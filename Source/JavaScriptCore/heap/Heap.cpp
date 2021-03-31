@@ -1510,7 +1510,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_structureIDTable.flushOldTables();
 
         reapWeakHandles();
-        pruneStaleEntriesFromWeakGCMaps();
+        pruneStaleEntriesFromWeakGCHashTables();
         sweepArrayBuffers();
         snapshotUnswept();
         finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
@@ -2217,12 +2217,12 @@ void Heap::reapWeakHandles()
     m_objectSpace.reapWeakSets();
 }
 
-void Heap::pruneStaleEntriesFromWeakGCMaps()
+void Heap::pruneStaleEntriesFromWeakGCHashTables()
 {
     if (!m_collectionScope || m_collectionScope.value() != CollectionScope::Full)
         return;
-    for (WeakGCMapBase* weakGCMap : m_weakGCMaps)
-        weakGCMap->pruneStaleEntries();
+    for (auto* weakGCHashTable : m_weakGCHashTables)
+        weakGCHashTable->pruneStaleEntries();
 }
 
 void Heap::sweepArrayBuffers()
@@ -2674,14 +2674,14 @@ void Heap::decrementDeferralDepthAndGCIfNeededSlow()
     collectIfNecessaryOrDefer();
 }
 
-void Heap::registerWeakGCMap(WeakGCMapBase* weakGCMap)
+void Heap::registerWeakGCHashTable(WeakGCHashTable* weakGCHashTable)
 {
-    m_weakGCMaps.add(weakGCMap);
+    m_weakGCHashTables.add(weakGCHashTable);
 }
 
-void Heap::unregisterWeakGCMap(WeakGCMapBase* weakGCMap)
+void Heap::unregisterWeakGCHashTable(WeakGCHashTable* weakGCHashTable)
 {
-    m_weakGCMaps.remove(weakGCMap);
+    m_weakGCHashTables.remove(weakGCHashTable);
 }
 
 void Heap::didAllocateBlock(size_t capacity)

@@ -34,6 +34,8 @@ public:
     typedef JSFunction Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
+    using CustomFunctionPointer = PutValueFunc;
+
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 
@@ -49,18 +51,19 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
     }
 
-    JS_EXPORT_PRIVATE static JSCustomSetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, PutValueFunc);
+    JS_EXPORT_PRIVATE static JSCustomSetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, CustomFunctionPointer);
 
     DECLARE_EXPORT_INFO;
 
     const Identifier& propertyName() const { return m_propertyName; }
-    PutValueFunc setter() const { return m_setter; };
+    CustomFunctionPointer setter() const { return m_setter; };
+    CustomFunctionPointer customFunctionPointer() const { return m_setter; };
 
 private:
-    JSCustomSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, PutValueFunc);
+    JSCustomSetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, CustomFunctionPointer);
 
     Identifier m_propertyName;
-    PutValueFunc m_setter;
+    CustomFunctionPointer m_setter;
 };
 
 } // namespace JSC

@@ -1,3 +1,41 @@
+2021-03-30  Sam Weinig  <weinig@apple.com>
+
+        JSGlobalObject's m_customGetterFunctionMap and m_customSetterFunctionMap should be sets, not maps, and should use both the identifier and function pointer as the key
+        https://bugs.webkit.org/show_bug.cgi?id=223613
+
+        Reviewed by Saam Barati.
+
+        Adds a heterogenous HashSet::ensure, which allows lazy construction of the value to
+        insert into the HashSet only if the heterogenous key (e.g. a key + HashTranslator
+        that are not the same as the HashSet's ValueType) does not match any item in the
+        set. For example given a set of ExpensiveToConstruct, but uniquely identifiable
+        by CheapToConstruct:
+        
+            HashSet<ExpensiveToConstruct> hashSet;
+            ...
+            struct Translator {
+                static unsigned hash(const CheapToConstruct& key)
+                {
+                    return key.hash();
+                }
+                static bool equal(const ExpensiveToConstruct& a, const CheapToConstruct& b)
+                {
+                    return a == b;
+                }
+            };
+            
+            hashSet.ensure<Translator>(CheapToConstruct { ... }, [] {
+                return ExpensiveToConstruct { ... };
+            });
+
+        This will be used by the custom getter/setter sets to avoid constructing the GC objects
+        unless they are really needed.
+
+        Also took the opertunity to replace some typedefs with usings, and fixed some comments.
+
+        * wtf/HashSet.h:
+        (WTF::Traits>::ensure):
+
 2021-03-30  Mark Lam  <mark.lam@apple.com>
 
         Add disableForwardingVPrintfStdErrToOSLog() and use it in the jsc shell.

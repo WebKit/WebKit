@@ -34,6 +34,8 @@ public:
     typedef JSFunction Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
+    using CustomFunctionPointer = GetValueFunc;
+
     static constexpr bool needsDestruction = true;
     static void destroy(JSCell*);
 
@@ -49,19 +51,20 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
     }
 
-    JS_EXPORT_PRIVATE static JSCustomGetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, GetValueFunc, Optional<DOMAttributeAnnotation> = WTF::nullopt);
+    JS_EXPORT_PRIVATE static JSCustomGetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, CustomFunctionPointer, Optional<DOMAttributeAnnotation> = WTF::nullopt);
 
     DECLARE_EXPORT_INFO;
 
     const Identifier& propertyName() const { return m_propertyName; }
-    GetValueFunc getter() const { return m_getter; };
+    CustomFunctionPointer getter() const { return m_getter; };
+    CustomFunctionPointer customFunctionPointer() const { return m_getter; };
     Optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; };
 
 private:
-    JSCustomGetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, GetValueFunc, Optional<DOMAttributeAnnotation>);
+    JSCustomGetterFunction(VM&, NativeExecutable*, JSGlobalObject*, Structure*, const PropertyName&, CustomFunctionPointer, Optional<DOMAttributeAnnotation>);
 
     Identifier m_propertyName;
-    GetValueFunc m_getter;
+    CustomFunctionPointer m_getter;
     Optional<DOMAttributeAnnotation> m_domAttribute;
 };
 

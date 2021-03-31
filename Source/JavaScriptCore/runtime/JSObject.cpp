@@ -3521,22 +3521,45 @@ Butterfly* JSObject::allocateMoreOutOfLineStorage(VM& vm, size_t oldSize, size_t
     return Butterfly::createOrGrowPropertyStorage(butterfly(), vm, this, structure(vm), oldSize, newSize);
 }
 
+template<typename T>
+struct WeakCustomGetterOrSetterHashTranslator {
+    using BaseHash = JSGlobalObject::WeakCustomGetterOrSetterHash<T>;
+
+    using Key = std::pair<PropertyName, typename T::CustomFunctionPointer>;
+
+    static unsigned hash(const Key& key)
+    {
+        return BaseHash::hash(std::get<0>(key), std::get<1>(key));
+    }
+
+    static bool equal(const Weak<T>& a, const Key& b)
+    {
+        if (!a)
+            return false;
+        return a->propertyName() == std::get<0>(b) && a->customFunctionPointer() == std::get<1>(b);
+    }
+};
+
 static JSCustomGetterFunction* createCustomGetterFunction(JSGlobalObject* globalObject, VM& vm, PropertyName propertyName, GetValueFunc getValueFunc, Optional<DOMAttributeAnnotation> domAttribute)
 {
-    // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
-    // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
+    using Translator = WeakCustomGetterOrSetterHashTranslator<JSCustomGetterFunction>;
+
+    // WeakGCSet::ensureValue's functor must not invoke GC since GC can modify WeakGCSet in the middle of HashSet::ensure.
+    // We use DeferGC here (1) not to invoke GC when executing WeakGCSet::ensureValue and (2) to avoid looking up HashSet twice.
     DeferGC deferGC(vm.heap);
-    return globalObject->customGetterFunctionMap().ensureValue(getValueFunc, [&] {
+    return globalObject->customGetterFunctionSet().ensureValue<Translator>(std::make_pair(propertyName, getValueFunc), [&] {
         return JSCustomGetterFunction::create(vm, globalObject, propertyName, getValueFunc, domAttribute);
     });
 }
 
 static JSCustomSetterFunction* createCustomSetterFunction(JSGlobalObject* globalObject, VM& vm, PropertyName propertyName, PutValueFunc putValueFunc)
 {
-    // WeakGCMap::ensureValue's functor must not invoke GC since GC can modify WeakGCMap in the middle of HashMap::ensure.
-    // We use DeferGC here (1) not to invoke GC when executing WeakGCMap::ensureValue and (2) to avoid looking up HashMap twice.
+    using Translator = WeakCustomGetterOrSetterHashTranslator<JSCustomSetterFunction>;
+
+    // WeakGCSet::ensureValue's functor must not invoke GC since GC can modify WeakGCSet in the middle of HashSet::ensure.
+    // We use DeferGC here (1) not to invoke GC when executing WeakGCSet::ensureValue and (2) to avoid looking up HashSet twice.
     DeferGC deferGC(vm.heap);
-    return globalObject->customSetterFunctionMap().ensureValue(putValueFunc, [&] {
+    return globalObject->customSetterFunctionSet().ensureValue<Translator>(std::make_pair(propertyName, putValueFunc), [&] {
         return JSCustomSetterFunction::create(vm, globalObject, propertyName, putValueFunc);
     });
 }

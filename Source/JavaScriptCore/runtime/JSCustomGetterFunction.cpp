@@ -40,7 +40,7 @@ JSC_DEFINE_HOST_FUNCTION(customGetterFunctionCall, (JSGlobalObject* globalObject
 
     JSCustomGetterFunction* customGetterFunction = jsCast<JSCustomGetterFunction*>(callFrame->jsCallee());
     JSValue thisValue = callFrame->thisValue();
-    GetValueFunc getter = customGetterFunction->getter();
+    auto getter = customGetterFunction->getter();
 
     if (auto domAttribute = customGetterFunction->domAttribute()) {
         if (!thisValue.inherits(vm, domAttribute->classInfo))
@@ -50,7 +50,7 @@ JSC_DEFINE_HOST_FUNCTION(customGetterFunctionCall, (JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, getter(globalObject, JSValue::encode(thisValue), customGetterFunction->propertyName()));
 }
 
-JSCustomGetterFunction::JSCustomGetterFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, const PropertyName& propertyName, GetValueFunc getter, Optional<DOMAttributeAnnotation> domAttribute)
+JSCustomGetterFunction::JSCustomGetterFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, const PropertyName& propertyName, CustomFunctionPointer getter, Optional<DOMAttributeAnnotation> domAttribute)
     : Base(vm, executable, globalObject, structure)
     , m_propertyName(Identifier::fromUid(vm, propertyName.uid()))
     , m_getter(getter)
@@ -58,7 +58,7 @@ JSCustomGetterFunction::JSCustomGetterFunction(VM& vm, NativeExecutable* executa
 {
 }
 
-JSCustomGetterFunction* JSCustomGetterFunction::create(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, GetValueFunc getter, Optional<DOMAttributeAnnotation> domAttribute)
+JSCustomGetterFunction* JSCustomGetterFunction::create(VM& vm, JSGlobalObject* globalObject, const PropertyName& propertyName, CustomFunctionPointer getter, Optional<DOMAttributeAnnotation> domAttribute)
 {
     ASSERT(getter);
     NativeExecutable* executable = vm.getHostFunction(customGetterFunctionCall, callHostFunctionAsConstructor, String(propertyName.publicName()));

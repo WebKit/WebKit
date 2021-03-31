@@ -33,36 +33,30 @@ template<typename ValueArg, typename HashArg, typename TraitsArg>
 class HashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 private:
-    typedef HashArg HashFunctions;
-    typedef TraitsArg ValueTraits;
-    typedef typename ValueTraits::TakeType TakeType;
+    using HashFunctions = HashArg;
+    using ValueTraits = TraitsArg;
+    using TakeType = typename ValueTraits::TakeType;
 
 public:
-    typedef typename ValueTraits::TraitType ValueType;
+    using ValueType = typename ValueTraits::TraitType;
 
 private:
-    typedef HashTable<ValueType, ValueType, IdentityExtractor,
-        HashFunctions, ValueTraits, ValueTraits> HashTableType;
+    using HashTableType = HashTable<ValueType, ValueType, IdentityExtractor, HashFunctions, ValueTraits, ValueTraits>;
 
 public:
-    /*
-     * Since figuring out the entries of an iterator is confusing, here is a cheat sheet:
-     * const KeyType& key = iterator->key;
-     */
-    typedef HashTableConstIteratorAdapter<HashTableType, ValueType> iterator;
-    typedef HashTableConstIteratorAdapter<HashTableType, ValueType> const_iterator;
+    // HashSet iterators have the following structure:
+    //      const ValueType* get() const;
+    //      const ValueType& operator*() const;
+    //      const ValueType* operator->() const;
+    using iterator = HashTableConstIteratorAdapter<HashTableType, ValueType>;
+    using const_iterator = HashTableConstIteratorAdapter<HashTableType, ValueType>;
 
-    /*
-     * Since figuring out the entries of an AddResult is confusing, here is a cheat sheet:
-     * iterator iter = addResult.iterator;
-     * bool isNewEntry = addResult.isNewEntry;
-     */
-    typedef typename HashTableType::AddResult AddResult;
+    // HashSet AddResults have the following fields:
+    //      IteratorType iterator;
+    //      bool isNewEntry;
+    using AddResult = typename HashTableType::AddResult;
 
-    HashSet()
-    {
-    }
-
+    HashSet() = default;
     HashSet(std::initializer_list<ValueArg> initializerList)
     {
         for (const auto& value : initializerList)
@@ -93,6 +87,7 @@ public:
     template<typename HashTranslator, typename T> iterator find(const T&) const;
     template<typename HashTranslator, typename T> bool contains(const T&) const;
 
+
     // The return value includes both an iterator to the added value's location,
     // and an isNewEntry bool that indicates if it is a new or existing entry in the set.
     AddResult add(const ValueType&);
@@ -110,6 +105,16 @@ public:
     //   static translate(ValueType&, const T&, unsigned hashCode);
     template<typename HashTranslator, typename T> AddResult add(const T&);
     
+    // An alternate version of translated add(), ensure() will still do translation
+    // by hashing and comparing with some other type, to avoid the cost of type
+    // conversion if the object is already in the table, but rather than a static
+    // translate() function, uses the passed in functor to perform lazy creation of
+    // the value only if it is not already there. HashTranslator must have the following
+    // function members:
+    //   static unsigned hash(const T&);
+    //   static bool equal(const ValueType&, const T&);
+    template<typename HashTranslator, typename T, typename Functor> AddResult ensure(T&&, Functor&&);
+
     // Attempts to add a list of things to the set. Returns true if any of
     // them are new to the set. Returns false if the set is unchanged.
     template<typename IteratorType>
@@ -168,6 +173,16 @@ struct HashSetTranslatorAdapter {
     template<typename T, typename U> static void translate(T& location, const U& key, const U&, unsigned hashCode)
     {
         Translator::translate(location, key, hashCode);
+    }
+};
+
+template<typename ValueTraits, typename Translator>
+struct HashSetEnsureTranslatorAdaptor {
+    template<typename T> static unsigned hash(const T& key) { return Translator::hash(key); }
+    template<typename T, typename U> static bool equal(const T& a, const U& b) { return Translator::equal(a, b); }
+    template<typename T, typename U, typename Functor> static void translate(T& location, U&&, Functor&& functor)
+    {
+        ValueTraits::assignToEmpty(location, functor());
     }
 };
 
@@ -231,6 +246,13 @@ template<typename HashTranslator, typename T>
 inline bool HashSet<Value, HashFunctions, Traits>::contains(const T& value) const
 {
     return m_impl.template contains<HashSetTranslatorAdapter<HashTranslator>>(value);
+}
+
+template<typename Value, typename HashFunctions, typename Traits>
+template<typename HashTranslator, typename T, typename Functor>
+inline auto HashSet<Value, HashFunctions, Traits>::ensure(T&& key, Functor&& functor) -> AddResult
+{
+    return m_impl.template add<HashSetEnsureTranslatorAdaptor<Traits, HashTranslator>>(std::forward<T>(key), std::forward<Functor>(functor));
 }
 
 template<typename T, typename U, typename V>

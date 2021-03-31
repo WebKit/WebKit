@@ -1098,8 +1098,11 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/VMTraps.h
     runtime/VarOffset.h
     runtime/Watchdog.h
+    runtime/WeakGCHashTable.h
     runtime/WeakGCMap.h
     runtime/WeakGCMapInlines.h
+    runtime/WeakGCSet.h
+    runtime/WeakGCSetInlines.h
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 

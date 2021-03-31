@@ -27,21 +27,15 @@
 
 #include "DeferGC.h"
 #include "Weak.h"
+#include "WeakGCHashTable.h"
 #include <wtf/HashMap.h>
 
 namespace JSC {
 
 // A HashMap with Weak<JSCell> values, which automatically removes values once they're garbage collected.
 
-class WeakGCMapBase {
-public:
-    virtual ~WeakGCMapBase() { }
-    virtual void pruneStaleEntries() = 0;
-};
-
-template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyArg>,
-    typename KeyTraitsArg = HashTraits<KeyArg>>
-class WeakGCMap final : public WeakGCMapBase {
+template<typename KeyArg, typename ValueArg, typename HashArg = DefaultHash<KeyArg>, typename KeyTraitsArg = HashTraits<KeyArg>>
+class WeakGCMap final : public WeakGCHashTable {
     WTF_MAKE_FAST_ALLOCATED;
     typedef Weak<ValueArg> ValueType;
     typedef HashMap<KeyArg, ValueType, HashArg, KeyTraitsArg> HashMapType;

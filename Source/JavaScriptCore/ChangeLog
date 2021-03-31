@@ -1,3 +1,104 @@
+2021-03-30  Sam Weinig  <weinig@apple.com>
+
+        JSGlobalObject's m_customGetterFunctionMap and m_customSetterFunctionMap should be sets, not maps, and should use both the identifier and function pointer as the key
+        https://bugs.webkit.org/show_bug.cgi?id=223613
+
+        Reviewed by Saam Barati.
+
+        - Adds a generic WeakGCSet class to go with the existing WeakGCMap.
+        - Renames WeakGCMapBase to WeakGCHashTable, moves it to its own file
+          and now uses it as the base class of both WeakGCSet and WeakGCMap.
+        - Replaces JSGlobalObject's customGetterFunctionMap/customSetterFunctionMap
+          with customGetterFunctionSet/customSetterFunctionSet, using the new
+          WeakGCSet, and updates them to use both the function pointer and 
+          property name for the key, rather than just the function pointer which
+          is what the previous code did. This allows multiple custom functions
+          to use the same underlying function pointer as long as they have distinct
+          property names, which is going to be used to optimize the bindings for
+          CSSStyleDeclaration.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCHashTables):
+        (JSC::Heap::registerWeakGCHashTable):
+        (JSC::Heap::unregisterWeakGCHashTable):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCMaps): Deleted.
+        (JSC::Heap::registerWeakGCMap): Deleted.
+        (JSC::Heap::unregisterWeakGCMap): Deleted.
+        * heap/Heap.h:
+        Update for new name. WeakGCMapBase -> WeakGCHashTable.
+
+        * runtime/JSCInlines.h:
+        Add WeakGCSetInlines.h
+
+        * runtime/JSCustomGetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomGetterFunction::JSCustomGetterFunction):
+        (JSC::JSCustomGetterFunction::create):
+        * runtime/JSCustomGetterFunction.h:
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomSetterFunction::JSCustomSetterFunction):
+        (JSC::JSCustomSetterFunction::create):
+        * runtime/JSCustomSetterFunction.h:
+        Add helper type CustomFunctionPointer and helper function customFunctionPointer()
+        to allow some generic hashing code to run on either JSCustomGetterFunction
+        or JSCustomSetterFunction.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::WeakCustomGetterOrSetterHash::hash):
+        (JSC::JSGlobalObject::WeakCustomGetterOrSetterHash::equal):
+        (JSC::JSGlobalObject::customGetterFunctionSet):
+        (JSC::JSGlobalObject::customSetterFunctionSet):
+        (JSC::JSGlobalObject::customGetterFunctionMap): Deleted.
+        (JSC::JSGlobalObject::customSetterFunctionMap): Deleted.
+        Replace m_customGetterFunctionMap/m_customSetterFunctionMap with 
+        m_customGetterFunctionSet/m_customSetterFunctionSet. As the key is included
+        in the value, it saves space to use a set rather than a map. We now also
+        hash and compare both the function pointer and the property name to allow
+        sharing implementations.
+
+        * runtime/JSObject.cpp:
+        (JSC::WeakCustomGetterOrSetterHashTranslator::hash):
+        (JSC::WeakCustomGetterOrSetterHashTranslator::equal):
+        (JSC::createCustomGetterFunction):
+        (JSC::createCustomSetterFunction):
+        Update creation functions to use the new sets, making use of the
+        ensureValue function and a HashTranslator allowing the use of a
+        std::pair<PropertyName, FunctionPointer> as an alternative lookup
+        key. This allows us to avoid creating the JSCustomGetterFunction/JSCustomSetterFunction
+        pointer if one with the same property name and function pointer are
+        already in the set.
+
+        * runtime/WeakGCHashTable.h: Added.
+        (JSC::WeakGCHashTable::~WeakGCHashTable):
+        Moved from WeakGCMap and renamed as it is now the base of both
+        WeakGCMap and WeakGCSet.
+ 
+        * runtime/WeakGCMap.h:
+        Update to use new WeakGCHashTable base class.
+
+        * runtime/WeakGCMapInlines.h:
+        (JSC::KeyTraitsArg>::WeakGCMap):
+        (JSC::KeyTraitsArg>::~WeakGCMap):
+        Update for new Heap function names for WeakGCHashTable.
+
+        * runtime/WeakGCSet.h: Added.
+        * runtime/WeakGCSetInlines.h: Added.
+        (JSC::TraitsArg>::WeakGCSet):
+        (JSC::TraitsArg>::~WeakGCSet):
+        (JSC::TraitsArg>::find):
+        (JSC::TraitsArg>::find const):
+        (JSC::TraitsArg>::contains const):
+        (JSC::TraitsArg>::pruneStaleEntries):
+        Added a minimal WeakGCSet based on WeakGCMap. 
+
 2021-03-30  Mark Lam  <mark.lam@apple.com>
 
         Add disableForwardingVPrintfStdErrToOSLog() and use it in the jsc shell.

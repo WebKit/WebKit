@@ -507,8 +507,8 @@ JSGlobalObject::JSGlobalObject(VM& vm, Structure* structure, const GlobalObjectM
     , m_numberToStringWatchpointSet(IsWatched)
     , m_runtimeFlags()
     , m_stackTraceLimit(Options::defaultErrorStackTraceLimit())
-    , m_customGetterFunctionMap(vm)
-    , m_customSetterFunctionMap(vm)
+    , m_customGetterFunctionSet(vm)
+    , m_customSetterFunctionSet(vm)
     , m_globalObjectMethodTable(globalObjectMethodTable ? globalObjectMethodTable : &s_globalObjectMethodTable)
 {
 }
