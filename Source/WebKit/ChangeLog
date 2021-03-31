@@ -1,3 +1,14 @@
+2021-03-31  Chris Dumez  <cdumez@apple.com>
+
+        ServiceWorkerContextData should not be saved both on ServiceWorkerThread & ServiceWorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=224001
+
+        Reviewed by Geoffrey Garen.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+
 2021-03-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Fall back to context menu presentation after long pressing image overlay text

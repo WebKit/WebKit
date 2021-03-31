@@ -1,3 +1,37 @@
+2021-03-31  Chris Dumez  <cdumez@apple.com>
+
+        ServiceWorkerContextData should not be saved both on ServiceWorkerThread & ServiceWorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=224001
+
+        Reviewed by Geoffrey Garen.
+
+        ServiceWorkerContextData should not be saved both on ServiceWorkerThread & ServiceWorkerGlobalScope.
+        ServiceWorkerContextData contains script sources and may use a large amount of memory.
+
+        To address the issue, we now clear ServiceWorkerThread's context data once the ServiceWorkerGlobalScope
+        has been constructed.
+
+        * inspector/agents/worker/ServiceWorkerAgent.cpp:
+        (WebCore::ServiceWorkerAgent::getInitializationInfo):
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::create):
+        (WebCore::ServiceWorkerGlobalScope::ServiceWorkerGlobalScope):
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::registerServiceWorkerThreadForInstall):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        (WebCore::ServiceWorkerThread::createWorkerGlobalScope):
+        (WebCore::ServiceWorkerThread::heartBeatTimerFired):
+        (WebCore::ServiceWorkerThread::finishedFiringInstallEvent):
+        * workers/service/context/ServiceWorkerThread.h:
+        (WebCore::ServiceWorkerThread::identifier const):
+        (WebCore::ServiceWorkerThread::jobDataIdentifier const):
+        (WebCore::ServiceWorkerThread::contextData const): Deleted.
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+
 2021-03-31  Antoine Quint  <graouts@webkit.org>
 
         font-stretch should support 0% and disallow animating to a value below 0%
