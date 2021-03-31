@@ -481,10 +481,15 @@ public:
 
     ALWAYS_INLINE void add(JSGlobalObject* globalObject, JSValue key, JSValue value = JSValue())
     {
+        VM& vm = getVM(globalObject);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
         key = normalizeMapKey(key);
         addNormalizedInternal(globalObject, key, value, [&] (HashMapBucketType* bucket) {
             return !isDeleted(bucket) && areKeysEqual(globalObject, key, bucket->key());
         });
+        RETURN_IF_EXCEPTION(scope, void());
+        scope.release();
         if (shouldRehashAfterAdd())
             rehash(globalObject);
     }

@@ -1,3 +1,14 @@
+2021-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check in HashMapImpl::add().
+        https://bugs.webkit.org/show_bug.cgi?id=224007
+        rdar://76053163
+
+        Reviewed by Saam Barati.
+
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::add):
+
 2021-03-31  Xan Lopez  <xan@igalia.com>
 
         [JSC] Remove warnings about unnecessary operator= for ARMv7Assembler LinkRecord

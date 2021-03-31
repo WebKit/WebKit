@@ -1,3 +1,13 @@
+2021-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check in HashMapImpl::add().
+        https://bugs.webkit.org/show_bug.cgi?id=224007
+        rdar://76053163
+
+        Reviewed by Saam Barati.
+
+        * stress/missing-exception-check-in-HashMapImpl-add.js: Added.
+
 2021-03-31  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Optimize constructors of ES6 collections
