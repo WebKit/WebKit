@@ -1,3 +1,16 @@
+2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Update a couple of icons in the file upload context menu
+        https://bugs.webkit.org/show_bug.cgi?id=224013
+        <rdar://problem/73234218>
+
+        Reviewed by Tim Horton.
+
+        Use updated symbols for the "Photo Library" and "Take Photo or Video" menu items.
+
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel contextMenuInteraction:configurationForMenuAtLocation:]):
+
 2021-03-30  Simon Fraser  <simon.fraser@apple.com>
 
         Assertions in DisplayUpdate when dragging WebView windows between screens with different refresh rates
