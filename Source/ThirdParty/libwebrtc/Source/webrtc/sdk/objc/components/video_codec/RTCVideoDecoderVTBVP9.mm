@@ -146,14 +146,14 @@ void vp9DecompressionOutputCallback(void *decoderRef,
                                  CVImageBufferRef imageBuffer,
                                  CMTime timestamp,
                                  CMTime duration) {
-  std::unique_ptr<RTCFrameDecodeParams> decodeParams(
-      reinterpret_cast<RTCFrameDecodeParams *>(params));
-  if (status != noErr) {
-      RTCVideoDecoderVTBVP9 *decoder = (__bridge RTCVideoDecoderVTBVP9 *)decoderRef;
-    [decoder setError:status];
+  if (status != noErr || !imageBuffer) {
+    RTCVideoDecoderVTBVP9 *decoder = (__bridge RTCVideoDecoderVTBVP9 *)decoderRef;
+    [decoder setError:status != noErr ? status : 1];
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
     return;
   }
+
+  std::unique_ptr<RTCFrameDecodeParams> decodeParams(reinterpret_cast<RTCFrameDecodeParams *>(params));
   RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:imageBuffer];
   RTCVideoFrame *decodedFrame =
       [[RTCVideoFrame alloc] initWithBuffer:frameBuffer
