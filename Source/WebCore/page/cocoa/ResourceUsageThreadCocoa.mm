@@ -164,7 +164,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
         auto locker = holdLock(Thread::allThreadsMutex());
         for (auto* thread : Thread::allThreads(locker)) {
             mach_port_t machThread = thread->machThread();
-            if (machThread != MACH_PORT_NULL)
+            if (MACH_PORT_VALID(machThread))
                 knownWebKitThreads.add(machThread);
         }
     }
@@ -177,7 +177,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
             if (!thread->thread())
                 continue;
             mach_port_t machThread = thread->thread()->machThread();
-            if (machThread != MACH_PORT_NULL)
+            if (MACH_PORT_VALID(machThread))
                 knownWorkerThreads.set(machThread, thread->identifier().isolatedCopy());
         }
     }

@@ -1,3 +1,20 @@
+2021-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Use MACH_PORT_VALID() when wanting to check if a mach port is valid
+        https://bugs.webkit.org/show_bug.cgi?id=224004
+
+        Reviewed by Darin Adler.
+
+        Use MACH_PORT_VALID() when wanting to check if a mach port is valid, instead of checking for
+        MACH_PORT_NULL. MACH_PORT_VALID() is the correct way to check for validity since it also checks
+        for the MACH_PORT_DEAD value.
+
+        * page/cocoa/ResourceUsageThreadCocoa.mm:
+        (WebCore::ResourceUsageThread::platformCollectCPUData):
+        * platform/graphics/mac/GraphicsChecksMac.cpp:
+        (WebCore::attachToAppleGraphicsControl):
+        (WebCore::hasMuxCapability):
+
 2021-03-31  Cameron McCormack  <heycam@apple.com>
 
         Avoid creating any complex text runs when font-size is zero.

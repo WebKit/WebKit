@@ -46,35 +46,35 @@ static io_connect_t attachToAppleGraphicsControl()
     mach_port_t masterPort = MACH_PORT_NULL;
 
     if (IOMasterPort(MACH_PORT_NULL, &masterPort) != KERN_SUCCESS)
-        return MACH_PORT_NULL;
+        return IO_OBJECT_NULL;
 
     CFDictionaryRef classToMatch = IOServiceMatching("AppleGraphicsControl");
     if (!classToMatch)
-        return MACH_PORT_NULL;
+        return IO_OBJECT_NULL;
 
     kern_return_t kernResult;
     io_iterator_t iterator;
     if ((kernResult = IOServiceGetMatchingServices(masterPort, classToMatch, &iterator)) != KERN_SUCCESS)
-        return MACH_PORT_NULL;
+        return IO_OBJECT_NULL;
 
     io_service_t serviceObject = IOIteratorNext(iterator);
     IOObjectRelease(iterator);
     if (!serviceObject)
-        return MACH_PORT_NULL;
+        return IO_OBJECT_NULL;
 
     io_connect_t dataPort;
     IOObjectRetain(serviceObject);
     kernResult = IOServiceOpen(serviceObject, mach_task_self(), 0, &dataPort);
     IOObjectRelease(serviceObject);
 
-    return (kernResult == KERN_SUCCESS) ? dataPort : MACH_PORT_NULL;
+    return (kernResult == KERN_SUCCESS) ? dataPort : IO_OBJECT_NULL;
 }
 
 static bool hasMuxCapability()
 {
     io_connect_t dataPort = attachToAppleGraphicsControl();
 
-    if (dataPort == MACH_PORT_NULL)
+    if (dataPort == IO_OBJECT_NULL)
         return false;
 
     bool result;
