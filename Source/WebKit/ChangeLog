@@ -1,3 +1,9 @@
+2021-04-01  Dean Jackson  <dino@apple.com>
+
+        Add #import for when unified sources doesn't import it first.
+
+        * Shared/ios/WebIconUtilities.h:
+
 2021-04-01  Chris Dumez  <cdumez@apple.com>
 
         Have the ServiceWorker process hold on to a file mapped version of the service worker scripts to save dirty memory
