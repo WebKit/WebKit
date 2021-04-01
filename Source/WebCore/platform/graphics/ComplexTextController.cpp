@@ -342,7 +342,7 @@ static bool shouldSynthesize(bool dontSynthesizeSmallCaps, const Font* nextFont,
 
 void ComplexTextController::collectComplexTextRuns()
 {
-    if (!m_end)
+    if (!m_end || !m_font.size())
         return;
 
     // We break up glyph run generation for the string by Font.

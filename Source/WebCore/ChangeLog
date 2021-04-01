@@ -1,3 +1,19 @@
+2021-03-31  Cameron McCormack  <heycam@apple.com>
+
+        Avoid creating any complex text runs when font-size is zero.
+        https://bugs.webkit.org/show_bug.cgi?id=223983
+
+        Reviewed by Myles C. Maxfield.
+
+        We have existing checks to handle `font-size: 0` on the simple
+        text path, but not for complex text.  Handle this by creating
+        no complex text runs for text with zero size.
+
+        Test: fast/text/font-size-zero-complex.html
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns):
+
 2021-03-31  Mark Lam  <mark.lam@apple.com>
 
         Placate exception check validation below convertVariadicArguments().
