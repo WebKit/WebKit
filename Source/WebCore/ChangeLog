@@ -1,3 +1,45 @@
+2021-04-01  Chris Lord  <clord@igalia.com>
+
+        Make FontCache constructable and safe to use off the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=223997
+
+        Reviewed by Darin Adler.
+
+        So that we can have a separate FontCache for use with OffscreenCanvas
+        on Worker threads, make FontCache constructable/destructable and
+        ref-counted.
+
+        This also changes some functions so that they no longer rely on static
+        AtomString variables, as these paths would not be safe to use off the
+        main thread, and changes main-thread checks to creation-thread checks.
+
+        No new tests, no change in behavior.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::alternateFamilyName):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::fontForFamily):
+        (WebCore::FontCache::similarFont):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::fontForFamily):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::FontCascadeFonts):
+        (WebCore::FontCascadeFonts::glyphDataForCharacter):
+        * platform/graphics/FontCascadeFonts.h:
+        (WebCore::FontCascadeFonts::primaryFont):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontCache::similarFont):
+        (WebCore::FontCache::platformAlternateFamilyName):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::lastResortFallbackFont):
+        (WebCore::getFamilyNameStringFromFamily):
+        (WebCore::FontCache::platformAlternateFamilyName):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::fontFromDescriptionAndLogFont):
+        (WebCore::FontCache::lastResortFallbackFont):
+        (WebCore::FontCache::platformAlternateFamilyName):
+
 2021-04-01  Mark Lam  <mark.lam@apple.com>
 
         Fix some missing exception checks in HTMLMediaElement methods.

@@ -224,11 +224,13 @@ typedef HashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCache
 typedef HashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontVerticalDataCache;
 #endif
 
-class FontCache {
+class FontCache : public RefCounted<FontCache> {
     friend class WTF::NeverDestroyed<FontCache>;
 
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
+    FontCache();
+
     WEBCORE_EXPORT static FontCache& singleton();
 
     // These methods are implemented by the platform.
@@ -253,10 +255,10 @@ public:
     // It comes into play when you create an @font-face which shares a family name as a preinstalled font.
     Vector<FontSelectionCapabilities> getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts);
 
-    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const AtomString&, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
+    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const String&, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
     WEBCORE_EXPORT Ref<Font> lastResortFallbackFont(const FontDescription&);
     WEBCORE_EXPORT Ref<Font> fontForPlatformData(const FontPlatformData&);
-    RefPtr<Font> similarFont(const FontDescription&, const AtomString& family);
+    RefPtr<Font> similarFont(const FontDescription&, const String& family);
 
     void addClient(FontSelector&);
     void removeClient(FontSelector&);
@@ -274,7 +276,7 @@ public:
     void clearWidthCaches();
 
 #if PLATFORM(WIN)
-    RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, AtomString& outFontFamilyName);
+    RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, String& outFontFamilyName);
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -301,22 +303,19 @@ public:
     void prewarmGlobally();
 
 private:
-    FontCache();
-    ~FontCache() = delete;
-
     WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
     void pruneUnreferencedEntriesFromFontCascadeCache();
     void pruneSystemFallbackFonts();
     Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, RefPtr<FontSelector>&&);
 
     // FIXME: This method should eventually be removed.
-    FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomString& family, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
+    FontPlatformData* getCachedFontPlatformData(const FontDescription&, const String& family, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
 
     // These methods are implemented by each platform.
     WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities);
     
-    static const AtomString& alternateFamilyName(const AtomString&);
-    static const AtomString& platformAlternateFamilyName(const AtomString&);
+    static Optional<ASCIILiteral> alternateFamilyName(const String&);
+    static Optional<ASCIILiteral> platformAlternateFamilyName(const String&);
 
     Timer m_purgeTimer;
     

@@ -114,6 +114,9 @@ private:
     unsigned short m_generation;
     Pitch m_pitch { UnknownPitch };
     bool m_isForPlatformFont { false };
+#if ASSERT_ENABLED
+    Optional<Ref<Thread>> m_thread;
+#endif
 };
 
 inline bool FontCascadeFonts::isFixedPitch(const FontCascadeDescription& description)
@@ -125,7 +128,7 @@ inline bool FontCascadeFonts::isFixedPitch(const FontCascadeDescription& descrip
 
 inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& description)
 {
-    ASSERT(isMainThread());
+    ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
     if (!m_cachedPrimaryFont) {
         auto& primaryRanges = realizeFallbackRangesAt(description, 0);
         m_cachedPrimaryFont = primaryRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Allow).font;

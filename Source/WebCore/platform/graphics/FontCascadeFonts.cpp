@@ -104,6 +104,10 @@ FontCascadeFonts::FontCascadeFonts(RefPtr<FontSelector>&& fontSelector)
     , m_fontSelectorVersion(m_fontSelector ? m_fontSelector->version() : 0)
     , m_generation(FontCache::singleton().generation())
 {
+#if ASSERT_ENABLED
+    if (!isMainThread())
+        m_thread = makeRef(Thread::current());
+#endif
 }
 
 FontCascadeFonts::FontCascadeFonts(const FontPlatformData& platformData)
@@ -488,7 +492,7 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
 
 GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDescription& description, FontVariant variant)
 {
-    ASSERT(isMainThread());
+    ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
     ASSERT(variant != AutoVariant);
 
     if (variant != NormalVariant)

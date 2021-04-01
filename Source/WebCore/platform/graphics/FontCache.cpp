@@ -134,33 +134,25 @@ struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPla
     static const bool emptyValueIsZero = false;
 };
 
-const AtomString& FontCache::alternateFamilyName(const AtomString& familyName)
+Optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyName)
 {
-    static MainThreadNeverDestroyed<const AtomString> arial("Arial", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> courier("Courier", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> courierNew("Courier New", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> helvetica("Helvetica", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> times("Times", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> timesNewRoman("Times New Roman", AtomString::ConstructFromLiteral);
-
-    const AtomString& platformSpecificAlternate = platformAlternateFamilyName(familyName);
-    if (!platformSpecificAlternate.isNull())
+    if (auto platformSpecificAlternate = platformAlternateFamilyName(familyName))
         return platformSpecificAlternate;
 
     switch (familyName.length()) {
     case 5:
         if (equalLettersIgnoringASCIICase(familyName, "arial"))
-            return helvetica;
+            return "Helvetica"_s;
         if (equalLettersIgnoringASCIICase(familyName, "times"))
-            return timesNewRoman;
+            return "Times New Roman"_s;
         break;
     case 7:
         if (equalLettersIgnoringASCIICase(familyName, "courier"))
-            return courierNew;
+            return "Courier New"_s;
         break;
     case 9:
         if (equalLettersIgnoringASCIICase(familyName, "helvetica"))
-            return arial;
+            return "Arial"_s;
         break;
 #if !OS(WINDOWS)
     // On Windows, Courier New is a TrueType font that is always present and
@@ -170,19 +162,19 @@ const AtomString& FontCache::alternateFamilyName(const AtomString& familyName)
     // only be tried if Courier New is not found.
     case 11:
         if (equalLettersIgnoringASCIICase(familyName, "courier new"))
-            return courier;
+            return "Courier"_s;
         break;
 #endif
     case 15:
         if (equalLettersIgnoringASCIICase(familyName, "times new roman"))
-            return times;
+            return "Times"_s;
         break;
     }
 
-    return nullAtom();
+    return WTF::nullopt;
 }
 
-FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const AtomString& passedFamilyName,
+FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName,
     const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -192,18 +184,16 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 #if OS(WINDOWS) && ENABLE(OPENTYPE_VERTICAL)
     // Leading "@" in the font name enables Windows vertical flow flag for the font.
     // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
-    // IE disregards "@" regardless of the orientatoin, so we follow the behavior.
-    const AtomString& familyName = (passedFamilyName.isEmpty() || passedFamilyName[0] != '@') ?
-        passedFamilyName : AtomString(passedFamilyName.impl()->substring(1));
+    // IE disregards "@" regardless of the orientation, so we follow the behavior.
+    const String& familyName = passedFamilyName.substring(passedFamilyName[0] == '@' ? 1 : 0);
 #else
-    const AtomString& familyName = passedFamilyName;
+    const String& familyName = passedFamilyName;
 #endif
 
-    static bool initialized;
-    if (!initialized) {
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&]() {
         platformInit();
-        initialized = true;
-    }
+    });
 
     FontPlatformDataCacheKey key(familyName, fontDescription, fontFaceFeatures, fontFaceCapabilities);
 
@@ -215,9 +205,8 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
         if (!it->value && !checkingAlternateName) {
             // We were unable to find a font.  We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
-            const AtomString& alternateName = alternateFamilyName(familyName);
-            if (!alternateName.isNull()) {
-                FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, fontFaceFeatures, fontFaceCapabilities, true);
+            if (auto alternateName = alternateFamilyName(familyName)) {
+                auto* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, *alternateName, fontFaceFeatures, fontFaceCapabilities, true);
                 // Lookup the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to getCachedFontPlatformData().
                 it = m_fontPlatformDataCache->find(key);
@@ -283,7 +272,7 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(0_s);
@@ -534,7 +523,7 @@ void FontCache::prewarm(const PrewarmInformation&)
 {
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription&, const AtomString&)
+RefPtr<Font> FontCache::similarFont(const FontDescription&, const String&)
 {
     return nullptr;
 }

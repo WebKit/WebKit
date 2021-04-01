@@ -619,7 +619,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     return adoptCF(CTFontCreateCopyWithAttributes(originalFont, CTFontGetSize(originalFont), nullptr, descriptor.get()));
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription& description, const AtomString& family)
+RefPtr<Font> FontCache::similarFont(const FontDescription& description, const String& family)
 {
     // Attempt to find an appropriate font using a match based on the presence of keywords in
     // the requested names. For example, we'll match any name that contains "Arabic" to Geeza Pro.
@@ -628,27 +628,19 @@ RefPtr<Font> FontCache::similarFont(const FontDescription& description, const At
 
 #if PLATFORM(IOS_FAMILY)
     // Substitute the default monospace font for well-known monospace fonts.
-    if (equalLettersIgnoringASCIICase(family, "monaco") || equalLettersIgnoringASCIICase(family, "menlo")) {
-        static MainThreadNeverDestroyed<const AtomString> courier("courier", AtomString::ConstructFromLiteral);
-        return fontForFamily(description, courier);
-    }
+    if (equalLettersIgnoringASCIICase(family, "monaco") || equalLettersIgnoringASCIICase(family, "menlo"))
+        return fontForFamily(description, "courier"_s);
 
     // Substitute Verdana for Lucida Grande.
-    if (equalLettersIgnoringASCIICase(family, "lucida grande")) {
-        static MainThreadNeverDestroyed<const AtomString> verdana("verdana", AtomString::ConstructFromLiteral);
-        return fontForFamily(description, verdana);
-    }
+    if (equalLettersIgnoringASCIICase(family, "lucida grande"))
+        return fontForFamily(description, "verdana"_s);
 #endif
 
-    static NeverDestroyed<String> arabic(MAKE_STATIC_STRING_IMPL("Arabic"));
-    static NeverDestroyed<String> pashto(MAKE_STATIC_STRING_IMPL("Pashto"));
-    static NeverDestroyed<String> urdu(MAKE_STATIC_STRING_IMPL("Urdu"));
-    static String* matchWords[3] = { &arabic.get(), &pashto.get(), &urdu.get() };
-    static MainThreadNeverDestroyed<const AtomString> geezaPlain("GeezaPro", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> geezaBold("GeezaPro-Bold", AtomString::ConstructFromLiteral);
-    for (String* matchWord : matchWords) {
-        if (family.containsIgnoringASCIICase(*matchWord))
-            return fontForFamily(description, isFontWeightBold(description.weight()) ? geezaBold : geezaPlain);
+    static constexpr ASCIILiteral matchWords[] = { "Arabic"_s, "Pashto"_s, "Urdu"_s };
+    auto familyMatcher = StringView(family);
+    for (auto matchWord : matchWords) {
+        if (equalIgnoringASCIICase(familyMatcher, StringView(matchWord)))
+            return fontForFamily(description, isFontWeightBold(description.weight()) ? "GeezaPro-Bold"_s : "GeezaPro"_s);
     }
     return nullptr;
 }
@@ -1423,7 +1415,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
     return fontForPlatformData(alternateFont);
 }
 
-const AtomString& FontCache::platformAlternateFamilyName(const AtomString& familyName)
+Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& familyName)
 {
     static const UChar heitiString[] = { 0x9ed1, 0x4f53 };
     static const UChar songtiString[] = { 0x5b8b, 0x4f53 };
@@ -1431,10 +1423,10 @@ const AtomString& FontCache::platformAlternateFamilyName(const AtomString& famil
     static const UChar weiruanYaHeiString[] = { 0x5fae, 0x8f6f, 0x96c5, 0x9ed1 };
     static const UChar weiruanZhengHeitiString[] = { 0x5fae, 0x8edf, 0x6b63, 0x9ed1, 0x9ad4 };
 
-    static MainThreadNeverDestroyed<const AtomString> songtiSC("Songti SC", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> songtiTC("Songti TC", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> heitiSCReplacement("PingFang SC", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> heitiTCReplacement("PingFang TC", AtomString::ConstructFromLiteral);
+    static constexpr ASCIILiteral songtiSC = "Songti SC"_s;
+    static constexpr ASCIILiteral songtiTC = "Songti TC"_s;
+    static constexpr ASCIILiteral heitiSCReplacement = "PingFang SC"_s;
+    static constexpr ASCIILiteral heitiTCReplacement = "PingFang TC"_s;
 
     switch (familyName.length()) {
     case 2:
@@ -1469,7 +1461,7 @@ const AtomString& FontCache::platformAlternateFamilyName(const AtomString& famil
         break;
     }
 
-    return nullAtom();
+    return WTF::nullopt;
 }
 
 void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)
