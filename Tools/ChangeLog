@@ -1,3 +1,22 @@
+2021-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Add API test for Bug 224022
+        https://bugs.webkit.org/show_bug.cgi?id=224024
+
+        Reviewed by Alex Christensen.
+
+        The way to reproduce the bug was to make sure that the NetworkProcessProxy was not associated
+        with any datastore at the time of the crash, then construct a new view and do a load, which
+        would hang.
+
+        If the NetworkProcessProxy was associated with a datastore and the WKWebSiteDataStore's
+        m_networkProcess was not null, then WebsiteDataStore::networkProcessCrashed() would take
+        care of calling `m_networkProcess->didTerminate()`, which would destroy the NetworkProcessProxy
+        singleton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcess.mm:
+        (TEST):
+
 2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         List of extents should be bounds-checked when iterating display list items
