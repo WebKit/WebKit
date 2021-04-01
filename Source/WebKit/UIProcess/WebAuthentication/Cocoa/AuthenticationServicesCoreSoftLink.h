@@ -28,16 +28,17 @@
 #import "AuthenticationServicesCoreSPI.h"
 #import <wtf/SoftLinking.h>
 
-#if HAVE(ASC_AUTH_UI)
-
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, AuthenticationServicesCore);
+
+SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCWebKitSPISupport);
+
+#if HAVE(ASC_AUTH_UI)
 
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresenter);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAuthorizationPresentationContext);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCPlatformPublicKeyCredentialLoginChoice);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCSecurityKeyPublicKeyCredentialLoginChoice);
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCAppleIDCredential);
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, ASCWebKitSPISupport);
 
 SOFT_LINK_CONSTANT_FOR_HEADER(WebKit, AuthenticationServicesCore, ASCAuthorizationErrorDomain, NSErrorDomain);
 #define ASCAuthorizationErrorDomain WebKit::get_AuthenticationServicesCore_ASCAuthorizationErrorDomain()
