@@ -1,3 +1,61 @@
+2021-04-01  Devin Rousso  <drousso@apple.com>
+
+        Limit the number of buttons shown in media controls
+        https://bugs.webkit.org/show_bug.cgi?id=223909
+
+        Reviewed by Eric Carlson.
+
+        When in fullscreen, it's possible to have five different buttons to the right of "Play":
+         - AirPlay
+         - Enter Picture in Picture
+         - Audio/Languages
+         - Exit Full Screen
+         - More...
+        This turns the UI into something of an "icon soup" and should really be avoided, especially
+        now that `OverflowButton` allows for a single button to have multiple actions (via a native
+        contextmenu). This matches AVKit behavior.
+
+        Tests: media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls.html:
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html:
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+               media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+               media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html:
+
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls.prototype.layout):
+        (InlineMediaControls.prototype._droppableButtons):
+        (InlineMediaControls.prototype._collapsableButtons): Added.
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls):
+        (MacOSFullscreenMediaControls.prototype.layout):
+        (MacOSFullscreenMediaControls.prototype._collapsableButtons): Added.
+        Limit the number of `visible` buttons in `rightContainer.children` by iteratively marking
+        `dropped = true` on buttons that are also in `_collapsableButtons` until either there are
+        no iterations left (`i < 0`) or the number of visible buttons is below the maximum (2 for
+        inline and 3 for fullscreen).
+
+        * Modules/modern-media-controls/controls/pip-button.js:
+        (PiPButton.prototype.get contextMenuOptions): Added.
+        * Modules/mediacontrols/MediaControlsHost.cpp:
+        (WebCore::MediaControlsHost::showMediaControlsContextMenu):
+        Add support for `includePictureInPicture` to the native contextmenu.
+
+        * en.lproj/Localizable.strings:
+
+        * testing/Internals.idl:
+        * testing/Internals.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::setMediaControlsMaximumRightContainerButtonCountOverride): Added.
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMediaControlsMaximumRightContainerButtonCountOverride): Added.
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.set maximumRightContainerButtonCountOverride): Added.
+        Add a way to override the default maximum right container button count for testing. This is
+        useful for testing the functionality of a specific button when not in the collapsed state,
+        allowing for tests to not have to worry about other state that may affect collapsing (e.g.
+        the AirPlay button is shown when there are AirPlay targets).
+
 2021-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Cleanup shouldComputeLogicalWidthFromAspectRatio and shouldComputeLogicalWidthFromAspectRatioAndInsets

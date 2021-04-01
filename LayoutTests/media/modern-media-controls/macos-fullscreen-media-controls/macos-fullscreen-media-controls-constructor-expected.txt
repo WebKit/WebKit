@@ -32,7 +32,7 @@ PASS mediaControls.bottomControlsBar.children[3].children is [mediaControls.airp
 PASS mediaControls.bottomControlsBar.children[3].element.className is "buttons-container right"
 PASS mediaControls.bottomControlsBar.children[3].leftMargin is 12
 PASS mediaControls.bottomControlsBar.children[3].rightMargin is 12
-PASS mediaControls.bottomControlsBar.children[3].buttonMargin is 16
+PASS mediaControls.bottomControlsBar.children[3].buttonMargin is 24
 
 PASS successfullyParsed is true
 

@@ -7388,6 +7388,11 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
     return status;
 }
 
+void HTMLMediaElement::setMediaControlsMaximumRightContainerButtonCountOverride(size_t count)
+{
+    setControllerJSProperty("maximumRightContainerButtonCountOverride", JSC::jsNumber(count));
+}
+
 unsigned long long HTMLMediaElement::fileSize() const
 {
     if (m_player)

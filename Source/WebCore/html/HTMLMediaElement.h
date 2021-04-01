@@ -494,6 +494,7 @@ public:
     void pageScaleFactorChanged();
     void userInterfaceLayoutDirectionChanged();
     WEBCORE_EXPORT String getCurrentMediaControlsStatus();
+    WEBCORE_EXPORT void setMediaControlsMaximumRightContainerButtonCountOverride(size_t);
     MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }
 
     bool isDisablingSleep() const { return m_sleepDisabler.get(); }

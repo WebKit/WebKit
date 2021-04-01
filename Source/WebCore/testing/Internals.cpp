@@ -4764,15 +4764,19 @@ void Internals::systemBeep()
     SystemSoundManager::singleton().systemBeep();
 }
 
+#if ENABLE(VIDEO)
+
 String Internals::getCurrentMediaControlsStatusForElement(HTMLMediaElement& mediaElement)
 {
-#if ENABLE(VIDEO)
     return mediaElement.getCurrentMediaControlsStatus();
-#else
-    UNUSED_PARAM(mediaElement);
-    return { };
-#endif
 }
+
+void Internals::setMediaControlsMaximumRightContainerButtonCountOverride(HTMLMediaElement& mediaElement, size_t count)
+{
+    mediaElement.setMediaControlsMaximumRightContainerButtonCountOverride(count);
+}
+
+#endif // ENABLE(VIDEO)
 
 #if !PLATFORM(COCOA)
 

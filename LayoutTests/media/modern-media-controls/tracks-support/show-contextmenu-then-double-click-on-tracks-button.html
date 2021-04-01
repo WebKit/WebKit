@@ -3,7 +3,7 @@
 <script src="../../../resources/ui-helper.js"></script>
 <script src="../../../resources/js-test-pre.js"></script>
 <body>
-<video src="../../content/CC+Subtitles.mov" style="position: absolute; left: 0; top: 0; width: 400px;" autoplay controls muted playsinline></video>
+<video src="../../content/CC+Subtitles.mov" style="position: absolute; left: 0; top: 0; width: 600px;" autoplay controls muted playsinline></video>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
@@ -12,6 +12,8 @@ description("Ensure that clicking the tracks button when the tracks contextmenu 
 
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
+
+window.internals.setMediaControlsMaximumRightContainerButtonCountOverride(media, 100); // A finite value larger than anything likely.
 
 media.addEventListener("play", () => {
     media.pause();

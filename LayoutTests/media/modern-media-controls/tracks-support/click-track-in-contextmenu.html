@@ -3,7 +3,7 @@
 <script src="../../../resources/ui-helper.js"></script>
 <script src="../../../resources/js-test-pre.js"></script>
 <body>
-<video src="../../content/audio-tracks.mp4" style="position: absolute; left: 0; top: 0; width: 400px;" controls autoplay muted playsinline></video>
+<video src="../../content/audio-tracks.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay muted playsinline></video>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
@@ -12,6 +12,8 @@ description("Clicking on a track in the tracks contextmenu.");
 
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
+
+window.internals.setMediaControlsMaximumRightContainerButtonCountOverride(media, 100); // A finite value larger than anything likely.
 
 let selectedTrack = null;
 
