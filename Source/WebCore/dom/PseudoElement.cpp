@@ -75,8 +75,7 @@ void PseudoElement::clearHostElement()
 {
     InspectorInstrumentation::pseudoElementDestroyed(document().page(), *this);
 
-    if (auto* timeline = document().existingTimeline())
-        timeline->elementWasRemoved(Styleable::fromElement(*this));
+    Styleable::fromElement(*this).elementWasRemoved();
     
     m_hostElement = nullptr;
 }

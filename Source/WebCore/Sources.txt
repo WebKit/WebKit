@@ -2496,6 +2496,7 @@ style/StyleScopeRuleSets.cpp
 style/StyleSharingResolver.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
+style/Styleable.cpp
 style/UserAgentStyle.cpp
 svg/DocumentSVG.cpp
 svg/SVGAElement.cpp

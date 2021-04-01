@@ -1,3 +1,82 @@
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
+        Move AnimationTimeline methods related to Styleable to Styleable
+        https://bugs.webkit.org/show_bug.cgi?id=224012
+
+        Reviewed by Dean Jackson.
+
+        A number of public methods on AnimationTimeline make no use of any AnimationTimeline instance
+        variables and instead call into Styleable:
+
+            void elementWasRemoved(const Styleable&);
+            void willChangeRendererForStyleable(const Styleable&);
+            void cancelDeclarativeAnimationsForStyleable(const Styleable&);
+            void animationWasAddedToStyleable(WebAnimation&, const Styleable&);
+            void animationWasRemovedFromStyleable(WebAnimation&, const Styleable&);
+            void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&, const Styleable&);
+            void updateCSSAnimationsForStyleable(const Styleable&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const RenderStyle* parentElementStyle);
+            void updateCSSTransitionsForStyleable(const Styleable&, const RenderStyle& currentStyle, const RenderStyle& newStyle);
+
+        These really belong on Styleable so we move them all over to that class with a new .cpp class
+        for these non-trivial methods.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::removeAnimation):
+        (WebCore::AnimationTimeline::animationWasAddedToStyleable): Deleted.
+        (WebCore::removeCSSTransitionFromMap): Deleted.
+        (WebCore::AnimationTimeline::animationWasRemovedFromStyleable): Deleted.
+        (WebCore::AnimationTimeline::removeDeclarativeAnimationFromListsForOwningElement): Deleted.
+        (WebCore::AnimationTimeline::removeCSSAnimationCreatedByMarkup): Deleted.
+        (WebCore::AnimationTimeline::elementWasRemoved): Deleted.
+        (WebCore::AnimationTimeline::willChangeRendererForStyleable): Deleted.
+        (WebCore::AnimationTimeline::cancelDeclarativeAnimationsForStyleable): Deleted.
+        (WebCore::shouldConsiderAnimation): Deleted.
+        (WebCore::AnimationTimeline::updateCSSAnimationsForStyleable): Deleted.
+        (WebCore::keyframeEffectForElementAndProperty): Deleted.
+        (WebCore::propertyInStyleMatchesValueForTransitionInMap): Deleted.
+        (WebCore::transitionCombinedDuration): Deleted.
+        (WebCore::transitionMatchesProperty): Deleted.
+        (WebCore::compileTransitionPropertiesInStyle): Deleted.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForStyleableAndProperty): Deleted.
+        (WebCore::AnimationTimeline::updateCSSTransitionsForStyleable): Deleted.
+        * animation/AnimationTimeline.h:
+        * animation/DeclarativeAnimation.cpp:
+        (WebCore::DeclarativeAnimation::disassociateFromOwningElement):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setEffectInternal):
+        (WebCore::WebAnimation::setTimeline):
+        (WebCore::WebAnimation::effectTargetDidChange):
+        (WebCore::WebAnimation::persist):
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+        * dom/PseudoElement.cpp:
+        (WebCore::PseudoElement::clearHostElement):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        * style/Styleable.cpp: Copied from Source/WebCore/animation/AnimationTimeline.cpp.
+        (WebCore::Styleable::animationWasAdded const):
+        (WebCore::removeCSSTransitionFromMap):
+        (WebCore::Styleable::removeDeclarativeAnimationFromListsForOwningElement const):
+        (WebCore::Styleable::animationWasRemoved const):
+        (WebCore::removeCSSAnimationCreatedByMarkup):
+        (WebCore::Styleable::elementWasRemoved const):
+        (WebCore::Styleable::willChangeRenderer const):
+        (WebCore::Styleable::cancelDeclarativeAnimations const):
+        (WebCore::shouldConsiderAnimation):
+        (WebCore::Styleable::updateCSSAnimations const):
+        (WebCore::keyframeEffectForElementAndProperty):
+        (WebCore::propertyInStyleMatchesValueForTransitionInMap):
+        (WebCore::transitionCombinedDuration):
+        (WebCore::transitionMatchesProperty):
+        (WebCore::compileTransitionPropertiesInStyle):
+        (WebCore::updateCSSTransitionsForStyleableAndProperty):
+        (WebCore::Styleable::updateCSSTransitions const):
+        * style/Styleable.h:
+
 2021-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Feed preferred frames per second back to the UI process for each DisplayRefreshMonitor

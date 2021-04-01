@@ -2317,8 +2317,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         document().accessSVGExtensions().removeElementFromPendingResources(*this);
 
     RefPtr<Frame> frame = document().frame();
-    if (auto* timeline = document().existingTimeline())
-        timeline->elementWasRemoved({ *this, pseudoId() });
+    Styleable::fromElement(*this).elementWasRemoved();
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     if (frame && frame->page()) {

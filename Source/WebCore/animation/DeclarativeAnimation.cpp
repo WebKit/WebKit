@@ -95,8 +95,7 @@ void DeclarativeAnimation::disassociateFromOwningElement()
     if (!m_owningElement)
         return;
 
-    if (auto* animationTimeline = timeline())
-        animationTimeline->removeDeclarativeAnimationFromListsForOwningElement(*this, *owningElement());
+    owningElement()->removeDeclarativeAnimationFromListsForOwningElement(*this);
     m_owningElement = nullptr;
 }
 

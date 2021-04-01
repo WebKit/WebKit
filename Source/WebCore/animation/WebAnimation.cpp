@@ -212,15 +212,15 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
         oldEffect->setAnimation(nullptr);
-        if (!doNotRemoveFromTimeline && m_timeline && previousTarget && previousTarget != newTarget)
-            m_timeline->animationWasRemovedFromStyleable(*this, *previousTarget);
+        if (!doNotRemoveFromTimeline && previousTarget && previousTarget != newTarget)
+            previousTarget->animationWasRemoved(*this);
         updateRelevance();
     }
 
     if (m_effect) {
         m_effect->setAnimation(this);
-        if (m_timeline && newTarget && previousTarget != newTarget)
-            m_timeline->animationWasAddedToStyleable(*this, *newTarget);
+        if (newTarget && previousTarget != newTarget)
+            newTarget->animationWasAdded(*this);
     }
 
     InspectorInstrumentation::didSetWebAnimationEffect(*this);
@@ -244,10 +244,9 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
             // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
             // while the timeline was set via the API, the element still has a transition or animation set up and we must
             // not break the relationship.
-            if (m_timeline && !isDeclarativeAnimation())
-                m_timeline->animationWasRemovedFromStyleable(*this, *target);
-            if (timeline)
-                timeline->animationWasAddedToStyleable(*this, *target);
+            if (!isDeclarativeAnimation())
+                target->animationWasRemoved(*this);
+            target->animationWasAdded(*this);
         }
     }
 
@@ -282,10 +281,10 @@ void WebAnimation::effectTargetDidChange(const Optional<const Styleable>& previo
 {
     if (m_timeline) {
         if (previousTarget)
-            m_timeline->animationWasRemovedFromStyleable(*this, *previousTarget);
+            previousTarget->animationWasRemoved(*this);
 
         if (newTarget)
-            m_timeline->animationWasAddedToStyleable(*this, *newTarget);
+            newTarget->animationWasAdded(*this);
 
         // This could have changed whether we have replaced animations, so we may need to schedule an update.
         m_timeline->animationTimingDidChange(*this);
@@ -1368,7 +1367,7 @@ void WebAnimation::persist()
         if (is<KeyframeEffect>(m_effect)) {
             auto& keyframeEffect = downcast<KeyframeEffect>(*m_effect);
             auto styleable = keyframeEffect.targetStyleable();
-            m_timeline->animationWasAddedToStyleable(*this, *styleable);
+            styleable->animationWasAdded(*this);
             styleable->ensureKeyframeEffectStack().addEffect(keyframeEffect);
         }
     }

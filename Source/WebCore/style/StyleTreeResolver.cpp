@@ -332,13 +332,13 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     // in case no Web Animations have been created through the JS API.
     if (document.backForwardCacheState() == Document::NotInBackForwardCache && !document.renderView()->printing()) {
         if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
-            document.timeline().updateCSSTransitionsForStyleable(styleable, *oldStyle, *newStyle);
+            styleable.updateCSSTransitions(*oldStyle, *newStyle);
 
         // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
         // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
         // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
         if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations())
-            document.timeline().updateCSSAnimationsForStyleable(styleable, oldStyle, *newStyle, &parentStyle);
+            styleable.updateCSSAnimations(oldStyle, *newStyle, &parentStyle);
     }
 
     // Now we can update all Web animations, which will include CSS Animations as well
