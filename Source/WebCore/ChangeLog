@@ -1,3 +1,28 @@
+2021-04-01  Youenn Fablet  <youenn@apple.com>
+
+        Add some logging to RTCRtpSender and RTCRtpReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=223991
+
+        Reviewed by Eric Carlson.
+
+        Add some logging around transforms.
+        No change of behavior.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        (WebCore::RTCRtpReceiver::RTCRtpReceiver):
+        (WebCore::RTCRtpReceiver::setTransform):
+        (WebCore::RTCRtpReceiver::logChannel const):
+        * Modules/mediastream/RTCRtpReceiver.h:
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::RTCRtpSender):
+        (WebCore::RTCRtpSender::setTransform):
+        (WebCore::RTCRtpSender::logChannel const):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSender.idl:
+
 2021-03-31  Antoine Quint  <graouts@webkit.org>
 
         Move AnimationTimeline methods related to Styleable to Styleable

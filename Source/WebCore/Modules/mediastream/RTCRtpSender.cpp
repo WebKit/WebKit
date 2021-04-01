@@ -34,6 +34,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "JSDOMPromiseDeferred.h"
+#include "Logging.h"
 #include "RTCDTMFSender.h"
 #include "RTCDTMFSenderBackend.h"
 #include "RTCPeerConnection.h"
@@ -42,6 +43,12 @@
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
+
+#if !RELEASE_LOG_DISABLED
+#define LOGIDENTIFIER_SENDER WTF::Logger::LogSiteIdentifier(logClassName(), __func__, m_connection->logIdentifier())
+#else
+#define LOGIDENTIFIER_SENDER
+#endif
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpSender);
 
@@ -61,6 +68,10 @@ RTCRtpSender::RTCRtpSender(RTCPeerConnection& connection, String&& trackKind, st
     : m_trackKind(WTFMove(trackKind))
     , m_backend(WTFMove(backend))
     , m_connection(makeWeakPtr(connection))
+#if !RELEASE_LOG_DISABLED
+    , m_logger(connection.logger())
+    , m_logIdentifier(connection.logIdentifier())
+#endif
 {
     ASSERT(m_backend);
 }
@@ -214,6 +225,8 @@ Optional<RTCRtpTransceiverDirection> RTCRtpSender::currentTransceiverDirection()
 
 ExceptionOr<void> RTCRtpSender::setTransform(Optional<RTCRtpTransform>&& transform)
 {
+    ALWAYS_LOG_IF(m_connection, LOGIDENTIFIER_SENDER);
+
     if (transform && m_transform && *transform == *m_transform)
         return { };
     if (transform && transform->isAttached())
@@ -234,6 +247,13 @@ Optional<RTCRtpTransform::Internal> RTCRtpSender::transform()
         return { };
     return m_transform->internalTransform();
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& RTCRtpSender::logChannel() const
+{
+    return LogWebRTC;
+}
+#endif
 
 } // namespace WebCore
 

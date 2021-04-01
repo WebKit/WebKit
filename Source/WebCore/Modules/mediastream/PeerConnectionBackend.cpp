@@ -265,6 +265,7 @@ void PeerConnectionBackend::setRemoteDescriptionSucceeded()
         auto& track = event.track.get();
 
         m_peerConnection.dispatchEventWhenFeasible(RTCTrackEvent::create(eventNames().trackEvent, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(event.receiver), WTFMove(event.track), WTFMove(event.streams), WTFMove(event.transceiver)));
+        ALWAYS_LOG(LOGIDENTIFIER, "Dispatched if feasible track of type ", track.source().type());
 
         if (m_peerConnection.isClosed())
             return;
