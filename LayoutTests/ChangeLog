@@ -1,3 +1,14 @@
+2021-04-01  Mark Lam  <mark.lam@apple.com>
+
+        Fix some missing exception checks in HTMLMediaElement methods.
+        https://bugs.webkit.org/show_bug.cgi?id=224038
+        rdar://69573092
+
+        Reviewed by Eric Carlson.
+
+        * media/missing-exception-checks-in-HTMLMediaElement-methods-expected.txt: Added.
+        * media/missing-exception-checks-in-HTMLMediaElement-methods.html: Added.
+
 2021-04-01  Devin Rousso  <drousso@apple.com>
 
         Limit the number of buttons shown in media controls

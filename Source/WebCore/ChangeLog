@@ -1,3 +1,22 @@
+2021-04-01  Mark Lam  <mark.lam@apple.com>
+
+        Fix some missing exception checks in HTMLMediaElement methods.
+        https://bugs.webkit.org/show_bug.cgi?id=224038
+        rdar://69573092
+
+        Reviewed by Eric Carlson.
+
+        Test: media/missing-exception-checks-in-HTMLMediaElement-methods.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setupAndCallJS):
+        (WebCore::HTMLMediaElement::updateCaptionContainer):
+        (WebCore::HTMLMediaElement::ensureMediaControlsInjectedScript):
+        (WebCore::HTMLMediaElement::setControllerJSProperty):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+        (WebCore::HTMLMediaElement::getCurrentMediaControlsStatus):
+
 2021-04-01  Jean-Yves Avenard  <jya@apple.com>
 
         Previous artwork isn't cleared when NowPlaying info doesn't contain an artwork
