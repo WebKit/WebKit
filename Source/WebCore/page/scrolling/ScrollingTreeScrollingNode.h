@@ -95,7 +95,7 @@ public:
     bool canHaveScrollbars() const { return m_scrollableAreaParameters.horizontalScrollbarMode != ScrollbarAlwaysOff || m_scrollableAreaParameters.verticalScrollbarMode != ScrollbarAlwaysOff; }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    const ScrollSnapOffsetsInfo<float>& snapOffsetsInfo() const;
+    const FloatScrollSnapOffsetsInfo& snapOffsetsInfo() const;
     unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
     unsigned currentVerticalSnapPointIndex() const { return m_currentVerticalSnapPointIndex; }
     void setCurrentHorizontalSnapPointIndex(unsigned index) { m_currentHorizontalSnapPointIndex = index; }
@@ -159,7 +159,7 @@ private:
     FloatPoint m_currentScrollPosition;
     IntPoint m_scrollOrigin;
 #if ENABLE(CSS_SCROLL_SNAP)
-    ScrollSnapOffsetsInfo<float> m_snapOffsetsInfo;
+    FloatScrollSnapOffsetsInfo m_snapOffsetsInfo;
     unsigned m_currentHorizontalSnapPointIndex { 0 };
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif

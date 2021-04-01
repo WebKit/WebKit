@@ -62,8 +62,8 @@ public:
         return axis == ScrollEventAxis::Horizontal ? m_snapOffsetsInfo.horizontalSnapOffsetRanges : m_snapOffsetsInfo.verticalSnapOffsetRanges;
     }
 
-    const ScrollSnapOffsetsInfo<LayoutUnit>& snapOffsetInfo() const { return m_snapOffsetsInfo; }
-    void setSnapOffsetInfo(const ScrollSnapOffsetsInfo<LayoutUnit>& newInfo) { m_snapOffsetsInfo = newInfo; }
+    const LayoutScrollSnapOffsetsInfo& snapOffsetInfo() const { return m_snapOffsetsInfo; }
+    void setSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo& newInfo) { m_snapOffsetsInfo = newInfo; }
 
     void setSnapOffsetsAndPositionRangesForAxis(ScrollEventAxis axis, const Vector<SnapOffset<LayoutUnit>>& snapOffsets, const Vector<ScrollOffsetRange<LayoutUnit>>& snapOffsetRanges)
     {
@@ -106,7 +106,7 @@ private:
 
     ScrollSnapState m_currentState { ScrollSnapState::UserInteraction };
 
-    ScrollSnapOffsetsInfo<LayoutUnit> m_snapOffsetsInfo;
+    LayoutScrollSnapOffsetsInfo m_snapOffsetsInfo;
 
     unsigned m_activeSnapIndexX { 0 };
     unsigned m_activeSnapIndexY { 0 };

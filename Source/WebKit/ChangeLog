@@ -1,3 +1,17 @@
+2021-04-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Expose an alias for ScrollSnapOffsetInfo<T> to make it easier to use
+        https://bugs.webkit.org/show_bug.cgi?id=223986
+
+        Reviewed by Sergio Villar Senin.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp:
+        (ArgumentCoder<ScrollingStateScrollingNode>::decode): Use new aliases.
+        (ArgumentCoder<FloatScrollSnapOffsetsInfo>::encode): Ditto.
+        (ArgumentCoder<FloatScrollSnapOffsetsInfo>::decode): Ditto.
+        (ArgumentCoder<ScrollSnapOffsetsInfo<float>>::encode): Deleted.
+        (ArgumentCoder<ScrollSnapOffsetsInfo<float>>::decode): Deleted.
+
 2021-04-01  Per Arne  <pvollan@apple.com>
 
         Add IOKit method filter telemetry

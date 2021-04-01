@@ -67,7 +67,7 @@ void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableAre
     updateScrollSnapPoints(*snapOffsetInfo);
 }
 
-void ScrollController::updateScrollSnapPoints(const ScrollSnapOffsetsInfo<LayoutUnit>& snapOffsetInfo)
+void ScrollController::updateScrollSnapPoints(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
 {
     if (snapOffsetInfo.isEmpty()) {
         m_scrollSnapState = nullptr;

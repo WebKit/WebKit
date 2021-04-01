@@ -479,19 +479,19 @@ String ScrollableArea::verticalScrollbarStateForTesting() const
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-ScrollSnapOffsetsInfo<LayoutUnit>& ScrollableArea::ensureSnapOffsetsInfo()
+LayoutScrollSnapOffsetsInfo& ScrollableArea::ensureSnapOffsetsInfo()
 {
     if (!m_snapOffsetsInfo)
-        m_snapOffsetsInfo = makeUnique<ScrollSnapOffsetsInfo<LayoutUnit>>();
+        m_snapOffsetsInfo = makeUnique<LayoutScrollSnapOffsetsInfo>();
     return *m_snapOffsetsInfo;
 }
 
-const ScrollSnapOffsetsInfo<LayoutUnit>* ScrollableArea::snapOffsetInfo() const
+const LayoutScrollSnapOffsetsInfo* ScrollableArea::snapOffsetInfo() const
 {
     return m_snapOffsetsInfo.get();
 }
 
-void ScrollableArea::setScrollSnapOffsetInfo(const ScrollSnapOffsetsInfo<LayoutUnit>& info)
+void ScrollableArea::setScrollSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo& info)
 {
     if (info.isEmpty()) {
         clearSnapOffsets();

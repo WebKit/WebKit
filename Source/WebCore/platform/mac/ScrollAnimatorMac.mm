@@ -1278,7 +1278,7 @@ bool ScrollAnimatorMac::isPinnedForScrollDelta(const FloatSize& delta) const
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis, const ScrollSnapOffsetsInfo<LayoutUnit>* offsetInfo)
+static bool gestureShouldBeginSnap(const PlatformWheelEvent& wheelEvent, ScrollEventAxis axis, const LayoutScrollSnapOffsetsInfo* offsetInfo)
 {
     if (!offsetInfo)
         return false;

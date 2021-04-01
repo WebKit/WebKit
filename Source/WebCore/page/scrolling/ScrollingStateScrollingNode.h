@@ -71,8 +71,8 @@ public:
     WEBCORE_EXPORT void setScrollOrigin(const IntPoint&);
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    const ScrollSnapOffsetsInfo<float>& snapOffsetsInfo() const { return m_snapOffsetsInfo; }
-    WEBCORE_EXPORT void setSnapOffsetsInfo(const ScrollSnapOffsetsInfo<float>& newOffsetsInfo);
+    const FloatScrollSnapOffsetsInfo& snapOffsetsInfo() const { return m_snapOffsetsInfo; }
+    WEBCORE_EXPORT void setSnapOffsetsInfo(const FloatScrollSnapOffsetsInfo& newOffsetsInfo);
 
     unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
     WEBCORE_EXPORT void setCurrentHorizontalSnapPointIndex(unsigned);
@@ -130,7 +130,7 @@ private:
     IntPoint m_scrollOrigin;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    ScrollSnapOffsetsInfo<float> m_snapOffsetsInfo;
+    FloatScrollSnapOffsetsInfo m_snapOffsetsInfo;
     unsigned m_currentHorizontalSnapPointIndex { 0 };
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif

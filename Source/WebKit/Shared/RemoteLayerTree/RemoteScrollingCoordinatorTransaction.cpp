@@ -98,9 +98,9 @@ template<> struct ArgumentCoder<RequestedScrollData> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, RequestedScrollData&);
 };
 
-template<> struct ArgumentCoder<ScrollSnapOffsetsInfo<float>> {
-    static void encode(Encoder&, const ScrollSnapOffsetsInfo<float>&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, ScrollSnapOffsetsInfo<float>&);
+template<> struct ArgumentCoder<FloatScrollSnapOffsetsInfo> {
+    static void encode(Encoder&, const FloatScrollSnapOffsetsInfo&);
+    static WARN_UNUSED_RETURN bool decode(Decoder&, FloatScrollSnapOffsetsInfo&);
 };
 
 template<> struct ArgumentCoder<SnapOffset<float>> {
@@ -311,7 +311,7 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollPosition, FloatPoint, setScrollPosition);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollOrigin, IntPoint, setScrollOrigin);
 #if ENABLE(CSS_SCROLL_SNAP)
-    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::SnapOffsetsInfo, ScrollSnapOffsetsInfo<float>, setSnapOffsetsInfo);
+    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::SnapOffsetsInfo, FloatScrollSnapOffsetsInfo, setSnapOffsetsInfo);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::CurrentHorizontalSnapOffsetIndex, unsigned, setCurrentHorizontalSnapPointIndex);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::CurrentVerticalSnapOffsetIndex, unsigned, setCurrentVerticalSnapPointIndex);
 #endif
@@ -544,7 +544,7 @@ bool ArgumentCoder<SnapOffset<float>>::decode(Decoder& decoder, SnapOffset<float
 }
 
 
-void ArgumentCoder<ScrollSnapOffsetsInfo<float>>::encode(Encoder& encoder, const ScrollSnapOffsetsInfo<float>& info)
+void ArgumentCoder<FloatScrollSnapOffsetsInfo>::encode(Encoder& encoder, const FloatScrollSnapOffsetsInfo& info)
 {
     encoder << info.horizontalSnapOffsets;
     encoder << info.verticalSnapOffsets;
@@ -552,7 +552,7 @@ void ArgumentCoder<ScrollSnapOffsetsInfo<float>>::encode(Encoder& encoder, const
     encoder << info.verticalSnapOffsetRanges;
 }
 
-bool ArgumentCoder<ScrollSnapOffsetsInfo<float>>::decode(Decoder& decoder, ScrollSnapOffsetsInfo<float>& info)
+bool ArgumentCoder<FloatScrollSnapOffsetsInfo>::decode(Decoder& decoder, FloatScrollSnapOffsetsInfo& info)
 {
     if (!decoder.decode(info.horizontalSnapOffsets))
         return false;

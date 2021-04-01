@@ -1,3 +1,45 @@
+2021-04-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Expose an alias for ScrollSnapOffsetInfo<T> to make it easier to use
+        https://bugs.webkit.org/show_bug.cgi?id=223986
+
+        Reviewed by Sergio Villar Senin.
+
+        No new tests. This should not change behavior.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::setStateScrollingNodeSnapOffsetsAsFloat): Use new aliases.
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::FloatScrollSnapOffsetsInfo::convertUnits const): Ditto.
+        (WebCore::LayoutScrollSnapOffsetsInfo::convertUnits const): Ditto.
+        (WebCore::LayoutScrollSnapOffsetsInfo::closestSnapOffset const): Ditto.
+        (WebCore::FloatScrollSnapOffsetsInfo::closestSnapOffset const): Ditto.
+        (WebCore::ScrollSnapOffsetsInfo<float>::convertUnits const): Deleted.
+        (WebCore::ScrollSnapOffsetsInfo<LayoutUnit>::convertUnits const): Deleted.
+        (WebCore::ScrollSnapOffsetsInfo<LayoutUnit>::closestSnapOffset const): Deleted.
+        (WebCore::ScrollSnapOffsetsInfo<float>::closestSnapOffset const): Deleted.
+        * page/scrolling/ScrollSnapOffsetsInfo.h: Ditto.
+        * page/scrolling/ScrollingStateScrollingNode.cpp:
+        (WebCore::ScrollingStateScrollingNode::setSnapOffsetsInfo): Ditto.
+        * page/scrolling/ScrollingStateScrollingNode.h:
+        (WebCore::ScrollingStateScrollingNode::snapOffsetsInfo const): Ditto.
+        * page/scrolling/ScrollingTreeScrollingNode.cpp:
+        (WebCore::ScrollingTreeScrollingNode::snapOffsetsInfo const): Ditto.
+        * page/scrolling/ScrollingTreeScrollingNode.h: Ditto.
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::updateScrollSnapPoints): Ditto.
+        * platform/ScrollController.h: Ditto.
+        * platform/ScrollSnapAnimatorState.h:
+        (WebCore::ScrollSnapAnimatorState::snapOffsetInfo const): Ditto.
+        (WebCore::ScrollSnapAnimatorState::setSnapOffsetInfo): Ditto.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::ensureSnapOffsetsInfo): Ditto.
+        (WebCore::ScrollableArea::snapOffsetInfo const): Ditto.
+        (WebCore::ScrollableArea::setScrollSnapOffsetInfo): Ditto.
+        * platform/ScrollableArea.h: Ditto.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::gestureShouldBeginSnap): Ditto.
+
 2021-04-01  Rob Buis  <rbuis@igalia.com>
 
         Use Element for checking Settings in CSSComputedStyleDeclaration

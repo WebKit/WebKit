@@ -89,15 +89,18 @@ struct ScrollSnapOffsetsInfo {
     WEBCORE_EXPORT std::pair<T, unsigned> closestSnapOffset(ScrollEventAxis, T scrollDestinationOffset, float velocity, Optional<T> originalPositionForDirectionalSnapping = WTF::nullopt) const;
 };
 
-template <> template <>
-ScrollSnapOffsetsInfo<LayoutUnit> ScrollSnapOffsetsInfo<float>::convertUnits(float /* unusedScaleFactor */) const;
-template <>
-WEBCORE_EXPORT std::pair<float, unsigned> ScrollSnapOffsetsInfo<float>::closestSnapOffset(ScrollEventAxis, float scrollDestinationOffset, float velocity, Optional<float> originalPositionForDirectionalSnapping) const;
+using LayoutScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<LayoutUnit>;
+using FloatScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<float>;
 
 template <> template <>
-ScrollSnapOffsetsInfo<float> ScrollSnapOffsetsInfo<LayoutUnit>::convertUnits(float deviceScaleFactor) const;
+LayoutScrollSnapOffsetsInfo FloatScrollSnapOffsetsInfo::convertUnits(float /* unusedScaleFactor */) const;
 template <>
-WEBCORE_EXPORT std::pair<LayoutUnit, unsigned> ScrollSnapOffsetsInfo<LayoutUnit>::closestSnapOffset(ScrollEventAxis, LayoutUnit scrollDestinationOffset, float velocity, Optional<LayoutUnit> originalPositionForDirectionalSnapping) const;
+WEBCORE_EXPORT std::pair<float, unsigned> FloatScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis, float scrollDestinationOffset, float velocity, Optional<float> originalPositionForDirectionalSnapping) const;
+
+template <> template <>
+FloatScrollSnapOffsetsInfo LayoutScrollSnapOffsetsInfo::convertUnits(float deviceScaleFactor) const;
+template <>
+WEBCORE_EXPORT std::pair<LayoutUnit, unsigned> LayoutScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis, LayoutUnit scrollDestinationOffset, float velocity, Optional<LayoutUnit> originalPositionForDirectionalSnapping) const;
 
 const unsigned invalidSnapOffsetIndex = UINT_MAX;
 
