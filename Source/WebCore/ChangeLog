@@ -1,3 +1,17 @@
+2021-04-01  Rob Buis  <rbuis@igalia.com>
+
+        aspect-ratio not recomputed on hover
+        https://bugs.webkit.org/show_bug.cgi?id=224028
+
+        Reviewed by Zalan Bujtas.
+
+        Detect change in aspect-ratio on hover.
+
+        Test: imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareNonInheritedDataChangeRequiresLayout):
+
 2021-04-01  Chris Dumez  <cdumez@apple.com>
 
         Have the ServiceWorker process hold on to a file mapped version of the service worker scripts to save dirty memory

@@ -738,6 +738,9 @@ static bool rareNonInheritedDataChangeRequiresLayout(const StyleRareNonInherited
         return true;
 #endif
 
+    if (first.aspectRatioType != second.aspectRatioType || first.aspectRatioWidth != second.aspectRatioWidth || first.aspectRatioWidth != second.aspectRatioHeight)
+        return true;
+
     return false;
 }
 

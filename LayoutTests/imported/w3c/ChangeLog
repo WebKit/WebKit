@@ -1,3 +1,15 @@
+2021-04-01  Rob Buis  <rbuis@igalia.com>
+
+        aspect-ratio not recomputed on hover
+        https://bugs.webkit.org/show_bug.cgi?id=224028
+
+        Reviewed by Zalan Bujtas.
+
+        Add test for this.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio.html: Added.
+
 2021-03-31  Antoine Quint  <graouts@webkit.org>
 
         Unreviewed. Import WPT test modified in https://github.com/web-platform-tests/wpt/pull/28315
