@@ -1,3 +1,19 @@
+2021-04-01  Per Arne  <pvollan@apple.com>
+
+        [GPU process] Enable CFPrefs direct mode
+        https://bugs.webkit.org/show_bug.cgi?id=223817
+        <rdar://74748933>
+
+        Reviewed by Brent Fulgham.
+
+        Enable CFPrefs direct mode in the GPU process.
+
+        * GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::shouldEnableCFPrefsDirectMode):
+        (WebKit::XPCServiceMain):
+
 2021-04-01  Alex Christensen  <achristensen@webkit.org>
 
         Use sendWithAsyncReply for NetworkProcess messages with async replies
