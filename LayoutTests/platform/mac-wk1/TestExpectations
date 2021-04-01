@@ -1263,3 +1263,15 @@ webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slas
 webkit.org/b/222686 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html [ Pass Failure ]
 
 webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.html [ Pass Failure ]
+
+# webkit.org/b/224066 Updating test expectations for 10 tests
+[ BigSur ] webanimations/accelerated-animation-easing-and-direction-update.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-animation-with-easing.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-overlapping-transform-animations.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-transform-related-animation-property-order.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-transition-by-removing-property.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-translate-animation.html [ Pass ImageOnlyFailure ]
