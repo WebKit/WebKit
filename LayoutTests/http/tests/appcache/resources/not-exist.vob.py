@@ -3,7 +3,7 @@
 import sys
 import time
 
-time.sleep(5000)
+time.sleep(5)
 
 sys.stdout.write(
     'status: 404\r\n'

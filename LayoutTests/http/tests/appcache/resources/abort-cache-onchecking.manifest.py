@@ -3,7 +3,7 @@
 import sys
 import time
 
-time.sleep(1000)
+time.sleep(1)
 
 sys.stdout.write(
     'Content-Type: text/html\r\n\r\n'

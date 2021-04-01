@@ -1,3 +1,17 @@
+2021-04-01  Chris Gambrell  <cgambrell@apple.com>
+
+        Flaky LayoutTests in http/tests/appcache
+        https://bugs.webkit.org/show_bug.cgi?id=224054
+        <rdar://problem/76108352>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/appcache/fail-on-update-2.html:
+        * http/tests/appcache/fail-on-update.html:
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest.py:
+        * http/tests/appcache/resources/abort-cache-ondownloading.text.py:
+        * http/tests/appcache/resources/not-exist.vob.py:
+
 2021-04-01  Mark Lam  <mark.lam@apple.com>
 
         Fix some missing exception checks in HTMLMediaElement methods.
