@@ -96,7 +96,7 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow (with telemetry) (with message "IOMobileFramebufferUserClient")
+                (allow
                     iokit-external-method)
             )
         )
@@ -236,56 +236,17 @@
     (allow iokit-open
         (require-all
             (extension "com.apple.webkit.extension.iokit")
+            (iokit-connection "IOGPU")
+        )
+        (require-all
+            (extension "com.apple.webkit.extension.iokit")
             (iokit-user-client-class "AGXDeviceUserClient") ;; Used by WebGL
         )
         (when (defined? 'iokit-external-method)
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-external-trap)
-                (allow (with telemetry) (with message "AGXDeviceUserClient")
-                    iokit-async-external-method
-                    iokit-external-method
-                )
-                (allow iokit-external-method
-                    (iokit-method-number
-                        0
-                        2
-                        4
-                        5
-                        6
-                        7
-                        8
-                        9
-                        10
-                        11
-                        12
-                        13
-                        14
-                        15
-                        16
-                        25
-                        26
-                        27
-                        36
-                        38
-                        44
-                    )
-                )
-
-            )
-        )
-    )
-
-    (allow iokit-open
-        (require-all
-            (extension "com.apple.webkit.extension.iokit")
-            (iokit-connection "IOGPU")
-        )
-        (when (defined? 'iokit-external-method)
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-external-trap)
-                (allow (with telemetry) (with message "IOGPU")
+                (allow
                     iokit-async-external-method
                     iokit-external-method)
             )
@@ -455,13 +416,8 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow (with telemetry) (with message "IOSurfaceAcceleratorClient")
+                (allow
                     iokit-external-method)
-                (allow iokit-external-method
-                    (iokit-method-number
-                        1
-                    )
-                )
             )
         )
     )
@@ -476,31 +432,8 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow (with telemetry) (with message "IOSurfaceRootUserClient")
+                (allow
                     iokit-external-method)
-                (allow iokit-external-method
-                    (iokit-method-number
-                        0
-                        1
-                        2
-                        3
-                        5
-                        9
-                        10
-                        11
-                        13
-                        14
-                        15
-                        20
-                        21
-                        23
-                        27
-                        31
-                        32
-                        34
-                        35
-                    )
-                )
             )
         )
     )
@@ -1093,7 +1026,7 @@
             (deny (with telemetry)
                 iokit-async-external-method
                 iokit-external-trap)
-            (allow (with telemetry) (with message "IOSurfaceRootUserClient no extension")
+            (allow
                 iokit-external-method)
         )
     )
