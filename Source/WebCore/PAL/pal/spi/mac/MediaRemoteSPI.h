@@ -91,6 +91,12 @@ enum {
 };
 typedef uint32_t MRNowPlayingClientVisibility;
 
+enum : uint8_t {
+    MRMediaRemoteMergePolicyUpdate = 0,
+    MRMediaRemoteMergePolicyReplace,
+};
+typedef uint8_t MRMediaRemoteMergePolicy;
+
 typedef uint32_t MRMediaRemoteError;
 typedef uint32_t MRSendCommandAppOptions;
 typedef uint32_t MRSendCommandError;
@@ -126,6 +132,7 @@ void MRMediaRemoteCommandInfoSetOptions(MRMediaRemoteCommandInfoRef, CFDictionar
 Boolean MRMediaRemoteSetCanBeNowPlayingApplication(Boolean);
 void MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MROriginRef, MRPlaybackState, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError));
 void MRMediaRemoteSetNowPlayingInfo(CFDictionaryRef);
+void MRMediaRemoteSetNowPlayingInfoWithMergePolicy(CFDictionaryRef, MRMediaRemoteMergePolicy);
 
 #pragma mark - MRAVRouting
 

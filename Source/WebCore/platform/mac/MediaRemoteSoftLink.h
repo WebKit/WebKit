@@ -52,6 +52,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetCanBeNowPlay
 #define MRMediaRemoteSetCanBeNowPlayingApplication softLink_MediaRemote_MRMediaRemoteSetCanBeNowPlayingApplication
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingInfo, void, (CFDictionaryRef info), (info))
 #define MRMediaRemoteSetNowPlayingInfo softLink_MediaRemote_MRMediaRemoteSetNowPlayingInfo
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingInfoWithMergePolicy, void, (CFDictionaryRef info, MRMediaRemoteMergePolicy mergePolicy), (info, mergePolicy))
+#define MRMediaRemoteSetNowPlayingInfoWithMergePolicy softLink_MediaRemote_MRMediaRemoteSetNowPlayingInfoWithMergePolicy
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin, void, (MROriginRef origin, MRPlaybackState playbackState, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError)), (origin, playbackState, replyQ, completion))
 #define MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin softLink_MediaRemote_MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteSetParentApplication, void, (MROriginRef origin, CFStringRef parentAppDisplayID), (origin, parentAppDisplayID))

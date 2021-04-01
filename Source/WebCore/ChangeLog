@@ -1,5 +1,20 @@
 2021-04-01  Jean-Yves Avenard  <jya@apple.com>
 
+        Previous artwork isn't cleared when NowPlaying info doesn't contain an artwork
+        https://bugs.webkit.org/show_bug.cgi?id=224031
+        <rdar://76044544>
+
+        Reviewed by Youenn Fablet.
+
+        Manually tested, no framework available to test such change.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::setNowPlayingInfo): use MRMediaRemoteSetNowPlayingInfoWithMergePolicy instead.
+        * platform/mac/MediaRemoteSoftLink.h: Soft link MRMediaRemoteSetNowPlayingInfoWithMergePolicy
+        * platform/mac/MediaRemoteSoftLink.mm:
+
+2021-04-01  Jean-Yves Avenard  <jya@apple.com>
+
         Now Playing artwork doesn't update when changed.
         https://bugs.webkit.org/show_bug.cgi?id=223731
         <rdar://problem/75823923>
