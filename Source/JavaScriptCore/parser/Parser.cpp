@@ -4336,11 +4336,11 @@ parseProperty:
     case STRING: {
 namedProperty:
         const Identifier* ident = m_token.m_data.ident;
-        bool escaped = m_token.m_data.escaped;
+        bool wasUnescapedIdent = wasIdent && !m_token.m_data.escaped;
         unsigned getterOrSetterStartOffset = tokenStart();
         JSToken identToken = m_token;
 
-        if (wasIdent && !isGeneratorMethodParseMode(parseMode) && (!escaped && (*ident == m_vm.propertyNames->get || *ident == m_vm.propertyNames->set)))
+        if (wasUnescapedIdent && !isGeneratorMethodParseMode(parseMode) && (*ident == m_vm.propertyNames->get || *ident == m_vm.propertyNames->set))
             nextExpectIdentifier(LexerFlags::IgnoreReservedWords);
         else
             nextExpectIdentifier(TreeBuilder::DontBuildKeywords | LexerFlags::IgnoreReservedWords);
@@ -4379,7 +4379,7 @@ namedProperty:
             classifyExpressionError(ErrorIndicatesPattern);
 
         Optional<PropertyNode::Type> type;
-        if (!escaped) {
+        if (wasUnescapedIdent) {
             if (*ident == m_vm.propertyNames->get)
                 type = PropertyNode::Getter;
             else if (*ident == m_vm.propertyNames->set)

@@ -1,3 +1,21 @@
+2021-03-31  David Kilzer  <ddkilzer@apple.com>
+
+        UBSan: JSC::Parser<LexerType>::parseProperty(): runtime error: load of value nnn, which is not a valid value for type 'bool'
+        <https://webkit.org/b/223896>
+        <rdar://problem/75970132>
+
+        Reviewed by Darin Adler.
+
+        Based on a suggestion by Darin Adler.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        - Change 'escaped' to 'wasUnescapedIdent' to avoid the undefined
+          behavior since m_token.m_data.escaped is only set in the case
+          when an identifer is parsed (in Lexer<>::parseIdentifer()),
+          not a string (in Lexer<>::parseString()). This simplifies the
+          logic later in the method.
+
 2021-03-31  Mark Lam  <mark.lam@apple.com>
 
         Missing exception check in HashMapImpl::add().
