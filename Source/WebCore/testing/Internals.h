@@ -43,6 +43,7 @@
 
 #if ENABLE(VIDEO)
 #include "MediaElementSession.h"
+#include "MediaUniqueIdentifier.h"
 #endif
 
 namespace WebCore {

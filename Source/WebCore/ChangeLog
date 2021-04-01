@@ -1,3 +1,47 @@
+2021-04-01  Jean-Yves Avenard  <jya@apple.com>
+
+        Now Playing artwork doesn't update when changed.
+        https://bugs.webkit.org/show_bug.cgi?id=223731
+        <rdar://problem/75823923>
+
+        Now Playing and Media Remote requires a unique identifier for the currently playing item.
+        If the same identifier is provided for every call to MRMediaRemoteSetNowPlayingInfo,
+        then some updates may be skipped.
+        In earlier changes, the MediaSessionElement identifier was combined with the Media Element
+        identifier which broke Now Playing as the MediaSession identifier never changes for the
+        lifetime of the web content process.
+        So we create a new method HTMLMediaElement::mediaUniqueIdentifier with a new MediaUniqueIdentifier
+        that willthat will be updated whenever the source of a media element changes and stop
+        using the MediaSession identifier when dealing with Now Playing.
+
+        Reviewed by Eric Carlson.
+
+        Manually tested, no framework available to test such change.
+
+        * WebCore.xcodeproj/project.pbxproj: Add MediaUniqueIdentifier.h
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad): Use setCurrentSrc instead of directly modifying m_currentSrc.
+        (WebCore::HTMLMediaElement::selectMediaResource): Use setCurrentSrc instead of directly modifying m_currentSrc.
+        (WebCore::HTMLMediaElement::loadResource): Use setCurrentSrc instead of directly modifying m_currentSrc.
+        (WebCore::HTMLMediaElement::setCurrentSrc): Add convenience method, generate new MediaUniqueIdentifier each time m_currentSrc is modified.
+        (WebCore::HTMLMediaElement::mediaUniqueIdentifier const): Return unique media identifier.
+        (WebCore::HTMLMediaElement::mediaSessionUniqueIdentifier const): Deleted.
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::nowPlayingInfo const):
+        * platform/audio/NowPlayingInfo.h: Use MediaUniqueIdentifier for uniqueIdentifier member.
+        (WebCore::NowPlayingInfo::decode):
+        * platform/audio/PlatformMediaSessionManager.h: Use MediaUniqueIdentifier instead.
+        (WebCore::PlatformMediaSessionManager::lastUpdatedNowPlayingInfoUniqueIdentifier const):
+        set kMRMediaRemoteNowPlayingInfoArtworkIdentifier in CFDictionary to the source of the artwork.
+        Workaround a bug in Media Controller component.
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::setNowPlayingInfo):
+        * platform/mac/MediaRemoteSoftLink.h: Soft-link kMRMediaRemoteNowPlayingInfoArtworkIdentifier symbol.
+        * platform/mac/MediaRemoteSoftLink.mm:
+        * testing/Internals.h: Add missing header.
+
 2021-04-01  Devin Rousso  <drousso@apple.com>
 
         Limit the number of buttons shown in media controls

@@ -1047,6 +1047,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/MediaSessionGroupIdentifier.h
     platform/MediaSessionIdentifier.h
     platform/MediaStrategy.h
+    platform/MediaUniqueIdentifier.h
     platform/NowPlayingManager.h
     platform/NotImplemented.h
     platform/OrientationNotifier.h

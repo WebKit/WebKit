@@ -40,7 +40,7 @@
 #include "MediaElementSession.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
-#include "MediaSessionIdentifier.h"
+#include "MediaUniqueIdentifier.h"
 #include "TextTrack.h"
 #include "VideoTrack.h"
 #include "VisibilityChangeClient.h"
@@ -566,7 +566,7 @@ public:
     void applicationWillResignActive();
     void applicationDidBecomeActive();
 
-    MediaSessionIdentifier mediaSessionUniqueIdentifier() const;
+    MediaUniqueIdentifier mediaUniqueIdentifier() const;
     String mediaSessionTitle() const;
     String sourceApplicationIdentifier() const;
 
@@ -846,6 +846,7 @@ private:
     void updateMediaController();
     bool isBlocked() const;
     bool isBlockedOnMediaController() const;
+    void setCurrentSrc(const URL&);
     bool hasCurrentSrc() const override { return !m_currentSrc.isEmpty(); }
     bool isLiveStream() const override { return movieLoadType() == MovieLoadType::LiveStream; }
 
@@ -966,6 +967,7 @@ private:
     ReadyState m_readyState { HAVE_NOTHING };
     ReadyState m_readyStateMaximum { HAVE_NOTHING };
     URL m_currentSrc;
+    MediaUniqueIdentifier m_currentIdentifier;
 
     RefPtr<MediaError> m_error;
 

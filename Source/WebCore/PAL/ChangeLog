@@ -1,3 +1,13 @@
+2021-04-01  Jean-Yves Avenard  <jya@apple.com>
+
+        Now Playing artwork doesn't update when changed.
+        https://bugs.webkit.org/show_bug.cgi?id=223731
+        <rdar://problem/75823923>
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/mac/MediaRemoteSPI.h:
+
 2021-03-31  Youenn Fablet  <youenn@apple.com>
 
         Make use of NSURLSessionWebSocket.sendCloseCode if available

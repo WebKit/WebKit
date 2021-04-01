@@ -1108,7 +1108,7 @@ void HTMLMediaElement::prepareForLoad()
     m_haveFiredLoadedData = false;
     m_completelyLoaded = false;
     m_havePreparedToPlay = false;
-    m_currentSrc = URL();
+    setCurrentSrc(URL());
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_failedToPlayToWirelessTarget = false;
@@ -1321,7 +1321,7 @@ void HTMLMediaElement::selectMediaResource()
         // ↳ If mode is object
         if (mode == Object) {
             // 1. Set the currentSrc attribute to the empty string.
-            m_currentSrc = URL();
+            setCurrentSrc(URL());
 
             // 2. End the synchronous section, continuing the remaining steps in parallel.
             // 3. Run the resource fetch algorithm with the assigned media provider object.
@@ -1370,7 +1370,7 @@ void HTMLMediaElement::selectMediaResource()
             }
 
             // 3. If absolute URL was obtained successfully, set the currentSrc attribute to absolute URL.
-            m_currentSrc = absoluteURL;
+            setCurrentSrc(absoluteURL);
 
             // 4. End the synchronous section, continuing the remaining steps in parallel.
             // 5. If absolute URL was obtained successfully, run the resource fetch algorithm with absolute
@@ -1467,7 +1467,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 
     // Set m_currentSrc *before* changing to the cache URL, the fact that we are loading from the app
     // cache is an internal detail not exposed through the media element API.
-    m_currentSrc = url;
+    setCurrentSrc(url);
 
     if (resource) {
         url = ApplicationCacheHost::createFileURL(resource->path());
@@ -7517,9 +7517,15 @@ String HTMLMediaElement::mediaSessionTitle() const
     return title;
 }
 
-MediaSessionIdentifier HTMLMediaElement::mediaSessionUniqueIdentifier() const
+void HTMLMediaElement::setCurrentSrc(const URL& src)
 {
-    return m_mediaSession->mediaSessionIdentifier();
+    m_currentSrc = src;
+    m_currentIdentifier = MediaUniqueIdentifier::generate();
+}
+
+MediaUniqueIdentifier HTMLMediaElement::mediaUniqueIdentifier() const
+{
+    return m_currentIdentifier;
 }
 
 void HTMLMediaElement::didReceiveRemoteControlCommand(PlatformMediaSession::RemoteControlCommandType command, const PlatformMediaSession::RemoteCommandArgument& argument)

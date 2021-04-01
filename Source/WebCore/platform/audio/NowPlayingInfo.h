@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MediaSessionIdentifier.h"
+#include "MediaUniqueIdentifier.h"
 #include "SharedBuffer.h"
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
@@ -83,7 +83,7 @@ struct NowPlayingInfo {
     double duration { 0 };
     double currentTime { 0 };
     bool supportsSeeking { false };
-    MediaSessionIdentifier uniqueIdentifier;
+    MediaUniqueIdentifier uniqueIdentifier;
     bool isPlaying { false };
     bool allowsNowPlayingControlsVisibility { false };
     Optional<NowPlayingInfoArtwork> artwork;
@@ -147,7 +147,7 @@ template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(D
     if (!decoder.decode(supportsSeeking))
         return { };
 
-    MediaSessionIdentifier uniqueIdentifier;
+    MediaUniqueIdentifier uniqueIdentifier;
     if (!decoder.decode(uniqueIdentifier))
         return { };
 

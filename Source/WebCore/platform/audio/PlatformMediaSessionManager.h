@@ -27,7 +27,7 @@
 #define PlatformMediaSessionManager_h
 
 #include "GenericTaskQueue.h"
-#include "MediaSessionIdentifier.h"
+#include "MediaUniqueIdentifier.h"
 #include "PlatformMediaSession.h"
 #include "Timer.h"
 #include <wtf/AggregateLogger.h>
@@ -86,7 +86,7 @@ public:
     virtual String lastUpdatedNowPlayingTitle() const { return emptyString(); }
     virtual double lastUpdatedNowPlayingDuration() const { return NAN; }
     virtual double lastUpdatedNowPlayingElapsedTime() const { return NAN; }
-    virtual MediaSessionIdentifier lastUpdatedNowPlayingInfoUniqueIdentifier() const { return { }; }
+    virtual MediaUniqueIdentifier lastUpdatedNowPlayingInfoUniqueIdentifier() const { return { }; }
     virtual bool registeredAsNowPlayingApplication() const { return false; }
     virtual bool haveEverRegisteredAsNowPlayingApplication() const { return false; }
     virtual void prepareToSendUserMediaPermissionRequest() { }
