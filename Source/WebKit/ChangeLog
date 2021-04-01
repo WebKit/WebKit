@@ -1,3 +1,22 @@
+2021-04-01  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Process the pending messages of GPUProcessProxy before its destructor is called
+        https://bugs.webkit.org/show_bug.cgi?id=224017
+
+        Reviewed by Simon Fraser.
+
+        Ensure all the pending messages of the singleton GPUProcessProxy are
+        processed every time a WebProcessPool is about to be deleted. When calling
+        the completion handlers of these messages, the GPUProcessProxy and the 
+        WebProcessPool have to be valid
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::~AuxiliaryProcessProxy):
+        (WebKit::AuxiliaryProcessProxy::replyToPendingMessages):
+        * UIProcess/AuxiliaryProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool):
+
 2021-03-31  Simon Fraser  <simon.fraser@apple.com>
 
         Feed preferred frames per second back to the UI process for each DisplayRefreshMonitor

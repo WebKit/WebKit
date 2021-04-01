@@ -360,6 +360,11 @@ WebProcessPool::~WebProcessPool()
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 #endif
 
+#if ENABLE(GPU_PROCESS)
+    if (m_gpuProcess)
+        m_gpuProcess->replyToPendingMessages();
+#endif
+
     // Only remaining processes should be pre-warmed ones as other keep the process pool alive.
     while (!m_processes.isEmpty()) {
         auto& process = m_processes.first();
