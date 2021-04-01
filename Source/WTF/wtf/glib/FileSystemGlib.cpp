@@ -407,6 +407,9 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
 
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
+    if (!length)
+        return 0;
+
     gsize bytesWritten;
     g_output_stream_write_all(g_io_stream_get_output_stream(G_IO_STREAM(handle)),
         data, length, &bytesWritten, nullptr, nullptr);

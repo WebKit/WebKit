@@ -1,3 +1,17 @@
+2021-04-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r275267): [GTK][WPE] 12 new crashes on service-workers layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=224059
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Have the glib implementation of FileSystem::writeToFile() return early when the size to
+        write is 0, instead of calling g_output_stream_write_all(). It appears that passing a
+        NULL buffer to g_output_stream_write_all() crashes, even if size is 0.
+
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::writeToFile):
+
 2021-03-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         Allow ASCWebKitSPISupport to be used on macOS
