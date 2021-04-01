@@ -47,8 +47,6 @@ public:
     
     WEBCORE_EXPORT virtual void stop();
 
-    virtual void setPreferredFramesPerSecond(FramesPerSecond) { }
-
     // Return true if callback request was scheduled, false if it couldn't be
     // (e.g., hardware refresh is not available)
     WEBCORE_EXPORT virtual bool requestRefreshCallback();
@@ -58,6 +56,9 @@ public:
     bool hasClients() const { return m_clients.size(); }
     void addClient(DisplayRefreshMonitorClient&);
     bool removeClient(DisplayRefreshMonitorClient&);
+
+    void clientPreferredFramesPerSecondChanged(DisplayRefreshMonitorClient&);
+    Optional<FramesPerSecond> maxClientPreferredFramesPerSecond() const { return m_maxClientPreferredFramesPerSecond; }
 
     virtual Optional<FramesPerSecond> displayNominalFramesPerSecond() { return WTF::nullopt; }
 
@@ -89,9 +90,16 @@ protected:
 private:
     bool firedAndReachedMaxUnscheduledFireCount();
 
+    virtual void adjustPreferredFramesPerSecond(FramesPerSecond) { }
+
+    Optional<FramesPerSecond> maximumClientPreferredFramesPerSecond() const;
+    void computeMaxPreferredFramesPerSecond();
+
     HashSet<DisplayRefreshMonitorClient*> m_clients;
     HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified { nullptr };
+
     PlatformDisplayID m_displayID { 0 };
+    Optional<FramesPerSecond> m_maxClientPreferredFramesPerSecond;
 
     Lock m_lock;
     bool m_scheduled { false };

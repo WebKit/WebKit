@@ -59,17 +59,23 @@ bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
     return !path.isEmpty() && !path.startsWith("/System/");
 }
 
-void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
+void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     ASSERT(hasProcessPrivilege(ProcessPrivilege::CanCommunicateWithWindowServer));
     ASSERT(connection());
-    processPool().startDisplayLink(*connection(), observerID, displayID);
+    processPool().startDisplayLink(*connection(), observerID, displayID, preferredFramesPerSecond);
 }
 
 void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID)
 {
     ASSERT(connection());
     processPool().stopDisplayLink(*connection(), observerID, displayID);
+}
+
+void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+{
+    ASSERT(connection());
+    processPool().setDisplayLinkPreferredFramesPerSecond(*connection(), observerID, displayID, preferredFramesPerSecond);
 }
 
 } // namespace WebKit

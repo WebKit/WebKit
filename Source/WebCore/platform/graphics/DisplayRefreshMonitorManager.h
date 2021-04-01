@@ -44,11 +44,12 @@ public:
 
     void unregisterClient(DisplayRefreshMonitorClient&);
 
-    void setPreferredFramesPerSecond(DisplayRefreshMonitorClient&, FramesPerSecond);
     bool scheduleAnimation(DisplayRefreshMonitorClient&);
     void windowScreenDidChange(PlatformDisplayID, DisplayRefreshMonitorClient&);
     
     Optional<FramesPerSecond> nominalFramesPerSecondForDisplay(PlatformDisplayID, DisplayRefreshMonitorFactory*);
+
+    void clientPreferredFramesPerSecondChanged(DisplayRefreshMonitorClient&);
 
     WEBCORE_EXPORT void displayWasUpdated(PlatformDisplayID, const DisplayUpdate&);
 

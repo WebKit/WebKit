@@ -47,9 +47,11 @@ public:
     explicit DisplayLink(WebCore::PlatformDisplayID);
     ~DisplayLink();
     
-    void addObserver(IPC::Connection&, DisplayLinkObserverID);
+    void addObserver(IPC::Connection&, DisplayLinkObserverID, WebCore::FramesPerSecond);
     void removeObserver(IPC::Connection&, DisplayLinkObserverID);
     void removeObservers(IPC::Connection&);
+
+    void setPreferredFramesPerSecond(IPC::Connection&, DisplayLinkObserverID, WebCore::FramesPerSecond);
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     
@@ -65,9 +67,14 @@ private:
     
     static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 
+    struct ObserverInfo {
+        DisplayLinkObserverID observerID;
+        WebCore::FramesPerSecond preferredFramesPerSecond;
+    };
+
     CVDisplayLinkRef m_displayLink { nullptr };
     Lock m_observersLock;
-    HashMap<RefPtr<IPC::Connection>, Vector<DisplayLinkObserverID>> m_observers;
+    HashMap<RefPtr<IPC::Connection>, Vector<ObserverInfo>> m_observers;
     WebCore::PlatformDisplayID m_displayID;
     WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
     WebCore::DisplayUpdate m_currentUpdate;

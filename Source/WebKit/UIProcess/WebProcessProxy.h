@@ -77,6 +77,7 @@ struct PluginInfo;
 struct PrewarmInformation;
 struct SecurityOriginData;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
+using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 }
 
@@ -298,8 +299,9 @@ public:
 #endif
 
 #if HAVE(CVDISPLAYLINK)
-    void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID);
+    void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
     void stopDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID);
+    void setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
 #endif
 
     // Called when the web process has crashed or we know that it will terminate soon.

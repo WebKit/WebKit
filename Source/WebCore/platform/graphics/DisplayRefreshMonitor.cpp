@@ -90,7 +90,11 @@ void DisplayRefreshMonitor::stop()
 
 void DisplayRefreshMonitor::addClient(DisplayRefreshMonitorClient& client)
 {
-    m_clients.add(&client);
+    auto addResult = m_clients.add(&client);
+    if (addResult.isNewEntry) {
+        LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitor " << this << " addedClient - displayID " << m_displayID << " client " << &client << " client preferred fps " << client.preferredFramesPerSecond());
+        computeMaxPreferredFramesPerSecond();
+    }
 }
 
 bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient& client)
@@ -98,7 +102,38 @@ bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient& client)
     if (m_clientsToBeNotified)
         m_clientsToBeNotified->remove(&client);
 
-    return m_clients.remove(&client);
+    bool removed = m_clients.remove(&client);
+    if (removed) {
+        LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitor " << this << " removedClient " << &client);
+        computeMaxPreferredFramesPerSecond();
+    }
+
+    return removed;
+}
+
+Optional<FramesPerSecond> DisplayRefreshMonitor::maximumClientPreferredFramesPerSecond() const
+{
+    Optional<FramesPerSecond> maxFramesPerSecond;
+    for (auto* client : m_clients)
+        maxFramesPerSecond = std::max<FramesPerSecond>(maxFramesPerSecond.valueOr(0), client->preferredFramesPerSecond());
+
+    return maxFramesPerSecond;
+}
+
+void DisplayRefreshMonitor::computeMaxPreferredFramesPerSecond()
+{
+    auto maxFramesPerSecond = maximumClientPreferredFramesPerSecond();
+    LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitor " << this << " computeMaxPreferredFramesPerSecond - displayID " << m_displayID << " adjusting max fps to " << maxFramesPerSecond);
+    if (maxFramesPerSecond != m_maxClientPreferredFramesPerSecond) {
+        m_maxClientPreferredFramesPerSecond = maxFramesPerSecond;
+        if (m_maxClientPreferredFramesPerSecond)
+            adjustPreferredFramesPerSecond(*m_maxClientPreferredFramesPerSecond);
+    }
+}
+
+void DisplayRefreshMonitor::clientPreferredFramesPerSecondChanged(DisplayRefreshMonitorClient&)
+{
+    computeMaxPreferredFramesPerSecond();
 }
 
 bool DisplayRefreshMonitor::requestRefreshCallback()

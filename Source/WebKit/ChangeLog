@@ -1,3 +1,39 @@
+2021-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Feed preferred frames per second back to the UI process for each DisplayRefreshMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=224023
+
+        Reviewed by Sam Weinig.
+
+        DisplayLink needs to track the preferredFramesPerSecond of each of its client
+        observers. notifyObserversDisplayWasRefreshed() can then avoid sending IPC to
+        a process a frequency which is higher than that process needs.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::startDisplayLink):
+        (WebKit::WebProcessPool::setDisplayLinkPreferredFramesPerSecond):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::addObserver):
+        (WebKit::DisplayLink::removeObserver):
+        (WebKit::DisplayLink::removeObservers):
+        (WebKit::DisplayLink::setPreferredFramesPerSecond):
+        (WebKit::DisplayLink::notifyObserversDisplayWasRefreshed):
+        * UIProcess/mac/DisplayLink.h:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::startDisplayLink):
+        (WebKit::WebProcessProxy::setDisplayLinkPreferredFramesPerSecond):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm:
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::adjustPreferredFramesPerSecond):
+        (WebKit::RemoteLayerTreeDisplayRefreshMonitor::setPreferredFramesPerSecond): Deleted.
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::startNotificationMechanism):
+        (WebKit::DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond):
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.h:
+
 2021-03-31  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] WKInspectorResourceURLSchemeHandler can exceed the soft thread limit when opening multiple inspectors simultaneously.

@@ -40,7 +40,11 @@ DisplayRefreshMonitorClient::~DisplayRefreshMonitorClient()
 
 void DisplayRefreshMonitorClient::setPreferredFramesPerSecond(FramesPerSecond preferredFrameRate)
 {
+    if (preferredFrameRate == m_preferredFramesPerSecond)
+        return;
+
     m_preferredFramesPerSecond = preferredFrameRate;
+    DisplayRefreshMonitorManager::sharedManager().clientPreferredFramesPerSecondChanged(*this);
 }
 
 void DisplayRefreshMonitorClient::fireDisplayRefreshIfNeeded(const DisplayUpdate& displayUpdate)

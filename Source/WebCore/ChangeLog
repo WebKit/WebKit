@@ -1,3 +1,39 @@
+2021-03-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Feed preferred frames per second back to the UI process for each DisplayRefreshMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=224023
+
+        Reviewed by Sam Weinig.
+
+        DisplayRefreshMonitors should be responsive to the frame rate demands of their clients,
+        so move from a model where DisplayRefreshMonitor has setPreferredFramesPerSecond()
+        to one where it computes maxClientPreferredFramesPerSecond().
+
+        DisplayRefreshMonitor needs to recompute maxClientPreferredFramesPerSecond when clients
+        are added, removed, or when the preferred frame rate of a client changes.
+
+        For now, just one of the DisplayRefreshMonitor implementations responds to adjustPreferredFramesPerSecond:
+        DisplayRefreshMonitorMac sends IPC to the UI process, which DisplayLink can use on a per-connection
+        basis to throttle the frequency of display updates sent to that process (which is important
+        for power).
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::addClient):
+        (WebCore::DisplayRefreshMonitor::removeClient):
+        (WebCore::DisplayRefreshMonitor::maximumClientPreferredFramesPerSecond const):
+        (WebCore::DisplayRefreshMonitor::computeMaxPreferredFramesPerSecond):
+        (WebCore::DisplayRefreshMonitor::clientPreferredFramesPerSecondChanged):
+        * platform/graphics/DisplayRefreshMonitor.h:
+        (WebCore::DisplayRefreshMonitor::maxClientPreferredFramesPerSecond const):
+        (WebCore::DisplayRefreshMonitor::adjustPreferredFramesPerSecond):
+        (WebCore::DisplayRefreshMonitor::setPreferredFramesPerSecond): Deleted.
+        * platform/graphics/DisplayRefreshMonitorClient.cpp:
+        (WebCore::DisplayRefreshMonitorClient::setPreferredFramesPerSecond):
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::clientPreferredFramesPerSecondChanged):
+        (WebCore::DisplayRefreshMonitorManager::setPreferredFramesPerSecond): Deleted.
+        * platform/graphics/DisplayRefreshMonitorManager.h:
+
 2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         List of extents should be bounds-checked when iterating display list items

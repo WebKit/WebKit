@@ -32,6 +32,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/RunLoopObserver.h>
 #include <wtf/text/TextStream.h>
@@ -71,7 +72,7 @@ bool DisplayRefreshMonitorMac::startNotificationMechanism()
         return true;
 
     LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorMac::requestRefreshCallback - starting");
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID()), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID(), maxClientPreferredFramesPerSecond().valueOr(FullSpeedFramesPerSecond)), 0);
     if (!m_runLoopObserver) {
         // The RunLoopObserver repeats.
         m_runLoopObserver = makeUnique<RunLoopObserver>(kCFRunLoopEntry, [this]() {
@@ -95,6 +96,13 @@ void DisplayRefreshMonitorMac::stopNotificationMechanism()
     m_runLoopObserver->invalidate();
     
     m_displayLinkIsActive = false;
+}
+
+void DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
+{
+    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond for display link on display " << displayID() << " to " << preferredFramesPerSecond);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::SetDisplayLinkPreferredFramesPerSecond(m_observerID, displayID(), preferredFramesPerSecond), 0);
+
 }
 
 } // namespace WebKit

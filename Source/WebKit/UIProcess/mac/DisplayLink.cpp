@@ -31,6 +31,7 @@
 #include "EventDispatcherMessages.h"
 #include "Logging.h"
 #include "WebProcessMessages.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/text/TextStream.h>
 
@@ -81,15 +82,15 @@ WebCore::FramesPerSecond DisplayLink::nominalFramesPerSecondFromDisplayLink(CVDi
     return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
 }
 
-void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID observerID)
+void DisplayLink::addObserver(IPC::Connection& connection, DisplayLinkObserverID observerID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     ASSERT(RunLoop::isMain());
 
     {
-        LockHolder locker(m_observersLock);
+        auto locker = holdLock(m_observersLock);
         m_observers.ensure(&connection, [] {
-            return Vector<DisplayLinkObserverID> { };
-        }).iterator->value.append(observerID);
+            return Vector<ObserverInfo> { };
+        }).iterator->value.append({ observerID, preferredFramesPerSecond });
     }
 
     if (!CVDisplayLinkIsRunning(m_displayLink)) {
@@ -106,12 +107,14 @@ void DisplayLink::removeObserver(IPC::Connection& connection, DisplayLinkObserve
 {
     ASSERT(RunLoop::isMain());
 
-    LockHolder locker(m_observersLock);
+    auto locker = holdLock(m_observersLock);
 
     auto it = m_observers.find(&connection);
     if (it == m_observers.end())
         return;
-    bool removed = it->value.removeFirst(observerID);
+    bool removed = it->value.removeFirstMatching([observerID](const auto& value) {
+        return value.observerID == observerID;
+    });
     ASSERT_UNUSED(removed, removed);
     if (it->value.isEmpty())
         m_observers.remove(it);
@@ -125,12 +128,30 @@ void DisplayLink::removeObservers(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
 
-    LockHolder locker(m_observersLock);
+    auto locker = holdLock(m_observersLock);
     m_observers.remove(&connection);
 
     // We do not stop the display link right away when |m_observers| becomes empty. Instead, we
     // let the display link fire up to |maxFireCountWithoutObservers| times without observers to avoid
     // killing & restarting too many threads when observers gets removed & added in quick succession.
+}
+
+void DisplayLink::setPreferredFramesPerSecond(IPC::Connection& connection, DisplayLinkObserverID observerID, WebCore::FramesPerSecond preferredFramesPerSecond)
+{
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink::setPreferredFramesPerSecond - display " << m_displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
+
+    auto locker = holdLock(m_observersLock);
+
+    auto it = m_observers.find(&connection);
+    if (it == m_observers.end())
+        return;
+
+    auto index = it->value.findMatching([observerID](const auto& observer) {
+        return observer.observerID == observerID;
+    });
+
+    if (index != notFound)
+        it->value[index].preferredFramesPerSecond = preferredFramesPerSecond;
 }
 
 CVReturn DisplayLink::displayLinkCallback(CVDisplayLinkRef displayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
@@ -143,7 +164,7 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
 {
     ASSERT(!RunLoop::isMain());
 
-    LockHolder locker(m_observersLock);
+    auto locker = holdLock(m_observersLock);
     if (m_observers.isEmpty()) {
         if (++m_fireCountWithoutObservers >= maxFireCountWithoutObservers) {
             LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " fired " << m_fireCountWithoutObservers << " times with no observers; stopping CVDisplayLink");
@@ -153,8 +174,22 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
     }
     m_fireCountWithoutObservers = 0;
 
-    for (auto& connection : m_observers.keys()) {
-        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " (display fps " << m_displayNominalFramesPerSecond << ") update " << m_currentUpdate << " connection " << connection->uniqueID() << " on background queue " << shouldSendIPCOnBackgroundQueue);
+    auto maxFramesPerSecond = [](const Vector<ObserverInfo>& observers) {
+        Optional<WebCore::FramesPerSecond> observersMaxFramesPerSecond;
+        for (const auto& observer : observers)
+            observersMaxFramesPerSecond = std::max(observersMaxFramesPerSecond.valueOr(0), observer.preferredFramesPerSecond);
+        return observersMaxFramesPerSecond;
+    };
+
+    for (auto& [connection, observers] : m_observers) {
+        auto observersMaxFramesPerSecond = maxFramesPerSecond(observers);
+        auto updateIsRelevant = m_currentUpdate.relevantForUpdateFrequency(observersMaxFramesPerSecond.valueOr(WebCore::FullSpeedFramesPerSecond));
+
+        LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink for display " << m_displayID << " (display fps " << m_displayNominalFramesPerSecond << ") update " << m_currentUpdate << " " << observers.size()
+            << " observers, on background queue " << shouldSendIPCOnBackgroundQueue << " maxFramesPerSecond " << observersMaxFramesPerSecond << " relevant " << updateIsRelevant);
+
+        if (!updateIsRelevant)
+            continue;
 
         if (shouldSendIPCOnBackgroundQueue)
             connection->send(Messages::EventDispatcher::DisplayWasRefreshed(m_displayID, m_currentUpdate), 0);

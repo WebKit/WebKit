@@ -72,6 +72,7 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/spi/darwin/dyldSPI.h>
+#import <wtf/text/TextStream.h>
 
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
@@ -779,16 +780,16 @@ Optional<unsigned> WebProcessPool::nominalFramesPerSecondForDisplay(WebCore::Pla
     return frameRate;
 }
 
-void WebProcessPool::startDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID)
+void WebProcessPool::startDisplayLink(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
 {
     for (auto& displayLink : m_displayLinks) {
         if (displayLink->displayID() == displayID) {
-            displayLink->addObserver(connection, observerID);
+            displayLink->addObserver(connection, observerID, preferredFramesPerSecond);
             return;
         }
     }
     auto displayLink = makeUnique<DisplayLink>(displayID);
-    displayLink->addObserver(connection, observerID);
+    displayLink->addObserver(connection, observerID, preferredFramesPerSecond);
     m_displayLinks.append(WTFMove(displayLink));
 }
 
@@ -806,6 +807,18 @@ void WebProcessPool::stopDisplayLinks(IPC::Connection& connection)
 {
     for (auto& displayLink : m_displayLinks)
         displayLink->removeObservers(connection);
+}
+
+void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(IPC::Connection& connection, DisplayLinkObserverID observerID, PlatformDisplayID displayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+{
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] WebProcessPool::setDisplayLinkPreferredFramesPerSecond - display " << displayID << " observer " << observerID << " fps " << preferredFramesPerSecond);
+
+    for (auto& displayLink : m_displayLinks) {
+        if (displayLink->displayID() == displayID) {
+            displayLink->setPreferredFramesPerSecond(connection, observerID, preferredFramesPerSecond);
+            return;
+        }
+    }
 }
 #endif // HAVE(CVDISPLAYLINK)
 

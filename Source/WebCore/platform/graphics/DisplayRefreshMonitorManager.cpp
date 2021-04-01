@@ -70,10 +70,10 @@ void DisplayRefreshMonitorManager::unregisterClient(DisplayRefreshMonitorClient&
     monitor->removeClient(client);
 }
 
-void DisplayRefreshMonitorManager::setPreferredFramesPerSecond(DisplayRefreshMonitorClient& client, FramesPerSecond preferredFramesPerSecond)
+void DisplayRefreshMonitorManager::clientPreferredFramesPerSecondChanged(DisplayRefreshMonitorClient& client)
 {
     if (auto* monitor = monitorForClient(client))
-        monitor->setPreferredFramesPerSecond(preferredFramesPerSecond);
+        monitor->clientPreferredFramesPerSecondChanged(client);
 }
 
 bool DisplayRefreshMonitorManager::scheduleAnimation(DisplayRefreshMonitorClient& client)

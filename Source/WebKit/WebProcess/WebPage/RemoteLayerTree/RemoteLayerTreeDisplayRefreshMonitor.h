@@ -40,7 +40,6 @@ public:
     
     virtual ~RemoteLayerTreeDisplayRefreshMonitor();
 
-    void setPreferredFramesPerSecond(WebCore::FramesPerSecond) override;
     bool requestRefreshCallback() final;
 
     void didUpdateLayers();
@@ -52,6 +51,8 @@ private:
     bool startNotificationMechanism() final { return true; }
     void stopNotificationMechanism() final { }
     Optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() final;
+
+    void adjustPreferredFramesPerSecond(WebCore::FramesPerSecond) final;
 
     WeakPtr<RemoteLayerTreeDrawingArea> m_drawingArea;
 

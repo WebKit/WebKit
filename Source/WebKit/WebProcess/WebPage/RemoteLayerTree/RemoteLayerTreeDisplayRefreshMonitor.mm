@@ -48,10 +48,12 @@ RemoteLayerTreeDisplayRefreshMonitor::~RemoteLayerTreeDisplayRefreshMonitor()
         m_drawingArea->willDestroyDisplayRefreshMonitor(this);
 }
 
-void RemoteLayerTreeDisplayRefreshMonitor::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
+void RemoteLayerTreeDisplayRefreshMonitor::adjustPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
 {
     if (preferredFramesPerSecond == m_preferredFramesPerSecond)
         return;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "RemoteLayerTreeDisplayRefreshMonitor::adjustMaxPreferredFramesPerSecond to " << preferredFramesPerSecond);
 
     m_preferredFramesPerSecond = preferredFramesPerSecond;
     m_currentUpdate = { 0, m_preferredFramesPerSecond };
