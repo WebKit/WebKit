@@ -1,3 +1,19 @@
+2021-04-01  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Remove use of ENABLE from API header
+        https://bugs.webkit.org/show_bug.cgi?id=224060
+        <rdar://76111678>
+
+        Reviewed by Mark Lam.
+
+        The use of the ENABLE macro in these API headers has caused build failures. Instead of
+        conditionally exposing these API methods we make them into no-ops if DFG is disabled.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVirtualMachine setNumberOfDFGCompilerThreads:]):
+        (+[JSVirtualMachine setNumberOfFTLCompilerThreads:]):
+        * API/JSVirtualMachinePrivate.h:
+
 2021-04-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Optimize createListFromArrayLike() and Proxy's [[OwnPropertyKeys]] method
