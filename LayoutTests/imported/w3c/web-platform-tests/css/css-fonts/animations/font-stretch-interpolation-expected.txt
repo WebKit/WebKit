@@ -184,5 +184,5 @@ PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] a
 PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] at (0.25) should be [semi-expanded]
 PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] at (0.5) should be [expanded]
 PASS Web Animations: property <font-stretch> from [normal] to [extra-expanded] at (1) should be [extra-expanded]
-FAIL An interpolation to inherit updates correctly on a parent style change. assert_equals: expected "150%" but got "extra-expanded"
+FAIL An interpolation to inherit updates correctly on a parent style change. assert_equals: expected "condensed" but got "extra-expanded"
 

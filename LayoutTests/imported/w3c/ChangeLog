@@ -1,3 +1,12 @@
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
+        Unreviewed. Import WPT test modified in https://github.com/web-platform-tests/wpt/pull/28315
+        with updated expectation showing a slight progression in a failing test (we fail the second
+        assertion instead of the first one).
+
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation.html:
+
 2021-03-31  Robert Jenner  <jenner@apple.com>
 
         REGRESSION (r275227): [ macOS iOS Release ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html is a constant failure
