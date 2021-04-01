@@ -1,3 +1,18 @@
+2021-04-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Support case where contributor did not define email
+        https://bugs.webkit.org/show_bug.cgi?id=224005
+        <rdar://problem/76058258>
+
+        Rubber-stamped by Aakash Jain.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/contributor.py:
+        (Contributor):
+        (Contributor.Mapping.create): An email of 'None' should not be indexed.
+        (Contributor.from_scm_log): Handle case where contributor is defined, but email isn't.
+
 2021-03-31  Chris Dumez  <cdumez@apple.com>
 
         Add API test for Bug 224022
