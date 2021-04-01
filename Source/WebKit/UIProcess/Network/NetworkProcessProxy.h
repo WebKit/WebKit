@@ -279,8 +279,6 @@ private:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
 
-    void clearCallbackStates();
-
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
@@ -293,9 +291,6 @@ private:
     void didReceiveAuthenticationChallenge(PAL::SessionID, WebPageProxyIdentifier, const Optional<WebCore::SecurityOriginData>&, WebCore::AuthenticationChallenge&&, bool, uint64_t challengeID);
     void negotiatedLegacyTLS(WebPageProxyIdentifier);
     void didNegotiateModernTLS(WebPageProxyIdentifier, const WebCore::AuthenticationChallenge&);
-    void didFetchWebsiteData(CallbackID, const WebsiteData&);
-    void didDeleteWebsiteData(CallbackID);
-    void didDeleteWebsiteDataForOrigins(CallbackID);
     void setWebProcessHasUploads(WebCore::ProcessIdentifier, bool);
     void logDiagnosticMessage(WebPageProxyIdentifier, const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithResult(WebPageProxyIdentifier, const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
@@ -332,10 +327,6 @@ private:
 #endif
 
     void processAuthenticationChallenge(PAL::SessionID, Ref<AuthenticationChallengeProxy>&&);
-
-    HashMap<CallbackID, CompletionHandler<void(WebsiteData)>> m_pendingFetchWebsiteDataCallbacks;
-    HashMap<CallbackID, CompletionHandler<void()>> m_pendingDeleteWebsiteDataCallbacks;
-    HashMap<CallbackID, CompletionHandler<void()>> m_pendingDeleteWebsiteDataForOriginsCallbacks;
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;
 

@@ -207,9 +207,6 @@ NetworkProcessProxy::NetworkProcessProxy()
 
 NetworkProcessProxy::~NetworkProcessProxy()
 {
-    ASSERT(m_pendingFetchWebsiteDataCallbacks.isEmpty());
-    ASSERT(m_pendingDeleteWebsiteDataCallbacks.isEmpty());
-    ASSERT(m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty());
 #if ENABLE(CONTENT_EXTENSIONS)
     for (auto* proxy : m_webUserContentControllerProxies)
         proxy->removeNetworkProcess(*this);
@@ -287,58 +284,19 @@ DownloadProxy& NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& dataSt
     return m_downloadProxyMap->createDownloadProxy(dataStore, processPool, resourceRequest, frameInfo, originatingPage);
 }
 
-void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void (WebsiteData)>&& completionHandler)
+void NetworkProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, CompletionHandler<void(WebsiteData)>&& completionHandler)
 {
-    ASSERT(canSendMessage());
-
-    auto callbackID = CallbackID::generateID();
-    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is fetching Website data", this);
-
-    m_pendingFetchWebsiteDataCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::fetchWebsiteData"_s), completionHandler = WTFMove(completionHandler), sessionID] (WebsiteData websiteData) mutable {
-#if RELEASE_LOG_DISABLED
-        UNUSED_PARAM(this);
-        UNUSED_PARAM(sessionID);
-#endif
-        completionHandler(WTFMove(websiteData));
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is releasing a background assertion because the Network process is done fetching Website data", this);
-    });
-
-    send(Messages::NetworkProcess::FetchWebsiteData(sessionID, dataTypes, fetchOptions, callbackID), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::FetchWebsiteData(sessionID, dataTypes, fetchOptions), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, CompletionHandler<void ()>&& completionHandler)
+void NetworkProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
-    auto callbackID = CallbackID::generateID();
-    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is deleting Website data", this);
-
-    m_pendingDeleteWebsiteDataCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::deleteWebsiteData"_s), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
-#if RELEASE_LOG_DISABLED
-        UNUSED_PARAM(this);
-        UNUSED_PARAM(sessionID);
-#endif
-        completionHandler();
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is releasing a background assertion because the Network process is done deleting Website data", this);
-    });
-    send(Messages::NetworkProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince, callbackID), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::DeleteWebsiteData(sessionID, dataTypes, modifiedSince), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, const Vector<RegistrableDomain>& registrableDomains, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(canSendMessage());
-
-    auto callbackID = CallbackID::generateID();
-    RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because the Network process is deleting Website data for several origins", this);
-
-    m_pendingDeleteWebsiteDataForOriginsCallbacks.add(callbackID, [this, activity = throttler().backgroundActivity("NetworkProcessProxy::deleteWebsiteDataForOrigins"_s), completionHandler = WTFMove(completionHandler), sessionID] () mutable {
-#if RELEASE_LOG_DISABLED
-        UNUSED_PARAM(this);
-        UNUSED_PARAM(sessionID);
-#endif
-        completionHandler();
-        RELEASE_LOG_IF(sessionID.isAlwaysOnLoggingAllowed(), ProcessSuspension, "%p - NetworkProcessProxy is releasing a background assertion because the Network process is done deleting Website data for several origins", this);
-    });
-
-    send(Messages::NetworkProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins, cookieHostNames, HSTSCacheHostNames, registrableDomains, callbackID), 0);
+    sendWithAsyncReply(Messages::NetworkProcess::DeleteWebsiteDataForOrigins(sessionID, dataTypes, origins, cookieHostNames, HSTSCacheHostNames, registrableDomains), WTFMove(completionHandler));
 }
 
 void NetworkProcessProxy::renameOriginInWebsiteData(PAL::SessionID sessionID, const URL& oldName, const URL& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
@@ -351,25 +309,11 @@ void NetworkProcessProxy::networkProcessCrashed()
     if (defaultProcess() == this)
         defaultProcess() = nullptr;
 
-    clearCallbackStates();
-
     Ref<NetworkProcessProxy> protectedThis(*this);
     for (auto* processPool : WebProcessPool::allProcessPools())
         processPool->networkProcessCrashed(*this);
     for (auto& websiteDataStore : m_websiteDataStores)
         websiteDataStore.networkProcessCrashed(*this);
-}
-
-void NetworkProcessProxy::clearCallbackStates()
-{
-    while (!m_pendingFetchWebsiteDataCallbacks.isEmpty())
-        m_pendingFetchWebsiteDataCallbacks.take(m_pendingFetchWebsiteDataCallbacks.begin()->key)(WebsiteData { });
-
-    while (!m_pendingDeleteWebsiteDataCallbacks.isEmpty())
-        m_pendingDeleteWebsiteDataCallbacks.take(m_pendingDeleteWebsiteDataCallbacks.begin()->key)();
-
-    while (!m_pendingDeleteWebsiteDataForOriginsCallbacks.isEmpty())
-        m_pendingDeleteWebsiteDataForOriginsCallbacks.take(m_pendingDeleteWebsiteDataForOriginsCallbacks.begin()->key)();
 }
 
 void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -475,27 +419,6 @@ void NetworkProcessProxy::didNegotiateModernTLS(WebPageProxyIdentifier pageID, c
 {
     if (auto* page = pageID ? WebProcessProxy::webPage(pageID) : nullptr)
         page->didNegotiateModernTLS(challenge);
-}
-
-void NetworkProcessProxy::didFetchWebsiteData(CallbackID callbackID, const WebsiteData& websiteData)
-{
-    MESSAGE_CHECK(m_pendingFetchWebsiteDataCallbacks.isValidKey(callbackID));
-    auto callback = m_pendingFetchWebsiteDataCallbacks.take(callbackID);
-    callback(websiteData);
-}
-
-void NetworkProcessProxy::didDeleteWebsiteData(CallbackID callbackID)
-{
-    MESSAGE_CHECK(m_pendingDeleteWebsiteDataCallbacks.isValidKey(callbackID));
-    auto callback = m_pendingDeleteWebsiteDataCallbacks.take(callbackID);
-    callback();
-}
-
-void NetworkProcessProxy::didDeleteWebsiteDataForOrigins(CallbackID callbackID)
-{
-    MESSAGE_CHECK(m_pendingDeleteWebsiteDataForOriginsCallbacks.isValidKey(callbackID));
-    auto callback = m_pendingDeleteWebsiteDataForOriginsCallbacks.take(callbackID);
-    callback();
 }
 
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
