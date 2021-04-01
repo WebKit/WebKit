@@ -1366,7 +1366,7 @@ webkit.org/b/223486 [ arm64 ] inspector/css/modify-inline-style.html [ Pass Fail
 [ arm64 ] http/wpt/beacon/cors/cors-preflight-blob-success.html [ Pass Failure ]
 [ arm64 ] http/wpt/beacon/cors/cors-preflight-redirect-success.html [ Pass Failure ]
 
-webkit.org/b/223750 [ Debug ] security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html  [ Pass Crash ]
+webkit.org/b/223750 [ Debug ] security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html  [ Pass Failure Crash ]
 
 webkit.org/b/223900 [ Debug ] compositing/video/video-update-rendering.html [ Pass Failure ]
 

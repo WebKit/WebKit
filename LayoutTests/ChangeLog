@@ -1,5 +1,14 @@
 2021-03-31  Robert Jenner  <jenner@apple.com>
 
+        [ Debug wk2 ] ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData)
+        https://bugs.webkit.org/show_bug.cgi?id=223750
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Adding the Failure back to the test expectations that I removed during the prior update.
+
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
         ASSERTION FAILED: CustomElementReactionDisallowedScope::isReactionAllowed() ./dom/CustomElementReactionQueue.cpp(175) : static void WebCore::CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(WebCore::Element &)
         https://bugs.webkit.org/show_bug.cgi?id=224033
 
