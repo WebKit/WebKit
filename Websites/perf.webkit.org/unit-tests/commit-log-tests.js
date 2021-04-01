@@ -17,12 +17,34 @@ function webkitCommit()
     });
 }
 
+function webkitCommitWithRevisionIdentifier() 
+{
+    return new CommitLog(1, {
+        id: 1,
+        repository: MockModels.webkit,
+        revision: '200805',
+        revisionIdentifier: '184276@main',
+        time: +(new Date('2016-05-13T00:55:57.841344Z')),
+    });
+}
+
 function oldWebKitCommit()
 {
     return new CommitLog(2, {
         id: 2,
         repository: MockModels.webkit,
         revision: '200574',
+        time: +(new Date('2016-05-09T14:59:23.553767Z')),
+    });
+}
+
+function oldWebKitCommitWithRevisionIdentifier()
+{
+    return new CommitLog(2, {
+        id: 2,
+        repository: MockModels.webkit,
+        revision: '200574',
+        revisionIdentifier: '175605@main',
         time: +(new Date('2016-05-09T14:59:23.553767Z')),
     });
 }
@@ -37,12 +59,34 @@ function gitWebKitCommit()
     });
 }
 
+function gitWebKitCommitWithRevisionIdentifier()
+{
+    return new CommitLog(3, {
+        id: 3,
+        repository: MockModels.webkit,
+        revision: '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
+        revisionIdentifier: '184276@main',
+        time: +(new Date('2016-05-13T00:55:57.841344Z')),
+    });
+}
+
 function oldGitWebKitCommit()
 {
     return new CommitLog(4, {
         id: 4,
         repository: MockModels.webkit,
         revision: 'ffda14e6db0746d10d0f050907e4a7325851e502',
+        time: +(new Date('2016-05-09T14:59:23.553767Z')),
+    });
+}
+
+function oldGitWebKitCommitWithRevisionIdentifier()
+{
+    return new CommitLog(4, {
+        id: 4,
+        repository: MockModels.webkit,
+        revision: 'ffda14e6db0746d10d0f050907e4a7325851e502',
+        revisionIdentifier: '175605@main',
         time: +(new Date('2016-05-09T14:59:23.553767Z')),
     });
 }
@@ -147,8 +191,16 @@ describe('CommitLog', function () {
             assert.equal(webkitCommit().label(), 'r200805');
         });
 
-        it('should truncate a Git hash at 8th character', function () {
+        it('should display revision label followed by svn refixed with "r"', () => {
+            assert.strictEqual(webkitCommitWithRevisionIdentifier().label(), '184276@main (r200805)')
+        });
+
+        it('should truncate a Git hash at 12th character', function () {
             assert.equal(gitWebKitCommit().label(), '6f8b0dbbda95');
+        });
+
+        it('should display revision label followed by git hash truncated', () => {
+            assert.strictEqual(gitWebKitCommitWithRevisionIdentifier().label(), '184276@main (6f8b0dbbda95)')
         });
 
         it('should not modify OS X version', function () {
@@ -161,8 +213,16 @@ describe('CommitLog', function () {
             assert.equal(webkitCommit().title(), 'WebKit at r200805');
         });
 
-        it('should truncate a Git hash at 8th character', function () {
+        it('should include revision label', () => {
+            assert.strictEqual(webkitCommitWithRevisionIdentifier().title(), 'WebKit at 184276@main (r200805)');
+        });
+
+        it('should truncate a Git hash at 12th character', function () {
             assert.equal(gitWebKitCommit().title(), 'WebKit at 6f8b0dbbda95');
+        });
+
+        it('should display revision label followed by git hash truncated',  () => {
+            assert.strictEqual(gitWebKitCommitWithRevisionIdentifier().title(), 'WebKit at 184276@main (6f8b0dbbda95)');
         });
 
         it('should not modify OS X version', function () {
@@ -223,6 +283,31 @@ describe('CommitLog', function () {
                 repository: MockModels.osx
             });
         });
+
+        it('should display revision label followed with revison and  connect with "-", if both have revision label', () => {
+            assert.deepStrictEqual(webkitCommitWithRevisionIdentifier().diff(oldWebKitCommitWithRevisionIdentifier()), {
+                label: '175605-184276@main (r200574-r200805)',
+                url: '',
+                repository: MockModels.webkit
+            })
+        });
+
+        it('should display revision label followed with revison and  connect with "-", if both have revision label', () => {
+            assert.deepStrictEqual(gitWebKitCommitWithRevisionIdentifier().diff(oldGitWebKitCommitWithRevisionIdentifier()), {
+                label: '175605-184276@main (ffda14e6db07..6f8b0dbbda95)',
+                url: '',
+                repository: MockModels.webkit
+            })
+        });
+
+        it('should contain revision label, if one of the commits doesn`t have the revision label', () => {
+            assert.deepStrictEqual(webkitCommitWithRevisionIdentifier().diff(oldWebKitCommit()), {
+                label: 'r200574 - 184276@main (r200805)',
+                url: '',
+                repository: MockModels.webkit
+            });
+        });
+
     });
 
     describe('hasOrdering', () => {

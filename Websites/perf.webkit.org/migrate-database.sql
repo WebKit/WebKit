@@ -2,6 +2,10 @@ DO $$
 
 BEGIN
 ALTER TABLE build_requests ADD COLUMN IF NOT EXISTS request_status_description varchar(1024) DEFAULT NULL;
+ALTER TABLE platforms ADD COLUMN  IF NOT EXISTS platform_group integer REFERENCES platform_groups DEFAULT NULL;
+ALTER TABLE commits ADD COLUMN IF NOT EXISTS commit_revision_identifier varchar(64) DEFAULT NULL;
+ALTER TABLE commits DROP CONSTRAINT commit_string_identifier_in_repository_must_be_unique;
+ALTER TABLE commits ADD CONSTRAINT commit_string_identifier_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision_identifier);
 
 CREATE TABLE IF NOT EXISTS platform_groups (
     platformgroup_id serial PRIMARY KEY,

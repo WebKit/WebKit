@@ -20,6 +20,7 @@ class CommitLog extends DataModelObject {
 
         console.assert(+this._rawData['time'] == +rawData['time']);
         console.assert(this._rawData['revision'] == rawData['revision']);
+        console.assert(this._rawData['revisionIdentifier'] == rawData['revisionIdentifier']);
 
         if (rawData.authorName)
             this._rawData.authorName = rawData.authorName;
@@ -39,6 +40,7 @@ class CommitLog extends DataModelObject {
     testability() { return this._rawData['testability']; }
     author() { return this._rawData['authorName']; }
     revision() { return this._rawData['revision']; }
+    revisionIdentifier() { return this._rawData['revisionIdentifier']; }
     message() { return this._rawData['message']; }
     url() { return this._repository.urlForRevision(this._rawData['revision']); }
     ownsCommits() { return this._rawData['ownsCommits']; }
@@ -48,15 +50,33 @@ class CommitLog extends DataModelObject {
     hasCommitOrder() { return this._rawData['order'] != null; }
     setOwnerCommits(ownerCommit) { this._ownerCommit = ownerCommit; }
 
-    label()
+    label() { return CommitLog._formatttedRevision(this.revision(), this.revisionIdentifier()); }
+
+    static _repositoryType(revision)
     {
-        const revision = this.revision();
-        if (parseInt(revision) == revision) // e.g. r12345
-            return 'r' + revision;
-        if (revision.length == 40) // e.g. git hash
-            return revision.substring(0, 12);
-        return revision;
+        if (parseInt(revision) == revision)
+            return 'svn';
+        if (revision.length == 40)
+            return 'git';
+        return null;
     }
+
+    static _formatttedRevision(revision, revisionIdentifier = null) 
+    {
+        const formattedRevision = (() => {
+            switch (this._repositoryType(revision)) {
+            case 'svn':
+                return 'r' + revision; // e.g. r12345
+            case 'git':
+                return revision.substring(0, 12);
+            }
+            return revision;
+        })();
+        if (revisionIdentifier)
+            return `${revisionIdentifier} (${formattedRevision})`;
+        return formattedRevision;
+    }
+
     title() { return this._repository.name() + ' at ' + this.label(); }
 
     diff(previousCommit)
@@ -68,17 +88,24 @@ class CommitLog extends DataModelObject {
         if (!previousCommit)
             return {repository: repository, label: this.label(), url: this.url()};
 
-        const to = this.revision();
-        const from = previousCommit.revision();
-        let label = null;
-        if (parseInt(from) == from)// e.g. r12345.
-            label = `r${from}-r${this.revision()}`;
-        else if (to.length == 40) // e.g. git hash
-            label = `${from.substring(0, 12)}..${to.substring(0, 12)}`;
-        else
-            label = `${from} - ${to}`;
+        const toRevision = this.revision();
+        const fromRevision = previousCommit.revision();
+        const identifierPattern = /(?<number>\d+)@(?<branch>[\w\.\-]+)/;
+        const repositoryType = CommitLog._repositoryType(toRevision);
+       
+        const label = ((fromMatch, toMatch) => {
+            const separator = repositoryType == 'git' ? '..' : (repositoryType == 'svn' ? '-' : ' - ');
+            const revisionRange = `${CommitLog._formatttedRevision(fromRevision)}${separator}${CommitLog._formatttedRevision(toRevision)}`;
+            if (fromMatch && toMatch) {
+                console.assert(fromMatch.groups.branch == toMatch.groups.branch);
+                return `${fromMatch.groups.number}-${toMatch.groups.number}@${fromMatch.groups.branch} (${revisionRange})`;
+            }
+            if (fromMatch || toMatch)
+                return `${previousCommit.label()} - ${this.label()}`;
+            return revisionRange;
+        })(identifierPattern.exec(previousCommit.revisionIdentifier()), identifierPattern.exec(this.revisionIdentifier()));
 
-        return {repository: repository, label: label, url: repository.urlForRevisionRange(from, to)};
+        return {repository, label, url: repository.urlForRevisionRange(fromRevision, toRevision)};
     }
 
     static fetchLatestCommitForPlatform(repository, platform)

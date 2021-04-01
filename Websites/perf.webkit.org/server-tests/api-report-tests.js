@@ -77,6 +77,29 @@ describe("/api/report", function () {
         };
     }
 
+    function reportWithRevisionIdentifierCommit()
+    {
+        return {
+            "buildTag": "123",
+            "buildTime": "2013-02-28T10:12:03.388304",
+            "builderName": "someBuilder",
+            "workerName": "someWorker",
+            "builderPassword": "somePassword",
+            "platform": "Mountain Lion",
+            "tests": {},
+            "revisions": {
+                "macOS": {
+                    "revision": "10.8.2 12C60"
+                },
+                "WebKit": {
+                    "revision": "141977",
+                    "revisionIdentifier": "127231@main",
+                    "timestamp": "2013-02-06T08:55:20.9Z"
+                }
+            }
+        };
+    }
+
     function emptyWorkerReport()
     {
         return {
@@ -349,6 +372,37 @@ describe("/api/report", function () {
             assert.strictEqual(repositoryNameToRevisionRow['WebKit']['time'].toString(),
                 new Date('2013-02-06 08:55:20.9').toString());
         });
+    });
+
+    it("should add revision label", async () => {
+        await addBuilderForReport(reportWithRevisionIdentifierCommit());
+        await TestServer.remoteAPI().postJSON('/api/report/', [reportWithRevisionIdentifierCommit()]);
+        const db = TestServer.database();
+        const repositories = await db.selectAll('repositories');
+        const commits =  await db.selectAll('commits');
+        const buildCommitsRelations = await  db.selectAll('build_commits', 'build_commit');
+        assert.strictEqual(repositories.length, 2);
+        assert.deepStrictEqual(repositories.map((row) => row['name']).sort(), ['WebKit', 'macOS']);
+
+        assert.strictEqual(commits.length, 2);
+        assert.strictEqual(buildCommitsRelations.length, 2);
+        assert.strictEqual(buildCommitsRelations[0]['build_commit'], commits[0]['id']);
+        assert.strictEqual(buildCommitsRelations[1]['build_commit'], commits[1]['id']);
+        assert.strictEqual(buildCommitsRelations[0]['commit_build'], buildCommitsRelations[1]['commit_build']);
+
+        let repositoryIdToName = {};
+        for (const repository of repositories)
+            repositoryIdToName[repository['id']] = repository['name'];
+
+        let repositoryNameToRevisionRow = {};
+        for (const commit of commits)
+            repositoryNameToRevisionRow[repositoryIdToName[commit['repository']]] = commit;
+
+        assert.strictEqual(repositoryNameToRevisionRow['macOS']['revision'], '10.8.2 12C60');
+        assert.strictEqual(repositoryNameToRevisionRow['WebKit']['revision'], '141977');
+        assert.strictEqual(repositoryNameToRevisionRow['WebKit']['revision_identifier'], '127231@main');
+        assert.strictEqual(repositoryNameToRevisionRow['WebKit']['time'].toString(),
+            new Date('2013-02-06 08:55:20.9').toString());
     });
 
     it("should not create a duplicate build for the same build number if build times are close", () => {

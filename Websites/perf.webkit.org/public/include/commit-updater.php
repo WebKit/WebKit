@@ -30,7 +30,6 @@ class CommitUpdater {
     private function update_commit(&$update, $owner_commit_id, $owner_repository_id, $should_insert)
     {
         $commit_data = &$this->resolve_fields_from_database($update, $owner_repository_id, $should_insert);
-
         $commit_select_query = array('repository' => $commit_data['repository'], 'revision' => $commit_data['revision']);
         if ($should_insert) {
             $commit_id = $this->db->update_or_insert_row('commits', 'commit', $commit_select_query, $commit_data);
@@ -74,6 +73,7 @@ class CommitUpdater {
     private function &construct_update_list(&$commit_info_list, $should_insert)
     {
         $update_list = array();
+        $commit_revision_identifiers = array();
 
         foreach ($commit_info_list as &$commit_info) {
             self::validate_commits($commit_info);
@@ -81,6 +81,11 @@ class CommitUpdater {
             $has_update = count($commit_data) > 1;
 
             $update = array('commit' => &$commit_data, 'repository' => &$commit_info['repository']);
+            if (array_key_exists('revisionIdentifier', $commit_info)) {
+                if (array_key_exists($commit_info['revisionIdentifier'], $commit_revision_identifiers))
+                    $this->exit_with_error('DuplicatedRevisionIdentifier', array('commit' => $commit_info));
+                $commit_revision_identifiers[$commit_info['revisionIdentifier']] = true;
+            }
             if (array_key_exists('previousCommit', $commit_info)) {
                 $has_update = true;
                 $update['previous_commit'] = &$commit_info['previousCommit'];
@@ -104,6 +109,7 @@ class CommitUpdater {
 
             $owned_commit_update_list = array();
             foreach($commit_info['ownedCommits'] as $owned_repository_name => &$owned_commit_info) {
+                self::validate_commits($owned_commit_info, true);
                 $owned_commit = &self::construct_commit_data($owned_commit_info, $owned_repository_name, $should_insert);
                 $owned_commit_update = array('commit' => &$owned_commit, 'repository' => $owned_repository_name);
 
@@ -143,15 +149,18 @@ class CommitUpdater {
             $commit_data['time'] = $commit_info['time'];
         }
 
+        if (array_key_exists('revisionIdentifier', $commit_info))
+            $commit_data['revision_identifier'] = $commit_info['revisionIdentifier'];
+
         if ($should_insert)
             $commit_data['reported'] = true;
 
         return $commit_data;
     }
 
-    private static function validate_commits(&$commit_info)
+    private static function validate_commits(&$commit_info, $is_own_commit = false)
     {
-        if (!array_key_exists('repository', $commit_info))
+        if (!array_key_exists('repository', $commit_info) && !$is_own_commit)
             exit_with_error('MissingRepositoryName', array('commit' => $commit_info));
         if (!array_key_exists('revision', $commit_info))
             exit_with_error('MissingRevision', array('commit' => $commit_info));
@@ -160,6 +169,8 @@ class CommitUpdater {
             exit_with_error('InvalidAuthorFormat', array('commit' => $commit_info));
         if (array_key_exists('previousCommit', $commit_info))
             require_format('Revision', $commit_info['previousCommit'], '/^[A-Za-z0-9 \.]+$/');
+        if (array_key_exists('revisionIdentifier', $commit_info))
+            require_format('RevisionIdentifier', $commit_info['revisionIdentifier'], '/^\d+@[\w\.\-]+$/');
     }
 
     private function resolve_repository($repository_name, $owner_repository_id, $should_insert)
