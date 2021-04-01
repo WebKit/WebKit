@@ -5,11 +5,13 @@
 <script src="../../resources/js-test.js"></script>
 </head>
 <body>
+<div id="target" style="display: none"></div>
 <script>
 description("Tests that overscroll-behavior is not exposed when the feature is disabled");
 
 shouldBeFalse("'overscrollBehavior' in document.documentElement.style");
 shouldBeFalse("'overscroll-behavior' in getComputedStyle(document.documentElement)");
+shouldBeTrue("getComputedStyle(document.getElementById('target')).getPropertyValue('overscroll-behavior') == ''");
 shouldBeFalse("CSS.supports('overscroll-behavior: contain')");
 shouldBeFalse("CSS.supports('overscroll-behavior: inherit')");
 shouldBeFalse("CSS.supports('overscroll-behavior', 'inherit')");

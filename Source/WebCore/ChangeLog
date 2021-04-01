@@ -1,3 +1,20 @@
+2021-04-01  Rob Buis  <rbuis@igalia.com>
+
+        Use Element for checking Settings in CSSComputedStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=223598
+
+        Reviewed by Darin Adler.
+
+        Use Element for checking Settings in CSSComputedStyleDeclaration.
+        Right now renderer is used but this will not work for non-rendered elements.
+
+        Tests: fast/css/rotate-invalidate-if-disabled.html
+               fast/css/scale-invalidate-if-disabled.html
+               fast/css/translate-invalidate-if-disabled.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+
 2021-04-01  Youenn Fablet  <youenn@apple.com>
 
         Add some logging to RTCRtpSender and RTCRtpReceiver

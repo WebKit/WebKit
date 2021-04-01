@@ -3136,15 +3136,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyOverflowY:
             return cssValuePool.createValue(style.overflowY());
         case CSSPropertyOverscrollBehavior:
-            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+            if (!m_element->document().settings().overscrollBehaviorEnabled())
                 return nullptr;
             return cssValuePool.createValue(std::max(style.overscrollBehaviorX(), style.overscrollBehaviorY()));
         case CSSPropertyOverscrollBehaviorX:
-            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+            if (!m_element->document().settings().overscrollBehaviorEnabled())
                 return nullptr;
             return cssValuePool.createValue(style.overscrollBehaviorX());
         case CSSPropertyOverscrollBehaviorY:
-            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+            if (!m_element->document().settings().overscrollBehaviorEnabled())
                 return nullptr;
             return cssValuePool.createValue(style.overscrollBehaviorY());
         case CSSPropertyPaddingTop:
@@ -3455,7 +3455,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitAppearance:
             return cssValuePool.createValue(style.appearance());
         case CSSPropertyAspectRatio:
-            if (renderer && !renderer->settings().aspectRatioEnabled())
+            if (!m_element->document().settings().aspectRatioEnabled())
                 return nullptr;
             switch (style.aspectRatioType()) {
             case AspectRatioType::Auto:
@@ -3477,7 +3477,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             ASSERT_NOT_REACHED();
             return nullptr;
         case CSSPropertyContain: {
-            if (renderer && !renderer->settings().cssContainmentEnabled())
+            if (!m_element->document().settings().cssContainmentEnabled())
                 return nullptr;
             auto containment = style.contain();
             if (!containment)
@@ -3642,15 +3642,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             ASSERT_NOT_REACHED();
             return nullptr;
         case CSSPropertyTranslate:
-            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
             return computedTranslate(renderer, style);
         case CSSPropertyScale:
-            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
             return computedScale(renderer, style);
         case CSSPropertyRotate:
-            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
             return computedRotate(renderer, style);
         case CSSPropertyTransitionDelay:

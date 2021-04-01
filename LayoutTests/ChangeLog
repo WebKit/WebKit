@@ -1,3 +1,28 @@
+2021-04-01  Rob Buis  <rbuis@igalia.com>
+
+        Use Element for checking Settings in CSSComputedStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=223598
+
+        Reviewed by Darin Adler.
+
+        Adapt tests to verify that non-rendered elements do not expose
+        contain/aspect-ratio when these features are disabled.
+        Add tests for rotate, scale and translate as well.
+
+        * fast/css/aspect-ratio-invalidate-if-disabled-expected.txt:
+        * fast/css/aspect-ratio-invalidate-if-disabled.html:
+        * fast/css/contain-invalidate-if-disabled-expected.txt:
+        * fast/css/contain-invalidate-if-disabled.html:
+        * fast/css/overscroll-behavior-invalidate-if-disabled-expected.txt:
+        * fast/css/overscroll-behavior-invalidate-if-disabled.html:
+        * fast/css/rotate-invalidate-if-disabled-expected.txt: Added.
+        * fast/css/rotate-invalidate-if-disabled.html: Added.
+        * fast/css/scale-invalidate-if-disabled-expected.txt: Added.
+        * fast/css/scale-invalidate-if-disabled.html: Added.
+        * fast/css/translate-invalidate-if-disabled-expected.txt: Added.
+        * fast/css/translate-invalidate-if-disabled.html: Added.
+        * platform/win/TestExpectations:
+
 2021-03-31  Robert Jenner  <jenner@apple.com>
 
         [ Debug wk2 ] ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData)

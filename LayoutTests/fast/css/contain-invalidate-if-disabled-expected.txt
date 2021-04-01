@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS 'contain' in document.documentElement.style is false
 PASS 'contain' in getComputedStyle(document.documentElement) is false
+PASS getComputedStyle(document.getElementById('target')).getPropertyValue('contain') == '' is true
 PASS CSS.supports('contain: paint') is false
 PASS CSS.supports('contain: inherit') is false
 PASS successfullyParsed is true
