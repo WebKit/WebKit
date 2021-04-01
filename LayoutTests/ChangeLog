@@ -1,3 +1,12 @@
+2021-03-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (Metal ANGLE): [Catalina] 6 consistent WebGL failures / timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=224016
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Mark tests as failing / skipped.
+
 2021-03-31  Venky Dass  <yaranamavenkataramana@apple.com>
 
         Null pointer access crash in WebCore::makeBoundaryPoint(..)

@@ -2280,6 +2280,13 @@ fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
 # This fails on Catalina, but not Big Sur.
 [ Catalina Mojave ] inspector/canvas/updateShader-webgl.html [ Skip ]
 
+webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Failure ]
+webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance2/buffers/uniform-buffers.html [ Failure ]
+webkit.org/b/224016 [ Catalina ] webgl/1.0.3/conformance/ogles/GL/all/all_001_to_004.html [ Skip ]
+webkit.org/b/224016 [ Catalina ] webgl/1.0.3/conformance/ogles/GL/any/any_001_to_004.html [ Skip ]
+webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance/ogles/GL/all/all_001_to_004.html [ Skip ]
+webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance/ogles/GL/any/any_001_to_004.html [ Skip ]
+
 webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeout ]
 
 webkit.org/b/222748 [ Debug ] http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html [ Pass Failure ]
