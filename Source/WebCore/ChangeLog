@@ -1,3 +1,16 @@
+2021-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception check validation below convertVariadicArguments().
+        https://bugs.webkit.org/show_bug.cgi?id=224027
+        rdar://68912995
+
+        Reviewed by Saam Barati.
+
+        Test: js/dom/missing-exception-check-in-convertVariadicArguments.html
+
+        * bindings/js/JSDOMConvertVariadic.h:
+        (WebCore::convertVariadicArguments):
+
 2021-03-31  Venky Dass  <yaranamavenkataramana@apple.com>
 
         Null pointer access crash in WebCore::makeBoundaryPoint(..)

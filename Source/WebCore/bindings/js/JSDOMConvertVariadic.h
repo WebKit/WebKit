@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,9 @@ struct VariadicConverter {
 
 template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> convertVariadicArguments(JSC::JSGlobalObject& lexicalGlobalObject, JSC::CallFrame& callFrame, size_t startIndex)
 {
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     size_t length = callFrame.argumentCount();
     if (startIndex >= length)
         return { };
@@ -57,6 +60,7 @@ template<typename IDLType> Vector<typename VariadicConverter<IDLType>::Item> con
 
     for (size_t i = startIndex; i < length; ++i) {
         auto value = VariadicConverter<IDLType>::convert(lexicalGlobalObject, callFrame.uncheckedArgument(i));
+        EXCEPTION_ASSERT_UNUSED(scope, !!scope.exception() == !value);
         if (!value)
             return { };
         result.uncheckedAppend(WTFMove(*value));

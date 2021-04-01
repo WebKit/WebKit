@@ -1,3 +1,14 @@
+2021-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception check validation below convertVariadicArguments().
+        https://bugs.webkit.org/show_bug.cgi?id=224027
+        rdar://68912995
+
+        Reviewed by Saam Barati.
+
+        * js/dom/missing-exception-check-in-convertVariadicArguments-expected.txt: Added.
+        * js/dom/missing-exception-check-in-convertVariadicArguments.html: Added.
+
 2021-03-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION (Metal ANGLE): [Catalina] 6 consistent WebGL failures / timeouts
