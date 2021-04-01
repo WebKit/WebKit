@@ -42,7 +42,7 @@ enum class StopReplayReason : uint8_t {
     ReplayedAllItems,
     MissingCachedResource,
     ChangeDestinationImageBuffer,
-    InvalidItem,
+    InvalidItemOrExtent,
     OutOfMemory
 };
 

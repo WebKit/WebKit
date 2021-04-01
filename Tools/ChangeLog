@@ -1,3 +1,16 @@
+2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        List of extents should be bounds-checked when iterating display list items
+        https://bugs.webkit.org/show_bug.cgi?id=224019
+        <rdar://problem/71851600>
+
+        Reviewed by Tim Horton.
+
+        Rename `InvalidItem` to `InvalidItemOrExtent`.
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-03-31  BJ Burg  <bburg@apple.com>
 
         Style checker should warn about use of future OS versions in WK_API_AVAILABLE

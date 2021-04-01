@@ -153,7 +153,7 @@ std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Rep
 
     if (item.is<BeginClipToDrawingCommands>()) {
         if (m_maskImageBuffer)
-            return { StopReplayReason::InvalidItem, WTF::nullopt };
+            return { StopReplayReason::InvalidItemOrExtent, WTF::nullopt };
         auto& clipItem = item.get<BeginClipToDrawingCommands>();
         m_maskImageBuffer = ImageBuffer::createCompatibleBuffer(clipItem.destination().size(), clipItem.colorSpace(), m_context);
         if (!m_maskImageBuffer)
@@ -163,7 +163,7 @@ std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Rep
 
     if (item.is<EndClipToDrawingCommands>()) {
         if (!m_maskImageBuffer)
-            return { StopReplayReason::InvalidItem, WTF::nullopt };
+            return { StopReplayReason::InvalidItemOrExtent, WTF::nullopt };
         auto& clipItem = item.get<EndClipToDrawingCommands>();
         m_context.clipToImageBuffer(*m_maskImageBuffer, clipItem.destination());
         m_maskImageBuffer = nullptr;
@@ -195,7 +195,7 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
         }
 
         if (!item) {
-            result.reasonForStopping = StopReplayReason::InvalidItem;
+            result.reasonForStopping = StopReplayReason::InvalidItemOrExtent;
             break;
         }
 

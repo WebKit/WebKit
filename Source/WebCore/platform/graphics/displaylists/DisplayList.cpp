@@ -182,7 +182,7 @@ void DisplayList::forEachItemBuffer(Function<void(const ItemBufferHandle&)>&& ma
 
 void DisplayList::setTracksDrawingItemExtents(bool value)
 {
-    RELEASE_ASSERT(!m_items || m_items->isEmpty());
+    RELEASE_ASSERT(isEmpty());
     m_tracksDrawingItemExtents = value;
 }
 
@@ -332,6 +332,25 @@ bool DisplayList::iterator::atEnd() const
     return m_cursor == endCursor;
 }
 
+DisplayList::iterator::ExtentUpdateResult DisplayList::iterator::updateCurrentDrawingItemExtent(ItemType itemType)
+{
+    auto& extents = m_displayList.m_drawingItemExtents;
+    if (extents.isEmpty())
+        return ExtentUpdateResult::Success;
+
+    if (!isDrawingItem(itemType)) {
+        m_currentExtent = WTF::nullopt;
+        return ExtentUpdateResult::Success;
+    }
+
+    if (m_drawingItemIndex >= extents.size())
+        return ExtentUpdateResult::Failure;
+
+    m_currentExtent = extents[m_drawingItemIndex];
+    m_drawingItemIndex++;
+    return ExtentUpdateResult::Success;
+}
+
 void DisplayList::iterator::updateCurrentItem()
 {
     clearCurrentItem();
@@ -341,11 +360,11 @@ void DisplayList::iterator::updateCurrentItem()
 
     auto& items = *itemBuffer();
     auto itemType = static_cast<ItemType>(m_cursor[0]);
-    if (isDrawingItem(itemType) && !m_displayList.m_drawingItemExtents.isEmpty()) {
-        m_currentExtent = m_displayList.m_drawingItemExtents[m_drawingItemIndex];
-        m_drawingItemIndex++;
-    } else
-        m_currentExtent = WTF::nullopt;
+
+    if (updateCurrentDrawingItemExtent(itemType) == ExtentUpdateResult::Failure) {
+        m_isValid = false;
+        return;
+    }
 
     auto* client = items.m_readingClient;
     auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);

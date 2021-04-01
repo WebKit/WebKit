@@ -132,7 +132,7 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
     EXPECT_GT(result.numberOfBytesRead, 0U);
     EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
     EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
-    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItem);
+    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
 }
 
 TEST(DisplayListTests, InlineItemValidationFailure)
@@ -153,7 +153,7 @@ TEST(DisplayListTests, InlineItemValidationFailure)
     EXPECT_EQ(result.numberOfBytesRead, 0U);
     EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
     EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
-    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItem);
+    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
 }
 
 } // namespace TestWebKitAPI

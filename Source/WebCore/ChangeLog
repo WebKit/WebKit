@@ -1,3 +1,31 @@
+2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        List of extents should be bounds-checked when iterating display list items
+        https://bugs.webkit.org/show_bug.cgi?id=224019
+        <rdar://problem/71851600>
+
+        Reviewed by Tim Horton.
+
+        Add a bounds check before attempting to access the vector of display list drawing item extents. In the case
+        where we would've otherwise attempted to access an out-of-bounds item, we instead flag ourselves as invalid and
+        stop early with `StopReplayReason::InvalidItemOrExtent`.
+
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::setTracksDrawingItemExtents):
+
+        Drive-by fix: use `isEmpty()` in the release assertion instead of duplicating code.
+
+        (WebCore::DisplayList::DisplayList::iterator::updateCurrentDrawingItemExtent):
+        (WebCore::DisplayList::DisplayList::iterator::updateCurrentItem):
+        * platform/graphics/displaylists/DisplayList.h:
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::Replayer::applyItem):
+        (WebCore::DisplayList::Replayer::replay):
+        * platform/graphics/displaylists/DisplayListReplayer.h:
+
+        Rename the `StopReplayReason::InvalidItem` to `StopReplayReason::InvalidItemOrExtent`, to reflect that we may
+        also stop replay when encountering invalid item extents.
+
 2021-03-31  Tadeu Zagallo  <tzagallo@apple.com>
 
         Missing scope release in JSDOMBuiltinConstructorBase

@@ -140,6 +140,10 @@ public:
         WEBCORE_EXPORT void clearCurrentItem();
         WEBCORE_EXPORT void updateCurrentItem();
         WEBCORE_EXPORT void advance();
+
+        enum class ExtentUpdateResult : bool { Failure, Success };
+        ExtentUpdateResult updateCurrentDrawingItemExtent(ItemType);
+
         bool atEnd() const;
 
         ItemBuffer* itemBuffer() const { return m_displayList.itemBufferIfExists(); }

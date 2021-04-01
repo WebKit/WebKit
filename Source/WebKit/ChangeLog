@@ -1,3 +1,16 @@
+2021-03-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        List of extents should be bounds-checked when iterating display list items
+        https://bugs.webkit.org/show_bug.cgi?id=224019
+        <rdar://problem/71851600>
+
+        Reviewed by Tim Horton.
+
+        Rename `InvalidItem` to `InvalidItemOrExtent`.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+
 2021-03-31  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: The NetworkProcess fails to relaunch after it crashes
