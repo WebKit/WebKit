@@ -1371,3 +1371,8 @@ webkit.org/b/223750 [ Debug ] security/contentSecurityPolicy/plugins-types-allow
 webkit.org/b/223900 [ Debug ] compositing/video/video-update-rendering.html [ Pass Failure ]
 
 webkit.org/b/223969 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Pass Failure ]
+<<<<<<< Updated upstream
+=======
+
+webkit.org/b/219214 inspector/canvas/console-record-2d.html [ Pass Timeout ]
+>>>>>>> Stashed changes
