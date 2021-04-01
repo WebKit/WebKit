@@ -30,6 +30,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 
 TEST(WebKit, FontdSandboxCheck)
@@ -51,6 +52,31 @@ TEST(WebKit, FontdSandboxCheck)
     [webView _switchFromStaticFontRegistryToUserFontRegistry];
 
     ASSERT_TRUE(sandboxAccess());
+}
+
+TEST(WebKit, UserInstalledFontsWork)
+{
+    NSURL *fontURL = [[NSBundle mainBundle] URLForResource:@"Ahem" withExtension:@"ttf" subdirectory:@"TestWebKitAPI.resources"];
+    CFErrorRef error = nil;
+    auto registrationSucceeded = CTFontManagerRegisterFontsForURL(static_cast<CFURLRef>(fontURL), kCTFontManagerScopeUser, &error);
+
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    WKContextSetUsesSingleWebProcess(context.get(), true);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = (WKProcessPool *)context.get();
+    [configuration.get().processPool _warmInitialProcess];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 500) configuration:configuration.get() addToWindow:YES]);
+    [webView synchronouslyLoadTestPageNamed:@"UserInstalledAhem"];
+    auto result = [webView stringByEvaluatingJavaScript:@"document.getElementById('target').offsetWidth"].intValue;
+    ASSERT_EQ(result, 12 * 48);
+
+    if (registrationSucceeded) {
+        error = nil;
+        CTFontManagerUnregisterFontsForURL(static_cast<CFURLRef>(fontURL), kCTFontManagerScopeUser, &error);
+        ASSERT_FALSE(error);
+    }
 }
 
 #endif // WK_HAVE_C_SPI

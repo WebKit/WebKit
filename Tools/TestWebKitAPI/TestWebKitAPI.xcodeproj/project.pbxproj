@@ -108,6 +108,7 @@
 		1C2B81831C891F0900A5529F /* CancelFontSubresourcePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */; };
 		1C2B81861C89259D00A5529F /* webfont.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1C2B81841C8924A200A5529F /* webfont.html */; };
 		1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1C2B81851C89252300A5529F /* Ahem.ttf */; };
+		1C51534C261596D700FBC4FE /* UserInstalledAhem.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1C51534B261596BD00FBC4FE /* UserInstalledAhem.html */; };
 		1C734B5320788C4800F430EA /* SystemColors.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C734B5220788C4800F430EA /* SystemColors.mm */; };
 		1C79201C234BDD9B001EAF23 /* CopyRTF.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C79201B234BDD9B001EAF23 /* CopyRTF.mm */; };
 		1C7FEB20207C0F2E00D23278 /* BackgroundColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C7FEB1F207C0F2D00D23278 /* BackgroundColor.mm */; };
@@ -1688,6 +1689,7 @@
 				4952BE5F257816F800B0AEF1 /* try-text-select-with-disabled-text-interaction.html in Copy Resources */,
 				F4451C761EB8FD890020C5DA /* two-paragraph-contenteditable.html in Copy Resources */,
 				1D67BFDD2433EE66006B5047 /* two-videos.html in Copy Resources */,
+				1C51534C261596D700FBC4FE /* UserInstalledAhem.html in Copy Resources */,
 				C540F784152E5A9A00A40C8C /* verboseMarkup.html in Copy Resources */,
 				CD57779D211CE91F001B371E /* video-with-audio-and-web-audio.html in Copy Resources */,
 				CDC8E4941BC6F10800594FEC /* video-with-audio.html in Copy Resources */,
@@ -1833,6 +1835,7 @@
 		1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CancelFontSubresourcePlugIn.mm; sourceTree = "<group>"; };
 		1C2B81841C8924A200A5529F /* webfont.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = webfont.html; sourceTree = "<group>"; };
 		1C2B81851C89252300A5529F /* Ahem.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ahem.ttf; sourceTree = "<group>"; };
+		1C51534B261596BD00FBC4FE /* UserInstalledAhem.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = UserInstalledAhem.html; sourceTree = "<group>"; };
 		1C734B5220788C4800F430EA /* SystemColors.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemColors.mm; sourceTree = "<group>"; };
 		1C79201B234BDD9B001EAF23 /* CopyRTF.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CopyRTF.mm; sourceTree = "<group>"; };
 		1C7FEB1F207C0F2D00D23278 /* BackgroundColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackgroundColor.mm; sourceTree = "<group>"; };
@@ -4538,6 +4541,7 @@
 				C95984F61E36BCD7002C0D45 /* test-without-audio-track.mp4 */,
 				524BBCA019E30C63002F1AF1 /* test.mp4 */,
 				7AE9E5081AE5AE8B00CF874B /* test.pdf */,
+				1C51534B261596BD00FBC4FE /* UserInstalledAhem.html */,
 				C9C9A91C21DED79400FDE96E /* video-with-play-button.html */,
 				07CD32F72065B72A0064A4BE /* video.html */,
 				1C2B81841C8924A200A5529F /* webfont.html */,

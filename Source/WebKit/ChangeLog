@@ -1,3 +1,24 @@
+2021-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] REGRESSION(r272999): User-installed fonts no longer work in Mail
+        https://bugs.webkit.org/show_bug.cgi?id=223985
+        <rdar://problem/75975210>
+
+        Reviewed by Per Arne Vollan.
+
+        The sandbox extension which allows user-installed fonts to work was part of the WebPage,
+        but XType may already have been initialized to use the static registry by the time the WebPage
+        has been created. Therefore, simply _having_ a sandbox extension isn't sufficient; instead,
+        WebPage's constructor needs to call CTFontManagerEnableAllUserFonts() to switch to using fontd
+        in addition to using the sandbox extension.
+
+        Test: WebKit.UserInstalledFontsWork
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+        (WebKit::WebPage::~WebPage):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-03-31  Jiewen Tan  <jiewen_tan@apple.com>
 
         Allow ASCWebKitSPISupport to be used on macOS
