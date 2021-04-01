@@ -45,8 +45,6 @@
 
 - (void)shrinkFootprintWhenIdle JSC_API_AVAILABLE(macos(10.14), ios(12.0));
 
-#if ENABLE(DFG_JIT)
-
 /*!
 @method
 @abstract Set the number of threads to be used by the DFG JIT compiler.
@@ -79,8 +77,6 @@
 @param shouldCrash Sets process-wide state that indicates whether VM creation should crash or not.
 */
 + (void)setCrashOnVMCreation:(BOOL)shouldCrash;
-
-#endif // ENABLE(DFG_JIT)
 
 @end
 
