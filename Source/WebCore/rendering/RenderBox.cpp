@@ -5117,22 +5117,17 @@ bool RenderBox::shouldComputeLogicalWidthFromAspectRatio() const
     if (shouldIgnoreAspectRatio())
         return false;
 
-    auto isResolvablePercentageHeight = [this] () {
+    auto isResolvablePercentageHeight = [&] {
         return style().logicalHeight().isPercentOrCalculated() && (isOutOfFlowPositioned() || percentageLogicalHeightIsResolvable());
     };
-    if (!hasOverridingLogicalHeight() && !shouldComputeLogicalWidthFromAspectRatioAndInsets() && !style().logicalHeight().isFixed() && !isResolvablePercentageHeight())
-        return false;
-
-    return true;
+    return hasOverridingLogicalHeight() || shouldComputeLogicalWidthFromAspectRatioAndInsets() || style().logicalHeight().isFixed() || isResolvablePercentageHeight();
 }
 
 bool RenderBox::shouldComputeLogicalWidthFromAspectRatioAndInsets() const
 {
     if (!isOutOfFlowPositioned())
         return false;
-    if (style().width().isAuto() && style().height().isAuto() && !style().logicalTop().isAuto() && !style().logicalBottom().isAuto() && (style().logicalLeft().isAuto() || style().logicalRight().isAuto()))
-        return true;
-    return false;
+    return style().width().isAuto() && style().height().isAuto() && !style().logicalTop().isAuto() && !style().logicalBottom().isAuto() && (style().logicalLeft().isAuto() || style().logicalRight().isAuto());
 }
 
 LayoutUnit RenderBox::computeLogicalWidthFromAspectRatio(RenderFragmentContainer* fragment) const

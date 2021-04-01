@@ -1,3 +1,19 @@
+2021-04-01  Zalan Bujtas  <zalan@apple.com>
+
+        Cleanup shouldComputeLogicalWidthFromAspectRatio and shouldComputeLogicalWidthFromAspectRatioAndInsets
+        https://bugs.webkit.org/show_bug.cgi?id=224044
+
+        Reviewed by Antti Koivisto.
+
+        Let's use "return foo()" (or "return !foo()") instead of
+        if (!foo())
+          return true;
+        return false;
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::shouldComputeLogicalWidthFromAspectRatio const):
+        (WebCore::RenderBox::shouldComputeLogicalWidthFromAspectRatioAndInsets const):
+
 2021-04-01  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] '-webkit-appearance: none' is not respected for searchfield decorations
