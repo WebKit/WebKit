@@ -146,6 +146,8 @@ public:
         RetainPtr<NSData> createNSData() const;
 #endif
 
+        bool containsMappedFileData() const;
+
     private:
         DataSegment(Vector<char>&& data)
             : m_immutableData(WTFMove(data)) { }
@@ -185,6 +187,7 @@ public:
     using DataSegmentVector = Vector<DataSegmentVectorEntry, 1>;
     DataSegmentVector::const_iterator begin() const { return m_segments.begin(); }
     DataSegmentVector::const_iterator end() const { return m_segments.end(); }
+    bool hasOneSegment() const;
     
     // begin and end take O(1) time, this takes O(log(N)) time.
     SharedBufferDataView getSomeData(size_t position) const;

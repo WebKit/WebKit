@@ -216,6 +216,12 @@ Ref<SharedBuffer> SharedBuffer::copy() const
     return clone;
 }
 
+bool SharedBuffer::hasOneSegment() const
+{
+    auto it = begin();
+    return it != end() && ++it == end();
+}
+
 #if ASSERT_ENABLED
 bool SharedBuffer::internallyConsistent() const
 {
@@ -245,6 +251,11 @@ const char* SharedBuffer::DataSegment::data() const
         [](const FileSystem::MappedFileData& data) { return reinterpret_cast<const char*>(data.data()); }
     );
     return WTF::visit(visitor, m_immutableData);
+}
+
+bool SharedBuffer::DataSegment::containsMappedFileData() const
+{
+    return WTF::holds_alternative<FileSystem::MappedFileData>(m_immutableData);
 }
 
 #if !USE(CF)

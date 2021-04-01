@@ -155,6 +155,22 @@ void ServiceWorkerGlobalScope::setScriptResource(const URL& url, ServiceWorkerCo
     m_contextData.scriptResourceMap.set(url, WTFMove(script));
 }
 
+void ServiceWorkerGlobalScope::didSaveScriptsToDisk(RefPtr<SharedBuffer>&& script, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts)
+{
+    // These scripts should be identical to the ones we have. However, these are mmap'd so using them helps reduce dirty memory usage.
+    if (script) {
+        ASSERT(m_contextData.script.get() == *script);
+        m_contextData.script = script.releaseNonNull();
+    }
+    for (auto& pair : importedScripts) {
+        auto it = m_contextData.scriptResourceMap.find(pair.key);
+        if (it == m_contextData.scriptResourceMap.end())
+            continue;
+        ASSERT(*it->value.script == *pair.value); // Do a memcmp to make sure the scripts are identical.
+        it->value.script = WTFMove(pair.value);
+    }
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

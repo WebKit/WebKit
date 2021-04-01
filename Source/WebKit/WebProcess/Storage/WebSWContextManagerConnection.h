@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "MessageReceiver.h"
+#include "ShareableResource.h"
 #include "UserContentControllerIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebSWContextManagerConnectionMessagesReplies.h"
@@ -90,6 +91,9 @@ private:
     void fireInstallEvent(WebCore::ServiceWorkerIdentifier);
     void fireActivateEvent(WebCore::ServiceWorkerIdentifier);
     void terminateWorker(WebCore::ServiceWorkerIdentifier);
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, const ShareableResource::Handle& script, const HashMap<URL, ShareableResource::Handle>& importedScripts);
+#endif
     void findClientByIdentifierCompleted(uint64_t requestIdentifier, Optional<WebCore::ServiceWorkerClientData>&&, bool hasSecurityError);
     void matchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData>&&);
     void setUserAgent(String&& userAgent);

@@ -34,9 +34,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-ShareableResource::Handle::Handle()
-{
-}
+ShareableResource::Handle::Handle() = default;
 
 void ShareableResource::Handle::encode(IPC::Encoder& encoder) const
 {

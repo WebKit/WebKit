@@ -2828,6 +2828,143 @@ bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, Se
     }
     return true;
 }
+
+static void encodeServiceWorkerContextDataScript(Encoder& encoder, SharedBuffer& script)
+{
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    auto handle = tryConvertToShareableResourceHandle(script);
+    bool isShareableResourceHandle = !handle.isNull();
+    encoder << isShareableResourceHandle;
+    if (isShareableResourceHandle) {
+        encoder << handle;
+        return;
+    }
+#endif
+    encoder << makeRef(script);
+}
+
+static Optional<Ref<SharedBuffer>> decodeServiceWorkerContextDataScript(Decoder& decoder)
+{
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    Optional<bool> isShareableResourceHandle;
+    decoder >> isShareableResourceHandle;
+    if (!isShareableResourceHandle)
+        return WTF::nullopt;
+    if (*isShareableResourceHandle) {
+        ShareableResource::Handle handle;
+        if (!decoder.decode(handle) || handle.isNull())
+            return WTF::nullopt;
+        auto buffer = handle.tryWrapInSharedBuffer();
+        if (!buffer)
+            return WTF::nullopt;
+        return buffer.releaseNonNull();
+    }
+#endif
+    Optional<Ref<SharedBuffer>> script;
+    decoder >> script;
+    return script;
+}
+
+void ArgumentCoder<ServiceWorkerContextData::ImportedScript>::encode(Encoder& encoder, const ServiceWorkerContextData::ImportedScript& importedScript)
+{
+    encodeServiceWorkerContextDataScript(encoder, *importedScript.script);
+    encoder << importedScript.responseURL << importedScript.mimeType;
+}
+
+Optional<ServiceWorkerContextData::ImportedScript> ArgumentCoder<ServiceWorkerContextData::ImportedScript>::decode(Decoder& decoder)
+{
+    auto script = decodeServiceWorkerContextDataScript(decoder);
+    if (!script)
+        return WTF::nullopt;
+
+    Optional<URL> responseURL;
+    decoder >> responseURL;
+    if (!responseURL)
+        return WTF::nullopt;
+
+    Optional<String> mimeType;
+    decoder >> mimeType;
+    if (!mimeType)
+        return WTF::nullopt;
+
+    return {{
+        WTFMove(*script),
+        WTFMove(*responseURL),
+        WTFMove(*mimeType)
+    }};
+}
+
+void ArgumentCoder<ServiceWorkerContextData>::encode(Encoder& encoder, const ServiceWorkerContextData& data)
+{
+    encodeServiceWorkerContextDataScript(encoder, data.script);
+    encoder << data.jobDataIdentifier << data.registration << data.serviceWorkerIdentifier << data.contentSecurityPolicy << data.referrerPolicy
+        << data.scriptURL << data.workerType << data.loadedFromDisk << data.scriptResourceMap << data.certificateInfo;
+}
+
+Optional<ServiceWorkerContextData> ArgumentCoder<ServiceWorkerContextData>::decode(Decoder& decoder)
+{
+    auto script = decodeServiceWorkerContextDataScript(decoder);
+    if (!script)
+        return WTF::nullopt;
+
+    Optional<Optional<ServiceWorkerJobDataIdentifier>> jobDataIdentifier;
+    decoder >> jobDataIdentifier;
+    if (!jobDataIdentifier)
+        return WTF::nullopt;
+
+    Optional<ServiceWorkerRegistrationData> registration;
+    decoder >> registration;
+    if (!registration)
+        return WTF::nullopt;
+
+    auto serviceWorkerIdentifier = ServiceWorkerIdentifier::decode(decoder);
+    if (!serviceWorkerIdentifier)
+        return WTF::nullopt;
+
+    ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
+    if (!decoder.decode(contentSecurityPolicy))
+        return WTF::nullopt;
+
+    String referrerPolicy;
+    if (!decoder.decode(referrerPolicy))
+        return WTF::nullopt;
+
+    URL scriptURL;
+    if (!decoder.decode(scriptURL))
+        return WTF::nullopt;
+
+    WorkerType workerType;
+    if (!decoder.decode(workerType))
+        return WTF::nullopt;
+
+    bool loadedFromDisk;
+    if (!decoder.decode(loadedFromDisk))
+        return WTF::nullopt;
+
+    HashMap<URL, ServiceWorkerContextData::ImportedScript> scriptResourceMap;
+    if (!decoder.decode(scriptResourceMap))
+        return WTF::nullopt;
+
+    Optional<CertificateInfo> certificateInfo;
+    decoder >> certificateInfo;
+    if (!certificateInfo)
+        return WTF::nullopt;
+
+    return {{
+        WTFMove(*jobDataIdentifier),
+        WTFMove(*registration),
+        WTFMove(*serviceWorkerIdentifier),
+        WTFMove(*script),
+        WTFMove(*certificateInfo),
+        WTFMove(contentSecurityPolicy),
+        WTFMove(referrerPolicy),
+        WTFMove(scriptURL),
+        workerType,
+        loadedFromDisk,
+        WTFMove(scriptResourceMap)
+    }};
+}
+
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -3065,6 +3202,30 @@ Optional<Ref<SharedBuffer>> ArgumentCoder<Ref<WebCore::SharedBuffer>>::decode(De
 
     return buffer.releaseNonNull();
 }
+
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+ShareableResource::Handle tryConvertToShareableResourceHandle(SharedBuffer& buffer)
+{
+    if (!buffer.hasOneSegment())
+        return ShareableResource::Handle { };
+
+    auto& segment = buffer.begin()->segment;
+    if (!segment->containsMappedFileData())
+        return ShareableResource::Handle { };
+
+    auto sharedMemory = SharedMemory::wrapMap(const_cast<char*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return ShareableResource::Handle { };
+
+    auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, segment->size());
+    if (!shareableResource)
+        return ShareableResource::Handle { };
+
+    ShareableResource::Handle shareableResourceHandle;
+    shareableResource->createHandle(shareableResourceHandle);
+    return shareableResourceHandle;
+}
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::Message& message)

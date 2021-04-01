@@ -240,7 +240,11 @@ void SWServerWorker::setScriptResource(URL&& url, ServiceWorkerContextData::Impo
 
 void SWServerWorker::didSaveScriptsToDisk(Ref<SharedBuffer>&& mainScript, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts)
 {
-    // The scripts were saved to disk, replace our scripts with the mmap'd version to save memory.
+    // Send mmap'd version of the scripts to the ServiceWorker process so we can save dirty memory.
+    if (auto* contextConnection = this->contextConnection())
+        contextConnection->didSaveScriptsToDisk(identifier(), mainScript, importedScripts);
+
+    // The scripts were saved to disk, replace our scripts with the mmap'd version to save dirty memory.
     ASSERT(mainScript.get() == m_script.get()); // Do a memcmp to make sure the scripts are identical.
     m_script = WTFMove(mainScript);
     for (auto& pair : importedScripts) {

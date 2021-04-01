@@ -1,3 +1,44 @@
+2021-04-01  Chris Dumez  <cdumez@apple.com>
+
+        Have the ServiceWorker process hold on to a file mapped version of the service worker scripts to save dirty memory
+        https://bugs.webkit.org/show_bug.cgi?id=224015
+        <rdar://75637679>
+
+        Reviewed by Geoffrey Garen.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::didSaveScriptsToDisk):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::didSaveScriptsToDisk):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        When the NetworkProcess is done saving the service worker scripts to disk and it gets
+        a file mapped version, it now sends them to the ServiceWorker process as ShareableResource
+        handles via IPC. This allows the ServiceWorker process to replace its heap-allocated
+        versions of the script and save on dirty memory use (in the cold case).
+
+        * Shared/ShareableResource.h:
+        Fix bug where 2 of ShareableResource data members were not properly initialized by the default
+        constructor.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::encodeServiceWorkerContextDataScript):
+        (IPC::decodeServiceWorkerContextDataScript):
+        (IPC::ArgumentCoder<ServiceWorkerContextData::ImportedScript>::encode):
+        (IPC::ArgumentCoder<ServiceWorkerContextData::ImportedScript>::decode):
+        (IPC::ArgumentCoder<ServiceWorkerContextData>::encode):
+        (IPC::ArgumentCoder<ServiceWorkerContextData>::decode):
+        (IPC::tryConvertToShareableResourceHandle):
+        * Shared/WebCoreArgumentCoders.h:
+        Moved IPC encoders / decoders for ServiceWorkerContextData and ServiceWorkerContextData::ImportedScript
+        to the WebKit layer, in WebCoreArgumentCoders. This allows us to encode / decode the scripts as
+        WebKit::ShareableHandle whenever possible. This way, when the NetworkProcess sends a
+        ServiceWorkerContextData to the ServiceWorker process to launch a service worker, both the
+        ServiceWorker process and the Network process share the same mmap'd versions of the scripts and we
+        save on dirty memory use. This helps reduce dirty memory use in the ServiceWorker process in the
+        warm case, where the scripts are loaded straight from the disk (via SWScriptStorage).
+
 2021-04-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] REGRESSION(r272999): User-installed fonts no longer work in Mail

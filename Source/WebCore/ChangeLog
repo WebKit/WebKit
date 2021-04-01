@@ -1,3 +1,60 @@
+2021-04-01  Chris Dumez  <cdumez@apple.com>
+
+        Have the ServiceWorker process hold on to a file mapped version of the service worker scripts to save dirty memory
+        https://bugs.webkit.org/show_bug.cgi?id=224015
+        <rdar://75637679>
+
+        Reviewed by Geoffrey Garen.
+
+        Since r275267, the Network process holds on the file mapped (mmap'd) versions of the service worker
+        scripts instead of heap allocated versions, in order to decrease its dirty memory use. However, the
+        ServiceWorker process (which is often a regular WebProcess) was still using heap allocated service
+        worker scripts. This patch is a follow-up to make sure the NetworkProcess sends its file mapped
+        scripts to the ServiceWorker processes as ShareableResource handles in order to decrease the dirty
+        memory usage of the ServiceWorker processes as well.
+
+        No new tests, no Web-facing behavior change, just a decrease in dirty memory use in the ServiceWorker
+        processes (which may be WebProcesses). I have done local testing with a very large service worker
+        that uses a ~100MB main script, which imports another ~100MB sub-script. With my change, dirty
+        memory usage goes from ~440MB to ~230MB in both the cold and warm cases ("Cold" meaning that the
+        service worker was just registed and downloaded from the network and "Warm" meaning that the
+        service worker had been previously registed and was loaded straight from the SWScriptStorage).
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::hasOneSegment const):
+        Add a utility function to SharedBuffer to check if it contains a single data segment.
+
+        (WebCore::SharedBuffer::DataSegment::containsMappedFileData const):
+        Add a utility function to check if a SharedBuffer DataSegment contains a MappedFileData object.
+
+        * platform/SharedBuffer.h:
+
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::ImportedScript::isolatedCopy const):
+        Move IPC encoders / decoders for ServiceWorkerContextData and ServiceWorkerContextData::ImportedScript
+        to the WebKit layer, in WebCoreArgumentCoders. This allows us to encode / decode the scripts as
+        WebKit::ShareableHandle whenever possible. This way, when the NetworkProcess sends a
+        ServiceWorkerContextData to the ServiceWorker process to launch a service worker, both the
+        ServiceWorker process and the Network process share the same mmap'd versions of the scripts and we
+        save on dirty memory use. This helps reduce dirty memory use in the ServiceWorker process in the
+        warm case, where the scripts are loaded straight from the disk (via SWScriptStorage).
+
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::didSaveScriptsToDisk):
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::didSaveScriptsToDisk):
+        * workers/service/context/SWContextManager.h:
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::didSaveScriptsToDisk):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+        * workers/service/server/SWServerToContextConnection.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::didSaveScriptsToDisk):
+        In the cold case, once the NetworkProcess is done saving the scripts to disk, it now sends the
+        file mapped version of the scripts to the ServiceWorker process, so that it can also replace
+        its heap-allocated copies and save on dirty memory use.
+
 2021-04-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WebGL] Use GraphicsContextGLOpenGLManager for ports using TextureMapper

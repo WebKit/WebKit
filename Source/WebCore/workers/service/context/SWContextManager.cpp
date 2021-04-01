@@ -120,6 +120,12 @@ void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Secon
     stopWorker(*serviceWorker, timeout, WTFMove(completionHandler));
 }
 
+void SWContextManager::didSaveScriptsToDisk(ServiceWorkerIdentifier identifier, RefPtr<SharedBuffer>&& script, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts)
+{
+    if (auto serviceWorker = m_workerMap.get(identifier))
+        serviceWorker->didSaveScriptsToDisk(WTFMove(script), WTFMove(importedScripts));
+}
+
 void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Seconds timeout, Function<void()>&& completionHandler)
 {
     auto identifier = serviceWorker.identifier();

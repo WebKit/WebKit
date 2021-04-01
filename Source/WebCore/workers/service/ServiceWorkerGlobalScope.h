@@ -68,6 +68,8 @@ public:
     const ServiceWorkerContextData::ImportedScript* scriptResource(const URL&) const;
     void setScriptResource(const URL&, ServiceWorkerContextData::ImportedScript&&);
 
+    void didSaveScriptsToDisk(RefPtr<SharedBuffer>&& script, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts);
+
     const ServiceWorkerContextData& contextData() const { return m_contextData; }
     const CertificateInfo& certificateInfo() const { return m_contextData.certificateInfo; }
 

@@ -281,6 +281,13 @@ void ServiceWorkerThreadProxy::fireActivateEvent()
     });
 }
 
+void ServiceWorkerThreadProxy::didSaveScriptsToDisk(RefPtr<SharedBuffer>&& script, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts)
+{
+    thread().runLoop().postTask([script = WTFMove(script), importedScripts = WTFMove(importedScripts)](auto& context) mutable {
+        downcast<ServiceWorkerGlobalScope>(context).didSaveScriptsToDisk(WTFMove(script), WTFMove(importedScripts));
+    });
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

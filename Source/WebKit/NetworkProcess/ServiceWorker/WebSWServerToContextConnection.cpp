@@ -107,6 +107,25 @@ void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier ser
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
 }
 
+void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SharedBuffer& script, const HashMap<URL, RefPtr<SharedBuffer>>& importedScripts)
+{
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    auto scriptHandle = IPC::tryConvertToShareableResourceHandle(script);
+    HashMap<URL, ShareableResource::Handle> importedScriptHandles;
+    for (auto& pair : importedScripts) {
+        auto handle = IPC::tryConvertToShareableResourceHandle(*pair.value);
+        if (handle.isNull())
+            continue;
+        importedScriptHandles.add(pair.key, WTFMove(handle));
+    }
+    if (!scriptHandle.isNull() || !importedScriptHandles.isEmpty())
+        send(Messages::WebSWContextManagerConnection::DidSaveScriptsToDisk { serviceWorkerIdentifier, scriptHandle, importedScriptHandles });
+#else
+    UNUSED_PARAM(script);
+    UNUSED_PARAM(importedScripts);
+#endif
+}
+
 void WebSWServerToContextConnection::terminateDueToUnresponsiveness()
 {
     m_connection.networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::TerminateUnresponsiveServiceWorkerProcesses { webProcessIdentifier() }, 0);
