@@ -1,3 +1,32 @@
+2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION(r274724): JITCage trampoline needs to be adjusted
+        https://bugs.webkit.org/show_bug.cgi?id=224065
+
+        Reviewed by Saam Barati.
+
+        r274724 introduced a new parameter to custom setters, but it didn't change the parameter recognization of JITCage trampolines for custom accessors.
+        As a result, we are jumping with the wrong pointer, and crash when custom setter is called with JITCage.
+
+        This patch fixes the above bug.
+
+        1. Now, custom getter and custom setter have different number of parameters. We should have two different trampolines to invoke it. We remove vmEntryCustomAccessor, and
+           add vmEntryCustomGetter/vmEntryCustomSetter.
+        2. vmEntryCustomSetter should use a4 parameter as a executable address for trampoline.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        * llint/LLIntThunks.cpp:
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/registers.rb:
+        * runtime/PropertySlot.h:
+
 2021-04-01  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Use ucal_getTimeZoneOffsetFromLocal if ICU 69 is present

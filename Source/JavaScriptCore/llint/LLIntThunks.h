@@ -38,7 +38,8 @@ typedef int64_t EncodedJSValue;
 extern "C" {
     EncodedJSValue vmEntryToJavaScript(void*, VM*, ProtoCallFrame*);
     EncodedJSValue vmEntryToNative(void*, VM*, ProtoCallFrame*);
-    EncodedJSValue vmEntryCustomAccessor(CPURegister, CPURegister, CPURegister, CPURegister);
+    EncodedJSValue vmEntryCustomGetter(CPURegister, CPURegister, CPURegister, CPURegister);
+    EncodedJSValue vmEntryCustomSetter(CPURegister, CPURegister, CPURegister, CPURegister, CPURegister);
     EncodedJSValue vmEntryHostFunction(JSGlobalObject*, CallFrame*, void*);
 }
 
