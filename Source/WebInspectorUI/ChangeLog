@@ -1,3 +1,23 @@
+2021-03-31  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Regression (r270134) Timeline recordings 2 and beyond do not show a timescale.
+        https://bugs.webkit.org/show_bug.cgi?id=222930
+
+        Reviewed by Devin Rousso.
+
+        When a new `TimelineOverview` is created, it calls `TimelineOverview.prototype._viewModeDidChange` inside the
+        constructor, which in turn called `updateLayout`. This was problematic in that a `TimelineRuler` would have
+        `sizeDidChange` invoked before it was attached to the DOM, which meant that there was no width to cache. Because
+        `sizeDidChange` is only invoked during the first layout and on resize events, the cached width is not updated
+        when the ruler is attached to the view hierarchy, having already performed an early initial layout.
+
+        This patch now checks if the `TimelineOverview` has performed its initial layout before updating the layout
+        inside `_viewModeDidChange`, which means that the initial layout on the child `TimelineRuler` will be done while
+        attached, thus producing a valid width value to cache.
+
+        * UserInterface/Views/TimelineOverview.js:
+        (WI.TimelineRuler.prototype._viewModeDidChange):
+
 2021-03-31  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Autocomplete experimental CSS Color values (hwb, lch, lab, color-mix, color-contrast)

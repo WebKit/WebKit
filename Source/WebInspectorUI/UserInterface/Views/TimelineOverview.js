@@ -853,7 +853,8 @@ WI.TimelineOverview = class TimelineOverview extends WI.View
 
         this.element.classList.toggle("frames", isRenderingFramesMode);
 
-        this.updateLayout(WI.View.LayoutReason.Resize);
+        if (this.didInitialLayout)
+            this.updateLayout(WI.View.LayoutReason.Resize);
     }
 
     _createViewModeSettings(viewMode, minimumDurationPerPixel, maximumDurationPerPixel, durationPerPixel, selectionStartValue, selectionDuration)
