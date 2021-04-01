@@ -139,7 +139,7 @@ class TestCanonicalize(unittest.TestCase):
                 commit.message,
                 'New commit\n'
                 'Identifier: 6@main\n'
-                'svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
             )
 
         self.assertEqual(
