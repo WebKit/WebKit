@@ -7,7 +7,7 @@ file = __file__.split(':/cygwin')[-1]
 http_root = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(file))))
 sys.path.insert(0, http_root)
 
-from resources.portabilityLayer import setState, getState
+from resources.portabilityLayer import set_state, get_state
 from urllib.parse import parse_qs
 
 
@@ -24,7 +24,7 @@ def fail():
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
 stateFile = os.path.join(tempfile.gettempdir(), query.get('filename', ['state.txt'])[0])
-state = getState(stateFile)
+state = get_state(stateFile)
 
 sys.stdout.write('Content-Type: text/html\r\n')
 if state == 'Uninitialized':
@@ -37,7 +37,7 @@ if state == 'Uninitialized':
             'Access-Control-Max-Age: 1\r\n'
             '\r\n'
         )
-        setState('OptionsSent', stateFile)
+        set_state('OptionsSent', stateFile)
     else:
         fail()
 
@@ -49,7 +49,7 @@ elif state == 'OptionsSent':
             '\r\n'
             'PASS: First PUT request.'
         )
-        setState('FirstPUTSent', stateFile)
+        set_state('FirstPUTSent', stateFile)
     else:
         fail()
 
@@ -63,7 +63,7 @@ elif state == 'FirstPUTSent':
             'Access-Control-Max-Age: 1\r\n'
             '\r\n'
         )
-        setState('SecondOPTIONSSent', stateFile)
+        set_state('SecondOPTIONSSent', stateFile)
     elif os.environ.get('REQUEST_METHOD') == 'PUT':
         sys.stdout.write(
             'Access-Control-Allow-Origin: http://127.0.0.1:8000\r\n'

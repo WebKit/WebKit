@@ -7,7 +7,7 @@ file = __file__.split(':/cygwin')[-1]
 http_root = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(file))))
 sys.path.insert(0, http_root)
 
-from resources.portabilityLayer import setState, getState
+from resources.portabilityLayer import set_state, get_state
 from urllib.parse import parse_qs
 
 sys.stdout.write(
@@ -23,11 +23,11 @@ stateFile = os.path.join(tempfile.gettempdir(), query.get('filename', ['state.tx
 
 if os.environ.get('REQUEST_METHOD') == 'OPTIONS':
     if os.environ.get('HTTP_X_CUSTOM_HEADER'):
-        setState('FAIL', stateFile)
+        set_state('FAIL', stateFile)
     else:
-        setState('PASS', stateFile)
+        set_state('PASS', stateFile)
 else:
     if os.environ.get('HTTP_X_CUSTOM_HEADER'):
-        sys.stdout.write(getState(stateFile, default='FAIL'))
+        sys.stdout.write(get_state(stateFile, default='FAIL'))
     else:
         sys.stdout.write('FAIL - no header in actual request')

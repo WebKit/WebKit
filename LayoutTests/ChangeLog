@@ -1,3 +1,124 @@
+2021-03-31  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/appcache convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221286
+        <rdar://problem/73893844>
+
+        Reviewed by Jonathan Bedard.
+
+        * TestExpectations:
+        * http/tests/appcache/404-resource-with-slow-main-resource.php: Removed.
+        * http/tests/appcache/404-resource-with-slow-main-resource.py: Added.
+        * http/tests/appcache/abort-cache-onchecking-manifest-404.html:
+        * http/tests/appcache/abort-cache-onchecking.html:
+        * http/tests/appcache/access-via-redirect.php: Removed.
+        * http/tests/appcache/access-via-redirect.py: Added.
+        * http/tests/appcache/auth.html:
+        * http/tests/appcache/document-cookie-http-only.php: Removed.
+        * http/tests/appcache/document-cookie-http-only.py: Added.
+        * http/tests/appcache/document-cookie.php: Removed.
+        * http/tests/appcache/document-cookie.py: Added.
+        * http/tests/appcache/fail-on-update-2.html:
+        * http/tests/appcache/fail-on-update.html:
+        * http/tests/appcache/fallback.html:
+        * http/tests/appcache/identifier-test.html:
+        * http/tests/appcache/main-resource-redirect.html:
+        * http/tests/appcache/manifest-redirect-2.html:
+        * http/tests/appcache/manifest-redirect.html:
+        * http/tests/appcache/online-whitelist.html:
+        * http/tests/appcache/remove-cache.html:
+        * http/tests/appcache/resource-redirect-2-expected.txt:
+        * http/tests/appcache/resource-redirect-expected.txt:
+        * http/tests/appcache/resources/abort-cache-onchecking-resource-404.manifest:
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest.php: Removed.
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest.py: Added.
+        * http/tests/appcache/resources/abort-cache-ondownloading.manifest:
+        * http/tests/appcache/resources/abort-cache-ondownloading.text.php: Removed.
+        * http/tests/appcache/resources/abort-cache-ondownloading.text.py: Added.
+        * http/tests/appcache/resources/abort-cache-onprogress.manifest:
+        * http/tests/appcache/resources/access-via-redirect.html:
+        * http/tests/appcache/resources/appcache-cookies-test.html:
+        * http/tests/appcache/resources/auth/iframe.php: Removed.
+        * http/tests/appcache/resources/auth/iframe.py: Added.
+        * http/tests/appcache/resources/auth/manifest.php: Removed.
+        * http/tests/appcache/resources/auth/manifest.py: Added.
+        * http/tests/appcache/resources/auth/setup.php: Removed.
+        * http/tests/appcache/resources/auth/setup.py: Added.
+        * http/tests/appcache/resources/auth/subresource.php: Removed.
+        * http/tests/appcache/resources/auth/subresource.py: Added.
+        * http/tests/appcache/resources/cookie-protected-script.php: Removed.
+        * http/tests/appcache/resources/cookie-protected-script.py: Added.
+        * http/tests/appcache/resources/document-cookie.manifest:
+        * http/tests/appcache/resources/fail-on-update-2.html:
+        * http/tests/appcache/resources/fail-on-update-2.php: Removed.
+        * http/tests/appcache/resources/fail-on-update-2.py: Added.
+        * http/tests/appcache/resources/fail-on-update.php: Removed.
+        * http/tests/appcache/resources/fail-on-update.py: Added.
+        * http/tests/appcache/resources/fallback-redirect.php: Removed.
+        * http/tests/appcache/resources/fallback-redirect.py: Added.
+        * http/tests/appcache/resources/identifier-test-real.php: Removed.
+        * http/tests/appcache/resources/identifier-test-real.py: Added.
+        * http/tests/appcache/resources/identifier-test.php: Removed.
+        * http/tests/appcache/resources/identifier-test.py: Added.
+        * http/tests/appcache/resources/intercept/.htaccess:
+        * http/tests/appcache/resources/main-resource-redirect-frame.php: Removed.
+        * http/tests/appcache/resources/main-resource-redirect-frame.py: Added.
+        * http/tests/appcache/resources/manifest-if-cookie.php: Removed.
+        * http/tests/appcache/resources/manifest-if-cookie.py: Added.
+        * http/tests/appcache/resources/manifest-protected-script.php: Removed.
+        * http/tests/appcache/resources/manifest-redirect-2.php: Removed.
+        * http/tests/appcache/resources/manifest-redirect-2.py: Added.
+        * http/tests/appcache/resources/manifest-redirect.php: Removed.
+        * http/tests/appcache/resources/manifest-redirect.py: Added.
+        * http/tests/appcache/resources/navigating-away-while-cache-attempt-in-progress.manifest:
+        * http/tests/appcache/resources/not-exist.vob.php: Removed.
+        * http/tests/appcache/resources/not-exist.vob.py: Added.
+        * http/tests/appcache/resources/online-allowlist.manifest:
+        * http/tests/appcache/resources/online-allowlist.php: Removed.
+        * http/tests/appcache/resources/online-allowlist.py: Added.
+        * http/tests/appcache/resources/print-uri.php: Removed.
+        * http/tests/appcache/resources/print-uri.py: Added.
+        * http/tests/appcache/resources/remove-cache-frame-2.html:
+        * http/tests/appcache/resources/remove-cache-frame.html:
+        * http/tests/appcache/resources/remove-cache.php: Removed.
+        * http/tests/appcache/resources/remove-cache.py: Added.
+        * http/tests/appcache/resources/resource-redirect-2.manifest:
+        * http/tests/appcache/resources/resource-redirect-2.php: Removed.
+        * http/tests/appcache/resources/resource-redirect-2.py: Added.
+        * http/tests/appcache/resources/resource-redirect.manifest:
+        * http/tests/appcache/resources/resource-redirect.php: Removed.
+        * http/tests/appcache/resources/resource-redirect.py: Added.
+        * http/tests/appcache/resources/scope1/cookie-protected-manifest.php: Removed.
+        * http/tests/appcache/resources/scope1/cookie-protected-manifest.py: Added.
+        * http/tests/appcache/resources/scope2/cookie-protected-script.php: Removed.
+        * http/tests/appcache/resources/scope2/cookie-protected-script.py: Added.
+        * http/tests/appcache/resources/slow-resource.php: Removed.
+        * http/tests/appcache/resources/slow-resource.py: Added.
+        * http/tests/appcache/resources/uncacheable-resource.php: Removed.
+        * http/tests/appcache/resources/uncacheable-resource.py: Added.
+        * http/tests/appcache/resources/update-cache.php: Removed.
+        * http/tests/appcache/resources/update-cache.py: Added.
+        * http/tests/appcache/resources/x-frame-options-prevents-framing-test.html:
+        * http/tests/appcache/update-cache.html:
+        * http/tests/appcache/x-frame-options-prevents-framing-expected.txt:
+        * http/tests/appcache/x-frame-options-prevents-framing.php: Removed.
+        * http/tests/appcache/x-frame-options-prevents-framing.py: Added.
+        * http/tests/resources/portabilityLayer.py:
+        (get_count):
+        (get_state):
+        (set_state):
+        (step_state):
+        (setState): Deleted.
+        (getState): Deleted.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.py:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.py:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.py:
+        * http/tests/xmlhttprequest/resources/access-control-preflight-denied-xsrf.py:
+        * http/tests/xmlhttprequest/resources/no-custom-header.py:
+        * http/tests/xmlhttprequest/resources/redirect-cross-origin-tripmine.py:
+        * http/tests/xmlhttprequest/resources/remember-bad-password/count-failures.py:
+        * platform/ios-wk2/TestExpectations:
+
 2021-03-31  Robert Jenner  <jenner@apple.com>
 
         [ macOS wk2 ARM64 ] tiled-drawing/top-content-inset-fixed-attachment-cover-local.html is a flakey Image failure

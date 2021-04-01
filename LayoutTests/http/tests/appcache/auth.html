@@ -8,11 +8,11 @@ if (window.testRunner) {
 
 // Store authentication credentials.
 var req = new XMLHttpRequest;
-req.open("GET", "resources/auth/setup.php", false, "login", "pasword");
+req.open("GET", "resources/auth/setup.py", false, "login", "pasword");
 req.send();
 
 var ifr = document.createElement("iframe");
-ifr.setAttribute("src", "resources/auth/iframe.php");
+ifr.setAttribute("src", "resources/auth/iframe.py");
 document.body.appendChild(ifr);
 
 function success()

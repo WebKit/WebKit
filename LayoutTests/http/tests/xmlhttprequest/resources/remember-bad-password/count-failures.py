@@ -8,7 +8,7 @@ file = __file__.split(':/cygwin')[-1]
 http_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(file)))))
 sys.path.insert(0, http_root)
 
-from resources.portabilityLayer import setState, getState
+from resources.portabilityLayer import set_state, get_state
 from urllib.parse import parse_qs
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
@@ -34,9 +34,9 @@ command = query.get('command', [''])[0]
 if command:
     sys.stdout.write('\n')
     if command == 'status':
-        sys.stdout.write(getState(stateFile, default='0'))
+        sys.stdout.write(get_state(stateFile, default='0'))
     elif command == 'reset':
-        sys.stdout.write(setState('0', stateFile))
+        sys.stdout.write(set_state('0', stateFile))
     sys.exit(0)
 
 credentials = base64.b64decode(os.environ.get('HTTP_AUTHORIZATION', ' Og==').split(' ')[1]).decode().split(':')
@@ -57,4 +57,4 @@ else:
         'Authentication canceled'
     )
     if username:
-        setState(str(int(getState(stateFile, default='0')) + 1), stateFile)
+        set_state(str(int(get_state(stateFile, default='0')) + 1), stateFile)
