@@ -1,6 +1,0 @@
-PASS horizontal mouse wheel event snapped
-PASS vertical mouse wheel event snapped
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
