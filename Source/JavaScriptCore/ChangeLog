@@ -1,3 +1,15 @@
+2021-04-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Use ucal_getTimeZoneOffsetFromLocal if ICU 69 is present
+        https://bugs.webkit.org/show_bug.cgi?id=224075
+
+        Reviewed by Yusuke Suzuki.
+
+        Apple ICU 68 cherry picked ucal_getTimeZoneOffsetFromLocal (see r223783),
+        but now that ICU 69 is in RC, we can go ahead and update the #if for non-Apple platforms.
+
+        * runtime/JSDateMath.cpp:
+
 2021-04-01  Tadeu Zagallo  <tzagallo@apple.com>
 
         Remove use of ENABLE from API header
