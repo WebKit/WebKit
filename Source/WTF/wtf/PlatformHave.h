@@ -850,7 +850,7 @@
 #define HAVE_LIBXSLT_FIX_FOR_RADAR_71864140 1
 #endif
 
-#if __has_include(<AuthenticationServicesCore/ASCAuthorizationPresenter.h>) && PLATFORM(IOS)
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 140400)
 #define HAVE_ASC_AUTH_UI 1
 #endif
 

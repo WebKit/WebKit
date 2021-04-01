@@ -1,3 +1,13 @@
+2021-03-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Allow ASCWebKitSPISupport to be used on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=224036
+        <rdar://76028645>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformHave.h:
+
 2021-03-31  Sam Weinig  <weinig@apple.com>
 
         Ease experimentation by enabling <model> if SEPARATED_MODEL is being used
