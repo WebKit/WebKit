@@ -2302,3 +2302,5 @@ webkit.org/b/223975 inspector/protocol/condition.html [ Pass Timeout ]
 webkit.org/b/220754 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
 
 webkit.org/b/223976 [ Debug ] imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Pass Failure ]
+
+webkit.org/b/224033 imported/w3c/web-platform-tests/custom-elements/reactions/HTMLMediaElement.html [ Pass Crash ]
