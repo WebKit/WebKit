@@ -1,3 +1,26 @@
+2021-04-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WebGL] Use GraphicsContextGLOpenGLManager for ports using TextureMapper
+        https://bugs.webkit.org/show_bug.cgi?id=224035
+
+        Reviewed by Don Olmstead.
+
+        Use GraphicsContextGLOpenGLManager for GTK, WPE and WinCairo ports
+        to reduce duplicated code.
+
+        GraphicsContextGLOpenGLBase.cpp isn't used by Cocoa ports.
+
+        No behavior change.
+
+        * PlatformMac.cmake:
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLManager.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+        (WebCore::GraphicsContextGLOpenGL::create):
+        (WebCore::GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL):
+        (WebCore::activeContexts): Deleted.
+
 2021-04-01  Chris Lord  <clord@igalia.com>
 
         Make FontCache constructable and safe to use off the main thread
