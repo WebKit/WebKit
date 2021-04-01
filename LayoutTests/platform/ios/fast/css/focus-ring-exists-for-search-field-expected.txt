@@ -10,11 +10,10 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,56) size 784x23
         RenderTextControl {INPUT} at (2,2) size 164x20 [bgcolor=#7676801F]
           RenderFlexibleBox {DIV} at (5,2) size 154x15
+            RenderBlock {DIV} at (0,1) size 11x12
             RenderBlock {DIV} at (15,0) size 138x14
             RenderBlock {DIV} at (152,7) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (31,68) size 137x14
+layer at (31,68) size 138x14 backgroundClip at (31,68) size 137x14 clip at (31,68) size 137x14
   RenderBlock {DIV} at (0,0) size 138x14
-layer at (16,70) size 11x11
-  RenderBlock {DIV} at (0,1) size 11x12 [bgcolor=#A9A9A9]
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 3 {INPUT} of body

@@ -2542,6 +2542,86 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
     context.fillPath(glyphPath);
 }
 
+void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element* element) const
+{
+    if (!element || !element->document().settings().iOSFormControlRefreshEnabled())
+        return;
+
+    constexpr int searchFieldDecorationEmSize = 1;
+    constexpr int searchFieldDecorationMargin = 4;
+
+    CSSToLengthConversionData conversionData(&style, nullptr, nullptr, nullptr, 1.0, WTF::nullopt);
+
+    auto emSize = CSSPrimitiveValue::create(searchFieldDecorationEmSize, CSSUnitType::CSS_EMS);
+    auto size = emSize->computeLength<float>(conversionData);
+
+    style.setWidth({ size, LengthType::Fixed });
+    style.setHeight({ size, LengthType::Fixed });
+    style.setMarginEnd({ searchFieldDecorationMargin, LengthType::Fixed });
+}
+
+bool RenderThemeIOS::paintSearchFieldDecorationPart(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    if (!box.settings().iOSFormControlRefreshEnabled())
+        return RenderTheme::paintSearchFieldDecorationPart(box, paintInfo, rect);
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
+
+    const FloatSize glyphSize(73.0f, 73.0f);
+
+    Path glyphPath;
+    glyphPath.moveTo({ 29.6875f, 59.375f });
+    glyphPath.addBezierCurveTo({ 35.9863f, 59.375f }, { 41.7969f, 57.422f }, { 46.6309f, 54.0528f });
+    glyphPath.addLineTo({ 63.9649f, 71.3868f });
+    glyphPath.addBezierCurveTo({ 64.8926f, 72.3145f }, { 66.1133f, 72.754f }, { 67.3829f, 72.754f });
+    glyphPath.addBezierCurveTo({ 70.1172f, 72.754f }, { 72.1191f, 70.6544f }, { 72.1191f, 67.9688f });
+    glyphPath.addBezierCurveTo({ 72.1191f, 66.6993f }, { 71.6797f, 65.4786f }, { 70.7519f, 64.5508f });
+    glyphPath.addLineTo({ 53.5644f, 47.3145f });
+    glyphPath.addBezierCurveTo({ 57.2266f, 42.3829f }, { 59.375f, 36.2793f }, { 59.375f, 29.6875f });
+    glyphPath.addBezierCurveTo({ 59.375f, 13.3301f }, { 46.045f, 0.0f }, { 29.6875f, 0.0f });
+    glyphPath.addBezierCurveTo({ 13.3301f, 0.0f }, { 0.0f, 13.3301f }, { 0.0f, 29.6875f });
+    glyphPath.addBezierCurveTo({ 0.0f, 46.045f }, { 13.33f, 59.375f }, { 29.6875f, 59.375f });
+    glyphPath.moveTo({ 29.6875f, 52.0997f });
+    glyphPath.addBezierCurveTo({ 17.4316f, 52.0997f }, { 7.2754f, 41.9434f }, { 7.2754f, 29.6875f });
+    glyphPath.addBezierCurveTo({ 7.2754f, 17.3829f }, { 17.4316f, 7.2754f }, { 29.6875f, 7.2754f });
+    glyphPath.addBezierCurveTo({ 41.9922f, 7.2754f }, { 52.1f, 17.3829f }, { 52.1f, 29.6875f });
+    glyphPath.addBezierCurveTo({ 52.1f, 41.9435f }, { 41.9922f, 52.0997f }, { 29.6875f, 52.0997f });
+
+    FloatRect paintRect(rect);
+    float scale = paintRect.width() / glyphSize.width();
+
+    AffineTransform transform;
+    transform.translate(paintRect.center() - (glyphSize * scale * 0.5f));
+    transform.scale(scale);
+    glyphPath.transform(transform);
+
+    context.setFillColor(systemColor(CSSValueAppleSystemSecondaryLabel, box.styleColorOptions()));
+    context.fillPath(glyphPath);
+
+    return false;
+}
+
+void RenderThemeIOS::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element* element) const
+{
+    adjustSearchFieldDecorationPartStyle(style, element);
+}
+
+bool RenderThemeIOS::paintSearchFieldResultsDecorationPart(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return paintSearchFieldDecorationPart(box, paintInfo, rect);
+}
+
+void RenderThemeIOS::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element* element) const
+{
+    adjustSearchFieldDecorationPartStyle(style, element);
+}
+
+bool RenderThemeIOS::paintSearchFieldResultsButton(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
+{
+    return paintSearchFieldDecorationPart(box, paintInfo, rect);
+}
+
 #endif // ENABLE(IOS_FORM_CONTROL_REFRESH)
 
 } // namespace WebCore

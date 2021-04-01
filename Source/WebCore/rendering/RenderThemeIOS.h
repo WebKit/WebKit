@@ -136,6 +136,15 @@ private:
     bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) final;
 #endif
+
+    void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
+    bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) final;
+
+    void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const final;
+    bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) final;
+
+    void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
+    bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 #endif
 
     bool supportsFocusRing(const RenderStyle&) const final;

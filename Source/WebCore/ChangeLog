@@ -1,3 +1,41 @@
+2021-04-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] '-webkit-appearance: none' is not respected for searchfield decorations
+        https://bugs.webkit.org/show_bug.cgi?id=224018
+
+        Reviewed by Antti Koivisto.
+
+        Specifying '-webkit-appearance: none' on a searchfield decoration
+        pseudo-element fails to hide the native icon. This issue arises from
+        the fact that we add the icon in the UA stylesheet, rather than painting
+        it in the theme.
+
+        To fix, remove the styles from the UA stylesheet, and paint the icon in
+        RenderThemeIOS. If a different '-webkit-appearance' is specified the
+        theme will not adjust styles or paint the icon.
+
+        Test: fast/forms/ios/form-control-refresh/search/search-decoration-appearance.html
+
+        * css/html.css:
+
+        Remove the UA styles for searchfield decorations so that they are not
+        applied when specifying a different -webkit-appearance.
+
+        * rendering/RenderThemeIOS.h:
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustSearchFieldDecorationPartStyle const):
+
+        Adjust the style to match the native appearance.
+
+        (WebCore::RenderThemeIOS::paintSearchFieldDecorationPart):
+
+        Paint the native icon.
+
+        (WebCore::RenderThemeIOS::adjustSearchFieldResultsDecorationPartStyle const):
+        (WebCore::RenderThemeIOS::paintSearchFieldResultsDecorationPart):
+        (WebCore::RenderThemeIOS::adjustSearchFieldResultsButtonStyle const):
+        (WebCore::RenderThemeIOS::paintSearchFieldResultsButton):
+
 2021-04-01  Martin Robinson  <mrobinson@igalia.com>
 
         Expose an alias for ScrollSnapOffsetInfo<T> to make it easier to use
