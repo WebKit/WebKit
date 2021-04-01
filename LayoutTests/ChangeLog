@@ -1,3 +1,14 @@
+2021-03-31  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Missing scope release in JSDOMBuiltinConstructorBase
+        https://bugs.webkit.org/show_bug.cgi?id=216851
+        <rdar://problem/69144642>
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/transform-stream-expected.txt: Added.
+        * js/dom/transform-stream.html: Added.
+
 2021-03-31  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/appcache convert PHP to Python
