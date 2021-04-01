@@ -1,3 +1,31 @@
+2021-04-01  Chris Dumez  <cdumez@apple.com>
+
+        Share same code between network process termination and crash handling
+        https://bugs.webkit.org/show_bug.cgi?id=224056
+
+        Reviewed by Darin Adler.
+
+        Share same code between network process termination and crash handling. This would avoid
+        bugs such as Bug 224022.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::terminate):
+        (WebKit::NetworkProcessProxy::networkProcessDidTerminate):
+        (WebKit::NetworkProcessProxy::didClose):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        (WebKit::NetworkProcessProxy::didTerminate): Deleted.
+        (WebKit::NetworkProcessProxy::networkProcessCrashed): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessDidTerminate):
+        (WebKit::WebProcessPool::networkProcessCrashed): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::networkProcessDidTerminate):
+        (WebKit::WebsiteDataStore::terminateNetworkProcess):
+        (WebKit::WebsiteDataStore::networkProcessCrashed): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-04-01  Per Arne  <pvollan@apple.com>
 
         Add IOKit method filter telemetry

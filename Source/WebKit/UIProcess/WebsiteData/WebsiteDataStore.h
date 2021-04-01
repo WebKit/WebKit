@@ -139,7 +139,7 @@ public:
     void sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&&);
     void sendNetworkProcessWillSuspendImminentlyForTesting();
     void sendNetworkProcessDidResume();
-    void networkProcessCrashed(NetworkProcessProxy&);
+    void networkProcessDidTerminate(NetworkProcessProxy&);
     static void makeNextNetworkProcessLaunchFailForTesting();
     static bool shouldMakeNextNetworkProcessLaunchFailForTesting();
 

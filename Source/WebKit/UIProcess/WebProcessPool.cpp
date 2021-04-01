@@ -472,12 +472,13 @@ void WebProcessPool::screenPropertiesStateChanged()
 #endif
 }
 
-void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessProxy)
+void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProcessProxy, NetworkProcessProxy::TerminationReason reason)
 {
     for (auto& supplement : m_supplements.values())
         supplement->processDidClose(&networkProcessProxy);
 
-    m_client.networkProcessDidCrash(this);
+    if (reason == NetworkProcessProxy::TerminationReason::Crash)
+        m_client.networkProcessDidCrash(this);
 
     if (m_automationSession)
         m_automationSession->terminate();

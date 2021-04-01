@@ -368,7 +368,7 @@ public:
 #endif
 
     // Network Process Management
-    void networkProcessCrashed(NetworkProcessProxy&);
+    void networkProcessDidTerminate(NetworkProcessProxy&, NetworkProcessProxy::TerminationReason);
 
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
 #if ENABLE(SERVICE_WORKER)

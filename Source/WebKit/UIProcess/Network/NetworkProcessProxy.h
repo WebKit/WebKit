@@ -115,7 +115,6 @@ public:
     static Vector<Ref<NetworkProcessProxy>> allNetworkProcesses();
     
     void terminate() final;
-    void didTerminate();
 
     void getNetworkProcessConnection(WebProcessProxy&, Messages::WebProcessProxy::GetNetworkProcessConnectionDelayedReply&&);
 
@@ -237,7 +236,8 @@ public:
     void registerSchemeForLegacyCustomProtocol(const String&);
     void unregisterSchemeForLegacyCustomProtocol(const String&);
 
-    void networkProcessCrashed();
+    enum class TerminationReason { RequestedByClient, Crash };
+    void networkProcessDidTerminate(TerminationReason);
     
     void resetQuota(PAL::SessionID, CompletionHandler<void()>&&);
     void setQuotaLoggingEnabled(PAL::SessionID, bool enabled, CompletionHandler<void()>&&);

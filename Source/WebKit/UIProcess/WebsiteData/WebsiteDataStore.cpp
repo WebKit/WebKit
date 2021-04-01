@@ -1731,23 +1731,16 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
     });
 }
 
-void WebsiteDataStore::networkProcessCrashed(NetworkProcessProxy&)
+void WebsiteDataStore::networkProcessDidTerminate(NetworkProcessProxy& networkProcess)
 {
-    if (m_networkProcess)
-        m_networkProcess->didTerminate();
+    ASSERT(!m_networkProcess || m_networkProcess == &networkProcess);
     m_networkProcess = nullptr;
 }
 
 void WebsiteDataStore::terminateNetworkProcess()
 {
-    auto processPools = copyToVectorOf<RefPtr<WebProcessPool>>(WebProcessPool::allProcessPools());
-    for (auto& processPool : processPools)
-        processPool->terminateServiceWorkers();
-
-    if (!m_networkProcess)
-        return;
-    m_networkProcess->terminate();
-    m_networkProcess = nullptr;
+    if (auto networkProcess = std::exchange(m_networkProcess, nullptr))
+        networkProcess->terminate();
 }
 
 void WebsiteDataStore::sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&& completionHandler)

@@ -119,13 +119,7 @@ void NetworkProcessProxy::terminate()
     AuxiliaryProcessProxy::terminate();
     if (auto* connection = this->connection())
         connection->invalidate();
-    didTerminate();
-}
-
-void NetworkProcessProxy::didTerminate()
-{
-    if (this == defaultProcess().get())
-        defaultProcess() = nullptr;
+    networkProcessDidTerminate(TerminationReason::RequestedByClient);
 }
 
 void NetworkProcessProxy::sendCreationParametersToNewProcess()
@@ -304,16 +298,26 @@ void NetworkProcessProxy::renameOriginInWebsiteData(PAL::SessionID sessionID, co
     sendWithAsyncReply(Messages::NetworkProcess::RenameOriginInWebsiteData(sessionID, oldName, newName, dataTypes), WTFMove(completionHandler));
 }
 
-void NetworkProcessProxy::networkProcessCrashed()
+void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
 {
+    if (m_downloadProxyMap)
+        m_downloadProxyMap->invalidate();
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+    m_customProtocolManagerProxy.invalidate();
+#endif
+
+    m_activityForHoldingLockedFiles = nullptr;
+
+    m_uploadActivity = WTF::nullopt;
+
     if (defaultProcess() == this)
         defaultProcess() = nullptr;
 
     Ref<NetworkProcessProxy> protectedThis(*this);
     for (auto* processPool : WebProcessPool::allProcessPools())
-        processPool->networkProcessCrashed(*this);
+        processPool->networkProcessDidTerminate(*this, reason);
     for (auto& websiteDataStore : m_websiteDataStores)
-        websiteDataStore.networkProcessCrashed(*this);
+        websiteDataStore.networkProcessDidTerminate(*this);
 }
 
 void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -334,18 +338,8 @@ bool NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC
 
 void NetworkProcessProxy::didClose(IPC::Connection&)
 {
-    if (m_downloadProxyMap)
-        m_downloadProxyMap->invalidate();
-#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    m_customProtocolManagerProxy.invalidate();
-#endif
-
-    m_activityForHoldingLockedFiles = nullptr;
-
-    m_uploadActivity = WTF::nullopt;
-
     // This will cause us to be deleted.
-    networkProcessCrashed();
+    networkProcessDidTerminate(TerminationReason::Crash);
 }
 
 void NetworkProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
@@ -426,7 +420,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
-        networkProcessCrashed();
+        networkProcessDidTerminate(TerminationReason::Crash);
         return;
     }
     
