@@ -1647,7 +1647,7 @@ webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-ori
 # EventSender::dumpFilenameBeingDragged not implemented.
 webkit.org/b/61826 fast/events/drag-image-filename.html [ Timeout ]
 
-webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure ]
+webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
 webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
 
@@ -1757,6 +1757,10 @@ webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-do
 webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
 
 webkit.org/b/219979 gamepad/gamepad-polling-access.html [ Timeout Pass ]
+
+webkit.org/b/224073 media/non-existent-video-playback-interrupted.html [ Timeout Pass ]
+
+webkit.org/b/224074 webrtc/concurrentVideoPlayback.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2456,6 +2460,18 @@ webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/
 webkit.org/b/223980 editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
 
 webkit.org/b/223981 inspector/canvas/recording-2d-saves.html [ Failure ]
+
+webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-missing-varyings.html [ Failure ]
+webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]
+webkit.org/b/224062 webgl/1.0.3/conformance/rendering/gl-scissor-test.html [ Failure ]
+
+webkit.org/b/224064 media/video-orientation-canvas.html [ Failure ]
+
+webkit.org/b/222495 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
+
+webkit.org/b/224067 media/media-source/media-source-timestampoffset-trim.html [ Failure ]
+
+webkit.org/b/224076 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
