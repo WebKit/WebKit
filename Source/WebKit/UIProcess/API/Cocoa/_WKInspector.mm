@@ -26,12 +26,14 @@
 #import "config.h"
 #import "_WKInspectorInternal.h"
 
-#import "InspectorDelegate.h"
+#import "APIInspectorClient.h"
 #import "WKError.h"
 #import "WKWebViewInternal.h"
+#import "WebInspectorUIProxy.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKFrameHandleInternal.h"
+#import "_WKInspectorDelegate.h"
 #import "_WKInspectorPrivateForTesting.h"
 #import "_WKRemoteObjectRegistry.h"
 #import <WebCore/FrameIdentifier.h>
@@ -47,21 +49,44 @@
 #import <wtf/BlockPtr.h>
 #endif
 
+class InspectorClient final : public API::InspectorClient {
+public:
+    explicit InspectorClient(id <_WKInspectorDelegate> delegate)
+        : m_delegate(delegate)
+        , m_respondsToInspectorOpenURLExternally([delegate respondsToSelector:@selector(inspector:openURLExternally:)])
+    {
+    }
+
+    ~InspectorClient() = default;
+
+private:
+    // API::InspectorClient
+    void openURLExternally(WebKit::WebInspectorUIProxy& inspector, const WTF::String& url) final
+    {
+        if (!m_delegate || !m_respondsToInspectorOpenURLExternally)
+            return;
+
+        [m_delegate inspector:wrapper(inspector) openURLExternally:[NSURL URLWithString:url]];
+    }
+
+    WeakObjCPtr<id <_WKInspectorDelegate> > m_delegate;
+
+    bool m_respondsToInspectorOpenURLExternally : 1;
+};
+
 @implementation _WKInspector
 
 // MARK: _WKInspector methods
 
 - (id <_WKInspectorDelegate>)delegate
 {
-    return _delegate->delegate().autorelease();
+    return _delegate.get().get();
 }
 
 - (void)setDelegate:(id<_WKInspectorDelegate>)delegate
 {
-    if (!delegate && !_delegate)
-        return;
-
-    _delegate = makeUnique<WebKit::InspectorDelegate>(self, delegate);
+    _delegate = delegate;
+    _inspector->setInspectorClient(WTF::makeUnique<InspectorClient>(delegate));
 }
 
 - (WKWebView *)webView
@@ -174,6 +199,14 @@
 - (API::Object&)_apiObject
 {
     return *_inspector;
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKInspector.class, self))
+        return;
+
+    [super dealloc];
 }
 
 // MARK: _WKInspectorExtensionHost methods

@@ -29,10 +29,6 @@
 #import "WebInspectorUIProxy.h"
 
 namespace WebKit {
-class InspectorDelegate;
-}
-
-namespace WebKit {
 
 template<> struct WrapperTraits<WebInspectorUIProxy> {
     using WrapperClass = _WKInspector;
@@ -43,6 +39,6 @@ template<> struct WrapperTraits<WebInspectorUIProxy> {
 @interface _WKInspector () <WKObject> {
 @package
     API::ObjectStorage<WebKit::WebInspectorUIProxy> _inspector;
-    std::unique_ptr<WebKit::InspectorDelegate> _delegate;
+    WeakObjCPtr<id <_WKInspectorDelegate> > _delegate;
 }
 @end

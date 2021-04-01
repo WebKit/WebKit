@@ -56,7 +56,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
     NakedPtr<WebKit::WebPageProxy> _inspectedPage;
     RetainPtr<WKInspectorWKWebView> _webView;
     WeakObjCPtr<id <WKInspectorViewControllerDelegate>> _delegate;
-    _WKInspectorConfiguration *_configuration;
+    RetainPtr<_WKInspectorConfiguration> _configuration;
 }
 
 - (instancetype)initWithConfiguration:(_WKInspectorConfiguration *)configuration inspectedPage:(NakedPtr<WebKit::WebPageProxy>)inspectedPage
@@ -64,7 +64,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
     if (!(self = [super init]))
         return nil;
 
-    _configuration = [configuration copy];
+    _configuration = adoptNS([configuration copy]);
 
     // The (local) inspected page is nil if the controller is hosting a Remote Web Inspector view.
     _inspectedPage = inspectedPage;

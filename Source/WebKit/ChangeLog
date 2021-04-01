@@ -1,3 +1,35 @@
+2021-04-01  BJ Burg  <bburg@apple.com>
+
+        v2: REGRESSION(r266890): [Cocoa] Fix API::InspectorClient leak
+        https://bugs.webkit.org/show_bug.cgi?id=223899
+        <rdar://problem/75249282>
+
+        Reviewed by Devin Rousso.
+
+        Refactor to *not* use the helper ObjC class InspectorDelegate.
+        Instead, store the _WKInspectorDelegate in _WKInspector directly
+        using a WeakObjCPtr ivar. Move the C++ bridge class to be defined
+        inside _WKInspector.mm since it's only used there. Adapt it to
+        work better with a nil delegate.
+
+        * UIProcess/API/APIInspectorClient.h:
+        (API::InspectorClient::openURLExternally):
+
+        * UIProcess/API/Cocoa/_WKInspectorInternal.h:
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        (-[_WKInspector delegate]):
+        (-[_WKInspector setDelegate:]):
+        (-[_WKInspector dealloc]):
+
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.h: Removed.
+        * UIProcess/Inspector/Cocoa/InspectorDelegate.mm: Removed.
+
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController initWithConfiguration:inspectedPage:]):
+        Drive-by, fix the leak of _WKInspectorConfiguration.
+
 2021-04-01  Chris Dumez  <cdumez@apple.com>
 
         Share same code between network process termination and crash handling
