@@ -231,28 +231,22 @@ Stringifier::Stringifier(JSGlobalObject* globalObject, JSValue replacer, JSValue
             RETURN_IF_EXCEPTION(scope, );
             if (isArrayReplacer) {
                 m_usingArrayReplacer = true;
-                uint64_t length = static_cast<uint64_t>(toLength(globalObject, replacerObject));
-                RETURN_IF_EXCEPTION(scope, );
-                for (uint64_t index = 0; index < length; ++index) {
-                    JSValue name;
-                    if (isJSArray(replacerObject) && replacerObject->canGetIndexQuickly(index))
-                        name = replacerObject->getIndexQuickly(static_cast<uint32_t>(index));
-                    else {
-                        name = replacerObject->get(globalObject, index);
-                        RETURN_IF_EXCEPTION(scope, );
-                    }
+                forEachInArrayLike(globalObject, replacerObject, [&] (JSValue name) -> bool {
                     if (name.isObject()) {
                         auto* nameObject = jsCast<JSObject*>(name);
                         if (!nameObject->inherits<NumberObject>(vm) && !nameObject->inherits<StringObject>(vm))
-                            continue;
+                            return true;
                     } else if (!name.isNumber() && !name.isString())
-                        continue;
+                        return true;
+
                     JSString* propertyNameString = name.toString(globalObject);
-                    RETURN_IF_EXCEPTION(scope, );
+                    RETURN_IF_EXCEPTION(scope, false);
                     auto propertyName = propertyNameString->toIdentifier(globalObject);
-                    RETURN_IF_EXCEPTION(scope, );
+                    RETURN_IF_EXCEPTION(scope, false);
                     m_arrayReplacerPropertyNames.add(WTFMove(propertyName));
-                }
+                    return true;
+                });
+                RETURN_IF_EXCEPTION(scope, );
             }
         }
     }

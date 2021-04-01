@@ -1,3 +1,16 @@
+2021-04-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize createListFromArrayLike() and Proxy's [[OwnPropertyKeys]] method
+        https://bugs.webkit.org/show_bug.cgi?id=223928
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/json-stringify-array-replacer.js:
+        Reduce running time from over 350ms to ~60ms.
+
+        * microbenchmarks/reflect-own-keys-proxy-2.js: Added.
+        * microbenchmarks/reflect-own-keys-proxy.js: Added.
+
 2021-03-31  Mark Lam  <mark.lam@apple.com>
 
         Missing exception check in HashMapImpl::add().

@@ -110,9 +110,9 @@ JSC_DEFINE_HOST_FUNCTION(reflectObjectConstruct, (JSGlobalObject* globalObject, 
     if (!argumentsObject)
         return JSValue::encode(throwTypeError(globalObject, scope, "Reflect.construct requires the second argument be an object"_s));
 
-    createListFromArrayLike(globalObject, argumentsObject, RuntimeTypeMaskAllTypes, "This error must not be raised"_s, "This error must not be raised"_s, [&] (JSValue value, RuntimeType) -> bool {
+    forEachInArrayLike(globalObject, argumentsObject, [&] (JSValue value) -> bool {
         arguments.append(value);
-        return false;
+        return true;
     });
     RETURN_IF_EXCEPTION(scope, (arguments.overflowCheckNotNeeded(), encodedJSValue()));
     if (UNLIKELY(arguments.hasOverflowed())) {

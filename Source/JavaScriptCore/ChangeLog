@@ -1,3 +1,44 @@
+2021-04-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize createListFromArrayLike() and Proxy's [[OwnPropertyKeys]] method
+        https://bugs.webkit.org/show_bug.cgi?id=223928
+
+        Reviewed by Yusuke Suzuki.
+
+        createListFromArrayLike() changes:
+
+          1. Use toLength() / getIndex() methods that have fast paths.
+          2. Remove RuntimeTypeMask and error messages from its signature: type checks are better
+             performed in advance / inside a functor to keep the helper more versatile.
+          3. Invert functor's return value to align with Structure::forEachProperty() and friends.
+          4. Rename it to forEachInArrayLike() as no list is actually returned.
+
+        ProxyObject::performGetOwnPropertyNames() changes:
+
+          1. Remove RuntimeTypeMask filtering as it's already performed by PropertyNameArray::add().
+          2. Store target's keys in a HashSet for faster insertion / search.
+          3. Don't populate `targetConfigurableKeys` for extensible target as it won't be used [1].
+          4. Leverage return value of HashSet::remove() instead of using a helper.
+
+        This patch advances Proxy's [[OwnPropertyKeys]] microbenchmarks by 20-30%,
+        mainly due to createListFromArrayLike() changes. No behavior changes.
+
+        Also, utilizes forEachInArrayLike() for allow list of JSON.stringify().
+
+        [1]: https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys (step 20)
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getIndex const):
+        * runtime/JSObjectInlines.h:
+        (JSC::forEachInArrayLike):
+        (JSC::createListFromArrayLike): Deleted.
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        * runtime/ReflectObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-03-31  David Kilzer  <ddkilzer@apple.com>
 
         UBSan: JSC::Parser<LexerType>::parseProperty(): runtime error: load of value nnn, which is not a valid value for type 'bool'

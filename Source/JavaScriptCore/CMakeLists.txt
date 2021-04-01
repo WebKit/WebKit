@@ -933,6 +933,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/IteratorOperations.h
     runtime/IteratorPrototype.h
     runtime/JSArray.h
+    runtime/JSArrayInlines.h
     runtime/JSArrayBuffer.h
     runtime/JSArrayBufferPrototype.h
     runtime/JSArrayBufferView.h
