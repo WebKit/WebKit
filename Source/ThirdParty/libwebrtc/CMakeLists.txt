@@ -1530,7 +1530,9 @@ target_link_libraries(webrtc ${LIBEVENT_LIBRARY})
 
 target_link_libraries(webrtc ${LIBOPUS_LIBRARY})
 
-target_link_libraries(webrtc ${Openh264_LIBRARY})
+if (Openh264_FOUND)
+    target_link_libraries(webrtc ${Openh264_LIBRARY})
+endif ()
 
 # libsrtp package compilation
 set(libsrtp_SOURCES
