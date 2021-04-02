@@ -1,3 +1,16 @@
+2021-04-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [check-webkit-style] Check python files in LayoutTests
+        https://bugs.webkit.org/show_bug.cgi?id=224079
+        <rdar://problem/76122813>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher.should_skip_without_warning): Never skip style checks on .py files.
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherSkipTest.test_should_skip_without_warning__false):
+
 2021-04-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: textRectsFromMarkers always fails
