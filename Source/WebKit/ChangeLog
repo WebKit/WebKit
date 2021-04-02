@@ -1,3 +1,39 @@
+2021-04-02  John Wilander  <wilander@apple.com>
+
+        PCM: PrivateClickMeasurementManager::getTokenPublicKey() should not use PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable when validating the token before the attribution report is sent
+        https://bugs.webkit.org/show_bug.cgi?id=223956
+        <rdar://problem/76086936>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests. This just changes the NetworkLoadParameters field pcmDataCarried
+        for the initial public key load and for PCM Debug Mode. This network load setting
+        is not observable in tests.
+
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::storeUnattributed):
+            Now sends PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable
+            to PrivateClickMeasurementManager::getTokenPublicKey() since it's required.
+        (WebKit::generateNetworkLoadParameters):
+            Now takes the parameter isDebugModeEnabled and if it's true, forces
+            PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable since
+            Debug Mode disables privacy measures making PCM network requests likely
+            to be personally identifiable.
+        (WebKit::generateNetworkLoadParametersForHttpPost):
+            Now forwards isDebugModeEnabled to generateNetworkLoadParameters().
+        (WebKit::generateNetworkLoadParametersForHttpGet):
+            Now forwards isDebugModeEnabled to generateNetworkLoadParameters().
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+            Now takes a PrivateClickMeasurement::PcmDataCarried parameter to be able
+            to request the public key in either network load mode.
+            Now also forwards isDebugModeEnabled to generateNetworkLoadParameters().
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequest):
+            Now sends PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable
+            to PrivateClickMeasurementManager::getTokenPublicKey() since it's required.
+        (WebKit::PrivateClickMeasurementManager::fireConversionRequestImpl):
+            Now forwards isDebugModeEnabled to generateNetworkLoadParameters().
+        * NetworkProcess/PrivateClickMeasurementManager.h:
+
 2021-04-02  Youenn Fablet  <youenn@apple.com>
 
         Use webrtc GPU Process feature flag for audio capture on MacOS

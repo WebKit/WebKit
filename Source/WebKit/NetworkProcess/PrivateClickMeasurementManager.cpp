@@ -76,7 +76,8 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 
     if (attribution.ephemeralSourceNonce()) {
         auto attributionCopy = attribution;
-        getTokenPublicKey(WTFMove(attributionCopy), PrivateClickMeasurement::AttributionReportEndpoint::Source, [weakThis = makeWeakPtr(*this), this] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+        // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
+        getTokenPublicKey(WTFMove(attributionCopy), PrivateClickMeasurement::AttributionReportEndpoint::Source, PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable, [weakThis = makeWeakPtr(*this), this] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
             if (!weakThis)
                 return;
 
@@ -104,7 +105,7 @@ void PrivateClickMeasurementManager::storeUnattributed(PrivateClickMeasurement&&
 #endif
 }
 
-static NetworkLoadParameters generateNetworkLoadParameters(URL&& url, const String& httpMethod, RefPtr<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried dataTypeCarried)
+static NetworkLoadParameters generateNetworkLoadParameters(URL&& url, const String& httpMethod, RefPtr<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried dataTypeCarried, bool isDebugModeEnabled)
 {
     ResourceRequest request { WTFMove(url) };
     request.setHTTPMethod(httpMethod);
@@ -119,28 +120,26 @@ static NetworkLoadParameters generateNetworkLoadParameters(URL&& url, const Stri
     loadParameters.parentPID = presentingApplicationPID();
     loadParameters.storedCredentialsPolicy = StoredCredentialsPolicy::EphemeralStateless;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = true;
-    loadParameters.pcmDataCarried = dataTypeCarried;
+    loadParameters.pcmDataCarried = UNLIKELY(isDebugModeEnabled) ? PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable : dataTypeCarried;
 
     return loadParameters;
 }
 
-static NetworkLoadParameters generateNetworkLoadParametersForHttpPost(URL&& url, Ref<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried dataTypeCarried)
+static NetworkLoadParameters generateNetworkLoadParametersForHttpPost(URL&& url, Ref<JSON::Object>&& jsonPayload, PrivateClickMeasurement::PcmDataCarried dataTypeCarried, bool isDebugModeEnabled)
 {
-    return generateNetworkLoadParameters(WTFMove(url), "POST"_s, WTFMove(jsonPayload), dataTypeCarried);
+    return generateNetworkLoadParameters(WTFMove(url), "POST"_s, WTFMove(jsonPayload), dataTypeCarried, isDebugModeEnabled);
 }
 
-static NetworkLoadParameters generateNetworkLoadParametersForHttpGet(URL&& url, PrivateClickMeasurement::PcmDataCarried dataTypeCarried)
+static NetworkLoadParameters generateNetworkLoadParametersForHttpGet(URL&& url, PrivateClickMeasurement::PcmDataCarried dataTypeCarried, bool isDebugModeEnabled)
 {
-    return generateNetworkLoadParameters(WTFMove(url), "GET"_s, nullptr, dataTypeCarried);
+    return generateNetworkLoadParameters(WTFMove(url), "GET"_s, nullptr, dataTypeCarried, isDebugModeEnabled);
 }
 
-void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&& callback)
+void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&& attribution, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried pcmDataCarried, Function<void(PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL)>&& callback)
 {
     if (!featureEnabled())
         return;
 
-    // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
-    auto pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
     auto tokenPublicKeyURL = attribution.tokenPublicKeyURL();
     if (m_tokenPublicKeyURLForTesting) {
         if (attributionReportEndpoint == PrivateClickMeasurement::AttributionReportEndpoint::Destination)
@@ -152,7 +151,7 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
     if (tokenPublicKeyURL.isEmpty() || !tokenPublicKeyURL.isValid())
         return;
 
-    auto loadParameters = generateNetworkLoadParametersForHttpGet(WTFMove(tokenPublicKeyURL), pcmDataCarried);
+    auto loadParameters = generateNetworkLoadParametersForHttpGet(WTFMove(tokenPublicKeyURL), pcmDataCarried, debugModeEnabled());
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a token public key request.");
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a token public key request."_s);
@@ -192,7 +191,7 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
     if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
         return;
 
-    auto loadParameters = generateNetworkLoadParametersForHttpPost(WTFMove(tokenSignatureURL), attribution.tokenSignatureJSON(), pcmDataCarried);
+    auto loadParameters = generateNetworkLoadParametersForHttpPost(WTFMove(tokenSignatureURL), attribution.tokenSignatureJSON(), pcmDataCarried, debugModeEnabled());
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire a unlinkable token signing request.");
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire a unlinkable token signing request."_s);
@@ -309,7 +308,8 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
     }
 
     auto attributionCopy = attribution;
-    getTokenPublicKey(WTFMove(attributionCopy), attributionReportEndpoint, [weakThis = makeWeakPtr(*this), this, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
+    // This happens out of webpage context and with a long delay and is thus unlikely to be personally identifiable.
+    getTokenPublicKey(WTFMove(attributionCopy), attributionReportEndpoint, PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, [weakThis = makeWeakPtr(*this), this, attributionReportEndpoint] (PrivateClickMeasurement&& attribution, const String& publicKeyBase64URL) {
         if (!weakThis)
             return;
 
@@ -343,7 +343,7 @@ void PrivateClickMeasurementManager::fireConversionRequestImpl(const PrivateClic
     if (attributionURL.isEmpty() || !attributionURL.isValid())
         return;
 
-    auto loadParameters = generateNetworkLoadParametersForHttpPost(WTFMove(attributionURL), attribution.attributionReportJSON(), PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable);
+    auto loadParameters = generateNetworkLoadParametersForHttpPost(WTFMove(attributionURL), attribution.attributionReportJSON(), PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable, debugModeEnabled());
 
     RELEASE_LOG_INFO(PrivateClickMeasurement, "About to fire an attribution request.");
     m_networkProcess->broadcastConsoleMessage(m_sessionID, MessageSource::PrivateClickMeasurement, MessageLevel::Log, "[Private Click Measurement] About to fire an attribution request."_s);
