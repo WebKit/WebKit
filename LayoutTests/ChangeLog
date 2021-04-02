@@ -1,3 +1,12 @@
+2021-04-02  Robert Jenner  <jenner@apple.com>
+
+        [ EWS iOS wk2 ] css2.1/20110323/replaced-intrinsic-ratio-001.htm is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=224121
+
+        Uneviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updated test expectations to Pass Failure because it was slowing down EWS. Keeping expectation while test is reviewed.
+
 2021-04-02  Zalan Bujtas  <zalan@apple.com>
 
         [AspectRatio] Out-of-flow box with intrinsic width (e.g. <img>) may trigger infinite recursion

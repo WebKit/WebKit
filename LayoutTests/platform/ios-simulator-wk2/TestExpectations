@@ -162,3 +162,5 @@ webkit.org/b/222808 imported/w3c/web-platform-tests/webrtc/protocol/candidate-ex
 # webkit.org/b/209139 fast/canvas/webgl/webgl-clear-composited-notshowing.html [ Failure ]
 
 webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
+
+webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
