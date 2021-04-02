@@ -45,6 +45,7 @@
 
 #if ENABLE(ConditionBase) || (ENABLE(ConditionBase) && ENABLE(ConditionOperation))
 #include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
 #endif
 
 

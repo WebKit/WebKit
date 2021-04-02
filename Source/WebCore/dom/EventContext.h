@@ -28,10 +28,9 @@
 #pragma once
 
 #include "HTMLFormElement.h"
+#include "TouchList.h"
 
 namespace WebCore {
-
-class TouchList;
 
 class EventContext {
     WTF_MAKE_FAST_ALLOCATED;

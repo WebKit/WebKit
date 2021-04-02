@@ -1,3 +1,66 @@
+2021-04-02  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Non-unified build fixes, early April 2021
+        https://bugs.webkit.org/show_bug.cgi?id=224091
+
+        Reviewed by Alex Christensen.
+
+        Non-unified build fixes, April 2021.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddToIncludesForIDLType):
+        For IDLs that have a property with a type of `undefined`, also add #include "JSDOMConvertBase.h" to
+        the generated binding source file.  This fixes a build error in
+        DerivedSources/JSWebGLLoseContext.cpp that looked like:
+
+        WebCore/DerivedSources/JSWebGLLoseContext.cpp:147:78: error: expected primary-expression before ‘>’ token
+        RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.loseContext(); })));
+
+        Thanks to Darin Adler for figuring this out.
+
+        To see the full error, go here: https://bugs.webkit.org/show_bug.cgi?id=223150#c14
+
+        * dom/EventContext.h:
+        * dom/FocusOptions.h:
+        * loader/ResourceLoadInfo.cpp:
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        * platform/network/soup/SoupNetworkSession.cpp:
+        * rendering/RenderLayerModelObject.cpp:
+        * style/Styleable.cpp:
+        * workers/service/server/SWScriptStorage.cpp:
+        * workers/service/server/SWScriptStorage.h:
+        * Modules/mediastream/RTCDataChannelRemoteSource.h:
+        Fix 'invalid use of incomplete type <TYPE>' or '<TYPE> does not name a type' errors.
+
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithThisObject.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackFunctionWithTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp:
+        * bindings/scripts/test/JS/JSTestDomainSecurity.cpp:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestLegacyNoInterfaceObject.cpp:
+        * bindings/scripts/test/JS/JSTestMapLikeWithOverriddenOperations.cpp:
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestOperationConditional.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSetLikeWithOverriddenOperations.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/JS/JSTestVoidCallbackFunction.cpp:
+        Update bindings via `run-bindings-tests --reset-results` to add new "JSDOMConvertBase.h" include.
+
 2021-04-02  Chris Lord  <clord@igalia.com>
 
         Implement text rendering on OffscreenCanvas in a Worker

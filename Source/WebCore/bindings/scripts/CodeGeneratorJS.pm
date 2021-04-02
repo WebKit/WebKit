@@ -573,6 +573,7 @@ sub AddToIncludesForIDLType
 
     if ($type->name eq "undefined") {
         AddToIncludes("IDLTypes.h", $includesRef, $conditional);
+        AddToIncludes("JSDOMConvertBase.h", $includesRef, $conditional);
         return;
     }
 

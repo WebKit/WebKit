@@ -26,10 +26,11 @@
 #include "config.h"
 #include "ResourceLoadInfo.h"
 
-#include "ContentExtensionActions.h"
-#include "SecurityOrigin.h"
-
 #if ENABLE(CONTENT_EXTENSIONS)
+
+#include "ContentExtensionActions.h"
+#include "RegistrableDomain.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 namespace ContentExtensions {

@@ -35,11 +35,13 @@
 #include "CSSTransition.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
+#include "DocumentTimeline.h"
 #include "Element.h"
 #include "KeyframeEffect.h"
 #include "KeyframeEffectStack.h"
 #include "RenderStyle.h"
 #include "StylePropertyShorthand.h"
+#include "StyleResolver.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 

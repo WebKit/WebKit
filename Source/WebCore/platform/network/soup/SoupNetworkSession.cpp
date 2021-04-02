@@ -32,6 +32,7 @@
 #include "AuthenticationChallenge.h"
 #include "GUniquePtrSoup.h"
 #include "Logging.h"
+#include "SoupVersioning.h"
 #include <glib/gstdio.h>
 #include <libsoup/soup.h>
 #include <pal/crypto/CryptoDigest.h>

@@ -31,7 +31,6 @@
 #include "ServiceWorkerRegistrationKey.h"
 #include "SharedBuffer.h"
 #include <pal/crypto/CryptoDigest.h>
-#include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
 #include <wtf/PageBlock.h>
 #include <wtf/text/Base64.h>
