@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
+#include "config.h"
+#include "ScopedRenderingResourcesRequest.h"
 
-#import <Metal/MetalPrivate.h>
+#if PLATFORM(COCOA)
 
+#import <Metal/Metal.h>
+#import <objc/NSObjCRuntime.h>
+#import <pal/spi/cocoa/MetalSPI.h>
+#import <wtf/BlockObjCExceptions.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/RunLoop.h>
+#import <wtf/Seconds.h>
+
+OBJC_PROTOCOL(MTLDevice);
+OBJC_PROTOCOL(MTLDeviceSPI);
+
+namespace WebKit {
+
+static constexpr Seconds freeRenderingResourcesTimeout = 1_s;
+static bool didScheduleFreeRenderingResources;
+
+void ScopedRenderingResourcesRequest::scheduleFreeRenderingResources()
+{
+    if (didScheduleFreeRenderingResources)
+        return;
+    RunLoop::main().dispatchAfter(freeRenderingResourcesTimeout, freeRenderingResources);
+    didScheduleFreeRenderingResources = true;
+}
+
+void ScopedRenderingResourcesRequest::freeRenderingResources()
+{
+    didScheduleFreeRenderingResources = false;
+    if (s_requests)
+        return;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+#if PLATFORM(MAC)
+    auto devices = adoptNS(MTLCopyAllDevices());
+    for (id <MTLDevice> device : devices.get())
+        [(_MTLDevice *)device _purgeDevice];
 #else
+    RetainPtr<MTLDevice> devicePtr = adoptNS(MTLCreateSystemDefaultDevice());
+    [(_MTLDevice *)devicePtr.get() _purgeDevice];
+#endif
+    END_BLOCK_OBJC_EXCEPTIONS
+}
 
-#import <Foundation/NSObject.h>
-
-@protocol MTLDeviceSPI <MTLDevice>
-- (NSString*)vendorName;
-- (NSString*)familyName;
-- (NSString*)productName;
-@end
-
-@interface _MTLDevice : NSObject
-- (void)_purgeDevice;
-@end
+}
 
 #endif

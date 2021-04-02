@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
+#include "config.h"
+#include "ScopedWebGLRenderingResourcesRequest.h"
 
-#import <Metal/MetalPrivate.h>
+namespace WebKit {
 
-#else
+std::atomic<unsigned> ScopedWebGLRenderingResourcesRequest::s_requests;
 
-#import <Foundation/NSObject.h>
+#if !PLATFORM(COCOA)
 
-@protocol MTLDeviceSPI <MTLDevice>
-- (NSString*)vendorName;
-- (NSString*)familyName;
-- (NSString*)productName;
-@end
+void ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources()
+{
+}
 
-@interface _MTLDevice : NSObject
-- (void)_purgeDevice;
-@end
+void ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources()
+{
+}
 
 #endif
+
+}

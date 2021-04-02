@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GraphicsContextGLIdentifier.h"
 #include "RemoteRenderingBackend.h"
+#include "ScopedWebGLRenderingResourcesRequest.h"
 #include "StreamServerConnection.h"
 #include <WebCore/ExtensionsGL.h>
 #include <WebCore/GraphicsContextGLOpenGL.h>
@@ -110,7 +111,10 @@ protected:
     RefPtr<WebCore::GraphicsContextGLOpenGL> m_context;
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;
     Ref<RemoteRenderingBackend> m_renderingBackend;
+    ScopedWebGLRenderingResourcesRequest m_renderingResourcesRequest;
 };
+
+IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue();
 
 } // namespace WebKit
 

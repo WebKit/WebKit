@@ -77,6 +77,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
     , m_engineIdentifier(engineIdentifier)
     , m_updateCachedStateMessageTimer(RunLoop::main(), this, &RemoteMediaPlayerProxy::timerFired)
     , m_configuration(configuration)
+    , m_renderingResourcesRequest(ScopedRenderingResourcesRequest::acquire())
 #if !RELEASE_LOG_DISABLED
     , m_logger(manager.logger())
 #endif
@@ -100,6 +101,7 @@ void RemoteMediaPlayerProxy::invalidate()
         m_sandboxExtension->revoke();
         m_sandboxExtension = nullptr;
     }
+    m_renderingResourcesRequest = { };
 }
 
 void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& configuration)

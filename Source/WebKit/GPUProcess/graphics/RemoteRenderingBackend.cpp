@@ -87,7 +87,8 @@ void RemoteRenderingBackend::startListeningForIPC()
 RemoteRenderingBackend::~RemoteRenderingBackend()
 {
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
-    m_workQueue->dispatch([remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
+    // Make sure rendering resource request is released after destroying the cache.
+    m_workQueue->dispatch([renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()
@@ -166,6 +167,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     }
 
     m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
+    updateRenderingResourceRequest();
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
@@ -473,6 +475,7 @@ void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier r
 {
     ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
+    updateRenderingResourceRequest();
 }
 
 void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
@@ -585,6 +588,16 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     }
     ASSERT_NOT_REACHED();
     return WTF::nullopt;
+}
+
+void RemoteRenderingBackend::updateRenderingResourceRequest()
+{
+    bool hasActiveDrawables = !m_remoteResourceCache.imageBuffers().isEmpty() || !m_remoteResourceCache.nativeImages().isEmpty();
+    bool hasActiveRequest = m_renderingResourcesRequest.isRequested();
+    if (hasActiveDrawables && !hasActiveRequest)
+        m_renderingResourcesRequest = ScopedRenderingResourcesRequest::acquire();
+    else if (!hasActiveDrawables && hasActiveRequest)
+        m_renderingResourcesRequest = { };
 }
 
 } // namespace WebKit

@@ -1,3 +1,125 @@
+2021-04-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteRenderingBackend should clean up CG resources after last Canvas is destroyed in Gpu process
+        https://bugs.webkit.org/show_bug.cgi?id=223885
+        <rdar://problem/75637356>
+
+        Reviewed by Simon Fraser.
+
+        Release CoreGraphics resources (Metal device command buffers,
+        and other per-device resources) 1s after last
+         - RemoteRenderingBackend drawable resource
+         - RemoteGraphicsContextGL instance
+         - RemoteMediaPlayerProxy instance
+        has been destroyed.
+
+        Adds ScopedRenderingResourcesRequest and
+        ScopedWebGLRenderingResourcesRequest to hold the intent to
+        use the global rendering resources. The names are called 'Request'
+        because the implementation is not guaranteed to do anything specific.
+        E.g. ResourcesRequest == "I'd like the resources to be available"
+             ResourcesLock, ResourcesHolder, ...  = "The resources are guaranteed
+             to be held."
+        The naming tries to be consistent with the similar class
+        ScopedHighPerformanceGPURequest.
+
+        For sequence like:
+        1) Visit a page with simple Context2D usage
+        2) Close the page (but leave the browser running)
+        This saves 2mb of IOAccelMemory at step 2 on a tested device.
+
+
+        * Configurations/WebKit.xcconfig:
+        Link WebKit to Metal in order to use the RemoteRenderingRequest
+        (_MTLCopyAllDevices symbol).
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        Clear the map containing RemoteGraphicsContextGL objects
+        when connection to WebContent process is closed.
+        This stops the RemoteGraphicsContextGL listening for IPC
+        and destroys them in scenarios where the connection is
+        closed but the GPUConnectionToWebProcess is staying alive
+        for some reason. In this patch, this would happen for example
+        during reload of the page.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::remoteGraphicsContextGLStreamWorkQueue):
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::initialize):
+        (WebKit::RemoteGraphicsContextGL::stopListeningForIPC):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        Hold the ScopedWebGLRenderingResourcesRequest for
+        the duration of the RemoteGraphicsContextGL context lifetime.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::~RemoteRenderingBackend):
+        (WebKit::RemoteRenderingBackend::createImageBuffer):
+        (WebKit::RemoteRenderingBackend::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackend::updateRenderingResourceRequest):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        Hold the ScopedRenderingResourcesRequest for the duration that
+        there are ImageBuffers or NativeImages in the RemoteResourceCache.
+
+        A RemoteRenderingBackend might exist without any drawable due to
+        a) Context2D being created and then destroyed
+        b) WebGL taking a reference to the RemoteRenderingBackend in order
+        to submit work in case the caller would request Image -> texture
+        upload.
+
+        In case of WebGL context being created and then destroyed, there is
+        a RRB instance alive but not doing any rendering. In these cases,
+        we want the rendering resources to be released and not held by
+        the empty RRB.
+
+        * GPUProcess/graphics/ScopedRenderingResourcesRequest.cpp: Copied from Source/WebCore/PAL/pal/spi/cocoa/MetalSPI.h.
+        (WebKit::ScopedRenderingResourcesRequest::scheduleFreeRenderingResources):
+        (WebKit::ScopedRenderingResourcesRequest::freeRenderingResources):
+        * GPUProcess/graphics/ScopedRenderingResourcesRequest.h: Added.
+        (WebKit::ScopedRenderingResourcesRequest::ScopedRenderingResourcesRequest):
+        (WebKit::ScopedRenderingResourcesRequest::~ScopedRenderingResourcesRequest):
+        (WebKit::ScopedRenderingResourcesRequest::operator=):
+        (WebKit::ScopedRenderingResourcesRequest::isRequested const):
+        (WebKit::ScopedRenderingResourcesRequest::acquire):
+        (WebKit::ScopedRenderingResourcesRequest::reset):
+        * GPUProcess/graphics/ScopedRenderingResourcesRequestCocoa.mm: Copied from Source/WebCore/PAL/pal/spi/cocoa/MetalSPI.h.
+        (WebKit::ScopedRenderingResourcesRequest::scheduleFreeRenderingResources):
+        (WebKit::ScopedRenderingResourcesRequest::freeRenderingResources):
+        Add a scoped holder for the rendering resources. Currently it purges
+        all Metal device memory.
+
+        * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.cpp: Copied from Source/WebCore/PAL/pal/spi/cocoa/MetalSPI.h.
+        (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources):
+        (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources):
+        * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequest.h: Added.
+        (WebKit::ScopedWebGLRenderingResourcesRequest::ScopedWebGLRenderingResourcesRequest):
+        (WebKit::ScopedWebGLRenderingResourcesRequest::~ScopedWebGLRenderingResourcesRequest):
+        (WebKit::ScopedWebGLRenderingResourcesRequest::operator=):
+        (WebKit::ScopedWebGLRenderingResourcesRequest::isRequested const):
+        (WebKit::ScopedWebGLRenderingResourcesRequest::acquire):
+        (WebKit::ScopedWebGLRenderingResourcesRequest::reset):
+        * GPUProcess/graphics/ScopedWebGLRenderingResourcesRequestCocoa.cpp: Copied from Source/WebCore/PAL/pal/spi/cocoa/MetalSPI.h.
+        (WebKit::ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources):
+        (WebKit::ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources):
+        Add a scoped holder for the WebGL global resources. Currently it frees
+        the ANGLE related global data. It also purges all Metal device memory
+        via RenderingResourcesRequest.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::RemoteMediaPlayerProxy):
+        (WebKit::RemoteMediaPlayerProxy::invalidate):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        Hold RenderingResourcesRequest for the duration of a media player
+        existing in the GPU process. It's not known if media playback needs
+        Metal. At least some videos do not need it. However, this is erring
+        on the side of caution in order to avoid potential video frame skips
+        the video playback using Metal but then the devices being purged by
+        a Context2D or WebGL -related destruction.
+
+        * Sources.txt:
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-04-01  Kate Cheney  <katherine_cheney@apple.com>
 
         Clear network website data when a user clears history/website data

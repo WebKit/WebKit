@@ -1,3 +1,15 @@
+2021-04-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteRenderingBackend should clean up CG resources after last Canvas is destroyed in Gpu process
+        https://bugs.webkit.org/show_bug.cgi?id=223885
+        <rdar://problem/75637356>
+
+        Reviewed by Simon Fraser.
+
+        Add SPI interface _MTLDevice for its _purgeDevice method.
+
+        * pal/spi/cocoa/MetalSPI.h:
+
 2021-04-01  Jean-Yves Avenard  <jya@apple.com>
 
         Previous artwork isn't cleared when NowPlaying info doesn't contain an artwork

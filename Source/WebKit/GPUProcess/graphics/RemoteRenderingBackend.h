@@ -35,6 +35,7 @@
 #include "MessageSender.h"
 #include "RemoteResourceCache.h"
 #include "RenderingBackendIdentifier.h"
+#include "ScopedRenderingResourcesRequest.h"
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
@@ -106,6 +107,7 @@ private:
     RefPtr<WebCore::ImageBuffer> nextDestinationImageBufferAfterApplyingDisplayLists(WebCore::ImageBuffer& initialDestination, size_t initialOffset, DisplayListReaderHandle&, GPUProcessWakeupReason);
 
     Optional<SharedMemory::IPCHandle> updateSharedMemoryForGetImageDataHelper(size_t byteCount);
+    void updateRenderingResourceRequest();
 
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
@@ -132,6 +134,7 @@ private:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 
+
     struct PendingWakeupInformation {
         GPUProcessWakeupMessageArguments arguments;
         Optional<WebCore::RenderingResourceIdentifier> missingCachedResourceIdentifier;
@@ -157,6 +160,7 @@ private:
     IPC::Semaphore m_resumeDisplayListSemaphore;
     IPC::Semaphore m_getImageDataSemaphore;
     RefPtr<SharedMemory> m_getImageDataSharedMemory;
+    ScopedRenderingResourcesRequest m_renderingResourcesRequest;
 };
 
 } // namespace WebKit

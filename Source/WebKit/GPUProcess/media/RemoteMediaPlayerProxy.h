@@ -35,6 +35,7 @@
 #include "RemoteMediaPlayerState.h"
 #include "RemoteMediaResourceIdentifier.h"
 #include "SandboxExtension.h"
+#include "ScopedRenderingResourcesRequest.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/InbandTextTrackPrivate.h>
@@ -334,6 +335,7 @@ private:
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)
     RefPtr<RemoteAudioSourceProviderProxy> m_remoteAudioSourceProvider;
 #endif
+    ScopedRenderingResourcesRequest m_renderingResourcesRequest;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& m_logger;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if USE(APPLE_INTERNAL_SDK)
+#include "config.h"
+#include "ScopedWebGLRenderingResourcesRequest.h"
 
-#import <Metal/MetalPrivate.h>
+#if PLATFORM(COCOA)
 
-#else
+#include "RemoteGraphicsContextGL.h"
+#include "StreamConnectionWorkQueue.h"
+#include <WebCore/GraphicsContextGL.h>
+#include <wtf/RunLoop.h>
+#include <wtf/Seconds.h>
 
-#import <Foundation/NSObject.h>
+namespace WebKit {
 
-@protocol MTLDeviceSPI <MTLDevice>
-- (NSString*)vendorName;
-- (NSString*)familyName;
-- (NSString*)productName;
-@end
+static constexpr Seconds freeWebGLRenderingResourcesTimeout = 1_s;
+static bool didScheduleFreeWebGLRenderingResources;
 
-@interface _MTLDevice : NSObject
-- (void)_purgeDevice;
-@end
+void ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources()
+{
+    if (didScheduleFreeWebGLRenderingResources)
+        return;
+    RunLoop::main().dispatchAfter(freeWebGLRenderingResourcesTimeout, freeWebGLRenderingResources);
+    didScheduleFreeWebGLRenderingResources = true;
+}
+
+void ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources()
+{
+    didScheduleFreeWebGLRenderingResources = false;
+    if (s_requests)
+        return;
+    remoteGraphicsContextGLStreamWorkQueue().dispatch(GraphicsContextGLOpenGL::releaseAllResourcesIfUnused);
+}
+
+}
 
 #endif
