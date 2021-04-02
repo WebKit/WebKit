@@ -371,7 +371,6 @@ messages -> WebPageProxy {
     RecordAutocorrectionResponse(int32_t response, String replacedString, String replacementString);
 
     SetEditableElementIsFocused(bool editableElementIsFocused)
-    DidUpdateRenderingAfterCommittingLoad()
 #endif
 
 #if USE(DICTATION_ALTERNATIVES)

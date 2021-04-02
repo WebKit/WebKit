@@ -71,7 +71,6 @@ enum class SDKVersion : uint32_t {
     FirstWithoutWeChatScrollingQuirk = DYLD_IOS_VERSION_14_5,
     FirstWithDOMWindowReuseRestriction  = DYLD_IOS_VERSION_14_5,
     FirstWithSharedNetworkProcess = DYLD_IOS_VERSION_14_5,
-    FirstWithBlankViewOnJSPrompt = DYLD_IOS_VERSION_14_5,
 #elif PLATFORM(MAC)
     FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
     FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
@@ -93,7 +92,6 @@ enum class SDKVersion : uint32_t {
     FirstWithHTMLDocumentSupportedPropertyNames = DYLD_MACOSX_VERSION_11_3,
     FirstWithNullOriginForNonSpecialSchemedURLs = DYLD_MACOSX_VERSION_12_00,
     FirstWithDOMWindowReuseRestriction = DYLD_MACOSX_VERSION_11_3,
-    FirstWithBlankViewOnJSPrompt = DYLD_MACOSX_VERSION_11_3,
 #endif
 };
 

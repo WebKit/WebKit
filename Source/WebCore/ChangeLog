@@ -1,3 +1,16 @@
+2021-04-02  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, reverting r275434.
+
+        Need to figure out a better strategy to chose the color
+
+        Reverted changeset:
+
+        "Make sure we are no longer show the previous page when
+        running a JS prompt"
+        https://bugs.webkit.org/show_bug.cgi?id=215782
+        https://commits.webkit.org/r275434
+
 2021-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Allow wheel events to trigger high frequency DisplayLinks

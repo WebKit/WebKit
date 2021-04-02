@@ -630,8 +630,6 @@ public:
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);
-
-    void didUpdateRendering();
     
     void setUseSystemAppearance(bool);
 
@@ -2251,10 +2249,6 @@ private:
     bool m_lastNavigationWasAppBound { false };
 
     bool m_canUseCredentialStorage { true };
-
-#if PLATFORM(MAC)
-    bool m_didUpdateRenderingAfterCommittingLoad { false };
-#endif
 
     Vector<String> m_corsDisablingPatterns;
 
