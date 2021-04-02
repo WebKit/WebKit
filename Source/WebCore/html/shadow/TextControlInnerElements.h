@@ -101,9 +101,15 @@ public:
     bool willRespondToMouseClickEvents() override;
 #endif
 
+    bool canAdjustStyleForAppearance() const { return m_canAdjustStyleForAppearance; }
+
 private:
     SearchFieldResultsButtonElement(Document&);
     bool isMouseFocusable() const override { return false; }
+    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
+    bool isSearchFieldResultsButtonElement() const override { return true; }
+
+    bool m_canAdjustStyleForAppearance { true };
 };
 
 class SearchFieldCancelButtonElement final : public HTMLDivElement {
@@ -126,5 +132,10 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextControlInnerTextElement)
     static bool isType(const WebCore::HTMLElement& element) { return element.isTextControlInnerTextElement(); }
+    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SearchFieldResultsButtonElement)
+    static bool isType(const WebCore::HTMLElement& element) { return element.isSearchFieldResultsButtonElement(); }
     static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
 SPECIALIZE_TYPE_TRAITS_END()

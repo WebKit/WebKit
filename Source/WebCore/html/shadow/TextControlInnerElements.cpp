@@ -47,6 +47,7 @@
 #include "TextEventInputType.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
@@ -229,11 +230,27 @@ inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document
 {
     if (document.quirks().shouldHideSearchFieldResultsButton())
         setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
+
+    setHasCustomStyleResolveCallbacks();
 }
 
 Ref<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Document& document)
 {
     return adoptRef(*new SearchFieldResultsButtonElement(document));
+}
+
+Optional<Style::ElementStyle> SearchFieldResultsButtonElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
+{
+    auto input = makeRefPtr(downcast<HTMLInputElement>(shadowHost()));
+    if (input && input->maxResults() >= 0)
+        return WTF::nullopt;
+
+    if (shadowHostStyle && shadowHostStyle->appearance() != SearchFieldPart) {
+        SetForScope<bool> canAdjustStyleForAppearance(m_canAdjustStyleForAppearance, false);
+        return resolveStyle(&parentStyle);
+    }
+
+    return WTF::nullopt;
 }
 
 void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)

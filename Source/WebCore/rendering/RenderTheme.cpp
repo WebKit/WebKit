@@ -241,11 +241,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case SearchFieldCancelButtonPart:
         return adjustSearchFieldCancelButtonStyle(style, element);
     case SearchFieldDecorationPart:
-        return adjustSearchFieldDecorationPartStyle(style, element);
     case SearchFieldResultsDecorationPart:
-        return adjustSearchFieldResultsDecorationPartStyle(style, element);
     case SearchFieldResultsButtonPart:
-        return adjustSearchFieldResultsButtonStyle(style, element);
+        return adjustSearchFieldDecorationStyle(style, element);
     case ProgressBarPart:
         return adjustProgressBarStyle(style, element);
     case MeterPart:
@@ -269,6 +267,25 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case ListButtonPart:
         return adjustListButtonStyle(style, element);
 #endif
+    default:
+        break;
+    }
+}
+
+void RenderTheme::adjustSearchFieldDecorationStyle(RenderStyle& style, const Element* element) const
+{
+    if (is<SearchFieldResultsButtonElement>(element) && !downcast<SearchFieldResultsButtonElement>(*element).canAdjustStyleForAppearance()) {
+        style.setAppearance(NoControlPart);
+        return;
+    }
+
+    switch (style.appearance()) {
+    case SearchFieldDecorationPart:
+        return adjustSearchFieldDecorationPartStyle(style, element);
+    case SearchFieldResultsDecorationPart:
+        return adjustSearchFieldResultsDecorationPartStyle(style, element);
+    case SearchFieldResultsButtonPart:
+        return adjustSearchFieldResultsButtonStyle(style, element);
     default:
         break;
     }

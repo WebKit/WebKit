@@ -33,6 +33,7 @@
 #include "ElementIterator.h"
 #include "Frame.h"
 #include "HTMLBodyElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
@@ -242,7 +243,9 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_document.setTextColor(update.style->visitedDependentColor(CSSPropertyColor));
 
     // FIXME: These elements should not change renderer based on appearance property.
-    if (element.hasTagName(HTMLNames::meterTag) || is<HTMLProgressElement>(element)) {
+    if (element.hasTagName(HTMLNames::meterTag)
+        || is<HTMLProgressElement>(element)
+        || (is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isSearchField())) {
         if (existingStyle && update.style->appearance() != existingStyle->appearance()) {
             update.change = Change::Renderer;
             descendantsToResolve = DescendantsToResolve::All;

@@ -1,3 +1,17 @@
+2021-04-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        Do not paint native decorations for search fields without '-webkit-appearance: searchfield'
+        https://bugs.webkit.org/show_bug.cgi?id=223946
+        <rdar://problem/75621365>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined tests to account for the removal of the native decoration
+        when a different -webkit-appearance is specified on a search field.
+
+        * platform/ios/fast/css/input-search-padding-expected.txt:
+        * platform/mac/fast/css/text-input-with-webkit-border-radius-expected.txt:
+
 2021-04-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: textRectsFromMarkers always fails

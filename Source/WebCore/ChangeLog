@@ -1,3 +1,69 @@
+2021-04-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        Do not paint native decorations for search fields without '-webkit-appearance: searchfield'
+        https://bugs.webkit.org/show_bug.cgi?id=223946
+        <rdar://problem/75621365>
+
+        Reviewed by Antti Koivisto.
+
+        On iOS, sites that use <input type="search"> have been observed to draw
+        their own icons next to the field. Since we draw our own icon for
+        search fields, this results in an unwanted icon on some sites, such as
+        on chanel.com. However, in this case, the site specifies
+        "-webkit-appearance: textfield" on the search input, indicating a desire
+        to remove the native search field appearance. To remove the unwanted
+        icon, we should not paint decorations for search fields without
+        "-webkit-appearance: searchfield".
+
+        To achieve this behavior, adjust the -webkit-appearance value on the
+        pseudo element containing the icon when the search field has a different
+        -webkit-appearance value, so that the native painting is elided. The
+        decision to not simply set "display: none" on the element was made so
+        that sites can still customize the decoration should they choose to do
+        so. Note that on macOS, Web Inspector paints their own search icon
+        using the pseudo element.
+
+        No new tests. A layout test is not possible since SearchFieldResultsButtonElement
+        is inaccessible through DOM APIs. A reference mismatch test is not
+        possible since changing the -webkit-appearance property on a search field
+        already results in visual changes. Existing tests were rebaselined to
+        account for the fact that the decoration is removed when changing
+        -webkit-appearance, so we do have test coverage.
+
+        * html/HTMLElement.h:
+        (WebCore::HTMLElement::isSearchFieldResultsButtonElement const):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SearchFieldResultsButtonElement::SearchFieldResultsButtonElement):
+        (WebCore::SearchFieldResultsButtonElement::resolveCustomStyle):
+
+        If the searchfield's appearance is not "searchfield", adjust the
+        appearance of the results button to NoControlPart. For compatibility
+        reasons, the adjustment is skipped if the author has specified the
+        results attribute on the searchfield. This is determined by checking
+        the maxResults of the input element.
+
+        If the adjustment needs to be performed, we elide standard style
+        adjustments from the theme by setting canAdjustStyleForAppearance to
+        false. Without this, the call to resolveStyle will apply native styles
+        to the element, since it does not know we are about to reset appearance.
+
+        * html/shadow/TextControlInnerElements.h:
+        (isType):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::adjustSearchFieldDecorationStyle const):
+
+        Skip style adjustment and reset the appearance when necessary.
+
+        * rendering/RenderTheme.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+
+        Resolve all descendants if the appearance property of a search input is
+        changed. Without this change, the style of the results button is not
+        resolved when making a dynamic style change to the appearance of the
+        search input.
+
 2021-04-02  Chris Fleizach  <cfleizach@apple.com>
 
         AX: textRectsFromMarkers always fails

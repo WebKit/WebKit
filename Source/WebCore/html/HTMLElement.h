@@ -89,6 +89,7 @@ public:
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
 
     virtual bool isTextControlInnerTextElement() const { return false; }
+    virtual bool isSearchFieldResultsButtonElement() const { return false; }
 
     bool willRespondToMouseMoveEvents() override;
     bool willRespondToMouseWheelEvents() override;
