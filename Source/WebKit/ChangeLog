@@ -1,3 +1,19 @@
+2021-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [watchOS] Contact AutoFill suggestions no longer show up in non-username or password fields
+        https://bugs.webkit.org/show_bug.cgi?id=224087
+        <rdar://problem/76080205>
+
+        Reviewed by Tim Horton.
+
+        For the time being, limit use of `PUICQuickboardController` to text content types that would allow for login
+        credential AutoFill in Quickboard. We can remove this logic when `PUICQuickboardController` can be updated with
+        and present arbitrary text suggestion values.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (canUseQuickboardControllerFor):
+        (-[WKContentView presentViewControllerForCurrentFocusedElement]):
+
 2021-04-01  BJ Burg  <bburg@apple.com>
 
         v2: REGRESSION(r266890): [Cocoa] Fix API::InspectorClient leak

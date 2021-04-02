@@ -6545,6 +6545,12 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     return quickboardController;
 }
 
+static bool canUseQuickboardControllerFor(UITextContentType type)
+{
+    // We can remove this restriction once PUICQuickboardController supports displaying text suggestion strings that are not login credentials.
+    return [type isEqualToString:UITextContentTypeUsername] || [type isEqualToString:UITextContentTypePassword] || [type isEqualToString:UITextContentTypeEmailAddress];
+}
+
 #endif // HAVE(QUICKBOARD_CONTROLLER)
 
 - (void)presentViewControllerForCurrentFocusedElement
@@ -6575,10 +6581,12 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         break;
     default: {
 #if HAVE(QUICKBOARD_CONTROLLER)
-        _presentedQuickboardController = [self _createQuickboardController:presentingViewController];
-#else
-        _presentedFullScreenInputViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
+        if (canUseQuickboardControllerFor(self.textContentTypeForQuickboard)) {
+            _presentedQuickboardController = [self _createQuickboardController:presentingViewController];
+            break;
+        }
 #endif
+        _presentedFullScreenInputViewController = adoptNS([[WKTextInputListViewController alloc] initWithDelegate:self]);
         break;
     }
     }
