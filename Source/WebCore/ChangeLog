@@ -1,3 +1,29 @@
+2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove [Replaceable] extended attribute from `document.all`
+        https://bugs.webkit.org/show_bug.cgi?id=223883
+
+        Reviewed by Darin Adler.
+
+        [Replaceable] semantics was introduced around 2003 to work around a web-compat issue.
+        Since then, `document.all` was revised multiple times and standardized as [[IsHTMLDDA]]
+        object without a setter, which was proven to be compatible with the web.
+
+        This patch aligns WebKit with the spec [1], Blink, and Gecko.
+
+        iOS apps are unlikely to accidentally depend on subtleties in `document.all` behavior since
+        they were authored long after it became obsolete.
+
+        Old versions of libraries, originally designed for the web, are also unlikely to rely on
+        previous behavior, because `document.all` was never replaceable in some popular browsers.
+
+        [1] https://html.spec.whatwg.org/multipage/obsolete.html#Document-partial
+
+        Tests: fast/dom/undetectable-document-all.html
+               imported/w3c/web-platform-tests/html/dom/idlharness.https.html
+
+        * dom/Document+HTMLObsolete.idl:
+
 2021-04-02  Chris Dumez  <cdumez@apple.com>
 
         Introduce ScriptBuffer class to wrap SharedBuffer containing a script

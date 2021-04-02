@@ -5171,9 +5171,7 @@ PASS Document interface: attribute applets
 PASS Document interface: operation clear()
 PASS Document interface: operation captureEvents()
 PASS Document interface: operation releaseEvents()
-FAIL Document interface: attribute all assert_equals: setter must be undefined for readonly attributes expected (undefined) undefined but got (function) function "function all() {
-    [native code]
-}"
+PASS Document interface: attribute all
 PASS Document interface: attribute onabort
 FAIL Document interface: attribute onauxclick assert_true: The prototype object must have a property "onauxclick" expected true got false
 PASS Document interface: attribute onblur

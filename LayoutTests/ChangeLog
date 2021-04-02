@@ -1,3 +1,18 @@
+2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove [Replaceable] extended attribute from `document.all`
+        https://bugs.webkit.org/show_bug.cgi?id=223883
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/undetectable-document-all-expected.txt:
+        * fast/dom/undetectable-document-all.html:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2021-04-02  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS Debug] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html is a flakey crash and failure

@@ -1,3 +1,12 @@
+2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove [Replaceable] extended attribute from `document.all`
+        https://bugs.webkit.org/show_bug.cgi?id=223883
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/dom/idlharness.https-expected.txt:
+
 2021-04-02  Jessica Tallon  <jtallon@igalia.com>
 
         Update wasm JS-API tests for the type method to latest upstream.

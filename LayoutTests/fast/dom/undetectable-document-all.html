@@ -46,8 +46,8 @@ function runTests() {
     // Try replacing document.all with something else
     document.all = { 'foo': 42}
     
-    if (document.all.foo != 42) {
-        debug('FAILURE: replacing document.all did not work')
+    if (document.all.foo == 42) {
+        debug('FAILURE: document.all should be read-only');
         return;
     }
 
@@ -70,7 +70,7 @@ function runTests() {
 </script>
 </head>
 <body onload="runTests();">
-This tests that document.all should be undetectable, and that it should be possible to set document.all to something else. If this test is successful, the text "SUCCESS" should be shown below.
+This tests that document.all should be undetectable, and that it should be possible to delete document.all. If this test is successful, the text "SUCCESS" should be shown below.
 <pre id="console"></pre>
 </body>
 </html>
