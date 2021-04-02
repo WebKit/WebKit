@@ -2304,3 +2304,5 @@ webkit.org/b/223976 [ Debug ] imported/w3c/web-platform-tests/cors/redirect-pref
 webkit.org/b/224033 imported/w3c/web-platform-tests/custom-elements/reactions/HTMLMediaElement.html [ Pass Crash ]
 
 webkit.org/b/222750 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html [ Pass Failure Crash ]
+
+webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html [ Pass Failure ]

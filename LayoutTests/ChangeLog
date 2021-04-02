@@ -1,3 +1,12 @@
+2021-04-02  Amir Mark Jr  <amir_mark@apple.com>
+
+        [ MacOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=224123
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove [Replaceable] extended attribute from `document.all`
