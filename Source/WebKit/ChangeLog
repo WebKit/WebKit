@@ -1,3 +1,27 @@
+2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce RobinHoodHashTable
+        https://bugs.webkit.org/show_bug.cgi?id=223895
+
+        Reviewed by Fil Pizlo.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ObservedDomainsTableSchemaV1Alternate):
+        (WebKit::expectedUnattributedColumns):
+        (WebKit::expectedAttributedColumns):
+        (WebKit::createTableQueries):
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::getAppBoundDomainsTesting):
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::decode):
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::platformPathsWithAssumedReadAccess):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::platformPathsWithAssumedReadAccess):
+        * UIProcess/WebProcessProxy.h:
+
 2021-04-02  Youenn Fablet  <youenn@apple.com>
 
         Pass the main frame URL to requestGeolocationAuthorizationForURL delegate SPI

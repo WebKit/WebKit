@@ -71,6 +71,7 @@ struct RegExpKey {
         static unsigned hash(const RegExpKey& key) { return key.pattern->hash(); }
         static bool equal(const RegExpKey& a, const RegExpKey& b) { return a == b; }
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
+        static constexpr bool hasHashInValue = true;
     };
 };
 

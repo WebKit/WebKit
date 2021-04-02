@@ -214,6 +214,9 @@ set(WTF_PUBLIC_HEADERS
     RefPtr.h
     ResourceUsage.h
     RetainPtr.h
+    RobinHoodHashMap.h
+    RobinHoodHashSet.h
+    RobinHoodHashTable.h
     RunLoop.h
     SHA1.h
     SaturatedArithmetic.h

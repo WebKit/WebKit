@@ -49,8 +49,8 @@
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/DateMath.h>
-#include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdSet.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -274,18 +274,18 @@ static const String ObservedDomainsTableSchemaV1()
 
 static const String ObservedDomainsTableSchemaV1Alternate()
 {
-    return "CREATE TABLE \"ObservedDomains\" (domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, isPrevalent INTEGER NOT NULL, isVeryPrevalent INTEGER NOT NULL, dataRecordsRemoved INTEGER NOT NULL,timesAccessedAsFirstPartyDueToUserInteraction INTEGER NOT NULL, timesAccessedAsFirstPartyDueToStorageAccessAPI INTEGER NOT NULL,isScheduledForAllButCookieDataRemoval INTEGER NOT NULL)";
+    return "CREATE TABLE \"ObservedDomains\" (domainID INTEGER PRIMARY KEY, registrableDomain TEXT NOT NULL UNIQUE ON CONFLICT FAIL, lastSeen REAL NOT NULL, hadUserInteraction INTEGER NOT NULL, mostRecentUserInteractionTime REAL NOT NULL, grandfathered INTEGER NOT NULL, isPrevalent INTEGER NOT NULL, isVeryPrevalent INTEGER NOT NULL, dataRecordsRemoved INTEGER NOT NULL,timesAccessedAsFirstPartyDueToUserInteraction INTEGER NOT NULL, timesAccessedAsFirstPartyDueToStorageAccessAPI INTEGER NOT NULL,isScheduledForAllButCookieDataRemoval INTEGER NOT NULL)"_s;
 }
 
 static const ExpectedColumns& expectedUnattributedColumns()
 {
-    static const auto columns = makeNeverDestroyed(Vector<String> { "sourceSiteDomainID", "destinationSiteDomainID", "sourceID", "timeOfAdClick", "token", "signature", "keyID" });
+    static const auto columns = makeNeverDestroyed(Vector<String> { "sourceSiteDomainID"_s, "destinationSiteDomainID"_s, "sourceID"_s, "timeOfAdClick"_s, "token"_s, "signature"_s, "keyID"_s });
     return columns.get();
 }
 
 static const ExpectedColumns& expectedAttributedColumns()
 {
-    static const auto columns = makeNeverDestroyed(Vector<String> { "sourceSiteDomainID", "destinationSiteDomainID", "sourceID", "attributionTriggerData", "priority", "timeOfAdClick", "earliestTimeToSendToSource", "token", "signature", "keyID", "earliestTimeToSendToDestination" });
+    static const auto columns = makeNeverDestroyed(Vector<String> { "sourceSiteDomainID"_s, "destinationSiteDomainID"_s, "sourceID"_s, "attributionTriggerData"_s, "priority"_s, "timeOfAdClick"_s, "earliestTimeToSendToSource"_s, "token"_s, "signature"_s, "keyID"_s, "earliestTimeToSendToDestination"_s });
     return columns.get();
 }
 
@@ -294,9 +294,9 @@ static bool needsNewCreateTableSchema(const String& schema)
     return schema.contains("REFERENCES TopLevelDomains");
 }
 
-static const HashMap<String, String>& createTableQueries()
+static const MemoryCompactLookupOnlyRobinHoodHashMap<String, String>& createTableQueries()
 {
-    static auto createTableQueries = makeNeverDestroyed(HashMap<String, String> {
+    static auto createTableQueries = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, String> {
         { "ObservedDomains"_s, createObservedDomain},
         { "TopLevelDomains"_s, createTopLevelDomains},
         { "StorageAccessUnderTopFrameDomains"_s, createStorageAccessUnderTopFrameDomains},

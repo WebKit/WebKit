@@ -292,7 +292,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
     }
 
-    auto& availableLocales = intlNumberFormatAvailableLocales();
+    const auto& availableLocales = intlNumberFormatAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Nu }, localeData);
 
     m_locale = resolved.locale;

@@ -32,6 +32,7 @@
 #import <WebCore/VersionChecks.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/RobinHoodHashMap.h>
 #import <wtf/RunLoop.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/WorkQueue.h>
@@ -58,7 +59,7 @@ Optional<Vector<WebCore::RegistrableDomain>> getAppBoundDomainsTesting(const Str
     if (bundleID.isNull())
         return WTF::nullopt;
 
-    static auto appBoundDomainList = makeNeverDestroyed(HashMap<String, Vector<WebCore::RegistrableDomain>> {
+    static auto appBoundDomainList = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, Vector<WebCore::RegistrableDomain>> {
         {"inAppBrowserPrivacyTestIdentifier"_s, Vector<WebCore::RegistrableDomain> { WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString("127.0.0.1") }},
     });
 

@@ -103,7 +103,7 @@ void IntlListFormat::initializeListFormat(JSGlobalObject* globalObject, JSValue 
         return { };
     };
 
-    auto& availableLocales = intlListFormatAvailableLocales();
+    const auto& availableLocales = intlListFormatAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { }, localeData);
 
     m_locale = resolved.locale;

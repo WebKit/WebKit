@@ -93,9 +93,15 @@ template<typename> struct EnumTraits;
 template<typename E, E...> struct EnumValues;
 template<typename> struct HashTraits;
 
+struct HashTableTraits;
+struct IdentityExtractor;
+template<typename T> struct KeyValuePairKeyExtractor;
+template<typename KeyTraits, typename MappedTraits> struct KeyValuePairTraits;
+template<typename KeyTypeArg, typename ValueTypeArg> struct KeyValuePair;
+template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits> class HashTable;
 template<typename Value, typename = DefaultHash<Value>, typename = HashTraits<Value>> class HashCountedSet;
-template<typename KeyArg, typename MappedArg, typename = DefaultHash<KeyArg>, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>> class HashMap;
-template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTraits<ValueArg>> class HashSet;
+template<typename KeyArg, typename MappedArg, typename = DefaultHash<KeyArg>, typename = HashTraits<KeyArg>, typename = HashTraits<MappedArg>, typename = HashTableTraits> class HashMap;
+template<typename ValueArg, typename = DefaultHash<ValueArg>, typename = HashTraits<ValueArg>, typename = HashTableTraits> class HashSet;
 
 }
 

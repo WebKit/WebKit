@@ -2388,7 +2388,7 @@ void Element::removeShadowRoot()
 
 static bool canAttachAuthorShadowRoot(const Element& element)
 {
-    static NeverDestroyed<HashSet<AtomString>> tagNames = [] {
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> tagNames = [] {
         static const HTMLQualifiedName* const tagList[] = {
             &articleTag.get(),
             &asideTag.get(),
@@ -2409,7 +2409,8 @@ static bool canAttachAuthorShadowRoot(const Element& element)
             &sectionTag.get(),
             &spanTag.get()
         };
-        HashSet<AtomString> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
+        set.reserveInitialCapacity(sizeof(tagList));
         for (auto& name : tagList)
             set.add(name->localName());
         return set;

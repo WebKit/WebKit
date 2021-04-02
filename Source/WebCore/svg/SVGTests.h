@@ -23,6 +23,7 @@
 
 #include "QualifiedName.h"
 #include "SVGStringList.h"
+#include <wtf/RobinHoodHashSet.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ public:
     void parseAttribute(const QualifiedName&, const AtomString&);
     void svgAttributeChanged(const QualifiedName&);
 
-    static void addSupportedAttributes(HashSet<QualifiedName>&);
+    static void addSupportedAttributes(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>&);
 
     WEBCORE_EXPORT static bool hasFeatureForLegacyBindings(const String& feature, const String& version);
 

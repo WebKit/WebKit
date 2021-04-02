@@ -78,6 +78,7 @@
 #include "ScriptController.h"
 #include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -225,7 +226,7 @@ bool HTMLDocument::isCaseSensitiveAttribute(const QualifiedName& attributeName)
             &valuetypeAttr.get(),
             &vlinkAttr.get(),
         };
-        HashSet<AtomString> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
         for (auto* name : names)
             set.add(name->localName());
         return set;

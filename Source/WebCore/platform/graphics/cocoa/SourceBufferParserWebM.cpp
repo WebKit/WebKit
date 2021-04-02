@@ -1371,15 +1371,15 @@ void SourceBufferParserWebM::setCallOnClientThreadCallback(CallOnClientThreadCal
     m_callOnClientThreadCallback = WTFMove(callback);
 }
 
-const HashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()
+const MemoryCompactLookupOnlyRobinHoodHashSet<String>& SourceBufferParserWebM::supportedVideoCodecs()
 {
-    static auto codecs = makeNeverDestroyed<HashSet<String>>({ "V_VP8", "V_VP9" });
+    static auto codecs = makeNeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>>({ "V_VP8"_s, "V_VP9"_s });
     return codecs;
 }
 
-const HashSet<String>& SourceBufferParserWebM::supportedAudioCodecs()
+const MemoryCompactLookupOnlyRobinHoodHashSet<String>& SourceBufferParserWebM::supportedAudioCodecs()
 {
-    static auto codecs = makeNeverDestroyed<HashSet<String>>({ "A_VORBIS", "A_OPUS" });
+    static auto codecs = makeNeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>>({ "A_VORBIS"_s, "A_OPUS"_s });
     return codecs;
 }
 

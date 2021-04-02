@@ -100,6 +100,7 @@ if (length($fontNamesIn)) {
     printLicenseHeader($F);
     printHeaderHead($F, "CSS", $familyNamesFileBase, <<END, "");
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 END
@@ -709,6 +710,7 @@ sub printNamesHeaderFile
     printLicenseHeader($F);
     printHeaderHead($F, "DOM", $parameters{namespace}, <<END, "class $parameters{namespace}QualifiedName : public QualifiedName { };\n\n");
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
 #include "QualifiedName.h"
 END
@@ -956,7 +958,7 @@ END
 #include "Document.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -996,7 +998,7 @@ struct $parameters{namespace}ConstructorFunctionMapEntry {
     const QualifiedName* qualifiedName; // Use pointer instead of reference so that emptyValue() in HashMap is cheap to create.
 };
 
-static NEVER_INLINE HashMap<AtomStringImpl*, $parameters{namespace}ConstructorFunctionMapEntry> create$parameters{namespace}FactoryMap()
+static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, $parameters{namespace}ConstructorFunctionMapEntry> create$parameters{namespace}FactoryMap()
 {
     struct TableEntry {
         const QualifiedName& name;
@@ -1012,16 +1014,16 @@ END
     print F <<END
     };
 
-    HashMap<AtomStringImpl*, $parameters{namespace}ConstructorFunctionMapEntry> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, $parameters{namespace}ConstructorFunctionMapEntry> map;
     for (auto& entry : table)
-        map.add(entry.name.localName().impl(), $parameters{namespace}ConstructorFunctionMapEntry(entry.function, entry.name));
+        map.add(entry.name.localName(), $parameters{namespace}ConstructorFunctionMapEntry(entry.function, entry.name));
     return map;
 }
 
 static $parameters{namespace}ConstructorFunctionMapEntry find$parameters{namespace}ElementConstructorFunction(const AtomString& localName)
 {
     static const auto map = makeNeverDestroyed(create$parameters{namespace}FactoryMap());
-    return map.get().get(localName.impl());
+    return map.get().get(localName);
 }
 
 RefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::createKnownElement(const AtomString& localName, Document& document$formElementArgumentForDefinition, bool createdByParser)
@@ -1226,6 +1228,7 @@ sub printWrapperFactoryCppFile
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
 END
 ;
@@ -1247,7 +1250,7 @@ END
 
 print F <<END
 
-static NEVER_INLINE HashMap<AtomStringImpl*, Create$parameters{namespace}ElementWrapperFunction> create$parameters{namespace}WrapperMap()
+static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> create$parameters{namespace}WrapperMap()
 {
     struct TableEntry {
         const QualifiedName& name;
@@ -1285,16 +1288,16 @@ END
     print F <<END
     };
 
-    HashMap<AtomStringImpl*, Create$parameters{namespace}ElementWrapperFunction> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, Create$parameters{namespace}ElementWrapperFunction> map;
     for (auto& entry : table)
-        map.add(entry.name.localName().impl(), entry.function);
+        map.add(entry.name.localName(), entry.function);
     return map;
 }
 
 JSDOMObject* createJS$parameters{namespace}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
     static const auto functions = makeNeverDestroyed(create$parameters{namespace}WrapperMap());
-    if (auto function = functions.get().get(element->localName().impl()))
+    if (auto function = functions.get().get(element->localName()))
         return function(globalObject, WTFMove(element));
 END
 ;

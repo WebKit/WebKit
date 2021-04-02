@@ -93,7 +93,7 @@ void IntlPluralRules::initializePluralRules(JSGlobalObject* globalObject, JSValu
     LocaleMatcher localeMatcher = intlOption<LocaleMatcher>(globalObject, options, vm.propertyNames->localeMatcher, { { "lookup"_s, LocaleMatcher::Lookup }, { "best fit"_s, LocaleMatcher::BestFit } }, "localeMatcher must be either \"lookup\" or \"best fit\""_s, LocaleMatcher::BestFit);
     RETURN_IF_EXCEPTION(scope, void());
 
-    const HashSet<String>& availableLocales = intlPluralRulesAvailableLocales();
+    const auto& availableLocales = intlPluralRulesAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { }, localeData);
     m_locale = resolved.locale;
     if (m_locale.isEmpty()) {

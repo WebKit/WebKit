@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -48,7 +49,7 @@ struct AutofillInfo {
     AutofillCategory category;
 };
 
-static const HashMap<AtomString, AutofillInfo>& fieldNameMap()
+static const MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, AutofillInfo>& fieldNameMap()
 {
     static const auto map = makeNeverDestroyed([] {
         struct MapEntry {
@@ -113,7 +114,7 @@ static const HashMap<AtomString, AutofillInfo>& fieldNameMap()
             { "email", { AutofillFieldName::Email, AutofillCategory::Contact } },
             { "impp", { AutofillFieldName::Impp, AutofillCategory::Contact } },
         };
-        HashMap<AtomString, AutofillInfo> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, AutofillInfo> map;
         for (auto& entry : entries)
             map.add(entry.name, entry.value);
         return map;

@@ -59,6 +59,7 @@
 #include <wtf/Logger.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/WeakHashSet.h>
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -478,7 +479,7 @@ private:
     bool platformIsBeingDebugged() const;
     bool shouldAllowNonValidInjectedCode() const;
 
-    static const HashSet<String>& platformPathsWithAssumedReadAccess();
+    static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& platformPathsWithAssumedReadAccess();
 
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     void updateBackgroundResponsivenessTimer();

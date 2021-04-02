@@ -111,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlSegmenterConstructorSupportedLocalesOf, (JSGlobalOb
     // https://tc39.es/proposal-intl-segmenter/#sec-intl.segmenter.supportedlocalesof
 
     // 1. Let availableLocales be %Segmenter%.[[availableLocales]].
-    const HashSet<String>& availableLocales = intlSegmenterAvailableLocales();
+    const auto& availableLocales = intlSegmenterAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));

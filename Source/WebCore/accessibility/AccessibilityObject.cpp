@@ -84,6 +84,7 @@
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringView.h>
@@ -2607,8 +2608,8 @@ bool AccessibilityObject::supportsHasPopup() const
 
 String AccessibilityObject::popupValue() const
 {
-    static const NeverDestroyed<HashSet<String>> allowedPopupValues(std::initializer_list<String> {
-        "menu", "listbox", "tree", "grid", "dialog"
+    static const NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> allowedPopupValues(std::initializer_list<String> {
+        "menu"_s, "listbox"_s, "tree"_s, "grid"_s, "dialog"_s,
     });
 
     auto hasPopup = getAttribute(aria_haspopupAttr).convertToASCIILowercase();

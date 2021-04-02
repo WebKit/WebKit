@@ -79,6 +79,8 @@ set(TestWTF_SOURCES
     Tests/WTF/RefCounter.cpp
     Tests/WTF/RefLogger.cpp
     Tests/WTF/RefPtr.cpp
+    Tests/WTF/RobinHoodHashMap.cpp
+    Tests/WTF/RobinHoodHashSet.cpp
     Tests/WTF/RunLoop.cpp
     Tests/WTF/SHA1.cpp
     Tests/WTF/SaturatedArithmeticOperations.cpp

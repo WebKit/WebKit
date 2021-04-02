@@ -94,7 +94,8 @@ template<> struct DefaultHash<MoveOnly> {
         return a == b;
     }
 
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool hasHashInValue = true; // This is not correct, but for debugging of RobinHoodHashSet.
 };
 } // namespace WTF
 

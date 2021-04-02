@@ -717,7 +717,9 @@
 		E311FB161F0A568B003C08DE /* ThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGroup.h; sourceTree = "<group>"; };
 		E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcurrentBuffer.cpp; sourceTree = "<group>"; };
 		E31BDE2822E913CC0029B105 /* MachVMSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachVMSPI.h; sourceTree = "<group>"; };
+		E31CF0A5261058580036E673 /* RobinHoodHashTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashTable.h; sourceTree = "<group>"; };
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
+		E32561122611B5B600A72CC5 /* RobinHoodHashSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashSet.h; sourceTree = "<group>"; };
 		E32A207323C5902D0034A092 /* NakedRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedRef.h; sourceTree = "<group>"; };
 		E339C163244B4E8700359DA9 /* DataRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataRef.h; sourceTree = "<group>"; };
 		E33D5F871FBED66700BF625E /* RecursableLambda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecursableLambda.h; sourceTree = "<group>"; };
@@ -738,6 +740,7 @@
 		E3A32BC31FC830E2007D7E76 /* JSValueMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSValueMalloc.h; sourceTree = "<group>"; };
 		E3B8E41C24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LineBreakIteratorPoolICU.cpp; sourceTree = "<group>"; };
 		E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ICUHelpers.cpp; sourceTree = "<group>"; };
+		E3C583C826127ADD00C57568 /* RobinHoodHashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashMap.h; sourceTree = "<group>"; };
 		E3CF76902115D6BA0091DE48 /* CompactPointerTuple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompactPointerTuple.h; sourceTree = "<group>"; };
 		E3E158251EADA53C004A079D /* SystemFree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemFree.h; sourceTree = "<group>"; };
 		E3E64F0B22813428001E55B4 /* Nonmovable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nonmovable.h; sourceTree = "<group>"; };
@@ -1211,6 +1214,9 @@
 				A8A47303151A825B004123FF /* RefPtr.h */,
 				FE3842342325CC80009DD445 /* ResourceUsage.h */,
 				A8A47305151A825B004123FF /* RetainPtr.h */,
+				E3C583C826127ADD00C57568 /* RobinHoodHashMap.h */,
+				E32561122611B5B600A72CC5 /* RobinHoodHashSet.h */,
+				E31CF0A5261058580036E673 /* RobinHoodHashTable.h */,
 				2CDED0F118115C85004DBA70 /* RunLoop.cpp */,
 				2CDED0F218115C85004DBA70 /* RunLoop.h */,
 				14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */,

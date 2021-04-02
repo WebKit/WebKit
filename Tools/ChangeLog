@@ -1,3 +1,40 @@
+2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce RobinHoodHashTable
+        https://bugs.webkit.org/show_bug.cgi?id=223895
+
+        Reviewed by Fil Pizlo.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/DeletedAddressOfOperator.h:
+        * TestWebKitAPI/Tests/WTF/HashMap.cpp:
+        (TestWebKitAPI::testMovingUsingEnsure):
+        (TestWebKitAPI::testMovingUsingAdd):
+        * TestWebKitAPI/Tests/WTF/HashSet.cpp:
+        (TestWebKitAPI::generateTestCapacityUpToSize<0>):
+        (TestWebKitAPI::generateTestCapacityUpToSize):
+        * TestWebKitAPI/Tests/WTF/MoveOnly.h:
+        * TestWebKitAPI/Tests/WTF/RobinHoodHashMap.cpp: Copied from Tools/TestWebKitAPI/Tests/WTF/HashMap.cpp.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::bucketForKey):
+        (TestWebKitAPI::ZeroHash::hash):
+        (TestWebKitAPI::ObjectWithRefLogger::ObjectWithRefLogger):
+        (TestWebKitAPI::testMovingUsingEnsure):
+        (TestWebKitAPI::testMovingUsingAdd):
+        (TestWebKitAPI::DerefObserver::ref):
+        (TestWebKitAPI::DerefObserver::deref):
+        (TestWebKitAPI::TestObjectWithCustomDestructor::TestObjectWithCustomDestructor):
+        (TestWebKitAPI::TestObjectWithCustomDestructor::~TestObjectWithCustomDestructor):
+        * TestWebKitAPI/Tests/WTF/RobinHoodHashSet.cpp: Copied from Tools/TestWebKitAPI/Tests/WTF/HashSet.cpp.
+        (TestWebKitAPI::capacityForSize):
+        (TestWebKitAPI::testInitialCapacity):
+        (TestWebKitAPI::generateTestCapacityUpToSize<0>):
+        (TestWebKitAPI::generateTestCapacityUpToSize):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::DerefObserver::ref):
+        (TestWebKitAPI::DerefObserver::deref):
+
 2021-04-01  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r272469) QuickLook previews broken in some places on macOS

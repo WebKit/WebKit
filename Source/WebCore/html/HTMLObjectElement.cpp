@@ -51,6 +51,7 @@
 #include "Widget.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/RobinHoodHashSet.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "RuntimeApplicationChecks.h"
@@ -361,7 +362,7 @@ void HTMLObjectElement::renderFallbackContent()
 static inline bool preventsParentObjectFromExposure(const Element& child)
 {
     static const auto mostKnownTags = makeNeverDestroyed([] {
-        HashSet<QualifiedName> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> set;
         auto* tags = HTMLNames::getHTMLTags();
         for (size_t i = 0; i < HTMLNames::HTMLTagsCount; i++) {
             auto& tag = *tags[i];

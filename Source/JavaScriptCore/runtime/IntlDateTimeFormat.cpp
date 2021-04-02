@@ -566,7 +566,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String();
     }
 
-    const HashSet<String>& availableLocales = intlDateTimeFormatAvailableLocales();
+    const auto& availableLocales = intlDateTimeFormatAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Ca, RelevantExtensionKey::Hc, RelevantExtensionKey::Nu }, localeData);
 
     m_locale = resolved.locale;

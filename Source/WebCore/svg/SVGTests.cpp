@@ -163,7 +163,7 @@ void SVGTests::svgAttributeChanged(const QualifiedName& attrName)
     m_contextElement.invalidateStyleAndRenderersForSubtree();
 }
 
-void SVGTests::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
+void SVGTests::addSupportedAttributes(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>& supportedAttributes)
 {
     supportedAttributes.add(requiredFeaturesAttr);
     supportedAttributes.add(requiredExtensionsAttr);

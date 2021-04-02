@@ -45,6 +45,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/Base64.h>
 
 #if HAVE(AVCONTENTKEYSESSION)
@@ -205,9 +206,9 @@ Optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKeyIDsSk
     return keyIDs;
 }
 
-static const HashSet<AtomString>& validInitDataTypes()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& validInitDataTypes()
 {
-    static NeverDestroyed<HashSet<AtomString>> validTypes = HashSet<AtomString>({
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> validTypes(std::initializer_list<AtomString> {
         CDMPrivateFairPlayStreaming::sinfName(),
         CDMPrivateFairPlayStreaming::skdName(),
 #if HAVE(FAIRPLAYSTREAMING_CENC_INITDATA)

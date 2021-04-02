@@ -24,6 +24,7 @@
 
 #include <wtf/HashSet.h>
 #include <wtf/Packed.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringImpl.h>
 
 namespace WTF {
@@ -33,12 +34,15 @@ class StringImpl;
 class AtomStringTable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using StringEntry = PackedPtr<StringImpl>;
+    using StringTableImpl = HashSet<StringEntry>;
+
     WTF_EXPORT_PRIVATE ~AtomStringTable();
 
-    HashSet<PackedPtr<StringImpl>>& table() { return m_table; }
+    StringTableImpl& table() { return m_table; }
 
 private:
-    HashSet<PackedPtr<StringImpl>> m_table;
+    StringTableImpl m_table;
 };
 
 }

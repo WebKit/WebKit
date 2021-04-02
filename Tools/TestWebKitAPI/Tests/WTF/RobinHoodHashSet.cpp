@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,10 +31,12 @@
 #include "RefLogger.h"
 #include "Test.h"
 #include <functional>
-#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/DataLog.h>
+#include <wtf/Stopwatch.h>
 
 namespace TestWebKitAPI {
 
@@ -43,11 +45,24 @@ struct InitialCapacityTestHashTraits : public WTF::UnsignedWithZeroKeyHashTraits
     static const int minimumTableSize = initialCapacity;
 };
 
+template<typename T>
+struct RobinHoodHash : public DefaultHash<T> {
+    static constexpr bool hasHashInValue = true;
+};
+
+static constexpr unsigned capacityForSize(unsigned size)
+{
+    unsigned capacity = WTF::roundUpToPowerOfTwo(size);
+    if (size * 100 >= capacity * 95)
+        return capacity * 2;
+    return capacity;
+}
+
 template<unsigned size>
 void testInitialCapacity()
 {
-    const unsigned initialCapacity = WTF::HashTableCapacityForSize<size>::value;
-    HashSet<int, DefaultHash<int>, InitialCapacityTestHashTraits<initialCapacity> > testSet;
+    constexpr unsigned initialCapacity = capacityForSize(size);
+    MemoryCompactLookupOnlyRobinHoodHashSet<int, RobinHoodHash<int>, InitialCapacityTestHashTraits<initialCapacity>> testSet;
 
     // Initial capacity is null.
     ASSERT_EQ(0u, testSet.capacity());
@@ -58,8 +73,8 @@ void testInitialCapacity()
         ASSERT_EQ(initialCapacity, static_cast<unsigned>(testSet.capacity()));
     }
 
-    // Adding items up to less than 3/4 of the capacity should not change the capacity.
-    unsigned capacityLimit = initialCapacity * 3 / 4 - 1;
+    // Adding items up to more than 95% of the capacity should not change the capacity.
+    unsigned capacityLimit = static_cast<unsigned>(std::ceil(initialCapacity * 0.95));
     for (size_t i = size; i < capacityLimit; ++i) {
         testSet.add(i);
         ASSERT_EQ(initialCapacity, static_cast<unsigned>(testSet.capacity()));
@@ -80,14 +95,14 @@ template<unsigned size> inline void generateTestCapacityUpToSize()
     testInitialCapacity<size>();
 }
 
-TEST(WTF_HashSet, InitialCapacity)
+TEST(WTF_RobinHoodHashSet, InitialCapacity)
 {
     generateTestCapacityUpToSize<128>();
 }
 
-TEST(WTF_HashSet, MoveOnly)
+TEST(WTF_RobinHoodHashSet, MoveOnly)
 {
-    HashSet<MoveOnly> hashSet;
+    MemoryCompactLookupOnlyRobinHoodHashSet<MoveOnly> hashSet;
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
@@ -113,7 +128,7 @@ TEST(WTF_HashSet, MoveOnly)
     for (size_t i = 0; i < 100; ++i)
         hashSet.add(MoveOnly(i + 1));
 
-    HashSet<MoveOnly> secondSet;
+    MemoryCompactLookupOnlyRobinHoodHashSet<MoveOnly> secondSet;
 
     for (size_t i = 0; i < 100; ++i)
         secondSet.add(hashSet.takeAny());
@@ -125,11 +140,11 @@ TEST(WTF_HashSet, MoveOnly)
 }
 
 
-TEST(WTF_HashSet, UniquePtrKey)
+TEST(WTF_RobinHoodHashSet, UniquePtrKey)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<std::unique_ptr<ConstructorDestructorCounter>, RobinHoodHash<std::unique_ptr<ConstructorDestructorCounter>>> set;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     set.add(WTFMove(uniquePtr));
@@ -143,9 +158,9 @@ TEST(WTF_HashSet, UniquePtrKey)
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
-TEST(WTF_HashSet, UniquePtrKey_FindUsingRawPointer)
+TEST(WTF_RobinHoodHashSet, UniquePtrKey_FindUsingRawPointer)
 {
-    HashSet<std::unique_ptr<int>> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<std::unique_ptr<int>, RobinHoodHash<std::unique_ptr<int>>> set;
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
@@ -157,9 +172,9 @@ TEST(WTF_HashSet, UniquePtrKey_FindUsingRawPointer)
     EXPECT_EQ(5, *it->get());
 }
 
-TEST(WTF_HashSet, UniquePtrKey_ContainsUsingRawPointer)
+TEST(WTF_RobinHoodHashSet, UniquePtrKey_ContainsUsingRawPointer)
 {
-    HashSet<std::unique_ptr<int>> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<std::unique_ptr<int>, RobinHoodHash<std::unique_ptr<int>>> set;
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
@@ -168,15 +183,11 @@ TEST(WTF_HashSet, UniquePtrKey_ContainsUsingRawPointer)
     EXPECT_EQ(true, set.contains(ptr));
 }
 
-TEST(WTF_HashSet, UniquePtrKey_RemoveUsingRawPointer)
+TEST(WTF_RobinHoodHashSet, UniquePtrKey_RemoveUsingRawPointer)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
-#if !CHECK_HASHTABLE_ITERATORS &&!DUMP_HASHTABLE_STATS_PER_TABLE
-    static_assert(sizeof(set) == sizeof(void*));
-#endif
-
+    MemoryCompactLookupOnlyRobinHoodHashSet<std::unique_ptr<ConstructorDestructorCounter>, RobinHoodHash<std::unique_ptr<ConstructorDestructorCounter>>> set;
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
     set.add(WTFMove(uniquePtr));
@@ -191,11 +202,11 @@ TEST(WTF_HashSet, UniquePtrKey_RemoveUsingRawPointer)
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
-TEST(WTF_HashSet, UniquePtrKey_TakeUsingRawPointer)
+TEST(WTF_RobinHoodHashSet, UniquePtrKey_TakeUsingRawPointer)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashSet<std::unique_ptr<ConstructorDestructorCounter>> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<std::unique_ptr<ConstructorDestructorCounter>, RobinHoodHash<std::unique_ptr<ConstructorDestructorCounter>>> set;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
@@ -209,68 +220,64 @@ TEST(WTF_HashSet, UniquePtrKey_TakeUsingRawPointer)
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-    
+
     result = nullptr;
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
-TEST(WTF_HashSet, CopyEmpty)
+TEST(WTF_RobinHoodHashSet, CopyEmpty)
 {
     {
-        HashSet<unsigned> foo;
-        HashSet<unsigned> bar(foo);
+        MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> foo;
+        MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> bar(foo);
 
         EXPECT_EQ(0u, bar.capacity());
         EXPECT_EQ(0u, bar.size());
     }
     {
-        HashSet<unsigned> foo({ 1, 5, 64, 42 });
+        MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> foo({ 1, 5, 64, 42 });
         EXPECT_EQ(4u, foo.size());
         foo.remove(1);
         foo.remove(5);
         foo.remove(42);
         foo.remove(64);
-        HashSet<unsigned> bar(foo);
+        MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> bar(foo);
 
         EXPECT_EQ(0u, bar.capacity());
         EXPECT_EQ(0u, bar.size());
     }
 }
 
-TEST(WTF_HashSet, CopyAllocateAtLeastMinimumCapacity)
+TEST(WTF_RobinHoodHashSet, CopyAllocateAtLeastMinimumCapacity)
 {
-    HashSet<unsigned> foo({ 42 });
+    MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> foo({ 42 });
     EXPECT_EQ(1u, foo.size());
-    HashSet<unsigned> bar(foo);
+    MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> bar(foo);
 
     EXPECT_EQ(8u, bar.capacity());
     EXPECT_EQ(1u, bar.size());
 }
 
-TEST(WTF_HashSet, CopyCapacityIsNotOnBoundary)
+TEST(WTF_RobinHoodHashSet, CopyCapacityIsNotOnBoundary)
 {
-    // Starting at 4 because the minimum size is 8.
-    // With a size of 8, a medium load can be up to 3.3333->3.
-    // Adding 1 to 3 would reach max load.
-    // While correct, that's not really what we care about here.
     for (unsigned size = 4; size < 100; ++size) {
-        HashSet<unsigned> source;
+        MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> source;
         for (unsigned i = 1; i < size + 1; ++i)
             source.add(i);
 
-        HashSet<unsigned> copy1(source);
-        HashSet<unsigned> copy2(source);
-        HashSet<unsigned> copy3(source);
+        MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> copy1(source);
+        MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> copy2(source);
+        MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> copy3(source);
 
         EXPECT_EQ(size, copy1.size());
         EXPECT_EQ(size, copy2.size());
         EXPECT_EQ(size, copy3.size());
         for (unsigned i = 1; i < size + 1; ++i) {
-            EXPECT_TRUE(copy1.contains(i));
-            EXPECT_TRUE(copy2.contains(i));
-            EXPECT_TRUE(copy3.contains(i));
+            EXPECT_TRUE(copy1.contains(i)) << i;
+            EXPECT_TRUE(copy2.contains(i)) << i;
+            EXPECT_TRUE(copy3.contains(i)) << i;
         }
         EXPECT_FALSE(copy1.contains(size + 2));
         EXPECT_FALSE(copy2.contains(size + 2));
@@ -281,7 +288,10 @@ TEST(WTF_HashSet, CopyCapacityIsNotOnBoundary)
         EXPECT_FALSE(copy2.contains(1));
 
         EXPECT_TRUE(copy3.add(size + 2).isNewEntry);
-        EXPECT_EQ(copy1.capacity(), copy3.capacity());
+        if ((copy1.capacity() * 0.95) <= copy1.size())
+            EXPECT_EQ(copy1.capacity() * 2, copy3.capacity()) << copy1.size();
+        else
+            EXPECT_EQ(copy1.capacity(), copy3.capacity()) << copy1.size();
         EXPECT_TRUE(copy3.contains(size + 2));
     }
 }
@@ -302,11 +312,11 @@ struct DerefObserver {
     const DerefObserver* observedBucket { nullptr };
 };
 
-TEST(WTF_HashSet, RefPtrNotZeroedBeforeDeref)
+TEST(WTF_RobinHoodHashSet, RefPtrNotZeroedBeforeDeref)
 {
     auto observer = makeUnique<DerefObserver>();
 
-    HashSet<RefPtr<DerefObserver>> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<DerefObserver>, RobinHoodHash<RefPtr<DerefObserver>>> set;
     set.add(adoptRef(observer.get()));
 
     auto iterator = set.find(observer.get());
@@ -326,7 +336,7 @@ TEST(WTF_HashSet, RefPtrNotZeroedBeforeDeref)
 }
 
 
-TEST(WTF_HashSet, UniquePtrNotZeroedBeforeDestructor)
+TEST(WTF_RobinHoodHashSet, UniquePtrNotZeroedBeforeDestructor)
 {
     struct DestructorObserver {
         ~DestructorObserver()
@@ -338,32 +348,37 @@ TEST(WTF_HashSet, UniquePtrNotZeroedBeforeDestructor)
 
     const std::unique_ptr<DestructorObserver>* bucketAddress = nullptr;
     const DestructorObserver* observedBucket = nullptr;
+    bool destructorCalled = false;
     std::unique_ptr<DestructorObserver> observer(new DestructorObserver { [&]() {
         observedBucket = bucketAddress->get();
+        destructorCalled = true;
     }});
 
     const DestructorObserver* observerAddress = observer.get();
 
-    HashSet<std::unique_ptr<DestructorObserver>> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<std::unique_ptr<DestructorObserver>, RobinHoodHash<std::unique_ptr<DestructorObserver>>> set;
     auto addResult = set.add(WTFMove(observer));
 
     EXPECT_TRUE(addResult.isNewEntry);
     EXPECT_TRUE(observedBucket == nullptr);
+    EXPECT_FALSE(destructorCalled);
 
     bucketAddress = addResult.iterator.get();
 
     EXPECT_TRUE(observedBucket == nullptr);
+    EXPECT_FALSE(destructorCalled);
     EXPECT_TRUE(set.remove(*addResult.iterator));
 
+    EXPECT_TRUE(destructorCalled);
     EXPECT_TRUE(observedBucket == observerAddress || observedBucket == reinterpret_cast<const DestructorObserver*>(-1));
 }
 
-TEST(WTF_HashSet, Ref)
+TEST(WTF_RobinHoodHashSet, Ref)
 {
     {
         RefLogger a("a");
 
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
 
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
@@ -374,7 +389,7 @@ TEST(WTF_HashSet, Ref)
     {
         RefLogger a("a");
 
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
 
         Ref<RefLogger> ref(a);
         set.add(ref.copyRef());
@@ -385,7 +400,7 @@ TEST(WTF_HashSet, Ref)
     {
         RefLogger a("a");
 
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
 
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
@@ -397,7 +412,7 @@ TEST(WTF_HashSet, Ref)
     {
         RefLogger a("a");
 
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
 
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
@@ -412,7 +427,7 @@ TEST(WTF_HashSet, Ref)
     {
         RefLogger a("a");
 
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
 
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
@@ -425,7 +440,7 @@ TEST(WTF_HashSet, Ref)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
         auto emptyTake = set.takeAny();
         ASSERT_FALSE(static_cast<bool>(emptyTake));
     }
@@ -433,18 +448,18 @@ TEST(WTF_HashSet, Ref)
     {
         RefLogger a("a");
 
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
 
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
-        
+
         ASSERT_TRUE(set.contains(&a));
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
         for (int i = 0; i < 64; ++i) {
             // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
@@ -458,87 +473,51 @@ TEST(WTF_HashSet, Ref)
     {
         RefLogger a("a");
 
-        HashSet<Ref<RefLogger>> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set;
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
-        HashSet<Ref<RefLogger>> set2(set);
+        MemoryCompactLookupOnlyRobinHoodHashSet<Ref<RefLogger>, RobinHoodHash<Ref<RefLogger>>> set2(set);
     }
     ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashSet, DeletedAddressOfOperator)
+TEST(WTF_RobinHoodHashSet, DeletedAddressOfOperator)
 {
-    HashSet<DeletedAddressOfOperator> set1;
+    MemoryCompactLookupOnlyRobinHoodHashSet<DeletedAddressOfOperator> set1;
     set1.add(10);
 
     set1.remove(10);
 }
 
-TEST(WTF_HashSet, RemoveRandom)
+TEST(WTF_RobinHoodHashSet, RemoveRandom)
 {
-    HashSet<unsigned> set1 { 1, 2, 3 };
+    MemoryCompactLookupOnlyRobinHoodHashSet<unsigned, RobinHoodHash<unsigned>> set1 { 1, 2, 3 };
     set1.remove(set1.random());
     set1.remove(set1.random());
     set1.remove(set1.random());
     ASSERT_TRUE(set1.isEmpty());
 }
 
-TEST(WTF_HashSet, RemoveIf)
+TEST(WTF_RobinHoodHashSet, ReserveInitialCapacity)
 {
-    HashSet<unsigned> set1 { 1, 2, 3, 4, 5 };
-    ASSERT_EQ(set1.size(), 5u);
-    set1.removeIf([] (unsigned item) { return item % 2;  });
-    set1.checkConsistency();
-    ASSERT_TRUE(!set1.contains(1));
-    ASSERT_TRUE(set1.contains(2));
-    ASSERT_TRUE(!set1.contains(3));
-    ASSERT_TRUE(set1.contains(4));
-    ASSERT_TRUE(!set1.contains(5));
-    ASSERT_EQ(set1.size(), 2u);
-}
-
-TEST(WTF_HashSet, RemoveIfShrinkToBestSize)
-{
-    HashSet<unsigned> set1;
-    set1.add(1);
-    unsigned originalCapacity = set1.capacity();
-    while (set1.capacity() < originalCapacity * 4)
-        set1.add(set1.size() + 1);
-    set1.removeIf([] (unsigned item) { return item != 1; });
-    set1.checkConsistency();
-    ASSERT_EQ(set1.size(), 1u);
-    ASSERT_EQ(set1.capacity(), originalCapacity);
-
-    set1.clear();
-    set1.checkConsistency();
-    while (set1.capacity() < originalCapacity * 8)
-        set1.add(set1.size() + 1);
-    set1.removeIf([originalCapacity] (unsigned item) { return item >= originalCapacity / 2; });
-    set1.checkConsistency();
-    ASSERT_EQ(set1.size(), originalCapacity / 2 - 1);
-    ASSERT_EQ(set1.capacity(), originalCapacity);
-}
-
-TEST(WTF_HashSet, ReserveInitialCapacity)
-{
-    HashSet<String> set;
+    MemoryCompactLookupOnlyRobinHoodHashSet<String> set;
     EXPECT_EQ(0u, set.size());
     EXPECT_EQ(0u, set.capacity());
 
     set.reserveInitialCapacity(9999);
     EXPECT_EQ(0u, set.size());
-    EXPECT_EQ(32768u, set.capacity());
+    EXPECT_EQ(16384u, set.capacity());
 
     for (int i = 0; i < 9999; ++i)
         set.add(makeString("foo", i));
     EXPECT_EQ(9999u, set.size());
-    EXPECT_EQ(32768u, set.capacity());
+    EXPECT_EQ(16384u, set.capacity());
     EXPECT_TRUE(set.contains("foo3"_str));
 
     for (int i = 0; i < 9999; ++i)
         set.add(makeString("excess", i));
     EXPECT_EQ(9999u + 9999u, set.size());
-    EXPECT_EQ(32768u + 32768u, set.capacity());
+    EXPECT_EQ(32768u, set.capacity());
 
     for (int i = 0; i < 9999; ++i)
         EXPECT_TRUE(set.remove(makeString("foo", i)));
@@ -550,19 +529,71 @@ TEST(WTF_HashSet, ReserveInitialCapacity)
     EXPECT_EQ(0u, set.size());
     EXPECT_EQ(8u, set.capacity());
 
-    HashSet<String> set2;
+    MemoryCompactLookupOnlyRobinHoodHashSet<String> set2;
     set2.reserveInitialCapacity(9999);
     EXPECT_FALSE(set2.remove("foo1"_s));
 
     for (int i = 0; i < 2000; ++i)
         set2.add(makeString("foo", i));
     EXPECT_EQ(2000u, set2.size());
-    EXPECT_EQ(32768u, set2.capacity());
+    EXPECT_EQ(16384u, set2.capacity());
 
     for (int i = 0; i < 2000; ++i)
         EXPECT_TRUE(set2.remove(makeString("foo", i)));
     EXPECT_EQ(0u, set2.size());
     EXPECT_EQ(8u, set2.capacity());
+}
+
+TEST(WTF_RobinHoodHashSet, AddAndIdentity)
+{
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> set;
+    for (unsigned index = 0; index < 1e3; ++index) {
+        auto string = String::number(index);
+        auto result = set.add(string.impl());
+        EXPECT_TRUE(result.isNewEntry);
+        EXPECT_EQ(*result.iterator, string.impl());
+    }
+    for (unsigned index = 0; index < 1e3; ++index) {
+        auto string = String::number(index);
+        auto result = set.add(string.impl());
+        EXPECT_FALSE(result.isNewEntry);
+        EXPECT_NE(*result.iterator, string.impl());
+    }
+}
+
+TEST(WTF_RobinHoodHashSet, LargeRemoval)
+{
+    MemoryCompactLookupOnlyRobinHoodHashSet<RefPtr<StringImpl>> set;
+    for (unsigned index = 0; index < 1e4; ++index) {
+        auto string = String::number(index);
+        set.add(string.impl());
+    }
+    EXPECT_EQ(set.size(), 1e4);
+    for (unsigned index = 0; index < 1e4; ++index) {
+        if (index & 0x1) {
+            auto string = String::number(index);
+            bool removed = set.remove(string.impl());
+            EXPECT_TRUE(removed);
+        }
+    }
+    EXPECT_EQ(set.size(), 1e4 / 2);
+    for (unsigned index = 0; index < 1e4; ++index) {
+        auto string = String::number(index);
+        if (index & 0x1)
+            EXPECT_FALSE(set.contains(string.impl()));
+        else
+            EXPECT_TRUE(set.contains(string.impl()));
+    }
+
+    for (unsigned index = 0; index < 1e4; ++index) {
+        if (!(index & 0x1)) {
+            auto string = String::number(index);
+            bool removed = set.remove(string.impl());
+            EXPECT_TRUE(removed);
+        }
+    }
+    EXPECT_EQ(set.size(), 0u);
+    EXPECT_EQ(set.capacity(), 8u);
 }
 
 } // namespace TestWebKitAPI

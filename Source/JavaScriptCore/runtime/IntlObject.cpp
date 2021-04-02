@@ -352,7 +352,7 @@ String languageTagForLocaleID(const char* localeID, bool isImmortal)
 }
 
 // Ensure we have xx-ZZ whenever we have xx-Yyyy-ZZ.
-static void addScriptlessLocaleIfNeeded(HashSet<String>& availableLocales, StringView locale)
+static void addScriptlessLocaleIfNeeded(LocaleSet& availableLocales, StringView locale)
 {
     if (locale.length() < 10)
         return;
@@ -377,9 +377,9 @@ static void addScriptlessLocaleIfNeeded(HashSet<String>& availableLocales, Strin
     availableLocales.add(StringImpl::createStaticStringImpl(buffer.data(), buffer.size()));
 }
 
-const HashSet<String>& intlAvailableLocales()
+const LocaleSet& intlAvailableLocales()
 {
-    static LazyNeverDestroyed<HashSet<String>> availableLocales;
+    static LazyNeverDestroyed<LocaleSet> availableLocales;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
         availableLocales.construct();
@@ -455,9 +455,9 @@ const uint8_t ducetWeights[128] = {
     95, 97, 99, 21, 36, 22, 37, 0,
 };
 
-const HashSet<String>& intlCollatorAvailableLocales()
+const LocaleSet& intlCollatorAvailableLocales()
 {
-    static LazyNeverDestroyed<HashSet<String>> availableLocales;
+    static LazyNeverDestroyed<LocaleSet> availableLocales;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
         availableLocales.construct();
@@ -476,22 +476,21 @@ const HashSet<String>& intlCollatorAvailableLocales()
     return availableLocales;
 }
 
-const HashSet<String>& intlSegmenterAvailableLocales()
+const LocaleSet& intlSegmenterAvailableLocales()
 {
-    static NeverDestroyed<HashSet<String>> cachedAvailableLocales;
-    HashSet<String>& availableLocales = cachedAvailableLocales.get();
-
+    static LazyNeverDestroyed<LocaleSet> availableLocales;
     static std::once_flag initializeOnce;
     std::call_once(initializeOnce, [&] {
-        ASSERT(availableLocales.isEmpty());
+        availableLocales.construct();
+        ASSERT(availableLocales->isEmpty());
         constexpr bool isImmortal = true;
         int32_t count = ubrk_countAvailable();
         for (int32_t i = 0; i < count; ++i) {
             String locale = languageTagForLocaleID(ubrk_getAvailable(i), isImmortal);
             if (locale.isEmpty())
                 continue;
-            availableLocales.add(locale);
-            addScriptlessLocaleIfNeeded(availableLocales, locale);
+            availableLocales->add(locale);
+            addScriptlessLocaleIfNeeded(availableLocales.get(), locale);
         }
     });
     return availableLocales;
@@ -698,7 +697,7 @@ Vector<String> canonicalizeLocaleList(JSGlobalObject* globalObject, JSValue loca
     return seen;
 }
 
-String bestAvailableLocale(const HashSet<String>& availableLocales, const String& locale)
+String bestAvailableLocale(const LocaleSet& availableLocales, const String& locale)
 {
     return bestAvailableLocale(locale, [&](const String& candidate) {
         return availableLocales.contains(candidate);
@@ -763,7 +762,7 @@ String removeUnicodeLocaleExtension(const String& locale)
     return builder.toString();
 }
 
-static MatcherResult lookupMatcher(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static MatcherResult lookupMatcher(JSGlobalObject* globalObject, const LocaleSet& availableLocales, const Vector<String>& requestedLocales)
 {
     // LookupMatcher (availableLocales, requestedLocales)
     // https://tc39.github.io/ecma402/#sec-lookupmatcher
@@ -804,7 +803,7 @@ static MatcherResult lookupMatcher(JSGlobalObject* globalObject, const HashSet<S
     return result;
 }
 
-static MatcherResult bestFitMatcher(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static MatcherResult bestFitMatcher(JSGlobalObject* globalObject, const LocaleSet& availableLocales, const Vector<String>& requestedLocales)
 {
     // BestFitMatcher (availableLocales, requestedLocales)
     // https://tc39.github.io/ecma402/#sec-bestfitmatcher
@@ -825,7 +824,7 @@ constexpr ASCIILiteral relevantExtensionKeyString(RelevantExtensionKey key)
     return ASCIILiteral::null();
 }
 
-ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher localeMatcher, const ResolveLocaleOptions& options, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<String> (*localeData)(const String&, RelevantExtensionKey))
+ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher localeMatcher, const ResolveLocaleOptions& options, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<String> (*localeData)(const String&, RelevantExtensionKey))
 {
     // ResolveLocale (availableLocales, requestedLocales, options, relevantExtensionKeys, localeData)
     // https://tc39.github.io/ecma402/#sec-resolvelocale
@@ -890,7 +889,7 @@ ResolvedLocale resolveLocale(JSGlobalObject* globalObject, const HashSet<String>
     return resolved;
 }
 
-static JSArray* lookupSupportedLocales(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static JSArray* lookupSupportedLocales(JSGlobalObject* globalObject, const LocaleSet& availableLocales, const Vector<String>& requestedLocales)
 {
     // LookupSupportedLocales (availableLocales, requestedLocales)
     // https://tc39.github.io/ecma402/#sec-lookupsupportedlocales
@@ -919,7 +918,7 @@ static JSArray* lookupSupportedLocales(JSGlobalObject* globalObject, const HashS
     return subset;
 }
 
-static JSArray* bestFitSupportedLocales(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales)
+static JSArray* bestFitSupportedLocales(JSGlobalObject* globalObject, const LocaleSet& availableLocales, const Vector<String>& requestedLocales)
 {
     // BestFitSupportedLocales (availableLocales, requestedLocales)
     // https://tc39.github.io/ecma402/#sec-bestfitsupportedlocales
@@ -928,7 +927,7 @@ static JSArray* bestFitSupportedLocales(JSGlobalObject* globalObject, const Hash
     return lookupSupportedLocales(globalObject, availableLocales, requestedLocales);
 }
 
-JSValue supportedLocales(JSGlobalObject* globalObject, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue optionsValue)
+JSValue supportedLocales(JSGlobalObject* globalObject, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, JSValue optionsValue)
 {
     // SupportedLocales (availableLocales, requestedLocales, options)
     // https://tc39.github.io/ecma402/#sec-supportedlocales

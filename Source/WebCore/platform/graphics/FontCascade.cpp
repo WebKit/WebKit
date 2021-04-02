@@ -38,6 +38,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -50,7 +51,7 @@ static bool useBackslashAsYenSignForFamily(const AtomString& family)
     if (family.isEmpty())
         return false;
     static const auto set = makeNeverDestroyed([] {
-        HashSet<AtomString> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
         auto add = [&set] (const char* name, std::initializer_list<UChar> unicodeName) {
             unsigned nameLength = strlen(name);
             set.add(AtomString { name, nameLength, AtomString::ConstructFromLiteral });
@@ -382,7 +383,7 @@ bool FontCascade::hasValidAverageCharWidth() const
         return false;
 #endif
 
-    static const auto map = makeNeverDestroyed(HashSet<AtomString> {
+    static const auto map = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> {
         "American Typewriter",
         "Arial Hebrew",
         "Chalkboard",

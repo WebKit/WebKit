@@ -112,7 +112,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlDisplayNamesConstructorSupportedLocalesOf, (JSGloba
     // https://tc39.es/proposal-intl-displaynames/#sec-Intl.DisplayNames.supportedLocalesOf
 
     // 1. Let availableLocales be %DisplayNames%.[[availableLocales]].
-    const HashSet<String>& availableLocales = intlDisplayNamesAvailableLocales();
+    const auto& availableLocales = intlDisplayNamesAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));

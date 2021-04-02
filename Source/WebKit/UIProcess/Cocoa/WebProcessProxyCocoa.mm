@@ -65,9 +65,9 @@ namespace WebKit {
 
 static const Seconds unexpectedActivityDuration = 10_s;
 
-const HashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
+const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 {
-    static NeverDestroyed<HashSet<String>> platformPathsWithAssumedReadAccess(std::initializer_list<String> {
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> platformPathsWithAssumedReadAccess(std::initializer_list<String> {
         [NSBundle bundleWithIdentifier:@"com.apple.WebCore"].resourcePath.stringByStandardizingPath,
         [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].resourcePath.stringByStandardizingPath
     });

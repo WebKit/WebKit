@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,17 +32,22 @@
 #include "RefLogger.h"
 #include "Test.h"
 #include <string>
-#include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringHash.h>
 
 namespace TestWebKitAPI {
 
-typedef WTF::HashMap<int, int> IntHashMap;
+template<typename T>
+struct RobinHoodHash : public DefaultHash<T> {
+    static constexpr bool hasHashInValue = true;
+};
 
-TEST(WTF_HashMap, HashTableIteratorComparison)
+typedef WTF::MemoryCompactLookupOnlyRobinHoodHashMap<int, int, RobinHoodHash<int>> IntHashMap;
+
+TEST(WTF_RobinHoodHashMap, HashTableIteratorComparison)
 {
     IntHashMap map;
     map.add(1, 2);
@@ -64,7 +69,7 @@ struct TestDoubleHashTraits : HashTraits<double> {
     static const int minimumTableSize = 8;
 };
 
-typedef HashMap<double, int64_t, DefaultHash<double>, TestDoubleHashTraits> DoubleHashMap;
+typedef MemoryCompactLookupOnlyRobinHoodHashMap<double, int64_t, RobinHoodHash<double>, TestDoubleHashTraits> DoubleHashMap;
 
 static int bucketForKey(double key)
 {
@@ -77,9 +82,10 @@ template<typename T> struct BigTableHashTraits : public HashTraits<T> {
 
 template<typename T> struct ZeroHash : public IntHash<T> {
     static unsigned hash(const T&) { return 0; }
+    static constexpr bool hasHashInValue = true;
 };
 
-TEST(WTF_HashMap, DoubleHashCollisions)
+TEST(WTF_RobinHoodHashMap, DoubleHashCollisions)
 {
     // The "clobber" key here is one that ends up stealing the bucket that the -0 key
     // originally wants to be in. This makes the 0 and -0 keys collide and the test then
@@ -89,10 +95,6 @@ TEST(WTF_HashMap, DoubleHashCollisions)
     const double negativeZeroKey = -zeroKey;
 
     DoubleHashMap map;
-#if !CHECK_HASHTABLE_ITERATORS &&!DUMP_HASHTABLE_STATS_PER_TABLE
-    static_assert(sizeof(map) == sizeof(void*));
-#endif
-
     map.add(clobberKey, 1);
     map.add(zeroKey, 2);
     map.add(negativeZeroKey, 3);
@@ -103,9 +105,9 @@ TEST(WTF_HashMap, DoubleHashCollisions)
     ASSERT_EQ(map.get(negativeZeroKey), 3);
 }
 
-TEST(WTF_HashMap, MoveOnlyValues)
+TEST(WTF_RobinHoodHashMap, MoveOnlyValues)
 {
-    HashMap<unsigned, MoveOnly> moveOnlyValues;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, MoveOnly, RobinHoodHash<unsigned>> moveOnlyValues;
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
@@ -126,9 +128,9 @@ TEST(WTF_HashMap, MoveOnlyValues)
     ASSERT_TRUE(moveOnlyValues.isEmpty());
 }
 
-TEST(WTF_HashMap, MoveOnlyKeys)
+TEST(WTF_RobinHoodHashMap, MoveOnlyKeys)
 {
-    HashMap<MoveOnly, unsigned> moveOnlyKeys;
+    MemoryCompactLookupOnlyRobinHoodHashMap<MoveOnly, unsigned> moveOnlyKeys;
 
     for (size_t i = 0; i < 100; ++i) {
         MoveOnly moveOnly(i + 1);
@@ -149,9 +151,9 @@ TEST(WTF_HashMap, MoveOnlyKeys)
     ASSERT_TRUE(moveOnlyKeys.isEmpty());
 }
 
-TEST(WTF_HashMap, InitializerList)
+TEST(WTF_RobinHoodHashMap, InitializerList)
 {
-    HashMap<unsigned, std::string> map = {
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, std::string, RobinHoodHash<unsigned>> map = {
         { 1, "one" },
         { 2, "two" },
         { 3, "three" },
@@ -167,9 +169,9 @@ TEST(WTF_HashMap, InitializerList)
     EXPECT_EQ(std::string(), map.get(5));
 }
 
-TEST(WTF_HashMap, EfficientGetter)
+TEST(WTF_RobinHoodHashMap, EfficientGetter)
 {
-    HashMap<unsigned, CopyMoveCounter> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, CopyMoveCounter, RobinHoodHash<unsigned>> map;
     map.set(1, CopyMoveCounter());
 
     {
@@ -189,11 +191,11 @@ TEST(WTF_HashMap, EfficientGetter)
     }
 }
 
-TEST(WTF_HashMap, UniquePtrKey)
+TEST(WTF_RobinHoodHashMap, UniquePtrKey)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<std::unique_ptr<ConstructorDestructorCounter>, int, RobinHoodHash<std::unique_ptr<ConstructorDestructorCounter>>> map;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     map.add(WTFMove(uniquePtr), 2);
@@ -202,17 +204,17 @@ TEST(WTF_HashMap, UniquePtrKey)
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
 
     map.clear();
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
-TEST(WTF_HashMap, UniquePtrKey_CustomDeleter)
+TEST(WTF_RobinHoodHashMap, UniquePtrKey_CustomDeleter)
 {
     ConstructorDestructorCounter::TestingScope constructorDestructorCounterScope;
     DeleterCounter<ConstructorDestructorCounter>::TestingScope deleterCounterScope;
 
-    HashMap<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>, int, RobinHoodHash<std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>>>> map;
 
     std::unique_ptr<ConstructorDestructorCounter, DeleterCounter<ConstructorDestructorCounter>> uniquePtr(new ConstructorDestructorCounter(), DeleterCounter<ConstructorDestructorCounter>());
     map.add(WTFMove(uniquePtr), 2);
@@ -223,16 +225,16 @@ TEST(WTF_HashMap, UniquePtrKey_CustomDeleter)
     EXPECT_EQ(0u, DeleterCounter<ConstructorDestructorCounter>::deleterCount());
 
     map.clear();
-    
+
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 
     EXPECT_EQ(1u, DeleterCounter<ConstructorDestructorCounter>::deleterCount());
 }
 
-TEST(WTF_HashMap, UniquePtrKey_FindUsingRawPointer)
+TEST(WTF_RobinHoodHashMap, UniquePtrKey_FindUsingRawPointer)
 {
-    HashMap<std::unique_ptr<int>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<std::unique_ptr<int>, int, RobinHoodHash<std::unique_ptr<int>>> map;
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
@@ -244,9 +246,9 @@ TEST(WTF_HashMap, UniquePtrKey_FindUsingRawPointer)
     EXPECT_EQ(2, it->value);
 }
 
-TEST(WTF_HashMap, UniquePtrKey_ContainsUsingRawPointer)
+TEST(WTF_RobinHoodHashMap, UniquePtrKey_ContainsUsingRawPointer)
 {
-    HashMap<std::unique_ptr<int>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<std::unique_ptr<int>, int, RobinHoodHash<std::unique_ptr<int>>> map;
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
@@ -255,9 +257,9 @@ TEST(WTF_HashMap, UniquePtrKey_ContainsUsingRawPointer)
     EXPECT_EQ(true, map.contains(ptr));
 }
 
-TEST(WTF_HashMap, UniquePtrKey_GetUsingRawPointer)
+TEST(WTF_RobinHoodHashMap, UniquePtrKey_GetUsingRawPointer)
 {
-    HashMap<std::unique_ptr<int>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<std::unique_ptr<int>, int, RobinHoodHash<std::unique_ptr<int>>> map;
 
     auto uniquePtr = makeUniqueWithoutFastMallocCheck<int>(5);
     int* ptr = uniquePtr.get();
@@ -267,11 +269,11 @@ TEST(WTF_HashMap, UniquePtrKey_GetUsingRawPointer)
     EXPECT_EQ(2, value);
 }
 
-TEST(WTF_HashMap, UniquePtrKey_RemoveUsingRawPointer)
+TEST(WTF_RobinHoodHashMap, UniquePtrKey_RemoveUsingRawPointer)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<std::unique_ptr<ConstructorDestructorCounter>, int, RobinHoodHash<std::unique_ptr<ConstructorDestructorCounter>>> map;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
@@ -287,11 +289,11 @@ TEST(WTF_HashMap, UniquePtrKey_RemoveUsingRawPointer)
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
-TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
+TEST(WTF_RobinHoodHashMap, UniquePtrKey_TakeUsingRawPointer)
 {
     ConstructorDestructorCounter::TestingScope scope;
 
-    HashMap<std::unique_ptr<ConstructorDestructorCounter>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<std::unique_ptr<ConstructorDestructorCounter>, int, RobinHoodHash<std::unique_ptr<ConstructorDestructorCounter>>> map;
 
     auto uniquePtr = makeUnique<ConstructorDestructorCounter>();
     ConstructorDestructorCounter* ptr = uniquePtr.get();
@@ -307,9 +309,9 @@ TEST(WTF_HashMap, UniquePtrKey_TakeUsingRawPointer)
     EXPECT_EQ(1u, ConstructorDestructorCounter::destructionCount);
 }
 
-TEST(WTF_HashMap, UniqueRefValue)
+TEST(WTF_RobinHoodHashMap, UniqueRefValue)
 {
-    HashMap<int, UniqueRef<int>> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<int, UniqueRef<int>, RobinHoodHash<int>> map;
     UniqueRef<int> five = makeUniqueRefWithoutFastMallocCheck<int>(5);
     map.add(5, WTFMove(five));
     EXPECT_TRUE(map.contains(5));
@@ -326,12 +328,12 @@ TEST(WTF_HashMap, UniqueRefValue)
         EXPECT_EQ(a.get(), 6);
 }
 
-TEST(WTF_HashMap, RefPtrKey_Add)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_Add)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.add(ptr, 0);
@@ -340,12 +342,12 @@ TEST(WTF_HashMap, RefPtrKey_Add)
     ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_AddUsingRelease)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_AddUsingRelease)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.add(WTFMove(ptr), 0);
@@ -354,12 +356,12 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingRelease)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_AddUsingMove)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_AddUsingMove)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.add(WTFMove(ptr), 0);
@@ -368,12 +370,12 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMove)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_AddUsingRaw)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_AddUsingRaw)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.add(ptr.get(), 0);
@@ -382,11 +384,11 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingRaw)
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_AddKeyAlreadyPresent)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_AddKeyAlreadyPresent)
 {
     DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -408,11 +410,11 @@ TEST(WTF_HashMap, RefPtrKey_AddKeyAlreadyPresent)
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
 {
     DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -434,11 +436,11 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingReleaseKeyAlreadyPresent)
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
 {
     DerivedRefLogger a("a");
 
-    HashMap<RefPtr<RefLogger>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
     {
         RefPtr<RefLogger> ptr(&a);
@@ -460,12 +462,12 @@ TEST(WTF_HashMap, RefPtrKey_AddUsingMoveKeyAlreadyPresent)
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_Set)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_Set)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr, 0);
@@ -474,12 +476,12 @@ TEST(WTF_HashMap, RefPtrKey_Set)
     ASSERT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_SetUsingRelease)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_SetUsingRelease)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(WTFMove(ptr), 0);
@@ -489,12 +491,12 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingRelease)
 }
 
 
-TEST(WTF_HashMap, RefPtrKey_SetUsingMove)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_SetUsingMove)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(WTFMove(ptr), 0);
@@ -503,12 +505,12 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMove)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_SetUsingRaw)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_SetUsingRaw)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr.get(), 0);
@@ -517,12 +519,12 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingRaw)
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_SetKeyAlreadyPresent)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_SetKeyAlreadyPresent)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr, 0);
@@ -542,12 +544,12 @@ TEST(WTF_HashMap, RefPtrKey_SetKeyAlreadyPresent)
     EXPECT_STREQ("deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr, 0);
@@ -567,12 +569,12 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingReleaseKeyAlreadyPresent)
     EXPECT_STREQ("deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
+TEST(WTF_RobinHoodHashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
 {
     {
         DerivedRefLogger a("a");
 
-        HashMap<RefPtr<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<RefLogger>, int, RobinHoodHash<RefPtr<RefLogger>>> map;
 
         RefPtr<RefLogger> ptr(&a);
         map.set(ptr, 0);
@@ -592,9 +594,9 @@ TEST(WTF_HashMap, RefPtrKey_SetUsingMoveKeyAlreadyPresent)
     EXPECT_STREQ("deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, Ensure)
+TEST(WTF_RobinHoodHashMap, Ensure)
 {
-    HashMap<unsigned, unsigned> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, unsigned, RobinHoodHash<unsigned>> map;
     {
         auto addResult = map.ensure(1, [] { return 1; });
         EXPECT_EQ(1u, addResult.iterator->value);
@@ -607,9 +609,9 @@ TEST(WTF_HashMap, Ensure)
     }
 }
 
-TEST(WTF_HashMap, Ensure_MoveOnlyValues)
+TEST(WTF_RobinHoodHashMap, Ensure_MoveOnlyValues)
 {
-    HashMap<unsigned, MoveOnly> moveOnlyValues;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, MoveOnly, RobinHoodHash<unsigned>> moveOnlyValues;
     {
         auto addResult = moveOnlyValues.ensure(1, [] { return MoveOnly(1); });
         EXPECT_EQ(1u, addResult.iterator->value.value());
@@ -622,9 +624,9 @@ TEST(WTF_HashMap, Ensure_MoveOnlyValues)
     }
 }
 
-TEST(WTF_HashMap, Ensure_UniquePointer)
+TEST(WTF_RobinHoodHashMap, Ensure_UniquePointer)
 {
-    HashMap<unsigned, std::unique_ptr<unsigned>> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, std::unique_ptr<unsigned>, RobinHoodHash<unsigned>> map;
     {
         auto addResult = map.ensure(1, [] { return makeUniqueWithoutFastMallocCheck<unsigned>(1); });
         EXPECT_EQ(1u, *map.get(1));
@@ -639,11 +641,11 @@ TEST(WTF_HashMap, Ensure_UniquePointer)
     }
 }
 
-TEST(WTF_HashMap, Ensure_RefPtr)
+TEST(WTF_RobinHoodHashMap, Ensure_RefPtr)
 {
     DerivedRefLogger a("a");
 
-    HashMap<unsigned, RefPtr<RefLogger>> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, RefPtr<RefLogger>, RobinHoodHash<unsigned>> map;
 
     map.ensure(1, [&] { return RefPtr<RefLogger>(&a); });
     EXPECT_STREQ("ref(a) ", takeLogStr().c_str());
@@ -670,20 +672,20 @@ public:
 
 static void testMovingUsingEnsure(Ref<RefLogger>&& logger)
 {
-    HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
-    
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>, RobinHoodHash<unsigned>> map;
+
     map.ensure(1, [&] { return makeUnique<ObjectWithRefLogger>(WTFMove(logger)); });
 }
 
 static void testMovingUsingAdd(Ref<RefLogger>&& logger)
 {
-    HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>, RobinHoodHash<unsigned>> map;
 
     auto& slot = map.add(1, nullptr).iterator->value;
     slot = makeUnique<ObjectWithRefLogger>(WTFMove(logger));
 }
 
-TEST(WTF_HashMap, Ensure_LambdasCapturingByReference)
+TEST(WTF_RobinHoodHashMap, Ensure_LambdasCapturingByReference)
 {
     {
         DerivedRefLogger a("a");
@@ -703,7 +705,7 @@ TEST(WTF_HashMap, Ensure_LambdasCapturingByReference)
 }
 
 
-TEST(WTF_HashMap, ValueIsDestructedOnRemove)
+TEST(WTF_RobinHoodHashMap, ValueIsDestructedOnRemove)
 {
     struct DestructorObserver {
         DestructorObserver() = default;
@@ -735,7 +737,7 @@ TEST(WTF_HashMap, ValueIsDestructedOnRemove)
         bool* destructed { nullptr };
     };
 
-    HashMap<int, DestructorObserver> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<int, DestructorObserver, RobinHoodHash<int>> map;
 
     bool destructed = false;
     map.add(5, DestructorObserver { &destructed });
@@ -764,11 +766,11 @@ struct DerefObserver {
     const DerefObserver* observedBucket { nullptr };
 };
 
-TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
+TEST(WTF_RobinHoodHashMap, RefPtrNotZeroedBeforeDeref)
 {
     auto observer = makeUnique<DerefObserver>();
 
-    HashMap<RefPtr<DerefObserver>, int> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<DerefObserver>, int, RobinHoodHash<RefPtr<DerefObserver>>> map;
     map.add(adoptRef(observer.get()), 5);
 
     auto iterator = map.find(observer.get());
@@ -787,12 +789,12 @@ TEST(WTF_HashMap, RefPtrNotZeroedBeforeDeref)
     EXPECT_EQ(observer->count, 0u);
 }
 
-TEST(WTF_HashMap, Ref_Key)
+TEST(WTF_RobinHoodHashMap, Ref_Key)
 {
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<Ref<RefLogger>, int, RobinHoodHash<Ref<RefLogger>>> map;
 
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
@@ -803,7 +805,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<Ref<RefLogger>, int, RobinHoodHash<Ref<RefLogger>>> map;
 
         Ref<RefLogger> ref(a);
         map.set(WTFMove(ref), 1);
@@ -814,7 +816,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<Ref<RefLogger>, int, RobinHoodHash<Ref<RefLogger>>> map;
 
         Ref<RefLogger> refA(a);
         map.add(WTFMove(refA), 1);
@@ -828,11 +830,11 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<Ref<RefLogger>, int, RobinHoodHash<Ref<RefLogger>>> map;
 
         Ref<RefLogger> ref(a);
-        map.ensure(WTFMove(ref), []() { 
-            return 1; 
+        map.ensure(WTFMove(ref), []() {
+            return 1;
         });
     }
 
@@ -841,14 +843,14 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<Ref<RefLogger>, int, RobinHoodHash<Ref<RefLogger>>> map;
 
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
-        
+
         auto it = map.find(&a);
         ASSERT_TRUE(it != map.end());
-        
+
         ASSERT_EQ(it->key.ptr(), &a);
         ASSERT_EQ(it->value, 1);
     }
@@ -858,7 +860,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<Ref<RefLogger>, int, RobinHoodHash<Ref<RefLogger>>> map;
 
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
@@ -871,7 +873,7 @@ TEST(WTF_HashMap, Ref_Key)
     {
         RefLogger a("a");
 
-        HashMap<Ref<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<Ref<RefLogger>, int, RobinHoodHash<Ref<RefLogger>>> map;
 
         Ref<RefLogger> ref(a);
         map.add(WTFMove(ref), 1);
@@ -883,7 +885,7 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashMap<Ref<RefLogger>, int> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<Ref<RefLogger>, int, RobinHoodHash<Ref<RefLogger>>> map;
         for (int i = 0; i < 64; ++i) {
             // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
@@ -896,12 +898,12 @@ TEST(WTF_HashMap, Ref_Key)
     ASSERT_STREQ("deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, Ref_Value)
+TEST(WTF_RobinHoodHashMap, Ref_Value)
 {
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
@@ -912,7 +914,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
         Ref<RefLogger> ref(a);
         map.set(1, WTFMove(ref));
@@ -924,7 +926,7 @@ TEST(WTF_HashMap, Ref_Value)
         RefLogger a("a");
         RefLogger b("b");
 
-        HashMap<int, Ref<RefLogger>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
         Ref<RefLogger> refA(a);
         map.add(1, WTFMove(refA));
@@ -938,11 +940,11 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
-        
+
         auto aGet = map.get(1);
         ASSERT_EQ(aGet, &a);
     }
@@ -950,8 +952,8 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashMap<int, Ref<RefLogger>> map;
-        
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
+
         auto emptyGet = map.get(1);
         ASSERT_TRUE(emptyGet == nullptr);
     }
@@ -959,11 +961,11 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
-        
+
         auto aOut = map.take(1);
         ASSERT_TRUE(static_cast<bool>(aOut));
         ASSERT_EQ(&a, aOut.get());
@@ -972,8 +974,8 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashMap<int, Ref<RefLogger>> map;
-        
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
+
         auto emptyTake = map.take(1);
         ASSERT_FALSE(static_cast<bool>(emptyTake));
     }
@@ -981,7 +983,7 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
         Ref<RefLogger> ref(a);
         map.add(1, WTFMove(ref));
@@ -993,18 +995,18 @@ TEST(WTF_HashMap, Ref_Value)
     {
         RefLogger a("a");
 
-        HashMap<int, Ref<RefLogger>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
 
         map.ensure(1, [&]() mutable {
             Ref<RefLogger> ref(a);
-            return ref; 
+            return ref;
         });
     }
 
     ASSERT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        HashMap<int, Ref<RefLogger>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<int, Ref<RefLogger>, RobinHoodHash<int>> map;
         for (int i = 0; i < 64; ++i) {
             // FIXME: All of these RefLogger objects leak. No big deal for a test I guess.
             Ref<RefLogger> ref = adoptRef(*new RefLogger("a"));
@@ -1016,14 +1018,14 @@ TEST(WTF_HashMap, Ref_Value)
     ASSERT_STREQ("deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) deref(a) ", takeLogStr().c_str());
 }
 
-TEST(WTF_HashMap, DeletedAddressOfOperator)
+TEST(WTF_RobinHoodHashMap, DeletedAddressOfOperator)
 {
-    HashMap<int, DeletedAddressOfOperator> map1;
+    MemoryCompactLookupOnlyRobinHoodHashMap<int, DeletedAddressOfOperator, RobinHoodHash<int>> map1;
     for (auto& value : map1.values())
         (void)value;
 }
 
-TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
+TEST(WTF_RobinHoodHashMap, RefMappedToNonZeroEmptyValue)
 {
     class Value {
     public:
@@ -1050,7 +1052,7 @@ TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
 
     static_assert(!WTF::HashTraits<Value>::emptyValueIsZero, "");
 
-    HashMap<Ref<Key>, Value> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<Ref<Key>, Value, RobinHoodHash<Ref<Key>>> map;
     Vector<std::pair<Ref<Key>, int32_t>> vectorMap;
 
     for (int32_t i = 0; i < 160; ++i) {
@@ -1066,26 +1068,26 @@ TEST(WTF_HashMap, RefMappedToNonZeroEmptyValue)
         ASSERT_TRUE(map.remove(pair.first));
 }
 
-TEST(WTF_HashMap, Random_Empty)
+TEST(WTF_RobinHoodHashMap, Random_Empty)
 {
-    HashMap<unsigned, unsigned> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, unsigned, RobinHoodHash<unsigned>> map;
 
     auto result = map.random();
     ASSERT_EQ(result, map.end());
 }
 
-TEST(WTF_HashMap, Random_WrapAround)
+TEST(WTF_RobinHoodHashMap, Random_WrapAround)
 {
-    HashMap<unsigned, unsigned, ZeroHash<unsigned>, BigTableHashTraits<unsigned>> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, unsigned, ZeroHash<unsigned>, BigTableHashTraits<unsigned>> map;
     map.add(1, 1);
 
     auto result = map.random();
     ASSERT_EQ(result, map.begin());
 }
 
-TEST(WTF_HashMap, Random_IsEvenlyDistributed)
+TEST(WTF_RobinHoodHashMap, Random_IsEvenlyDistributed)
 {
-    HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, unsigned, RobinHoodHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
     map.add(0, 0);
     map.add(1, 1);
 
@@ -1107,27 +1109,27 @@ TEST(WTF_HashMap, Random_IsEvenlyDistributed)
     ASSERT_LE(ones, 600u);
 }
 
-TEST(WTF_HashMap, ReserveInitialCapacity)
+TEST(WTF_RobinHoodHashMap, ReserveInitialCapacity)
 {
-    HashMap<String, String> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<String, String> map;
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(0u, map.capacity());
 
     map.reserveInitialCapacity(9999);
     EXPECT_EQ(0u, map.size());
-    EXPECT_EQ(32768u, map.capacity());
+    EXPECT_EQ(16384u, map.capacity());
 
     for (int i = 0; i < 9999; ++i)
         map.add(makeString("foo", i), makeString("bar", i));
     EXPECT_EQ(9999u, map.size());
-    EXPECT_EQ(32768u, map.capacity());
+    EXPECT_EQ(16384u, map.capacity());
     EXPECT_TRUE(map.contains("foo3"_str));
     EXPECT_STREQ("bar3", map.get("foo3"_str).utf8().data());
 
     for (int i = 0; i < 9999; ++i)
         map.add(makeString("excess", i), makeString("baz", i));
     EXPECT_EQ(9999u + 9999u, map.size());
-    EXPECT_EQ(32768u + 32768u, map.capacity());
+    EXPECT_EQ(32768u, map.capacity());
 
     for (int i = 0; i < 9999; ++i)
         EXPECT_TRUE(map.remove(makeString("foo", i)));
@@ -1140,14 +1142,14 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
     EXPECT_EQ(0u, map.size());
     EXPECT_EQ(8u, map.capacity());
 
-    HashMap<String, String> map2;
+    MemoryCompactLookupOnlyRobinHoodHashMap<String, String> map2;
     map2.reserveInitialCapacity(9999);
     EXPECT_FALSE(map2.remove("foo1"_s));
 
     for (int i = 0; i < 2000; ++i)
         map2.add(makeString("foo", i), makeString("bar", i));
     EXPECT_EQ(2000u, map2.size());
-    EXPECT_EQ(32768u, map2.capacity());
+    EXPECT_EQ(16384u, map2.capacity());
 
     for (int i = 0; i < 2000; ++i)
         EXPECT_TRUE(map2.remove(makeString("foo", i)));
@@ -1155,10 +1157,10 @@ TEST(WTF_HashMap, ReserveInitialCapacity)
     EXPECT_EQ(8u, map2.capacity());
 }
 
-TEST(WTF_HashMap, Random_IsEvenlyDistributedAfterRemove)
+TEST(WTF_RobinHoodHashMap, Random_IsEvenlyDistributedAfterRemove)
 {
     for (size_t tableSize = 2; tableSize <= 2 * 6; ++tableSize) { // Our hash tables shrink at a load factor of 1 / 6.
-        HashMap<unsigned, unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<unsigned, unsigned, RobinHoodHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> map;
         for (size_t i = 0; i < tableSize; ++i)
             map.add(i, i);
         for (size_t i = 2; i < tableSize; ++i)
@@ -1199,9 +1201,9 @@ private:
     Function<void()> m_runInDestructor;
 };
 
-TEST(WTF_HashMap, Clear_Reenter)
+TEST(WTF_RobinHoodHashMap, Clear_Reenter)
 {
-    HashMap<uint64_t, std::unique_ptr<TestObjectWithCustomDestructor>> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<uint64_t, std::unique_ptr<TestObjectWithCustomDestructor>, RobinHoodHash<uint64_t>> map;
     for (unsigned i = 1; i <= 10; ++i) {
         map.add(i, makeUnique<TestObjectWithCustomDestructor>([&map] {
             map.clear();
@@ -1213,6 +1215,61 @@ TEST(WTF_HashMap, Clear_Reenter)
     map.clear();
     EXPECT_EQ(0U, map.size());
     EXPECT_TRUE(map.isEmpty());
+}
+
+TEST(WTF_RobinHoodHashMap, AddAndIdentity)
+{
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, unsigned> map;
+    for (unsigned index = 0; index < 1e3; ++index) {
+        auto string = String::number(index);
+        auto result = map.set(string.impl(), index);
+        EXPECT_TRUE(result.isNewEntry);
+        EXPECT_EQ(result.iterator->key, string.impl());
+    }
+    for (unsigned index = 0; index < 1e3; ++index) {
+        auto string = String::number(index);
+        auto result = map.add(string.impl(), index + 1);
+        EXPECT_FALSE(result.isNewEntry);
+        EXPECT_EQ(result.iterator->value, index);
+        EXPECT_NE(result.iterator->key, string.impl());
+    }
+}
+
+TEST(WTF_RobinHoodHashMap, LargeRemoval)
+{
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, unsigned> map;
+    for (unsigned index = 0; index < 1e4; ++index) {
+        auto string = String::number(index);
+        map.set(string.impl(), index);
+    }
+    EXPECT_EQ(map.size(), 1e4);
+    for (unsigned index = 0; index < 1e4; ++index) {
+        if (index & 0x1) {
+            auto string = String::number(index);
+            bool removed = map.remove(string.impl());
+            EXPECT_TRUE(removed);
+        }
+    }
+    EXPECT_EQ(map.size(), 1e4 / 2);
+    for (unsigned index = 0; index < 1e4; ++index) {
+        auto string = String::number(index);
+        if (index & 0x1)
+            EXPECT_FALSE(map.contains(string.impl()));
+        else {
+            unsigned value = map.get(string.impl());
+            EXPECT_EQ(value, index);
+        }
+    }
+
+    for (unsigned index = 0; index < 1e4; ++index) {
+        if (!(index & 0x1)) {
+            auto string = String::number(index);
+            bool removed = map.remove(string.impl());
+            EXPECT_TRUE(removed);
+        }
+    }
+    EXPECT_EQ(map.size(), 0u);
+    EXPECT_EQ(map.capacity(), 8u);
 }
 
 } // namespace TestWebKitAPI

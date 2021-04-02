@@ -67,6 +67,7 @@
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -739,7 +740,7 @@ static bool isProhibitedParagraphChild(const AtomString& name)
             &ulTag.get(),
             &xmpTag.get(),
         };
-        HashSet<AtomString> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
         for (auto& tag : tags)
             set.add(tag->localName());
         return set;

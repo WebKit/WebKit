@@ -46,6 +46,7 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(IOS_FAMILY)
@@ -478,9 +479,9 @@ template <bool shouldClose(const HTMLStackItem&)> void HTMLTreeBuilder::processC
     m_tree.insertHTMLElement(WTFMove(token));
 }
 
-template <typename TableQualifiedName> static HashMap<AtomString, QualifiedName> createCaseMap(const TableQualifiedName* const names[], unsigned length)
+template <typename TableQualifiedName> static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createCaseMap(const TableQualifiedName* const names[], unsigned length)
 {
-    HashMap<AtomString, QualifiedName> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
     for (unsigned i = 0; i < length; ++i) {
         const QualifiedName& name = *names[i];
         const AtomString& localName = name.localName();
@@ -493,14 +494,14 @@ template <typename TableQualifiedName> static HashMap<AtomString, QualifiedName>
 
 static void adjustSVGTagNameCase(AtomicHTMLToken& token)
 {
-    static NeverDestroyed<HashMap<AtomString, QualifiedName>> map = createCaseMap(SVGNames::getSVGTags(), SVGNames::SVGTagsCount);
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createCaseMap(SVGNames::getSVGTags(), SVGNames::SVGTagsCount);
     const QualifiedName& casedName = map.get().get(token.name());
     if (casedName.localName().isNull())
         return;
     token.setName(casedName.localName());
 }
 
-static inline void adjustAttributes(HashMap<AtomString, QualifiedName>& map, AtomicHTMLToken& token)
+static inline void adjustAttributes(const MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>& map, AtomicHTMLToken& token)
 {
     for (auto& attribute : token.attributes()) {
         const QualifiedName& casedName = map.get(attribute.localName());
@@ -511,7 +512,7 @@ static inline void adjustAttributes(HashMap<AtomString, QualifiedName>& map, Ato
 
 template<const QualifiedName* const* attributesTable(), unsigned attributesTableLength> static void adjustAttributes(AtomicHTMLToken& token)
 {
-    static NeverDestroyed<HashMap<AtomString, QualifiedName>> map = createCaseMap(attributesTable(), attributesTableLength);
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createCaseMap(attributesTable(), attributesTableLength);
     adjustAttributes(map, token);
 }
 
@@ -525,18 +526,17 @@ static inline void adjustMathMLAttributes(AtomicHTMLToken& token)
     adjustAttributes<MathMLNames::getMathMLAttrs, MathMLNames::MathMLAttrsCount>(token);
 }
 
-static void addNamesWithPrefix(HashMap<AtomString, QualifiedName>& map, const AtomString& prefix, const QualifiedName* const names[], unsigned length)
+static MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> createForeignAttributesMap()
 {
-    for (unsigned i = 0; i < length; ++i) {
-        const QualifiedName& name = *names[i];
-        const AtomString& localName = name.localName();
-        map.add(prefix + ':' + localName, QualifiedName(prefix, localName, name.namespaceURI()));
-    }
-}
+    auto addNamesWithPrefix = [](MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>& map, const AtomString& prefix, const QualifiedName* const names[], unsigned length) {
+        for (unsigned i = 0; i < length; ++i) {
+            const QualifiedName& name = *names[i];
+            const AtomString& localName = name.localName();
+            map.add(prefix + ':' + localName, QualifiedName(prefix, localName, name.namespaceURI()));
+        }
+    };
 
-static HashMap<AtomString, QualifiedName> createForeignAttributesMap()
-{
-    HashMap<AtomString, QualifiedName> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
 
     AtomString xlinkName("xlink", AtomString::ConstructFromLiteral);
     addNamesWithPrefix(map, xlinkName, XLinkNames::getXLinkAttrs(), XLinkNames::XLinkAttrsCount);
@@ -550,7 +550,7 @@ static HashMap<AtomString, QualifiedName> createForeignAttributesMap()
 
 static void adjustForeignAttributes(AtomicHTMLToken& token)
 {
-    static NeverDestroyed<HashMap<AtomString, QualifiedName>> map = createForeignAttributesMap();
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName>> map = createForeignAttributesMap();
     adjustAttributes(map, token);
 }
 

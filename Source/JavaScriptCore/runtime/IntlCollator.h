@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "JSObject.h"
+#include "IntlObject.h"
 #include <unicode/ucol.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -73,9 +73,9 @@ public:
     }
 
 #if ASSERT_ENABLED
-    static void checkICULocaleInvariants(const HashSet<String>&);
+    static void checkICULocaleInvariants(const LocaleSet&);
 #else
-    static inline void checkICULocaleInvariants(const HashSet<String>&) { }
+    static inline void checkICULocaleInvariants(const LocaleSet&) { }
 #endif
 
 private:

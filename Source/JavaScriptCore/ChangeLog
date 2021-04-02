@@ -1,5 +1,72 @@
 2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [WTF] Introduce RobinHoodHashTable
+        https://bugs.webkit.org/show_bug.cgi?id=223895
+
+        Reviewed by Fil Pizlo.
+
+        * builtins/BuiltinNames.cpp:
+        (JSC::lookUpPrivateNameImpl):
+        (JSC::lookUpWellKnownSymbolImpl):
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * runtime/Identifier.h:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        (JSC::IntlCollator::checkICULocaleInvariants):
+        * runtime/IntlCollator.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::initializeDisplayNames):
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlListFormat.cpp:
+        (JSC::IntlListFormat::initializeListFormat):
+        * runtime/IntlListFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlObject.cpp:
+        (JSC::addScriptlessLocaleIfNeeded):
+        (JSC::intlAvailableLocales):
+        (JSC::intlCollatorAvailableLocales):
+        (JSC::intlSegmenterAvailableLocales):
+        (JSC::bestAvailableLocale):
+        (JSC::lookupMatcher):
+        (JSC::bestFitMatcher):
+        (JSC::resolveLocale):
+        (JSC::lookupSupportedLocales):
+        (JSC::bestFitSupportedLocales):
+        (JSC::supportedLocales):
+        * runtime/IntlObject.h:
+        (JSC::intlDateTimeFormatAvailableLocales):
+        (JSC::intlDisplayNamesAvailableLocales):
+        (JSC::intlNumberFormatAvailableLocales):
+        (JSC::intlPluralRulesAvailableLocales):
+        (JSC::intlRelativeTimeFormatAvailableLocales):
+        (JSC::intlListFormatAvailableLocales):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlSegmenter.cpp:
+        (JSC::IntlSegmenter::initializeSegmenter):
+        * runtime/IntlSegmenterConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/RegExpCache.h:
+        * runtime/RegExpKey.h:
+
+2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
         REGRESSION(r274724): JITCage trampoline needs to be adjusted
         https://bugs.webkit.org/show_bug.cgi?id=224065
 

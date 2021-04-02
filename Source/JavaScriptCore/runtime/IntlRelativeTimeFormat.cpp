@@ -106,7 +106,7 @@ void IntlRelativeTimeFormat::initializeRelativeTimeFormat(JSGlobalObject* global
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Nu)] = numberingSystem;
     }
 
-    const HashSet<String>& availableLocales = intlRelativeTimeFormatAvailableLocales();
+    const auto& availableLocales = intlRelativeTimeFormatAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Nu }, localeData);
     m_locale = resolved.locale;
     if (m_locale.isEmpty()) {

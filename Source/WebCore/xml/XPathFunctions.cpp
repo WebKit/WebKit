@@ -35,6 +35,7 @@
 #include "XPathUtil.h"
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -668,44 +669,44 @@ struct FunctionMapValue {
     Interval argumentCountInterval;
 };
 
-static HashMap<String, FunctionMapValue> createFunctionMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> createFunctionMap()
 {
     struct FunctionMapping {
-        const char* name;
+        ASCIILiteral name;
         FunctionMapValue function;
     };
 
     static const FunctionMapping functions[] = {
-        { "boolean", { createFunctionBoolean, 1 } },
-        { "ceiling", { createFunctionCeiling, 1 } },
-        { "concat", { createFunctionConcat, Interval(2, Interval::Inf) } },
-        { "contains", { createFunctionContains, 2 } },
-        { "count", { createFunctionCount, 1 } },
-        { "false", { createFunctionFalse, 0 } },
-        { "floor", { createFunctionFloor, 1 } },
-        { "id", { createFunctionId, 1 } },
-        { "lang", { createFunctionLang, 1 } },
-        { "last", { createFunctionLast, 0 } },
-        { "local-name", { createFunctionLocalName, Interval(0, 1) } },
-        { "name", { createFunctionName, Interval(0, 1) } },
-        { "namespace-uri", { createFunctionNamespaceURI, Interval(0, 1) } },
-        { "normalize-space", { createFunctionNormalizeSpace, Interval(0, 1) } },
-        { "not", { createFunctionNot, 1 } },
-        { "number", { createFunctionNumber, Interval(0, 1) } },
-        { "position", { createFunctionPosition, 0 } },
-        { "round", { createFunctionRound, 1 } },
-        { "starts-with", { createFunctionStartsWith, 2 } },
-        { "string", { createFunctionString, Interval(0, 1) } },
-        { "string-length", { createFunctionStringLength, Interval(0, 1) } },
-        { "substring", { createFunctionSubstring, Interval(2, 3) } },
-        { "substring-after", { createFunctionSubstringAfter, 2 } },
-        { "substring-before", { createFunctionSubstringBefore, 2 } },
-        { "sum", { createFunctionSum, 1 } },
-        { "translate", { createFunctionTranslate, 3 } },
-        { "true", { createFunctionTrue, 0 } },
+        { "boolean"_s, { createFunctionBoolean, 1 } },
+        { "ceiling"_s, { createFunctionCeiling, 1 } },
+        { "concat"_s, { createFunctionConcat, Interval(2, Interval::Inf) } },
+        { "contains"_s, { createFunctionContains, 2 } },
+        { "count"_s, { createFunctionCount, 1 } },
+        { "false"_s, { createFunctionFalse, 0 } },
+        { "floor"_s, { createFunctionFloor, 1 } },
+        { "id"_s, { createFunctionId, 1 } },
+        { "lang"_s, { createFunctionLang, 1 } },
+        { "last"_s, { createFunctionLast, 0 } },
+        { "local-name"_s, { createFunctionLocalName, Interval(0, 1) } },
+        { "name"_s, { createFunctionName, Interval(0, 1) } },
+        { "namespace-uri"_s, { createFunctionNamespaceURI, Interval(0, 1) } },
+        { "normalize-space"_s, { createFunctionNormalizeSpace, Interval(0, 1) } },
+        { "not"_s, { createFunctionNot, 1 } },
+        { "number"_s, { createFunctionNumber, Interval(0, 1) } },
+        { "position"_s, { createFunctionPosition, 0 } },
+        { "round"_s, { createFunctionRound, 1 } },
+        { "starts-with"_s, { createFunctionStartsWith, 2 } },
+        { "string"_s, { createFunctionString, Interval(0, 1) } },
+        { "string-length"_s, { createFunctionStringLength, Interval(0, 1) } },
+        { "substring"_s, { createFunctionSubstring, Interval(2, 3) } },
+        { "substring-after"_s, { createFunctionSubstringAfter, 2 } },
+        { "substring-before"_s, { createFunctionSubstringBefore, 2 } },
+        { "sum"_s, { createFunctionSum, 1 } },
+        { "translate"_s, { createFunctionTranslate, 3 } },
+        { "true"_s, { createFunctionTrue, 0 } },
     };
 
-    HashMap<String, FunctionMapValue> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<String, FunctionMapValue> map;
     for (auto& function : functions)
         map.add(function.name, function.function);
     return map;

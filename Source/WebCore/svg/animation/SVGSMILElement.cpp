@@ -45,6 +45,7 @@
 #include "XLinkNames.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -462,7 +463,7 @@ void SVGSMILElement::parseBeginOrEnd(const String& parseString, BeginOrEnd begin
 
 bool SVGSMILElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    static const auto supportedAttributes = makeNeverDestroyed(HashSet<QualifiedName> {
+    static const auto supportedAttributes = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
         SVGNames::beginAttr,
         SVGNames::endAttr,
         SVGNames::durAttr,
