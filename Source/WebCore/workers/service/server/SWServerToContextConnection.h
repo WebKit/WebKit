@@ -54,7 +54,7 @@ public:
     virtual void fireInstallEvent(ServiceWorkerIdentifier) = 0;
     virtual void fireActivateEvent(ServiceWorkerIdentifier) = 0;
     virtual void terminateWorker(ServiceWorkerIdentifier) = 0;
-    virtual void didSaveScriptsToDisk(ServiceWorkerIdentifier, SharedBuffer& script, const HashMap<URL, RefPtr<SharedBuffer>>& importedScripts) = 0;
+    virtual void didSaveScriptsToDisk(ServiceWorkerIdentifier, const ScriptBuffer&, const HashMap<URL, ScriptBuffer>& importedScripts) = 0;
     virtual void findClientByIdentifierCompleted(uint64_t requestIdentifier, const Optional<ServiceWorkerClientData>&, bool hasSecurityError) = 0;
     virtual void matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>&) = 0;
 

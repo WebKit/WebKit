@@ -26,7 +26,6 @@
 #pragma once
 
 #include "ArgumentCoders.h"
-#include "ShareableResource.h"
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
@@ -42,7 +41,6 @@
 #include <WebCore/RenderingMode.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
 #include <WebCore/SerializedPlatformDataCueValue.h>
-#include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/WorkerType.h>
@@ -122,6 +120,7 @@ class Region;
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
+class ScriptBuffer;
 class SecurityOrigin;
 class SharedBuffer;
 class SpringTimingFunction;
@@ -737,16 +736,6 @@ template<> struct ArgumentCoder<WebCore::ServiceWorkerOrClientIdentifier> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ServiceWorkerOrClientIdentifier&);
 };
 
-template<> struct ArgumentCoder<WebCore::ServiceWorkerContextData> {
-    static void encode(Encoder&, const WebCore::ServiceWorkerContextData&);
-    static Optional<WebCore::ServiceWorkerContextData> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::ServiceWorkerContextData::ImportedScript> {
-    static void encode(Encoder&, const WebCore::ServiceWorkerContextData::ImportedScript&);
-    static Optional<WebCore::ServiceWorkerContextData::ImportedScript> decode(Decoder&);
-};
-
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -808,11 +797,10 @@ template<> struct ArgumentCoder<Ref<WebCore::SharedBuffer>> {
     static Optional<Ref<WebCore::SharedBuffer>> decode(Decoder&);
 };
 
-#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-// If the SharedBuffer contains a single segment and the segment is MappedFileData, then convert it into
-// a ShareableResource handle so that it can be sent over IPC and shared with another process.
-WebKit::ShareableResource::Handle tryConvertToShareableResourceHandle(WebCore::SharedBuffer&);
-#endif
+template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
+    static void encode(Encoder&, const WebCore::ScriptBuffer&);
+    static Optional<WebCore::ScriptBuffer> decode(Decoder&);
+};
 
 #if ENABLE(ENCRYPTED_MEDIA)
 template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {

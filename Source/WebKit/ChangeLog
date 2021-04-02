@@ -1,5 +1,43 @@
 2021-04-02  Chris Dumez  <cdumez@apple.com>
 
+        Introduce ScriptBuffer class to wrap SharedBuffer containing a script
+        https://bugs.webkit.org/show_bug.cgi?id=224092
+
+        Reviewed by Yusuke Suzuki and Geoff Garen.
+
+        Introduce ScriptBuffer class to wrap SharedBuffer containing a script. We started using SharedBuffer to represent
+        worker scripts instead of String, so that they can hold file mapped data and be shared across processes.
+        This patch introduces a new ScriptBuffer to wrap those SharedBuffers. The type makes it clearer what type of
+        data we're dealing with. The helper functions used to convert between String and SharedBuffer can now simply
+        be member functions on ScriptBuffer. This also simplifies IPC code.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.cpp:
+        (WebKit::WebSWServerToContextConnection::didSaveScriptsToDisk):
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h:
+        Use ScriptBuffer instead SharedBuffer.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::tryConvertToShareableResourceHandle):
+        (IPC::decodeScriptBufferAsShareableResourceHandle):
+        (IPC::ArgumentCoder<WebCore::ScriptBuffer>::encode):
+        (IPC::ArgumentCoder<WebCore::ScriptBuffer>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        - Add IPC encoder / decoder for ScriptBuffer which tries to encode / decode as a ShareableResource whenever
+          possible (single segment that is file mapped). This logic used to be in the ServiceWorkerContextData
+          coders. Now that the logic is in the ScriptBuffer coder, the ServiceWorkerContextData encoding / decoding
+          becomes much simpler.
+        - Moved ServiceWorkerContextData coders from WebCoreArgumentCoders back to its class in WebCore, now that
+          they no longer need to deal with ShareableResource directly.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::didSaveScriptsToDisk):
+        * WebProcess/Storage/WebSWContextManagerConnection.h:
+        * WebProcess/Storage/WebSWContextManagerConnection.messages.in:
+        Send scripts over IPC as ScriptBuffer instead of using ShareableResource directly. The new IPC encoder /
+        decoder for ScriptBuffer takes care of using ShareableResource for us.
+
+2021-04-02  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, reverting r275434.
 
         Need to figure out a better strategy to chose the color

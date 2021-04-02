@@ -78,7 +78,7 @@ public:
     void postMessageToServiceWorker(MessageWithMessagePorts&&, ServiceWorkerOrClientData&&);
     void fireInstallEvent();
     void fireActivateEvent();
-    void didSaveScriptsToDisk(RefPtr<SharedBuffer>&& script, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts);
+    void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
 
     WEBCORE_EXPORT void setLastNavigationWasAppBound(bool);
 

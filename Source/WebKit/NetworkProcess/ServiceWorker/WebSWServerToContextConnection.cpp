@@ -107,19 +107,18 @@ void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier ser
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
 }
 
-void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::SharedBuffer& script, const HashMap<URL, RefPtr<SharedBuffer>>& importedScripts)
+void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, const ScriptBuffer& script, const HashMap<URL, ScriptBuffer>& importedScripts)
 {
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-    auto scriptHandle = IPC::tryConvertToShareableResourceHandle(script);
-    HashMap<URL, ShareableResource::Handle> importedScriptHandles;
+    // Send file-mapped ScriptBuffers over to the ServiceWorker process so that it can replace its heap-allocated copies and save on dirty memory.
+    auto scriptToSend = script.containsSingleFileMappedSegment() ? script : ScriptBuffer();
+    HashMap<URL, ScriptBuffer> importedScriptsToSend;
     for (auto& pair : importedScripts) {
-        auto handle = IPC::tryConvertToShareableResourceHandle(*pair.value);
-        if (handle.isNull())
-            continue;
-        importedScriptHandles.add(pair.key, WTFMove(handle));
+        if (pair.value.containsSingleFileMappedSegment())
+            importedScriptsToSend.add(pair.key, pair.value);
     }
-    if (!scriptHandle.isNull() || !importedScriptHandles.isEmpty())
-        send(Messages::WebSWContextManagerConnection::DidSaveScriptsToDisk { serviceWorkerIdentifier, scriptHandle, importedScriptHandles });
+    if (scriptToSend || !importedScriptsToSend.isEmpty())
+        send(Messages::WebSWContextManagerConnection::DidSaveScriptsToDisk { serviceWorkerIdentifier, scriptToSend, importedScriptsToSend });
 #else
     UNUSED_PARAM(script);
     UNUSED_PARAM(importedScripts);

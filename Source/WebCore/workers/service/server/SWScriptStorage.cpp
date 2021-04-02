@@ -28,8 +28,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 #include "Logging.h"
+#include "ScriptBuffer.h"
 #include "ServiceWorkerRegistrationKey.h"
-#include "SharedBuffer.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/MainThread.h>
 #include <wtf/PageBlock.h>
@@ -79,7 +79,7 @@ String SWScriptStorage::scriptPath(const ServiceWorkerRegistrationKey& registrat
     return FileSystem::pathByAppendingComponent(registrationDirectory(registrationKey), sha2Hash(scriptURL));
 }
 
-RefPtr<SharedBuffer> SWScriptStorage::store(const ServiceWorkerRegistrationKey& registrationKey, const URL& scriptURL, const SharedBuffer& script)
+ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registrationKey, const URL& scriptURL, const ScriptBuffer& script)
 {
     ASSERT(!isMainThread());
 
@@ -87,35 +87,35 @@ RefPtr<SharedBuffer> SWScriptStorage::store(const ServiceWorkerRegistrationKey& 
     FileSystem::makeAllDirectories(FileSystem::directoryName(scriptPath));
 
     auto iterateOverBufferAndWriteData = [&](const Function<bool(const uint8_t*, size_t)>& writeData) {
-        for (auto it = script.begin(); it != script.end(); ++it)
+        for (auto it = script.buffer()->begin(); it != script.buffer()->end(); ++it)
             writeData(reinterpret_cast<const uint8_t*>(it->segment->data()), it->segment->size());
     };
 
-    if (!shouldUseFileMapping(script.size())) {
+    if (!shouldUseFileMapping(script.buffer()->size())) {
         auto handle = FileSystem::openFile(scriptPath, FileSystem::FileOpenMode::Write);
         if (!FileSystem::isHandleValid(handle)) {
             RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::store: Failure to store %s, FileSystem::openFile() failed", scriptPath.utf8().data());
-            return nullptr;
+            return { };
         }
         iterateOverBufferAndWriteData([&](const uint8_t* data, size_t size) {
             FileSystem::writeToFile(handle, reinterpret_cast<const char*>(data), size);
             return true;
         });
         FileSystem::closeFile(handle);
-        return script.copy();
+        return script;
     }
 
     // Make sure we delete the file before writing as there may be code using a mmap'd version of this file.
     FileSystem::deleteFile(scriptPath);
-    auto mappedFile = FileSystem::mapToFile(scriptPath, script.size(), WTFMove(iterateOverBufferAndWriteData));
+    auto mappedFile = FileSystem::mapToFile(scriptPath, script.buffer()->size(), WTFMove(iterateOverBufferAndWriteData));
     if (!mappedFile) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::store: Failure to store %s, FileSystem::mapToFile() failed", scriptPath.utf8().data());
-        return nullptr;
+        return { };
     }
-    return SharedBuffer::create(WTFMove(mappedFile));
+    return ScriptBuffer { SharedBuffer::create(WTFMove(mappedFile)) };
 }
 
-RefPtr<SharedBuffer> SWScriptStorage::retrieve(const ServiceWorkerRegistrationKey& registrationKey, const URL& scriptURL)
+ScriptBuffer SWScriptStorage::retrieve(const ServiceWorkerRegistrationKey& registrationKey, const URL& scriptURL)
 {
     ASSERT(!isMainThread());
 
@@ -123,7 +123,7 @@ RefPtr<SharedBuffer> SWScriptStorage::retrieve(const ServiceWorkerRegistrationKe
     long long fileSize = 0;
     if (!FileSystem::getFileSize(scriptPath, fileSize)) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWScriptStorage::retrieve: Failure to retrieve %s, FileSystem::getFileSize() failed", scriptPath.utf8().data());
-        return nullptr;
+        return { };
     }
 
     // FIXME: Do we need to disable file mapping in more cases to avoid having too many file descriptors open?

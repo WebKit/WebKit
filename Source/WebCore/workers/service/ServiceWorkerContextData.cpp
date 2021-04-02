@@ -37,7 +37,7 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const
         jobDataIdentifier,
         registration.isolatedCopy(),
         serviceWorkerIdentifier,
-        script->copy(),
+        script.isolatedCopy(),
         certificateInfo.isolatedCopy(),
         contentSecurityPolicy.isolatedCopy(),
         referrerPolicy.isolatedCopy(),
@@ -46,20 +46,6 @@ ServiceWorkerContextData ServiceWorkerContextData::isolatedCopy() const
         loadedFromDisk,
         crossThreadCopy(scriptResourceMap)
     };
-}
-
-String scriptBufferToString(SharedBuffer& buffer)
-{
-    StringBuilder builder;
-    for (auto it = buffer.begin(); it != buffer.end(); ++it)
-        builder.append(String::fromUTF8(it->segment->data(), it->segment->size()));
-    return builder.toString();
-}
-
-Ref<SharedBuffer> stringToScriptBuffer(const String& string)
-{
-    auto utf8 = string.utf8();
-    return SharedBuffer::create(utf8.data(), utf8.length());
 }
 
 } // namespace WebCore

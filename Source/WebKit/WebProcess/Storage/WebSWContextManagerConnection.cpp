@@ -263,22 +263,9 @@ void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier iden
 }
 
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-void WebSWContextManagerConnection::didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier identifier, const ShareableResource::Handle& scriptHandle, const HashMap<URL, ShareableResource::Handle>& importedScriptHandles)
+void WebSWContextManagerConnection::didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier identifier, ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
 {
-    auto toSharedBuffer = [](const ShareableResource::Handle& handle) -> RefPtr<SharedBuffer> {
-        if (handle.isNull())
-            return nullptr;
-        auto sharedBuffer = handle.tryWrapInSharedBuffer();
-        if (!sharedBuffer)
-            RELEASE_LOG_ERROR(ServiceWorker, "WebSWContextManagerConnection::didSaveScriptsToDisk: Failed to wrap ShareableResource handle in a SharedBuffer");
-        return sharedBuffer;
-    };
-    HashMap<URL, RefPtr<SharedBuffer>> importedScripts;
-    for (auto& pair : importedScriptHandles) {
-        if (auto sharedBuffer = toSharedBuffer(pair.value))
-            importedScripts.add(pair.key, WTFMove(sharedBuffer));
-    }
-    SWContextManager::singleton().didSaveScriptsToDisk(identifier, toSharedBuffer(scriptHandle), WTFMove(importedScripts));
+    SWContextManager::singleton().didSaveScriptsToDisk(identifier, WTFMove(script), WTFMove(importedScripts));
 }
 #endif
 

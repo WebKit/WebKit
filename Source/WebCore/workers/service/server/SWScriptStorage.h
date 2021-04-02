@@ -33,15 +33,15 @@
 namespace WebCore {
 
 class ServiceWorkerRegistrationKey;
-class SharedBuffer;
+class ScriptBuffer;
 
 class SWScriptStorage {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit SWScriptStorage(const String& directory);
 
-    RefPtr<SharedBuffer> store(const ServiceWorkerRegistrationKey&, const URL& scriptURL, const SharedBuffer& script);
-    RefPtr<SharedBuffer> retrieve(const ServiceWorkerRegistrationKey&, const URL& scriptURL);
+    ScriptBuffer store(const ServiceWorkerRegistrationKey&, const URL& scriptURL, const ScriptBuffer&);
+    ScriptBuffer retrieve(const ServiceWorkerRegistrationKey&, const URL& scriptURL);
     void clear(const ServiceWorkerRegistrationKey&);
 
 private:

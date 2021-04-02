@@ -42,7 +42,6 @@ class SecurityOrigin;
 class SerializedScriptValue;
 class ServiceWorkerContainer;
 class ServiceWorkerRegistration;
-class SharedBuffer;
 enum class ServiceWorkerRegistrationState : uint8_t;
 enum class ServiceWorkerState : uint8_t;
 enum class ShouldNotifyWhenResolved : bool;

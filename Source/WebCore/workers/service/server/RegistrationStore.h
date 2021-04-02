@@ -63,7 +63,7 @@ public:
     void addRegistrationFromDatabase(ServiceWorkerContextData&&);
     void databaseFailedToOpen();
     void databaseOpenedAndRecordsImported();
-    void didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier, Ref<SharedBuffer>&& mainScript, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts);
+    void didSaveWorkerScriptsToDisk(ServiceWorkerIdentifier, ScriptBuffer&& mainScript, HashMap<URL, ScriptBuffer>&& importedScripts);
 
     SWServer& server() { return m_server; };
 

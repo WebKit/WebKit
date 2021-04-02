@@ -2642,6 +2642,7 @@ svg/properties/SVGAttributeAnimator.cpp
 workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp
 workers/DedicatedWorkerThread.cpp
+workers/ScriptBuffer.cpp
 workers/Worker.cpp
 workers/WorkerAnimationController.cpp
 workers/WorkerConsoleClient.cpp

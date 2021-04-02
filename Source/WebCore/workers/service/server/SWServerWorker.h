@@ -80,7 +80,7 @@ public:
     SWServer* server() { return m_server.get(); }
     const ServiceWorkerRegistrationKey& registrationKey() const { return m_registrationKey; }
     const URL& scriptURL() const { return m_data.scriptURL; }
-    SharedBuffer& script() const { return m_script; }
+    const ScriptBuffer& script() const { return m_script; }
     const CertificateInfo& certificateInfo() const { return m_certificateInfo; }
     WorkerType type() const { return m_data.type; }
 
@@ -102,7 +102,7 @@ public:
     WEBCORE_EXPORT Optional<ServiceWorkerClientData> findClientByIdentifier(const ServiceWorkerClientIdentifier&) const;
     void matchAll(const ServiceWorkerClientQueryOptions&, ServiceWorkerClientsMatchAllCallback&&);
     void setScriptResource(URL&&, ServiceWorkerContextData::ImportedScript&&);
-    void didSaveScriptsToDisk(Ref<SharedBuffer>&& mainScript, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts);
+    void didSaveScriptsToDisk(ScriptBuffer&& mainScript, HashMap<URL, ScriptBuffer>&& importedScripts);
 
     void skipWaiting();
     bool isSkipWaitingFlagSet() const { return m_isSkipWaitingFlagSet; }
@@ -128,7 +128,7 @@ public:
     void didFailHeartBeatCheck();
 
 private:
-    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, SharedBuffer& script, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
+    SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 
     void callWhenActivatedHandler(bool success);
 
@@ -141,7 +141,7 @@ private:
     ServiceWorkerRegistrationKey m_registrationKey;
     WeakPtr<SWServerRegistration> m_registration;
     ServiceWorkerData m_data;
-    Ref<SharedBuffer> m_script;
+    ScriptBuffer m_script;
     CertificateInfo m_certificateInfo;
     ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     String m_referrerPolicy;

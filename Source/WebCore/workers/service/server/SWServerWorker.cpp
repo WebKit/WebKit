@@ -49,7 +49,7 @@ SWServerWorker* SWServerWorker::existingWorkerForIdentifier(ServiceWorkerIdentif
 }
 
 // FIXME: Use r-value references for script and contentSecurityPolicy
-SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, SharedBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
+SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registration, const URL& scriptURL, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, String&& referrerPolicy, WorkerType type, ServiceWorkerIdentifier identifier, HashMap<URL, ServiceWorkerContextData::ImportedScript>&& scriptResourceMap)
     : m_server(makeWeakPtr(server))
     , m_registrationKey(registration.key())
     , m_registration(makeWeakPtr(registration))
@@ -238,21 +238,21 @@ void SWServerWorker::setScriptResource(URL&& url, ServiceWorkerContextData::Impo
     m_scriptResourceMap.set(WTFMove(url), WTFMove(script));
 }
 
-void SWServerWorker::didSaveScriptsToDisk(Ref<SharedBuffer>&& mainScript, HashMap<URL, RefPtr<SharedBuffer>>&& importedScripts)
+void SWServerWorker::didSaveScriptsToDisk(ScriptBuffer&& mainScript, HashMap<URL, ScriptBuffer>&& importedScripts)
 {
     // Send mmap'd version of the scripts to the ServiceWorker process so we can save dirty memory.
     if (auto* contextConnection = this->contextConnection())
         contextConnection->didSaveScriptsToDisk(identifier(), mainScript, importedScripts);
 
     // The scripts were saved to disk, replace our scripts with the mmap'd version to save dirty memory.
-    ASSERT(mainScript.get() == m_script.get()); // Do a memcmp to make sure the scripts are identical.
+    ASSERT(mainScript == m_script); // Do a memcmp to make sure the scripts are identical.
     m_script = WTFMove(mainScript);
     for (auto& pair : importedScripts) {
         auto it = m_scriptResourceMap.find(pair.key);
         ASSERT(it != m_scriptResourceMap.end());
         if (it == m_scriptResourceMap.end())
             continue;
-        ASSERT(*it->value.script == *pair.value); // Do a memcmp to make sure the scripts are identical.
+        ASSERT(it->value.script == pair.value); // Do a memcmp to make sure the scripts are identical.
         it->value.script = WTFMove(pair.value);
     }
 }

@@ -469,14 +469,14 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
         ASSERT(mainScript);
         if (!mainScript)
             return false;
-        HashMap<URL, RefPtr<SharedBuffer>> importedScripts;
+        HashMap<URL, ScriptBuffer> importedScripts;
         for (auto& pair : data.scriptResourceMap) {
-            auto importedScript = scriptStorage.store(data.registration.key, pair.key, *pair.value.script);
+            auto importedScript = scriptStorage.store(data.registration.key, pair.key, pair.value.script);
             ASSERT(importedScript);
             if (importedScript)
-                importedScripts.add(crossThreadCopy(pair.key), WTFMove(importedScript));
+                importedScripts.add(crossThreadCopy(pair.key), crossThreadCopy(importedScript));
         }
-        callOnMainThread([this, protectedThis = makeRef(*this), serviceWorkerIdentifier = data.serviceWorkerIdentifier, mainScript = mainScript.releaseNonNull(), importedScripts = WTFMove(importedScripts)]() mutable {
+        callOnMainThread([this, protectedThis = makeRef(*this), serviceWorkerIdentifier = data.serviceWorkerIdentifier, mainScript = crossThreadCopy(mainScript), importedScripts = WTFMove(importedScripts)]() mutable {
             if (m_store)
                 m_store->didSaveWorkerScriptsToDisk(serviceWorkerIdentifier, WTFMove(mainScript), WTFMove(importedScripts));
         });
@@ -569,7 +569,7 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, script.releaseNonNull(), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(scriptResourceMap) };
+        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, WTFMove(scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));

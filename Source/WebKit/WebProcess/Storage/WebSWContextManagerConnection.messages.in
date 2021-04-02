@@ -32,7 +32,7 @@ messages -> WebSWContextManagerConnection NotRefCounted {
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
-    DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebKit::ShareableResource::Handle script, HashMap<URL, WebKit::ShareableResource::Handle> importedScripts);
+    DidSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ScriptBuffer script, HashMap<URL, WebCore::ScriptBuffer> importedScripts);
 #endif
     FindClientByIdentifierCompleted(uint64_t clientIdRequestIdentifier, Optional<WebCore::ServiceWorkerClientData> data, bool hasSecurityError)
     MatchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData> clientsData)
