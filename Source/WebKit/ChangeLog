@@ -1,5 +1,17 @@
 2021-04-02  Youenn Fablet  <youenn@apple.com>
 
+        Use webrtc GPU Process feature flag for audio capture on MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=223682
+
+        Reviewed by Eric Carlson.
+
+        Manually tested.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultCaptureAudioInGPUProcessEnabled):
+
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
         No audio output when unplugged wired headset during a call
         https://bugs.webkit.org/show_bug.cgi?id=216389
         <rdar://problem/68692800>
