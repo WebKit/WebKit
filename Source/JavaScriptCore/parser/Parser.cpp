@@ -2886,6 +2886,7 @@ template <typename LexerType>
 template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(TreeBuilder& context, FunctionNameRequirements requirements, ParserClassInfo<TreeBuilder>& info)
 {
     ASSERT(match(CLASSTOKEN));
+    JSTextPosition start = tokenStartPosition();
     JSTokenLocation location(tokenLocation());
     info.startLine = location.line;
     info.startColumn = tokenColumn();
@@ -2915,14 +2916,17 @@ template <class TreeBuilder> TreeClassExpression Parser<LexerType>::parseClass(T
     }
     ASSERT(info.className);
 
+    JSTextPosition divot = start;
     TreeExpression parentClass = 0;
     if (consume(EXTENDS)) {
+        divot = tokenStartPosition();
         parentClass = parseMemberExpression(context);
         failIfFalse(parentClass, "Cannot parse the parent class name");
     }
     classScope->setIsClassScope();
     const ConstructorKind constructorKind = parentClass ? ConstructorKind::Extends : ConstructorKind::Base;
 
+    JSTextPosition classHeadEnd = lastTokenEndPosition();
     consumeOrFail(OPENBRACE, "Expected opening '{' at the start of a class body");
 
     TreeExpression constructor = 0;
@@ -3170,7 +3174,7 @@ parseMethod:
         semanticFailIfFalse(copyUndeclaredPrivateNamesToOuterScope(), "Cannot reference undeclared private names");
     }
 
-    auto classExpression = context.createClassExpr(location, info, classScope->finalizeLexicalEnvironment(), constructor, parentClass, classElements);
+    auto classExpression = context.createClassExpr(location, info, classScope->finalizeLexicalEnvironment(), constructor, parentClass, classElements, start, divot, classHeadEnd);
     popScope(classScope, TreeBuilder::NeedsFreeVariableInfo);
     return classExpression;
 }

@@ -1299,6 +1299,9 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setPrototypeDirect)].initLater([] (const Initializer<JSCell>& init) {
             init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, String(), globalFuncSetPrototypeDirect));
         });
+    m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::setPrototypeDirectOrThrow)].initLater([] (const Initializer<JSCell>& init) {
+            init.set(JSFunction::create(init.vm, jsCast<JSGlobalObject*>(init.owner), 2, String(), globalFuncSetPrototypeDirectOrThrow));
+        });
 
     // RegExp.prototype helpers.
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::regExpCreate)].initLater([] (const Initializer<JSCell>& init) {

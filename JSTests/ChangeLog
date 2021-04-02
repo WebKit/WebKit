@@ -1,3 +1,12 @@
+2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Reduce bytecode instruction count emitted for `class extends`
+        https://bugs.webkit.org/show_bug.cgi?id=223884
+
+        Reviewed by Yusuke Suzuki.
+
+        * ChakraCore/test/Error/validate_line_column.baseline-jsc:
+
 2021-04-02  Jessica Tallon  <jtallon@igalia.com>
 
         Add tests for the new type method on certain JS-API wasm objects.

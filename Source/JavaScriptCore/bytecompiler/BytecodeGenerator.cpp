@@ -2706,16 +2706,16 @@ RegisterID* BytecodeGenerator::emitGetPrototypeOf(RegisterID* dst, RegisterID* v
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitDirectSetPrototypeOf(RegisterID* base, RegisterID* prototype)
+template<InvalidPrototypeMode mode>
+RegisterID* BytecodeGenerator::emitDirectSetPrototypeOf(RegisterID* base, RegisterID* prototype, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
 {
-    RefPtr<RegisterID> setPrototypeDirect = moveLinkTimeConstant(nullptr, LinkTimeConstant::setPrototypeDirect);
+    RefPtr<RegisterID> setPrototypeDirect = moveLinkTimeConstant(nullptr, mode == InvalidPrototypeMode::Throw ? LinkTimeConstant::setPrototypeDirectOrThrow : LinkTimeConstant::setPrototypeDirect);
 
     CallArguments args(*this, nullptr, 1);
     move(args.thisRegister(), base);
     move(args.argumentRegister(0), prototype);
 
-    JSTextPosition position;
-    emitCall(newTemporary(), setPrototypeDirect.get(), NoExpectedFunction, args, position, position, position, DebuggableCall::No);
+    emitCall(newTemporary(), setPrototypeDirect.get(), NoExpectedFunction, args, divot, divotStart, divotEnd, DebuggableCall::No);
     return base;
 }
 
