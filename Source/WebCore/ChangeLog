@@ -1,3 +1,20 @@
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
+        Start observing outgoing audio/video sources asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=224040
+
+        Reviewed by Eric Carlson.
+
+        We delay sending media a little bit to guarantee that senders can be
+        assigned a transform synchronously at creation time.
+        This guarantees all sent media will go through the transform.
+        Difficult to test in practice as this would be very racy.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::operator==):
+        (WebCore::LibWebRTCRtpSenderBackend::startSource):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+
 2021-04-02  Rob Buis  <rbuis@igalia.com>
 
         Subpixel layout: Switch inlines' baseline positioning from int to LayoutUnit.
