@@ -81,9 +81,13 @@ static void webKitGLVideoSinkConstructed(GObject* object)
 
     GstElement* upload = gst_element_factory_make("glupload", nullptr);
     GstElement* colorconvert = gst_element_factory_make("glcolorconvert", nullptr);
+    GstElement* videoFlip = gst_element_factory_make("glvideoflip", nullptr);
+    gst_util_set_object_arg(G_OBJECT(videoFlip), "method", "automatic");
+
     ASSERT(upload);
     ASSERT(colorconvert);
-    gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, sink->priv->appSink.get(), nullptr);
+    ASSERT(videoFlip);
+    gst_bin_add_many(GST_BIN_CAST(sink), upload, colorconvert, videoFlip, sink->priv->appSink.get(), nullptr);
 
     // Workaround until we can depend on GStreamer 1.16.2.
     // https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/commit/8d32de090554cf29fe359f83aa46000ba658a693
@@ -109,7 +113,7 @@ static void webKitGLVideoSinkConstructed(GObject* object)
 
     if (imxVideoConvertG2D)
         gst_element_link(imxVideoConvertG2D, upload);
-    gst_element_link_many(upload, colorconvert, sink->priv->appSink.get(), nullptr);
+    gst_element_link_many(upload, colorconvert, videoFlip, sink->priv->appSink.get(), nullptr);
 
     GstElement* sinkElement =
         [&] {

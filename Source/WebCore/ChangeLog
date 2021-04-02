@@ -1,3 +1,22 @@
+2021-04-02  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r268176): [GStreamer] media/video-orientation-canvas.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223850
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The GL pipeline used by the player is now able to handle image rotation tags itself. Manual
+        handling of the image rotation tags is now performed only when the pipeline is not able to
+        do it by itself.
+
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (webKitGLVideoSinkConstructed):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        (WebCore::getVideoOrientation):
+        (WebCore::MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Introduce RobinHoodHashTable
