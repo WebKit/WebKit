@@ -1,3 +1,27 @@
+2021-04-02  Chris Dumez  <cdumez@apple.com>
+
+        Delete JS code and trigger garbage collection in worker threads on memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=224110
+
+        Reviewed by Geoffrey Garen.
+
+        Delete JS code and trigger garbage collection in worker threads on memory pressure,
+        to release as much memory as possible. We were previously only doing this in the
+        common (main thread) VM.
+
+        For the garbage collection logic, I tried to match what the GCController is doing
+        for the commonVM but apply it to worker VMs.
+
+        * page/MemoryRelease.cpp:
+        (WebCore::releaseCriticalMemory):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::allWorkerGlobalScopeIdentifiers):
+        (WebCore::WorkerGlobalScope::WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::releaseMemory):
+        (WebCore::WorkerGlobalScope::releaseMemoryInWorkers):
+        * workers/WorkerGlobalScope.h:
+
 2021-04-02  Aditya Keerthi  <akeerthi@apple.com>
 
         Do not paint native decorations for search fields without '-webkit-appearance: searchfield'

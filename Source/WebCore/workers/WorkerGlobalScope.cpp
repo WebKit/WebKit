@@ -59,6 +59,16 @@
 namespace WebCore {
 using namespace Inspector;
 
+static Lock allWorkerGlobalScopeIdentifiersLock;
+static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifiers(LockHolder& holder)
+{
+    UNUSED_PARAM(holder);
+
+    static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> identifiers;
+    ASSERT(allWorkerGlobalScopeIdentifiersLock.isLocked());
+    return identifiers;
+}
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
@@ -77,6 +87,11 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_workerType(params.workerType)
     , m_credentials(params.credentials)
 {
+    {
+        auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
+        allWorkerGlobalScopeIdentifiers(locker).add(contextIdentifier());
+    }
+
     if (m_topOrigin->hasUniversalAccess())
         origin->grantUniversalAccess();
     if (m_topOrigin->needsStorageAccessFromFileURLsQuirk())
@@ -91,6 +106,11 @@ WorkerGlobalScope::~WorkerGlobalScope()
     ASSERT(thread().thread() == &Thread::current());
     // We need to remove from the contexts map very early in the destructor so that calling postTask() on this WorkerGlobalScope from another thread is safe.
     removeFromContextsMap();
+
+    {
+        auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
+        allWorkerGlobalScopeIdentifiers(locker).remove(contextIdentifier());
+    }
 
     if (m_cssFontSelector)
         m_cssFontSelector->stopLoadingAndClearFonts();
@@ -504,6 +524,43 @@ ReferrerPolicy WorkerGlobalScope::referrerPolicy() const
 WorkerThread& WorkerGlobalScope::thread() const
 {
     return *static_cast<WorkerThread*>(workerOrWorkletThread());
+}
+
+void WorkerGlobalScope::releaseMemory(Synchronous synchronous)
+{
+    ASSERT(isContextThread());
+
+    JSC::JSLockHolder lock(vm());
+    vm().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
+
+    if (synchronous == Synchronous::Yes) {
+        if (!vm().heap.isCurrentThreadBusy()) {
+            vm().heap.collectNow(JSC::Sync, JSC::CollectionScope::Full);
+            WTF::releaseFastMallocFreeMemory();
+            return;
+        }
+    }
+#if PLATFORM(IOS_FAMILY)
+    if (!vm().heap.isCurrentThreadBusy()) {
+        vm().heap.collectNowFullIfNotDoneRecently(JSC::Async);
+        return;
+    }
+#endif
+#if USE(CF) || USE(GLIB)
+    vm().heap.reportAbandonedObjectGraph();
+#else
+    vm().heap.collectNow(JSC::Async, JSC::CollectionScope::Full);
+#endif
+}
+
+void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
+{
+    auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
+    for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers(locker)) {
+        postTaskTo(globalScopeIdentifier, [synchronous](auto& context) {
+            downcast<WorkerGlobalScope>(context).releaseMemory(synchronous);
+        });
+    }
 }
 
 } // namespace WebCore

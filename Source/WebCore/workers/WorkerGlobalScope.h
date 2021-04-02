@@ -39,6 +39,7 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <memory>
+#include <wtf/MemoryPressureHandler.h>
 
 namespace WebCore {
 
@@ -125,6 +126,9 @@ public:
     const Settings::Values& settingsValues() const final { return m_settingsValues; }
 
     FetchOptions::Credentials credentials() const { return m_credentials; }
+
+    void releaseMemory(Synchronous);
+    static void releaseMemoryInWorkers(Synchronous);
 
 protected:
     WorkerGlobalScope(WorkerThreadType, const WorkerParameters&, Ref<SecurityOrigin>&&, WorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
