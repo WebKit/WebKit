@@ -684,6 +684,7 @@ public:
     ExceptionOr<String> mediaSessionRestrictions(const String& mediaType) const;
     void setMediaElementRestrictions(HTMLMediaElement&, StringView restrictionsString);
     ExceptionOr<void> postRemoteControlCommand(const String&, float argument);
+    void activeAudioRouteDidChange(bool shouldPause);
     bool elementIsBlockingDisplaySleep(HTMLMediaElement&) const;
 #endif
 

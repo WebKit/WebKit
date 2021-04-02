@@ -7661,6 +7661,15 @@ void HTMLMediaElement::processIsSuspendedChanged()
     updateSleepDisabling();
 }
 
+bool HTMLMediaElement::shouldOverridePauseDuringRouteChange() const
+{
+#if ENABLE(MEDIA_STREAM)
+    return hasMediaStreamSrcObject();
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 void HTMLMediaElement::scheduleUpdateMediaState()

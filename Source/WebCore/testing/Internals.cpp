@@ -328,6 +328,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "MediaSessionHelperIOS.h"
 #include "SystemBattery.h"
 #include "VP9UtilitiesCocoa.h"
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -4325,6 +4326,15 @@ ExceptionOr<void> Internals::postRemoteControlCommand(const String& commandStrin
 
     PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(command, parameter);
     return { };
+}
+
+void Internals::activeAudioRouteDidChange(bool shouldPause)
+{
+#if PLATFORM(IOS)
+    MediaSessionHelper::sharedHelper().activeAudioRouteDidChange(shouldPause ? MediaSessionHelperClient::ShouldPause::Yes : MediaSessionHelperClient::ShouldPause::No);
+#else
+    UNUSED_PARAM(shouldPause);
+#endif
 }
 
 bool Internals::elementIsBlockingDisplaySleep(HTMLMediaElement& element) const

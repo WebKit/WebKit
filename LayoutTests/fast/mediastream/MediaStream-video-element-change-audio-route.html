@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Change of audio route</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+    <video id="video" autoplay playsInline></video>
+    <script>
+promise_test(async (test) => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+
+    await video.play();
+
+    if (window.internals)
+        internals.activeAudioRouteDidChange(true);
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    assert_false(video.paused, "video paused");
+}, "MediaStream video should not be paused when audio route changes");
+    </script>
+</body>
+</html>

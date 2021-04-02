@@ -1,5 +1,59 @@
 2021-04-02  Youenn Fablet  <youenn@apple.com>
 
+        No audio output when unplugged wired headset during a call
+        https://bugs.webkit.org/show_bug.cgi?id=216389
+        <rdar://problem/68692800>
+
+        Reviewed by Eric Carlson.
+
+        Implement shouldOverridePauseDuringRouteChange for media elements.
+        If it is a media stream backed video element, do not pause on active audio route change.
+
+        Implement internal API to write a layout test.
+
+        Refactoring to share more code between WebCore and WebKit and implement the internal API.
+        Improve isolation of MediaSessionHelper by moving all its members from protected to private.
+
+        Test: fast/mediastream/MediaStream-video-element-change-audio-route.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldOverridePauseDuringRouteChange const):
+        * html/HTMLMediaElement.h:
+        * platform/audio/ios/MediaSessionHelperIOS.h:
+        (WebCore::MediaSessionHelper::MediaSessionHelper):
+        * platform/audio/ios/MediaSessionHelperIOS.mm:
+        (MediaSessionHelper::activeAudioRouteDidChange):
+        (MediaSessionHelper::applicationWillEnterForeground):
+        (MediaSessionHelper::applicationDidEnterBackground):
+        (MediaSessionHelper::applicationWillBecomeInactive):
+        (MediaSessionHelper::applicationDidBecomeActive):
+        (MediaSessionHelper::mediaServerConnectionDied):
+        (MediaSessionHelper::externalOutputDeviceAvailableDidChange):
+        (MediaSessionHelper::isPlayingToAutomotiveHeadUnitDidChange):
+        (MediaSessionHelper::activeVideoRouteDidChange):
+        (MediaSessionHelper::startMonitoringWirelessRoutes):
+        (MediaSessionHelper::stopMonitoringWirelessRoutes):
+        (MediaSessionHelperiOS::MediaSessionHelperiOS):
+        (MediaSessionHelperiOS::startMonitoringWirelessRoutesInternal):
+        (MediaSessionHelperiOS::stopMonitoringWirelessRoutesInternal):
+        (MediaSessionHelperiOS::mediaServerConnectionDied):
+        (MediaSessionHelperiOS::setIsPlayingToAutomotiveHeadUnit):
+        (MediaSessionHelperiOS::activeAudioRouteDidChange):
+        (MediaSessionHelperiOS::activeVideoRouteDidChange):
+        (MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange):
+        (MediaSessionHelperiOS::startMonitoringWirelessRoutes): Deleted.
+        (MediaSessionHelperiOS::stopMonitoringWirelessRoutes): Deleted.
+        (MediaSessionHelperiOS::applicationDidBecomeActive): Deleted.
+        (MediaSessionHelperiOS::applicationDidEnterBackground): Deleted.
+        (MediaSessionHelperiOS::applicationWillBecomeInactive): Deleted.
+        (MediaSessionHelperiOS::applicationWillEnterForeground): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::Internals::activeAudioRouteDidChange):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
         Start observing outgoing audio/video sources asynchronously
         https://bugs.webkit.org/show_bug.cgi?id=224040
 

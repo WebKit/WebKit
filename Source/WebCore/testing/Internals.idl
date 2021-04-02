@@ -721,6 +721,8 @@ enum TreeType {
     [Conditional=VIDEO] undefined setMediaElementRestrictions(HTMLMediaElement element, DOMString restrictions);
     [Conditional=WEB_AUDIO] undefined setAudioContextRestrictions((AudioContext or WebKitAudioContext) context, DOMString restrictions);
     [Conditional=VIDEO] undefined postRemoteControlCommand(DOMString command, optional unrestricted float argument = 0);
+    [Conditional=VIDEO] undefined activeAudioRouteDidChange(boolean shouldPause);
+
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerEnabled(boolean enabled);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined setMockMediaPlaybackTargetPickerState(DOMString deviceName, DOMString deviceState);
     [Conditional=WIRELESS_PLAYBACK_TARGET] undefined mockMediaPlaybackTargetPickerDismissPopup();

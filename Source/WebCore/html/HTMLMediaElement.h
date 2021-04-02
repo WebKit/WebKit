@@ -872,6 +872,7 @@ private:
     bool canProduceAudio() const final;
     bool hasMediaStreamSource() const final;
     void processIsSuspendedChanged() final;
+    bool shouldOverridePauseDuringRouteChange() const final;
 
     void pageMutedStateDidChange() override;
 
