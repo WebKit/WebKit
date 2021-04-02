@@ -918,7 +918,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
     WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
     WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
-    WKPreferencesSetIsNSURLSessionWebSocketEnabled(preferences, false);
     WKPreferencesSetFetchAPIKeepAliveEnabled(preferences, true);
     WKPreferencesSetMediaPreloadingEnabled(preferences, true);
     WKPreferencesSetExposeSpeakersEnabled(preferences, true);
