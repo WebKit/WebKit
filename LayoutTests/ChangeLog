@@ -1,3 +1,14 @@
+2021-04-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of flaky tests
+
+        Unreviewed gardening.
+
+        Update list of flaky tests.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-04-02  Chris Lord  <clord@igalia.com>
 
         Implement text rendering on OffscreenCanvas in a Worker

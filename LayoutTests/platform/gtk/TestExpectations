@@ -1567,6 +1567,16 @@ webkit.org/b/214801 fast/forms/datalist/datalist-show-hide.html [ Failure Pass ]
 
 webkit.org/b/214802 http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Failure Pass ]
 
+webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/224106 fast/forms/textfield-onchange-without-focus.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/224108 gamepad/gamepad-visibility-1.html [ Failure Pass ]
+
+webkit.org/b/224112 media/video-as-img-output-pts.html [ Crash Timeout Pass ]
+
+webkit.org/b/224117 intersection-observer/intersection-observer-keeps-js-wrapper-of-target-alive.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

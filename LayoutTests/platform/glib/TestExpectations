@@ -580,13 +580,15 @@ webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-borde
 # HTTP-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/214797 http/tests/images/jpeg-partial-load.html [ ImageOnlyFailure Timeout Pass ]
+webkit.org/b/214797 http/tests/images/jpeg-partial-load.html [ ImageOnlyFailure Timeout Crash Pass ]
 
-webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeout Pass ]
+webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeout Crash Pass ]
 
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
 webkit.org/b/217961 webkit.org/b/223636 http/tests/images/mp4-partial-load.html [ Crash Timeout Pass ]
+
+webkit.org/b/224109 http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
@@ -639,6 +641,8 @@ webkit.org/b/215217 [ Debug ] imported/w3c/web-platform-tests/mathml/presentatio
 webkit.org/b/215217 [ Debug ] imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-stretchy-006.html [ Crash ]
 
 webkit.org/b/216871 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.tentative.html [ ImageOnlyFailure ]
+
+webkit.org/b/224111 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of MathML-related bugs
@@ -740,6 +744,7 @@ webkit.org/b/188101 perf/append-text-nodes-without-renderers.html [ Failure Pass
 webkit.org/b/211837 perf/rel-list-remove.html [ Failure Pass ]
 webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
 webkit.org/b/218609 perf/clone-with-focus.html [ Failure Pass ]
+webkit.org/b/224118 perf/array-reverse.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Perf-related bugs
@@ -2039,7 +2044,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seq
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
 webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Timeout Failure ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Crash Failure ]
-webkit.org/b/214349 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure Crash ]
+webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure Crash ]
 webkit.org/b/220083 [ Debug ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Crash ]
 
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Pass Failure ]
@@ -2056,6 +2061,12 @@ webkit.org/b/223965 http/tests/contentextensions/main-resource-redirect-blocked.
 webkit.org/b/224068 http/wpt/webrtc/webrtc-late-transform.html [ Failure ]
 
 webkit.org/b/224071 webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Timeout ]
+
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ ImageOnlyFailure Pass ]
+webkit.org/b/224107 fast/images/animated-image-mp4-crash.html [ Crash Timeout Pass ]
+webkit.org/b/224114 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html [ Failure Pass ]
+webkit.org/b/224115 imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately-before-installed.https.html [ Failure Pass ]
+webkit.org/b/224116 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
