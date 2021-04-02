@@ -18,7 +18,7 @@ function loadImage() {
     img.referrerPolicy = "origin-when-cross-origin";
     img.onload = function() { testPassed('referrer is "' + expected + '"'); finishJSTest(); }
     img.onerror = function() { testFailed("referrer is not as expected"); finishJSTest(); }
-    img.src = "http://127.0.0.1:8000/referrer-policy/resources/image.php?expected=" + expected;
+    img.src = "http://127.0.0.1:8000/referrer-policy/resources/image.py?expected=" + expected;
     if (window.internals)
         internals.setResourceLoadStatisticsEnabled(true);
 }

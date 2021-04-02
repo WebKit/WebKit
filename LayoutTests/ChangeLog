@@ -1,3 +1,95 @@
+2021-04-02  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/referrer-policy convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223234
+        <rdar://problem/75460136>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cache/resources/svg-defs-vary.py:
+        * http/tests/css/resources/webfont-request.py:
+        (get_request_count):
+        (set_request_count):
+        (getRequestCount): Deleted.
+        (setRequestCount): Deleted.
+        * http/tests/eventsource/resources/status-codes.py:
+        * http/tests/misc/resources/dns-prefetch-control.py:
+        * http/tests/misc/resources/protected/protected-image.py:
+        * http/tests/navigation/ping-attribute/resources/utilities.js:
+        (clearLastPingResultAndRunTest):
+        * http/tests/navigation/resources/post-goback-same-url.py:
+        * http/tests/navigation/resources/randomredirects/randomredirect.py:
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/same-origin.html:
+        * http/tests/referrer-policy-anchor/no-referrer/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/no-referrer/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/no-referrer/same-origin.html:
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/same-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/same-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/same-origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/strict-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/strict-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/strict-origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/unsafe-url/same-origin.html:
+        * http/tests/referrer-policy-img/no-referrer-when-downgrade/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/no-referrer-when-downgrade/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/no-referrer-when-downgrade/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/no-referrer-when-downgrade/same-origin.html:
+        * http/tests/referrer-policy-img/no-referrer/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/no-referrer/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/no-referrer/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/no-referrer/same-origin.html:
+        * http/tests/referrer-policy-img/origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/origin-when-cross-origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-img/origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/origin/same-origin.html:
+        * http/tests/referrer-policy-img/same-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/same-origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/same-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/same-origin/same-origin.html:
+        * http/tests/referrer-policy-img/strict-origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/strict-origin-when-cross-origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/strict-origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/strict-origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-img/strict-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/strict-origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/strict-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/strict-origin/same-origin.html:
+        * http/tests/referrer-policy-img/unsafe-url/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/unsafe-url/same-origin.html:
+        * http/tests/referrer-policy/resources/check-referrer.php: Removed.
+        * http/tests/referrer-policy/resources/check-referrer.py: Added.
+        * http/tests/referrer-policy/resources/image.php: Removed.
+        * http/tests/referrer-policy/resources/image.py: Added.
+        * http/tests/referrer-policy/resources/script.php: Removed.
+        * http/tests/referrer-policy/resources/script.py: Added.
+        * http/tests/security/xssAuditor/resources/tag-with-pause.py:
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php.json: Removed.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.py.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies.php.json: Removed.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies.py.json: Added.
+        * imported/blink/http/tests/misc/input-image-fallback-content-crash.html:
+        * resources/js-test.js:
+        (downgradeReferrerCallback):
+
 2021-04-02  Aditya Keerthi  <akeerthi@apple.com>
 
         Do not paint native decorations for search fields without '-webkit-appearance: searchfield'

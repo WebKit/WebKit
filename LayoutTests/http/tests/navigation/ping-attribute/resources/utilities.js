@@ -26,7 +26,7 @@ function clearLastPingResultAndRunTest(callback)
     }
 
     var xhr = new XMLHttpRequest;
-    xhr.open("GET", "../../resources/delete-ping.php", true /* async */);
+    xhr.open("GET", "./resources/delete-ping.php", true /* async */);
     xhr.send(null);
     xhr.onload = callback;
     xhr.onerror = done;
