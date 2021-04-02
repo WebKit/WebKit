@@ -361,7 +361,7 @@ bool Quirks::isGoogleMaps() const
     return topPrivatelyControlledDomain(url.host().toString()).startsWith("google.") && url.path().startsWithIgnoringASCIICase("/maps/");
 }
 
-bool Quirks::shouldDispatchSimulatedMouseEvents() const
+bool Quirks::shouldDispatchSimulatedMouseEvents(EventTarget* target) const
 {
     if (RuntimeEnabledFeatures::sharedFeatures().mouseEventsSimulationEnabled())
         return true;
@@ -369,70 +369,95 @@ bool Quirks::shouldDispatchSimulatedMouseEvents() const
     if (!needsQuirks())
         return false;
 
-    auto doShouldDispatchChecks = [this] () -> bool {
+    auto doShouldDispatchChecks = [this] () -> ShouldDispatchSimulatedMouseEvents {
         auto* loader = m_document->loader();
         if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
-            return false;
+            return ShouldDispatchSimulatedMouseEvents::No;
 
         if (isAmazon())
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (isGoogleMaps())
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
 
         auto& url = m_document->topDocument().url();
         auto host = url.host().convertToASCIILowercase();
 
         if (host == "wix.com" || host.endsWith(".wix.com")) {
             // Disable simulated mouse dispatching for template selection.
-            return !url.path().startsWithIgnoringASCIICase("/website/templates/");
+            return url.path().startsWithIgnoringASCIICase("/website/templates/") ? ShouldDispatchSimulatedMouseEvents::No : ShouldDispatchSimulatedMouseEvents::Yes;
         }
 
         if ((host == "desmos.com" || host.endsWith(".desmos.com")) && url.path().startsWithIgnoringASCIICase("/calculator/"))
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "figma.com" || host.endsWith(".figma.com"))
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "trello.com" || host.endsWith(".trello.com"))
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "airtable.com" || host.endsWith(".airtable.com"))
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "msn.com" || host.endsWith(".msn.com"))
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "flipkart.com" || host.endsWith(".flipkart.com"))
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "iqiyi.com" || host.endsWith(".iqiyi.com"))
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "trailers.apple.com")
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "soundcloud.com")
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "naver.com")
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host == "nba.com" || host.endsWith(".nba.com"))
-            return true;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         if (host.endsWith(".naver.com")) {
             // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
             if (host == "tv.naver.com")
-                return false;
+                return ShouldDispatchSimulatedMouseEvents::No;
             // Disable the quirk for mail.naver.com subdomain to be able to tap on mail subjects.
             if (host == "mail.naver.com")
-                return false;
+                return ShouldDispatchSimulatedMouseEvents::No;
             // Disable the quirk on the mobile site.
             // FIXME: Maybe this quirk should be disabled for "m." subdomains on all sites? These are generally mobile sites that don't need mouse events.
             if (host == "m.naver.com")
-                return false;
-            return true;
+                return ShouldDispatchSimulatedMouseEvents::No;
+            return ShouldDispatchSimulatedMouseEvents::Yes;
         }
-        return false;
+        if (host == "mybinder.org" || host.endsWith(".mybinder.org"))
+            return ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org;
+        return ShouldDispatchSimulatedMouseEvents::No;
     };
 
-    if (!m_shouldDispatchSimulatedMouseEventsQuirk)
+    if (m_shouldDispatchSimulatedMouseEventsQuirk == ShouldDispatchSimulatedMouseEvents::Unknown)
         m_shouldDispatchSimulatedMouseEventsQuirk = doShouldDispatchChecks();
-    return *m_shouldDispatchSimulatedMouseEventsQuirk;
+
+    switch (m_shouldDispatchSimulatedMouseEventsQuirk) {
+    case ShouldDispatchSimulatedMouseEvents::Unknown:
+        ASSERT_NOT_REACHED();
+        return false;
+
+    case ShouldDispatchSimulatedMouseEvents::No:
+        return false;
+
+    case ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org:
+        if (is<Node>(target)) {
+            for (auto* node = downcast<Node>(target); node; node = node->parentNode()) {
+                if (is<Element>(node) && downcast<Element>(*node).classList().contains("lm-DockPanel-tabBar"))
+                    return true;
+            }
+        }
+        return false;
+
+    case ShouldDispatchSimulatedMouseEvents::Yes:
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget* target) const
 {
-    if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents())
+    if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents(target))
         return false;
 
     if (isAmazon() && is<Element>(target)) {
@@ -453,7 +478,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
 
 Optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
 {
-    if (!shouldDispatchSimulatedMouseEvents())
+    if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents(target))
         return { };
 
     // On Google Maps, we want to limit simulated mouse events to dragging the little man that allows entering into Street View.

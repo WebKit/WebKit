@@ -368,7 +368,7 @@ public:
     // We should choose one term and stick to it.
     bool isWheelEventType(const AtomString& eventType) const;
     bool isGestureEventType(const AtomString& eventType) const;
-    bool isTouchRelatedEventType(const Document&, const AtomString& eventType) const;
+    bool isTouchRelatedEventType(const AtomString& eventType, EventTarget&) const;
     bool isTouchScrollBlockingEventType(const AtomString& eventType) const;
 #if ENABLE(GAMEPAD)
     bool isGamepadEventType(const AtomString& eventType) const;
@@ -403,15 +403,15 @@ inline bool EventNames::isTouchScrollBlockingEventType(const AtomString& eventTy
         || eventType == touchmoveEvent;
 }
 
-inline bool EventNames::isTouchRelatedEventType(const Document& document, const AtomString& eventType) const
+inline bool EventNames::isTouchRelatedEventType(const AtomString& eventType, EventTarget& target) const
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (document.quirks().shouldDispatchSimulatedMouseEvents()) {
+    if (is<Node>(target) && downcast<Node>(target).document().quirks().shouldDispatchSimulatedMouseEvents(&target)) {
         if (eventType == mousedownEvent || eventType == mousemoveEvent || eventType == mouseupEvent)
             return true;
     }
 #endif
-    UNUSED_PARAM(document);
+    UNUSED_PARAM(target);
     return eventType == touchstartEvent
         || eventType == touchmoveEvent
         || eventType == touchendEvent

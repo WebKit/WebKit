@@ -2082,7 +2082,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
 
         unsigned numTouchEventListeners = 0;
 #if ENABLE(TOUCH_EVENTS)
-        if (newDocument.quirks().shouldDispatchSimulatedMouseEvents()) {
+        if (newDocument.quirks().shouldDispatchSimulatedMouseEvents(this)) {
             for (auto& name : eventNames().extendedTouchRelatedEventNames())
                 numTouchEventListeners += eventListeners(name).size();
         } else {
@@ -2136,7 +2136,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
     targetNode->document().addListenerTypeIfNeeded(eventType);
     if (eventNames().isWheelEventType(eventType))
         targetNode->document().didAddWheelEventHandler(*targetNode);
-    else if (eventNames().isTouchRelatedEventType(targetNode->document(), eventType))
+    else if (eventNames().isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().didAddTouchEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
@@ -2146,7 +2146,7 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (eventNames().isTouchRelatedEventType(targetNode->document(), eventType))
+    if (eventNames().isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().addTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
@@ -2173,7 +2173,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
     // listeners for each type, not just a bool - see https://bugs.webkit.org/show_bug.cgi?id=33861
     if (eventNames().isWheelEventType(eventType))
         targetNode->document().didRemoveWheelEventHandler(*targetNode);
-    else if (eventNames().isTouchRelatedEventType(targetNode->document(), eventType))
+    else if (eventNames().isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().didRemoveTouchEventHandler(*targetNode);
 
 #if PLATFORM(IOS_FAMILY)
@@ -2183,7 +2183,7 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomString& ev
     }
 
 #if ENABLE(TOUCH_EVENTS)
-    if (eventNames().isTouchRelatedEventType(targetNode->document(), eventType))
+    if (eventNames().isTouchRelatedEventType(eventType, *targetNode))
         targetNode->document().removeTouchEventListener(*targetNode);
 #endif
 #endif // PLATFORM(IOS_FAMILY)
@@ -2471,7 +2471,7 @@ void Node::defaultEventHandler(Event& event)
                 frame->eventHandler().defaultWheelEventHandler(startNode, downcast<WheelEvent>(event));
         }
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
-    } else if (is<TouchEvent>(event) && eventNames().isTouchRelatedEventType(document(), eventType)) {
+    } else if (is<TouchEvent>(event) && eventNames().isTouchRelatedEventType(eventType, *this)) {
         // Capture the target node's visibility state before dispatching touchStart.
         if (is<Element>(*this) && eventType == eventNames().touchstartEvent) {
             auto& contentChangeObserver = document().contentChangeObserver(); 
