@@ -1,3 +1,16 @@
+2021-04-02  Brady Eidson  <beidson@apple.com>
+
+        Add WKURLSchemeTask redirect API.
+        https://bugs.webkit.org/show_bug.cgi?id=224119
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+        (-[TaskSchemeHandler webView:startURLSchemeTask:]):
+        (TEST):
+        (-[HTTPRedirectTest webView:startURLSchemeTask:]):
+        (-[HTTPRedirectTest webView:stopURLSchemeTask:]):
+
 2021-04-02  Jonathan Bedard  <jbedard@apple.com>
 
         [check-webkit-style] Check python files in LayoutTests

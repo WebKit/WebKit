@@ -9495,16 +9495,18 @@ void WebPageProxy::setURLSchemeHandlerForScheme(Ref<WebURLSchemeHandler>&& handl
 {
     auto canonicalizedScheme = WTF::URLParser::maybeCanonicalizeScheme(scheme);
     ASSERT(canonicalizedScheme);
-    ASSERT(!WTF::URLParser::isSpecialScheme(canonicalizedScheme.value()));
+
+    bool schemeIsInHTTPFamily = *canonicalizedScheme == "http" || *canonicalizedScheme == "https";
+    ASSERT_UNUSED(schemeIsInHTTPFamily, schemeIsInHTTPFamily || !WTF::URLParser::isSpecialScheme(canonicalizedScheme.value()));
 
     auto schemeResult = m_urlSchemeHandlersByScheme.add(canonicalizedScheme.value(), handler.get());
     ASSERT_UNUSED(schemeResult, schemeResult.isNewEntry);
 
-    auto identifier = handler->identifier();
-    auto identifierResult = m_urlSchemeHandlersByIdentifier.add(identifier, WTFMove(handler));
-    ASSERT_UNUSED(identifierResult, identifierResult.isNewEntry);
+    auto handlerIdentifier = handler->identifier();
+    auto handlerIdentifierResult = m_urlSchemeHandlersByIdentifier.add(handlerIdentifier, WTFMove(handler));
+    ASSERT_UNUSED(handlerIdentifierResult, handlerIdentifierResult.isNewEntry);
 
-    send(Messages::WebPage::RegisterURLSchemeHandler(identifier, canonicalizedScheme.value()));
+    send(Messages::WebPage::RegisterURLSchemeHandler(handlerIdentifier, canonicalizedScheme.value()));
 }
 
 WebURLSchemeHandler* WebPageProxy::urlSchemeHandlerForScheme(const String& scheme)

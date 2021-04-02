@@ -78,13 +78,13 @@ void WebURLSchemeHandlerProxy::stopAllTasks()
         m_tasks.begin()->value->stopLoading();
 }
 
-void WebURLSchemeHandlerProxy::taskDidPerformRedirection(uint64_t taskIdentifier, WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& newRequest)
+void WebURLSchemeHandlerProxy::taskDidPerformRedirection(uint64_t taskIdentifier, WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& newRequest, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
     auto* task = m_tasks.get(taskIdentifier);
     if (!task)
         return;
     
-    task->didPerformRedirection(WTFMove(redirectResponse), WTFMove(newRequest));
+    task->didPerformRedirection(WTFMove(redirectResponse), WTFMove(newRequest), WTFMove(completionHandler));
 }
 
 void WebURLSchemeHandlerProxy::taskDidReceiveResponse(uint64_t taskIdentifier, const ResourceResponse& response)

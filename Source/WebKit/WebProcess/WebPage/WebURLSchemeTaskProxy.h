@@ -52,7 +52,7 @@ public:
     void startLoading();
     void stopLoading();
 
-    void didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
+    void didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(size_t, const uint8_t* data);
     void didComplete(const WebCore::ResourceError&);

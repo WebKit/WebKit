@@ -554,7 +554,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)setURLSchemeHandler:(id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme
 {
-    if ([WKWebView handlesURLScheme:urlScheme])
+    if ([WKWebView handlesURLScheme:urlScheme] && [urlScheme caseInsensitiveCompare:@"http"] != NSOrderedSame && [urlScheme caseInsensitiveCompare:@"https"] != NSOrderedSame)
         [NSException raise:NSInvalidArgumentException format:@"'%@' is a URL scheme that WKWebView handles natively", urlScheme];
 
     auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(urlScheme);

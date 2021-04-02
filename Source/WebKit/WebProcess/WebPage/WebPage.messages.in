@@ -559,7 +559,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     RegisterURLSchemeHandler(uint64_t identifier, String scheme)
 
-    URLSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest request)
+    URLSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest) -> (WebCore::ResourceRequest actualRequest) Async
+    URLSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response, WebCore::ResourceRequest proposedRequest)
     URLSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse response)
     URLSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, IPC::SharedBufferDataReference data)
     URLSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceError error)

@@ -1,3 +1,51 @@
+2021-04-02  Brady Eidson  <beidson@apple.com>
+
+        Add WKURLSchemeTask redirect API.
+        https://bugs.webkit.org/show_bug.cgi?id=224119
+
+        Reviewed by Alex Christensen.
+
+        Covered by new API tests.
+        
+        Instead of the existing "did do a redirect" SPI without completion handler, this one has
+        a completion handler with a new request for the task, proposed by WebKit.
+
+        * UIProcess/API/Cocoa/WKURLSchemeTask.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (raiseExceptionIfNecessary):
+        (-[WKURLSchemeTaskImpl willPerformRedirection:newRequest:completionHandler:]):
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration setURLSchemeHandler:forURLScheme:]):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setURLSchemeHandlerForScheme):
+
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::willPerformRedirection):
+        (WebKit::WebURLSchemeTask::didPerformRedirection):
+        (WebKit::WebURLSchemeTask::didReceiveResponse):
+        (WebKit::WebURLSchemeTask::didReceiveData):
+        (WebKit::WebURLSchemeTask::didComplete):
+        * UIProcess/WebURLSchemeTask.h:
+        (WebKit::WebURLSchemeTask::waitingForRedirectCompletionHandlerCallback const):
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::urlSchemeTaskWillPerformRedirection):
+        (WebKit::WebPage::urlSchemeTaskDidPerformRedirection):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp:
+        (WebKit::WebURLSchemeHandlerProxy::taskDidPerformRedirection):
+        * WebProcess/WebPage/WebURLSchemeHandlerProxy.h:
+
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        (WebKit::WebURLSchemeTaskProxy::didPerformRedirection):
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.h:
+
 2021-04-02  Chris Dumez  <cdumez@apple.com>
 
         Introduce ScriptBuffer class to wrap SharedBuffer containing a script

@@ -57,7 +57,7 @@ public:
     uint64_t identifier() const { return m_identifier; }
     WebPage& page() { return m_webPage; }
 
-    void taskDidPerformRedirection(uint64_t taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
+    void taskDidPerformRedirection(uint64_t taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void taskDidReceiveResponse(uint64_t taskIdentifier, const WebCore::ResourceResponse&);
     void taskDidReceiveData(uint64_t taskIdentifier, size_t, const uint8_t* data);
     void taskDidComplete(uint64_t taskIdentifier, const WebCore::ResourceError&);

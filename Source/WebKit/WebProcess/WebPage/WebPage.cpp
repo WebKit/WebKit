@@ -6731,12 +6731,21 @@ void WebPage::registerURLSchemeHandler(uint64_t handlerIdentifier, const String&
     m_identifierToURLSchemeHandlerProxyMap.add(handlerIdentifier, schemeResult.iterator->value.get());
 }
 
+void WebPage::urlSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, ResourceResponse&& response, ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+{
+    auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
+    ASSERT(handler);
+
+    auto actualNewRequest = request;
+    handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request), WTFMove(completionHandler));
+}
+
 void WebPage::urlSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, ResourceResponse&& response, ResourceRequest&& request)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
-    
-    handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request));
+
+    handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request), [] (ResourceRequest&&) {});
 }
     
 void WebPage::urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, const ResourceResponse& response)

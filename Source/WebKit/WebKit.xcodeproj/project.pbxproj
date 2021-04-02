@@ -1051,6 +1051,8 @@
 		517CF0E3163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */; };
 		517CF0E3163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */; };
 		517CF0E4163A486C00C2950E /* NetworkProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */; };
+		5183247C26168C62003F239E /* NetworkURLSchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 51832475261599CC003F239E /* NetworkURLSchemeHandler.h */; };
+		5183247D26168FF7003F239E /* NetworkURLSchemeTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 5183247A26168675003F239E /* NetworkURLSchemeTask.h */; };
 		5183722223CE97410003CF83 /* APIContentWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = 5183722023CE973A0003CF83 /* APIContentWorld.h */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
 		518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4031,6 +4033,12 @@
 		517CF0E1163A486C00C2950E /* NetworkProcessConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/NetworkProcessConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheStorageEngineConnectionMessageReceiver.cpp; path = DerivedSources/WebKit2/CacheStorageEngineConnectionMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		517CF0E2163A486C00C2950E /* NetworkProcessConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionMessages.h; path = DerivedSources/WebKit2/NetworkProcessConnectionMessages.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		51832475261599CC003F239E /* NetworkURLSchemeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkURLSchemeHandler.h; sourceTree = "<group>"; };
+		51832476261599CC003F239E /* NetworkURLSchemeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkURLSchemeHandler.cpp; sourceTree = "<group>"; };
+		518324782615B00D003F239E /* NetworkSchemeURLProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkSchemeURLProtocol.h; sourceTree = "<group>"; };
+		518324792615B00D003F239E /* NetworkSchemeURLProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkSchemeURLProtocol.mm; sourceTree = "<group>"; };
+		5183247A26168675003F239E /* NetworkURLSchemeTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkURLSchemeTask.h; sourceTree = "<group>"; };
+		5183247B26168675003F239E /* NetworkURLSchemeTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkURLSchemeTask.cpp; sourceTree = "<group>"; };
 		5183722023CE973A0003CF83 /* APIContentWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIContentWorld.h; sourceTree = "<group>"; };
 		5183722123CE973A0003CF83 /* APIContentWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIContentWorld.cpp; sourceTree = "<group>"; };
 		5183B3931379F85C00E8754E /* Shim.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Shim.xcconfig; sourceTree = "<group>"; };
@@ -8523,6 +8531,10 @@
 				5C0B177E1E7C886700E9123C /* NetworkSocketStream.h */,
 				5C0B177F1E7C886700E9123C /* NetworkSocketStream.messages.in */,
 				5C9EF2E721F058F9003BDC56 /* NetworkStorageSessionProvider.h */,
+				51832476261599CC003F239E /* NetworkURLSchemeHandler.cpp */,
+				51832475261599CC003F239E /* NetworkURLSchemeHandler.h */,
+				5183247B26168675003F239E /* NetworkURLSchemeTask.cpp */,
+				5183247A26168675003F239E /* NetworkURLSchemeTask.h */,
 				462107D71F38DBD300DD7810 /* PingLoad.cpp */,
 				5CE85B1F1C88E6430070BFCE /* PingLoad.h */,
 				83A0ED331F747CC7003299EB /* PreconnectTask.cpp */,
@@ -9257,6 +9269,8 @@
 				7EC4F0F918E4A945008056AF /* NetworkProcessCocoa.mm */,
 				532159501DBAE6D70054AA3C /* NetworkSessionCocoa.h */,
 				5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */,
+				518324782615B00D003F239E /* NetworkSchemeURLProtocol.h */,
+				518324792615B00D003F239E /* NetworkSchemeURLProtocol.mm */,
 				41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */,
 				41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */,
 			);
@@ -11661,6 +11675,7 @@
 				317FE7C51C487A6C00A0CA89 /* APIExperimentalFeature.h in Headers */,
 				00B9661618E24CBA00CE1F88 /* APIFindClient.h in Headers */,
 				2DD67A2E1BD819730053B251 /* APIFindMatchesClient.h in Headers */,
+				5183247D26168FF7003F239E /* NetworkURLSchemeTask.h in Headers */,
 				37E25D6E18FDE5D6005D3A00 /* APIFormClient.h in Headers */,
 				1AC1337218566C7C00F3EC05 /* APIFrameHandle.h in Headers */,
 				2DF9EEE61A781FB400B6CFBE /* APIFrameInfo.h in Headers */,
@@ -12811,6 +12826,7 @@
 				0FCB4E6818BBE3D9000FCFC9 /* WKTextInputWindowController.h in Headers */,
 				CE21215F240EE571006ED443 /* WKTextPlaceholder.h in Headers */,
 				CE45945C240F88550078019F /* WKTextSelectionRect.h in Headers */,
+				5183247C26168C62003F239E /* NetworkURLSchemeHandler.h in Headers */,
 				2EB6FC01203021960017E619 /* WKTimePickerViewController.h in Headers */,
 				71A676A622C62325007D6295 /* WKTouchActionGestureRecognizer.h in Headers */,
 				BC407608124FF0270068F20A /* WKType.h in Headers */,
