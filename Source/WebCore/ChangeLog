@@ -1,3 +1,15 @@
+2021-04-02  David Kilzer  <ddkilzer@apple.com>
+
+        UBSan: AlternativeTextController::dismiss()/dismissSoon(): runtime error: load of value nnn, which is not a valid value for type 'bool'
+        <https://webkit.org/b/223903>
+
+        Reviewed by Wenson Hsieh.
+
+        Covered by 449 layout tests using WebKit compiled with UBSan.
+
+        * editing/AlternativeTextController.h:
+        - Initialize m_isActive and m_isDismissedByEditing.
+
 2021-04-02  Chris Dumez  <cdumez@apple.com>
 
         Make sure we are no longer show the previous page when running a JS prompt
