@@ -1,5 +1,23 @@
 2021-04-01  Chris Gambrell  <cgambrell@apple.com>
 
+        [LayoutTests] Convert http/tests/cache convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222935
+        <rdar://problem/75183314>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cache/cache-redirections.html:
+        * http/tests/cache/resources/cache-control-redirect.php: Removed.
+        * http/tests/cache/resources/cache-control-redirect.py: Added.
+        * http/tests/cache/resources/permanent-redirect.php: Removed.
+        * http/tests/cache/resources/x-frame-options.php: Removed.
+        * http/tests/cache/resources/x-frame-options.py: Added.
+        * http/tests/cache/x-frame-options-304.html:
+        * http/tests/navigation/window-open-redirect-and-remove-opener.html:
+        * http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash.html:
+
+2021-04-01  Chris Gambrell  <cgambrell@apple.com>
+
         [LayoutTests] Convert http/tests/history convert PHP to Python
         https://bugs.webkit.org/show_bug.cgi?id=222614
         <rdar://problem/74946423>
@@ -254,6 +272,24 @@
 
         * js/dom/transform-stream-expected.txt: Added.
         * js/dom/transform-stream.html: Added.
+
+2021-03-31  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/cache convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222935
+        <rdar://problem/75183314>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cache/cache-redirections.html:
+        * http/tests/cache/resources/cache-control-redirect.php: Removed.
+        * http/tests/cache/resources/cache-control-redirect.py: Added.
+        * http/tests/cache/resources/permanent-redirect.php: Removed.
+        * http/tests/cache/resources/x-frame-options.php: Removed.
+        * http/tests/cache/resources/x-frame-options.py: Added.
+        * http/tests/cache/x-frame-options-304.html:
+        * http/tests/navigation/window-open-redirect-and-remove-opener.html:
+        * http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash.html:
 
 2021-03-31  Chris Gambrell  <cgambrell@apple.com>
 

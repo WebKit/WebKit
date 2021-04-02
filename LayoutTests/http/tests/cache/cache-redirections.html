@@ -15,7 +15,7 @@ test.step(function() {
 
 var counter = 0;
 var resource = "No";
-var baseURL = "resources/cache-control-redirect.php?code=302&url=cacheable-random-text.py&random_id=1";
+var baseURL = "resources/cache-control-redirect.py?code=302&url=cacheable-random-text.py&random_id=1";
 var testCases = [
 {name : "Should reuse resource (cacheable redirection)", expected : true, url : baseURL + "&cache_control=public, max-age=1000", reloadDelay : 0},
 {name : "Should reload resource (no-store redirection)", expected : false, url: baseURL + "&cache_control=no-store&max_age=1000", reloadDelay : 0},
