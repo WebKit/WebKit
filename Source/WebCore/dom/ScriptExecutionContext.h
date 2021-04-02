@@ -60,10 +60,12 @@ namespace WebCore {
 
 class EventLoop;
 class CachedScript;
+class CSSFontSelector;
 class DatabaseContext;
 class EventQueue;
 class EventLoopTaskGroup;
 class EventTarget;
+class FontCache;
 class MessagePort;
 class PublicURLManager;
 class RejectedPromiseTracker;
@@ -160,6 +162,9 @@ public:
     void destroyedMessagePort(MessagePort&);
 
     virtual void didLoadResourceSynchronously(const URL&);
+
+    virtual FontCache& fontCache();
+    virtual CSSFontSelector* cssFontSelector() { return nullptr; }
 
     void ref() { refScriptExecutionContext(); }
     void deref() { derefScriptExecutionContext(); }

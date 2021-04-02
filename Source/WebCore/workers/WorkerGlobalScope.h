@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class CSSFontSelector;
 class CSSValuePool;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
@@ -116,6 +117,8 @@ public:
     void createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
 
     CSSValuePool& cssValuePool();
+    CSSFontSelector* cssFontSelector() final;
+    FontCache& fontCache() final;
 
     ReferrerPolicy referrerPolicy() const final;
 
@@ -180,6 +183,8 @@ private:
     RefPtr<WorkerSWClientConnection> m_swClientConnection;
 #endif
     std::unique_ptr<CSSValuePool> m_cssValuePool;
+    RefPtr<CSSFontSelector> m_cssFontSelector;
+    RefPtr<FontCache> m_fontCache;
     ReferrerPolicy m_referrerPolicy;
     Settings::Values m_settingsValues;
     WorkerType m_workerType;

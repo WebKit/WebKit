@@ -1,3 +1,81 @@
+2021-04-02  Chris Lord  <clord@igalia.com>
+
+        Implement text rendering on OffscreenCanvas in a Worker
+        https://bugs.webkit.org/show_bug.cgi?id=202793
+
+        Reviewed by Darin Adler.
+
+        Add a CSSFontSelector and FontCache to WorkerGlobalScope and via
+        interface changes to ScriptExecutionContext and FontSelector, use them
+        as appropriate after enabling text functions on Worker threads with
+        OffscreenCanvas.
+
+        No new tests, rebaselined existing tests.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::m_version):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        (WebCore::CSSFontSelector::fontRangesForFamily):
+        (WebCore::CSSFontSelector::fallbackFontAt):
+        * css/CSSFontSelector.h:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::genericFontFamily):
+        (WebCore::CSSPropertyParserHelpers::genericFontFamilyIndex):
+        * css/parser/CSSPropertyParserHelpers.h:
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::fontCache):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::cssFontSelector):
+        * dom/make_names.pl:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::canDrawText):
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        (WebCore::OffscreenCanvasRenderingContext2D::setFont):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontDataCacheKeyHash::hash):
+        (WebCore::FontDataCacheKeyHash::equal):
+        (WebCore::FontDataCacheKeyTraits::emptyValue):
+        (WebCore::FontDataCacheKeyTraits::constructDeletedValue):
+        (WebCore::FontDataCacheKeyTraits::isDeletedValue):
+        (WebCore::FontCache::create):
+        (WebCore::FontCache::singleton):
+        (WebCore::FontCache::FontCache):
+        (WebCore::FontCache::getCachedFontPlatformData):
+        (WebCore::FontCache::fontForPlatformData):
+        (WebCore::FontCache::purgeInactiveFontDataIfNeeded):
+        (WebCore::FontCache::purgeInactiveFontData):
+        (WebCore::FontCache::verticalData):
+        (WebCore::FontCache::fontCount):
+        (WebCore::FontCache::inactiveFontCount):
+        (WebCore::FontCache::invalidate):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::fontCacheFallbackToSingleton):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::isCurrent const):
+        (WebCore::FontCascade::update const):
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::FontCascadeFonts):
+        (WebCore::realizeNextFallback):
+        (WebCore::FontCascadeFonts::realizeFallbackRangesAt):
+        * platform/graphics/FontSelector.h:
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::getFamilyNameStringFromFamily):
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueFontFamily):
+        * style/StyleResolveForFontRaw.cpp:
+        (WebCore::Style::useFixedDefaultSize):
+        (WebCore::Style::resolveForFontRaw):
+        * style/StyleResolveForFontRaw.h:
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+        (WebCore::WorkerGlobalScope::cssFontSelector):
+        (WebCore::WorkerGlobalScope::fontCache):
+        * workers/WorkerGlobalScope.h:
+
 2021-04-02  Youenn Fablet  <youenn@apple.com>
 
         No audio output when unplugged wired headset during a call

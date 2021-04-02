@@ -28,10 +28,12 @@
 #include "config.h"
 #include "WorkerGlobalScope.h"
 
+#include "CSSFontSelector.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
+#include "FontCache.h"
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
@@ -90,6 +92,8 @@ WorkerGlobalScope::~WorkerGlobalScope()
     // We need to remove from the contexts map very early in the destructor so that calling postTask() on this WorkerGlobalScope from another thread is safe.
     removeFromContextsMap();
 
+    if (m_cssFontSelector)
+        m_cssFontSelector->stopLoadingAndClearFonts();
     m_performance = nullptr;
     m_crypto = nullptr;
 
@@ -476,6 +480,20 @@ CSSValuePool& WorkerGlobalScope::cssValuePool()
     if (!m_cssValuePool)
         m_cssValuePool = makeUnique<CSSValuePool>();
     return *m_cssValuePool;
+}
+
+CSSFontSelector* WorkerGlobalScope::cssFontSelector()
+{
+    if (!m_cssFontSelector)
+        m_cssFontSelector = CSSFontSelector::create(*this);
+    return m_cssFontSelector.get();
+}
+
+FontCache& WorkerGlobalScope::fontCache()
+{
+    if (!m_fontCache)
+        m_fontCache = FontCache::create();
+    return *m_fontCache;
 }
 
 ReferrerPolicy WorkerGlobalScope::referrerPolicy() const

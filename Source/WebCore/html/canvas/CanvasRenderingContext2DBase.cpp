@@ -2366,8 +2366,6 @@ bool CanvasRenderingContext2DBase::canDrawText(float x, float y, bool fill, Opti
     if (!fontProxy()->realized())
         return false;
 
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-
     auto* c = drawingContext();
     if (!c)
         return false;

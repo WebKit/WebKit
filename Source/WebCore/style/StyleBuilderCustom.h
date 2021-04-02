@@ -1061,7 +1061,7 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
                 family = builderState.document().settings().standardFontFamily();
             else {
                 isGenericFamily = true;
-                family = CSSPropertyParserHelpers::genericFontFamilyFromValueID(contentValue.valueID());
+                family = CSSPropertyParserHelpers::genericFontFamily(contentValue.valueID());
             }
         }
 

@@ -105,15 +105,24 @@ if (length($fontNamesIn)) {
 #include <wtf/text/AtomString.h>
 END
 
-    print F "extern LazyNeverDestroyed<Vector<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
-    print F "extern MainThreadLazyNeverDestroyed<Vector<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
-    printMacros($F, "extern MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
-    print F "\n";
     print F "enum class FamilyNamesIndex {\n";
     for my $name (sort keys %parameters) {
         print F "    ", ucfirst(${name}), ",\n";
     }
     print F "};\n\n";
+
+    print F "template<typename T, size_t inlineCapacity = 0>\n";
+    print F "class FamilyNamesList : public Vector<T, inlineCapacity> {\n";
+    print F "public:\n";
+    print F "    T& at(FamilyNamesIndex i)\n";
+    print F "    {\n";
+    print F "        return Vector<T, inlineCapacity>::at(static_cast<size_t>(i));\n";
+    print F "    }\n";
+    print F "};\n\n";
+    print F "extern LazyNeverDestroyed<FamilyNamesList<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
+    print F "extern MainThreadLazyNeverDestroyed<FamilyNamesList<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
+    printMacros($F, "extern MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
+    print F "\n";
     print F "#endif\n\n";
 
     printInit($F, 1);
@@ -127,8 +136,8 @@ END
 
     print F StaticString::GenerateStrings(\%parameters);
 
-    print F "LazyNeverDestroyed<Vector<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
-    print F "MainThreadLazyNeverDestroyed<Vector<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
+    print F "LazyNeverDestroyed<FamilyNamesList<const StaticStringImpl*, ", scalar(keys %parameters), ">> familyNamesData;\n";
+    print F "MainThreadLazyNeverDestroyed<FamilyNamesList<AtomStringImpl*, ", scalar(keys %parameters), ">> familyNames;\n\n";
 
     printMacros($F, "MainThreadLazyNeverDestroyed<const AtomString>", "", \%parameters);
 

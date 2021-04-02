@@ -1,3 +1,17 @@
+2021-04-02  Chris Lord  <clord@igalia.com>
+
+        Implement text rendering on OffscreenCanvas in a Worker
+        https://bugs.webkit.org/show_bug.cgi?id=202793
+
+        Reviewed by Darin Adler.
+
+        Adjust test expectations.
+
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.basic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.complex.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.invalid.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.tiny.worker-expected.txt:
+
 2021-04-02  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] align-content issues

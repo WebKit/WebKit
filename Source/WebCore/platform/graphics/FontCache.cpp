@@ -49,22 +49,6 @@
 namespace WebCore {
 using namespace WTF;
 
-FontCache& FontCache::singleton()
-{
-    static NeverDestroyed<FontCache> globalFontCache;
-    return globalFontCache;
-}
-
-FontCache::FontCache()
-    : m_purgeTimer(*this, &FontCache::purgeInactiveFontDataIfNeeded)
-    , m_fontPlatformDataCache(makeUniqueRef<FontPlatformDataCache>())
-    , m_fontDataCache(makeUniqueRef<FontDataCache>())
-#if ENABLE(OPENTYPE_VERTICAL)
-    , m_fontVerticalDataCache(makeUniqueRef<FontVerticalDataCache>())
-#endif
-{
-}
-
 struct FontPlatformDataCacheKey {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -127,12 +111,79 @@ struct FontPlatformDataCacheKeyHash {
         return a == b;
     }
 
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPlatformDataCacheKey> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
 };
+
+struct FontDataCacheKeyHash {
+    static unsigned hash(const FontPlatformData& platformData)
+    {
+        return platformData.hash();
+    }
+
+    static bool equal(const FontPlatformData& a, const FontPlatformData& b)
+    {
+        return a == b;
+    }
+
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
+};
+
+struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
+    static constexpr bool emptyValueIsZero = true;
+    static const FontPlatformData& emptyValue()
+    {
+        static NeverDestroyed<FontPlatformData> key(0.f, false, false);
+        return key;
+    }
+    static void constructDeletedValue(FontPlatformData& slot)
+    {
+        new (NotNull, &slot) FontPlatformData(HashTableDeletedValue);
+    }
+    static bool isDeletedValue(const FontPlatformData& value)
+    {
+        return value.isHashTableDeletedValue();
+    }
+};
+
+using FontPlatformDataCache = HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyHashTraits>;
+using FontDataCache = HashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits>;
+#if ENABLE(OPENTYPE_VERTICAL)
+using FontVerticalDataCache = HashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits>;
+#endif
+
+struct FontCache::FontDataCaches {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    FontDataCache data;
+    FontPlatformDataCache platformData;
+#if ENABLE(OPENTYPE_VERTICAL)
+    FontVerticalDataCache verticalData;
+#endif
+};
+
+Ref<FontCache> FontCache::create()
+{
+    ASSERT(!isMainThread());
+    return adoptRef(*new FontCache());
+}
+
+FontCache& FontCache::singleton()
+{
+    static MainThreadNeverDestroyed<FontCache> globalFontCache;
+    return globalFontCache;
+}
+
+FontCache::~FontCache() = default;
+
+FontCache::FontCache()
+    : m_purgeTimer(*this, &FontCache::purgeInactiveFontDataIfNeeded)
+    , m_fontDataCaches(makeUniqueRef<FontDataCaches>())
+{
+}
 
 Optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyName)
 {
@@ -197,7 +248,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 
     FontPlatformDataCacheKey key(familyName, fontDescription, fontFaceFeatures, fontFaceCapabilities);
 
-    auto addResult = m_fontPlatformDataCache->add(key, nullptr);
+    auto addResult = m_fontDataCaches->platformData.add(key, nullptr);
     FontPlatformDataCache::iterator it = addResult.iterator;
     if (addResult.isNewEntry) {
         it->value = createFontPlatformData(fontDescription, familyName, fontFaceFeatures, fontFaceCapabilities);
@@ -209,8 +260,8 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
                 auto* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, *alternateName, fontFaceFeatures, fontFaceCapabilities, true);
                 // Lookup the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to getCachedFontPlatformData().
-                it = m_fontPlatformDataCache->find(key);
-                ASSERT(it != m_fontPlatformDataCache->end());
+                it = m_fontDataCaches->platformData.find(key);
+                ASSERT(it != m_fontDataCaches->platformData.end());
                 if (fontPlatformDataForAlternateName)
                     it->value = makeUnique<FontPlatformData>(*fontPlatformDataForAlternateName);
             }
@@ -219,47 +270,6 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 
     return it->value.get();
 }
-
-struct FontDataCacheKeyHash {
-    static unsigned hash(const FontPlatformData& platformData)
-    {
-        return platformData.hash();
-    }
-
-    static bool equal(const FontPlatformData& a, const FontPlatformData& b)
-    {
-        return a == b;
-    }
-
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-
-struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
-    static const bool emptyValueIsZero = true;
-    static const FontPlatformData& emptyValue()
-    {
-        static NeverDestroyed<FontPlatformData> key(0.f, false, false);
-        return key;
-    }
-    static void constructDeletedValue(FontPlatformData& slot)
-    {
-        new (NotNull, &slot) FontPlatformData(HashTableDeletedValue);
-    }
-    static bool isDeletedValue(const FontPlatformData& value)
-    {
-        return value.isHashTableDeletedValue();
-    }
-};
-
-#if ENABLE(OPENTYPE_VERTICAL)
-RefPtr<OpenTypeVerticalData> FontCache::verticalData(const FontPlatformData& platformData)
-{
-    auto addResult = m_fontVerticalDataCache->ensure(platformData, [&platformData] {
-        return OpenTypeVerticalData::create(platformData);
-    });
-    return addResult.iterator->value;
-}
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 const unsigned cMaxInactiveFontData = 120;
@@ -289,7 +299,7 @@ Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
     auto locker = holdLock(m_fontLock);
 #endif
 
-    auto addResult = m_fontDataCache->ensure(platformData, [&] {
+    auto addResult = m_fontDataCaches->data.ensure(platformData, [&] {
         return Font::create(platformData);
     });
 
@@ -305,7 +315,7 @@ void FontCache::purgeInactiveFontDataIfNeeded()
 
     LOG(Fonts, "FontCache::purgeInactiveFontDataIfNeeded() - underMemoryPressure %d, inactiveFontDataLimit %u", underMemoryPressure, inactiveFontDataLimit);
 
-    if (m_fontDataCache->size() < inactiveFontDataLimit)
+    if (m_fontDataCaches->data.size() < inactiveFontDataLimit)
         return;
     unsigned inactiveCount = inactiveFontCount();
     if (inactiveCount <= inactiveFontDataLimit)
@@ -328,7 +338,7 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
 
     while (purgeCount) {
         Vector<Ref<Font>, 20> fontsToDelete;
-        for (auto& font : m_fontDataCache->values()) {
+        for (auto& font : m_fontDataCaches->data.values()) {
             LOG(Fonts, " trying to purge font %s (has one ref %d)", font->platformData().description().utf8().data(), font->hasOneRef());
             if (!font->hasOneRef())
                 continue;
@@ -340,25 +350,25 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
         if (fontsToDelete.isEmpty())
             break;
         for (auto& font : fontsToDelete) {
-            bool success = m_fontDataCache->remove(font->platformData());
+            bool success = m_fontDataCaches->data.remove(font->platformData());
             ASSERT_UNUSED(success, success);
 #if ENABLE(OPENTYPE_VERTICAL)
-            m_fontVerticalDataCache->remove(font->platformData());
+            m_fontDataCaches->verticalData.remove(font->platformData());
 #endif
         }
     };
 
     Vector<FontPlatformDataCacheKey> keysToRemove;
-    keysToRemove.reserveInitialCapacity(m_fontPlatformDataCache->size());
-    for (auto& entry : m_fontPlatformDataCache.get()) {
-        if (entry.value && !m_fontDataCache->contains(*entry.value))
+    keysToRemove.reserveInitialCapacity(m_fontDataCaches->platformData.size());
+    for (auto& entry : m_fontDataCaches->platformData) {
+        if (entry.value && !m_fontDataCaches->data.contains(*entry.value))
             keysToRemove.uncheckedAppend(entry.key);
     }
 
     LOG(Fonts, " removing %lu keys", keysToRemove.size());
 
     for (auto& key : keysToRemove)
-        m_fontPlatformDataCache->remove(key);
+        m_fontDataCaches->platformData.remove(key);
 
     platformPurgeInactiveFontData();
 }
@@ -401,6 +411,16 @@ void FontCache::clearWidthCaches()
     for (auto& value : m_fontCascadeCache.values())
         value->fonts.get().widthCache().clear();
 }
+
+#if ENABLE(OPENTYPE_VERTICAL)
+RefPtr<OpenTypeVerticalData> FontCache::verticalData(const FontPlatformData& platformData)
+{
+    auto addResult = m_fontDataCaches->verticalData.ensure(platformData, [&platformData] {
+        return OpenTypeVerticalData::create(platformData);
+    });
+    return addResult.iterator->value;
+}
+#endif
 
 static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
@@ -458,7 +478,7 @@ void FontCache::updateFontCascade(const FontCascade& fontCascade, RefPtr<FontSel
 
 size_t FontCache::fontCount()
 {
-    return m_fontDataCache->size();
+    return m_fontDataCaches->data.size();
 }
 
 size_t FontCache::inactiveFontCount()
@@ -467,7 +487,7 @@ size_t FontCache::inactiveFontCount()
     auto locker = holdLock(m_fontLock);
 #endif
     unsigned count = 0;
-    for (auto& font : m_fontDataCache->values()) {
+    for (auto& font : m_fontDataCaches->data.values()) {
         if (font->hasOneRef())
             ++count;
     }
@@ -489,9 +509,9 @@ void FontCache::removeClient(FontSelector& client)
 
 void FontCache::invalidate()
 {
-    m_fontPlatformDataCache->clear();
+    m_fontDataCaches->platformData.clear();
 #if ENABLE(OPENTYPE_VERTICAL)
-    m_fontVerticalDataCache->clear();
+    m_fontDataCaches->verticalData.clear();
 #endif
     invalidateFontCascadeCache();
 

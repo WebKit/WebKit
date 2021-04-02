@@ -102,7 +102,7 @@ FontCascadeFonts::FontCascadeFonts(RefPtr<FontSelector>&& fontSelector)
     : m_cachedPrimaryFont(nullptr)
     , m_fontSelector(fontSelector)
     , m_fontSelectorVersion(m_fontSelector ? m_fontSelector->version() : 0)
-    , m_generation(FontCache::singleton().generation())
+    , m_generation(FontCache::fontCacheFallbackToSingleton(m_fontSelector).generation())
 {
 #if ASSERT_ENABLED
     if (!isMainThread())
@@ -144,7 +144,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
 {
     ASSERT(index < description.effectiveFamilyCount());
 
-    auto& fontCache = FontCache::singleton();
+    auto& fontCache = FontCache::fontCacheFallbackToSingleton(fontSelector);
     while (index < description.effectiveFamilyCount()) {
         auto visitor = WTF::makeVisitor([&](const AtomString& family) -> FontRanges {
             if (family.isEmpty())
@@ -181,7 +181,7 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
         return m_realizedFallbackRanges[index];
 
     ASSERT(index == m_realizedFallbackRanges.size());
-    ASSERT(FontCache::singleton().generation() == m_generation);
+    ASSERT(FontCache::fontCacheFallbackToSingleton(m_fontSelector).generation() == m_generation);
 
     m_realizedFallbackRanges.append(FontRanges());
     auto& fontRanges = m_realizedFallbackRanges.last();
@@ -191,7 +191,7 @@ const FontRanges& FontCascadeFonts::realizeFallbackRangesAt(const FontCascadeDes
         if (fontRanges.isNull() && m_fontSelector)
             fontRanges = m_fontSelector->fontRangesForFamily(description, standardFamily);
         if (fontRanges.isNull())
-            fontRanges = FontRanges(FontCache::singleton().lastResortFallbackFont(description));
+            fontRanges = FontRanges(FontCache::fontCacheFallbackToSingleton(m_fontSelector).lastResortFallbackFont(description));
         return fontRanges;
     }
 

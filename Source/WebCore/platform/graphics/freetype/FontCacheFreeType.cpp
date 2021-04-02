@@ -338,19 +338,19 @@ static String getFamilyNameStringFromFamily(const String& family)
     if (family.length() && !family.startsWith("-webkit-"))
         return family;
 
-    if (family == familyNamesData->at(static_cast<unsigned>(FamilyNamesIndex::StandardFamily)) || family == familyNamesData->at(static_cast<unsigned>(FamilyNamesIndex::SerifFamily)))
+    if (family == familyNamesData->at(FamilyNamesIndex::StandardFamily) || family == familyNamesData->at(FamilyNamesIndex::SerifFamily))
         return "serif";
-    if (family == familyNamesData->at(static_cast<unsigned>(FamilyNamesIndex::SansSerifFamily)))
+    if (family == familyNamesData->at(FamilyNamesIndex::SansSerifFamily))
         return "sans-serif";
-    if (family == familyNamesData->at(static_cast<unsigned>(FamilyNamesIndex::MonospaceFamily)))
+    if (family == familyNamesData->at(FamilyNamesIndex::MonospaceFamily))
         return "monospace";
-    if (family == familyNamesData->at(static_cast<unsigned>(FamilyNamesIndex::CursiveFamily)))
+    if (family == familyNamesData->at(FamilyNamesIndex::CursiveFamily))
         return "cursive";
-    if (family == familyNamesData->at(static_cast<unsigned>(FamilyNamesIndex::FantasyFamily)))
+    if (family == familyNamesData->at(FamilyNamesIndex::FantasyFamily))
         return "fantasy";
 
 #if PLATFORM(GTK)
-    if (family == familyNamesData->at(static_cast<unsigned>(FamilyNamesIndex::SystemUiFamily)) || family == "-webkit-system-font")
+    if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font")
         return defaultGtkSystemFont();
 #endif
 

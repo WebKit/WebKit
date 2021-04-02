@@ -46,6 +46,7 @@
 #include "Pair.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"
+#include "WebKitFontFamilyNames.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -3061,7 +3062,7 @@ Optional<FontRaw> consumeFontWorkerSafe(CSSParserTokenRange& range, CSSParserMod
     return result;
 }
 
-const AtomString& genericFontFamilyFromValueID(CSSValueID ident)
+const AtomString& genericFontFamily(CSSValueID ident)
 {
     switch (ident) {
     case CSSValueSerif:
@@ -3080,6 +3081,29 @@ const AtomString& genericFontFamilyFromValueID(CSSValueID ident)
         return systemUiFamily.get();
     default:
         return emptyAtom();
+    }
+}
+
+WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID ident)
+{
+    switch (ident) {
+    case CSSValueSerif:
+        return WebKitFontFamilyNames::FamilyNamesIndex::SerifFamily;
+    case CSSValueSansSerif:
+        return WebKitFontFamilyNames::FamilyNamesIndex::SansSerifFamily;
+    case CSSValueCursive:
+        return WebKitFontFamilyNames::FamilyNamesIndex::CursiveFamily;
+    case CSSValueFantasy:
+        return WebKitFontFamilyNames::FamilyNamesIndex::FantasyFamily;
+    case CSSValueMonospace:
+        return WebKitFontFamilyNames::FamilyNamesIndex::MonospaceFamily;
+    case CSSValueWebkitPictograph:
+        return WebKitFontFamilyNames::FamilyNamesIndex::PictographFamily;
+    case CSSValueSystemUi:
+        return WebKitFontFamilyNames::FamilyNamesIndex::SystemUiFamily;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebKitFontFamilyNames::FamilyNamesIndex::StandardFamily;
     }
 }
 

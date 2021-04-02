@@ -32,9 +32,9 @@
 
 namespace WebCore {
 
-class Document;
 class FontCascade;
 class FontCascadeDescription;
+class ScriptExecutionContext;
 
 namespace CSSPropertyParserHelpers {
 struct FontRaw;
@@ -42,7 +42,7 @@ struct FontRaw;
 
 namespace Style {
 
-Optional<FontCascade> resolveForFontRaw(const CSSPropertyParserHelpers::FontRaw&, FontCascadeDescription&&, Document&);
+Optional<FontCascade> resolveForFontRaw(const CSSPropertyParserHelpers::FontRaw&, FontCascadeDescription&&, ScriptExecutionContext&);
 
 }
 }

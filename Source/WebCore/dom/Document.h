@@ -1645,6 +1645,9 @@ private:
     void createRenderTree();
     void detachParser();
 
+    // ScriptExecutionContext
+    CSSFontSelector* cssFontSelector() final { return m_fontSelector.ptr(); }
+
     // FontSelectorClient
     void fontsNeedUpdate(FontSelector&) final;
 

@@ -35,6 +35,7 @@
 #include "DatabaseContext.h"
 #include "Document.h"
 #include "ErrorEvent.h"
+#include "FontCache.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
 #include "JSWorkerGlobalScope.h"
@@ -224,6 +225,11 @@ void ScriptExecutionContext::destroyedMessagePort(MessagePort& messagePort)
 
 void ScriptExecutionContext::didLoadResourceSynchronously(const URL&)
 {
+}
+
+FontCache& ScriptExecutionContext::fontCache()
+{
+    return FontCache::singleton();
 }
 
 void ScriptExecutionContext::forEachActiveDOMObject(const Function<ShouldContinue(ActiveDOMObject&)>& apply) const

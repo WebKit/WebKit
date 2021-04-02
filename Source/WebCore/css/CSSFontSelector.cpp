@@ -52,7 +52,6 @@
 #include "StyleProperties.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
-#include "WebKitFontFamilyNames.h"
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 #include <wtf/text/AtomString.h>
@@ -66,6 +65,7 @@ static unsigned fontSelectorId;
 CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_context(makeWeakPtr(context))
+    , m_fontCache(makeRef(context.fontCache()))
     , m_cssFontFaceSet(CSSFontFaceSet::create(this))
     , m_fontModifiedObserver([this] { fontModified(); })
     , m_fontLoadingTimer(*this, &CSSFontSelector::fontLoadingTimerFired)
@@ -82,7 +82,7 @@ CSSFontSelector::CSSFontSelector(ScriptExecutionContext& context)
             m_fontFamilyNames.uncheckedAppend(familyName);
     }
 
-    FontCache::singleton().addClient(*this);
+    m_fontCache->addClient(*this);
     m_cssFontFaceSet->addFontModifiedObserver(m_fontModifiedObserver);
     LOG(Fonts, "CSSFontSelector %p ctor", this);
 
@@ -94,7 +94,7 @@ CSSFontSelector::~CSSFontSelector()
     LOG(Fonts, "CSSFontSelector %p dtor", this);
 
     stopLoadingAndClearFonts();
-    FontCache::singleton().removeClient(*this);
+    m_fontCache->removeClient(*this);
 }
 
 FontFaceSet* CSSFontSelector::fontFaceSetIfExists()
@@ -308,7 +308,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
     ASSERT(!m_buildIsUnderway || m_computingRootStyleFontCount);
 
     // FIXME: The spec (and Firefox) says user specified generic families (sans-serif etc.) should be resolved before the @font-face lookup too.
-    bool resolveGenericFamilyFirst = familyName == m_fontFamilyNames[static_cast<int>(FamilyNamesIndex::StandardFamily)];
+    bool resolveGenericFamilyFirst = familyName == m_fontFamilyNames.at(FamilyNamesIndex::StandardFamily);
 
     AtomString familyForLookup = familyName;
     Optional<FontDescription> overrideFontDescription;
@@ -330,7 +330,7 @@ FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescr
 
     if (!resolveGenericFamilyFirst)
         resolveAndAssignGenericFamily();
-    auto font = FontCache::singleton().fontForFamily(*fontDescriptionForLookup, familyForLookup);
+    auto font = m_fontCache->fontForFamily(*fontDescriptionForLookup, familyForLookup);
     if (document && RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logFontLoad(*document, familyForLookup.string(), !!font);
     return FontRanges { WTFMove(font) };
@@ -442,7 +442,7 @@ RefPtr<Font> CSSFontSelector::fallbackFontAt(const FontDescription& fontDescript
     if (!m_context->settingsValues().fontFallbackPrefersPictographs)
         return nullptr;
     auto& pictographFontFamily = m_context->settingsValues().fontGenericFamilies.pictographFontFamily();
-    auto font = FontCache::singleton().fontForFamily(fontDescription, pictographFontFamily);
+    auto font = m_fontCache->fontForFamily(fontDescription, pictographFontFamily);
     if (RuntimeEnabledFeatures::sharedFeatures().webAPIStatisticsEnabled() && is<Document>(m_context.get()))
         ResourceLoadObserver::shared().logFontLoad(downcast<Document>(*m_context), pictographFontFamily, !!font);
 

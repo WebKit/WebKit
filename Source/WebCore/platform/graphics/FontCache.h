@@ -32,6 +32,7 @@
 #include "FontCascadeFonts.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "FontSelector.h"
 #include "FontTaggedSettings.h"
 #include "Timer.h"
 #include <array>
@@ -64,15 +65,9 @@
 namespace WebCore {
 
 class FontCascade;
-class FontSelector;
 class OpenTypeVerticalData;
 class Font;
 enum class IsForPlatformFont : uint8_t;
-struct FontDataCacheKeyHash;
-struct FontDataCacheKeyTraits;
-struct FontPlatformDataCacheKey;
-struct FontPlatformDataCacheKeyHash;
-struct FontPlatformDataCacheKeyHashTraits;
 
 #if PLATFORM(WIN)
 #if USE(IMLANG_FONT_LINK2)
@@ -218,20 +213,16 @@ struct FontCascadeCacheKeyHashTraits : WTF::GenericHashTraits<WebCore::FontCasca
 
 using FontCascadeCache = HashMap<FontCascadeCacheKey, std::unique_ptr<FontCascadeCacheEntry>, FontCascadeCacheKeyHash, FontCascadeCacheKeyHashTraits>;
 
-typedef HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyHashTraits> FontPlatformDataCache;
-typedef HashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
-#if ENABLE(OPENTYPE_VERTICAL)
-typedef HashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontVerticalDataCache;
-#endif
-
 class FontCache : public RefCounted<FontCache> {
-    friend class WTF::NeverDestroyed<FontCache>;
+    friend class WTF::NeverDestroyed<FontCache, MainThreadAccessTraits>;
 
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
-    FontCache();
-
+    static Ref<FontCache> create();
     WEBCORE_EXPORT static FontCache& singleton();
+    static FontCache& fontCacheFallbackToSingleton(RefPtr<FontSelector>);
+
+    ~FontCache();
 
     // These methods are implemented by the platform.
     enum class PreferColoredFont : uint8_t { No, Yes };
@@ -303,6 +294,8 @@ public:
     void prewarmGlobally();
 
 private:
+    FontCache();
+
     WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
     void pruneUnreferencedEntriesFromFontCascadeCache();
     void pruneSystemFallbackFonts();
@@ -322,11 +315,8 @@ private:
     bool m_shouldMockBoldSystemFontForAccessibility { false };
 
     HashSet<FontSelector*> m_clients;
-    UniqueRef<FontPlatformDataCache> m_fontPlatformDataCache;
-    UniqueRef<FontDataCache> m_fontDataCache;
-#if ENABLE(OPENTYPE_VERTICAL)
-    UniqueRef<FontVerticalDataCache> m_fontVerticalDataCache;
-#endif
+    struct FontDataCaches;
+    UniqueRef<FontDataCaches> m_fontDataCaches;
     FontCascadeCache m_fontCascadeCache;
 
     unsigned short m_generation { 0 };
@@ -386,6 +376,11 @@ Optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::decode(De
         return { };
 
     return prewarmInformation;
+}
+
+inline FontCache& FontCache::fontCacheFallbackToSingleton(RefPtr<FontSelector> fontSelector)
+{
+    return fontSelector ? fontSelector->fontCache() : FontCache::singleton();
 }
 
 }
