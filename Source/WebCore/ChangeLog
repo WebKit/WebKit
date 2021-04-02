@@ -1,3 +1,21 @@
+2021-04-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        PendingImageBitmap gets created on a stopped script execution context.
+        https://bugs.webkit.org/show_bug.cgi?id=223971
+
+        Reviewed by Youenn Fablet.
+
+        Don't create a PendingImageBitmap in PendingImageBitmap::fetch
+        if the associated script execution context had already been stoppped.
+
+        The new behavior matches of Chrome although it's technically incorrect.
+
+        Correcting it to match the spec & Firefox will refactor a larger fix around
+        how script execution context is used by the threaded loader.
+
+        * html/ImageBitmap.cpp:
+        (WebCore::PendingImageBitmap::fetch):
+
 2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove [Replaceable] extended attribute from `document.all`
