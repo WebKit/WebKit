@@ -1,5 +1,19 @@
 2021-04-02  Youenn Fablet  <youenn@apple.com>
 
+        Capture rotation is wrong after Safari is backgrounded then foregrounded
+        https://bugs.webkit.org/show_bug.cgi?id=224103
+
+        Reviewed by Eric Carlson.
+
+        WebPage computes rotation either based on rotation notification or viewport notification.
+        Apply the same technique in UIProcess to let GPUProcess get the right information.
+        Manually tested.
+
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::dynamicViewportSizeUpdate):
+
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
         Do not send samples to GPUProcess if mediastream video is not playing
         https://bugs.webkit.org/show_bug.cgi?id=224100
         <rdar://74809558>
