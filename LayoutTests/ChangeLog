@@ -1,3 +1,14 @@
+2021-04-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: textRectsFromMarkers always fails
+        https://bugs.webkit.org/show_bug.cgi?id=223556
+        <rdar://74256003>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/ios-simulator/text-rects-for-range-matches-expected.txt: Added.
+        * accessibility/ios-simulator/text-rects-for-range-matches.html: Added.
+
 2021-04-02  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/multipart convert PHP to Python

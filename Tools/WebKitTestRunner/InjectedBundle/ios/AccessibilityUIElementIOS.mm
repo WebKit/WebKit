@@ -107,6 +107,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSArray *)textMarkerRange;
 - (NSInteger)lengthForTextMarkers:(NSArray *)textMarkers;
 - (NSString *)stringForTextMarkers:(NSArray *)markers;
+- (NSArray *)textRectsFromMarkers:(NSArray *)markers withText:(NSString *)text;
 - (id)startOrEndTextMarkerForTextMarkers:(NSArray*)textMarkers isStart:(BOOL)isStart;
 - (NSArray *)textMarkerRangeForMarkers:(NSArray *)textMarkers;
 - (NSInteger)positionForTextMarker:(id)marker;
@@ -1193,6 +1194,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::stringForTextMarkerRange(Access
     if (![textMarkers isKindOfClass:[NSArray class]])
         return createJSString();
     return [[m_element stringForTextMarkers:textMarkers] createJSStringRef];
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::rectsForTextMarkerRange(AccessibilityTextMarkerRange* markerRange, JSStringRef text)
+{
+    id textMarkers = markerRange->platformTextMarkerRange();
+    if (![textMarkers isKindOfClass:[NSArray class]])
+        return createJSString();
+    return [[[m_element textRectsFromMarkers:textMarkers withText:[NSString stringWithJSStringRef:text]] componentsJoinedByString:@","] createJSStringRef];
 }
 
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker)
