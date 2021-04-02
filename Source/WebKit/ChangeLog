@@ -1,3 +1,22 @@
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
+        Do not send samples to GPUProcess if mediastream video is not playing
+        https://bugs.webkit.org/show_bug.cgi?id=224100
+        <rdar://74809558>
+
+        Reviewed by Eric Carlson.
+
+        In case video is paused, there is no need to send samples to GPUProcess.
+        Instead, we can just exit early.
+        This fixes the issue of freezing camera in case a hidden video element tries to play the camera feed.
+        Manually tested.
+
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp:
+        (WebKit::SampleBufferDisplayLayer::play):
+        (WebKit::SampleBufferDisplayLayer::pause):
+        (WebKit::SampleBufferDisplayLayer::enqueueSample):
+        * WebProcess/GPU/webrtc/SampleBufferDisplayLayer.h:
+
 2021-04-02  John Wilander  <wilander@apple.com>
 
         PCM: PrivateClickMeasurementManager::getTokenPublicKey() should not use PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable when validating the token before the attribution report is sent

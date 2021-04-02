@@ -70,6 +70,7 @@ private:
 
     PlatformLayerContainer m_videoLayer;
     bool m_didFail { false };
+    bool m_paused { false };
 };
 
 }
