@@ -1,3 +1,19 @@
+2021-04-02  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] Power regression: audio hardware is configured for 128 frame preferred buffer size during VideoAudio playback
+        https://bugs.webkit.org/show_bug.cgi?id=224122
+
+        Reviewed by Eric Carlson.
+
+        The RemoteAudioHardwareListenerProxy tracks when audio hardware changes, and updates the WebContent process with
+        the supported properies of the new default audio device, including supported buffer sizes. However, it only does
+        so when the current audio devices changes, and not initially. Instead, ensure the WebContent process is immediately
+        update with the correct values for supported buffer sizes. This allows VideoAudio playback to enter a lower-power
+        playback mode by specifying a large preferred buffer size (4096).
+
+        * GPUProcess/media/RemoteAudioHardwareListenerProxy.cpp:
+        (WebKit::RemoteAudioHardwareListenerProxy::RemoteAudioHardwareListenerProxy):
+
 2021-04-02  Brady Eidson  <beidson@apple.com>
 
         Add WKURLSchemeTask redirect API.
