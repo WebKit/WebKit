@@ -95,7 +95,7 @@ LayoutUnit RenderMathMLBlock::mirrorIfNeeded(LayoutUnit horizontalOffset, Layout
     return horizontalOffset;
 }
 
-int RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     // mathml.css sets math { -webkit-line-box-contain: glyphs replaced; line-height: 0; }, so when linePositionMode == PositionOfInteriorLineBoxes we want to
     // return 0 here to match our line-height. This matters when RootInlineBox::ascentAndDescentForBox is called on a RootInlineBox for an inline-block.
@@ -176,11 +176,11 @@ LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& s
     }
 }
 
-Optional<int> RenderMathMLTable::firstLineBaseline() const
+Optional<LayoutUnit> RenderMathMLTable::firstLineBaseline() const
 {
     // By default the vertical center of <mtable> is aligned on the math axis.
     // This is different than RenderTable::firstLineBoxBaseline, which returns the baseline of the first row of a <table>.
-    return Optional<int>(logicalHeight() / 2 + axisHeight(style()));
+    return LayoutUnit { (logicalHeight() / 2 + axisHeight(style())).toInt() };
 }
 
 void RenderMathMLBlock::layoutItems(bool relayoutChildren)

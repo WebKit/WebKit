@@ -69,7 +69,7 @@ private:
     std::unique_ptr<InlineElementBox> createInlineBox() override;
 
     LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
+    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
     bool isImage() const override;
     bool isText() const { return !isImage(); }

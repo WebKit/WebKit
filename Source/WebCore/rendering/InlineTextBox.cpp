@@ -119,7 +119,7 @@ void InlineTextBox::setLogicalOverflowRect(const LayoutRect& rect)
     gTextBoxesWithOverflow->add(this, rect);
 }
 
-int InlineTextBox::baselinePosition(FontBaseline baselineType) const
+LayoutUnit InlineTextBox::baselinePosition(FontBaseline baselineType) const
 {
     if (!parent())
         return 0;

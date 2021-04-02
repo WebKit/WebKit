@@ -466,12 +466,12 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     clearNeedsLayout();
 }
 
-Optional<int> RenderMathMLScripts::firstLineBaseline() const
+Optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
 {
     auto* base = firstChildBox();
     if (!base)
-        return Optional<int>();
-    return Optional<int>(static_cast<int>(lroundf(ascentForChild(*base) + base->logicalTop())));
+        return Optional<LayoutUnit>();
+    return LayoutUnit { roundf(ascentForChild(*base) + base->logicalTop()) };
 }
 
 }

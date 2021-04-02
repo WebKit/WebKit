@@ -49,7 +49,7 @@ public:
 protected:
     void paint(PaintInfo&, const LayoutPoint&) override;
     void paintChildren(PaintInfo& forSelf, const LayoutPoint&, PaintInfo& forChild, bool usePrintRect) override;
-    Optional<int> firstLineBaseline() const override;
+    Optional<LayoutUnit> firstLineBaseline() const override;
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     void computePreferredLogicalWidths() override;
 

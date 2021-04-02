@@ -144,12 +144,12 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     minLogicalWidth += scrollbarWidth;
 }
 
-static int synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
+static LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
 {
-    return (direction == HorizontalLine ? box.size().height() : box.size().width()).toInt();
+    return direction == HorizontalLine ? box.size().height() : box.size().width();
 }
 
-int RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
+LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
 {
     auto baseline = firstLineBaseline();
     if (!baseline)
@@ -158,10 +158,10 @@ int RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode di
     return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight()).toInt();
 }
 
-Optional<int> RenderFlexibleBox::firstLineBaseline() const
+Optional<LayoutUnit> RenderFlexibleBox::firstLineBaseline() const
 {
     if (isWritingModeRoot() || m_numberOfInFlowChildrenOnFirstLine <= 0)
-        return Optional<int>();
+        return Optional<LayoutUnit>();
     RenderBox* baselineChild = nullptr;
     int childNumber = 0;
     for (RenderBox* child = m_orderIterator.first(); child; child = m_orderIterator.next()) {
@@ -180,25 +180,25 @@ Optional<int> RenderFlexibleBox::firstLineBaseline() const
     }
 
     if (!baselineChild)
-        return Optional<int>();
+        return Optional<LayoutUnit>();
 
     if (!isColumnFlow() && !mainAxisIsChildInlineAxis(*baselineChild))
-        return Optional<int>(crossAxisExtentForChild(*baselineChild) + baselineChild->logicalTop());
+        return LayoutUnit { (crossAxisExtentForChild(*baselineChild) + baselineChild->logicalTop()).toInt() };
     if (isColumnFlow() && mainAxisIsChildInlineAxis(*baselineChild))
-        return Optional<int>(mainAxisExtentForChild(*baselineChild) + baselineChild->logicalTop());
+        return LayoutUnit { (mainAxisExtentForChild(*baselineChild) + baselineChild->logicalTop()).toInt() };
 
-    Optional<int> baseline = baselineChild->firstLineBaseline();
+    Optional<LayoutUnit> baseline = baselineChild->firstLineBaseline();
     if (!baseline) {
         // FIXME: We should pass |direction| into firstLineBoxBaseline and stop bailing out if we're a writing mode root.
         // This would also fix some cases where the flexbox is orthogonal to its container.
         LineDirectionMode direction = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
-        return Optional<int>(synthesizedBaselineFromBorderBox(*baselineChild, direction) + baselineChild->logicalTop());
+        return synthesizedBaselineFromBorderBox(*baselineChild, direction) + baselineChild->logicalTop();
     }
 
-    return Optional<int>(baseline.value() + baselineChild->logicalTop());
+    return LayoutUnit { (baseline.value() + baselineChild->logicalTop()).toInt() };
 }
 
-Optional<int> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode) const
+Optional<LayoutUnit> RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode) const
 {
     return firstLineBaseline();
 }

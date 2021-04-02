@@ -50,7 +50,7 @@ protected:
 
 private:
     MathMLScriptsElement& element() const;
-    Optional<int> firstLineBaseline() const final;
+    Optional<LayoutUnit> firstLineBaseline() const final;
     struct ReferenceChildren {
         RenderBox* base;
         RenderBox* prescriptDelimiter;

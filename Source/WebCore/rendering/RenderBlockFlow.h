@@ -450,8 +450,8 @@ protected:
 
     void createFloatingObjects();
 
-    Optional<int> firstLineBaseline() const override;
-    Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
+    Optional<LayoutUnit> firstLineBaseline() const override;
+    Optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const override;
 
     bool isMultiColumnBlockFlow() const override { return multiColumnFlow(); }
     

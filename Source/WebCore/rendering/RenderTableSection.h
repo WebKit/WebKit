@@ -62,7 +62,7 @@ public:
     RenderTableRow* firstRow() const;
     RenderTableRow* lastRow() const;
 
-    Optional<int> firstLineBaseline() const override;
+    Optional<LayoutUnit> firstLineBaseline() const override;
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 

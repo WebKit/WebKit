@@ -1162,11 +1162,11 @@ LayoutUnit RenderInline::lineHeight(bool firstLine, LineDirectionMode /*directio
     return style().computedLineHeight();
 }
 
-int RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+LayoutUnit RenderInline::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     const RenderStyle& style = firstLine ? firstLineStyle() : this->style();
     const FontMetrics& fontMetrics = style.fontMetrics();
-    return fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2;
+    return LayoutUnit { (fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2).toInt() };
 }
 
 LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child) const

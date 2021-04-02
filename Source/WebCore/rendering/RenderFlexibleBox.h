@@ -52,9 +52,9 @@ public:
     bool canDropAnonymousBlockChild() const final { return false; }
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 
-    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
-    Optional<int> firstLineBaseline() const override;
-    Optional<int> inlineBlockBaseline(LineDirectionMode) const override;
+    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
+    Optional<LayoutUnit> firstLineBaseline() const override;
+    Optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const override;
 
     void styleDidChange(StyleDifference, const RenderStyle*) override;
     bool hitTestChildren(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& adjustedLocation, HitTestAction) override;

@@ -61,7 +61,7 @@ HTMLInputElement& RenderSlider::element() const
     return downcast<HTMLInputElement>(nodeForNonAnonymous());
 }
 
-int RenderSlider::baselinePosition(FontBaseline, bool /*firstLine*/, LineDirectionMode, LinePositionMode) const
+LayoutUnit RenderSlider::baselinePosition(FontBaseline, bool /*firstLine*/, LineDirectionMode, LinePositionMode) const
 {
     // FIXME: Patch this function for writing-mode.
     return height() + marginTop();

@@ -292,9 +292,9 @@ private:
     void computePreferredLogicalWidths() override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
-    Optional<int> firstLineBaseline() const override;
-    Optional<int> inlineBlockBaseline(LineDirectionMode) const final;
+    LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const final;
+    Optional<LayoutUnit> firstLineBaseline() const override;
+    Optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const final;
 
     RenderTableCol* slowColElement(unsigned col, bool* startEdge, bool* endEdge) const;
 

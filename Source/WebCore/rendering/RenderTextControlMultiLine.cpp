@@ -92,7 +92,7 @@ LayoutUnit RenderTextControlMultiLine::computeControlLogicalHeight(LayoutUnit li
     return lineHeight * textAreaElement().rows() + nonContentHeight;
 }
 
-int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+LayoutUnit RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }

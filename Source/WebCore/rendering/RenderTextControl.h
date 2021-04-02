@@ -94,12 +94,12 @@ public:
     { }
     virtual ~RenderTextControlInnerContainer() = default;
 
-    int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
+    LayoutUnit baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const override
     {
         return RenderBlock::baselinePosition(baseline, firstLine, direction, position);
     }
-    Optional<int> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
-    Optional<int> inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
+    Optional<LayoutUnit> firstLineBaseline() const override { return RenderBlock::firstLineBaseline(); }
+    Optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode direction) const override { return RenderBlock::inlineBlockBaseline(direction); }
 
 private:
     bool isFlexibleBoxImpl() const override { return true; }

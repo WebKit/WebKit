@@ -1,3 +1,113 @@
+2021-04-02  Rob Buis  <rbuis@igalia.com>
+
+        Subpixel layout: Switch inlines' baseline positioning from int to LayoutUnit.
+        https://bugs.webkit.org/show_bug.cgi?id=133932
+
+        Reviewed by Zalan Bujtas.
+
+        This change converts the int returns type to LayoutUnit.
+        To match the old behavior, the implicit toInt() calls
+        have been replaced by explicit toInt() calls.
+
+        * rendering/GridBaselineAlignment.cpp:
+        (WebCore::GridBaselineAlignment::ascentForChild const):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::baselinePosition const):
+        * rendering/InlineBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::baselinePosition const):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderAttachment.cpp:
+        (WebCore::RenderAttachment::baselinePosition const):
+        * rendering/RenderAttachment.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::baselinePosition const):
+        (WebCore::RenderBlock::firstLineBaseline const):
+        (WebCore::RenderBlock::inlineBlockBaseline const):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::firstLineBaseline const):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::baselinePosition const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::firstLineBaseline const):
+        (WebCore::RenderBox::inlineBlockBaseline const):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::baselinePosition const):
+        * rendering/RenderButton.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::synthesizedBaselineFromBorderBox):
+        (WebCore::RenderFlexibleBox::baselinePosition const):
+        (WebCore::RenderFlexibleBox::firstLineBaseline const):
+        (WebCore::RenderFlexibleBox::inlineBlockBaseline const):
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::synthesizedBaselineFromBorderBox):
+        (WebCore::RenderGrid::baselinePosition const):
+        (WebCore::RenderGrid::firstLineBaseline const):
+        (WebCore::RenderGrid::inlineBlockBaseline const):
+        * rendering/RenderGrid.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::baselinePosition const):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::baselinePosition const):
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::baselinePosition const):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::baselinePosition const):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.h:
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::baselinePosition const):
+        * rendering/RenderSlider.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::baselinePosition const):
+        (WebCore::RenderTable::inlineBlockBaseline const):
+        (WebCore::RenderTable::firstLineBaseline const):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::firstLineBaseline const):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::baselinePosition const):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::baselinePosition const):
+        * rendering/RootInlineBox.h:
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::RenderMathMLBlock::baselinePosition const):
+        (WebCore::RenderMathMLTable::firstLineBaseline const):
+        * rendering/mathml/RenderMathMLBlock.h:
+        (WebCore::RenderMathMLBlock::ascentForChild):
+        * rendering/mathml/RenderMathMLFraction.cpp:
+        (WebCore::RenderMathMLFraction::firstLineBaseline const):
+        * rendering/mathml/RenderMathMLFraction.h:
+        * rendering/mathml/RenderMathMLOperator.cpp:
+        (WebCore::RenderMathMLOperator::firstLineBaseline const):
+        * rendering/mathml/RenderMathMLOperator.h:
+        * rendering/mathml/RenderMathMLPadded.cpp:
+        (WebCore::RenderMathMLPadded::firstLineBaseline const):
+        * rendering/mathml/RenderMathMLPadded.h:
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::firstLineBaseline const):
+        * rendering/mathml/RenderMathMLRow.h:
+        * rendering/mathml/RenderMathMLScripts.cpp:
+        (WebCore::RenderMathMLScripts::firstLineBaseline const):
+        * rendering/mathml/RenderMathMLScripts.h:
+        * rendering/mathml/RenderMathMLSpace.cpp:
+        (WebCore::RenderMathMLSpace::firstLineBaseline const):
+        * rendering/mathml/RenderMathMLSpace.h:
+        * rendering/mathml/RenderMathMLToken.cpp:
+        (WebCore::RenderMathMLToken::firstLineBaseline const):
+        * rendering/mathml/RenderMathMLToken.h:
+
 2021-04-02  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r268176): [GStreamer] media/video-orientation-canvas.html fails

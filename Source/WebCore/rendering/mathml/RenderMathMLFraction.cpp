@@ -272,10 +272,10 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
     info.context().drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + logicalWidth(), LayoutUnit(adjustedPaintOffset.y()))));
 }
 
-Optional<int> RenderMathMLFraction::firstLineBaseline() const
+Optional<LayoutUnit> RenderMathMLFraction::firstLineBaseline() const
 {
     if (isValid())
-        return Optional<int>(std::lround(static_cast<float>(fractionAscent())));
+        return LayoutUnit { roundf(static_cast<float>(fractionAscent())) };
     return RenderMathMLBlock::firstLineBaseline();
 }
 
