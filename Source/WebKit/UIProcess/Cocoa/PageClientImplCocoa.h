@@ -60,6 +60,8 @@ public:
 
     bool scrollingUpdatesDisabledForTesting() final;
 
+    void setHasBlankOverlay(bool) final;
+
 #if ENABLE(ATTACHMENT_ELEMENT)
     void didInsertAttachment(API::Attachment&, const String& source) final;
     void didRemoveAttachment(API::Attachment&) final;

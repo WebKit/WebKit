@@ -28,6 +28,7 @@
 
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
+#import "WKWebViewPrivate.h"
 #import "WKWebViewPrivateForTesting.h"
 #import <WebCore/AlternativeTextUIController.h>
 #import <wtf/Vector.h>
@@ -77,6 +78,11 @@ void PageClientImplCocoa::isPlayingAudioDidChange()
 bool PageClientImplCocoa::scrollingUpdatesDisabledForTesting()
 {
     return [m_webView _scrollingUpdatesDisabledForTesting];
+}
+
+void PageClientImplCocoa::setHasBlankOverlay(bool hasBlankOverlay)
+{
+    [m_webView _setHasBlankOverlay:hasBlankOverlay];
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)

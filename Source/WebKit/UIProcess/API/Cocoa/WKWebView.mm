@@ -1455,6 +1455,26 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
+- (BOOL)_hasBlankOverlay
+{
+    return !!_blankOverlayView;
+}
+
+- (void)_setHasBlankOverlay:(BOOL)hasBlankOverlay
+{
+    if (!!_blankOverlayView == hasBlankOverlay)
+        return;
+
+    if (hasBlankOverlay) {
+        auto backgroundColor = _page->backgroundColor().valueOr(WebCore::Color::white);
+        _blankOverlayView = adoptNS([[WKBlankOverlayView alloc] initWithFrame:[self bounds] color:platformColor(backgroundColor)]);
+        [self addSubview:_blankOverlayView.get()];
+    } else {
+        [_blankOverlayView removeFromSuperview];
+        _blankOverlayView = nullptr;
+    }
+}
+
 - (id <_WKAppHighlightDelegate>)_appHighlightDelegate
 {
 #if ENABLE(APP_HIGHLIGHTS)
