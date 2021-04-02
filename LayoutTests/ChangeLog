@@ -1,3 +1,28 @@
+2021-04-01  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/history convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222614
+        <rdar://problem/74946423>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/history/back-to-post.php: Removed.
+        * http/tests/history/back-to-post.py: Added.
+        * http/tests/history/back-with-fragment-change-expected.txt:
+        * http/tests/history/back-with-fragment-change.php: Removed.
+        * http/tests/history/back-with-fragment-change.py: Added.
+        * http/tests/history/resources/back-during-onload-hung-page.php: Removed.
+        * http/tests/history/resources/back-during-onload-hung-page.py: Added.
+        * http/tests/history/resources/back-during-onload-middle.html:
+        * http/tests/navigation/resources/back-twice-page-2.html:
+        * platform/glib/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2021-04-01  Robert Jenner  <jenner@apple.com>
 
         inspector/animation/lifecycle-css-transition.html is a flakey timeout on EWS

@@ -1112,7 +1112,7 @@ webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 # WebSocket-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failure ]
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Pass Failure ]
 
 webkit.org/b/208287 http/tests/eventsource/eventsource-page-cache-connected.html [ Timeout Pass ]
 

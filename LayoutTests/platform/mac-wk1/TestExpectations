@@ -923,7 +923,7 @@ webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-ind
 
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
-webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.php [ Pass Failure ]
+webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.py [ Pass Failure ]
 
 # prefetch not supported in WK1
 http/wpt/prefetch [ Skip ]
@@ -1088,7 +1088,7 @@ webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw
 
 webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-console-no-report.html [ Pass Failure ]
 
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 
 # <rdar://problem/60376665> [ macOS ] svg/custom/glyph-selection-arabic-forms.svg is failing since around r252706
 [ Mojave ] svg/custom/glyph-selection-arabic-forms.svg [ Failure ]

@@ -1,15 +1,20 @@
-<?php
-header("Cache-control: no-cache, no-store");
-header("Pragma: no-cache");
-?>
+#!/usr/bin/env python3
 
-<html>
+import sys
+
+sys.stdout.write(
+    'Cache-control: no-cache, no-store\r\n'
+    'Pragma: no-cache\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<html>
 <body>
 <p>Test for <a href="rdar://problem/6791439">rdar://problem/6791439</a>
 Getting an error page instead of login page navigating back in gmail.</p>
 <div id="result">FAIL: Script did not run</div>
 
-<form action="back-to-post.php?1" method="post">
+<form action="back-to-post.py?1" method="post">
 <input name="a" value="b">
 <input id="mysubmit" type="submit" name="Submit" value="Submit">
 </form>
@@ -50,4 +55,4 @@ if (document.location.search == "") {
 }
 </script>
 </body>
-</html>
+</html>''')

@@ -1,15 +1,22 @@
-<?php
-// We intentionally want the page to load slowly (every time, hence no caching), 
-// so that when back-with-fragment-change-target.html calls history.back(), the
-// load is provisional for a while (long enough for the window.location = '#foo'
-// script to run and stop that load).
-sleep(2);
+#!/usr/bin/env python3
 
-header("Cache-control: no-cache, no-store");
-header("Pragma: no-cache");
-?>
+import sys
+import time
 
-<script>
+# We intentionally want the page to load slowly (every time, hence no caching), 
+# so that when back-with-fragment-change-target.html calls history.back(), the
+# load is provisional for a while (long enough for the window.location = '#foo'
+# script to run and stop that load).
+
+time.sleep(2)
+
+sys.stdout.write(
+    'Cache-control: no-cache, no-store\r\n'
+    'Pragma: no-cache\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<script>
 if (window.testRunner) {
     testRunner.dumpBackForwardList();
     testRunner.dumpAsText();
@@ -39,4 +46,4 @@ onunload = function() { };
 Tests that a history navigation that is aborted by a fragment change doesn't
 update the provisional history item. This test relies on
 <code>testRunner.dumpBackForwardList</code> to verify correctness
-and thus can only be run via DumpRenderTree.</p>
+and thus can only be run via DumpRenderTree.</p>''')
