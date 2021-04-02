@@ -1144,9 +1144,9 @@ WebGLUsingMetal:
   condition: ENABLE(WEBGL)
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
 
 WebGPUEnabled:
   type: bool
