@@ -492,7 +492,8 @@ inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, Key
     unsigned size = tableSize();
     unsigned sizeMask = tableSizeMask();
     unsigned tableHash = this->tableHash();
-    unsigned hash = HashTranslator::hash(key) ^ tableHash;
+    unsigned originalHash = HashTranslator::hash(key);
+    unsigned hash = originalHash ^ tableHash;
     unsigned index = desiredIndex(hash, sizeMask);
     unsigned distance = 0;
 
@@ -502,7 +503,7 @@ inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, Key
         if (isEmptyBucket(*entry)) {
             if (distance >= probeDistanceThreshold)
                 m_willExpand = true;
-            HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra), hash);
+            HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra), originalHash);
             break;
         }
 
@@ -516,7 +517,7 @@ inline auto RobinHoodHashTable<Key, Value, Extractor, HashFunctions, Traits, Key
             ValueType existingEntry = WTFMove(*entry);
             entry->~ValueType();
             initializeBucket(*entry);
-            HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra), hash);
+            HashTranslator::translate(*entry, std::forward<T>(key), std::forward<Extra>(extra), originalHash);
             maintainProbeDistanceForAdd(WTFMove(existingEntry), index, entryDistance, size, sizeMask, tableHash);
             break;
         }
