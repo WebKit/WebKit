@@ -1,3 +1,12 @@
+2021-04-01  Cameron McCormack  <heycam@apple.com>
+
+        Remove redundant #if in RuntimeApplicationChecks.h.
+        https://bugs.webkit.org/show_bug.cgi?id=224037
+
+        Reviewed by Alexey Proskuryakov.
+
+        * platform/RuntimeApplicationChecks.h:
+
 2021-04-01  Zalan Bujtas  <zalan@apple.com>
 
         Expand on shouldComputeLogicalWidthFromAspectRatioAndInsets return logic

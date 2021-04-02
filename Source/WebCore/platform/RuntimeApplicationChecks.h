@@ -55,20 +55,17 @@ inline bool isInGPUProcess() { return checkAuxiliaryProcessType(AuxiliaryProcess
 #endif
 
 #if PLATFORM(COCOA)
+
 WEBCORE_EXPORT void setApplicationBundleIdentifier(const String&);
 WEBCORE_EXPORT void setApplicationBundleIdentifierOverride(const String&);
 WEBCORE_EXPORT String applicationBundleIdentifier();
 WEBCORE_EXPORT void clearApplicationBundleIdentifierTestingOverride();
-
-#if PLATFORM(COCOA)
 
 namespace CocoaApplication {
 
 WEBCORE_EXPORT bool isIBooks();
 
 }
-
-#endif // PLATFORM(COCOA)
 
 #if PLATFORM(MAC)
 
