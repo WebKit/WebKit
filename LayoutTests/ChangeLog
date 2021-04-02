@@ -1,3 +1,15 @@
+2021-04-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] align-content issues
+        https://bugs.webkit.org/show_bug.cgi?id=221468
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix the relative path to a stylesheet in 4 expected results. The tests were working as expected
+        but the expected results were wrong without those CSS rules.
+
+        * TestExpectations: Unskip 4 tests that should be passing now.
+
 2021-04-02  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r268176): [GStreamer] media/video-orientation-canvas.html fails
