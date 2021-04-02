@@ -1,5 +1,19 @@
 2021-04-01  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION(r272469) QuickLook previews broken in some places on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=224086
+
+        Reviewed by Tim Horton.
+
+        The linked-on-or-after check saves us from most compatibility problems, but QuickLook on macOS was broken.
+        It uses schemes x-apple-ql-id and x-apple-ql-magic, which we allow to continue to have non-null origins.
+        Covered by API tests.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::shouldTreatAsUniqueOrigin):
+
+2021-04-01  Alex Christensen  <achristensen@webkit.org>
+
         Add more deprecation macros.
 
         I missed one in r275298

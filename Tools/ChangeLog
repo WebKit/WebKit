@@ -1,3 +1,13 @@
+2021-04-01  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r272469) QuickLook previews broken in some places on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=224086
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/SecurityOrigin.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-04-01  Aakash Jain  <aakash_jain@apple.com>
 
         Enable ews status bubble for stress tests ews
