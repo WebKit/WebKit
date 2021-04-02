@@ -1,3 +1,28 @@
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
+        Pass the main frame URL to requestGeolocationAuthorizationForURL delegate SPI
+        https://bugs.webkit.org/show_bug.cgi?id=224045
+
+        Reviewed by Alex Christensen.
+
+        Simplify code path using requestGeolocationAuthorizationForURL SPI.
+        We store the URL in the GeolocationRequestData since it might change over time given the requests may be processed asynchronously.
+        Once geolocation access check is done, we then process each request one at a time using a Deque.
+        We pass the main frame URL instead of the URL of the frame that called the API, following getUserMedia and device motion orientation. 
+        Manually tested in the simulator.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        Remove shouldRequestGeolocationAuthorizationForURL SPI that is not used.
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::decidePolicyForGeolocationPermissionRequest):
+        Remove unneeded origin creation.
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS decidePolicyForGeolocationRequestFromOrigin:completionHandler:view:]):
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+        (-[WKGeolocationProviderIOS geolocationAuthorizationDenied]):
+        * UIProcess/ios/WKGeolocationProviderIOSObjCSecurityOrigin.mm:
+        (WebKit::decidePolicyForGeolocationRequestFromOrigin):
+
 2021-04-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r275387.
