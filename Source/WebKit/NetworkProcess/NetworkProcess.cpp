@@ -1607,6 +1607,9 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     }
 #endif
 
+    if (auto* networkSession = this->networkSession(sessionID))
+        networkSession->removeNetworkWebsiteData(modifiedSince, [clearTasksHandler] { });
+
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
 

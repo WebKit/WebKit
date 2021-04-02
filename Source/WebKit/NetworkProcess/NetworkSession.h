@@ -166,6 +166,8 @@ public:
     void addPrivateClickMeasurementNetworkLoader(std::unique_ptr<PrivateClickMeasurementNetworkLoader>&& loader) { m_privateClickMeasurementNetworkLoaders.add(WTFMove(loader)); }
     void removePrivateClickMeasurementNetworkLoader(PrivateClickMeasurementNetworkLoader* loader) { m_privateClickMeasurementNetworkLoaders.remove(loader); }
     
+    virtual void removeNetworkWebsiteData(WallTime, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 

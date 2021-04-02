@@ -65,6 +65,7 @@
 #else
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
 #define NETWORK_SESSION_COCOA_HTTP_REDIRECT_ADDITIONS
+void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(WallTime, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
 #import "DeviceManagementSoftLink.h"

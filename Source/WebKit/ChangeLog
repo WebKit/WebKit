@@ -1,3 +1,27 @@
+2021-04-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clear network website data when a user clears history/website data
+        https://bugs.webkit.org/show_bug.cgi?id=224030
+        <rdar://problem/75288338>
+
+        Reviewed by David Kilzer.
+
+        Clear network-related website data for domains when clearing history/
+        website data.
+
+        No new tests. Unable to test due to recent changes in a dependent
+        framework's infrastructure for setting network website data for
+        testing. Will post a followup test once that is resolved.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::removeNetworkWebsiteData):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (NetworkSessionCocoa::removeNetworkWebsiteData):
+        * Scripts/process-entitlements.sh:
+
 2021-04-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [watchOS] Contact AutoFill suggestions no longer show up in non-username or password fields

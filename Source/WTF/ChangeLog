@@ -1,3 +1,15 @@
+2021-04-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clear network website data when a user clears history/website data
+        https://bugs.webkit.org/show_bug.cgi?id=224030
+        <rdar://problem/75288338>
+
+        Reviewed by David Kilzer.
+
+        * wtf/cocoa/SoftLinking.h:
+        Add a new soft link macro to link umbrella private frameworks. We need
+        this to support internal additions we need to clear network domain data.
+
 2021-04-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION(r275267): [GTK][WPE] 12 new crashes on service-workers layout tests

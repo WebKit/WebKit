@@ -106,6 +106,8 @@ public:
     
     _NSHSTSStorage *hstsStorage() const;
 
+    void removeNetworkWebsiteData(WallTime, CompletionHandler<void()>&&) override;
+
 private:
     void invalidateAndCancel() override;
     void clearCredentials() override;
