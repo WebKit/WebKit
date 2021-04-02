@@ -64,6 +64,7 @@ public:
     void set(uint32_t, WebAssemblyWrapperFunction*);
     void set(uint32_t, JSValue);
     void clear(uint32_t);
+    JSObject* type(JSGlobalObject*);
 
     Wasm::Table* table() { return m_table.ptr(); }
 

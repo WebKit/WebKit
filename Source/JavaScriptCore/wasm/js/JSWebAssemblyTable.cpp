@@ -126,6 +126,37 @@ void JSWebAssemblyTable::clear(uint32_t index)
     m_table->clear(index);
 }
 
+JSObject* JSWebAssemblyTable::type(JSGlobalObject* globalObject)
+{
+    VM& vm = globalObject->vm();
+
+    Wasm::TableElementType element = m_table->type();
+    JSString* elementString = nullptr;
+    switch (element) {
+    case Wasm::TableElementType::Funcref:
+        elementString = jsNontrivialString(vm, "funcref");
+        break;
+    case Wasm::TableElementType::Externref:
+        elementString = jsNontrivialString(vm, "externref");
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    JSObject* result;
+    auto maximum = m_table->maximum();
+    if (maximum) {
+        result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 3);
+        result->putDirect(vm, Identifier::fromString(vm, "maximum"), jsNumber(*maximum));
+    } else
+        result = constructEmptyObject(globalObject, globalObject->objectPrototype(), 2);
+
+    uint32_t minimum = m_table->length();
+    result->putDirect(vm, Identifier::fromString(vm, "minimum"), jsNumber(minimum));
+    result->putDirect(vm, Identifier::fromString(vm, "element"), elementString);
+    return result;
+}
+
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)

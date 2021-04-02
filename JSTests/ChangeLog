@@ -1,3 +1,16 @@
+2021-04-02  Jessica Tallon  <jtallon@igalia.com>
+
+        Add tests for the new type method on certain JS-API wasm objects.
+        https://bugs.webkit.org/show_bug.cgi?id=222412
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/js-api/global.js: Added.
+        (assert.throws):
+        * wasm/js-api/table.js:
+        (assert.truthy):
+        * wasm/js-api/test_memory.js:
+
 2021-04-01  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Optimize createListFromArrayLike() and Proxy's [[OwnPropertyKeys]] method

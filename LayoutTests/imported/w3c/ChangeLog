@@ -1,3 +1,24 @@
+2021-04-02  Jessica Tallon  <jtallon@igalia.com>
+
+        Update wasm JS-API tests for the type method to latest upstream.
+        https://bugs.webkit.org/show_bug.cgi?id=222412
+
+        Reviewed by Yusuke Suzuki.
+
+        The upstream tests has recently added a test for the table type method and
+        updated the other type tests to methods to keep up with a recent spec change.
+        This adds those updated tests as well as now expectations they pass.
+
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.js:
+        (assert_type):
+        (string_appeared_here.test):
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.js:
+        (assert_type):
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.worker-expected.txt:
+
 2021-04-02  Chris Lord  <clord@igalia.com>
 
         Implement text rendering on OffscreenCanvas in a Worker

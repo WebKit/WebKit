@@ -60,6 +60,8 @@ public:
     Wasm::PageCount grow(VM&, JSGlobalObject*, uint32_t delta);
     JS_EXPORT_PRIVATE void growSuccessCallback(VM&, Wasm::PageCount oldPageCount, Wasm::PageCount newPageCount);
 
+    JSObject* type(JSGlobalObject*);
+
 private:
     JSWebAssemblyMemory(VM&, Structure*);
     void finishCreation(VM&);
