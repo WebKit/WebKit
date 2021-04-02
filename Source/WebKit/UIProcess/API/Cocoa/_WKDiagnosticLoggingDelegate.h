@@ -27,6 +27,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define HAS_DIAGNOSTIC_LOGGING_DOMAIN
+
 typedef NS_ENUM(NSInteger, _WKDiagnosticLoggingResultType) {
     _WKDiagnosticLoggingResultPass,
     _WKDiagnosticLoggingResultFail,

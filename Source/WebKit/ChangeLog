@@ -1,3 +1,15 @@
+2021-04-01  Said Abou-Hallawa  <said@apple.com>
+
+        Add a macro to help staging logDiagnosticMessageWithDomain in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=224081
+
+        Reviewed by Wenson Hsieh.
+
+        Checking this macro will allow the webkit clients to implement this API
+        and build with or without r275103.
+
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+
 2021-04-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteRenderingBackend should clean up CG resources after last Canvas is destroyed in Gpu process
