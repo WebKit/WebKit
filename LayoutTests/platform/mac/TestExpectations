@@ -2302,3 +2302,5 @@ webkit.org/b/220754 http/wpt/service-workers/service-worker-spinning-activate.ht
 webkit.org/b/223976 [ Debug ] imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Pass Failure ]
 
 webkit.org/b/224033 imported/w3c/web-platform-tests/custom-elements/reactions/HTMLMediaElement.html [ Pass Crash ]
+
+webkit.org/b/222750 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html [ Pass Failure Crash ]

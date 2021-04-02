@@ -1,3 +1,12 @@
+2021-04-02  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS Debug] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html is a flakey crash and failure
+        https://bugs.webkit.org/show_bug.cgi?id=222750
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-04-02  Robert Jenner  <jenner@apple.com>
 
         [ EWS iOS wk2 ] css2.1/20110323/replaced-intrinsic-ratio-001.htm is a flakey text failure
