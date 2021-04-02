@@ -87,8 +87,8 @@ inline unsigned attributesForStructure(unsigned attributes)
 using GetValueFunc = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName);
 using GetValueFuncWithPtr = EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue thisValue, PropertyName, void*);
 
-using PutValueFunc = bool (*)(JSGlobalObject*, EncodedJSValue baseObject, EncodedJSValue value, PropertyName);
-using PutValueFuncWithPtr = bool (*)(JSGlobalObject*, EncodedJSValue baseObject, EncodedJSValue value, PropertyName, void*);
+using PutValueFunc = bool (JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue baseObject, EncodedJSValue value, PropertyName);
+using PutValueFuncWithPtr = bool (JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue baseObject, EncodedJSValue value, PropertyName, void*);
 
 class PropertySlot {
 

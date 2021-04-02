@@ -1800,9 +1800,12 @@ void AccessCase::generateImpl(AccessGenerationState& state)
             else
                 operationCall = jit.call(CustomAccessorPtrTag);
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                if (Options::useJITCage())
-                    linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryCustomAccessor));
-                else
+                if (Options::useJITCage()) {
+                    if (m_type == CustomValueGetter || m_type == CustomAccessorGetter)
+                        linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryCustomGetter));
+                    else
+                        linkBuffer.link(operationCall, FunctionPtr<OperationPtrTag>(vmEntryCustomSetter));
+                } else
                     linkBuffer.link(operationCall, this->as<GetterSetterAccessCase>().m_customAccessor);
             });
 

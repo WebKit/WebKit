@@ -1624,9 +1624,24 @@ end
     ret
 
 # a0, a1, a2 are used. a3 contains function address.
-global _vmEntryCustomAccessor
-_vmEntryCustomAccessor:
+# EncodedJSValue(JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue, PropertyName, void*);
+global _vmEntryCustomGetter
+_vmEntryCustomGetter:
+if ARM64E
     jmp a3, CustomAccessorPtrTag
+else
+    crash()
+end
+
+# a0, a1, a2, a3 are used. a4 contains function address.
+# bool (JIT_OPERATION_ATTRIBUTES*)(JSGlobalObject*, EncodedJSValue, EncodedJSValue, PropertyName, void*);
+global _vmEntryCustomSetter
+_vmEntryCustomSetter:
+if ARM64E
+    jmp a4, CustomAccessorPtrTag
+else
+    crash()
+end
 
 # a0 and a1 are used. a2 contains function address.
 global _vmEntryHostFunction

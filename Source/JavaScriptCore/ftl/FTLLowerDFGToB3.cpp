@@ -14635,7 +14635,7 @@ private:
             m_out.storePtr(m_callFrame, m_out.absolute(&vm().topCallFrame));
             if (Options::useJITCage()) {
                 setJSValue(
-                    vmCall(Int64, vmEntryCustomAccessor, weakPointer(globalObject), lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber]), m_out.constIntPtr(m_node->callDOMGetterData()->customAccessorGetter.executableAddress())));
+                    vmCall(Int64, vmEntryCustomGetter, weakPointer(globalObject), lowCell(m_node->child1()), m_out.constIntPtr(m_graph.identifiers()[m_node->callDOMGetterData()->identifierNumber]), m_out.constIntPtr(m_node->callDOMGetterData()->customAccessorGetter.executableAddress())));
             } else {
                 FunctionPtr<CustomAccessorPtrTag> getter = m_node->callDOMGetterData()->customAccessorGetter;
                 FunctionPtr<OperationPtrTag> bypassedFunction = FunctionPtr<OperationPtrTag>(MacroAssemblerCodePtr<OperationPtrTag>(WTF::tagNativeCodePtrImpl<OperationPtrTag>(WTF::untagNativeCodePtrImpl<CustomAccessorPtrTag>(getter.executableAddress()))));
