@@ -567,11 +567,11 @@ PreferPageRenderingUpdatesNear60FPSEnabled:
   humanReadableDescription: "Prefer page rendering updates near 60 frames per second rather than use the display's refresh rate"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 PrefixedWebAudioEnabled:
   type: bool
