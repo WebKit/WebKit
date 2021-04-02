@@ -5111,7 +5111,7 @@ static inline bool shouldComputeLogicalWidthFromAspectRatioAndInsets(const Rende
         return false;
     }
     // When both left and right are set, the out-of-flow positioned box is horizontally constrained and aspect ratio for the logical width is not applicable.
-    auto hasConstrainedWidth = !style.logicalLeft().isAuto() && !style.logicalRight().isAuto();
+    auto hasConstrainedWidth = (!style.logicalLeft().isAuto() && !style.logicalRight().isAuto()) || renderer.intrinsicLogicalWidth();
     if (hasConstrainedWidth)
         return false;
 

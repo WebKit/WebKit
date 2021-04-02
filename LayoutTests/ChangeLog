@@ -1,3 +1,13 @@
+2021-04-02  Zalan Bujtas  <zalan@apple.com>
+
+        [AspectRatio] Out-of-flow box with intrinsic width (e.g. <img>) may trigger infinite recursion
+        https://bugs.webkit.org/show_bug.cgi?id=224113
+
+        Reviewed by Rob Buis.
+
+        * fast/replaced/infinite-recursion-with-intrinsic-width-expected.txt: Added.
+        * fast/replaced/infinite-recursion-with-intrinsic-width.html: Added.
+
 2021-04-02  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/referrer-policy convert PHP to Python
