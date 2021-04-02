@@ -71,7 +71,7 @@ bool DisplayRefreshMonitorMac::startNotificationMechanism()
     if (m_displayLinkIsActive)
         return true;
 
-    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorMac::requestRefreshCallback - starting");
+    LOG_WITH_STREAM(DisplayLink, stream << "[Web ] DisplayRefreshMonitorMac::requestRefreshCallback for display " << displayID() << " - starting");
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID(), maxClientPreferredFramesPerSecond().valueOr(FullSpeedFramesPerSecond)), 0);
     if (!m_runLoopObserver) {
         // The RunLoopObserver repeats.
@@ -100,7 +100,7 @@ void DisplayRefreshMonitorMac::stopNotificationMechanism()
 
 void DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
 {
-    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond for display link on display " << displayID() << " to " << preferredFramesPerSecond);
+    LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond for display link on display " << displayID() << " to " << preferredFramesPerSecond);
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::SetDisplayLinkPreferredFramesPerSecond(m_observerID, displayID(), preferredFramesPerSecond), 0);
 
 }

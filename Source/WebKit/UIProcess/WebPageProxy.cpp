@@ -185,7 +185,6 @@
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
 #include <WebCore/WritingDirection.h>
-#include <pal/HysteresisActivity.h>
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
@@ -323,35 +322,6 @@ namespace WebKit {
 using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
-
-#if HAVE(CVDISPLAYLINK)
-class ScrollingObserver {
-    WTF_MAKE_NONCOPYABLE(ScrollingObserver);
-    WTF_MAKE_FAST_ALLOCATED;
-    friend NeverDestroyed<ScrollingObserver>;
-public:
-    static ScrollingObserver& singleton();
-
-    void willSendWheelEvent()
-    {
-        m_hysteresis.impulse();
-    }
-
-private:
-    ScrollingObserver()
-        : m_hysteresis([](PAL::HysteresisState state) { DisplayLink::setShouldSendIPCOnBackgroundQueue(state == PAL::HysteresisState::Started); })
-    {
-    }
-
-    PAL::HysteresisActivity m_hysteresis;
-};
-
-ScrollingObserver& ScrollingObserver::singleton()
-{
-    static NeverDestroyed<ScrollingObserver> detector;
-    return detector;
-}
-#endif
 
 class StorageRequests {
     WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
@@ -512,6 +482,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_waitsForPaintAfterViewDidMoveToWindow(m_configuration->waitsForPaintAfterViewDidMoveToWindow())
     , m_hasRunningProcess(process.state() != WebProcessProxy::State::Terminated)
+#if HAVE(CVDISPLAYLINK)
+    , m_wheelEventActivityHysteresis([this](PAL::HysteresisState state) { wheelEventHysteresisUpdated(state); })
+#endif
     , m_controlledByAutomation(m_configuration->isControlledByAutomation())
 #if PLATFORM(COCOA)
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
@@ -2756,10 +2729,21 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
     }
 }
 
+#if HAVE(CVDISPLAYLINK)
+void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState state)
+{
+    if (!m_process->hasConnection() || !m_displayID)
+        return;
+
+    bool wantsFullSpeedUpdates = state == PAL::HysteresisState::Started;
+    process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
+}
+#endif
+
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
 #if HAVE(CVDISPLAYLINK)
-    ScrollingObserver::singleton().willSendWheelEvent();
+    m_wheelEventActivityHysteresis.impulse();
 #endif
 
     send(
@@ -3776,6 +3760,8 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
 {
+    m_displayID = displayID;
+
     if (!hasRunningProcess())
         return;
 

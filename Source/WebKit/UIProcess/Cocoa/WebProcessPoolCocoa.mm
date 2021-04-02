@@ -820,6 +820,20 @@ void WebProcessPool::setDisplayLinkPreferredFramesPerSecond(IPC::Connection& con
         }
     }
 }
+
+void WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates(IPC::Connection& connection, WebCore::PlatformDisplayID displayID, bool wantsFullSpeedUpdates)
+{
+    for (auto& displayLink : m_displayLinks) {
+        if (displayLink->displayID() == displayID) {
+            if (wantsFullSpeedUpdates)
+                displayLink->incrementFullSpeedRequestClientCount(connection);
+            else
+                displayLink->decrementFullSpeedRequestClientCount(connection);
+            return;
+        }
+    }
+}
+
 #endif // HAVE(CVDISPLAYLINK)
 
 // FIXME: Deprecated. Left here until a final decision is made.

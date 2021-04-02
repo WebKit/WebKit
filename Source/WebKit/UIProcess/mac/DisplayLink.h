@@ -51,6 +51,9 @@ public:
     void removeObserver(IPC::Connection&, DisplayLinkObserverID);
     void removeObservers(IPC::Connection&);
 
+    void incrementFullSpeedRequestClientCount(IPC::Connection&);
+    void decrementFullSpeedRequestClientCount(IPC::Connection&);
+
     void setPreferredFramesPerSecond(IPC::Connection&, DisplayLinkObserverID, WebCore::FramesPerSecond);
 
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
@@ -64,17 +67,24 @@ public:
 private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     void notifyObserversDisplayWasRefreshed();
-    
+
+    void removeInfoForConnectionIfPossible(IPC::Connection&);
+
     static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
 
     struct ObserverInfo {
         DisplayLinkObserverID observerID;
         WebCore::FramesPerSecond preferredFramesPerSecond;
     };
+    
+    struct ConnectionClientInfo {
+        unsigned fullSpeedUpdatesClientCount { 0 };
+        Vector<ObserverInfo> observers;
+    };
 
     CVDisplayLinkRef m_displayLink { nullptr };
     Lock m_observersLock;
-    HashMap<RefPtr<IPC::Connection>, Vector<ObserverInfo>> m_observers;
+    HashMap<RefPtr<IPC::Connection>, ConnectionClientInfo> m_observers;
     WebCore::PlatformDisplayID m_displayID;
     WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
     WebCore::DisplayUpdate m_currentUpdate;

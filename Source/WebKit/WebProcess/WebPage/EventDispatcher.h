@@ -108,7 +108,7 @@ private:
 #endif
 
 #if PLATFORM(MAC)
-    void displayWasRefreshed(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&);
+    void displayWasRefreshed(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
 #endif
 
 #if ENABLE(SCROLLING_THREAD)

@@ -289,10 +289,13 @@ void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID 
 }
 
 #if HAVE(CVDISPLAYLINK)
-void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate)
+void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool sendToMainThread)
 {
     ASSERT(!RunLoop::isMain());
     notifyScrollingTreesDisplayWasRefreshed(displayID);
+
+    if (!sendToMainThread)
+        return;
 
     RunLoop::main().dispatch([displayID, displayUpdate]() {
         DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID, displayUpdate);

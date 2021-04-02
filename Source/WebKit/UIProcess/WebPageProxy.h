@@ -112,6 +112,7 @@
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewportArguments.h>
 #include <memory>
+#include <pal/HysteresisActivity.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
@@ -2300,6 +2301,10 @@ private:
 
     WebWheelEventCoalescer& wheelEventCoalescer();
 
+#if HAVE(CVDISPLAYLINK)
+    void wheelEventHysteresisUpdated(PAL::HysteresisState);
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventTracking(const WebTouchEvent&);
     WebCore::TrackingType touchEventTrackingType(const WebTouchEvent&) const;
@@ -2658,6 +2663,11 @@ private:
 #endif
 
     std::unique_ptr<WebWheelEventCoalescer> m_wheelEventCoalescer;
+
+    Optional<WebCore::PlatformDisplayID> m_displayID;
+#if HAVE(CVDISPLAYLINK)
+    PAL::HysteresisActivity m_wheelEventActivityHysteresis;
+#endif
 
     Deque<NativeWebMouseEvent> m_mouseEventQueue;
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;

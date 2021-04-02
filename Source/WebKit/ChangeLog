@@ -1,3 +1,66 @@
+2021-04-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow wheel events to trigger high frequency DisplayLinks
+        https://bugs.webkit.org/show_bug.cgi?id=224095
+
+        Reviewed by Sam Weinig.
+
+        When scrolling via wheel events, we may want to drive scrolling tree updates
+        (which are driven by EventDispatcher::displayWasRefreshed()) at a higher rate
+        than the main thread does rendering updates.
+
+        To support this, give DisplayLink a count of "full speed" clients, and when this count is
+        greater than zero, have DisplayLink::notifyObserversDisplayWasRefreshed() send
+        EventDispatcher IPC at full framerate, while passing a flag based on the usual
+        relevantForUpdateFrequency() about whether to update the main thread for a given update.
+
+        Allow DisplayLink connection info objects with non-zero fullSpeedUpdatesClientCount
+        to stick around, because that fullSpeedUpdatesClientCount needs to be stored for
+        connections that may not yet have observers.
+
+        Since DisplayLink might have info for connections with no observers, adjust the logic in
+        DisplayLink::notifyObserversDisplayWasRefreshed() to do the CVDisplayLinkStop
+        after traversing the observers.
+
+        The "full speed" client count is maintained by a HysteresisActivity on WebPageProxy,
+        whose impulse is wheel events. This replaces a singleton HysteresisActivity which
+        was used to determine whether IPC goes to EventDispatcher or the main thread of
+        the web process.
+
+        WebPageProxy needs to track the PlatformDisplayID for the screen that its view is on,
+        so it knows which DisplayLink to message.
+
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::setDisplayLinkForDisplayWantsFullSpeedUpdates):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_wheelEventActivityHysteresis):
+        (WebKit::WebPageProxy::wheelEventHysteresisUpdated):
+        (WebKit::WebPageProxy::sendWheelEvent):
+        (WebKit::WebPageProxy::windowScreenDidChange):
+        (WebKit::ScrollingObserver::willSendWheelEvent): Deleted.
+        (WebKit::ScrollingObserver::ScrollingObserver): Deleted.
+        (WebKit::ScrollingObserver::singleton): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::DisplayLink):
+        (WebKit::DisplayLink::~DisplayLink):
+        (WebKit::DisplayLink::addObserver):
+        (WebKit::DisplayLink::removeObserver):
+        (WebKit::DisplayLink::removeInfoForConnectionIfPossible):
+        (WebKit::DisplayLink::incrementFullSpeedRequestClientCount):
+        (WebKit::DisplayLink::decrementFullSpeedRequestClientCount):
+        (WebKit::DisplayLink::setPreferredFramesPerSecond):
+        (WebKit::DisplayLink::notifyObserversDisplayWasRefreshed):
+        * UIProcess/mac/DisplayLink.h:
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::displayWasRefreshed):
+        * WebProcess/WebPage/EventDispatcher.h:
+        * WebProcess/WebPage/EventDispatcher.messages.in:
+        * WebProcess/WebPage/mac/DisplayRefreshMonitorMac.cpp:
+        (WebKit::DisplayRefreshMonitorMac::startNotificationMechanism):
+        (WebKit::DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond):
+
 2021-04-02  Chris Dumez  <cdumez@apple.com>
 
         Make sure we are no longer show the previous page when running a JS prompt

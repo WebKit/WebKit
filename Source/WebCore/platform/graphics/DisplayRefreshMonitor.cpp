@@ -172,7 +172,7 @@ void DisplayRefreshMonitor::displayLinkFired(const DisplayUpdate& displayUpdate)
         if (!isPreviousFrameDone())
             return;
 
-        LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitor::displayLinkFired for display " << displayID() << " - scheduled " << isScheduled() << " unscheduledFireCount " << m_unscheduledFireCount << " of " << m_maxUnscheduledFireCount);
+        LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitor::displayLinkFired for display " << displayID() << " - scheduled " << isScheduled() << " unscheduledFireCount " << m_unscheduledFireCount << " of " << m_maxUnscheduledFireCount);
         if (firedAndReachedMaxUnscheduledFireCount()) {
             stopNotificationMechanism();
             return;

@@ -1,3 +1,17 @@
+2021-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Allow wheel events to trigger high frequency DisplayLinks
+        https://bugs.webkit.org/show_bug.cgi?id=224095
+
+        Reviewed by Sam Weinig.
+
+        Adjust some logging so it's clear which process code is running in.
+
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::displayLinkFired):
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::ensureMonitorForDisplayID):
+
 2021-04-02  David Kilzer  <ddkilzer@apple.com>
 
         UBSan: AlternativeTextController::dismiss()/dismissSoon(): runtime error: load of value nnn, which is not a valid value for type 'bool'

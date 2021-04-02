@@ -30,6 +30,6 @@ messages -> EventDispatcher {
     GestureEvent(WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event)
 #endif
 #if HAVE(CVDISPLAYLINK)
-    DisplayWasRefreshed(uint32_t displayID, struct WebCore::DisplayUpdate update)
+    DisplayWasRefreshed(uint32_t displayID, struct WebCore::DisplayUpdate update, bool sendToMainThread)
 #endif
 }
