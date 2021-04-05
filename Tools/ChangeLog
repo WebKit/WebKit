@@ -1,3 +1,11 @@
+2021-04-05  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Garden API test failure and flakiness after r275267
+
+        Unreviewed test gardening.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
 2021-04-02  Brady Eidson  <beidson@apple.com>
 
         Add WKURLSchemeTask redirect API.
