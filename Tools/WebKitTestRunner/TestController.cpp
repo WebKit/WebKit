@@ -143,7 +143,7 @@ void TestController::navigationDidBecomeDownloadShared(WKDownloadRef download, c
     WKDownloadClientV0 client {
         { 0, clientInfo },
         TestController::downloadDidReceiveServerRedirectToURL,
-        nullptr, // didReceiveAuthenticationChallenge
+        TestController::downloadDidReceiveAuthenticationChallenge,
         TestController::decideDestinationWithSuggestedFilename,
         nullptr, // didWriteData
         TestController::downloadDidFinish,
@@ -2162,7 +2162,7 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef
     if (suggestedFilename.isEmpty())
         suggestedFilename = "Unknown";
     
-    String destination = temporaryFolder + "/" + suggestedFilename;
+    String destination = temporaryFolder + pathSeparator + suggestedFilename;
     if (FileSystem::fileExists(destination))
         FileSystem::deleteFile(destination);
 
@@ -2196,6 +2196,11 @@ void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
         m_currentInvocation->outputText(makeString("Failed: ", domain, ", code=", code, ", description=", description, "\n"));
     }
     m_currentInvocation->notifyDownloadDone();
+}
+
+void TestController::downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallenge(nullptr, authenticationChallenge);
 }
 
 void TestController::processDidCrash()

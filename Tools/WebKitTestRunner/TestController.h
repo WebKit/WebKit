@@ -464,6 +464,7 @@ private:
     void downloadDidFail(WKDownloadRef, WKErrorRef);
     static bool downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLResponseRef, WKURLRequestRef, const void*);
     bool downloadDidReceiveServerRedirectToURL(WKDownloadRef, WKURLRequestRef);
+    static void downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef, const void *clientInfo);
     
     static void processDidCrash(WKPageRef, const void* clientInfo);
     void processDidCrash();

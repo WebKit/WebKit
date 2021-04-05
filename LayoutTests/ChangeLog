@@ -1,3 +1,13 @@
+2021-04-05  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Enable Service Worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=223591
+
+        Reviewed by Fujii Hironori.
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-04-02  Amir Mark Jr  <amir_mark@apple.com>
 
         [ MacOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html is a flaky failure

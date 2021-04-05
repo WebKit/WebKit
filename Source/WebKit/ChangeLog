@@ -1,3 +1,16 @@
+2021-04-05  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Enable Service Worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=223591
+
+        Reviewed by Fujii Hironori.
+
+        WPT HTTP tests were failing because SSL Connect errors weren't triggering authentication challenges.
+        Also Add a suggestedFilename implementation.
+
+        * NetworkProcess/curl/NetworkDataTaskCurl.cpp:
+        * NetworkProcess/curl/NetworkDataTaskCurl.h:
+
 2021-04-05  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP][iPad] Audio only when airplaying a youtube video

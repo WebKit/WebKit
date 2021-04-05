@@ -91,6 +91,8 @@ private:
     void blockCookies();
     void unblockCookies();
 
+    String suggestedFilename() const override;
+
     State m_state { State::Suspended };
 
     RefPtr<WebCore::CurlRequest> m_curlRequest;
