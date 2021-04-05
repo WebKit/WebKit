@@ -1,3 +1,20 @@
+2021-04-05  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP][iPad] Audio only when airplaying a youtube video
+        https://bugs.webkit.org/show_bug.cgi?id=224132
+
+        Reviewed by Eric Carlson.
+
+        While `MediaPlayerPrivateAVFoundationObjC` only implements `setWirelessPlaybackTarget()`
+        on macOS, `MediaPlayerPrivateMediaSourceAVFObjC` implements it on both macOS and iOS.
+        Therefore, `RemoteMediaPlayerProxy` has to forward the calls of `setWirelessPlaybackTarget()`
+        from WebContent processes to "MediaPlayerPrivate*" on both macOS and iOS.
+
+        Manually tested.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::setWirelessPlaybackTarget):
+
 2021-04-02  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] Power regression: audio hardware is configured for 128 frame preferred buffer size during VideoAudio playback
