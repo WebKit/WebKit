@@ -1,3 +1,32 @@
+2021-04-06  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] At EOS, change position to match duration, not the other way around.
+        https://bugs.webkit.org/show_bug.cgi?id=224237
+
+        Reviewed by Philippe Normand.
+
+        The criteria used to check if playback has finished is currentTime >=
+        duration. Currently MediaPlayerPrivateGStreamer::didEnd() ensures this
+        in an awkward way: by changing the duration so that it matches
+        currentTime, rather than the other way around.
+
+        This meant a duration change at the end of playback most of the time,
+        with a slightly different duration each time, since currentTime is
+        cached periodically.
+
+        This patch reworks that function to work more naturally and less racy:
+
+        First, only if the stream doesn't have a set duration (e.g. live
+        stream), we set a duration to currentTime, as defined in the spec.
+
+        Second, at EOS we update currentTime to match duration, rather than
+        the other way around.
+
+        This patch doesn't introduce changes in test results.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+
 2021-04-06  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Non-unified build fixes, early April 2021
