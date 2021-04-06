@@ -10,9 +10,13 @@ window.jsTestIsAsync = true;
 
 const mediaControls = new IOSInlineMediaControls({ width: 680, height: 300 });
 mediaControls.shouldUseSingleBarLayout = true;
+mediaControls.maximumRightContainerButtonCountOverride = 100; // A finite value larger than anything likely.
+
+// Trigger a layout so that `maximumRightContainerButtonCountOverride` takes effect.
+mediaControls.needsLayout = true;
+scheduler.flushScheduledLayoutCallbacks();
 
 const droppableControls = [
-    mediaControls.overflowButton,
     mediaControls.fullscreenButton,
     mediaControls.airplayButton,
     mediaControls.muteButton,
