@@ -112,6 +112,7 @@ public:
     static GCGLenum drawingBufferTextureTargetQuery();
     static GCGLint EGLDrawingBufferTextureTarget();
 #else
+    static Ref<GraphicsContextGLOpenGL> createForGPUProcess(const GraphicsContextGLAttributes&);
     PlatformLayer* platformLayer() const final;
 #endif
 #if USE(ANGLE)

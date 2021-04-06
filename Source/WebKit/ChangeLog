@@ -1,3 +1,48 @@
+2021-04-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK2] Implement IPC::Semaphore to run WebGL in GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=224014
+
+        Reviewed by Don Olmstead.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        * GPUProcess/graphics/RemoteGraphicsContextGLWin.cpp: Added.
+        (WebKit::RemoteGraphicsContextGL::create):
+        (WebKit::RemoteGraphicsContextGLWin::RemoteGraphicsContextGLWin):
+        (WebKit::RemoteGraphicsContextGLWin::platformWorkQueueInitialize):
+        (WebKit::RemoteGraphicsContextGL::prepareForDisplay):
+        * Platform/IPC/IPCSemaphore.cpp:
+        * Platform/IPC/IPCSemaphore.h:
+        * Platform/IPC/StreamClientConnection.cpp:
+        (IPC::StreamClientConnection::setWakeUpSemaphore):
+        (IPC::StreamClientConnection::wakeUpServer):
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::tryAcquire):
+        (IPC::StreamClientConnection::tryAcquireAll):
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::StreamConnectionWorkQueue):
+        (IPC::StreamConnectionWorkQueue::removeStreamConnection):
+        (IPC::StreamConnectionWorkQueue::stop):
+        (IPC::StreamConnectionWorkQueue::wakeUp):
+        (IPC::StreamConnectionWorkQueue::wakeUpProcessingThread):
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnectionBase::release):
+        (IPC::StreamServerConnectionBase::releaseAll):
+        * Platform/IPC/win/IPCSemaphoreWin.cpp: Added.
+        (IPC::Semaphore::Semaphore):
+        (IPC::Semaphore::~Semaphore):
+        (IPC::Semaphore::operator=):
+        (IPC::Semaphore::signal):
+        (IPC::Semaphore::wait):
+        (IPC::Semaphore::waitFor):
+        (IPC::Semaphore::encode const):
+        (IPC::Semaphore::decode):
+        (IPC::Semaphore::destroy):
+        * PlatformWin.cmake:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createGraphicsContextGL const):
+
 2021-04-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 1: Require encoding/decoding delegates for non-inline display list items

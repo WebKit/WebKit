@@ -53,7 +53,7 @@ private:
     void wakeUpProcessingThread();
     void processStreams();
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     const char* const m_name;
 #endif
 

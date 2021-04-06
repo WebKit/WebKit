@@ -1,3 +1,18 @@
+2021-04-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][WK2] Implement IPC::Semaphore to run WebGL in GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=224014
+
+        Reviewed by Don Olmstead.
+
+        * platform/graphics/PlatformDisplay.cpp:
+        (WebCore::PlatformDisplay::sharedDisplay): GPU process calls this
+        function in IPC thread. Removed the assertion checking the main
+        thread.
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+        (WebCore::GraphicsContextGLOpenGL::createForGPUProcess): Added.
+
 2021-04-05  Cameron McCormack  <heycam@apple.com>
 
         Fix max-content on tables with percentage cell widths.

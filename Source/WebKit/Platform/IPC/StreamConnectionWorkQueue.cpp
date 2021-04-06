@@ -29,7 +29,7 @@
 namespace IPC {
 
 StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     : m_name(name)
 #endif
 {
@@ -63,7 +63,7 @@ void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnectionBas
         m_connections.remove(connection);
         ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
     }
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     m_wakeUpSemaphore.signal();
 #endif
 }
@@ -71,7 +71,7 @@ void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnectionBas
 void StreamConnectionWorkQueue::stop()
 {
     m_shouldQuit = true;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     if (!m_processingThread)
         return;
     m_wakeUpSemaphore.signal();
@@ -82,7 +82,7 @@ void StreamConnectionWorkQueue::stop()
 
 void StreamConnectionWorkQueue::wakeUp()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     m_wakeUpSemaphore.signal();
 #endif
 }
@@ -94,7 +94,7 @@ IPC::Semaphore& StreamConnectionWorkQueue::wakeUpSemaphore()
 
 void StreamConnectionWorkQueue::wakeUpProcessingThread()
 {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     if (m_processingThread) {
         m_wakeUpSemaphore.signal();
         return;

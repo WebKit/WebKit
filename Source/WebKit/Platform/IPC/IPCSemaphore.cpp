@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IPCSemaphore.h"
 
-#if !OS(DARWIN)
+#if !OS(DARWIN) && !OS(WINDOWS)
 
 namespace IPC {
 

@@ -111,7 +111,7 @@
 #include <WebCore/MockWebAuthenticationConfiguration.h>
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
 #include "RemoteGraphicsContextGLProxy.h"
 #endif
 
@@ -938,7 +938,7 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
     if (!WebProcess::singleton().shouldUseRemoteRenderingForWebGL())
         return nullptr;
     UNUSED_VARIABLE(hostWindowDisplayID);
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     return RemoteGraphicsContextGLProxy::create(attributes, m_page.ensureRemoteRenderingBackendProxy().renderingBackendIdentifier());
 #else
     return nullptr;

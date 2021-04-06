@@ -102,7 +102,7 @@ private:
 
     size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     Optional<Semaphore> m_wakeUpSemaphore;
 #endif
 };
@@ -240,7 +240,7 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
         }
         if (timeout.didTimeOut())
             break;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
         ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
         if (clientLimit == oldClientLimit) {
             m_buffer.clientWaitSemaphore().waitFor(timeout);
@@ -273,7 +273,7 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
     // If the transaction commits, server is guaranteed to signal.
 
     for (;;) {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
         ClientLimit clientLimit = sharedClientLimit().exchange(ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel);
         ClientOffset clientOffset = sharedClientOffset().load(std::memory_order_acquire);
 #else
@@ -283,7 +283,7 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
         if (!clientLimit && (clientOffset == ClientOffset::serverIsSleepingTag || !clientOffset))
             break;
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
         m_buffer.clientWaitSemaphore().waitFor(timeout);
 #else
         Thread::yield();
@@ -291,7 +291,7 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
         if (timeout.didTimeOut())
             return WTF::nullopt;
     }
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || PLATFORM(WIN)
     // In case the transaction was cancelled, undo the transaction marker.
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_release);
 #endif
