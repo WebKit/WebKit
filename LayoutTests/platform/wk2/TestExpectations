@@ -447,7 +447,6 @@ fast/overflow/overflow_hidden.html
 platform/mac/fast/loader/non-html-load-event.html
 plugins/embed-attributes-style.html
 plugins/plugin-initiate-popup-window.html
-storage/websql/open-database-while-transaction-in-progress.html
 svg/hixie/cascade/002.xml
 transitions/font-family-during-transition.html
 
@@ -489,9 +488,6 @@ webkit.org/b/158703 userscripts/window-onerror-for-isolated-world-3.html [ Skip 
 transitions/color-transition-all.html
 transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
-
-# These storage tests fail in WebKit2 on the bot, but not running locally
-storage/websql/multiple-databases-garbage-collection.html
 
 # Mysterious failure after enabling paste tests
 editing/mac/pasteboard/text-precomposed.html
@@ -697,6 +693,18 @@ fast/events/drag-display-none-element.html
 
 # Skip tests in fast/text/shaping
 fast/text/shaping
+
+# WebSQL is disabled
+storage/websql [ Skip ]
+fast/dom/MutationObserver/database-callback-delivery.html [ Skip ]
+http/tests/security/cross-origin-websql-allowed.html [ Skip ]
+http/tests/security/cross-origin-websql.html [ Skip ]
+http/tests/security/same-origin-websql-blocked.html [ Skip ]
+http/tests/security/storage-blocking-loosened-websql.html [ Skip ]
+http/tests/security/storage-blocking-strengthened-websql.html [ Skip ]
+http/tests/storage/callbacks-are-called-in-correct-context.html [ Skip ]
+fast/history/page-cache-webdatabase-no-transaction-db.html [ Skip ]
+fast/history/page-cache-webdatabase-pending-transaction.html [ Skip ]
 
 # WebKitTestRunner testRunner.setPrivateBrowsingEnabled_DEPRECATED() doesn't work with NetworkProcess.
 # We explicitly Skip the following tests instead of marking them as Failure because some of these tests will naturally pass

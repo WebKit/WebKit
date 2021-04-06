@@ -28,9 +28,8 @@
         finishJSTest();
       };
       
-      // Database is one of several uses of JS Callbacks
-      var db = openDatabase("callback-function-with-handle-event-test", "", "Test for callback functions that implement a handleEvent() method.", 1);
-      db.changeVersion(db.version, "1.0", callback);
+      // requestAnimationFrame is one of several uses of JS Callbacks
+      requestAnimationFrame(callback);
     </script>
     <script src="../../resources/js-test-post.js"></script>
   

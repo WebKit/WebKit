@@ -934,7 +934,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetMediaCapabilitiesEnabled(preferences, true);
     WKPreferencesSetRestrictedHTTPResponseAccess(preferences, true);
     WKPreferencesSetServerTimingEnabled(preferences, true);
-    WKPreferencesSetWebSQLDisabled(preferences, false);
     WKPreferencesSetMediaPlaybackRequiresUserGesture(preferences, false);
     WKPreferencesSetVideoPlaybackRequiresUserGesture(preferences, false);
     WKPreferencesSetAudioPlaybackRequiresUserGesture(preferences, false);

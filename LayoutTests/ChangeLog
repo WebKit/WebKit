@@ -1,3 +1,37 @@
+2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable WebSQL in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=224144
+
+        Reviewed by Sihui Liu.
+
+        Skipped various WebSQL tests on WebKit2 and removed references to openDatabase in some tests.
+
+        * fast/dom/Window/resources/WindowProperties.js: Removed openDatabase from the list of properties to test.
+        * fast/dom/Window/window-function-frame-getter-precedence-expected.txt:
+        * fast/dom/Window/window-function-name-getter-precedence-expected.txt:
+        * fast/frames/resources/sandboxed-iframe-storage-allowed.html: Ditto.
+        * fast/frames/resources/sandboxed-iframe-storage-disallowed.html: Ditto.
+        * fast/frames/sandboxed-iframe-storage-expected.txt:
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html: Ditto.
+        * inspector/runtime/CommandLineAPI-inspect-expected.txt:
+        * inspector/runtime/CommandLineAPI-inspect.html: Ditto.
+        * js/dom/callback-function-with-handle-event-expected.txt:
+        * js/dom/callback-function-with-handle-event.html: Use requestAnimationFrame instead of openDatabase.
+        * js/dom/exceptions-thrown-in-callbacks-expected.txt:
+        * js/dom/exceptions-thrown-in-callbacks.html: Ditto and use geolocation.getCurrentLocation.
+        * platform/glib/TestExpectations: Removed entries under storage/websql since they're all skipped now.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/ios-wk2/TestExpectations: Ditto.
+        * platform/mac-wk1/TestExpectations: Moved flaky timeout expectation on a test here from mac-wk2.
+        * platform/mac-wk2/TestExpectations: Removed an entry to skip storage/websql as it's now skipped for all WK2 ports.
+        * platform/mac/TestExpectations: Removed flaky timeout expectation since this will force the test to run
+        in WebKitTestRunner, which isn't what we want to do.
+        * platform/wincairo/TestExpectations: Removed entries under storage/websql since they're all skipped now.
+        * platform/wk2/TestExpectations: Skip all the tests for WebSQL.
+        * platform/wpe/TestExpectations: Removed entries under storage/websql since they're all skipped now.
+
 2021-04-06  Frédéric Wang  <fwang@igalia.com>
 
         Nullptr crash in EventPath::eventTargetRespectingTargetRules

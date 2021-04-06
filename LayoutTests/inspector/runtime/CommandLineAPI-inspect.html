@@ -66,12 +66,6 @@ function test()
     });
 
     addTestCase({
-        name: "CommandLineAPI.prototype.inspect.Database",
-        description: "inspect(database) should include a hint",
-        expression: `inspect(openDatabase("CommandLineAPITestDB", "", "", 1))`,
-    });
-
-    addTestCase({
         name: "CommandLineAPI.prototype.inspect.Storage",
         description: "inspect(sessionStorage) should include a hint",
         expression: `inspect(sessionStorage)`,
