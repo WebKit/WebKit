@@ -1,3 +1,29 @@
+2021-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce crash inside getAuditToken
+        https://bugs.webkit.org/show_bug.cgi?id=224196
+        <rdar://74536285>
+
+        Reviewed by David Kilzer.
+
+        Something is crashing inside the call to getAuditToken, and I believe it is happening during teardown of the network process.
+        After many days of head scratching and many previous attempts at fixing this problem, it persists.
+        Since direct strategies at fixing this problem have failed, I now try something different.
+        Instead of calling getAuditToken at the beginning of every resource load to ask if the parent process has an entitlement,
+        I now call it only once per process.  That should make things faster and less crashy.  Otherwise no change in behavior.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::activateSessionCleanup):
+        (WebKit::NetworkSessionCocoa::sessionWrapperForTask):
+        * Shared/Cocoa/DefaultWebBrowserChecks.h:
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::doesParentProcessHaveITPEnabled):
+        (WebKit::isParentProcessAFullWebBrowser):
+        * WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp:
+        (WebKit::WebCore::isWebBrowser):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::isParentProcessAWebBrowser const):
+
 2021-04-05  Chris Dumez  <cdumez@apple.com>
 
         Make sure we no longer show the previous page when running a JS prompt

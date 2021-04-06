@@ -3826,8 +3826,7 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 bool WebPage::isParentProcessAWebBrowser() const
 {
 #if HAVE(AUDIT_TOKEN)
-    if (auto* connection = WebProcess::singleton().parentProcessConnection())
-        return isParentProcessAFullWebBrowser(connection->getAuditToken());
+    return isParentProcessAFullWebBrowser(WebProcess::singleton());
 #endif
     return false;
 }

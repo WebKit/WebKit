@@ -1145,10 +1145,7 @@ static void activateSessionCleanup(NetworkSessionCocoa& session, const NetworkSe
         return;
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    auto parentAuditToken = session.networkProcess().parentProcessConnection()->getAuditToken();
-    RELEASE_ASSERT(parentAuditToken); // This should be impossible.
-
-    bool itpEnabled = doesParentProcessHaveITPEnabled(parentAuditToken, parameters.appHasRequestedCrossWebsiteTrackingPermission);
+    bool itpEnabled = doesParentProcessHaveITPEnabled(session.networkProcess(), parameters.appHasRequestedCrossWebsiteTrackingPermission);
     bool passedEnabledState = session.isResourceLoadStatisticsEnabled();
 
     // We do not need to log a discrepancy between states for WebKitTestRunner or TestWebKitAPI.
@@ -1350,10 +1347,8 @@ SessionWrapper& NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSes
 SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifier webPageProxyID, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
-    if (RefPtr<IPC::Connection> connection = networkProcess().parentProcessConnection()) {
-        if (isParentProcessAFullWebBrowser(connection->getAuditToken()))
-            shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
-    }
+    if (isParentProcessAFullWebBrowser(networkProcess()))
+        shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     if (auto* storageSession = networkStorageSession()) {
         auto firstParty = WebCore::RegistrableDomain(request.firstPartyForCookies());
