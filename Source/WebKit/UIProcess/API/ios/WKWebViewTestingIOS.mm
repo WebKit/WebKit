@@ -313,6 +313,15 @@
 #endif
 }
 
+- (BOOL)_isAnimatingDragCancel
+{
+#if ENABLE(DRAG_SUPPORT)
+    return [_contentView isAnimatingDragCancel];
+#else
+    return NO;
+#endif
+}
+
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
     [_contentView _simulateElementAction:actionType atLocation:location];

@@ -113,6 +113,7 @@ const TestFeatures& TestOptions::defaults()
             { "applicationBundleIdentifier", { } },
             { "applicationManifest", { } },
             { "contentMode", { } },
+            { "dragInteractionPolicy", { } },
             { "jscOptions", { } },
             { "standaloneWebApplicationURL", { } },
         };
@@ -161,6 +162,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "applicationBundleIdentifier", TestHeaderKeyType::StringTestRunner },
         { "applicationManifest", TestHeaderKeyType::StringRelativePathTestRunner },
         { "contentMode", TestHeaderKeyType::StringTestRunner },
+        { "dragInteractionPolicy", TestHeaderKeyType::StringTestRunner },
         { "jscOptions", TestHeaderKeyType::StringTestRunner },
         { "standaloneWebApplicationURL", TestHeaderKeyType::StringURLTestRunner },
 

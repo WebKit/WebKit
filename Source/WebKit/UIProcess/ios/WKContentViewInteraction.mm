@@ -681,6 +681,16 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setEnabled:YES];
 }
 
+- (BOOL)_wk_isTapAndAHalf
+{
+    static dispatch_once_t onceToken;
+    static Class tapAndAHalfGestureRecognizerClass;
+    dispatch_once(&onceToken, ^{
+        tapAndAHalfGestureRecognizerClass = NSClassFromString(@"UITapAndAHalfRecognizer");
+    });
+    return [self isKindOfClass:tapAndAHalfGestureRecognizerClass];
+}
+
 @end
 
 @interface WKContentView (WKInteractionPrivate)
@@ -2226,16 +2236,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return (a == x && b == y) || (b == x && a == y);
 }
 
-static Class tapAndAHalfRecognizerClass()
-{
-    static dispatch_once_t onceToken;
-    static Class theClass;
-    dispatch_once(&onceToken, ^{
-        theClass = NSClassFromString(@"UITapAndAHalfRecognizer");
-    });
-    return theClass;
-}
-
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {
@@ -2245,6 +2245,14 @@ static Class tapAndAHalfRecognizerClass()
 
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class] && [otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return YES;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (gestureRecognizer == _imageExtractionDeferringGestureRecognizer)
+        return ![self shouldDeferGestureDueToImageExtraction:otherGestureRecognizer];
+
+    if (otherGestureRecognizer == _imageExtractionDeferringGestureRecognizer)
+        return ![self shouldDeferGestureDueToImageExtraction:gestureRecognizer];
+#endif
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
         return YES;
@@ -2274,7 +2282,7 @@ static Class tapAndAHalfRecognizerClass()
         if (gestureRecognizer == loupeGesture || otherGestureRecognizer == loupeGesture)
             return YES;
 
-        if ([gestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()] || [otherGestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()])
+        if (gestureRecognizer._wk_isTapAndAHalf || otherGestureRecognizer._wk_isTapAndAHalf)
             return YES;
     }
 
@@ -7513,6 +7521,15 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     return WebCore::IOSApplication::isDataActivation();
 }
 
+#if ENABLE(IMAGE_EXTRACTION)
+
+- (BOOL)shouldDeferGestureDueToImageExtraction:(UIGestureRecognizer *)gesture
+{
+    return gesture == [_textInteractionAssistant loupeGesture] || gesture._wk_isTapAndAHalf || gesture == [_textInteractionAssistant forcePressGesture];
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
+
 #if HAVE(PASTEBOARD_DATA_OWNER)
 
 static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
@@ -7659,12 +7676,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (gestureRecognizer == _touchEventGestureRecognizer)
         return NO;
 
-    BOOL isLoupeGesture = gestureRecognizer == [_textInteractionAssistant loupeGesture];
-    BOOL isTapAndAHalfGesture = [gestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()];
-
 #if ENABLE(IMAGE_EXTRACTION)
     if (deferringGestureRecognizer == _imageExtractionDeferringGestureRecognizer)
-        return isLoupeGesture || isTapAndAHalfGesture || gestureRecognizer == [_textInteractionAssistant forcePressGesture];
+        return [self shouldDeferGestureDueToImageExtraction:gestureRecognizer];
 #endif
 
     auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
@@ -7678,10 +7692,10 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
             return YES;
 #endif
 
-        if (isTapAndAHalfGesture)
+        if (gestureRecognizer._wk_isTapAndAHalf)
             return YES;
 
-        if (isLoupeGesture)
+        if (gestureRecognizer == [_textInteractionAssistant loupeGesture])
             return YES;
 
         if ([gesture isKindOfClass:UITapGestureRecognizer.class]) {
@@ -8685,13 +8699,15 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
 {
+    _isAnimatingDragCancel = YES;
     RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator");
     [animator addCompletion:[protectedSelf = retainPtr(self), page = _page] (UIViewAnimatingPosition finalPosition) {
         RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
         page->dragCancelled();
         if (auto completion = protectedSelf->_dragDropInteractionState.takeDragCancelSetDownBlock()) {
-            page->callAfterNextPresentationUpdate([completion] (WebKit::CallbackBase::Error) {
+            page->callAfterNextPresentationUpdate([completion, protectedSelf] (WebKit::CallbackBase::Error) {
                 completion();
+                protectedSelf->_isAnimatingDragCancel = NO;
             });
         }
     }];
@@ -9542,6 +9558,15 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         return (WKFormSelectControl *)_inputPeripheral.get();
     return nil;
 }
+
+#if ENABLE(DRAG_SUPPORT)
+
+- (BOOL)isAnimatingDragCancel
+{
+    return _isAnimatingDragCancel;
+}
+
+#endif // ENABLE(DRAG_SUPPORT)
 
 - (void)_simulateTextEntered:(NSString *)text
 {

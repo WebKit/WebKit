@@ -438,6 +438,7 @@ enum class ProceedWithImageExtraction : bool {
     WebKit::DragDropInteractionState _dragDropInteractionState;
     RetainPtr<UIDragInteraction> _dragInteraction;
     RetainPtr<UIDropInteraction> _dropInteraction;
+    BOOL _isAnimatingDragCancel;
     BOOL _shouldRestoreCalloutBarAfterDrop;
     RetainPtr<UIView> _visibleContentViewSnapshot;
     RetainPtr<UIView> _unselectedContentSnapshot;
@@ -735,6 +736,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) NSString *formInputLabel;
 @property (nonatomic, readonly) WKDateTimeInputControl *dateTimeInputControl;
 @property (nonatomic, readonly) WKFormSelectControl *selectControl;
+#if ENABLE(DRAG_SUPPORT)
+@property (nonatomic, readonly, getter=isAnimatingDragCancel) BOOL animatingDragCancel;
+#endif
 
 @end
 

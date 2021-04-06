@@ -1,3 +1,37 @@
+2021-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r274610): Unable to drag images when image extraction is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224211
+        <rdar://problem/76229563>
+
+        Reviewed by Tim Horton.
+
+        Add support for some new testing infrastructure; see below for more details.
+
+        * TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl:
+        * TestRunnerShared/UIScriptContext/UIScriptController.h:
+        (WTR::UIScriptController::isAnimatingDragCancel const):
+
+        Add a new testing hook to return whether or not the web view's drag interaction is currently animating a drag
+        cancel (i.e., the drag preview is animating back to its original frame).
+
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        (WTR::TestOptions::keyTypeMapping):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::dragInteractionPolicy const):
+
+        Add a test option that allows tests to override the drag interaction policy to "always-allow",
+        "always-disallow", and the default value. This option allows us to force drag and drop to be enabled when
+        testing on iPhone simulator.
+
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::dragInteractionPolicy):
+        (WTR::TestController::platformResetStateToConsistentValues):
+        * WebKitTestRunner/ios/UIScriptControllerIOS.h:
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::isAnimatingDragCancel const):
+
 2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Introduce FixedVector and use it for FixedOperands

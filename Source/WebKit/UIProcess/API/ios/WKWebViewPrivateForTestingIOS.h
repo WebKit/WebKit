@@ -42,6 +42,7 @@
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText;
 @property (nonatomic, readonly) NSNumber *_stableStateOverride;
 @property (nonatomic, readonly) CGRect _dragCaretRect;
+@property (nonatomic, readonly, getter=_isAnimatingDragCancel) BOOL _animatingDragCancel;
 
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;

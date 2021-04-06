@@ -1170,6 +1170,11 @@ bool UIScriptControllerIOS::keyboardIsAutomaticallyShifted() const
     return UIKeyboardImpl.activeInstance.isAutoShifted;
 }
 
+bool UIScriptControllerIOS::isAnimatingDragCancel() const
+{
+    return webView()._animatingDragCancel;
+}
+
 JSObjectRef UIScriptControllerIOS::attachmentInfo(JSStringRef jsAttachmentIdentifier)
 {
     auto attachmentIdentifier = toWTFString(jsAttachmentIdentifier);

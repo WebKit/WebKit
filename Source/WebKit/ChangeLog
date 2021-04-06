@@ -1,3 +1,48 @@
+2021-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r274610): Unable to drag images when image extraction is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224211
+        <rdar://problem/76229563>
+
+        Reviewed by Tim Horton.
+
+        r274610 introduced a new deferring gesture recognizer intended to prevent several text interaction gestures from
+        recognizing during pending image extraction. However, this also causes dragging on iOS to fail, since the
+        gesture used to initiate dragging is excluded by the new deferring gesture recognizer. To fix this, allow the
+        new deferring gesture to recognize simultaneously alongside all gestures with the exception of only the gestures
+        it is intended to defer (i.e. text interaction gestures).
+
+        Test: fast/events/ios/dragstart-on-image-by-long-pressing.html
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _isAnimatingDragCancel]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[UIGestureRecognizer _wk_isTapAndAHalf]):
+
+        Add a WebKit category method that returns whether or not a gesture recognizer is a tap-and-a-half gesture.
+
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+
+        Allow the image extraction deferring gesture to recognize alongside all other gestures, with the exception of
+        the text interaction gestures determined by `-shouldDeferGestureDueToImageExtraction:`. This limits the impact
+        of this new deferring gesture, such that it only affects the text interaction gestures it is intended to defer.
+
+        (-[WKContentView shouldDeferGestureDueToImageExtraction:]):
+
+        Add a helper method to determine whether or not a gesture recognizer should be deferred, due to pending image
+        extraction. We pull this logic behind a helper method because it's now consulted from two call sites.
+
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+        (-[WKContentView dragInteraction:item:willAnimateCancelWithAnimator:]):
+        (-[WKContentView isAnimatingDragCancel]):
+
+        Add a testing hook to return whether or not the drag cancel animation is running. See Tools/ChangeLog and the
+        new layout test for more detail.
+
+        (tapAndAHalfRecognizerClass): Deleted.
+
 2021-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Hold strong reference to xpc_connection_t in XPCServiceEventHandler

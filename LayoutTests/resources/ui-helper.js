@@ -370,6 +370,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isAnimatingDragCancel()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.isAnimatingDragCancel`, result => resolve(result === "true"));
+        });
+    }
+
     static ensurePresentationUpdate()
     {
         if (!this.isWebKit2()) {

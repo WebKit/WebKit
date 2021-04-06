@@ -154,6 +154,16 @@ void TestController::platformResetPreferencesToConsistentValues()
 #endif
 }
 
+static _WKDragInteractionPolicy dragInteractionPolicy(const TestOptions& options)
+{
+    auto policy = options.dragInteractionPolicy();
+    if (policy == "always-enable")
+        return _WKDragInteractionPolicyAlwaysEnable;
+    if (policy == "always-disable")
+        return _WKDragInteractionPolicyAlwaysDisable;
+    return _WKDragInteractionPolicyDefault;
+}
+
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
     cocoaResetStateToConsistentValues(options);
@@ -212,6 +222,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [webView _clearInterfaceOrientationOverride];
         [webView resetCustomMenuAction];
         [webView setAllowedMenuActions:nil];
+        webView._dragInteractionPolicy = dragInteractionPolicy(options);
 
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];

@@ -78,6 +78,7 @@ public:
     std::string applicationBundleIdentifier() const { return stringTestRunnerFeatureValue("applicationBundleIdentifier"); }
     std::string applicationManifest() const { return stringTestRunnerFeatureValue("applicationManifest"); }
     std::string contentMode() const { return stringTestRunnerFeatureValue("contentMode"); }
+    std::string dragInteractionPolicy() const { return stringTestRunnerFeatureValue("dragInteractionPolicy"); }
     std::string jscOptions() const { return stringTestRunnerFeatureValue("jscOptions"); }
     std::string standaloneWebApplicationURL() const { return stringTestRunnerFeatureValue("standaloneWebApplicationURL"); }
     std::vector<std::string> overrideLanguages() const { return stringVectorTestRunnerFeatureValue("language"); }

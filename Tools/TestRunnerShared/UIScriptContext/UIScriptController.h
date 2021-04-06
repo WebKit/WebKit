@@ -176,6 +176,12 @@ public:
         return false;
     }
 
+    virtual bool isAnimatingDragCancel() const
+    {
+        notImplemented();
+        return false;
+    }
+
     virtual void rawKeyDown(JSStringRef) { notImplemented(); }
     virtual void rawKeyUp(JSStringRef) { notImplemented(); }
 
