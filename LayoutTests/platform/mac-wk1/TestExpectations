@@ -1292,3 +1292,14 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/223904 Updating test expectations for 9 tests
+[ BigSur ] transforms/2d/preserve3d-not-fixed-container.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/scale-change-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/scale-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/translate-change-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/translate-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/perspective-not-fixed-container.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/rotate-change-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/rotate-composited.html [ Pass ImageOnlyFailure ]
