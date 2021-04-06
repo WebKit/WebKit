@@ -1,3 +1,18 @@
+2021-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Protect frame in WebPage::runJavaScriptInFrameInScriptWorld()
+        https://bugs.webkit.org/show_bug.cgi?id=224210
+
+        Reviewed by Alex Christensen.
+
+        Between the time we were getting the raw pointer to the frame, and the time were were passing it to
+        WebPage::runJavaScript(), we were potentially calling WebFrameLoaderClient::dispatchGlobalObjectAvailable().
+        It is possible in theory for those synchronous injected bundle calls to mess with the frame tree and cause
+        our frame to go bad. As a result, it is best to protect the frame as soon as we get it.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInFrameInScriptWorld):
+
 2021-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a missing bounds check when mapping display list items from a shared display list handle
