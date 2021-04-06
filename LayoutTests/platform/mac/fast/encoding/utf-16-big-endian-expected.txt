@@ -88,9 +88,9 @@ layer at (0,0) size 785x1120
                 text run at (68,1) width 5: " "
                 text run at (72,1) width 64: "Itinerary"
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 0x0
+            RenderInline {SPAN} at (0,0) size 0x15
               RenderText {#text} at (0,0) size 0x0
-              RenderInline {SPAN} at (0,0) size 0x0
+              RenderInline {SPAN} at (0,0) size 0x15
                 RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,313) size 769x61
         RenderTable {TABLE} at (0,0) size 584x60
@@ -137,7 +137,7 @@ layer at (0,0) size 785x1120
                 RenderBlock (anonymous) at (1,1) size 606x126
                   RenderText {#text} at (0,0) size 24x17
                     text run at (0,0) width 24: "Air "
-                  RenderBR {BR} at (0,0) size 0x0
+                  RenderBR {BR} at (24,0) size 0x17
                   RenderText {#text} at (0,18) size 485x17
                     text run at (0,18) width 51: "United "
                     text run at (50,18) width 84: "Flight 1187 "
@@ -163,7 +163,7 @@ layer at (0,0) size 785x1120
                     RenderInline {SPACE} at (0,0) size 129x35
                       RenderText {#text} at (124,90) size 5x17
                         text run at (124,90) width 5: " "
-                      RenderBR {BR} at (0,0) size 0x0
+                      RenderBR {BR} at (128,90) size 1x17
                       RenderText {#text} at (0,108) size 46x17
                         text run at (0,108) width 46: "Seats:"
                       RenderBR {BR} at (45,108) size 1x17
@@ -233,7 +233,7 @@ layer at (0,0) size 785x1120
                 RenderBlock (anonymous) at (1,1) size 493x126
                   RenderText {#text} at (0,0) size 24x17
                     text run at (0,0) width 24: "Air "
-                  RenderBR {BR} at (0,0) size 0x0
+                  RenderBR {BR} at (24,0) size 0x17
                   RenderText {#text} at (0,18) size 466x17
                     text run at (0,18) width 51: "United "
                     text run at (50,18) width 76: "Flight 480 "
@@ -259,7 +259,7 @@ layer at (0,0) size 785x1120
                     RenderInline {SPACE} at (0,0) size 129x35
                       RenderText {#text} at (124,90) size 5x17
                         text run at (124,90) width 5: " "
-                      RenderBR {BR} at (0,0) size 0x0
+                      RenderBR {BR} at (128,90) size 1x17
                       RenderText {#text} at (0,108) size 46x17
                         text run at (0,108) width 46: "Seats:"
                       RenderBR {BR} at (45,108) size 1x17
@@ -328,7 +328,7 @@ layer at (0,0) size 785x1120
               RenderTableCell {TD} at (107,2) size 509x110 [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 24x17
                   text run at (1,1) width 24: "Air "
-                RenderBR {BR} at (0,0) size 0x0
+                RenderBR {BR} at (25,1) size 0x17
                 RenderText {#text} at (1,19) size 507x17
                   text run at (1,19) width 89: "UNKNOWN "
                   text run at (89,19) width 76: "Flight 123 "
@@ -364,18 +364,18 @@ layer at (0,0) size 785x1120
       RenderBlock (anonymous) at (0,931) size 769x3
         RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,940) size 769x51
-        RenderInline {SPAN} at (0,0) size 196x47
-          RenderInline {SPAN} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 196x48
+          RenderInline {SPAN} at (0,0) size 0x15
+            RenderInline {SPAN} at (0,0) size 0x15
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 98x17
             RenderText {#text} at (0,0) size 0x0
             RenderImage {IMG} at (0,0) size 20x20
-            RenderText {#text} at (20,1) size 78x17
-              text run at (20,1) width 5: " "
-              text run at (24,1) width 74: "Remarks:"
-            RenderBR {BR} at (97,1) size 1x17
+            RenderText {#text} at (20,0) size 78x17
+              text run at (20,0) width 5: " "
+              text run at (24,0) width 74: "Remarks:"
+            RenderBR {BR} at (97,0) size 1x17
           RenderText {#text} at (0,0) size 0x0
           RenderBR {BR} at (0,20) size 0x15
           RenderInline {SPAN} at (0,0) size 196x15
@@ -398,9 +398,9 @@ layer at (0,0) size 785x1120
                 text run at (72,1) width 112: "Web Bookings"
             RenderText {#text} at (183,1) size 5x17
               text run at (183,1) width 5: " "
-            RenderInline {SPAN} at (0,0) size 1x17
+            RenderInline {SPAN} at (0,0) size 0x17
               RenderBR {BR} at (187,1) size 1x17
-              RenderInline {SPAN} at (0,0) size 0x0
+              RenderInline {SPAN} at (0,0) size 0x14
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,1033) size 769x3

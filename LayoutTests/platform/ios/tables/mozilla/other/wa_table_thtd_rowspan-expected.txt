@@ -7,7 +7,7 @@ layer at (0,0) size 800x2467
         RenderInline {FONT} at (0,0) size 470x74 [color=#FF0000]
           RenderText {#text} at (0,1) size 294x36
             text run at (0,1) width 294: "Acceptance Test Case"
-          RenderBR {BR} at (293,0) size 1x36
+          RenderBR {BR} at (293,1) size 1x36
           RenderText {#text} at (0,39) size 470x36
             text run at (0,39) width 470: "Web Browser: Web View (HTML)"
       RenderBlock {P} at (0,97) size 784x31
@@ -128,7 +128,7 @@ layer at (0,0) size 800x2467
           RenderTableSection {TBODY} at (1,1) size 665x62
             RenderTableRow {TR} at (0,2) size 665x58
               RenderTableCell {TH} at (2,2) size 661x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 0x19
                 RenderText {#text} at (11,11) size 95x19
                   text run at (11,11) width 95: "Test Case #1: "
                 RenderInline {FONT} at (0,0) size 316x19 [color=#0000FF]
@@ -149,8 +149,8 @@ layer at (0,0) size 800x2467
           RenderTableSection {TBODY} at (1,1) size 704x106
             RenderTableRow {TR} at (0,2) size 704x102
               RenderTableCell {TD} at (2,2) size 700x102 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {FONT} at (0,0) size 672x79 [color=#FF0000]
-                  RenderInline {B} at (0,0) size 672x79
+                RenderInline {FONT} at (0,0) size 671x79 [color=#FF0000]
+                  RenderInline {B} at (0,0) size 671x79
                     RenderText {#text} at (11,11) size 361x19
                       text run at (11,11) width 361: "In the following sample table you should see that the "
                     RenderInline {FONT} at (0,0) size 82x19 [color=#0000FF]
@@ -163,11 +163,11 @@ layer at (0,0) size 800x2467
                     RenderInline {FONT} at (0,0) size 69x19 [color=#0000FF]
                       RenderText {#text} at (232,31) size 69x19
                         text run at (232,31) width 69: "HEADER"
-                    RenderText {#text} at (300,31) size 672x59
+                    RenderText {#text} at (300,31) size 671x59
                       text run at (300,31) width 138: " cell is to span. This "
                       text run at (438,31) width 235: "tells the browser to make the table"
                       text run at (11,51) width 613: "header cell occupy the same vertical space as the integer number of cells specified in rows "
-                      text run at (623,51) width 60: "above or"
+                      text run at (623,51) width 59: "above or"
                       text run at (11,71) width 655: "below it. The browser flows the contents of the spanning cell to occupy the entire spanned space."
       RenderBlock {P} at (0,785) size 784x41
         RenderBR {BR} at (0,0) size 0x19
@@ -488,7 +488,7 @@ layer at (0,0) size 800x2467
           RenderTableSection {TBODY} at (1,1) size 665x46
             RenderTableRow {TR} at (0,2) size 665x42
               RenderTableCell {TH} at (2,2) size 661x42 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 0x19
                 RenderText {#text} at (11,11) size 95x19
                   text run at (11,11) width 95: "Test Case #2: "
                 RenderInline {FONT} at (0,0) size 300x19 [color=#0000FF]
@@ -877,7 +877,7 @@ layer at (0,0) size 800x2467
           RenderTableSection {TBODY} at (1,1) size 665x62
             RenderTableRow {TR} at (0,2) size 665x58
               RenderTableCell {TH} at (2,2) size 661x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 0x19
                 RenderText {#text} at (11,11) size 95x19
                   text run at (11,11) width 95: "Test Case #3: "
                 RenderInline {FONT} at (0,0) size 416x19 [color=#0000FF]

@@ -1,3 +1,14 @@
+2021-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable inline box support (RenderInline)
+        https://bugs.webkit.org/show_bug.cgi?id=220148
+        <rdar://problem/72768785>
+
+        Reviewed by Antti Koivisto.
+
+        * TestWebKitAPI/Tests/ios/AccessibilityTestsIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Test harness should use a mock audio output device

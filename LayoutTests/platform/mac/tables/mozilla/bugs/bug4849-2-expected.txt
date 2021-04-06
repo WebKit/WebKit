@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             RenderTableRow {TR} at (0,0) size 600x90
               RenderTableCell {TD} at (0,0) size 151x36 [r=0 c=0 rs=1 cs=1]
                 RenderBlock {CENTER} at (0,0) size 151x36
-                  RenderInline {IFRAMEX} at (0,0) size 1x36
+                  RenderInline {IFRAMEX} at (0,0) size 0x36
                     RenderText {#text} at (0,0) size 0x0
                     RenderBR {BR} at (75,0) size 1x18
                     RenderBR {BR} at (75,18) size 1x18

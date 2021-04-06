@@ -98,7 +98,7 @@ layer at (11,212) size 36x59
       RenderInline {SPAN} at (0,0) size 0x0
     RenderBlock (anonymous) at (0,0) size 37x0
     RenderBlock (anonymous) at (0,0) size 37x59
-      RenderInline {SPAN} at (0,0) size 0x0
+      RenderInline {SPAN} at (0,0) size 0x59
       RenderText {#text} at (0,0) size 34x59
         text run at (0,0) width 34: "B"
 layer at (11,321) size 36x59

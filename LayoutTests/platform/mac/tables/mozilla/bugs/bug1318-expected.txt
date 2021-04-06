@@ -19,27 +19,27 @@ layer at (0,0) size 800x600
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,74) size 784x20
             RenderTableCell {TD} at (0,75) size 558x18 [r=1 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 142x15
-                RenderText {#text} at (415,0) size 142x17
-                  text run at (415,1) width 142: "I agree with the program"
+              RenderInline {FONT} at (0,0) size 142x16
+                RenderText {#text} at (415,1) size 142x16
+                  text run at (415,2) width 142: "I agree with the program"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (557,74) size 66x20 [r=1 c=1 rs=1 cs=1]
               RenderBlock {INPUT} at (3,4) size 12x12
           RenderTableRow {TR} at (0,94) size 784x20
             RenderTableCell {TD} at (0,95) size 558x18 [r=2 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 153x15
-                RenderText {#text} at (404,0) size 153x17
-                  text run at (404,1) width 153: "I think vouchers are wrong"
+              RenderInline {FONT} at (0,0) size 153x16
+                RenderText {#text} at (404,1) size 153x16
+                  text run at (404,2) width 153: "I think vouchers are wrong"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (557,94) size 66x20 [r=2 c=1 rs=1 cs=1]
               RenderBlock {INPUT} at (3,4) size 12x12
           RenderTableRow {TR} at (0,114) size 784x24
             RenderTableCell {TD} at (0,117) size 623x18 [r=3 c=0 rs=1 cs=2]
-              RenderInline {A} at (0,0) size 76x18 [color=#0000EE]
-                RenderInline {FONT} at (0,0) size 76x15
-                  RenderText {#text} at (273,0) size 76x17
-                    text run at (273,1) width 76: "View Results"
-              RenderInline {FONT} at (0,0) size 1x16
+              RenderInline {A} at (0,0) size 76x19 [color=#0000EE]
+                RenderInline {FONT} at (0,0) size 76x16
+                  RenderText {#text} at (273,1) size 76x16
+                    text run at (273,2) width 76: "View Results"
+              RenderInline {FONT} at (0,0) size 0x16
                 RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (622,114) size 163x24 [r=3 c=2 rs=1 cs=2]
               RenderButton {INPUT} at (61,3) size 40x18 [color=#000000D8] [bgcolor=#C0C0C0]

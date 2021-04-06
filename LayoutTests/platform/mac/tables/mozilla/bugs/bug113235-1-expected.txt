@@ -31,7 +31,7 @@ layer at (0,0) size 785x11400
                     text run at (0,0) width 327: "This text node only exists once in the original document! "
                     text run at (326,0) width 305: "If it were a large collection of inlines, the page would "
                     text run at (630,0) width 77: "hang forever."
-                  RenderInline {A} at (0,0) size 0x0
+                  RenderInline {A} at (0,0) size 0x15
               RenderBlock (anonymous) at (2,85) size 707x11292
                 RenderBlock {H2} at (0,0) size 707x23
                   RenderInline {A} at (0,0) size 168x22
@@ -4240,7 +4240,7 @@ layer at (0,0) size 785x11400
                     RenderText {#text} at (0,30) size 114x15
                       text run at (0,30) width 114: "Product Information"
                   RenderText {#text} at (0,0) size 0x0
-                  RenderInline {A} at (0,0) size 0x0
+                  RenderInline {A} at (0,0) size 0x15
                   RenderText {#text} at (0,0) size 0x0
                 RenderTable {TABLE} at (0,11265) size 26x27
                   RenderTableSection {TBODY} at (0,0) size 26x26

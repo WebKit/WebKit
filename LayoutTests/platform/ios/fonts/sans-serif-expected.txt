@@ -66,7 +66,7 @@ layer at (0,0) size 800x6248
               text run at (0,100) width 780: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
               text run at (0,120) width 433: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
           RenderText {#text} at (0,0) size 0x0
-          RenderInline {FONT} at (0,0) size 0x0
+          RenderInline {FONT} at (0,0) size 0x19
             RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,532) size 784x1900
         RenderInline {FONT} at (0,0) size 70x1899

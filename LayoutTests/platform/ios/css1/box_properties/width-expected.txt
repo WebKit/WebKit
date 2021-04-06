@@ -69,7 +69,7 @@ layer at (0,0) size 800x1396
                 RenderText {#text} at (0,0) size 182x179
                   text run at (0,0) width 163: "This paragraph should be"
                   text run at (0,20) width 170: "half the width of its parent"
-                  text run at (0,40) width 170: "element (either the BODY"
+                  text run at (0,40) width 169: "element (either the BODY"
                   text run at (0,60) width 166: "or the table, which should"
                   text run at (0,80) width 174: "itself be half as wide as the"
                   text run at (0,100) width 113: "BODY element). "

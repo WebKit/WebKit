@@ -31,8 +31,8 @@ setTimeout(function() {
       elements[i].style.textDecoration = "underline";
     document.body.offsetHeight;
     if (window.internals) {
-        shouldNotBe("window.internals.repaintRectsAsText().indexOf('8 8 784 13')", "-1");
-        shouldNotBe("window.internals.repaintRectsAsText().indexOf('8 20 784 13')", "-1");
+        shouldNotBe("window.internals.repaintRectsAsText().indexOf('8 8 784 12')", "-1");
+        shouldNotBe("window.internals.repaintRectsAsText().indexOf('8 20 784 12')", "-1");
         internals.stopTrackingRepaints();
     }
     finishJSTest();

@@ -51,7 +51,7 @@ layer at (0,0) size 785x1368
               RenderInline {SPAN} at (0,0) size 610x92
                 RenderText {#text} at (2,2) size 610x92
                   text run at (2,2) width 610: "TBODY blah blah blah blah blah blah"
-                  text run at (2,48) width 138: "TBODY"
+                  text run at (2,48) width 137: "TBODY"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (724,28) size 42x40 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x36
@@ -159,7 +159,7 @@ layer at (0,0) size 785x1368
               RenderInline {SPAN} at (0,0) size 610x92
                 RenderText {#text} at (2,2) size 610x92
                   text run at (2,2) width 610: "TBODY blah blah blah blah blah blah"
-                  text run at (2,48) width 138: "TBODY"
+                  text run at (2,48) width 137: "TBODY"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (724,28) size 42x40 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 27x36

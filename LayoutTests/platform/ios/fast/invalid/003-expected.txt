@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 91x19
             RenderText {#text} at (0,0) size 91x19
               text run at (0,0) width 91: "Italic and Red"
-        RenderInline {I} at (0,0) size 1x19
+        RenderInline {I} at (0,0) size 0x19
       RenderBlock (anonymous) at (0,36) size 784x20
         RenderBlock {P} at (0,0) size 784x20
           RenderInline {FONT} at (0,0) size 95x19 [color=#FF0000]

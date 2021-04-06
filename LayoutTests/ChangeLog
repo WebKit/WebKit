@@ -1,3 +1,164 @@
+2021-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable inline box support (RenderInline)
+        https://bugs.webkit.org/show_bug.cgi?id=220148
+        <rdar://problem/72768785>
+
+        Reviewed by Antti Koivisto.
+
+        - correctness progressions
+        - output progressions 
+        - 1px rounding diffs
+        - misc
+
+        * editing/execCommand/delete-hidden-crash.html:
+        * fast/css/empty-inline-003-quirksmode-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html:
+        * fast/invalid/018-expected.txt:
+        * fast/text/line-break-between-text-nodes-latin1-expected.html:
+        * imported/blink/fast/css/first-letter-all-inherit-td-crash-expected.html: Removed.
+        * imported/blink/fast/css/first-letter-all-inherit-td-crash-expected.txt: Added.
+        * imported/blink/fast/css/first-letter-all-inherit-td-crash.html:
+        * platform/ios-wk2/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/orthogonal-flex-item-crash-expected.txt:
+        * platform/ios/css1/box_properties/border-expected.txt:
+        * platform/ios/css1/box_properties/width-expected.txt:
+        * platform/ios/css1/text_properties/text_decoration-expected.txt:
+        * platform/ios/css1/text_properties/vertical_align-expected.txt:
+        * platform/ios/css1/text_properties/word_spacing-expected.txt:
+        * platform/ios/css2.1/t0803-c5505-mrgn-00-b-ag-expected.txt:
+        * platform/ios/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/ios/fast/block/basic/014-expected.txt:
+        * platform/ios/fast/block/margin-collapse/block-inside-inline/001-expected.txt:
+        * platform/ios/fast/block/margin-collapse/block-inside-inline/005-expected.txt:
+        * platform/ios/fast/block/positioning/057-expected.txt:
+        * platform/ios/fast/body-propagation/background-image/010-expected.txt:
+        * platform/ios/fast/body-propagation/background-image/010-xhtml-expected.txt:
+        * platform/ios/fast/css-generated-content/after-duplicated-after-split-expected.txt:
+        * platform/ios/fast/css/child-style-can-override-visited-style-expected.txt:
+        * platform/ios/fast/css/empty-inline-003-quirksmode-expected.txt:
+        * platform/ios/fast/css/inline-element-line-break-expected.txt:
+        * platform/ios/fast/css/word-space-extra-expected.txt:
+        * platform/ios/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/ios/fast/forms/select-change-listbox-size-expected.txt:
+        * platform/ios/fast/images/image-map-anchor-children-expected.txt:
+        * platform/ios/fast/inline-block/003-expected.txt:
+        * platform/ios/fast/inline/002-expected.txt:
+        * platform/ios/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/ios/fast/invalid/003-expected.txt:
+        * platform/ios/fast/lists/marker-before-empty-inline-expected.txt:
+        * platform/ios/fast/selectors/visited-descendant-expected.txt:
+        * platform/ios/fast/table/border-collapsing/004-expected.txt:
+        * platform/ios/fast/table/frame-and-rules-expected.txt:
+        * platform/ios/fast/table/table-display-types-strict-expected.txt:
+        * platform/ios/fast/text/basic/007-expected.txt:
+        * platform/ios/fast/text/basic/012-expected.txt:
+        * platform/ios/fast/text/whitespace/018-expected.txt:
+        * platform/ios/fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt:
+        * platform/ios/fonts/sans-serif-expected.txt:
+        * platform/ios/fonts/serif-expected.txt:
+        * platform/ios/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/ios/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/ios/svg/hixie/processing-model/003-expected.txt:
+        * platform/ios/svg/hixie/processing-model/004-expected.txt:
+        * platform/ios/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug113235-3-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug113424-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug126742-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug14323-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug22513-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug2267-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug38916-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4849-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug57300-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/ios/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/ios/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/ios/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+        * platform/mac-catalina/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/mac-catalina/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac-catalina/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac-catalina/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/mac-wk1/fast/inline-block/003-expected.txt:
+        * platform/mac/css1/box_properties/width-expected.txt:
+        * platform/mac/css1/text_properties/vertical_align-expected.txt:
+        * platform/mac/css1/text_properties/word_spacing-expected.txt:
+        * platform/mac/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/mac/editing/selection/previous-line-position-expected.txt:
+        * platform/mac/fast/block/basic/014-expected.txt:
+        * platform/mac/fast/block/margin-collapse/block-inside-inline/001-expected.txt:
+        * platform/mac/fast/block/margin-collapse/block-inside-inline/005-expected.txt:
+        * platform/mac/fast/block/positioning/057-expected.txt:
+        * platform/mac/fast/css-generated-content/after-duplicated-after-split-expected.txt:
+        * platform/mac/fast/css/child-style-can-override-visited-style-expected.txt:
+        * platform/mac/fast/css/inline-element-line-break-expected.txt:
+        * platform/mac/fast/css/resize-corner-tracking-transformed-expected.txt:
+        * platform/mac/fast/css/word-space-extra-expected.txt:
+        * platform/mac/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/mac/fast/encoding/utf-16-big-endian-expected.txt:
+        * platform/mac/fast/encoding/utf-16-little-endian-expected.txt:
+        * platform/mac/fast/images/image-map-anchor-children-expected.txt:
+        * platform/mac/fast/inline-block/003-expected.txt:
+        * platform/mac/fast/inline/002-expected.txt:
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/mac/fast/invalid/003-expected.txt:
+        * platform/mac/fast/invalid/missing-end-tag-expected.txt:
+        * platform/mac/fast/lists/marker-before-empty-inline-expected.txt:
+        * platform/mac/fast/parser/nofoo-tags-inside-paragraph-expected.txt:
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/mac/fast/selectors/visited-descendant-expected.txt:
+        * platform/mac/fast/table/frame-and-rules-expected.txt:
+        * platform/mac/fast/table/table-display-types-strict-expected.txt:
+        * platform/mac/fast/text/basic/007-expected.txt:
+        * platform/mac/fast/text/basic/012-expected.txt:
+        * platform/mac/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/mac/fast/text/text-letter-spacing-expected.txt:
+        * platform/mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac/fast/text/wbr-expected.txt:
+        * platform/mac/fast/text/whitespace/018-expected.txt:
+        * platform/mac/fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt:
+        * platform/mac/fonts/sans-serif-expected.txt:
+        * platform/mac/fonts/serif-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/mac/svg/hixie/processing-model/003-expected.txt:
+        * platform/mac/svg/hixie/processing-model/004-expected.txt:
+        * platform/mac/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113424-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug126742-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug14323-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug22513-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2267-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug38916-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4849-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug57300-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug57828-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug60804-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug60807-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][WebRTC] Audio is not played from an audio element when the srcObject object has unstarted video tracks
