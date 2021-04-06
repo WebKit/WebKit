@@ -1,3 +1,19 @@
+2021-04-05  Keith Miller  <keith_miller@apple.com>
+
+        DFG arity fixup nodes should exit to the caller's call opcode
+        https://bugs.webkit.org/show_bug.cgi?id=223278
+
+        Reviewed by Saam Barati.
+
+        * stress/dfg-arity-fixup-uses-callers-exit-origin.js: Added.
+        (main.v22):
+        (main.v30):
+        (main.try.v40):
+        (main.try.v47):
+        (main.try.v56):
+        (main.):
+        (main):
+
 2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Reduce bytecode instruction count emitted for `class extends`
