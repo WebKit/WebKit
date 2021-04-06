@@ -1,3 +1,14 @@
+2021-04-05  Chris Gambrell  <cgambrell@apple.com>
+
+        REGRESSION (r275332?): [ EWS macOS iOS wk2 ] http/tests/appcache/fail-on-update.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=224120
+        <rdar://problem/76157112>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/appcache/fail-on-update-2.html:
+        * http/tests/appcache/fail-on-update.html:
+
 2021-04-05  Philippe Normand  <pnormand@igalia.com>
 
         [ macOS ] media/webaudio-background-playback.html is a flakey text failure
