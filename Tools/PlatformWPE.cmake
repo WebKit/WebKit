@@ -22,6 +22,7 @@ if (DEVELOPER_MODE AND ENABLE_COG)
     ExternalProject_Add(cog
         GIT_REPOSITORY "https://github.com/Igalia/cog.git"
         SOURCE_DIR "${CMAKE_SOURCE_DIR}/Tools/wpe/cog"
+        CMAKE_ARGS "-DCOG_PLATFORM_GTK4=ON"
         INSTALL_COMMAND "")
     ExternalProject_Add_StepDependencies(cog build WebKit)
 endif ()

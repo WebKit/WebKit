@@ -157,7 +157,9 @@ class WPEPort(Port):
             env = os.environ.copy()
             env.update({'WEBKIT_EXEC_PATH': self._build_path('bin'),
                         'WEBKIT_INJECTED_BUNDLE_PATH': self._build_path('lib')})
-            args = ['-P', 'fdo'] + args
+            has_platform_arg = any((a == "-P" or a.startswith("--platform=") for a in args))
+            if not has_platform_arg:
+                args.insert(0, "--platform=gtk4")
         else:
             print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
             miniBrowser = self._build_path('bin', 'MiniBrowser')

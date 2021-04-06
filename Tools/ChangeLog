@@ -1,3 +1,17 @@
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Enable Cog's GTK4 backend
+        https://bugs.webkit.org/show_bug.cgi?id=224099
+
+        Reviewed by Adrian Perez de Castro.
+
+        The Cog GTK4 platform plugin is more suitable for developer builds on desktop, compared to
+        the fdo backend which provides no window decorations on most Wayland compositors.
+
+        * PlatformWPE.cmake:
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.run_minibrowser):
+
 2021-04-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable inline box support (RenderInline)
