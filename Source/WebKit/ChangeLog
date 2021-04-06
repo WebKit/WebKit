@@ -1,3 +1,17 @@
+2021-04-06  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Non-unified build fixes, early April 2021
+        https://bugs.webkit.org/show_bug.cgi?id=224091
+
+        Reviewed by Simon Fraser.
+
+        The SelectionRestorationMode enum has been moved out of Document.h so
+        the entirety of Document.h doesn't need to be included just for that
+        enum.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        Add #include "SelectionRestorationMode.h".
+
 2021-04-06  Youenn Fablet  <youenn@apple.com>
 
         Release WebRTC remote encoder/decoder callback lock right after having changed the encoder/decoder callback

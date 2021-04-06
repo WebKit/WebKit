@@ -234,6 +234,7 @@
 #include <WebCore/SWClientConnection.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityPolicy.h>
+#include <WebCore/SelectionRestorationMode.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>

@@ -64,6 +64,7 @@
 #include "ResetInputType.h"
 #include "ScopedEventQueue.h"
 #include "SearchInputType.h"
+#include "SelectionRestorationMode.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StepRange.h"

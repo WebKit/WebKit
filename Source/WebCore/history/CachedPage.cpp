@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "PageTransitionEvent.h"
 #include "ScriptDisallowedScope.h"
+#include "SelectionRestorationMode.h"
 #include "Settings.h"
 #include "VisitedLinkState.h"
 #include <wtf/RefCountedLeakCounter.h>

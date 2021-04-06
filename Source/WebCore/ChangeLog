@@ -1,3 +1,47 @@
+2021-04-06  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Non-unified build fixes, early April 2021
+        https://bugs.webkit.org/show_bug.cgi?id=224091
+
+        Reviewed by Simon Fraser.
+        
+        The SelectionRestorationMode enum has been moved out of Document.h so
+        the entirety of Document.h doesn't need to be included just for that
+        enum.
+
+        * Headers.cmake:
+        Add SelectionRestorationMode.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add SelectionRestorationMode.h.
+        
+        * dom/Document.h:
+        Move SelectionRestorationMode enum to its own file.
+
+        * dom/Element.h:
+        Add forward declaration for enum class SelectionRestorationMode. Rearrange
+        existing enum class forward declarations alphabetically.
+
+        * dom/SelectionRestorationMode.h: Added.
+
+        * dom/FocusOptions.h:
+        * history/CachedPage.cpp:
+        * html/HTMLFormControlElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLLabelElement.cpp:
+        * html/HTMLLegendElement.cpp:
+        * html/HTMLTextAreaElement.h:
+        * html/InputType.cpp:
+        * page/EventHandler.cpp:
+        * page/FocusController.cpp:
+        Add #include "SelectionRestorationMode.h".
+
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        Add #include "ServiceWorkerGlobalScope.h" to fix:
+        ServiceWorkerThreadProxy.cpp:287:53: error: invalid use of incomplete type
+        'WTF::match_constness_t<WebCore::ScriptExecutionContext, WebCore::ServiceWorkerGlobalScope>'
+        {aka 'class WebCore::ServiceWorkerGlobalScope'}
+
 2021-04-06  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Use opaque system colors for control backgrounds

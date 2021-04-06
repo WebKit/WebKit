@@ -512,6 +512,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/ScriptExecutionContext.h
     dom/SecurityContext.h
     dom/SecurityPolicyViolationEvent.h
+    dom/SelectionRestorationMode.h
     dom/ShadowRoot.h
     dom/ShadowRootInit.h
     dom/ShadowRootMode.h

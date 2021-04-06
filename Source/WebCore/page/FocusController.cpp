@@ -56,6 +56,7 @@
 #include "Range.h"
 #include "RenderWidget.h"
 #include "ScrollAnimator.h"
+#include "SelectionRestorationMode.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpatialNavigation.h"

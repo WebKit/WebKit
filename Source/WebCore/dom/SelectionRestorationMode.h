@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Igalia S.L. All rights reserved.
+ * Copyright (C) 2021 Tyler Wilcock <twilco.o@protonmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,13 @@
 
 #pragma once
 
-#include "FocusDirection.h"
-#include "SelectionRestorationMode.h"
-
 namespace WebCore {
 
-struct FocusOptions {
-    SelectionRestorationMode selectionRestorationMode { SelectionRestorationMode::RestoreOrSelectAll };
-    FocusDirection direction { FocusDirection::None };
-    bool preventScroll { false };
+enum class SelectionRestorationMode : uint8_t {
+    RestoreOrSelectAll,
+    SelectAll,
+    PlaceCaretAtStart,
 };
 
 } // namespace WebCore
+

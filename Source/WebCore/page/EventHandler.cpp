@@ -92,6 +92,7 @@
 #include "ScrollAnimator.h"
 #include "ScrollLatchingController.h"
 #include "Scrollbar.h"
+#include "SelectionRestorationMode.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpatialNavigation.h"
