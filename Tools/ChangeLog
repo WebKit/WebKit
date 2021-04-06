@@ -1,3 +1,20 @@
+2021-04-06  David Kilzer  <ddkilzer@apple.com>
+
+        set-webkit-configuration should print current settings
+        <https://webkit.org/b/224190>
+
+        Reviewed by Mark Lam.
+
+        * Scripts/set-webkit-configuration:
+        - Reorder switches to put sanitizers together.
+        - Declare subroutines.
+        - Call printCurrentSettings() or printUsage() as needed.
+        (printCurrentSettings): Add.
+        (printUsage): Add.
+        * Scripts/webkitdirs.pm:
+        - Reorder switch variables to match other code.
+        (coverageIsEnabled): Add for set-webkit-configuration.
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Enable Cog's GTK4 backend
