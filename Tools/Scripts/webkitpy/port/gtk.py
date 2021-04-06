@@ -38,7 +38,6 @@ from webkitpy.common.system import path
 from webkitpy.common.memoized import memoized
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.port.base import Port
-from webkitpy.port.pulseaudio_sanitizer import PulseAudioSanitizer
 from webkitpy.port.xvfbdriver import XvfbDriver
 from webkitpy.port.westondriver import WestonDriver
 from webkitpy.port.xorgdriver import XorgDriver
@@ -56,7 +55,6 @@ class GtkPort(Port):
 
     def __init__(self, *args, **kwargs):
         super(GtkPort, self).__init__(*args, **kwargs)
-        self._pulseaudio_sanitizer = PulseAudioSanitizer()
         self._display_server = self.get_option("display_server")
 
         if self.get_option("leaks"):
@@ -108,14 +106,9 @@ class GtkPort(Port):
 
     def setup_test_run(self, device_type=None):
         super(GtkPort, self).setup_test_run(device_type)
-        self._pulseaudio_sanitizer.unload_pulseaudio_module()
 
         if self.get_option("leaks"):
             self._leakdetector.clean_leaks_files_from_results_directory()
-
-    def clean_up_test_run(self):
-        super(GtkPort, self).clean_up_test_run()
-        self._pulseaudio_sanitizer.restore_pulseaudio_module()
 
     def setup_environ_for_server(self, server_name=None):
         environment = super(GtkPort, self).setup_environ_for_server(server_name)
@@ -129,12 +122,15 @@ class GtkPort(Port):
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_TOP_LEVEL')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_DEBUG')
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_GST_USE_PLAYBIN3')
-        self._copy_value_from_environ_if_set(environment, 'PULSE_SERVER')
-        self._copy_value_from_environ_if_set(environment, 'PULSE_CLIENTCONFIG')
         for gst_variable in ('DEBUG', 'DEBUG_DUMP_DOT_DIR', 'DEBUG_FILE', 'DEBUG_NO_COLOR',
                              'PLUGIN_SCANNER', 'PLUGIN_PATH', 'PLUGIN_SYSTEM_PATH', 'REGISTRY',
                              'PLUGIN_PATH_1_0'):
             self._copy_value_from_environ_if_set(environment, 'GST_%s' % gst_variable)
+
+        gst_feature_rank_override = environment.get('GST_PLUGIN_FEATURE_RANK')
+        environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max'
+        if gst_feature_rank_override:
+            environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
 
         # Configure the software libgl renderer if jhbuild ready and we test inside a virtualized window system
         if self._driver_class() in [XvfbDriver, WestonDriver] and (self._should_use_jhbuild() or self._is_flatpak()):

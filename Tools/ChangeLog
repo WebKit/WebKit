@@ -1,3 +1,34 @@
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Test harness should use a mock audio output device
+        https://bugs.webkit.org/show_bug.cgi?id=223888
+
+        Reviewed by Adrian Perez de Castro.
+
+        Prioritize the new fakeaudiosink over other platform sinks when running the layout and API
+        tests. Mute and volume handling will still be tested (mocked, actually) but no actual
+        rendering will be performed.
+
+        The pulseaudio "sanitizer" can't work with a pipewire-pulse server because dynamic module
+        (un)loading is heavily restricted in this new wrapper. Moreover relying on the default sinks
+        when running on desktop machines easily triggers unintended beeps when running the tests.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.__init__):
+        (GtkPort.setup_test_run):
+        (GtkPort.setup_environ_for_server):
+        (GtkPort.clean_up_test_run): Deleted.
+        * Scripts/webkitpy/port/gtk_unittest.py:
+        (GtkPortTest):
+        (GtkPortTest.make_port): Deleted.
+        * Scripts/webkitpy/port/pulseaudio_sanitizer.py: Removed.
+        * Scripts/webkitpy/port/pulseaudio_sanitizer_mock.py: Removed.
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/wpe_unittest.py:
+        (WPEPortTest):
+        (WPEPortTest.make_port): Deleted.
+
 2021-04-06  Aakash Jain  <aakash_jain@apple.com>
 
         [resultsdbpy] Remove obsolete BuildbotEightURLFactory
