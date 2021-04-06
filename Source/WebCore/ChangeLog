@@ -1,3 +1,18 @@
+2021-04-05  Saam Barati  <sbarati@apple.com>
+
+        Enable QuotaExceededError on non GSTREAMER platforms
+        https://bugs.webkit.org/show_bug.cgi?id=224136
+        <rdar://71219720>
+
+        Reviewed by Jer Noble.
+
+        This fixes a memory leak in Disney+ where we end up queuing up the entire
+        video because we never communicate to the page that they should stop queuing
+        more data.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBufferInternal):
+
 2021-04-05  Chris Dumez  <cdumez@apple.com>
 
         Make sure service workers use a ScriptSourceCode backed by file-mapped memory when possible

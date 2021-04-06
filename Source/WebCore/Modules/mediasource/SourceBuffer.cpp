@@ -490,14 +490,11 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     // 4. Run the coded frame eviction algorithm.
     m_private->evictCodedFrames(size, m_pendingAppendData.capacity(), maximumBufferSize(), m_source->currentTime(), m_source->duration(), m_source->isEnded());
 
-    // FIXME: enable this code when MSE libraries have been updated to support it.
-#if USE(GSTREAMER)
     // 5. If the buffer full flag equals true, then throw a QuotaExceededError exception and abort these step.
     if (m_private->bufferFull()) {
         ERROR_LOG(LOGIDENTIFIER, "buffer full, failing with QuotaExceededError error");
         return Exception { QuotaExceededError };
     }
-#endif
 
     // NOTE: Return to 3.2 appendBuffer()
     // 3. Add data to the end of the input buffer.
