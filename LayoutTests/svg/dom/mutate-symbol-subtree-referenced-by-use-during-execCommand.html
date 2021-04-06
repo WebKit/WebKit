@@ -1,0 +1,29 @@
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function nestedSubtreeMutations(...callbacks) {
+    const nextCallback = callbacks.shift();
+    if (!nextCallback)
+        return;
+    g.addEventListener("DOMSubtreeModified", () => {
+        nestedSubtreeMutations(...callbacks);
+    }, {once: true});
+    nextCallback();
+}
+
+onload = () => {
+    nestedSubtreeMutations(
+        () => g.setAttribute("stroke", "blue"),
+        () => document.execCommand("usecss", false),
+        () => tspan.appendChild(document.createElement('rect')),
+        () => document.execCommand("usecss", false),
+        () => g.setAttribute("onclick", "var00063"));
+    document.body.innerText = `This tests mutating SVG symbol element's subtree referenced by a SVG use element inside a event queue scope.
+WebKit should not hit any assertions or crash.
+
+PASS.`;
+}
+</script>
+<svg><symbol id="symbol1"><g id="g"><tspan id="tspan"/></symbol><use href="#symbol1" />

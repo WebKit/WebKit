@@ -1,0 +1,13 @@
+This tests updating the SVG use element's shadow tree inside a event queue scope.
+WebKit should not dispach any mutation events
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS subtreeModifiedFired is false
+document.execCommand("usecss", false)
+PASS subtreeModifiedFired is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

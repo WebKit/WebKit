@@ -1,3 +1,45 @@
+2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assert failure in isCloneInShadowTreeOfSVGUseElement
+        https://bugs.webkit.org/show_bug.cgi?id=224174
+
+        Reviewed by Darin Adler and Antti Koivisto.
+
+        The bug was caused by two related but distinct issues:
+        1. An element can have an instance that had been removed from a use element's shadow tree
+           but not yet deleted. Because SVGElement clears its correspondingElement in its destructor,
+           when addEventListener is called on such an element, it can try to add an event listener
+           on this instance which is in the process of getting disposed.
+        2. DOM mutation events can be fired on the corresponding element of an instance inside
+           a use element’s shadow tree with EventQueueScope in the stack when the event is schedueld
+           via Node::dispatchScopedEvent, e.g. because use element's shadow tree was updated during
+           a style update at the beginning of document.execComand. Because SVGUseElement::cloneTarget
+           constructs the shadow tree by cloning the original tree while it's disconnected from the
+           document, Node::dispatchSubtreeModifiedEvent sees isInShadowTree() to be false and happily
+           tries to dispach DOMSubtreeModified event using Node::dispatchScopedEvent. This works fine
+           when the event is dispatched synchronously since these elements had never been exposed to
+           any scripts yet and they are still disconnected so no scripts have had an opportunity to
+           attach an event listener. But when EventQueueScope in the stack, Node::dispatchScopedEvent
+           will queue up the event and fire it later when those instance elements had been inserted
+           into use element's shadow tree.
+
+        This patch addresses (1) by severing correspondingElement relationship as soon as an instance
+        is removed from its use element's shadow tree, and (2) by not dispatching a scheduled mutation
+        event if the target is inside a shadow tree. Note that this patch also addresses (2) for
+        a regular shadow tree attached by author scripts.
+
+        Tests: fast/shadow-dom/mutation-event-in-shadow-tree.html
+               svg/dom/mutate-symbol-subtree-referenced-by-use-during-execCommand.html
+               svg/dom/update-svg-use-shadow-tree-with-execCommand.html
+
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::dispatchEvent const):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::removedFromAncestor):
+        (WebCore::SVGElement::addEventListener):
+        (WebCore::SVGElement::removeEventListener):
+
 2021-04-06  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] audio played at 2x speed video is not pitch corrected
