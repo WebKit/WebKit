@@ -1,3 +1,17 @@
+2021-04-06  Ian Gilbert  <iang@apple.com>
+
+        IPC::decodeObject null dereference in decodeArrayInternal()
+        https://bugs.webkit.org/show_bug.cgi?id=224214
+
+        Reviewed by Ryosuke Niwa.
+
+        Add null pointer check to decodeArrayInternal.
+
+        Test: ipc/decode-object-array-crash.html
+
+        * Shared/Cocoa/ArgumentCodersCocoa.mm:
+        (IPC::decodeArrayInternal):
+
 2021-04-05  Jiewen Tan  <jiewen_tan@apple.com>
 
         Allow the WebAuthn UI to inform users about BiometryLockout
