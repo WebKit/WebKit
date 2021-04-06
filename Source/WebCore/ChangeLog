@@ -1,5 +1,24 @@
 2021-04-06  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Grid overlay label style cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=224240
+
+        Reviewed by BJ Burg.
+
+        Clean up grid overlay label styling by:
+        - Make all labels use a translucent background. This patch chooses a middle ground between the existing
+        translucent labels that matched the color of the rulers, and the solid white background used by line
+        numbers/names for maximum legibility.
+        - Bumping the label padding by 1px to improve legibility.
+        - Bumping the label arrow size by 2px to make it easier to understand where a label is pointing, particularly
+        for labels where the edge position is not `Middle`.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::drawGridOverlay):
+        (WebCore::InspectorOverlay::buildGridOverlay):
+
+2021-04-06  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: Grid overlay track size labels should show implicit `auto` value and no computed size
         https://bugs.webkit.org/show_bug.cgi?id=224199
 

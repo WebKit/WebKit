@@ -85,8 +85,8 @@ static constexpr float rulerStepLength = 8;
 static constexpr float rulerSubStepIncrement = 5;
 static constexpr float rulerSubStepLength = 5;
 
-static constexpr float layoutLabelPadding = 3;
-static constexpr float layoutLabelArrowSize = 4;
+static constexpr float layoutLabelPadding = 4;
+static constexpr float layoutLabelArrowSize = 6;
 
 static constexpr UChar bullet = 0x2022;
 static constexpr UChar ellipsis = 0x2026;
@@ -1466,7 +1466,7 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
 
 void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const InspectorOverlay::Highlight::GridHighlightOverlay& gridOverlay)
 {
-    constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(153);
+    constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(230);
 
     GraphicsContextStateSaver saver(context);
     context.setStrokeThickness(1);
@@ -1623,7 +1623,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
         return { };
     }
 
-    constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(153);
+    constexpr auto translucentLabelBackgroundColor = Color::white.colorWithAlphaByte(230);
     
     FrameView* pageView = m_page.mainFrame().view();
     if (!pageView)
@@ -1828,7 +1828,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
                     gapLabelPosition = gapLabelLine.pointAtAbsoluteDistance(expectedLabelSize.height());
             }
 
-            gridHighlightOverlay.labels.append(buildLabel(text, gapLabelPosition, Color::white, arrowDirection, arrowEdgePosition));
+            gridHighlightOverlay.labels.append(buildLabel(text, gapLabelPosition, translucentLabelBackgroundColor, arrowDirection, arrowEdgePosition));
         }
     }
 
@@ -1901,7 +1901,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             if (gapLabelPosition.x() - expectedLabelSize.width() + scrollPosition.x() - viewportBounds.x() < 0)
                 arrowDirection = correctedArrowDirection(LabelArrowDirection::Left, GridTrackSizingDirection::ForRows);
 
-            gridHighlightOverlay.labels.append(buildLabel(text, gapLabelPosition, Color::white, arrowDirection, arrowEdgePosition));
+            gridHighlightOverlay.labels.append(buildLabel(text, gapLabelPosition, translucentLabelBackgroundColor, arrowDirection, arrowEdgePosition));
         }
     }
 

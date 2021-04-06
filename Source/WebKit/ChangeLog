@@ -1,3 +1,16 @@
+2021-04-06  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Grid overlay label style cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=224240
+
+        Reviewed by BJ Burg.
+
+        Mirror changes to constants from `WebCore::InspectorOverlay`.
+
+        * UIProcess/Inspector/ios/WKInspectorHighlightView.mm:
+        (createLayoutLabelLayer):
+        (-[WKInspectorHighlightView _createGridOverlayLayer:scale:]):
+
 2021-04-06  Mike Gorse  <mgorse@suse.com>
 
         Build fails when video is disabled
