@@ -34,7 +34,6 @@
 #import "ServicesController.h"
 #import "ShareableBitmap.h"
 #import "WKMenuItemIdentifiersPrivate.h"
-#import "WKNSURLExtras.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuItem.h"
 #import "WebContextMenuItemData.h"
@@ -480,10 +479,8 @@ static RetainPtr<NSMenuItem> createMenuActionItem(const WebContextMenuItemData& 
     [menuItem setTarget:[WKMenuTarget sharedMenuTarget]];
     [menuItem setIdentifier:menuItemIdentifier(item.action())];
 
-    if (item.userData()) {
-        auto wrapper = adoptNS([[WKUserDataWrapper alloc] initWithUserData:item.userData()]);
-        [menuItem setRepresentedObject:wrapper.get()];
-    }
+    if (item.userData())
+        [menuItem setRepresentedObject:adoptNS([[WKUserDataWrapper alloc] initWithUserData:item.userData()]).get()];
 
     return menuItem;
 }
@@ -530,7 +527,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
     }
 #endif
 
-    auto imageURL = URL([NSURL _web_URLWithWTFString:m_context.webHitTestResultData().absoluteImageURL]);
+    auto imageURL = URL { URL { }, m_context.webHitTestResultData().absoluteImageURL };
     auto imageBitmap = m_context.webHitTestResultData().imageBitmap;
 
     auto sparseMenuItems = retainPtr([NSPointerArray strongObjectsPointerArray]);
@@ -547,11 +544,8 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         if (revealImageItem && page && imageBitmap) {
 #if ENABLE(IMAGE_EXTRACTION)
             page->computeCanRevealImage(imageURL, *imageBitmap, [protectedThis = WTFMove(protectedThis), revealImageItem = WTFMove(*revealImageItem)] (bool canRevealImage) mutable {
-                if (!canRevealImage)
-                    return;
-
-                auto nsMenuItem = createMenuActionItem(revealImageItem);
-                [protectedThis->m_menu addItem:nsMenuItem.get()];
+                if (canRevealImage)
+                    [protectedThis->m_menu addItem:createMenuActionItem(revealImageItem).get()];
             });
 #else
             UNUSED_PARAM(imageURL);
@@ -580,11 +574,9 @@ void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& it
 
     switch (item.type()) {
     case WebCore::ActionType:
-    case WebCore::CheckableActionType: {
-        auto nsMenuItem = createMenuActionItem(item);
-        completionHandler(nsMenuItem.get());
+    case WebCore::CheckableActionType:
+        completionHandler(createMenuActionItem(item).get());
         return;
-    }
 
     case WebCore::SeparatorType:
         completionHandler(NSMenuItem.separatorItem);

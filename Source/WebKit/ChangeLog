@@ -1,3 +1,25 @@
+2021-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Address some post-landing comments after r275491
+        https://bugs.webkit.org/show_bug.cgi?id=224126
+
+        Reviewed by Darin Adler.
+
+        Address some minor feedback; no change in behavior.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::createMenuActionItem):
+
+        Remove an unnecessary local variable.
+
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+
+        Use `WTF::URL` instead of `NSURL`, and remove a header import that is now unnecessary.
+
+        (WebKit::WebContextMenuProxyMac::getContextMenuItem):
+
+        Remove some more unnecessary local variables.
+
 2021-04-06  Jer Noble  <jer.noble@apple.com>
 
         [MediaSession] Add optional mediaTime and hostTime arguments to the playSession() command.
