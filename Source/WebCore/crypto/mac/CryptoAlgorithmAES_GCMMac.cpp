@@ -37,7 +37,8 @@ namespace WebCore {
 
 static ExceptionOr<Vector<uint8_t>> encryptAES_GCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& plainText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
-    Vector<uint8_t> cipherText(plainText.size()); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
+    // This is a wordaround for rdar://75093377. Force the buffer to be a non null pointer.
+    Vector<uint8_t> cipherText(plainText.size() + desiredTagLengthInBytes); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);
     // tagLength is actual an input <rdar://problem/30660074>
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -46,14 +47,15 @@ static ExceptionOr<Vector<uint8_t>> encryptAES_GCM(const Vector<uint8_t>& iv, co
     if (status)
         return Exception { OperationError };
 
-    cipherText.append(tag.data(), desiredTagLengthInBytes);
+    memcpy(cipherText.data() + plainText.size(), tag.data(), desiredTagLengthInBytes);
 
     return WTFMove(cipherText);
 }
 
 static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, const Vector<uint8_t>& key, const Vector<uint8_t>& cipherText, const Vector<uint8_t>& additionalData, size_t desiredTagLengthInBytes)
 {
-    Vector<uint8_t> plainText(cipherText.size() - desiredTagLengthInBytes); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
+    // This is a wordaround for rdar://75093377. Force the buffer to be a non null pointer.
+    Vector<uint8_t> plainText(cipherText.size()); // Per section 5.2.1.2: http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf
     Vector<uint8_t> tag(desiredTagLengthInBytes);
     size_t offset = cipherText.size() - desiredTagLengthInBytes;
     // tagLength is actual an input <rdar://problem/30660074>
@@ -67,6 +69,8 @@ static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, con
     if (constantTimeMemcmp(tag.data(), cipherText.data() + offset, desiredTagLengthInBytes))
         return Exception { OperationError };
 
+    // This is a wordaround for rdar://75093377. Force the buffer to be a non null pointer.
+    plainText.shrink(offset);
     return WTFMove(plainText);
 }
 

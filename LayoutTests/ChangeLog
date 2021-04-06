@@ -1,3 +1,14 @@
+2021-04-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebCrypto in Safari will not AES-GCM encrypt 0 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224083
+        <rdar://75093377>
+
+        Reviewed by Youenn Fablet.
+
+        * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text-expected.txt: Added.
+        * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text.html: Added.
+
 2021-04-06  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/loading convert PHP to Python
