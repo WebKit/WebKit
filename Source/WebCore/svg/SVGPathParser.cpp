@@ -43,7 +43,9 @@ bool SVGPathParser::parse(SVGPathSource& source, SVGPathConsumer& consumer, Path
 bool SVGPathParser::parseToByteStream(SVGPathSource& source, SVGPathByteStream& byteStream, PathParsingMode mode, bool checkForInitialMoveTo)
 {
     SVGPathByteStreamBuilder builder(byteStream);
-    return parse(source, builder, mode, checkForInitialMoveTo);
+    auto result = parse(source, builder, mode, checkForInitialMoveTo);
+    byteStream.shrinkToFit();
+    return result;
 }
 
 bool SVGPathParser::parseToString(SVGPathSource& source, String& result, PathParsingMode mode, bool checkForInitialMoveTo)
