@@ -328,14 +328,21 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
         if (auto exception = scriptLoader->loadSynchronously(this, url, FetchOptions::Mode::NoCors, cachePolicy, cspEnforcement, resourceRequestIdentifier()))
             return WTFMove(*exception);
 
-        InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script());
+        InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script().toString());
 
-        NakedPtr<JSC::Exception> exception;
-        script()->evaluate(ScriptSourceCode(scriptLoader->script(), URL(scriptLoader->responseURL())), exception);
-        if (exception) {
-            script()->setException(exception);
-            return { };
+        WeakPtr<ScriptBufferSourceProvider> sourceProvider;
+        {
+            NakedPtr<JSC::Exception> exception;
+            ScriptSourceCode sourceCode(scriptLoader->script(), URL(scriptLoader->responseURL()));
+            sourceProvider = makeWeakPtr(static_cast<ScriptBufferSourceProvider&>(sourceCode.provider()));
+            script()->evaluate(sourceCode, exception);
+            if (exception) {
+                script()->setException(exception);
+                return { };
+            }
         }
+        if (sourceProvider)
+            addImportedScriptSourceProvider(url, *sourceProvider);
     }
 
     return { };
@@ -529,6 +536,13 @@ WorkerThread& WorkerGlobalScope::thread() const
 void WorkerGlobalScope::releaseMemory(Synchronous synchronous)
 {
     ASSERT(isContextThread());
+    deleteJSCodeAndGC(synchronous);
+    clearDecodedScriptData();
+}
+
+void WorkerGlobalScope::deleteJSCodeAndGC(Synchronous synchronous)
+{
+    ASSERT(isContextThread());
 
     JSC::JSLockHolder lock(vm());
     vm().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
@@ -560,6 +574,48 @@ void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
         postTaskTo(globalScopeIdentifier, [synchronous](auto& context) {
             downcast<WorkerGlobalScope>(context).releaseMemory(synchronous);
         });
+    }
+}
+
+void WorkerGlobalScope::setMainScriptSourceProvider(ScriptBufferSourceProvider& provider)
+{
+    ASSERT(!m_mainScriptSourceProvider);
+    m_mainScriptSourceProvider = makeWeakPtr(provider);
+}
+
+void WorkerGlobalScope::addImportedScriptSourceProvider(const URL& url, ScriptBufferSourceProvider& provider)
+{
+    m_importedScriptsSourceProviders.ensure(url, [] {
+        return WeakHashSet<ScriptBufferSourceProvider> { };
+    }).iterator->value.add(provider);
+}
+
+void WorkerGlobalScope::clearDecodedScriptData()
+{
+    ASSERT(isContextThread());
+
+    if (m_mainScriptSourceProvider)
+        m_mainScriptSourceProvider->clearDecodedData();
+
+    for (auto& sourceProviders : m_importedScriptsSourceProviders.values()) {
+        for (auto& sourceProvider : sourceProviders)
+            sourceProvider.clearDecodedData();
+    }
+}
+
+void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScript, const HashMap<URL, ScriptBuffer>& importedScripts)
+{
+    ASSERT(isContextThread());
+
+    if (mainScript && m_mainScriptSourceProvider)
+        m_mainScriptSourceProvider->tryReplaceScriptBuffer(mainScript);
+
+    for (auto& pair : importedScripts) {
+        auto it = m_importedScriptsSourceProviders.find(pair.key);
+        if (it == m_importedScriptsSourceProviders.end())
+            continue;
+        for (auto& sourceProvider : it->value)
+            sourceProvider.tryReplaceScriptBuffer(pair.value);
     }
 }
 

@@ -1,3 +1,13 @@
+2021-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Make sure service workers use a ScriptSourceCode backed by file-mapped memory when possible
+        https://bugs.webkit.org/show_bug.cgi?id=224088
+
+        Reviewed by Yusuke Suzuki.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::didFinishLoading):
+
 2021-04-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WK2] Implement IPC::Semaphore to run WebGL in GPU process

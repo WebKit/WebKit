@@ -474,7 +474,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     job.fetchScriptWithContext(*context, cachePolicy);
 }
 
-void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy)
+void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy)
 {
 #ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());

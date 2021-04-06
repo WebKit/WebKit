@@ -1,3 +1,152 @@
+2021-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Make sure service workers use a ScriptSourceCode backed by file-mapped memory when possible
+        https://bugs.webkit.org/show_bug.cgi?id=224088
+
+        Reviewed by Yusuke Suzuki.
+
+        To run a worker, we were constructing a ScriptSourceCode from the source String and calling
+        JSC::evaluate. ScriptSourceCode would construct a JSC::StringSourceProvider, which would
+        keep the source String alive for the lifetime of the provider. This is problematic since
+        those worker scripts may be big and keeping heap-allocated version of them in memory is
+        expensive.
+
+        To address the issue, this patch introduces a new JSC::SourceProvider subclass named
+        ScriptBufferSourceProvider, which uses a ScriptBuffer internally. ScriptBuffer has the
+        benefit of being able to hold file-mapped data. We only convert the ScriptBuffer to
+        a String whenever necessary (When the script contains non-ascii characters and JSC
+        requests a StringView to the script). If we do end up converting the ScriptBuffer to
+        a String, this String will get cleared on memory pressure. This is similar to what
+        CachedScriptSourceProvider / CachedScript do on the main thread.
+
+        In the warm case, where the service worker script is coming from disk, we create
+        the ScriptBufferSourceProvider right away from a file-mapped ScriptBuffer, thus
+        greatly reducing dirty memory use. In the cold case, we initially construct the
+        ScriptBufferSourceProvider using a ScriptBuffer that is not file-mapped. However,
+        once the script is saved to disk (via SWScriptStorage), we replace the
+        ScriptBufferSourceProvider's ScriptBuffer with the new file-mapped version in
+        order to reduce dirty memory use in this case too.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add ScriptBufferSourceProvider.h to the project.
+
+        * bindings/js/ScriptBufferSourceProvider.h: Added.
+        - Add new ScriptBufferSourceProvider, which is a JSC::SourceProvider subclass that
+        uses a ScriptBuffer as backing instead of a String. This allows us to use file-mapped
+        memory whenever possible, thus reducing dirty memory use. This provider provides
+        similar functionality to CachedScriptSourceProvider / CachedScript but works with
+        a ScriptBuffer and can be used off the main thread.
+        - We only transform the SharedBuffer into a String when strictly necessary, meaning
+          that the ScriptBuffer contains non-ascii characters and JSC is asking for a StringView
+          to the script.
+        - The class supports clearing the String copy of the script (done on memory pressure)
+          and replacing the ScriptBuffer (with a new file-mapped version).
+
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::m_code):
+        (WebCore::ScriptSourceCode::provider):
+        Add new constructors taking a ScriptBuffer instead of a String for the source code.
+        We then use the new ScriptBufferSourceProvider internally instead of the
+        StringSourceProvider.
+
+        * workers/DedicatedWorkerThread.cpp:
+        (WebCore::DedicatedWorkerThread::DedicatedWorkerThread):
+        * workers/DedicatedWorkerThread.h:
+        Use ScriptBuffer instead of String.
+
+        * workers/ScriptBuffer.cpp:
+        (WebCore::ScriptBuffer::empty):
+        (WebCore::ScriptBuffer::append):
+        (WebCore::operator!=):
+        * workers/ScriptBuffer.h:
+        (WebCore::ScriptBuffer::isEmpty const):
+        Add some functionality to SCriptBuffer to make it more convenient to use.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::notifyFinished):
+        Convert ScriptBuffer to a String since this is what WebInspector expects.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::importScripts):
+        - When importing a new script, we now construct a ScriptSourceCode from a
+        ScriptBuffer instead of a String.
+        - We also store a weak pointer to the ScriptBufferSourceProvider used by the ScriptSourceCode
+          on the WorkerGlobalScope. This is so that we can ask those ScriptBufferSourceProvider objects
+          to clear their cached String representation of the script source on memory pressure. It is
+          also needed so we can replace the ScriptBufferSourceProvider's ScriptBuffer with a file-mapped
+          version when one becomes available.
+
+        (WebCore::WorkerGlobalScope::releaseMemory):
+        In addition to deleting JS code and doing garbage collection, we now also ask the
+        ScriptBufferSourceProvider objects to clear their cached String representation of the script
+        source.
+
+        (WebCore::WorkerGlobalScope::deleteJSCodeAndGC):
+        Moved the logic to delete JS code and doing GC from releaseMemory() to a new function, now
+        that releaseMemory() needs to do more things.
+
+        (WebCore::WorkerGlobalScope::setMainScriptSourceProvider):
+        (WebCore::WorkerGlobalScope::addImportedScriptSourceProvider):
+        Functions used to store the CachedScriptSourceProvider objects for the scripts used by the
+        worker on the WorkerGlobalScope. We keep weak pointers to those.
+
+        (WebCore::WorkerGlobalScope::clearDecodedScriptData):
+        Function used to ask the ScriptBufferSourceProvider objects to clear their cached String
+        representation of the script source on memory pressure.
+
+        (WebCore::WorkerGlobalScope::updateSourceProviderBuffers):
+        Function used to ask the ScriptBufferSourceProvider objects to replace their ScriptBuffers
+        with file-backed versions.
+
+        * workers/WorkerGlobalScope.h:
+        * workers/WorkerGlobalScopeProxy.h:
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::startWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+        Use ScriptBuffer instead of String.
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::WorkerScriptLoader):
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::didReceiveData):
+        * workers/WorkerScriptLoader.h:
+        (WebCore::WorkerScriptLoader::script):
+        Use ScriptBuffer instead of String to hold the script source. We eventually need a ScriptBuffer
+        since this is what the Worker now needs to launch. Also, in the service worker case, we may
+        get a ScriptBuffer right away from the scriptResourceMap, without going to the network at all.
+
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThreadStartupData::WorkerThreadStartupData):
+        (WebCore::WorkerThread::WorkerThread):
+        Use ScriptBuffer instead of String.
+
+        (WebCore::WorkerThread::evaluateScriptIfNecessary):
+        - When evaluating the main worker script, we now construct a ScriptSourceCode from a
+        ScriptBuffer instead of a String.
+        - We also store a weak pointer to the ScriptBufferSourceProvider used by the ScriptSourceCode
+          on the WorkerGlobalScope. This is so that we can ask those ScriptBufferSourceProvider objects
+          to clear their cached String representation of the script source on memory pressure. It is
+          also needed so we can replace the ScriptBufferSourceProvider's ScriptBuffer with a file-mapped
+          version when one becomes available.
+
+        * workers/WorkerThread.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerFetchResult.h:
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::didSaveScriptsToDisk):
+        * workers/service/ServiceWorkerJobClient.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::updateWorker):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+        Use ScriptBuffer instead of String.
+
 2021-04-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][WK2] Implement IPC::Semaphore to run WebGL in GPU process

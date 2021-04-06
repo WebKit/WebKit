@@ -158,6 +158,8 @@ void ServiceWorkerGlobalScope::setScriptResource(const URL& url, ServiceWorkerCo
 void ServiceWorkerGlobalScope::didSaveScriptsToDisk(ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
 {
     // These scripts should be identical to the ones we have. However, these are mmap'd so using them helps reduce dirty memory usage.
+    updateSourceProviderBuffers(script, importedScripts);
+
     if (script) {
         ASSERT(m_contextData.script == script);
         m_contextData.script = WTFMove(script);

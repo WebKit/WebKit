@@ -32,6 +32,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptBuffer.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 #include <memory>
@@ -62,7 +63,7 @@ public:
 
     void notifyError();
 
-    String script();
+    const ScriptBuffer& script() { return m_script; }
     const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
     const String& referrerPolicy() const { return m_referrerPolicy; }
     const URL& url() const { return m_url; }
@@ -98,7 +99,7 @@ private:
     RefPtr<ThreadableLoader> m_threadableLoader;
     String m_responseEncoding;
     RefPtr<TextResourceDecoder> m_decoder;
-    StringBuilder m_script;
+    ScriptBuffer m_script;
     URL m_url;
     URL m_responseURL;
     CertificateInfo m_certificateInfo;
