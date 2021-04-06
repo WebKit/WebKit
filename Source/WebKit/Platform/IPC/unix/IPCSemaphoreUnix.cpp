@@ -26,25 +26,46 @@
 #include "config.h"
 #include "IPCSemaphore.h"
 
-#if !OS(DARWIN) && !OS(WINDOWS)
-
 namespace IPC {
 
-Semaphore::Semaphore() = default;
+Semaphore::Semaphore()
+{
+    ASSERT_NOT_REACHED();
+}
 
-Semaphore::Semaphore(Semaphore&&) = default;
+Semaphore::Semaphore(Semaphore&&)
+{
+    ASSERT_NOT_REACHED();
+}
 
 Semaphore::~Semaphore() = default;
 
 Semaphore& Semaphore::operator=(Semaphore&&) = default;
 
-void Semaphore::encode(Encoder&) const { }
+void Semaphore::signal()
+{
+}
+
+void Semaphore::wait()
+{
+}
+
+bool Semaphore::waitFor(Timeout)
+{
+    return false;
+}
+
+void Semaphore::encode(Encoder&) const
+{
+}
 
 Optional<Semaphore> Semaphore::decode(Decoder&)
 {
     return Semaphore { };
 }
 
+void Semaphore::destroy()
+{
 }
 
-#endif
+} // namespace IPC

@@ -40,18 +40,14 @@ StreamClientConnection::StreamClientConnection(Connection& connection, size_t si
 
 void StreamClientConnection::setWakeUpSemaphore(IPC::Semaphore&& semaphore)
 {
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     m_wakeUpSemaphore = WTFMove(semaphore);
-#endif
     wakeUpServer();
 }
 
 void StreamClientConnection::wakeUpServer()
 {
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     if (m_wakeUpSemaphore)
         m_wakeUpSemaphore->signal();
-#endif
 }
 
 }

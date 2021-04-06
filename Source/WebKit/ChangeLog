@@ -1,3 +1,52 @@
+2021-04-06  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Add IPC::Semaphore stub for Unix ports
+        https://bugs.webkit.org/show_bug.cgi?id=224223
+
+        Reviewed by Don Olmstead.
+
+        PlayStation, GTK and WPE ports don't use it yet. Just add stubs
+        instead of scattering #if everywhere using Semaphore.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::populateGetImageDataSharedMemory):
+        * Platform/IPC/StreamClientConnection.cpp:
+        (IPC::StreamClientConnection::setWakeUpSemaphore):
+        (IPC::StreamClientConnection::wakeUpServer):
+        * Platform/IPC/StreamClientConnection.h:
+        (IPC::StreamClientConnection::tryAcquire):
+        (IPC::StreamClientConnection::tryAcquireAll):
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::StreamConnectionWorkQueue):
+        (IPC::StreamConnectionWorkQueue::removeStreamConnection):
+        (IPC::StreamConnectionWorkQueue::stop):
+        (IPC::StreamConnectionWorkQueue::wakeUp):
+        (IPC::StreamConnectionWorkQueue::wakeUpProcessingThread):
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnectionBase::release):
+        (IPC::StreamServerConnectionBase::releaseAll):
+        * Platform/IPC/unix/IPCSemaphoreUnix.cpp: Added.
+        (IPC::Semaphore::Semaphore):
+        (IPC::Semaphore::signal):
+        (IPC::Semaphore::wait):
+        (IPC::Semaphore::waitFor):
+        (IPC::Semaphore::encode const):
+        (IPC::Semaphore::decode):
+        (IPC::Semaphore::destroy):
+        * PlatformPlayStation.cmake:
+        * Sources.txt:
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::waitForGetImageDataToComplete):
+        (WebKit::RemoteRenderingBackendProxy::didAppendData):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::startRenderingThread):
+        (WebKit::RemoteAudioDestinationProxy::stopRenderingThread):
+
 2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Delay the end of printing while PrintContext is in use.

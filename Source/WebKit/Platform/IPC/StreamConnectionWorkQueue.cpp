@@ -29,9 +29,7 @@
 namespace IPC {
 
 StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     : m_name(name)
-#endif
 {
 }
 
@@ -63,28 +61,22 @@ void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnectionBas
         m_connections.remove(connection);
         ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
     }
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     m_wakeUpSemaphore.signal();
-#endif
 }
 
 void StreamConnectionWorkQueue::stop()
 {
     m_shouldQuit = true;
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     if (!m_processingThread)
         return;
     m_wakeUpSemaphore.signal();
     m_processingThread->waitForCompletion();
     m_processingThread = nullptr;
-#endif
 }
 
 void StreamConnectionWorkQueue::wakeUp()
 {
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     m_wakeUpSemaphore.signal();
-#endif
 }
 
 IPC::Semaphore& StreamConnectionWorkQueue::wakeUpSemaphore()
@@ -94,7 +86,6 @@ IPC::Semaphore& StreamConnectionWorkQueue::wakeUpSemaphore()
 
 void StreamConnectionWorkQueue::wakeUpProcessingThread()
 {
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     if (m_processingThread) {
         m_wakeUpSemaphore.signal();
         return;
@@ -111,7 +102,6 @@ void StreamConnectionWorkQueue::wakeUpProcessingThread()
         }
     };
     m_processingThread = Thread::create(m_name, WTFMove(task), ThreadType::Graphics, Thread::QOS::UserInteractive);
-#endif
 }
 
 void StreamConnectionWorkQueue::processStreams()

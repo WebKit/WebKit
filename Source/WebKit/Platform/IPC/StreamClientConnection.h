@@ -102,9 +102,7 @@ private:
 
     size_t m_clientOffset { 0 };
     StreamConnectionBuffer m_buffer;
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     Optional<Semaphore> m_wakeUpSemaphore;
-#endif
 };
 
 template<typename T, typename U>
@@ -240,17 +238,12 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
         }
         if (timeout.didTimeOut())
             break;
-#if PLATFORM(COCOA) || PLATFORM(WIN)
         ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acq_rel);
         if (clientLimit == oldClientLimit) {
             m_buffer.clientWaitSemaphore().waitFor(timeout);
             clientLimit = sharedClientLimit().load(std::memory_order_acquire);
         } else
             clientLimit = oldClientLimit;
-#else
-        Thread::yield();
-        clientLimit = sharedClientLimit().load(std::memory_order_acquire);
-#endif
         // The alignedSpan uses the minimumMessageSize to calculate the next beginning position in the buffer,
         // and not the size. The size might be more or less what is needed, depending on where the reader is.
         // If there is no capacity for minimum message size, wait until more is available.
@@ -273,28 +266,17 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
     // If the transaction commits, server is guaranteed to signal.
 
     for (;;) {
-#if PLATFORM(COCOA) || PLATFORM(WIN)
         ClientLimit clientLimit = sharedClientLimit().exchange(ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel);
         ClientOffset clientOffset = sharedClientOffset().load(std::memory_order_acquire);
-#else
-        ClientLimit clientLimit = sharedClientLimit().load(std::memory_order_acquire);
-        ClientOffset clientOffset = sharedClientOffset().load(std::memory_order_acquire);
-#endif
         if (!clientLimit && (clientOffset == ClientOffset::serverIsSleepingTag || !clientOffset))
             break;
 
-#if PLATFORM(COCOA) || PLATFORM(WIN)
         m_buffer.clientWaitSemaphore().waitFor(timeout);
-#else
-        Thread::yield();
-#endif
         if (timeout.didTimeOut())
             return WTF::nullopt;
     }
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     // In case the transaction was cancelled, undo the transaction marker.
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_release);
-#endif
     m_clientOffset = 0;
     return alignedSpan(m_clientOffset, 0);
 }

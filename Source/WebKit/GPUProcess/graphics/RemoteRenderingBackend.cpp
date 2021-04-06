@@ -247,11 +247,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
                 break;
 
             handle.startWaiting();
-#if PLATFORM(COCOA)
             m_resumeDisplayListSemaphore.waitFor(30_us);
-#else
-            sleep(30_us);
-#endif
 
             auto resumeReadingInfo = handle.stopWaiting();
             if (!resumeReadingInfo)
@@ -376,9 +372,7 @@ void RemoteRenderingBackend::populateGetImageDataSharedMemory(WebCore::ImageData
     } else
         memset(m_getImageDataSharedMemory->data(), 0, m_getImageDataSharedMemory->size());
 
-#if OS(DARWIN)
     m_getImageDataSemaphore.signal();
-#endif
 }
 
 void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)

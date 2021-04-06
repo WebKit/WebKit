@@ -88,17 +88,12 @@ void StreamServerConnectionBase::release(size_t readSize)
     readSize = std::max(readSize, minimumMessageSize);
     ServerOffset serverOffset = static_cast<ServerOffset>(wrapOffset(alignOffset(m_serverOffset) + readSize));
 
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     ServerOffset oldServerOffset = sharedServerOffset().exchange(serverOffset, std::memory_order_acq_rel);
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
         m_buffer.clientWaitSemaphore().signal();
     else
         ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
-#else
-    sharedServerOffset().store(serverOffset, std::memory_order_release);
-    // IPC::Semaphore not implemented for the platform. Client will poll and yield.
-#endif
 
     m_serverOffset = serverOffset;
 }
@@ -106,17 +101,12 @@ void StreamServerConnectionBase::release(size_t readSize)
 void StreamServerConnectionBase::releaseAll()
 {
     sharedServerLimit().store(static_cast<ServerLimit>(0), std::memory_order_release);
-#if PLATFORM(COCOA) || PLATFORM(WIN)
     ServerOffset oldServerOffset = sharedServerOffset().exchange(static_cast<ServerOffset>(0), std::memory_order_acq_rel);
     // If the client wrote over serverOffset, it means the client is waiting.
     if (oldServerOffset == ServerOffset::clientIsWaitingTag)
         m_buffer.clientWaitSemaphore().signal();
     else
         ASSERT(!(oldServerOffset & ServerOffset::clientIsWaitingTag));
-#else
-    sharedServerOffset().store(static_cast<ServerOffset>(0), std::memory_order_release);
-    // IPC::Semaphore not implemented for the platform. Client will poll and yield.
-#endif
     m_serverOffset = 0;
 }
 

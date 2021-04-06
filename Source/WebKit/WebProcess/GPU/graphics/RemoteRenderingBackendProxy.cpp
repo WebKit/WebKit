@@ -180,11 +180,7 @@ SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetImageData(size_t da
 bool RemoteRenderingBackendProxy::waitForGetImageDataToComplete(IPC::Timeout timeout)
 {
     ASSERT(m_getImageDataSemaphore);
-#if OS(DARWIN)
     return m_getImageDataSemaphore->waitFor(timeout);
-#else
-    return true;
-#endif
 }
 
 void RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory()
@@ -326,9 +322,7 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
     if (!wasEmpty || didChangeItemBuffer == DisplayList::DidChangeItemBuffer::Yes) {
         if (m_deferredWakeupMessageArguments) {
             if (sharedHandle->tryToResume({ m_deferredWakeupMessageArguments->offset, m_deferredWakeupMessageArguments->destinationImageBufferIdentifier.toUInt64() })) {
-#if PLATFORM(COCOA)
                 m_resumeDisplayListSemaphore.signal();
-#endif
                 m_deferredWakeupMessageArguments = WTF::nullopt;
                 m_remainingItemsToAppendBeforeSendingWakeup = 0;
             } else if (!--m_remainingItemsToAppendBeforeSendingWakeup) {
@@ -343,9 +337,7 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
 
     auto offsetToRead = sharedHandle->writableOffset() - numberOfBytes;
     if (sharedHandle->tryToResume({ offsetToRead, destinationImageBuffer.toUInt64() })) {
-#if PLATFORM(COCOA)
         m_resumeDisplayListSemaphore.signal();
-#endif
         return;
     }
 
