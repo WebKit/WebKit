@@ -1,3 +1,19 @@
+2021-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Make sure the Frame always gets destroyed on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=224213
+        <rdar://75131946>
+
+        Reviewed by Alex Christensen.
+
+        Make sure the Frame always gets destroyed on the main thread.
+
+        Since http://trac.webkit.org/changeset/181791, Frame is ThreadSafeRefCounted and captured
+        on other threads. We should make sure the Frame is always destroyed on the main thread
+        though, since it is a main thread object and we hold WeakPtrs to it in many places.
+
+        * page/AbstractFrame.h:
+
 2021-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Wasted vector capacity in FEColorMatrix and filters
