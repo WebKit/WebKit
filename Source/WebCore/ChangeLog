@@ -1,3 +1,31 @@
+2021-04-06  David Kilzer  <ddkilzer@apple.com>
+
+        UBSan: RenderView.cpp:831:9: runtime error: load of value nnn, which is not a valid value for type 'bool'
+        <https://webkit.org/b/224157>
+
+        Reviewed by Darin Adler.
+
+        Tests: editing/inserting/insert-list-user-select-none-crash.html
+               fast/dom/clientWidthAfterDocumentIsRemoved.html
+               fast/scrolling/iframe-scrollable-after-back.html
+               fast/text/crash-font-family-parsed.html
+               html5lib/generated/run-template-write.html
+               imported/blink/plugins/renderless-plugin-creation-doesnt-crash-without-frame.html
+               imported/w3c/web-platform-tests/css/cssom-view/scrolling-no-browsing-context.html
+               imported/w3c/web-platform-tests/dom/ranges/Range-mutations-appendChild.html
+               imported/w3c/web-platform-tests/html/browsers/the-window-object/named-access-on-the-window-object/navigated-named-objects.window.html
+               imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/clicking-interactive-content.html
+               imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_template.html
+               imported/w3c/web-platform-tests/html/syntax/parsing/template/creating-an-element-for-the-token/template-owner-document.html
+               imported/w3c/web-platform-tests/selection/addRange-12.html
+               imported/w3c/web-platform-tests/shadow-dom/untriaged/html-elements-in-shadow-trees/html-forms/test-001.html
+               media/track/track-remove-crash.html
+               svg/custom/animate-reference-crash.html
+
+        * rendering/RenderView.h:
+        (WebCore::RenderView::m_wasAccumulatingRepaintRegion):
+        - Add default initialization.
+
 2021-04-06  Jiewen Tan  <jiewen_tan@apple.com>
 
         WebCrypto in Safari will not AES-GCM encrypt 0 bytes
