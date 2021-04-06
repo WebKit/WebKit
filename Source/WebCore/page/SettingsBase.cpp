@@ -30,6 +30,8 @@
 #include "BackForwardCache.h"
 #include "BackForwardController.h"
 #include "CachedResourceLoader.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CookieStorage.h"
 #include "DOMTimer.h"
 #include "Database.h"
@@ -284,7 +286,14 @@ void SettingsBase::shouldEnableTextAutosizingBoostChanged()
     setNeedsRecalcStyleInAllFrames();
 }
 
-#endif
+void SettingsBase::textAutosizingUsesIdempotentModeChanged()
+{
+    if (m_page)
+        m_page->chrome().client().textAutosizingUsesIdempotentModeChanged();
+    setNeedsRecalcStyleInAllFrames();
+}
+
+#endif // ENABLE(TEXT_AUTOSIZING)
 
 #if ENABLE(MEDIA_STREAM)
 

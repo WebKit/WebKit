@@ -134,6 +134,7 @@ protected:
     void iceCandidateFilteringEnabledChanged();
 #if ENABLE(TEXT_AUTOSIZING)
     void shouldEnableTextAutosizingBoostChanged();
+    void textAutosizingUsesIdempotentModeChanged();
 #endif
 #if ENABLE(MEDIA_STREAM)
     void mockCaptureDevicesEnabledChanged();

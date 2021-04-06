@@ -1,3 +1,40 @@
+2021-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() on various tests
+        https://bugs.webkit.org/show_bug.cgi?id=209450
+        <rdar://problem/60799255>
+
+        Reviewed by Tim Horton.
+
+        When running layout tests without idempotent text autosizing after layout tests with idempotent text autosizing
+        enabled, it's possible to get into a state where the text size adjustment timer (which is used to schedule
+        idempotent text autosizing style adjustments) is scheduled, but idempotent text autosizing is disabled before
+        the timer fires. This causes the assertion in `resetIdempotentTextAutosizingIfNeeded` to fail, leading to a
+        debug assertion.
+
+        To prevent this, we simply add a client method to call out to WebPage to stop its idempotent text autosizing
+        timer when the idempotent text autosizing WebCore setting changes to disabled.
+
+        This fixes assertions on these four tests, which are normally run after fast/text-autosizing:
+        - fast/text/control-characters/visible-control-characters-1.html
+        - fast/text/firstline/001.html
+        - fast/text-indicator/text-indicator-empty-link.html
+        - fast/text/basic/001.html
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::textAutosizingUsesIdempotentModeChanged):
+
+        Add the new chrome client hook (see WebKit2 change for more details).
+
+        * page/SettingsBase.cpp:
+        (WebCore::SettingsBase::textAutosizingUsesIdempotentModeChanged):
+
+        Replace the existing settings change handler (`setNeedsRecalcStyleInAllFrames`) with a custom change handler
+        (`textAutosizingUsesIdempotentModeChanged`) that invokes the client hook above, in addition to flagging all
+        frames for a style recalc.
+
+        * page/SettingsBase.h:
+
 2021-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink the Vector<> of keyframe values

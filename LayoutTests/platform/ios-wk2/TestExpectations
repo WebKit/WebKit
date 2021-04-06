@@ -1724,8 +1724,6 @@ imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_comple
 
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
 
-webkit.org/b/209450 [ Debug ] fast/text/control-characters/visible-control-characters-1.html [ Pass ImageOnlyFailure Crash ]
-
 webkit.org/b/209512 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Pass Timeout ]
 
 webkit.org/b/209520 http/wpt/fetch/dnt-header-after-redirection.html [ Pass Timeout ]
@@ -1739,8 +1737,6 @@ webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout
 webkit.org/b/206750 http/tests/security/appcache-in-private-browsing.html [ Pass Timeout ]
 
 webkit.org/b/210201 [ Debug ] editing/editability/empty-document-delete.html [ Pass Crash ]
-
-webkit.org/b/210205 [ Debug ] fast/text/firstline/001.html [ Pass Crash ]
 
 webkit.org/b/210219 [ Debug ] http/tests/IndexedDB/collect-IDB-objects.https.html [ Pass Crash ]
 
@@ -1768,8 +1764,6 @@ webkit.org/b/21365 imported/w3c/web-platform-tests/html/semantics/embedded-conte
 webkit.org/b/214084 webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
 
 webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Crash ]
-
-webkit.org/b/214363 [ Debug ] fast/text-indicator/text-indicator-empty-link.html [ Pass Crash ]
 
 webkit.org/b/214382 [ Release ] imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.html [ Pass Failure ]
 
@@ -1808,8 +1802,6 @@ webkit.org/b/215185 [ Release ] imported/w3c/web-platform-tests/IndexedDB/struct
 webkit.org/b/215192 imported/w3c/web-platform-tests/preload/single-download-preload.html [ Pass Failure ]
 
 webkit.org/b/215204 imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual.svg [ Pass Failure ]
-
-webkit.org/b/215226 [ Debug ] fast/text/basic/001.html [ Pass Crash ]
 
 webkit.org/b/215268 http/wpt/resource-timing/rt-revalidate-requests-3.html [ Pass Failure ]
 

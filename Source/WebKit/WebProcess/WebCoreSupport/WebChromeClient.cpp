@@ -1455,6 +1455,15 @@ void WebChromeClient::requestImageExtraction(Element& element)
 
 #endif
 
+#if ENABLE(TEXT_AUTOSIZING)
+
+void WebChromeClient::textAutosizingUsesIdempotentModeChanged()
+{
+    m_page.textAutosizingUsesIdempotentModeChanged();
+}
+
+#endif
+
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
 void WebChromeClient::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)

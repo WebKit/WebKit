@@ -572,6 +572,10 @@ public:
     virtual void enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&& completionHandler) { PlatformXR::Instance::singleton().enumerateImmersiveXRDevices(WTFMove(completionHandler)); }
 #endif
 
+#if ENABLE(TEXT_AUTOSIZING)
+    virtual void textAutosizingUsesIdempotentModeChanged() { }
+#endif
+
 protected:
     virtual ~ChromeClient() = default;
 };

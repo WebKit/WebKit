@@ -7185,7 +7185,13 @@ void WebPage::textAutoSizingAdjustmentTimerFired()
 {
     m_page->recomputeTextAutoSizingInAllFrames();
 }
-#endif
+
+void WebPage::textAutosizingUsesIdempotentModeChanged()
+{
+    if (!m_page->settings().textAutosizingUsesIdempotentMode())
+        m_textAutoSizingAdjustmentTimer.stop();
+}
+#endif // ENABLE(TEXT_AUTOSIZING)
 
 void WebPage::setOverriddenMediaType(const String& mediaType)
 {

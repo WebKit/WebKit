@@ -1420,6 +1420,10 @@ public:
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
 
     bool isParentProcessAWebBrowser() const;
+
+#if ENABLE(TEXT_AUTOSIZING)
+    void textAutosizingUsesIdempotentModeChanged();
+#endif
     
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
