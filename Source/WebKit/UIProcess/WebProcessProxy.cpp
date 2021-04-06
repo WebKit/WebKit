@@ -845,9 +845,14 @@ bool WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::De
     return false;
 }
 
-void WebProcessProxy::didClose(IPC::Connection&)
+void WebProcessProxy::didClose(IPC::Connection& connection)
 {
+#if OS(DARWIN)
+    RELEASE_LOG_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy didClose (web process %d crash)", this, connection.remoteProcessID());
+#else
     RELEASE_LOG_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy didClose (web process crash)", this);
+#endif
+
     processDidTerminateOrFailedToLaunch(ProcessTerminationReason::Crash);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *           (C) 2007 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -124,6 +124,10 @@ void ResourceLoader::releaseResources()
 void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!m_documentLoader || !m_documentLoader->frame()) {
+        if (!m_documentLoader)
+            RELEASE_LOG_IF_ALLOWED("init: Cancelling because there is no document loader.");
+        else
+            RELEASE_LOG_IF_ALLOWED("init: Cancelling because the document loader has no frame.");
         cancel();
         return completionHandler(false);
     }
@@ -138,6 +142,7 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
     m_defersLoading = m_options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && m_frame->page()->defersLoading();
 
     if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_frame->document()->securityOrigin().canDisplay(clientRequest.url())) {
+        RELEASE_LOG_IF_ALLOWED("init: Cancelling load because it violates security policy.");
         FrameLoader::reportLocalLoadFailed(m_frame.get(), clientRequest.url().string());
         releaseResources();
         return completionHandler(false);
@@ -158,11 +163,14 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
 
 #if PLATFORM(IOS_FAMILY)
         // If this ResourceLoader was stopped as a result of willSendRequest, bail out.
-        if (m_reachedTerminalState)
+        if (m_reachedTerminalState) {
+            RELEASE_LOG_IF_ALLOWED("init: Cancelling load because it was stopped as a result of willSendRequest.");
             return completionHandler(false);
+        }
 #endif
 
         if (request.isNull()) {
+            RELEASE_LOG_IF_ALLOWED("init: Cancelling load because the request is null.");
             cancel();
             return completionHandler(false);
         }
@@ -269,8 +277,10 @@ void ResourceLoader::loadDataURL()
             protectedThis->didFail(ResourceError(errorDomainWebKitInternal, 0, url, "Data URL decoding failed"));
             return;
         }
-        if (this->wasCancelled())
+        if (this->wasCancelled()) {
+            RELEASE_LOG_IF_ALLOWED("loadDataURL: Load was cancelled");
             return;
+        }
 
         auto dataSize = decodeResult->data.size();
         ResourceResponse dataResponse = ResourceResponse::dataURLResponse(url, decodeResult.value());
@@ -402,6 +412,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
     bool isRedirect = !redirectResponse.isNull();
     if (isRedirect) {
+        RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: Processing cross-origin redirect");
         platformStrategies()->loaderStrategy()->crossOriginRedirectReceived(this, request.url());
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
         frameLoader()->client().didLoadFromRegistrableDomain(RegistrableDomain(request.url()));
@@ -416,6 +427,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
 
         if (redirectURL.protocolIsData()) {
             // Handle data URL decoding locally.
+            RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: Redirected to a data URL. Processing locally");
             finishNetworkLoad();
             loadDataURL();
         }
@@ -565,8 +577,10 @@ void ResourceLoader::didFinishLoadingOnePart(const NetworkLoadMetrics& networkLo
 {
     // If load has been cancelled after finishing (which could happen with a
     // JavaScript that changes the window location), do nothing.
-    if (wasCancelled())
+    if (wasCancelled()) {
+        RELEASE_LOG_IF_ALLOWED("didFinishLoadingOnePart: Load was cancelled after finishing.");
         return;
+    }
     ASSERT(!m_reachedTerminalState);
 
     if (m_notifiedLoadComplete)
@@ -847,5 +861,6 @@ bool ResourceLoader::isAlwaysOnLoggingAllowed() const
 
 } // namespace WebCore
 
+#undef RELEASE_LOG_IF_ALLOWED
 #undef PAGE_ID
 #undef FRAME_ID

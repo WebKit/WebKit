@@ -1,3 +1,29 @@
+2021-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Add additional page load diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=224194
+        <rdar://problem/76227175>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds new logging to help us diagnose and investigate page load failures.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init): Add logging for some unusual conditions:
+            (1) A loader cannot be created because the document loader is nullptr.
+            (2) A load is cancelled because it violates security policy.
+            (3) A load was cancelled during 'willSendRequest' processing.
+            (4) A load was cancelled because the request was null.
+        (WebCore::ResourceLoader::loadDataURL): Log when a data load was cancelled.
+        (WebCore::ResourceLoader::willSendRequestInternal): Log when a cross-origin redirect is triggered, and when a redirect is
+        to a dataURL and will be handled locally.
+        (WebCore::ResourceLoader::didFinishLoadingOnePart): Log when a load is cancelled after it finished.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):  Log when an ongoing load has unexpectedly reached terminal state. Remove a
+        spammy log message that indicates when a redirect response is null (which just means its a normal load).
+        (WebCore::SubresourceLoader::didFinishLoading): Log when a finished load unexpectedly did not reach terminal state.
+        (WebCore::SubresourceLoader::notifyDone): Log when a load could not finish because the document loader was nullptr.
+
 2021-04-06  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Grid overlay label style cleanup

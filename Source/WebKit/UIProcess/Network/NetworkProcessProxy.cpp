@@ -336,8 +336,14 @@ bool NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC
     return didReceiveSyncNetworkProcessProxyMessage(connection, decoder, replyEncoder);
 }
 
-void NetworkProcessProxy::didClose(IPC::Connection&)
+void NetworkProcessProxy::didClose(IPC::Connection& connection)
 {
+#if OS(DARWIN)
+    RELEASE_LOG_ERROR(Process, "%p - NetworkProcessProxy::didClose (Network Process %d crash)", this, connection.remoteProcessID());
+#else
+    RELEASE_LOG_ERROR(Process, "%p - NetworkProcessProxy::didClose (Network Process crash)", this);
+#endif
+
     // This will cause us to be deleted.
     networkProcessDidTerminate(TerminationReason::Crash);
 }

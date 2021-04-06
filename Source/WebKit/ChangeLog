@@ -1,3 +1,43 @@
+2021-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        Add additional page load diagnostic logging
+        https://bugs.webkit.org/show_bug.cgi?id=224194
+        <rdar://problem/76227175>
+
+        Reviewed by Alex Christensen.
+
+        This patch adds new logging to help us diagnose and investigate page load failures.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose): Log when the connection from a WebProcess requesting a load
+        is closed.
+        (WebKit::NetworkConnectionToWebProcess::removeLoadIdentifier): Log when the WebProcess requests a load
+        identifier be removed (and cancelled).
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::restartNetworkLoad): Log when an in-process load is cancelled so that the load
+        can be restarted.
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose): Log when the network process crashes.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose): Add logging when the WebProcess crashes.
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoad): Remove an erroneous log message that made it appear that no URL handler
+        had been called. The log message was generated when a normal network load handler was executed, leading to
+        confusing troubleshooting logs.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::registerURLSchemeHandler): Log when a web page registers a custom URL handler, and for which scheme.
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        (WebKit::pageIDFromWebFrame): Added helper.
+        (WebKit::frameIDFromWebFrame): Ditto.
+        (WebKit::WebURLSchemeTaskProxy::startLoading): Add logging to track progress of custom URL handlers.
+        (WebKit::WebURLSchemeTaskProxy::stopLoading): Ditto.
+        (WebKit::WebURLSchemeTaskProxy::didPerformRedirection): Ditto.
+        (WebKit::WebURLSchemeTaskProxy::didReceiveResponse): Ditto.
+        (WebKit::WebURLSchemeTaskProxy::didReceiveData): Ditto.
+        (WebKit::WebURLSchemeTaskProxy::didComplete): Ditto.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::networkProcessConnectionClosed): Add logging that the network process crashed.
+
 2021-04-06  Devin Rousso  <drousso@apple.com>
 
         [iOS] contextmenu hints can be clipped by the WKWebView
