@@ -1,3 +1,50 @@
+2021-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Wasted vector capacity in FEColorMatrix and filters
+        https://bugs.webkit.org/show_bug.cgi?id=224169
+
+        Reviewed by Said Abou-Hallawa.
+
+        When building filter effects, avoid the inputEffects() having a larger
+        capacity than needed.
+
+        Shrink the Vector<float> which is input to FEColorMatrix.
+
+        This saves around 40KB on facebook.com feed pages.
+
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::FEColorMatrix):
+        (WebCore::FEColorMatrix::create):
+        * platform/graphics/filters/FEColorMatrix.h:
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::build):
+        (WebCore::endMatrixRow): Deleted.
+        (WebCore::lastMatrixRow): Deleted.
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives const):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::build const):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build const):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::build const):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build const):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::build const):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::build const):
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::build const):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::build const):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::build const):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build const):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::build const):
+
 2021-04-05  Saam Barati  <sbarati@apple.com>
 
         Enable QuotaExceededError on non GSTREAMER platforms

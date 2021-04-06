@@ -113,15 +113,18 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuil
     // Use defaults if values is empty (SVG 1.1 15.10).
     if (!hasAttribute(SVGNames::valuesAttr)) {
         switch (filterType) {
-        case FECOLORMATRIX_TYPE_MATRIX:
-            for (size_t i = 0; i < 20; i++)
-                filterValues.append((i % 6) ? 0 : 1);
+        case FECOLORMATRIX_TYPE_MATRIX: {
+            static constexpr unsigned matrixValueCount = 20;
+            filterValues.reserveInitialCapacity(matrixValueCount);
+            for (size_t i = 0; i < matrixValueCount; i++)
+                filterValues.uncheckedAppend((i % 6) ? 0 : 1);
             break;
+        }
         case FECOLORMATRIX_TYPE_HUEROTATE:
-            filterValues.append(0);
+            filterValues = { 0 };
             break;
         case FECOLORMATRIX_TYPE_SATURATE:
-            filterValues.append(1);
+            filterValues = { 1 };
             break;
         default:
             break;
@@ -135,10 +138,11 @@ RefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filterBuil
             return nullptr;
         
         filterValues = values();
+        filterValues.shrinkToFit();
     }
 
-    auto effect = FEColorMatrix::create(filter, filterType, filterValues);
-    effect->inputEffects().append(input1);
+    auto effect = FEColorMatrix::create(filter, filterType, WTFMove(filterValues));
+    effect->inputEffects() = { input1 };
     return effect;
 }
 

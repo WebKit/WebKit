@@ -94,7 +94,7 @@ std::unique_ptr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFi
     builder->setTargetBoundingBox(targetBoundingBox);
     
     for (auto& element : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement())) {
-        RefPtr<FilterEffect> effect = element.build(builder.get(), filter);
+        auto effect = element.build(builder.get(), filter);
         if (!effect) {
             builder->clearEffects();
             return nullptr;
