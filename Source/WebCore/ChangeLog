@@ -1,3 +1,14 @@
+2021-04-06  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Fix build of DiagnosticLoggingDomain.h
+        https://bugs.webkit.org/show_bug.cgi?id=224205
+
+        Reviewed by Don Olmstead.
+
+        No new tests, build fix only.
+
+        * page/DiagnosticLoggingDomain.h: Include wtf/EnumTraits.h
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r274358) [GStreamer] http/tests/images/mp4-partial-load.html is flaky crashing inside GStreamer
