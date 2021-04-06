@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DisplayListItemBuffer.h"
 
+#include "DisplayListItemBufferIdentifier.h"
 #include "DisplayListItems.h"
 #include <wtf/FastMalloc.h>
 

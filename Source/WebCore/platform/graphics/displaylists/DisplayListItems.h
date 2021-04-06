@@ -26,11 +26,14 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "DisplayList.h"
+#include "DisplayListFlushIdentifier.h"
+#include "DisplayListItemBufferIdentifier.h"
+#include "DisplayListItemType.h"
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"
+#include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageData.h"
 #include "MediaPlayerIdentifier.h"
@@ -38,6 +41,7 @@
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
 #include <wtf/TypeCasts.h>
+#include <wtf/Variant.h>
 
 namespace WTF {
 class TextStream;
@@ -50,6 +54,8 @@ class MediaPlayer;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
+
+struct ItemHandle;
 
 /* isInlineItem indicates whether the object needs to be passed through IPC::Encoder in order to serialize,
  * or whether we can just use placement new and be done.

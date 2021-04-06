@@ -1,3 +1,32 @@
+2021-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 3: Reorder #include dependencies to allow for ItemBuffer{Writing,Reading}Client to know about DisplayList item types
+        https://bugs.webkit.org/show_bug.cgi?id=224145
+
+        Reviewed by Wenson Hsieh.
+
+        ItemBuffer{Writing,Reading}Client exists within DisplayListItemBuffer.h. The DisplayList item types exist within DisplayListItems.h.
+
+        Previously, the #include path was:
+        DisplayListItems.h -> DisplayList.h -> DisplayListItemBuffer.h
+
+        However, this means that DisplayListItemBuffer.h can't see what's inside DisplayListItems.h.
+
+        After this patch, the #include path is:
+        DisplayList.h -> DisplayListItemBuffer.h -> DisplayListItems.h
+
+        This is important because ItemBuffer{Writing,Reading}Client have encodeItem() and decodeItem() functions, which will need to know
+        about DisplayList item types if we want to migrate away from ItemHandle.
+
+        No new tests because there is no behavior change.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        * platform/graphics/displaylists/DisplayListItemBuffer.h:
+        * platform/graphics/displaylists/DisplayListItemBufferIdentifier.h: Added.
+        * platform/graphics/displaylists/DisplayListItems.h:
+
 2021-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         Add additional page load diagnostic logging
