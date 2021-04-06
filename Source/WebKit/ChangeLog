@@ -1,3 +1,16 @@
+2021-04-05  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Calling AudioComponentFetchServerRegistrations on main thread causes launch time regression
+        https://bugs.webkit.org/show_bug.cgi?id=224137
+        <rdar://76137483>
+
+        Reviewed by Eric Carlson.
+
+        Run the command to fetch AudioComponent registration data on a generic background queue.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations):
+
 2021-04-05  Christopher Reid  <chris.reid@sony.com>
 
         [WinCairo] Enable Service Worker tests
