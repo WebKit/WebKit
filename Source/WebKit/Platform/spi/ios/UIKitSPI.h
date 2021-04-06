@@ -1218,10 +1218,6 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @end
 
 #if USE(UICONTEXTMENU)
-@interface UITargetedPreview ()
-@property (nonatomic, strong, setter=_setOverridePositionTrackingView:) UIView *overridePositionTrackingView;
-@end
-
 @interface UIContextMenuInteraction ()
 @property (nonatomic, readonly) UIGestureRecognizer *gestureRecognizerForFailureRelationships;
 - (void)_presentMenuAtLocation:(CGPoint)location;
