@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "DisplayListItems.h"
 #include "GraphicsContext.h"
+#include "InMemoryDisplayList.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 
@@ -179,9 +180,9 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
     LOG_WITH_STREAM(DisplayLists, stream << "\nReplaying with clip " << initialClip);
     UNUSED_PARAM(initialClip);
 
-    std::unique_ptr<DisplayList> replayList;
+    std::unique_ptr<InMemoryDisplayList> replayList;
     if (UNLIKELY(trackReplayList))
-        replayList = makeUnique<DisplayList>();
+        replayList = makeUnique<InMemoryDisplayList>();
 
 #if !LOG_DISABLED
     size_t i = 0;

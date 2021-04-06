@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -437,14 +437,14 @@ template<typename, typename = void> inline constexpr bool HasIsValid = false;
 template<typename T> inline constexpr bool HasIsValid<T, std::void_t<decltype(std::declval<T>().isValid())>> = true;
 
 template<typename Item>
-typename std::enable_if_t<!HasIsValid<Item>, bool> copyInto(const ItemHandle& itemHandle, uint8_t* destinationWithOffset)
+static typename std::enable_if_t<!HasIsValid<Item>, bool> copyInto(const ItemHandle& itemHandle, uint8_t* destinationWithOffset)
 {
     new (destinationWithOffset) Item(itemHandle.get<Item>());
     return true;
 }
 
 template<typename Item>
-typename std::enable_if_t<HasIsValid<Item>, bool> copyInto(const ItemHandle& itemHandle, uint8_t* destinationWithOffset)
+static typename std::enable_if_t<HasIsValid<Item>, bool> copyInto(const ItemHandle& itemHandle, uint8_t* destinationWithOffset)
 {
     auto* newItem = new (destinationWithOffset) Item(itemHandle.get<Item>());
     return newItem->isValid();
@@ -605,7 +605,6 @@ ItemBuffer::~ItemBuffer()
 ItemBuffer::ItemBuffer(ItemBuffer&& other)
     : m_readingClient(std::exchange(other.m_readingClient, nullptr))
     , m_writingClient(std::exchange(other.m_writingClient, nullptr))
-    , m_itemsToDestroyInAllocatedBuffers(std::exchange(other.m_itemsToDestroyInAllocatedBuffers, { }))
     , m_allocatedBuffers(std::exchange(other.m_allocatedBuffers, { }))
     , m_readOnlyBuffers(std::exchange(other.m_readOnlyBuffers, { }))
     , m_writableBuffer(std::exchange(other.m_writableBuffer, { }))
@@ -617,7 +616,6 @@ ItemBuffer& ItemBuffer::operator=(ItemBuffer&& other)
 {
     m_readingClient = std::exchange(other.m_readingClient, nullptr);
     m_writingClient = std::exchange(other.m_writingClient, nullptr);
-    m_itemsToDestroyInAllocatedBuffers = std::exchange(other.m_itemsToDestroyInAllocatedBuffers, { });
     m_allocatedBuffers = std::exchange(other.m_allocatedBuffers, { });
     m_readOnlyBuffers = std::exchange(other.m_readOnlyBuffers, { });
     m_writableBuffer = std::exchange(other.m_writableBuffer, { });
@@ -651,9 +649,6 @@ void ItemBuffer::forEachItemBuffer(Function<void(const ItemBufferHandle&)>&& map
 
 void ItemBuffer::clear()
 {
-    for (auto item : std::exchange(m_itemsToDestroyInAllocatedBuffers, { }))
-        item.destroy();
-
     for (auto* buffer : std::exchange(m_allocatedBuffers, { }))
         fastFree(buffer);
 
@@ -682,18 +677,30 @@ DidChangeItemBuffer ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
 
 void ItemBuffer::append(ItemHandle temporaryItem)
 {
-    auto data = m_writingClient->encodeItem(temporaryItem);
-    if (!data)
-        return;
+    auto requiredSizeForItem = m_writingClient->requiredSizeForItem(temporaryItem);
+    RefPtr<SharedBuffer> outOfLineItem;
+    if (!requiredSizeForItem) {
+        outOfLineItem = m_writingClient->encodeItemOutOfLine(temporaryItem);
+        if (!outOfLineItem)
+            return;
+    }
 
-    auto dataLength = data->size();
+    auto dataLength = valueOrCompute(requiredSizeForItem, [&] {
+        ASSERT(outOfLineItem);
+        return outOfLineItem->size();
+    });
     auto additionalCapacityForEncodedItem = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
 
     auto bufferChanged = swapWritableBufferIfNeeded(additionalCapacityForEncodedItem);
 
     m_writableBuffer.data[m_writtenNumberOfBytes] = static_cast<uint8_t>(temporaryItem.type());
     reinterpret_cast<uint64_t*>(m_writableBuffer.data + m_writtenNumberOfBytes)[1] = dataLength;
-    memcpy(m_writableBuffer.data + m_writtenNumberOfBytes + 2 * sizeof(uint64_t), data->dataAsUInt8Ptr(), dataLength);
+    auto* location = m_writableBuffer.data + m_writtenNumberOfBytes + 2 * sizeof(uint64_t);
+
+    if (requiredSizeForItem)
+        m_writingClient->encodeItemInline(temporaryItem, location);
+    else
+        memcpy(location, outOfLineItem->dataAsUInt8Ptr(), dataLength);
 
     didAppendData(additionalCapacityForEncodedItem, bufferChanged);
 }

@@ -1,3 +1,12 @@
+2021-04-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 1: Require encoding/decoding delegates for non-inline display list items
+        https://bugs.webkit.org/show_bug.cgi?id=223849
+
+        Reviewed by Wenson Hsieh.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+
 2021-04-05  Jer Noble  <jer.noble@apple.com>
 
         [MediaSession] Small refactoring of MediaSession implementation classes

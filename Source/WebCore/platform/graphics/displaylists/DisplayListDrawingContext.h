@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@
 namespace WebCore {
 namespace DisplayList {
 
+class InMemoryDisplayList;
+
 class DrawingContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -42,7 +44,7 @@ public:
     DisplayList takeDisplayList() { return std::exchange(m_displayList, { }); }
     DisplayList& displayList() { return m_displayList; }
     const DisplayList& displayList() const { return m_displayList; }
-    const DisplayList* replayedDisplayList() const { return m_replayedDisplayList.get(); }
+    const InMemoryDisplayList* replayedDisplayList() const { return m_replayedDisplayList.get(); }
 
     WEBCORE_EXPORT void setTracksDisplayListReplay(bool);
     WEBCORE_EXPORT void replayDisplayList(GraphicsContext&);
@@ -50,7 +52,7 @@ public:
 protected:
     GraphicsContext m_context;
     DisplayList m_displayList;
-    std::unique_ptr<DisplayList> m_replayedDisplayList;
+    std::unique_ptr<InMemoryDisplayList> m_replayedDisplayList;
     bool m_tracksDisplayListReplay { false };
 };
 

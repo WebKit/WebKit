@@ -1,3 +1,72 @@
+2021-04-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 1: Require encoding/decoding delegates for non-inline display list items
+        https://bugs.webkit.org/show_bug.cgi?id=223849
+
+        Reviewed by Wenson Hsieh.
+
+        Requiring delegates for non-inline display list items has these advantages:
+        - DisplayList::Iterator::updateCurrentItem() only has 2 codepaths instead of 3.
+        - ItemBuffer::m_itemsToDestroyInAllocatedBuffers can be deleted entirely.
+        - The conditional inside ItemBuffer::append() can be simplified from
+              !T::isInlineItem && m_writingClient to just !T::isInlineItem, which I think makes the
+              function significantly more readable.
+
+        There are a few places where we were using non-inline display list items without a delegate:
+        This patch adds two new "null" delegates, and hooks them up to a subclass of DisplayList,
+        called InMemoryDisplayList. Clients who want to use in-memory display lists (like the
+        DrawGlyphs cache) can just use this class, and retain their calling pattern they were using
+        before. Also, this patch adds InMemoryDisplayList without adding any virtual functions to
+        DisplayList.
+
+        No new tests because there is no behavior change.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLCanvasElement.cpp:
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::displayListForTextRun const):
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::displayListForTextRun):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::recursiveCommitChanges):
+        (WebCore::GraphicsLayerCA::platformCALayerPaintContents):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::iterator::updateCurrentItem):
+        * platform/graphics/displaylists/DisplayListDrawingContext.h:
+        (WebCore::DisplayList::DrawingContext::replayedDisplayList const):
+        * platform/graphics/displaylists/DisplayListImageBuffer.h:
+        (WebCore::DisplayList::ImageBuffer::ImageBuffer):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::copyInto):
+        (WebCore::DisplayList::ItemBuffer::ItemBuffer):
+        (WebCore::DisplayList::ItemBuffer::operator=):
+        (WebCore::DisplayList::ItemBuffer::clear):
+        (WebCore::DisplayList::ItemBuffer::append):
+        (WebCore::DisplayList::m_allocatedBuffers): Deleted.
+        * platform/graphics/displaylists/DisplayListItemBuffer.h:
+        (WebCore::DisplayList::ItemHandle::get const):
+        (WebCore::DisplayList::ItemBufferWritingClient::~ItemBufferWritingClient):
+        (WebCore::DisplayList::ItemBufferWritingClient::createItemBuffer):
+        (WebCore::DisplayList::ItemBufferWritingClient::requiredSizeForItem const):
+        (WebCore::DisplayList::ItemBufferWritingClient::encodeItemOutOfLine const):
+        (WebCore::DisplayList::ItemBufferWritingClient::encodeItemInline const):
+        (WebCore::DisplayList::ItemBufferWritingClient::didAppendData):
+        (WebCore::DisplayList::ItemBuffer::append):
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::Replayer::replay):
+        * platform/graphics/displaylists/DisplayListReplayer.h:
+        * platform/graphics/displaylists/InMemoryDisplayList.cpp: Added.
+        (WebCore::DisplayList::InMemoryDisplayList::WritingClient::requiredSizeForItem const):
+        (WebCore::DisplayList::InMemoryDisplayList::WritingClient::encodeItemInline const):
+        (WebCore::DisplayList::InMemoryDisplayList::ReadingClient::decodeItem):
+        (WebCore::DisplayList::InMemoryDisplayList::InMemoryDisplayList):
+        (WebCore::DisplayList::InMemoryDisplayList::~InMemoryDisplayList):
+        * platform/graphics/displaylists/InMemoryDisplayList.h: Copied from Source/WebCore/platform/graphics/displaylists/DisplayListDrawingContext.h.
+        * rendering/GlyphDisplayListCache.h:
+
 2021-04-05  Jer Noble  <jer.noble@apple.com>
 
         [MediaSession] Small refactoring of MediaSession implementation classes

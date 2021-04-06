@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/Gradient.h>
+#include <WebCore/InMemoryDisplayList.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -58,7 +59,7 @@ static Path createComplexPath()
 
 TEST(DisplayListTests, AppendItems)
 {
-    DisplayList list;
+    InMemoryDisplayList list;
 
     EXPECT_TRUE(list.isEmpty());
 
@@ -198,14 +199,12 @@ TEST(DisplayListTests, ItemBufferClient)
             return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
         }
 
-        RefPtr<SharedBuffer> encodeItem(ItemHandle handle) const final
+        RefPtr<SharedBuffer> encodeItemOutOfLine(ItemHandle handle) const final
         {
             auto index = m_items.size();
             m_items.append(handle.get<StrokePath>());
             return SharedBuffer::create(reinterpret_cast<uint8_t*>(&index), sizeof(size_t));
         }
-
-        void didAppendData(const ItemBufferHandle&, size_t, DidChangeItemBuffer) final { }
 
         Vector<StrokePath>& m_items;
     };

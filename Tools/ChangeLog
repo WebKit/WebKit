@@ -1,3 +1,14 @@
+2021-04-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 1: Require encoding/decoding delegates for non-inline display list items
+        https://bugs.webkit.org/show_bug.cgi?id=223849
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+
 2021-04-05  Christopher Reid  <chris.reid@sony.com>
 
         [WinCairo] Enable Service Worker tests

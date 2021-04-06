@@ -35,6 +35,7 @@
 #include "FloatRect.h"
 #include "GraphicsLayerFactory.h"
 #include "Image.h"
+#include "InMemoryDisplayList.h"
 #include "Logging.h"
 #include "Model.h"
 #include "PlatformCAFilters.h"
@@ -402,7 +403,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAn
 #endif
 }
 
-typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
+typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::InMemoryDisplayList>>> LayerDisplayListHashMap;
 
 static LayerDisplayListHashMap& layerDisplayListMap()
 {
@@ -1710,7 +1711,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     if (usesDisplayListDrawing() && m_drawsContent && (!m_hasEverPainted || hadDirtyRects)) {
         TraceScope tracingScope(DisplayListRecordStart, DisplayListRecordEnd);
 
-        m_displayList = makeUnique<DisplayList::DisplayList>();
+        m_displayList = makeUnique<DisplayList::InMemoryDisplayList>();
         
         FloatRect initialClip(boundsOrigin(), size());
 
@@ -1744,7 +1745,7 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
         
         if (UNLIKELY(isTrackingDisplayListReplay())) {
             auto replayList = replayer.replay(clip, isTrackingDisplayListReplay()).trackedDisplayList;
-            layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>(clip, WTFMove(replayList)));
+            layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::InMemoryDisplayList>>(clip, WTFMove(replayList)));
         } else
             replayer.replay(clip);
 

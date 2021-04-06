@@ -104,6 +104,7 @@ protected:
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
 
         m_drawingContext.displayList().setItemBufferWritingClient(this);
+        m_drawingContext.displayList().setItemBufferReadingClient(nullptr);
         m_drawingContext.displayList().setTracksDrawingItemExtents(false);
     }
 
@@ -310,7 +311,7 @@ protected:
             m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheFont(font);
     }
 
-    WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) override
+    WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) final
     {
         if (LIKELY(m_remoteRenderingBackendProxy))
             return m_remoteRenderingBackendProxy->createItemBuffer(capacity, m_renderingResourceIdentifier);
@@ -319,7 +320,7 @@ protected:
         return { };
     }
 
-    RefPtr<WebCore::SharedBuffer> encodeItem(WebCore::DisplayList::ItemHandle item) const override
+    RefPtr<WebCore::SharedBuffer> encodeItemOutOfLine(WebCore::DisplayList::ItemHandle item) const final
     {
         /* This needs to match (1) isInlineItem() in DisplayListItemType.cpp, (2) RemoteRenderingBackend::decodeItem(),
          * and (3) all the "static constexpr bool isInlineItem"s inside the individual item classes.

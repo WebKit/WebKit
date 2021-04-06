@@ -31,6 +31,7 @@
 #include "FontCache.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
+#include "InMemoryDisplayList.h"
 #include "LayoutRect.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
@@ -211,7 +212,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
     drawEmphasisMarks(context, glyphBuffer, mark, startPoint);
 }
 
-std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
+std::unique_ptr<DisplayList::InMemoryDisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(!context.paintingDisabled());
     unsigned destination = to.valueOr(run.length());
@@ -227,7 +228,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     if (glyphBuffer.isEmpty())
         return nullptr;
     
-    std::unique_ptr<DisplayList::DisplayList> displayList = makeUnique<DisplayList::DisplayList>();
+    std::unique_ptr<DisplayList::InMemoryDisplayList> displayList = makeUnique<DisplayList::InMemoryDisplayList>();
     GraphicsContext recordingContext([&](GraphicsContext& displayListContext) {
         return makeUnique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform(), nullptr, DisplayList::DrawGlyphsRecorder::DrawGlyphsDeconstruction::DontDeconstruct);
     });
