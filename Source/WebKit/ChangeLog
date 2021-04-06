@@ -1,3 +1,21 @@
+2021-04-06  Youenn Fablet  <youenn@apple.com>
+
+        Release WebRTC remote encoder/decoder callback lock right after having changed the encoder/decoder callback
+        https://bugs.webkit.org/show_bug.cgi?id=224228
+        <rdar://74560516>
+
+        Reviewed by Eric Carlson.
+
+        We were locking the callback lock, changing the callback and hopping to codec map thread to free the encoder/decoder.
+        Then we were unlocking the callback lock.
+        There was a chance that the encoder/decoder gets freed in the codec map thread before we unlock its callback lock.
+        Given that we nullify the callback in decoder/encoder Release before going to destructor, we can just remove the lock/nullify code.
+        Covered by existing test sets.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::releaseDecoder):
+        (WebKit::LibWebRTCCodecs::releaseEncoder):
+
 2021-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Remove definition used for staging change with internal repo
