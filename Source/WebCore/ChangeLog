@@ -1,3 +1,15 @@
+2021-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Wasted vector capacity in CSSVariableData
+        https://bugs.webkit.org/show_bug.cgi?id=224164
+
+        Reviewed by Anders Carlsson.
+
+        Shrink m_tokens. This saves 2.7MB on youtube.com.
+
+        * css/CSSVariableData.cpp:
+        (WebCore::CSSVariableData::CSSVariableData):
+
 2021-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION: ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() on various tests
