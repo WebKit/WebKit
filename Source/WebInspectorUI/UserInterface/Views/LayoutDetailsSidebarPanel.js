@@ -36,11 +36,6 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
     // Public
 
-    get minimumWidth()
-    {
-        return this._boxModelDiagramRow?.minimumWidth ?? 0;
-    }
-
     inspect(objects)
     {
         // Layout panel doesn't show when hasDOMNode is false.
@@ -102,11 +97,6 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
     initialLayout()
     {
-        this._boxModelDiagramRow = new WI.BoxModelDetailsSectionRow;
-        let boxModelGroup = new WI.DetailsSectionGroup([this._boxModelDiagramRow]);
-        let boxModelSection = new WI.DetailsSection("layout-box-model", WI.UIString("Box Model"), [boxModelGroup]);
-        this.contentView.element.appendChild(boxModelSection.element);
-
         this._gridDetailsSectionRow = new WI.DetailsSectionRow(WI.UIString("No CSS Grid Contexts", "No CSS Grid Contexts @ Layout Details Sidebar Panel", "Message shown when there are no CSS Grid contexts on the inspected page."));
         let gridGroup = new WI.DetailsSectionGroup([this._gridDetailsSectionRow]);
         let gridDetailsSection = new WI.DetailsSection("layout-css-grid", WI.UIString("Grid", "Grid @ Elements details sidebar", "CSS Grid layout section name"), [gridGroup]);
@@ -134,9 +124,6 @@ WI.LayoutDetailsSidebarPanel = class LayoutDetailsSidebarPanel extends WI.DOMDet
 
             this._gridSection.gridNodeSet = this._gridNodeSet;
         }
-
-        if (this._boxModelDiagramRow.nodeStyles !== this._nodeStyles)
-            this._boxModelDiagramRow.nodeStyles = this._nodeStyles;
     }
 
     // Private
