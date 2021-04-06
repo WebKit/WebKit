@@ -1,3 +1,21 @@
+2021-04-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] audio played at 2x speed video is not pitch corrected
+        https://bugs.webkit.org/show_bug.cgi?id=224238
+        rdar://75868284
+
+        Reviewed by Jer Noble.
+
+        We need to use the _intended_ playback rate when deciding which pitch correction
+        algorithm to use. MediaPlayerPrivateAVFoundationObjC::m_cachedRate is used for this,
+        but r274592 stopped setting m_cachedRate in MediaPlayerPrivateAVFoundationObjC::setPlayerRate
+        because it is also set when AVPlayer KVOs that the rate changed.
+
+        Tested manually.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPlayerRate): Set m_cachedRate.
+
 2021-04-06  David Kilzer  <ddkilzer@apple.com>
 
         UBSan: RenderView.cpp:831:9: runtime error: load of value nnn, which is not a valid value for type 'bool'
