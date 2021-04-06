@@ -1934,10 +1934,10 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             auto& area = gridArea.value;
 
             // Named grid areas will always be rectangular per the CSS Grid specification.
-            auto columnStartLine = columnLineAt(columnPositions[area.columns.startLine()] - columnPositions[0]);
+            auto columnStartLine = columnLineAt(columnPositions[area.columns.startLine()]);
             auto columnEndLine = columnLineAt(columnPositions[area.columns.endLine() - 1] + columnWidths[area.columns.endLine() - 1]);
-            auto rowStartLine = rowLineAt(rowPositions[area.rows.startLine()] - rowPositions[0]);
-            auto rowEndLine = rowLineAt(rowPositions[area.rows.endLine() - 1] + rowHeights[area.rows.endLine() - 1] - rowPositions[0]);
+            auto rowStartLine = rowLineAt(rowPositions[area.rows.startLine()]);
+            auto rowEndLine = rowLineAt(rowPositions[area.rows.endLine() - 1] + rowHeights[area.rows.endLine() - 1]);
 
             Optional<FloatPoint> topLeft = columnStartLine.intersectionWith(rowStartLine);
             Optional<FloatPoint> topRight = columnEndLine.intersectionWith(rowStartLine);

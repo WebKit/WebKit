@@ -1,3 +1,16 @@
+2021-04-06  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Grid overlay areas appear offset from their actual areas when the grid container has a border set
+        https://bugs.webkit.org/show_bug.cgi?id=224201
+
+        Reviewed by BJ Burg.
+
+        As of r274096, it is no longer correct to subtract the first track's position for either axis from the edge
+        lines of areas. This change resolves that, bringing this math in line with how other grid lines are laid out.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::buildGridOverlay):
+
 2021-04-06  Alicia Boya García  <aboya@igalia.com>
 
         [GStreamer] At EOS, change position to match duration, not the other way around.
