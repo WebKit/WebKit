@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
       RenderBR {BR} at (540,44) size 1x19
       RenderInline {SPAN} at (0,0) size 60x29 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (7,66) size 42x20 [color=#007AFF] [bgcolor=#78788029]
+        RenderMenuList {SELECT} at (7,66) size 42x20 [color=#007AFF] [bgcolor=#E9E9EA]
           RenderBlock (anonymous) at (5,3) size 32x14
             RenderText at (0,0) size 21x14
               text run at (0,0) width 21: "test"
@@ -51,7 +51,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,172) size 509x19
         text run at (0,172) width 509: "This tests that background is white if only background-image:none is specified."
       RenderBR {BR} at (508,172) size 1x19
-      RenderMenuList {SELECT} at (2,194) size 42x20 [color=#007AFF] [bgcolor=#78788029]
+      RenderMenuList {SELECT} at (2,194) size 42x20 [color=#007AFF] [bgcolor=#E9E9EA]
         RenderBlock (anonymous) at (5,3) size 32x14
           RenderText at (0,0) size 21x14
             text run at (0,0) width 21: "test"
@@ -59,7 +59,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,216) size 430x19
         text run at (0,216) width 430: "This tests that the image specified for background-image is visible."
       RenderBR {BR} at (429,216) size 1x19
-      RenderMenuList {SELECT} at (2,238) size 30x14 [color=#007AFF] [bgcolor=#78788029]
+      RenderMenuList {SELECT} at (2,238) size 30x14 [color=#007AFF] [bgcolor=#E9E9EA]
         RenderBlock (anonymous) at (4,0) size 22x14
           RenderText at (0,0) size 21x14
             text run at (0,0) width 21: "test"

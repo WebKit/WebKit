@@ -1,3 +1,57 @@
+2021-04-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Use opaque system colors for control backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=224131
+        <rdar://problem/75975709>
+
+        Reviewed by Tim Horton.
+
+        r274600 introduced the use of system colors for control backgrounds.
+        However, the system fill colors are not opaque, leading to poor
+        visibility on certain page/element backgrounds.
+
+        To fix, use an opaque variant of the system fill colors, as if they
+        were drawn on top of a white background. Note that UIKit does not
+        expose these opaque variants, leaving us to make the adjustments
+        ourselves.
+
+        * css/CSSValueKeywords.in:
+
+        Replace the system fill color keywords with opaque variants. The old
+        colors are fine to remove, since they were only introduced in r274600,
+        and have no external clients.
+
+        * css/html.css:
+
+        Replace all system fill colors with their opaque variants.
+ 
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::cssValueSystemColorInformationList):
+
+        Renamed CSSValueIDAndSelector to CSSValueSystemColorInformation to
+        account for the addition of new fields to support opaque fill colors.
+
+        Storing the blendOverWhite and opacity fields in the list allows us
+        to resolve the color once and store it in a cache, rather than
+        applying the adjustments each time.
+
+        (WebCore::systemColorFromCSSValueSystemColorInformation):
+
+        Use the blendOverWhite and opacity information from the
+        CSSValueSystemColorInformation to determine the final color.
+
+        (WebCore::systemColorFromCSSValueID):
+
+        Call into systemColorFromCSSValueSystemColorInformation to avoid
+        duplicating logic.
+
+        (WebCore::RenderThemeIOS::cssValueToSystemColorMap):
+        (WebCore::RenderThemeIOS::systemColor):
+        (WebCore::RenderThemeIOS::checkboxRadioBackgroundColor):
+        (WebCore::RenderThemeIOS::paintProgressBarWithFormControlRefresh):
+        (WebCore::RenderThemeIOS::paintMeter):
+        (WebCore::RenderThemeIOS::paintSliderTrackWithFormControlRefresh):
+
 2021-04-06  Tadeu Zagallo  <tzagallo@apple.com>
 
         Handle OOM in ScriptExecutionContext::reportUnhandledPromiseRejection

@@ -33,6 +33,7 @@
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKey.h"
 #import "CSSValueKeywords.h"
+#import "ColorBlending.h"
 #import "ColorIOS.h"
 #import "DateComponents.h"
 #import "Document.h"
@@ -1266,20 +1267,22 @@ bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
     }
 }
 
-struct CSSValueIDAndSelector {
+struct CSSValueSystemColorInformation {
     CSSValueID cssValueID;
     SEL selector;
+    bool blendOverWhite { false };
+    float opacity { 1.0f };
 };
 
-static const Vector<CSSValueIDAndSelector>& cssValueIDSelectorList()
+static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformationList()
 {
-    static NeverDestroyed<Vector<CSSValueIDAndSelector>> cssValueIDSelectorList;
+    static NeverDestroyed<Vector<CSSValueSystemColorInformation>> cssValueSystemColorInformationList;
 
     static std::once_flag initializeOnce;
     std::call_once(
         initializeOnce,
         [] {
-        cssValueIDSelectorList.get() = Vector(std::initializer_list<CSSValueIDAndSelector> {
+        cssValueSystemColorInformationList.get() = Vector(std::initializer_list<CSSValueSystemColorInformation> {
             { CSSValueText, @selector(labelColor) },
             { CSSValueWebkitControlBackground, @selector(systemBackgroundColor) },
             { CSSValueAppleSystemBlue, @selector(systemBlueColor) },
@@ -1296,9 +1299,11 @@ static const Vector<CSSValueIDAndSelector>& cssValueIDSelectorList()
             { CSSValueAppleSystemBackground, @selector(systemBackgroundColor) },
             { CSSValueAppleSystemSecondaryBackground, @selector(secondarySystemBackgroundColor) },
             { CSSValueAppleSystemTertiaryBackground, @selector(tertiarySystemBackgroundColor) },
-            { CSSValueAppleSystemFill, @selector(systemFillColor) },
-            { CSSValueAppleSystemSecondaryFill, @selector(secondarySystemFillColor) },
-            { CSSValueAppleSystemTertiaryFill, @selector(tertiarySystemFillColor) },
+            { CSSValueAppleSystemOpaqueFill, @selector(systemFillColor), true },
+            { CSSValueAppleSystemOpaqueSecondaryFill, @selector(secondarySystemFillColor), true },
+            // FIXME: <rdar://problem/75538507> UIKit should expose this color so that we maintain parity with system buttons.
+            { CSSValueAppleSystemOpaqueSecondaryFillDisabled, @selector(secondarySystemFillColor), true, 0.75f },
+            { CSSValueAppleSystemOpaqueTertiaryFill, @selector(tertiarySystemFillColor), true },
             { CSSValueAppleSystemGroupedBackground, @selector(systemGroupedBackgroundColor) },
             { CSSValueAppleSystemSecondaryGroupedBackground, @selector(secondarySystemGroupedBackgroundColor) },
             { CSSValueAppleSystemTertiaryGroupedBackground, @selector(tertiarySystemGroupedBackgroundColor) },
@@ -1320,13 +1325,23 @@ static const Vector<CSSValueIDAndSelector>& cssValueIDSelectorList()
         });
     });
 
-    return cssValueIDSelectorList;
+    return cssValueSystemColorInformationList;
 }
 
-static inline Optional<Color> systemColorFromCSSValueIDSelector(CSSValueIDAndSelector idAndSelector)
+static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation)
 {
-    if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), idAndSelector.selector))
-        return Color { color.CGColor, Color::Flags::Semantic };
+    if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), systemColorInformation.selector)) {
+        Color systemColor = { color.CGColor, Color::Flags::Semantic };
+
+        if (systemColorInformation.opacity < 1.0f)
+            systemColor = systemColor.colorWithAlphaMultipliedBy(systemColorInformation.opacity);
+
+        if (systemColorInformation.blendOverWhite)
+            return blendSourceOver(Color::white, systemColor);
+
+        return systemColor;
+    }
+
     return WTF::nullopt;
 }
 
@@ -1334,21 +1349,13 @@ static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool use
 {
     LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
 
-    auto cssColorToSelector = [cssValueID] () -> SEL {
-        for (auto& cssValueIDSelector : cssValueIDSelectorList()) {
-            if (cssValueIDSelector.cssValueID == cssValueID)
-                return cssValueIDSelector.selector;
-        }
-        return nullptr;
-    };
-
-    if (auto selector = cssColorToSelector()) {
-        if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), selector))
-            return Color { color.CGColor, Color::Flags::Semantic };
+    for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
+        if (cssValueSystemColorInformation.cssValueID == cssValueID)
+            return systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation);
     }
+
     return WTF::nullopt;
 }
-
 
 static RenderThemeIOS::CSSValueToSystemColorMap& globalCSSValueToSystemColorMap()
 {
@@ -1364,9 +1371,9 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
         for (bool useDarkAppearance : { false, true }) {
             for (bool useElevatedUserInterfaceLevel : { false, true }) {
                 LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
-                for (auto& cssValueIDSelector : cssValueIDSelectorList()) {
-                    if (auto color = systemColorFromCSSValueIDSelector(cssValueIDSelector))
-                        map.add(CSSValueKey { cssValueIDSelector.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTFMove(*color));
+                for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
+                    if (auto color = systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation))
+                        map.add(CSSValueKey { cssValueSystemColorInformation.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTFMove(*color));
                 }
             }
         }
@@ -1396,10 +1403,6 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColor::O
         return RenderTheme::systemColor(cssValueID, options);
 
     ASSERT(!forVisitedLink);
-
-    // FIXME: <rdar://problem/75538507> UIKit should expose this color so that we maintain parity with system buttons.
-    if (cssValueID == CSSValueAppleSystemSecondaryFillDisabled)
-        return systemColor(CSSValueAppleSystemSecondaryFill, options).colorWithAlphaMultipliedBy(0.75f);
 
     auto& cache = colorCache(options);
     return cache.systemStyleColors.ensure(cssValueID, [this, cssValueID, options] () -> Color {
@@ -2011,13 +2014,13 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 Color RenderThemeIOS::checkboxRadioBackgroundColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
 {
     if (!states.contains(ControlStates::States::Enabled))
-        return systemColor(CSSValueAppleSystemSecondaryFillDisabled, styleColorOptions);
+        return systemColor(CSSValueAppleSystemOpaqueSecondaryFillDisabled, styleColorOptions);
 
     Color enabledBackgroundColor;
     if (states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate }))
         enabledBackgroundColor = systemColor(CSSValueAppleSystemBlue, styleColorOptions);
     else
-        enabledBackgroundColor = systemColor(CSSValueAppleSystemSecondaryFill, styleColorOptions);
+        enabledBackgroundColor = systemColor(CSSValueAppleSystemOpaqueSecondaryFill, styleColorOptions);
 
     if (states.contains(ControlStates::States::Pressed))
         return enabledBackgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
@@ -2169,7 +2172,7 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
 
     FloatRect trackRect(rect.x(), barTop, rect.width(), barHeight);
     FloatRoundedRect roundedTrackRect(trackRect, barCornerRadii);
-    context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueAppleSystemFill, styleColorOptions));
+    context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
 
     float barWidth;
     float barLeft = rect.x();
@@ -2235,7 +2238,7 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
     FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
-    context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemTertiaryFill, styleColorOptions));
+    context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions));
     context.clipRoundedRect(roundedFillRect);
 
     FloatRect fillRect(rect);
@@ -2370,7 +2373,7 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
 
     FloatRoundedRect::Radii cornerRadii(cornerWidth, cornerHeight);
     FloatRoundedRect innerBorder(trackClip, cornerRadii);
-    context.fillRoundedRect(innerBorder, systemColor(CSSValueAppleSystemFill, styleColorOptions));
+    context.fillRoundedRect(innerBorder, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
 
 #if ENABLE(DATALIST_ELEMENT)
     paintSliderTicks(box, paintInfo, trackClip);

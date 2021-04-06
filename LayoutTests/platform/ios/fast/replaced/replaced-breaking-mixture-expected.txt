@@ -10,27 +10,27 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,45) size 10x44
         RenderText {#text} at (0,0) size 25x19
           text run at (0,0) width 25: "Foo"
-        RenderMenuList {SELECT} at (2,22) size 43x20 [color=#007AFF] [bgcolor=#78788029]
+        RenderMenuList {SELECT} at (2,22) size 43x20 [color=#007AFF] [bgcolor=#E9E9EA]
           RenderBlock (anonymous) at (5,3) size 33x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
       RenderBlock {DIV} at (0,89) size 10x45
         RenderText {#text} at (0,0) size 25x19
           text run at (0,0) width 25: "Foo"
-        RenderTextControl {INPUT} at (2,22) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+        RenderTextControl {INPUT} at (2,22) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
       RenderBlock {DIV} at (0,134) size 10x45
         RenderImage {IMG} at (0,0) size 25x25
         RenderText {#text} at (0,25) size 25x19
           text run at (0,25) width 25: "Foo"
       RenderBlock {DIV} at (0,179) size 10x44
-        RenderMenuList {SELECT} at (2,2) size 43x20 [color=#007AFF] [bgcolor=#78788029]
+        RenderMenuList {SELECT} at (2,2) size 43x20 [color=#007AFF] [bgcolor=#E9E9EA]
           RenderBlock (anonymous) at (5,3) size 33x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,24) size 25x19
           text run at (0,24) width 25: "Foo"
       RenderBlock {DIV} at (0,223) size 10x45
-        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
         RenderText {#text} at (0,25) size 25x19
           text run at (0,25) width 25: "Foo"
 layer at (17,122) size 141x14

@@ -414,7 +414,7 @@ input {
 #endif
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border-radius: 5px;
-    border: 1px solid -apple-system-fill;
+    border: 1px solid -apple-system-opaque-fill;
     font: 11px system-ui;
     padding: 0.2em 0.5em 0.3em 0.5em;
 #else
@@ -439,7 +439,7 @@ input[type="search"] {
     box-sizing: border-box;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     border: initial;
-    background-color: -apple-system-tertiary-fill;
+    background-color: -apple-system-opaque-tertiary-fill;
 #endif
 }
 
@@ -499,7 +499,7 @@ input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     -webkit-appearance: menulist-button;
     border: initial;
-    background-color: -apple-system-secondary-fill;
+    background-color: -apple-system-opaque-secondary-fill;
     font-family: system-ui;
     color: -apple-system-blue;
     padding: 0.2em 0.5em;
@@ -515,7 +515,7 @@ input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], 
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]):disabled {
-    background-color: -apple-system-secondary-fill-disabled;
+    background-color: -apple-system-opaque-secondary-fill-disabled;
     color: -apple-system-tertiary-label;
     opacity: initial;
 }
@@ -836,7 +836,7 @@ input:is([type="button"], [type="submit"], [type="reset"]), input[type="file"]::
     padding: 0 1.0em;
     border: initial;
     font: 11px system-ui;
-    background-color: -apple-system-secondary-fill;
+    background-color: -apple-system-opaque-secondary-fill;
     color: -apple-system-blue;
 #endif
     box-sizing: border-box;
@@ -941,7 +941,7 @@ input:is([type="button"], [type="submit"], [type="reset"]):disabled,
 input[type="file"]:disabled::file-selector-button,
 button:disabled,
 select:disabled {
-    background-color: -apple-system-secondary-fill-disabled;
+    background-color: -apple-system-opaque-secondary-fill-disabled;
     color: -apple-system-tertiary-label;
     opacity: initial;
 }
@@ -1058,7 +1058,7 @@ select {
     font: 11px system-ui;
     border: initial;
     border-radius: initial;
-    background-color: -apple-system-secondary-fill;
+    background-color: -apple-system-opaque-secondary-fill;
 #else
     -webkit-appearance: menulist;
     border: 1px solid;
