@@ -1551,10 +1551,6 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
 
         handleValueIgnoringLineNames(currentValue);
     }
-
-    // Remaining tracks will be `auto`.
-    while (trackSizes.size() < expectedTrackCount)
-        trackSizes.append("auto"_s);
     
     return trackSizes;
 }
@@ -1786,22 +1782,9 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             previousColumnEndLine = columnEndLine;
             
             if (gridOverlay.config.showTrackSizes) {
-                auto trackSizeLabel = String::number(roundf(width));
-                trackSizeLabel.append("px"_s);
-
-                String authoredTrackSize;
-                if (i < authoredTrackColumnSizes.size()) {
-                    auto authoredTrackSize = authoredTrackColumnSizes[i];
-                    if (authoredTrackSize.length() && authoredTrackSize != trackSizeLabel) {
-                        trackSizeLabel.append(thinSpace);
-                        trackSizeLabel.append(bullet);
-                        trackSizeLabel.append(thinSpace);
-                        trackSizeLabel.append(authoredTrackSize);
-                    }
-                }
-
+                auto authoredTrackSize = i < authoredTrackColumnSizes.size() ? authoredTrackColumnSizes[i] : "auto"_s;
                 FloatLine trackTopLine = { columnStartLine.start(), columnEndLine.start() };
-                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, correctedArrowDirection(LabelArrowDirection::Up, GridTrackSizingDirection::ForColumns), LabelArrowEdgePosition::Middle));
+                gridHighlightOverlay.labels.append(buildLabel(authoredTrackSize, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, correctedArrowDirection(LabelArrowDirection::Up, GridTrackSizingDirection::ForColumns), LabelArrowEdgePosition::Middle));
             }
         } else
             previousColumnEndLine = columnStartLine;
@@ -1883,22 +1866,9 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             previousRowEndLine = rowEndLine;
 
             if (gridOverlay.config.showTrackSizes) {
-                auto trackSizeLabel = String::number(roundf(height));
-                trackSizeLabel.append("px"_s);
-
-                String authoredTrackSize;
-                if (i < authoredTrackRowSizes.size()) {
-                    auto authoredTrackSize = authoredTrackRowSizes[i];
-                    if (authoredTrackSize.length() && authoredTrackSize != trackSizeLabel) {
-                        trackSizeLabel.append(thinSpace);
-                        trackSizeLabel.append(bullet);
-                        trackSizeLabel.append(thinSpace);
-                        trackSizeLabel.append(authoredTrackSize);
-                    }
-                }
-
+                auto authoredTrackSize = i < authoredTrackRowSizes.size() ? authoredTrackRowSizes[i] : "auto"_s;
                 FloatLine trackLeftLine = { rowStartLine.start(), rowEndLine.start() };
-                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, correctedArrowDirection(LabelArrowDirection::Left, GridTrackSizingDirection::ForRows), LabelArrowEdgePosition::Middle));
+                gridHighlightOverlay.labels.append(buildLabel(authoredTrackSize, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, correctedArrowDirection(LabelArrowDirection::Left, GridTrackSizingDirection::ForRows), LabelArrowEdgePosition::Middle));
             }
         } else
             previousRowEndLine = rowStartLine;

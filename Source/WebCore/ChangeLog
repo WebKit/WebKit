@@ -1,5 +1,25 @@
 2021-04-06  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Grid overlay track size labels should show implicit `auto` value and no computed size
+        https://bugs.webkit.org/show_bug.cgi?id=224199
+
+        Reviewed by BJ Burg.
+
+        Previously, implicit `auto` track sizes were only shown if there were some number of explicit track sizes for
+        that track direction (rows/columns). To resolve this, `authoredGridTrackSizes` now only returns explicit
+        authored track sizes, and buildGridOverlay then infers `auto` for all remaining tracks. This will also help
+        resolve bug 224200 by providing a way to distinguish explicit and implicit tracks.
+
+        After discussion, this patch also removes the computed size of tracks from labels, as that information is
+        available in the box model diagram for children elements and having that information in these labels further
+        cramped often limited space for overlay labels.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::authoredGridTrackSizes):
+        (WebCore::InspectorOverlay::buildGridOverlay):
+
+2021-04-06  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: Grid overlay line numbers should not include implicit tracks in negative line number calculations.
         https://bugs.webkit.org/show_bug.cgi?id=224200
 
