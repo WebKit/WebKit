@@ -209,11 +209,25 @@ EditCommandComposition::EditCommandComposition(Document& document, const Visible
     m_replacedText.configureRangeDeletedByReapplyWithStartingSelection(startingSelection);
 }
 
+bool EditCommandComposition::areRootEditabledElementsConnected()
+{
+    if (m_startingRootEditableElement && !m_startingRootEditableElement->isConnected())
+        return false;
+
+    if (m_endingRootEditableElement && !m_endingRootEditableElement->isConnected())
+        return false;
+
+    return true;
+}
+
 void EditCommandComposition::unapply()
 {
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
     if (!frame)
+        return;
+
+    if (!areRootEditabledElementsConnected())
         return;
 
     m_replacedText.captureTextForUnapply();
@@ -252,6 +266,9 @@ void EditCommandComposition::reapply()
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
     if (!frame)
+        return;
+
+    if (!areRootEditabledElementsConnected())
         return;
 
     m_replacedText.captureTextForReapply();

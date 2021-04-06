@@ -1,3 +1,25 @@
+2021-04-06  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr crash in EventPath::eventTargetRespectingTargetRules
+        https://bugs.webkit.org/show_bug.cgi?id=222718
+
+        Reviewed by Ryosuke Niwa.
+
+        During executions of "undo" and "redo" commands, beforeinput and input events are dispatched
+        on root editable elements. It is however possible that these elements had been disconnected,
+        causing nullptr crash. This patch exits the command execution early if that's the case.
+
+        Test: editing/undo/undo-with-disconnected-editable-element-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::EditCommandComposition::areRootEditabledElementsConnected): Add helper function
+        to check whether m_startingRootEditableElement and m_endingRootEditableElement are still
+        connected.
+        (WebCore::EditCommandComposition::unapply): Exit early if root editable elements are no
+        longer connected. Put this after the layout update.
+        (WebCore::EditCommandComposition::reapply): Ditto.
+        * editing/CompositeEditCommand.h: Declare new helper function.
+
 2021-03-24  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-grid] Initialize auto-repeat data in RenderStyle in applyInitialGridTemplate{Columns|Rows}
