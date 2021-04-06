@@ -1,3 +1,10 @@
+2021-04-06  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MediaStream] Unreviewed micro-gardening
+        https://bugs.webkit.org/show_bug.cgi?id=224233
+
+        * platform/glib/TestExpectations:
+
 2021-04-06  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL conformance tests are missing files due to too widely matching .gitignore
