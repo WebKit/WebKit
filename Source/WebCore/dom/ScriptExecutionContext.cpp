@@ -403,10 +403,26 @@ void ScriptExecutionContext::reportUnhandledPromiseRejection(JSC::JSGlobalObject
 
     JSC::VM& vm = state.vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
-
     JSC::JSValue result = promise.result(vm);
     String resultMessage = retrieveErrorMessage(state, vm, result, scope);
-    String errorMessage = makeString("Unhandled Promise Rejection: ", resultMessage);
+    String errorMessage;
+
+    auto tryMakeErrorString = [&] (unsigned length) -> String {
+        bool addEllipsis = length != resultMessage.length();
+        return tryMakeString("Unhandled Promise Rejection: ", StringView(resultMessage).left(length), addEllipsis ? "..." : "");
+    };
+
+    if (!!resultMessage && !scope.exception()) {
+        constexpr unsigned maxLength = 200;
+        constexpr unsigned shortLength = 10;
+        errorMessage = tryMakeErrorString(std::min(resultMessage.length(), maxLength));
+        if (!errorMessage && resultMessage.length() > shortLength)
+            errorMessage = tryMakeErrorString(shortLength);
+    }
+
+    if (!errorMessage)
+        errorMessage = "Unhandled Promise Rejection"_s;
+
     std::unique_ptr<Inspector::ConsoleMessage> message;
     if (callStack)
         message = makeUnique<Inspector::ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Error, errorMessage, callStack.releaseNonNull());

@@ -1,3 +1,14 @@
+2021-04-06  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Handle OOM in ScriptExecutionContext::reportUnhandledPromiseRejection
+        https://bugs.webkit.org/show_bug.cgi?id=223777
+        <rdar://66271491>
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/Promise-reject-large-string-expected.txt: Added.
+        * js/dom/Promise-reject-large-string.html: Added.
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r274358) [GStreamer] http/tests/images/mp4-partial-load.html is flaky crashing inside GStreamer
