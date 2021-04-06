@@ -1,3 +1,23 @@
+2021-04-06  Rob Buis  <rbuis@igalia.com>
+
+        Migrate layout ascents and descents to LayoutUnits instead of ints
+        https://bugs.webkit.org/show_bug.cgi?id=133040
+
+        Reviewed by Zalan Bujtas.
+
+        Migrate layout ascents and descents to LayoutUnits instead of ints.
+        The actual ascent/descent values are still integral.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        * rendering/InlineFlowBox.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::alignBoxesInBlockDirection):
+        (WebCore::setAscentAndDescent):
+        (WebCore::RootInlineBox::ascentAndDescentForBox const):
+        * rendering/RootInlineBox.h:
+
 2021-04-06  Chris Lord  <clord@igalia.com>
 
         BidiContext caching is not thread-safe
