@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -134,14 +134,26 @@ private:
     ImageSource(BitmapImage*, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
     ImageSource(RefPtr<NativeImage>&&);
 
-    template<typename T, T (ImageDecoder::*functor)() const>
-    T metadata(const T& defaultValue, Optional<T>* cachedValue = nullptr);
+    enum class MetadataType {
+        AccessibilityDescription    = 1 << 0,
+        DensityCorrectedSize        = 1 << 1,
+        EncodedDataStatus           = 1 << 2,
+        FileNameExtension           = 1 << 3,
+        FrameCount                  = 1 << 4,
+        HotSpot                     = 1 << 5,
+        MaximumSubsamplingLevel     = 1 << 6,
+        Orientation                 = 1 << 7,
+        RepetitionCount             = 1 << 8,
+        SinglePixelSolidColor       = 1 << 9,
+        Size                        = 1 << 10,
+        UTI                         = 1 << 11
+    };
 
-    template<typename T, typename... Args>
-    T frameMetadataAtIndex(size_t, T (ImageFrame::*functor)(Args...) const, Args&&...);
+    template<typename T>
+    T metadataCacheIfNeeded(T& cachedValue, const T& defaultValue, MetadataType, T (ImageDecoder::*functor)() const);
 
-    template<typename T, typename... Args>
-    T frameMetadataAtIndexCacheIfNeeded(size_t, T (ImageFrame::*functor)() const,  Optional<T>* cachedValue, Args&&...);
+    template<typename T>
+    T firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching, const Optional<SubsamplingLevel>& = { });
 
     bool ensureDecoderAvailable(SharedBuffer* data);
     bool isDecoderAvailable() const { return m_decoder; }
@@ -163,6 +175,7 @@ private:
     WorkQueue& decodingQueue();
     SynchronizedFixedQueue<ImageFrameRequest, BufferSize>& frameRequestQueue();
 
+    const ImageFrame& frameAtIndex(size_t index) { return index < m_frames.size() ? m_frames[index] : ImageFrame::defaultFrame(); }
     const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const Optional<SubsamplingLevel>& = { });
 
     void dump(TextStream&);
@@ -195,20 +208,22 @@ private:
     Seconds m_frameDecodingDurationForTesting;
 
     // Image metadata.
-    Optional<EncodedDataStatus> m_encodedDataStatus;
-    Optional<size_t> m_frameCount;
-    Optional<RepetitionCount> m_repetitionCount;
-    Optional<String> m_uti;
-    Optional<String> m_filenameExtension;
-    Optional<String> m_accessibilityDescription;
-    Optional<Optional<IntPoint>> m_hotSpot;
+    EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
+    size_t m_frameCount { 0 };
+    RepetitionCount m_repetitionCount { RepetitionCountNone };
+    String m_uti;
+    String m_filenameExtension;
+    String m_accessibilityDescription;
+    Optional<IntPoint> m_hotSpot;
 
     // Image metadata which is calculated from the first ImageFrame.
-    Optional<IntSize> m_size;
-    Optional<ImageOrientation> m_orientation;
-    Optional<Optional<IntSize>> m_densityCorrectedSize;
-    Optional<Color> m_singlePixelSolidColor;
-    Optional<SubsamplingLevel> m_maximumSubsamplingLevel;
+    IntSize m_size;
+    Optional<IntSize> m_densityCorrectedSize;
+    ImageOrientation m_orientation;
+    Color m_singlePixelSolidColor;
+    SubsamplingLevel m_maximumSubsamplingLevel { SubsamplingLevel::Default };
+
+    OptionSet<MetadataType> m_cachedMetadata;
 
     RunLoop& m_runLoop;
 };

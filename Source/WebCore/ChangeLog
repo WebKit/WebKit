@@ -1,3 +1,57 @@
+2021-04-06  Said Abou-Hallawa  <said@apple.com>
+
+        Replace the Optional metadata of ImageSource by a single OptionSet and the underlying metadata
+        https://bugs.webkit.org/show_bug.cgi?id=224202
+
+        Reviewed by Simon Fraser.
+
+        Encapsulating the metadata in a Optionals adds extra memory cost. Replace
+        these Optionals by the underlying metadata and an OptionSet to tell which
+        ones are cached.
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::frameAtIndexCacheIfNeeded):
+        Instead of assertion index < m_frames.size(), we can return defaultFrame().
+        This will used in many callers which checks the size before calling it.
+
+        (WebCore::ImageSource::clearMetadata):
+
+        (WebCore::ImageSource::metadataCacheIfNeeded):
+        (WebCore::ImageSource::firstFrameMetadataCacheIfNeeded):
+        These two template functions will be used to return and cache, if needed,
+        the image metadata. The first function uses the ImageDecoder while the
+        second one uses the first ImageFrame of the image.
+
+        (WebCore::ImageSource::encodedDataStatus):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::uti):
+        (WebCore::ImageSource::filenameExtension):
+        (WebCore::ImageSource::accessibilityDescription):
+        (WebCore::ImageSource::hotSpot):
+        (WebCore::ImageSource::orientation):
+        (WebCore::ImageSource::densityCorrectedSize):
+        (WebCore::ImageSource::sourceSize):
+        (WebCore::ImageSource::singlePixelSolidColor):
+        (WebCore::ImageSource::maximumSubsamplingLevel):
+        (WebCore::ImageSource::frameDecodingStatusAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        (WebCore::ImageSource::frameHasFullSizeNativeImageAtIndex):
+        (WebCore::ImageSource::frameHasDecodedNativeImageCompatibleWithOptionsAtIndex):
+        (WebCore::ImageSource::frameSubsamplingLevelAtIndex):
+        (WebCore::ImageSource::frameSizeAtIndex):
+        (WebCore::ImageSource::frameBytesAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameOrientationAtIndex):
+        (WebCore::ImageSource::frameImageAtIndex):
+        (WebCore::ImageSource::frameImageAtIndexCacheIfNeeded):
+        (WebCore::ImageSource::metadata): Deleted.
+        (WebCore::ImageSource::frameMetadataAtIndex): Deleted.
+        (WebCore::ImageSource::frameMetadataAtIndexCacheIfNeeded): Deleted.
+        * platform/graphics/ImageSource.h:
+        (WebCore::ImageSource::frameAtIndex):
+
 2021-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 3: Reorder #include dependencies to allow for ItemBuffer{Writing,Reading}Client to know about DisplayList item types
