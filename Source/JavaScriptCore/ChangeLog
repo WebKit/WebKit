@@ -1,5 +1,31 @@
 2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Symbol and BigInt wrapper objects should perform OrdinaryToPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=224208
+
+        Reviewed by Yusuke Suzuki.
+
+        ES6 introduced Symbol.toPrimitive as the only way to override ToPrimitive;
+        if it's nullish, OrdinaryToPrimitive [1] is performed unconditionally.
+
+        This patch removes two redundant defaultValue() overrides, fixing JSC to call
+        (possibly userland) toString() / valueOf() methods of a) Symbol objects whose
+        Symbol.toPrimitive was removed, and b) BigInt wrapper objects.
+
+        Aligns JSC with V8 and SpiderMonkey. Coercion of primitives is unaffected.
+        Also, removes dummy BigIntObject::internalValue() override.
+
+        [1]: https://tc39.es/ecma262/#sec-toprimitive (step 2.d)
+
+        * runtime/BigIntObject.cpp:
+        (JSC::BigIntObject::defaultValue): Deleted.
+        * runtime/BigIntObject.h:
+        * runtime/SymbolObject.cpp:
+        (JSC::SymbolObject::defaultValue): Deleted.
+        * runtime/SymbolObject.h:
+
+2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Array's toString() is incorrect if join() is non-callable
         https://bugs.webkit.org/show_bug.cgi?id=224215
 

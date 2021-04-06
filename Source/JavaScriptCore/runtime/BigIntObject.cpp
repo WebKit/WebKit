@@ -56,10 +56,4 @@ void BigIntObject::finishCreation(VM& vm, JSValue bigInt)
     setInternalValue(vm, bigInt);
 }
 
-JSValue BigIntObject::defaultValue(const JSObject* object, JSGlobalObject*, PreferredPrimitiveType)
-{
-    const BigIntObject* bigIntObject = jsCast<const BigIntObject*>(object);
-    return bigIntObject->internalValue();
-}
-
 } // namespace JSC

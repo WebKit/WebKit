@@ -1,5 +1,15 @@
 2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Symbol and BigInt wrapper objects should perform OrdinaryToPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=224208
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/bigint-object-ordinary-toprimitive.js: Added.
+        * stress/symbol-object-ordinary-toprimitive.js: Added.
+
+2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Array's toString() is incorrect if join() is non-callable
         https://bugs.webkit.org/show_bug.cgi?id=224215
 
