@@ -1,3 +1,18 @@
+2021-04-06  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=222266
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream 8837d4e994.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
 2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove [Replaceable] extended attribute from `document.all`
