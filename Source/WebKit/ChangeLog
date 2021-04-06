@@ -1,3 +1,22 @@
+2021-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a missing bounds check when mapping display list items from a shared display list handle
+        https://bugs.webkit.org/show_bug.cgi?id=224156
+        <rdar://problem/71805209>
+
+        Reviewed by Tim Horton.
+
+        Add a check to ensure that we don't end up with out-of-bounds memory access when attempting to map an `offset`
+        and `capacity` in shared display list data into a `WebCore::DisplayList`. It's possible for this to happen if
+        either the sum of `offset` and `capacity` (i.e. the extent of the mapped segment) overflows `size_t`, or the
+        extent exceeds the total length of the buffer in shared memory.
+
+        * GPUProcess/graphics/DisplayListReaderHandle.cpp:
+        (WebKit::DisplayListReaderHandle::displayListForReading const):
+
+        Note that returning `nullptr` here subsequently causes us to terminate the web process due to the message check
+        for `displayList` inside `nextDestinationImageBufferAfterApplyingDisplayLists`.
+
 2021-04-05  Chris Dumez  <cdumez@apple.com>
 
         Make sure service workers use a ScriptSourceCode backed by file-mapped memory when possible
