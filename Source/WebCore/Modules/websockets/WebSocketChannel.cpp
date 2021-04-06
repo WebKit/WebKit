@@ -699,7 +699,11 @@ bool WebSocketChannel::processFrame()
         break;
     }
 
-    return !m_buffer.isEmpty();
+    if (m_buffer.isEmpty()) {
+        m_buffer.clear();
+        return false;
+    }
+    return true;
 }
 
 void WebSocketChannel::enqueueTextFrame(const CString& string)

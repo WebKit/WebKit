@@ -1,3 +1,13 @@
+2021-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        WebSocketChannel buffers use memory after going idle (64K wasted on facebook.com
+        https://bugs.webkit.org/show_bug.cgi?id=224193
+
+        Reviewed by Simon Fraser.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processFrame):
+
 2021-04-05  Chris Dumez  <cdumez@apple.com>
 
         Make sure the Frame always gets destroyed on the main thread
