@@ -1,3 +1,19 @@
+2021-04-06  Aakash Jain  <aakash_jain@apple.com>
+
+        [resultsdbpy] Remove obsolete BuildbotEightURLFactory
+        https://bugs.webkit.org/show_bug.cgi?id=223796
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/example/environment.py:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/ci_context.py:
+        (BuildbotEightURLFactory): Deleted.
+        (BuildbotEightURLFactory.__init__): Deleted.
+        (BuildbotEightURLFactory.url): Deleted.
+        * Scripts/libraries/resultsdbpy/resultsdbpy/model/ci_context_unittest.py:
+        (URLFactoryTest.test_old_builder_url): Deleted.
+        (URLFactoryTest.test_old_worker_url): Deleted.
+
 2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable WebSQL in WebKitTestRunner

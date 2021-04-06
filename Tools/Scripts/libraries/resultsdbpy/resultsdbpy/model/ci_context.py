@@ -209,23 +209,6 @@ class CIContext(UploadCallbackContext):
         return self._find_urls(self.URLsByStartTime, *args, **kwargs)
 
 
-class BuildbotEightURLFactory(object):
-    SCHEME = 'https://'
-
-    def __init__(self, master):
-        self.master = master
-
-    def url(self, builder_name=None, build_number=None, worker_name=None, should_fetch=False):
-        if builder_name:
-            if build_number:
-                return self.SCHEME + urllib.parse.quote(f'{self.master}/builders/{builder_name}/builds/{build_number}')
-            return self.SCHEME + urllib.parse.quote(f'{self.master}/builders/{builder_name}')
-        elif worker_name:
-            return f'{self.SCHEME}{self.master}/buildslaves/{worker_name}'
-
-        return None
-
-
 class BuildbotURLFactory(object):
     SCHEME = 'https://'
     BUILDER_KEY = '_builder_'
