@@ -1,3 +1,17 @@
+2021-04-06  Mark Lam  <mark.lam@apple.com>
+
+        Speculative build fix for Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=224243
+        rdar://75883248
+
+        Reviewed by Saam Barati.
+
+        Source/cmake/tools/scripts/auto-version.pl was limiting our `minor` and `micro`
+        version to only 2 decimal digits only.  In practice, we can use up to 3 digits.
+
+        * Source/cmake/tools/scripts/auto-version.pl:
+        (packTwoValues):
+
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build
