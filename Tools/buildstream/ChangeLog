@@ -1,5 +1,16 @@
 2021-04-05  Philippe Normand  <pnormand@igalia.com>
 
+        [Flatpak SDK] Update dav1d and libavif
+        https://bugs.webkit.org/show_bug.cgi?id=224177
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/freedesktop-sdk.bst: Update dav1d to version 0.8.2.
+        * elements/sdk/libavif.bst: Update to version 0.9.0.
+        * patches/fdo-0001-dav1d-Bump-to-version-0.8.2.patch: Added.
+
+2021-04-05  Philippe Normand  <pnormand@igalia.com>
+
         [Flatpak SDK] Backport GStreamer fakeaudiosink
         https://bugs.webkit.org/show_bug.cgi?id=224053
 
