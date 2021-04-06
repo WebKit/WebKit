@@ -163,11 +163,12 @@ bool doesParentProcessHaveITPEnabled(AuxiliaryProcess& auxiliaryProcess, bool ha
     ASSERT(isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
 
+    if (!isParentProcessAFullWebBrowser(auxiliaryProcess) && !hasRequestedCrossWebsiteTrackingPermission)
+        return true;
+
     static bool itpEnabled { true };
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        if (!isParentProcessAFullWebBrowser(auxiliaryProcess) && !hasRequestedCrossWebsiteTrackingPermission)
-            return;
 
         TCCAccessPreflightResult result = kTCCAccessPreflightDenied;
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 140000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000)
@@ -234,11 +235,6 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
     static bool fullWebBrowser { false };
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        if (isRunningTest(WebCore::applicationBundleIdentifier())) {
-            fullWebBrowser = true;
-            return;
-        }
-
         RefPtr<IPC::Connection> connection = auxiliaryProcess.parentProcessConnection();
         if (!connection) {
             ASSERT_NOT_REACHED();
@@ -256,7 +252,7 @@ bool isParentProcessAFullWebBrowser(AuxiliaryProcess& auxiliaryProcess)
         fullWebBrowser = WTF::hasEntitlement(*auditToken, "com.apple.developer.web-browser");
     });
 
-    return fullWebBrowser;
+    return fullWebBrowser || isRunningTest(WebCore::applicationBundleIdentifier());
 }
 
 static bool isFullWebBrowser(const String& bundleIdentifier)

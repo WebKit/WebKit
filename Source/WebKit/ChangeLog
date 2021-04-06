@@ -1,3 +1,19 @@
+2021-04-06  Alex Christensen  <achristensen@webkit.org>
+
+        Revert part of crash fix to keep test infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=224196
+
+        These two tests change the bundle identifier to test what it's like to not be in a test:
+
+        http/tests/in-app-browser-privacy/app-bound-domain-gets-app-bound-session.html
+        http/tests/in-app-browser-privacy/non-app-bound-iframe-under-app-bound-domain-is-app-bound.html
+
+        This partial revert of r275486 allows the test to dynamically change whether it's in testing mode.
+
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::doesParentProcessHaveITPEnabled):
+        (WebKit::isParentProcessAFullWebBrowser):
+
 2021-04-06  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Clean up two messages.in files
