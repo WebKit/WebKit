@@ -520,9 +520,9 @@ void JIT::privateCompileSlowCases()
     m_byValInstructionIndex = 0;
     m_callLinkInfoIndex = 0;
 
-    RefCountedArray<RareCaseProfile> rareCaseProfiles;
+    FixedVector<RareCaseProfile> rareCaseProfiles;
     if (shouldEmitProfiling())
-        rareCaseProfiles = RefCountedArray<RareCaseProfile>(m_bytecodeCountHavingSlowCase);
+        rareCaseProfiles = FixedVector<RareCaseProfile>(m_bytecodeCountHavingSlowCase);
     
     unsigned bytecodeCountHavingSlowCase = 0;
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {

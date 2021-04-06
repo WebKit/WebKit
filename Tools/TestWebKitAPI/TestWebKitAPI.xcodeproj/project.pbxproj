@@ -1110,6 +1110,7 @@
 		E1220DCA155B28AA0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E1220DC9155B287D0013E2FC /* MemoryCacheDisableWithinResourceLoadDelegate.html */; };
 		E194E1BD177E53C7009C4D4E /* StopLoadingFromDidReceiveResponse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */; };
 		E302BDAA2404B92400865277 /* CompactRefPtrTuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */; };
+		E3210519261979F300157C67 /* FixedVector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3210518261979F300157C67 /* FixedVector.cpp */; };
 		E324A6F02041C82000A76593 /* UniqueArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E398BC0F2041C76300387136 /* UniqueArray.cpp */; };
 		E325C90723E3870200BC7D3B /* PictureInPictureSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = E325C90623E3870200BC7D3B /* PictureInPictureSupport.mm */; };
 		E32B549222810AC4008AD702 /* Packed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E32B549122810AC0008AD702 /* Packed.cpp */; };
@@ -2904,6 +2905,7 @@
 		E194E1BA177E5145009C4D4E /* StopLoadingFromDidReceiveResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StopLoadingFromDidReceiveResponse.mm; sourceTree = "<group>"; };
 		E194E1BC177E534A009C4D4E /* StopLoadingFromDidReceiveResponse.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = StopLoadingFromDidReceiveResponse.html; sourceTree = "<group>"; };
 		E302BDA92404B92300865277 /* CompactRefPtrTuple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CompactRefPtrTuple.cpp; sourceTree = "<group>"; };
+		E3210518261979F300157C67 /* FixedVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FixedVector.cpp; sourceTree = "<group>"; };
 		E325C90623E3870200BC7D3B /* PictureInPictureSupport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PictureInPictureSupport.mm; sourceTree = "<group>"; };
 		E32B549122810AC0008AD702 /* Packed.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Packed.cpp; sourceTree = "<group>"; };
 		E34A6D182412DE390012AB6E /* GrantAccessToPreferencesService.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GrantAccessToPreferencesService.mm; sourceTree = "<group>"; };
@@ -4373,6 +4375,7 @@
 				1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */,
 				AD7C434C1DD2A5470026888B /* Expected.cpp */,
 				A310827121F296EC00C28B97 /* FileSystem.cpp */,
+				E3210518261979F300157C67 /* FixedVector.cpp */,
 				9310CD361EF708FB0050FFE0 /* Function.cpp */,
 				83DB79671EF63B3C00BFA5E5 /* Function.cpp */,
 				7A38D7E51C752D5F004F157D /* HashCountedSet.cpp */,
@@ -5124,6 +5127,7 @@
 				1AF7B21F1D6CD14D008C126C /* EnumTraits.cpp in Sources */,
 				AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */,
 				A310827221F296FF00C28B97 /* FileSystem.cpp in Sources */,
+				E3210519261979F300157C67 /* FixedVector.cpp in Sources */,
 				9310CD381EF708FB0050FFE0 /* Function.cpp in Sources */,
 				6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */,
 				933D631D1FCB76200032ECD6 /* Hasher.cpp in Sources */,

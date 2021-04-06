@@ -159,7 +159,7 @@ static void dumpLineColumnEntry(size_t index, const InstructionStream& instructi
 
 void UnlinkedCodeBlock::dumpExpressionRangeInfo()
 {
-    RefCountedArray<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
+    FixedVector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
 
     size_t size = m_expressionInfo.size();
     dataLogF("UnlinkedCodeBlock %p expressionRangeInfo[%zu] {\n", this, size);
@@ -188,7 +188,7 @@ void UnlinkedCodeBlock::expressionRangeForBytecodeIndex(BytecodeIndex bytecodeIn
         return;
     }
 
-    const RefCountedArray<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
+    const FixedVector<ExpressionRangeInfo>& expressionInfo = m_expressionInfo;
 
     int low = 0;
     int high = expressionInfo.size();

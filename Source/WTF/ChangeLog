@@ -1,3 +1,52 @@
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce FixedVector and use it for FixedOperands
+        https://bugs.webkit.org/show_bug.cgi?id=224171
+
+        Reviewed by Mark Lam.
+
+        This FixedVector<T> is a wrapper around RefCountedArray<T>, but this offers Vector-like copy / move semantics,
+        so that we can use this FixedVector<T> as a drop-in-replacement for fixed-sized Vector fields. The purpose
+        of that is saving memory by removing unnecessary storage (FixedVector is fixed-sized allocated) and putting size
+        into the allocated memory.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVector::FastBitVector):
+        * wtf/FixedVector.h: Added.
+        (WTF::FixedVector::FixedVector):
+        (WTF::FixedVector::operator=):
+        (WTF::FixedVector::size const):
+        (WTF::FixedVector::isEmpty const):
+        (WTF::FixedVector::byteSize const):
+        (WTF::FixedVector::data):
+        (WTF::FixedVector::begin):
+        (WTF::FixedVector::end):
+        (WTF::FixedVector::data const):
+        (WTF::FixedVector::begin const):
+        (WTF::FixedVector::end const):
+        (WTF::FixedVector::rbegin):
+        (WTF::FixedVector::rend):
+        (WTF::FixedVector::rbegin const):
+        (WTF::FixedVector::rend const):
+        (WTF::FixedVector::at):
+        (WTF::FixedVector::at const):
+        (WTF::FixedVector::operator[]):
+        (WTF::FixedVector::operator[] const):
+        (WTF::FixedVector::first):
+        (WTF::FixedVector::first const):
+        (WTF::FixedVector::last):
+        (WTF::FixedVector::last const):
+        (WTF::FixedVector::fill):
+        (WTF::FixedVector::operator== const):
+        (WTF::FixedVector::swap):
+        (WTF::swap):
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+        (WTF::RefCountedArray::fill):
+        (WTF::RefCountedArray::swap):
+
 2021-04-06  Youenn Fablet  <youenn@apple.com>
 
         Enable NSURLSession WebSocket code path by default

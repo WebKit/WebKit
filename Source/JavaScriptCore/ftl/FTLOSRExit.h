@@ -67,6 +67,9 @@ struct OSRExitDescriptorImpl;
 struct OSRExitHandle;
 
 struct OSRExitDescriptor {
+private:
+    WTF_MAKE_NONCOPYABLE(OSRExitDescriptor);
+public:
     OSRExitDescriptor(
         DataFormat profileDataFormat, MethodOfGettingAValueProfile,
         unsigned numberOfArguments, unsigned numberOfLocals, unsigned numberOfTmps);
@@ -79,7 +82,7 @@ struct OSRExitDescriptor {
     DataFormat m_profileDataFormat;
     MethodOfGettingAValueProfile m_valueProfile;
     
-    Operands<ExitValue> m_values;
+    FixedOperands<ExitValue> m_values;
     Bag<ExitTimeObjectMaterialization> m_materializations;
 
     void validateReferences(const TrackedReferences&);

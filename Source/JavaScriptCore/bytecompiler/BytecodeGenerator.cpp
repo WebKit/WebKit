@@ -4092,7 +4092,7 @@ static void prepareJumpTableForSwitch(
     int32_t (*keyGetter)(ExpressionNode*, int32_t min, int32_t max))
 {
     jumpTable.min = min;
-    jumpTable.branchOffsets = RefCountedArray<int32_t>(max - min + 1);
+    jumpTable.branchOffsets = FixedVector<int32_t>(max - min + 1);
     std::fill(jumpTable.branchOffsets.begin(), jumpTable.branchOffsets.end(), 0);
     for (uint32_t i = 0; i < clauseCount; ++i) {
         // We're emitting this after the clause labels should have been fixed, so 

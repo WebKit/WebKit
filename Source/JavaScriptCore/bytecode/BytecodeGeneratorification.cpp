@@ -220,7 +220,7 @@ void BytecodeGeneratorification::run()
         VirtualRegister state = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::Argument::State));
         auto& jumpTable = m_codeBlock->addSwitchJumpTable();
         jumpTable.min = 0;
-        jumpTable.branchOffsets = RefCountedArray<int32_t>(m_yields.size() + 1);
+        jumpTable.branchOffsets = FixedVector<int32_t>(m_yields.size() + 1);
         std::fill(jumpTable.branchOffsets.begin(), jumpTable.branchOffsets.end(), 0);
         jumpTable.add(0, nextToEnterPoint.offset());
         for (unsigned i = 0; i < m_yields.size(); ++i)

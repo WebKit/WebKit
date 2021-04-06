@@ -1,3 +1,68 @@
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce FixedVector and use it for FixedOperands
+        https://bugs.webkit.org/show_bug.cgi?id=224171
+
+        Reviewed by Mark Lam.
+
+        Define FixedOperands<T> which uses FixedVector for its storage. We use FixedOperands in FTL::OSRExitDescriptor.
+        We also replace RefCountedArray<T> with FixedVector<T> if they are not requiring RefCountedArray<T>'s ref-counting
+        semantics.
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::setRareCaseProfiles):
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        * bytecode/CodeBlock.h:
+        * bytecode/Operands.h:
+        (JSC::Operands::Operands):
+        * bytecode/OperandsInlines.h:
+        (JSC::U>::dumpInContext const):
+        (JSC::U>::dump const):
+        (JSC::Operands<T>::dumpInContext const): Deleted.
+        (JSC::Operands<T>::dump const): Deleted.
+        * bytecode/PolyProtoAccessChain.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::dumpExpressionRangeInfo):
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeIndex const):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::expressionInfo):
+        (JSC::UnlinkedCodeBlock::identifiers const):
+        (JSC::UnlinkedCodeBlock::constantRegisters):
+        (JSC::UnlinkedCodeBlock::constantsSourceCodeRepresentation):
+        (JSC::UnlinkedCodeBlock::constantIdentifierSets):
+        (JSC::UnlinkedCodeBlock::opProfileControlFlowBytecodeOffsets const):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::prepareJumpTableForSwitch):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::tierUpInLoopHierarchy):
+        * ftl/FTLOSRExit.h:
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/PolymorphicCallStubRoutine.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseClassFieldInitializerSourceElements):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedVector::encode):
+        (JSC::CachedVector::decode const):
+        * wasm/js/JSWebAssemblyInstance.h:
+
 2021-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Shrink some of Vectors in JSC

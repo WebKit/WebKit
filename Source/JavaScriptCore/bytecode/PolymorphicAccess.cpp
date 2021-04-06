@@ -748,7 +748,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, WTFMove(state.m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTFMove(state.watchpoints);
     if (!state.weakReferences.isEmpty())
-        m_weakReferences = RefCountedArray<WriteBarrier<JSCell>>(WTFMove(state.weakReferences));
+        m_weakReferences = FixedVector<WriteBarrier<JSCell>>(WTFMove(state.weakReferences));
     if (PolymorphicAccessInternal::verbose)
         dataLog("Returning: ", code.code(), "\n");
     

@@ -30,7 +30,7 @@
 #include "JITStubRoutine.h"
 #include "JSObject.h"
 #include "WriteBarrier.h"
-#include <wtf/RefCountedArray.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -97,7 +97,7 @@ protected:
     void markRequiredObjectsInternal(SlotVisitor&) final;
 
 private:
-    RefCountedArray<WriteBarrier<JSCell>> m_cells;
+    FixedVector<WriteBarrier<JSCell>> m_cells;
     Bag<CallLinkInfo> m_callLinkInfos;
 };
 

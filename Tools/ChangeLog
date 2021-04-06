@@ -1,3 +1,18 @@
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce FixedVector and use it for FixedOperands
+        https://bugs.webkit.org/show_bug.cgi?id=224171
+
+        Reviewed by Mark Lam.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/FixedVector.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::DestructorObserver::DestructorObserver):
+        (TestWebKitAPI::DestructorObserver::~DestructorObserver):
+        (TestWebKitAPI::DestructorObserver::operator=):
+
 2021-04-06  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add MediaSessionCoordinator API test

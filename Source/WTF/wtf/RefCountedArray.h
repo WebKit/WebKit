@@ -66,6 +66,10 @@ public:
         : RefCountedArray(CommonCopyConstructor, other)
     { }
 
+    RefCountedArray(RefCountedArray&& other)
+        : m_data(PtrTraits::exchange(other.m_data, nullptr))
+    { }
+
     explicit RefCountedArray(size_t size)
     {
         if (!size) {
@@ -211,6 +215,16 @@ public:
     const T& first() const { return (*this)[0]; }
     T& last() { return (*this)[size() - 1]; }
     const T& last() const { return (*this)[size() - 1]; }
+
+    void fill(const T& val)
+    {
+        std::fill(begin(), end(), val);
+    }
+
+    void swap(RefCountedArray& other)
+    {
+        PtrTraits::swap(m_data, other.m_data);
+    }
 
     template<typename OtherTraits = PtrTraits>
     bool operator==(const RefCountedArray<T, OtherTraits>& other) const

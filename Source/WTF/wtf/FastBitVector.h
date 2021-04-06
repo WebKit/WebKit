@@ -479,6 +479,10 @@ private:
 class FastBitVector : public FastBitVectorImpl<FastBitVectorWordOwner> {
 public:
     FastBitVector() { }
+    explicit FastBitVector(size_t numBits)
+    {
+        grow(numBits);
+    }
     
     FastBitVector(const FastBitVector&) = default;
     FastBitVector& operator=(const FastBitVector&) = default;

@@ -27,7 +27,7 @@
 
 #include "StructureIDTable.h"
 #include "VM.h"
-#include <wtf/RefCountedArray.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -44,7 +44,7 @@ public:
     static RefPtr<PolyProtoAccessChain> tryCreate(JSGlobalObject*, JSCell* base, const PropertySlot&);
     static RefPtr<PolyProtoAccessChain> tryCreate(JSGlobalObject*, JSCell* base, JSObject* target);
 
-    const RefCountedArray<StructureID>& chain() const { return m_chain; }
+    const FixedVector<StructureID>& chain() const { return m_chain; }
 
     void dump(Structure* baseStructure, PrintStream& out) const;
 
@@ -82,7 +82,7 @@ private:
 
     // This does not include the base. We rely on AccessCase providing it for us. That said, this data
     // structure is tied to the base that it was created with.
-    RefCountedArray<StructureID> m_chain;
+    FixedVector<StructureID> m_chain;
 };
 
 }

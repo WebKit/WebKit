@@ -38,8 +38,8 @@
 #include "RegExp.h"
 #include "SourceCode.h"
 #include "VariableEnvironment.h"
+#include <wtf/FixedVector.h>
 #include <wtf/Optional.h>
-#include <wtf/RefCountedArray.h>
 
 namespace JSC {
 
@@ -219,13 +219,13 @@ public:
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
         RefPtr<TDZEnvironmentLink> m_parentScopeTDZVariables;
-        RefCountedArray<JSTextPosition> m_classFieldLocations;
+        FixedVector<JSTextPosition> m_classFieldLocations;
         PrivateNameEnvironment m_parentPrivateNameEnvironment;
     };
 
     NeedsClassFieldInitializer needsClassFieldInitializer() const { return static_cast<NeedsClassFieldInitializer>(m_needsClassFieldInitializer); }
 
-    RefCountedArray<JSTextPosition>* classFieldLocations() const
+    const FixedVector<JSTextPosition>* classFieldLocations() const
     {
         if (m_rareData)
             return &m_rareData->m_classFieldLocations;
@@ -236,7 +236,7 @@ public:
     {
         if (classFieldLocations.isEmpty())
             return;
-        ensureRareData().m_classFieldLocations = RefCountedArray<JSTextPosition>(WTFMove(classFieldLocations));
+        ensureRareData().m_classFieldLocations = FixedVector<JSTextPosition>(WTFMove(classFieldLocations));
     }
 
 private:
