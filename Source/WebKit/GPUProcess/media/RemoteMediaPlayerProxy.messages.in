@@ -51,9 +51,6 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     PrepareForRendering()
     SetVisible(bool visible)
     SetShouldMaintainAspectRatio(bool maintainAspectRatio)
-#if ENABLE(VIDEO_PRESENTATION_MODE)
-    SetVideoFullscreenGravity(enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
-#endif
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
     SetShouldDisableSleep(bool disable)
     SetRate(double rate)
@@ -62,6 +59,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     UpdateVideoFullscreenInlineImage()
     SetVideoFullscreenMode(WebCore::MediaPlayer::VideoFullscreenMode mode)
+    SetVideoFullscreenGravity(enum:uint8_t WebCore::MediaPlayerEnums::VideoGravity gravity)
     VideoFullscreenStandbyChanged()
 #endif
 
@@ -73,7 +71,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     SetWirelessVideoPlaybackDisabled(bool disabled)
-    # SetWirelessPlaybackTarget(WebCore::MediaPlaybackTarget)
+    SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)
     SetShouldPlayToPlaybackTarget(bool shouldPlay)
 #endif
 
@@ -106,10 +104,6 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     AudioTrackSetEnabled(WebKit::TrackPrivateRemoteIdentifier identifier, bool enabled)
     VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier identifier, bool selected)
     TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier identifier, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    SetWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext target)
-#endif
 
     PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<WallTime> wallTime) Async
     WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous

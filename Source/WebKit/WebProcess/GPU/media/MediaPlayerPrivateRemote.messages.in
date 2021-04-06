@@ -89,7 +89,6 @@ messages -> MediaPlayerPrivateRemote NotRefCounted {
 #if PLATFORM(IOS_FAMILY)
     GetRawCookies(URL url) -> (Vector<WebCore::Cookie> result) Async
 #endif
-
 }
 
 #endif
