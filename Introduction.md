@@ -1344,5 +1344,49 @@ FIXME: Talk about how to debug API tests.
 
 # Logging in WebKit
 
-FIXME: Write this.
+Some places in WebKit use a macro called `LOG_WITH_STREAM`. Here's an example invocation:
 
+```
+LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::commitTreeState - removing unvisited node " << nodeID);
+```
+
+The first argument is the _log channel_ and the second is the _log content_. By default, this logging is enabled in
+debug builds and disabled in release builds (see definition of `LOG_DISABLED`).
+
+The only logs that will be printed are those whose channels you have enabled. You can specify the channels you want to
+enable by constructing a comma-separated list with the following syntax:
+
+* `ChannelName` to enable logging for this channel
+* `all` to enable logging for all channels
+* `-ChannelName` to disable logging for this channel
+
+Where you specify this list depends on the platform you are running WebKit on.
+
+### Linux
+
+Set the `WEBKIT_DEBUG` environment variable.
+
+```
+WEBKIT_DEBUG=Scrolling Tools/Scripts/run-minibrowser --gtk --debug
+```
+
+### Mac
+
+Set a value for the `WebCoreLogging` key in [standardUserDefaults](https://developer.apple.com/documentation/foundation/nsuserdefaults/1416603-standarduserdefaults).
+
+You may also pass this key and value as an argument:
+
+```
+Tools/Scripts/run-minibrowser --debug -WebCoreLogging Scrolling
+```
+
+or set the key and value on the [NSGlobalDomain](https://developer.apple.com/documentation/foundation/nsglobaldomain).
+
+```
+defaults write NSGlobalDomain  WebCoreLogging -string Scrolling
+Tools/Scripts/run-minibrowser --debug
+```
+
+### Windows
+
+Set the `WebCoreLogging` environment variable.

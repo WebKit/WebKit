@@ -1,3 +1,14 @@
+2021-04-05  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Document how to use logging in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=224152
+
+        Reviewed by Simon Fraser.
+
+        Add documentation about how to use logging in WebKit.
+
+        * Introduction.md:
+
 2021-03-28  David Kilzer  <ddkilzer@apple.com>
 
         Compile WebKit with UBSan
