@@ -46,6 +46,4 @@ bool doesParentProcessHaveITPEnabled(AuxiliaryProcess&, bool hasRequestedCrossWe
 bool isFullWebBrowser();
 bool isParentProcessAFullWebBrowser(AuxiliaryProcess&);
 
-#define WEBKIT_PARENT_PROCESS_FULL_WEB_BROWSER_PARAMETER_AUXILIARY_PROCESS 1
-
 } // namespace WebKit

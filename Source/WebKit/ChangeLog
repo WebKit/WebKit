@@ -1,3 +1,12 @@
+2021-04-06  Alex Christensen  <achristensen@webkit.org>
+
+        Remove definition used for staging change with internal repo
+        https://bugs.webkit.org/show_bug.cgi?id=224196
+
+        * Shared/Cocoa/DefaultWebBrowserChecks.h:
+        This definition was used to help me land the patch without breaking the internal build.
+        Now that I've used it to adapt to the open source changes, I can remove it.
+
 2021-04-06  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Update UIDatePickerStyle for <input type=time>
