@@ -32,6 +32,10 @@
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+struct ExceptionData;
+}
+
 namespace WebKit {
 
 class MediaSessionCoordinatorProxyPrivate

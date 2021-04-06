@@ -46,6 +46,7 @@ list(APPEND WTF_PUBLIC_HEADERS
 
 list(APPEND WTF_SOURCES
     BlockObjCExceptions.mm
+    TranslatedProcess.cpp
 
     cf/CFURLExtras.cpp
     cf/FileSystemCF.cpp
@@ -60,7 +61,6 @@ list(APPEND WTF_SOURCES
     cocoa/Entitlements.mm
     cocoa/FileSystemCocoa.mm
     cocoa/LanguageCocoa.mm
-    cocoa/MachSemaphore.cpp
     cocoa/MachSendRight.cpp
     cocoa/MainThreadCocoa.mm
     cocoa/MemoryFootprintCocoa.cpp
@@ -106,6 +106,3 @@ list(APPEND WTF_SOURCES
     ${WTF_DERIVED_SOURCES_DIR}/mach_excServer.c
     ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
 )
-
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKit DIRECTORIES ${FORWARDING_HEADERS_DIR}/WebKitLegacy)

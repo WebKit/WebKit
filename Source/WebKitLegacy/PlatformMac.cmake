@@ -7,6 +7,13 @@ add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
 list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKITLEGACY_DIR}"
     "${WEBKITLEGACY_DIR}/mac"
+    "${WEBKITLEGACY_DIR}/mac/WebView"
+    "${WEBKITLEGACY_DIR}/mac/WebCoreSupport"
+    "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}"
+    "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy"
+    "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source"
+    "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source/third_party/abseil-cpp"
+    "${CMAKE_SOURCE_DIR}/Source/ThirdParty/libwebrtc/Source/webrtc"
 )
 
 list(APPEND WebKitLegacy_UNIFIED_SOURCE_LIST_FILES
@@ -105,6 +112,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebCoreSupport/WebInspectorClient.mm
     mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
     mac/WebCoreSupport/WebKitFullScreenListener.mm
+    mac/WebCoreSupport/WebMediaKeySystemClient.mm
     mac/WebCoreSupport/WebNotificationClient.mm
     mac/WebCoreSupport/WebOpenPanelResultListener.mm
     mac/WebCoreSupport/WebPaymentCoordinatorClient.mm
@@ -129,6 +137,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebView/WebDeviceOrientationProviderMock.mm
     mac/WebView/WebDocumentLoaderMac.mm
     mac/WebView/WebDynamicScrollBarsView.mm
+    mac/WebView/WebFeature.m
     mac/WebView/WebFormDelegate.m
     mac/WebView/WebGeolocationPosition.mm
     mac/WebView/WebHTMLRepresentation.mm
@@ -140,6 +149,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebView/WebPDFDocumentExtras.mm
     mac/WebView/WebPolicyDelegate.mm
     mac/WebView/WebPreferences.mm
+    mac/WebView/WebPreferencesDefaultValues.mm
     mac/WebView/WebResource.mm
     mac/WebView/WebTextCompletionController.mm
     mac/WebView/WebTextIterator.mm
@@ -628,21 +638,24 @@ endforeach ()
 
 foreach (_file ${WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES})
     get_filename_component(_name "${_file}" NAME)
-    set(_target_filename "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy/${_name}")
+    set(_target_filename "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}/WebKitLegacy/${_name}")
     if (NOT EXISTS ${_target_filename})
         file(WRITE ${_target_filename} "#import \"${_file}\"")
     endif ()
 endforeach ()
 
-if (NOT EXISTS ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginHostTypes.h)
+if (NOT EXISTS ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitLegacy/WebKitPluginHostTypes.h)
     file(COPY
         mac/Plugins/Hosted/WebKitPluginAgent.defs
         mac/Plugins/Hosted/WebKitPluginAgentReply.defs
         mac/Plugins/Hosted/WebKitPluginClient.defs
         mac/Plugins/Hosted/WebKitPluginHost.defs
+        DESTINATION ${WebKitLegacy_DERIVED_SOURCES_DIR})
+    file(MAKE_DIRECTORY ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitLegacy)
+    file(COPY
         mac/Plugins/Hosted/WebKitPluginHostTypes.defs
         mac/Plugins/Hosted/WebKitPluginHostTypes.h
-        DESTINATION ${WebKitLegacy_DERIVED_SOURCES_DIR})
+        DESTINATION ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitLegacy)
 endif ()
 
 add_custom_command(
@@ -669,6 +682,18 @@ list(APPEND WebKitLegacy_SOURCES
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginAgentUser.c
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginClientServer.c
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebKitPluginHostUser.c
+)
+
+add_custom_command(
+    OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebViewPreferencesChangedGenerated.mm ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesInternalFeatures.mm ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesExperimentalFeatures.mm ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h
+    DEPENDS ${WebKit_WEB_PREFERENCES_TEMPLATES} ${WebKit_WEB_PREFERENCES} WTF_CopyPreferences
+    COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GeneratePreferences.rb --frontend WebKitLegacy --base ${WTF_SCRIPTS_DIR}/Preferences/WebPreferences.yaml --debug ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesDebug.yaml --experimental ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesExperimental.yaml --internal ${WTF_SCRIPTS_DIR}/Preferences/WebPreferencesInternal.yaml --outputDir "${WebKitLegacy_DERIVED_SOURCES_DIR}" --template ${WEBKITLEGACY_DIR}/mac/Scripts/PreferencesTemplates/WebViewPreferencesChangedGenerated.mm.erb --template ${WEBKITLEGACY_DIR}/mac/Scripts/PreferencesTemplates/WebPreferencesInternalFeatures.mm.erb --template ${WEBKITLEGACY_DIR}/mac/Scripts/PreferencesTemplates/WebPreferencesExperimentalFeatures.mm.erb --template ${WEBKITLEGACY_DIR}/mac/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
+    VERBATIM)
+
+list(APPEND WebKitLegacy_SOURCES
+    ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebViewPreferencesChangedGenerated.mm
+    ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesInternalFeatures.mm
+    ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesExperimentalFeatures.mm
 )
 
 WEBKIT_MAKE_FORWARDING_HEADERS(WebKitLegacy

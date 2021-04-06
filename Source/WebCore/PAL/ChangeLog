@@ -1,3 +1,12 @@
+2021-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=224084
+
+        Reviewed by Tim Horton.
+
+        * pal/PlatformMac.cmake:
+
 2021-04-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         RemoteRenderingBackend should clean up CG resources after last Canvas is destroyed in Gpu process

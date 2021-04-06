@@ -80,7 +80,7 @@ void PrivateClickMeasurementNetworkLoader::didReceiveResponse(ResourceResponse&&
 void PrivateClickMeasurementNetworkLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, int reportedEncodedDataLength)
 {
     if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("application/json"_s, m_response.textEncodingName().isEmpty() ? TextEncoding("UTF-8") : TextEncoding(m_response.textEncodingName()));
+        m_decoder = TextResourceDecoder::create("application/json"_s, m_response.textEncodingName().isEmpty() ? WebCore::TextEncoding("UTF-8") : WebCore::TextEncoding(m_response.textEncodingName()));
 
     if (auto size = buffer->size())
         m_jsonString.append(m_decoder->decode(buffer->data(), size));

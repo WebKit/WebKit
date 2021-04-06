@@ -1,3 +1,27 @@
+2021-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=224084
+
+        Reviewed by Tim Horton.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/WebGLBlocklist.mm:
+        * platform/text/cocoa/LocalizedDateCache.h: Renamed from Source/WebCore/platform/text/ios/LocalizedDateCache.h.
+        * platform/text/cocoa/LocalizedDateCache.mm: Renamed from Source/WebCore/platform/text/ios/LocalizedDateCache.mm.
+        (WebCore::localizedDateCache):
+        (WebCore::_localeChanged):
+        (WebCore::LocalizedDateCache::LocalizedDateCache):
+        (WebCore::LocalizedDateCache::~LocalizedDateCache):
+        (WebCore::LocalizedDateCache::localeChanged):
+        (WebCore::LocalizedDateCache::formatterForDateType):
+        (WebCore::LocalizedDateCache::maximumWidthForDateType):
+        (WebCore::LocalizedDateCache::createFormatterForType):
+        (WebCore::LocalizedDateCache::calculateMaximumWidth):
+        * testing/cocoa/WebViewVisualIdentificationOverlay.mm:
+
 2021-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Wasted vector capacity in SVGPathByteStream
