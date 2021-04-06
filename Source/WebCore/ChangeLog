@@ -1,5 +1,19 @@
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
+        [GTK][GStreamer] Web Audio - Media element source - Audio is cracking.
+        https://bugs.webkit.org/show_bug.cgi?id=196293
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The provider client might request samples faster than the current clock speed, so this sink
+        should process buffers as fast as possible. The cracks were consequence of the audio sink of
+        the AudioDestination starving off.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::handleNewDeinterleavePad):
+
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] Heap allocation exceptions
         https://bugs.webkit.org/show_bug.cgi?id=224188
 
