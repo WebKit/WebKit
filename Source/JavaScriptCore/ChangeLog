@@ -1,3 +1,29 @@
+2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array's toString() is incorrect if join() is non-callable
+        https://bugs.webkit.org/show_bug.cgi?id=224215
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch exposes objectPrototypeToString() to be used by Array.prototype.toString
+        if "join" lookup doesn't return a callable value [1].
+
+        Fixes Array's toString() to return the correct tag instead of internal `className`,
+        perform Symbol.toStringTag lookup, and throw for revoked Proxy objects.
+        Aligns JSC with V8 and SpiderMonkey.
+
+        Also, a few objectPrototypeToString() tweaks: a bit nicer `undefined` / `null`
+        checks and simpler toObject() exception handling.
+
+        [1]: https://tc39.es/ecma262/#sec-array.prototype.tostring (step 3)
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectPrototypeToString):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectPrototype.h:
+
 2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [WTF] Introduce FixedVector and use it for FixedOperands

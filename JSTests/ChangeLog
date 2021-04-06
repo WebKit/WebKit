@@ -1,3 +1,12 @@
+2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array's toString() is incorrect if join() is non-callable
+        https://bugs.webkit.org/show_bug.cgi?id=224215
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/array-toString-non-callable-join.js: Added.
+
 2021-04-05  Keith Miller  <keith_miller@apple.com>
 
         DFG arity fixup nodes should exit to the caller's call opcode
