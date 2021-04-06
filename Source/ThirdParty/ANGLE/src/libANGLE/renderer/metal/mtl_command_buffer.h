@@ -522,6 +522,8 @@ class RenderCommandEncoder final : public CommandEncoder
     gl::ShaderMap<uint8_t> mSetSamplerCmds;
 
     RenderCommandEncoderStates mStateCache = {};
+
+    bool mPipelineStateSet = false;
 };
 
 class BlitCommandEncoder final : public CommandEncoder

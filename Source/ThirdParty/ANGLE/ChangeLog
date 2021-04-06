@@ -1,3 +1,56 @@
+2021-04-05  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r275476. rdar://problem/76250256
+
+    [METAL ANGLE] Stencil only formats being used as the depth attachment.
+    https://bugs.webkit.org/show_bug.cgi?id=224183
+    
+    Patch by John Cunningham <johncunnigham@apple.com> on 2021-04-05
+    Reviewed by Jon Lee.
+    
+    * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+    * src/compiler/translator/TranslatorMetalDirect/RewriteOutArgs.cpp:
+    (sh::Rewriter::argAlreadyProcessed):
+    * src/libANGLE/renderer/metal/ContextMtl.mm:
+    (rx::ContextMtl::setupDraw):
+    * src/libANGLE/renderer/metal/mtl_command_buffer.h:
+    * src/libANGLE/renderer/metal/mtl_command_buffer.mm:
+    (rx::mtl::RenderCommandEncoder::reset):
+    (rx::mtl::RenderCommandEncoder::setRenderPipelineState):
+    (rx::mtl::RenderCommandEncoder::draw):
+    (rx::mtl::RenderCommandEncoder::drawInstanced):
+    (rx::mtl::RenderCommandEncoder::drawIndexed):
+    (rx::mtl::RenderCommandEncoder::drawIndexedInstanced):
+    (rx::mtl::RenderCommandEncoder::drawIndexedInstancedBaseVertex):
+    * src/libANGLE/renderer/metal/mtl_utils.mm:
+    (rx::mtl::InitializeDepthStencilTextureContentsGPU):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275476 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-05  John Cunningham  <johncunnigham@apple.com>
+
+            [METAL ANGLE] Stencil only formats being used as the depth attachment.
+            https://bugs.webkit.org/show_bug.cgi?id=224183
+
+            Reviewed by Jon Lee.
+
+            * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+            * src/compiler/translator/TranslatorMetalDirect/RewriteOutArgs.cpp:
+            (sh::Rewriter::argAlreadyProcessed):
+            * src/libANGLE/renderer/metal/ContextMtl.mm:
+            (rx::ContextMtl::setupDraw):
+            * src/libANGLE/renderer/metal/mtl_command_buffer.h:
+            * src/libANGLE/renderer/metal/mtl_command_buffer.mm:
+            (rx::mtl::RenderCommandEncoder::reset):
+            (rx::mtl::RenderCommandEncoder::setRenderPipelineState):
+            (rx::mtl::RenderCommandEncoder::draw):
+            (rx::mtl::RenderCommandEncoder::drawInstanced):
+            (rx::mtl::RenderCommandEncoder::drawIndexed):
+            (rx::mtl::RenderCommandEncoder::drawIndexedInstanced):
+            (rx::mtl::RenderCommandEncoder::drawIndexedInstancedBaseVertex):
+            * src/libANGLE/renderer/metal/mtl_utils.mm:
+            (rx::mtl::InitializeDepthStencilTextureContentsGPU):
+
 2021-03-30  Kyle Piddington  <kpiddington@apple.com>
 
         Enable sample_compare operations in Metal ANGLE

@@ -1031,6 +1031,7 @@ void RenderCommandEncoder::reset()
 {
     CommandEncoder::reset();
     mRecording = false;
+    mPipelineStateSet = false;
     mCommands.clear();
 }
 
@@ -1295,6 +1296,7 @@ RenderCommandEncoder &RenderCommandEncoder::restart(const RenderPassDesc &desc)
 
 RenderCommandEncoder &RenderCommandEncoder::setRenderPipelineState(id<MTLRenderPipelineState> state)
 {
+    mPipelineStateSet = true;
     if (mStateCache.renderPipeline == state)
     {
         return *this;
@@ -1603,6 +1605,7 @@ RenderCommandEncoder &RenderCommandEncoder::draw(MTLPrimitiveType primitiveType,
                                                  uint32_t vertexStart,
                                                  uint32_t vertexCount)
 {
+    ASSERT(mPipelineStateSet && "Render Pipeline State was never set and we've issued a draw command.");
     mHasDrawCalls = true;
     mCommands.push(CmdType::Draw).push(primitiveType).push(vertexStart).push(vertexCount);
 
@@ -1614,6 +1617,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawInstanced(MTLPrimitiveType primi
                                                           uint32_t vertexCount,
                                                           uint32_t instances)
 {
+    ASSERT(mPipelineStateSet && "Render Pipeline State was never set and we've issued a draw command.");
     mHasDrawCalls = true;
     mCommands.push(CmdType::DrawInstanced)
         .push(primitiveType)
@@ -1630,6 +1634,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexed(MTLPrimitiveType primiti
                                                         const BufferRef &indexBuffer,
                                                         size_t bufferOffset)
 {
+    ASSERT(mPipelineStateSet && "Render Pipeline State was never set and we've issued a draw command.");
     if (!indexBuffer)
     {
         return *this;
@@ -1655,6 +1660,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexedInstanced(MTLPrimitiveTyp
                                                                  size_t bufferOffset,
                                                                  uint32_t instances)
 {
+    ASSERT(mPipelineStateSet && "Render Pipeline State was never set and we've issued a draw command.");
     if (!indexBuffer)
     {
         return *this;
@@ -1683,6 +1689,7 @@ RenderCommandEncoder &RenderCommandEncoder::drawIndexedInstancedBaseVertex(
     uint32_t instances,
     uint32_t baseVertex)
 {
+    ASSERT(mPipelineStateSet && "Render Pipeline State was never set and we've issued a draw command.");
     if (!indexBuffer)
     {
         return *this;
