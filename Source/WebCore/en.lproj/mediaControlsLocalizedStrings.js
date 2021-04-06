@@ -1,6 +1,6 @@
 var UIStringTable = {
     '##WIRELESS_PLAYBACK_DEVICE_TYPE##': 'AirPlay',
-    '##WIRELESS_PLAYBACK_DEVICE_NAME##': 'This video is playing on “##DEVICE_NAME##”.',
+    '##WIRELESS_PLAYBACK_DEVICE_NAME##': 'This video is playing on \u201C##DEVICE_NAME##\u201D.',
 
     '##TVOUT_DEVICE_TYPE##': 'TV Connected',
     '##TVOUT_DEVICE_NAME##': 'This video is playing on the TV.',

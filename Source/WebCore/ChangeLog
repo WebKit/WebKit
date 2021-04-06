@@ -1,3 +1,14 @@
+2021-04-06  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Change mediaControlsLocalizedStrings to use unicode escapes
+        https://bugs.webkit.org/show_bug.cgi?id=224195
+
+        Reviewed by Yusuke Suzuki.
+
+        * en.lproj/mediaControlsLocalizedStrings.js:
+
+        Switch from literal smart quotes to unicode escapes.
+
 2021-04-06  Rob Buis  <rbuis@igalia.com>
 
         Migrate layout ascents and descents to LayoutUnits instead of ints
