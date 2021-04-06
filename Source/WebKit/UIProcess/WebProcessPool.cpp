@@ -376,6 +376,9 @@ WebProcessPool::~WebProcessPool()
 
         process->shutDown();
     }
+
+    if (processPools().isEmpty() && !!NetworkProcessProxy::defaultNetworkProcess())
+        NetworkProcessProxy::defaultNetworkProcess() = nullptr;
 }
 
 void WebProcessPool::initializeClient(const WKContextClientBase* client)

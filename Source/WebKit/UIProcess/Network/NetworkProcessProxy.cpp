@@ -101,17 +101,17 @@ Vector<Ref<NetworkProcessProxy>> NetworkProcessProxy::allNetworkProcesses()
     return processes;
 }
 
-static RefPtr<NetworkProcessProxy>& defaultProcess()
+RefPtr<NetworkProcessProxy>& NetworkProcessProxy::defaultNetworkProcess()
 {
     static NeverDestroyed<RefPtr<NetworkProcessProxy>> process;
     return process.get();
 }
 
-Ref<NetworkProcessProxy> NetworkProcessProxy::defaultNetworkProcess()
+Ref<NetworkProcessProxy> NetworkProcessProxy::ensureDefaultNetworkProcess()
 {
-    if (!defaultProcess())
-        defaultProcess() = NetworkProcessProxy::create();
-    return *defaultProcess();
+    if (!defaultNetworkProcess())
+        defaultNetworkProcess() = NetworkProcessProxy::create();
+    return *defaultNetworkProcess();
 }
 
 void NetworkProcessProxy::terminate()
@@ -310,8 +310,8 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
 
     m_uploadActivity = WTF::nullopt;
 
-    if (defaultProcess() == this)
-        defaultProcess() = nullptr;
+    if (defaultNetworkProcess() == this)
+        defaultNetworkProcess() = nullptr;
 
     Ref<NetworkProcessProxy> protectedThis(*this);
     for (auto* processPool : WebProcessPool::allProcessPools())
@@ -1279,6 +1279,9 @@ void NetworkProcessProxy::removeSession(WebsiteDataStore& websiteDataStore)
 
     if (canSendMessage())
         send(Messages::NetworkProcess::DestroySession { websiteDataStore.sessionID() }, 0);
+
+    if (m_websiteDataStores.computesEmpty())
+        defaultNetworkProcess() = nullptr;
 }
 
 WebsiteDataStore* NetworkProcessProxy::websiteDataStoreFromSessionID(PAL::SessionID sessionID)

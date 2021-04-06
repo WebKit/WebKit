@@ -1,5 +1,31 @@
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION(r267763) NetworkProcess never terminates
+        https://bugs.webkit.org/show_bug.cgi?id=224191
+        <rdar://problem/76124590>
+
+        Reviewed by Chris Dumez.
+
+        Before r267763, when a WebProcessPool was deallocated, the NetworkProcess it owned was terminated.
+        Since then, once you start using a NetworkProcess, it will be kept until your app closes or it crashes.
+        To reclaim these resources in a way similar to how we did before, we now terminate the network process in two situations:
+        1. If all WebsiteDataStores associated with it are deallocated.  This happens if you have never used the default WKWebsiteDataStore.
+        2. If all WebProcessPools are deallocated.  This can still happen if you do use the default WKWebsiteDataStore, which is never deallocated.
+
+        Covered by API tests.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _defaultNetworkProcessExists]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::defaultNetworkProcessExists):
+        (WebKit::NetworkProcessProxy::removeSession):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool):
+
+2021-04-05  Alex Christensen  <achristensen@webkit.org>
+
         Reduce crash inside getAuditToken
         https://bugs.webkit.org/show_bug.cgi?id=224196
         <rdar://74536285>
