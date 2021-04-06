@@ -69,7 +69,19 @@ void loadIDNAllowedScriptList()
 
 static bool isArmenianLookalikeCharacter(UChar32 codePoint)
 {
-    return codePoint == 0x0548 || codePoint == 0x054D || codePoint == 0x0578 || codePoint == 0x057D;
+    switch (codePoint) {
+    case 0x0548: /* ARMENIAN CAPITAL LETTER VO */
+    case 0x054D: /* ARMENIAN CAPITAL LETTER SEH */
+    case 0x0551: /* ARMENIAN CAPITAL LETTER CO */
+    case 0x0555: /* ARMENIAN CAPITAL LETTER OH */
+    case 0x0578: /* ARMENIAN SMALL LETTER VO */
+    case 0x057D: /* ARMENIAN SMALL LETTER SEH */
+    case 0x0581: /* ARMENIAN SMALL LETTER CO */
+    case 0x0585: /* ARMENIAN SMALL LETTER OH */
+        return true;
+    default:
+        return false;
+    }
 }
 
 static bool isArmenianScriptCharacter(UChar32 codePoint)
@@ -106,7 +118,19 @@ template<typename CharacterType> inline bool isASCIIDigitOrValidHostCharacter(Ch
     }
 }
 
-static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UChar32 charCode)
+static bool isArmenianLookalikeSequence(const Optional<UChar32>& previousCodePoint, UChar32 codePoint)
+{
+    if (!previousCodePoint || *previousCodePoint == '/')
+        return false;
+
+    auto isArmenianLookalikePair = [] (UChar first, UChar second) {
+        return isArmenianLookalikeCharacter(first) && !(isArmenianScriptCharacter(second) || isASCIIDigitOrValidHostCharacter(second));
+    };
+    return isArmenianLookalikePair(codePoint, *previousCodePoint)
+        || isArmenianLookalikePair(*previousCodePoint, codePoint);
+}
+
+static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UChar32 codePoint)
 {
     // This function treats the following as unsafe, lookalike characters:
     // any non-printable character, any character considered as whitespace,
@@ -119,10 +143,10 @@ static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UCh
     // slashes into an ASCII solidus. But one of the two callers uses this
     // on characters that have not been processed by ICU, so they are needed here.
     
-    if (!u_isprint(charCode) || u_isUWhiteSpace(charCode) || u_hasBinaryProperty(charCode, UCHAR_DEFAULT_IGNORABLE_CODE_POINT))
+    if (!u_isprint(codePoint) || u_isUWhiteSpace(codePoint) || u_hasBinaryProperty(codePoint, UCHAR_DEFAULT_IGNORABLE_CODE_POINT))
         return true;
     
-    switch (charCode) {
+    switch (codePoint) {
     case 0x00BC: /* VULGAR FRACTION ONE QUARTER */
     case 0x00BD: /* VULGAR FRACTION ONE HALF */
     case 0x00BE: /* VULGAR FRACTION THREE QUARTERS */
@@ -250,19 +274,10 @@ static bool isLookalikeCharacter(const Optional<UChar32>& previousCodePoint, UCh
         return previousCodePoint == 0x0237 /* LATIN SMALL LETTER DOTLESS J */
             || previousCodePoint == 0x0131 /* LATIN SMALL LETTER DOTLESS I */
             || previousCodePoint == 0x05D5; /* HEBREW LETTER VAV */
-    case 0x0548: /* ARMENIAN CAPITAL LETTER VO */
-    case 0x054D: /* ARMENIAN CAPITAL LETTER SEH */
-    case 0x0578: /* ARMENIAN SMALL LETTER VO */
-    case 0x057D: /* ARMENIAN SMALL LETTER SEH */
-        return previousCodePoint
-            && !isASCIIDigitOrValidHostCharacter(previousCodePoint.value())
-            && !isArmenianScriptCharacter(previousCodePoint.value());
     case '.':
         return false;
     default:
-        return previousCodePoint
-            && isArmenianLookalikeCharacter(previousCodePoint.value())
-            && !(isArmenianScriptCharacter(charCode) || isASCIIDigitOrValidHostCharacter(charCode));
+        return isArmenianLookalikeSequence(previousCodePoint, codePoint);
     }
 }
 
