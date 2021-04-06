@@ -111,18 +111,18 @@ void ScriptElement::handleAsyncAttribute()
 static bool isLegacySupportedJavaScriptLanguage(const String& language)
 {
     static const auto languages = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
-        "javascript",
-        "javascript1.0",
-        "javascript1.1",
-        "javascript1.2",
-        "javascript1.3",
-        "javascript1.4",
-        "javascript1.5",
-        "javascript1.6",
-        "javascript1.7",
-        "livescript",
-        "ecmascript",
-        "jscript",
+        "javascript"_s,
+        "javascript1.0"_s,
+        "javascript1.1"_s,
+        "javascript1.2"_s,
+        "javascript1.3"_s,
+        "javascript1.4"_s,
+        "javascript1.5"_s,
+        "javascript1.6"_s,
+        "javascript1.7"_s,
+        "livescript"_s,
+        "ecmascript"_s,
+        "jscript"_s,
     });
     return languages.get().contains(language);
 }

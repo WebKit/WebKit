@@ -1,3 +1,15 @@
+2021-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Define AtomString(ASCIILiteral) and use ASCIILiteral more to avoid memory allocation
+        https://bugs.webkit.org/show_bug.cgi?id=224125
+
+        Reviewed by Saam Barati.
+
+        Add AtomString(ASCIILiteral). ASCIILiteral ensures that storage is constant non-heap string by its type.
+        So we can just use it as a literal (not allocating a string storage).
+
+        * wtf/text/AtomString.h:
+
 2021-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Enable PreferPageRenderingUpdatesNear60FPSEnabled by default
