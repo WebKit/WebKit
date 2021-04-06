@@ -1,3 +1,19 @@
+2021-04-06  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Layout sidebar grid overlay color swatch tooltip shouldn't include "switch format" hint
+        https://bugs.webkit.org/show_bug.cgi?id=223418
+        <rdar://problem/75825793>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.layout):
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype.set shiftClickColorEnabled):
+        (WI.InlineSwatch.prototype._updateSwatch):
+        (WI.InlineSwatch.prototype._allowChangingColorFormats):
+
 2021-03-31  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Regression (r270134) Timeline recordings 2 and beyond do not show a timescale.
