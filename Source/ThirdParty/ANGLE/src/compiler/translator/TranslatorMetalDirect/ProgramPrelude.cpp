@@ -1242,7 +1242,7 @@ struct ANGLE_Out
     thread T &mDest;
     ~ANGLE_Out() { mDest = mTemp; }
     ANGLE_Out(thread T &dest)
-        : mDest(dest)
+        : mTemp(dest), mDest(dest)
     {}
     operator thread T &() { return mTemp; }
 };
