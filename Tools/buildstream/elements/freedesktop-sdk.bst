@@ -14,6 +14,8 @@ sources:
   path: patches/fdo-0001-meson-Bump-to-0.56.1.patch
 - kind: patch
   path: patches/fdo-0001-dav1d-Bump-to-version-0.8.2.patch
+- kind: patch
+  path: patches/fdo-0001-libvpx-Enable-high-bit-depth-support.patch
 config:
   options:
     target_arch: '%{arch}'
