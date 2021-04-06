@@ -139,6 +139,10 @@
 #import <WebCore/ImageExtractionResult.h>
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#include <WebKit/MediaSessionCoordinatorProxyPrivate.h>
+#endif
+
 #if HAVE(TRANSLATION_UI_SERVICES)
 #import <TranslationUIServices/LTUITranslationViewController.h>
 
@@ -5581,6 +5585,13 @@ bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()
 {
     return false;
 }
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void WebViewImpl::setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorProxyPrivate* coordinator)
+{
+    m_coordinatorForTesting = coordinator;
+}
+#endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 

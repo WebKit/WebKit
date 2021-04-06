@@ -72,17 +72,17 @@ void RemoteMediaSessionCoordinator::join(CompletionHandler<void(Optional<WebCore
         }
 
         if (exception) {
-            callback(Exception { exception->code, WTFMove(exception->message) });
+            callback(exception->toException());
             return;
         }
 
         callback({ });
-    }, 0);
+    });
 }
 
 void RemoteMediaSessionCoordinator::leave()
 {
-    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::Leave { }, 0);
+    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::Leave { });
 }
 
 void RemoteMediaSessionCoordinator::seekTo(double time, CompletionHandler<void(Optional<WebCore::Exception>&&)>&& callback)
@@ -95,12 +95,12 @@ void RemoteMediaSessionCoordinator::seekTo(double time, CompletionHandler<void(O
         }
 
         if (exception) {
-            callback(Exception { exception->code, WTFMove(exception->message) });
+            callback(exception->toException());
             return;
         }
 
         callback({ });
-    }, 0);
+    });
 }
 
 void RemoteMediaSessionCoordinator::play(CompletionHandler<void(Optional<WebCore::Exception>&&)>&& callback)
@@ -113,12 +113,12 @@ void RemoteMediaSessionCoordinator::play(CompletionHandler<void(Optional<WebCore
         }
 
         if (exception) {
-            callback(Exception { exception->code, WTFMove(exception->message) });
+            callback(exception->toException());
             return;
         }
 
         callback({ });
-    }, 0);
+    });
 }
 
 void RemoteMediaSessionCoordinator::pause(CompletionHandler<void(Optional<WebCore::Exception>&&)>&& callback)
@@ -131,12 +131,12 @@ void RemoteMediaSessionCoordinator::pause(CompletionHandler<void(Optional<WebCor
         }
 
         if (exception) {
-            callback(Exception { exception->code, WTFMove(exception->message) });
+            callback(exception->toException());
             return;
         }
 
         callback({ });
-    }, 0);
+    });
 }
 
 void RemoteMediaSessionCoordinator::setTrack(const String& trackIdentifier, CompletionHandler<void(Optional<WebCore::Exception>&&)>&& callback)
@@ -149,36 +149,36 @@ void RemoteMediaSessionCoordinator::setTrack(const String& trackIdentifier, Comp
         }
 
         if (exception) {
-            callback(Exception { exception->code, WTFMove(exception->message) });
+            callback(exception->toException());
             return;
         }
 
         callback({ });
-    }, 0);
+    });
 }
 
 void RemoteMediaSessionCoordinator::positionStateChanged(const Optional<WebCore::MediaPositionState>& state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
-    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::PositionStateChanged { state }, 0);
+    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::PositionStateChanged { state });
 }
 
 void RemoteMediaSessionCoordinator::readyStateChanged(WebCore::MediaSessionReadyState state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::ReadyStateChanged { state }, 0);
+    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::ReadyStateChanged { state });
 }
 
 void RemoteMediaSessionCoordinator::playbackStateChanged(WebCore::MediaSessionPlaybackState state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::PlaybackStateChanged { state }, 0);
+    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::PlaybackStateChanged { state });
 }
 
 void RemoteMediaSessionCoordinator::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, state);
-    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::CoordinatorStateChanged { state }, 0);
+    m_page.send(Messages::RemoteMediaSessionCoordinatorProxy::CoordinatorStateChanged { state });
 }
 
 void RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<void(bool)>&& completionHandler)

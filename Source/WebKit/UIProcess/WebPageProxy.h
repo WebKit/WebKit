@@ -1892,7 +1892,7 @@ public:
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&&, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&&);
+    void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&&, CompletionHandler<void(bool)>&&);
 #endif
 
 #if PLATFORM(COCOA)

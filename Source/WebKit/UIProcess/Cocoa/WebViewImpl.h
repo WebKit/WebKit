@@ -152,6 +152,7 @@ namespace WebKit {
 class PageClient;
 class PageClientImpl;
 class DrawingAreaProxy;
+class MediaSessionCoordinatorProxyPrivate;
 class SafeBrowsingWarning;
 class ViewGestureController;
 class ViewSnapshot;
@@ -645,6 +646,11 @@ public:
     void handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& menuLocation);
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    MediaSessionCoordinatorProxyPrivate* mediaSessionCoordinatorForTesting() { return m_coordinatorForTesting.get(); }
+    void setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorProxyPrivate*);
+#endif
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
@@ -850,6 +856,10 @@ private:
     RetainPtr<NSMenu> m_domPasteMenu;
     RetainPtr<WKDOMPasteMenuDelegate> m_domPasteMenuDelegate;
     CompletionHandler<void(WebCore::DOMPasteAccessResponse)> m_domPasteRequestHandler;
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<MediaSessionCoordinatorProxyPrivate> m_coordinatorForTesting;
+#endif
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebViewImplAdditionsAfter.h>

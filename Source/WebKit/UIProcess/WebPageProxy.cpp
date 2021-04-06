@@ -10403,19 +10403,19 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&& completionHandler)
+void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!m_mediaSessionCoordinatorProxy);
 
     sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
 
         if (!weakThis || !success) {
-            completionHandler({ });
+            completionHandler(false);
             return;
         }
 
         weakThis->m_mediaSessionCoordinatorProxy = RemoteMediaSessionCoordinatorProxy::create(*weakThis, WTFMove(privateCoordinator));
-        completionHandler(makeWeakPtr(weakThis->m_mediaSessionCoordinatorProxy.get()));
+        completionHandler(true);
     });
 }
 #endif

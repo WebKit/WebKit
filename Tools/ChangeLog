@@ -1,3 +1,56 @@
+2021-04-06  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Add MediaSessionCoordinator API test
+        https://bugs.webkit.org/show_bug.cgi?id=224140
+        <rdar://problem/76171173>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/xcshareddata/xcschemes/TestWebKitAPI.xcscheme:
+        * TestWebKitAPI/Tests/WebKit/MediaSessionCoordinatorTest.mm: Added.
+        (-[_WKMockMediaSessionCoordinator lastStateChange]):
+        (-[_WKMockMediaSessionCoordinator lastMethodCalled]):
+        (-[_WKMockMediaSessionCoordinator identifier]):
+        (-[_WKMockMediaSessionCoordinator joinWithCompletion:]):
+        (-[_WKMockMediaSessionCoordinator leave]):
+        (-[_WKMockMediaSessionCoordinator seekTo:withCompletion:]):
+        (-[_WKMockMediaSessionCoordinator playWithCompletion:]):
+        (-[_WKMockMediaSessionCoordinator pauseWithCompletion:]):
+        (-[_WKMockMediaSessionCoordinator setTrack:withCompletion:]):
+        (-[_WKMockMediaSessionCoordinator positionStateChanged:]):
+        (-[_WKMockMediaSessionCoordinator readyStateChanged:]):
+        (-[_WKMockMediaSessionCoordinator playbackStateChanged:]):
+        (-[_WKMockMediaSessionCoordinator coordinatorStateChanged:]):
+        (-[_WKMockMediaSessionCoordinator seekSessionToTime:]):
+        (-[_WKMockMediaSessionCoordinator playSession]):
+        (-[_WKMockMediaSessionCoordinator pauseSession]):
+        (-[_WKMockMediaSessionCoordinator setSessionTrack:]):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::createCoordinator):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::webView const):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::coordinator const):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::loadPageAndBecomeReady):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::runScriptWithUserGesture):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::play):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::pause):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::listenForEventMessages):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::eventListenerWasCalled):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::clearEventListenerState):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::executeUntil):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::waitForEventListenerToBeCalled):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::listenForMessagesPosted):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::clearMessagesPosted):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::listenForSessionHandlerMessages):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::sessionHandlerWasCalled):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::waitForSessionHandlerToBeCalled):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::listenForPromiseMessages):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::clearPromiseMessages):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::promiseWasResolved):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::promiseWasRejected):
+        (TestWebKitAPI::MediaSessionCoordinatorTest::waitForPromise):
+        (TestWebKitAPI::TEST_F):
+        * TestWebKitAPI/Tests/WebKitCocoa/media-remote.html:
+
 2021-04-06  David Kilzer  <ddkilzer@apple.com>
 
         set-webkit-configuration should print current settings

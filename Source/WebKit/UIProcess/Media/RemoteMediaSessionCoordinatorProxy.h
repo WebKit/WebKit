@@ -41,7 +41,7 @@ namespace WebKit {
 class WebPageProxy;
 
 class RemoteMediaSessionCoordinatorProxy
-    : public IPC::MessageReceiver
+    : private IPC::MessageReceiver
     , public RefCounted<RemoteMediaSessionCoordinatorProxy>
     , public WebCore::MediaSessionCoordinatorClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -60,19 +60,16 @@ public:
 private:
     explicit RemoteMediaSessionCoordinatorProxy(WebPageProxy&, Ref<MediaSessionCoordinatorProxyPrivate>&&);
 
-    using CoordinateCompletionHandler = CompletionHandler<void(const WebCore::ExceptionData&)>;
-
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    using CommandCompletionHandler = CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>;
-    void join(CommandCompletionHandler&&);
+    void join(MediaSessionCommandCompletionHandler&&);
     void leave();
-    void coordinateSeekTo(double, CommandCompletionHandler&&);
-    void coordinatePlay(CommandCompletionHandler&&);
-    void coordinatePause(CommandCompletionHandler&&);
-    void coordinateSetTrack(const String&, CommandCompletionHandler&&);
+    void coordinateSeekTo(double, MediaSessionCommandCompletionHandler&&);
+    void coordinatePlay(MediaSessionCommandCompletionHandler&&);
+    void coordinatePause(MediaSessionCommandCompletionHandler&&);
+    void coordinateSetTrack(const String&, MediaSessionCommandCompletionHandler&&);
     void positionStateChanged(const Optional<WebCore::MediaPositionState>&);
     void readyStateChanged(WebCore::MediaSessionReadyState);
     void playbackStateChanged(WebCore::MediaSessionPlaybackState);

@@ -59,6 +59,7 @@ RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy(WebPagePr
     , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #endif
 {
+    m_privateCoordinator->setClient(makeWeakPtr(this));
     m_webPageProxy.process().addMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID(), *this);
 }
 
@@ -67,7 +68,7 @@ RemoteMediaSessionCoordinatorProxy::~RemoteMediaSessionCoordinatorProxy()
     m_webPageProxy.process().removeMessageReceiver(Messages::RemoteMediaSessionCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
 
-void RemoteMediaSessionCoordinatorProxy::join(CommandCompletionHandler&& completionHandler)
+void RemoteMediaSessionCoordinatorProxy::join(MediaSessionCommandCompletionHandler&& completionHandler)
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
@@ -85,7 +86,7 @@ void RemoteMediaSessionCoordinatorProxy::leave()
     m_privateCoordinator->leave();
 }
 
-void RemoteMediaSessionCoordinatorProxy::coordinateSeekTo(double time, CommandCompletionHandler&& completionHandler)
+void RemoteMediaSessionCoordinatorProxy::coordinateSeekTo(double time, MediaSessionCommandCompletionHandler&& completionHandler)
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier, time);
@@ -96,7 +97,7 @@ void RemoteMediaSessionCoordinatorProxy::coordinateSeekTo(double time, CommandCo
     });
 }
 
-void RemoteMediaSessionCoordinatorProxy::coordinatePlay(CommandCompletionHandler&& completionHandler)
+void RemoteMediaSessionCoordinatorProxy::coordinatePlay(MediaSessionCommandCompletionHandler&& completionHandler)
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
@@ -107,7 +108,7 @@ void RemoteMediaSessionCoordinatorProxy::coordinatePlay(CommandCompletionHandler
     });
 }
 
-void RemoteMediaSessionCoordinatorProxy::coordinatePause(CommandCompletionHandler&& completionHandler)
+void RemoteMediaSessionCoordinatorProxy::coordinatePause(MediaSessionCommandCompletionHandler&& completionHandler)
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
@@ -118,7 +119,7 @@ void RemoteMediaSessionCoordinatorProxy::coordinatePause(CommandCompletionHandle
     });
 }
 
-void RemoteMediaSessionCoordinatorProxy::coordinateSetTrack(const String& track, CommandCompletionHandler&& completionHandler)
+void RemoteMediaSessionCoordinatorProxy::coordinateSetTrack(const String& track, MediaSessionCommandCompletionHandler&& completionHandler)
 {
     auto identifier = LOGIDENTIFIER;
     ALWAYS_LOG(identifier);
@@ -147,6 +148,12 @@ void RemoteMediaSessionCoordinatorProxy::readyStateChanged(MediaSessionReadyStat
     m_privateCoordinator->readyStateChanged(state);
 }
 
+void RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_privateCoordinator->coordinatorStateChanged(state);
+}
+
 void RemoteMediaSessionCoordinatorProxy::seekSessionToTime(double time, CompletionHandler<void(bool)>&& callback)
 {
     m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SeekSessionToTime { time }, callback);
@@ -165,12 +172,6 @@ void RemoteMediaSessionCoordinatorProxy::pauseSession(CompletionHandler<void(boo
 void RemoteMediaSessionCoordinatorProxy::setSessionTrack(const String& trackId, CompletionHandler<void(bool)>&& callback)
 {
     m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SetSessionTrack { trackId }, callback);
-}
-
-void RemoteMediaSessionCoordinatorProxy::coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state)
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-    m_privateCoordinator->coordinatorStateChanged(state);
 }
 
 #if !RELEASE_LOG_DISABLED

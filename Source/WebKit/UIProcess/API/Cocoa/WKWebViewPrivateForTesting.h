@@ -26,6 +26,8 @@
 #import "WKWebViewPrivateForTestingIOS.h"
 #import "WKWebViewPrivateForTestingMac.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef enum {
     WKWebViewAudioRoutingArbitrationStatusNone,
     WKWebViewAudioRoutingArbitrationStatusPending,
@@ -36,6 +38,8 @@ struct WKAppBoundNavigationTestingData {
     BOOL hasLoadedAppBoundRequestTesting;
     BOOL hasLoadedNonAppBoundRequestTesting;
 };
+
+@protocol _WKMediaSessionCoordinator;
 
 @interface WKWebView (WKTesting)
 
@@ -99,4 +103,56 @@ struct WKAppBoundNavigationTestingData {
 - (void)_appBoundNavigationData:(void(^)(struct WKAppBoundNavigationTestingData data))completionHandler;
 - (void)_clearAppBoundNavigationData:(void(^)(void))completionHandler;
 
+- (void)_createMediaSessionCoordinatorForTesting:(id <_WKMediaSessionCoordinator>)privateCoordinator completionHandler:(void(^)(BOOL))completionHandler;
+
 @end
+
+typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {
+    WKMediaSessionReadyStateHaveNothing,
+    WKMediaSessionReadyStateHaveMetadata,
+    WKMediaSessionReadyStateHaveCurrentData,
+    WKMediaSessionReadyStateHaveFutureData,
+    WKMediaSessionReadyStateHaveEnoughData
+};
+
+typedef NS_ENUM(NSInteger, _WKMediaSessionPlaybackState) {
+    WKMediaSessionPlaybackStateNone,
+    WKMediaSessionPlaybackStatePaused,
+    WKMediaSessionPlaybackStatePlaying
+};
+
+typedef NS_ENUM(NSInteger, _WKMediaSessionCoordinatorState) {
+    WKMediaSessionCoordinatorStateWaiting,
+    WKMediaSessionCoordinatorStateJoined,
+    WKMediaSessionCoordinatorStateClosed
+};
+
+struct _WKMediaPositionState {
+    double duration;
+    double playbackRate;
+    double position;
+};
+
+@protocol _WKMediaSessionCoordinatorDelegate <NSObject>
+- (void)seekSessionToTime:(double)time withCompletion:(void(^)(BOOL))completionHandler;
+- (void)playSessionWithCompletion:(void(^)(BOOL))completionHandler;
+- (void)pauseSessionWithCompletion:(void(^)(BOOL))completionHandler;
+- (void)setSessionTrack:(NSString*)trackIdentifier withCompletion:(void(^)(BOOL))completionHandler;
+@end
+
+@protocol _WKMediaSessionCoordinator <NSObject>
+@property (nullable, weak) id <_WKMediaSessionCoordinatorDelegate> delegate;
+@property (nonatomic, readonly) NSString * _Nonnull identifier;
+- (void)joinWithCompletion:(void(^ _Nonnull)(BOOL))completionHandler;
+- (void)leave;
+- (void)seekTo:(double)time withCompletion:(void(^ _Nonnull)(BOOL))completionHandler;
+- (void)playWithCompletion:(void(^ _Nonnull)(BOOL))completionHandler;
+- (void)pauseWithCompletion:(void(^ _Nonnull)(BOOL))completionHandler;
+- (void)setTrack:(NSString *_Nonnull)trackIdentifier withCompletion:(void(^ _Nonnull)(BOOL))completionHandler;
+- (void)positionStateChanged:(struct _WKMediaPositionState * _Nullable)state;
+- (void)readyStateChanged:(_WKMediaSessionReadyState)state;
+- (void)playbackStateChanged:(_WKMediaSessionPlaybackState)state;
+- (void)coordinatorStateChanged:(_WKMediaSessionCoordinatorState)state;
+@end
+
+NS_ASSUME_NONNULL_END
