@@ -1,3 +1,18 @@
+2021-04-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Allow access to 'com.apple.system.logger' in the Base System
+        https://bugs.webkit.org/show_bug.cgi?id=224241
+        <rdar://problem/75960194>
+
+        Reviewed by Alex Christensen.
+
+        Deeper testing has revealed that some test configurations used internally require access to 'com.apple.system.logger' in the base
+        system to support certain diagnostic operations outside the normal user release logging paths.
+
+        This patch restores access to the 'com.apple.system.logger' endpoint when running in the Base System.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-04-06  Eric Carlson  <eric.carlson@apple.com>
 
         [macOS] Add MediaSessionCoordinator API test
