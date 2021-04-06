@@ -92,6 +92,7 @@ static constexpr UChar bullet = 0x2022;
 static constexpr UChar ellipsis = 0x2026;
 static constexpr UChar multiplicationSign = 0x00D7;
 static constexpr UChar thinSpace = 0x2009;
+static constexpr UChar emSpace = 0x2003;
 
 static void truncateWithEllipsis(String& string, size_t length)
 {
@@ -1806,8 +1807,11 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             previousColumnEndLine = columnStartLine;
 
         StringBuilder lineLabel;
-        if (gridOverlay.config.showLineNumbers)
-            lineLabel.append(i + 1, thinSpace, bullet, thinSpace, -static_cast<int>(columnPositions.size() - i));
+        if (gridOverlay.config.showLineNumbers) {
+            lineLabel.append(i + 1);
+            if (i <= authoredTrackColumnSizes.size())
+                lineLabel.append(emSpace, -static_cast<int>(authoredTrackColumnSizes.size() - i + 1));
+        }
         if (gridOverlay.config.showLineNames && columnLineNames.contains(i)) {
             for (auto lineName : columnLineNames.get(i)) {
                 if (!lineLabel.isEmpty())
@@ -1900,8 +1904,11 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             previousRowEndLine = rowStartLine;
 
         StringBuilder lineLabel;
-        if (gridOverlay.config.showLineNumbers)
-            lineLabel.append(i + 1, thinSpace, bullet, thinSpace, -static_cast<int>(rowPositions.size() - i));
+        if (gridOverlay.config.showLineNumbers) {
+            lineLabel.append(i + 1);
+            if (i <= authoredTrackRowSizes.size())
+                lineLabel.append(emSpace, -static_cast<int>(authoredTrackRowSizes.size() - i + 1));
+        }
         if (gridOverlay.config.showLineNames && rowLineNames.contains(i)) {
             for (auto lineName : rowLineNames.get(i)) {
                 if (!lineLabel.isEmpty())

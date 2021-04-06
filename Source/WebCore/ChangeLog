@@ -1,3 +1,23 @@
+2021-04-06  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Grid overlay line numbers should not include implicit tracks in negative line number calculations.
+        https://bugs.webkit.org/show_bug.cgi?id=224200
+
+        Reviewed by BJ Burg.
+
+        Use the `authoredTrackColumnSizes`/`authoredTrackRowSizes` to determine if the line is an explicit grid line or
+        implicit grid line (starting with the patch for bug 224199 those vectors will only contain the explicit lines).
+        Only explicit lines should have a negative number for addressing the line, and those numbers should start with
+        the last explicit line. Because each track is bounded by two lines, there will always be one more explicit line
+        than there is explicit track, including the case where there are no explicit tracks, which will still have a
+        single explicit line numbered `-1`.
+
+        Additionally, line numbers are now separated by an em-space to improve legibility, where previously the bullet
+        looked like a multiplication symbol between two numbers.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::buildGridOverlay):
+
 2021-04-06  Mike Gorse  <mgorse@suse.com>
 
         Build fails when video is disabled
