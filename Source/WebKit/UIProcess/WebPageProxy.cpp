@@ -8258,6 +8258,11 @@ void WebPageProxy::requestImageExtraction(const URL& imageURL, const ShareableBi
     pageClient().requestImageExtraction(imageURL, imageData, WTFMove(completionHandler));
 }
 
+void WebPageProxy::computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+{
+    pageClient().computeCanRevealImage(imageURL, imageBitmap, WTFMove(completion));
+}
+
 void WebPageProxy::updateWithImageExtractionResult(ImageExtractionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&& completionHandler)
 {
     if (!hasRunningProcess()) {

@@ -1,3 +1,40 @@
+2021-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Image preview context menu action should be shown conditionally
+        https://bugs.webkit.org/show_bug.cgi?id=224126
+        <rdar://problem/76162272>
+
+        Reviewed by Devin Rousso.
+
+        Add a page client hook to return whether or not the "reveal image" context menu item should be enabled, given
+        the image URL and decoded image bitmap; we then use this method to conditionally insert a context menu item for
+        revealing the image in context menu data.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::computeCanRevealImage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::computeCanRevealImage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::computeCanRevealImage):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::createMenuActionItem):
+
+        Pull logic for mapping a `WebContextMenuItemData` of type `ActionType` or `CheckableActionType` to a platform
+        `NSMenuItem` out into a separate helper function. Use this helper in `getContextMenuItem`, as well as the
+        completion handler for the call to `computeCanRevealImage`. Note that this also requires moving the
+        `menuItemIdentifier` function up above `getContextMenuFromItems`.
+
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+
+        Special case the `ContextMenuItemTagRevealImage` item; instead of adding this item to the context menu right
+        away, we hide it by default, and only reinsert it if the page client indicates that we require the item (via
+        `computeCanRevealImage`).
+
+        (WebKit::WebContextMenuProxyMac::getContextMenuItem):
+
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r267763) NetworkProcess never terminates

@@ -132,6 +132,7 @@ private:
 
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&) override;
+    void computeCanRevealImage(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&&) override;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;

@@ -527,6 +527,7 @@ public:
 
 #if ENABLE(IMAGE_EXTRACTION)
     virtual void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
+    virtual void computeCanRevealImage(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

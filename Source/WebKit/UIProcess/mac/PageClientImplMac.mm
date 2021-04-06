@@ -488,6 +488,11 @@ void PageClientImpl::requestImageExtraction(const URL& imageURL, const Shareable
     m_impl->requestImageExtraction(imageURL, imageData, WTFMove(completion));
 }
 
+void PageClientImpl::computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+{
+    m_impl->computeCanRevealImage(imageURL, imageBitmap, WTFMove(completion));
+}
+
 #endif
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)

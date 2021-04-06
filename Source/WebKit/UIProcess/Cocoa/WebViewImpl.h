@@ -44,6 +44,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakObjCPtr.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
 using _WKRectEdge = NSUInteger;
@@ -585,6 +586,7 @@ public:
 
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
+    void computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);

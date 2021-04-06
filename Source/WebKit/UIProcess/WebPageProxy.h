@@ -1639,6 +1639,7 @@ public:
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
     void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&&);
+    void computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
