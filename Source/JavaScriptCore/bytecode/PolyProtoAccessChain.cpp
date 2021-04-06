@@ -30,21 +30,20 @@
 
 namespace JSC {
 
-std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObject* globalObject, JSCell* base, const PropertySlot& slot)
+RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* globalObject, JSCell* base, const PropertySlot& slot)
 {
     JSObject* target = slot.isUnset() ? nullptr : slot.slotBase();
-    return create(globalObject, base, target);
+    return tryCreate(globalObject, base, target);
 }
 
-std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObject* globalObject, JSCell* base, JSObject* target)
+RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* globalObject, JSCell* base, JSObject* target)
 {
     JSCell* current = base;
     VM& vm = base->vm();
 
     bool found = false;
 
-    std::unique_ptr<PolyProtoAccessChain> result(new PolyProtoAccessChain());
-
+    Vector<StructureID> chain;
     for (unsigned iterationNumber = 0; true; ++iterationNumber) {
         Structure* structure = current->structure(vm);
 
@@ -60,7 +59,7 @@ std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObjec
         // To save memory, we don't include the base in the chain. We let
         // AccessCase provide the base to us as needed.
         if (iterationNumber)
-            result->m_chain.append(structure->id());
+            chain.append(structure->id());
         else
             RELEASE_ASSERT(current == base);
 
@@ -78,8 +77,7 @@ std::unique_ptr<PolyProtoAccessChain> PolyProtoAccessChain::create(JSGlobalObjec
     if (!found && !!target)
         return nullptr;
 
-    result->m_chain.shrinkToFit();
-    return result;
+    return adoptRef(*new PolyProtoAccessChain(WTFMove(chain)));
 }
 
 bool PolyProtoAccessChain::needImpurePropertyWatchpoint(VM& vm) const

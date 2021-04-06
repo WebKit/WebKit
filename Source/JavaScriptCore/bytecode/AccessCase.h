@@ -148,10 +148,10 @@ public:
     }
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset = invalidOffset,
-        Structure* = nullptr, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(), std::unique_ptr<PolyProtoAccessChain> = nullptr);
+        Structure* = nullptr, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(), RefPtr<PolyProtoAccessChain>&& = nullptr);
 
     static std::unique_ptr<AccessCase> createTransition(VM&, JSCell* owner, CacheableIdentifier, PropertyOffset, Structure* oldStructure,
-        Structure* newStructure, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
+        Structure* newStructure, const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&);
 
     static std::unique_ptr<AccessCase> createDelete(VM&, JSCell* owner, CacheableIdentifier, PropertyOffset, Structure* oldStructure,
         Structure* newStructure);
@@ -255,20 +255,9 @@ public:
 #endif
     
 protected:
-    AccessCase(VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, std::unique_ptr<PolyProtoAccessChain>);
+    AccessCase(VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*, const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&);
     AccessCase(AccessCase&&) = default;
-    AccessCase(const AccessCase& other)
-        : m_type(other.m_type)
-        , m_state(other.m_state)
-        , m_viaProxy(other.m_viaProxy)
-        , m_offset(other.m_offset)
-        , m_structure(other.m_structure)
-        , m_conditionSet(other.m_conditionSet)
-        , m_identifier(other.m_identifier)
-    {
-        if (other.m_polyProtoAccessChain)
-            m_polyProtoAccessChain = other.m_polyProtoAccessChain->clone();
-    }
+    AccessCase(const AccessCase& other) = default;
 
     AccessCase& operator=(const AccessCase&) = delete;
     void resetState() { m_state = Primordial; }
@@ -321,7 +310,7 @@ private:
 
     ObjectPropertyConditionSet m_conditionSet;
 
-    std::unique_ptr<PolyProtoAccessChain> m_polyProtoAccessChain;
+    RefPtr<PolyProtoAccessChain> m_polyProtoAccessChain;
 
     CacheableIdentifier m_identifier;
 };

@@ -37,6 +37,7 @@
 #include "VariableEnvironment.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -991,7 +992,7 @@ public:
     ~Parser();
 
     template <class ParsedNode>
-    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const PrivateNameEnvironment* = nullptr, const Vector<JSTextPosition>* = nullptr);
+    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const PrivateNameEnvironment* = nullptr, const RefCountedArray<JSTextPosition>* = nullptr);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     JSTokenLocation locationBeforeLastToken() const { return m_lexer->lastTokenLocation(); }
@@ -1511,7 +1512,7 @@ private:
         CodeFeatures features;
         int numConstants;
     };
-    Expected<ParseInnerResult, String> parseInner(const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition, const Vector<JSTextPosition>*, const PrivateNameEnvironment* parentScopePrivateNames);
+    Expected<ParseInnerResult, String> parseInner(const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition, const RefCountedArray<JSTextPosition>*, const PrivateNameEnvironment* parentScopePrivateNames);
 
     // Used to determine type of error to report.
     bool isFunctionMetadataNode(ScopeNode*) { return false; }
@@ -1742,7 +1743,7 @@ private:
     template <class TreeBuilder> TreeSourceElements parseAsyncFunctionSourceElements(TreeBuilder&, bool isArrowFunctionBodyExpression, SourceElementsMode);
     template <class TreeBuilder> TreeSourceElements parseAsyncGeneratorFunctionSourceElements(TreeBuilder&, bool isArrowFunctionBodyExpression, SourceElementsMode);
     template <class TreeBuilder> TreeSourceElements parseSingleFunction(TreeBuilder&, Optional<int> functionConstructorParametersEndPosition);
-    template <class TreeBuilder> TreeSourceElements parseClassFieldInitializerSourceElements(TreeBuilder&, const Vector<JSTextPosition>&);
+    template <class TreeBuilder> TreeSourceElements parseClassFieldInitializerSourceElements(TreeBuilder&, const RefCountedArray<JSTextPosition>&);
     template <class TreeBuilder> TreeStatement parseStatementListItem(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength);
     template <class TreeBuilder> TreeStatement parseStatement(TreeBuilder&, const Identifier*& directive, unsigned* directiveLiteralLength = nullptr);
     enum class ExportType { Exported, NotExported };
@@ -2127,7 +2128,7 @@ private:
 
 template <typename LexerType>
 template <class ParsedNode>
-std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const Identifier& calleeName, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const PrivateNameEnvironment* parentScopePrivateNames, const Vector<JSTextPosition>* classFieldLocations)
+std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const Identifier& calleeName, ParsingContext parsingContext, Optional<int> functionConstructorParametersEndPosition, const PrivateNameEnvironment* parentScopePrivateNames, const RefCountedArray<JSTextPosition>* classFieldLocations)
 {
     int errLine;
     String errMsg;
@@ -2228,7 +2229,7 @@ std::unique_ptr<ParsedNode> parse(
     EvalContextType evalContextType = EvalContextType::None,
     DebuggerParseData* debuggerParseData = nullptr,
     const PrivateNameEnvironment* parentScopePrivateNames = nullptr,
-    const Vector<JSTextPosition>* classFieldLocations = nullptr,
+    const RefCountedArray<JSTextPosition>* classFieldLocations = nullptr,
     bool isInsideOrdinaryFunction = false)
 {
     ASSERT(!source.provider()->source().isNull());

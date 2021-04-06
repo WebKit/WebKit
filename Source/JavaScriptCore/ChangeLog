@@ -1,3 +1,129 @@
+2021-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink some of Vectors in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=224162
+
+        Reviewed by Simon Fraser.
+
+        1. Add XXXStatus::shrinkToFit to shrink underlying dynamic Vectors.
+        2. Replace tierUpInLoopHierarchy's Vector with RefCountedArray since it is constructed-once-lookup-only data.
+        3. Use MemoryCompactLookupOnlyRobinHoodHashSet for StringTables since this is constructed-once-lookup-only data. We also add
+           MemoryCompactLookupOnlyRobinHoodHashSet support for CachedTypes.
+        4. Use resizeToFit for StringSwitchJumpTables and SwitchJumpTables.
+        5. JITStubRoutineSet's Vector should be shrunk.
+        6. BlockDirectoryBits's Vector's initial size should be small.
+        7. Make PolyProtoAccessChain RefCounted, and use RefCountedArray for its Vector<StructureID>. And remove PolyProtoAccessChain::clone.
+           Just having Ref is enough since this is immutable data.
+        8. Use RefCountedArray for UnlinkedFunctionExecutable's m_classFieldLocations.
+        9. Use RefCountedArray for JSWebAssemblyInstance.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::createTransition):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::AccessCase): Deleted.
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setFrameShuffleData):
+        * bytecode/CheckPrivateBrandStatus.cpp:
+        (JSC::CheckPrivateBrandStatus::shrinkToFit):
+        (JSC::CheckPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::CheckPrivateBrandStatus::merge):
+        * bytecode/CheckPrivateBrandStatus.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/DeleteByStatus.cpp:
+        (JSC::DeleteByStatus::shrinkToFit):
+        (JSC::DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::DeleteByStatus::merge):
+        * bytecode/DeleteByStatus.h:
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::shrinkToFit):
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByStatus::computeFor):
+        (JSC::GetByStatus::merge):
+        * bytecode/GetByStatus.h:
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::create):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::shrinkToFit):
+        (JSC::InByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::InByIdStatus::merge):
+        * bytecode/InByIdStatus.h:
+        * bytecode/InstanceOfStatus.cpp:
+        (JSC::InstanceOfStatus::shrinkToFit):
+        (JSC::InstanceOfStatus::computeForStubInfo):
+        * bytecode/InstanceOfStatus.h:
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::IntrinsicGetterAccessCase):
+        (JSC::IntrinsicGetterAccessCase::create):
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * bytecode/JumpTable.h:
+        * bytecode/PolyProtoAccessChain.cpp:
+        (JSC::PolyProtoAccessChain::tryCreate):
+        (JSC::PolyProtoAccessChain::create): Deleted.
+        * bytecode/PolyProtoAccessChain.h:
+        (JSC::PolyProtoAccessChain::clone): Deleted.
+        (JSC::PolyProtoAccessChain::chain const): Deleted.
+        (JSC::PolyProtoAccessChain::operator!= const): Deleted.
+        (JSC::PolyProtoAccessChain::forEach const): Deleted.
+        (JSC::PolyProtoAccessChain::slotBaseStructure const): Deleted.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::visitWeak const):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::ProxyableAccessCase):
+        (JSC::ProxyableAccessCase::create):
+        * bytecode/ProxyableAccessCase.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::shrinkToFit):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::merge):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/SetPrivateBrandStatus.cpp:
+        (JSC::SetPrivateBrandStatus::shrinkToFit):
+        (JSC::SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::SetPrivateBrandStatus::merge):
+        * bytecode/SetPrivateBrandStatus.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * dfg/DFGJITCode.h:
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::tierUpInLoopHierarchy):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * heap/BlockDirectoryBits.h:
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * jit/CallFrameShuffleData.h:
+        (JSC::CallFrameShuffleData::shrinkToFit):
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/PolymorphicCallStubRoutine.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheInByID):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseClassFieldInitializerSourceElements):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedFunctionExecutableRareData::encode):
+        (JSC::CachedFunctionExecutableRareData::decode const):
+        * runtime/VM.cpp:
+        (JSC::VM::popAllCheckpointOSRSideStateUntil):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildrenImpl):
+        * wasm/js/JSWebAssemblyInstance.h:
+
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

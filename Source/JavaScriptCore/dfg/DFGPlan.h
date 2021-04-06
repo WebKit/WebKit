@@ -106,7 +106,7 @@ public:
     bool willTryToTierUp() const { return m_willTryToTierUp; }
     void setWillTryToTierUp(bool willTryToTierUp) { m_willTryToTierUp = willTryToTierUp; }
 
-    HashMap<BytecodeIndex, Vector<BytecodeIndex>>& tierUpInLoopHierarchy() { return m_tierUpInLoopHierarchy; }
+    HashMap<BytecodeIndex, RefCountedArray<BytecodeIndex>>& tierUpInLoopHierarchy() { return m_tierUpInLoopHierarchy; }
     Vector<BytecodeIndex>& tierUpAndOSREnterBytecodes() { return m_tierUpAndOSREnterBytecodes; }
 
     enum Stage { Preparing, Compiling, Ready, Cancelled };
@@ -159,7 +159,7 @@ private:
     DesiredGlobalProperties m_globalProperties;
     RecordedStatuses m_recordedStatuses;
 
-    HashMap<BytecodeIndex, Vector<BytecodeIndex>> m_tierUpInLoopHierarchy;
+    HashMap<BytecodeIndex, RefCountedArray<BytecodeIndex>> m_tierUpInLoopHierarchy;
     Vector<BytecodeIndex> m_tierUpAndOSREnterBytecodes;
 
     Stage m_stage;

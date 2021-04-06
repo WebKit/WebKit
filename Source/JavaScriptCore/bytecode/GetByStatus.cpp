@@ -45,6 +45,11 @@ bool GetByStatus::appendVariant(const GetByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
+void GetByStatus::shrinkToFit()
+{
+    m_variants.shrinkToFit();
+}
+
 GetByStatus GetByStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex)
 {
     VM& vm = profiledBlock->vm();
@@ -339,6 +344,7 @@ GetByStatus GetByStatus::computeForStubInfoWithoutExitSiteFeedback(
             } }
         }
         
+        result.shrinkToFit();
         return result;
     }
         
@@ -433,6 +439,7 @@ GetByStatus GetByStatus::computeFor(const StructureSet& set, UniquedStringImpl* 
             return GetByStatus(LikelyTakesSlowPath);
     }
     
+    result.shrinkToFit();
     return result;
 }
 #endif // ENABLE(JIT)
@@ -494,6 +501,7 @@ void GetByStatus::merge(const GetByStatus& other)
             if (!appendVariant(otherVariant))
                 return mergeSlow();
         }
+        shrinkToFit();
         return;
         
     case ModuleNamespace:

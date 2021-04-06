@@ -50,6 +50,11 @@ class RefCountedArray {
     enum CommonCopyConstructorTag { CommonCopyConstructor };
 
 public:
+    using iterator = T*;
+    using const_iterator = const T*;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
     RefCountedArray() = default;
     
     RefCountedArray(const RefCountedArray& other)
@@ -169,8 +174,8 @@ public:
     size_t byteSize() const { return size() * sizeof(T); }
     
     T* data() { return PtrTraits::unwrap(m_data); }
-    T* begin() { return data(); }
-    T* end()
+    iterator begin() { return data(); }
+    iterator end()
     {
         if (!m_data)
             return 0;
@@ -179,8 +184,13 @@ public:
     }
     
     const T* data() const { return const_cast<RefCountedArray*>(this)->data(); }
-    const T* begin() const { return const_cast<RefCountedArray*>(this)->begin(); }
-    const T* end() const { return const_cast<RefCountedArray*>(this)->end(); }
+    const_iterator begin() const { return const_cast<RefCountedArray*>(this)->begin(); }
+    const_iterator end() const { return const_cast<RefCountedArray*>(this)->end(); }
+
+    reverse_iterator rbegin() { return reverse_iterator(end()); }
+    reverse_iterator rend() { return reverse_iterator(begin()); }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+    const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
     
     T& at(size_t i)
     {

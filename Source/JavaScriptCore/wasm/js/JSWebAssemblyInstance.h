@@ -35,6 +35,7 @@
 #include "WasmCreationMode.h"
 #include "WasmInstance.h"
 #include <wtf/Ref.h>
+#include <wtf/RefCountedArray.h>
 
 namespace JSC {
 
@@ -115,7 +116,7 @@ private:
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;
     WriteBarrier<WebAssemblyModuleRecord> m_moduleRecord;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
-    Vector<WriteBarrier<JSWebAssemblyTable>> m_tables;
+    RefCountedArray<WriteBarrier<JSWebAssemblyTable>> m_tables;
 };
 
 } // namespace JSC

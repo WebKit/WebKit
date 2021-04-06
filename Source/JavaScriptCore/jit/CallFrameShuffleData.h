@@ -35,6 +35,11 @@ namespace JSC {
 struct CallFrameShuffleData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    void shrinkToFit()
+    {
+        args.shrinkToFit();
+    }
+
     Vector<ValueRecovery> args;
     unsigned numLocals { UINT_MAX };
     unsigned numPassedArgs { UINT_MAX };

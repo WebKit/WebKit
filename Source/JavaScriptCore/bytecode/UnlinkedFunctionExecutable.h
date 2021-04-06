@@ -39,6 +39,7 @@
 #include "SourceCode.h"
 #include "VariableEnvironment.h"
 #include <wtf/Optional.h>
+#include <wtf/RefCountedArray.h>
 
 namespace JSC {
 
@@ -177,11 +178,11 @@ public:
         return m_rareData->m_parentScopeTDZVariables;
     }
 
-    PrivateNameEnvironment parentPrivateNameEnvironment() const
+    const PrivateNameEnvironment* parentPrivateNameEnvironment() const
     {
         if (!m_rareData)
-            return PrivateNameEnvironment();
-        return m_rareData->m_parentPrivateNameEnvironment;
+            return nullptr;
+        return &m_rareData->m_parentPrivateNameEnvironment;
     }
     
     bool isArrowFunction() const { return isArrowFunctionParseMode(parseMode()); }
@@ -218,13 +219,13 @@ public:
         String m_sourceURLDirective;
         String m_sourceMappingURLDirective;
         RefPtr<TDZEnvironmentLink> m_parentScopeTDZVariables;
-        Vector<JSTextPosition> m_classFieldLocations;
+        RefCountedArray<JSTextPosition> m_classFieldLocations;
         PrivateNameEnvironment m_parentPrivateNameEnvironment;
     };
 
     NeedsClassFieldInitializer needsClassFieldInitializer() const { return static_cast<NeedsClassFieldInitializer>(m_needsClassFieldInitializer); }
 
-    Vector<JSTextPosition>* classFieldLocations() const
+    RefCountedArray<JSTextPosition>* classFieldLocations() const
     {
         if (m_rareData)
             return &m_rareData->m_classFieldLocations;
@@ -235,7 +236,7 @@ public:
     {
         if (classFieldLocations.isEmpty())
             return;
-        ensureRareData().m_classFieldLocations = WTFMove(classFieldLocations);
+        ensureRareData().m_classFieldLocations = RefCountedArray<JSTextPosition>(WTFMove(classFieldLocations));
     }
 
 private:

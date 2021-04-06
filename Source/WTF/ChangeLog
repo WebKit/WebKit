@@ -1,3 +1,22 @@
+2021-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink some of Vectors in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=224162
+
+        Reviewed by Simon Fraser.
+
+        Add rbegin and rend to make RefCountedArray usable for Vector clients who use these features.
+
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::begin):
+        (WTF::RefCountedArray::end):
+        (WTF::RefCountedArray::begin const):
+        (WTF::RefCountedArray::end const):
+        (WTF::RefCountedArray::rbegin):
+        (WTF::RefCountedArray::rend):
+        (WTF::RefCountedArray::rbegin const):
+        (WTF::RefCountedArray::rend const):
+
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

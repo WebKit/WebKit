@@ -281,6 +281,7 @@ void CallLinkInfo::visitWeak(VM& vm)
 void CallLinkInfo::setFrameShuffleData(const CallFrameShuffleData& shuffleData)
 {
     m_frameShuffleData = makeUnique<CallFrameShuffleData>(shuffleData);
+    m_frameShuffleData->shrinkToFit();
 }
 
 } // namespace JSC

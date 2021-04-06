@@ -40,6 +40,11 @@ bool DeleteByStatus::appendVariant(const DeleteByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
+void DeleteByStatus::shrinkToFit()
+{
+    m_variants.shrinkToFit();
+}
+
 DeleteByStatus DeleteByStatus::computeForBaseline(CodeBlock* baselineBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit)
 {
     ConcurrentJSLocker locker(baselineBlock->m_lock);
@@ -129,6 +134,7 @@ DeleteByStatus DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback(
             }
         }
 
+        result.shrinkToFit();
         return result;
     }
 
@@ -214,6 +220,7 @@ void DeleteByStatus::merge(const DeleteByStatus& other)
             if (!appendVariant(otherVariant))
                 return mergeSlow();
         }
+        shrinkToFit();
         return;
 
     case LikelyTakesSlowPath:

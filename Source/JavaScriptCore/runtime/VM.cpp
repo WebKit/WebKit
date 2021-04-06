@@ -1127,6 +1127,7 @@ void VM::popAllCheckpointOSRSideStateUntil(CallFrame* target)
     // We have to worry about migrating from another thread since there may be no checkpoints in our thread but one in the other threads.
     while (m_checkpointSideState.size() && bounds.contains(m_checkpointSideState.last()->associatedCallFrame))
         m_checkpointSideState.takeLast();
+    m_checkpointSideState.shrinkToFit();
 }
 
 void logSanitizeStack(VM& vm)

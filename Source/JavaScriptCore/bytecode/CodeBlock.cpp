@@ -437,7 +437,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
 
         if (size_t count = unlinkedCodeBlock->numberOfStringSwitchJumpTables()) {
-            m_rareData->m_stringSwitchJumpTables.grow(count);
+            m_rareData->m_stringSwitchJumpTables.resizeToFit(count);
             for (size_t i = 0; i < count; i++) {
                 UnlinkedStringJumpTable::StringOffsetTable::iterator ptr = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.begin();
                 UnlinkedStringJumpTable::StringOffsetTable::iterator end = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.end();
@@ -450,7 +450,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
 
         if (size_t count = unlinkedCodeBlock->numberOfSwitchJumpTables()) {
-            m_rareData->m_switchJumpTables.grow(count);
+            m_rareData->m_switchJumpTables.resizeToFit(count);
             for (size_t i = 0; i < count; i++) {
                 UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->switchJumpTable(i);
                 SimpleJumpTable& destTable = m_rareData->m_switchJumpTables[i];

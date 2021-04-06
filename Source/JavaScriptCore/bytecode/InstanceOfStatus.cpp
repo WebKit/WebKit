@@ -39,6 +39,11 @@ void InstanceOfStatus::appendVariant(const InstanceOfVariant& variant)
     appendICStatusVariant(m_variants, variant);
 }
 
+void InstanceOfStatus::shrinkToFit()
+{
+    m_variants.shrinkToFit();
+}
+
 InstanceOfStatus InstanceOfStatus::computeFor(
     CodeBlock* codeBlock, ICStatusMap& infoMap, BytecodeIndex bytecodeIndex)
 {
@@ -96,6 +101,7 @@ InstanceOfStatus InstanceOfStatus::computeForStubInfo(const ConcurrentJSLocker&,
             access.type() == AccessCase::InstanceOfHit));
     }
     
+    result.shrinkToFit();
     return result;
 }
 #endif // ENABLE(DFG_JIT)

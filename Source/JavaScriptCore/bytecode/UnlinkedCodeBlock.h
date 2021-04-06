@@ -42,8 +42,8 @@
 #include "VirtualRegister.h"
 #include <algorithm>
 #include <wtf/BitVector.h>
-#include <wtf/HashSet.h>
 #include <wtf/RefCountedArray.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
 #include <wtf/text/UniquedStringImpl.h>
@@ -80,7 +80,7 @@ struct UnlinkedStringJumpTable {
         int32_t branchOffset;
     };
 
-    typedef HashMap<RefPtr<StringImpl>, OffsetLocation> StringOffsetTable;
+    using StringOffsetTable = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, OffsetLocation>;
     StringOffsetTable offsetTable;
 
     inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset)

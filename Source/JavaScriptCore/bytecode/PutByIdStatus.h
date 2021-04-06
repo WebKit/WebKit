@@ -135,6 +135,7 @@ private:
     static PutByIdStatus computeFromLLInt(CodeBlock*, BytecodeIndex, UniquedStringImpl* uid);
     
     bool appendVariant(const PutByIdVariant&);
+    void shrinkToFit();
     
     State m_state;
     Vector<PutByIdVariant, 1> m_variants;

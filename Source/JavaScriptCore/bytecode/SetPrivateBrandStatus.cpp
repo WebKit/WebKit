@@ -41,6 +41,11 @@ bool SetPrivateBrandStatus::appendVariant(const SetPrivateBrandVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
+void SetPrivateBrandStatus::shrinkToFit()
+{
+    m_variants.shrinkToFit();
+}
+
 SetPrivateBrandStatus SetPrivateBrandStatus::computeForBaseline(CodeBlock* baselineBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit)
 {
     ConcurrentJSLocker locker(baselineBlock->m_lock);
@@ -113,6 +118,7 @@ SetPrivateBrandStatus SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFe
                 return SetPrivateBrandStatus(JSC::slowVersion(summary), *stubInfo);
         }
 
+        result.shrinkToFit();
         return result;
     }
 
@@ -195,6 +201,7 @@ void SetPrivateBrandStatus::merge(const SetPrivateBrandStatus& other)
             if (!appendVariant(otherVariant))
                 return mergeSlow();
         }
+        shrinkToFit();
         return;
 
     case LikelyTakesSlowPath:

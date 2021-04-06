@@ -86,6 +86,7 @@ public:
     bool finalize(VM&);
 
     bool appendVariant(const DeleteByIdVariant&);
+    void shrinkToFit();
 
     void dump(PrintStream&) const;
 

@@ -30,7 +30,7 @@
 #pragma once
 
 #include "CodeLocation.h"
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringImpl.h>
 
@@ -44,7 +44,7 @@ namespace JSC {
     };
 
     struct StringJumpTable {
-        typedef HashMap<RefPtr<StringImpl>, OffsetLocation> StringOffsetTable;
+        using StringOffsetTable = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, OffsetLocation>;
         StringOffsetTable offsetTable;
 #if ENABLE(JIT)
         CodeLocationLabel<JSSwitchPtrTag> ctiDefault; // FIXME: it should not be necessary to store this.

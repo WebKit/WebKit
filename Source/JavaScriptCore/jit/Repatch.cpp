@@ -293,7 +293,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 }
             }
 
-            std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
+            RefPtr<PolyProtoAccessChain> prototypeAccessChain;
 
             PropertyOffset offset = slot.isUnset() ? invalidOffset : slot.cachedOffset();
 
@@ -333,7 +333,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                     }
 
                     if (cacheStatus->usesPolyProto) {
-                        prototypeAccessChain = PolyProtoAccessChain::create(globalObject, baseCell, slot);
+                        prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, slot);
                         if (!prototypeAccessChain)
                             return GiveUpOnCache;
                         RELEASE_ASSERT(slot.isCacheableCustom() || prototypeAccessChain->slotBaseStructure(vm, structure)->get(vm, propertyName.uid()) == offset);
@@ -694,7 +694,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                 ASSERT(!newStructure->isDictionary());
                 ASSERT(newStructure->isObject());
                 
-                std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
+                RefPtr<PolyProtoAccessChain> prototypeAccessChain;
                 ObjectPropertyConditionSet conditionSet;
                 if (putKind == PutKind::NotDirect) {
                     auto cacheStatus = prepareChainForCaching(globalObject, baseCell, nullptr);
@@ -702,7 +702,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                         return GiveUpOnCache;
 
                     if (cacheStatus->usesPolyProto) {
-                        prototypeAccessChain = PolyProtoAccessChain::create(globalObject, baseCell, nullptr);
+                        prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, nullptr);
                         if (!prototypeAccessChain)
                             return GiveUpOnCache;
                     } else {
@@ -726,7 +726,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
         } else if (slot.isCacheableCustom() || slot.isCacheableSetter()) {
             if (slot.isCacheableCustom()) {
                 ObjectPropertyConditionSet conditionSet;
-                std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
+                RefPtr<PolyProtoAccessChain> prototypeAccessChain;
 
                 // We need to do this even if we're a self custom, since we must disallow dictionaries
                 // because we need to be informed if the custom goes away since we cache the constant
@@ -737,7 +737,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
 
                 if (slot.base() != baseValue) {
                     if (cacheStatus->usesPolyProto) {
-                        prototypeAccessChain = PolyProtoAccessChain::create(globalObject, baseCell, slot.base());
+                        prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, slot.base());
                         if (!prototypeAccessChain)
                             return GiveUpOnCache;
                     } else {
@@ -755,7 +755,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
             } else {
                 ASSERT(slot.isCacheableSetter());
                 ObjectPropertyConditionSet conditionSet;
-                std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
+                RefPtr<PolyProtoAccessChain> prototypeAccessChain;
                 PropertyOffset offset = slot.cachedOffset();
 
                 if (slot.base() != baseValue) {
@@ -766,7 +766,7 @@ static InlineCacheAction tryCachePutByID(JSGlobalObject* globalObject, CodeBlock
                         return RetryCacheLater;
 
                     if (cacheStatus->usesPolyProto) {
-                        prototypeAccessChain = PolyProtoAccessChain::create(globalObject, baseCell, slot.base());
+                        prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, baseCell, slot.base());
                         if (!prototypeAccessChain)
                             return GiveUpOnCache;
                         unsigned attributes;
@@ -920,7 +920,7 @@ static InlineCacheAction tryCacheInByID(
         
         Structure* structure = base->structure(vm);
         
-        std::unique_ptr<PolyProtoAccessChain> prototypeAccessChain;
+        RefPtr<PolyProtoAccessChain> prototypeAccessChain;
         ObjectPropertyConditionSet conditionSet;
         if (wasFound) {
             InlineCacheAction action = actionForCell(vm, base);
@@ -951,7 +951,7 @@ static InlineCacheAction tryCacheInByID(
                     return RetryCacheLater;
 
                 if (cacheStatus->usesPolyProto) {
-                    prototypeAccessChain = PolyProtoAccessChain::create(globalObject, base, slot);
+                    prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, base, slot);
                     if (!prototypeAccessChain)
                         return GiveUpOnCache;
                     RELEASE_ASSERT(slot.isCacheableCustom() || prototypeAccessChain->slotBaseStructure(vm, structure)->get(vm, propertyName.uid()) == slot.cachedOffset());
@@ -970,7 +970,7 @@ static InlineCacheAction tryCacheInByID(
                 return GiveUpOnCache;
 
             if (cacheStatus->usesPolyProto) {
-                prototypeAccessChain = PolyProtoAccessChain::create(globalObject, base, slot);
+                prototypeAccessChain = PolyProtoAccessChain::tryCreate(globalObject, base, slot);
                 if (!prototypeAccessChain)
                     return GiveUpOnCache;
             } else {
