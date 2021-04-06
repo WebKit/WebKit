@@ -851,6 +851,8 @@ inline void RenderBox::setInlineBoxWrapper(InlineElementBox* boxWrapper)
     m_inlineBoxWrapper = boxWrapper;
 }
 
+LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox&, LineDirectionMode);
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderBox, isBox())

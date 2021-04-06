@@ -1,3 +1,23 @@
+2021-04-06  Rob Buis  <rbuis@igalia.com>
+
+        Move synthesizedBaselineFromBorderBox to RenderBox
+        https://bugs.webkit.org/show_bug.cgi?id=224186
+
+        Reviewed by Javier Fernandez.
+
+        Move synthesizedBaselineFromBorderBox to RenderBox since there are
+        various call sites using it.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+        * rendering/RenderBox.cpp:
+        (WebCore::synthesizedBaselineFromBorderBox):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::synthesizedBaselineFromBorderBox): Deleted.
+        * rendering/RenderGrid.cpp:
+        (WebCore::synthesizedBaselineFromBorderBox): Deleted.
+
 2021-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Wasted vector capacity in CSSSegmentedFontFace

@@ -3141,7 +3141,7 @@ Optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode line
             return WTF::nullopt;
     }
     // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
-    float boxHeight = lineDirection == HorizontalLine ? height() + m_marginBox.bottom() : width() + m_marginBox.left();
+    float boxHeight = synthesizedBaselineFromBorderBox(*this, lineDirection) + (lineDirection == HorizontalLine ? m_marginBox.bottom() : m_marginBox.left());
     float lastBaseline = 0;
     if (!childrenInline()) {
         auto inlineBlockBaseline = RenderBlock::inlineBlockBaseline(lineDirection);
