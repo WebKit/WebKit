@@ -1,5 +1,38 @@
 2021-04-05  Jer Noble  <jer.noble@apple.com>
 
+        [MediaSession] Small refactoring of MediaSession implementation classes
+        https://bugs.webkit.org/show_bug.cgi?id=224141
+
+        Reviewed by Eric Carlson.
+
+        A smorgasboard of small refactoring changes:
+
+        - MediaSessionCoordinatorProxyPrivate should use an Optional<ExceptionData> rather than
+          an actual ExceptionData, to handle the case where no exception was encoutered.
+        - RemoteMediaSessionCoordinatorProxy::create() should just return a Ref, not a RefPtr.
+        - Logging inside a completion handler requires access to this.
+        - Add RemoteMediaSessionCoordinatorProxy.cpp to the build.
+
+        * UIProcess/Media/MediaSessionCoordinatorProxyPrivate.h:
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::create):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::RemoteMediaSessionCoordinatorProxy):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::join):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinateSeekTo):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatePlay):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinatePause):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::coordinateSetTrack):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::pauseSession):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::setSessionTrack):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::logChannel const):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::::coordinateSetTrack): Deleted.
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.h:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::logger const):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::logIdentifier const):
+        (WebKit::RemoteMediaSessionCoordinatorProxy::logClassName const):
+
+2021-04-05  Jer Noble  <jer.noble@apple.com>
+
         [Cocoa] Calling AudioComponentFetchServerRegistrations on main thread causes launch time regression
         https://bugs.webkit.org/show_bug.cgi?id=224137
         <rdar://76137483>

@@ -1864,6 +1864,7 @@
 		CD0C6831201FD10100A59409 /* WKFullScreenViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */; };
 		CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */; };
 		CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD1FE2D72613E18600ADC29B /* RemoteMediaSessionCoordinatorProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0736B75C260D4A4E00E06994 /* RemoteMediaSessionCoordinatorProxy.cpp */; };
 		CD3EEF462579C261006563BB /* RemoteMediaEngineConfigurationFactoryProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD3EEF442579C1D4006563BB /* RemoteMediaEngineConfigurationFactoryProxyMessageReceiver.cpp */; };
 		CD4570D3244113B500A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4570D02441014A00A3DCEB /* AudioSessionRoutingArbitratorProxyMessageReceiver.cpp */; };
 		CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */; };
@@ -14005,6 +14006,7 @@
 				071BC58F23CE1EAA00680D7C /* RemoteMediaPlayerProxyMessageReceiver.cpp in Sources */,
 				1D4D737023A9E54700717A25 /* RemoteMediaResourceManagerMessageReceiver.cpp in Sources */,
 				077BA56E260E6D1C0072F19F /* RemoteMediaSessionCoordinator.cpp in Sources */,
+				CD1FE2D72613E18600ADC29B /* RemoteMediaSessionCoordinatorProxy.cpp in Sources */,
 				1DD2A6632561246F00FF7B6F /* RemoteMediaSourceProxyMessageReceiver.cpp in Sources */,
 				1AC1338518590C4600F3EC05 /* RemoteObjectRegistryMessageReceiver.cpp in Sources */,
 				CD8252E225D4919100862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp in Sources */,

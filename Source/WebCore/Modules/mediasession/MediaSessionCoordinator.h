@@ -73,13 +73,8 @@ private:
     // MediaSessionCoordinatorClient
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
     void playSession(CompletionHandler<void(bool)>&&) final;
-    void pauseSession(CompletionHandler<void(bool)>) final;
-    void setSessionTrack(const String&, CompletionHandler<void(bool)>) final;
-
-    bool internalSeekTo(double);
-    bool internalPlay();
-    bool internalPause();
-    bool internalSetTrack(const String&);
+    void pauseSession(CompletionHandler<void(bool)>&&) final;
+    void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
 
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }

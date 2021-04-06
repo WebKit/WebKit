@@ -33,6 +33,7 @@
 #include "MediaSessionPlaybackState.h"
 #include "MediaSessionReadyState.h"
 #include <wtf/Optional.h>
+#include <wtf/WeakPtr.h>
 
 namespace WTF {
 class Logger;
@@ -46,8 +47,8 @@ public:
 
     virtual void seekSessionToTime(double, CompletionHandler<void(bool)>&&) = 0;
     virtual void playSession(CompletionHandler<void(bool)>&&) = 0;
-    virtual void pauseSession(CompletionHandler<void(bool)>) = 0;
-    virtual void setSessionTrack(const String&, CompletionHandler<void(bool)>) = 0;
+    virtual void pauseSession(CompletionHandler<void(bool)>&&) = 0;
+    virtual void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) = 0;
 };
 
 class MediaSessionCoordinatorPrivate : public RefCounted<MediaSessionCoordinatorPrivate> {

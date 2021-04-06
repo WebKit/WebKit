@@ -292,7 +292,8 @@ void MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<v
         return;
     }
 
-    completionHandler(internalSeekTo(time));
+    m_session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = time });
+    completionHandler(true);
 }
 
 void MediaSessionCoordinator::playSession(CompletionHandler<void(bool)>&& completionHandler)
@@ -304,10 +305,11 @@ void MediaSessionCoordinator::playSession(CompletionHandler<void(bool)>&& comple
         return;
     }
 
-    completionHandler(internalPlay());
+    m_session->callActionHandler({ .action = MediaSessionAction::Play });
+    completionHandler(true);
 }
 
-void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)> completionHandler)
+void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, m_state);
 
@@ -316,10 +318,11 @@ void MediaSessionCoordinator::pauseSession(CompletionHandler<void(bool)> complet
         return;
     }
 
-    completionHandler(internalPause());
+    m_session->callActionHandler({ .action = MediaSessionAction::Play });
+    completionHandler(true);
 }
 
-void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHandler<void(bool)> completionHandler)
+void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG(LOGIDENTIFIER, m_state, ", ", track);
 
@@ -328,61 +331,8 @@ void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHan
         return;
     }
 
-    completionHandler(internalSetTrack(track));
-}
-
-bool MediaSessionCoordinator::internalSeekTo(double time)
-{
-    if (!m_session)
-        return false;
-
-    MediaSessionActionDetails details {
-        .action = MediaSessionAction::Seekto,
-        .seekTime = time,
-    };
-    m_session->callActionHandler(details);
-
-    return true;
-}
-
-bool MediaSessionCoordinator::internalPlay()
-{
-    if (!m_session)
-        return false;
-
-    MediaSessionActionDetails details {
-        .action = MediaSessionAction::Play,
-    };
-    m_session->callActionHandler(details);
-
-    return true;
-}
-
-bool MediaSessionCoordinator::internalPause()
-{
-    if (!m_session)
-        return false;
-
-    MediaSessionActionDetails details {
-        .action = MediaSessionAction::Pause,
-    };
-    m_session->callActionHandler(details);
-
-    return true;
-}
-
-bool MediaSessionCoordinator::internalSetTrack(const String& track)
-{
-    if (!m_session)
-        return false;
-
-    MediaSessionActionDetails details {
-        .action = MediaSessionAction::Settrack,
-        .trackIdentifier = track,
-    };
-    m_session->callActionHandler(details);
-
-    return true;
+    m_session->callActionHandler({ .action = MediaSessionAction::Settrack, .trackIdentifier = track });
+    completionHandler(true);
 }
 
 WTFLogChannel& MediaSessionCoordinator::logChannel()

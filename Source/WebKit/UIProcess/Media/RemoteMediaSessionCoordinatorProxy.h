@@ -66,13 +66,14 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    void join(CompletionHandler<void(const WebCore::ExceptionData&)>&&);
+    using CommandCompletionHandler = CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>;
+    void join(CommandCompletionHandler&&);
     void leave();
-    void coordinateSeekTo(double, CompletionHandler<void(const WebCore::ExceptionData&)>&&);
-    void coordinatePlay(CompletionHandler<void(const WebCore::ExceptionData&)>&&);
-    void coordinatePause(CompletionHandler<void(const WebCore::ExceptionData&)>&&);
-    void coordinateSetTrack(const String&, CompletionHandler<void(const WebCore::ExceptionData&)>&&);
-    void positionStateChanged(Optional<WebCore::MediaPositionState>);
+    void coordinateSeekTo(double, CommandCompletionHandler&&);
+    void coordinatePlay(CommandCompletionHandler&&);
+    void coordinatePause(CommandCompletionHandler&&);
+    void coordinateSetTrack(const String&, CommandCompletionHandler&&);
+    void positionStateChanged(const Optional<WebCore::MediaPositionState>&);
     void readyStateChanged(WebCore::MediaSessionReadyState);
     void playbackStateChanged(WebCore::MediaSessionPlaybackState);
     void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState);
@@ -80,13 +81,22 @@ private:
     // MediaSessionCoordinatorClient
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
     void playSession(CompletionHandler<void(bool)>&&) final;
-    void pauseSession(CompletionHandler<void(bool)>) final;
-    void setSessionTrack(const String&, CompletionHandler<void(bool)>) final;
+    void pauseSession(CompletionHandler<void(bool)>&&) final;
+    void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
+
+#if !RELEASE_LOG_DISABLED
+    const WTF::Logger& logger() const { return m_logger; }
+    const void* logIdentifier() const { return m_logIdentifier; }
+    const char* logClassName() const { return "RemoteMediaSessionCoordinatorProxy"; }
+    WTFLogChannel& logChannel() const;
+#endif
 
     WebPageProxy& m_webPageProxy;
     Ref<MediaSessionCoordinatorProxyPrivate> m_privateCoordinator;
-    Ref<const Logger> m_logger;
+#if !RELEASE_LOG_DISABLED
+    Ref<const WTF::Logger> m_logger;
     const void* m_logIdentifier;
+#endif
 };
 
 } // namespace WebKit

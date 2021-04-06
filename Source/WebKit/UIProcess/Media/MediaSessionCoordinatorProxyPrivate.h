@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#include <WebCore/ExceptionData.h>
 #include <WebCore/MediaSessionCoordinatorPrivate.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
@@ -41,10 +42,12 @@ public:
 
     virtual String identifier() const = 0;
 
-    virtual void seekTo(double, CompletionHandler<void(const WebCore::ExceptionData&)>&&) = 0;
-    virtual void play(CompletionHandler<void(const WebCore::ExceptionData&)>&&) = 0;
-    virtual void pause(CompletionHandler<void(const WebCore::ExceptionData&)>&&) = 0;
-    virtual void setTrack(const String&, CompletionHandler<void(const WebCore::ExceptionData&)>&&) = 0;
+    virtual void join(CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
+    virtual void leave() = 0;
+    virtual void seekTo(double, CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
+    virtual void play(CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
+    virtual void pause(CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
+    virtual void setTrack(const String&, CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
 
     virtual void positionStateChanged(const Optional<WebCore::MediaPositionState>&) = 0;
     virtual void readyStateChanged(WebCore::MediaSessionReadyState) = 0;

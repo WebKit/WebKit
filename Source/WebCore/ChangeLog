@@ -1,3 +1,28 @@
+2021-04-05  Jer Noble  <jer.noble@apple.com>
+
+        [MediaSession] Small refactoring of MediaSession implementation classes
+        https://bugs.webkit.org/show_bug.cgi?id=224141
+
+        Reviewed by Eric Carlson.
+
+        A smorgasboard of small refactoring changes:
+
+        - Don't call action handlers by default in response to coordinator requests.
+        - Since we don't call the action handlers, we don't need the internal methods.
+        - Simplify the call site by defining the action details inline.
+
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::seekSessionToTime):
+        (WebCore::MediaSessionCoordinator::playSession):
+        (WebCore::MediaSessionCoordinator::pauseSession):
+        (WebCore::MediaSessionCoordinator::setSessionTrack):
+        (WebCore::MediaSessionCoordinator::internalSeekTo): Deleted.
+        (WebCore::MediaSessionCoordinator::internalPlay): Deleted.
+        (WebCore::MediaSessionCoordinator::internalPause): Deleted.
+        (WebCore::MediaSessionCoordinator::internalSetTrack): Deleted.
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.h:
+
 2021-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Define AtomString(ASCIILiteral) and use ASCIILiteral more to avoid memory allocation
