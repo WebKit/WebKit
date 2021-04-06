@@ -1,3 +1,15 @@
+2021-04-05  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Backport GStreamer fakeaudiosink
+        https://bugs.webkit.org/show_bug.cgi?id=224053
+
+        Reviewed by Adrian Perez de Castro.
+
+        This audio sink will be used for the media layout and API tests.
+        
+        * elements/sdk/gst-plugins-bad.bst:
+        * patches/gst-plugins-bad-0001-debugutils-Add-fakeaudiosink-element.patch: Added.
+
 2021-03-27  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Backport GTK4 Clipboard fix for GdkContentProviderUnion

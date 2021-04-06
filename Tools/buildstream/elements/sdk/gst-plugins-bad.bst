@@ -3,6 +3,9 @@ sources:
 - kind: tar
   url: gst_downloads:gst-plugins-bad/gst-plugins-bad-1.18.4.tar.xz
   ref: 74e806bc5595b18c70e9ca93571e27e79dfb808e5d2e7967afa952b52e99c85f
+# Should be shipped in GStreamer 1.20. https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/2125
+- kind: patch
+  path: patches/gst-plugins-bad-0001-debugutils-Add-fakeaudiosink-element.patch
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
