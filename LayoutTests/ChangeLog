@@ -1,3 +1,16 @@
+2021-04-06  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/loading convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222198
+        <rdar://problem/74536576>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/loading/redirect-methods-expected.txt:
+        * http/tests/loading/resources/redirect-methods-form.html:
+        * http/tests/loading/resources/redirect-methods-result.php: Removed.
+        * http/tests/loading/resources/redirect-methods-result.py: Added.
+
 2021-04-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing
