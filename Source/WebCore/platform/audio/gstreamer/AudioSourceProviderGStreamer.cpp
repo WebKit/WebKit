@@ -153,7 +153,9 @@ void AudioSourceProviderGStreamer::configureAudioBin(GstElement* audioBin, GstEl
 void AudioSourceProviderGStreamer::provideInput(AudioBus* bus, size_t framesToProcess)
 {
     GST_TRACE("Fetching buffers from adapters");
-    auto locker = holdLock(m_adapterMutex);
+    auto locker = tryHoldLock(m_adapterMutex);
+    if (!locker)
+        return;
     for (auto& it : m_adapters)
         copyGStreamerBuffersToAudioChannel(it.value.get(), bus, it.key - 1, framesToProcess);
 }

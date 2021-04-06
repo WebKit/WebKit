@@ -64,6 +64,7 @@ static inline GstAudioInfo libwebrtcAudioFormat(int sampleRate, size_t channelCo
 
 void RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t /* sampleCount */)
 {
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     auto data = static_cast<const GStreamerAudioData&>(audioData);
     auto desc = static_cast<const GStreamerAudioStreamDescription&>(streamDescription);
 

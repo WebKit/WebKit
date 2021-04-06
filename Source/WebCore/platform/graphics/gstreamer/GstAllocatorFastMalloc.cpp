@@ -45,6 +45,9 @@ static GstMemoryFastMalloc* gstMemoryFastMallocNew(GstAllocator* allocator, gsiz
     alignment |= gst_memory_alignment;
     ASSERT(!((alignment + 1) & alignment));
 
+    // GStreamer's allocator requires heap allocations.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
     gsize headerSize = (sizeof(GstMemoryFastMalloc) + alignment) & ~alignment;
     gsize allocationSize = offset + size + padding;
     auto* memory = static_cast<GstMemoryFastMalloc*>(tryFastAlignedMalloc(alignment + 1, headerSize + allocationSize));

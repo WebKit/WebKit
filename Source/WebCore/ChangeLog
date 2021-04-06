@@ -1,5 +1,22 @@
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] Heap allocation exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=224188
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The current GStreamer audio-related backends can't yet avoid heap allocations in the audio
+        thread, so we need exceptions for those cases.
+
+        * platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp:
+        (WebCore::AudioSourceProviderGStreamer::provideInput):
+        * platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp:
+        (gstMemoryFastMallocNew):
+        * platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeOutgoingAudioSourceLibWebRTC::audioSamplesAvailable):
+
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer][MediaStream] AudioSource triggering critical warnings
         https://bugs.webkit.org/show_bug.cgi?id=224180
 
