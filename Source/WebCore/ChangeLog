@@ -1,3 +1,28 @@
+2021-03-24  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-grid] Initialize auto-repeat data in RenderStyle in applyInitialGridTemplate{Columns|Rows}
+        https://bugs.webkit.org/show_bug.cgi?id=222852
+
+        Reviewed by Antti Koivisto.
+
+        We should initialize the auto repeat data (like auto repeat tracks or the insertion point) whenever
+        applyInitialGridTemplateXXX is called. That method is normally called using different RenderStyle's
+        but under some circumstances it might be the same. For those cases we wouldn't like to end up with
+        obsolete data from a previous style resolution.
+
+        The same applies also to the applyInheritGridTemplateXXX calls. We're also removing a duplicate call
+        to setGridAutoRepeat{Row|Column}sInsertionPoint() that is not needed at all.
+
+        In order to have a single place with all the style properties affecting columns and rows, all the set
+        calls were moved to a macro that is used by all the apply{Initial|Inherit}GridTemplate{Columns|Rows}
+        methods. This would allow us to prevent eventual out-of-sync issues like this one.
+
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyInitialGridTemplateColumns):
+        (WebCore::Style::BuilderCustom::applyInheritGridTemplateColumns):
+        (WebCore::Style::BuilderCustom::applyInitialGridTemplateRows):
+        (WebCore::Style::BuilderCustom::applyInheritGridTemplateRows):
+
 2021-04-06  Rob Buis  <rbuis@igalia.com>
 
         Move synthesizedBaselineFromBorderBox to RenderBox
