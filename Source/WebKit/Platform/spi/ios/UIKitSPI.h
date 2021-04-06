@@ -1213,6 +1213,7 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @interface _UIContextMenuStyle : NSObject <NSCopying>
 @property (nonatomic) _UIContextMenuLayout preferredLayout;
 @property (nonatomic) BOOL hasInteractivePreview;
+@property (nonatomic, strong) NSArray *preferredBackgroundEffects;
 + (instancetype)defaultStyle;
 @end
 

@@ -163,6 +163,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 {
     _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
     style.hasInteractivePreview = YES;
+    style.preferredBackgroundEffects = @[ [UIVisualEffect emptyEffect] ];
     style.preferredLayout = _UIContextMenuLayoutAutomatic;
     return style;
 }

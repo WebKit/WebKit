@@ -1,3 +1,26 @@
+2021-04-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Prevent background blur when presenting date/time pickers
+        https://bugs.webkit.org/show_bug.cgi?id=224189
+        <rdar://problem/76220352>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker _contextMenuInteraction:styleForMenuWithConfiguration:]):
+
+        Presenting a UIContextMenuInteraction results in the application of a
+        blur effect to the background view. However, the peripheral presented
+        when interacting with a UIDatePicker across the rest of the system
+        does not blur the background.
+
+        To align our behavior with the rest of the system, remove the blur
+        effect by specifying an empty UIVisualEffect for the
+        _UIContextMenuStyle's preferredBackgroundEffects. The empty effect
+        must be explicitly specified, since setting an empty array will result
+        in the default effect being applied.
+
 2021-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Revert part of crash fix to keep test infrastructure
