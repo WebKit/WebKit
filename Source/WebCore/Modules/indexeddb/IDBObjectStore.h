@@ -50,7 +50,7 @@ class IDBTransaction;
 struct IDBKeyRangeData;
 
 namespace IndexedDB {
-enum class ObjectStoreOverwriteMode;
+enum class ObjectStoreOverwriteMode : uint8_t;
 }
 
 class IDBObjectStore final : public ActiveDOMObject {

@@ -31,20 +31,16 @@
 namespace WebCore {
 
 IDBKeyRangeData::IDBKeyRangeData(IDBKey* key)
-    : isNull(!key)
-    , lowerKey(key)
+    : lowerKey(key)
     , upperKey(key)
-    , lowerOpen(false)
-    , upperOpen(false)
+    , isNull(!key)
 {
 }
 
 IDBKeyRangeData::IDBKeyRangeData(const IDBKeyData& keyData)
-    : isNull(keyData.isNull())
-    , lowerKey(keyData)
+    : lowerKey(keyData)
     , upperKey(keyData)
-    , lowerOpen(false)
-    , upperOpen(false)
+    , isNull(keyData.isNull())
 {
 }
 

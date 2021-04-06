@@ -35,8 +35,6 @@ class IDBKey;
 struct IDBKeyRangeData {
     IDBKeyRangeData()
         : isNull(true)
-        , lowerOpen(false)
-        , upperOpen(false)
     {
     }
 
@@ -54,8 +52,6 @@ struct IDBKeyRangeData {
 
     IDBKeyRangeData(IDBKeyRange* keyRange)
         : isNull(!keyRange)
-        , lowerOpen(false)
-        , upperOpen(false)
     {
         if (isNull)
             return;
@@ -77,13 +73,13 @@ struct IDBKeyRangeData {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBKeyRangeData&);
 
-    bool isNull;
-
     IDBKeyData lowerKey;
     IDBKeyData upperKey;
 
-    bool lowerOpen;
-    bool upperOpen;
+    bool lowerOpen { false };
+    bool upperOpen { false };
+
+    bool isNull;
 
 #if !LOG_DISABLED
     String loggingString() const;

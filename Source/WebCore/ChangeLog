@@ -1,3 +1,42 @@
+2021-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink some IndexedDB-related classes
+        https://bugs.webkit.org/show_bug.cgi?id=224221
+
+        Reviewed by Geoffrey Garen.
+
+        Shrink some enum classes, and re-order data members to optimize packing in 
+        IDBRequest and IDBKeyRangeData.
+
+        A couple of data members of IDBRequest were made private with protected setters.
+
+        This shrinks IDBRequest from 496 bytes to 448 bytes, and IDBKeyRangeData from 96
+        to 72 bytes on x86_64.
+
+        * Modules/indexeddb/IDBKeyData.h:
+        * Modules/indexeddb/IDBKeyRangeData.cpp:
+        (WebCore::IDBKeyRangeData::IDBKeyRangeData):
+        * Modules/indexeddb/IDBKeyRangeData.h:
+        (WebCore::IDBKeyRangeData::IDBKeyRangeData):
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::IDBOpenDBRequest):
+        (WebCore::IDBOpenDBRequest::versionChangeTransactionDidFinish):
+        (WebCore::IDBOpenDBRequest::onSuccess):
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        (WebCore::IDBOpenDBRequest::onDeleteDatabaseSuccess):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::IDBRequest):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::setReadyState):
+        (WebCore::IDBRequest::setShouldExposeTransactionToDOM):
+        * Modules/indexeddb/IndexedDB.h:
+        * Modules/indexeddb/client/IDBConnectionToServerDelegate.h:
+        * Modules/indexeddb/server/MemoryIndex.h:
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+        * Modules/indexeddb/shared/IDBCursorInfo.h:
+        * Modules/indexeddb/shared/IDBGetAllRecordsData.h:
+
 2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assert failure in isCloneInShadowTreeOfSVGUseElement

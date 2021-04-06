@@ -33,7 +33,7 @@ namespace WebCore {
 class IDBTransaction;
 
 namespace IndexedDB {
-enum class CursorDirection;
+enum class CursorDirection : uint8_t;
 enum class CursorSource : bool;
 enum class CursorType : bool;
 }

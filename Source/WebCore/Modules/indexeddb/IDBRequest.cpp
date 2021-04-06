@@ -81,12 +81,13 @@ Ref<IDBRequest> IDBRequest::createIndexGet(ScriptExecutionContext& context, IDBI
     return adoptRef(*new IDBRequest(context, index, requestedRecordType, transaction));
 }
 
-IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy)
+IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBClient::IDBConnectionProxy& connectionProxy, IndexedDB::RequestType requestType)
     : IDBActiveDOMObject(&context)
     , m_resourceIdentifier(connectionProxy)
+    , m_result(NullResultType::Undefined)
     , m_connectionProxy(connectionProxy)
+    , m_requestType(requestType)
 {
-    m_result = NullResultType::Undefined;
     suspendIfNeeded();
 }
 
@@ -94,10 +95,10 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     : IDBActiveDOMObject(&context)
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
+    , m_result(NullResultType::Undefined)
     , m_source(&objectStore)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
-    m_result = NullResultType::Undefined;
     suspendIfNeeded();
 }
 
@@ -105,6 +106,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
     : IDBActiveDOMObject(&context)
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
+    , m_result(NullResultType::Undefined)
     , m_pendingCursor(&cursor)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
@@ -114,7 +116,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBCursor& cursor, IDBTr
         [this] (const auto& value) { this->m_source = IDBRequest::Source { value }; }
     );
 
-    m_result = NullResultType::Undefined;
     cursor.setRequest(*this);
 }
 
@@ -122,10 +123,10 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IDBTran
     : IDBActiveDOMObject(&context)
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
+    , m_result(NullResultType::Undefined)
     , m_source(&index)
     , m_connectionProxy(transaction.database().connectionProxy())
 {
-    m_result = NullResultType::Undefined;
     suspendIfNeeded();
 }
 
@@ -133,18 +134,17 @@ IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBObjectStore& objectSt
     : IDBActiveDOMObject(&context)
     , m_transaction(&transaction)
     , m_resourceIdentifier(transaction.connectionProxy())
+    , m_result(NullResultType::Undefined)
     , m_source(&objectStore)
-    , m_requestedObjectStoreRecordType(type)
     , m_connectionProxy(transaction.database().connectionProxy())
+    , m_requestedObjectStoreRecordType(type)
 {
-    m_result = NullResultType::Undefined;
     suspendIfNeeded();
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext& context, IDBIndex& index, IndexedDB::IndexRecordType requestedRecordType, IDBTransaction& transaction)
     : IDBRequest(context, index, transaction)
 {
-    m_result = NullResultType::Undefined;
     m_requestedIndexRecordType = requestedRecordType;
 }
 

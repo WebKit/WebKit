@@ -49,7 +49,7 @@ class IDBValue;
 struct IDBKeyRangeData;
 
 namespace IndexedDB {
-enum class GetAllType;
+enum class GetAllType : uint8_t;
 enum class IndexRecordType : bool;
 }
 

@@ -191,10 +191,10 @@ private:
     static void isolatedCopy(const IDBKeyData& source, IDBKeyData& destination);
 
     IndexedDB::KeyType m_type;
-    Variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
-
     bool m_isNull { false };
     bool m_isDeletedValue { false };
+
+    Variant<Vector<IDBKeyData>, String, double, ThreadSafeDataBuffer> m_value;
 };
 
 struct IDBKeyDataHash {

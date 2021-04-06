@@ -46,7 +46,7 @@ struct IDBIterateCursorData;
 struct SecurityOriginData;
 
 namespace IndexedDB {
-enum class ObjectStoreOverwriteMode;
+enum class ObjectStoreOverwriteMode : uint8_t;
 enum class ConnectionClosedOnBehalfOfServer : bool;
 }
 
