@@ -1376,3 +1376,4 @@ webkit.org/b/224032 [ arm64 ] tiled-drawing/top-content-inset-fixed-attachment-c
 
 webkit.org/b/222277 media/media-fragments [ Skip ]
 
+webkit.org/b/224135 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html [ Pass Timeout ]
