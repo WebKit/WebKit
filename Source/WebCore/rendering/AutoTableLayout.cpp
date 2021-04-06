@@ -237,7 +237,7 @@ static bool shouldScaleColumnsForSelf(RenderTable* table)
     return scale;
 }
 
-void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
+void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics intrinsics)
 {
     fullRecalc();
 
@@ -246,7 +246,7 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
     maxWidth = 0;
     float maxPercent = 0;
     float maxNonPercent = 0;
-    bool scaleColumnsForSelf = shouldScaleColumnsForSelf(m_table);
+    bool scaleColumnsForSelf = shouldScaleColumnsForSelf(m_table) && intrinsics == TableIntrinsics::ForLayout;
 
     // We substitute 0 percent by (epsilon / percentScaleFactor) percent in two places below to avoid division by zero.
     // FIXME: Handle the 0% cases properly.

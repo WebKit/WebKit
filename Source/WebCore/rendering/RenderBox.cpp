@@ -2617,7 +2617,7 @@ LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(Length logicalWidthLengt
     if (!logicalWidthLength.isMinIntrinsic() && shouldComputeLogicalWidthFromAspectRatio())
         minLogicalWidth = maxLogicalWidth = computeLogicalWidthFromAspectRatio();
     else
-        computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        computeIntrinsicKeywordLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
     if (logicalWidthLength.isMinContent() || logicalWidthLength.isMinIntrinsic())
         return minLogicalWidth + borderAndPadding;

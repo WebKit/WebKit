@@ -802,7 +802,7 @@ void RenderTable::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset
     paintMaskImages(paintInfo, rect);
 }
 
-void RenderTable::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
+void RenderTable::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics intrinsics) const
 {
     recalcSectionsIfNeeded();
     // FIXME: Do the recalc in borderStart/borderEnd and make those const_cast this call.
@@ -810,9 +810,19 @@ void RenderTable::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit
     // of reading out stale values.
     const_cast<RenderTable*>(this)->recalcBordersInRowDirection();
     // FIXME: Restructure the table layout code so that we can make this method const.
-    const_cast<RenderTable*>(this)->m_tableLayout->computeIntrinsicLogicalWidths(minWidth, maxWidth);
+    const_cast<RenderTable*>(this)->m_tableLayout->computeIntrinsicLogicalWidths(minWidth, maxWidth, intrinsics);
 
     // FIXME: We should include captions widths here like we do in computePreferredLogicalWidths.
+}
+
+void RenderTable::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
+{
+    computeIntrinsicLogicalWidths(minWidth, maxWidth, TableIntrinsics::ForLayout);
+}
+
+void RenderTable::computeIntrinsicKeywordLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
+{
+    computeIntrinsicLogicalWidths(minWidth, maxWidth, TableIntrinsics::ForKeyword);
 }
 
 void RenderTable::computePreferredLogicalWidths()

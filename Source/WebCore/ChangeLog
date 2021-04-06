@@ -1,3 +1,49 @@
+2021-04-05  Cameron McCormack  <heycam@apple.com>
+
+        Fix max-content on tables with percentage cell widths.
+        https://bugs.webkit.org/show_bug.cgi?id=221165
+
+        Reviewed by Zalan Bujtas.
+
+        When `width: max-content` is specified on an element, any percentages
+        on content inside the element that are relative to the containing block
+        width should be treated as auto.  Percentages on table cells and columns
+        in tables using auto table layout are not quite relative to the
+        containing block width, but do have a similar influence.  So when
+        computing the intrinsic width of a table for the purpose of determining
+        the max-content value to use, ignore any percentages specified on table
+        cells and columns.
+
+        This change makes us match Firefox and Chrome on the test case.
+
+        Test: fast/table/percent-width-max-content.html
+
+        * rendering/AutoTableLayout.cpp:
+        (WebCore::AutoTableLayout::computeIntrinsicLogicalWidths):
+        * rendering/AutoTableLayout.h:
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::computeIntrinsicLogicalWidths):
+        * rendering/FixedTableLayout.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeIntrinsicLogicalWidthUsing const): Call
+        into the new computeIntrinsicKeywordLogicalWidths function so that
+        tables can return different values for layout and intrinsic keyword
+        calculation.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::computeIntrinsicKeywordLogicalWidths const):
+        Added to support computing intrinsic keyword lengths that differ from
+        those returned by computeIntrinsicLogicalWidths.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::computeIntrinsicLogicalWidths const): Factored
+        this out to allow specifying an argument for whether the intrinsics
+        being computed are for layout or for instrinsic keyword calculation,
+        like max-content.
+        (WebCore::RenderTable::computeIntrinsicKeywordLogicalWidths const):
+        Added.  This is the only override of the default implementation in
+        RenderBox.
+        * rendering/RenderTable.h:
+        * rendering/TableLayout.h:
+
 2021-04-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 1: Require encoding/decoding delegates for non-inline display list items

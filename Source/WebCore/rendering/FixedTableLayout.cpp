@@ -169,7 +169,7 @@ float FixedTableLayout::calcWidthArray()
     return usedWidth;
 }
 
-void FixedTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
+void FixedTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics)
 {
     minWidth = maxWidth = calcWidthArray();
 }
