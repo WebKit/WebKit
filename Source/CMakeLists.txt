@@ -27,7 +27,6 @@ endif ()
 
 if (USE_LIBWEBRTC)
     add_subdirectory(ThirdParty/libwebrtc)
-    include_directories(${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/libwebrtc)
 endif ()
 
 if (ENABLE_WEBINSPECTORUI)

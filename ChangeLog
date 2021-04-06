@@ -1,3 +1,13 @@
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r275275): Broke some build configs lacking openh264
+        https://bugs.webkit.org/show_bug.cgi?id=224244
+
+        Unreviewed, manual revert of r275275 and r275409.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/GStreamerChecks.cmake:
+
 2021-04-06  Mark Lam  <mark.lam@apple.com>
 
         Speculative build fix for Windows port.

@@ -1,3 +1,19 @@
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r275275): Broke some build configs lacking openh264
+        https://bugs.webkit.org/show_bug.cgi?id=224244
+
+        Unreviewed, manual revert of r275275 and r275409.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoCommon.cpp:
+        (WebCore::gstreamerSupportedH264Codecs):
+        (WebCore::supportedH264Formats): Deleted.
+        * platform/mediastream/libwebrtc/GStreamerVideoCommon.h:
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp:
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoderFactory::CreateVideoEncoder):
+        (WebCore::GStreamerVideoEncoderFactory::GetSupportedFormats const):
+
 2021-04-06  Simon Fraser  <simon.fraser@apple.com>
 
         Shrink some IndexedDB-related classes
