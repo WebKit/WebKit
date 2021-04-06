@@ -70,8 +70,8 @@ private:
     bool isRenderTableCol() const override { return true; }
     void computePreferredLogicalWidths() override { ASSERT_NOT_REACHED(); }
 
-    void insertedIntoTree() override;
-    void willBeRemovedFromTree() override;
+    void insertedIntoTree(IsInternalMove) override;
+    void willBeRemovedFromTree(IsInternalMove) override;
 
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     bool canHaveChildren() const override;

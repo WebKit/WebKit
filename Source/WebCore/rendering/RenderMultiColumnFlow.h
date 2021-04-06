@@ -102,7 +102,7 @@ private:
     bool isRenderMultiColumnFlow() const override { return true; }
     const char* renderName() const override;
     void addFragmentToThread(RenderFragmentContainer*) override;
-    void willBeRemovedFromTree() override;
+    void willBeRemovedFromTree(IsInternalMove) override;
     void fragmentedFlowDescendantBoxLaidOut(RenderBox*) override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
     LayoutUnit initialLogicalWidth() const override;

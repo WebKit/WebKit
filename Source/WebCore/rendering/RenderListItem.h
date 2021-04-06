@@ -67,8 +67,8 @@ private:
 
     bool isListItem() const final { return true; }
     
-    void insertedIntoTree() final;
-    void willBeRemovedFromTree() final;
+    void insertedIntoTree(IsInternalMove) final;
+    void willBeRemovedFromTree(IsInternalMove) final;
 
     void paint(PaintInfo&, const LayoutPoint&) final;
 

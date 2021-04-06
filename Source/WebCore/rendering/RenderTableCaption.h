@@ -38,8 +38,8 @@ public:
 private:
     bool isTableCaption() const override { return true; }
 
-    void insertedIntoTree() override;
-    void willBeRemovedFromTree() override;
+    void insertedIntoTree(IsInternalMove) override;
+    void willBeRemovedFromTree(IsInternalMove) override;
 
     RenderTable* table() const;
 };

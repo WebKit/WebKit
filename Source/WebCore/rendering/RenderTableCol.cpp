@@ -98,15 +98,15 @@ void RenderTableCol::updateFromElement()
         setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void RenderTableCol::insertedIntoTree()
+void RenderTableCol::insertedIntoTree(IsInternalMove isInternalMove)
 {
-    RenderBox::insertedIntoTree();
+    RenderBox::insertedIntoTree(isInternalMove);
     table()->addColumn(this);
 }
 
-void RenderTableCol::willBeRemovedFromTree()
+void RenderTableCol::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
-    RenderBox::willBeRemovedFromTree();
+    RenderBox::willBeRemovedFromTree(isInternalMove);
     table()->removeColumn(this);
 }
 

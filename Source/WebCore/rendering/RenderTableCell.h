@@ -144,7 +144,7 @@ private:
 
     bool isTableCell() const override { return true; }
 
-    void willBeRemovedFromTree() override;
+    void willBeRemovedFromTree(IsInternalMove) override;
 
     void updateLogicalWidth() override;
 

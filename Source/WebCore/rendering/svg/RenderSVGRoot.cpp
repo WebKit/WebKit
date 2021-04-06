@@ -300,16 +300,16 @@ void RenderSVGRoot::willBeDestroyed()
     RenderReplaced::willBeDestroyed();
 }
 
-void RenderSVGRoot::insertedIntoTree()
+void RenderSVGRoot::insertedIntoTree(IsInternalMove isInternalMove)
 {
-    RenderReplaced::insertedIntoTree();
+    RenderReplaced::insertedIntoTree(isInternalMove);
     SVGResourcesCache::clientWasAddedToTree(*this);
 }
 
-void RenderSVGRoot::willBeRemovedFromTree()
+void RenderSVGRoot::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(*this);
-    RenderReplaced::willBeRemovedFromTree();
+    RenderReplaced::willBeRemovedFromTree(isInternalMove);
 }
 
 void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

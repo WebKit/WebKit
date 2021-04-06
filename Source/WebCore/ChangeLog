@@ -1,3 +1,64 @@
+2021-04-05  Zalan Bujtas  <zalan@apple.com>
+
+        No need to update the list marker number during internal move (e.g. result of anonymous collapsing)
+        https://bugs.webkit.org/show_bug.cgi?id=224142
+        <rdar://76101241>
+
+        Reviewed by Antti Koivisto.
+
+        Let's not update the marker numbers when the reason for re-parenting is "internal move"
+        which means the renderer's insertion point remains the same (e.g collapsing its anonymous parent). 
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertedIntoTree):
+        (WebCore::RenderElement::willBeRemovedFromTree):
+        * rendering/RenderElement.h:
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::insertedIntoTree):
+        (WebCore::RenderFragmentContainer::willBeRemovedFromTree):
+        * rendering/RenderFragmentContainer.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::insertedIntoTree):
+        (WebCore::RenderListItem::willBeRemovedFromTree):
+        * rendering/RenderListItem.h:
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::willBeRemovedFromTree):
+        * rendering/RenderMultiColumnFlow.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::insertedIntoTree):
+        (WebCore::RenderObject::willBeRemovedFromTree):
+        * rendering/RenderObject.h:
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::insertedIntoTree):
+        (WebCore::RenderQuote::willBeRemovedFromTree):
+        * rendering/RenderQuote.h:
+        * rendering/RenderTableCaption.cpp:
+        (WebCore::RenderTableCaption::insertedIntoTree):
+        (WebCore::RenderTableCaption::willBeRemovedFromTree):
+        * rendering/RenderTableCaption.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::willBeRemovedFromTree):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::insertedIntoTree):
+        (WebCore::RenderTableCol::willBeRemovedFromTree):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::willBeRemovedFromTree):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::willBeRemovedFromTree):
+        * rendering/RenderTableSection.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::insertedIntoTree):
+        (WebCore::RenderSVGRoot::willBeRemovedFromTree):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::attachToRenderElementInternal):
+        (WebCore::RenderTreeBuilder::move):
+        (WebCore::RenderTreeBuilder::detachFromRenderElement):
+        * rendering/updating/RenderTreeBuilder.h:
+
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
         WebSocketChannel buffers use memory after going idle (64K wasted on facebook.com

@@ -334,16 +334,16 @@ LayoutUnit RenderFragmentContainer::logicalBottomOfFragmentedFlowContentRect(con
     return fragmentedFlow()->isHorizontalWritingMode() ? rect.maxY() : rect.maxX();
 }
 
-void RenderFragmentContainer::insertedIntoTree()
+void RenderFragmentContainer::insertedIntoTree(IsInternalMove isInternalMove)
 {
     attachFragment();
     if (isValid())
-        RenderBlockFlow::insertedIntoTree();
+        RenderBlockFlow::insertedIntoTree(isInternalMove);
 }
 
-void RenderFragmentContainer::willBeRemovedFromTree()
+void RenderFragmentContainer::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
-    RenderBlockFlow::willBeRemovedFromTree();
+    RenderBlockFlow::willBeRemovedFromTree(isInternalMove);
 
     detachFragment();
 }
