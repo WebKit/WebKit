@@ -1330,9 +1330,10 @@ Path InspectorOverlay::backgroundPathForLayoutLabel(float width, float height, I
         path.addLineTo({ width + arrowSize, -(height / 2) });
         break;
     case InspectorOverlay::LabelArrowDirection::None:
-        path.addLineTo({ 0, height });
-        path.addLineTo({ width, height });
-        path.addLineTo({ width, 0 });
+        path.moveTo({ -(width / 2), -(height / 2) });
+        path.addLineTo({ -(width / 2), height / 2 });
+        path.addLineTo({ width / 2, height / 2 });
+        path.addLineTo({ width / 2, -(height / 2) });
         break;
     }
 
@@ -1448,7 +1449,7 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
         }
         break;
     case InspectorOverlay::LabelArrowDirection::None:
-        textPosition = FloatPoint(layoutLabelPadding, layoutLabelPadding + textHeight - textDescent);
+        textPosition = FloatPoint(-(textWidth / 2), (textHeight / 2) - textDescent);
         break;
     }
 
@@ -1487,7 +1488,7 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     // Draw labels on top of all other lines.
     context.setStrokeThickness(1);
     for (auto area : gridOverlay.areas)
-        drawLayoutLabel(context, area.name, area.quad.p1(), LabelArrowDirection::None, LabelArrowEdgePosition::None, translucentLabelBackgroundColor, area.quad.boundingBox().width());
+        drawLayoutLabel(context, area.name, area.quad.center(), LabelArrowDirection::None, LabelArrowEdgePosition::None, translucentLabelBackgroundColor, area.quad.boundingBox().width());
 
     for (auto label : gridOverlay.labels)
         drawLayoutLabel(context, label.text, label.location, label.arrowDirection, label.arrowEdgePosition, label.backgroundColor);
@@ -1514,7 +1515,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
                 break;
         }
     }
-    
+
     if (!cssValue || !is<CSSValueList>(cssValue))
         return { };
     
@@ -1524,7 +1525,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
         if (!is<CSSGridLineNamesValue>(currentValue))
             trackSizes.append(currentValue.cssText());
     };
-    
+
     for (auto& currentValue : downcast<CSSValueList>(*cssValue)) {
         if (is<CSSGridAutoRepeatValue>(currentValue)) {
             // Auto-repeated values will be looped through until no more values were used in layout based on the expected track count.
@@ -1537,7 +1538,7 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
             }
             break;
         }
-        
+
         if (is<CSSGridIntegerRepeatValue>(currentValue)) {
             size_t repetitions = downcast<CSSGridIntegerRepeatValue>(currentValue.get()).repetitions();
             for (size_t i = 0; i < repetitions; ++i) {
@@ -1546,10 +1547,10 @@ static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirectio
             }
             continue;
         }
-        
+
         handleValueIgnoringLineNames(currentValue);
     }
-    
+
     // Remaining tracks will be `auto`.
     while (trackSizes.size() < expectedTrackCount)
         trackSizes.append("auto"_s);
@@ -1652,17 +1653,97 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
         return { };
     FrameView* containingView = containingFrame->view();
 
-    auto columnLineAt = [&](int x) -> FloatLine {
+    auto computedStyle = node->computedStyle();
+    if (!computedStyle)
+        return { };
+
+    auto isHorizontalWritingMode = computedStyle->isHorizontalWritingMode();
+    auto isDirectionFlipped = !computedStyle->isLeftToRightDirection();
+    auto isWritingModeFlipped = computedStyle->isFlippedBlocksWritingMode();
+    auto contentBox = renderGrid.absoluteBoundingBoxRectIgnoringTransforms();
+
+    auto columnLineAt = [&](float x) -> FloatLine {
+        FloatPoint startPoint;
+        FloatPoint endPoint;
+        if (isHorizontalWritingMode) {
+            startPoint = { isDirectionFlipped ? contentBox.width() - x : x, isWritingModeFlipped ? contentBox.height() - gridStartY : gridStartY };
+            endPoint = { isDirectionFlipped ? contentBox.width() - x : x, isWritingModeFlipped ? contentBox.height() - gridEndY : gridEndY };
+        } else {
+            startPoint = { isWritingModeFlipped ? contentBox.width() - gridStartY : gridStartY, isDirectionFlipped ? contentBox.height() - x : x };
+            endPoint = { isWritingModeFlipped ? contentBox.width() - gridEndY : gridEndY, isDirectionFlipped ? contentBox.height() - x : x };
+        }
         return {
-            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(x, gridStartY), nullptr)),
-            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(x, gridEndY), nullptr)),
+            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(startPoint, nullptr)),
+            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(endPoint, nullptr)),
         };
     };
-    auto rowLineAt = [&](int y) -> FloatLine {
+    auto rowLineAt = [&](float y) -> FloatLine {
+        FloatPoint startPoint;
+        FloatPoint endPoint;
+        if (isHorizontalWritingMode) {
+            startPoint = { isDirectionFlipped ? contentBox.width() - gridStartX : gridStartX, isWritingModeFlipped ? contentBox.height() - y : y };
+            endPoint = { isDirectionFlipped ? contentBox.width() - gridEndX : gridEndX, isWritingModeFlipped ? contentBox.height() - y : y };
+        } else {
+            startPoint = { isWritingModeFlipped ? contentBox.width() - y : y, isDirectionFlipped ? contentBox.height() - gridStartX : gridStartX };
+            endPoint = { isWritingModeFlipped ? contentBox.width() - y : y, isDirectionFlipped ? contentBox.height() - gridEndX : gridEndX };
+        }
         return {
-            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(gridStartX, y), nullptr)),
-            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(FloatPoint(gridEndX, y), nullptr)),
+            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(startPoint, nullptr)),
+            localPointToRootPoint(containingView, renderGrid.localToContainerPoint(endPoint, nullptr)),
         };
+    };
+
+    auto correctedArrowDirection = [&](LabelArrowDirection direction, GridTrackSizingDirection sizingDirection) -> LabelArrowDirection {
+        if ((sizingDirection == GridTrackSizingDirection::ForColumns && isWritingModeFlipped) || (sizingDirection == GridTrackSizingDirection::ForRows && isDirectionFlipped)) {
+            switch (direction) {
+            case LabelArrowDirection::Down:
+                direction = LabelArrowDirection::Up;
+                break;
+            case LabelArrowDirection::Up:
+                direction = LabelArrowDirection::Down;
+                break;
+            case LabelArrowDirection::Left:
+                direction = LabelArrowDirection::Right;
+                break;
+            case LabelArrowDirection::Right:
+                direction = LabelArrowDirection::Left;
+                break;
+            case LabelArrowDirection::None:
+                break;
+            }
+        }
+
+        if (!isHorizontalWritingMode) {
+            switch (direction) {
+            case LabelArrowDirection::Down:
+                direction = LabelArrowDirection::Right;
+                break;
+            case LabelArrowDirection::Up:
+                direction = LabelArrowDirection::Left;
+                break;
+            case LabelArrowDirection::Left:
+                direction = LabelArrowDirection::Up;
+                break;
+            case LabelArrowDirection::Right:
+                direction = LabelArrowDirection::Down;
+                break;
+            case LabelArrowDirection::None:
+                break;
+            }
+        }
+
+        return direction;
+    };
+
+    auto correctedArrowEdgePosition = [&](LabelArrowEdgePosition edgePosition, GridTrackSizingDirection sizingDirection) -> LabelArrowEdgePosition {
+        if ((sizingDirection == GridTrackSizingDirection::ForRows && isWritingModeFlipped) || (sizingDirection == GridTrackSizingDirection::ForColumns && isDirectionFlipped)) {
+            if (edgePosition == LabelArrowEdgePosition::Leading)
+                return LabelArrowEdgePosition::Trailing;
+            if (edgePosition == LabelArrowEdgePosition::Trailing)
+                return LabelArrowEdgePosition::Leading;
+        }
+
+        return edgePosition;
     };
 
     InspectorOverlay::Highlight::GridHighlightOverlay gridHighlightOverlay;
@@ -1706,7 +1787,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             if (gridOverlay.config.showTrackSizes) {
                 auto trackSizeLabel = String::number(roundf(width));
                 trackSizeLabel.append("px"_s);
-                
+
                 String authoredTrackSize;
                 if (i < authoredTrackColumnSizes.size()) {
                     auto authoredTrackSize = authoredTrackColumnSizes[i];
@@ -1717,9 +1798,9 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
                         trackSizeLabel.append(authoredTrackSize);
                     }
                 }
-                
+
                 FloatLine trackTopLine = { columnStartLine.start(), columnEndLine.start() };
-                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, LabelArrowDirection::Up, LabelArrowEdgePosition::Middle));
+                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, correctedArrowDirection(LabelArrowDirection::Up, GridTrackSizingDirection::ForColumns), LabelArrowEdgePosition::Middle));
             }
         } else
             previousColumnEndLine = columnStartLine;
@@ -1737,13 +1818,13 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
 
         if (!lineLabel.isEmpty()) {
             auto text = lineLabel.toString();
-            auto arrowDirection = LabelArrowDirection::Down;
-            auto arrowEdgePosition = LabelArrowEdgePosition::Middle;
+            auto arrowDirection = correctedArrowDirection(LabelArrowDirection::Down, GridTrackSizingDirection::ForColumns);
+            auto arrowEdgePosition = correctedArrowEdgePosition(LabelArrowEdgePosition::Middle, GridTrackSizingDirection::ForColumns);
 
             if (!i)
-                arrowEdgePosition = LabelArrowEdgePosition::Leading;
+                arrowEdgePosition = correctedArrowEdgePosition(LabelArrowEdgePosition::Leading, GridTrackSizingDirection::ForColumns);
             else if (i == columnPositions.size() - 1)
-                arrowEdgePosition = LabelArrowEdgePosition::Trailing;
+                arrowEdgePosition = correctedArrowEdgePosition(LabelArrowEdgePosition::Trailing, GridTrackSizingDirection::ForColumns);
 
             auto expectedLabelSize = expectedSizeForLayoutLabel(text, arrowDirection);
             auto gapLabelPosition = gapLabelLine.start();
@@ -1751,7 +1832,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             // The area under the window's toolbar is drawable, but not meaningfully visible, so we must account for that space.
             auto topEdgeInset = pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
             if (gapLabelLine.start().y() - expectedLabelSize.height() - topEdgeInset + scrollPosition.y() - viewportBounds.y() < 0) {
-                arrowDirection = LabelArrowDirection::Up;
+                arrowDirection = correctedArrowDirection(LabelArrowDirection::Up, GridTrackSizingDirection::ForColumns);
 
                 // Special case for the first column to make sure the label will be out of the way of the first row's label.
                 // The label heights will be the same, as they use the same font, so moving down by this label's size will
@@ -1811,8 +1892,9 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
                         trackSizeLabel.append(authoredTrackSize);
                     }
                 }
+
                 FloatLine trackLeftLine = { rowStartLine.start(), rowEndLine.start() };
-                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, LabelArrowDirection::Left, LabelArrowEdgePosition::Middle));
+                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, correctedArrowDirection(LabelArrowDirection::Left, GridTrackSizingDirection::ForRows), LabelArrowEdgePosition::Middle));
             }
         } else
             previousRowEndLine = rowStartLine;
@@ -1830,17 +1912,17 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
 
         if (!lineLabel.isEmpty()) {
             auto text = lineLabel.toString();
-            auto arrowDirection = LabelArrowDirection::Right;
-            auto arrowEdgePosition = LabelArrowEdgePosition::Middle;
+            auto arrowDirection = correctedArrowDirection(LabelArrowDirection::Right, GridTrackSizingDirection::ForRows);
+            auto arrowEdgePosition = correctedArrowEdgePosition(LabelArrowEdgePosition::Middle, GridTrackSizingDirection::ForRows);
 
             if (!i)
-                arrowEdgePosition = LabelArrowEdgePosition::Leading;
+                arrowEdgePosition = correctedArrowEdgePosition(LabelArrowEdgePosition::Leading, GridTrackSizingDirection::ForRows);
             else if (i == rowPositions.size() - 1)
-                arrowEdgePosition = LabelArrowEdgePosition::Trailing;
+                arrowEdgePosition = correctedArrowEdgePosition(LabelArrowEdgePosition::Trailing, GridTrackSizingDirection::ForRows);
 
             auto expectedLabelSize = expectedSizeForLayoutLabel(text, arrowDirection);
             if (gapLabelPosition.x() - expectedLabelSize.width() + scrollPosition.x() - viewportBounds.x() < 0)
-                arrowDirection = LabelArrowDirection::Left;
+                arrowDirection = correctedArrowDirection(LabelArrowDirection::Left, GridTrackSizingDirection::ForRows);
 
             gridHighlightOverlay.labels.append(buildLabel(text, gapLabelPosition, Color::white, arrowDirection, arrowEdgePosition));
         }

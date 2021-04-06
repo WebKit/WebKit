@@ -400,7 +400,7 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
         }
         break;
     case WebCore::InspectorOverlay::LabelArrowDirection::None:
-        textPosition = WebCore::FloatPoint(padding + (textWidth / 2), padding + (textHeight / 2));
+        // Text position will remain (0, 0).
         break;
     }
 
