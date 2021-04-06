@@ -59,6 +59,6 @@ void GPU_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializ
     WTF::initializeMainThread();
 
 #if ENABLE(GPU_PROCESS)
-    WebKit::XPCServiceInitializer<WebKit::GPUProcess, WebKit::GPUServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
+    WebKit::XPCServiceInitializer<WebKit::GPUProcess, WebKit::GPUServiceInitializerDelegate>(connection, initializerMessage, priorityBoostMessage);
 #endif // ENABLE(GPU_PROCESS)
 }

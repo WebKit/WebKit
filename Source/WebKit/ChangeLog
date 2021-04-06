@@ -1,3 +1,31 @@
+2021-04-06  Alex Christensen  <achristensen@webkit.org>
+
+        Hold strong reference to xpc_connection_t in XPCServiceEventHandler
+        https://bugs.webkit.org/show_bug.cgi?id=224242
+        <rdar://74308418>
+
+        Reviewed by David Kilzer.
+
+        There is a reasonable chance that by the time we get to the block of xpc_connection_set_event_handler
+        and back through WorkQueue::main().dispatchSync the xpc_connection_t has been freed.
+
+        Also, the adoption in each entry points was incorrect, causing a late overrelease when tearing down the process.
+        It was incorrect because we did not just create the connection or get it from any NS_RETURNS_RETAINED-like function.
+        It was causing rare crashes once everything else had released their hold on the connection.
+
+        * GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm:
+        (GPU_SERVICE_INITIALIZER):
+        * NetworkProcess/EntryPoint/Cocoa/XPCService/NetworkServiceEntryPoint.mm:
+        (NETWORK_SERVICE_INITIALIZER):
+        * PluginProcess/EntryPoint/Cocoa/XPCService/PluginServiceEntryPoint.mm:
+        (PLUGIN_SERVICE_INITIALIZER):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * WebAuthnProcess/EntryPoint/Cocoa/XPCService/WebAuthnServiceEntryPoint.mm:
+        (WEBAUTHN_SERVICE_INITIALIZER):
+        * WebProcess/EntryPoint/Cocoa/XPCService/WebContentServiceEntryPoint.mm:
+        (WEBCONTENT_SERVICE_INITIALIZER):
+
 2021-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Allow access to 'com.apple.system.logger' in the Base System
