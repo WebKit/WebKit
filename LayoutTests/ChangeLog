@@ -1,3 +1,27 @@
+2021-04-06  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/misc convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221981
+        <rdar://problem/74399686>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/misc/prefetch-purpose-expected.txt:
+        * http/tests/misc/prefetch-purpose.html:
+        * http/tests/misc/resources/check-query-param.php: Removed.
+        * http/tests/misc/resources/check-query-param.py: Added.
+        * http/tests/misc/resources/prefetch-purpose.php: Removed.
+        * http/tests/misc/resources/prefetch-purpose.py: Added.
+        * http/tests/misc/resources/redirect-to-http-url.php: Removed.
+        * http/tests/misc/resources/redirect-to-http-url.py: Added.
+        * http/tests/misc/submit-get-in-utf16be.html:
+        * http/tests/misc/submit-get-in-utf16le.html:
+        * http/tests/misc/submit-post-in-utf16be.html:
+        * http/tests/misc/submit-post-in-utf16le.html:
+        * http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt:
+        * http/tests/misc/will-send-request-returns-null-on-redirect.html:
+        * platform/wk2/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt:
+
 2021-04-06  Robert Jenner  <jenner@apple.com>
 
         [ macOS wk2] media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html is a flakey timeout
@@ -807,6 +831,26 @@
 
         * fast/replaced/infinite-recursion-with-intrinsic-width-expected.txt: Added.
         * fast/replaced/infinite-recursion-with-intrinsic-width.html: Added.
+
+2021-04-02  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/misc convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221981
+        <rdar://problem/74399686>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/misc/prefetch-purpose-expected.txt:
+        * http/tests/misc/prefetch-purpose.html:
+        * http/tests/misc/resources/check-query-param.php: Removed.
+        * http/tests/misc/resources/check-query-param.py: Added.
+        * http/tests/misc/resources/prefetch-purpose.php: Removed.
+        * http/tests/misc/resources/prefetch-purpose.py: Added.
+        * http/tests/misc/resources/redirect-to-http-url.py: Added.
+        * http/tests/misc/submit-get-in-utf16be.html:
+        * http/tests/misc/submit-get-in-utf16le.html:
+        * http/tests/misc/submit-post-in-utf16be.html:
+        * http/tests/misc/submit-post-in-utf16le.html:
 
 2021-04-02  Chris Gambrell  <cgambrell@apple.com>
 
