@@ -486,6 +486,7 @@ void TiledCoreAnimationDrawingArea::updateRendering(UpdateRenderingType flushTyp
         }
 
         sendDidFirstLayerFlushIfNeeded();
+        m_webPage.didUpdateRendering();
         handleActivityStateChangeCallbacksIfNeeded();
         invalidateRenderingUpdateRunLoopObserver();
     }

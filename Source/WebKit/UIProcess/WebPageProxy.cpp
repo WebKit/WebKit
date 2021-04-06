@@ -2443,6 +2443,31 @@ void WebPageProxy::layerTreeCommitComplete()
 }
 #endif
 
+void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate()
+{
+#if PLATFORM(COCOA)
+    ASSERT(m_hasUpdatedRenderingAfterDidCommitLoad);
+    RELEASE_LOG_IF_ALLOWED(Process, "stopMakingViewBlankDueToLackOfRenderingUpdate:");
+    pageClient().makeViewBlank(false);
+#endif
+}
+
+// If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
+// Displaying a JS prompt for the new page with the old page behind would be confusing so we make the view blank
+// until the next paint in such case.
+void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
+{
+#if PLATFORM(COCOA)
+    if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
+        static bool shouldMakeViewBlank = linkedOnOrAfter(WebCore::SDKVersion::FirstWithBlankViewOnJSPrompt);
+        if (shouldMakeViewBlank) {
+            RELEASE_LOG_IF_ALLOWED(Process, "makeViewBlankIfUnpaintedSinceLastLoadCommit: Making the view blank because of a JS prompt before the first paint for its page");
+            pageClient().makeViewBlank(true);
+        }
+    }
+#endif
+}
+
 void WebPageProxy::discardQueuedMouseEvents()
 {
     while (m_mouseEventQueue.size() > 1)
@@ -4633,10 +4658,12 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     if (frame->isMainFrame()) {
-        m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = false;
+        m_hasUpdatedRenderingAfterDidCommitLoad = false;
+#if PLATFORM(IOS_FAMILY)
         m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
+#endif
     }
 #endif
 

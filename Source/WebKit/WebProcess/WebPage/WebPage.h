@@ -630,6 +630,8 @@ public:
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);
+
+    void didUpdateRendering();
     
     void setUseSystemAppearance(bool);
 
@@ -1280,10 +1282,11 @@ public:
     void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
 
     template<typename T>
-    SendSyncResult sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply)
+    SendSyncResult sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
         cancelGesturesBlockedOnSynchronousReplies();
-        return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+        sendSyncOptions = sendSyncOptions | IPC::SendSyncOption::InformPlatformProcessWillSuspend;
+        return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), sendSyncOptions);
     }
 
     WebCore::DOMPasteAccessResponse requestDOMPasteAccess(const String& originIdentifier);
@@ -2254,6 +2257,10 @@ private:
     bool m_lastNavigationWasAppBound { false };
 
     bool m_canUseCredentialStorage { true };
+
+#if PLATFORM(MAC)
+    bool m_didUpdateRenderingAfterCommittingLoad { false };
+#endif
 
     Vector<String> m_corsDisablingPatterns;
 

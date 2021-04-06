@@ -149,6 +149,8 @@ private:
     CALayer* acceleratedCompositingRootLayer() const override;
     LayerHostingMode viewLayerHostingMode() override { return LayerHostingMode::OutOfProcess; }
 
+    void makeViewBlank(bool) final;
+
     RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&) override;
     void wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent&) override;
 

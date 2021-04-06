@@ -227,6 +227,8 @@ private:
 
     void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
 
+    void makeViewBlank(bool) final;
+
     NSView *activeView() const;
     NSWindow *activeWindow() const;
 

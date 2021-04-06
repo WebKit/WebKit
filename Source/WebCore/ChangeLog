@@ -1,3 +1,16 @@
+2021-04-05  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we no longer show the previous page when running a JS prompt
+        https://bugs.webkit.org/show_bug.cgi?id=215782
+        <rdar://problem/67698601>
+
+        Reviewed by Darin Adler.
+
+        Add linked-on-after check for the behavior change to minimize the risk of
+        breakage.
+
+        * platform/cocoa/VersionChecks.h:
+
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build
