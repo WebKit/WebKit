@@ -1,3 +1,19 @@
+2021-04-06  Keith Miller  <keith_miller@apple.com>
+
+        CloneDeserializer should use ArrayBuffer::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=224218
+
+        Reviewed by Antti Koivisto.
+
+        Right now CloneDeserializer assumes that every ArrayBuffer allocation during
+        deserialization will succeed. This is silly since it's an array-like object.
+        It should call tryCreate and fail the deserialization instead.
+
+        Test: fast/dom/Window/post-message-large-array-buffer-should-not-crash.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readArrayBuffer):
+
 2021-04-06  Stephan Szabo  <stephan.szabo@sony.com>
 
         [PlayStation] Change mediaControlsLocalizedStrings to use unicode escapes

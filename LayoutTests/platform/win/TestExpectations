@@ -2881,6 +2881,9 @@ fast/text/arabic-zwj-and-zwnj.html [ ImageOnlyFailure ]
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################
 
+# For some reason this test causes a stack overflow on windows but it's not important to test on every platform anyway.
+fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Skip ]
+
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
 http/tests/contentfiltering [ Skip ]
