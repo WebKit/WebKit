@@ -77,7 +77,7 @@ private:
 
     // MediaSessionCoordinatorClient
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&) final;
-    void playSession(CompletionHandler<void(bool)>&&) final;
+    void playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&&) final;
     void pauseSession(CompletionHandler<void(bool)>&&) final;
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
 

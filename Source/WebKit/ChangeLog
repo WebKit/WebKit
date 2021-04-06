@@ -1,3 +1,18 @@
+2021-04-06  Jer Noble  <jer.noble@apple.com>
+
+        [MediaSession] Add optional mediaTime and hostTime arguments to the playSession() command.
+        https://bugs.webkit.org/show_bug.cgi?id=224173
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp:
+        (WebKit::RemoteMediaSessionCoordinatorProxy::playSession):
+        * UIProcess/Media/RemoteMediaSessionCoordinatorProxy.h:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp:
+        (WebKit::RemoteMediaSessionCoordinator::playSession):
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.h:
+        * WebProcess/MediaSession/RemoteMediaSessionCoordinator.messages.in:
+
 2021-04-06  Brent Fulgham  <bfulgham@apple.com>
 
         Add additional page load diagnostic logging

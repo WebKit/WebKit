@@ -159,9 +159,9 @@ void RemoteMediaSessionCoordinatorProxy::seekSessionToTime(double time, Completi
     m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::SeekSessionToTime { time }, callback);
 }
 
-void RemoteMediaSessionCoordinatorProxy::playSession(CompletionHandler<void(bool)>&& callback)
+void RemoteMediaSessionCoordinatorProxy::playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&& callback)
 {
-    m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PlaySession { }, callback);
+    m_webPageProxy.sendWithAsyncReply(Messages::RemoteMediaSessionCoordinator::PlaySession { WTFMove(atTime), WTFMove(hostTime) }, callback);
 }
 
 void RemoteMediaSessionCoordinatorProxy::pauseSession(CompletionHandler<void(bool)>&& callback)

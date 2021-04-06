@@ -55,7 +55,7 @@ private:
 
     // MessageReceivers.
     void seekSessionToTime(double, CompletionHandler<void(bool)>&&);
-    void playSession(CompletionHandler<void(bool)>&&);
+    void playSession(Optional<double>, Optional<double>, CompletionHandler<void(bool)>&&);
     void pauseSession(CompletionHandler<void(bool)>&&);
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&);
 

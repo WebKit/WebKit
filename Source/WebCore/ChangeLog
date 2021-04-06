@@ -1,3 +1,20 @@
+2021-04-06  Jer Noble  <jer.noble@apple.com>
+
+        [MediaSession] Add optional mediaTime and hostTime arguments to the playSession() command.
+        https://bugs.webkit.org/show_bug.cgi?id=224173
+
+        Reviewed by Eric Carlson.
+
+        When receiving a playSession() method that has an optional mediaTime argument, perform a
+        seekAction before the matching playAction if the current media time is not already approximately
+        equal to the mediaTime argument.
+
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::playSession):
+        (WebCore::MediaSessionCoordinator::currentPositionApproximatelyEqualTo):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasession/MediaSessionCoordinatorPrivate.h:
+
 2021-04-06  Said Abou-Hallawa  <said@apple.com>
 
         Replace the Optional metadata of ImageSource by a single OptionSet and the underlying metadata

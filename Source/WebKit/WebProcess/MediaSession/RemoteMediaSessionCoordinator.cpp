@@ -190,11 +190,11 @@ void RemoteMediaSessionCoordinator::seekSessionToTime(double time, CompletionHan
         completionHandler(false);
 }
 
-void RemoteMediaSessionCoordinator::playSession(CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMediaSessionCoordinator::playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&& completionHandler)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (auto coordinatorClient = client())
-        coordinatorClient->playSession(WTFMove((completionHandler)));
+        coordinatorClient->playSession(WTFMove(atTime), WTFMove(hostTime), WTFMove((completionHandler)));
     else
         completionHandler(false);
 }
