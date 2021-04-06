@@ -1,3 +1,17 @@
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][MediaStream] AudioSource triggering critical warnings
+        https://bugs.webkit.org/show_bug.cgi?id=224180
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Keep track of audio channel offsets and store them as metadata in audio buffers. This is
+        used by downstream elements such as the audio convert elements.
+
+        * Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp:
+        (WebCore::copyBusData):
+        (WebCore::MediaStreamAudioSource::consumeAudio):
+
 2021-04-06  Antti Koivisto  <antti@apple.com>
 
         [LFC][Integration] Disable LFC if paginated context has inline boxes
