@@ -1,3 +1,18 @@
+2021-04-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Update UIDatePickerStyle for <input type=time>
+        https://bugs.webkit.org/show_bug.cgi?id=224187
+        <rdar://problem/76219729>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePicker datePickerStyle]):
+
+        Use UIDatePickerStyleWheels rather than UIDatePickerStyleInline, since
+        the inline style now requires an additional tap to present the editable
+        picker view.
+
 2021-04-06  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Grid overlay does not honor writing modes and RTL layout direction.
