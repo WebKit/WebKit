@@ -1,3 +1,15 @@
+2021-04-05  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Allow the WebAuthn UI to inform users about BiometryLockout
+        https://bugs.webkit.org/show_bug.cgi?id=224124
+        <rdar://74815938>
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+        (WebKit::LocalService::isAvailable):
+        The LocalService is still available within the BiometryLockout period.
+
 2021-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Image preview context menu action should be shown conditionally
