@@ -1,3 +1,19 @@
+2021-04-06  Mike Gorse  <mgorse@suse.com>
+
+        Build fails when video is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=224198
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add #if ENABLE(VIDEO) where needed.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::decodeItem):
+        * UIProcess/gtk/ClipboardGtk3.cpp:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::committedLoad):
+
 2021-04-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Add IPC::Semaphore stub for Unix ports

@@ -192,9 +192,11 @@ void ItemHandle::apply(GraphicsContext& context)
         // Should already be handled by the delegate.
         ASSERT_NOT_REACHED();
         return;
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         get<PaintFrameForMedia>().apply(context);
         return;
+#endif
     case ItemType::StrokeRect:
         get<StrokeRect>().apply(context);
         return;
@@ -374,9 +376,11 @@ void ItemHandle::destroy()
     case ItemType::MetaCommandChangeItemBuffer:
         static_assert(std::is_trivially_destructible<MetaCommandChangeItemBuffer>::value);
         return;
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         static_assert(std::is_trivially_destructible<PaintFrameForMedia>::value);
         return;
+#endif
     case ItemType::Restore:
         static_assert(std::is_trivially_destructible<Restore>::value);
         return;
@@ -548,8 +552,10 @@ bool ItemHandle::safeCopy(ItemHandle destination) const
         return copyInto<MetaCommandChangeDestinationImageBuffer>(*this, itemOffset);
     case ItemType::MetaCommandChangeItemBuffer:
         return copyInto<MetaCommandChangeItemBuffer>(*this, itemOffset);
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return copyInto<PaintFrameForMedia>(*this, itemOffset);
+#endif
     case ItemType::Restore:
         return copyInto<Restore>(*this, itemOffset);
     case ItemType::Rotate:

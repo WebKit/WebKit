@@ -458,6 +458,7 @@ void Recorder::clipToDrawingCommands(const FloatRect& destination, DestinationCo
     append<EndClipToDrawingCommands>(destination);
 }
 
+#if ENABLE(VIDEO)
 bool Recorder::canPaintFrameForMedia(const MediaPlayer& player) const
 {
     return !!player.identifier();
@@ -468,6 +469,7 @@ void Recorder::paintFrameForMedia(MediaPlayer& player, const FloatRect& destinat
     ASSERT(player.identifier());
     append<PaintFrameForMedia>(player, destination);
 }
+#endif
 
 void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
 {

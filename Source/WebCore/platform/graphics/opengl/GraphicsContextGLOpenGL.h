@@ -470,7 +470,9 @@ public:
     RefPtr<ImageData> readRenderingResultsForPainting();
     RefPtr<ImageData> readCompositedResultsForPainting();
 
+#if ENABLE(VIDEO)
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+#endif
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     void primitiveRestartIndex(GCGLuint);

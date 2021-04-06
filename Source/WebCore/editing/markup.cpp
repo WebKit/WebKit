@@ -183,7 +183,9 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     auto pageConfiguration = pageConfigurationWithEmptyClients(PAL::SessionID::defaultSessionID());
     
     auto page = makeUnique<Page>(WTFMove(pageConfiguration));
+#if ENABLE(VIDEO)
     page->settings().setMediaEnabled(false);
+#endif
     page->settings().setScriptEnabled(false);
     page->settings().setHTMLParserScriptingFlagPolicy(HTMLParserScriptingFlagPolicy::Enabled);
     page->settings().setPluginsEnabled(false);

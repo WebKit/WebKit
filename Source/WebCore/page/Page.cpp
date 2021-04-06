@@ -2141,12 +2141,12 @@ void Page::playbackControlsManagerUpdateTimerFired()
         chrome().client().clearPlaybackControlsManager();
 }
 
-#endif
-
 void Page::playbackControlsMediaEngineChanged()
 {
     chrome().client().playbackControlsMediaEngineChanged();
 }
+
+#endif
 
 void Page::setMuted(MediaProducer::MutedStateFlags muted)
 {

@@ -1985,6 +1985,7 @@ Optional<PutImageData> PutImageData::decode(Decoder& decoder)
     return {{ *inputFormat, WTFMove(*imageData), *srcRect, *destPoint, *destFormat }};
 }
 
+#if ENABLE(VIDEO)
 class PaintFrameForMedia {
 public:
     static constexpr ItemType itemType = ItemType::PaintFrameForMedia;
@@ -2007,6 +2008,7 @@ private:
     MediaPlayerIdentifier m_identifier;
     FloatRect m_destination;
 };
+#endif
 
 class StrokeRect {
 public:
@@ -2336,7 +2338,9 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer,
     WebCore::DisplayList::ItemType::GetImageData,
     WebCore::DisplayList::ItemType::PutImageData,
+#if ENABLE(VIDEO)
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
+#endif
     WebCore::DisplayList::ItemType::StrokeRect,
     WebCore::DisplayList::ItemType::StrokeLine,
 #if ENABLE(INLINE_PATH_DATA)

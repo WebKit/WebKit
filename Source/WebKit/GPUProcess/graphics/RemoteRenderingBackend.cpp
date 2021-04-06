@@ -555,7 +555,9 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::FlushContext:
     case DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer:
     case DisplayList::ItemType::MetaCommandChangeItemBuffer:
+#if ENABLE(VIDEO)
     case DisplayList::ItemType::PaintFrameForMedia:
+#endif
     case DisplayList::ItemType::Restore:
     case DisplayList::ItemType::Rotate:
     case DisplayList::ItemType::Save:

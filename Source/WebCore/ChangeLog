@@ -1,3 +1,47 @@
+2021-04-06  Mike Gorse  <mgorse@suse.com>
+
+        Build fails when video is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=224198
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add #if ENABLE(VIDEO) where needed.
+
+        * editing/markup.cpp:
+        (WebCore::createPageForSanitizingWebContent):
+        * page/Page.cpp:
+        * page/Page.h:
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextGL.h:
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::append):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemHandle::apply):
+        (WebCore::DisplayList::ItemHandle::destroy):
+        (WebCore::DisplayList::ItemHandle::safeCopy const):
+        * platform/graphics/displaylists/DisplayListItemType.cpp:
+        (WebCore::DisplayList::sizeOfItemInBytes):
+        (WebCore::DisplayList::isDrawingItem):
+        (WebCore::DisplayList::isInlineItem):
+        * platform/graphics/displaylists/DisplayListItemType.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::operator<<):
+        * platform/graphics/displaylists/DisplayListItems.h:
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp:
+        * platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.cpp:
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/win/GraphicsContextImplDirect2D.cpp:
+        * platform/graphics/win/GraphicsContextImplDirect2D.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r275275): Broke some build configs lacking openh264
