@@ -54,7 +54,7 @@ struct _WebKitMediaStreamSrcClass {
     GstBinClass parentClass;
 };
 
-void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc*, WebCore::MediaStreamPrivate*);
+void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc*, WebCore::MediaStreamPrivate*, bool isVideoPlayer);
 void webkitMediaStreamSrcAddTrack(WebKitMediaStreamSrc*, WebCore::MediaStreamTrackPrivate*, bool onlyTrack);
 GstElement* webkitMediaStreamSrcNew();
 

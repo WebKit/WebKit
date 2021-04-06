@@ -1070,8 +1070,6 @@ webkit.org/b/206464 webkit.org/b/218787 webrtc/peerconnection-page-cache.html [ 
 
 webkit.org/b/208125 webrtc/peerconnection-new-candidate-page-cache.html [ Failure Timeout ]
 
-webkit.org/b/209163 webrtc/audio-video-element-playing.html [ Crash Failure Pass ]
-
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Slow Failure ]
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
