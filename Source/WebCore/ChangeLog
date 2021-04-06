@@ -1,3 +1,20 @@
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r274358) [GStreamer] http/tests/images/mp4-partial-load.html is flaky crashing inside GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=223636
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Ensure the GStreamer messages are always processed synchronously, even when the handler is
+        called from another thread. Without blocking in the latter case, the select-streams event
+        might be sent to decodebin too late. It has to be sent as a synchronous reaction to the
+        stream-collection message.
+
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::handleMessage):
+        (WebCore::ImageDecoderGStreamer::InnerDecoder::preparePipeline):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.h:
+
 2021-04-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable inline box support (RenderInline)

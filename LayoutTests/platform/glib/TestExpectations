@@ -584,7 +584,7 @@ webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeou
 
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
-webkit.org/b/217961 webkit.org/b/223636 http/tests/images/mp4-partial-load.html [ Crash Timeout Pass ]
+webkit.org/b/217961 http/tests/images/mp4-partial-load.html [ Timeout Pass ]
 
 webkit.org/b/224109 http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Failure Pass ]
 
@@ -2045,7 +2045,6 @@ webkit.org/b/224068 http/wpt/webrtc/webrtc-late-transform.html [ Failure ]
 webkit.org/b/224071 webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Timeout ]
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ ImageOnlyFailure Pass ]
-webkit.org/b/224107 fast/images/animated-image-mp4-crash.html [ Crash Timeout Pass ]
 webkit.org/b/224114 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html [ Failure Pass ]
 webkit.org/b/224115 imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately-before-installed.https.html [ Failure Pass ]
 webkit.org/b/224116 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Failure Pass ]
