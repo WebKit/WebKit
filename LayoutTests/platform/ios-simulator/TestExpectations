@@ -31,8 +31,6 @@ svg/filters/filter-hidden-content.svg [ Failure ]
 
 transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/156718 storage/websql/alter-to-info-table.html [ Failure ]
-
 # This test relies on Arial being used to draw Arabic. However, on iOS,
 # we explicitly disallow this because this font is too slow.
 fast/text/initial-advance-in-intermediate-run-complex.html [ ImageOnlyFailure ]

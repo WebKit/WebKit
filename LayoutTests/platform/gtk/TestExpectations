@@ -2174,8 +2174,6 @@ webkit.org/b/163523 media/track/track-manual-mode.html [ Failure ]
 webkit.org/b/163524 media/track/video-track-alternate-groups.html [ Failure ]
 webkit.org/b/163525 media/video-background-tab-playback.html [ Failure Pass Crash Timeout ]
 
-webkit.org/b/163827 storage/websql/quota-tracking.html [ Failure ]
-
 webkit.org/b/163829 svg/W3C-SVG-1.1/fonts-desc-02-t.svg [ Failure ]
 
 webkit.org/b/163984 fast/dom/Window/child-window-focus.html [ Failure ]
@@ -2498,9 +2496,6 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 webkit.org/b/160131 webkit.org/b/198830 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Timeout Pass Crash ]
 
 webkit.org/b/160119 media/video-object-fit-change.html [ Pass Crash ImageOnlyFailure ]
-
-webkit.org/b/200301 storage/websql/alter-to-info-table.html [ Failure ]
-webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 
 webkit.org/b/204638 imported/w3c/web-platform-tests/IndexedDB/idb-explicit-commit.any.worker.html [ Failure Pass ]
 

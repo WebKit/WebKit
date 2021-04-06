@@ -1699,9 +1699,6 @@ storage/indexeddb/modern/workers-enable.html [ Crash Pass ]
 # Flaky timeouts
 storage/indexeddb/clone-exception.html [ Timeout Pass ]
 storage/indexeddb/modern/objectstore-rename-1.html [ Timeout Pass ]
-storage/websql/open-database-creation-callback.html [ Timeout Pass ]
-storage/websql/statement-error-callback.html [ Timeout Pass ]
-storage/websql/transaction-error-callback-isolated-world.html [ Timeout Pass ]
 storage/indexeddb/modern/aborted-put.html [ Timeout Pass ]
 [ Debug ] storage/indexeddb/modern/index-rename-1.html [ Skip ]
 
