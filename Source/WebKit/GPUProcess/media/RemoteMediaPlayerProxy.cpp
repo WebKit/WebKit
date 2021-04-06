@@ -699,21 +699,21 @@ void RemoteMediaPlayerProxy::setShouldPlayToPlaybackTarget(bool shouldPlay)
 
 void RemoteMediaPlayerProxy::setWirelessPlaybackTarget(const WebCore::MediaPlaybackTargetContext& targetContext)
 {
-#if !PLATFORM(IOS_FAMILY)
     switch (targetContext.type()) {
     case MediaPlaybackTargetContext::AVOutputContextType:
         m_player->setWirelessPlaybackTarget(WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext()));
         break;
+#if PLATFORM(MAC)
     case MediaPlaybackTargetContext::MockType:
         m_player->setWirelessPlaybackTarget(WebCore::MediaPlaybackTargetMock::create(targetContext.mockDeviceName(), targetContext.mockState()));
         break;
+#else
+    case MediaPlaybackTargetContext::MockType:
+#endif
     case MediaPlaybackTargetContext::None:
         ASSERT_NOT_REACHED();
         break;
     }
-#else
-    UNUSED_PARAM(targetContext);
-#endif
 }
 #endif
 
