@@ -845,8 +845,12 @@ Vector<double> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)
             result.append(1);
         else
             return { }; // Parser error, invalid value in keyframe selector
-        if (range.atEnd())
+
+        if (range.atEnd()) {
+            result.shrinkToFit();
             return result;
+        }
+
         if (range.consume().type() != CommaToken)
             return { }; // Parser error
     }

@@ -1,3 +1,16 @@
+2021-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Shrink the Vector<> of keyframe values
+        https://bugs.webkit.org/show_bug.cgi?id=224154
+
+        Reviewed by Sam Weinig.
+
+        The Vector<double> returned by CSSParserImpl::consumeKeyframeKeyList()
+        wasted 152KB of vector capacity on nytimes.com pages, so shrink it.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeKeyframeKeyList):
+
 2021-04-05  Zalan Bujtas  <zalan@apple.com>
 
         No need to update the list marker number during internal move (e.g. result of anonymous collapsing)
