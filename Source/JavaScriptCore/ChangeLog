@@ -1,3 +1,14 @@
+2021-04-07  Mark Lam  <mark.lam@apple.com>
+
+        Fix a typo in JITUncoughtExceptionAfterCall.
+        https://bugs.webkit.org/show_bug.cgi?id=224290
+
+        Reviewed by Keith Miller.
+
+        * assembler/AbortReason.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitReleaseAssertNoException):
+
 2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] WasmMemory caging should care about nullptr
