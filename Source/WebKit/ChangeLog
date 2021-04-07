@@ -1,3 +1,9 @@
+2021-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r275614; make sure SWIFT_VERSION is defined inside the WebKitSwift build target.
+
+        * Configurations/WebKitSwift.xcconfig:
+
 2021-04-07  Ada Chan  <ada.chan@apple.com>
 
         [WebXR] Introduce XRDeviceIdentifier and XRDeviceInfo to be used to communicate device info
