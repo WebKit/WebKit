@@ -1,22 +1,185 @@
-    2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+2021-03-08  Russell Epstein  <repstein@apple.com>
 
-            Unreviewed, reverting r273390 and r273391.
-            https://bugs.webkit.org/show_bug.cgi?id=222449
+        Cherry-pick r273997. rdar://problem/75180327
 
-            Didn't fix the extreme test variance, and caused some internal
-            performance bots to hang during testing
+    Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate
+    https://bugs.webkit.org/show_bug.cgi?id=222809
+    
+    Reviewed by Michael Catanzaro.
+    
+    Source/WebKit:
+    
+    There was a PageLoadState::Transaction in resetStateAfterProcessTermination() that
+    was previously making sure we would not clear the WebView's URL before calling the
+    processDidTerminate client delegate. Now that we call the client delegate in a
+    separate function (WebPageProxy::dispatchProcessDidTerminate), we need to make move
+    the PageLoadState::Transaction to the caller in
+    WebProcessProxy::processDidTerminateOrFailedToLaunch(), so that its scope covers
+    both resetStateAfterProcessTermination() & dispatchProcessDidTerminate() calls.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273997 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 
-            Reverted changesets:
+    2021-03-05  Chris Dumez  <cdumez@apple.com>
 
-            "MotionMark scores are super sensitive to a single long frame"
-            https://bugs.webkit.org/show_bug.cgi?id=220847
-            https://trac.webkit.org/changeset/273390
+            Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate
+            https://bugs.webkit.org/show_bug.cgi?id=222809
 
-            "MotionMark scores are super sensitive to a single long frame"
-            https://bugs.webkit.org/show_bug.cgi?id=220847
-            https://trac.webkit.org/changeset/273391
+            Reviewed by Michael Catanzaro.
 
-            * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+            (TEST):
+
+2021-03-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273590. rdar://problem/74881366
+
+    Non-cookie website data not deleted after 7 days of browser use without user interaction
+    https://bugs.webkit.org/show_bug.cgi?id=222248
+    <rdar://problem/74612589>
+    
+    Reviewed by Brent Fulgham and informally by Kate Cheney.
+    
+    Source/WebKit:
+    
+    Tests: http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html
+           http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html
+    
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+    (WebKit::ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters):
+        Now sets two new member variables:
+        - Optional<OperatingDate> m_longWindowOperatingDate
+        - Optional<OperatingDate> m_shortWindowOperatingDate
+        These are only set if the minimum number of operating days has passed.
+        This function no longer sets m_leastRecentOperatingDate.
+    (WebKit::ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired const):
+        Now checks against the two new member variables m_longWindowOperatingDate
+        and m_shortWindowOperatingDate. This fixes the bug.
+    (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+        Test infrastructure. Now takes the new parameter numberOfOperatingDaysPassed
+        with which layout tests can control the exact number of operating days
+        passed since user interaction.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        Added m_longWindowOperatingDate and m_shortWindowOperatingDate, and
+        removed m_leastRecentOperatingDate since it's no longer used.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+    (WebKit::ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting):
+        Test infrastructure. The same changes as in the DB store.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+    * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+    * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+    (WebKit::WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * NetworkProcess/NetworkProcess.h:
+    * NetworkProcess/NetworkProcess.messages.in:
+    * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+    (WKWebsiteDataStoreSetStatisticsExpiredStatistic):
+        Test infrastructure.
+    * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * UIProcess/Network/NetworkProcessProxy.h:
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * UIProcess/WebsiteData/WebsiteDataStore.h:
+    
+    Tools:
+    
+    A new numberOfOperatingDaysPassed parameter was added to
+    testRunner.setStatisticsExpiredStatistic() to control the exact
+    number of operating days passed since user interaction.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::setStatisticsExpiredStatistic):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::setStatisticsExpiredStatistic):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+    
+    LayoutTests:
+    
+    Existing test cases now make use of the new numberOfOperatingDaysPassed
+    parameter to testRunner.setStatisticsExpiredStatistic() to control the exact
+    number of operating days passed since user interaction.
+    A new test case makes sure website data is not deleted below the threshold.
+    
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago-expected.txt: Added.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html: Added.
+        Sets numberOfOperatingDaysPassed to 6.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago-expected.txt: Renamed from LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-expected.txt.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction.html.
+        Sets numberOfOperatingDaysPassed to 7.
+    * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html:
+        Sets numberOfOperatingDaysPassed to 30.
+    * platform/wk2/TestExpectations:
+        Updated existing expectation with new file name.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273590 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  John Wilander  <wilander@apple.com>
+
+            Non-cookie website data not deleted after 7 days of browser use without user interaction
+            https://bugs.webkit.org/show_bug.cgi?id=222248
+            <rdar://problem/74612589>
+
+            Reviewed by Brent Fulgham and informally by Kate Cheney.
+
+            A new numberOfOperatingDaysPassed parameter was added to
+            testRunner.setStatisticsExpiredStatistic() to control the exact
+            number of operating days passed since user interaction.
+
+            * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+            * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+            (WTR::TestRunner::setStatisticsExpiredStatistic):
+            * WebKitTestRunner/InjectedBundle/TestRunner.h:
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::setStatisticsExpiredStatistic):
+            * WebKitTestRunner/TestController.h:
+            * WebKitTestRunner/TestInvocation.cpp:
+            (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
+        2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
+
+                Unreviewed, reverting r273390 and r273391.
+                https://bugs.webkit.org/show_bug.cgi?id=222449
+
+                Didn't fix the extreme test variance, and caused some internal
+                performance bots to hang during testing
+
+                Reverted changesets:
+
+                "MotionMark scores are super sensitive to a single long frame"
+                https://bugs.webkit.org/show_bug.cgi?id=220847
+                https://trac.webkit.org/changeset/273390
+
+                "MotionMark scores are super sensitive to a single long frame"
+                https://bugs.webkit.org/show_bug.cgi?id=220847
+                https://trac.webkit.org/changeset/273391
+
+                * Scripts/webkitpy/benchmark_runner/data/plans/motionmark1.1.plan:
 
 2021-02-25  Russell Epstein  <repstein@apple.com>
 

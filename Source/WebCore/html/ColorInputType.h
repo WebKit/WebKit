@@ -52,7 +52,6 @@ private:
     Vector<Color> suggestedColors() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent*) const final;
-    bool isColorControl() const final;
     bool isPresentingAttachedView() const final;
     const AtomString& formControlType() const final;
     bool supportsRequired() const final;

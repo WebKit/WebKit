@@ -102,11 +102,6 @@ Optional<DateComponents> TimeInputType::setMillisecondToDateComponents(double va
     return DateComponents::fromMillisecondsSinceMidnight(value);
 }
 
-bool TimeInputType::isTimeField() const
-{
-    return true;
-}
-
 void TimeInputType::handleDOMActivateEvent(Event&)
 {
 }

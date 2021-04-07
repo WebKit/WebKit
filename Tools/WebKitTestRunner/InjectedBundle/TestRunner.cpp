@@ -1228,12 +1228,13 @@ void TestRunner::statisticsCallDidSetMergeStatisticCallback()
     callTestRunnerCallback(SetStatisticsMergeStatisticCallbackID);
 }
 
-void TestRunner::setStatisticsExpiredStatistic(JSStringRef hostName, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, JSValueRef completionHandler)
+void TestRunner::setStatisticsExpiredStatistic(JSStringRef hostName, unsigned numberOfOperatingDaysPassed, bool hadUserInteraction, bool isScheduledForAllButCookieDataRemoval, bool isPrevalent, JSValueRef completionHandler)
 {
     cacheTestRunnerCallback(SetStatisticsExpiredStatisticCallbackID, completionHandler);
 
     postMessage("SetStatisticsExpiredStatistic", createWKDictionary({
         { "HostName", toWK(hostName) },
+        { "NumberOfOperatingDaysPassed", adoptWK(WKUInt64Create(numberOfOperatingDaysPassed)) },
         { "HadUserInteraction", adoptWK(WKBooleanCreate(hadUserInteraction)) },
         { "IsScheduledForAllButCookieDataRemoval", adoptWK(WKBooleanCreate(isScheduledForAllButCookieDataRemoval)) },
         { "IsPrevalent", adoptWK(WKBooleanCreate(isPrevalent)) }

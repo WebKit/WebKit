@@ -43,14 +43,12 @@ public:
     explicit RangeInputType(HTMLInputElement&);
 
 private:
-    bool isRangeControl() const final;
     const AtomString& formControlType() const final;
     double valueAsDouble() const final;
     ExceptionOr<void> setValueAsDecimal(const Decimal&, TextFieldEventBehavior) const final;
     bool typeMismatchFor(const String&) const final;
     bool supportsRequired() const final;
     StepRange createStepRange(AnyStepHandling) const final;
-    bool isSteppableSlow() const final;
     void handleMouseDownEvent(MouseEvent&) final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) final;

@@ -50,7 +50,6 @@ private:
     bool typeMismatch() const final;
     bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const final;
     float decorationWidth() const final;
-    bool isSteppableSlow() const final;
     StepRange createStepRange(AnyStepHandling) const final;
     ShouldCallBaseEventHandler handleKeydownEvent(KeyboardEvent&) final;
     Decimal parseToNumber(const String&, const Decimal&) const final;
@@ -62,7 +61,6 @@ private:
     bool hasBadInput() const final;
     String badInputText() const final;
     bool supportsPlaceholder() const final;
-    bool isNumberField() const final;
     void attributeChanged(const QualifiedName&) final;
 };
 

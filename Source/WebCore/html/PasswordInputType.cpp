@@ -86,9 +86,4 @@ bool PasswordInputType::shouldRespectListAttribute()
     return false;
 }
 
-bool PasswordInputType::isPasswordField() const
-{
-    return true;
-}
-
 } // namespace WebCore

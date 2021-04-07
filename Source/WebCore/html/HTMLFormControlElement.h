@@ -100,6 +100,7 @@ public:
     WEBCORE_EXPORT AutocapitalizeType autocapitalizeType() const final;
 #endif
 
+    // "willValidate" means "is a candidate for constraint validation".
     WEBCORE_EXPORT bool willValidate() const final;
     void updateVisibleValidationMessage();
     void hideVisibleValidationMessage();
@@ -113,7 +114,7 @@ public:
     void setCustomValidity(const String&) override;
 
     bool isReadOnly() const { return m_isReadOnly; }
-    bool isDisabledOrReadOnly() const { return isDisabledFormControl() || m_isReadOnly; }
+    bool isDisabledOrReadOnly() const { return m_disabled || m_disabledByAncestorFieldset || m_isReadOnly; }
 
     bool hasAutofocused() { return m_hasAutofocused; }
     void setAutofocused() { m_hasAutofocused = true; }

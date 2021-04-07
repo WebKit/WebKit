@@ -61,11 +61,6 @@ String URLInputType::typeMismatchText() const
     return validationMessageTypeMismatchForURLText();
 }
 
-bool URLInputType::isURLField() const
-{
-    return true;
-}
-
 String URLInputType::sanitizeValue(const String& proposedValue) const
 {
     return stripLeadingAndTrailingHTMLSpaces(BaseTextInputType::sanitizeValue(proposedValue));

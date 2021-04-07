@@ -2395,25 +2395,6 @@ void WebPageProxy::layerTreeCommitComplete()
 }
 #endif
 
-void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate()
-{
-#if PLATFORM(COCOA)
-    ASSERT(m_hasUpdatedRenderingAfterDidCommitLoad);
-    pageClient().setHasBlankOverlay(false);
-#endif
-}
-
-void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
-{
-#if PLATFORM(COCOA)
-    if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
-        // Add a blank overlay view to make the view blank. This overlay will be taken down once
-        // when we've painted for the first time after committing a load.
-        pageClient().setHasBlankOverlay(true);
-    }
-#endif
-}
-
 void WebPageProxy::discardQueuedMouseEvents()
 {
     while (m_mouseEventQueue.size() > 1)
@@ -2914,7 +2895,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
     TrackingType touchEventsTrackingType = touchEventTrackingType(event);
     if (touchEventsTrackingType == TrackingType::NotTracking) {
         if (!isHandlingPreventableTouchStart())
-            pageClient().doneDeferringTouchStart(false);
+            pageClient().doneDeferringNativeGestures(false);
         return;
     }
 
@@ -2929,17 +2910,16 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         handleUnpreventableTouchEvent(event);
         didReceiveEvent(event.type(), false);
         if (!isHandlingPreventableTouchStart())
-            pageClient().doneDeferringTouchStart(false);
+            pageClient().doneDeferringNativeGestures(false);
         return;
     }
 
     if (event.type() == WebEvent::TouchStart) {
         ++m_handlingPreventableTouchStartCount;
         Function<void(bool, CallbackBase::Error)> completionHandler = [this, protectedThis = makeRef(*this), event](bool handled, CallbackBase::Error error) {
-            bool didFinishDeferringTouchStart = false;
-            ASSERT_IMPLIES(event.type() == WebEvent::TouchStart, m_handlingPreventableTouchStartCount);
-            if (event.type() == WebEvent::TouchStart && m_handlingPreventableTouchStartCount)
-                didFinishDeferringTouchStart = !--m_handlingPreventableTouchStartCount;
+            ASSERT(m_handlingPreventableTouchStartCount);
+            if (m_handlingPreventableTouchStartCount)
+                --m_handlingPreventableTouchStartCount;
 
             bool handledOrFailedWithError = handled || error != CallbackBase::Error::None || m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart;
             if (!isHandlingPreventableTouchStart())
@@ -2950,9 +2930,8 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
 
             didReceiveEvent(event.type(), handledOrFailedWithError);
             pageClient().doneWithTouchEvent(event, handledOrFailedWithError);
-
-            if (didFinishDeferringTouchStart)
-                pageClient().doneDeferringTouchStart(handledOrFailedWithError);
+            if (!isHandlingPreventableTouchStart())
+                pageClient().doneDeferringNativeGestures(handledOrFailedWithError);
         };
 
         auto callbackID = m_callbacks.put(WTFMove(completionHandler), m_process->throttler().backgroundActivity("WebPageProxy::handlePreventableTouchEvent"_s));
@@ -2969,7 +2948,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
     didReceiveEvent(event.type(), handled);
     pageClient().doneWithTouchEvent(event, handled);
     if (!isHandlingPreventableTouchStart())
-        pageClient().doneDeferringTouchStart(handled);
+        pageClient().doneDeferringNativeGestures(handled);
     else if (handled)
         m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart = true;
     m_process->stopResponsivenessTimer();
@@ -4649,12 +4628,10 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 
-#if PLATFORM(COCOA)
-    if (frame->isMainFrame()) {
-        m_hasUpdatedRenderingAfterDidCommitLoad = false;
 #if PLATFORM(IOS_FAMILY)
+    if (frame->isMainFrame()) {
+        m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = false;
         m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
-#endif
     }
 #endif
 
@@ -5644,12 +5621,6 @@ void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, FrameInfoData&& f
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
-
-    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
-    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
-    // on top of the view in this case.
-    makeViewBlankIfUnpaintedSinceLastLoadCommit();
-
     m_uiClient->runJavaScriptAlert(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
 }
 
@@ -5668,11 +5639,6 @@ void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, FrameInfoData&&
             automationSession->willShowJavaScriptDialog(*this);
     }
 
-    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
-    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
-    // on top of the view in this case.
-    makeViewBlankIfUnpaintedSinceLastLoadCommit();
-
     m_uiClient->runJavaScriptConfirm(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
 }
 
@@ -5690,11 +5656,6 @@ void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, FrameInfoData&& 
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
-
-    // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
-    // Displaying a JS prompt for the new page with the old page behind would be confusing so we add a blank overlay
-    // on top of the view in this case.
-    makeViewBlankIfUnpaintedSinceLastLoadCommit();
 
     m_uiClient->runJavaScriptPrompt(*this, message, defaultValue, frame, WTFMove(frameInfo), WTFMove(reply));
 }
@@ -7424,9 +7385,6 @@ void WebPageProxy::resetStateAfterProcessTermination(ProcessTerminationReason re
             logDiagnosticMessageWithEnhancedPrivacy(WebCore::DiagnosticLoggingKeys::domainCausingJetsamKey(), domain, WebCore::ShouldSample::No);
     }
 #endif
-
-    // There is a nested transaction in resetStateAfterProcessExited() that we don't want to commit before the client call.
-    PageLoadState::Transaction transaction = m_pageLoadState.transaction();
 
     resetStateAfterProcessExited(reason);
     stopAllURLSchemeTasks(m_process.ptr());

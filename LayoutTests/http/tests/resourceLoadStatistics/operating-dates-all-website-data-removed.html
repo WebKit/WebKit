@@ -238,8 +238,12 @@
 
     function runTest() {
         setEnableFeature(true, function () {
-            // insertStatisticsExpiredStatistic(domain, hasHadUserInteraction, isScheduledForAllButCookieDataRemoval, isPrevalent)
-            testRunner.setStatisticsExpiredStatistic(originUnderTest, true, false, true, function() {
+            testRunner.setStatisticsExpiredStatistic(originUnderTest,
+                30,    // numberOfOperatingDaysPassed
+                true,  // hasUserInteraction
+                false, // isScheduledForAllButCookieDataRemoval,
+                true,  // isPrevalent
+                function() {
                 if (!testRunner.isStatisticsPrevalentResource(originUnderTest))
                     addOutput("FAIL: " + originUnderTest + " did not get inserted into database.");
                 writeWebsiteDataAndContinue();

@@ -89,7 +89,6 @@ protected:
 private:
     bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isMouseFocusable() const final;
-    bool isTextField() const final;
     bool isEmptyValue() const final;
     void handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&) final;
     void forwardEvent(Event&) final;

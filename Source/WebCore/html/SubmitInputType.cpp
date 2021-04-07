@@ -90,14 +90,4 @@ String SubmitInputType::defaultValue() const
     return submitButtonDefaultLabel();
 }
 
-bool SubmitInputType::isSubmitButton() const
-{
-    return true;
-}
-
-bool SubmitInputType::isTextButton() const
-{
-    return true;
-}
-
 } // namespace WebCore

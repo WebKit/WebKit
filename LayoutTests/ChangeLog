@@ -1,3 +1,328 @@
+2021-03-30  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r275214. rdar://problem/76032705
+
+    [LFC][Integration] Elements that overflow inline-blocks are not hit tested correctly
+    https://bugs.webkit.org/show_bug.cgi?id=223932
+    rdar://75888718
+    
+    Reviewed by Zalan Bujtas.
+    Source/WebCore:
+    
+    If an inline block has overflowing children (for example due to negative margin) we may fail to hit test them.
+    
+    Test: fast/inline-block/hit-test-negative-margin-child.html
+    
+    * layout/integration/LayoutIntegrationLineLayout.cpp:
+    (WebCore::LayoutIntegration::LineLayout::hitTest):
+    
+    Always descend into inline blocks even if their run didn't hit.
+    
+    LayoutTests:
+    
+    * fast/inline-block/hit-test-negative-margin-child-expected.txt: Added.
+    * fast/inline-block/hit-test-negative-margin-child.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275214 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-30  Antti Koivisto  <antti@apple.com>
+
+            [LFC][Integration] Elements that overflow inline-blocks are not hit tested correctly
+            https://bugs.webkit.org/show_bug.cgi?id=223932
+            rdar://75888718
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/inline-block/hit-test-negative-margin-child-expected.txt: Added.
+            * fast/inline-block/hit-test-negative-margin-child.html: Added.
+
+2021-03-22  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274796. rdar://problem/75712824
+
+    [iOS] Composition text is not initially highlighted when typing in text fields using Pinyin keyboard
+    https://bugs.webkit.org/show_bug.cgi?id=223563
+    <rdar://problem/75564516>
+    
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    When enabling line layout integration, composition highlights on iOS don't appear when typing an input string
+    using the Pinyin keyboard for the first time. This is because the text renderer for the inserted composition
+    text does not contain inline text boxes when painting the composition text on iOS, so the marked text painting
+    codepath is never triggered.
+    
+    On macOS, this isn't an issue because the process of setting the composition changes the selection, which then
+    changes the highlight state of the `RenderText`, which subsequently calls into `ensureLineBoxes()`. However,
+    since selections are drawn using UIKit in the UI process on iOS, we don't end up ensuring that inline text boxes
+    are constructed for the inserted text.
+    
+    To address this, we follow macOS behavior by ensuring line box construction on the rendered composition text
+    when setting the composition.
+    
+    Test: editing/input/composition-underline-in-search-field.html
+    
+    * editing/Editor.cpp:
+    (WebCore::Editor::setComposition):
+    
+    LayoutTests:
+    
+    Add a test to verify that marked text underlines show up in search fields.
+    
+    * editing/input/composition-underline-in-search-field-expected-mismatch.html: Added.
+    * editing/input/composition-underline-in-search-field.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274796 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Composition text is not initially highlighted when typing in text fields using Pinyin keyboard
+            https://bugs.webkit.org/show_bug.cgi?id=223563
+            <rdar://problem/75564516>
+
+            Reviewed by Antti Koivisto.
+
+            Add a test to verify that marked text underlines show up in search fields.
+
+            * editing/input/composition-underline-in-search-field-expected-mismatch.html: Added.
+            * editing/input/composition-underline-in-search-field.html: Added.
+
+2021-03-04  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273901. rdar://problem/75058982
+
+    window proxy of detached iframe doesn't respect updates to global values
+    https://bugs.webkit.org/show_bug.cgi?id=206445
+    
+    Reviewed by Chris Dumez.
+    
+    Source/WebCore:
+    
+    According to the html spec the frame should only be needing for
+    COOP access violation reporting, which we don't support. This
+    patch removes our old behavior of blocking stores to windows that
+    have been detached.
+    
+    I also removed some stale caching code from
+    getOwnPropertySlotByIndex since it's only accessed once now.
+    
+    * bindings/js/JSDOMWindowCustom.cpp:
+    (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+    (WebCore::JSDOMWindow::doPutPropertySecurityCheck):
+    (WebCore::JSDOMWindow::put):
+    (WebCore::JSDOMWindow::putByIndex):
+    
+    LayoutTests:
+    
+    * fast/frames/iframe-detached-window-still-writable-eval-expected.txt: Added.
+    * fast/frames/iframe-detached-window-still-writable-eval.html: Added.
+    * fast/frames/iframe-detached-window-still-writable-expected.txt: Added.
+    * fast/frames/iframe-detached-window-still-writable.html: Added.
+    * http/tests/dom/cross-origin-detached-window-properties-expected.txt:
+    * http/tests/dom/cross-origin-detached-window-properties.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273901 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-04  Keith Miller  <keith_miller@apple.com>
+
+            window proxy of detached iframe doesn't respect updates to global values
+            https://bugs.webkit.org/show_bug.cgi?id=206445
+
+            Reviewed by Chris Dumez.
+
+            * fast/frames/iframe-detached-window-still-writable-eval-expected.txt: Added.
+            * fast/frames/iframe-detached-window-still-writable-eval.html: Added.
+            * fast/frames/iframe-detached-window-still-writable-expected.txt: Added.
+            * fast/frames/iframe-detached-window-still-writable.html: Added.
+            * http/tests/dom/cross-origin-detached-window-properties-expected.txt:
+            * http/tests/dom/cross-origin-detached-window-properties.html:
+
+2021-03-02  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273656. rdar://problem/74883345
+
+    REGRESSION(r272004): transform transition with delay doesn't behave correctly
+    https://bugs.webkit.org/show_bug.cgi?id=222545
+    <rdar://problem/74865413>
+    
+    Reviewed by Dean Jackson.
+    
+    Source/WebCore:
+    
+    To support accelerated animations of individual transform properties, we introduced the notion of
+    non-interpolating animations to apply the underlying value for a given property before applying
+    the actual animations for this property with additivity set to true.
+    
+    These non-interpolating animations were meant to last between the time at which animations were
+    committed and the effective start of the first animation for that property, accounting for any
+    delay.
+    
+    However, we neglected to handle the case where that first animation had a fill mode that would
+    make it fill backwards, such as CSS Transitions. In that situation, the animation would have
+    its first keyframe applied on top of the underlying value, effectively applying the underlying
+    value twice with additivity.
+    
+    We now only add these non-interpolating animations if the first animation has a delay and does
+    not fill backwards.
+    
+    Test: webanimations/transform-transition-with-delay-on-forced-layer-with-transform.html
+    
+    * platform/graphics/ca/GraphicsLayerCA.cpp:
+    (WebCore::GraphicsLayerCA::updateAnimations):
+    
+    LayoutTests:
+    
+    Add a new test where an element with a non-identity transform starts a transform transition with a
+    long delay. Prior to this patch, this test failed because, while in the delay phase, the transition
+    would mean the underlying transform was applied twice: once by the non-interpolating animation
+    generated for the underlying "transform" value, and once by the first keyframe of the transition
+    since it fills backwards.
+    
+    * webanimations/transform-transition-with-delay-on-forced-layer-with-transform-expected.html: Added.
+    * webanimations/transform-transition-with-delay-on-forced-layer-with-transform.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273656 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-01  Antoine Quint  <graouts@webkit.org>
+
+            REGRESSION(r272004): transform transition with delay doesn't behave correctly
+            https://bugs.webkit.org/show_bug.cgi?id=222545
+            <rdar://problem/74865413>
+
+            Reviewed by Dean Jackson.
+
+            Add a new test where an element with a non-identity transform starts a transform transition with a
+            long delay. Prior to this patch, this test failed because, while in the delay phase, the transition
+            would mean the underlying transform was applied twice: once by the non-interpolating animation
+            generated for the underlying "transform" value, and once by the first keyframe of the transition
+            since it fills backwards.
+
+            * webanimations/transform-transition-with-delay-on-forced-layer-with-transform-expected.html: Added.
+            * webanimations/transform-transition-with-delay-on-forced-layer-with-transform.html: Added.
+
+2021-03-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273590. rdar://problem/74881366
+
+    Non-cookie website data not deleted after 7 days of browser use without user interaction
+    https://bugs.webkit.org/show_bug.cgi?id=222248
+    <rdar://problem/74612589>
+    
+    Reviewed by Brent Fulgham and informally by Kate Cheney.
+    
+    Source/WebKit:
+    
+    Tests: http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html
+           http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html
+    
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+    (WebKit::ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters):
+        Now sets two new member variables:
+        - Optional<OperatingDate> m_longWindowOperatingDate
+        - Optional<OperatingDate> m_shortWindowOperatingDate
+        These are only set if the minimum number of operating days has passed.
+        This function no longer sets m_leastRecentOperatingDate.
+    (WebKit::ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired const):
+        Now checks against the two new member variables m_longWindowOperatingDate
+        and m_shortWindowOperatingDate. This fixes the bug.
+    (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+        Test infrastructure. Now takes the new parameter numberOfOperatingDaysPassed
+        with which layout tests can control the exact number of operating days
+        passed since user interaction.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        Added m_longWindowOperatingDate and m_shortWindowOperatingDate, and
+        removed m_leastRecentOperatingDate since it's no longer used.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+    (WebKit::ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting):
+        Test infrastructure. The same changes as in the DB store.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+    * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+    * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+    (WebKit::WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * NetworkProcess/NetworkProcess.h:
+    * NetworkProcess/NetworkProcess.messages.in:
+    * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+    (WKWebsiteDataStoreSetStatisticsExpiredStatistic):
+        Test infrastructure.
+    * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * UIProcess/Network/NetworkProcessProxy.h:
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * UIProcess/WebsiteData/WebsiteDataStore.h:
+    
+    Tools:
+    
+    A new numberOfOperatingDaysPassed parameter was added to
+    testRunner.setStatisticsExpiredStatistic() to control the exact
+    number of operating days passed since user interaction.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::setStatisticsExpiredStatistic):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::setStatisticsExpiredStatistic):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+    
+    LayoutTests:
+    
+    Existing test cases now make use of the new numberOfOperatingDaysPassed
+    parameter to testRunner.setStatisticsExpiredStatistic() to control the exact
+    number of operating days passed since user interaction.
+    A new test case makes sure website data is not deleted below the threshold.
+    
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago-expected.txt: Added.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html: Added.
+        Sets numberOfOperatingDaysPassed to 6.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago-expected.txt: Renamed from LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-expected.txt.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction.html.
+        Sets numberOfOperatingDaysPassed to 7.
+    * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html:
+        Sets numberOfOperatingDaysPassed to 30.
+    * platform/wk2/TestExpectations:
+        Updated existing expectation with new file name.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273590 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  John Wilander  <wilander@apple.com>
+
+            Non-cookie website data not deleted after 7 days of browser use without user interaction
+            https://bugs.webkit.org/show_bug.cgi?id=222248
+            <rdar://problem/74612589>
+
+            Reviewed by Brent Fulgham and informally by Kate Cheney.
+
+            Existing test cases now make use of the new numberOfOperatingDaysPassed
+            parameter to testRunner.setStatisticsExpiredStatistic() to control the exact
+            number of operating days passed since user interaction.
+            A new test case makes sure website data is not deleted below the threshold.
+
+            * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago-expected.txt: Added.
+            * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html: Added.
+                Sets numberOfOperatingDaysPassed to 6.
+            * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago-expected.txt: Renamed from LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-expected.txt.
+            * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction.html.
+                Sets numberOfOperatingDaysPassed to 7.
+            * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html:
+                Sets numberOfOperatingDaysPassed to 30.
+            * platform/wk2/TestExpectations:
+                Updated existing expectation with new file name.
+
 2021-02-26  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r273512. rdar://problem/74799698

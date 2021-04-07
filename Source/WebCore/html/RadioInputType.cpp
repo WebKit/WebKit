@@ -180,11 +180,6 @@ void RadioInputType::didDispatchClick(Event& event, const InputElementClickState
     event.setDefaultHandled();
 }
 
-bool RadioInputType::isRadioButton() const
-{
-    return true;
-}
-
 bool RadioInputType::matchesIndeterminatePseudoClass() const
 {
     ASSERT(element());

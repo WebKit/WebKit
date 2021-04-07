@@ -62,11 +62,6 @@ void HiddenInputType::restoreFormControlState(const FormControlState& state)
     element()->setAttributeWithoutSynchronization(valueAttr, state[0]);
 }
 
-bool HiddenInputType::supportsValidation() const
-{
-    return false;
-}
-
 RenderPtr<RenderElement> HiddenInputType::createInputRenderer(RenderStyle&&)
 {
     ASSERT_NOT_REACHED();
@@ -92,11 +87,6 @@ void HiddenInputType::setValue(const String& sanitizedValue, bool, TextFieldEven
 {
     ASSERT(element());
     element()->setAttributeWithoutSynchronization(valueAttr, sanitizedValue);
-}
-
-bool HiddenInputType::isHiddenType() const
-{
-    return true;
 }
 
 bool HiddenInputType::appendFormData(DOMFormData& formData, bool isMultipartForm) const

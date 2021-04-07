@@ -1,3 +1,589 @@
+2021-03-31  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r275316. rdar://problem/76077169
+
+    REGRESSION: The NetworkProcess fails to relaunch after it crashes
+    https://bugs.webkit.org/show_bug.cgi?id=224022
+    <rdar://75148724>
+    
+    Reviewed by Darin Adler.
+    
+    NetworkProcessProxy::networkProcessCrashed() failed to clear defaultNetworkProcess() like we do on
+    network process termination (in NetworkProcessProxy::didTerminate()). As a result, upon a
+    network process crash, WebsiteDataStore::networkProcessCrashed() would get called and
+    properly clear WebsiteDataStore::m_networkProcess. However, when calling
+    WebsiteDataStore::networkProcess() later on, it would re-initialize m_networkProcess with
+    the same dead NetworkProcessProxy, since networkProcessForSession() relies on
+    NetworkProcessProxy::defaultNetworkProcess().
+    
+    No new tests, will land an API test shortly as a follow-up.
+    
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::networkProcessCrashed):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275316 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-31  Chris Dumez  <cdumez@apple.com>
+
+            REGRESSION: The NetworkProcess fails to relaunch after it crashes
+            https://bugs.webkit.org/show_bug.cgi?id=224022
+            <rdar://75148724>
+
+            Reviewed by Darin Adler.
+
+            NetworkProcessProxy::networkProcessCrashed() failed to clear defaultNetworkProcess() like we do on
+            network process termination (in NetworkProcessProxy::didTerminate()). As a result, upon a
+            network process crash, WebsiteDataStore::networkProcessCrashed() would get called and
+            properly clear WebsiteDataStore::m_networkProcess. However, when calling
+            WebsiteDataStore::networkProcess() later on, it would re-initialize m_networkProcess with
+            the same dead NetworkProcessProxy, since networkProcessForSession() relies on
+            NetworkProcessProxy::defaultNetworkProcess().
+
+            No new tests, will land an API test shortly as a follow-up.
+
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::networkProcessCrashed):
+
+2021-03-24  Ruben Turcios  <rubent_22@apple.com>
+
+        Apply patch. rdar://problem/75744524
+
+    Aply patch. rdar://75744524
+
+    2021-03-24  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Read access to passwd is required
+            https://bugs.webkit.org/show_bug.cgi?id=223641
+            <rdar://75616105>
+
+            Reviewed by Brent Fulgham.
+
+            The WebContent sandbox on iOS should allow reading the passwd file.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2021-03-24  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r274766. rdar://problem/75762455
+
+    Add an early return in UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList
+    https://bugs.webkit.org/show_bug.cgi?id=223571
+    
+    Reviewed by Eric Carlson.
+    
+    Update code to early return as soon as possible.
+    
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274766 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-22  Youenn Fablet  <youenn@apple.com>
+
+            Add an early return in UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList
+            https://bugs.webkit.org/show_bug.cgi?id=223571
+
+            Reviewed by Eric Carlson.
+
+            Update code to early return as soon as possible.
+
+            * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+            (WebKit::UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList):
+
+2021-03-22  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274790. rdar://problem/75712637
+
+    Allow additional fcntl
+    https://bugs.webkit.org/show_bug.cgi?id=223590
+    <rdar://problem/75702241>
+    
+    Reviewed by Brent Fulgham.
+    
+    An additional fcntl is being used and should be allowed.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274790 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-22  Per Arne  <pvollan@apple.com>
+
+            Allow additional fcntl
+            https://bugs.webkit.org/show_bug.cgi?id=223590
+            <rdar://problem/75702241>
+
+            Reviewed by Brent Fulgham.
+
+            An additional fcntl is being used and should be allowed.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-03-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r274462. rdar://problem/75485320
+
+    Unreviewed, revert r272629 as it caused regressions in some apps
+    https://bugs.webkit.org/show_bug.cgi?id=223232
+    <rdar://75440378>
+    
+    * SourcesCocoa.txt:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    * UIProcess/API/Cocoa/WKWebViewInternal.h:
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    * UIProcess/Cocoa/PageClientImplCocoa.h:
+    * UIProcess/Cocoa/PageClientImplCocoa.mm:
+    * UIProcess/Cocoa/WKBlankOverlayView.h: Removed.
+    * UIProcess/PageClient.h:
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::didCommitLoadForFrame):
+    (WebKit::WebPageProxy::runJavaScriptAlert):
+    (WebKit::WebPageProxy::runJavaScriptConfirm):
+    (WebKit::WebPageProxy::runJavaScriptPrompt):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::didCommitLayerTree):
+    * UIProcess/mac/WebPageProxyMac.mm:
+    * WebKit.xcodeproj/project.pbxproj:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::didCommitLoad):
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+    (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+    * WebProcess/WebPage/mac/WebPageMac.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274462 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-15  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, revert r272629 as it caused regressions in some apps
+            https://bugs.webkit.org/show_bug.cgi?id=223232
+            <rdar://75440378>
+
+            * SourcesCocoa.txt:
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            * UIProcess/API/Cocoa/WKWebViewInternal.h:
+            * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+            * UIProcess/Cocoa/PageClientImplCocoa.h:
+            * UIProcess/Cocoa/PageClientImplCocoa.mm:
+            * UIProcess/Cocoa/WKBlankOverlayView.h: Removed.
+            * UIProcess/PageClient.h:
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::didCommitLoadForFrame):
+            (WebKit::WebPageProxy::runJavaScriptAlert):
+            (WebKit::WebPageProxy::runJavaScriptConfirm):
+            (WebKit::WebPageProxy::runJavaScriptPrompt):
+            * UIProcess/WebPageProxy.h:
+            * UIProcess/WebPageProxy.messages.in:
+            * UIProcess/ios/WebPageProxyIOS.mm:
+            (WebKit::WebPageProxy::didCommitLayerTree):
+            * UIProcess/mac/WebPageProxyMac.mm:
+            * WebKit.xcodeproj/project.pbxproj:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::didCommitLoad):
+            * WebProcess/WebPage/WebPage.h:
+            * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+            (WebKit::TiledCoreAnimationDrawingArea::updateRendering):
+            * WebProcess/WebPage/mac/WebPageMac.mm:
+
+2021-03-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274439. rdar://problem/75450660
+
+    Enforce subcommand filtering
+    https://bugs.webkit.org/show_bug.cgi?id=223192
+    <rdar://75434409>
+    
+    Reviewed by Brent Fulgham.
+    
+    Enforce subcommand filtering in the WebContent process' sandbox.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274439 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+            Enforce subcommand filtering
+            https://bugs.webkit.org/show_bug.cgi?id=223192
+            <rdar://75434409>
+
+            Reviewed by Brent Fulgham.
+
+            Enforce subcommand filtering in the WebContent process' sandbox.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-03-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274295. rdar://problem/75450660
+
+    [macOS] Add additional telemetry to WebContent sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=223080
+    
+    Reviewed by Brent Fulgham.
+    
+    Add additional telemetry to WebContent sandbox on macOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274295 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Add additional telemetry to WebContent sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=223080
+
+            Reviewed by Brent Fulgham.
+
+            Add additional telemetry to WebContent sandbox on macOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-03-10  Ruben Turcios  <rubent_22@apple.com>
+
+        Revert r271193. rdar://problem/75273221
+
+2021-03-10  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r274231. rdar://problem/75279800
+
+    [iOS] Add additional telemetry to WebContent sandbox 
+    https://bugs.webkit.org/show_bug.cgi?id=223035
+    <rdar://75275161>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Add additional telemetry to WebContent sandbox on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274231 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-10  Per Arne  <pvollan@apple.com>
+
+            [iOS] Add additional telemetry to WebContent sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=223035
+            <rdar://75275161>
+
+            Reviewed by Geoffrey Garen.
+
+            Add additional telemetry to WebContent sandbox on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2021-03-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r273997. rdar://problem/75180327
+
+    Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate
+    https://bugs.webkit.org/show_bug.cgi?id=222809
+    
+    Reviewed by Michael Catanzaro.
+    
+    Source/WebKit:
+    
+    There was a PageLoadState::Transaction in resetStateAfterProcessTermination() that
+    was previously making sure we would not clear the WebView's URL before calling the
+    processDidTerminate client delegate. Now that we call the client delegate in a
+    separate function (WebPageProxy::dispatchProcessDidTerminate), we need to make move
+    the PageLoadState::Transaction to the caller in
+    WebProcessProxy::processDidTerminateOrFailedToLaunch(), so that its scope covers
+    both resetStateAfterProcessTermination() & dispatchProcessDidTerminate() calls.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
+    (TEST):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273997 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-05  Chris Dumez  <cdumez@apple.com>
+
+            Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate
+            https://bugs.webkit.org/show_bug.cgi?id=222809
+
+            Reviewed by Michael Catanzaro.
+
+            There was a PageLoadState::Transaction in resetStateAfterProcessTermination() that
+            was previously making sure we would not clear the WebView's URL before calling the
+            processDidTerminate client delegate. Now that we call the client delegate in a
+            separate function (WebPageProxy::dispatchProcessDidTerminate), we need to make move
+            the PageLoadState::Transaction to the caller in
+            WebProcessProxy::processDidTerminateOrFailedToLaunch(), so that its scope covers
+            both resetStateAfterProcessTermination() & dispatchProcessDidTerminate() calls.
+
+            * UIProcess/WebPageProxy.cpp:
+            (WebKit::WebPageProxy::resetStateAfterProcessTermination):
+            * UIProcess/WebProcessProxy.cpp:
+            (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+
+2021-03-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274051. rdar://problem/75178467
+
+    [WebAuthn] Expand WebAuthn Process's sandbox profile on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=222858
+    <rdar://problem/74772012>
+    
+    Reviewed by Brent Fulgham.
+    
+    Allows WebAuthn process to use AAA again.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274051 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+            [WebAuthn] Expand WebAuthn Process's sandbox profile on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=222858
+            <rdar://problem/74772012>
+
+            Reviewed by Brent Fulgham.
+
+            Allows WebAuthn process to use AAA again.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+
+2021-03-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273564. rdar://problem/74886738
+
+    [Cocoa] Register VP9 decoders when PlatformMediaSessionManager is created
+    https://bugs.webkit.org/show_bug.cgi?id=222473
+    <rdar://problem/74790242>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Currently, VP9 decoders are registered when a Web page is created in the WebContent process. Instead, VP9 decoders can be registered
+    when PlatformMediaSessionManager is created, which should be a slight performance improvement, since calls into media frameworks will
+    then not be made unconditionally when creating a Web page, but delayed until required.
+    
+    No new tests, covered by existing tests.
+    
+    * platform/audio/PlatformMediaSessionManager.cpp:
+    (WebCore::PlatformMediaSessionManager::setShouldEnableVP9Decoder):
+    (WebCore::PlatformMediaSessionManager::shouldEnableVP9Decoder):
+    (WebCore::PlatformMediaSessionManager::setShouldEnableVP8Decoder):
+    (WebCore::PlatformMediaSessionManager::shouldEnableVP8Decoder):
+    (WebCore::PlatformMediaSessionManager::setShouldEnableVP9SWDecoder):
+    (WebCore::PlatformMediaSessionManager::shouldEnableVP9SWDecoder):
+    * platform/audio/PlatformMediaSessionManager.h:
+    * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+    (WebCore::MediaSessionManagerCocoa::MediaSessionManagerCocoa):
+    
+    Source/WebKit:
+    
+    Currently, VP9 decoders are registered when a Web page is created in the WebContent process. Instead, VP9 decoders can be registered when
+    PlatformMediaSessionManager is created, which should be a slight performance improvement, since calls into media frameworks will then not
+    be made unconditionally when creating a Web page, but delayed until required.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::m_lastNavigationWasAppBound):
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::enableVP9Decoder): Deleted.
+    (WebKit::WebProcess::enableVP8SWDecoder): Deleted.
+    (WebKit::WebProcess::enableVP9SWDecoder): Deleted.
+    * WebProcess/WebProcess.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273564 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  Per Arne  <pvollan@apple.com>
+
+            [Cocoa] Register VP9 decoders when PlatformMediaSessionManager is created
+            https://bugs.webkit.org/show_bug.cgi?id=222473
+            <rdar://problem/74790242>
+
+            Reviewed by Eric Carlson.
+
+            Currently, VP9 decoders are registered when a Web page is created in the WebContent process. Instead, VP9 decoders can be registered when
+            PlatformMediaSessionManager is created, which should be a slight performance improvement, since calls into media frameworks will then not
+            be made unconditionally when creating a Web page, but delayed until required.
+
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::m_lastNavigationWasAppBound):
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::enableVP9Decoder): Deleted.
+            (WebKit::WebProcess::enableVP8SWDecoder): Deleted.
+            (WebKit::WebProcess::enableVP9SWDecoder): Deleted.
+            * WebProcess/WebProcess.h:
+
+2021-03-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r273590. rdar://problem/74881366
+
+    Non-cookie website data not deleted after 7 days of browser use without user interaction
+    https://bugs.webkit.org/show_bug.cgi?id=222248
+    <rdar://problem/74612589>
+    
+    Reviewed by Brent Fulgham and informally by Kate Cheney.
+    
+    Source/WebKit:
+    
+    Tests: http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html
+           http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html
+    
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+    (WebKit::ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters):
+        Now sets two new member variables:
+        - Optional<OperatingDate> m_longWindowOperatingDate
+        - Optional<OperatingDate> m_shortWindowOperatingDate
+        These are only set if the minimum number of operating days has passed.
+        This function no longer sets m_leastRecentOperatingDate.
+    (WebKit::ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired const):
+        Now checks against the two new member variables m_longWindowOperatingDate
+        and m_shortWindowOperatingDate. This fixes the bug.
+    (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+        Test infrastructure. Now takes the new parameter numberOfOperatingDaysPassed
+        with which layout tests can control the exact number of operating days
+        passed since user interaction.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        Added m_longWindowOperatingDate and m_shortWindowOperatingDate, and
+        removed m_leastRecentOperatingDate since it's no longer used.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+    (WebKit::ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting):
+        Test infrastructure. The same changes as in the DB store.
+    * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+    * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+    * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+    (WebKit::WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+    * NetworkProcess/NetworkProcess.cpp:
+    (WebKit::NetworkProcess::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * NetworkProcess/NetworkProcess.h:
+    * NetworkProcess/NetworkProcess.messages.in:
+    * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+    (WKWebsiteDataStoreSetStatisticsExpiredStatistic):
+        Test infrastructure.
+    * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+    * UIProcess/Network/NetworkProcessProxy.cpp:
+    (WebKit::NetworkProcessProxy::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * UIProcess/Network/NetworkProcessProxy.h:
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    (WebKit::WebsiteDataStore::insertExpiredStatisticForTesting):
+        Test infrastructure.
+    * UIProcess/WebsiteData/WebsiteDataStore.h:
+    
+    Tools:
+    
+    A new numberOfOperatingDaysPassed parameter was added to
+    testRunner.setStatisticsExpiredStatistic() to control the exact
+    number of operating days passed since user interaction.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::setStatisticsExpiredStatistic):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::setStatisticsExpiredStatistic):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+    
+    LayoutTests:
+    
+    Existing test cases now make use of the new numberOfOperatingDaysPassed
+    parameter to testRunner.setStatisticsExpiredStatistic() to control the exact
+    number of operating days passed since user interaction.
+    A new test case makes sure website data is not deleted below the threshold.
+    
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago-expected.txt: Added.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html: Added.
+        Sets numberOfOperatingDaysPassed to 6.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago-expected.txt: Renamed from LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction-expected.txt.
+    * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html: Renamed from LayoutTests/http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-statistics-with-no-user-interaction.html.
+        Sets numberOfOperatingDaysPassed to 7.
+    * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html:
+        Sets numberOfOperatingDaysPassed to 30.
+    * platform/wk2/TestExpectations:
+        Updated existing expectation with new file name.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273590 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  John Wilander  <wilander@apple.com>
+
+            Non-cookie website data not deleted after 7 days of browser use without user interaction
+            https://bugs.webkit.org/show_bug.cgi?id=222248
+            <rdar://problem/74612589>
+
+            Reviewed by Brent Fulgham and informally by Kate Cheney.
+
+            Tests: http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html
+                   http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html
+
+            * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+            (WebKit::ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters):
+                Now sets two new member variables:
+                - Optional<OperatingDate> m_longWindowOperatingDate
+                - Optional<OperatingDate> m_shortWindowOperatingDate
+                These are only set if the minimum number of operating days has passed.
+                This function no longer sets m_leastRecentOperatingDate.
+            (WebKit::ResourceLoadStatisticsDatabaseStore::hasStatisticsExpired const):
+                Now checks against the two new member variables m_longWindowOperatingDate
+                and m_shortWindowOperatingDate. This fixes the bug.
+            (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+                Test infrastructure. Now takes the new parameter numberOfOperatingDaysPassed
+                with which layout tests can control the exact number of operating days
+                passed since user interaction.
+            * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+                Added m_longWindowOperatingDate and m_shortWindowOperatingDate, and
+                removed m_leastRecentOperatingDate since it's no longer used.
+            * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.cpp:
+            (WebKit::ResourceLoadStatisticsMemoryStore::insertExpiredStatisticForTesting):
+                Test infrastructure. The same changes as in the DB store.
+            * NetworkProcess/Classifier/ResourceLoadStatisticsMemoryStore.h:
+            * NetworkProcess/Classifier/ResourceLoadStatisticsStore.h:
+            * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp:
+            (WebKit::WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting):
+                Test infrastructure.
+            * NetworkProcess/Classifier/WebResourceLoadStatisticsStore.h:
+            * NetworkProcess/NetworkProcess.cpp:
+            (WebKit::NetworkProcess::insertExpiredStatisticForTesting):
+                Test infrastructure.
+            * NetworkProcess/NetworkProcess.h:
+            * NetworkProcess/NetworkProcess.messages.in:
+            * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+            (WKWebsiteDataStoreSetStatisticsExpiredStatistic):
+                Test infrastructure.
+            * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+            * UIProcess/Network/NetworkProcessProxy.cpp:
+            (WebKit::NetworkProcessProxy::insertExpiredStatisticForTesting):
+                Test infrastructure.
+            * UIProcess/Network/NetworkProcessProxy.h:
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::insertExpiredStatisticForTesting):
+                Test infrastructure.
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2021-02-25  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r273452. rdar://problem/74753294

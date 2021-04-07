@@ -77,11 +77,6 @@ bool ImageInputType::appendFormData(DOMFormData& formData, bool) const
     return true;
 }
 
-bool ImageInputType::supportsValidation() const
-{
-    return false;
-}
-
 void ImageInputType::handleDOMActivateEvent(Event& event)
 {
     ASSERT(element());
@@ -169,16 +164,6 @@ bool ImageInputType::shouldRespectAlignAttribute()
 bool ImageInputType::canBeSuccessfulSubmitButton()
 {
     return true;
-}
-
-bool ImageInputType::isImageButton() const
-{
-    return true;
-}
-
-bool ImageInputType::isEnumeratable()
-{
-    return false;
 }
 
 bool ImageInputType::shouldRespectHeightAndWidthAttributes()

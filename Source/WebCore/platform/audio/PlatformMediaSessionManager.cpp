@@ -43,6 +43,12 @@ bool PlatformMediaSessionManager::m_webMFormatReaderEnabled;
 bool PlatformMediaSessionManager::m_vorbisDecoderEnabled;
 #endif
 
+#if ENABLE(VP9)
+bool PlatformMediaSessionManager::m_vp9DecoderEnabled;
+bool PlatformMediaSessionManager::m_vp8DecoderEnabled;
+bool PlatformMediaSessionManager::m_vp9SWDecoderEnabled;
+#endif
+
 static std::unique_ptr<PlatformMediaSessionManager>& sharedPlatformMediaSessionManager()
 {
     static NeverDestroyed<std::unique_ptr<PlatformMediaSessionManager>> platformMediaSessionManager;
@@ -653,6 +659,38 @@ void PlatformMediaSessionManager::setVorbisDecoderEnabled(bool enabled)
     UNUSED_PARAM(enabled);
 #endif
 }
+
+#if ENABLE(VP9)
+void PlatformMediaSessionManager::setShouldEnableVP9Decoder(bool vp9DecoderEnabled)
+{
+    m_vp9DecoderEnabled = vp9DecoderEnabled;
+}
+
+bool PlatformMediaSessionManager::shouldEnableVP9Decoder()
+{
+    return m_vp9DecoderEnabled;
+}
+
+void PlatformMediaSessionManager::setShouldEnableVP8Decoder(bool vp8DecoderEnabled)
+{
+    m_vp8DecoderEnabled = vp8DecoderEnabled;
+}
+
+bool PlatformMediaSessionManager::shouldEnableVP8Decoder()
+{
+    return m_vp8DecoderEnabled;
+}
+
+void PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(bool vp9SWDecoderEnabled)
+{
+    m_vp9SWDecoderEnabled = vp9SWDecoderEnabled;
+}
+
+bool PlatformMediaSessionManager::shouldEnableVP9SWDecoder()
+{
+    return m_vp9SWDecoderEnabled;
+}
+#endif // ENABLE(VP9)
 
 #else // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 

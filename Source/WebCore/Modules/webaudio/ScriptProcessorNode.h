@@ -78,17 +78,20 @@ private:
 
     bool virtualHasPendingActivity() const final;
     void eventListenersDidChange() final;
-    void fireProcessEvent(unsigned doubleBufferIndex);
+    void fireProcessEvent(unsigned bufferIndex);
 
     RefPtr<AudioBuffer> createInputBufferForJS(AudioBuffer*) const;
     RefPtr<AudioBuffer> createOutputBufferForJS(AudioBuffer&) const;
 
-    // Double buffering
-    unsigned doubleBufferIndex() const { return m_doubleBufferIndex; }
-    void swapBuffers() { m_doubleBufferIndex = 1 - m_doubleBufferIndex; }
-    unsigned m_doubleBufferIndex { 0 };
-    Vector<RefPtr<AudioBuffer>> m_inputBuffers;
-    Vector<RefPtr<AudioBuffer>> m_outputBuffers;
+    // Double buffering.
+    static constexpr unsigned bufferCount = 2;
+    unsigned bufferIndex() const { return m_bufferIndex; }
+    void swapBuffers() { m_bufferIndex = (m_bufferIndex + 1) % bufferCount; }
+
+    unsigned m_bufferIndex { 0 };
+    std::array<Lock, bufferCount> m_bufferLocks;
+    std::array<RefPtr<AudioBuffer>, bufferCount> m_inputBuffers;
+    std::array<RefPtr<AudioBuffer>, bufferCount> m_outputBuffers;
     mutable RefPtr<AudioBuffer> m_cachedInputBufferForJS;
     mutable RefPtr<AudioBuffer> m_cachedOutputBufferForJS;
 
@@ -100,7 +103,6 @@ private:
 
     RefPtr<AudioBus> m_internalInputBus;
     RefPtr<PendingActivity<ScriptProcessorNode>> m_pendingActivity;
-    Lock m_processLock;
     bool m_hasAudioProcessEventListener { false };
 };
 

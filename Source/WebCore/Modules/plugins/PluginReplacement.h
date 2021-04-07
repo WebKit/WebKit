@@ -26,6 +26,8 @@
 #pragma once
 
 #include "RenderPtr.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -45,8 +47,14 @@ class PluginReplacement : public RefCounted<PluginReplacement> {
 public:
     virtual ~PluginReplacement() = default;
 
-    virtual bool installReplacement(ShadowRoot&) = 0;
-    virtual JSC::JSObject* scriptObject() { return nullptr; }
+    struct InstallResult {
+        bool success;
+#if PLATFORM(COCOA)
+        JSC::JSValue scriptObject { };
+#endif
+    };
+
+    virtual InstallResult installReplacement(ShadowRoot&) = 0;
 
     virtual bool willCreateRenderer() { return false; }
     virtual RenderPtr<RenderElement> createElementRenderer(HTMLPlugInElement&, RenderStyle&&, const RenderTreePosition&) = 0;

@@ -47,7 +47,7 @@ PointerCaptureController::PointerCaptureController(Page& page)
     reset();
 }
 
-Element* PointerCaptureController::pointerCaptureElement(Document* document, PointerID pointerId)
+Element* PointerCaptureController::pointerCaptureElement(Document* document, PointerID pointerId) const
 {
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
     if (iterator != m_activePointerIdsToCapturingData.end()) {
@@ -85,6 +85,7 @@ ExceptionOr<void> PointerCaptureController::setPointerCapture(Element* capturing
     if (capturingData.pointerIsPressed)
         capturingData.pendingTargetOverride = capturingTarget;
 
+    updateHaveAnyCapturingElement();
     return { };
 }
 
@@ -107,7 +108,10 @@ ExceptionOr<void> PointerCaptureController::releasePointerCapture(Element* captu
 
     // 3. For the specified pointerId, clear the pending pointer capture target override, if set.
     iterator->value.pendingTargetOverride = nullptr;
+    
+    // FIXME: This leaves value.targetOverride set: webkit.org/b/221342.
 
+    updateHaveAnyCapturingElement();
     return { };
 }
 
@@ -118,6 +122,9 @@ bool PointerCaptureController::hasPointerCapture(Element* capturingTarget, Point
     // Indicates whether the element on which this method is invoked has pointer capture for the pointer identified by the argument pointerId.
     // In particular, returns true if the pending pointer capture target override for pointerId is set to the element on which this method is
     // invoked, and false otherwise.
+
+    if (!m_haveAnyCapturingElement)
+        return false;
 
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
     return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.pendingTargetOverride == capturingTarget;
@@ -133,10 +140,15 @@ void PointerCaptureController::pointerLockWasApplied()
         capturingData.pendingTargetOverride = nullptr;
         capturingData.targetOverride = nullptr;
     }
+
+    updateHaveAnyCapturingElement();
 }
 
 void PointerCaptureController::elementWasRemoved(Element& element)
 {
+    if (!m_haveAnyCapturingElement)
+        return;
+
     for (auto& keyAndValue : m_activePointerIdsToCapturingData) {
         auto& capturingData = keyAndValue.value;
         if (capturingData.pendingTargetOverride == &element || capturingData.targetOverride == &element) {
@@ -158,24 +170,33 @@ void PointerCaptureController::elementWasRemoved(Element& element)
 void PointerCaptureController::reset()
 {
     m_activePointerIdsToCapturingData.clear();
+    m_haveAnyCapturingElement = false;
 
     CapturingData capturingData;
     capturingData.pointerType = PointerEvent::mousePointerType();
     m_activePointerIdsToCapturingData.add(mousePointerID, capturingData);
 }
 
+void PointerCaptureController::updateHaveAnyCapturingElement()
+{
+    m_haveAnyCapturingElement = WTF::anyOf(m_activePointerIdsToCapturingData.values(), [&](auto& capturingData) {
+        return capturingData.hasAnyElement();
+    });
+}
+
 void PointerCaptureController::touchWithIdentifierWasRemoved(PointerID pointerId)
 {
     m_activePointerIdsToCapturingData.remove(pointerId);
+    updateHaveAnyCapturingElement();
 }
 
-bool PointerCaptureController::hasCancelledPointerEventForIdentifier(PointerID pointerId)
+bool PointerCaptureController::hasCancelledPointerEventForIdentifier(PointerID pointerId) const
 {
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
     return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.cancelled;
 }
 
-bool PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier(PointerID pointerId)
+bool PointerCaptureController::preventsCompatibilityMouseEventsForIdentifier(PointerID pointerId) const
 {
     auto iterator = m_activePointerIdsToCapturingData.find(pointerId);
     return iterator != m_activePointerIdsToCapturingData.end() && iterator->value.preventsCompatibilityMouseEvents;

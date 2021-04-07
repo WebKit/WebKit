@@ -27,6 +27,8 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -351,4 +353,26 @@ TEST(WKNavigation, ReloadRelatedViewsInProcessDidTerminate)
     EXPECT_TRUE(!!pidAfter);
     for (auto& webView : webViews)
         EXPECT_EQ(pidAfter, [webView _webProcessIdentifier]);
+}
+
+TEST(WKNavigation, WebViewURLInProcessDidTerminate)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    NSString *viewURL = [webView URL].absoluteString;
+    EXPECT_TRUE(!!viewURL);
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    __block bool done = false;
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *view) {
+        EXPECT_EQ(view, webView.get());
+        EXPECT_WK_STREQ(view.URL.absoluteString, viewURL);
+        done = true;
+    };
+    kill([webView _webProcessIdentifier], 9);
+    TestWebKitAPI::Util::run(&done);
 }

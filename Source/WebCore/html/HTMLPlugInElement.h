@@ -24,6 +24,7 @@
 
 #include "HTMLFrameOwnerElement.h"
 #include "Image.h"
+#include "JSValueInWrappedObject.h"
 #include "RenderEmbeddedObject.h"
 
 namespace JSC {
@@ -59,6 +60,9 @@ public:
     void setDisplayState(DisplayState);
 
     JSC::JSObject* scriptObjectForPluginReplacement();
+#if PLATFORM(COCOA)
+    JSValueInWrappedObject& pluginReplacementScriptObject() { return m_pluginReplacementScriptObject; }
+#endif
 
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
@@ -116,6 +120,9 @@ private:
     RefPtr<JSC::Bindings::Instance> m_instance;
     Timer m_swapRendererTimer;
     RefPtr<PluginReplacement> m_pluginReplacement;
+#if PLATFORM(COCOA)
+    JSValueInWrappedObject m_pluginReplacementScriptObject;
+#endif
     bool m_isCapturingMouseEvents { false };
     bool m_inBeforeLoadEventHandler { false };
     DisplayState m_displayState { Playing };

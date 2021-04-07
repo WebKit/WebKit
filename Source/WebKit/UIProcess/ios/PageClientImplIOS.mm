@@ -447,9 +447,9 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& nativeWebTouc
 
 #if ENABLE(IOS_TOUCH_EVENTS)
 
-void PageClientImpl::doneDeferringTouchStart(bool preventNativeGestures)
+void PageClientImpl::doneDeferringNativeGestures(bool preventNativeGestures)
 {
-    [m_contentView _doneDeferringTouchStart:preventNativeGestures];
+    [m_contentView _doneDeferringNativeGestures:preventNativeGestures];
 }
 
 #endif // ENABLE(IOS_TOUCH_EVENTS)

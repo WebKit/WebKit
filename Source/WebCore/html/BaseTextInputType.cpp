@@ -33,11 +33,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-bool BaseTextInputType::isTextType() const
-{
-    return true;
-}
-
 bool BaseTextInputType::patternMismatch(const String& value) const
 {
     ASSERT(element());
