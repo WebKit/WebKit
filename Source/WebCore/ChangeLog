@@ -1,3 +1,14 @@
+2021-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] InlineFormattingState::shrinkToFit should shrink InlineItems too
+        https://bugs.webkit.org/show_bug.cgi?id=224258
+
+        Reviewed by Simon Fraser.
+
+        * layout/inlineformatting/InlineFormattingState.h:
+        (WebCore::Layout::InlineFormattingState::shrinkToFit):
+        * layout/integration/LayoutIntegrationCoverage.cpp:
+
 2021-04-06  Jean-Yves Avenard  <jya@apple.com>
 
         Fix logic error in MediaMetadataInit

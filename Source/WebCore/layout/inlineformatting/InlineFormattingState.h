@@ -95,6 +95,7 @@ inline void InlineFormattingState::clearLineAndRuns()
 
 inline void InlineFormattingState::shrinkToFit()
 {
+    m_inlineItems.shrinkToFit();
     m_lines.shrinkToFit();
     m_lineBoxes.shrinkToFit();
     m_lineRuns.shrinkToFit();
