@@ -1114,8 +1114,7 @@ FullBytecodeLiveness& Graph::livenessFor(CodeBlock* codeBlock)
     if (iter != m_bytecodeLiveness.end())
         return *iter->value;
     
-    std::unique_ptr<FullBytecodeLiveness> liveness = makeUnique<FullBytecodeLiveness>();
-    codeBlock->livenessAnalysis().computeFullLiveness(codeBlock, *liveness);
+    std::unique_ptr<FullBytecodeLiveness> liveness = codeBlock->livenessAnalysis().computeFullLiveness(codeBlock);
     FullBytecodeLiveness& result = *liveness;
     m_bytecodeLiveness.add(codeBlock, WTFMove(liveness));
     return result;

@@ -58,14 +58,16 @@ void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, Abstr
     });
 
     m_moduleRecord.set(vm, this, moduleRecord);
-    m_names.reserveCapacity(resolutions.size());
+    m_names = FixedVector<Identifier>(resolutions.size());
     {
         auto locker = holdLock(cellLock());
+        unsigned index = 0;
         for (const auto& pair : resolutions) {
-            m_names.append(pair.first);
+            m_names[index] = pair.first;
             auto addResult = m_exports.add(pair.first.impl(), ExportEntry());
             addResult.iterator->value.localName = pair.second.localName;
             addResult.iterator->value.moduleRecord.set(vm, this, pair.second.moduleRecord);
+            ++index;
         }
     }
 

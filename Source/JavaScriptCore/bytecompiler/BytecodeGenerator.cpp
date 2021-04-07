@@ -889,7 +889,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
         else
             variables.append(Identifier::fromUid(m_vm, entry.key.get()));
     }
-    codeBlock->adoptVariables(variables);
+    codeBlock->adoptVariables(WTFMove(variables));
     codeBlock->adoptFunctionHoistingCandidates(WTFMove(hoistedFunctions));
     
     if (evalNode->needsNewTargetRegisterForThisScope())

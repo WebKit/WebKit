@@ -246,7 +246,7 @@ void MarkedSpace::sweepPreciseAllocations()
         allocation->setIndexInSpace(dstIndex);
         m_preciseAllocations[dstIndex++] = allocation;
     }
-    m_preciseAllocations.shrink(dstIndex);
+    m_preciseAllocations.shrinkCapacity(dstIndex);
     m_preciseAllocationsNurseryOffset = m_preciseAllocations.size();
 }
 

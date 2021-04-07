@@ -28,6 +28,7 @@
 #include "BytecodeLivenessAnalysis.h"
 #include "Operands.h"
 #include <wtf/FastBitVector.h>
+#include <wtf/FixedVector.h>
 
 namespace JSC {
 
@@ -39,6 +40,11 @@ class CodeBlock;
 class FullBytecodeLiveness {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    explicit FullBytecodeLiveness(size_t size)
+        : m_usesBefore(size)
+        , m_usesAfter(size)
+    { }
+
     const FastBitVector& getLiveness(BytecodeIndex bytecodeIndex, LivenessCalculationPoint point) const
     {
         // We don't have to worry about overflowing into the next bytecodeoffset in our vectors because we
@@ -64,8 +70,8 @@ private:
 
     // FIXME: Use FastBitVector's view mechanism to make them compact.
     // https://bugs.webkit.org/show_bug.cgi?id=204427
-    Vector<FastBitVector, 0, UnsafeVectorOverflow> m_usesBefore;
-    Vector<FastBitVector, 0, UnsafeVectorOverflow> m_usesAfter;
+    FixedVector<FastBitVector> m_usesBefore;
+    FixedVector<FastBitVector> m_usesAfter;
 };
 
 } // namespace JSC

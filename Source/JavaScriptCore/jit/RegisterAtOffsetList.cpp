@@ -37,6 +37,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList);
 RegisterAtOffsetList::RegisterAtOffsetList() { }
 
 RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseType offsetBaseType)
+    : m_registers(registerSet.numberOfSetRegisters())
 {
     size_t numberOfRegisters = registerSet.numberOfSetRegisters();
     ptrdiff_t offset = 0;
@@ -44,10 +45,11 @@ RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseTy
     if (offsetBaseType == FramePointerBased)
         offset = -(static_cast<ptrdiff_t>(numberOfRegisters) * sizeof(CPURegister));
 
-    m_registers.reserveInitialCapacity(numberOfRegisters);
+    unsigned index = 0;
     registerSet.forEach([&] (Reg reg) {
-        m_registers.append(RegisterAtOffset(reg, offset));
+        m_registers[index] = RegisterAtOffset(reg, offset);
         offset += sizeof(CPURegister);
+        ++index;
     });
 }
 

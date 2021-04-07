@@ -44,6 +44,7 @@
 #include "Reg.h"
 #include "ValueProfile.h"
 #include "VirtualRegister.h"
+#include <wtf/FixedVector.h>
 
 namespace JSC {
 
@@ -125,7 +126,7 @@ struct OSRExit : public DFG::OSRExitBase {
     MacroAssemblerCodeRef<OSRExitPtrTag> m_code;
     // This tells us where to place a jump.
     CodeLocationJump<JSInternalPtrTag> m_patchableJump;
-    Vector<B3::ValueRep> m_valueReps;
+    FixedVector<B3::ValueRep> m_valueReps;
 
     CodeLocationJump<JSInternalPtrTag> codeLocationForRepatch(CodeBlock* ftlCodeBlock) const;
     void considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)

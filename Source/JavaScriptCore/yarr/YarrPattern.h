@@ -413,7 +413,7 @@ struct YarrPattern {
 
         m_disjunctions.clear();
         m_userCharacterClasses.clear();
-        m_captureGroupNames.shrink(0);
+        m_captureGroupNames.clear();
     }
 
     bool containsUnsignedLengthPattern()

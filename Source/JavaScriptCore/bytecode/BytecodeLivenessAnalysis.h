@@ -85,7 +85,7 @@ public:
     
     FastBitVector getLivenessInfoAtInstruction(CodeBlock* codeBlock, BytecodeIndex bytecodeIndex) { return BytecodeLivenessPropagation::getLivenessInfoAtInstruction(codeBlock, codeBlock->instructions(), m_graph, bytecodeIndex); }
     
-    void computeFullLiveness(CodeBlock*, FullBytecodeLiveness& result);
+    std::unique_ptr<FullBytecodeLiveness> computeFullLiveness(CodeBlock*);
 
     BytecodeGraph& graph() { return m_graph; }
 

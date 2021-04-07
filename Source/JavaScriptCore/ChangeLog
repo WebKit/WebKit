@@ -1,3 +1,46 @@
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector more in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=224255
+
+        Reviewed by Mark Lam.
+
+        Use FixedVector more aggressively. This reduces sizeof(Holder) since sizeof(FixedVector) is 8
+        while sizeof(Vector) is 16. And since this allocates just-fit size, this does not waste memory.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/FullBytecodeLiveness.h:
+        (JSC::FullBytecodeLiveness::FullBytecodeLiveness):
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::livenessFor):
+        * ftl/FTLForOSREntryJITCode.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileRecovery):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweepPreciseAllocations):
+        * jit/RegisterAtOffsetList.cpp:
+        (JSC::RegisterAtOffsetList::RegisterAtOffsetList):
+        * jit/RegisterAtOffsetList.h:
+        (JSC::RegisterAtOffsetList::begin const):
+        (JSC::RegisterAtOffsetList::end const):
+        (JSC::RegisterAtOffsetList::clear): Deleted.
+        * runtime/JSGlobalObject.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        * runtime/JSModuleNamespaceObject.h:
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::resetForReparsing):
+
 2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Symbol and BigInt wrapper objects should perform OrdinaryToPrimitive

@@ -48,6 +48,7 @@
 #include "WeakGCSet.h"
 #include <JavaScriptCore/JSBase.h>
 #include <array>
+#include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 
@@ -459,7 +460,7 @@ public:
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_STRUCTURE)
 #undef DECLARE_TYPED_ARRAY_TYPE_STRUCTURE
 
-    Vector<LazyProperty<JSGlobalObject, JSCell>> m_linkTimeConstants;
+    FixedVector<LazyProperty<JSGlobalObject, JSCell>> m_linkTimeConstants;
 
     String m_name;
 
