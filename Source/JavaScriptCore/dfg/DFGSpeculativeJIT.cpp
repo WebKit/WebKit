@@ -7485,7 +7485,7 @@ void SpeculativeJIT::cageTypedArrayStorage(GPRReg baseReg, GPRReg storageReg, bo
 {
     auto untagArrayPtr = [&]() {
 #if CPU(ARM64E)
-        m_jit.untagArrayPtr(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg, validateAuth);
+        m_jit.untagArrayPtrLength32(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfLength()), storageReg, validateAuth);
 #else
         UNUSED_PARAM(validateAuth);
         UNUSED_PARAM(baseReg);

@@ -1,3 +1,20 @@
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] WasmMemory caging should care about nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=224268
+        <rdar://problem/74654838>
+
+        Reviewed by Mark Lam.
+
+        * wasm/stress/4g-memory-cage.js: Added.
+        (async test):
+        * wasm/stress/more-than-4g-offset-access-oom.js: Added.
+        (async test):
+        * wasm/stress/null-memory-cage-explicit.js: Added.
+        (async test):
+        * wasm/stress/null-memory-cage.js: Added.
+        (async test):
+
 2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Symbol and BigInt wrapper objects should perform OrdinaryToPrimitive

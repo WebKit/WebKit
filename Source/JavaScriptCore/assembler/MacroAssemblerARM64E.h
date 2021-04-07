@@ -128,7 +128,7 @@ public:
         }
     }
 
-    ALWAYS_INLINE void untagArrayPtr(Address length, RegisterID target, bool validateAuth)
+    ALWAYS_INLINE void untagArrayPtrLength32(Address length, RegisterID target, bool validateAuth)
     {
         auto lengthGPR = getCachedDataTempRegisterIDAndInvalidate();
         load32(length, lengthGPR);

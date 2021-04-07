@@ -1,3 +1,24 @@
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] WasmMemory caging should care nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=224268
+        <rdar://problem/74654838>
+
+        Reviewed by Mark Lam.
+
+        Accept size_t since Wasm::Memory's length can be larger than 4GB.
+
+        * wtf/CagedPtr.h:
+        (WTF::CagedPtr::CagedPtr):
+        (WTF::CagedPtr::get const):
+        (WTF::CagedPtr::getMayBeNull const):
+        (WTF::CagedPtr::at const):
+        (WTF::CagedPtr::recage):
+        * wtf/CagedUniquePtr.h:
+        (WTF::CagedUniquePtr::CagedUniquePtr):
+        (WTF::CagedUniquePtr::create):
+        (WTF::CagedUniquePtr::tryCreate):
+
 2021-04-06  Alex Christensen  <achristensen@webkit.org>
 
         Add U+0581 and U+0585 to list of Armenian characters that look like Latin characters

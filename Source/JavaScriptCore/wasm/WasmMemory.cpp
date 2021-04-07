@@ -279,13 +279,13 @@ bool tryAllocate(const Func& allocate, const WTF::Function<void(Memory::NotifyPr
 
 
 MemoryHandle::MemoryHandle(void* memory, size_t size, size_t mappedCapacity, PageCount initial, PageCount maximum, MemorySharingMode sharingMode, MemoryMode mode)
-    : m_memory(memory, mappedCapacity)
+    : m_sharingMode(sharingMode)
+    , m_mode(mode)
+    , m_memory(memory, mappedCapacity)
     , m_size(size)
     , m_mappedCapacity(mappedCapacity)
     , m_initial(initial)
     , m_maximum(maximum)
-    , m_sharingMode(sharingMode)
-    , m_mode(mode)
 {
 #if ASSERT_ENABLED
     if (sharingMode == MemorySharingMode::Default && mode == MemoryMode::BoundsChecking)

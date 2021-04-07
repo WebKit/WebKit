@@ -1,5 +1,43 @@
 2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] WasmMemory caging should care about nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=224268
+        <rdar://problem/74654838>
+
+        Reviewed by Mark Lam.
+
+        1. Fix Wasm::MemoryHandle::boundsCheckingSize. We should just return m_mappedCapacity here since UINT32_MAX is not 4GB.
+           This checking size can include redzone for fast-memory, but this is OK: bounds-check pass in LLInt (in upper tiers, we
+           do not use bounds-check for fast-memory), and access to redzone, then fault occurs and signal handler can make it error
+           since signal handler is checking whether the access is within Memory::fastMappedBytes which includes redzone.
+        2. Fix caging of wasm memory-base pointer in LLInt. We should use pointer sized length since it can be larger than 4GB.
+           And we should handle nullptr case correctly: Wasm::MemoryHandle's memory can be nullptr when mapped size is zero.
+           caging needs to handle this case as we do in CagedPtr::getMayBeNull.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::untagArrayPtrLength32):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        * llint/LowLevelInterpreter64.asm:
+        * llint/WebAssembly.asm:
+        * offlineasm/arm64e.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/instructions.rb:
+        * runtime/CagedBarrierPtr.h:
+        (JSC::CagedBarrierPtr::CagedBarrierPtr):
+        (JSC::CagedBarrierPtr::set):
+        (JSC::CagedBarrierPtr::get const):
+        (JSC::CagedBarrierPtr::getMayBeNull const):
+        (JSC::CagedBarrierPtr::at const):
+        (JSC::CagedBarrierPtr::setWithoutBarrier):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::updateCachedMemory):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::MemoryHandle::MemoryHandle):
+        * wasm/WasmMemory.h:
+
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Use FixedVector more in JSC
         https://bugs.webkit.org/show_bug.cgi?id=224255
 

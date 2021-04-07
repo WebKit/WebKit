@@ -45,7 +45,7 @@ public:
     CagedBarrierPtr() = default;
     
     template<typename U>
-    CagedBarrierPtr(VM& vm, JSCell* cell, U&& value, unsigned size)
+    CagedBarrierPtr(VM& vm, JSCell* cell, U&& value, size_t size)
     {
         m_barrier.set(vm, cell, CagedType(std::forward<U>(value), size));
     }
@@ -53,19 +53,19 @@ public:
     void clear() { m_barrier.clear(); }
     
     template<typename U>
-    void set(VM& vm, JSCell* cell, U&& value, unsigned size)
+    void set(VM& vm, JSCell* cell, U&& value, size_t size)
     {
         m_barrier.set(vm, cell, CagedType(std::forward<U>(value), size));
     }
     
-    T* get(unsigned size) const { return m_barrier.get().get(size); }
-    T* getMayBeNull(unsigned size) const { return m_barrier.get().getMayBeNull(size); }
+    T* get(size_t size) const { return m_barrier.get().get(size); }
+    T* getMayBeNull(size_t size) const { return m_barrier.get().getMayBeNull(size); }
     T* getUnsafe() const { return m_barrier.get().getUnsafe(); }
 
     // We need the template here so that the type of U is deduced at usage time rather than class time. U should always be T.
     template<typename U = T>
     typename std::enable_if<!std::is_same<void, U>::value, T>::type&
-    /* T& */ at(unsigned index, unsigned size) const { return get(size)[index]; }
+    /* T& */ at(size_t index, size_t size) const { return get(size)[index]; }
 
     bool operator==(const CagedBarrierPtr& other) const
     {
@@ -83,7 +83,7 @@ public:
     }
     
     template<typename U>
-    void setWithoutBarrier(U&& value, unsigned size) { m_barrier.setWithoutBarrier(CagedType(std::forward<U>(value), size)); }
+    void setWithoutBarrier(U&& value, size_t size) { m_barrier.setWithoutBarrier(CagedType(std::forward<U>(value), size)); }
 
     T* rawBits() const
     {

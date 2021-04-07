@@ -497,6 +497,31 @@ macro cagedPrimitive(ptr, length, scratch, scratch2)
     end
 end
 
+macro cagedPrimitiveMayBeNull(ptr, length, scratch, scratch2)
+    if ARM64E
+        const source = scratch2
+        move ptr, scratch2
+        removeArrayPtrTag scratch2
+        btpz scratch2, .nullCase
+        move ptr, scratch2
+    else
+        # Note that we may produce non-nullptr for nullptr in non-ARM64E architecture since we add Gigacage offset.
+        # But this behavior is aligned to AssemblyHelpers::{cageConditionallyAndUntag,cageWithoutUntagging}, FTL implementation of caging etc.
+        const source = ptr
+    end
+    if GIGACAGE_ENABLED
+        cagePrimitive(GigacageConfig + Gigacage::Config::basePtrs + GigacagePrimitiveBasePtrOffset, constexpr Gigacage::primitiveGigacageMask, source, scratch)
+        if ARM64E
+            const numberOfPACBits = constexpr MacroAssembler::numberOfPACBits
+            bfiq scratch2, 0, 64 - numberOfPACBits, ptr
+        end
+    end
+    if ARM64E
+        .nullCase:
+        untagArrayPtr length, ptr
+    end
+end
+
 macro loadCagedJSValue(source, dest, scratchOrLength)
     loadp source, dest
     if GIGACAGE_ENABLED

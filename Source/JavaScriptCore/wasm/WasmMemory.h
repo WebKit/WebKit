@@ -61,12 +61,7 @@ public:
     void* memory() const;
     size_t size() const { return m_size; }
     size_t mappedCapacity() const { return m_mappedCapacity; }
-    size_t boundsCheckingSize() const
-    {
-        if (m_mode == MemoryMode::BoundsChecking)
-            return m_mappedCapacity;
-        return UINT32_MAX;
-    }
+    size_t boundsCheckingSize() const { return m_mappedCapacity; }
     PageCount initial() const { return m_initial; }
     PageCount maximum() const { return m_maximum; }
     MemorySharingMode sharingMode() const { return m_sharingMode; }
@@ -81,14 +76,15 @@ public:
 
 private:
     using CagedMemory = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
+
+    Lock m_lock;
+    MemorySharingMode m_sharingMode { MemorySharingMode::Default };
+    MemoryMode m_mode { MemoryMode::BoundsChecking };
     CagedMemory m_memory;
     size_t m_size { 0 };
     size_t m_mappedCapacity { 0 };
     PageCount m_initial;
     PageCount m_maximum;
-    MemorySharingMode m_sharingMode { MemorySharingMode::Default };
-    MemoryMode m_mode { MemoryMode::BoundsChecking };
-    Lock m_lock;
 };
 
 class Memory final : public RefCounted<Memory> {
