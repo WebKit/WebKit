@@ -1,5 +1,22 @@
 2021-04-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Wasted vector capacity in StyleRuleKeyframes
+        https://bugs.webkit.org/show_bug.cgi?id=224264
+
+        Reviewed by Antti Koivisto.
+
+        Shrink StyleRuleKeyframes::m_keyframes. Saves 23KB on youtube.com.
+
+        * css/CSSKeyframesRule.cpp:
+        (WebCore::StyleRuleKeyframes::shrinkToFit):
+        * css/CSSKeyframesRule.h:
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeKeyframesRule):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeAnimationShorthand):
+
+2021-04-07  Simon Fraser  <simon.fraser@apple.com>
+
         Wasted vector capacity in StyleSheetContents
         https://bugs.webkit.org/show_bug.cgi?id=224250
 

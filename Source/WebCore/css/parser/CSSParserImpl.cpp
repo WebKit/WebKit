@@ -630,6 +630,8 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefix
 
     // FIXME-NEWPARSER: Find out why this is done. Behavior difference when prefixed?
     // keyframeRule->setVendorPrefixed(webkitPrefixed);
+    
+    keyframeRule->shrinkToFit();
     return keyframeRule;
 }
 

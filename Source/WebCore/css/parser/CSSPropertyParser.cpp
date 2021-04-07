@@ -1668,7 +1668,7 @@ bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& 
                 if (parsedLonghand[i])
                     continue;
 
-                if (RefPtr<CSSValue> value = consumeAnimationValue(shorthand.properties()[i], m_range, m_context)) {
+                if (auto value = consumeAnimationValue(shorthand.properties()[i], m_range, m_context)) {
                     parsedLonghand[i] = true;
                     foundProperty = true;
                     longhands[i]->append(*value);
