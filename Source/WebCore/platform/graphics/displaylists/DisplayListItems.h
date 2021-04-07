@@ -920,7 +920,7 @@ public:
     RenderingResourceIdentifier fontIdentifier() { return m_fontIdentifier; }
     const FloatPoint& localAnchor() const { return m_localAnchor; }
     FloatPoint anchorPoint() const { return m_localAnchor; }
-    const Vector<GlyphBufferGlyph, 128>& glyphs() const { return m_glyphs; }
+    const Vector<GlyphBufferGlyph, 16>& glyphs() const { return m_glyphs; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<DrawGlyphs> decode(Decoder&);
@@ -937,8 +937,8 @@ private:
     void computeBounds(const Font&);
 
     RenderingResourceIdentifier m_fontIdentifier;
-    Vector<GlyphBufferGlyph, 128> m_glyphs;
-    Vector<GlyphBufferAdvance, 128> m_advances;
+    Vector<GlyphBufferGlyph, 16> m_glyphs;
+    Vector<GlyphBufferAdvance, 16> m_advances;
     FloatRect m_bounds;
     FloatPoint m_localAnchor;
     FontSmoothingMode m_smoothingMode;

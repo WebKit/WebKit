@@ -150,6 +150,7 @@ public:
     }
 
     void clear();
+    void shrinkToFit();
 
     bool isEmpty() const
     {

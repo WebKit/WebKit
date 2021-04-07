@@ -664,6 +664,11 @@ void ItemBuffer::clear()
     m_writtenNumberOfBytes = 0;
 }
 
+void ItemBuffer::shrinkToFit()
+{
+    m_allocatedBuffers.shrinkToFit();
+}
+
 DidChangeItemBuffer ItemBuffer::swapWritableBufferIfNeeded(size_t numberOfBytes)
 {
     auto sizeForBufferSwitchItem = paddedSizeOfTypeAndItemInBytes(ItemType::MetaCommandChangeItemBuffer);

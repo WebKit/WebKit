@@ -161,6 +161,14 @@ ItemBuffer& DisplayList::itemBuffer()
     return *m_items;
 }
 
+void DisplayList::shrinkToFit()
+{
+    if (auto* itemBuffer = itemBufferIfExists())
+        itemBuffer->shrinkToFit();
+
+    m_drawingItemExtents.shrinkToFit();
+}
+
 void DisplayList::setItemBufferReadingClient(ItemBufferReadingClient* client)
 {
     itemBuffer().setClient(client);

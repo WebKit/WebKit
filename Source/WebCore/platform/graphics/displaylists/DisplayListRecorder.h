@@ -228,7 +228,7 @@ private:
     DisplayList& m_displayList;
     Delegate* m_delegate;
 
-    Vector<ContextState, 32> m_stateStack;
+    Vector<ContextState, 4> m_stateStack;
 
     DrawGlyphsRecorder m_drawGlyphsRecorder;
 };

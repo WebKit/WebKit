@@ -1,5 +1,31 @@
 2021-04-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Wasted vector capacity in various DisplayList related code paths
+        https://bugs.webkit.org/show_bug.cgi?id=224304
+
+        Reviewed by Wenson Hsieh.
+
+        Add DisplayList::shrinkToFit() and have it shrink the vector of drawing extents (this
+        could be extended to shrink item buffers at some point). Call the shrink from
+        FontCascade which caches glyph buffers as an optimization.
+
+        Reduce the inline capacity of the Recorder's context stack; this sticks around
+        for GPU process canvases.
+
+        Reduce the inline capacity of the DrawGyph buffers from 128 to 16, as these items
+        persist for FontCascade cached lists (until a memory warning).
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::displayListForTextRun const):
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::shrinkToFit):
+        * platform/graphics/displaylists/DisplayList.h:
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::DrawGlyphs::glyphs const):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
+2021-04-07  Simon Fraser  <simon.fraser@apple.com>
+
         Wasted vector capacity under CSSFontFace::setUnicodeRange()
         https://bugs.webkit.org/show_bug.cgi?id=224266
 

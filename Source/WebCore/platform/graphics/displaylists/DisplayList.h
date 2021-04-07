@@ -81,6 +81,8 @@ public:
     WEBCORE_EXPORT void setItemBufferWritingClient(ItemBufferWritingClient*);
     WEBCORE_EXPORT void prepareToAppend(ItemBufferHandle&&);
 
+    void shrinkToFit();
+
 #if !defined(NDEBUG) || !LOG_DISABLED
     WTF::CString description() const;
     WEBCORE_EXPORT void dump() const;
