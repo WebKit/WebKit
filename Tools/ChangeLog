@@ -1,3 +1,21 @@
+2021-04-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::gtest target
+        https://bugs.webkit.org/show_bug.cgi?id=224203
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use the WebKit::gtest target. Remove uses of ${THIRDPARTY_DIR}/gtest/include since the
+        target propagates those. Also remove the hack to get gtest definitions.
+
+        Don't include gtest with the TestJSC executable since it just uses GLib's testing
+        capabilities.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/PlatformGTK.cmake:
+        * TestWebKitAPI/PlatformWPE.cmake:
+        * TestWebKitAPI/config.h:
+
 2021-04-07  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Videos start playing muted in epiphany with no unmute icon visible in tab, webkit_web_view_get_is_muted() returns incorrect results

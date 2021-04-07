@@ -1,8 +1,8 @@
 set(gtest_LIBRARY_TYPE STATIC)
 
 list(APPEND gtest_DEFINITIONS
-    -DGTEST_HAS_POSIX_RE=0
-    -DGTEST_HAS_TR1_TUPLE=0
+    GTEST_HAS_POSIX_RE=0
+    GTEST_HAS_TR1_TUPLE=0
 )
 
 # localtime_r isn't available so map to localtime_s
