@@ -1,5 +1,17 @@
 2021-04-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Wasted vector capacity under CSSFontFace::setUnicodeRange()
+        https://bugs.webkit.org/show_bug.cgi?id=224266
+
+        Reviewed by Devin Rousso.
+
+        We know how big the Vector<UnicodeRange> is up-front.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::setUnicodeRange):
+
+2021-04-07  Simon Fraser  <simon.fraser@apple.com>
+
         Wasted vector capacity under RuleFeatureSet::collectFeatures()
         https://bugs.webkit.org/show_bug.cgi?id=224248
 

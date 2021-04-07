@@ -271,11 +271,14 @@ bool CSSFontFace::setUnicodeRange(CSSValue& unicodeRange)
     if (!is<CSSValueList>(unicodeRange))
         return false;
 
-    Vector<UnicodeRange> ranges;
     auto& list = downcast<CSSValueList>(unicodeRange);
+
+    Vector<UnicodeRange> ranges;
+    ranges.reserveInitialCapacity(list.length());
+
     for (auto& rangeValue : list) {
         auto& range = downcast<CSSUnicodeRangeValue>(rangeValue.get());
-        ranges.append({ range.from(), range.to() });
+        ranges.uncheckedAppend({ range.from(), range.to() });
     }
 
     if (ranges == m_ranges)
