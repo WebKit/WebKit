@@ -114,13 +114,14 @@ bool DisplayList::shouldDumpForFlags(AsTextFlags flags, ItemHandle item)
 String DisplayList::asText(AsTextFlags flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
-    for (auto [item, extent, itemSizeInBuffer] : *this) {
-        if (!shouldDumpForFlags(flags, *item))
+    for (auto displayListItem : *this) {
+        auto [item, extent, itemSizeInBuffer] = displayListItem.value();
+        if (!shouldDumpForFlags(flags, item))
             continue;
 
         TextStream::GroupScope group(stream);
         stream << item;
-        if (item->isDrawingItem())
+        if (item.isDrawingItem())
             stream << " extent " << extent;
     }
     return stream.release();
@@ -131,10 +132,11 @@ void DisplayList::dump(TextStream& ts) const
     TextStream::GroupScope group(ts);
     ts << "display list";
 
-    for (auto [item, extent, itemSizeInBuffer] : *this) {
+    for (auto displayListItem : *this) {
+        auto [item, extent, itemSizeInBuffer] = displayListItem.value();
         TextStream::GroupScope group(ts);
         ts << item;
-        if (item->isDrawingItem())
+        if (item.isDrawingItem())
             ts << " extent " << extent;
     }
     ts.startGroup();

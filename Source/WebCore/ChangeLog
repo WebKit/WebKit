@@ -1,3 +1,44 @@
+2021-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 5: Tweak the return type of DisplayList::Iterator::operator*()
+        https://bugs.webkit.org/show_bug.cgi?id=224148
+
+        Reviewed by Wenson Hsieh.
+
+        This patch migrates from
+
+        struct Value {
+            Optional<ItemHandle> item;
+            Optional<FloatRect> extent;
+            size_t itemSizeInBuffer { 0 };
+        };
+        Value operator*() const;
+
+        to
+
+        struct Value {
+            ItemHandle item;
+            Optional<FloatRect> extent;
+            size_t itemSizeInBuffer { 0 };
+        };
+        Optional<Value> operator*() const
+
+        There are two reasons for this:
+        1. Philosophically, if the item is nullopt, then all the stuff in the Value is also meaningless
+        2. Part of the iterator's API contract is that if the item is nullopt, you're not allowed to keep
+               iterating - doing this will lead to an infinite loop. Promoting the optional makes it more
+               likely that this API contract is followed in the future.
+
+        No new tests because there is no behavior change.
+
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::asText const):
+        (WebCore::DisplayList::DisplayList::dump const):
+        * platform/graphics/displaylists/DisplayList.h:
+        (WebCore::DisplayList::DisplayList::iterator::operator* const):
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::Replayer::replay):
+
 2021-04-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] InlineFormattingState::shrinkToFit should shrink InlineItems too

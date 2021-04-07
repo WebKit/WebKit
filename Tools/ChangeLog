@@ -1,3 +1,13 @@
+2021-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 5: Tweak the return type of DisplayList::Iterator::operator*()
+        https://bugs.webkit.org/show_bug.cgi?id=224148
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-04-06  Jean-Yves Avenard  <jya@apple.com>
 
         Add jya@apple.com as committer.
