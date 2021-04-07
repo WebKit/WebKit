@@ -251,6 +251,7 @@ void CSSParserImpl::parseStyleSheet(const String& string, const CSSParserContext
         styleSheet->parserAppendRule(rule.releaseNonNull());
     });
     styleSheet->setHasSyntacticallyValidCSSHeader(firstRuleValid);
+    styleSheet->shrinkToFit();
     parser.adoptTokenizerEscapedStrings();
 }
 

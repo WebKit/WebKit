@@ -1,3 +1,17 @@
+2021-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Wasted vector capacity in StyleSheetContents
+        https://bugs.webkit.org/show_bug.cgi?id=224250
+
+        Reviewed by Darin Adler.
+
+        Call shrinkToFit() on the StyleSheetContents created in CSSParserImpl::parseStyleSheet()
+        in order to shrink m_importRules and m_childRules, which can waste about 100KB on
+        youtube.com.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::parseStyleSheet):
+
 2021-04-07  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r270849): Button content fails to render on apple.com "Blood Oxygen"/"ECG"
