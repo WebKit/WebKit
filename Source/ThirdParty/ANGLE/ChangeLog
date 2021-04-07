@@ -1,3 +1,18 @@
+2021-04-07  John Cunningham  <johncunnigham@apple.com>
+
+        [METAL ANGLE] Interface block declerations need to have children marked as struct accesses. Add implicit backing textures for multisample render targets
+        https://bugs.webkit.org/show_bug.cgi?id=224265
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.cpp:
+        * src/libANGLE/renderer/metal/FrameBufferMtl.h:
+        * src/libANGLE/renderer/metal/FrameBufferMtl.mm:
+        (rx::FramebufferMtl::setLoadStoreActionOnRenderPassFirstStart):
+        (rx::FramebufferMtl::onStartedDrawingToFrameBuffer):
+        * src/libANGLE/renderer/metal/RenderBufferMtl.mm:
+        (rx::RenderbufferMtl::setStorageImpl):
+
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build

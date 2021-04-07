@@ -86,7 +86,7 @@ class Reducer : public TIntermRebuild
             }
         }
 
-        return {declNode, VisitBits::Neither};
+        return {declNode, VisitBits::Both};
     }
 
     PreResult visitSymbolPre(TIntermSymbol &symbolNode) override
