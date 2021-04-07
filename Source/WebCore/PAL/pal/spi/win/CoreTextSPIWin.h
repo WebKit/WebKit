@@ -54,6 +54,13 @@ CT_EXPORT const CFStringRef kCTFontVariationAttribute;
 CT_EXPORT const CFStringRef kCTFontURLAttribute;
 CT_EXPORT const CFStringRef kCTFontReferenceURLAttribute;
 
+#ifndef __CTFONTPRIV__
+typedef CF_OPTIONS(uint32_t, CTFontTransformOptions) {
+    kCTFontTransformApplyShaping = (1 << 0),
+    kCTFontTransformApplyPositioning = (1 << 1)
+};
+#endif
+
 // These enums are defined in CTFont.h. To avoid redefinition, only define them here if CTFont.h has not been included. 
 #ifndef __CTFONT__
 typedef CF_OPTIONS(uint32_t, CTFontSymbolicTraits) {
@@ -79,11 +86,6 @@ enum {
     kCTFontTableVORG = 'VORG',
     kCTFontTableHead = 'head',
     kCTFontTableVhea = 'vhea',
-};
-
-typedef CF_OPTIONS(uint32_t, CTFontTransformOptions) {
-    kCTFontTransformApplyShaping = (1 << 0),
-    kCTFontTransformApplyPositioning = (1 << 1)
 };
 
 enum {

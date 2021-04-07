@@ -3684,7 +3684,7 @@ static Vector<SimpleRange> scanForTelephoneNumbers(const SimpleRange& range)
     return result;
 }
 
-static SimpleRange extendSelection(const SimpleRange& range, unsigned charactersToExtend)
+static Optional<SimpleRange> extendSelection(const SimpleRange& range, unsigned charactersToExtend)
 {
     auto start = makeDeprecatedLegacyPosition(range.start);
     auto end = makeDeprecatedLegacyPosition(range.end);
@@ -3692,7 +3692,7 @@ static SimpleRange extendSelection(const SimpleRange& range, unsigned characters
         start = start.previous(Character);
         end = end.next(Character);
     }
-    return *makeSimpleRange(start, end);
+    return makeSimpleRange(start, end);
 }
 
 void Editor::scanSelectionForTelephoneNumbers()
@@ -3705,16 +3705,19 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     auto& selection = m_document.selection();
     if (selection.isRange()) {
-        auto selectedRange = *selection.selection().firstRange();
-        // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
-        constexpr unsigned charactersToExtend = 15;
-        for (auto& range : scanForTelephoneNumbers(extendSelection(selectedRange, charactersToExtend))) {
-            // FIXME: Why do we do this unconditionally instead of when only when it overlaps the selection?
-            addMarker(range, DocumentMarker::TelephoneNumber);
+        if (auto selectedRange = selection.selection().firstRange()) {
+            // Extend the range a few characters in each direction to detect incompletely selected phone numbers.
+            constexpr unsigned charactersToExtend = 15;
+            if (auto extendedRange = extendSelection(*selectedRange, charactersToExtend)) {
+                for (auto& range : scanForTelephoneNumbers(*extendedRange)) {
+                    // FIXME: Why do we do this unconditionally instead of when only when it overlaps the selection?
+                    addMarker(range, DocumentMarker::TelephoneNumber);
 
-            // Only consider ranges with a detected telephone number if they overlap with the selection.
-            if (intersects<ComposedTree>(range, selectedRange))
-                m_detectedTelephoneNumberRanges.append(range);
+                    // Only consider ranges with a detected telephone number if they overlap with the selection.
+                    if (intersects<ComposedTree>(range, *selectedRange))
+                        m_detectedTelephoneNumberRanges.append(range);
+                }
+            }
         }
     }
 

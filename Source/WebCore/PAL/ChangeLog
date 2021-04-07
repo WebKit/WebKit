@@ -1,3 +1,32 @@
+2021-03-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r274023. rdar://problem/75052309
+
+    [Win] Fix compile error
+    https://bugs.webkit.org/show_bug.cgi?id=222802
+    <rdar://problem/75052309>
+    
+    Reviewed by Dean Jackson.
+    
+    Declare CTFontTransformOptions if associated header file has not been included.
+    
+    * pal/spi/win/CoreTextSPIWin.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274023 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-05  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] Fix compile error
+            https://bugs.webkit.org/show_bug.cgi?id=222802
+            <rdar://problem/75052309>
+
+            Reviewed by Dean Jackson.
+
+            Declare CTFontTransformOptions if associated header file has not been included.
+
+            * pal/spi/win/CoreTextSPIWin.h:
+
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r272188. rdar://problem/74032553

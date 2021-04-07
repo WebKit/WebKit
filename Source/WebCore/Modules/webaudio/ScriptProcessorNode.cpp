@@ -215,7 +215,7 @@ void ScriptProcessorNode::process(size_t framesToProcess)
         // We only wait for script code execution when the context is an offline one for performance reasons.
         if (context().isOfflineContext()) {
             BinarySemaphore semaphore;
-            callOnMainThread([this, &semaphore, bufferIndex, protector = makeRef(*this)] {
+            callOnMainThread([this, &semaphore, bufferIndex, protector = makeRef(*this)] {    
                 fireProcessEvent(bufferIndex);
                 semaphore.signal();
             });

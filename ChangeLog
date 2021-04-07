@@ -1,3 +1,30 @@
+2021-03-03  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r273699. rdar://problem/74992920
+
+    [Win] Fix build failure
+    https://bugs.webkit.org/show_bug.cgi?id=222576
+    <rdar://problem/74590803>
+    Reviewed by Brent Fulgham.
+    
+    It appears a recent change has unintentionally enabled WebInspectorUI on Apple Win. Address this by explicitly disabling it.
+    
+    * Source/cmake/OptionsAppleWin.cmake:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273699 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-01  Per Arne  <pvollan@apple.com>
+
+            [Win] Fix build failure
+            https://bugs.webkit.org/show_bug.cgi?id=222576
+            <rdar://problem/74590803>
+            Reviewed by Brent Fulgham.
+
+            It appears a recent change has unintentionally enabled WebInspectorUI on Apple Win. Address this by explicitly disabling it.
+
+            * Source/cmake/OptionsAppleWin.cmake:
+
 2021-01-11  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Add support to build with native audio and video

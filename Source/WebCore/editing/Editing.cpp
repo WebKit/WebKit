@@ -1101,7 +1101,8 @@ VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int in
 
     auto range = makeRangeSelectingNodeContents(node);
     CharacterIterator it(range);
-    it.advance(index - 1);
+    if (!it.atEnd())
+        it.advance(index - 1);
 
     if (!it.atEnd() && it.text().length() == 1 && it.text()[0] == '\n') {
         // FIXME: workaround for collapsed range (where only start position is correct) emitted for some emitted newlines.

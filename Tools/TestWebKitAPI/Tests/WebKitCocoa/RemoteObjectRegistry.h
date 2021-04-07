@@ -52,6 +52,7 @@
 - (void)doNotCallCompletionHandler:(void (^)())completionHandler;
 - (void)sendRequest:(NSURLRequest *)request response:(NSURLResponse *)response challenge:(NSURLAuthenticationChallenge *)challenge error:(NSError *)error completionHandler:(void (^)(NSURLRequest *, NSURLResponse *, NSURLAuthenticationChallenge *, NSError *))completionHandler;
 - (void)callUIProcessMethodWithReplyBlock;
+- (void)sendError:(NSError *)error completionHandler:(void (^)(NSError *))completionHandler;
 
 @end
 

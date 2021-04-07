@@ -30,7 +30,9 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/RetainPtr.h>
 
-@implementation TestNavigationDelegate
+@implementation TestNavigationDelegate {
+    RetainPtr<NSError> _navigationError;
+}
 
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler
 {
@@ -151,18 +153,20 @@
     self.decidePolicyForNavigationActionWithPreferences = nil;
 }
 
-- (void)waitForDidFailProvisionalNavigation
+- (NSError *)waitForDidFailProvisionalNavigation
 {
     EXPECT_FALSE(self.didFailProvisionalNavigation);
 
     __block bool finished = false;
-    self.didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *) {
+    self.didFailProvisionalNavigation = ^(WKWebView *, WKNavigation *, NSError *error) {
+        _navigationError = error;
         finished = true;
     };
 
     TestWebKitAPI::Util::run(&finished);
 
     self.didFailProvisionalNavigation = nil;
+    return _navigationError.autorelease();
 }
 
 @end

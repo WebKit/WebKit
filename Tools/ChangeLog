@@ -1,6 +1,69 @@
+2021-03-29  Robert Jenner  <jenner@apple.com>
+
+        Unreviewed build fix, cherry-pick parts of r273181. rdar://75904391
+
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.h: 
+        * TestWebKitAPI/cocoa/TestNavigationDelegate.mm:
+        (-[TestNavigationDelegate waitForDidFailProvisionalNavigation]):
+
+2021-03-19  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r273875. rdar://problem/75635901
+
+    WKRemoteObjectCoder should be able to handle NSErrors from TLS failures
+    https://bugs.webkit.org/show_bug.cgi?id=222401
+    Source/WebKit:
+    
+    <rdar://problem/72103865>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-03-03
+    Reviewed by Chris Dumez.
+    
+    NSErrors from TLS failures contain values like a SecTrustRef or a SecCertificateRef,
+    which are not ObjC objects, and they don't like it when you call encodeWithCoder: on them.
+    Until r273141 it would crash when we do, but even after that we just decode a nil NSError.
+    Add a special case like we did in encodeNSError to successfully encode and decode these errors.
+    
+    * Shared/API/Cocoa/WKRemoteObjectCoder.mm:
+    (decodeObjCObject):
+    (transformCertificatesToData):
+    (transformTrustToData):
+    (encodeError):
+    (transformDataToCertificates):
+    (transformDataToTrust):
+    (decodeError):
+    (encodeObject):
+    (decodeObject):
+    
+    Tools:
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-03-03
+    Reviewed by Chris Dumez.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+    * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+    (TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+    (-[RemoteObjectRegistryPlugIn sendError:completionHandler:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273875 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-03  Alex Christensen  <achristensen@webkit.org>
+
+            WKRemoteObjectCoder should be able to handle NSErrors from TLS failures
+            https://bugs.webkit.org/show_bug.cgi?id=222401
+
+            Reviewed by Chris Dumez.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.h:
+            * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistry.mm:
+            (TEST):
+            * TestWebKitAPI/Tests/WebKitCocoa/RemoteObjectRegistryPlugIn.mm:
+            (-[RemoteObjectRegistryPlugIn sendError:completionHandler:]):
+
 2021-03-08  Russell Epstein  <repstein@apple.com>
 
-        Cherry-pick r273997. rdar://problem/75180327
+        Cherry-pick r273997. rdar://problem/75180339
 
     Regression(r268097): WKWebView.URL is nil in the processDidTerminate delegate
     https://bugs.webkit.org/show_bug.cgi?id=222809
@@ -43,9 +106,59 @@
             * TestWebKitAPI/Tests/WebKitCocoa/WebContentProcessDidTerminate.mm:
             (TEST):
 
-2021-03-01  Alan Coon  <alancoon@apple.com>
+2021-03-02  Alan Coon  <alancoon@apple.com>
 
-        Cherry-pick r273590. rdar://problem/74881366
+        Cherry-pick r273695. rdar://problem/74940739
+
+    Crash under WebProcessPool::pageBeginUsingWebsiteDataStore()
+    https://bugs.webkit.org/show_bug.cgi?id=222574
+    <rdar://68340471>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Source/WebKit:
+    
+    The issue was that when WebProcessProxy::requestTermination() was called (e.g. process is killed by WebKit
+    for using too much memory), we would fail to remove the process from the WebProcessCache. Because the
+    terminated would stay in the cache (even though WebProcessProxy::shutDown() was called), we could potentially
+    try and use it later on for a navigation to the same domain. This would lead to crashes because
+    WebProcessProxy::shutDown() has already been called.
+    
+    Note that we were previously correctly removing the process from the cache in case of a proper crash, inside
+    WebProcessProxy::processDidTerminateOrFailedToLaunch(). I have moved the logic to remove from the cache
+    from processDidTerminateOrFailedToLaunch() to shutDown() to avoid similar issues in the future.
+    
+    * UIProcess/API/Cocoa/WKProcessPool.mm:
+    (-[WKProcessPool _requestWebProcessTermination:]):
+    * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+    * UIProcess/WebProcessProxy.cpp:
+    (WebKit::WebProcessProxy::shutDown):
+    (WebKit::WebProcessProxy::processDidTerminateOrFailedToLaunch):
+    
+    Tools:
+    
+    Add API test coverage.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273695 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-01  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebProcessPool::pageBeginUsingWebsiteDataStore()
+            https://bugs.webkit.org/show_bug.cgi?id=222574
+            <rdar://68340471>
+
+            Reviewed by Geoffrey Garen.
+
+            Add API test coverage.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
+2021-03-01  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r273590. rdar://problem/74881385
 
     Non-cookie website data not deleted after 7 days of browser use without user interaction
     https://bugs.webkit.org/show_bug.cgi?id=222248
@@ -160,6 +273,112 @@
             * WebKitTestRunner/TestController.h:
             * WebKitTestRunner/TestInvocation.cpp:
             (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
+2021-03-01  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r273583. rdar://problem/74881429
+
+    Add AXTextMarkerRangeForNSRange attribute so that Mac clients can access this functionality.
+    https://bugs.webkit.org/show_bug.cgi?id=222477
+    Source/WebCore:
+    
+    <rdar://problem/74793445>
+    
+    Reviewed by Chris Fleizach.
+    
+    This is a follow up to: https://bugs.webkit.org/show_bug.cgi?id=222154.
+    As Chris Fleizach pointed out in the above review, it is necessary to
+    add a handler in accessibilityAttributeValue:forParameter: for a new AX
+    attribute in order for clients to access this functionality.
+    
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+    (-[WebAccessibilityObjectWrapper textMarkerRangeForNSRange:]): Deleted.
+    
+    Tools:
+    
+    Reviewed by Chris Fleizach.
+    
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273583 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-26  Andres Gonzalez  <andresg_22@apple.com>
+
+            Add AXTextMarkerRangeForNSRange attribute so that Mac clients can access this functionality.
+            https://bugs.webkit.org/show_bug.cgi?id=222477
+
+            Reviewed by Chris Fleizach.
+
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+            (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+
+2021-03-01  Kocsen Chung  <kocsen_chung@apple.com>
+
+        Cherry-pick r273227. rdar://problem/74880937
+
+    Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.
+    https://bugs.webkit.org/show_bug.cgi?id=222154
+    
+    Reviewed by Chris Fleizach and Darin Adler.
+    
+    Source/WebCore:
+    
+    Test: accessibility/mac/textmarker-range-for-range.html
+    
+    Clients like VoiceOver often need the ability to convert a text range
+    into an accessibility TextMarkerRange.
+    This patch adds [WebAccessibilityObjectWrapper textMarkerRangeForNSRange]
+    to allow clients to efficiently perform this conversion.
+    This is the Mac implementation, iOS implementation is pending.
+    
+    * accessibility/AccessibilityObject.h:
+    (WebCore::AccessibilityObject::allowsTextRanges const):
+    * accessibility/AccessibilityObjectInterface.h:
+    * accessibility/isolatedtree/AXIsolatedObject.h:
+    * accessibility/isolatedtree/mac/AXIsolatedObjectMac.mm:
+    (WebCore::AXIsolatedObject::textMarkerRangeForNSRange const):
+    * accessibility/mac/AccessibilityObjectMac.mm:
+    (WebCore::AccessibilityObject::textMarkerRangeForNSRange const):
+    * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+    (-[WebAccessibilityObjectWrapper textMarkerRangeForNSRange:]):
+    (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+    * editing/Editing.cpp:
+    (WebCore::visiblePositionForIndexUsingCharacterIterator):
+    Only advance the CharacterIterator if not atEnd yet.
+    
+    Tools:
+    
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+    (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+    * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+    * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+    * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+    (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+    
+    LayoutTests:
+    
+    * accessibility/mac/textmarker-range-for-range-expected.txt: Added.
+    * accessibility/mac/textmarker-range-for-range.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273227 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-21  Andres Gonzalez  <andresg_22@apple.com>
+
+            Add [WebAccessibilityObjectWrapper textMarkerRangeForNSRange] to allow clients to efficiently get a TextMarkerRange from an NSRange.
+            https://bugs.webkit.org/show_bug.cgi?id=222154
+
+            Reviewed by Chris Fleizach and Darin Adler.
+
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+            (WTR::AccessibilityUIElement::textMarkerRangeForRange):
+            * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+            * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+            * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+            (WTR::AccessibilityUIElement::textMarkerRangeForRange):
 
         2021-02-25  Myles C. Maxfield  <mmaxfield@apple.com>
 

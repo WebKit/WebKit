@@ -1,0 +1,21 @@
+<style>
+    .container {
+        width: 900px;
+    }
+    .line {
+        background-image: url('data:image/svg+xml;utf8,\
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" width="24">\
+                <rect width="100%" height="100%" fill="green"/>\
+            </svg>');
+        background-size: 24px;
+    }
+</style>
+<body>
+    <p>PASS when all the lines below have visible background images.<p>
+    <div class="container">
+        <div class="line">should have a visible background image</div>
+        <div class="line">should have a visible background image</div>
+        <div class="line">should have a visible background image</div>
+        <div class="line">should have a visible background image</div>
+    </div>
+<body>
