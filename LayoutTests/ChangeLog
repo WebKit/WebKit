@@ -1,3 +1,15 @@
+2021-04-07  Rob Buis  <rbuis@igalia.com>
+
+        Ignore non-null lastQuote ASSERT when continuation is broken
+        https://bugs.webkit.org/show_bug.cgi?id=218576
+
+        Reviewed by Zalan Bujtas.
+
+        Add test for this.
+
+        * fast/dom/quotes-continuation-crash-expected.txt: Added.
+        * fast/dom/quotes-continuation-crash.html: Added.
+
 2021-04-07  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Wrong frame scrolled when view is horizontally scrolled with async scrolling enabled

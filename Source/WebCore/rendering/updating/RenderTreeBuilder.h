@@ -62,6 +62,8 @@ public:
     void createPlaceholderForFullScreen(RenderFullScreen&, std::unique_ptr<RenderStyle>, const LayoutRect&);
 #endif
 
+    bool hasBrokenContinuation() const { return m_hasBrokenContinuation; }
+
 private:
     void attachInternal(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild);
 
@@ -90,6 +92,8 @@ private:
     void removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent);
 
     void reportVisuallyNonEmptyContent(const RenderElement& parent, const RenderObject& child);
+
+    void setHasBrokenContinuation() { m_hasBrokenContinuation = true; }
 
     class FirstLetter;
     class List;
@@ -149,6 +153,7 @@ private:
 #if ENABLE(FULLSCREEN_API)
     std::unique_ptr<FullScreen> m_fullScreenBuilder;
 #endif
+    bool m_hasBrokenContinuation { false };
 };
 
 }

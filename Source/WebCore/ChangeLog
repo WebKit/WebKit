@@ -1,3 +1,20 @@
+2021-04-07  Rob Buis  <rbuis@igalia.com>
+
+        Ignore non-null lastQuote ASSERT when continuation is broken
+        https://bugs.webkit.org/show_bug.cgi?id=218576
+
+        Reviewed by Zalan Bujtas.
+
+        Ignore non-null lastQuote when continuation is broken.
+
+        * rendering/updating/RenderTreeBuilder.h:
+        (WebCore::RenderTreeBuilder::hasBrokenContinuation const):
+        (WebCore::RenderTreeBuilder::setHasBrokenContinuation):
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::splitInlines):
+        * rendering/updating/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::RenderTreeUpdater::GeneratedContent::updateQuotesUpTo):
+
 2021-04-07  Imanol Fernandez  <ifernandez@igalia.com>
 
         Use frameData instead of scheduleOnNextFrame calls in WebFakeXRDevice
