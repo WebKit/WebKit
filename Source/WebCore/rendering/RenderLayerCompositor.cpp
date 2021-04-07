@@ -1687,19 +1687,18 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
         }
     }
 
-    if (diff == StyleDifference::RecompositeLayer && layer.isComposited()) {
-        if (oldStyle && oldStyle->pointerEvents() != newStyle.pointerEvents())
-            layer.setNeedsCompositingConfigurationUpdate();
-        else if (is<RenderWidget>(layer.renderer())) {
-            // This is necessary to get iframe layers hooked up in response to scheduleInvalidateStyleAndLayerComposition().
-            layer.setNeedsCompositingConfigurationUpdate();
+    if (diff >= StyleDifference::RecompositeLayer) {
+        if (layer.isComposited()) {
+            if (is<RenderWidget>(layer.renderer()) || (oldStyle && oldStyle->pointerEvents() != newStyle.pointerEvents())) {
+                // For RenderWidgets this is necessary to get iframe layers hooked up in response to scheduleInvalidateStyleAndLayerComposition().
+                layer.setNeedsCompositingConfigurationUpdate();
+            }
         }
-    }
-
-    if (diff >= StyleDifference::RecompositeLayer && oldStyle && recompositeChangeRequiresGeometryUpdate(*oldStyle, newStyle)) {
-        // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().
-        layer.setNeedsPostLayoutCompositingUpdate();
-        layer.setNeedsCompositingGeometryUpdate();
+        if (oldStyle && recompositeChangeRequiresGeometryUpdate(*oldStyle, newStyle)) {
+            // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().
+            layer.setNeedsPostLayoutCompositingUpdate();
+            layer.setNeedsCompositingGeometryUpdate();
+        }
     }
 }
 

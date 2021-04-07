@@ -1,3 +1,22 @@
+2021-04-07  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r270849): Button content fails to render on apple.com "Blood Oxygen"/"ECG"
+        https://bugs.webkit.org/show_bug.cgi?id=224261
+
+        Reviewed by Simon Fraser.
+
+        1. The changeRequiresRecompositeLayer check in RenderStyle::diff should come after
+        changeRequiresRepaintIfTextOrBorderOrOutline since RepaintIfTextOrBorderOrOutline is at
+        a higher priority in StyleDifference.
+        2. Ensure that we trigger setNeedsCompositingConfigurationUpdate on diff >= StyleDifference::RecompositeLayer.
+
+        Test: fast/text/text-repaint-when-pointer-event-property-changes.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff const):
+
 2021-04-07  Rob Buis  <rbuis@igalia.com>
 
         Ignore non-null lastQuote ASSERT when continuation is broken
