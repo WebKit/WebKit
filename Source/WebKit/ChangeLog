@@ -1,3 +1,16 @@
+2021-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Incorrect selector used to set logging level
+        https://bugs.webkit.org/show_bug.cgi?id=224292
+        <rdar://problem/75379660>
+
+        Reviewed by John Wilander.
+
+        The wrong selector label was used to configure the low-level network logging level.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID):
+
 2021-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Use os_transaction_create instead of deprecated xpc_transaction_begin/end
