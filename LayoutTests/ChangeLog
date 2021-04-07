@@ -1,3 +1,12 @@
+2021-04-07  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur wk2 Debug x86_64 ] inspector/indexeddb/requestDatabaseNames.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=224294
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass Failure.
+
 2021-04-07  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION (r270849): Button content fails to render on apple.com "Blood Oxygen"/"ECG"
