@@ -3260,12 +3260,13 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         if rc == SUCCESS:
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
             svn_revision = self.svn_revision_from_commit_text(log_text)
-            self.setProperty('bugzilla_comment_text', self.comment_text_for_bug(svn_revision))
-            commit_summary = 'Committed r{}'.format(svn_revision)
+            identifier = self.identifier_for_revision(svn_revision)
+            self.setProperty('bugzilla_comment_text', self.comment_text_for_bug(svn_revision, identifier))
+            commit_summary = 'Committed {}'.format(identifier)
             self.descriptionDone = commit_summary
-            self.setProperty('build_summary', 'Committed r{}'.format(svn_revision))
+            self.setProperty('build_summary', commit_summary)
             self.build.addStepsAfterCurrentStep([CommentOnBug(), RemoveFlagsOnPatch(), CloseBug()])
-            self.addURL('r{}'.format(svn_revision), self.url_for_revision(svn_revision))
+            self.addURL(identifier, self.url_for_identifier(identifier))
         else:
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
@@ -3278,16 +3279,33 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
         return rc
 
-    def url_for_revision(self, revision):
-        return 'https://commits.webkit.org/r{}'.format(revision)
+    def url_for_revision_details(self, revision):
+        return '{}r{}/json'.format(COMMITS_INFO_URL, revision)
 
-    def comment_text_for_bug(self, svn_revision=None):
+    def url_for_identifier(self, identifier):
+        return '{}{}'.format(COMMITS_INFO_URL, identifier)
+
+    def identifier_for_revision(self, revision):
+        try:
+            response = requests.get(self.url_for_revision_details(revision), timeout=60)
+            if response and response.status_code == 200:
+                return response.json().get('identifier', 'r{}'.format(revision))
+            else:
+                print('Non-200 status code received from {}: {}'.format(COMMITS_INFO_URL, response.status_code))
+                print(response.text)
+        except Exception as e:
+            print(e)
+        return 'r{}'.format(revision)
+
+    def comment_text_for_bug(self, svn_revision=None, identifier=None):
         patch_id = self.getProperty('patch_id', '')
         if not svn_revision:
             comment = 'commit-queue failed to commit attachment {} to WebKit repository.'.format(patch_id)
             comment += ' To retry, please set cq+ flag again.'
             return comment
-        comment = 'Committed r{}: <{}>'.format(svn_revision, self.url_for_revision(svn_revision))
+
+        identifier_str = identifier if identifier and '@' in identifier else '?'
+        comment = 'Committed r{} ({}): <{}>'.format(svn_revision, identifier_str, self.url_for_identifier(identifier))
         comment += '\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment {}.'.format(patch_id)
         return comment
 

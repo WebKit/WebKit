@@ -34,7 +34,7 @@ from buildbot.test.fake.remotecommand import Expect, ExpectRemoteRef, ExpectShel
 from buildbot.test.util.misc import TestReactorMixin
 from buildbot.test.util.steps import BuildStepMixin
 from buildbot.util import identifiers as buildbot_identifiers
-from mock import call
+from mock import call, patch
 from twisted.internet import defer, error, reactor
 from twisted.python import failure, log
 from twisted.trial import unittest
@@ -4089,23 +4089,63 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def test_success(self):
-        self.setupStep(PushCommitToWebKitRepo())
-        self.setProperty('patch_id', '1234')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=300,
-                        logEnviron=False,
-                        command=['git', 'svn', 'dcommit', '--rmdir']) +
-            ExpectShell.log('stdio', stdout='Committed r256729') +
-            0,
+    def mock_commits_webkit_org(self, identifier=None):
+        class Response(object):
+            def __init__(self, data=None, status_code=200):
+                self.status_code = status_code
+                self.headers = {'Content-Type': 'text/json'}
+                self.text = json.dumps(data or {})
+
+            def json(self):
+                return json.loads(self.text)
+
+        return patch(
+            'requests.get',
+            lambda *args, **kwargs: Response(
+                data=dict(identifier=identifier) if identifier else dict(status='Not Found'),
+                status_code=200 if identifier else 404,
+            )
         )
-        self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
-        with current_hostname(EWS_BUILD_HOSTNAME):
-            rc = self.runStep()
-        self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729: <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
-        self.assertEqual(self.getProperty('build_finish_summary'), None)
-        return rc
+
+    def test_success(self):
+        with self.mock_commits_webkit_org(identifier='220797@main'):
+            self.setupStep(PushCommitToWebKitRepo())
+            self.setProperty('patch_id', '1234')
+            self.expectRemoteCommands(
+                ExpectShell(workdir='wkdir',
+                            timeout=300,
+                            logEnviron=False,
+                            command=['git', 'svn', 'dcommit', '--rmdir']) +
+                ExpectShell.log('stdio', stdout='Committed r256729') +
+                0,
+            )
+            self.expectOutcome(result=SUCCESS, state_string='Committed 220797@main')
+            with current_hostname(EWS_BUILD_HOSTNAME):
+                rc = self.runStep()
+            self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729 (220797@main): <https://commits.webkit.org/220797@main>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+            self.assertEqual(self.getProperty('build_finish_summary'), None)
+            self.assertEqual(self.getProperty('build_summary'), 'Committed 220797@main')
+            return rc
+
+    def test_success_no_identifier(self):
+        with self.mock_commits_webkit_org():
+            self.setupStep(PushCommitToWebKitRepo())
+            self.setProperty('patch_id', '1234')
+            self.expectRemoteCommands(
+                ExpectShell(workdir='wkdir',
+                            timeout=300,
+                            logEnviron=False,
+                            command=['git', 'svn', 'dcommit', '--rmdir']) +
+                ExpectShell.log('stdio', stdout='Committed r256729') +
+                0,
+            )
+            self.expectOutcome(result=SUCCESS, state_string='Committed r256729')
+            with current_hostname(EWS_BUILD_HOSTNAME):
+                rc = self.runStep()
+            self.assertEqual(self.getProperty('bugzilla_comment_text'), 'Committed r256729 (?): <https://commits.webkit.org/r256729>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
+            self.assertEqual(self.getProperty('build_finish_summary'), None)
+            self.assertEqual(self.getProperty('build_summary'), 'Committed r256729')
+            return rc
 
     def test_failure_retry(self):
         self.setupStep(PushCommitToWebKitRepo())
