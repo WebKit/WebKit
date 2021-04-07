@@ -1,3 +1,29 @@
+2021-04-07  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Only seek to change the rate un updatePlaybackRate() when needed
+        https://bugs.webkit.org/show_bug.cgi?id=224235
+
+        Reviewed by Alicia Boya Garcia.
+
+        A seek is used by MediaPlayerPrivateGStreamer to update the playback
+        rate used in the pipeline. There's a special case when the rate is 0.0.
+        This actually means "paused" and, when set, the pipeline is changed to
+        PAUSED and no updatePlaybackRate() call is made because of an early
+        return (and therefore, no seek). When the rate is restored to a
+        non-zero value, the pipeline is set again to PLAYING, but a
+        call to updatePlaybackRate() is done, which implies an unconditional
+        seek.
+
+        It should be possible to do the seek in updatePlaybackRate() only if the
+        rate changed with respect to the original one, instead of always doing
+        it. This would avoid unneeded seeks, which are complex operations that
+        can trigger collateral issues such as the one addressed in
+        https://bugs.webkit.org/show_bug.cgi?id=223742.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::updatePlaybackRate): Only seek when the playback rate hasn't changed.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Document m_lastPlaybackRate purpose.
+
 2021-04-07  Rob Buis  <rbuis@igalia.com>
 
         Make synthesizedBaselineFromContentBox return LayoutUnit
