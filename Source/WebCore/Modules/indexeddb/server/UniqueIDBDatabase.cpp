@@ -291,24 +291,10 @@ void UniqueIDBDatabase::deleteBackingStore()
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::deleteBackingStore");
-
-    uint64_t deletedVersion = 0;
-
-    if (m_backingStore) {
-        m_backingStore->deleteBackingStore();
-        m_backingStore = nullptr;
-    } else {
-        auto backingStore = m_server.createBackingStore(m_identifier);
-
-        IDBDatabaseInfo databaseInfo;
-        auto error = backingStore->getOrEstablishDatabaseInfo(databaseInfo);
-        if (!error.isNull())
-            LOG_ERROR("Error getting database info from database %s that we are trying to delete", m_identifier.loggingString().utf8().data());
-
-        deletedVersion = databaseInfo.version();
-        backingStore->deleteBackingStore();
-    }
-
+    
+    auto backingStore = m_backingStore ? std::exchange(m_backingStore, nullptr) : m_server.createBackingStore(m_identifier);
+    uint64_t deletedVersion = backingStore->databaseVersion();
+    backingStore->deleteBackingStore();
     didDeleteBackingStore(deletedVersion);
 }
 

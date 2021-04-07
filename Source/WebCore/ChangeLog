@@ -1,3 +1,28 @@
+2021-04-06  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Catalina WK2 Release ] http/tests/IndexedDB/storage-limit-1.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213292
+        <rdar://problem/64447734>
+
+        Reviewed by Geoffrey Garen.
+
+        Test http/tests/IndexedDB/collect-IDB-objects.https.html, which runs right before 
+        http/tests/IndexedDB/storage-limit-1.https.html, will delete databases after test completetion. During deletion, 
+        we create a new database if it does not exist, extract database version from it, and then delete database files.
+        This creation can happen during storage-limit-1.https.html run and interrupt testing for quota. To fix the 
+        flakiness and make the deletion more efficient, let's not create a new database during deletion if database
+        does not exist.
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::databaseVersion):
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::databaseVersion):
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::deleteBackingStore):
+
 2021-04-06  Eric Carlson  <eric.carlson@apple.com>
 
         REGRESSION (r275538): [ macOS ] TestWebKitAPI.WebKitLegacy.MediaPlaybackSleepAssertion and TestWebKitAPI.SleepDisabler.Pause consistently failing

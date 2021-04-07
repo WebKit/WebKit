@@ -1265,6 +1265,19 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     return IDBError { };
 }
 
+uint64_t SQLiteIDBBackingStore::databaseVersion()
+{
+    if (m_databaseInfo)
+        return m_databaseInfo->version();
+
+    String dbFilename = fullDatabasePath();
+    if (!FileSystem::fileExists(dbFilename))
+        return 0;
+
+    auto databaseNameAndVersion = databaseNameAndVersionFromFile(dbFilename);
+    return databaseNameAndVersion ? databaseNameAndVersion->version : 0;
+}
+
 uint64_t SQLiteIDBBackingStore::databasesSizeForDirectory(const String& directory, bool shouldPrintUsageDetail)
 {
     uint64_t diskUsage = 0;

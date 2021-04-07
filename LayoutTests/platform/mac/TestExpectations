@@ -1847,9 +1847,6 @@ imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-com
 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
 
-# <rdar://problem/56545293> REGRESSION (r250936?): http/tests/IndexedDB/storage-limit-1.https.html is a Flaky Failure
-[ Catalina Release ] http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
-
 # <rdar://problem/60376665> [ macOS ] svg/custom/glyph-selection-arabic-forms.svg is failing since around r252706
 [ Mojave ] svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
 

@@ -46,6 +46,7 @@ public:
     ~MemoryIDBBackingStore();
 
     IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
+    uint64_t databaseVersion() final;
     void setDatabaseInfo(const IDBDatabaseInfo&);
 
     void removeObjectStoreForVersionChangeAbort(MemoryObjectStore&);
