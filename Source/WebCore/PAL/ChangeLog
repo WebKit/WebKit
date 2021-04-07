@@ -1,3 +1,10 @@
+2021-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r275614; add soft linked class.
+
+        * pal/cocoa/AVFoundationSoftLink.h:
+        * pal/cocoa/AVFoundationSoftLink.mm:
+
 2021-04-05  Alex Christensen  <achristensen@webkit.org>
 
         Resurrect Mac CMake build
