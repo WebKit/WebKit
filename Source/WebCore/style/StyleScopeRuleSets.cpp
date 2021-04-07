@@ -239,10 +239,21 @@ static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const KeyType& ke
                     invalidationSelectorArray[arrayIndex].append(feature.invalidationSelector);
             }
         }
+
+        unsigned ruleSetCount = 0;
+        for (const auto& item : matchElementArray) {
+            if (item)
+                ++ruleSetCount;
+        }
+
         auto invalidationRuleSets = makeUnique<Vector<InvalidationRuleSet>>();
+        invalidationRuleSets->reserveInitialCapacity(ruleSetCount);
+
         for (unsigned i = 0; i < matchElementArray.size(); ++i) {
-            if (matchElementArray[i])
-                invalidationRuleSets->append({ static_cast<MatchElement>(i), *matchElementArray[i], WTFMove(invalidationSelectorArray[i]) });
+            if (matchElementArray[i]) {
+                matchElementArray[i]->shrinkToFit();
+                invalidationRuleSets->uncheckedAppend({ static_cast<MatchElement>(i), matchElementArray[i].releaseNonNull(), WTFMove(invalidationSelectorArray[i]) });
+            }
         }
         return invalidationRuleSets;
     }).iterator->value.get();

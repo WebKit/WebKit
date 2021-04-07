@@ -1,5 +1,21 @@
 2021-04-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Wasted vector capacity under RuleFeatureSet::collectFeatures()
+        https://bugs.webkit.org/show_bug.cgi?id=224248
+
+        Reviewed by Devin Rousso.
+
+        The RuleSets constructed ensureInvalidationRuleSets() were never shrunk,
+        causing up to 500KB of wasted vector capacity on youtube.com.
+
+        This change calls shrinkToFit() on the RuleSets, and on the InvalidationRuleSet
+        vector.
+
+        * style/StyleScopeRuleSets.cpp:
+        (WebCore::Style::ensureInvalidationRuleSets):
+
+2021-04-07  Simon Fraser  <simon.fraser@apple.com>
+
         Reduce Vector<> wasted capacity in some RuleSet code
         https://bugs.webkit.org/show_bug.cgi?id=224160
 
