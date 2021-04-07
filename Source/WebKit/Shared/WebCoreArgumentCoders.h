@@ -74,6 +74,10 @@
 #include <WebCore/GraphicsTypesGL.h>
 #endif
 
+#if ENABLE(WEBXR)
+#include <WebCore/PlatformXR.h>
+#endif
+
 #if PLATFORM(COCOA)
 namespace WTF {
 class MachSendRight;
@@ -1033,6 +1037,21 @@ template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesti
     WebCore::GraphicsContextGL::SimulatedEventForTesting::Timeout
     >;
 };
+#endif
+
+#if ENABLE(WEBXR)
+
+template<> struct EnumTraits<PlatformXR::ReferenceSpaceType> {
+    using values = EnumValues<
+        PlatformXR::ReferenceSpaceType,
+        PlatformXR::ReferenceSpaceType::Viewer,
+        PlatformXR::ReferenceSpaceType::Local,
+        PlatformXR::ReferenceSpaceType::LocalFloor,
+        PlatformXR::ReferenceSpaceType::BoundedFloor,
+        PlatformXR::ReferenceSpaceType::Unbounded
+    >;
+};
+
 #endif
 
 } // namespace WTF

@@ -1,3 +1,25 @@
+2021-04-07  Ada Chan  <ada.chan@apple.com>
+
+        [WebXR] Introduce XRDeviceIdentifier and XRDeviceInfo to be used to communicate device info
+        https://bugs.webkit.org/show_bug.cgi?id=224239
+
+        Reviewed by Tim Horton.
+
+        These classes are codable so they can be used in messages across UI/web process boundary.
+        In a future patch, these classes will be used to create device objects returned from
+        WebChromeClient::enumerateImmersiveXRDevices().
+
+        * Shared/Cocoa/XRDeviceIdentifier.h: Added.
+        This codable type will be used to identify a device.
+        * Shared/Cocoa/XRDeviceInfo.h: Added.
+        * Shared/Cocoa/XRDeviceInfo.mm: Added.
+        (WebKit::XRDeviceInfo::encode const):
+        (WebKit::XRDeviceInfo::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        Add EnumTraits for PlatformXR::ReferenceSpaceType so we can encode it.
+        * SourcesCocoa.txt:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-04-07  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] webkit://gpu should print runtime libwpe and wpebackend-fdo versions
