@@ -138,7 +138,7 @@ private:
     bool m_isStopped { false };
     HashMap<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistration*> m_registrations;
 
-#ifndef NDEBUG
+#if ASSERT_ENABLED
     Ref<Thread> m_creationThread { Thread::current() };
 #endif
 

@@ -1,3 +1,27 @@
+2021-04-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop unnecessary NDEBUG checks in ServiceWorkerContainer
+        https://bugs.webkit.org/show_bug.cgi?id=224285
+
+        Reviewed by Youenn Fablet.
+
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::~ServiceWorkerContainer):
+        (WebCore::ServiceWorkerContainer::scheduleJob):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::queueTaskToFireUpdateFoundEvent):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerContainer::startScriptFetchForJob):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        (WebCore::ServiceWorkerContainer::destroyJob):
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::removeRegistration):
+        (WebCore::ServiceWorkerContainer::queueTaskToDispatchControllerChangeEvent):
+        (WebCore::ServiceWorkerContainer::contextIdentifier):
+        * workers/service/ServiceWorkerContainer.h:
+
 2021-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Wasted vector capacity in StyleRuleKeyframes
