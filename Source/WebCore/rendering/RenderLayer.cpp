@@ -701,7 +701,10 @@ void RenderLayer::updateNormalFlowList()
             m_normalFlowList->append(child);
         }
     }
-    
+
+    if (m_normalFlowList)
+        m_normalFlowList->shrinkToFit();
+
     m_normalFlowListDirty = false;
 }
 
@@ -748,11 +751,15 @@ void RenderLayer::rebuildZOrderLists(std::unique_ptr<Vector<RenderLayer*>>& posZ
     };
 
     // Sort the two lists.
-    if (posZOrderList)
+    if (posZOrderList) {
         std::stable_sort(posZOrderList->begin(), posZOrderList->end(), compareZIndex);
+        posZOrderList->shrinkToFit();
+    }
 
-    if (negZOrderList)
+    if (negZOrderList) {
         std::stable_sort(negZOrderList->begin(), negZOrderList->end(), compareZIndex);
+        negZOrderList->shrinkToFit();
+    }
 }
 
 void RenderLayer::collectLayers(bool includeHiddenLayers, std::unique_ptr<Vector<RenderLayer*>>& positiveZOrderList, std::unique_ptr<Vector<RenderLayer*>>& negativeZOrderList, OptionSet<Compositing>& accumulatedDirtyFlags)

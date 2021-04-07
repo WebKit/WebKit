@@ -1,3 +1,18 @@
+2021-04-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Wasted vector capacity in RenderLayer lists
+        https://bugs.webkit.org/show_bug.cgi?id=224170
+
+        Reviewed by Sam Weinig.
+
+        Shrink RenderLayer normal flow and z-order lists.
+
+        This saves about 800KB on twitter.com.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateNormalFlowList):
+        (WebCore::RenderLayer::rebuildZOrderLists):
+
 2021-04-07  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Remove InlineLines and InlineLineBoxes inline capacity of 10
