@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests calling focus({preventScroll: true}) and removing textarea's children.<br>
+WebKit should not crash or hit any assertions.</p>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const input = document.createElement('input');
+document.body.appendChild(input);
+
+const textarea = document.createElement('textarea');
+input.appendChild(textarea);
+
+textarea.focus({preventScroll: true});
+document.body.offsetTop;
+textarea.replaceChildren();
+
+document.write('PASS');
+
+</script>
+</body>
+</html>

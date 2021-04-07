@@ -2723,7 +2723,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
         return false;
 
     if (element && m_mouseDownDelegatedFocus)
-        element->revealFocusedElement(SelectionRestorationMode::SelectAll);
+        element->findTargetAndUpdateFocusAppearance(SelectionRestorationMode::SelectAll);
 
     return true;
 }

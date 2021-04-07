@@ -3088,19 +3088,16 @@ void Element::focus(const FocusOptions& options)
             return;
     }
 
-    if (!options.preventScroll)
-        newTarget->revealFocusedElement(options.selectionRestorationMode);
+    newTarget->findTargetAndUpdateFocusAppearance(options.selectionRestorationMode, options.preventScroll ? SelectionRevealMode::DoNotReveal : SelectionRevealMode::Reveal);
 }
 
-void Element::revealFocusedElement(SelectionRestorationMode selectionMode)
+void Element::findTargetAndUpdateFocusAppearance(SelectionRestorationMode selectionMode, SelectionRevealMode revealMode)
 {
-    SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
-
 #if PLATFORM(IOS_FAMILY)
     // Focusing a form element triggers animation in UIKit to scroll to the right position.
     // Calling updateFocusAppearance() would generate an unnecessary call to ScrollView::setScrollPosition(),
     // which would jump us around during this animation. See <rdar://problem/6699741>.
-    if (is<HTMLFormControlElement>(*this))
+    if (revealMode == SelectionRevealMode::Reveal && is<HTMLFormControlElement>(*this))
         revealMode = SelectionRevealMode::RevealUpToMainFrame;
 #endif
 
