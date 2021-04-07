@@ -406,10 +406,10 @@
                 callback(false);
         }
 
-        void playSession(CompletionHandler<void(bool)>&& callback) final
+        void playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&& callback) final
         {
             if (auto coordinatorClient = client())
-                coordinatorClient->playSession(WTFMove(callback));
+                coordinatorClient->playSession(WTFMove(atTime), WTFMove(hostTime), WTFMove(callback));
             else
                 callback(false);
         }
@@ -593,7 +593,7 @@
 
 - (void)playSessionWithCompletion:(void(^)(BOOL))completionHandler
 {
-    m_coordinatorClient->playSession(makeBlockPtr(completionHandler));
+    m_coordinatorClient->playSession({ }, { }, makeBlockPtr(completionHandler));
 }
 
 - (void)pauseSessionWithCompletion:(void(^)(BOOL))completionHandler

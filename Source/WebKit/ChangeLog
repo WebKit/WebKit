@@ -1,3 +1,11 @@
+2021-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r275571 and r275537, which introduced conflicting changes.
+
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _createMediaSessionCoordinatorForTesting:completionHandler:]):
+        (-[WKMediaSessionCoordinatorHelper playSessionWithCompletion:]):
+
 2021-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Address some post-landing comments after r275491
