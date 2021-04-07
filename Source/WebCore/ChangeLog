@@ -1,5 +1,14 @@
 2021-04-06  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed build fix after 275571: add declaration for new method (and make the constness match).
+
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::currentPositionApproximatelyEqualTo const):
+        (WebCore::MediaSessionCoordinator::currentPositionApproximatelyEqualTo): Deleted.
+        * Modules/mediasession/MediaSessionCoordinator.h:
+
+2021-04-06  Jer Noble  <jer.noble@apple.com>
+
         [MediaSession] Add optional mediaTime and hostTime arguments to the playSession() command.
         https://bugs.webkit.org/show_bug.cgi?id=224173
 

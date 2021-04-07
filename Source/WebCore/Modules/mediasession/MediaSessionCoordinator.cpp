@@ -342,7 +342,7 @@ void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHan
     completionHandler(true);
 }
 
-bool MediaSessionCoordinator::currentPositionApproximatelyEqualTo(double time)
+bool MediaSessionCoordinator::currentPositionApproximatelyEqualTo(double time) const
 {
     if (!m_session)
         return false;

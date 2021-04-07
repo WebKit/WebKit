@@ -76,6 +76,8 @@ private:
     void pauseSession(CompletionHandler<void(bool)>&&) final;
     void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) final;
 
+    bool currentPositionApproximatelyEqualTo(double) const;
+
     const Logger& logger() const { return m_logger; }
     const void* logIdentifier() const { return m_logIdentifier; }
     static WTFLogChannel& logChannel();
