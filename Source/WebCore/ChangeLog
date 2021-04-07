@@ -1,3 +1,14 @@
+2021-04-07  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [PlayStation] Provide a non-empty User Agent
+        https://bugs.webkit.org/show_bug.cgi?id=224216
+
+        Reviewed by Ross Kirsling.
+
+        Add non-empty implementation of User Agent code for port.
+
+        * platform/playstation/UserAgentPlayStation.cpp:
+
 2021-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 5: Tweak the return type of DisplayList::Iterator::operator*()
