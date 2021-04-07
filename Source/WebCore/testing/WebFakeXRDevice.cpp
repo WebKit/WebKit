@@ -60,12 +60,31 @@ SimulatedXRDevice::~SimulatedXRDevice()
     stopTimer();
 }
 
+void SimulatedXRDevice::setViews(Vector<FrameData::View>&& views)
+{
+    m_frameData.views = WTFMove(views);
+}
+
 void SimulatedXRDevice::setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>& geometry)
 {
-    m_stageParameters.id++;
-    m_stageParameters.bounds.clear();
+    m_frameData.stageParameters.id++;
+    m_frameData.stageParameters.bounds.clear();
     for (auto& point : geometry)
-        m_stageParameters.bounds.append({ static_cast<float>(point.x), static_cast<float>(point.z) });
+        m_frameData.stageParameters.bounds.append({ static_cast<float>(point.x), static_cast<float>(point.z) });
+}
+
+void SimulatedXRDevice::setViewerOrigin(const Optional<FrameData::Pose>& origin)
+{
+    if (origin) {
+        m_frameData.origin = *origin;
+        m_frameData.isPositionValid = true;
+        m_frameData.isTrackingValid = true;
+        return;
+    }
+
+    m_frameData.origin = Device::FrameData::Pose();
+    m_frameData.isPositionValid = false;
+    m_frameData.isTrackingValid = false;
 }
 
 void SimulatedXRDevice::simulateShutdownCompleted()
@@ -109,34 +128,8 @@ void SimulatedXRDevice::stopTimer()
 
 void SimulatedXRDevice::frameTimerFired()
 {
-    auto updates = WTFMove(m_pendingUpdates);
-    for (auto& update : updates)
-        update();
-
-    FrameData data;
+    FrameData data = m_frameData;
     data.shouldRender = true;
-    if (m_viewerOrigin) {
-        data.origin = *m_viewerOrigin;
-        data.isTrackingValid = true;
-        data.isPositionValid = true;
-        data.isPositionEmulated = m_emulatedPosition;
-    }
-
-    if (m_floorOrigin)
-        data.floorTransform = { *m_floorOrigin };
-
-    data.stageParameters = m_stageParameters;
-
-    for (auto& fakeView : m_views) {
-        FrameData::View view;
-        view.offset = fakeView->offset();
-        if (fakeView->fieldOfView().hasValue())
-            view.projection = { *fakeView->fieldOfView() };
-        else
-            view.projection = { fakeView->projection() };
-        
-        data.views.append(view);
-    }
 
     for (auto& layer : m_layers)
         data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
@@ -190,26 +183,28 @@ Vector<PlatformXR::Device::ViewData> SimulatedXRDevice::views(PlatformXR::Sessio
     return { { .active = true, .eye = PlatformXR::Eye::None } };
 }
 
-void SimulatedXRDevice::scheduleOnNextFrame(Function<void()>&& func)
-{
-    m_pendingUpdates.append(WTFMove(func));
-}
-
 WebFakeXRDevice::WebFakeXRDevice() = default;
 
 void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
 {
-    m_device.scheduleOnNextFrame([this, views]() {
-        Vector<Ref<FakeXRView>> deviceViews;
+    Vector<PlatformXR::Device::FrameData::View> deviceViews;
 
-        for (auto& viewInit : views) {
-            auto view = parseView(viewInit);
-            if (!view.hasException())
-                deviceViews.append(view.releaseReturnValue());
+    for (auto& viewInit : views) {
+        auto parsedView = parseView(viewInit);
+        if (!parsedView.hasException()) {
+            auto fakeView = parsedView.releaseReturnValue();
+            PlatformXR::Device::FrameData::View view;
+            view.offset = fakeView->offset();
+            if (fakeView->fieldOfView().hasValue())
+                view.projection = { *fakeView->fieldOfView() };
+            else
+                view.projection = { fakeView->projection() };
+
+            deviceViews.append(view);
         }
+    }
 
-        m_device.setViews(WTFMove(deviceViews));
-    });
+    m_device.setViews(WTFMove(deviceViews));
 }
 
 void WebFakeXRDevice::disconnect(DOMPromiseDeferred<void>&& promise)
@@ -219,54 +214,25 @@ void WebFakeXRDevice::disconnect(DOMPromiseDeferred<void>&& promise)
 
 void WebFakeXRDevice::setViewerOrigin(FakeXRRigidTransformInit origin, bool emulatedPosition)
 {
-    auto result = parseRigidTransform(origin);
-    if (result.hasException())
+    auto pose = parseRigidTransform(origin);
+    if (pose.hasException())
         return;
 
-    auto pose = result.releaseReturnValue();
-
-    m_device.scheduleOnNextFrame([this, pose = WTFMove(pose), emulatedPosition]() mutable {
-        m_device.setViewerOrigin(WTFMove(pose));
-        m_device.setEmulatedPosition(emulatedPosition);
-    });
-}
-
-void WebFakeXRDevice::clearViewerOrigin()
-{
-    m_device.scheduleOnNextFrame([this]() {
-        m_device.setViewerOrigin(WTF::nullopt);
-    });
+    m_device.setViewerOrigin(pose.releaseReturnValue());
+    m_device.setEmulatedPosition(emulatedPosition);
 }
 
 void WebFakeXRDevice::simulateVisibilityChange(XRVisibilityState)
 {
 }
 
-void WebFakeXRDevice::setBoundsGeometry(Vector<FakeXRBoundsPoint>&& bounds)
-{
-    m_device.scheduleOnNextFrame([this, bounds = WTFMove(bounds)]() {
-        m_device.setNativeBoundsGeometry(bounds);
-    });
-} 
-
 void WebFakeXRDevice::setFloorOrigin(FakeXRRigidTransformInit origin)
 {
-    auto result = parseRigidTransform(origin);
-    if (result.hasException())
+    auto pose = parseRigidTransform(origin);
+    if (pose.hasException())
         return;
 
-    auto pose = result.releaseReturnValue();
-
-    m_device.scheduleOnNextFrame([this, pose = WTFMove(pose)]() mutable {
-        m_device.setFloorOrigin(WTFMove(pose));
-    });
-}
-
-void WebFakeXRDevice::clearFloorOrigin()
-{
-    m_device.scheduleOnNextFrame([this]() {
-        m_device.setFloorOrigin(WTF::nullopt);
-    });
+    m_device.setFloorOrigin(pose.releaseReturnValue());
 }
 
 void WebFakeXRDevice::simulateResetPose()

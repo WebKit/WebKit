@@ -72,12 +72,11 @@ class SimulatedXRDevice final : public PlatformXR::Device {
 public:
     SimulatedXRDevice();
     ~SimulatedXRDevice();
-    void setViews(Vector<Ref<FakeXRView>>&& views) { m_views = WTFMove(views); }
+    void setViews(Vector<FrameData::View>&&);
     void setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&);
-    void setViewerOrigin(Optional<FrameData::Pose>&& origin) { m_viewerOrigin = WTFMove(origin); }
-    void setFloorOrigin(Optional<FrameData::Pose>&& origin) { m_floorOrigin = WTFMove(origin); }
-    void setEmulatedPosition(bool emulated) { m_emulatedPosition = emulated; }
-    Vector<Ref<FakeXRView>>& views() { return m_views; }
+    void setViewerOrigin(const Optional<FrameData::Pose>&);
+    void setFloorOrigin(Optional<FrameData::Pose>&& origin) { m_frameData.floorTransform = WTFMove(origin); }
+    void setEmulatedPosition(bool emulated) { m_frameData.isPositionEmulated = emulated; }
     void setSupportsShutdownNotification(bool supportsShutdownNotification) { m_supportsShutdownNotification = supportsShutdownNotification; }
     void simulateShutdownCompleted();
     void scheduleOnNextFrame(Function<void()>&&);
@@ -95,16 +94,10 @@ private:
     void stopTimer();
     void frameTimerFired();
 
-    Optional<Vector<FakeXRBoundsPoint>> m_nativeBoundsGeometry;
-    Optional<FrameData::Pose> m_viewerOrigin;
-    Optional<FrameData::Pose> m_floorOrigin;
-    bool m_emulatedPosition { false };
-    Vector<Ref<FakeXRView>> m_views;
+    PlatformXR::Device::FrameData m_frameData;
     bool m_supportsShutdownNotification { false };
     Timer m_frameTimer;
     RequestFrameCallback m_FrameCallback;
-    Vector<Function<void()>> m_pendingUpdates;
-    FrameData::StageParameters m_stageParameters;
     RefPtr<WebCore::GraphicsContextGL> m_gl;
     HashMap<PlatformXR::LayerHandle, PlatformGLObject> m_layers;
     uint32_t m_layerIndex { 0 };
@@ -115,31 +108,18 @@ public:
     static Ref<WebFakeXRDevice> create() { return adoptRef(*new WebFakeXRDevice()); }
 
     void setViews(const Vector<FakeXRViewInit>&);
-
     void disconnect(DOMPromiseDeferred<void>&&);
-
     void setViewerOrigin(FakeXRRigidTransformInit origin, bool emulatedPosition = false);
-
-    void clearViewerOrigin();
-
+    void clearViewerOrigin() { m_device.setViewerOrigin(WTF::nullopt); }
     void simulateVisibilityChange(XRVisibilityState);
-
-    void setBoundsGeometry(Vector<FakeXRBoundsPoint>&& boundsCoordinates);
-
+    void setBoundsGeometry(Vector<FakeXRBoundsPoint>&& bounds) { m_device.setNativeBoundsGeometry(WTFMove(bounds)); }
     void setFloorOrigin(FakeXRRigidTransformInit);
-
-    void clearFloorOrigin();
-
+    void clearFloorOrigin() { m_device.setFloorOrigin(WTF::nullopt); }
     void simulateResetPose();
-
     Ref<WebFakeXRInputController> simulateInputSourceConnection(FakeXRInputSourceInit);
-
     static ExceptionOr<Ref<FakeXRView>> parseView(const FakeXRViewInit&);
-
     SimulatedXRDevice& simulatedXRDevice() { return m_device; }
-
     void setSupportsShutdownNotification();
-
     void simulateShutdown();
 
 private:
