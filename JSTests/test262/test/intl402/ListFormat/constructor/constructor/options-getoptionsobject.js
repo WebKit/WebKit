@@ -6,21 +6,19 @@ esid: sec-Intl.ListFormat
 description: Checks handling of non-object option arguments to the ListFormat constructor.
 info: |
     InitializeListFormat (listFormat, locales, options)
-features: [Intl.ListFormat]
+features: [Intl.ListFormat,BigInt]
 ---*/
 
 const optionsArguments = [
+  null,
   true,
+  false,
   "test",
   7,
   Symbol(),
+  123456789n,
 ];
 
 for (const options of optionsArguments) {
-  const lf = new Intl.ListFormat([], options);
-  const resolvedOptions = lf.resolvedOptions();
-  assert.sameValue(resolvedOptions.type, "conjunction",
-    `options argument ${String(options)} should yield the correct value for "type"`);
-  assert.sameValue(resolvedOptions.style, "long",
-    `options argument ${String(options)} should yield the correct value for "style"`);
+  assert.throws(TypeError, function() { new Intl.ListFormat([], options) })
 }

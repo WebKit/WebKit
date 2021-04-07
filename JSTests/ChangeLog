@@ -1,3 +1,23 @@
+2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=224272
+
+        Reviewed by Ross Kirsling.
+
+        * test262/latest-changes-summary.txt:
+        * test262/test/intl402/DisplayNames/options-getoptionsobject.js: Added.
+        * test262/test/intl402/ListFormat/constructor/constructor/options-getoptionsobject.js: Renamed from JSTests/test262/test/intl402/ListFormat/constructor/constructor/options-toobject.js.
+        * test262/test/intl402/ListFormat/constructor/constructor/options-toobject-prototype.js: Removed.
+        * test262/test/intl402/Segmenter/constructor/constructor/options-getoptionsobject.js: Added.
+        * test262/test/intl402/Segmenter/constructor/constructor/options-toobject-prototype.js: Removed.
+        * test262/test/intl402/Segmenter/constructor/constructor/options-toobject.js: Removed.
+        * test262/test/language/expressions/in/rhs-yield-absent-non-strict.js: Added.
+        * test262/test/language/expressions/in/rhs-yield-absent-strict.js: Added.
+        * test262/test/language/expressions/in/rhs-yield-present.js: Added.
+        (isNameIn):
+        * test262/test262-Revision.txt:
+
 2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] WasmMemory caging should care about nullptr
