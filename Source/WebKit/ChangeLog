@@ -1,3 +1,21 @@
+2021-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use os_transaction_create instead of deprecated xpc_transaction_begin/end
+        https://bugs.webkit.org/show_bug.cgi?id=224288
+
+        Reviewed by Tim Horton.
+
+        xpc_transaction_begin/end are deprecated with os_transaction_t being the replacement.
+        The transaction object makes it easier to associate a transaction's begin and end with each other,
+        and it adds a name, which makes system level debugging of what transactions are happening in which
+        processes much nicer.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::osTransaction):
+        (WebKit::XPCServiceExit):
+
 2021-04-07  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add WebKitAdditions sources to project

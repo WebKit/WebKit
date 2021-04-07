@@ -1,3 +1,12 @@
+2021-04-07  Alex Christensen  <achristensen@webkit.org>
+
+        Use os_transaction_create instead of deprecated xpc_transaction_begin/end
+        https://bugs.webkit.org/show_bug.cgi?id=224288
+
+        Reviewed by Tim Horton.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] WasmMemory caging should care nullptr
