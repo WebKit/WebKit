@@ -216,6 +216,14 @@ public:
 
     RenderLayer* paintOrderParent() const;
 
+    Optional<LayerRepaintRects> repaintRects() const
+    {
+        if (m_repaintRectsValid)
+            return m_repaintRects;
+
+        return { };
+    }
+
     void dirtyNormalFlowList();
     void dirtyZOrderLists();
     void dirtyStackingContextZOrderLists();
@@ -699,8 +707,6 @@ public:
     // Can pass offsetFromRoot if known.
     LayoutRect calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutSize& offsetFromRoot, OptionSet<CalculateLayerBoundsFlag> = defaultCalculateLayerBoundsFlags()) const;
     
-    // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
-    bool hasComputedRepaintRects() const { return renderer().hasRepaintLayoutRects(); }
     LayoutRect repaintRectIncludingNonCompositingDescendants() const;
 
     void setRepaintStatus(RepaintStatus status) { m_repaintStatus = status; }
@@ -910,6 +916,8 @@ private:
 
     void computeRepaintRects(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* = nullptr);
     void computeRepaintRectsIncludingDescendants();
+
+    void setRepaintRects(const LayerRepaintRects&);
     void clearRepaintRects();
 
     LayoutRect clipRectRelativeToAncestor(RenderLayer* ancestor, LayoutSize offsetFromAncestor, const LayoutRect& constrainingRect) const;
@@ -1136,6 +1144,7 @@ private:
     bool m_hasNotIsolatedBlendingDescendants : 1;
     bool m_hasNotIsolatedBlendingDescendantsStatusDirty : 1;
 #endif
+    bool m_repaintRectsValid : 1;
 
     RenderLayerModelObject& m_renderer;
 
@@ -1156,6 +1165,9 @@ private:
 
     // This list contains child layers that cannot create stacking contexts and appear in normal flow order.
     std::unique_ptr<Vector<RenderLayer*>> m_normalFlowList;
+
+    // Only valid if m_repaintRectsValid is set (Optional<> not used to avoid padding).
+    LayerRepaintRects m_repaintRects;
 
     // Our current relative position offset.
     LayoutSize m_offsetForInFlowPosition;
@@ -1188,7 +1200,7 @@ private:
     std::unique_ptr<RenderLayerFilters> m_filters;
     std::unique_ptr<RenderLayerBacking> m_backing;
     std::unique_ptr<RenderLayerScrollableArea> m_scrollableArea;
-    
+
     PaintFrequencyTracker m_paintFrequencyTracker;
 };
 

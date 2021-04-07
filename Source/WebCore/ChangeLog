@@ -1,5 +1,54 @@
 2021-04-07  Simon Fraser  <simon.fraser@apple.com>
 
+        Remove RepaintLayoutRectsMap
+        https://bugs.webkit.org/show_bug.cgi?id=224217
+
+        Reviewed by Zalan Bujtas.
+
+        RepaintLayoutRectsMap was a side table used to map RenderLayerModelObjects to
+        repaint rects for their corresponding layers. However, this HashMap could
+        get large, and waste more space than if we just stored the repaint rects
+        on RenderLayer.
+
+        For example, on twitter.com we could have about 2000 RenderLayers; increasing
+        their size by 32 bytes (the size of the two LayoutRects) adds 62KB, but RepaintLayoutRectsMap
+        would contain about 1950 entries with a capacity of 8192, wasting around 200KB.
+
+        So moving repaint rects into RenderLayer is a memory saving. This patch does so
+        without using Optional<> since that introduces extra padding.
+
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::ComplexLineLayout::layoutRunsAndFloats):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::repaintRectIncludingNonCompositingDescendants const):
+        (WebCore::RenderLayer::computeRepaintRects):
+        (WebCore::RenderLayer::setRepaintRects):
+        (WebCore::RenderLayer::clearRepaintRects):
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::repaintRects const):
+        (WebCore::RenderLayer::hasComputedRepaintRects const): Deleted.
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::willBeDestroyed):
+        (WebCore::RenderLayerModelObject::destroyLayer):
+        (WebCore::RenderLayerModelObject::styleDidChange):
+        (WebCore::RenderLayerModelObject::layerRepaintRects const):
+        (WebCore::RepaintLayoutRects::RepaintLayoutRects): Deleted.
+        (WebCore::RenderLayerModelObject::hasRepaintLayoutRects const): Deleted.
+        (WebCore::RenderLayerModelObject::setRepaintLayoutRects): Deleted.
+        (WebCore::RenderLayerModelObject::clearRepaintLayoutRects): Deleted.
+        (WebCore::RenderLayerModelObject::repaintLayoutRects const): Deleted.
+        (WebCore::RenderLayerModelObject::computeRepaintLayoutRects): Deleted.
+        * rendering/RenderLayerModelObject.h:
+        (WebCore::RepaintLayoutRects::RepaintLayoutRects): Deleted.
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::scrollTo):
+
+2021-04-07  Simon Fraser  <simon.fraser@apple.com>
+
         Wasted vector capacity in various DisplayList related code paths
         https://bugs.webkit.org/show_bug.cgi?id=224304
 
