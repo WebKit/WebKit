@@ -2289,3 +2289,5 @@ webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/maco
 webkit.org/b/224212 [ arm64 ] compositing/background-color/no-composited-background-color-when-perspective.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/215397 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Pass Failure ]
+
+webkit.org/b/224297 media/modern-media-controls/seek-forward-support/seek-forward-support.html [ Pass Timeout ]
