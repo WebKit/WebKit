@@ -1,3 +1,16 @@
+2021-04-06  Jean-Yves Avenard  <jya@apple.com>
+
+        Fix logic error in MediaMetadataInit
+        https://bugs.webkit.org/show_bug.cgi?id=224252
+        <rdar://problem/76291386>
+
+        Reviewed by Eric Carlson.
+
+        Fix inverted logic error in decode that would have caused it to return early.
+
+        * Modules/mediasession/MediaMetadataInit.h:
+        (WebCore::MediaMetadataInit::decode):
+
 2021-04-06  Sihui Liu  <sihui_liu@apple.com>
 
         [ Catalina WK2 Release ] http/tests/IndexedDB/storage-limit-1.https.html is a flaky failure

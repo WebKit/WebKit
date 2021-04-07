@@ -57,7 +57,7 @@ template<class Decoder> inline Optional<MediaMetadataInit> MediaMetadataInit::de
 {
     Optional<String> title;
     decoder >> title;
-    if (title)
+    if (!title)
         return { };
 
     Optional<String> artist;
