@@ -1,3 +1,21 @@
+2021-04-07  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Handle multiple double-branch commits
+        https://bugs.webkit.org/show_bug.cgi?id=224251
+        <rdar://problem/76288547>
+
+        Reviewed by Dewei Zhu.
+
+        There are a few cases, namely on the safari-607-branch, where some commits where made both
+        on trunk and on a branch. In one notable case, two sequential commits were made this way.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/local/svn.py:
+        (Svn._cache_revisions): Handle multiple double-branch commits.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/remote/svn.py:
+        (Svn._cache_revisions): Handle multiple double-branch commits.
+
 2021-04-07  Aakash Jain  <aakash_jain@apple.com>
 
         commit-queue should perform git reset --hard between retry attempts
