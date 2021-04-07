@@ -1054,6 +1054,7 @@ fast/frames/flattening/scrolling-in-object.html [ Skip ]
 fast/media/video-element-in-details-collapse.html [ Skip ]
 fast/frames/user-gesture-timestamp-propagation.html [ Failure ]
 fast/events/mouse-click-different-mouseDown-mouseUp-nodes.html [ Skip ]
+fast/scrolling/scrolling-inside-scrolled-overflowarea.html [ Skip ]
 
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]

@@ -1,3 +1,19 @@
+2021-04-07  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Wrong frame scrolled when view is horizontally scrolled with async scrolling enabled
+        https://bugs.webkit.org/show_bug.cgi?id=222900
+
+        Reviewed by Žan Doberšek.
+
+        We need to use the scrolling offset in the parent when collecting
+        the descendant layers at a point. We substract the boundsOrigin to
+        make sure we transform the point considering the scrolling offset.
+
+        Test: fast/scrolling/scrolling-inside-scrolled-overflowarea.html
+
+        * page/scrolling/nicosia/ScrollingTreeNicosia.cpp:
+        (WebCore::collectDescendantLayersAtPoint):
+
 2021-04-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r274812): Release assert in Document::updateLayout() after calling focus({preventScroll: true}) on a textarea

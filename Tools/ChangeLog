@@ -1,3 +1,17 @@
+2021-04-07  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Wrong frame scrolled when view is horizontally scrolled with async scrolling enabled
+        https://bugs.webkit.org/show_bug.cgi?id=222900
+
+        Reviewed by Žan Doberšek.
+
+        We were not testing the async code path for WPE, it is important
+        we do it because it is the default option.
+
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformSpecificFeatureDefaultsForTest const):
+        Activating AsyncOverflowScrollingEnabled.
+
 2021-04-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [GPU Process] Simplify DisplayList::Iterator part 5: Tweak the return type of DisplayList::Iterator::operator*()
