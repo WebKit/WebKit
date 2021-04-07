@@ -1,3 +1,13 @@
+2021-04-07  Aakash Jain  <aakash_jain@apple.com>
+
+        git-webkit find doesn't work well with unicode characters in author name
+        https://bugs.webkit.org/show_bug.cgi?id=223686
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/find.py:
+        (Info.main): Added a try except block while printing author, since the script should still print rest of the info.
+
 2021-04-07  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION(r274366): webkitscmpy.test.svn_unittest.TestRemoteSvn.test_info fails in non-PDT timezones
