@@ -1232,7 +1232,7 @@ bool MediaPlayerPrivateGStreamer::isMuted() const
 
     gboolean isMuted;
     g_object_get(m_volumeElement.get(), "mute", &isMuted, nullptr);
-    GST_INFO_OBJECT(pipeline(), "Player is muted: %s", boolForPrinting(!!isMuted));
+    GST_INFO_OBJECT(pipeline(), "Player is muted: %s", boolForPrinting(isMuted));
     return isMuted;
 }
 
@@ -1667,20 +1667,24 @@ float MediaPlayerPrivateGStreamer::volume() const
     if (!m_volumeElement)
         return 0;
 
-    return gst_stream_volume_get_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_LINEAR);
+    auto volume = gst_stream_volume_get_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_LINEAR);
+    GST_DEBUG_OBJECT(pipeline(), "Volume: %f", volume);
+    return volume;
 }
 
 void MediaPlayerPrivateGStreamer::notifyPlayerOfVolumeChange()
 {
     if (!m_player || !m_volumeElement)
         return;
-    double volume;
-    volume = gst_stream_volume_get_volume(m_volumeElement.get(), GST_STREAM_VOLUME_FORMAT_LINEAR);
-    // get_volume() can return values superior to 1.0 if the user
-    // applies software user gain via third party application (GNOME
-    // volume control for instance).
-    volume = CLAMP(volume, 0.0, 1.0);
-    m_player->volumeChanged(static_cast<float>(volume));
+
+    // get_volume() can return values superior to 1.0 if the user applies software user gain via
+    // third party application (GNOME volume control for instance).
+    auto oldVolume = this->volume();
+    auto volume = CLAMP(oldVolume, 0.0, 1.0);
+
+    if (volume != oldVolume)
+        GST_DEBUG_OBJECT(pipeline(), "Volume value (%f) was not in [0,1] range. Clamped to %f", oldVolume, volume);
+    m_player->volumeChanged(volume);
 }
 
 void MediaPlayerPrivateGStreamer::volumeChangedCallback(MediaPlayerPrivateGStreamer* player)
@@ -1711,7 +1715,7 @@ void MediaPlayerPrivateGStreamer::setMuted(bool shouldMute)
     if (!m_volumeElement || shouldMute == isMuted())
         return;
 
-    GST_INFO_OBJECT(pipeline(), "Muted? %s", boolForPrinting(shouldMute));
+    GST_INFO_OBJECT(pipeline(), "Setting muted state to %s", boolForPrinting(shouldMute));
     g_object_set(m_volumeElement.get(), "mute", shouldMute, nullptr);
 }
 
@@ -1722,6 +1726,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfMute()
 
     gboolean muted;
     g_object_get(m_volumeElement.get(), "mute", &muted, nullptr);
+    GST_DEBUG_OBJECT(pipeline(), "Notifying player of new mute value: %s", boolForPrinting(muted));
     m_player->muteChanged(static_cast<bool>(muted));
 }
 

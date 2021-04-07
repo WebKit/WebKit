@@ -1,3 +1,27 @@
+2021-04-07  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Videos start playing muted in epiphany with no unmute icon visible in tab, webkit_web_view_get_is_muted() returns incorrect results
+        https://bugs.webkit.org/show_bug.cgi?id=223195
+
+        Reviewed by Eric Carlson.
+
+        For GStreamer ports the semantics of IsPlayingAudio slightly differ from Apple ports. The
+        webkit_web_view_is_playing_audio() API is expected to return true if a page is producing
+        audio even though it might be muted.
+
+        The second change affects the private player mute state when the page mute state has been
+        updated.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaState const):
+        (WebCore::HTMLMediaElement::pageMutedStateDidChange):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp: Logging improvements.
+        (WebCore::MediaPlayerPrivateGStreamer::isMuted const):
+        (WebCore::MediaPlayerPrivateGStreamer::volume const):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVolumeChange):
+        (WebCore::MediaPlayerPrivateGStreamer::setMuted):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfMute):
+
 2021-04-07  Enrique Ocaña González  <eocanha@igalia.com>
 
         [EME][GStreamer] Abort decryptor operations immediately and without errors on flush

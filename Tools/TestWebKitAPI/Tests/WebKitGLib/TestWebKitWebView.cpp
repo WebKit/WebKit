@@ -44,6 +44,25 @@ public:
         g_signal_connect(m_webView, "notify::is-playing-audio", G_CALLBACK(isPlayingAudioChanged), this);
         g_main_loop_run(m_mainLoop);
     }
+
+    void periodicallyCheckIsPlayingForAWhile()
+    {
+        m_tickCount = 0;
+        g_timeout_add(50, [](gpointer userData) -> gboolean {
+            auto* test = static_cast<IsPlayingAudioWebViewTest*>(userData);
+            g_assert_true(webkit_web_view_is_playing_audio(test->m_webView));
+            test->m_tickCount++;
+            if (test->m_tickCount >= 10) {
+                test->quitMainLoop();
+                return G_SOURCE_REMOVE;
+            }
+            return G_SOURCE_CONTINUE;
+        }, this);
+        g_main_loop_run(m_mainLoop);
+    }
+
+private:
+    uint32_t m_tickCount { 0 };
 };
 
 static WebKitTestServer* gServer;
@@ -1114,6 +1133,7 @@ static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpoi
 
     // Initially, web views should always report no audio being played.
     g_assert_false(webkit_web_view_is_playing_audio(test->m_webView));
+    g_assert_false(webkit_web_view_get_is_muted(test->m_webView));
 
     GUniquePtr<char> resourcePath(g_build_filename(Test::getResourcesDir(Test::WebKit2Resources).data(), "file-with-video.html", nullptr));
     GUniquePtr<char> resourceURL(g_filename_to_uri(resourcePath.get(), nullptr, nullptr));
@@ -1124,6 +1144,15 @@ static void testWebViewIsPlayingAudio(IsPlayingAudioWebViewTest* test, gconstpoi
     test->runJavaScriptAndWaitUntilFinished("playVideo();", nullptr);
     if (!webkit_web_view_is_playing_audio(test->m_webView))
         test->waitUntilIsPlayingAudioChanged();
+    g_assert_true(webkit_web_view_is_playing_audio(test->m_webView));
+
+    // Mute the page, webkit_web_view_is_playing_audio() should still return TRUE.
+    webkit_web_view_set_is_muted(test->m_webView, TRUE);
+    g_assert_true(webkit_web_view_get_is_muted(test->m_webView));
+    test->periodicallyCheckIsPlayingForAWhile();
+    g_assert_true(webkit_web_view_is_playing_audio(test->m_webView));
+    webkit_web_view_set_is_muted(test->m_webView, FALSE);
+    g_assert_false(webkit_web_view_get_is_muted(test->m_webView));
     g_assert_true(webkit_web_view_is_playing_audio(test->m_webView));
 
     // Pause the video, and check again.
