@@ -1,3 +1,15 @@
+2021-04-07  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION(r274366): webkitscmpy.test.svn_unittest.TestRemoteSvn.test_info fails in non-PDT timezones
+        https://bugs.webkit.org/show_bug.cgi?id=223606
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/libraries/webkitscmpy/setup.py: Bump version.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/__init__.py: Ditto.
+        * Scripts/libraries/webkitscmpy/webkitscmpy/test/svn_unittest.py:
+        (TestRemoteSvn.test_info): Use utc shifted into PDT for consistency across timezones.
+
 2021-04-07  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add WebKit::gtest target
