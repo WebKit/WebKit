@@ -1,3 +1,15 @@
+2021-04-07  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Suppress -Warray-bounds warning spam in Bitmap.h
+        https://bugs.webkit.org/show_bug.cgi?id=224207
+
+        Reviewed by Don Olmstead.
+
+        Suppress this warning.
+
+        * wtf/Bitmap.h:
+        (WTF::WordType>::clear):
+
 2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use FixedVector more in bytecode dir and JumpTable
