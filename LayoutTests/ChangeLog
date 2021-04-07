@@ -1,3 +1,12 @@
+2021-04-06  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215397
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Removed prior test expectations from mac-wk1, and added them just to mac since test is flakey across mac, and not just in wk1. 
+
 2021-04-06  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/misc convert PHP to Python
