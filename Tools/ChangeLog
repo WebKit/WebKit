@@ -1,3 +1,27 @@
+2021-04-07  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Enable LLVM extension
+        https://bugs.webkit.org/show_bug.cgi?id=223882
+
+        Reviewed by Adrian Perez de Castro.
+
+        The clang shipped by default in the FDO SDK is not usable for ASan, UBSan (and I guess TSan)
+        builds, but the Flatpak extension shipping LLVM11 allows this, even though UBSan builds
+        still fail (linking errors in JSC and WTF) and will require further investigation. Still,
+        having clang-11 in the SDK is an improvement.
+
+        This patch also adds support for cleaning up unused toolchain archives.
+
+        * flatpak/flatpakutils.py:
+        (run_sanitized):
+        (WebkitFlatpak.load_from_args):
+        (WebkitFlatpak.clean_args):
+        (WebkitFlatpak.run_in_sandbox):
+        (WebkitFlatpak.main):
+        (WebkitFlatpak.purge_unused_toolchains):
+        (WebkitFlatpak.pack_toolchain):
+        (WebkitFlatpak._get_packages):
+
 2021-04-07  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK][WPE] Wrong frame scrolled when view is horizontally scrolled with async scrolling enabled
