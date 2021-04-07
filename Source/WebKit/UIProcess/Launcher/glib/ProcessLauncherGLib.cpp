@@ -184,9 +184,12 @@ void ProcessLauncher::launchProcess()
         process = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), argv, &error.outPtr()));
 
     if (!process.get())
-        g_error("Unable to fork a new child process: %s", error->message);
+        g_error("Unable to spawn a new child process: %s", error->message);
 
     const char* processIdStr = g_subprocess_get_identifier(process.get());
+    if (!processIdStr)
+        g_error("Spawned process died immediately. This should not happen.");
+
     m_processIdentifier = g_ascii_strtoll(processIdStr, nullptr, 0);
     RELEASE_ASSERT(m_processIdentifier);
 
