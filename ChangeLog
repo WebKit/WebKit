@@ -1,3 +1,36 @@
+2021-04-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r275541. rdar://problem/76365929
+
+    Speculative build fix for Windows port.
+    https://bugs.webkit.org/show_bug.cgi?id=224243
+    rdar://75883248
+    
+    Reviewed by Saam Barati.
+    
+    Source/cmake/tools/scripts/auto-version.pl was limiting our `minor` and `micro`
+    version to only 2 decimal digits only.  In practice, we can use up to 3 digits.
+    
+    * Source/cmake/tools/scripts/auto-version.pl:
+    (packTwoValues):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275541 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-06  Mark Lam  <mark.lam@apple.com>
+
+            Speculative build fix for Windows port.
+            https://bugs.webkit.org/show_bug.cgi?id=224243
+            rdar://75883248
+
+            Reviewed by Saam Barati.
+
+            Source/cmake/tools/scripts/auto-version.pl was limiting our `minor` and `micro`
+            version to only 2 decimal digits only.  In practice, we can use up to 3 digits.
+
+            * Source/cmake/tools/scripts/auto-version.pl:
+            (packTwoValues):
+
 2021-03-03  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r273699. rdar://problem/74992920
