@@ -350,8 +350,14 @@ static void removeSymbolElementsFromSubtree(SVGElement& subtree)
     // into <svg> elements, which is correct for symbol elements directly referenced by use elements,
     // but incorrect for ones that just happen to be in a subtree.
     Vector<Element*> symbolElements;
-    for (auto& descendant : descendantsOfType<SVGSymbolElement>(subtree))
-        symbolElements.append(&descendant);
+    for (auto it = descendantsOfType<Element>(subtree).begin(); it; ) {
+        if (is<SVGSymbolElement>(*it)) {
+            symbolElements.append(&*it);
+            it.traverseNextSkippingChildren();
+            continue;
+        }
+        ++it;
+    }
     disassociateAndRemoveClones(symbolElements);
 }
 

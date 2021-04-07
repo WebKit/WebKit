@@ -1,3 +1,93 @@
+2021-03-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r274439. rdar://problem/75450678
+
+    Enforce subcommand filtering
+    https://bugs.webkit.org/show_bug.cgi?id=223192
+    <rdar://75434409>
+    
+    Reviewed by Brent Fulgham.
+    
+    Enforce subcommand filtering in the WebContent process' sandbox.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274439 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-15  Per Arne Vollan  <pvollan@apple.com>
+
+            Enforce subcommand filtering
+            https://bugs.webkit.org/show_bug.cgi?id=223192
+            <rdar://75434409>
+
+            Reviewed by Brent Fulgham.
+
+            Enforce subcommand filtering in the WebContent process' sandbox.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-03-15  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r274295. rdar://problem/75450678
+
+    [macOS] Add additional telemetry to WebContent sandbox
+    https://bugs.webkit.org/show_bug.cgi?id=223080
+    
+    Reviewed by Brent Fulgham.
+    
+    Add additional telemetry to WebContent sandbox on macOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274295 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-11  Per Arne Vollan  <pvollan@apple.com>
+
+            [macOS] Add additional telemetry to WebContent sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=223080
+
+            Reviewed by Brent Fulgham.
+
+            Add additional telemetry to WebContent sandbox on macOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-03-10  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r274231. rdar://problem/75291920
+
+    [iOS] Add additional telemetry to WebContent sandbox 
+    https://bugs.webkit.org/show_bug.cgi?id=223035
+    <rdar://75275161>
+    
+    Reviewed by Geoffrey Garen.
+    
+    Add additional telemetry to WebContent sandbox on iOS.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274231 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-10  Per Arne  <pvollan@apple.com>
+
+            [iOS] Add additional telemetry to WebContent sandbox
+            https://bugs.webkit.org/show_bug.cgi?id=223035
+            <rdar://75275161>
+
+            Reviewed by Geoffrey Garen.
+
+            Add additional telemetry to WebContent sandbox on iOS.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-03-31  Kocsen Chung  <kocsen_chung@apple.com>
 
         Cherry-pick r275316. rdar://problem/76078629
