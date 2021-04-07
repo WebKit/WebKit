@@ -125,7 +125,7 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffe
         return false;
     }
 
-    CDMProxyClearKey::cencDecryptContext context;
+    CDMProxyClearKey::cencDecryptContext context = { };
     context.keyID = mappedKeyIdBuffer.data();
     context.keyIDSizeInBytes = mappedKeyIdBuffer.size();
     context.iv = mappedIVBuffer.data();
@@ -145,6 +145,7 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffe
         context.subsamplesBuffer = mappedSubsamplesBuffer.data();
         context.subsamplesBufferSizeInBytes = mappedSubsamplesBuffer.size();
     }
+    context.cdmProxyDecryptionClient = webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(self);
 
     return priv->cdmProxy->cencDecrypt(context);
 }

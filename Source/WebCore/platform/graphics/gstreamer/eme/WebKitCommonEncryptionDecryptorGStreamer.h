@@ -28,6 +28,7 @@
 #include <gst/base/gstbasetransform.h>
 #include <gst/gst.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 G_BEGIN_DECLS
 
@@ -44,6 +45,9 @@ typedef struct _WebKitMediaCommonEncryptionDecryptClass   WebKitMediaCommonEncry
 typedef struct _WebKitMediaCommonEncryptionDecryptPrivate WebKitMediaCommonEncryptionDecryptPrivate;
 
 GType webkit_media_common_encryption_decrypt_get_type(void);
+
+bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDecrypt*);
+WeakPtr<WebCore::CDMProxyDecryptionClient> webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(WebKitMediaCommonEncryptionDecrypt*);
 
 struct _WebKitMediaCommonEncryptionDecrypt {
     GstBaseTransform parent;

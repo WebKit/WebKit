@@ -1,5 +1,82 @@
 2021-04-07  Enrique Ocaña González  <eocanha@igalia.com>
 
+        [EME][GStreamer] Abort decryptor operations immediately and without errors on flush
+        https://bugs.webkit.org/show_bug.cgi?id=223742
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        A decryptor transformInPlace() operation can cause potentially long waits in
+        two situations:
+
+        - transformInPlace() is waiting to get the cdmProxy.
+        - The CDMProxy::decrypt() method is internally waiting for a specific key to
+          become available.
+
+        If a seek operation is performed during those long waits, the main thread will
+        be blocked until the seek finishes the conditions those long waits are waiting
+        for will never be fulfilled (because the operations that complete them happen
+        in the main thread, which is blocked), the internal wait timeouts will trigger
+        and the decoder will trigger an unrecoverable error.
+
+        The solution for this is to break the waits by issuing the right notifications,
+        and to detect the flushes performed by the seek, distinguising this special
+        "abort" case from a regular error, so that the situation is no longer
+        unrecoverable.
+
+        This solution involves changes in several layers. A public
+        CDMProxy::abortWaitingForKey() method is exposed to allow the decryptor to
+        awake the inner waitFor() that checks for the key. The cdmProxy wait is also
+        awaken in case there's no cdmProxy available yet.
+
+        In order to distinguish if the awakenings are caused by real errors (no
+        cdmProxy, no key available) or by a flush operation (caused by the seek), the
+        decryptor first needs to keep track of the "flushing" state and allow other
+        objects to know about it. CDMProxy is one of those objects, but due to layer
+        limitations it can't directly ask about it to the decryptor (it can't "see"
+        it).
+
+        A new CDMProxyDecryptionClient interface is created, and the decryptor will
+        hold an implementation of it (as CDMProxyDecryptorClientImplementation).
+        CDMProxy can then know the client isAborting(), and the client will know the
+        decryptor and will ask about it.
+
+        As the pipeline, and thus the decryptor, can be destroyed at any moment,
+        the client holds a WeakPtr to the decryptor and will only ask if isAborting()
+        if the pointer is still alive.
+
+        * platform/encryptedmedia/CDMProxy.cpp:
+        (WebCore::CDMProxy::abortWaitingForKey const): Notify waiting threads.
+        (WebCore::CDMProxy::tryWaitForKeyHandle const): Take a client and ask it if it's aborting.
+        (WebCore::CDMProxy::getOrWaitForKeyHandle const): Pass the client along.
+        (WebCore::CDMProxy::getOrWaitForKeyValue const): Ditto.
+        * platform/encryptedmedia/CDMProxy.h: Declaration and usage of the CDMProxyDecryptionClient interface.
+        * platform/graphics/gstreamer/eme/CDMProxyClearKey.cpp:
+        (WebCore::CDMProxyClearKey::cencSetDecryptionKey): Pass the client along from the context.
+        * platform/graphics/gstreamer/eme/CDMProxyClearKey.h: Store client in the cencDecryptContext.
+        * platform/graphics/gstreamer/eme/CDMProxyThunder.cpp:
+        (WebCore::CDMProxyThunder::getDecryptionSession const): Pass the client along from the context.
+        (WebCore::CDMProxyThunder::decrypt): Abort operations aren't an error, so just trigger a warning if there's no session.
+        * platform/graphics/gstreamer/eme/CDMProxyThunder.h: Store client in DecryptionContext.
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (decrypt): Ask for client to the superclass and store it in the context.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (CDMProxyDecryptionClientImplementation::CDMProxyDecryptionClientImplementation): Implementation of the CDMProxyDecryptionClient interface.
+        (CDMProxyDecryptionClientImplementation::isAborting): Ask if the decryptor is flushing.
+        (constructed): Initialize the client.
+        (transformInPlace): Check the flush status after waiting for the CDMProxy and for the decryption performed by the subclasses. Release the lock when not needed.
+        (isCDMProxyAvailable): Renamed mutex to be more generic.
+        (attachCDMProxy): Ditto. Also renamed condition for the same reason.
+        (sinkEventHandler): Manage isFlushing status and awake waits for cdmProxy or for session depending on the lifecycle stage. 
+        (webKitMediaCommonEncryptionDecryptIsFlushing): Expose isFlushing status.
+        (webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient): Return Weak reference to the client.
+        (changeState): Renamed condition.
+        (setContext): Renamed mutex.
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h: New getters for isFlushing and the client.
+        * platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp:
+        (decrypt): Ask for client to the superclass and store it in the context.
+
+2021-04-07  Enrique Ocaña González  <eocanha@igalia.com>
+
         [GStreamer] Only seek to change the rate un updatePlaybackRate() when needed
         https://bugs.webkit.org/show_bug.cgi?id=224235
 

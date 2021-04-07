@@ -44,7 +44,7 @@ namespace WebCore {
 // NOTE: YouTube 2019 EME conformance tests expect this to be >=5s.
 const WTF::Seconds s_licenseKeyResponseTimeout = WTF::Seconds(6);
 
-BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(const DecryptionContext& in) const
+BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(DecryptionContext& in) const
 {
     GstMappedBuffer mappedKeyID(in.keyIDBuffer, GST_MAP_READ);
     if (!mappedKeyID) {
@@ -54,7 +54,7 @@ BoxPtr<OpenCDMSession> CDMProxyThunder::getDecryptionSession(const DecryptionCon
 
     auto keyID = mappedKeyID.createVector();
 
-    auto keyHandle = getOrWaitForKeyHandle(keyID);
+    auto keyHandle = getOrWaitForKeyHandle(keyID, WTFMove(in.cdmProxyDecryptionClient));
     if (!keyHandle.hasValue() || !keyHandle.value()->isStatusCurrentlyValid())
         return nullptr;
 
@@ -84,7 +84,7 @@ bool CDMProxyThunder::decrypt(CDMProxyThunder::DecryptionContext& input)
 {
     BoxPtr<OpenCDMSession> session = getDecryptionSession(input);
     if (!session) {
-        GST_ERROR("there is no valid session to decrypt for the provided key ID");
+        GST_WARNING("there is no valid session to decrypt for the provided key ID (or the operation was aborted)");
         return false;
     }
 
