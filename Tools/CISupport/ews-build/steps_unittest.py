@@ -46,7 +46,7 @@ from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJ
                    CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch, CompileWebKit,
                    CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
-                   FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, InstallGtkDependencies, InstallWpeDependencies,
+                   FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
                    ReRunWebKitTests, RunAPITests, RunAPITestsWithoutPatch, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                    RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
@@ -836,6 +836,40 @@ class TestKillOldProcesses(BuildStepMixinAdditions, unittest.TestCase):
             + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to kill old processes')
+        return self.runStep()
+
+
+class TestGitResetHard(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(GitResetHard())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['git', 'reset', 'HEAD~10', '--hard'],
+                        logEnviron=False,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Performed git reset --hard')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(GitResetHard())
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['git', 'reset', 'HEAD~10', '--hard'],
+                        logEnviron=False,
+                        )
+            + ExpectShell.log('stdio', stdout='Unexpected error.')
+            + 2,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Performed git reset --hard (failure)')
         return self.runStep()
 
 

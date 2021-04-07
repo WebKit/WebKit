@@ -169,6 +169,18 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
 
+class GitResetHard(shell.ShellCommand):
+    name = 'git-reset-hard'
+    descriptionDone = ['Performed git reset --hard']
+
+    def __init__(self, **kwargs):
+        super(GitResetHard, self).__init__(logEnviron=False, **kwargs)
+
+    def start(self):
+        self.setCommand(['git', 'reset', 'HEAD~10', '--hard'])
+        return shell.ShellCommand.start(self)
+
+
 class FetchBranches(shell.ShellCommand):
     name = 'fetch-branch-references'
     descriptionDone = ['Updated branch information']
@@ -3271,7 +3283,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
                 self.setProperty('retry_count', retry_count + 1)
-                self.build.addStepsAfterCurrentStep([CheckOutSource(), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
+                self.build.addStepsAfterCurrentStep([GitResetHard(), CheckOutSource(), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
                 return rc
 
             self.setProperty('bugzilla_comment_text', self.comment_text_for_bug())
