@@ -1,3 +1,21 @@
+2021-04-06  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION (r275538): [ macOS ] TestWebKitAPI.WebKitLegacy.MediaPlaybackSleepAssertion and TestWebKitAPI.SleepDisabler.Pause consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=224249
+        <rdar://problem/76286539>
+
+        Reviewed by Jer Noble.
+
+        No new tests, this fixes two API tests.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem): Use m_requestedRate
+        when choosing the pitch correction algorithm.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPlayerRate): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPreservesPitch): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPitchCorrectionAlgorithm): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playerItemStatusDidChange): Ditto.
+
 2021-04-06  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after 275571: add declaration for new method (and make the constness match).

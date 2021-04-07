@@ -1134,7 +1134,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     for (NSString *keyName in itemKVOProperties())
         [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:options context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
 
-    [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_cachedRate)];
+    [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
 
 #if HAVE(AVFOUNDATION_INTERSTITIAL_EVENTS)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -1513,8 +1513,7 @@ void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate)
 {
     setDelayCallbacks(true);
 
-    m_cachedRate = rate;
-    [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_cachedRate)];
+    [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
 
     setShouldObserveTimeControlStatus(false);
     [m_avPlayer setRate:rate];
@@ -1552,13 +1551,13 @@ double MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval() const
 void MediaPlayerPrivateAVFoundationObjC::setPreservesPitch(bool preservesPitch)
 {
     if (m_avPlayerItem)
-        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), preservesPitch, m_cachedRate)];
+        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), preservesPitch, m_requestedRate)];
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setPitchCorrectionAlgorithm(MediaPlayer::PitchCorrectionAlgorithm pitchCorrectionAlgorithm)
 {
     if (m_avPlayerItem)
-        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm, player()->preservesPitch(), m_cachedRate)];
+        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(pitchCorrectionAlgorithm, player()->preservesPitch(), m_requestedRate)];
 }
 
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
@@ -3042,7 +3041,7 @@ void MediaPlayerPrivateAVFoundationObjC::playerItemStatusDidChange(int status)
 #if !(PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 101400)
     // FIXME(rdar://72829354): Remove after AVFoundation radar is fixed.
     if (status == AVPlayerItemStatusReadyToPlay)
-        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_cachedRate)];
+        [m_avPlayerItem setAudioTimePitchAlgorithm:audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player()->pitchCorrectionAlgorithm(), player()->preservesPitch(), m_requestedRate)];
 #endif
 
     updateStates();
