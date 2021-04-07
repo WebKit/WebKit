@@ -298,6 +298,14 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #include "RemoteMediaSessionCoordinatorProxy.h"
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKCoordinatorAdditions.h>
+#else
+#define WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
+#define WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
+#define WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
+#endif
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -558,6 +566,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
         process.setIgnoreInvalidMessageForTesting();
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
+#endif
 }
 
 WebPageProxy::~WebPageProxy()
@@ -593,6 +604,10 @@ WebPageProxy::~WebPageProxy()
     
     for (auto& callback : m_nextActivityStateChangeCallbacks)
         callback();
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
+#endif
 }
 
 // FIXME: Should return a const PageClient& and add a separate non-const
@@ -4749,6 +4764,10 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #if ENABLE(REMOTE_INSPECTOR)
     if (frame->isMainFrame())
         remoteInspectorInformationDidChange();
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
 #endif
 }
 

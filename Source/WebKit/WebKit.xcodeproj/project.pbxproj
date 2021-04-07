@@ -1882,6 +1882,7 @@
 		CD78E1191DB7E5AD0014A2DE /* _WKFullscreenDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CD78E1181DB7E5AD0014A2DE /* _WKFullscreenDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD8252DE25D4916C00862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8252DA25D4915400862FD8 /* RemoteRemoteCommandListenerProxyMessageReceiver.cpp */; };
 		CD8252E225D4919100862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD8252E025D4918400862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp */; };
+		CD9549432615917B008372D9 /* WKGroupSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */; };
 		CDA041F41ACE2105004A13EC /* BackBoardServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */; };
 		CDA29A1B1CBDBF4100901CCF /* PlaybackSessionManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */; };
 		CDA29A201CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA29A1E1CBEB5FB00901CCF /* PlaybackSessionManagerProxy.h */; };
@@ -1915,6 +1916,8 @@
 		CDE555332406EB8C008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552A2406B896008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp */; };
 		CDE555342406EB8C008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552E2406B897008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp */; };
 		CDE555352406EB8C008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */; };
+		CDF17C9C260D4B8D00F0A4E8 /* WKCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF17C9A260D4B8D00F0A4E8 /* WKCoordinator.h */; };
+		CDF17C9D260D4B8D00F0A4E8 /* WKCoordinator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF17C9B260D4B8D00F0A4E8 /* WKCoordinator.mm */; };
 		CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */ = {isa = PBXBuildFile; fileRef = CE11AD511CBC482F00681EE5 /* CodeSigning.h */; };
 		CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */; };
 		CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */; };
@@ -2189,6 +2192,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC3DE46515A91763008D26FC;
 			remoteInfo = WebKit2Service;
+		};
+		CD954940261590B4008372D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CD95493426159004008372D9;
+			remoteInfo = WebKitSwift;
 		};
 		E1AC2E2D20F7B98800B0897D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5562,6 +5572,7 @@
 		CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentAsStringIncludesChildFrames.h; sourceTree = "<group>"; };
 		CD003A5019D49B5D005ABCE0 /* WebMediaKeyStorageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebMediaKeyStorageManager.cpp; path = MediaCache/WebMediaKeyStorageManager.cpp; sourceTree = "<group>"; };
 		CD003A5119D49B5D005ABCE0 /* WebMediaKeyStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebMediaKeyStorageManager.h; path = MediaCache/WebMediaKeyStorageManager.h; sourceTree = "<group>"; };
+		CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitSwift.xcconfig; sourceTree = "<group>"; };
 		CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKFullScreenViewController.h; path = ios/fullscreen/WKFullScreenViewController.h; sourceTree = "<group>"; };
 		CD0C6830201FD10100A59409 /* WKFullScreenViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFullScreenViewController.mm; path = ios/fullscreen/WKFullScreenViewController.mm; sourceTree = "<group>"; };
 		CD19A2691A13E820008D650E /* WebDiagnosticLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDiagnosticLoggingClient.cpp; sourceTree = "<group>"; };
@@ -5639,6 +5650,7 @@
 		CD8252DF25D4918400862FD8 /* RemoteRemoteCommandListenerMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerMessagesReplies.h; sourceTree = "<group>"; };
 		CD8252E025D4918400862FD8 /* RemoteRemoteCommandListenerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRemoteCommandListenerMessageReceiver.cpp; sourceTree = "<group>"; };
 		CD8252E125D4918500862FD8 /* RemoteRemoteCommandListenerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRemoteCommandListenerMessages.h; sourceTree = "<group>"; };
+		CD95493526159004008372D9 /* libWebKitSwift.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libWebKitSwift.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDA041F31ACE2105004A13EC /* BackBoardServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackBoardServicesSPI.h; sourceTree = "<group>"; };
 		CDA29A181CBDBF4100901CCF /* PlaybackSessionManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlaybackSessionManager.mm; sourceTree = "<group>"; };
 		CDA29A191CBDBF4100901CCF /* PlaybackSessionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaybackSessionManager.h; sourceTree = "<group>"; };
@@ -5753,6 +5765,9 @@
 		CDE5552F2406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMSessionProxyMessages.h; sourceTree = "<group>"; };
 		CDE555302406B897008A3DDB /* RemoteLegacyCDMSessionMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMSessionMessagesReplies.h; sourceTree = "<group>"; };
 		CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLegacyCDMSessionProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		CDF17C9A260D4B8D00F0A4E8 /* WKCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKCoordinator.h; sourceTree = "<group>"; };
+		CDF17C9B260D4B8D00F0A4E8 /* WKCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCoordinator.mm; sourceTree = "<group>"; };
+		CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WKGroupSession.swift; sourceTree = "<group>"; };
 		CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CodeSigning.mm; sourceTree = "<group>"; };
 		CE11AD511CBC482F00681EE5 /* CodeSigning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSigning.h; sourceTree = "<group>"; };
 		CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCCSPI.h; sourceTree = "<group>"; };
@@ -6036,6 +6051,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CD95493326159004008372D9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -6051,6 +6073,7 @@
 				A16E66002581930800EE1749 /* MediaFormatReader.bundle */,
 				1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
+				CD95493526159004008372D9 /* libWebKitSwift.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6462,6 +6485,7 @@
 				372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
+				CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */,
 				37119A7C20CCB64E002C6DC9 /* WebKitTargetConditionals.xcconfig */,
 			);
 			path = Configurations;
@@ -6927,6 +6951,7 @@
 		1ABC3DF21899E415004F0626 /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				CDF17C93260D3B5200F0A4E8 /* Coordinator */,
 				57FD316B22B3367E008D0E8B /* SOAuthorization */,
 				99C81D551C20DFBE005C4C82 /* AutomationClient.h */,
 				99C81D561C20DFBE005C4C82 /* AutomationClient.mm */,
@@ -11353,6 +11378,17 @@
 			name = fullscreen;
 			sourceTree = "<group>";
 		};
+		CDF17C93260D3B5200F0A4E8 /* Coordinator */ = {
+			isa = PBXGroup;
+			children = (
+				CDF17C9A260D4B8D00F0A4E8 /* WKCoordinator.h */,
+				CDF17C9B260D4B8D00F0A4E8 /* WKCoordinator.mm */,
+				CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */,
+			);
+			name = Coordinator;
+			path = usr/local/include/WebKitAdditions;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		CE1A0BCA1A48E6C60054EF74 /* spi */ = {
 			isa = PBXGroup;
 			children = (
@@ -12590,6 +12626,7 @@
 				BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */,
 				9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */,
 				3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */,
+				CDF17C9C260D4B8D00F0A4E8 /* WKCoordinator.h in Headers */,
 				A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */,
 				512F58FA12A88A5400629530 /* WKCredential.h in Headers */,
 				518ACF1112B015F800B04B83 /* WKCredentialTypes.h in Headers */,
@@ -12922,6 +12959,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CD95493126159004008372D9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -13022,6 +13066,7 @@
 				F4EFBAD522540CBB00049BA6 /* Replace WebKitAdditions in Framework Headers */,
 				1A1D2115191D96380001619F /* Postprocess Framework Headers */,
 				2E16B6F42019BC25008996D6 /* Copy Additional Resources */,
+				CDF17CBE260DAD1B00F0A4E8 /* Copy Additional Sources */,
 				8DC2EF520486A6940098B216 /* Resources */,
 				372589431C1E496800C92CA9 /* Copy Shims */,
 				7CB16FEE1724BA05007A0A95 /* Copy Plug-in Sandbox Profiles */,
@@ -13045,6 +13090,7 @@
 				535E08C422545B7200DF00CA /* PBXBuildRule */,
 			);
 			dependencies = (
+				CD954941261590B4008372D9 /* PBXTargetDependency */,
 				E1AC2E3E20F7B9C000B0897D /* PBXTargetDependency */,
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				2D11BA052126A5AE006F8878 /* PBXTargetDependency */,
@@ -13137,6 +13183,24 @@
 			productReference = BC82841F16B4FDF600A278FE /* com.apple.WebKit.Plugin.64.xpc */;
 			productType = "com.apple.product-type.xpc-service";
 		};
+		CD95493426159004008372D9 /* WebKitSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD95493B26159004008372D9 /* Build configuration list for PBXNativeTarget "WebKitSwift" */;
+			buildPhases = (
+				CD95493126159004008372D9 /* Headers */,
+				CD95493226159004008372D9 /* Sources */,
+				CD95493326159004008372D9 /* Frameworks */,
+				CD954942261590EE008372D9 /* Copy ObjC Interface Header */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WebKitSwift;
+			productName = WebKitSwift;
+			productReference = CD95493526159004008372D9 /* libWebKitSwift.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -13144,18 +13208,24 @@
 			isa = PBXProject;
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
-				LastSwiftUpdateCheck = 0700;
+				LastSwiftUpdateCheck = 1300;
 				LastUpgradeCheck = 1140;
 				TargetAttributes = {
 					5325BDCD21DFF47700A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
 						ProvisioningStyle = Automatic;
 					};
+					8DC2EF4F0486A6940098B216 = {
+						LastSwiftMigration = 1300;
+					};
 					942DB232257EE6D4009BD80A = {
 						CreatedOnToolsVersion = 12.4;
 					};
 					A16E65FF2581930800EE1749 = {
 						CreatedOnToolsVersion = 12.4;
+					};
+					CD95493426159004008372D9 = {
+						CreatedOnToolsVersion = 13.0;
 					};
 					E1AC2E2720F7B94C00B0897D = {
 						CreatedOnToolsVersion = 9.3;
@@ -13178,6 +13248,7 @@
 			targets = (
 				1A50DB38110A3C13000D3FE5 /* All */,
 				8DC2EF4F0486A6940098B216 /* WebKit */,
+				CD95493426159004008372D9 /* WebKitSwift */,
 				2D7DEBD821269C6B00B9F73C /* Generate Unified Sources */,
 				C0CE72851247E66800BC0EC4 /* Derived Sources */,
 				A16E65FF2581930800EE1749 /* MediaFormatReader */,
@@ -13429,6 +13500,9 @@
 			files = (
 			);
 			name = "Copy Additional Resources";
+			outputPaths = (
+				"",
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nRELATIVE_SOURCE_PATH=\"usr/local/include/WebKitAdditions/WebKit/AdditionalResources\"\nSOURCE_PATH=\"$BUILT_PRODUCTS_DIR/$RELATIVE_SOURCE_PATH\"\n\nif [[ ! -d \"$SOURCE_PATH\" ]]; then\n    SOURCE_PATH=\"$SDK_DIR/$RELATIVE_SOURCE_PATH\"\nfi\n\nif [[ -d \"$SOURCE_PATH\" ]]; then\n    ditto $SOURCE_PATH \"$BUILT_PRODUCTS_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\nfi\n";
@@ -13794,6 +13868,50 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/generate-derived-sources.sh\n";
+		};
+		CD954942261590EE008372D9 /* Copy ObjC Interface Header */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(DERIVED_SOURCES_DIR)/$(SWIFT_OBJC_INTERFACE_HEADER_NAME)",
+			);
+			name = "Copy ObjC Interface Header";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/$(TARGET_NAME)/$(SWIFT_OBJC_INTERFACE_HEADER_NAME)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"$WK_HAVE_COORDINATOR\" == \"YES\" ]]\nthen\n    ditto \"${DERIVED_SOURCES_DIR}/${SWIFT_OBJC_INTERFACE_HEADER_NAME}\" \"${BUILT_PRODUCTS_DIR}/usr/local/include/${TARGET_NAME}/${SWIFT_OBJC_INTERFACE_HEADER_NAME}\"\nfi\n";
+		};
+		CDF17CBE260DAD1B00F0A4E8 /* Copy Additional Sources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SDK_DIR)/usr/local/include/WebKitAdditions/WKCoordinator.h",
+				"$(SDK_DIR)/usr/local/include/WebKitAdditions/WKCoordinator.mm",
+				"$(SDK_DIR)/usr/local/include/WebKitAdditions/WKGroupSession.swift",
+			);
+			name = "Copy Additional Sources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKCoordinator.h",
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKCoordinator.mm",
+				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKGroupSession.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "set -e\n\nRELATIVE_SOURCE_PATH=\"usr/local/include/WebKitAdditions\"\nSOURCE_PATH=\"$SDK_DIR/$RELATIVE_SOURCE_PATH\"\nDESTINATION_PATH=\"$BUILT_PRODUCTS_DIR/$RELATIVE_SOURCE_PATH\"\n\nfor SOURCE in WKCoordinator.h WKCoordinator.mm WKGroupSession.swift; do\n    if [[ \"$SOURCE_PATH/$SOURCE\" -nt \"$DESTINATION_PATH/$SOURCE\" ]]; then\n        ditto \"$SOURCE_PATH/$SOURCE\" \"$DESTINATION_PATH/$SOURCE\"\n    fi\ndone\n";
 		};
 		E1AC2E2C20F7B95800B0897D /* Unlock Keychain */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -14297,6 +14415,7 @@
 				C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */,
 				2D931169212F61B200044BFE /* WKContentView.mm in Sources */,
 				2D93116A212F61B500044BFE /* WKContentViewInteraction.mm in Sources */,
+				CDF17C9D260D4B8D00F0A4E8 /* WKCoordinator.mm in Sources */,
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
 				DF84CEE4249AA24D009096F6 /* WKPDFHUDView.mm in Sources */,
@@ -14341,6 +14460,14 @@
 			files = (
 				5CE912132293C279005BEC78 /* AuxiliaryProcessMain.cpp in Sources */,
 				5C9A9114228F69CE005C5B17 /* XPCServiceMain.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD95493226159004008372D9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD9549432615917B008372D9 /* WKGroupSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14452,6 +14579,11 @@
 			target = BC3DE46515A91763008D26FC /* WebContent */;
 			targetProxy = BCA8D46715BCE0D6009DC1F1 /* PBXContainerItemProxy */;
 		};
+		CD954941261590B4008372D9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CD95493426159004008372D9 /* WebKitSwift */;
+			targetProxy = CD954940261590B4008372D9 /* PBXContainerItemProxy */;
+		};
 		E1AC2E2E20F7B98800B0897D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
@@ -14543,7 +14675,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -14551,7 +14690,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -14702,7 +14847,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Production;
 		};
@@ -14861,6 +15012,27 @@
 			baseConfigurationReference = 5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "Derived Sources";
+			};
+			name = Production;
+		};
+		CD95493C26159004008372D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		CD95493D26159004008372D9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		CD95493E26159004008372D9 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */;
+			buildSettings = {
 			};
 			name = Production;
 		};
@@ -15047,6 +15219,16 @@
 				C0CE72861247E66800BC0EC4 /* Debug */,
 				C0CE72871247E66800BC0EC4 /* Release */,
 				C0CE72881247E66800BC0EC4 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		CD95493B26159004008372D9 /* Build configuration list for PBXNativeTarget "WebKitSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD95493C26159004008372D9 /* Debug */,
+				CD95493D26159004008372D9 /* Release */,
+				CD95493E26159004008372D9 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

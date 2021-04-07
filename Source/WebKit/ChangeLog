@@ -1,3 +1,23 @@
+2021-04-07  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add WebKitAdditions sources to project
+        https://bugs.webkit.org/show_bug.cgi?id=223803
+
+        Reviewed by Eric Carlson.
+
+        Enabling swift compilation requires modularization of the WebKit project,
+        but some of the headers in the WebKitLegacy.h umbrella header conflict with
+        filenames in the WebKit project, and can't be included in Objective-C or
+        Swift sources. To work around this issue for now, add "#if defined(__cplusplus)"
+        guards around those headers.
+
+        * Configurations/WebKit.xcconfig:
+        * UIProcess/API/Cocoa/WebKitLegacy.h:
+        * UIProcess/WebBackForwardList.h:
+        * UIProcess/WebPreferences.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebFrame.h:
+
 2021-04-07  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [WPE][GTK] Null pointer dereference when child process exits immediately
