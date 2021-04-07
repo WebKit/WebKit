@@ -4,8 +4,6 @@
 *.pyc
 .DS_Store
 .directory
-build/
-!/PerformanceTests/Speedometer/**/build/
 /WebKitBuild/
 /test262-results/
 autoinstall.cache.d

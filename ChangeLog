@@ -1,3 +1,18 @@
+2021-04-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        .gitignore contains 'build/' which causes all directories named 'build/' to be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=224227
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove 'build/' from .gitignore, it was causing errors by hiding files.
+        WebGL conformance test suite files have directiories with 'build/' in its path.
+
+        Most likely '/build/' is not a common build directory, since the scripts
+        seem to default to '/WebKitBuild/'.
+
+        * .gitignore:
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r275275): Broke some build configs lacking openh264
