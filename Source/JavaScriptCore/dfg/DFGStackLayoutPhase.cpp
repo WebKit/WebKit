@@ -111,7 +111,7 @@ public:
                     CallFrameSlot::argumentCountIncludingThis + inlineCallFrame->stackOffset), true);
             }
             
-            for (unsigned argument = inlineCallFrame->argumentsWithFixup.size(); argument--;) {
+            for (unsigned argument = inlineCallFrame->m_argumentsWithFixup.size(); argument--;) {
                 usedOperands.setOperand(VirtualRegister(
                     virtualRegisterForArgumentIncludingThis(argument).offset() +
                     inlineCallFrame->stackOffset), true);
@@ -178,7 +178,7 @@ public:
             if (inlineCallFrame->isVarargs())
                 inlineCallFrame->argumentCountRegister = assign(usedOperands, allocation, VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCountIncludingThis));
 
-            for (unsigned argument = inlineCallFrame->argumentsWithFixup.size(); argument--;) {
+            for (unsigned argument = inlineCallFrame->m_argumentsWithFixup.size(); argument--;) {
                 ArgumentPosition& position = m_graph.m_argumentPositions[
                     data.argumentPositionStart + argument];
                 VariableAccessData* variable = position.someVariable();
@@ -189,7 +189,7 @@ public:
                     source = ValueSource::forFlushFormat(
                         variable->machineLocal(), variable->flushFormat());
                 }
-                inlineCallFrame->argumentsWithFixup[argument] = source.valueRecovery();
+                inlineCallFrame->m_argumentsWithFixup[argument] = source.valueRecovery();
             }
             
             RELEASE_ASSERT(inlineCallFrame->isClosureCall == !!data.calleeVariable);

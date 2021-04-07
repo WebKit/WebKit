@@ -122,8 +122,8 @@ void emitSetupVarargsFrameFastCase(VM& vm, CCallHelpers& jit, GPRReg numUsedSlot
         } else {
             argumentCountRecovery = ValueRecovery::constant(jsNumber(inlineCallFrame->argumentCountIncludingThis));
         }
-        if (inlineCallFrame->argumentsWithFixup.size() > 1)
-            firstArgumentReg = inlineCallFrame->argumentsWithFixup[1].virtualRegister();
+        if (inlineCallFrame->m_argumentsWithFixup.size() > 1)
+            firstArgumentReg = inlineCallFrame->m_argumentsWithFixup[1].virtualRegister();
         else
             firstArgumentReg = VirtualRegister(0);
     } else {

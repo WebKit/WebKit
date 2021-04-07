@@ -5447,7 +5447,7 @@ private:
         TypedPointer base;
         if (inlineCallFrame) {
             if (inlineCallFrame->argumentCountIncludingThis > 1)
-                base = addressFor(inlineCallFrame->argumentsWithFixup[0].virtualRegister());
+                base = addressFor(inlineCallFrame->m_argumentsWithFixup[0].virtualRegister());
         } else
             base = addressFor(virtualRegisterForArgumentIncludingThis(0));
         

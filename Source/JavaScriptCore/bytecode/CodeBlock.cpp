@@ -454,8 +454,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             for (size_t i = 0; i < count; i++) {
                 UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->switchJumpTable(i);
                 SimpleJumpTable& destTable = m_rareData->m_switchJumpTables[i];
-                destTable.branchOffsets.resizeToFit(sourceTable.branchOffsets.size());
-                std::copy(sourceTable.branchOffsets.begin(), sourceTable.branchOffsets.end(), destTable.branchOffsets.begin());
+                destTable.branchOffsets = sourceTable.branchOffsets;
                 destTable.min = sourceTable.min;
             }
         }

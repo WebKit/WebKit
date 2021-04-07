@@ -575,7 +575,7 @@ private:
                 break;
             if (operand.offset() < static_cast<int>(inlineCallFrame->stackOffset + CallFrame::headerSizeInRegisters))
                 continue;
-            if (operand.offset() >= static_cast<int>(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset() + inlineCallFrame->argumentsWithFixup.size()))
+            if (operand.offset() >= static_cast<int>(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset() + inlineCallFrame->m_argumentsWithFixup.size()))
                 continue;
             int argument = VirtualRegister(operand.offset() - inlineCallFrame->stackOffset).toArgument();
             return stack->m_argumentPositions[argument];
@@ -598,7 +598,7 @@ private:
         int numArguments;
         if (inlineCallFrame) {
             ASSERT(!m_graph.hasDebuggerEnabled());
-            numArguments = inlineCallFrame->argumentsWithFixup.size();
+            numArguments = inlineCallFrame->m_argumentsWithFixup.size();
             if (inlineCallFrame->isClosureCall)
                 addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, CallFrameSlot::callee));
             if (inlineCallFrame->isVarargs())
@@ -8146,7 +8146,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* argument;
             int32_t argumentIndexIncludingThis = bytecode.m_index;
             if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
-                int32_t argumentCountIncludingThisWithFixup = inlineCallFrame->argumentsWithFixup.size();
+                int32_t argumentCountIncludingThisWithFixup = inlineCallFrame->m_argumentsWithFixup.size();
                 if (argumentIndexIncludingThis < argumentCountIncludingThisWithFixup)
                     argument = get(virtualRegisterForArgumentIncludingThis(argumentIndexIncludingThis));
                 else
@@ -8524,7 +8524,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         } else
             m_inlineCallFrame->isClosureCall = true;
         m_inlineCallFrame->directCaller = byteCodeParser->currentCodeOrigin();
-        m_inlineCallFrame->argumentsWithFixup.resizeToFit(argumentCountIncludingThisWithFixup); // Set the number of arguments including this, but don't configure the value recoveries, yet.
+        m_inlineCallFrame->m_argumentsWithFixup = FixedVector<ValueRecovery>(argumentCountIncludingThisWithFixup); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         m_inlineCallFrame->kind = kind;
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());

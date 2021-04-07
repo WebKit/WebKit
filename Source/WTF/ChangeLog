@@ -1,3 +1,16 @@
+2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector more in bytecode dir and JumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=224275
+
+        Reviewed by Michael Saboff and Mark Lam.
+
+        * wtf/FixedVector.h:
+        (WTF::FixedVector::offsetOfStorage):
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::Header::size):
+        (WTF::RefCountedArray::Header::offsetOfLength):
+
 2021-04-07  Alex Christensen  <achristensen@webkit.org>
 
         Use os_transaction_create instead of deprecated xpc_transaction_begin/end

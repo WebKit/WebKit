@@ -175,7 +175,7 @@ struct InlineCallFrame {
         return caller ? caller->inlineCallFrame() : nullptr;
     }
     
-    Vector<ValueRecovery> argumentsWithFixup; // Includes 'this' and arity fixups.
+    FixedVector<ValueRecovery> m_argumentsWithFixup; // Includes 'this' and arity fixups.
     WriteBarrier<CodeBlock> baselineCodeBlock;
     CodeOrigin directCaller;
 

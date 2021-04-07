@@ -1,3 +1,58 @@
+2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector more in bytecode dir and JumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=224275
+
+        Reviewed by Michael Saboff and Mark Lam.
+
+        1. Use FixedVector more in bytecode/ directory's long-living data structures.
+        2. Use FixedVector in SimpleJumpTable. This involves LLInt changes because we need to access FixedVector data from LLInt.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::dumpInContext const):
+        * bytecode/InlineCallFrame.h:
+        * bytecode/JumpTable.h:
+        (JSC::SimpleJumpTable::clear):
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::mergedWith const):
+        (JSC::ObjectPropertyConditionSet::dumpInContext const):
+        (JSC::ObjectPropertyConditionSet::isValidAndWatchable const):
+        * bytecode/ObjectPropertyConditionSet.h:
+        (JSC::ObjectPropertyConditionSet::create):
+        (JSC::ObjectPropertyConditionSet::isValid const):
+        (JSC::ObjectPropertyConditionSet::size const):
+        (JSC::ObjectPropertyConditionSet::begin const):
+        (JSC::ObjectPropertyConditionSet::end const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+        (JSC::DFG::ByteCodeParser::flushImpl):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::validateReferences):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::argumentsStart):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createWithInlineFrame):
+
 2021-04-07  Mark Lam  <mark.lam@apple.com>
 
         Fix a typo in JITUncoughtExceptionAfterCall.

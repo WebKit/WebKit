@@ -271,10 +271,12 @@ private:
         unsigned refCount;
         unsigned length;
         
-        static size_t size()
+        static constexpr size_t size()
         {
             return (sizeof(Header) + 7) & ~7;
         }
+
+        static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Header, length); }
         
         T* payload()
         {

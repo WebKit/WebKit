@@ -2184,9 +2184,10 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     addp t3, t2
     bqb t1, numberTag, .opSwitchImmNotInt
     subi SimpleJumpTable::min[t2], t1
-    biaeq t1, SimpleJumpTable::branchOffsets + VectorSizeOffset[t2], .opSwitchImmFallThrough
-    loadp SimpleJumpTable::branchOffsets + VectorBufferOffset[t2], t3
-    loadis [t3, t1, 4], t1
+    loadp SimpleJumpTable::branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    btpz t2, .opSwitchImmFallThrough
+    biaeq t1, RefCountedArrayStorageNonNullSizeOffset[t2], .opSwitchImmFallThrough
+    loadis [t2, t1, 4], t1
     btiz t1, .opSwitchImmFallThrough
     dispatchIndirect(t1)
 
@@ -2223,8 +2224,9 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     loadb [t1], t0
 .opSwitchCharReady:
     subi SimpleJumpTable::min[t2], t0
-    biaeq t0, SimpleJumpTable::branchOffsets + VectorSizeOffset[t2], .opSwitchCharFallThrough
-    loadp SimpleJumpTable::branchOffsets + VectorBufferOffset[t2], t2
+    loadp SimpleJumpTable::branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    btpz t2, .opSwitchCharFallThrough
+    biaeq t0, RefCountedArrayStorageNonNullSizeOffset[t2], .opSwitchCharFallThrough
     loadis [t2, t0, 4], t1
     btiz t1, .opSwitchCharFallThrough
     dispatchIndirect(t1)

@@ -112,6 +112,8 @@ public:
         m_storage.swap(other.m_storage);
     }
 
+    static ptrdiff_t offsetOfStorage() { return OBJECT_OFFSETOF(FixedVector, m_storage); }
+
 private:
     friend class JSC::LLIntOffsetsExtractor;
 

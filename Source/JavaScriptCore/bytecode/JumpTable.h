@@ -78,7 +78,7 @@ namespace JSC {
 
     struct SimpleJumpTable {
         // FIXME: The two Vectors can be combined into one Vector<OffsetLocation>
-        Vector<int32_t> branchOffsets;
+        FixedVector<int32_t> branchOffsets;
         int32_t min { INT32_MIN };
 #if ENABLE(JIT)
         Vector<CodeLocationLabel<JSSwitchPtrTag>> ctiOffsets;
@@ -115,7 +115,7 @@ namespace JSC {
 #if ENABLE(DFG_JIT)
         void clear()
         {
-            branchOffsets.clear();
+            branchOffsets = FixedVector<int32_t>();
             ctiOffsets.clear();
         }
 #endif

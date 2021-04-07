@@ -613,6 +613,8 @@ const BlackThreshold = constexpr blackThreshold
 const VectorBufferOffset = Vector::m_buffer
 const VectorSizeOffset = Vector::m_size
 
+const RefCountedArrayStorageNonNullSizeOffset = -(constexpr (RefCountedArray::Header::size())) + RefCountedArray::Header::length
+
 # Some common utilities.
 macro crash()
     if C_LOOP or C_LOOP_WIN

@@ -1194,7 +1194,7 @@ bool Graph::isLiveInBytecode(Operand operand, CodeOrigin codeOrigin)
         // Arguments are always live. This would be redundant if it wasn't for our
         // op_call_varargs inlining.
         if (inlineCallFrame && reg.isArgument()
-            && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->argumentsWithFixup.size()) {
+            && static_cast<size_t>(reg.toArgument()) < inlineCallFrame->m_argumentsWithFixup.size()) {
             if (verbose)
                 dataLog("Argument is live.\n");
             return true;
