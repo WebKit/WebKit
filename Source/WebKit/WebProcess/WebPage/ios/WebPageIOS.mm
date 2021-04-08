@@ -1516,23 +1516,24 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
     Optional<SimpleRange> range;
 
     constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowVisibleChildFrameContentOnly };
-    HitTestResult hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, hitType);
-    if (hitTest.targetNode())
-        result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), hitTest.targetNode()).deepEquivalent();
+    auto hitTest = frame.eventHandler().hitTestResultAtPoint(pointInDocument, hitType);
+    auto targetNode = makeRefPtr(hitTest.targetNode());
+    if (targetNode)
+        result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), targetNode.get()).deepEquivalent();
     else
         result = frame.visiblePositionForPoint(pointInDocument).deepEquivalent();
     
     if (baseIsStart) {
         if (result <= selectionStart)
             result = selectionStart.next();
-        else if (&selectionStart.deepEquivalent().anchorNode()->treeScope() != &hitTest.targetNode()->treeScope())
+        else if (targetNode && selectionStart.deepEquivalent().treeScope() != &targetNode->treeScope())
             result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), selectionStart.deepEquivalent().containerNode());
 
         range = makeSimpleRange(selectionStart, result);
     } else {
         if (selectionEnd <= result)
             result = selectionEnd.previous();
-        else if (&hitTest.targetNode()->treeScope() != &selectionEnd.deepEquivalent().anchorNode()->treeScope())
+        else if (targetNode && selectionEnd.deepEquivalent().treeScope() != &targetNode->treeScope())
             result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), selectionEnd.deepEquivalent().containerNode());
 
         range = makeSimpleRange(result, selectionEnd);
