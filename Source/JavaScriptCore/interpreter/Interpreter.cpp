@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -607,7 +607,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = nullptr;
-    UnwindFunctor functor(vm, callFrame, isTerminatedExecutionException(vm, exception), codeBlock, handler);
+    UnwindFunctor functor(vm, callFrame, vm.isTerminationException(exception), codeBlock, handler);
     StackVisitor::visit<StackVisitor::TerminateIfTopEntryFrameIsEmpty>(callFrame, vm, functor);
     if (vm.hasCheckpointOSRSideState())
         vm.popAllCheckpointOSRSideStateUntil(callFrame);
@@ -620,6 +620,8 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
 
 void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, Exception* exception)
 {
+    ASSERT(!vm.isTerminationException(exception));
+
     Debugger* debugger = globalObject->debugger();
     if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
         // This code assumes that if the debugger is enabled then there is no inlining.
@@ -627,17 +629,11 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* gl
         // frames.
         // https://bugs.webkit.org/show_bug.cgi?id=121754
 
-        bool hasCatchHandler;
-        bool isTermination = isTerminatedExecutionException(vm, exception);
-        if (isTermination)
-            hasCatchHandler = false;
-        else {
-            GetCatchHandlerFunctor functor;
-            StackVisitor::visit(callFrame, vm, functor);
-            HandlerInfo* handler = functor.handler();
-            ASSERT(!handler || handler->isCatchHandler());
-            hasCatchHandler = !!handler;
-        }
+        GetCatchHandlerFunctor functor;
+        StackVisitor::visit(callFrame, vm, functor);
+        HandlerInfo* handler = functor.handler();
+        ASSERT(!handler || handler->isCatchHandler());
+        bool hasCatchHandler = !!handler;
 
         debugger->exception(globalObject, callFrame, exception->value(), hasCatchHandler);
     }

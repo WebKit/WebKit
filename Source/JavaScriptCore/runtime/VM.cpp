@@ -432,7 +432,6 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     smallStrings.initializeCommonStrings(*this);
 
     propertyNames = new CommonIdentifiers(*this);
-    terminatedExecutionErrorStructure.set(*this, TerminatedExecutionError::createStructure(*this, nullptr, jsNull()));
     propertyNameEnumeratorStructure.set(*this, JSPropertyNameEnumerator::createStructure(*this, nullptr, jsNull()));
     getterSetterStructure.set(*this, GetterSetter::createStructure(*this, nullptr, jsNull()));
     customGetterSetterStructure.set(*this, CustomGetterSetter::createStructure(*this, nullptr, jsNull()));
@@ -741,8 +740,10 @@ VM*& VM::sharedInstanceInternal()
 
 Watchdog& VM::ensureWatchdog()
 {
-    if (!m_watchdog)
+    if (!m_watchdog) {
         m_watchdog = adoptRef(new Watchdog(this));
+        ensureTerminationException();
+    }
     return *m_watchdog;
 }
 
@@ -761,6 +762,17 @@ SamplingProfiler& VM::ensureSamplingProfiler(Ref<Stopwatch>&& stopwatch)
     return *m_samplingProfiler;
 }
 #endif // ENABLE(SAMPLING_PROFILER)
+
+static SymbolImpl::StaticSymbolImpl terminationErrorSymbol { "TerminationError", SymbolImpl::s_flagIsPrivate };
+
+Exception* VM::ensureTerminationException()
+{
+    if (!m_terminationException) {
+        Symbol* terminationError = Symbol::create(*this, terminationErrorSymbol);
+        m_terminationException = Exception::create(*this, terminationError, Exception::DoNotCaptureStack);
+    }
+    return m_terminationException;
+}
 
 #if ENABLE(JIT)
 static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
@@ -946,8 +958,25 @@ void VM::clearSourceProviderCaches()
     sourceProviderCacheMap.clear();
 }
 
-Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception)
+void VM::throwTerminationException()
 {
+    setException(terminationException());
+}
+
+Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exceptionToThrow)
+{
+    // The TerminationException is not like ordinary exceptions that should be
+    // reported to the debugger. The fact that the TerminationException uses the
+    // exception handling mechanism is just a VM internal implementation detail.
+    // It is not meaningful to report it to the debugger as an exception.
+    if (isTerminationException(exceptionToThrow)) {
+        // Note: we can only get here is we're just re-throwing the TerminationException
+        // from C++ functions to propagate it. If we're throwing it for the first
+        // time, we would have gone through VM::throwTerminationException().
+        setException(exceptionToThrow);
+        return exceptionToThrow;
+    }
+
     CallFrame* throwOriginFrame = topJSCallFrame();
     if (!throwOriginFrame)
         throwOriginFrame = globalObject->deprecatedCallFrameForDebugger();
@@ -958,15 +987,15 @@ Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exception
         CRASH();
     }
 
-    interpreter->notifyDebuggerOfExceptionToBeThrown(*this, globalObject, throwOriginFrame, exception);
+    interpreter->notifyDebuggerOfExceptionToBeThrown(*this, globalObject, throwOriginFrame, exceptionToThrow);
 
-    setException(exception);
+    setException(exceptionToThrow);
 
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     m_nativeStackTraceOfLastThrow = StackTrace::captureStackTrace(Options::unexpectedExceptionStackTraceLimit());
     m_throwingThread = &Thread::current();
 #endif
-    return exception;
+    return exceptionToThrow;
 }
 
 Exception* VM::throwException(JSGlobalObject* globalObject, JSValue thrownValue)

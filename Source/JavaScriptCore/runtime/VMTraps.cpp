@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -380,8 +380,7 @@ void VMTraps::handleTraps(JSGlobalObject* globalObject, CallFrame* callFrame, VM
             FALLTHROUGH;
 
         case NeedTermination:
-            throwException(globalObject, scope, createTerminatedExecutionException(&vm));
-            return;
+            RELEASE_AND_RETURN(scope, vm.throwTerminationException());
 
         default:
             RELEASE_ASSERT_NOT_REACHED();

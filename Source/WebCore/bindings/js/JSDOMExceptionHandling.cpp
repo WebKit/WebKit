@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2020 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2013 Michael Pruett <michael@68k.org>
  *
@@ -94,7 +94,7 @@ void reportException(JSGlobalObject* lexicalGlobalObject, JSC::Exception* except
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
-    if (isTerminatedExecutionException(vm, exception))
+    if (vm.isTerminationException(exception))
         return;
 
     ErrorHandlingScope errorScope(lexicalGlobalObject->vm());

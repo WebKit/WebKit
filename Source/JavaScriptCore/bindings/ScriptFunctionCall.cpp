@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -127,7 +127,7 @@ Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
 
     if (exception) {
         // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.
-        if (!isTerminatedExecutionException(vm, exception))
+        if (!vm.isTerminationException(exception))
             return makeUnexpected(exception);
         return { };
     }

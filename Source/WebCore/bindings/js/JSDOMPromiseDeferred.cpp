@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,7 +129,8 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
     ASSERT(deferred());
     ASSERT(m_globalObject);
     auto& lexicalGlobalObject = *m_globalObject;
-    JSC::JSLockHolder locker(&lexicalGlobalObject);
+    JSC::VM& vm = lexicalGlobalObject.vm();
+    JSC::JSLockHolder locker(vm);
 
     if (exception.code() == ExistingExceptionError) {
         auto scope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
@@ -143,10 +144,10 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
         return;
     }
 
-    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto error = createDOMException(lexicalGlobalObject, WTFMove(exception));
     if (UNLIKELY(scope.exception())) {
-        ASSERT(isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+        ASSERT(vm.isTerminationException(scope.exception()));
         return;
     }
 
@@ -162,10 +163,11 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
     ASSERT(deferred());
     ASSERT(m_globalObject);
     auto& lexicalGlobalObject = *m_globalObject;
-    JSC::JSLockHolder locker(&lexicalGlobalObject);
+    JSC::VM& vm = lexicalGlobalObject.vm();
+    JSC::JSLockHolder locker(vm);
 
     if (ec == ExistingExceptionError) {
-        auto scope = DECLARE_CATCH_SCOPE(lexicalGlobalObject.vm());
+        auto scope = DECLARE_CATCH_SCOPE(vm);
 
         EXCEPTION_ASSERT(scope.exception());
 
@@ -176,10 +178,10 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
         return;
     }
 
-    auto scope = DECLARE_THROW_SCOPE(lexicalGlobalObject.vm());
+    auto scope = DECLARE_THROW_SCOPE(vm);
     auto error = createDOMException(&lexicalGlobalObject, ec, message);
     if (UNLIKELY(scope.exception())) {
-        ASSERT(isTerminatedExecutionException(lexicalGlobalObject.vm(), scope.exception()));
+        ASSERT(vm.isTerminationException(scope.exception()));
         return;
     }
 

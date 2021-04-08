@@ -73,7 +73,6 @@ class ThrowScope;
 struct HashTable;
 struct HashTableValue;
 
-JS_EXPORT_PRIVATE bool isTerminatedExecutionException(VM&, Exception*);
 JS_EXPORT_PRIVATE Exception* throwTypeError(JSGlobalObject*, ThrowScope&, const String&);
 extern JS_EXPORT_PRIVATE const ASCIILiteral NonExtensibleObjectPropertyDefineError;
 extern JS_EXPORT_PRIVATE const ASCIILiteral ReadonlyPropertyWriteError;
@@ -1497,7 +1496,7 @@ inline JSValue JSObject::get(JSGlobalObject* globalObject, PropertyName property
     PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
     bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
 
-    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(vm, scope.exception()) || !hasProperty);
+    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()) || !hasProperty);
     RETURN_IF_EXCEPTION(scope, jsUndefined());
 
     if (hasProperty)
@@ -1513,7 +1512,7 @@ inline JSValue JSObject::get(JSGlobalObject* globalObject, unsigned propertyName
     PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
     bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(globalObject, propertyName, slot);
 
-    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(vm, scope.exception()) || !hasProperty);
+    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()) || !hasProperty);
     RETURN_IF_EXCEPTION(scope, jsUndefined());
 
     if (hasProperty)

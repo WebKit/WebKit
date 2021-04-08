@@ -1,3 +1,73 @@
+2021-04-07  Mark Lam  <mark.lam@apple.com>
+
+        Rename and make the TerminationException a singleton.
+        https://bugs.webkit.org/show_bug.cgi?id=224295
+
+        Reviewed by Keith Miller.
+
+        We previously call it the TerminatedExecutionException, which is a mouthful but
+        adds no meaningful information.  It's now renamed to TerminationException.
+
+        We can make it a singleton because the TerminationException is just a VM internal
+        mechanism for implementing the termination of the current execution stack.  It
+        should never be exposed to user JS code, and therefore, there is no value in
+        making it a JS object.  Making it a singleton simplifies the code.
+
+        A TerminationException is now implemented as an Exception cell which holds a
+        Symbol with the name "TerminationError".  The TerminationException is only created
+        if needed e.g. if the JSC watchdog is created, or if the VM is for a Worker thread
+        which needs to be able to handle termination requests.
+
+        We'll also stop notifying the debugger when we throw the TerminationException.
+        This is because the TerminationException is not like ordinary exceptions that
+        should be reported to the debugger. The fact that the TerminationException uses
+        the exception handling mechanism is just a VM internal implementation detail.
+        It is not meaningful to report it to the debugger as an exception.
+
+        * API/JSContext.mm:
+        (-[JSContext evaluateJSScript:]):
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptFor):
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::notifyDebuggerOfExceptionToBeThrown):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jsc.cpp:
+        (checkException):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::TerminatedExecutionError::defaultValue): Deleted.
+        (JSC::createTerminatedExecutionException): Deleted.
+        (JSC::isTerminatedExecutionException): Deleted.
+        (JSC::throwTerminatedExecutionException): Deleted.
+        * runtime/ExceptionHelpers.h:
+        (): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::get const):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::rejectWithCaughtException):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::ensureWatchdog):
+        (JSC::VM::ensureTerminationException):
+        (JSC::VM::throwTerminationException):
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::terminationException const):
+        (JSC::VM::isTerminationException const):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::handleTraps):
+
 2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use FixedVector more in bytecode dir and JumpTable

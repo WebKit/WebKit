@@ -3519,7 +3519,7 @@ JSC_DEFINE_JIT_OPERATION(operationCheckIfExceptionIsUncatchableAndNotifyProfiler
     auto scope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(!!scope.exception());
 
-    if (isTerminatedExecutionException(vm, scope.exception())) {
+    if (vm.isTerminationException(scope.exception())) {
         genericUnwind(vm, callFrame);
         return 1;
     }

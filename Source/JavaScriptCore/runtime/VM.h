@@ -338,6 +338,20 @@ public:
     WeakRandom& random() { return m_random; }
     Integrity::Random& integrityRandom() { return m_integrityRandom; }
 
+    JS_EXPORT_PRIVATE Exception* ensureTerminationException();
+    Exception* terminationException() const
+    {
+        ASSERT(m_terminationException);
+        return m_terminationException;
+    }
+    bool isTerminationException(Exception* exception) const
+    {
+        ASSERT(exception);
+        return exception == m_terminationException;
+    }
+
+    void throwTerminationException();
+
 private:
     unsigned nextID();
 
@@ -664,7 +678,6 @@ public:
 #endif
     Strong<Structure> structureStructure;
     Strong<Structure> structureRareDataStructure;
-    Strong<Structure> terminatedExecutionErrorStructure;
     Strong<Structure> stringStructure;
     Strong<Structure> propertyNameEnumeratorStructure;
     Strong<Structure> getterSetterStructure;
@@ -1078,6 +1091,7 @@ public:
     bool needTrapHandling(VMTraps::Mask mask) { return m_traps.needTrapHandling(mask); }
     void* needTrapHandlingAddress() { return m_traps.needTrapHandlingAddress(); }
 
+    // These may be called concurrently from another thread.
     void notifyNeedDebuggerBreak() { m_traps.fireTrap(VMTraps::NeedDebuggerBreak); }
     void notifyNeedShellTimeoutCheck() { m_traps.fireTrap(VMTraps::NeedShellTimeoutCheck); }
     void notifyNeedTermination() { m_traps.fireTrap(VMTraps::NeedTermination); }
@@ -1186,6 +1200,7 @@ private:
     void* m_lastStackTop { nullptr };
 
     Exception* m_exception { nullptr };
+    Exception* m_terminationException { nullptr };
     Exception* m_lastException { nullptr };
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
     ExceptionScope* m_topExceptionScope { nullptr };

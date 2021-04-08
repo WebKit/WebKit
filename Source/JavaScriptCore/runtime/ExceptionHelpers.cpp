@@ -39,30 +39,6 @@
 
 namespace JSC {
 
-STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TerminatedExecutionError);
-
-const ClassInfo TerminatedExecutionError::s_info = { "TerminatedExecutionError", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TerminatedExecutionError) };
-
-JSValue TerminatedExecutionError::defaultValue(const JSObject*, JSGlobalObject* globalObject, PreferredPrimitiveType hint)
-{
-    if (hint == PreferString)
-        return jsNontrivialString(globalObject->vm(), String("JavaScript execution terminated."_s));
-    return JSValue(PNaN);
-}
-
-JSObject* createTerminatedExecutionException(VM* vm)
-{
-    return TerminatedExecutionError::create(*vm);
-}
-
-bool isTerminatedExecutionException(VM& vm, Exception* exception)
-{
-    if (!exception->value().isObject())
-        return false;
-
-    return exception->value().inherits<TerminatedExecutionError>(vm);
-}
-
 JSObject* createStackOverflowError(JSGlobalObject* globalObject)
 {
     auto* error = createRangeError(globalObject, "Maximum call stack size exceeded."_s);
@@ -383,13 +359,6 @@ Exception* throwStackOverflowError(JSGlobalObject* globalObject, ThrowScope& sco
     VM& vm = globalObject->vm();
     ErrorHandlingScope errorScope(vm);
     return throwException(globalObject, scope, createStackOverflowError(globalObject));
-}
-
-Exception* throwTerminatedExecutionException(JSGlobalObject* globalObject, ThrowScope& scope)
-{
-    VM& vm = globalObject->vm();
-    ErrorHandlingScope errorScope(vm);
-    return throwException(globalObject, scope, createTerminatedExecutionException(&vm));
 }
 
 } // namespace JSC
