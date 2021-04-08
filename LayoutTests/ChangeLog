@@ -1,5 +1,36 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r271549. rdar://problem/76375033
+
+    Release assert in Document::updateStyleIfNeeded() via PrintContext::end() inside HTMLTitleElement::insertedIntoAncestor and removedFromAncestor
+    https://bugs.webkit.org/show_bug.cgi?id=218496
+    
+    Reviewed by Darin Adler.
+    
+    Remove the title element to eliminiate the non-determinism.
+    
+    * http/tests/loading/redirect-with-no-location-crash-expected.txt:
+    * http/tests/loading/redirect-with-no-location-crash.html:
+    * platform/wk2/http/tests/loading/redirect-with-no-location-crash-expected.txt:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@271549 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Release assert in Document::updateStyleIfNeeded() via PrintContext::end() inside HTMLTitleElement::insertedIntoAncestor and removedFromAncestor
+            https://bugs.webkit.org/show_bug.cgi?id=218496
+
+            Reviewed by Darin Adler.
+
+            Remove the title element to eliminiate the non-determinism.
+
+            * http/tests/loading/redirect-with-no-location-crash-expected.txt:
+            * http/tests/loading/redirect-with-no-location-crash.html:
+            * platform/wk2/http/tests/loading/redirect-with-no-location-crash-expected.txt:
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271514. rdar://problem/76375033
 
     Use event loop to set title
