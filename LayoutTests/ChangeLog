@@ -1,5 +1,45 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275535. rdar://problem/76375208
+
+    WebCrypto in Safari will not AES-GCM encrypt 0 bytes
+    https://bugs.webkit.org/show_bug.cgi?id=224083
+    <rdar://75093377>
+    
+    Reviewed by Youenn Fablet.
+    
+    Source/WebCore:
+    
+    CommonCrypto will bail out both the encryption and decryption process if the dataOut is a null pointer.
+    To workaround the issue, this patch forces the dataOut to be a non-null pointer.
+    
+    Test: crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text.html
+    
+    * crypto/mac/CryptoAlgorithmAES_GCMMac.cpp:
+    (WebCore::encryptAES_GCM):
+    (WebCore::decyptAES_GCM):
+    
+    LayoutTests:
+    
+    * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text-expected.txt: Added.
+    * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275535 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+            WebCrypto in Safari will not AES-GCM encrypt 0 bytes
+            https://bugs.webkit.org/show_bug.cgi?id=224083
+            <rdar://75093377>
+
+            Reviewed by Youenn Fablet.
+
+            * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text-expected.txt: Added.
+            * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text.html: Added.
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275300. rdar://problem/76375624
 
     In case WebRTC VTB decoder returns a null frame, mark the decoder as failing
