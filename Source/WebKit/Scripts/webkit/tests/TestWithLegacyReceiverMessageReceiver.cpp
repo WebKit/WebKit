@@ -131,7 +131,7 @@ void TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage(IPC::Connec
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
-    ASSERT_NOT_REACHED();
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %llu", description(decoder.messageName()), decoder.destinationID());
 }
 
 bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
@@ -154,7 +154,7 @@ bool TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage(IPC::Co
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);
-    ASSERT_NOT_REACHED();
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %llu", description(decoder.messageName()), decoder.destinationID());
     return false;
 }
 
