@@ -1,3 +1,20 @@
+2021-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Streams: new test failure for canceling the branches of an errored tee'd stream
+        https://bugs.webkit.org/show_bug.cgi?id=223558
+        <rdar://problem/75924807>
+
+        Reviewed by Alex Christensen.
+
+        Rebased from WPT ToT.
+
+        * web-platform-tests/streams/readable-streams/tee.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.any.js:
+        (promise_test.async const):
+        (promise_test):
+        (promise_test.async t):
+        * web-platform-tests/streams/readable-streams/tee.any.worker-expected.txt:
+
 2021-04-06  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][Integration] Enable inline box support (RenderInline)

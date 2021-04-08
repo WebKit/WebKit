@@ -1,3 +1,18 @@
+2021-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Streams: new test failure for canceling the branches of an errored tee'd stream
+        https://bugs.webkit.org/show_bug.cgi?id=223558
+        <rdar://problem/75924807>
+
+        Reviewed by Alex Christensen.
+
+        Align with latest version of the spec.
+        Covered by updated test.
+
+        * Modules/streams/ReadableStreamInternals.js:
+        (readableStreamTee):
+        (readableStreamTeePullFunction):
+
 2021-04-08  Andres Gonzalez  <andresg_22@apple.com>
 
         VoiceOver does not echo text insertions and deletions when a contenteditable div has a non editable descendant element with a content editable child
