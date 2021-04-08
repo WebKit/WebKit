@@ -161,7 +161,7 @@ unsigned FormElementKeyHash::hash(const FormElementKey& key)
     return StringHasher::hashMemory<sizeof(FormElementKey)>(&key);
 }
 
-struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
+struct FormElementKeyHashTraits : HashTraits<FormElementKey> {
     static void constructDeletedValue(FormElementKey& slot) { new (NotNull, &slot) FormElementKey(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const FormElementKey& value) { return value.isHashTableDeletedValue(); }
 };

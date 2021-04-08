@@ -45,6 +45,7 @@
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
+#include <wtf/URLHash.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 

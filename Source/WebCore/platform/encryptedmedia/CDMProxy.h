@@ -36,8 +36,6 @@
 #include "SharedBuffer.h"
 #include <wtf/BoxPtr.h>
 #include <wtf/Condition.h>
-#include <wtf/VectorHash.h>
-#include <wtf/WeakHashSet.h>
 
 #if ENABLE(THUNDER)
 #include "CDMOpenCDMTypes.h"
@@ -207,8 +205,6 @@ private:
 class CDMInstanceProxy;
 
 class CDMInstanceSessionProxy : public CDMInstanceSession, public CanMakeWeakPtr<CDMInstanceSessionProxy, WeakPtrFactoryInitialization::Eager> {
-public:
-
 protected:
     CDMInstanceSessionProxy(CDMInstanceProxy&);
     const WeakPtr<CDMInstanceProxy>& cdmInstanceProxy() const { return m_instance; }

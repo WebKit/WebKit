@@ -669,6 +669,7 @@ def headers_for_type(type):
         'MediaTime': ['<wtf/MediaTime.h>'],
         'MonotonicTime': ['<wtf/MonotonicTime.h>'],
         'Seconds': ['<wtf/Seconds.h>'],
+        'URL': ['<wtf/URLHash.h>'],
         'WallTime': ['<wtf/WallTime.h>'],
         'String': ['<wtf/text/WTFString.h>'],
         'PAL::SessionID': ['<pal/SessionID.h>'],

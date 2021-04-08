@@ -32,6 +32,7 @@
 #include "ServiceWorkerFetchTask.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/SWServerToContextConnection.h>
+#include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

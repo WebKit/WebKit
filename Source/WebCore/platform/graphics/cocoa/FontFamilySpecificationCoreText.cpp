@@ -37,6 +37,9 @@
 namespace WebCore {
 
 struct FontFamilySpecificationKey {
+    RetainPtr<CTFontDescriptorRef> fontDescriptor;
+    FontDescriptionKey fontDescriptionKey;
+
     FontFamilySpecificationKey() = default;
 
     FontFamilySpecificationKey(CTFontDescriptorRef fontDescriptor, const FontDescription& fontDescription)
@@ -50,7 +53,7 @@ struct FontFamilySpecificationKey {
 
     bool operator==(const FontFamilySpecificationKey& other) const
     {
-        return WTF::safeCFEqual(fontDescriptor.get(), other.fontDescriptor.get()) && fontDescriptionKey == other.fontDescriptionKey;
+        return safeCFEqual(fontDescriptor.get(), other.fontDescriptor.get()) && fontDescriptionKey == other.fontDescriptionKey;
     }
 
     bool operator!=(const FontFamilySpecificationKey& other) const
@@ -59,23 +62,15 @@ struct FontFamilySpecificationKey {
     }
 
     bool isHashTableDeletedValue() const { return fontDescriptionKey.isHashTableDeletedValue(); }
-
-    unsigned computeHash() const
-    {
-        return WTF::pairIntHash(WTF::safeCFHash(fontDescriptor.get()), fontDescriptionKey.computeHash());
-    }
-
-    RetainPtr<CTFontDescriptorRef> fontDescriptor;
-    FontDescriptionKey fontDescriptionKey;
 };
 
 struct FontFamilySpecificationKeyHash {
-    static unsigned hash(const FontFamilySpecificationKey& key) { return key.computeHash(); }
+    static unsigned hash(const FontFamilySpecificationKey& key) { return computeHash(safeCFHash(key.fontDescriptor.get()), key.fontDescriptionKey); }
     static bool equal(const FontFamilySpecificationKey& a, const FontFamilySpecificationKey& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-using FontMap = HashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, WTF::SimpleClassHashTraits<FontFamilySpecificationKey>>;
+using FontMap = HashMap<FontFamilySpecificationKey, std::unique_ptr<FontPlatformData>, FontFamilySpecificationKeyHash, SimpleClassHashTraits<FontFamilySpecificationKey>>;
 
 static FontMap& fontMap()
 {

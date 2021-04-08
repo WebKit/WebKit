@@ -48,12 +48,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
-// FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
-using WTF::pairIntHash;
-
-// FIXME: The following using declaration should be in <wtf/HashTraits.h>.
-using WTF::GenericHashTraits;
-
 namespace WebCore {
 
 static void setCGFillColor(CGContextRef context, const Color& color)

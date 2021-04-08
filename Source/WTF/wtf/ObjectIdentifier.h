@@ -131,6 +131,11 @@ template<typename T> inline ObjectIdentifier<T> makeObjectIdentifier(uint64_t id
     return ObjectIdentifier<T> { identifier };
 }
 
+template<typename T> inline void add(Hasher& hasher, ObjectIdentifier<T> identifier)
+{
+    add(hasher, identifier.toUInt64());
+}
+
 template<typename T> struct ObjectIdentifierHash {
     static unsigned hash(const ObjectIdentifier<T>& identifier) { return intHash(identifier.m_identifier); }
     static bool equal(const ObjectIdentifier<T>& a, const ObjectIdentifier<T>& b) { return a == b; }

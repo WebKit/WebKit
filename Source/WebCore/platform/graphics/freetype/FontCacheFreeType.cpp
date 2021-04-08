@@ -195,6 +195,9 @@ private:
 };
 
 struct FallbackFontDescriptionKey {
+    FontDescriptionKey descriptionKey;
+    bool coloredFont { false };
+
     FallbackFontDescriptionKey() = default;
 
     FallbackFontDescriptionKey(const FontDescription& description, FontCache::PreferColoredFont preferColoredFont)
@@ -220,17 +223,10 @@ struct FallbackFontDescriptionKey {
 
     bool isHashTableDeletedValue() const { return descriptionKey.isHashTableDeletedValue(); }
 
-    unsigned computeHash() const
-    {
-        return WTF::pairIntHash(descriptionKey.computeHash(), WTF::DefaultHash<bool>::hash(coloredFont));
-    }
-
-    FontDescriptionKey descriptionKey;
-    bool coloredFont { false };
 };
 
 struct FallbackFontDescriptionKeyHash {
-    static unsigned hash(const FallbackFontDescriptionKey& key) { return key.computeHash(); }
+    static unsigned hash(const FallbackFontDescriptionKey& key) { return computeHash(key.descriptionKey, key.coloredFont); }
     static bool equal(const FallbackFontDescriptionKey& a, const FallbackFontDescriptionKey& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

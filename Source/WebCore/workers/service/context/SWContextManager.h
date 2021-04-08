@@ -34,6 +34,7 @@
 #include "ServiceWorkerThreadProxy.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/URLHash.h>
 
 namespace WebCore {
 

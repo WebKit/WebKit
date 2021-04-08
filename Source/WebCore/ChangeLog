@@ -1,3 +1,173 @@
+2021-04-02  Darin Adler  <darin@apple.com>
+
+        Use Hasher more, remove IntegerHasher, fix hashing-related mistakes
+        https://bugs.webkit.org/show_bug.cgi?id=224138
+
+        Reviewed by Chris Dumez.
+
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::TriggerHash::hash): Use computeHash to
+        hash all the fields instead of a custom-written algorithm. The custom
+        algorithm had some magic numbers, repeatedly hashed hashes, and combined
+        hashes using exclusive or. The new one is almost certainly better.
+
+        * contentextensions/Term.h:
+        (WebCore::ContentExtensions::Term::CharacterSet::hash const):
+        Use computeHash to hash the boolean and the characters rather than
+        using intHash and pairIntHash.
+
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::add): Moved the hashing here from the header. Fixed the
+        mistake where this was using & instead of | and so none of the booleans
+        were having any effect on the hash value.
+
+        * css/parser/CSSParserContext.h: Use WTF_MAKE_STRUCT_FAST_ALLOCATED so
+        we don't have to say public: explicitly. Also moved all the function
+        members to the bottom of the struct. This is typically preferred style
+        for structures as opposed to classes. Since the data members are the
+        primary interface, they are first, and all function members are secondary
+        and so they come after.
+        (WebCore::CSSParserContextHash::hash): Use convertHash instead of
+        a custom written hash function. The custom written function was combining
+        hahes using exclusive or, not a best practice, and also had a mistake
+        where it used & instead of | and so the "bits" local variable was always 0.
+
+        * html/FormController.cpp: Use HashTraits instead of WTF::GenericHashTraits.
+
+        * platform/encryptedmedia/CDMProxy.h: Removed unneedes includes.
+
+        * platform/graphics/Font.cpp: Changed CharacterFallbackMapKey into a
+        simple struct with no additional function members or static data members.
+        Changed CharacterFallbackMapKeyHash to use computeHash to calculate the
+        hash, instead of IntegerHasher. Probably better to hash the pointer of
+        the AtomString rather than hashing the hash, but either way, we should
+        have the best implementation for AtomString hashing in the Hasher class.
+        Added CharacterFallbackMapKeyHashTraits instead of using
+        SimpleClassHashTraits. Use the value U_SENTINEL for the UChar32 character,
+        which is the same as the -1 used before, but slightly clearer why it's OK.
+        (WebCore::Font::systemFallbackFontForCharacter const): Use HashMap::ensure
+        instead of HashMap::add to make the logic simpler.
+
+        * platform/graphics/Font.h: Use bool instead of uint8_t as the base type
+        for the No/Yes enumeration IsForPlatformFont.
+
+        * platform/graphics/FontCache.cpp: Removed unneeded "using namespace WTF",
+        which is not our best practice, especially given unified builds.
+        Changed FontPlatformDataCacheKey into a simple struct, removing all the
+        hash-related member functions. Also used struct-style naming for the
+        members without an "m_" prefix. Used the type FontFamilyName for the
+        family name, which means we will use FontCascadeDescription's system
+        for hashing and comparing family names for equality without having to
+        remember do to so explicitly. Changed FontPlatformDataCacheKeyHash to
+        use computeHash. The old version had unnecessarily complex logic to
+        handle Optional and was unnecessarily hashing hashes.
+        (WebCore::FontCache::cachedFontPlatformData): Renamed to remove "get"
+        from the function's name. Also use shorter argument and local variable
+        names that are single words, and updated since FontPlatformDataCacheKey
+        is now a struct without a constructor.
+        (WebCore::FontCache::fontForFamily): Use shorter names.
+        (WebCore::operator==): To compare two FontCascadeCacheKey objects,
+        use a simpler constructions, depending on the fact that Vector already
+        has an == operator and we are using FontFamilyName for the elements
+        of the vector, which has a correct == operator.
+        (WebCore::FontCascadeCacheKeyHash::hash): Use computeHash since
+        the FontFamilyName hashing is now correct, and we can rely on the
+        way Hasher knows how to iterate a collection.
+        (WebCore::FontCache::retrieveOrAddCachedFonts): Update since
+        FontCascadeCacheEntry is now a simple struct. Also use constexpr a bit.
+        (WebCore::FontCache::invalidate): Use copyToVectorOf<> to simplify the
+        code that calls fontCacheInvalidated on all the font selectors.
+
+        * platform/graphics/FontCache.h: Use "using" instead of "typedef".
+        Remove FontDescriptionKey::computeHash.
+        (WebCore::add): An overload of add for Hasher to include a
+        FontDescriptionKey in a hash, which just lists all the data members.
+        The old version did a hash of hashes, but that's not needed any more.
+        Updated FontDescriptionKeyHash to use the Hasher version of ComputeHash.
+        Added FontFamilyName. Change FontCascadeCacheKey to use a vector of
+        FontFamilyName instead of AtomString. In FontCascadeCacheEntry, use
+        WTF_MAKE_STRUCT_FAST_ALLOCATED instead of WTF_MAKE_FAST_ALLOCATED
+        and also got rid of the unneeeded constructor.
+        (WebCore::FontCascadeCacheKeyHashTraits::constructDeletedValue):
+        Use the deleted value of FontDescriptionKey.
+        (WebCore::FontCascadeCacheKeyHashTraits::isDeletedValue): Ditto.
+        Renamed getCachedFontPlatformData to just cachedFontPlatformData.
+
+        * platform/graphics/FontGenericFamilies.h: Use HashTraits instead of
+        WTF::GenericHashTraits.
+
+        * platform/graphics/FontSelectionAlgorithm.h:
+        (WebCore::FontSelectionRange::uniqueValue const): Deleted.
+        (WebCore::add): Add both the minimum and maximum values to the hash
+        separately instead of combining them. For now, this makes the way
+        they are hashed a bit inefficient, but that can be re-tightened up by
+        improving the algorithm of Hasher if we like. Should be fine for our
+        needs either way.
+
+        * platform/graphics/FontTaggedSettings.cpp:
+        (WebCore::FontFeatureSettings::hash const): Deleted.
+        (WebCore::FontVariationSettings::hash const): Deleted.
+
+        * platform/graphics/FontTaggedSettings.h: Added overloads of the
+        add(Hasher&) function for std::array<char, 4> and FontTaggedSetting<T>.
+        Got rid of many uses of pass by reference instead of value for FontTag,
+        since it fits into a 32-bit register and bth more source code and less
+        efficient to pass by value.
+
+        * platform/graphics/Gradient.cpp: Removed "using WTF::pairIntHash" since
+        that's now done in the WTF header.
+        * platform/graphics/cg/GraphicsContextCG.cpp: Ditto. Also removed
+        "using WTF::GenericHashTraits", which was unhelpful. The GenericHashTraits
+        template is only really needed when specializing HashTraits, which
+        already has to be done within the WTF namespace. In all other cases, we
+        should just use HashTraits instead.
+
+        * platform/graphics/cg/SubimageCacheWithTimer.h: Use HashTraits
+        instead of WTF::GenericHashTraits.
+
+        * platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp:
+        Move the data members to the top of the FontFamilySpecificationKey struct.
+        Removed unneeded computeHash function and WTF prefix from safeCFEqual.
+        (WebCore::FontFamilySpecificationKeyHash::hash): Call the Hasher version
+        of computeHash directly to hash the two items in this structure.
+
+        * platform/graphics/cocoa/SystemFontDatabaseCoreText.h:
+        (WebCore::SystemFontDatabaseCoreText::CascadeListParameters::hash const):
+        Use computeHash instead of IntegerHasher. Also renamed the hash function
+        struct from CascadeListParameters::CascadeListParametersHash to
+        CascadeListParameters::Hash.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+        Removed now-unneeded WTF prefixes from calls to safeCFEqual.
+
+        * rendering/TextAutoSizing.h: Use HashTraits instead of WTF::GenericHashTraits.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::computeFontHash): Use computeHash instead of IntegerHasher.
+        Still not great that we hash a hash here, but we can improve that later.
+
+        * workers/service/ServiceWorkerClientIdentifier.h:
+        (WebCore::ServiceWorkerClientIdentifier::decode): Removed unneeded
+        WTFMove on ObjectIdentifier, which are just integers, so move vs. copy
+        is not an important distinction.
+        (WebCore::ServiceWorkerClientIdentifier::hash const): Use computeHash
+        instead of combining intHash with StringHasher::hashMemory. This fixes
+        two mistakes: one is that there is no need to hash a hash. The second is
+        that intHash takes a 32-bit integer as its parameter, so high bits
+        of object identifiers were discarded unnecessarily.
+
+        * workers/service/ServiceWorkerContextData.h: Removed unneeded include.
+
+        * workers/service/ServiceWorkerGlobalScope.h: Added now-needed include
+        of URLHash.h, since we removed it from a widely-included header.
+        * workers/service/context/SWContextManager.h: Ditto.
+        * workers/service/server/ServiceWorkerThreadProxy.h: Ditto.
+        * workers/service/server/RegistrationStore.h: Ditto.
+        * workers/service/server/SWServer.h: Ditto.
+        * workers/service/server/SWServerToContextConnection.h: Ditto.
+        * workers/service/server/SWServerWorker.h: Ditto.
+
 2021-04-07  Mark Lam  <mark.lam@apple.com>
 
         Rename and make the TerminationException a singleton.

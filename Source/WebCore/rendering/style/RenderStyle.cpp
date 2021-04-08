@@ -449,10 +449,8 @@ bool RenderStyle::descendantAffectingNonInheritedPropertiesEqual(const RenderSty
 
 static inline unsigned computeFontHash(const FontCascade& font)
 {
-    IntegerHasher hasher;
-    hasher.add(ASCIICaseInsensitiveHash::hash(font.fontDescription().firstFamily()));
-    hasher.add(font.fontDescription().specifiedSize());
-    return hasher.hash();
+    // FIXME: Would be better to hash the family name rather than hashing a hash of the family name. Also, should this use FontCascadeDescription::familyNameHash?
+    return computeHash(ASCIICaseInsensitiveHash::hash(font.fontDescription().firstFamily()), font.fontDescription().specifiedSize());
 }
 
 unsigned RenderStyle::hashForTextAutosizing() const

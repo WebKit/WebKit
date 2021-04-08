@@ -30,20 +30,16 @@
 #include "StyleRuleType.h"
 #include "TextEncoding.h"
 #include <wtf/HashFunctions.h>
+#include <wtf/Hasher.h>
 #include <wtf/Optional.h>
 #include <wtf/URL.h>
-#include <wtf/URLHash.h>
-#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 class Document;
 
 struct CSSParserContext {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    CSSParserContext(CSSParserMode, const URL& baseURL = URL());
-    WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     URL baseURL;
     String charset;
@@ -56,8 +52,6 @@ public:
 
     bool isContentOpaque { false };
     bool useSystemAppearance { false };
-
-    bool isPropertyRuntimeDisabled(CSSPropertyID) const;
 
     // Settings.
     bool aspectRatioEnabled { false };
@@ -90,70 +84,29 @@ public:
     bool attachmentEnabled { false };
 #endif
 
-    URL completeURL(const String& url) const;
+    CSSParserContext(CSSParserMode, const URL& baseURL = URL());
+    WEBCORE_EXPORT CSSParserContext(const Document&, const URL& baseURL = URL(), const String& charset = emptyString());
+    bool isPropertyRuntimeDisabled(CSSPropertyID) const;
+    URL completeURL(const String& relativeURL) const;
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);
 inline bool operator!=(const CSSParserContext& a, const CSSParserContext& b) { return !(a == b); }
 
+void add(Hasher&, const CSSParserContext&);
+
 WEBCORE_EXPORT const CSSParserContext& strictCSSParserContext();
 
 struct CSSParserContextHash {
-    static unsigned hash(const CSSParserContext& key)
-    {
-        // FIXME: Convert this to use WTF::Hasher.
-
-        unsigned hash = 0;
-        if (!key.baseURL.isNull())
-            hash ^= WTF::URLHash::hash(key.baseURL);
-        if (!key.charset.isEmpty())
-            hash ^= StringHash::hash(key.charset);
-        
-        unsigned bits = key.isHTMLDocument                  << 0
-            & key.hasDocumentSecurityOrigin                 << 1
-            & key.isContentOpaque                           << 2
-            & key.useSystemAppearance                       << 3
-            & key.aspectRatioEnabled                        << 4
-            & key.colorContrastEnabled                      << 5
-            & key.colorFilterEnabled                        << 6
-            & key.colorMixEnabled                           << 7
-            & key.constantPropertiesEnabled                 << 8
-            & key.containmentEnabled                        << 9
-            & key.cssColor4                                 << 10
-            & key.deferredCSSParserEnabled                  << 11
-            & key.individualTransformPropertiesEnabled      << 12
-#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
-            & key.legacyOverflowScrollingTouchEnabled       << 13
-#endif
-            & key.overscrollBehaviorEnabled                 << 14
-            & key.relativeColorSyntaxEnabled                << 15
-            & key.scrollBehaviorEnabled                     << 16
-            & key.springTimingFunctionEnabled               << 17
-#if ENABLE(TEXT_AUTOSIZING)
-            & key.textAutosizingEnabled                     << 18
-#endif
-#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
-            & key.transformStyleOptimized3DEnabled          << 19
-#endif
-            & key.useLegacyBackgroundSizeShorthandBehavior  << 20
-            & key.focusVisibleEnabled                       << 21
-#if ENABLE(ATTACHMENT_ELEMENT)
-            & key.attachmentEnabled                         << 22
-#endif
-            & key.mode                                      << 23; // Keep this last.
-        hash ^= WTF::intHash(bits);
-        return hash;
-    }
-    static bool equal(const CSSParserContext& a, const CSSParserContext& b)
-    {
-        return a == b;
-    }
+    static unsigned hash(const CSSParserContext& context) { return computeHash(context); }
+    static bool equal(const CSSParserContext& a, const CSSParserContext& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
 } // namespace WebCore
 
 namespace WTF {
+
 template<> struct HashTraits<WebCore::CSSParserContext> : GenericHashTraits<WebCore::CSSParserContext> {
     static void constructDeletedValue(WebCore::CSSParserContext& slot) { new (NotNull, &slot.baseURL) URL(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const WebCore::CSSParserContext& value) { return value.baseURL.isHashTableDeletedValue(); }

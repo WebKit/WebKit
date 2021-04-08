@@ -137,6 +137,43 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
     ;
 }
 
+void add(Hasher& hasher, const CSSParserContext& context)
+{
+    unsigned bits = context.isHTMLDocument                  << 0
+        | context.hasDocumentSecurityOrigin                 << 1
+        | context.isContentOpaque                           << 2
+        | context.useSystemAppearance                       << 3
+        | context.aspectRatioEnabled                        << 4
+        | context.colorContrastEnabled                      << 5
+        | context.colorFilterEnabled                        << 6
+        | context.colorMixEnabled                           << 7
+        | context.constantPropertiesEnabled                 << 8
+        | context.containmentEnabled                        << 9
+        | context.cssColor4                                 << 10
+        | context.deferredCSSParserEnabled                  << 11
+        | context.individualTransformPropertiesEnabled      << 12
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+        | context.legacyOverflowScrollingTouchEnabled       << 13
+#endif
+        | context.overscrollBehaviorEnabled                 << 14
+        | context.relativeColorSyntaxEnabled                << 15
+        | context.scrollBehaviorEnabled                     << 16
+        | context.springTimingFunctionEnabled               << 17
+#if ENABLE(TEXT_AUTOSIZING)
+        | context.textAutosizingEnabled                     << 18
+#endif
+#if ENABLE(CSS_TRANSFORM_STYLE_OPTIMIZED_3D)
+        | context.transformStyleOptimized3DEnabled          << 19
+#endif
+        | context.useLegacyBackgroundSizeShorthandBehavior  << 20
+        | context.focusVisibleEnabled                       << 21
+#if ENABLE(ATTACHMENT_ELEMENT)
+        | context.attachmentEnabled                         << 22
+#endif
+        | context.mode                                      << 23; // This is multiple bits, so keep it last.
+    add(hasher, context.baseURL, context.charset, bits);
+}
+
 bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
 {
     switch (property) {

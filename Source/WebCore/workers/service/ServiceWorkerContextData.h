@@ -33,7 +33,6 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "WorkerType.h"
 #include <wtf/HashMap.h>
-#include <wtf/URL.h>
 #include <wtf/URLHash.h>
 
 #if ENABLE(SERVICE_WORKER)

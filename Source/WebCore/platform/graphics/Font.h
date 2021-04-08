@@ -64,7 +64,7 @@ struct GlyphData;
 
 enum FontVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
-enum class IsForPlatformFont : uint8_t { No, Yes };
+enum class IsForPlatformFont : bool { No, Yes };
 
 #if USE(CORE_TEXT)
 bool fontHasTable(CTFontRef, unsigned tableTag);

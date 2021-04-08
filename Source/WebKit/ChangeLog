@@ -1,3 +1,33 @@
+2021-04-02  Darin Adler  <darin@apple.com>
+
+        Use Hasher more, remove IntegerHasher, fix hashing-related mistakes
+        https://bugs.webkit.org/show_bug.cgi?id=224138
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/ServiceWorker/WebSWServerToContextConnection.h: Added now-needed include
+        of URLHash.h, since we removed it from a widely-included header.
+
+        * NetworkProcess/cache/NetworkCache.h:
+        (WebKit::NetworkCache::GlobalFrameID::hash const): Use computeHash
+        instead of combining intHash with StringHasher::hashMemory. This fixes
+        two mistakes: one is that there is no need to hash a hash. The second is
+        that intHash takes a 32-bit integer as its parameter, so high bits
+        of object identifiers were discarded unnecessarily.
+
+        * Scripts/webkit/messages.py: Added code so that if URL is in an argument, we include the
+        URLHash.h header. Would be better to just use URL.h and use URLHash.h only if it's a
+        HashMap<URL>, but currently the script does not distinguish those cases. This wasn't needed
+        before becuase a widely included header was always pulling in URLHash.h.
+
+        * Shared/API/Cocoa/WKBrowsingContextHandle.mm:
+        (-[WKBrowsingContextHandle hash]): Use computeHash instead of pairIntHash.
+        This fixes a mistake: pairIntHash takes two 32-bit integers, so high bits
+        of object identifiers were discarded unnecessarily.
+
+        * NetworkProcess/Storage/WebSWContextManagerConnection.h: Added now-needed include
+        of URLHash.h, since we removed it from a widely-included header.
+
 2021-04-07  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r275614; make sure SWIFT_VERSION is defined inside the WebKitSwift build target.

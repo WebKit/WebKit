@@ -36,20 +36,26 @@ class TextStream;
 
 namespace WebCore {
 
-typedef std::array<char, 4> FontTag;
+using FontTag = std::array<char, 4>;
 
-inline FontTag fontFeatureTag(const char arr[4]) { return {{ arr[0], arr[1], arr[2], arr[3] }}; }
+inline FontTag fontFeatureTag(const char characters[4]) { return {{ characters[0], characters[1], characters[2], characters[3] }}; }
+
+inline void add(Hasher& hasher, std::array<char, 4> array)
+{
+    uint32_t integer = (static_cast<uint8_t>(array[0]) << 24) | (static_cast<uint8_t>(array[1]) << 16) | (static_cast<uint8_t>(array[2]) << 8) | static_cast<uint8_t>(array[3]);
+    add(hasher, integer);
+}
 
 struct FourCharacterTagHash {
-    static unsigned hash(const FontTag& characters) { return (characters[0] << 24) | (characters[1] << 16) | (characters[2] << 8) | characters[3]; }
-    static bool equal(const FontTag& a, const FontTag& b) { return a == b; }
+    static unsigned hash(FontTag characters) { return computeHash(characters); }
+    static bool equal(FontTag a, FontTag b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-struct FourCharacterTagHashTraits : WTF::GenericHashTraits<FontTag> {
+struct FourCharacterTagHashTraits : HashTraits<FontTag> {
     static const bool emptyValueIsZero = true;
     static void constructDeletedValue(FontTag& slot) { new (NotNull, std::addressof(slot)) FontTag({{ ff, ff, ff, ff }}); }
-    static bool isDeletedValue(const FontTag& value) { return value == FontTag({{ ff, ff, ff, ff }}); }
+    static bool isDeletedValue(FontTag value) { return value == FontTag({{ ff, ff, ff, ff }}); }
 
 private:
     static constexpr char ff = static_cast<char>(0xFF);
@@ -59,14 +65,13 @@ template <typename T>
 class FontTaggedSetting {
 public:
     FontTaggedSetting() = delete;
-    FontTaggedSetting(const FontTag&, T value);
-    FontTaggedSetting(FontTag&&, T value);
+    FontTaggedSetting(FontTag, T value);
 
     bool operator==(const FontTaggedSetting<T>& other) const;
     bool operator!=(const FontTaggedSetting<T>& other) const { return !(*this == other); }
     bool operator<(const FontTaggedSetting<T>& other) const;
 
-    const FontTag& tag() const { return m_tag; }
+    FontTag tag() const { return m_tag; }
     T value() const { return m_value; }
     bool enabled() const { return value(); }
 
@@ -79,15 +84,8 @@ private:
 };
 
 template <typename T>
-FontTaggedSetting<T>::FontTaggedSetting(const FontTag& tag, T value)
+FontTaggedSetting<T>::FontTaggedSetting(FontTag tag, T value)
     : m_tag(tag)
-    , m_value(value)
-{
-}
-
-template <typename T>
-FontTaggedSetting<T>::FontTaggedSetting(FontTag&& tag, T value)
-    : m_tag(WTFMove(tag))
     , m_value(value)
 {
 }
@@ -152,6 +150,11 @@ Optional<FontTaggedSetting<T>> FontTaggedSetting<T>::decode(Decoder& decoder)
     }}, *value);
 }
 
+template<typename T> void add(Hasher& hasher, const FontTaggedSetting<T>& setting)
+{
+    add(hasher, setting.tag(), setting.value());
+}
+
 template <typename T>
 class FontTaggedSettings {
 public:
@@ -211,14 +214,10 @@ Optional<FontTaggedSettings<T>> FontTaggedSettings<T>::decode(Decoder& decoder)
     return result;
 }
 
-typedef FontTaggedSetting<int> FontFeature;
-typedef FontTaggedSettings<int> FontFeatureSettings;
+using FontFeature = FontTaggedSetting<int>;
+using FontFeatureSettings = FontTaggedSettings<int>;
+using FontVariationSettings = FontTaggedSettings<float>;
 
-template <> unsigned FontFeatureSettings::hash() const;
-
-typedef FontTaggedSettings<float> FontVariationSettings;
-WTF::TextStream& operator<<(WTF::TextStream&, const FontVariationSettings&);
-
-template <> unsigned FontVariationSettings::hash() const;
+TextStream& operator<<(TextStream&, const FontTaggedSettings<float>&);
 
 }

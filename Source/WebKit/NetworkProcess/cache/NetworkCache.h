@@ -59,11 +59,7 @@ struct GlobalFrameID {
 
 inline unsigned GlobalFrameID::hash() const
 {
-    unsigned hashes[2];
-    hashes[0] = WTF::intHash(webPageID.toUInt64());
-    hashes[1] = WTF::intHash(frameID.toUInt64());
-
-    return StringHasher::hashMemory(hashes, sizeof(hashes));
+    return computeHash(webPageID, frameID);
 }
 
 inline bool operator==(const GlobalFrameID& a, const GlobalFrameID& b)
@@ -73,8 +69,8 @@ inline bool operator==(const GlobalFrameID& a, const GlobalFrameID& b)
     return a.webPageID == b.webPageID &&  a.frameID == b.frameID;
 }
 
-};
-} // namespace NetworkCache
+}
+}
 
 namespace WTF {
 

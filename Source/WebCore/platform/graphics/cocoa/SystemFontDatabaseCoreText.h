@@ -72,27 +72,12 @@ public:
 
         unsigned hash() const
         {
-            IntegerHasher hasher;
-            ASSERT(!fontName.isNull());
-            hasher.add(locale.existingHash());
-            hasher.add(locale.isNull() ? 0 : locale.existingHash());
-            hasher.add(weight);
-            hasher.add(width);
-            hasher.add(size);
-            hasher.add(static_cast<unsigned>(allowUserInstalledFonts));
-            hasher.add(italic);
-            return hasher.hash();
+            return computeHash(fontName, locale, weight, width, size, allowUserInstalledFonts, italic);
         }
 
-        struct CascadeListParametersHash : WTF::PairHash<AtomString, float> {
-            static unsigned hash(const CascadeListParameters& parameters)
-            {
-                return parameters.hash();
-            }
-            static bool equal(const CascadeListParameters& a, const CascadeListParameters& b)
-            {
-                return a == b;
-            }
+        struct Hash {
+            static unsigned hash(const CascadeListParameters& parameters) { return parameters.hash(); }
+            static bool equal(const CascadeListParameters& a, const CascadeListParameters& b) { return a == b; }
             static const bool safeToCompareToEmptyOrDeleted = true;
         };
 
@@ -131,7 +116,7 @@ private:
     static Vector<RetainPtr<CTFontDescriptorRef>> computeCascadeList(CTFontRef, CFStringRef locale);
     static CascadeListParameters systemFontParameters(const FontDescription&, const AtomString& familyName, SystemFontKind, AllowUserInstalledFonts);
 
-    HashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::CascadeListParametersHash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
+    HashMap<CascadeListParameters, Vector<RetainPtr<CTFontDescriptorRef>>, CascadeListParameters::Hash, SimpleClassHashTraits<CascadeListParameters>> m_systemFontCache;
 
     HashMap<String, String> m_serifFamilies;
     HashMap<String, String> m_sansSeriferifFamilies;

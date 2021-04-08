@@ -1,3 +1,32 @@
+2021-04-02  Darin Adler  <darin@apple.com>
+
+        Use Hasher more, remove IntegerHasher, fix hashing-related mistakes
+        https://bugs.webkit.org/show_bug.cgi?id=224138
+
+        Reviewed by Chris Dumez.
+
+        * wtf/HashFunctions.h: Export intHash and pairIntHash to the global namespace
+        so they can be called without an explicit WTF prefix. This follows the usual
+        WTF design pattern given that these functions are intended for use outside WTF.
+
+        * wtf/Hasher.h: Deleted IntegerHasher.
+        (WTF::add): Added overloads for String, AtomString, and URL.
+
+        * wtf/ObjectIdentifier.h:
+        (WTF::add): Added a Hasher overload for any ObjectIdentifier.
+
+        * wtf/RetainPtr.h: Export safeCFEqual and safeCFHash to the global namespace
+        so they can be called without an explicit WTF prefix. This follows the usual
+        WTF design pattern given that these functions are intended for use outside WTF.
+
+        * wtf/VectorHash.h: Removed the VectorHash template, instead just specializing
+        DefaultHash. Use computeHash to hash the contents of the vector instead of
+        hashing the hashes of the items in the vector. This is better in general and
+        better for the one case where we are currently using this, for a Vector<int>.
+        We want to hash all the integers rather than hashing hashes of all the integers.
+        In the future, this means the elements of the Vector need to be hashable using
+        the Hasher machinery. The old requirement was the the elements had a DefaultHash.
+
 2021-04-07  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Suppress -Warray-bounds warning spam in Bitmap.h

@@ -29,6 +29,7 @@
 
 #include "ContentExtensionActions.h"
 #include "ResourceLoadInfo.h"
+#include <wtf/Hasher.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -88,23 +89,12 @@ struct Trigger {
 struct TriggerHash {
     static unsigned hash(const Trigger& trigger)
     {
-        unsigned hash = trigger.urlFilterIsCaseSensitive ? 10619863 : 40960001;
-        if (!trigger.urlFilter.isNull())
-            hash ^= StringHash::hash(trigger.urlFilter);
-        hash = WTF::pairIntHash(hash, DefaultHash<ResourceFlags>::hash(trigger.flags));
-
-        for (const String& condition : trigger.conditions)
-            hash ^= StringHash::hash(condition);
-
-        hash ^= 1 << static_cast<unsigned>(trigger.conditionType);
-        return hash;
+        return computeHash(trigger.urlFilterIsCaseSensitive, trigger.urlFilter, trigger.flags, trigger.conditions, trigger.conditionType);
     }
-
     static bool equal(const Trigger& a, const Trigger& b)
     {
         return a == b;
     }
-
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 

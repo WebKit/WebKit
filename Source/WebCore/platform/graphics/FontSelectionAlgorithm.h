@@ -291,6 +291,11 @@ constexpr FontSelectionValue ultraExpandedStretchValue()
     return FontSelectionValue { 200 };
 }
 
+inline void add(Hasher& hasher, const FontSelectionValue& value)
+{
+    add(hasher, value.rawValue());
+}
+
 // [Inclusive, Inclusive]
 struct FontSelectionRange {
     using Value = FontSelectionValue;
@@ -334,14 +339,6 @@ struct FontSelectionRange {
         return target >= minimum && target <= maximum;
     }
 
-    // FIXME: This name is not so great. Move this into the add function below
-    // once we move FontPlatformDataCacheKeyHash from IntegerHasher to Hasher,
-    // and then it doesn't need to have a name.
-    constexpr uint32_t uniqueValue() const
-    {
-        return minimum.rawValue() << 16 | maximum.rawValue();
-    }
-
     template<class Encoder>
     void encode(Encoder&) const;
 
@@ -377,7 +374,7 @@ Optional<FontSelectionRange> FontSelectionRange::decode(Decoder& decoder)
 
 inline void add(Hasher& hasher, const FontSelectionRange& range)
 {
-    add(hasher, range.uniqueValue());
+    add(hasher, range.minimum, range.maximum);
 }
 
 struct FontSelectionRequest {
@@ -385,6 +382,7 @@ struct FontSelectionRequest {
 
     Value weight;
     Value width;
+
     // FIXME: We are using an optional here to be able to distinguish between an explicit
     // or implicit slope (for "italic" and "oblique") and the "normal" value which has no
     // slope. The "italic" and "oblique" values can be distinguished by looking at the

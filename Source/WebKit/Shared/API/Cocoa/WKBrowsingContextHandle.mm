@@ -55,7 +55,7 @@
 
 - (NSUInteger)hash
 {
-    return WTF::pairIntHash(_pageProxyID.toUInt64(), _webPageID.toUInt64());
+    return computeHash(_pageProxyID, _webPageID);
 }
 
 - (BOOL)isEqual:(id)object

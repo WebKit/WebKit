@@ -535,63 +535,32 @@ void Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool, bool, const A
 }
 #endif
 
-class CharacterFallbackMapKey {
-public:
-    CharacterFallbackMapKey()
-    {
-    }
-
-    CharacterFallbackMapKey(const AtomString& locale, UChar32 character, IsForPlatformFont isForPlatformFont)
-        : locale(locale)
-        , character(character)
-        , isForPlatformFont(isForPlatformFont == IsForPlatformFont::Yes)
-    {
-    }
-
-    CharacterFallbackMapKey(WTF::HashTableDeletedValueType)
-        : character(-1)
-    {
-    }
-
-    bool isHashTableDeletedValue() const { return character == -1; }
-
-    bool operator==(const CharacterFallbackMapKey& other) const
-    {
-        return locale == other.locale && character == other.character && isForPlatformFont == other.isForPlatformFont;
-    }
-
-    static const bool emptyValueIsZero = true;
-
-private:
-    friend struct CharacterFallbackMapKeyHash;
-
+struct CharacterFallbackMapKey {
     AtomString locale;
     UChar32 character { 0 };
     bool isForPlatformFont { false };
 };
 
+inline bool operator==(const CharacterFallbackMapKey& a, const CharacterFallbackMapKey& b)
+{
+    return a.locale == b.locale && a.character == b.character && a.isForPlatformFont == b.isForPlatformFont;
+}
+
 struct CharacterFallbackMapKeyHash {
-    static unsigned hash(const CharacterFallbackMapKey& key)
-    {
-        IntegerHasher hasher;
-        hasher.add(key.character);
-        hasher.add(key.isForPlatformFont);
-        hasher.add(key.locale.existingHash());
-        return hasher.hash();
-    }
-
-    static bool equal(const CharacterFallbackMapKey& a, const CharacterFallbackMapKey& b)
-    {
-        return a == b;
-    }
-
+    static unsigned hash(const CharacterFallbackMapKey& key) { return computeHash(key.locale, key.character, key.isForPlatformFont); }
+    static bool equal(const CharacterFallbackMapKey& a, const CharacterFallbackMapKey& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
+struct CharacterFallbackMapKeyHashTraits : SimpleClassHashTraits<CharacterFallbackMapKey> {
+    static void constructDeletedValue(CharacterFallbackMapKey& slot) { new (NotNull, &slot) CharacterFallbackMapKey { { }, U_SENTINEL, { } }; }
+    static bool isDeletedValue(const CharacterFallbackMapKey& key) { return key.character == U_SENTINEL; }
+};
+
 // Fonts are not ref'd to avoid cycles.
-// FIXME: Shouldn't these be WeakPtrs?
-typedef HashMap<CharacterFallbackMapKey, Font*, CharacterFallbackMapKeyHash, WTF::SimpleClassHashTraits<CharacterFallbackMapKey>> CharacterFallbackMap;
-typedef HashMap<const Font*, CharacterFallbackMap> SystemFallbackCache;
+// FIXME: Consider changing these maps to use WeakPtr instead of raw pointers.
+using CharacterFallbackMap = HashMap<CharacterFallbackMapKey, Font*, CharacterFallbackMapKeyHash, CharacterFallbackMapKeyHashTraits>;
+using SystemFallbackCache = HashMap<const Font*, CharacterFallbackMap>;
 
 static SystemFallbackCache& systemFallbackCache()
 {
@@ -608,12 +577,8 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
         return FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
     }
 
-    auto key = CharacterFallbackMapKey(description.computedLocale(), character, isForPlatformFont);
-    auto characterAddResult = fontAddResult.iterator->value.add(WTFMove(key), nullptr);
-
-    Font*& fallbackFont = characterAddResult.iterator->value;
-
-    if (!fallbackFont) {
+    auto key = CharacterFallbackMapKey { description.computedLocale(), character, isForPlatformFont != IsForPlatformFont::No };
+    return fontAddResult.iterator->value.ensure(WTFMove(key), [&] {
         UChar codeUnits[2];
         unsigned codeUnitsLength;
         if (U_IS_BMP(character)) {
@@ -624,13 +589,11 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
             codeUnits[1] = U16_TRAIL(character);
             codeUnitsLength = 2;
         }
-
-        fallbackFont = FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
-        if (fallbackFont)
-            fallbackFont->m_isUsedInSystemFallbackCache = true;
-    }
-
-    return fallbackFont;
+        auto font = FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
+        if (font)
+            font->m_isUsedInSystemFallbackCache = true;
+        return font;
+    }).iterator->value;
 }
 
 void Font::removeFromSystemFallbackCache()

@@ -32,8 +32,6 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
 
-using WTF::pairIntHash;
-
 namespace WebCore {
 
 Ref<Gradient> Gradient::create(Data&& data)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,30 +20,13 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/URL.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringHasher.h>
 
 namespace WTF {
-
-// Deprecated. Use Hasher instead.
-class IntegerHasher {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    void add(uint32_t integer)
-    {
-        m_underlyingHasher.addCharactersAssumingAligned(integer, integer >> 16);
-    }
-
-    unsigned hash() const
-    {
-        return m_underlyingHasher.hash();
-    }
-
-private:
-    StringHasher m_underlyingHasher;
-};
 
 template<typename... Types> uint32_t computeHash(const Types&...);
 template<typename T, typename... OtherTypes> uint32_t computeHash(std::initializer_list<T>, std::initializer_list<OtherTypes>...);
@@ -110,6 +93,28 @@ inline void add(Hasher& hasher, double number)
 inline void add(Hasher& hasher, float number)
 {
     add(hasher, bitwise_cast<uint32_t>(number));
+}
+
+inline void add(Hasher& hasher, const String& string)
+{
+    // Chose to hash the characters here. Assuming this is better than hashing the possibly-already-computed hash of the characters.
+    bool remainder = string.length() & 1;
+    unsigned roundedLength = string.length() - remainder;
+    for (unsigned i = 0; i < roundedLength; i += 2)
+        add(hasher, (string[i] << 16) | string[i + 1]);
+    if (remainder)
+        add(hasher, string[roundedLength]);
+}
+
+inline void add(Hasher& hasher, const AtomString& string)
+{
+    // Chose to hash the pointer here. Assuming this is better than hashing the characters or hashing the already-computed hash of the characters.
+    add(hasher, bitwise_cast<uintptr_t>(string.impl()));
+}
+
+inline void add(Hasher& hasher, const URL& url)
+{
+    add(hasher, url.string());
 }
 
 template<typename Enumeration> std::enable_if_t<std::is_enum<Enumeration>::value, void> add(Hasher& hasher, Enumeration value)
@@ -186,4 +191,3 @@ template<typename T> void add(Hasher& hasher, std::initializer_list<T> values)
 
 using WTF::computeHash;
 using WTF::Hasher;
-using WTF::IntegerHasher;

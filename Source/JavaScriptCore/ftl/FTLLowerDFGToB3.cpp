@@ -591,8 +591,7 @@ private:
         NodeSet& live = m_liveInToNode.find(node)->value;
         unsigned highParentIndex = node->index();
         {
-            uint64_t hash = WTF::intHash(highParentIndex);
-            if (hash >= static_cast<uint64_t>((static_cast<double>(std::numeric_limits<unsigned>::max()) + 1) * Options::validateAbstractInterpreterStateProbability()))
+            if (intHash(highParentIndex) >= (static_cast<double>(std::numeric_limits<unsigned>::max()) + 1) * Options::validateAbstractInterpreterStateProbability())
                 return;
         }
 

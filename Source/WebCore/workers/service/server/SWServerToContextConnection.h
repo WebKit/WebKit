@@ -33,6 +33,7 @@
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
+#include <wtf/URLHash.h>
 
 namespace WebCore {
 

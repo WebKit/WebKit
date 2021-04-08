@@ -1,3 +1,22 @@
+2021-04-02  Darin Adler  <darin@apple.com>
+
+        Use Hasher more, remove IntegerHasher, fix hashing-related mistakes
+        https://bugs.webkit.org/show_bug.cgi?id=224138
+
+        Reviewed by Chris Dumez.
+
+        * bytecode/BytecodeIndex.h:
+        (JSC::BytecodeIndex::hash const): Remove unneeded WTF prefix on call
+        to intHash.
+
+        * ftl/FTLAbstractHeap.h: Use HashTraits instead of WTF::GenericHashTraits.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState): Remove unneeded WTF
+        prefix on call to intHash.
+
+        * wasm/WasmLLIntGenerator.cpp: Use HashTraits instead of WTF::GenericHashTraits.
+
 2021-04-07  Mark Lam  <mark.lam@apple.com>
 
         Rename and make the TerminationException a singleton.

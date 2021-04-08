@@ -60,7 +60,7 @@ public:
     Checkpoint checkpoint() const { return m_packedBits & checkpointMask; }
     uint32_t asBits() const { return m_packedBits; }
 
-    unsigned hash() const { return WTF::intHash(m_packedBits); }
+    unsigned hash() const { return intHash(m_packedBits); }
     static BytecodeIndex deletedValue() { return fromBits(invalidOffset - 1); }
     bool isHashTableDeletedValue() const { return *this == deletedValue(); }
 
