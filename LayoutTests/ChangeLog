@@ -1,3 +1,86 @@
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r275682. rdar://problem/76424627
+
+    Add test infrastructure for app bound request context string
+    https://bugs.webkit.org/show_bug.cgi?id=224311
+    <rdar://problem/76229003>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebKit:
+    
+    The app-bound request context string is the eTLD+1 for a load and is
+    needed by CFNetwork. We should add testing infrastructure to make sure
+    the context string is being properly set.
+    
+    Test: http/tests/in-app-browser-privacy/context-string-for-subframe.html
+    
+    * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+    (contextString):
+    (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+    * Shared/NavigatingToAppBoundDomain.h:
+    (WebKit::AppBoundNavigationTestingData::clearAppBoundNavigationDataTesting):
+    (WebKit::AppBoundNavigationTestingData::updateAppBoundNavigationTestingData):
+    (WebKit::AppBoundNavigationTestingData::encode const):
+    (WebKit::AppBoundNavigationTestingData::decode):
+    Store the context string in the testing struct.
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _appBoundNavigationDataForDomain:completionHandler:]):
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    SPI to get the app-bound request test data for layout testing.
+    
+    Tools:
+    
+    Layout test infrastructure.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+    (WTR::InjectedBundle::didReceiveMessageToPage):
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::appBoundRequestContextDataForDomain):
+    (WTR::TestRunner::callDidReceiveAppBoundRequestContextDataForDomainCallback):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::appBoundRequestContextDataForDomain):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+    (WTR::TestInvocation::didReceiveAppBoundRequestContextDataForDomain):
+    * WebKitTestRunner/TestInvocation.h:
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::appBoundRequestContextDataForDomain):
+    * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+    * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+    (-[TestRunnerWKWebView _appBoundNavigationDataForDomain:completionHandler:]):
+    
+    LayoutTests:
+    
+    Test coverage.
+    
+    * http/tests/in-app-browser-privacy/context-string-for-subframe-expected.txt: Added.
+    * http/tests/in-app-browser-privacy/context-string-for-subframe.html: Added.
+    * http/tests/in-app-browser-privacy/resources/basic-iframe.html: Added.
+    * platform/ios-wk2/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275682 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
+
+            Add test infrastructure for app bound request context string
+            https://bugs.webkit.org/show_bug.cgi?id=224311
+            <rdar://problem/76229003>
+
+            Reviewed by Brent Fulgham.
+
+            Test coverage.
+
+            * http/tests/in-app-browser-privacy/context-string-for-subframe-expected.txt: Added.
+            * http/tests/in-app-browser-privacy/context-string-for-subframe.html: Added.
+            * http/tests/in-app-browser-privacy/resources/basic-iframe.html: Added.
+            * platform/ios-wk2/TestExpectations:
+
 2021-04-02  Amir Mark Jr  <amir_mark@apple.com>
 
         [ MacOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html is a flaky failure

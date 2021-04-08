@@ -591,4 +591,9 @@ static bool isQuickboardViewController(UIViewController *viewController)
         self.didHideContactPickerCallback();
 }
 
+- (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler
+{
+    [super _appBoundNavigationDataForDomain:domain completionHandler:completionHandler];
+}
+
 @end

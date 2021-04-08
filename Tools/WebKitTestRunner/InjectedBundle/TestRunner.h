@@ -493,6 +493,8 @@ public:
     void clearAppBoundSession();
     void setAppBoundDomains(JSValueRef originArray, JSValueRef callback);
     void didSetAppBoundDomainsCallback();
+    void appBoundRequestContextDataForDomain(JSStringRef, JSValueRef);
+    void callDidReceiveAppBoundRequestContextDataForDomainCallback(String&&);
 
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);

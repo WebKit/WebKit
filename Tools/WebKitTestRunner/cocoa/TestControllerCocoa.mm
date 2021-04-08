@@ -383,6 +383,22 @@ void TestController::clearLoadedSubresourceDomains()
     [[globalWebViewConfiguration() websiteDataStore] _clearLoadedSubresourceDomainsFor:parentView->platformView()];
 }
 
+void TestController::appBoundRequestContextDataForDomain(WKStringRef domain)
+{
+    auto* parentView = mainWebView();
+    if (!parentView)
+        return;
+
+    [m_mainWebView->platformView() _appBoundNavigationDataForDomain:toWTFString(domain) completionHandler:^(NSString *context) {
+        if (!context) {
+            m_currentInvocation->didReceiveAppBoundRequestContextDataForDomain({ });
+            return;
+        }
+
+        m_currentInvocation->didReceiveAppBoundRequestContextDataForDomain(String(context));
+    }];
+}
+
 void TestController::injectUserScript(WKStringRef script)
 {
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource: toWTFString(script) injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);

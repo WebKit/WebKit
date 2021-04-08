@@ -2719,6 +2719,10 @@ void TestController::removeAllSessionCredentials()
 {
 }
 
+void TestController::appBoundRequestContextDataForDomain(WKStringRef)
+{
+}
+
 struct GetAllStorageAccessEntriesCallbackContext {
     GetAllStorageAccessEntriesCallbackContext(TestController& controller, CompletionHandler<void(Vector<String>&&)>&& handler)
         : testController(controller)

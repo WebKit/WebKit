@@ -26,13 +26,19 @@
 #pragma once
 
 #include "ArgumentCoder.h"
+#include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include <WebCore/RegistrableDomain.h>
+#include <WebCore/ResourceRequest.h>
 
 namespace WebKit {
 
 enum class NavigatingToAppBoundDomain : bool { No, Yes };
 enum class LastNavigationWasAppBound : bool { No, Yes };
+
+using ContextDomain = WebCore::RegistrableDomain;
+using RequestDomain = WebCore::RegistrableDomain;
 
 #if PLATFORM(COCOA)
 struct AppBoundNavigationTestingData {
@@ -41,17 +47,20 @@ struct AppBoundNavigationTestingData {
     {
         hasLoadedAppBoundRequestTesting = false;
         hasLoadedNonAppBoundRequestTesting = false;
+        contextData.clear();
     }
-    
-    void updateAppBoundNavigationTestingData(bool requestIsAppBound)
+
+    void updateAppBoundNavigationTestingData(const WebCore::ResourceRequest& request, WebCore::RegistrableDomain&& contextDomain)
     {
-        requestIsAppBound ? hasLoadedAppBoundRequestTesting = true : hasLoadedNonAppBoundRequestTesting = true;
+        request.isAppBound() ? hasLoadedAppBoundRequestTesting = true : hasLoadedNonAppBoundRequestTesting = true;
+        contextData.add(WebCore::RegistrableDomain(request.url()), contextDomain);
     }
 
     void encode(IPC::Encoder& encoder) const
     {
         encoder << hasLoadedAppBoundRequestTesting;
         encoder << hasLoadedNonAppBoundRequestTesting;
+        encoder << contextData;
     }
 
     static Optional<AppBoundNavigationTestingData> decode(IPC::Decoder& decoder)
@@ -66,11 +75,17 @@ struct AppBoundNavigationTestingData {
         if (!hasLoadedNonAppBoundRequestTesting)
             return WTF::nullopt;
 
-        return {{ *hasLoadedAppBoundRequestTesting, *hasLoadedNonAppBoundRequestTesting }};
+        Optional<HashMap<RequestDomain, ContextDomain>> contextData;
+        decoder >> contextData;
+        if (!contextData)
+            return WTF::nullopt;
+
+        return {{ *hasLoadedAppBoundRequestTesting, *hasLoadedNonAppBoundRequestTesting, WTFMove(*contextData) }};
     }
 
     bool hasLoadedAppBoundRequestTesting { false };
     bool hasLoadedNonAppBoundRequestTesting { false };
+    HashMap<RequestDomain, ContextDomain> contextData;
 };
 #endif
 

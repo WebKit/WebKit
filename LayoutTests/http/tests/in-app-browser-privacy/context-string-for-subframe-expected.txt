@@ -1,0 +1,10 @@
+Tests that the app-bound-request context string gets properly set for an iframe
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Context string for sub frame correctly captured.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
