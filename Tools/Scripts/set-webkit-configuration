@@ -51,7 +51,7 @@ EOF
 
 sub printCurrentSettings();
 sub printUsage();
-sub updateOrDeleteConfigurationFile($$);
+sub updateOrDeleteConfigurationFile($$$);
 
 my $configuration = passedConfiguration();
 my $architecture = passedArchitecture();
@@ -129,19 +129,6 @@ if ($forceOptimizationLevel
     exit 1;
 }
 
-sub updateOrDeleteConfigurationFile($$)
-{
-    my ($fileName, $contents) = @_;
-    my $filePath = File::Spec->catfile($baseProductDir, $fileName);
-    if ($contents) {
-       open FILE, ">", $filePath or die;
-       print FILE $contents;
-       close FILE;
-    } else {
-        unlink $filePath;
-    }
-}
-
 if ($configuration) {
     open CONFIGURATION, ">", "$baseProductDir/Configuration" or die;
     print CONFIGURATION $configuration;
@@ -158,10 +145,10 @@ if ($architecture) {
     }
 }
 
-updateOrDeleteConfigurationFile("ASan", $enableASAN ? "YES" : undef);
-updateOrDeleteConfigurationFile("Coverage", $enableCoverage ? "YES" : undef);
-updateOrDeleteConfigurationFile("TSan", $enableTSAN ? "YES" : undef);
-updateOrDeleteConfigurationFile("UBSan", $enableUBSAN ? "YES" : undef);
+updateOrDeleteConfigurationFile("ASan", $enableASAN, $disableASAN);
+updateOrDeleteConfigurationFile("Coverage", $enableCoverage, $disableCoverage);
+updateOrDeleteConfigurationFile("TSan", $enableTSAN, $disableTSAN);
+updateOrDeleteConfigurationFile("UBSan", $enableUBSAN, $disableUBSAN);
 
 if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {
     unlink "$baseProductDir/ForceOptimizationLevel";
@@ -200,4 +187,17 @@ sub printUsage()
 {
     print STDERR $usage, "\n";
     printCurrentSettings();
+}
+
+sub updateOrDeleteConfigurationFile($$$)
+{
+    my ($fileName, $shouldEnable, $shouldDisable) = @_;
+    my $filePath = File::Spec->catfile($baseProductDir, $fileName);
+    if ($shouldEnable) {
+       open FILE, ">", $filePath or die;
+       print FILE "YES";
+       close FILE;
+    } elsif ($shouldDisable) {
+        unlink $filePath;
+    }
 }

@@ -1,3 +1,16 @@
+2021-04-08  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r275150): set-webkit-configuration is too aggressive at deleting config files when coverage/sanitizer switch is not set
+        <https://webkit.org/b/224343>
+
+        Reviewed by Mark Lam.
+
+        * Scripts/set-webkit-configuration:
+        (updateOrDeleteConfigurationFile):
+        - Change to take enabled and disabled arguments, and only
+          reset (unlink) a config file if the --no-<option> is
+          explicitly set.
+
 2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Add test infrastructure for app bound request context string
