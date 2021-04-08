@@ -1,3 +1,14 @@
+2021-04-08  Dean Jackson  <dino@apple.com>
+
+        Specify Swift version in configuration
+        https://bugs.webkit.org/show_bug.cgi?id=224334
+
+        Reviewed by Darin Adler.
+
+        Specify Swift language version 5 to stop an Xcode warning.
+
+        * Configurations/Base.xcconfig:
+
 2021-04-08  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Temporarily retain some media services when GPU Process active
