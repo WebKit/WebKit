@@ -196,6 +196,8 @@ void OfflineAudioContext::didSuspendRendering(size_t frame)
 {
     BaseAudioContext::didSuspendRendering(frame);
 
+    clearPendingActivity();
+
     RefPtr<DeferredPromise> promise;
     {
         AutoLocker locker(*this);

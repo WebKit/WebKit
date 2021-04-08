@@ -1,3 +1,19 @@
+2021-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Suspended OfflineAudioContext objects are leaking
+        https://bugs.webkit.org/show_bug.cgi?id=224333
+
+        Reviewed by Darin Adler.
+
+        When offline rendering is suspended, we now release the ActiveDOMObject::PendingActivity we hold
+        to keep the OfflineAudioContext and its wrapper alive during rendering. The JS has to keep a
+        reference to the context's wrapper anyway if they ever want to resume rendering.
+
+        Test: webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended.html
+
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::didSuspendRendering):
+
 2021-04-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         Unreviewed, a comment fix

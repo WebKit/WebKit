@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+description("Makes sure that the OfflineAudioContext objects are not leaking when suspended.");
+jsTestIsAsync = true;
+
+const instancesToCreate = 100;
+
+function test() {
+    let promises = [];
+    for (let i = 0; i < instancesToCreate; i++) {
+        let context = new OfflineAudioContext(2, 44100, 44100);
+        promises.push(context.suspend(0.5));
+        context.startRendering();
+    }
+    shouldBeTrue("internals.numberOfBaseAudioContexts() >= instancesToCreate");
+    Promise.all(promises).then((values) => {
+        gc();
+        setTimeout(() => {
+            gc();
+            shouldBeTrue("internals.numberOfBaseAudioContexts() < instancesToCreate");
+            finishJSTest();
+        }, 0);
+    });
+}
+
+test();
+</script>
+</body>
+</html>

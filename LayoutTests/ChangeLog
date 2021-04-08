@@ -1,3 +1,15 @@
+2021-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Suspended OfflineAudioContext objects are leaking
+        https://bugs.webkit.org/show_bug.cgi?id=224333
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended.html: Added.
+
 2021-04-08  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/navigation convert PHP to Python
