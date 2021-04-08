@@ -1,3 +1,9 @@
+2021-04-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed. Fixed build warning.
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.h: Avoid C-linkage warning.
+
 2021-04-07  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Nullptr dereference in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
