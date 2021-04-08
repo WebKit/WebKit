@@ -1,3 +1,15 @@
+2021-04-08  Jer Noble  <jer.noble@apple.com>
+
+        [Swift] Move the "Copy Additional Sources" Build Phase into the WebKitSwift target
+        https://bugs.webkit.org/show_bug.cgi?id=224330
+
+        Reviewed by Eric Carlson.
+
+        Avoid a dependency cycle (WebKit -> WebKitSwift -> WebKit) due to the Copy Additional Sources phase by moving
+        that phase to the WebKitSwift target itself.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-04-08  Sihui Liu  <sihui_liu@apple.com>
 
         Remove logging for investigating http/tests/IndexedDB/storage-limit-1.html failure
