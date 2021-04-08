@@ -1,3 +1,16 @@
+2021-04-08  Rob Buis  <rbuis@igalia.com>
+
+        Remove virtual from RenderBox::availableLogicalWidth
+        https://bugs.webkit.org/show_bug.cgi?id=224332
+
+        Reviewed by Darin Adler.
+
+        Remove virtual from RenderBox::availableLogicalWidth since
+        it is not overridden.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::availableLogicalWidth const):
+
 2021-04-08  Chris Dumez  <cdumez@apple.com>
 
         OfflineAudioContext objects are leaking
