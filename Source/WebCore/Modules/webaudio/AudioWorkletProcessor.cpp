@@ -65,15 +65,6 @@ static JSObject* toJSObject(JSValueInWrappedObject& wrapper)
     return wrapper ? jsCast<JSObject*>(static_cast<JSValue>(wrapper)) : nullptr;
 }
 
-static void forEachChannelDataJSArray(JSGlobalObject& globalObject, JSArray& jsArray, const Function<void(unsigned busIndex, unsigned channelIndex, JSFloat32Array& channelData)>& apply)
-{
-    for (unsigned busIndex = 0, busCount = jsArray.length(); busIndex < busCount; ++busIndex) {
-        auto* channelsArray = jsCast<JSArray*>(jsArray.getIndex(&globalObject, busIndex));
-        for (unsigned channelIndex = 0, channelCount = channelsArray->length(); channelIndex < channelCount; ++channelIndex)
-            apply(busIndex, channelIndex, *jsCast<JSFloat32Array*>(channelsArray->getIndex(&globalObject, channelIndex)));
-    }
-}
-
 static JSFloat32Array* constructJSFloat32Array(JSGlobalObject& globalObject, unsigned length, const float* data = nullptr)
 {
     auto* jsArray = JSFloat32Array::create(&globalObject, globalObject.typedArrayStructure(TypeFloat32), length);
@@ -143,70 +134,65 @@ static void copyDataFromJSArrayToBuses(JSGlobalObject& globalObject, const JSArr
     }
 }
 
-static void copyDataFromBusesToJSArray(JSGlobalObject& globalObject, const Vector<RefPtr<AudioBus>>& buses, JSArray& jsArray)
-{
-    forEachChannelDataJSArray(globalObject, jsArray, [&](unsigned busIndex, unsigned channelIndex, JSFloat32Array& channelData) {
-        auto* channel = buses[busIndex]->channel(channelIndex);
-        ASSERT(channelData.length() == channel->length());
-        memcpy(channelData.typedVector(), channel->mutableData(), sizeof(float) * channel->length());
-    });
-}
-
-static void copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObject, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, JSObject& jsObject)
-{
-    for (auto& pair : paramValuesMap) {
-        auto* jsTypedArray = jsCast<JSFloat32Array*>(jsObject.get(&globalObject, Identifier::fromString(vm, pair.key)));
-        ASSERT(pair.value->size() >= jsTypedArray->length());
-        memcpy(jsTypedArray->typedVector(), pair.value->data(), sizeof(float) * jsTypedArray->length());
-    }
-}
-
-template<typename T>
-static bool busTopologyMatchesJSArray(JSGlobalObject& globalObject, const Vector<T>& buses, JSArray* jsArray)
+static bool copyDataFromBusesToJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<RefPtr<AudioBus>>& buses, JSArray* jsArray)
 {
     if (!jsArray)
         return false;
 
-    ASSERT_WITH_MESSAGE(jsArray->length() == buses.size(), "Number of inputs/outputs cannot change after construction");
-
-    for (unsigned i = 0; i < buses.size(); ++i) {
-        auto& bus = buses[i];
-        auto* channelsArray = jsCast<JSArray*>(jsArray->getIndex(&globalObject, i));
+    for (size_t busIndex = 0; busIndex < buses.size(); ++busIndex) {
+        auto& bus = buses[busIndex];
+        auto* jsChannelsArray = jsDynamicCast<JSArray*>(vm, jsArray->getIndex(&globalObject, busIndex));
         unsigned numberOfChannels = busChannelCount(bus.get());
-        if (channelsArray->length() != numberOfChannels)
+        if (!jsChannelsArray || jsChannelsArray->length() != numberOfChannels)
             return false;
-
-        for (unsigned j = 0; j < numberOfChannels; ++j) {
-            auto* channel = bus->channel(j);
-            auto* jsChannelData = jsCast<JSFloat32Array*>(channelsArray->getIndex(&globalObject, j));
-            if (jsChannelData->length() != channel->length())
+        for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
+            auto* channel = bus->channel(channelIndex);
+            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(vm, jsChannelsArray->getIndex(&globalObject, channelIndex));
+            if (!jsChannelArray || jsChannelArray->length() != channel->length())
                 return false;
+            memcpy(jsChannelArray->typedVector(), channel->mutableData(), sizeof(float) * jsChannelArray->length());
         }
     }
-
     return true;
 }
 
-static bool parameterMapTopologyMatchesJSObject(VM& vm, JSGlobalObject& globalObject, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, JSObject* jsObject)
+static bool copyDataFromParameterMapToJSObject(VM& vm, JSGlobalObject& globalObject, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap, JSObject* jsObject)
 {
     if (!jsObject)
         return false;
 
     for (auto& pair : paramValuesMap) {
-        auto* jsTypedArray = jsCast<JSFloat32Array*>(jsObject->get(&globalObject, Identifier::fromString(vm, pair.key)));
+        auto* jsTypedArray = jsDynamicCast<JSFloat32Array*>(vm, jsObject->get(&globalObject, Identifier::fromString(vm, pair.key)));
+        if (!jsTypedArray)
+            return false;
         unsigned expectedLength = pair.value->containsConstantValue() ? 1 : pair.value->size();
         if (jsTypedArray->length() != expectedLength)
             return false;
+        memcpy(jsTypedArray->typedVector(), pair.value->data(), sizeof(float) * jsTypedArray->length());
     }
-
     return true;
 }
 
-static void zeroJSArray(JSGlobalObject& globalObject, JSArray& jsArray)
+static bool zeroJSArray(VM& vm, JSGlobalObject& globalObject, const Vector<Ref<AudioBus>>& outputs, JSArray* jsArray)
 {
-    forEachChannelDataJSArray(globalObject, jsArray, [](unsigned, unsigned, JSFloat32Array& channelData) {
-        memset(channelData.typedVector(), 0, sizeof(float) * channelData.length());
-    });
+    if (!jsArray)
+        return false;
+
+    for (size_t busIndex = 0; busIndex < outputs.size(); ++busIndex) {
+        auto& bus = outputs[busIndex];
+        auto* jsChannelsArray = jsDynamicCast<JSArray*>(vm, jsArray->getIndex(&globalObject, busIndex));
+        unsigned numberOfChannels = busChannelCount(bus.get());
+        if (!jsChannelsArray || jsChannelsArray->length() != numberOfChannels)
+            return false;
+        for (unsigned channelIndex = 0; channelIndex < numberOfChannels; ++channelIndex) {
+            auto* channel = bus->channel(channelIndex);
+            auto* jsChannelArray = jsDynamicCast<JSFloat32Array*>(vm, jsChannelsArray->getIndex(&globalObject, channelIndex));
+            if (!jsChannelArray || jsChannelArray->length() != channel->length())
+                return false;
+            memset(jsChannelArray->typedVector(), 0, sizeof(float) * jsChannelArray->length());
+        }
+    }
+    return true;
 }
 
 ExceptionOr<Ref<AudioWorkletProcessor>> AudioWorkletProcessor::create(ScriptExecutionContext& context)
@@ -230,21 +216,15 @@ AudioWorkletProcessor::AudioWorkletProcessor(const AudioWorkletProcessorConstruc
 void AudioWorkletProcessor::buildJSArguments(VM& vm, JSGlobalObject& globalObject, MarkedArgumentBuffer& args, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const HashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap)
 {
     // For performance reasons, we cache the arrays passed to JS and reconstruct them only when the topology changes.
-    if (busTopologyMatchesJSArray(globalObject, inputs, toJSArray(m_jsInputs)))
-        copyDataFromBusesToJSArray(globalObject, inputs, *toJSArray(m_jsInputs));
-    else
+    if (!copyDataFromBusesToJSArray(vm, globalObject, inputs, toJSArray(m_jsInputs)))
         m_jsInputs = { constructFrozenJSArray(vm, globalObject, inputs, ShouldPopulateWithBusData::Yes) };
     args.append(m_jsInputs);
 
-    if (busTopologyMatchesJSArray(globalObject, outputs, toJSArray(m_jsOutputs)))
-        zeroJSArray(globalObject, *toJSArray(m_jsOutputs));
-    else
+    if (!zeroJSArray(vm, globalObject, outputs, toJSArray(m_jsOutputs)))
         m_jsOutputs = { constructFrozenJSArray(vm, globalObject, outputs, ShouldPopulateWithBusData::No) };
     args.append(m_jsOutputs);
 
-    if (parameterMapTopologyMatchesJSObject(vm, globalObject, paramValuesMap, toJSObject(m_jsParamValues)))
-        copyDataFromParameterMapToJSObject(vm, globalObject, paramValuesMap, *toJSObject(m_jsParamValues));
-    else
+    if (!copyDataFromParameterMapToJSObject(vm, globalObject, paramValuesMap, toJSObject(m_jsParamValues)))
         m_jsParamValues = { constructFrozenKeyValueObject(vm, globalObject, paramValuesMap) };
     args.append(m_jsParamValues);
 }
