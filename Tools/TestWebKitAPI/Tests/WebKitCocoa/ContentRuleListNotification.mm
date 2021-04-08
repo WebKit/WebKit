@@ -198,14 +198,6 @@ static String webSocketAcceptValue(const Vector<char>& request)
     return base64Encode(hash.data(), SHA1::hashSize);
 }
 
-static void respond(id<WKURLSchemeTask> task, const char* html)
-{
-    NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:strlen(html) textEncodingName:nil] autorelease];
-    [task didReceiveResponse:response];
-    [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
-    [task didFinish];
-};
-
 TEST(ContentRuleList, ResourceTypes)
 {
     using namespace TestWebKitAPI;

@@ -1,3 +1,13 @@
+2021-04-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r273541) WKWebView can't load NSURLRequest subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=224338
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData):
+
 2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Add test infrastructure for app bound request context string

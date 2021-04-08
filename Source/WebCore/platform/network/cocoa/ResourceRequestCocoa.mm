@@ -150,6 +150,14 @@ static NSURL *siteForCookies(ResourceRequest::SameSiteDisposition disposition, N
     }
 }
 
+void ResourceRequest::replacePlatformRequest(HTTPBodyUpdatePolicy policy)
+{
+    updateResourceRequest();
+    m_nsRequest = nil;
+    m_platformRequestUpdated = false;
+    updatePlatformRequest(policy);
+}
+
 void ResourceRequest::doUpdatePlatformRequest()
 {
     if (isNull()) {

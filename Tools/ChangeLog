@@ -1,3 +1,17 @@
+2021-04-08  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r273541) WKWebView can't load NSURLRequest subclasses
+        https://bugs.webkit.org/show_bug.cgi?id=224338
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+        (respond):
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadInvalidURLRequest.mm:
+        (-[TestURLRequest initWithURL:]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/TestURLSchemeHandler.h:
+
 2021-04-08  David Kilzer  <ddkilzer@apple.com>
 
         REGRESSION (r275150): set-webkit-configuration is too aggressive at deleting config files when coverage/sanitizer switch is not set

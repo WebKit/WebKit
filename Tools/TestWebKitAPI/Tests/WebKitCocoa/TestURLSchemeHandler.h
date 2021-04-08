@@ -31,3 +31,5 @@
 @property (nonatomic, copy) void (^stopURLSchemeTaskHandler)(WKWebView *, id <WKURLSchemeTask>);
 
 @end
+
+void respond(id<WKURLSchemeTask>, const char* html);
