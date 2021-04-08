@@ -1,5 +1,15 @@
 2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] DUCET level-1 weighs are equal if characters are alphabets
+        https://bugs.webkit.org/show_bug.cgi?id=224047
+
+        Reviewed by Saam Barati and Mark Lam.
+
+        * stress/ducet-level-3-or-4-comparison.js: Added.
+        (shouldBe):
+
+2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Update test262
         https://bugs.webkit.org/show_bug.cgi?id=224272
 

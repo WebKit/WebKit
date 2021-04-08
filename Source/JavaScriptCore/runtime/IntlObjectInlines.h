@@ -154,27 +154,49 @@ ResultType intlOption(JSGlobalObject* globalObject, Optional<JSObject&> options,
 
 ALWAYS_INLINE bool canUseASCIIUCADUCETComparison(UChar character)
 {
-    return isASCII(character) && ducetWeights[character];
+    return isASCII(character) && ducetLevel1Weights[character];
+}
+
+template<typename CharacterType1, typename CharacterType2>
+UCollationResult compareASCIIWithUCADUCETLevel3(const CharacterType1* characters1, const CharacterType2* characters2, unsigned length)
+{
+    for (unsigned position = 0; position < length; ++position) {
+        auto lhs = characters1[position];
+        auto rhs = characters2[position];
+        uint8_t leftWeight = ducetLevel3Weights[lhs];
+        uint8_t rightWeight = ducetLevel3Weights[rhs];
+        if (leftWeight == rightWeight)
+            continue;
+        return leftWeight > rightWeight ? UCOL_GREATER : UCOL_LESS;
+    }
+    return UCOL_EQUAL;
 }
 
 template<typename CharacterType1, typename CharacterType2>
 inline UCollationResult compareASCIIWithUCADUCET(const CharacterType1* characters1, unsigned length1, const CharacterType2* characters2, unsigned length2)
 {
+    bool notSameCharacters = false;
     unsigned commonLength = std::min(length1, length2);
     for (unsigned position = 0; position < commonLength; ++position) {
         auto lhs = characters1[position];
         auto rhs = characters2[position];
         ASSERT(canUseASCIIUCADUCETComparison(lhs));
         ASSERT(canUseASCIIUCADUCETComparison(rhs));
-        uint8_t leftWeight = ducetWeights[lhs];
-        uint8_t rightWeight = ducetWeights[rhs];
+        if (lhs == rhs)
+            continue;
+        notSameCharacters = true;
+        uint8_t leftWeight = ducetLevel1Weights[lhs];
+        uint8_t rightWeight = ducetLevel1Weights[rhs];
         if (leftWeight == rightWeight)
             continue;
         return leftWeight > rightWeight ? UCOL_GREATER : UCOL_LESS;
     }
 
-    if (length1 == length2)
+    if (length1 == length2) {
+        if (notSameCharacters)
+            return compareASCIIWithUCADUCETLevel3(characters1, characters2, length1);
         return UCOL_EQUAL;
+    }
     return length1 > length2 ? UCOL_GREATER : UCOL_LESS;
 }
 
