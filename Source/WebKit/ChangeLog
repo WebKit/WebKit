@@ -1,5 +1,54 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r274378. rdar://problem/76412648
+
+    [Cocoa][WebM] Hang when reloading page before WebM content is loaded
+    https://bugs.webkit.org/show_bug.cgi?id=223139
+    <rdar://75351029>
+    
+    Reviewed by Darin Adler.
+    
+    No new tests; a truly deterministic test would require a .cgi script to block loading after
+    the WebM init segment, but a bug in the platform format reader causes URLs not ending in
+    .webm to fail to load the format reader plugin. Once this issue is fixed, we can write a
+    test to cover this behavior.
+    
+    The WebM TrackEntry "enabled" bit is optional, and WebKit previously waited until any media data
+    was appended to say whether or not the track is enabled in the absense of an explicit signal.
+    Instead, assume any track that is not explicity disabled is enabled, for the purpose of the
+    format reader. This means that "enabled" queries will no longer block, which breaks the deadlock
+    when tearing down the AVAsset backing the WebM file.
+    
+    * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+    (WebKit::MediaTrackReader::copyProperty):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274378 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-12  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa][WebM] Hang when reloading page before WebM content is loaded
+            https://bugs.webkit.org/show_bug.cgi?id=223139
+            <rdar://75351029>
+
+            Reviewed by Darin Adler.
+
+            No new tests; a truly deterministic test would require a .cgi script to block loading after
+            the WebM init segment, but a bug in the platform format reader causes URLs not ending in
+            .webm to fail to load the format reader plugin. Once this issue is fixed, we can write a
+            test to cover this behavior.
+
+            The WebM TrackEntry "enabled" bit is optional, and WebKit previously waited until any media data
+            was appended to say whether or not the track is enabled in the absense of an explicit signal.
+            Instead, assume any track that is not explicity disabled is enabled, for the purpose of the
+            format reader. This means that "enabled" queries will no longer block, which breaks the deadlock
+            when tearing down the AVAsset backing the WebM file.
+
+            * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+            (WebKit::MediaTrackReader::copyProperty):
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r273820. rdar://problem/76412727
 
     Report the correct document uri in the case of a ContentSecurityPolicyClient

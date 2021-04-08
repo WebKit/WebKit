@@ -147,9 +147,11 @@ const char* MediaTrackReader::mediaTypeString() const
 
 OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, void* copiedValue)
 {
-    // Don't block waiting for media if the we know the enabled state.
-    if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_Enabled()) && m_isEnabled != Enabled::Unknown) {
-        *reinterpret_cast<CFBooleanRef*>(copiedValue) = retainPtr(m_isEnabled == Enabled::True ? kCFBooleanTrue : kCFBooleanFalse).leakRef();
+    // Don't block waiting for media to answer requests for the enabled state.
+    if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_Enabled())) {
+        // Assume that a track without an explicit enabled state is enabled by default,
+        // to avoid blocking waiting for media data to be appended.
+        *reinterpret_cast<CFBooleanRef*>(copiedValue) = m_isEnabled == Enabled::False ? kCFBooleanFalse : kCFBooleanTrue;
         return noErr;
     }
 
@@ -159,17 +161,6 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
     });
 
     auto& sampleMap = m_sampleStorage->sampleMap;
-
-    if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginTrackReaderProperty_Enabled())) {
-        if (m_isEnabled == Enabled::Unknown) {
-            m_isEnabled = sampleMap.empty() ? Enabled::False : Enabled::True;
-            if (m_isEnabled == Enabled::False)
-                ERROR_LOG(LOGIDENTIFIER, "ignoring empty ", mediaTypeString(), " track");
-        }
-
-        *reinterpret_cast<CFBooleanRef*>(copiedValue) = retainPtr(m_isEnabled == Enabled::True ? kCFBooleanTrue : kCFBooleanFalse).leakRef();
-        return noErr;
-    }
 
     if (sampleMap.empty()) {
         ERROR_LOG(LOGIDENTIFIER, "sample table empty when asked for ", String(key));
