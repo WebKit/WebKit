@@ -7729,6 +7729,14 @@ static const Vector<ASCIILiteral>& mediaRelatedIOKitClasses()
     });
     return services;
 }
+
+static const Vector<ASCIILiteral>& temporaryMachServices()
+{
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.coremedia.routingcontext.xpc"_s // Remove after <rdar://76403302> is fixed.
+    });
+    return services;
+}
 #endif
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
@@ -7824,6 +7832,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         // FIXME(207716): The following should be removed when the GPU process is complete.
         parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
         parameters.mediaIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(mediaRelatedIOKitClasses(), WTF::nullopt);
+    } else {
+        // FIXME(224327): Remove this else clause once <rdar://76403302> is fixed.
+        parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(temporaryMachServices(), WTF::nullopt);
     }
 
     if (!preferences().useGPUProcessForMediaEnabled()
