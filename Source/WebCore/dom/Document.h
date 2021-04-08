@@ -2127,6 +2127,8 @@ private:
     bool m_didDispatchViewportPropertiesChanged { false };
 #endif
 
+    bool m_updateTitleTaskScheduled { false };
+
     OrientationNotifier m_orientationNotifier;
     mutable RefPtr<Logger> m_logger;
     RefPtr<StringCallback> m_consoleMessageListener;
