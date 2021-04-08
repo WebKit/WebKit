@@ -611,7 +611,7 @@ static void applyCommonButtonPaddingToStyle(RenderStyle& style, const Element& e
     Document& document = element.document();
     auto emSize = CSSPrimitiveValue::create(0.5, CSSUnitType::CSS_EMS);
     // We don't need this element's parent style to calculate `em` units, so it's okay to pass nullptr for it here.
-    int pixels = emSize->computeLength<int>(CSSToLengthConversionData(&style, document.renderStyle(), nullptr, document.renderView(), document.frame()->pageZoomFactor()));
+    int pixels = emSize->computeLength<int>(CSSToLengthConversionData(&style, document.renderStyle(), nullptr, document.renderView(), document.frame() ? document.frame()->pageZoomFactor() : 1.));
     style.setPaddingBox(LengthBox(0, pixels, 0, pixels));
 }
 
