@@ -572,7 +572,11 @@ class BugzillaMixin(object):
         patch = self.fetch_data_from_url_with_authentication(patch_url)
         if not patch:
             return None
-        patch_json = patch.json().get('attachments')
+        try:
+            patch_json = patch.json().get('attachments')
+        except Exception as e:
+            print('Failed to fetch patch json from {}, error: {}'.format(patch_url, e))
+            return None
         if not patch_json or len(patch_json) == 0:
             return None
         return patch_json.get(str(patch_id))
@@ -582,7 +586,11 @@ class BugzillaMixin(object):
         bug = self.fetch_data_from_url_with_authentication(bug_url)
         if not bug:
             return None
-        bugs_json = bug.json().get('bugs')
+        try:
+            bugs_json = bug.json().get('bugs')
+        except Exception as e:
+            print('Failed to fetch bug json from {}, error: {}'.format(bug_url, e))
+            return None
         if not bugs_json or len(bugs_json) == 0:
             return None
         return bugs_json[0]
