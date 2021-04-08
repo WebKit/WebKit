@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #import "APINavigation.h"
 #import "WKFrameInfo.h"
+#import "WKInspectorResourceURLSchemeHandler.h"
 #import "WKInspectorWKWebView.h"
 #import "WKNavigationAction.h"
 #import "WKNavigationDelegate.h"
@@ -45,6 +46,8 @@
 #import "_WKInspectorConfigurationInternal.h"
 #import <WebCore/VersionChecks.h>
 #import <wtf/WeakObjCPtr.h>
+
+static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 
 @interface WKInspectorViewController () <WKUIDelegate, WKNavigationDelegate, WKInspectorWKWebViewDelegate>
 @end
@@ -110,7 +113,9 @@
 
 - (WKWebViewConfiguration *)webViewConfiguration
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    RetainPtr<WKInspectorResourceURLSchemeHandler> inspectorSchemeHandler = adoptNS([[WKInspectorResourceURLSchemeHandler alloc] init]);
+    [configuration setURLSchemeHandler:inspectorSchemeHandler.autorelease() forURLScheme:WKInspectorResourceScheme];
 
     WKPreferences *preferences = configuration.get().preferences;
     preferences._allowFileAccessFromFileURLs = YES;
@@ -145,6 +150,11 @@
 + (BOOL)viewIsInspectorWebView:(NSView *)view
 {
     return [view isKindOfClass:[WKInspectorWKWebView class]];
+}
+
++ (NSURL *)URLForInspectorResource:(NSString *)resource
+{
+    return [NSURL URLWithString:[NSString stringWithFormat:@"%@:///%@", WKInspectorResourceScheme, resource]].URLByStandardizingPath;
 }
 
 // MARK: WKUIDelegate methods
@@ -226,7 +236,7 @@
     }
 
     // Allow loading of the main inspector file.
-    if (WebKit::WebInspectorProxy::isMainOrTestInspectorPage(navigationAction.request.URL)) {
+    if ([navigationAction.request.URL.scheme isEqualToString:WKInspectorResourceScheme]) {
         decisionHandler(WKNavigationActionPolicyAllow);
         return;
     }

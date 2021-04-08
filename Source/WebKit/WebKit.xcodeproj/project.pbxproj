@@ -1509,6 +1509,7 @@
 		997965A3253128C700B31AE3 /* _WKInspectorExtensionHost.h in Headers */ = {isa = PBXBuildFile; fileRef = 997965A2253128C700B31AE3 /* _WKInspectorExtensionHost.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9979CA58237F49F10039EC05 /* _WKInspectorPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9979CA57237F49F00039EC05 /* _WKInspectorPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99996A9F25004BCC004F7559 /* _WKInspectorPrivateForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = 99996A9D25004BCB004F7559 /* _WKInspectorPrivateForTesting.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		99A7ACE526012922006D57FD /* WKInspectorResourceURLSchemeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 99A7ACE326012919006D57FD /* WKInspectorResourceURLSchemeHandler.h */; };
 		99B16757252BB7E10073140E /* _WKInspectorExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 99B16754252BB7E00073140E /* _WKInspectorExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		99B16758252BB7E10073140E /* _WKInspectorExtensionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99B16755252BB7E10073140E /* _WKInspectorExtensionInternal.h */; };
 		99B1675B252BBADD0073140E /* WebInspectorUIExtensionControllerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 99B1675A252BBADD0073140E /* WebInspectorUIExtensionControllerProxy.h */; };
@@ -4840,6 +4841,8 @@
 		99996A9E25004BCB004F7559 /* _WKInspectorTesting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorTesting.mm; sourceTree = "<group>"; };
 		999B7ED82550E4A800F450A4 /* InspectorExtensionTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorExtensionTypes.cpp; sourceTree = "<group>"; };
 		999B7F4F2554BA3F00F450A4 /* APIInspectorExtension.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIInspectorExtension.cpp; sourceTree = "<group>"; };
+		99A7ACE326012919006D57FD /* WKInspectorResourceURLSchemeHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKInspectorResourceURLSchemeHandler.h; sourceTree = "<group>"; };
+		99A7ACE42601291A006D57FD /* WKInspectorResourceURLSchemeHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorResourceURLSchemeHandler.mm; sourceTree = "<group>"; };
 		99B16754252BB7E00073140E /* _WKInspectorExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorExtension.h; sourceTree = "<group>"; };
 		99B16755252BB7E10073140E /* _WKInspectorExtensionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKInspectorExtensionInternal.h; sourceTree = "<group>"; };
 		99B16756252BB7E10073140E /* _WKInspectorExtension.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKInspectorExtension.mm; sourceTree = "<group>"; };
@@ -9127,6 +9130,8 @@
 			children = (
 				A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */,
 				1CA8B935127C774E00576C2B /* WebInspectorProxyMac.mm */,
+				99A7ACE326012919006D57FD /* WKInspectorResourceURLSchemeHandler.h */,
+				99A7ACE42601291A006D57FD /* WKInspectorResourceURLSchemeHandler.mm */,
 				994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */,
 				994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */,
 				A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */,
@@ -12416,6 +12421,7 @@
 				0F3C725B196F604E00AEDD0C /* WKInspectorHighlightView.h in Headers */,
 				A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */,
 				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
+				99A7ACE526012922006D57FD /* WKInspectorResourceURLSchemeHandler.h in Headers */,
 				994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */,
 				A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */,
 				2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */,

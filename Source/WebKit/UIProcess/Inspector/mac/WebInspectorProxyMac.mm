@@ -779,42 +779,17 @@ void WebInspectorProxy::platformStartWindowDrag()
 
 String WebInspectorProxy::inspectorPageURL()
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return String();
-
-    NSString *path = [bundle pathForResource:@"Main" ofType:@"html"];
-    ASSERT(path && path.length);
-    if (!path)
-        return String();
-
-    return [NSURL fileURLWithPath:path isDirectory:NO].absoluteString;
+    return [WKInspectorViewController URLForInspectorResource:@"Main.html"].absoluteString;
 }
 
 String WebInspectorProxy::inspectorTestPageURL()
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return String();
-
-    // We might not have a Test.html in Production builds.
-    NSString *path = [bundle pathForResource:@"Test" ofType:@"html"];
-    if (!path)
-        return String();
-
-    return [NSURL fileURLWithPath:path isDirectory:NO].absoluteString;
+    return [WKInspectorViewController URLForInspectorResource:@"Test.html"].absoluteString;
 }
 
 String WebInspectorProxy::inspectorBaseURL()
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebInspectorUI"];
-    if (!bundle)
-        return String();
-
-    NSString *path = bundle.resourcePath;
-    ASSERT(path && path.length);
-
-    return [NSURL fileURLWithPath:path isDirectory:YES].absoluteString;
+    return [WKInspectorViewController URLForInspectorResource:@""].absoluteString;
 }
 
 static NSDictionary *systemVersionPlist()
