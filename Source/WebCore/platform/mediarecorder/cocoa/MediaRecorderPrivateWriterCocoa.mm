@@ -50,10 +50,10 @@
 #include <pal/cocoa/AVFoundationSoftLink.h>
 
 @interface WebAVAssetWriterDelegate : NSObject <AVAssetWriterDelegate> {
-    WeakPtr<WebCore::MediaRecorderPrivateWriter> m_writer;
+    WebCore::MediaRecorderPrivateWriter* m_writer;
 }
 
-- (instancetype)initWithWriter:(WebCore::MediaRecorderPrivateWriter*)writer;
+- (instancetype)initWithWriter:(WebCore::MediaRecorderPrivateWriter&)writer;
 - (void)close;
 
 @end
@@ -61,12 +61,12 @@
 @implementation WebAVAssetWriterDelegate {
 };
 
-- (instancetype)initWithWriter:(WebCore::MediaRecorderPrivateWriter*)writer
+- (instancetype)initWithWriter:(WebCore::MediaRecorderPrivateWriter&)writer
 {
     ASSERT(isMainThread());
     self = [super init];
     if (self)
-        self->m_writer = makeWeakPtr(writer);
+        self->m_writer = &writer;
 
     return self;
 }
@@ -74,36 +74,14 @@
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedHeaderData:(NSData *)fragmentedHeaderData
 {
     UNUSED_PARAM(assetWriter);
-    if (!isMainThread()) {
-        if (auto size = [fragmentedHeaderData length]) {
-            callOnMainThread([protectedSelf = RetainPtr<WebAVAssetWriterDelegate>(self), buffer = WebCore::SharedBuffer::create(static_cast<const char*>([fragmentedHeaderData bytes]), size)]() mutable {
-                if (protectedSelf->m_writer)
-                    protectedSelf->m_writer->appendData(WTFMove(buffer));
-            });
-        }
-        return;
-    }
-
-    if (m_writer)
-        m_writer->appendData(static_cast<const char*>([fragmentedHeaderData bytes]), [fragmentedHeaderData length]);
+    m_writer->appendData(static_cast<const char*>([fragmentedHeaderData bytes]), [fragmentedHeaderData length]);
 }
 
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedMediaData:(NSData *)fragmentedMediaData fragmentedMediaDataReport:(AVFragmentedMediaDataReport *)fragmentedMediaDataReport
 {
     UNUSED_PARAM(assetWriter);
     UNUSED_PARAM(fragmentedMediaDataReport);
-    if (!isMainThread()) {
-        if (auto size = [fragmentedMediaData length]) {
-            callOnMainThread([protectedSelf = RetainPtr<WebAVAssetWriterDelegate>(self), buffer = WebCore::SharedBuffer::create(static_cast<const char*>([fragmentedMediaData bytes]), size)]() mutable {
-                if (protectedSelf->m_writer)
-                    protectedSelf->m_writer->appendData(WTFMove(buffer));
-            });
-        }
-        return;
-    }
-
-    if (m_writer)
-        m_writer->appendData(static_cast<const char*>([fragmentedMediaData bytes]), [fragmentedMediaData length]);
+    m_writer->appendData(static_cast<const char*>([fragmentedMediaData bytes]), [fragmentedMediaData length]);
 }
 
 - (void)close
@@ -164,7 +142,7 @@ bool MediaRecorderPrivateWriter::initialize()
         return false;
     }
 
-    m_writerDelegate = adoptNS([[WebAVAssetWriterDelegate alloc] initWithWriter: this]);
+    m_writerDelegate = adoptNS([[WebAVAssetWriterDelegate alloc] initWithWriter: *this]);
     [m_writer.get() setDelegate:m_writerDelegate.get()];
 
     if (m_hasAudio) {
@@ -396,10 +374,16 @@ void MediaRecorderPrivateWriter::clear()
 {
     m_pendingAudioSampleQueue.clear();
     m_pendingVideoSampleQueue.clear();
-    if (m_writer)
+    if (m_writer) {
+        [m_writer cancelWriting];
         m_writer.clear();
+    }
 
+    // At this pointer, we should no longer be writing any data, so it should be safe to close and nullify m_data without locking.
+    if (m_writerDelegate)
+        [m_writerDelegate close];
     m_data = nullptr;
+
     if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
         completionHandler(nullptr, 0);
 }
@@ -488,10 +472,13 @@ void MediaRecorderPrivateWriter::stopRecording()
             m_isStopped = false;
             m_hasStartedWriting = false;
 
-            if (m_writer)
+            if (m_writer) {
+                [m_writer cancelWriting];
                 m_writer.clear();
+            }
+
             if (m_fetchDataCompletionHandler)
-                m_fetchDataCompletionHandler(std::exchange(m_data, nullptr), 0);
+                m_fetchDataCompletionHandler(takeData(), 0);
         };
 
         if (!m_hasStartedWriting) {
@@ -551,11 +538,12 @@ void MediaRecorderPrivateWriter::completeFetchData()
         auto sampleTime = CMTimeSubtract(CMClockGetTime(CMClockGetHostTimeClock()), m_resumedVideoTime);
         m_timeCode = CMTimeGetSeconds(CMTimeAdd(sampleTime, m_currentVideoDuration));
     }
-    m_fetchDataCompletionHandler(std::exchange(m_data, nullptr), currentTimeCode);
+    m_fetchDataCompletionHandler(takeData(), currentTimeCode);
 }
 
 void MediaRecorderPrivateWriter::appendData(const char* data, size_t size)
 {
+    auto locker = holdLock(m_dataLock);
     if (!m_data) {
         m_data = SharedBuffer::create(data, size);
         return;
@@ -563,13 +551,11 @@ void MediaRecorderPrivateWriter::appendData(const char* data, size_t size)
     m_data->append(data, size);
 }
 
-void MediaRecorderPrivateWriter::appendData(Ref<SharedBuffer>&& buffer)
+RefPtr<SharedBuffer> MediaRecorderPrivateWriter::takeData()
 {
-    if (!m_data) {
-        m_data = WTFMove(buffer);
-        return;
-    }
-    m_data->append(WTFMove(buffer));
+    auto locker = holdLock(m_dataLock);
+    auto data = WTFMove(m_data);
+    return data;
 }
 
 void MediaRecorderPrivateWriter::pause()
