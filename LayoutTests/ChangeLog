@@ -1,5 +1,79 @@
 2021-04-08  Chris Gambrell  <cgambrell@apple.com>
 
+        [LayoutTests] Convert http/tests/navigation convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222418
+        <rdar://problem/74744523>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-blob-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-blob.html:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect.html:
+        * http/tests/navigation/image-load-in-pagehide-handler-expected.txt:
+        * http/tests/navigation/image-load-in-pagehide-handler.html:
+        * http/tests/navigation/image-load-in-unload-handler-expected.txt:
+        * http/tests/navigation/image-load-in-unload-handler.html:
+        * http/tests/navigation/no-referrer-reset-expected.txt:
+        * http/tests/navigation/no-referrer-reset.html:
+        * http/tests/navigation/no-referrer-same-window.html:
+        * http/tests/navigation/no-referrer-subframe.html:
+        * http/tests/navigation/no-referrer-target-blank.html:
+        * http/tests/navigation/ping-attribute/anchor-cookie-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-cookie.html:
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-from-https-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html:
+        * http/tests/navigation/ping-attribute/anchor-cross-origin.html:
+        * http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html:
+        * http/tests/navigation/ping-attribute/anchor-same-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-same-origin.html:
+        * http/tests/navigation/ping-attribute/area-cookie-expected.txt:
+        * http/tests/navigation/ping-attribute/area-cookie.html:
+        * http/tests/navigation/ping-attribute/area-cross-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/area-cross-origin-from-https-expected.txt:
+        * http/tests/navigation/ping-attribute/area-cross-origin-from-https.html:
+        * http/tests/navigation/ping-attribute/area-cross-origin.html:
+        * http/tests/navigation/ping-attribute/area-same-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/area-same-origin.html:
+        * http/tests/navigation/ping-attribute/resources/utilities.js:
+        (clearLastPingResultAndRunTest):
+        * http/tests/navigation/post-301-response.html:
+        * http/tests/navigation/post-302-response.html:
+        * http/tests/navigation/post-303-response.html:
+        * http/tests/navigation/post-307-response.html:
+        * http/tests/navigation/post-308-response.html:
+        * http/tests/navigation/resources/check-ping.php: Removed.
+        * http/tests/navigation/resources/check-ping.py: Added.
+        * http/tests/navigation/resources/delete-ping.php: Removed.
+        * http/tests/navigation/resources/delete-ping.py: Added.
+        * http/tests/navigation/resources/image-load-in-pagehide-handler-2.html:
+        * http/tests/navigation/resources/image-load-in-unload-handler-2.html:
+        * http/tests/navigation/resources/no-referrer-helper.php: Removed.
+        * http/tests/navigation/resources/no-referrer-helper.py: Added.
+        * http/tests/navigation/resources/no-referrer-reset-helper.php: Removed.
+        * http/tests/navigation/resources/no-referrer-reset-helper.py: Added.
+        * http/tests/navigation/resources/no-referrer-same-window-helper.php: Removed.
+        * http/tests/navigation/resources/no-referrer-same-window-helper.py: Added.
+        * http/tests/navigation/resources/ping-file-path.php: Removed.
+        * http/tests/navigation/resources/ping_file_path.py: Added.
+        * http/tests/navigation/resources/redirected-post-request-contents.php: Removed.
+        * http/tests/navigation/resources/redirected-post-request-contents.py: Added.
+        (check_header):
+        * http/tests/navigation/resources/redirection-response.php: Removed.
+        * http/tests/navigation/resources/redirection-response.py: Added.
+        * http/tests/navigation/resources/save-Ping.php: Removed.
+        * http/tests/navigation/resources/save-ping-and-redirect-to-save-ping.php: Removed.
+        * http/tests/navigation/resources/save-ping-and-redirect-to-save-ping.py: Added.
+        * http/tests/navigation/resources/save-ping.py: Added.
+        * http/tests/navigation/resources/save_ping.py: Added.
+        (not_being_called):
+        (save_ping):
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html:
+
+2021-04-08  Chris Gambrell  <cgambrell@apple.com>
+
         [LayoutTests] Convert http/tests/workers convert PHP to Python
         https://bugs.webkit.org/show_bug.cgi?id=223522
         <rdar://problem/75624689>

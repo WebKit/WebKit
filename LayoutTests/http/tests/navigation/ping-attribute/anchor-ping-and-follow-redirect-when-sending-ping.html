@@ -18,7 +18,7 @@ function checkPing()
 {
     function actualCheckPing()
     {
-        window.location = "../resources/check-ping.php";
+        window.location = "../resources/check-ping.py";
     }
     // We assume that if redirects were followed when saving a ping that they will complete within one second.
     // FIXME: Is there are better way to test that a redirect occurred?
@@ -32,7 +32,7 @@ window.onload = function ()
 </script>
 </head>
 <body>
-<p>This test PASSED if the filename of the REQUEST_URI in the dumped report is save-Ping.php. Otherwise, it FAIL.</p>
-<a id="a" href="javascript:checkPing()" ping="../resources/save-ping-and-redirect-to-save-ping.php">Navigate and send ping</a>
+<p>This test PASSED if the filename of the REQUEST_URI in the dumped report is save-ping.py. Otherwise, it FAIL.</p>
+<a id="a" href="javascript:checkPing()" ping="../resources/save-ping-and-redirect-to-save-ping.py">Navigate and send ping</a>
 </body>
 </html>
