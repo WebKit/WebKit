@@ -153,7 +153,7 @@ JSC_DEFINE_HOST_FUNCTION(callWebAssemblyFunction, (JSGlobalObject* globalObject,
     return rawResult;
 }
 
-bool WebAssemblyFunction::useTagRegisters() const
+bool WebAssemblyFunction::usesTagRegisters() const
 {
     const auto& signature = Wasm::SignatureInformation::get(signatureIndex());
     return signature.argumentCount() || !signature.returnsVoid();
@@ -162,7 +162,13 @@ bool WebAssemblyFunction::useTagRegisters() const
 RegisterSet WebAssemblyFunction::calleeSaves() const
 {
     // Pessimistically save callee saves in BoundsChecking mode since the LLInt always bounds checks
-    return Wasm::PinnedRegisterInfo::get().toSave(Wasm::MemoryMode::BoundsChecking);
+    RegisterSet result = Wasm::PinnedRegisterInfo::get().toSave(Wasm::MemoryMode::BoundsChecking);
+    if (usesTagRegisters()) {
+        RegisterSet tagCalleeSaves = RegisterSet::calleeSaveRegisters();
+        tagCalleeSaves.filter(RegisterSet::runtimeTagRegisters());
+        result.merge(tagCalleeSaves);
+    }
+    return result;
 }
 
 RegisterAtOffsetList WebAssemblyFunction::usedCalleeSaveRegisters() const
@@ -249,7 +255,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
     slowPath.append(jit.branch32(CCallHelpers::Below,
         CCallHelpers::payloadFor(CallFrameSlot::argumentCountIncludingThis), CCallHelpers::TrustedImm32(signature.argumentCount() + 1)));
 
-    if (useTagRegisters())
+    if (usesTagRegisters())
         jit.emitMaterializeTagCheckRegisters();
 
     // Loop backwards so we can use the first floating point argument as a scratch.

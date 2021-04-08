@@ -1,5 +1,53 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r274699. rdar://problem/76373830
+
+    JS->Wasm IC must save the tag registers if it uses them
+    https://bugs.webkit.org/show_bug.cgi?id=223491
+    <rdar://66445108>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * wasm/stress/save-tag-callee-saves-in-js-entrypoint-ic.js: Added.
+    (0x0b.WebAssembly.instantiate.wasm.then.e.const.mod.e.instance.exports.Test.prototype.get breakIt):
+    (0x0b.WebAssembly.instantiate.wasm.then.e.const.mod.e.instance.exports.Test):
+    (0x0b.WebAssembly.instantiate.wasm.then.e.const.obj.new.Test):
+    
+    Source/JavaScriptCore:
+    
+    It turns out, that when you use a callee save register, you should save it.
+    
+    * wasm/js/WebAssemblyFunction.cpp:
+    (JSC::WebAssemblyFunction::usesTagRegisters const):
+    (JSC::WebAssemblyFunction::calleeSaves const):
+    (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+    (JSC::WebAssemblyFunction::useTagRegisters const): Deleted.
+    * wasm/js/WebAssemblyFunction.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274699 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-18  Saam Barati  <sbarati@apple.com>
+
+            JS->Wasm IC must save the tag registers if it uses them
+            https://bugs.webkit.org/show_bug.cgi?id=223491
+            <rdar://66445108>
+
+            Reviewed by Yusuke Suzuki.
+
+            It turns out, that when you use a callee save register, you should save it.
+
+            * wasm/js/WebAssemblyFunction.cpp:
+            (JSC::WebAssemblyFunction::usesTagRegisters const):
+            (JSC::WebAssemblyFunction::calleeSaves const):
+            (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+            (JSC::WebAssemblyFunction::useTagRegisters const): Deleted.
+            * wasm/js/WebAssemblyFunction.h:
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r274539. rdar://problem/76374197
 
     Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies
