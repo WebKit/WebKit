@@ -1,3 +1,13 @@
+2021-04-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the internal build after r275640
+        https://bugs.webkit.org/show_bug.cgi?id=224239
+
+        * WebKit.xcodeproj/project.pbxproj:
+        This source file was added to the project as a compilation target, but it also appears in unified sources; this
+        causes the `encode` and `decode` methods to be defined twice, leading to a linker error. Fix this by only
+        including it as a unified source.
+
 2021-04-08  Jer Noble  <jer.noble@apple.com>
 
         [Swift] Move the "Copy Additional Sources" Build Phase into the WebKitSwift target
