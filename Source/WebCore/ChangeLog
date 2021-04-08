@@ -1,3 +1,39 @@
+2021-04-08  Antti Koivisto  <antti@apple.com>
+
+        Revert r273621 because iPhone PLT regression
+        https://bugs.webkit.org/show_bug.cgi?id=224323
+
+        Unreviewed.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::setDataAndUpdate):
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::updateTextRenderer):
+        (WebCore::Document::needsStyleRecalc const):
+        * dom/Document.h:
+        * dom/Text.cpp:
+        (WebCore::Text::splitText):
+        (WebCore::Text::updateRendererAfterContentChange):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        * editing/markup.cpp:
+        (WebCore::replaceChildrenWithFragment):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::TreeResolver):
+        (WebCore::Style::TreeResolver::resolve):
+        * style/StyleTreeResolver.h:
+        (WebCore::Style::TreeResolver::TreeResolver): Deleted.
+        * style/StyleUpdate.cpp:
+        (WebCore::Style::Update::addText):
+        (WebCore::Style::Update::addPossibleRoot):
+        * style/StyleUpdate.h:
+        (WebCore::Style::Update:: const):
+        (WebCore::Style::Update::roots const): Deleted.
+
 2021-04-08  Youenn Fablet  <youenn@apple.com>
 
         Update SFrame implementation to latest version

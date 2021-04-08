@@ -1802,8 +1802,6 @@ private:
     
     Timer m_styleRecalcTimer;
 
-    std::unique_ptr<Style::Update> m_pendingRenderTreeTextUpdate;
-
     Element* m_cssTarget { nullptr };
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;

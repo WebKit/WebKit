@@ -805,7 +805,6 @@ void Document::removedLastRef()
         m_fullscreenManager->clear();
 #endif
         m_associatedFormControls.clear();
-        m_pendingRenderTreeTextUpdate = { };
 
         m_fontSelector->stopLoadingAndClearFonts();
 
@@ -2051,7 +2050,7 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentElement->invalidateStyleForSubtree();
         }
 
-        Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeTextUpdate));
+        Style::TreeResolver resolver(*this);
         auto styleUpdate = resolver.resolve();
 
         m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
@@ -2099,12 +2098,10 @@ void Document::resolveStyle(ResolveStyleType type)
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
 {
-    if (!m_pendingRenderTreeTextUpdate)
-        m_pendingRenderTreeTextUpdate = makeUnique<Style::Update>(*this);
+    auto textUpdate = makeUnique<Style::Update>(*this);
+    textUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, WTF::nullopt });
 
-    m_pendingRenderTreeTextUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, WTF::nullopt });
-
-    scheduleRenderingUpdate({ });
+    updateRenderTree(WTFMove(textUpdate));
 }
 
 bool Document::needsStyleRecalc() const
@@ -2116,9 +2113,6 @@ bool Document::needsStyleRecalc() const
         return true;
 
     if (childNeedsStyleRecalc())
-        return true;
-
-    if (m_pendingRenderTreeTextUpdate)
         return true;
 
     if (styleScope().hasPendingUpdate())
