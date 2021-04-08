@@ -1295,11 +1295,12 @@ void ReplaceSelectionCommand::doApply()
         insertNodeAt(HTMLBRElement::create(document()), startOfInsertedContent.deepEquivalent());
 
     if (endBR && (plainTextFragment || shouldRemoveEndBR(endBR.get(), originalVisPosBeforeEndBR))) {
-        RefPtr<Node> parent = endBR->parentNode();
+        auto parent = makeRefPtr(endBR->parentNode());
         insertedNodes.willRemoveNode(endBR.get());
         removeNode(*endBR);
-        if (Node* nodeToRemove = highestNodeToRemoveInPruning(parent.get())) {
-            insertedNodes.willRemoveNode(nodeToRemove);
+        document().updateLayoutIgnorePendingStylesheets();
+        if (auto nodeToRemove = makeRefPtr(highestNodeToRemoveInPruning(parent.get()))) {
+            insertedNodes.willRemoveNode(nodeToRemove.get());
             removeNode(*nodeToRemove);
         }
     }
