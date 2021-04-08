@@ -1093,7 +1093,9 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
         if (style().listStylePosition() != oldStyle->listStylePosition() || style().listStyleType() != oldStyle->listStyleType() || (style().listStyleType() == ListStyleType::String && style().listStyleStringValue() != oldStyle->listStyleStringValue()))
             setNeedsLayoutAndPrefWidthsRecalc();
         if (oldStyle->isDisplayInlineType() && !style().isDisplayInlineType()) {
-            delete m_inlineBoxWrapper;
+            setNeedsLayoutAndPrefWidthsRecalc();
+            if (m_inlineBoxWrapper)
+                m_inlineBoxWrapper->dirtyLineBoxes();
             m_inlineBoxWrapper = nullptr;
         }
     }
