@@ -1,3 +1,22 @@
+2021-04-07  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Nullptr dereference in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
+        https://bugs.webkit.org/show_bug.cgi?id=224259
+
+        Reviewed by Ryosuke Niwa.
+
+        When pruning after removing the end <br> in ReplaceSelectionCommand::doApply(), make sure
+        that insertedNodes is updated properly (given that we may be removing an ancestor
+        of the start or end of insertedNodes).
+
+        Test: editing/inserting/insert-display-contents-crash.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::willRemovePossibleAncestorNode):
+        (WebCore::ReplaceSelectionCommand::InsertedNodes::willRemoveNode):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+
 2021-04-07  Jean-Yves Avenard  <jya@apple.com>
 
         Site could crash if MediaRemote framework isn't available.
