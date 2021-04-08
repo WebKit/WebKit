@@ -1,3 +1,20 @@
+2021-04-08  Adam Roben  <aroben@apple.com>
+
+        prepare-ChangeLog fails to find deleted functions in files with spaces in their path in Git repositories
+        https://bugs.webkit.org/show_bug.cgi?id=224303
+
+        Reviewed by Sam Weinig.
+
+        It would also print a bunch of errors like this on stderr:
+
+            fatal: ambiguous argument 'Foo/Bar.cpp': unknown revision or path not in the working tree.
+            Use '--' to separate paths from revisions, like this:
+            'git <command> [<revision>...] -- [<file>...]'
+
+        * Scripts/prepare-ChangeLog:
+        (originalFile): Quote the file path in the `git show` command we
+        construct.
+
 2021-04-08  Truitt Savell  <tsavell@apple.com>
 
         Repalce bot187 with bot178 for CLoop tester. 
