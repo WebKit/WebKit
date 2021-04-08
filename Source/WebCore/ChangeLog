@@ -1,3 +1,12 @@
+2021-04-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a comment fix
+
+        * crypto/mac/CryptoAlgorithmAES_GCMMac.cpp:
+        (WebCore::encryptAES_GCM):
+        (WebCore::decyptAES_GCM):
+        Removes unnecessary comments.
+
 2021-04-08  Rob Buis  <rbuis@igalia.com>
 
         Remove virtual from RenderBox::availableLogicalWidth
