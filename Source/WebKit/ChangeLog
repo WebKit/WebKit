@@ -1,3 +1,20 @@
+2021-04-08  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Temporarily retain some media services when GPU Process active
+        https://bugs.webkit.org/show_bug.cgi?id=224328
+        <rdar://problem/76370805>
+
+        Reviewed by Eric Carlson.
+
+        Testing of the GPU Process show that access to the CoreMedia routing service is still needed under
+        some use cases. To prevent user-facing impact, we will allow these connections while the underlying
+        issues are resolved.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::temporaryMachServices): Added.
+        (WebKit::WebPageProxy::creationParameters): Extend access to the set of temporaryMachServices when
+        the GPU Process is enabled.
+
 2021-04-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the internal build after r275640
