@@ -1,5 +1,58 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r274054. rdar://problem/76374004
+
+    Use counters for pending events
+    https://bugs.webkit.org/show_bug.cgi?id=218556
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2021-03-07
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    Use counters for pending events instead of flags since
+    it is allowed to schedule multiple events:
+    https://html.spec.whatwg.org/multipage/images.html#update-the-image-data
+    
+    * loader/ImageLoader.cpp:
+    (WebCore::ImageLoader::ImageLoader):
+    (WebCore::ImageLoader::~ImageLoader):
+    (WebCore::ImageLoader::clearImageWithoutConsideringPendingLoadEvent):
+    (WebCore::ImageLoader::updateFromElement):
+    (WebCore::ImageLoader::notifyFinished):
+    (WebCore::ImageLoader::updatedHasPendingEvent):
+    (WebCore::ImageLoader::dispatchPendingBeforeLoadEvent):
+    (WebCore::ImageLoader::dispatchPendingLoadEvent):
+    (WebCore::ImageLoader::dispatchPendingErrorEvent):
+    * loader/ImageLoader.h:
+    (WebCore::ImageLoader::hasPendingBeforeLoadEvent const):
+    (WebCore::ImageLoader::hasPendingActivity const):
+    
+    LayoutTests:
+    
+    The onerror can be called multiple times, after the first call
+    container will have no parent, so protect against that in
+    subsequent calls.
+    
+    * fast/dom/modify-node-and-while-in-the-callback-too-crash.html:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274054 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-07  Rob Buis  <rbuis@igalia.com>
+
+            Use counters for pending events
+            https://bugs.webkit.org/show_bug.cgi?id=218556
+
+            Reviewed by Ryosuke Niwa.
+
+            The onerror can be called multiple times, after the first call
+            container will have no parent, so protect against that in
+            subsequent calls.
+
+            * fast/dom/modify-node-and-while-in-the-callback-too-crash.html:
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r273820. rdar://problem/76412727
 
     Report the correct document uri in the case of a ContentSecurityPolicyClient
