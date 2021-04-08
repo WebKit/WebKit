@@ -91,7 +91,10 @@ bool AudioListener::shouldUseARate() const
 
 void AudioListener::updateValuesIfNeeded(size_t framesToProcess)
 {
-    double currentTime = positionX().context().currentTime();
+    if (!positionX().context())
+        return;
+
+    double currentTime = positionX().context()->currentTime();
     if (m_lastUpdateTime != currentTime) {
         // Time has changed. Update all of the automation values now.
         m_lastUpdateTime = currentTime;
@@ -177,8 +180,10 @@ const float* AudioListener::upZValues(size_t framesToProcess)
 ExceptionOr<void> AudioListener::setPosition(float x, float y, float z)
 {
     ASSERT(isMainThread());
+    if (!m_positionX->context())
+        return { };
 
-    double now = m_positionX->context().currentTime();
+    double now = m_positionX->context()->currentTime();
 
     auto result = m_positionX->setValueAtTime(x, now);
     if (result.hasException())
@@ -201,8 +206,10 @@ FloatPoint3D AudioListener::position() const
 ExceptionOr<void> AudioListener::setOrientation(float x, float y, float z, float upX, float upY, float upZ)
 {
     ASSERT(isMainThread());
+    if (!m_forwardX->context())
+        return { };
 
-    double now = m_forwardX->context().currentTime();
+    double now = m_forwardX->context()->currentTime();
 
     auto result = m_forwardX->setValueAtTime(x, now);
     if (result.hasException())

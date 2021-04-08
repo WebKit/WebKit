@@ -66,6 +66,10 @@ public:
     bool isPlayingAudio() const { return m_isEffectivelyPlayingAudio; }
     void setMuted(bool muted) { m_muted = muted; }
 
+    // AudioDestinationNodes are owned by the BaseAudioContext so we forward the refcounting to its BaseAudioContext.
+    void ref() final;
+    void deref() final;
+
 protected:
     double tailTime() const override { return 0; }
     double latencyTime() const override { return 0; }

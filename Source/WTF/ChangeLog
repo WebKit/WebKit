@@ -1,3 +1,23 @@
+2021-04-08  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext objects are leaking
+        https://bugs.webkit.org/show_bug.cgi?id=224279
+
+        Reviewed by Darin Adler.
+
+        Add flag that can be passed when constructing a WeakPtr to disable threading assertions.
+        This is useful for cases where we know it is safe due to locking but we'd like to use a
+        WeakPtr instead of a raw pointer because it is safer.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtr::get const):
+        (WTF::WeakPtr::operator-> const):
+        (WTF::WeakPtr::operator* const):
+        (WTF::WeakPtr::WeakPtr):
+        (WTF::WeakPtrFactory::createWeakPtr const):
+        (WTF::=):
+        (WTF::makeWeakPtr):
+
 2021-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Copy-constructed Vectors should not have excess capacity

@@ -47,7 +47,8 @@ public:
     unsigned length() const { return m_length; }
     bool shouldSuspend() final;
 
-    OfflineAudioDestinationNode* destination() { return static_cast<OfflineAudioDestinationNode*>(BaseAudioContext::destination()); }
+    OfflineAudioDestinationNode& destination() { return static_cast<OfflineAudioDestinationNode&>(BaseAudioContext::destination()); }
+    const OfflineAudioDestinationNode& destination() const { return static_cast<const OfflineAudioDestinationNode&>(BaseAudioContext::destination()); }
 
     // mustReleaseLock is set to true if we acquired the lock in this method call and caller must unlock(), false if it was previously acquired.
     void offlineLock(bool& mustReleaseLock);

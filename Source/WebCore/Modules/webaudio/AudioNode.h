@@ -87,16 +87,16 @@ public:
     AudioNode(BaseAudioContext&, NodeType);
     virtual ~AudioNode();
 
-    BaseAudioContext& context() { return m_context.get(); }
-    const BaseAudioContext& context() const { return m_context.get(); }
+    BaseAudioContext& context();
+    const BaseAudioContext& context() const;
 
-    Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> contextForBindings() const;
+    Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> contextForBindings();
 
     NodeType nodeType() const { return m_nodeType; }
 
     // Can be called from main thread or context's audio thread.
-    void ref();
-    void deref();
+    virtual void ref();
+    virtual void deref();
     void incrementConnectionCount();
     void decrementConnectionCount();
 
@@ -230,13 +230,17 @@ protected:
     virtual void updatePullStatus() { }
 
 private:
+    using WeakOrStrongContext = Variant<Ref<BaseAudioContext>, WeakPtr<BaseAudioContext>>;
+    static WeakOrStrongContext toWeakOrStrongContext(BaseAudioContext&, NodeType);
+
     // EventTarget
     EventTargetInterface eventTargetInterface() const override;
     ScriptExecutionContext* scriptExecutionContext() const final;
 
     volatile bool m_isInitialized { false };
     NodeType m_nodeType;
-    Ref<BaseAudioContext> m_context;
+
+    WeakOrStrongContext m_context;
 
     Vector<std::unique_ptr<AudioNodeInput>> m_inputs;
     Vector<std::unique_ptr<AudioNodeOutput>> m_outputs;

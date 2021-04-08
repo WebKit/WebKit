@@ -1,3 +1,17 @@
+2021-04-08  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext objects are leaking
+        https://bugs.webkit.org/show_bug.cgi?id=224279
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering.html: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak.html: Added.
+
 2021-04-08  Andres Gonzalez  <andresg_22@apple.com>
 
         VoiceOver does not echo text insertions and deletions when a contenteditable div has a non editable descendant element with a content editable child

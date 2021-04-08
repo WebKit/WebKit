@@ -69,8 +69,8 @@ AudioParam::AudioParam(BaseAudioContext& context, const String& name, float defa
 float AudioParam::value()
 {
     // Update value for timeline.
-    if (context().isAudioThread()) {
-        auto timelineValue = m_timeline.valueForContextTime(context(), m_value, minValue(), maxValue());
+    if (context() && context()->isAudioThread()) {
+        auto timelineValue = m_timeline.valueForContextTime(*context(), m_value, minValue(), maxValue());
         if (timelineValue)
             m_value = *timelineValue;
     }
@@ -96,7 +96,11 @@ ExceptionOr<void> AudioParam::setValueForBindings(float value)
     ASSERT(isMainThread());
 
     setValue(value);
-    auto result = setValueAtTime(m_value, context().currentTime());
+
+    if (!context())
+        return { };
+
+    auto result = setValueAtTime(m_value, context()->currentTime());
     if (result.hasException())
         return result.releaseException();
     return { };
@@ -118,9 +122,12 @@ float AudioParam::smoothedValue()
 
 bool AudioParam::smooth()
 {
+    if (!context())
+        return true;
+
     // If values have been explicitly scheduled on the timeline, then use the exact value.
     // Smoothing effectively is performed by the timeline.
-    auto timelineValue = m_timeline.valueForContextTime(context(), m_value, minValue(), maxValue());
+    auto timelineValue = m_timeline.valueForContextTime(*context(), m_value, minValue(), maxValue());
     if (timelineValue)
         m_value = *timelineValue;
 
@@ -145,10 +152,13 @@ bool AudioParam::smooth()
 
 ExceptionOr<AudioParam&> AudioParam::setValueAtTime(float value, double startTime)
 {
+    if (!context())
+        return *this;
+
     if (startTime < 0)
         return Exception { RangeError, "startTime must be a positive value"_s };
 
-    startTime = std::max(startTime, context().currentTime());
+    startTime = std::max(startTime, context()->currentTime());
     auto result = m_timeline.setValueAtTime(value, Seconds { startTime });
     if (result.hasException())
         return result.releaseException();
@@ -157,11 +167,14 @@ ExceptionOr<AudioParam&> AudioParam::setValueAtTime(float value, double startTim
 
 ExceptionOr<AudioParam&> AudioParam::linearRampToValueAtTime(float value, double endTime)
 {
+    if (!context())
+        return *this;
+
     if (endTime < 0)
         return Exception { RangeError, "endTime must be a positive value"_s };
 
-    endTime = std::max(endTime, context().currentTime());
-    auto result = m_timeline.linearRampToValueAtTime(value, Seconds { endTime }, m_value, Seconds { context().currentTime() });
+    endTime = std::max(endTime, context()->currentTime());
+    auto result = m_timeline.linearRampToValueAtTime(value, Seconds { endTime }, m_value, Seconds { context()->currentTime() });
     if (result.hasException())
         return result.releaseException();
     return *this;
@@ -174,8 +187,8 @@ ExceptionOr<AudioParam&> AudioParam::exponentialRampToValueAtTime(float value, d
     if (endTime < 0)
         return Exception { RangeError, "endTime must be a positive value"_s };
 
-    endTime = std::max(endTime, context().currentTime());
-    auto result = m_timeline.exponentialRampToValueAtTime(value, Seconds { endTime }, m_value, Seconds { context().currentTime() });
+    endTime = std::max(endTime, context()->currentTime());
+    auto result = m_timeline.exponentialRampToValueAtTime(value, Seconds { endTime }, m_value, Seconds { context()->currentTime() });
     if (result.hasException())
         return result.releaseException();
     return *this;
@@ -183,12 +196,15 @@ ExceptionOr<AudioParam&> AudioParam::exponentialRampToValueAtTime(float value, d
 
 ExceptionOr<AudioParam&> AudioParam::setTargetAtTime(float target, double startTime, float timeConstant)
 {
+    if (!context())
+        return *this;
+
     if (startTime < 0)
         return Exception { RangeError, "startTime must be a positive value"_s };
     if (timeConstant < 0)
         return Exception { RangeError, "timeConstant must be a positive value"_s };
 
-    startTime = std::max(startTime, context().currentTime());
+    startTime = std::max(startTime, context()->currentTime());
     auto result = m_timeline.setTargetAtTime(target, Seconds { startTime }, timeConstant);
     if (result.hasException())
         return result.releaseException();
@@ -197,6 +213,9 @@ ExceptionOr<AudioParam&> AudioParam::setTargetAtTime(float target, double startT
 
 ExceptionOr<AudioParam&> AudioParam::setValueCurveAtTime(Vector<float>&& curve, double startTime, double duration)
 {
+    if (!context())
+        return *this;
+
     if (curve.size() < 2)
         return Exception { InvalidStateError, "Array must have a length of at least 2"_s };
     if (startTime < 0)
@@ -204,7 +223,7 @@ ExceptionOr<AudioParam&> AudioParam::setValueCurveAtTime(Vector<float>&& curve, 
     if (duration <= 0)
         return Exception { RangeError, "duration must be a strictly positive value"_s };
 
-    startTime = std::max(startTime, context().currentTime());
+    startTime = std::max(startTime, context()->currentTime());
     auto result = m_timeline.setValueCurveAtTime(WTFMove(curve), Seconds { startTime }, Seconds { duration });
     if (result.hasException())
         return result.releaseException();
@@ -237,7 +256,10 @@ bool AudioParam::hasSampleAccurateValues() const
     if (numberOfRenderingConnections())
         return true;
 
-    return m_timeline.hasValues(context().currentSampleFrame(), context().sampleRate());
+    if (!context())
+        return false;
+
+    return m_timeline.hasValues(context()->currentSampleFrame(), context()->sampleRate());
 }
 
 float AudioParam::finalValue()
@@ -249,7 +271,7 @@ float AudioParam::finalValue()
 
 void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfValues)
 {
-    bool isSafe = context().isAudioThread() && values && numberOfValues;
+    bool isSafe = context() && context()->isAudioThread() && values && numberOfValues;
     ASSERT(isSafe);
     if (!isSafe)
         return;
@@ -259,7 +281,7 @@ void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfV
 
 void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bool sampleAccurate)
 {
-    bool isGood = context().isAudioThread() && values && numberOfValues;
+    bool isGood = context() && context()->isAudioThread() && values && numberOfValues;
     ASSERT(isGood);
     if (!isGood)
         return;
@@ -271,7 +293,7 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
         calculateTimelineValues(values, numberOfValues);
     } else {
         // Calculate control-rate (k-rate) intrinsic value.
-        auto timelineValue = m_timeline.valueForContextTime(context(), m_value, minValue(), maxValue());
+        auto timelineValue = m_timeline.valueForContextTime(*context(), m_value, minValue(), maxValue());
 
         if (timelineValue)
             m_value = *timelineValue;
@@ -313,10 +335,13 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
 
 void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
 {
+    if (!context())
+        return;
+
     // Calculate values for this render quantum.
     // Normally numberOfValues will equal AudioUtilities::renderQuantumSize (the render quantum size).
-    double sampleRate = context().sampleRate();
-    size_t startFrame = context().currentSampleFrame();
+    double sampleRate = context()->sampleRate();
+    size_t startFrame = context()->currentSampleFrame();
     size_t endFrame = startFrame + numberOfValues;
 
     // Note we're running control rate at the sample-rate.
@@ -326,7 +351,8 @@ void AudioParam::calculateTimelineValues(float* values, unsigned numberOfValues)
 
 void AudioParam::connect(AudioNodeOutput* output)
 {
-    ASSERT(context().isGraphOwner());
+    ASSERT(context());
+    ASSERT(context()->isGraphOwner());
 
     ASSERT(output);
     if (!output)
@@ -341,7 +367,8 @@ void AudioParam::connect(AudioNodeOutput* output)
 
 void AudioParam::disconnect(AudioNodeOutput* output)
 {
-    ASSERT(context().isGraphOwner());
+    ASSERT(context());
+    ASSERT(context()->isGraphOwner());
 
     ASSERT(output);
     if (!output)

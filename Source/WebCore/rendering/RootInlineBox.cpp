@@ -47,10 +47,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RootInlineBox);
 
 struct SameSizeAsRootInlineBox : public InlineFlowBox, public CanMakeWeakPtr<RootInlineBox> {
     unsigned variables[7];
-    void* pointers[3];
+    WeakPtr<RenderObject> lineBreakObj;
+    void* pointers[2];
 };
 
 COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInlineBox_should_stay_small);
+#if !ASSERT_ENABLED
+COMPILE_ASSERT(sizeof(WeakPtr<RenderObject>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
+#endif
 
 typedef WTF::HashMap<const RootInlineBox*, std::unique_ptr<EllipsisBox>> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap;

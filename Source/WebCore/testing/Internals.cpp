@@ -2656,6 +2656,15 @@ unsigned Internals::referencingNodeCount(const Document& document) const
     return document.referencingNodeCount();
 }
 
+unsigned Internals::numberOfBaseAudioContexts() const
+{
+#if ENABLE(WEB_AUDIO)
+    return BaseAudioContext::numberOfInstances();
+#else
+    return 0;
+#endif
+}
+
 #if ENABLE(INTERSECTION_OBSERVER)
 unsigned Internals::numberOfIntersectionObservers(const Document& document) const
 {

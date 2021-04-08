@@ -1,3 +1,178 @@
+2021-04-08  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext objects are leaking
+        https://bugs.webkit.org/show_bug.cgi?id=224279
+
+        Reviewed by Darin Adler.
+
+        OfflineAudioContext objects were always leaking due to 2 reference cycles:
+        1. BaseAudioContext -> m_listener (AudioListener) -> m_positionX (AudioParam) -> m_context (BaseAudioContext)
+        2. BaseAudioContext -> m_destinationNode (AudioDestinationNode) -> m_context (BaseAudioContext)
+
+        For reference cycle 1, I made AudioSummingJunction (base class of AudioParam) hold a weak pointer to the
+        AudioContext instead of a Ref<>. I don't think there is a good reason for an AudioSummingJunction (AudioParam
+        or AudioNodeInput) to keep its AudioContext alive. AudioNodes already keep their AudioContext alive.
+        AudioNodeInputs and AudioParams are associated to AudioNodes.
+
+        For reference cycle 2, I made AudioDestinationNode not hold a strong pointer to its context but instead a
+        weak pointer. Since keeping an AudioDestinationNode alive should keep its AudioContext alive, I made it so
+        that ref'ing the AudioDestinationNode refs its BaseAudioContext. Also, BaseAudioContext::m_destinationNode
+        is now a UniqueRef<> instead of a RefPtr<> to avoid a cycle.
+
+        Tests: webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering.html
+               webaudio/OfflineAudioContext/offlineaudiocontext-leak.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::baseLatency):
+        (WebCore::AudioContext::getOutputTimestamp):
+        (WebCore::AudioContext::close):
+        (WebCore::AudioContext::destination):
+        (WebCore::AudioContext::destination const):
+        (WebCore::AudioContext::suspendRendering):
+        (WebCore::AudioContext::resumeRendering):
+        (WebCore::AudioContext::startRendering):
+        (WebCore::AudioContext::lazyInitialize):
+        (WebCore::AudioContext::mediaState const):
+        (WebCore::AudioContext::mayResumePlayback):
+        (WebCore::AudioContext::suspendPlayback):
+        (WebCore::AudioContext::pageMutedStateDidChange):
+        * Modules/webaudio/AudioContext.h:
+        - Drop some null checks now that m_destinationNode can no longer be null.
+        - Capture an ActiveDOMObject::PendingActivity when doing async work that ends up resolving a Promise, so that
+          we keep both the object and its wrapper alive for the duration of the async work.
+
+        * Modules/webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::ref):
+        (WebCore::AudioDestinationNode::deref):
+        * Modules/webaudio/AudioDestinationNode.h:
+        Have AudioDestinationNode override AudioNode's ref() / deref() to forward the refcounting
+        to its BaseAudioContext, instead of using the AudioNode's internal refCount.
+
+        * Modules/webaudio/AudioListener.cpp:
+        (WebCore::AudioListener::updateValuesIfNeeded):
+        (WebCore::AudioListener::setPosition):
+        (WebCore::AudioListener::setOrientation):
+        Add some null-checks for AudioParam::context() now that AudioParam holds a WeakPtr to its
+        context.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::toWeakOrStrongContext):
+        (WebCore::AudioNode::AudioNode):
+        (WebCore::AudioNode::connect):
+        (WebCore::AudioNode::sampleRate const):
+        (WebCore::AudioNode::markNodeForDeletionIfNecessary):
+        (WebCore::AudioNode::contextForBindings):
+        (WebCore::AudioNode::context):
+        (WebCore::AudioNode::context const):
+        * Modules/webaudio/AudioNode.h:
+        - Hold the BaseAudioContext as a WeakPtr instead of a Ref<> if the AudioNode is an
+          AudioDestinationNode. This avoids a reference cycle since the BaseAudioContext owns the
+          AudioDestinationNode. Even though we are using a WeakPtr, it is safe to assume that
+          the context is not null because ref'ing an AudioDestinationNode refs its BaseAudioContext.
+        - Make sure markNodeForDeletionIfNecessary() has no effect for AudioDestinationNode since
+          BaseAudioContext now owns the AudioDestinationNode when we take care of destroying its
+          destination node when destroyed.
+
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::connect):
+        (WebCore::AudioNodeInput::disconnect):
+        (WebCore::AudioNodeInput::outputEnabledStateChanged):
+        (WebCore::AudioNodeInput::updateInternalBus):
+        (WebCore::AudioNodeInput::bus):
+        (WebCore::AudioNodeInput::internalSummingBus):
+        (WebCore::AudioNodeInput::sumAllConnections):
+        (WebCore::AudioNodeInput::pull):
+        Add assertions that the context is not null. There were already assertions that we are the graph
+        owner, which means we are holding the BaseAudioContext's lock, which means that the audio context
+        is alive.
+
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::value):
+        (WebCore::AudioParam::setValueForBindings):
+        (WebCore::AudioParam::smooth):
+        (WebCore::AudioParam::hasSampleAccurateValues const):
+        (WebCore::AudioParam::calculateSampleAccurateValues):
+        (WebCore::AudioParam::calculateFinalValues):
+        (WebCore::AudioParam::calculateTimelineValues):
+        (WebCore::AudioParam::connect):
+        (WebCore::AudioParam::disconnect):
+        Add null-checks for the AudioContext now that the AudioParam is only holding a WeakPtr to its
+        BaseAudioContext (to avoid a reference cycle).
+
+        * Modules/webaudio/AudioSummingJunction.cpp:
+        (WebCore::AudioSummingJunction::AudioSummingJunction):
+        (WebCore::AudioSummingJunction::~AudioSummingJunction):
+        (WebCore::AudioSummingJunction::markRenderingStateAsDirty):
+        (WebCore::AudioSummingJunction::addOutput):
+        (WebCore::AudioSummingJunction::removeOutput):
+        (WebCore::AudioSummingJunction::updateRenderingState):
+        (WebCore::AudioSummingJunction::outputEnabledStateChanged):
+        * Modules/webaudio/AudioSummingJunction.h:
+        (WebCore::AudioSummingJunction::context):
+        (WebCore::AudioSummingJunction::context const):
+        - Hold a WeakPtr to the BaseAudioContext to avoid a reference cycle.
+        - Deal with the fact that the audio context may be null now that we're holding a WeakPtr
+          to it (except when holding the graph lock)
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        (WebCore::BaseAudioContext::~BaseAudioContext):
+        (WebCore::BaseAudioContext::numberOfInstances):
+        (WebCore::BaseAudioContext::lazyInitialize):
+        (WebCore::BaseAudioContext::clear):
+        (WebCore::BaseAudioContext::uninitialize):
+        (WebCore::BaseAudioContext::stop):
+        (WebCore::BaseAudioContext::sampleRate const):
+        (WebCore::BaseAudioContext::decodeAudioData):
+        (WebCore::BaseAudioContext::markForDeletion):
+        (WebCore::BaseAudioContext::deleteMarkedNodes):
+        (WebCore::BaseAudioContext::setPendingActivity):
+        (WebCore::BaseAudioContext::workletIsReady):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::destination):
+        (WebCore::BaseAudioContext::destination const):
+        (WebCore::BaseAudioContext::currentSampleFrame const):
+        (WebCore::BaseAudioContext::currentTime const):
+        - Switch m_destinationNode from RefPtr<> to UniqueRef<> since the AudioContext is now
+          the owner of the destinationNode and since refing the destination node actually refs
+          its BaseAudioContext.
+        - Drop some null checks now that m_destinationNode can no longer be null.
+        - Rename makePendingActivity() to setPendingActivity() to avoid a naming conflict with
+          ActiveDOMObject::makePendingActivity().
+
+        * Modules/webaudio/DefaultAudioDestinationNode.h:
+        * Modules/webaudio/OfflineAudioDestinationNode.h:
+        - Drop create() factory functions and make the constructor public now that the BaseAudioContext owns
+          its destination node via a UniqueRef<>.
+        - Make some member functions public as they are virtual and they now called on the subclass instead of the
+          base class (and these functions are public in the base class).
+
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::startOfflineRendering):
+        (WebCore::OfflineAudioContext::resumeOfflineRendering):
+        * Modules/webaudio/OfflineAudioContext.h:
+        - Drop some null checks now that m_destinationNode can no longer be null.
+        - Capture an ActiveDOMObject::PendingActivity when doing async work that ends up resolving a Promise, so that
+          we keep both the object and its wrapper alive for the duration of the async work.
+
+        * Modules/webaudio/WebKitAudioContext.cpp:
+        (WebCore::WebKitAudioContext::close):
+        Drop null checks for the destination node now that it can never be null.
+
+        * dom/ShadowRoot.cpp:
+        * rendering/FloatingObjects.cpp:
+        * rendering/RootInlineBox.cpp:
+        Update classes used of size restrictions since the size of a WeakPtr is not longer the same as the size of a
+        pointer when debug assertions are enabled. As long as they are the same size in release builds, there is no
+        memory use concern.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::numberOfBaseAudioContexts const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add testing function to check how many BaseAudioContexts are alive, so that we can write layout tests and check
+        for leaks.
+
 2021-04-08  Youenn Fablet  <youenn@apple.com>
 
         Streams: new test failure for canceling the branches of an errored tee'd stream

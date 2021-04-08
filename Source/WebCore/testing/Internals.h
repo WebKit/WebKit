@@ -455,6 +455,7 @@ public:
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
     unsigned referencingNodeCount(const Document&) const;
+    unsigned numberOfBaseAudioContexts() const;
 
 #if ENABLE(INTERSECTION_OBSERVER)
     unsigned numberOfIntersectionObservers(const Document&) const;
