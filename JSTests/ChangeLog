@@ -1,5 +1,57 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r274539. rdar://problem/76374197
+
+    Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies
+    https://bugs.webkit.org/show_bug.cgi?id=221069
+    <rdar://problem/73686589>
+    
+    Reviewed by Yusuke Suzuki.
+    
+    JSTests:
+    
+    * stress/allocation-sinking-scope-materialization-order.js: Added.
+    (var3.var2.x):
+    (var3):
+    
+    Source/JavaScriptCore:
+    
+    Suppose we have two scope objects, A and B. Let's say A points to B, so B is
+    A's parent scope. A then depends on B. B has no dependencies here. When deciding
+    an order to materialize scope objects, we should always do it in reverse dependency
+    order. So above, we should materialize B, then A.
+    
+    Inside object allocation sinking phase, when at an object materialization
+    site, we do track both dependencies and reverse dependencies. In the above
+    object graph, we'd attempt to materialize the objects in the right order,
+    always picking things with no dependencies first (and updating the list of
+    dependencies as we materialzed objects).
+    
+    The code was using an std::list to track things to materialize, and it had
+    notions for materializing something first, and materializing something last.
+    However, there was a bug in how the code managed to insert things when
+    it first inserted last followed by inserting first. This patch simplifies
+    the code and makes it do the right thing.
+    
+    * dfg/DFGObjectAllocationSinkingPhase.cpp:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274539 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-16  Saam Barati  <sbarati@apple.com>
+
+            Object allocation sinking phase should prioritize materializations with no dependencies before materializations with no reverse dependencies
+            https://bugs.webkit.org/show_bug.cgi?id=221069
+            <rdar://problem/73686589>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/allocation-sinking-scope-materialization-order.js: Added.
+            (var3.var2.x):
+            (var3):
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r273972. rdar://problem/76375074
 
     OpGetPrivateName needs to be listed in FOR_EACH_OPCODE_WITH_VALUE_PROFILE
