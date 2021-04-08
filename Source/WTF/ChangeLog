@@ -1,3 +1,15 @@
+2021-04-08  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [RunLoopGeneric] OneShotTimer should not remain "isActive" after fired
+        https://bugs.webkit.org/show_bug.cgi?id=189335
+        <rdar://problem/44226604>
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/generic/RunLoopGeneric.cpp:
+
+        Deactivate one-shot timer before invoking its callback.
+
 2021-04-08  Khem Raj  <raj.khem@gmail.com>
 
         [WPE] Build fixes for musl C library on Linux
