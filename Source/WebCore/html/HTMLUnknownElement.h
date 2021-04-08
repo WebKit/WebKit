@@ -43,11 +43,9 @@ public:
 
 private:
     HTMLUnknownElement(const QualifiedName& tagName, Document& document)
-        : HTMLElement(tagName, document, CreateHTMLElement)
+        : HTMLElement(tagName, document, CreateHTMLElement | NodeFlag::IsUnknownElement)
     {
     }
-
-    bool isHTMLUnknownElement() const final { return true; }
 };
 
 } // namespace WebCore
