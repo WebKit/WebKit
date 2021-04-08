@@ -1,3 +1,17 @@
+2021-04-08  Khem Raj  <raj.khem@gmail.com>
+
+        [WPE] Build fixes for musl C library on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=210068
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Define 128KB DEFAULT_THREAD_STACK_SIZE_IN_KB for musl
+        Use OS(LINUX) check to include musl when building for
+        Linux based platforms.
+
+        * wtf/PlatformHave.h:
+        * wtf/Threading.cpp:
+
 2021-04-08  Chris Dumez  <cdumez@apple.com>
 
         OfflineAudioContext objects are leaking
