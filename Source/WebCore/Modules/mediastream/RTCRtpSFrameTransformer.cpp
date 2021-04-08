@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+static constexpr unsigned AES_CM_128_HMAC_SHA256_NONCE_SIZE = 12;
+
 static inline void writeUInt64(uint8_t* data, uint64_t value, uint8_t valueLength)
 {
     for (unsigned i = 0; i < valueLength; ++i)
@@ -71,13 +73,18 @@ static inline uint8_t computeFirstHeaderByte(uint64_t keyId, uint64_t counter)
 
 static inline Vector<uint8_t> computeIV(uint64_t counter, const Vector<uint8_t>& saltKey)
 {
+    // The saltKey is 12 bytes (AES_CM_128_HMAC_SHA256_NONCE_SIZE), we XOR with the counter as 12 bytes.
+    // We then extend it to 16 bytes since that is what is expected by the crypto routines.
     Vector<uint8_t> iv(16);
-    for (unsigned i = 0; i < 8; ++i) {
-        auto value = (counter >> ((7 - i) * 8)) & 0xff;
+    for (unsigned i = 0; i < 4; ++i)
+        iv[i] = saltKey[i];
+    for (unsigned i = 11; i >= 4; --i) {
+        auto value = counter & 0xff;
+        counter = counter >> 8;
         iv[i] = value ^ saltKey[i];
     }
-    for (unsigned i = 8; i < 16; ++i)
-        iv[i] = saltKey[i];
+    for (unsigned i = 12; i < 16; ++i)
+        iv[i] = 0;
     return iv;
 }
 
@@ -161,7 +168,7 @@ ExceptionOr<void> RTCRtpSFrameTransformer::updateEncryptionKey(const Vector<uint
     if (saltKeyResult.hasException())
         return saltKeyResult.releaseException();
 
-    ASSERT(saltKeyResult.returnValue().size() >= 16);
+    ASSERT(saltKeyResult.returnValue().size() >= AES_CM_128_HMAC_SHA256_NONCE_SIZE);
 
     auto authenticationKeyResult = computeAuthenticationKey(rawKey);
     if (authenticationKeyResult.hasException())
@@ -240,9 +247,11 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
     if (frameSize < (header->size + m_authenticationSize))
         return Exception { DataError, "Chunk is too small for authentication size" };
 
+    auto iv = computeIV(m_counter, m_saltKey);
+
     // Compute signature
     auto* transmittedSignature = frameData + frameSize - m_authenticationSize;
-    auto signature = computeEncryptedDataSignature(frameData, frameSize  - m_authenticationSize, m_authenticationKey);
+    auto signature = computeEncryptedDataSignature(iv, frameData, header->size, frameData + header->size, frameSize  - m_authenticationSize - header->size, m_authenticationKey);
     for (size_t cptr = 0; cptr < m_authenticationSize; ++cptr) {
         if (signature[cptr] != transmittedSignature[cptr]) {
             // FIXME: We should try ratcheting.
@@ -251,7 +260,6 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptFrame(const uint8_t
     }
 
     // Decrypt data
-    auto iv = computeIV(m_counter, m_saltKey);
     auto dataSize = frameSize - header->size - m_authenticationSize;
     auto result = decryptData(frameData + header->size, dataSize, iv, m_encryptionKey);
 
@@ -311,7 +319,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptFrame(const uint8_t
     std::memcpy(newDataPointer + headerSize, encryptedData.returnValue().data(), frameSize);
 
     // Fill signature
-    auto signature = computeEncryptedDataSignature(newDataPointer, frameSize + headerSize, m_authenticationKey);
+    auto signature = computeEncryptedDataSignature(iv, newDataPointer, headerSize, newDataPointer + headerSize, frameSize, m_authenticationKey);
     std::memcpy(newDataPointer + frameSize + headerSize, signature.data(), m_authenticationSize);
 
     if (m_compatibilityMode == CompatibilityMode::H264)
@@ -356,7 +364,7 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(const uint8_t*
     return Exception { NotSupportedError };
 }
 
-Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const uint8_t*, size_t, const Vector<uint8_t>&)
+Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vector<uint8_t>&, const uint8_t*, size_t, const uint8_t*, size_t, const Vector<uint8_t>&)
 {
     return { };
 }

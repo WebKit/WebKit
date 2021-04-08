@@ -1,3 +1,37 @@
+2021-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Update SFrame implementation to latest version
+        https://bugs.webkit.org/show_bug.cgi?id=224276
+
+        Reviewed by Eric Carlson.
+
+        Update implementation according to latest draft at https://github.com/eomara/sframe/blob/master/draft-omara-sframe.md.
+        In particular, we derive keys with new algorithm and the generation of the signature by including header and data length as well as nonce.
+
+        Test: webrtc/sframe-test-vectors.html
+
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::RTCRtpSFrameTransform::setCounterForTesting):
+        * Modules/mediastream/RTCRtpSFrameTransform.h:
+        * Modules/mediastream/RTCRtpSFrameTransformer.cpp:
+        (WebCore::computeIV):
+        (WebCore::RTCRtpSFrameTransformer::updateEncryptionKey):
+        (WebCore::RTCRtpSFrameTransformer::decryptFrame):
+        (WebCore::RTCRtpSFrameTransformer::encryptFrame):
+        (WebCore::RTCRtpSFrameTransformer::computeEncryptedDataSignature):
+        * Modules/mediastream/RTCRtpSFrameTransformer.h:
+        * Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp:
+        (WebCore::RTCRtpSFrameTransformer::computeSaltKey):
+        (WebCore::createBaseSFrameKey):
+        (WebCore::RTCRtpSFrameTransformer::computeAuthenticationKey):
+        (WebCore::RTCRtpSFrameTransformer::computeEncryptionKey):
+        (WebCore::encodeBigEndian):
+        (WebCore::RTCRtpSFrameTransformer::computeEncryptedDataSignature):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setSFrameCounter):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-04-08  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         Unreviewed. Fixed build warning.

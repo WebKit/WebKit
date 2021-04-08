@@ -1,3 +1,15 @@
+2021-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Update SFrame implementation to latest version
+        https://bugs.webkit.org/show_bug.cgi?id=224276
+
+        Reviewed by Eric Carlson.
+
+        Update tests according new way of deriving keys and generating the signature.
+
+        * TestWebKitAPI/Tests/WebCore/RTCRtpSFrameTransformerTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-04-07  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Handle multiple double-branch commits
