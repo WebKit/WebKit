@@ -1,5 +1,53 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275147. rdar://problem/76411207
+
+    Use-after-move in UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition
+    https://bugs.webkit.org/show_bug.cgi?id=223842
+    <rdar://problem/75791668>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebKit:
+    
+    Use request decision handler instead of already moved completion handler.
+    
+    Tests: fast/speechrecognition/start-recognition-after-denied-gum.html
+           fast/speechrecognition/start-recognition-after-gum.html
+    
+    * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+    (WebKit::UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition):
+    
+    LayoutTests:
+    
+    * fast/speechrecognition/start-recognition-after-denied-gum-expected.txt: Added.
+    * fast/speechrecognition/start-recognition-after-denied-gum.html: Added.
+    * fast/speechrecognition/start-recognition-after-gum-expected.txt: Added.
+    * fast/speechrecognition/start-recognition-after-gum.html: Added.
+    * platform/mac-wk1/TestExpectations:
+    * platform/win/TestExpectations:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275147 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-28  Youenn Fablet  <youenn@apple.com>
+
+            Use-after-move in UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition
+            https://bugs.webkit.org/show_bug.cgi?id=223842
+            <rdar://problem/75791668>
+
+            Reviewed by Eric Carlson.
+
+            Use request decision handler instead of already moved completion handler.
+
+            Tests: fast/speechrecognition/start-recognition-after-denied-gum.html
+                   fast/speechrecognition/start-recognition-after-gum.html
+
+            * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+            (WebKit::UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition):
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275011. rdar://problem/76375300
 
     Crash in TextChecker::updateSpellingUIWithGrammarString()

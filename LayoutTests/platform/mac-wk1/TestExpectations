@@ -72,6 +72,9 @@ fast/history/page-cache-media-recorder.html [ Skip ]
 http/wpt/audio-output [ Skip ]
 imported/w3c/web-platform-tests/audio-output [ Skip ]
 
+fast/speechrecognition/start-recognition-after-gum.html [ Skip ]
+fast/speechrecognition/start-recognition-after-denied-gum.html [ Skip ]
+
 # Datalist is unsupported in WK1
 accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]

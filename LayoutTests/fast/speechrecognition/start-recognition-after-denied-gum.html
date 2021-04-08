@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+promise_test(async () => {
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(false);
+    await navigator.mediaDevices.getUserMedia({audio:true}).then(() => assert_unreached("succcesful gum"), () => { });
+    if (window.testRunner)
+        testRunner.setUserMediaPermission(true);
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.start();
+    return new Promise(resolve => recognition.onerror = resolve);
+}, "Speech recognition after denied audio gum");
+</script>
+</body>
+</html>
