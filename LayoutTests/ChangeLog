@@ -1,5 +1,40 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272900. rdar://problem/76411260
+
+    Teardown shadow root renderers on hostChildElementDidChange
+    https://bugs.webkit.org/show_bug.cgi?id=221386
+    
+    Patch by Carlos Garcia Campos <cgarcia@igalia.com> on 2021-02-16
+    Reviewed by Antti Koivisto.
+    
+    Source/WebCore:
+    
+    When details element has a display contents style, the default summary renderer is not cleared when a new
+    summary element is added. This causes that both summary elements are rendered at the same time, instead of the
+    active one. The crash happens when the details element is removed from the document, because the default summary
+    element still has a valid renderer on destroy.
+    
+    * dom/SlotAssignment.h:
+    (WebCore::ShadowRoot::hostChildElementDidChange):
+    
+    LayoutTests:
+    
+    * tables/table-col-indent-crash-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272900 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            Teardown shadow root renderers on hostChildElementDidChange
+            https://bugs.webkit.org/show_bug.cgi?id=221386
+
+            Reviewed by Antti Koivisto.
+
+            * tables/table-col-indent-crash-expected.txt:
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271549. rdar://problem/76375033
 
     Release assert in Document::updateStyleIfNeeded() via PrintContext::end() inside HTMLTitleElement::insertedIntoAncestor and removedFromAncestor
