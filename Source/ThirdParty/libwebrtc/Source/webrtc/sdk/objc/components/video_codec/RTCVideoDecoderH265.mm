@@ -34,21 +34,27 @@ struct RTCH265FrameDecodeParams {
   int64_t timestamp;
 };
 
+@interface RTCVideoDecoderH265 ()
+- (void)setError:(OSStatus)error;
+@end
+
 // This is the callback function that VideoToolbox calls when decode is
 // complete.
-void h265DecompressionOutputCallback(void* decoder,
+void h265DecompressionOutputCallback(void* decoderRef,
                                      void* params,
                                      OSStatus status,
                                      VTDecodeInfoFlags infoFlags,
                                      CVImageBufferRef imageBuffer,
                                      CMTime timestamp,
                                      CMTime duration) {
-  std::unique_ptr<RTCH265FrameDecodeParams> decodeParams(
-      reinterpret_cast<RTCH265FrameDecodeParams*>(params));
-  if (status != noErr) {
+  if (status != noErr || !imageBuffer) {
+    RTCVideoDecoderH265 *decoder = (__bridge RTCVideoDecoderH265 *)decoderRef;
+    [decoder setError:status != noErr ? status : 1];
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
     return;
   }
+
+  std::unique_ptr<RTCH265FrameDecodeParams> decodeParams(reinterpret_cast<RTCH265FrameDecodeParams*>(params));
   // TODO(tkchin): Handle CVO properly.
   RTCCVPixelBuffer* frameBuffer =
       [[RTCCVPixelBuffer alloc] initWithPixelBuffer:imageBuffer];
@@ -164,6 +170,10 @@ void h265DecompressionOutputCallback(void* decoder,
 
 - (void)setCallback:(RTCVideoDecoderCallback)callback {
   _callback = callback;
+}
+
+- (void)setError:(OSStatus)error {
+  _error = error;
 }
 
 - (NSInteger)releaseDecoder {

@@ -1,5 +1,47 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275300. rdar://problem/76375624
+
+    In case WebRTC VTB decoder returns a null frame, mark the decoder as failing
+    https://bugs.webkit.org/show_bug.cgi?id=223993
+    <rdar://problem/76049206>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/ThirdParty/libwebrtc:
+    
+    In case VTB does not return any pixel buffer, consider decoding is failing.
+    Set the error so that we we will send the error on the next frame we try to decode.
+    
+    * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm:
+    (decompressionOutputCallback):
+    * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm:
+    (h265DecompressionOutputCallback):
+    (-[RTCVideoDecoderH265 setError:]):
+    * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.mm:
+    (vp9DecompressionOutputCallback):
+    
+    LayoutTests:
+    
+    * http/wpt/webrtc/webrtc-late-transform-expected.txt: Added.
+    * http/wpt/webrtc/webrtc-late-transform.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275300 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-31  Youenn Fablet  <youenn@apple.com>
+
+            In case WebRTC VTB decoder returns a null frame, mark the decoder as failing
+            https://bugs.webkit.org/show_bug.cgi?id=223993
+            <rdar://problem/76049206>
+
+            Reviewed by Eric Carlson.
+
+            * http/wpt/webrtc/webrtc-late-transform-expected.txt: Added.
+            * http/wpt/webrtc/webrtc-late-transform.html: Added.
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275147. rdar://problem/76411207
 
     Use-after-move in UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition
