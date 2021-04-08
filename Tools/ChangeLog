@@ -1,5 +1,111 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r273820. rdar://problem/76412727
+
+    Report the correct document uri in the case of a ContentSecurityPolicyClient
+    https://bugs.webkit.org/show_bug.cgi?id=222489
+    <rdar://problem/73774118>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore:
+    
+    Tests: http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect.html
+           http/tests/security/contentSecurityPolicy/report-document-uri-blob.html
+    
+    Previously we were setting the document URI to be the blocked URI in
+    the case where we were using a ContentSecurityPolicyClient and didn't
+    have access to the document URL. This patch passes the document URL
+    to the network process when loading a resource so we can properly set
+    the document URI in this case.
+    
+    * page/csp/ContentSecurityPolicy.cpp:
+    (WebCore::shouldReportProtocolOnly):
+    (WebCore::ContentSecurityPolicy::deprecatedURLForReporting const):
+    (WebCore::ContentSecurityPolicy::reportViolation const):
+    Follow spec guidelines https://www.w3.org/TR/CSP2/#violation-reports
+    and set the document URI to be the URI's scheme if it is a globally
+    unique identifier.
+    
+    In the case where we are using a client and don't have the document
+    URL, we should at least strip the blocked URL before reporting to align
+    with the spec.
+    
+    * page/csp/ContentSecurityPolicy.h:
+    (WebCore::ContentSecurityPolicy::setDocumentURL):
+    
+    Source/WebKit:
+    
+    Pass the document URL from the Network Process when we schedule a load
+    in case we need to report a CSP violation in NetworkLoadChecker.
+    
+    * NetworkProcess/NetworkLoadChecker.cpp:
+    (WebKit::NetworkLoadChecker::NetworkLoadChecker):
+    (WebKit::NetworkLoadChecker::contentSecurityPolicy):
+    The regular toString() method sets file:// URLs to null. We should use
+    toRawString() so we can report the scheme if the source origin is a
+    local file, as per the W3C spec.
+    
+    * NetworkProcess/NetworkLoadChecker.h:
+    * NetworkProcess/NetworkResourceLoadParameters.cpp:
+    (WebKit::NetworkResourceLoadParameters::encode const):
+    (WebKit::NetworkResourceLoadParameters::decode):
+    * NetworkProcess/NetworkResourceLoadParameters.h:
+    * NetworkProcess/NetworkResourceLoader.cpp:
+    * NetworkProcess/PingLoad.cpp:
+    (WebKit::PingLoad::PingLoad):
+    * WebProcess/Network/WebLoaderStrategy.cpp:
+    (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+    
+    Tools:
+    
+    Rename OverrideContentSecurityPolicy.mm to ContentSecurityPolicy.mm
+    so we can use it for more general purpose CSP testing.
+    
+    Add a test for document-uri reporting for file:, data: and about: protocols.
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    * TestWebKitAPI/Tests/WebKitCocoa/ContentSecurityPolicy.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/OverrideContentSecurityPolicy.mm.
+    (TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/csp-document-uri-report.html: Added.
+    
+    LayoutTests:
+    
+    Layout test coverage for redirects using a ContentSecurityPolicyClient
+    and blob files.
+    
+    * http/tests/security/contentSecurityPolicy/report-document-uri-blob-expected.txt: Added.
+    * http/tests/security/contentSecurityPolicy/report-document-uri-blob.html: Added.
+    * http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect-expected.txt: Added.
+    * http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect.html: Added.
+    * platform/mac-wk1/http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect-expected.txt: Added.
+    * platform/win/http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect-expected.txt: Added.
+    * platform/win/TestExpectations:
+    Blob URLs timeout on win.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@273820 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-03  Kate Cheney  <katherine_cheney@apple.com>
+
+            Report the correct document uri in the case of a ContentSecurityPolicyClient
+            https://bugs.webkit.org/show_bug.cgi?id=222489
+            <rdar://problem/73774118>
+
+            Reviewed by Brent Fulgham.
+
+            Rename OverrideContentSecurityPolicy.mm to ContentSecurityPolicy.mm
+            so we can use it for more general purpose CSP testing.
+
+            Add a test for document-uri reporting for file:, data: and about: protocols.
+
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WebKitCocoa/ContentSecurityPolicy.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/OverrideContentSecurityPolicy.mm.
+            (TEST):
+            * TestWebKitAPI/Tests/WebKitCocoa/csp-document-uri-report.html: Added.
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272910. rdar://problem/76416446
 
     Set a default path for device ID hash salts

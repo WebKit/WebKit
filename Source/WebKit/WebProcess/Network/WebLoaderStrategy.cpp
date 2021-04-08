@@ -367,8 +367,10 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
         if (!origin.isNull())
             loadParameters.sourceOrigin = SecurityOrigin::createFromString(origin);
     }
-    if (document)
+    if (document) {
         loadParameters.topOrigin = &document->topOrigin();
+        loadParameters.documentURL = document->url();
+    }
 
     if (loadParameters.options.mode != FetchOptions::Mode::Navigate) {
         ASSERT(loadParameters.sourceOrigin);

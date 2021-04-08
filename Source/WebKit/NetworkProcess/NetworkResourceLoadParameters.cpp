@@ -110,6 +110,8 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << parentFrameID;
     encoder << crossOriginAccessControlCheckEnabled;
 
+    encoder << documentURL;
+    
 #if ENABLE(SERVICE_WORKER)
     encoder << serviceWorkersMode;
     encoder << serviceWorkerRegistrationIdentifier;
@@ -274,6 +276,12 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
         return WTF::nullopt;
     result.crossOriginAccessControlCheckEnabled = *crossOriginAccessControlCheckEnabled;
     
+    Optional<URL> documentURL;
+    decoder >> documentURL;
+    if (!documentURL)
+        return WTF::nullopt;
+    result.documentURL = *documentURL;
+
 #if ENABLE(SERVICE_WORKER)
     Optional<ServiceWorkersMode> serviceWorkersMode;
     decoder >> serviceWorkersMode;
