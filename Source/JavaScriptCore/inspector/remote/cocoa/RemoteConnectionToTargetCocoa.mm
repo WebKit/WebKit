@@ -162,7 +162,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
 
     auto targetIdentifier = this->targetIdentifier().valueOr(0);
 
-    dispatchAsyncOnTarget([&, strongThis = makeRef(*this)]() {
+    dispatchAsyncOnTarget([this, targetIdentifier, isAutomaticInspection, automaticallyPause, strongThis = makeRef(*this)]() {
         LockHolder lock(m_targetMutex);
 
         if (!m_target || !m_target->remoteControlAllowed()) {
@@ -197,7 +197,7 @@ void RemoteConnectionToTarget::close()
 {
     auto targetIdentifier = m_target ? m_target->targetIdentifier() : 0;
     
-    dispatchAsyncOnTarget([&, strongThis = makeRef(*this)]() {
+    dispatchAsyncOnTarget([this, targetIdentifier, strongThis = makeRef(*this)]() {
         LockHolder lock(m_targetMutex);
         if (m_target) {
             if (m_connected)
