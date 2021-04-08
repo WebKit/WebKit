@@ -1,3 +1,15 @@
+2021-04-07  Kyle Piddington  <kpiddington@apple.com>
+
+        Crash in conformance2/textures/misc/compressed-tex-image.html with ANGLE+METAL
+        Handle uploading a compressed texture with a non-aligned offset. Path requires that we still fill the entire level of a 
+        compressed texture.
+        https://bugs.webkit.org/show_bug.cgi?id=223925
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::convertAndSetPerSliceSubImage):
+
 2021-04-07  John Cunningham  <johncunnigham@apple.com>
 
         [METAL ANGLE] Interface block declerations need to have children marked as struct accesses. Add implicit backing textures for multisample render targets
