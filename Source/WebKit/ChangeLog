@@ -1,5 +1,42 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275341. rdar://problem/76375265
+
+    Web Inspector: [Cocoa] WKInspectorResourceURLSchemeHandler can exceed the soft thread limit when opening multiple inspectors simultaneously.
+    https://bugs.webkit.org/show_bug.cgi?id=223958
+    
+    Reviewed by BJ Burg.
+    
+    In engineering builds, the Web Inspector is loaded as hundreds of separate resources instead of the handful of
+    minified sources used for released builds. When two Web Inspector windows are opened their loads can overlap
+    and it is possible for the sum total of file load operations to exceed the dispatch soft thread limit. To
+    resolve this, we set a sensible limit to the number of simultaneous inspector loading operations. A higher
+    number of allowed concurrent operations yielded no noticeable increase in load speeds.
+    
+    * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm:
+    (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275341 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-31  Patrick Angle  <pangle@apple.com>
+
+            Web Inspector: [Cocoa] WKInspectorResourceURLSchemeHandler can exceed the soft thread limit when opening multiple inspectors simultaneously.
+            https://bugs.webkit.org/show_bug.cgi?id=223958
+
+            Reviewed by BJ Burg.
+
+            In engineering builds, the Web Inspector is loaded as hundreds of separate resources instead of the handful of
+            minified sources used for released builds. When two Web Inspector windows are opened their loads can overlap
+            and it is possible for the sum total of file load operations to exceed the dispatch soft thread limit. To
+            resolve this, we set a sensible limit to the number of simultaneous inspector loading operations. A higher
+            number of allowed concurrent operations yielded no noticeable increase in load speeds.
+
+            * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm:
+            (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275147. rdar://problem/76411207
 
     Use-after-move in UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition

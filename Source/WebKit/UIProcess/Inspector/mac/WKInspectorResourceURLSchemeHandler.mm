@@ -58,6 +58,10 @@
         _operationQueue = [[NSOperationQueue alloc] init];
         _operationQueue.get().underlyingQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
         _operationQueue.get().qualityOfService = NSOperationQualityOfServiceUserInteractive;
+
+        // The default value (NSOperationQueueDefaultMaxConcurrentOperationCount) results in a large number of threads
+        // that can exceed the soft limit if two Web Inspector instances are being loaded simultaneously.
+        _operationQueue.get().maxConcurrentOperationCount = 4;
     }
 
     NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
