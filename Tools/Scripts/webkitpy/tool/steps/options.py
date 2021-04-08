@@ -1,5 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -48,6 +48,7 @@ class Options(object):
     description = make_option("-m", "--description", action="store", type="string", dest="description", help="Description string for the attachment")
     email = make_option("--email", action="store", type="string", dest="email", help="Email address to use in ChangeLogs.")
     ews = make_option('--no-ews', action='store_false', dest='ews', default=True, help='Do not submit the patch to EWS for analysis (only applies when using --no-review).')
+    fast_cq = make_option("--fast-cq", "--fast-commit-queue", "--fastcq", action='store_true', dest='fast_cq', default=False, help='Enable fast-commit-queue mode for this patch, that skips building and testing.')
     force_clean = make_option("--force-clean", action="store_true", dest="force_clean", default=False, help="Clean working directory before applying patches (removes local changes and commits)")
     git_commit = make_option("-g", "--git-commit", action="store", dest="git_commit", help="Operate on a local commit. If a range, the commits are squashed into one. <ref>.... includes the working copy changes. UPSTREAM can be used for the upstream/tracking branch.")
     group = make_option("--group", action="store", dest="group", default=None, help="")

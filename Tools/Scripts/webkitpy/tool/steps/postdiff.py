@@ -1,4 +1,5 @@
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -26,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 
@@ -40,6 +42,7 @@ class PostDiff(AbstractStep):
             Options.request_commit,
             Options.open_bug,
             Options.ews,
+            Options.fast_cq,
         ]
 
     def run(self, state):
@@ -47,6 +50,8 @@ class PostDiff(AbstractStep):
         description = self._options.description or "Patch"
         comment_text = self._options.comment
         bug_id = state["bug_id"]
+        if self._options.fast_cq:
+            description = '{}{}'.format(Attachment.fast_cq_preamble, description)
 
         attachment_id = self._tool.bugs.add_patch_to_bug(bug_id, diff, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
         if self._options.open_bug:

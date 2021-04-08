@@ -1,5 +1,5 @@
 # Copyright (c) 2009 Google Inc. All rights reserved.
-# Copyright (c) 2009, 2018 Apple Inc. All rights reserved.
+# Copyright (c) 2009-2021 Apple Inc. All rights reserved.
 # Copyright (c) 2010 Research In Motion Limited. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,7 @@ _log = logging.getLogger(__name__)
 
 
 class Attachment(object):
+    fast_cq_preamble = "[fast-cq] "
     revert_preamble = "REVERT of r"
     rollout_preamble = "ROLLOUT of r"
 
