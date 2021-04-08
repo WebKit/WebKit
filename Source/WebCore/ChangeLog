@@ -1,3 +1,18 @@
+2021-04-07  Jean-Yves Avenard  <jya@apple.com>
+
+        Site could crash if MediaRemote framework isn't available.
+        https://bugs.webkit.org/show_bug.cgi?id=224308
+        <rdar://problem/76273591>
+
+        Reviewed by Eric Carlson.
+
+        Check that MediaRemote framework is available before calling any of its method.
+        We put the check in the two static methods calling MediaRemote in order to keep all code dealing with MediaRemote in the same place.
+
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::clearNowPlayingInfo): Add a test with isMediaRemoteFrameworkAvailable
+        (WebCore::MediaSessionManagerCocoa::setNowPlayingInfo):  Add a test with isMediaRemoteFrameworkAvailable
+
 2021-04-02  Darin Adler  <darin@apple.com>
 
         Use Hasher more, remove IntegerHasher, fix hashing-related mistakes
