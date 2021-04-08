@@ -1,3 +1,33 @@
+2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add test infrastructure for app bound request context string
+        https://bugs.webkit.org/show_bug.cgi?id=224311
+        <rdar://problem/76229003>
+
+        Reviewed by Brent Fulgham.
+
+        Layout test infrastructure.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::appBoundRequestContextDataForDomain):
+        (WTR::TestRunner::callDidReceiveAppBoundRequestContextDataForDomainCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::appBoundRequestContextDataForDomain):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveAppBoundRequestContextDataForDomain):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::appBoundRequestContextDataForDomain):
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.h:
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView _appBoundNavigationDataForDomain:completionHandler:]):
+
 2021-04-08  Aakash Jain  <aakash_jain@apple.com>
 
         Add webkit-patch support for fast-cq mode

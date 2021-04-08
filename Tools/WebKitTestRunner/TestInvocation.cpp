@@ -792,6 +792,12 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "AppBoundRequestContextDataForDomain")) {
+        WKStringRef domain = stringValue(messageBody);
+        TestController::singleton().appBoundRequestContextDataForDomain(domain);
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 
@@ -1562,6 +1568,12 @@ void TestInvocation::didReceiveLoadedSubresourceDomains(Vector<String>&& domains
     for (auto& domain : domains)
         WKArrayAppendItem(messageBody.get(), toWK(domain).get());
     postPageMessage("CallDidReceiveLoadedSubresourceDomains", messageBody);
+}
+
+void TestInvocation::didReceiveAppBoundRequestContextDataForDomain(String&& domain)
+{
+    auto messageBody = WKStringCreateWithUTF8CString(domain.utf8().data());
+    postPageMessage("CallDidReceiveAppBoundRequestContextDataForDomain", messageBody);
 }
 
 void TestInvocation::didRemoveAllSessionCredentials()

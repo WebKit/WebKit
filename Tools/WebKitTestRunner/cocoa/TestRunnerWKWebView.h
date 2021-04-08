@@ -82,5 +82,6 @@
 
 - (void)dismissActiveMenu;
 - (void)resetInteractionCallbacks;
+- (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler;
 
 @end

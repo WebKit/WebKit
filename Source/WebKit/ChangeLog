@@ -1,3 +1,31 @@
+2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add test infrastructure for app bound request context string
+        https://bugs.webkit.org/show_bug.cgi?id=224311
+        <rdar://problem/76229003>
+
+        Reviewed by Brent Fulgham.
+
+        The app-bound request context string is the eTLD+1 for a load and is
+        needed by CFNetwork. We should add testing infrastructure to make sure
+        the context string is being properly set.
+
+        Test: http/tests/in-app-browser-privacy/context-string-for-subframe.html
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (contextString):
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        * Shared/NavigatingToAppBoundDomain.h:
+        (WebKit::AppBoundNavigationTestingData::clearAppBoundNavigationDataTesting):
+        (WebKit::AppBoundNavigationTestingData::updateAppBoundNavigationTestingData):
+        (WebKit::AppBoundNavigationTestingData::encode const):
+        (WebKit::AppBoundNavigationTestingData::decode):
+        Store the context string in the testing struct.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _appBoundNavigationDataForDomain:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        SPI to get the app-bound request test data for layout testing.
+
 2021-04-08  Chris Dumez  <cdumez@apple.com>
 
         Cache NSInvocation objects on _WKRemoteObjectInterface

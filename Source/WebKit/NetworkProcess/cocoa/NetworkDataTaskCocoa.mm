@@ -57,6 +57,7 @@
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
 #define NETWORK_DATA_TASK_COCOA_ADDITIONS
+static WebCore::RegistrableDomain contextString(NSURLRequest *) { return { }; }
 #endif
 
 namespace WebKit {
@@ -340,7 +341,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
     NETWORK_DATA_TASK_COCOA_ADDITIONS
 
-    m_session->appBoundNavigationTestingData().updateAppBoundNavigationTestingData(request.isAppBound());
+    m_session->appBoundNavigationTestingData().updateAppBoundNavigationTestingData(request, contextString(nsRequest));
 
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::ContentSniffingPolicy::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
