@@ -297,12 +297,13 @@ void RegistrationDatabase::pushChanges(const HashMap<ServiceWorkerRegistrationKe
         else
             removedRegistrations.append(keyValue.key.isolatedCopy());
     }
-    schedulePushChanges(WTFMove(updatedRegistrations), WTFMove(removedRegistrations), WTFMove(completionHandler));
+    schedulePushChanges(WTFMove(updatedRegistrations), WTFMove(removedRegistrations), ShouldRetry::Yes, WTFMove(completionHandler));
 }
 
-void RegistrationDatabase::schedulePushChanges(Vector<ServiceWorkerContextData>&& updatedRegistrations, Vector<ServiceWorkerRegistrationKey>&& removedRegistrations, CompletionHandler<void()>&& completionHandler)
+void RegistrationDatabase::schedulePushChanges(Vector<ServiceWorkerContextData>&& updatedRegistrations, Vector<ServiceWorkerRegistrationKey>&& removedRegistrations, ShouldRetry shouldRetry, CompletionHandler<void()>&& completionHandler)
 {
-    postTaskToWorkQueue([this, protectedThis = makeRef(*this), pushCounter = m_pushCounter, updatedRegistrations = WTFMove(updatedRegistrations), removedRegistrations = WTFMove(removedRegistrations), completionHandler = WTFMove(completionHandler)]() mutable {
+    auto pushCounter = shouldRetry == ShouldRetry::Yes ? m_pushCounter : 0;
+    postTaskToWorkQueue([this, protectedThis = makeRef(*this), pushCounter, updatedRegistrations = WTFMove(updatedRegistrations), removedRegistrations = WTFMove(removedRegistrations), completionHandler = WTFMove(completionHandler)]() mutable {
         bool success = doPushChanges(updatedRegistrations, removedRegistrations);
         if (success) {
             updatedRegistrations.clear();
@@ -310,8 +311,8 @@ void RegistrationDatabase::schedulePushChanges(Vector<ServiceWorkerContextData>&
         }
         callOnMainThread([this, protectedThis = WTFMove(protectedThis), success, pushCounter, updatedRegistrations = WTFMove(updatedRegistrations).isolatedCopy(), removedRegistrations = WTFMove(removedRegistrations).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
             if (!success && (pushCounter + 1) == m_pushCounter) {
-                // We retry writing if no other change was pushed.
-                schedulePushChanges(WTFMove(updatedRegistrations), WTFMove(removedRegistrations), WTFMove(completionHandler));
+                // We retry writing once if no other change was pushed.
+                schedulePushChanges(WTFMove(updatedRegistrations), WTFMove(removedRegistrations), ShouldRetry::No, WTFMove(completionHandler));
                 return;
             }
             if (completionHandler)
