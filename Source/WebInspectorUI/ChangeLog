@@ -1,3 +1,51 @@
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274737. rdar://problem/76416315
+
+    Uncaught Exception: RangeError: Array size is not a small enough positive integer.
+    https://bugs.webkit.org/show_bug.cgi?id=223532
+    <rdar://problem/75635080>
+    
+    Reviewed by Devin Rousso.
+    
+    This patch fixes the broken CPU instrument when viewing a JSON timeline recordng.
+    
+    This exception is thrown when viewing a timeline recording that has been
+    imported from JSON file. Aside from the exception, the code is functionally
+    broken in this situation since passing a negative number to Array() doesn't work.
+    
+    I tested this change manually and selection ranges now behave as expected, and
+    have not regressed in other instruments / UI.
+    
+    * UserInterface/Views/CPUTimelineView.js:
+    Based on my investigation, the visibleEndTime is incorrectly computed when
+    showing a JSON timeline recording because the currentTime property is always '0'.
+    If this is the case, then let's assume that the entire range should be displayed.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274737 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-19  BJ Burg  <bburg@apple.com>
+
+            Uncaught Exception: RangeError: Array size is not a small enough positive integer.
+            https://bugs.webkit.org/show_bug.cgi?id=223532
+            <rdar://problem/75635080>
+
+            Reviewed by Devin Rousso.
+
+            This patch fixes the broken CPU instrument when viewing a JSON timeline recordng.
+
+            This exception is thrown when viewing a timeline recording that has been
+            imported from JSON file. Aside from the exception, the code is functionally
+            broken in this situation since passing a negative number to Array() doesn't work.
+
+            I tested this change manually and selection ranges now behave as expected, and
+            have not regressed in other instruments / UI.
+
+            * UserInterface/Views/CPUTimelineView.js:
+            Based on my investigation, the visibleEndTime is incorrectly computed when
+            showing a JSON timeline recording because the currentTime property is always '0'.
+            If this is the case, then let's assume that the entire range should be displayed.
+
 2021-02-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r272232. rdar://problem/74032620
