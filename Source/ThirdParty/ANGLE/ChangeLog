@@ -1,3 +1,17 @@
+2021-04-08  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal-ANGLE] Support GPU power preferences, select low-power GPU by default.
+        Respond to GPU power preference flags, expose extension, and avoid creating a high-powered GPU by default.
+        https://bugs.webkit.org/show_bug.cgi?id=224337
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeImpl):
+        (rx::DisplayMtl::getMetalDeviceMatchingAttribute):
+        (rx::DisplayMtl::generateExtensions const):
+
 2021-04-07  Kyle Piddington  <kpiddington@apple.com>
 
         Crash in conformance2/textures/misc/compressed-tex-image.html with ANGLE+METAL
