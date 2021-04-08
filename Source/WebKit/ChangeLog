@@ -1,3 +1,45 @@
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r272910. rdar://problem/76416446
+
+    Set a default path for device ID hash salts
+    https://bugs.webkit.org/show_bug.cgi?id=221955
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebKit:
+    
+    The default path was the empty string, which leads to not persist device IDs.
+    Update this to provide a valid default path like for other persisting data types.
+    Covered by API test.
+    
+    * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+    (WebKit::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+    * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKit/GetUserMediaNavigation.mm:
+    (TestWebKitAPI::TEST):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272910 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-16  Youenn Fablet  <youenn@apple.com>
+
+            Set a default path for device ID hash salts
+            https://bugs.webkit.org/show_bug.cgi?id=221955
+
+            Reviewed by Eric Carlson.
+
+            The default path was the empty string, which leads to not persist device IDs.
+            Update this to provide a valid default path like for other persisting data types.
+            Covered by API test.
+
+            * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+            (WebKit::WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory):
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+
 2021-03-15  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r274439. rdar://problem/75450678

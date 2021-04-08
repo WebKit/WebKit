@@ -101,6 +101,39 @@ TEST(WebKit, NavigateDuringDeviceEnumeration)
     TestWebKitAPI::Util::run(&okToProceed);
 }
 
+TEST(WebKit, DefaultDeviceIdHashSaltsDirectory)
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    auto *path = [websiteDataStoreConfiguration deviceIdHashSaltsStorageDirectory].path;
+
+    if ([fileManager fileExistsAtPath:path]) {
+        NSError *error = nil;
+        [fileManager removeItemAtPath:path error:&error];
+        EXPECT_FALSE(error);
+    }
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:[[[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()] autorelease]];
+    auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto preferences = [configuration preferences];
+    preferences._mediaCaptureRequiresSecureConnection = NO;
+    configuration.get()._mediaCaptureEnabled = YES;
+    preferences._mockCaptureDevicesEnabled = YES;
+    auto webView = [[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()];
+    auto delegate = adoptNS([[NavigationWhileGetUserMediaPromptDisplayedUIDelegate alloc] init]);
+    webView.UIDelegate = delegate.get();
+
+    [webView loadTestPageNamed:@"enumerateMediaDevices"];
+
+    while (![fileManager fileExistsAtPath:path])
+        Util::spinRunLoop();
+    NSError *error = nil;
+    [fileManager removeItemAtPath:path error:&error];
+    EXPECT_FALSE(error);
+}
+
 TEST(WebKit, DeviceIdHashSaltsDirectory)
 {
     NSURL *tempDir = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"CustomPathsTest"] isDirectory:YES];

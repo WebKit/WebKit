@@ -2299,7 +2299,7 @@ bool WebsiteDataStore::networkProcessHasEntitlementForTesting(const String&)
 }
 #endif // !PLATFORM(COCOA)
 
-#if !USE(GLIB)
+#if !USE(GLIB) && !PLATFORM(COCOA)
 WTF::String WebsiteDataStore::defaultDeviceIdHashSaltsStorageDirectory()
 {
     // Not implemented.
