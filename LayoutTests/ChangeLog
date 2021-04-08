@@ -1,3 +1,13 @@
+2021-04-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        VoiceOver does not echo text insertions and deletions when a contenteditable div has a non editable descendant element with a content editable child
+        https://bugs.webkit.org/show_bug.cgi?id=223818
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/nested-textareas-value-changed-notifications-expected.txt: Added.
+        * accessibility/nested-textareas-value-changed-notifications.html: Added.
+
 2021-04-08  Sihui Liu  <sihui_liu@apple.com>
 
         Remove logging for investigating http/tests/IndexedDB/storage-limit-1.html failure

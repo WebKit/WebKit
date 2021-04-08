@@ -482,7 +482,6 @@ public:
     void decrement() override { }
 
     void childrenChanged() override { }
-    void textChanged() override { }
     void updateAccessibilityRole() override { }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     void addChildren() override { }
@@ -791,7 +790,6 @@ protected:
 
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;
-
     String innerHTML() const override;
     String outerHTML() const override;
 

@@ -2117,11 +2117,6 @@ void AXIsolatedObject::childrenChanged()
     ASSERT_NOT_REACHED();
 }
 
-void AXIsolatedObject::textChanged()
-{
-    ASSERT_NOT_REACHED();
-}
-
 void AXIsolatedObject::updateAccessibilityRole()
 {
     ASSERT_NOT_REACHED();
