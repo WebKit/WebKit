@@ -1,3 +1,18 @@
+2021-04-08  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] check to see that a Metal device is available before selecting the backend.    
+        https://bugs.webkit.org/show_bug.cgi?id=224341
+
+        Some platforms, including virtual machines, do not support Metal.
+        If we cannot create a default device, fall back on selecting the OpenGL backend.
+
+        Reviewed by Dean Jackson.
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::platformSupportsMetal):
+        (WebCore::InitializeEGLDisplay):
+        Added Metal header include, and runtime check to ensure a metal device can be created before selecting the Metal backend.
+
 2021-04-08  Chris Dumez  <cdumez@apple.com>
 
         Suspended OfflineAudioContext objects are leaking

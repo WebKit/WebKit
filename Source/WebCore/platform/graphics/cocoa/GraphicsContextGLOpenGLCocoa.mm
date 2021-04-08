@@ -37,6 +37,7 @@
 #import "WebCoreThread.h"
 #import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
+#import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
@@ -84,6 +85,14 @@ static bool checkVolatileContextSupportIfDeviceExists(EGLDisplay display, const 
 }
 #endif
 
+static bool platformSupportsMetal()
+{
+    if (MTLCreateSystemDefaultDevice())
+        return true;
+    
+    return false;
+}
+
 static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
 {
     EGLint majorVersion = 0;
@@ -103,13 +112,13 @@ static ScopedEGLDefaultDisplay InitializeEGLDisplay(const GraphicsContextGLAttri
         displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_CONTEXT_VOLATILE_CGL_ANGLE);
         displayAttributes.append(EGL_TRUE);
     }
-
-    if (attrs.useMetal) {
+    bool canUseMetal = platformSupportsMetal();
+    if (attrs.useMetal && canUseMetal) {
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_ANGLE);
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
     }
 
-    LOG(WebGL, "Attempting to use ANGLE's %s backend.", attrs.useMetal ? "Metal" : "OpenGL");
+    LOG(WebGL, "Attempting to use ANGLE's %s backend.", attrs.useMetal && canUseMetal ? "Metal" : "OpenGL");
 
     displayAttributes.append(EGL_NONE);
     display = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void*>(EGL_DEFAULT_DISPLAY), displayAttributes.data());
