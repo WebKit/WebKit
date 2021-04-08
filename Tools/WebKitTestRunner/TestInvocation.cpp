@@ -1391,11 +1391,6 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         return nullptr;
     }
 
-    if (WKStringIsEqualToUTF8CString(messageName, "SetQuotaLoggingEnabled")) {
-        TestController::singleton().setQuotaLoggingEnabled(messageBody);
-        return nullptr;
-    }
-
     ASSERT_NOT_REACHED();
     return nullptr;
 }

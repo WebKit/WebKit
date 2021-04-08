@@ -78,8 +78,7 @@ StorageQuotaManager::Decision StorageQuotaManager::requestSpaceOnBackgroundThrea
     if (tryGrantRequest(spaceRequested))
         return Decision::Grant;
 
-    auto shouldPrintUsageDetail = m_loggingEnabled ? ShouldPrintUsageDetail::Yes : ShouldPrintUsageDetail::No;
-    m_usage = m_usageGetter(shouldPrintUsageDetail);
+    m_usage = m_usageGetter();
     updateQuotaBasedOnUsage();
     m_quotaCountDown = m_usage < m_quota ? m_quota - m_usage : 0;
     if (tryGrantRequest(spaceRequested))
@@ -102,7 +101,7 @@ StorageQuotaManager::Decision StorageQuotaManager::requestSpaceOnBackgroundThrea
 
     semaphore.wait();
 
-    m_usage = m_usageGetter(shouldPrintUsageDetail);
+    m_usage = m_usageGetter();
     m_quotaCountDown = m_usage < m_quota ? m_quota - m_usage : 0;
     return tryGrantRequest(spaceRequested) ? Decision::Grant : Decision::Deny;
 }
@@ -110,9 +109,6 @@ StorageQuotaManager::Decision StorageQuotaManager::requestSpaceOnBackgroundThrea
 bool StorageQuotaManager::tryGrantRequest(uint64_t spaceRequested)
 {
     ASSERT(m_quotaCountDownLock.isLocked());
-
-    if (m_loggingEnabled)
-        WTFLogAlways("%p - StorageQuotaManager tryGrantRequest m_quota %" PRIu64 ", m_usage %" PRIu64 ", m_quotaCountDown %" PRIu64 ", spaceRequested %" PRIu64, this, m_quota, m_usage, m_quotaCountDown, spaceRequested);
 
     if (spaceRequested <= m_quotaCountDown) {
         m_quotaCountDown -= spaceRequested;
@@ -146,11 +142,6 @@ void StorageQuotaManager::resetQuotaForTesting()
     LockHolder locker(m_quotaCountDownLock);
     m_quota = m_initialQuota;
     m_quotaCountDown = 0;
-}
-
-void StorageQuotaManager::setLoggingEnabled(bool enabled)
-{
-    m_loggingEnabled = enabled;
 }
 
 } // namespace WebCore

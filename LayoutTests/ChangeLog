@@ -1,3 +1,15 @@
+2021-04-08  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove logging for investigating http/tests/IndexedDB/storage-limit-1.html failure
+        https://bugs.webkit.org/show_bug.cgi?id=223086
+        <rdar://problem/75591816>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/IndexedDB/storage-limit-1.https.html:
+        * http/tests/IndexedDB/storage-limit-2.https.html:
+        * http/tests/IndexedDB/storage-limit.https.html:
+
 2021-04-08  Antti Koivisto  <antti@apple.com>
 
         Revert r273621 because iPhone PLT regression

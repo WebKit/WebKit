@@ -2910,13 +2910,6 @@ void TestController::resetQuota()
     runUntil(context.done, noTimeout);
 }
 
-void TestController::setQuotaLoggingEnabled(bool enabled)
-{
-    StorageVoidCallbackContext context(*this);
-    WKWebsiteDataStoreSetQuotaLoggingEnabled(TestController::websiteDataStore(), enabled, &context, StorageVoidCallback);
-    runUntil(context.done, noTimeout);
-}
-
 struct FetchCacheOriginsCallbackContext {
     FetchCacheOriginsCallbackContext(TestController& controller, WKStringRef origin)
         : testController(controller)

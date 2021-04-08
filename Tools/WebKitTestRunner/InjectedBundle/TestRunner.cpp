@@ -383,11 +383,6 @@ void TestRunner::setDatabaseQuota(uint64_t quota)
     return WKBundleSetDatabaseQuota(InjectedBundle::singleton().bundle(), quota);
 }
 
-void TestRunner::setQuotaLoggingEnabled(bool enabled)
-{
-    postSynchronousPageMessage("SetQuotaLoggingEnabled", enabled);
-}
-
 void TestRunner::syncLocalStorage()
 {
     postSynchronousMessage("SyncLocalStorage", true);

@@ -106,7 +106,7 @@ public:
     WEBCORE_EXPORT void renameOrigin(const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&);
 
     StorageQuotaManager::Decision requestSpace(const ClientOrigin&, uint64_t taskSize);
-    WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&, StorageQuotaManager::ShouldPrintUsageDetail);
+    WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
 
     WEBCORE_EXPORT void stopDatabaseActivitiesOnMainThread();
 
