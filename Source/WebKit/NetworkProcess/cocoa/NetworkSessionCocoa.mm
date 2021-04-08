@@ -1068,9 +1068,11 @@ static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID
     configuration._shouldSkipPreferredClientCertificateLookup = YES;
 
 #if HAVE(LOGGING_PRIVACY_LEVEL)
-    auto setLoggingPrivacyLevel = NSSelectorFromString(@"_setLoggingPrivacyLevel:");
-    if ([configuration respondsToSelector:setLoggingPrivacyLevel])
+    auto setLoggingPrivacyLevel = NSSelectorFromString(@"set_loggingPrivacyLevel:");
+    if ([configuration respondsToSelector:setLoggingPrivacyLevel]) {
         wtfObjCMsgSend<void>(configuration, setLoggingPrivacyLevel, loggingPrivacyLevel);
+        RELEASE_LOG(NetworkSession, "Setting logging level for %s session %" PRIu64 " to %s", session.isEphemeral() ? "Ephemeral" : "Regular", session.toUInt64(), loggingPrivacyLevel == nw_context_privacy_level_silent ? "silent" : "sensitive");
+    }
 #elif HAVE(ALLOWS_SENSITIVE_LOGGING)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     configuration._allowsSensitiveLogging = NO;

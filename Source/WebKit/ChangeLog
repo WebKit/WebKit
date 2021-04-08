@@ -1,5 +1,36 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275622. rdar://problem/76375389
+
+    [Cocoa] Incorrect selector used to set logging level
+    https://bugs.webkit.org/show_bug.cgi?id=224292
+    <rdar://problem/75379660>
+    
+    Reviewed by John Wilander.
+    
+    The wrong selector label was used to configure the low-level network logging level.
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::configurationForSessionID):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275622 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-07  Brent Fulgham  <bfulgham@apple.com>
+
+            [Cocoa] Incorrect selector used to set logging level
+            https://bugs.webkit.org/show_bug.cgi?id=224292
+            <rdar://problem/75379660>
+
+            Reviewed by John Wilander.
+
+            The wrong selector label was used to configure the low-level network logging level.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::configurationForSessionID):
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275474. rdar://problem/76416845
 
     Protect frame in WebPage::runJavaScriptInFrameInScriptWorld()
