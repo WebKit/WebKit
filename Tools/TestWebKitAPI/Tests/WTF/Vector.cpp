@@ -177,11 +177,38 @@ TEST(WTF_Vector, ConstructWithFromMoveOnly)
 
 TEST(WTF_Vector, InitializeFromOtherInitialCapacity)
 {
+    Vector<int> vector = { 1, 3, 2, 4, 5 };
+    Vector<int> vectorCopy(vector);
+    EXPECT_EQ(5U, vector.size());
+    EXPECT_EQ(5U, vectorCopy.size());
+    EXPECT_EQ(5U, vectorCopy.capacity());
+}
+
+TEST(WTF_Vector, InitializeFromOtherInlineInitialCapacity)
+{
     Vector<int, 3> vector = { 1, 3, 2, 4 };
     Vector<int, 5> vectorCopy(vector);
     EXPECT_EQ(4U, vector.size());
     EXPECT_EQ(4U, vectorCopy.size());
     EXPECT_EQ(5U, vectorCopy.capacity());
+
+    EXPECT_EQ(1, vectorCopy[0]);
+    EXPECT_EQ(3, vectorCopy[1]);
+    EXPECT_EQ(2, vectorCopy[2]);
+    EXPECT_EQ(4, vectorCopy[3]);
+
+    EXPECT_TRUE(vector == vectorCopy);
+    EXPECT_FALSE(vector != vectorCopy);
+}
+
+TEST(WTF_Vector, InitializeFromOtherInlineBigToSmallInitialCapacity)
+{
+    Vector<int, 5> vector = { 1, 3, 2, 4 };
+    Vector<int, 3> vectorCopy(vector);
+    EXPECT_EQ(4U, vector.size());
+    EXPECT_EQ(5U, vector.capacity());
+    EXPECT_EQ(4U, vectorCopy.size());
+    EXPECT_EQ(4U, vectorCopy.capacity());
 
     EXPECT_EQ(1, vectorCopy[0]);
     EXPECT_EQ(3, vectorCopy[1]);
