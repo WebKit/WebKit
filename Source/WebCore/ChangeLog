@@ -1,3 +1,19 @@
+2021-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Broken transition when video player with MediaStream changes size
+        https://bugs.webkit.org/show_bug.cgi?id=224161
+        <rdar://problem/76366061>
+
+        Reviewed by Eric Carlson.
+
+        In case of animation that changes the root layer bounds, we need to synchronously update
+        the buffer layer as well.
+
+        Manually tested.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange):
+
 2021-04-08  Simon Fraser  <simon.fraser@apple.com>
 
         Compact GraphicsContextState
