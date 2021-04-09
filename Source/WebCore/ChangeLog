@@ -1,3 +1,10 @@
+2021-04-09  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GStreamer Thunder decryptor build fix after r275599
+
+        * platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp:
+        (decrypt):
+
 2021-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Teardown shadow root renderers on SlotAssignment::didChangeSlot
