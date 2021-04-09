@@ -90,9 +90,13 @@ constexpr size_t alignmentOfWTFConfig = std::alignment_of<WTF::Config>::value;
 static_assert(Gigacage::reservedBytesForGigacageConfig + sizeof(WTF::Config) <= ConfigSizeToProtect);
 static_assert(roundUpToMultipleOf<alignmentOfWTFConfig>(startOffsetOfWTFConfig) == startOffsetOfWTFConfig);
 
+WTF_EXPORT_PRIVATE void setPermissionsOfConfigPage();
+
 #define g_wtfConfig (*bitwise_cast<WTF::Config*>(&WebConfig::g_config[WTF::startSlotOfWTFConfig]))
 
 #else // not ENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
+
+inline void setPermissionsOfConfigPage() { }
 
 extern "C" WTF_EXPORT_PRIVATE Config g_wtfConfig;
 

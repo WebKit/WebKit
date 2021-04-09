@@ -49,6 +49,7 @@ struct Config {
 
     static void configureForTesting()
     {
+        WTF::setPermissionsOfConfigPage();
         disableFreezingForTesting();
         enableRestrictedOptions();
     }

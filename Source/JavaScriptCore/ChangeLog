@@ -1,5 +1,48 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r274325. rdar://problem/76416354
+
+    Adopt VM_FLAGS_PERMANENT for the config vm mapping
+    https://bugs.webkit.org/show_bug.cgi?id=222086
+    <rdar://74402690>
+    
+    Reviewed by Yusuke Suzuki and Mark Lam.
+    
+    Source/JavaScriptCore:
+    
+    * runtime/JSCConfig.h:
+    (JSC::Config::configureForTesting):
+    
+    Source/WebKit:
+    
+    * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+    (WebKit::XPCServiceMain):
+    
+    Source/WTF:
+    
+    * wtf/PlatformHave.h:
+    * wtf/Threading.cpp:
+    (WTF::initialize):
+    * wtf/WTFConfig.cpp:
+    (WTF::setPermissionsOfConfigPage):
+    * wtf/WTFConfig.h:
+    (WTF::setPermissionsOfConfigPage):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274325 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-11  Saam Barati  <sbarati@apple.com>
+
+            Adopt VM_FLAGS_PERMANENT for the config vm mapping
+            https://bugs.webkit.org/show_bug.cgi?id=222086
+            <rdar://74402690>
+
+            Reviewed by Yusuke Suzuki and Mark Lam.
+
+            * runtime/JSCConfig.h:
+            (JSC::Config::configureForTesting):
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r274699. rdar://problem/76373830
 
     JS->Wasm IC must save the tag registers if it uses them
