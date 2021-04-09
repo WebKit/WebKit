@@ -1,5 +1,37 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275003. rdar://problem/76411341
+
+    WTF::setPermissionsOfConfigPage() should allow its VM_FLAGS_PERMANENT workaround unconditionally.
+    https://bugs.webkit.org/show_bug.cgi?id=223725
+    rdar://75813316
+    
+    Reviewed by Saam Barati.
+    
+    If the OS does not support the flag, then we should not require it.
+    
+    * wtf/WTFConfig.cpp:
+    (WTF::setPermissionsOfConfigPage):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275003 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-24  Mark Lam  <mark.lam@apple.com>
+
+            WTF::setPermissionsOfConfigPage() should allow its VM_FLAGS_PERMANENT workaround unconditionally.
+            https://bugs.webkit.org/show_bug.cgi?id=223725
+            rdar://75813316
+
+            Reviewed by Saam Barati.
+
+            If the OS does not support the flag, then we should not require it.
+
+            * wtf/WTFConfig.cpp:
+            (WTF::setPermissionsOfConfigPage):
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r274898. rdar://problem/76412278
 
     Don't require VM_FLAGS_PERMANENT on the simulator builds
