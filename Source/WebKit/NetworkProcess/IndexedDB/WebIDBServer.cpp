@@ -34,13 +34,18 @@
 
 namespace WebKit {
 
-Ref<WebIDBServer> WebIDBServer::create(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
+Ref<WebIDBServer> WebIDBServer::create(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester, CompletionHandler<void()>&& callback)
 {
-    return adoptRef(*new WebIDBServer(sessionID, directory, WTFMove(spaceRequester)));
+    return adoptRef(*new WebIDBServer(sessionID, directory, WTFMove(spaceRequester), WTFMove(callback)));
 }
 
-WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester)
-    : CrossThreadTaskHandler("com.apple.WebKit.IndexedDBServer", WTF::CrossThreadTaskHandler::AutodrainedPoolForRunLoop::Use)
+WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester, CompletionHandler<void()>&& callback)
+    : CrossThreadTaskHandler(makeString("com.apple.WebKit.IndexedDBServer.", sessionID.toUInt64()).ascii().data(), WTF::CrossThreadTaskHandler::AutodrainedPoolForRunLoop::Use)
+    , m_dataTaskCounter([weakThis = makeWeakPtr(this)](RefCounterEvent) {
+        if (weakThis)
+            weakThis->tryClose();
+    })
+    , m_closeCallback(WTFMove(callback))
 {
     ASSERT(RunLoop::isMain());
 
@@ -61,11 +66,11 @@ void WebIDBServer::getOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOr
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), callback = WTFMove(callback)]() mutable {
+    postTask([this, protectedThis = makeRef(*this), callback = WTFMove(callback), token = m_dataTaskCounter.count()]() mutable {
         ASSERT(!RunLoop::isMain());
 
         LockHolder locker(m_server->lock());
-        postTaskReply(CrossThreadTask([callback = WTFMove(callback), origins = crossThreadCopy(m_server->getOrigins())]() mutable {
+        postTaskReply(CrossThreadTask([callback = WTFMove(callback), token = WTFMove(token), origins = crossThreadCopy(m_server->getOrigins())]() mutable {
             callback(WTFMove(origins));
         }));
     });
@@ -75,12 +80,12 @@ void WebIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTim
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), modificationTime, callback = WTFMove(callback)]() mutable {
+    postTask([this, protectedThis = makeRef(*this), modificationTime, callback = WTFMove(callback), token = m_dataTaskCounter.count()]() mutable {
         ASSERT(!RunLoop::isMain());
 
         LockHolder locker(m_server->lock());
         m_server->closeAndDeleteDatabasesModifiedSince(modificationTime);
-        postTaskReply(CrossThreadTask([callback = WTFMove(callback)]() mutable {
+        postTaskReply(CrossThreadTask([callback = WTFMove(callback), token = WTFMove(token)]() mutable {
             callback();
         }));
     });
@@ -90,12 +95,12 @@ void WebIDBServer::closeAndDeleteDatabasesForOrigins(const Vector<WebCore::Secur
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), originDatas = originDatas.isolatedCopy(), callback = WTFMove(callback)] () mutable {
+    postTask([this, protectedThis = makeRef(*this), originDatas = originDatas.isolatedCopy(), callback = WTFMove(callback), token = m_dataTaskCounter.count()] () mutable {
         ASSERT(!RunLoop::isMain());
 
         LockHolder locker(m_server->lock());
         m_server->closeAndDeleteDatabasesForOrigins(originDatas);
-        postTaskReply(CrossThreadTask([callback = WTFMove(callback)]() mutable {
+        postTaskReply(CrossThreadTask([callback = WTFMove(callback), token = WTFMove(token)]() mutable {
             callback();
         }));
     });
@@ -105,12 +110,14 @@ void WebIDBServer::renameOrigin(const WebCore::SecurityOriginData& oldOrigin, co
 {
     ASSERT(RunLoop::isMain());
 
-    postTask([this, protectedThis = makeRef(*this), oldOrigin = oldOrigin.isolatedCopy(), newOrigin = newOrigin.isolatedCopy(), callback = WTFMove(callback)] () mutable {
+    postTask([this, protectedThis = makeRef(*this), oldOrigin = oldOrigin.isolatedCopy(), newOrigin = newOrigin.isolatedCopy(), callback = WTFMove(callback), token = m_dataTaskCounter.count()] () mutable {
         ASSERT(!RunLoop::isMain());
 
         LockHolder locker(m_server->lock());
         m_server->renameOrigin(oldOrigin, newOrigin);
-        postTaskReply(CrossThreadTask(WTFMove(callback)));
+        postTaskReply(CrossThreadTask([callback = WTFMove(callback), token = WTFMove(token)]() mutable {
+            callback();
+        }));
     });
 }
 
@@ -370,16 +377,20 @@ void WebIDBServer::removeConnection(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
 
-    m_connections.remove(&connection);
-    connection.removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
+    auto* takenConnection = m_connections.take(&connection);
+    if (!takenConnection)
+        return;
+
+    takenConnection->removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
     postTask([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID()] {
         auto connection = m_connectionMap.take(connectionID);
-
         ASSERT(connection);
 
         LockHolder locker(m_server->lock());
         m_server->unregisterConnection(connection->connectionToClient());
     });
+
+    tryClose();
 }
 
 void WebIDBServer::postTask(Function<void()>&& task)
@@ -413,6 +424,18 @@ void WebIDBServer::close()
 
         CrossThreadTaskHandler::kill();
     });
+}
+
+void WebIDBServer::tryClose()
+{
+    if (!m_connections.isEmpty() || m_dataTaskCounter.value())
+        return;
+
+    if (!m_closeCallback)
+        return;
+
+    close();
+    m_closeCallback();
 }
 
 } // namespace WebKit

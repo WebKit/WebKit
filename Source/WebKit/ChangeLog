@@ -1,3 +1,46 @@
+2021-04-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Create WebIDBServer only when it is needed
+        https://bugs.webkit.org/show_bug.cgi?id=224305
+        rdar://71962196
+
+        Reviewed by Alex Christensen.
+
+        Currently each WebIDBServer comes with a thread, so we don't want to keep WebIDBServer if it's not in use.
+        Now there are two cases where network process needs a WebIDBServer:
+        1. handle requests from UI process to collect or remove data
+        2. handle requests from Web process to perform IDB operations 
+        We created a WebIDBServer when network process connects to a web process, and we should create it when 
+        web process is about to perform IDB operations. Also, we should remove WebIDBServer if it's done handling
+        requests, i.e count of pending requests from UI process is 0 and WebIDBServer is not associated with any web 
+        process connection.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::create):
+        (WebKit::WebIDBServer::WebIDBServer): Add SessionID to thread name so we know which session to blame in crash 
+        traces. 
+        (WebKit::m_closeCallback):
+        (WebKit::WebIDBServer::getOrigins):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::renameOrigin):
+        (WebKit::WebIDBServer::removeConnection):
+        (WebKit::WebIDBServer::tryClose):
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::addIDBConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in: Add a message for web process to ask network process
+        to create WebIDBServer if not exists, and associate the web process connection with WebIDBServer.
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::createWebIDBServer):
+        (WebKit::NetworkProcess::connectionToWebProcessClosed):
+        (WebKit::NetworkProcess::removeWebIDBServerIfPossible): Deleted. Move the removal code to WebIDBServer.
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer):
+
 2021-04-09  Chris Dumez  <cdumez@apple.com>
 
         Need to propagate and use 'canShowWhileLocked' in the GPU Process
