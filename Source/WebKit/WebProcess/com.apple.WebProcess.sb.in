@@ -2177,3 +2177,11 @@
     (allow darwin-notification-post (with telemetry))
 )
 #endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED > 110000
+(deny file-read* (with no-report)
+    (home-literal
+        "/Library/Preferences/com.apple.CFNetwork.plist"
+    )
+)
+#endif

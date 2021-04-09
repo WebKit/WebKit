@@ -1,3 +1,18 @@
+2021-04-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Silence a CFNetwork preference file access warning 
+        https://bugs.webkit.org/show_bug.cgi?id=224344
+        <rdar://problem/75839558>
+
+        Reviewed by Eric Carlson.
+
+        Silence sandbox telemetry and reports when CFNetwork attempts to read an unimportant preference
+        when executing in the WebContent process. This has been confirmed to be a silent/safe failiure
+        case (just returns false) and is not needed in the WebContent process.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-04-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Use context menus for text input datalist dropdowns
