@@ -1,3 +1,18 @@
+2021-04-08  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] WebProcessProxy::sendAudioComponentRegistrations leaks CFDataRef
+        https://bugs.webkit.org/show_bug.cgi?id=224349
+        <rdar://problem/76176827>
+
+        Reviewed by Jer Noble.
+
+        Tested manually.
+
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::sendAudioComponentRegistrations): The CFDictionary
+        returned by AudioComponentFetchServerRegistrations is newly allocated, so adopt
+        it into the RetainPtr so we don't increase the retain count.
+
 2021-04-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r273541) WKWebView can't load NSURLRequest subclasses

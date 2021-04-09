@@ -296,7 +296,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
             return;
 
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), registrations = retainPtr(registrations)] () mutable {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), registrations = adoptCF(registrations)] () mutable {
             auto registrationData = SharedBuffer::create(registrations.get());
             protectedThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
         });
