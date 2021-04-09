@@ -35,9 +35,10 @@ from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner, Sharder, TestRunInterruptedException
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.models.test_run_results import TestRunResults
+from webkitpy.layout_tests.models.test import Test
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_results import TestResult
+from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.port.test import TestPort
 
 
@@ -81,10 +82,10 @@ class LayoutTestRunnerTests(unittest.TestCase):
         return LayoutTestRunner(options, port, FakePrinter(), port.results_directory(), lambda test_name: False)
 
     def _run_tests(self, runner, tests):
-        test_inputs = [TestInput(test, 6000) for test in tests]
+        test_inputs = [TestInput(Test(test), 6000) for test in tests]
         expectations = TestExpectations(runner._port, tests)
         expectations.parse_all_expectations()
-        runner.run_tests(expectations, test_inputs, set(),
+        runner.run_tests(expectations, test_inputs,
             num_workers=1, needs_http=any('http' in test for test in tests), needs_websockets=any(['websocket' in test for test in tests]), needs_web_platform_test_server=any(['imported/w3c' in test for test in tests]), retrying=False)
 
     def test_interrupt_if_at_failure_limits(self):
@@ -92,7 +93,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner._options.exit_after_n_failures = None
         runner._options.exit_after_n_crashes_or_times = None
         test_names = ['passes/text.html', 'passes/image.html']
-        runner._test_inputs = [TestInput(test_name, 6000) for test_name in test_names]
+        runner._test_inputs = [TestInput(Test(test_name), 6000) for test_name in test_names]
 
         expectations = TestExpectations(runner._port, test_names)
         expectations.parse_all_expectations()
@@ -261,7 +262,7 @@ class SharderTests(unittest.TestCase):
     ]
 
     def get_test_input(self, test_file):
-        return TestInput(test_file, needs_servers=(test_file.startswith('http')))
+        return TestInput(Test(test_file), needs_servers=(test_file.startswith('http')))
 
     def get_shards(self, num_workers, fully_parallel, test_list=None):
         port = TestPort(MockSystemHost())

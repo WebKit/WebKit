@@ -1,3 +1,46 @@
+2021-04-09  Sam Sneddon  <gsnedders@apple.com>
+
+        Make TestInput take a Test object, not a path
+        https://bugs.webkit.org/show_bug.cgi?id=224329
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests): Remove test_to_skip argument; skipped tests aren't for the runner.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests._run_tests): TestInput expects a Test.
+        (LayoutTestRunnerTests.test_interrupt_if_at_failure_limits): TestInput expects a Test.
+        (SharderTests.get_test_input): TestInput expects a Test.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._collect_tests):
+        Move duplicated code from Manager.run and Manager.print_expectations here.
+        (Manager._tests_to_run):
+        Renamed from Manager._prepare_lists; now just gives tests to run.
+        (Manager._test_input_for_file): Now takes a Test, not a str; device_type changes behaviour and shouldn't have any default.
+        (Manager._test_is_slow): device_type changes behaviour and shouldn't have any default.
+        (Manager._test_should_dump_jsconsolelog_in_stderr): device_type changes behaviour and shouldn't have any default.
+        (Manager._get_test_inputs): device_type changes behaviour and shouldn't have any default.
+        (Manager._update_worker_count): device_type changes behaviour and shouldn't have any default.
+        (Manager._set_up_run): device_type changes behaviour and shouldn't have any default.
+        (Manager.run):
+        Largely just change for Manager._collect_tests, also renaming the sets to match their
+        clearer names in print_expectations.
+        Additionally, now generate skip results here, as they aren't to do with actually running
+        tests, they're about test selection.
+        (Manager._run_test_subset): Remove tests_to_skip argument, devie_type is required.
+        (Manager._run_tests): Remove tests_to_skip argument, devie_type is required.
+        (Manager._print_expectation_line_for_test): Now takes a Test, not a str; device_type changes behaviour and shouldn't have any default.
+        (Manager._print_expectations_for_subset): Change default of tests_to_skip to avoid set/dict oddness.
+        (Manager.print_expectations): Largely change for Manager._collect_tests.
+        * Scripts/webkitpy/layout_tests/models/test.py:
+        (Test): Use attrs to avoid having to define cmp, hash, repr, etc.
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput.__init__): Take a Test, not a str.
+        (TestInput.test_name): Maintain compatibility with code reading TestInput.test_name for now.
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (TestRunResults.merge): Fix merging of dicts-of-sets, rather than overwriting the sets.
+        (TestRunResults.merge.merge_dict_sets): Implement the merging.
+
 2021-04-09  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Use context menus for text input datalist dropdowns

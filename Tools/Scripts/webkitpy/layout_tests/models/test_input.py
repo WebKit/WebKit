@@ -28,6 +28,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+from .test import Test
+
 class TestInput(object):
     """Information about a test needed to run it.
 
@@ -35,15 +37,24 @@ class TestInput(object):
     derived from TestExpectations/test execution options (e.g., timeout).
     """
 
-    def __init__(self, test_name, timeout=None, needs_servers=None, should_dump_jsconsolelog_in_stderr=None):
+    def __init__(self,
+                 test,  # type: Test
+                 timeout=None,  # type: Union[None, int, str]
+                 needs_servers=None,  # type: Optional[bool]
+                 should_dump_jsconsolelog_in_stderr=None,  # type: Optional[bool]
+                 ):
         # TestInput objects are normally constructed by the manager and passed
         # to the workers, but these some fields are set lazily in the workers where possible
         # because they require us to look at the filesystem and we want to be able to do that in parallel.
-        self.test_name = test_name
+        self.test = test
         self.timeout = timeout  # in msecs; should rename this for consistency
         self.needs_servers = needs_servers
         self.should_dump_jsconsolelog_in_stderr = should_dump_jsconsolelog_in_stderr
         self.reference_files = None
+
+    @property
+    def test_name(self):
+        return self.test.test_path
 
     def __repr__(self):
         return "TestInput('%s', timeout=%s, needs_servers=%s, reference_files=%s, should_dump_jsconsolelog_in_stderr=%s)" % (self.test_name, self.timeout, self.needs_servers, self.reference_files, self.should_dump_jsconsolelog_in_stderr)
