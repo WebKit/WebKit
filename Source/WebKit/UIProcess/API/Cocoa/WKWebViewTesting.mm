@@ -323,6 +323,20 @@
     });
 }
 
+- (void)_setPrivateClickMeasurementAttributionTokenPublicKeyURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
+{
+    _page->setPrivateClickMeasurementTokenPublicKeyURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
+- (void)_setPrivateClickMeasurementAttributionTokenSignatureURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
+{
+    _page->setPrivateClickMeasurementTokenSignatureURLForTesting(url, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_didShowContextMenu
 {
     // For subclasses to override.

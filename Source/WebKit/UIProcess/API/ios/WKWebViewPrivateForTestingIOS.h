@@ -29,6 +29,7 @@
 #if TARGET_OS_IPHONE
 
 @class _WKTextInputContext;
+@class UIEventAttribution;
 @class UIWKDocumentContext;
 @class UIWKDocumentRequest;
 
@@ -82,6 +83,10 @@
 - (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)(void))handler;
 
 - (void)_setDeviceHasAGXCompilerServiceForTesting;
+
+#if !TARGET_OS_TV && !TARGET_OS_WATCH
+- (void)_setUIEventAttributionForTesting:(UIEventAttribution *)attribution withNonce:(NSString *)nonce;
+#endif
 
 @end
 

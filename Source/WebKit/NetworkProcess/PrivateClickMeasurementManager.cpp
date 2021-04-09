@@ -320,8 +320,7 @@ void PrivateClickMeasurementManager::fireConversionRequest(const PrivateClickMea
         crypto->addBytes(publicKeyData.data(), publicKeyData.size());
         auto publicKeyDataHash = crypto->computeHash();
 
-        static const size_t keyIDSize = 4;
-        auto keyID = WTF::base64URLEncode(publicKeyDataHash.data(), keyIDSize);
+        auto keyID = WTF::base64URLEncode(publicKeyDataHash.data(), publicKeyDataHash.size());
         if (keyID != attribution.sourceUnlinkableToken()->keyIDBase64URL)
             return;
 

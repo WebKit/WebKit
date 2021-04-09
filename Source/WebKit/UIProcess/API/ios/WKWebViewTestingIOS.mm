@@ -369,6 +369,28 @@
         _page->setDeviceHasAGXCompilerServiceForTesting();
 }
 
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+- (void)_setUIEventAttributionForTesting:(UIEventAttribution *)attribution withNonce:(NSString *)nonce
+{
+#if HAVE(UI_EVENT_ATTRIBUTION)
+    if (attribution) {
+        WebCore::PrivateClickMeasurement measurement(
+            WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
+            WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
+            WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
+            attribution.sourceDescription,
+            attribution.purchaser
+        );
+        measurement.setEphemeralSourceNonce({ nonce });
+
+        _page->setPrivateClickMeasurement(WTFMove(measurement));
+    } else
+        _page->setPrivateClickMeasurement(WTF::nullopt);
+#endif
+}
+#endif
+
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)
