@@ -1,3 +1,17 @@
+2021-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        ServiceWorker should save module scripts
+        https://bugs.webkit.org/show_bug.cgi?id=224356
+        <rdar://problem/75634897>
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/service-workers/persistent-modules-expected.txt: Added.
+        * http/wpt/service-workers/persistent-modules.html: Added.
+        * http/wpt/service-workers/resources/persistent-imported-module-script.py: Added.
+        (main):
+        * http/wpt/service-workers/resources/persistent-module-worker.js: Added.
+
 2021-04-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Write more blinded secret tests

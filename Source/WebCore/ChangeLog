@@ -1,3 +1,24 @@
+2021-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        ServiceWorker should save module scripts
+        https://bugs.webkit.org/show_bug.cgi?id=224356
+        <rdar://problem/75634897>
+
+        Reviewed by Youenn Fablet.
+
+        Test: http/wpt/service-workers/persistent-modules.html
+
+        In this patch, we call setScriptResource / scriptResource while loading service-worker module scripts in module loaders,
+        so that we can ensure that they are saved on the disk.
+
+        * bindings/js/ScriptModuleLoader.cpp:
+        (WebCore::ScriptModuleLoader::notifyFinished):
+        * bindings/js/WorkerModuleScriptLoader.cpp:
+        (WebCore::WorkerModuleScriptLoader::load):
+        (WebCore::WorkerModuleScriptLoader::notifyFinished):
+        (WebCore::WorkerModuleScriptLoader::notifyClientFinished):
+        * bindings/js/WorkerModuleScriptLoader.h:
+
 2021-04-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Wrong KeyboardEvent.key for numeric key pad with NumLock

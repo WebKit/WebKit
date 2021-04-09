@@ -369,8 +369,6 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             if (sourceURL.hasFragmentIdentifier())
                 responseURL.setFragmentIdentifier(sourceURL.fragmentIdentifier());
         }
-
-        m_requestURLToResponseURLMap.add(sourceURL.string(), responseURL);
         return responseURL;
     };
 
@@ -408,16 +406,19 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             }
         }
 
-        canonicalizeAndRegisterResponseURL(cachedScript.response().url(), cachedScript.hasRedirections(), cachedScript.response().source());
+        URL responseURL = canonicalizeAndRegisterResponseURL(cachedScript.response().url(), cachedScript.hasRedirections(), cachedScript.response().source());
+        m_requestURLToResponseURLMap.add(sourceURL.string(), WTFMove(responseURL));
         promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
             return JSC::JSSourceCode::create(jsGlobalObject.vm(),
                 JSC::SourceCode { ScriptSourceCode { &cachedScript, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
         });
     } else {
         auto& loader = static_cast<WorkerModuleScriptLoader&>(moduleScriptLoader);
-        auto& workerScriptLoader = loader.scriptLoader();
 
-        if (workerScriptLoader.failed()) {
+        if (loader.failed()) {
+            ASSERT(!loader.retrievedFromServiceWorkerCache());
+            auto& workerScriptLoader = loader.scriptLoader();
+            ASSERT(workerScriptLoader.failed());
             if (workerScriptLoader.error().isAccessControl()) {
                 rejectToPropagateNetworkError(promise.get(), ModuleFetchFailureKind::WasErrored, "Cross-origin script load denied by Cross-Origin Resource Sharing policy."_s);
                 return;
@@ -432,24 +433,32 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
             return;
         }
 
-        if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(workerScriptLoader.responseMIMEType())) {
+        if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(loader.responseMIMEType())) {
             // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script
             // The result of extracting a MIME type from response's header list (ignoring parameters) is not a JavaScript MIME type.
             // For historical reasons, fetching a classic script does not include MIME type checking. In contrast, module scripts will fail to load if they are not of a correct MIME type.
-            promise->reject(TypeError, makeString("'", workerScriptLoader.responseMIMEType(), "' is not a valid JavaScript MIME type."));
+            promise->reject(TypeError, makeString("'", loader.responseMIMEType(), "' is not a valid JavaScript MIME type."));
             return;
         }
 
-        if (auto* parameters = loader.parameters()) {
-            // If this is top-level-module, then we extract referrer-policy and apply to the dependent modules.
-            if (parameters->isTopLevelModule())
-                static_cast<WorkerScriptFetcher&>(loader.scriptFetcher()).setReferrerPolicy(loader.referrerPolicy());
+        URL responseURL = loader.responseURL();
+        if (!loader.retrievedFromServiceWorkerCache()) {
+            auto& workerScriptLoader = loader.scriptLoader();
+            if (auto* parameters = loader.parameters()) {
+                // If this is top-level-module, then we extract referrer-policy and apply to the dependent modules.
+                if (parameters->isTopLevelModule())
+                    static_cast<WorkerScriptFetcher&>(loader.scriptFetcher()).setReferrerPolicy(loader.referrerPolicy());
+            }
+            responseURL = canonicalizeAndRegisterResponseURL(responseURL, workerScriptLoader.isRedirected(), workerScriptLoader.responseSource());
+#if ENABLE(SERVICE_WORKER)
+            if (is<ServiceWorkerGlobalScope>(m_context))
+                downcast<ServiceWorkerGlobalScope>(m_context).setScriptResource(sourceURL, ServiceWorkerContextData::ImportedScript { loader.script(), responseURL, loader.responseMIMEType() });
+#endif
         }
-
-        URL responseURL = canonicalizeAndRegisterResponseURL(workerScriptLoader.responseURL(), workerScriptLoader.isRedirected(), workerScriptLoader.responseSource());
+        m_requestURLToResponseURLMap.add(sourceURL.string(), responseURL);
         promise->resolveWithCallback([&] (JSDOMGlobalObject& jsGlobalObject) {
             return JSC::JSSourceCode::create(jsGlobalObject.vm(),
-                JSC::SourceCode { ScriptSourceCode { workerScriptLoader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
+                JSC::SourceCode { ScriptSourceCode { loader.script(), WTFMove(responseURL), { }, JSC::SourceProviderSourceType::Module, loader.scriptFetcher() }.jsSourceCode() });
         });
     }
 }
