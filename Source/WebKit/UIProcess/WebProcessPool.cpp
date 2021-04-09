@@ -326,6 +326,15 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     });
 
     updateBackForwardCacheCapacity();
+
+#if PLATFORM(IOS)
+    if (WebCore::IOSApplication::isLutron() && !WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithSharedNetworkProcess)) {
+        callOnMainRunLoop([] {
+            if (WebsiteDataStore::defaultDataStoreExists())
+                WebsiteDataStore::defaultDataStore()->terminateNetworkProcess();
+        });
+    }
+#endif
 }
 
 WebProcessPool::~WebProcessPool()

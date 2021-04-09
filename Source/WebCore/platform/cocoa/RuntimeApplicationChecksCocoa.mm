@@ -452,6 +452,12 @@ bool IOSApplication::isWechat()
     return isWechat;
 }
 
+bool IOSApplication::isLutron()
+{
+    static bool isLutronApp = applicationBundleIsEqualTo("com.lutron.lsb"_s);
+    return isLutronApp;
+}
+
 #endif
 
 } // namespace WebCore
