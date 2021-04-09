@@ -179,6 +179,15 @@
 #endif
 }
 
+- (BOOL)_isShowingDataListSuggestions
+{
+#if ENABLE(DATALIST_ELEMENT)
+    return [_contentView isShowingDataListSuggestions];
+#else
+    return NO;
+#endif
+}
+
 - (NSString *)textContentTypeForTesting
 {
     return [_contentView textContentTypeForTesting];

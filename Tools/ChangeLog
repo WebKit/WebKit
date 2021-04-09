@@ -1,3 +1,18 @@
+2021-04-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Use context menus for text input datalist dropdowns
+        https://bugs.webkit.org/show_bug.cgi?id=224287
+        <rdar://problem/76351317>
+
+        Reviewed by Wenson Hsieh.
+
+        * WebKitTestRunner/ios/UIScriptControllerIOS.mm:
+        (WTR::UIScriptControllerIOS::isShowingDataListSuggestions const):
+
+        Use the exposed information from the webview to determine whether the
+        datalist suggestions are visible, rather than traversing the view
+        hierarchy.
+
 2021-04-08  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Write more blinded secret tests

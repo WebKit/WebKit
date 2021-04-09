@@ -1,3 +1,79 @@
+2021-04-09  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Use context menus for text input datalist dropdowns
+        https://bugs.webkit.org/show_bug.cgi?id=224287
+        <rdar://problem/76351317>
+
+        Reviewed by Wenson Hsieh.
+
+        Use context menus rather than popovers to present suggested values for
+        text inputs with an associated datalist element.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+
+        Expose _isShowingDatalistSuggestions for testing. Previously, the test
+        runner traversed the view hierarchy in order to determine whether the
+        suggestions were visible. However, that approach is not reliable since
+        we no longer own the presented view, and UIKit could change the
+        implementation details of context menus.
+
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _isShowingDataListSuggestions]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView doAfterEditorStateUpdateAfterFocusingElement:]):
+
+        Add a mechanism to perform actions after an editor state update when
+        focusing an element. If an update is not expected, run the block
+        immediately.
+
+        See below for details on why this is necessary.
+
+        (-[WKContentView _didUpdateEditorState]):
+
+        Run any pending blocks that were awaiting an editor state update.
+
+        (-[WKContentView isShowingDataListSuggestions]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.h:
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (-[WKDataListSuggestionsDropdown invalidate]):
+        (-[WKDataListSuggestionsDropdown didSelectOptionAtIndex:]):
+        (-[WKDataListSuggestionsDropdown _showSuggestions]):
+
+        Present a context menu displaying the suggestions if one is not already
+        presented.
+
+        Note that focusing text fields can result in automatic zooming of the
+        webview. This zooming occurs after an editor state update for focused
+        elements. The presentation of the context menu is deferred to run
+        after an editor state update to ensure any zooming occurs before
+        showing the menu. Without this deferred presentation mechanism, the
+        context menu can be presented before the state update, partially
+        obscuring the webview and resulting in an incorrect zoom once the
+        update occurs.
+
+        If a menu is already presented, use `updateVisibleMenuWithBlock:` to
+        update the contents of the menu.
+
+        (-[WKDataListSuggestionsDropdown _updateTextSuggestions]):
+        (-[WKDataListSuggestionsDropdown _updateSuggestionsMenuElements]):
+        (-[WKDataListSuggestionsDropdown _removeContextMenuInteraction]):
+        (-[WKDataListSuggestionsDropdown _suggestionsMenuDidPresent]):
+        (-[WKDataListSuggestionsDropdown _suggestionsMenuDidDismiss]):
+        (-[WKDataListSuggestionsDropdown _preferredEdgeInsetsForSuggestionsMenu]):
+
+        By default, context menus can obscure the presenting element if there
+        are too many options. Inset the menu so that it does not overlap the
+        text field. Present the menu above the text field if there is less
+        space underneath the field.
+
+        (-[WKDataListSuggestionsDropdown contextMenuInteraction:previewForHighlightingMenuWithConfiguration:]):
+        (-[WKDataListSuggestionsDropdown _contextMenuInteraction:styleForMenuWithConfiguration:]):
+        (-[WKDataListSuggestionsDropdown contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKDataListSuggestionsDropdown contextMenuInteraction:willDisplayMenuForConfiguration:animator:]):
+        (-[WKDataListSuggestionsDropdown contextMenuInteraction:willEndForConfiguration:animator:]):
+
 2021-04-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Wrong KeyboardEvent.key for numeric key pad with NumLock

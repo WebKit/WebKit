@@ -54,6 +54,7 @@
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex;
 - (void)setSelectedColorForColorPicker:(UIColor *)color;
 - (void)_selectDataListOption:(int)optionIndex;
+- (BOOL)_isShowingDataListSuggestions;
 
 - (BOOL)_mayContainEditableElementsInRect:(CGRect)rect;
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler;

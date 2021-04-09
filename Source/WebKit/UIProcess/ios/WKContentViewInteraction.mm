@@ -6461,6 +6461,16 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [UIMenuController.sharedMenuController showMenuFromView:self rect:menuControllerRect];
 }
 
+- (void)doAfterEditorStateUpdateAfterFocusingElement:(dispatch_block_t)block
+{
+    if (!_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement()) {
+        block();
+        return;
+    }
+
+    _actionsToPerformAfterEditorStateUpdate.append(makeBlockPtr(block));
+}
+
 - (void)_didUpdateEditorState
 {
     [self _updateInitialWritingDirectionIfNecessary];
@@ -6471,6 +6481,9 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         [self _zoomToRevealFocusedElement];
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
+
+    for (auto block : std::exchange(_actionsToPerformAfterEditorStateUpdate, { }))
+        block();
 }
 
 - (void)_updateInitialWritingDirectionIfNecessary
@@ -9791,12 +9804,17 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #if ENABLE(DATALIST_ELEMENT)
 - (void)_selectDataListOption:(NSInteger)optionIndex
 {
-    [_dataListSuggestionsControl.getAutoreleased() didSelectOptionAtIndex:optionIndex];
+    [_dataListSuggestionsControl didSelectOptionAtIndex:optionIndex];
 }
 
 - (void)_setDataListSuggestionsControl:(WKDataListSuggestionsControl *)control
 {
     _dataListSuggestionsControl = control;
+}
+
+- (BOOL)isShowingDataListSuggestions
+{
+    return [_dataListSuggestionsControl isShowingSuggestions];
 }
 #endif
 

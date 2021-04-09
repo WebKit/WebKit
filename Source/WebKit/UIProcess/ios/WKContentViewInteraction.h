@@ -378,6 +378,8 @@ enum class ProceedWithImageExtraction : bool {
 
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
 
+    Vector<BlockPtr<void()>> _actionsToPerformAfterEditorStateUpdate;
+
 #if ENABLE(DATALIST_ELEMENT)
     RetainPtr<UIView <WKFormControl>> _dataListTextSuggestionsInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _dataListTextSuggestions;
@@ -642,6 +644,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request;
 - (BOOL)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
 
+- (void)doAfterEditorStateUpdateAfterFocusingElement:(dispatch_block_t)block;
+
 #if ENABLE(DRAG_SUPPORT)
 - (void)_didChangeDragInteractionPolicy;
 - (void)_didPerformDragOperation:(BOOL)handled;
@@ -678,6 +682,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled;
 
 #if USE(UICONTEXTMENU)
+- (UIView *)textEffectsWindow;
+
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement;
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
 - (void)_removeContextMenuViewIfPossible;
@@ -732,6 +738,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if ENABLE(DATALIST_ELEMENT)
 - (void)_selectDataListOption:(NSInteger)optionIndex;
 - (void)_setDataListSuggestionsControl:(WKDataListSuggestionsControl *)control;
+
+@property (nonatomic, readonly) BOOL isShowingDataListSuggestions;
 #endif
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
