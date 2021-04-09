@@ -1,3 +1,24 @@
+2021-04-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Cairo][GPUP] GraphicsContextGLOpenGL::paintToCanvas can't paint into a remote canvas
+        https://bugs.webkit.org/show_bug.cgi?id=224271
+
+        Reviewed by Don Olmstead.
+
+        WebGL canvas tests were failing for WinCairo port since r274327
+        enabled GPU process for canvas rendering. In the current
+        implementation of WebKitTestRunner, 2D canvases are in GPU
+        process, while WebGL canvases are in WebContent process. Remote
+        canvases in GPU process failed to drawImage() with a WebGL canvas
+        what is in WebContent process.
+
+        GraphicsContextGLOpenGL::paintToCanvas of Cairo port was painting
+        directly into PlatformContextCairo. It also should use
+        GraphicsContext::drawNativeImage as well as CG port does.
+
+        * platform/graphics/cairo/GraphicsContextGLCairo.cpp:
+        (WebCore::GraphicsContextGLOpenGL::paintToCanvas):
+
 2021-04-09  Jer Noble  <jer.noble@apple.com>
 
         WTF SoftLinking macros can cause collisions with their target functions

@@ -112,10 +112,6 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
     if (canvasSize.isEmpty())
         return;
 
-    PlatformContextCairo* platformContext = context.platformContext();
-    if (!platformContext)
-        return;
-
     // Convert RGBA to BGRA. BGRA is CAIRO_FORMAT_ARGB32 on little-endian architectures.
     size_t totalBytes = imageData->data()->byteLength();
     uint8_t* pixels = imageData->data()->data();
@@ -130,26 +126,18 @@ void GraphicsContextGLOpenGL::paintToCanvas(const GraphicsContextGLAttributes& s
         }
     }
 
-    cairo_t* cr = platformContext->cr();
-    platformContext->save();
-
-    cairo_rectangle(cr, 0, 0, canvasSize.width(), canvasSize.height());
-    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-    cairo_paint(cr);
+    auto imageSize = imageData->size();
 
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
         imageData->data()->data(), CAIRO_FORMAT_ARGB32, imageData->width(), imageData->height(), imageData->width() * 4));
 
-    // OpenGL keeps the pixels stored bottom up, so we need to flip the image here.
-    cairo_translate(cr, 0, imageData->height());
-    cairo_scale(cr, 1, -1);
+    auto image = NativeImage::create(WTFMove(imageSurface));
 
-    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-    cairo_set_source_surface(cr, imageSurface.get(), 0, 0);
-    cairo_rectangle(cr, 0, 0, canvasSize.width(), -canvasSize.height());
-
-    cairo_fill(cr);
-    platformContext->restore();
+    GraphicsContextStateSaver stateSaver(context);
+    context.scale(FloatSize(1, -1));
+    context.translate(0, -imageSize.height());
+    context.setImageInterpolationQuality(InterpolationQuality::DoNotInterpolate);
+    context.drawNativeImage(*image, imageSize, FloatRect({ }, canvasSize), FloatRect({ }, imageSize), { CompositeOperator::Copy });
 }
 
 } // namespace WebCore
