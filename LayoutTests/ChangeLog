@@ -1,3 +1,21 @@
+2021-04-08  Antoine Quint  <graouts@webkit.org>
+
+        calc() values resulting from blending mixed type lengths should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=224322
+
+        Reviewed by Sam Weinig.
+
+        Modify a few tests to account for the correct serialization.
+
+        * fast/css/object-position/parsing-object-position-expected.txt:
+        * fast/css/object-position/parsing-object-position.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation-expected.txt:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+        * transitions/background-position-transitions.html:
+        * transitions/background-position-transitions-expected.txt:
+        * transitions/resources/transition-test-helpers.js: set computedValue such that
+        failures print out the actual value instead of "undefined".
+
 2021-04-09  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/cookies convert PHP to Python

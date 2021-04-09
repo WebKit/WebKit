@@ -2118,7 +2118,10 @@ RefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const R
     auto expression = createCSS(value.expression(), style);
     if (!expression)
         return nullptr;
-    auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), value.shouldClampToNonNegative()));
+
+    auto simplifiedExpression = CSSCalcOperationNode::simplify(expression.releaseNonNull());
+
+    auto result = adoptRef(new CSSCalcValue(WTFMove(simplifiedExpression), value.shouldClampToNonNegative()));
     LOG_WITH_STREAM(Calc, stream << "CSSCalcValue::create from CalculationValue: " << *result);
     return result;
 }

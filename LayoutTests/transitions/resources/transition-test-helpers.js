@@ -214,9 +214,10 @@ function checkExpectedValue(expected, index)
                     break;
             }
         }
-    } else if (property == "background-position-x" || property == "background-position-y")
-        pass = window.getComputedStyle(document.getElementById(elementId))[property] == expectedValue;
-    else if (property == "fill" || property == "stroke") {
+    } else if (property == "background-position-x" || property == "background-position-y") {
+        computedValue = window.getComputedStyle(document.getElementById(elementId))[property];
+        pass = computedValue == expectedValue;
+    } else if (property == "fill" || property == "stroke") {
         computedValue = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property).rgbColor;
         if (compareRGB([computedValue.red.cssText, computedValue.green.cssText, computedValue.blue.cssText], expectedValue, tolerance))
             pass = true;

@@ -1,3 +1,17 @@
+2021-04-08  Antoine Quint  <graouts@webkit.org>
+
+        calc() values resulting from blending mixed type lengths should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=224322
+
+        Reviewed by Sam Weinig.
+
+        While we simplify calc() values upon parsing such that operations are resolved and
+        values are sorted (percentages first then alphabetically by unit), we didn't do this
+        when creating calc() values during blending of lengths of mixed types.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::create const):
+
 2021-04-09  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Cleanup the inline box wrappers when moving subtrees
