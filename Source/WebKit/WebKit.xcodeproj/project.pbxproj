@@ -14691,14 +14691,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -14706,13 +14698,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
-				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -14863,13 +14848,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
-				SWIFT_VERSION = 5.0;
 			};
 			name = Production;
 		};
