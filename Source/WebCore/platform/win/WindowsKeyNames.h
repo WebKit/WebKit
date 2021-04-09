@@ -40,7 +40,7 @@ class WindowsKeyNames {
 public:
     WindowsKeyNames();
 
-    String domKeyFromLParam(LPARAM);
+    String domKeyFromParams(WPARAM, LPARAM);
     String domKeyFromChar(UChar);
     String domCodeFromLParam(LPARAM);
 

@@ -1,3 +1,24 @@
+2021-04-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Wrong KeyboardEvent.key for numeric key pad with NumLock
+        https://bugs.webkit.org/show_bug.cgi?id=224352
+
+        Reviewed by Don Olmstead.
+
+        `8` key on a numeric key pad with NumLock dispatched a wrong
+        KeyboardEvent with `ArrowUp` as the `key` value. It should be `8`.
+
+        WindowsKeyNames::domKeyFromLParam computed a virtual key by
+        MapVirtualKey and a scan code. But, it should use a real virtual
+        key conveyed by WPARAM of WM_KEYDOWN and WM_KEYUP events.
+
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/win/WindowsKeyNames.cpp:
+        (WebCore::WindowsKeyNames::domKeyFromParams):
+        (WebCore::WindowsKeyNames::domKeyFromLParam): Deleted.
+        * platform/win/WindowsKeyNames.h:
+
 2021-04-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a completion handler argument to `ChromeClient::requestImageExtraction`
