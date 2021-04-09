@@ -1356,7 +1356,7 @@ webkit.org/b/202736 http/wpt/cache-storage/cache-quota-after-restart.any.html [ 
 
 webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
 
-webkit.org/b/194933 http/tests/cookies/same-site/user-load-cross-site-redirect.php [ Failure ]
+webkit.org/b/194933 http/tests/cookies/same-site/user-load-cross-site-redirect.py [ Failure ]
 
 # WEBGL2 is disabled
 webkit.org/b/208188 fast/canvas/webgl/webgl2 [ Skip ]

@@ -1405,8 +1405,8 @@ http/tests/cookies/same-site [ Pass ]
 http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
 
 # FIXME: Mark as Pass once the fix for <rdar://problem/42255251> is shipped.
-http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Skip ]
-http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Skip ]
+http/tests/cookies/same-site/set-first-party-cross-site-cookies.py [ Skip ]
+http/tests/cookies/same-site/set-first-party-same-site-cookies.py [ Skip ]
 
 # <rdar://problem/40498290> REGRESSION (Mojave): HTMLMeterElement LayoutTests failing
 fast/dom/HTMLMeterElement/meter-boundary-values.html [ Failure ]

@@ -1,3 +1,34 @@
+2021-04-09  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/cookies convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223891
+        <rdar://problem/75965634>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cookies/multiple-redirect-and-set-cookie.php: Removed.
+        * http/tests/cookies/multiple-redirect-and-set-cookie.py: Added.
+        (redirect_url):
+        (redirect_to_step):
+        (step0):
+        (step2):
+        * http/tests/cookies/resources/cookie-utilities.php: Removed.
+        * http/tests/cookies/resources/cookie_utilities.py: Added.
+        (hostname_is_equal_to_string):
+        (reset_cookies_for_current_origin):
+        (reset_cookies):
+        (should_reset_cookies):
+        (wk_set_cookie):
+        * http/tests/cookies/same-site/set-first-party-cross-site-cookies.php: Removed.
+        * http/tests/cookies/same-site/set-first-party-cross-site-cookies.py: Added.
+        * http/tests/cookies/same-site/set-first-party-same-site-cookies.php: Removed.
+        * http/tests/cookies/same-site/set-first-party-same-site-cookies.py: Added.
+        * http/tests/cookies/same-site/user-load-cross-site-redirect.php: Removed.
+        * http/tests/cookies/same-site/user-load-cross-site-redirect.py: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-04-09  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/canvas/canvas-createPattern-video-loading.html is failing since r218170
