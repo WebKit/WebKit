@@ -205,6 +205,7 @@ IOSurface::IOSurface(IntSize size, IntSize contextSize, CGColorSpaceRef colorSpa
     ASSERT(!success);
     ASSERT(contextSize.width() <= size.width());
     ASSERT(contextSize.height() <= size.height());
+    ASSERT(!size.isEmpty());
 
     NSDictionary *options;
 

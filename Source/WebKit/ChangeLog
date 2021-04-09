@@ -1,3 +1,16 @@
+2021-04-08  Tim Horton  <timothy_horton@apple.com>
+
+        Safari unit tests sometimes fail an ASSERTion in IOSurface.mm's optionsFor32BitSurface()
+        https://bugs.webkit.org/show_bug.cgi?id=224351
+        <rdar://problem/76405354>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _takeViewSnapshot]):
+        Don't take view snapshots for views that have a empty size.
+        This triggers both the assertions mentioned in the title, and the newly added ones.
+
 2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Fix incorrect compile-time macro for CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER

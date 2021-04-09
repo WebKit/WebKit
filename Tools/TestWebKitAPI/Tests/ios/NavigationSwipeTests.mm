@@ -79,4 +79,19 @@ TEST(NavigationSwipeTests, DoNotBecomeFirstResponderAfterNavigationSwipeIfWebVie
     EXPECT_FALSE([webView _contentViewIsFirstResponder]);
 }
 
+TEST(NavigationSwipeTests, DoNotAssertWhenSnapshottingZeroSizeView)
+{
+    poseAsClass("TestNavigationInteractiveTransition", "_UINavigationInteractiveTransitionBase");
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero]);
+    [webView setAllowsBackForwardNavigationGestures:YES];
+    [webView becomeFirstResponder];
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView synchronouslyLoadTestPageNamed:@"simple2"];
+
+    [webView _beginBackSwipeForTesting];
+    [webView _completeBackSwipeForTesting];
+}
+
 #endif // PLATFORM(IOS_FAMILY)

@@ -1,3 +1,15 @@
+2021-04-08  Tim Horton  <timothy_horton@apple.com>
+
+        Safari unit tests sometimes fail an ASSERTion in IOSurface.mm's optionsFor32BitSurface()
+        https://bugs.webkit.org/show_bug.cgi?id=224351
+        <rdar://problem/76405354>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/ios/NavigationSwipeTests.mm:
+        (TEST):
+        Add a test that taking navigation snapshots for a 0x0 WKWebView doesn't assert.
+
 2021-04-08  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r273541) WKWebView can't load NSURLRequest subclasses

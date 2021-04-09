@@ -1003,6 +1003,9 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     WebCore::FloatSize snapshotSize(self.bounds.size);
     snapshotSize.scale(deviceScale);
 
+    if (snapshotSize.isEmpty())
+        return nullptr;
+
     CATransform3D transform = CATransform3DMakeScale(deviceScale, deviceScale, 1);
 
 #if HAVE(IOSURFACE_RGB10)
