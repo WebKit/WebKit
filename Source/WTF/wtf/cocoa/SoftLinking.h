@@ -326,6 +326,7 @@ static void* lib##Library() \
 #define SOFT_LINK_LIBRARY_FOR_HEADER(functionNamespace, lib) \
     namespace functionNamespace { \
     extern void* lib##Library(bool isOptional = false); \
+    bool is##lib##LibraryAvailable(); \
     inline bool is##lib##LibaryAvailable() { \
         return lib##Library(true) != nullptr; \
     } \
@@ -333,7 +334,7 @@ static void* lib##Library() \
 
 #define SOFT_LINK_LIBRARY_FOR_SOURCE(functionNamespace, lib) \
     namespace functionNamespace { \
-    void* lib##Library(bool isOptional); \
+    extern void* lib##Library(bool isOptional = false); \
     void* lib##Library(bool isOptional) \
     { \
         static void* library; \
@@ -516,10 +517,6 @@ static void* lib##Library() \
         return softLink##framework##functionName parameterNames; \
     } \
     } \
-    inline __attribute__((__always_inline__)) resultType functionName parameterDeclarations \
-    {\
-        return functionNamespace::softLink##framework##functionName parameterNames; \
-    }
 
 #define SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(functionNamespace, framework, functionName, resultType, parameterDeclarations, parameterNames, export) \
     WTF_EXTERN_C_BEGIN \

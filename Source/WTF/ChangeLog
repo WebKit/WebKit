@@ -1,3 +1,54 @@
+2021-04-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r275775. rdar://problem/76467684
+
+    WTF SoftLinking macros can cause collisions with their target functions
+    https://bugs.webkit.org/show_bug.cgi?id=224379
+    <rdar://76434202>
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Don't include the SoftLinkLibxslt.h file in the .cpp file.
+    
+    * xml/SoftLinkLibxslt.cpp:
+    * xml/SoftLinkLibxslt.h:
+    
+    Source/WebCore/PAL:
+    
+    * pal/cf/CoreMediaSoftLink.h:
+    * pal/cocoa/MediaToolboxSoftLink.h:
+    * pal/cocoa/OpenGLSoftLinkCocoa.h:
+    * pal/cocoa/PassKitSoftLink.h:
+    * pal/ios/UIKitSoftLink.h:
+    * pal/spi/cocoa/AccessibilitySupportSoftLink.cpp:
+    * pal/spi/cocoa/AccessibilitySupportSoftLink.h:
+    
+    Source/WTF:
+    
+    Do not declare an inline version of the target function, as this will collide if the target function
+    becomes inlined. Instead, callers should use the explicit softLink_Library_Function() syntax, or
+    the LibrarySoftLinking.h headers should use #defines to re-declare the function name.
+    
+    * wtf/cocoa/SoftLinking.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275775 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-09  Jer Noble  <jer.noble@apple.com>
+
+            WTF SoftLinking macros can cause collisions with their target functions
+            https://bugs.webkit.org/show_bug.cgi?id=224379
+            <rdar://76434202>
+
+            Reviewed by Eric Carlson.
+
+            Do not declare an inline version of the target function, as this will collide if the target function
+            becomes inlined. Instead, callers should use the explicit softLink_Library_Function() syntax, or
+            the LibrarySoftLinking.h headers should use #defines to re-declare the function name.
+
+            * wtf/cocoa/SoftLinking.h:
+
 2021-04-02  Simon Fraser  <simon.fraser@apple.com>
 
         Enable PreferPageRenderingUpdatesNear60FPSEnabled by default
