@@ -419,10 +419,10 @@ void NetworkDataTaskCocoa::didReceiveChallenge(WebCore::AuthenticationChallenge&
     }
 }
 
-void NetworkDataTaskCocoa::didNegotiateModernTLS(const WebCore::AuthenticationChallenge& challenge)
+void NetworkDataTaskCocoa::didNegotiateModernTLS(const URL& url)
 {
     if (m_client)
-        m_client->didNegotiateModernTLS(challenge);
+        m_client->didNegotiateModernTLS(url);
 }
 
 void NetworkDataTaskCocoa::didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics& networkLoadMetrics)

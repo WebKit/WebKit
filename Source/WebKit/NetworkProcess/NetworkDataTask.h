@@ -71,7 +71,7 @@ public:
 
     virtual bool shouldCaptureExtraNetworkLoadMetrics() const { return false; }
 
-    virtual void didNegotiateModernTLS(const WebCore::AuthenticationChallenge&) { }
+    virtual void didNegotiateModernTLS(const URL&) { }
 
     void didCompleteWithError(const WebCore::ResourceError& error)
     {

@@ -71,7 +71,7 @@
 @interface TLSNavigationDelegate : NSObject <WKNavigationDelegate>
 - (void)waitForDidFinishNavigation;
 - (void)waitForDidFailProvisionalNavigation;
-- (NSURLAuthenticationChallenge *)waitForDidNegotiateModernTLS;
+- (NSURL *)waitForDidNegotiateModernTLS;
 - (bool)receivedShouldAllowDeprecatedTLS;
 @property (nonatomic) bool shouldAllowDeprecatedTLS;
 @end
@@ -80,7 +80,7 @@
     bool _navigationFinished;
     bool _navigationFailed;
     bool _receivedShouldAllowDeprecatedTLS;
-    RetainPtr<NSURLAuthenticationChallenge> _negotiatedModernTLS;
+    RetainPtr<NSURL> _negotiatedModernTLS;
 }
 
 - (void)waitForDidFinishNavigation
@@ -95,7 +95,7 @@
         TestWebKitAPI::Util::spinRunLoop();
 }
 
-- (NSURLAuthenticationChallenge *)waitForDidNegotiateModernTLS
+- (NSURL *)waitForDidNegotiateModernTLS
 {
     while (!_negotiatedModernTLS)
         TestWebKitAPI::Util::spinRunLoop();
@@ -129,9 +129,9 @@
     completionHandler([self shouldAllowDeprecatedTLS]);
 }
 
-- (void)_webView:(WKWebView *)webView didNegotiateModernTLS:(NSURLAuthenticationChallenge *)challenge
+- (void)_webView:(WKWebView *)webView didNegotiateModernTLSForURL:(NSURL *)url
 {
-    _negotiatedModernTLS = challenge;
+    _negotiatedModernTLS = url;
 }
 
 @end
@@ -417,9 +417,9 @@ TEST(TLSVersion, DidNegotiateModernTLS)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
     [webView loadRequest:server.request()];
-    NSURLAuthenticationChallenge *challenge = [delegate waitForDidNegotiateModernTLS];
-    EXPECT_WK_STREQ(challenge.protectionSpace.host, "127.0.0.1");
-    EXPECT_EQ(challenge.protectionSpace.port, server.port());
+    NSURL *url = [delegate waitForDidNegotiateModernTLS];
+    EXPECT_WK_STREQ(url.host, "127.0.0.1");
+    EXPECT_EQ(url.port.unsignedShortValue, server.port());
 }
 
 TEST(TLSVersion, BackForwardHasOnlySecureContent)

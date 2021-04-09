@@ -1,3 +1,40 @@
+2021-04-08  Alex Christensen  <achristensen@webkit.org>
+
+        Serialize URL instead of entire challenge for informing client that modern TLS was negotiated
+        https://bugs.webkit.org/show_bug.cgi?id=224346
+        <rdar://76421667>
+
+        Reviewed by Geoff Garen.
+
+        This callback is only used in Safari, and they only use the host.
+        We are serializing the certificate chain, during which we evaluate the trustedness and correctness of the certificate chain.
+        This patch removes that unused operation.
+
+        * NetworkProcess/NetworkDataTask.h:
+        (WebKit::NetworkDataTaskClient::didNegotiateModernTLS):
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didNegotiateModernTLS):
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::didNegotiateModernTLS):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didReceiveChallenge:completionHandler:]):
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didNegotiateModernTLS):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::NavigationState::NavigationClient::didNegotiateModernTLS):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didNegotiateModernTLS):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didNegotiateModernTLS):
+        * UIProcess/WebPageProxy.h:
+
 2021-04-08  Tim Horton  <timothy_horton@apple.com>
 
         Safari unit tests sometimes fail an ASSERTion in IOSurface.mm's optionsFor32BitSurface()

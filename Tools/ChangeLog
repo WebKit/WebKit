@@ -1,3 +1,16 @@
+2021-04-08  Alex Christensen  <achristensen@webkit.org>
+
+        Serialize URL instead of entire challenge for informing client that modern TLS was negotiated
+        https://bugs.webkit.org/show_bug.cgi?id=224346
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/TLSDeprecation.mm:
+        (-[TLSNavigationDelegate waitForDidNegotiateModernTLS]):
+        (-[TLSNavigationDelegate _webView:didNegotiateModernTLSForURL:]):
+        (TestWebKitAPI::TEST):
+        (-[TLSNavigationDelegate _webView:didNegotiateModernTLS:]): Deleted.
+
 2021-04-08  Tim Horton  <timothy_horton@apple.com>
 
         Safari unit tests sometimes fail an ASSERTion in IOSurface.mm's optionsFor32BitSurface()

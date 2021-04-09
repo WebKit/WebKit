@@ -86,7 +86,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (NSData *)_webCryptoMasterKeyForWebView:(WKWebView *)webView;
 
 - (void)_webView:(WKWebView *)webView authenticationChallenge:(NSURLAuthenticationChallenge *)challenge shouldAllowLegacyTLS:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
-- (void)_webView:(WKWebView *)webView didNegotiateModernTLS:(NSURLAuthenticationChallenge *)challenge WK_API_AVAILABLE(macos(11.0), ios(14.0));
+- (void)_webView:(WKWebView *)webView didNegotiateModernTLSForURL:(NSURL *)url WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 - (void)_webView:(WKWebView *)webView contextMenuDidCreateDownload:(WKDownload *)download WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 

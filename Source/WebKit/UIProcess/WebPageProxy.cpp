@@ -8072,9 +8072,9 @@ void WebPageProxy::negotiatedLegacyTLS()
     m_pageLoadState.negotiatedLegacyTLS(transaction);
 }
 
-void WebPageProxy::didNegotiateModernTLS(const WebCore::AuthenticationChallenge& challenge)
+void WebPageProxy::didNegotiateModernTLS(const URL& url)
 {
-    m_navigationClient->didNegotiateModernTLS(challenge);
+    m_navigationClient->didNegotiateModernTLS(url);
 }
 
 void WebPageProxy::exceededDatabaseQuota(FrameIdentifier frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)
