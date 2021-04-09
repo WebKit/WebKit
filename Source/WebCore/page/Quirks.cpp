@@ -1362,6 +1362,9 @@ bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
     if (!m_requiresUserGestureToLoadInPictureInPicture) {
         auto domain = RegistrableDomain(m_document->topDocument().url());
         m_requiresUserGestureToLoadInPictureInPicture = domain.string() == "twitter.com"_s;
+
+        auto domain = RegistrableDomain(m_document->topDocument().url());
+        m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk || domain == "espn.com"_s;
     }
 
     return *m_requiresUserGestureToLoadInPictureInPicture;
