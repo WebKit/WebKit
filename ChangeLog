@@ -1,3 +1,13 @@
+2021-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump libsoup3 version to 2.99.3
+        https://bugs.webkit.org/show_bug.cgi?id=224362
+
+        Reviewed by Žan Doberšek.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-04-07  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] webkit://gpu should print runtime libwpe and wpebackend-fdo versions

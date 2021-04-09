@@ -24,6 +24,7 @@
 
 #include "ResourceResponse.h"
 
+#include "GUniquePtrSoup.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
@@ -134,11 +135,10 @@ String ResourceResponse::platformSuggestedFilename() const
 
     if (contentDisposition.is8Bit())
         contentDisposition = String::fromUTF8WithLatin1Fallback(contentDisposition.characters8(), contentDisposition.length());
-    SoupMessageHeaders* soupHeaders = soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE);
-    soup_message_headers_append(soupHeaders, "Content-Disposition", contentDisposition.utf8().data());
+    GUniquePtr<SoupMessageHeaders> soupHeaders(soup_message_headers_new(SOUP_MESSAGE_HEADERS_RESPONSE));
+    soup_message_headers_append(soupHeaders.get(), "Content-Disposition", contentDisposition.utf8().data());
     GRefPtr<GHashTable> params;
-    soup_message_headers_get_content_disposition(soupHeaders, nullptr, &params.outPtr());
-    soup_message_headers_free(soupHeaders);
+    soup_message_headers_get_content_disposition(soupHeaders.get(), nullptr, &params.outPtr());
     auto filename = params ? String::fromUTF8(static_cast<char*>(g_hash_table_lookup(params.get(), "filename"))) : String();
     return sanitizeFilename(filename);
 }
