@@ -1,3 +1,12 @@
+2021-04-09  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=224396
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations to Pass Timeout while test is reviewed.
+
 2021-04-09  Antoine Quint  <graouts@webkit.org>
 
         Remove tests under css3/shapes which are superseded by tests at imported/w3c/web-platform-tests/css/css-shapes
