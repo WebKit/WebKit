@@ -1,3 +1,20 @@
+2021-04-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/canvas/canvas-createPattern-video-loading.html is failing since r218170
+        https://bugs.webkit.org/show_bug.cgi?id=173410
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        When a flush has been requested by the GL video sink, allocate a new copy of the sample
+        which has to be released. The copy is necessary so that the video dimensions can still be
+        fetched and also for canvas rendering. The release is necessary because the sample might
+        have been allocated by a hardware decoder and memory might have to be reclaimed by a
+        non-sysmem buffer pool.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::flushCurrentBuffer):
+        (WebCore::MediaPlayerPrivateGStreamer::paint):
+
 2021-04-09  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Fix min/max widths of grid affected by ancestor

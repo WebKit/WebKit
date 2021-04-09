@@ -3160,10 +3160,13 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     auto sampleLocker = holdLock(m_sampleMutex);
 
     if (m_sample) {
-        // Replace by a new sample having only the caps, so this dummy sample is still useful to get the dimensions.
-        // This prevents resizing problems when the video changes its quality and a DRAIN is performed.
+        // Allocate a new copy of the sample which has to be released. The copy is necessary so that
+        // the video dimensions can still be fetched and also for canvas rendering. The release is
+        // necessary because the sample might have been allocated by a hardware decoder and memory
+        // might have to be reclaimed by a non-sysmem buffer pool.
         const GstStructure* info = gst_sample_get_info(m_sample.get());
-        m_sample = adoptGRef(gst_sample_new(nullptr, gst_sample_get_caps(m_sample.get()),
+        auto buffer = adoptGRef(gst_buffer_copy_deep(gst_sample_get_buffer(m_sample.get())));
+        m_sample = adoptGRef(gst_sample_new(buffer.get(), gst_sample_get_caps(m_sample.get()),
             gst_sample_get_segment(m_sample.get()), info ? gst_structure_copy(info) : nullptr));
     }
 
@@ -3252,7 +3255,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (!gstImage)
         return;
 
-    context.drawImage(gstImage->image(), rect, gstImage->rect(), { CompositeOperator::Copy, m_canRenderingBeAccelerated ? m_videoSourceOrientation : ImageOrientation() });
+    context.drawImage(gstImage->image(), rect, gstImage->rect(), { CompositeOperator::Copy, m_shouldHandleOrientationTags ? m_videoSourceOrientation : ImageOrientation() });
 }
 
 #if USE(GSTREAMER_GL)
