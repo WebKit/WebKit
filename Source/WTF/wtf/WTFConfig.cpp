@@ -71,7 +71,20 @@ void setPermissionsOfConfigPage()
         flags |= VM_FLAGS_PERMANENT;
 #endif
 
-        auto result = mach_vm_map(mach_task_self(), &addr, ConfigSizeToProtect, pageSize() - 1, flags, MEMORY_OBJECT_NULL, 0, false, VM_PROT_READ | VM_PROT_WRITE, VM_PROT_READ | VM_PROT_WRITE, VM_INHERIT_DEFAULT);
+        auto attemptVMMapping = [&] {
+            return mach_vm_map(mach_task_self(), &addr, ConfigSizeToProtect, pageSize() - 1, flags, MEMORY_OBJECT_NULL, 0, false, VM_PROT_READ | VM_PROT_WRITE, VM_PROT_READ | VM_PROT_WRITE, VM_INHERIT_DEFAULT);
+        };
+
+        auto result = attemptVMMapping();
+
+#if HAVE(VM_FLAGS_PERMANENT) && PLATFORM(IOS_FAMILY_SIMULATOR)
+        // FIXME: Remove this when the oldest OS we support simulator on has VM_FLAGS_PERMANENT
+        if (result != KERN_SUCCESS) {
+            flags &= ~VM_FLAGS_PERMANENT;
+            result = attemptVMMapping();
+        }
+#endif
+
         RELEASE_ASSERT(result == KERN_SUCCESS);
     });
 #endif // OS(DARWIN)

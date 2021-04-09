@@ -1,5 +1,44 @@
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r274898. rdar://problem/76412278
+
+    Don't require VM_FLAGS_PERMANENT on the simulator builds
+    https://bugs.webkit.org/show_bug.cgi?id=223649
+    <rdar://problem/75747788>
+    
+    Reviewed by Alexey Proskuryakov.
+    
+    Since VM_FLAGS_PERMANENT must be supported by the kernel, let's make
+    it so that the vm_map that passes this flag in can fail when running
+    on the simulator. This is to support the use case of running a newer
+    simulator on an older OS. When the call to vm_map fails when running
+    on the simulator, we try again without the VM_FLAGS_PERMANENT flag.
+    
+    * wtf/WTFConfig.cpp:
+    (WTF::setPermissionsOfConfigPage):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274898 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-23  Saam Barati  <sbarati@apple.com>
+
+            Don't require VM_FLAGS_PERMANENT on the simulator builds
+            https://bugs.webkit.org/show_bug.cgi?id=223649
+            <rdar://problem/75747788>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Since VM_FLAGS_PERMANENT must be supported by the kernel, let's make
+            it so that the vm_map that passes this flag in can fail when running
+            on the simulator. This is to support the use case of running a newer
+            simulator on an older OS. When the call to vm_map fails when running
+            on the simulator, we try again without the VM_FLAGS_PERMANENT flag.
+
+            * wtf/WTFConfig.cpp:
+            (WTF::setPermissionsOfConfigPage):
+
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r274325. rdar://problem/76416354
 
     Adopt VM_FLAGS_PERMANENT for the config vm mapping
