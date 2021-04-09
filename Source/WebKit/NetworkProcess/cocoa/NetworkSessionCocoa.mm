@@ -504,29 +504,32 @@ static void setIgnoreHSTS(NSMutableURLRequest *request, bool ignoreHSTS)
         [request _setIgnoreHSTS:ignoreHSTS];
 }
 
+static void setIgnoreHSTS(RetainPtr<NSURLRequest>& request, bool shouldIgnoreHSTS)
+{
+    auto mutableRequest = adoptNS([request mutableCopy]);
+    setIgnoreHSTS(mutableRequest.get(), false);
+    request = mutableRequest;
+}
+
 static bool ignoreHSTS(NSURLRequest *request)
 {
     return [request respondsToSelector:@selector(_ignoreHSTS)]
         && [request _ignoreHSTS];
 }
 
-static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURLRequest *request, bool shouldIgnoreHSTS)
+static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& request, bool shouldIgnoreHSTS)
 {
-    if ([request.URL.scheme isEqualToString:@"https"] && shouldIgnoreHSTS && ignoreHSTS(request)) {
-        // The request was upgraded for some other reason than HSTS.
-        // Don't ignore HSTS to avoid the risk of another downgrade.
-        auto nsMutableRequest = adoptNS([request mutableCopy]);
-        setIgnoreHSTS(nsMutableRequest.get(), false);
-        return nsMutableRequest.autorelease();
+    auto scheme = request.get().URL.scheme;
+    if ([scheme isEqualToString:@"https"]) {
+        if (shouldIgnoreHSTS && ignoreHSTS(request.get())) {
+            // The request was upgraded for some other reason than HSTS.
+            // Don't ignore HSTS to avoid the risk of another downgrade.
+            setIgnoreHSTS(request, false);
+        }
+    } else if ([scheme isEqualToString:@"http"]) {
+        if (ignoreHSTS(request.get()) != shouldIgnoreHSTS)
+            setIgnoreHSTS(request, shouldIgnoreHSTS);
     }
-    
-    if ([request.URL.scheme isEqualToString:@"http"] && ignoreHSTS(request) != shouldIgnoreHSTS) {
-        auto nsMutableRequest = adoptNS([request mutableCopy]);
-        setIgnoreHSTS(nsMutableRequest.get(), shouldIgnoreHSTS);
-        return nsMutableRequest.autorelease();
-    }
-
-    return request;
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
@@ -555,9 +558,9 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 #else
             UNUSED_PARAM(taskIdentifier);
 #endif
-            auto nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
-            nsRequest = updateIgnoreStrictTransportSecuritySettingIfNecessary(nsRequest, shouldIgnoreHSTS);
-            completionHandler(nsRequest);
+            auto nsRequest = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody));
+            updateIgnoreStrictTransportSecuritySetting(nsRequest, shouldIgnoreHSTS);
+            completionHandler(nsRequest.get());
         });
     } else {
         LOG(NetworkSession, "%llu willPerformHTTPRedirection completionHandler (nil)", taskIdentifier);
@@ -590,9 +593,9 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 #else
             UNUSED_PARAM(taskIdentifier);
 #endif
-            auto nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
-            nsRequest = updateIgnoreStrictTransportSecuritySettingIfNecessary(nsRequest, shouldIgnoreHSTS);
-            completionHandler(nsRequest);
+            auto nsRequest = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody));
+            updateIgnoreStrictTransportSecuritySetting(nsRequest, shouldIgnoreHSTS);
+            completionHandler(nsRequest.get());
         });
     } else {
         LOG(NetworkSession, "%llu _schemeUpgraded completionHandler (nil)", taskIdentifier);
@@ -1107,7 +1110,7 @@ std::unique_ptr<NetworkSession> NetworkSessionCocoa::create(NetworkProcess& netw
     return makeUnique<NetworkSessionCocoa>(networkProcess, WTFMove(parameters));
 }
 
-static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy)
+static RetainPtr<NSDictionary> proxyDictionary(const URL& httpProxy, const URL& httpsProxy)
 {
     if (!httpProxy.isValid() && !httpsProxy.isValid())
         return nil;
@@ -1125,7 +1128,7 @@ static NSDictionary *proxyDictionary(const URL& httpProxy, const URL& httpsProxy
         if (auto port = httpsProxy.port())
             [dictionary setObject:@(*port) forKey:(NSString *)kCFStreamPropertyHTTPSProxyPort];
     }
-    return dictionary.autorelease();
+    return dictionary;
 
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
@@ -1237,7 +1240,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
     configuration._preventsSystemHTTPProxyAuthentication = parameters.preventsSystemHTTPProxyAuthentication;
     configuration._requiresSecureHTTPSProxyConnection = parameters.requiresSecureHTTPSProxyConnection;
-    configuration.connectionProxyDictionary = (NSDictionary *)parameters.proxyConfiguration.get() ?: proxyDictionary(parameters.httpProxy, parameters.httpsProxy);
+    configuration.connectionProxyDictionary = (NSDictionary *)parameters.proxyConfiguration.get() ?: proxyDictionary(parameters.httpProxy, parameters.httpsProxy).get();
 
 #if PLATFORM(IOS_FAMILY)
     if (!m_dataConnectionServiceType.isEmpty())

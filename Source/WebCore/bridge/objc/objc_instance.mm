@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,15 +52,22 @@
 }
 #endif
 
-using namespace JSC::Bindings;
-using namespace JSC;
+@interface NSObject (WebDescriptionCategory)
+- (NSString *)_web_description;
+@end
+
+namespace JSC {
+namespace Bindings {
 
 static RetainPtr<NSString>& globalException()
 {
     static NeverDestroyed<RetainPtr<NSString>> exception;
     return exception;
 }
-static JSGlobalObject* s_exceptionEnvironment; // No need to protect this value, since we just use it for a pointer comparison.
+
+// No need to protect this value, since we just use it for a pointer comparison.
+// FIXME: A new object can happen to be equal to the old one, so even pointer comparison is not safe. Maybe we can use NeverDestroyed<JSC::Weak>?
+static JSGlobalObject* s_exceptionEnvironment;
 
 static HashMap<CFTypeRef, ObjcInstance*>& wrapperCache()
 {
@@ -74,10 +81,9 @@ RuntimeObject* ObjcInstance::newRuntimeObject(JSGlobalObject* lexicalGlobalObjec
     return ObjCRuntimeObject::create(lexicalGlobalObject->vm(), WebCore::deprecatedGetDOMStructure<ObjCRuntimeObject>(lexicalGlobalObject), this);
 }
 
-void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)
+void ObjcInstance::setGlobalException(NSString *exception, JSGlobalObject* exceptionEnvironment)
 {
     globalException() = adoptNS([exception copy]);
-
     s_exceptionEnvironment = exceptionEnvironment;
 }
 
@@ -468,32 +474,13 @@ JSC::JSValue ObjcInstance::defaultValue(JSGlobalObject* lexicalGlobalObject, Pre
     return valueOf(lexicalGlobalObject);
 }
 
-static WTF::ThreadSpecific<uint32_t>* s_descriptionDepth;
-
-@interface NSObject (WebDescriptionCategory)
-- (NSString *)_web_description;
-@end
-
-@implementation NSObject (WebDescriptionCategory)
-
-- (NSString *)_web_description
-{
-    ASSERT(s_descriptionDepth);
-    if (s_descriptionDepth->isSet() && **s_descriptionDepth)
-        return [NSString stringWithFormat:@"<%@>", NSStringFromClass([self class])];
-    // We call _web_description here since this method should only be called
-    // once we have already swizzled this method with the one on NSObject.
-    // Thus, _web_description is actually the original description method.
-    return [self _web_description];
-}
-
-@end
+static ThreadSpecific<uint32_t>* s_descriptionDepth;
 
 JSC::JSValue ObjcInstance::stringValue(JSGlobalObject* lexicalGlobalObject) const
 {
     static std::once_flag initializeDescriptionDepthOnceFlag;
     std::call_once(initializeDescriptionDepthOnceFlag, [] {
-        s_descriptionDepth = new WTF::ThreadSpecific<uint32_t>();
+        s_descriptionDepth = new ThreadSpecific<uint32_t>();
         **s_descriptionDepth = 0;
 
         auto descriptionMethod = class_getInstanceMethod([NSObject class], @selector(description));
@@ -505,6 +492,11 @@ JSC::JSValue ObjcInstance::stringValue(JSGlobalObject* lexicalGlobalObject) cons
     JSC::JSValue result = convertNSStringToString(lexicalGlobalObject, [getObject() description]);
     (**s_descriptionDepth)--;
     return result;
+}
+
+bool ObjcInstance::isInStringValue()
+{
+    return s_descriptionDepth && s_descriptionDepth->isSet() && **s_descriptionDepth;
 }
 
 JSC::JSValue ObjcInstance::numberValue(JSGlobalObject*) const
@@ -521,3 +513,20 @@ JSC::JSValue ObjcInstance::valueOf(JSGlobalObject* lexicalGlobalObject) const
 {
     return stringValue(lexicalGlobalObject);
 }
+
+}
+}
+
+@implementation NSObject (WebDescriptionCategory)
+
+- (NSString *)_web_description
+{
+    if (JSC::Bindings::ObjcInstance::isInStringValue())
+        return [NSString stringWithFormat:@"<%@>", NSStringFromClass([self class])];
+
+    // Calling _web_description here invokes the implementation of the original description
+    // method from NSObject, because we have already swapped implementations.
+    return [self _web_description];
+}
+
+@end

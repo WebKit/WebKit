@@ -1,3 +1,19 @@
+2021-04-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Reduce usage of autorelease, fix mistakes noticed nearby code using autorelease
+        https://bugs.webkit.org/show_bug.cgi?id=224340
+
+        Reviewed by Anders Carlsson.
+
+        * bridge/objc/objc_instance.h: Added a static member function isInStringValue to
+        help factor the _web_description method better.
+
+        * bridge/objc/objc_instance.mm:
+        (JSC::Bindings::ObjcInstance::stringValue const): Removed unneeded WTF prefixes.
+        (JSC::Bindings::ObjcInstance::isInStringValue): Added.
+        (-[NSObject _web_description]): Moved this out of the C++ namespace since it's an
+        Objective-C class implementation. Refactored for simplicity.
+
 2021-04-08  Antoine Quint  <graouts@webkit.org>
 
         calc() values resulting from blending mixed type lengths should be simplified

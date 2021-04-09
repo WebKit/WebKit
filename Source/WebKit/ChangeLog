@@ -1,3 +1,48 @@
+2021-04-08  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Reduce usage of autorelease, fix mistakes noticed nearby code using autorelease
+        https://bugs.webkit.org/show_bug.cgi?id=224340
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h: Use RetainPtr<NSURLRequest> instead of
+        __strong NSURLRequest*& for the in/out argument of the
+        applySniffingPoliciesAndBindRequestToInferfaceIfNeeded function.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::applySniffingPoliciesAndBindRequestToInferfaceIfNeeded):
+        Updated to use RetainPtr instead of __strong. Also fixed some incorrect uses of %llu
+        to log NSUInteger and uint64_t, switching to "%lu" (and casting to unsigned long to
+        retain 32-bit compatibility) and "%" PRIu64 respectively.
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa): Ditto.
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection): Ditto.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (setIgnoreHSTS): Added. Helper function so the code that makes a mutableCopy is isolated
+        in a helper function for clarity. A good counterpart to the existing ignoreHSTS function.
+        (updateIgnoreStrictTransportSecuritySetting): Changed to use a RetainPtr<NSURLRequest>
+        in/out argument instead of an argument plus a return value, obviating the need to use
+        autorelease and making this easier to read. Used setIgnoreHSTS for brevity in implementation.
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        Update for change to updateIgnoreStrictTransportSecuritySetting.
+        (-[WKNetworkSessionDelegate URLSession:task:_schemeUpgraded:completionHandler:]): Ditto.
+        (WebKit::proxyDictionary): Return a RetainPtr instead of something autoreleased.
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa): Call get() on the result of the
+        proxyDictionary function.
+
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (makePolicyDecisionBlock): Return a BlockPtr instead of an autoreleased block.
+        Also use a lambda and retainWK for better clarity on capture semantics rather than
+        doing a WKRetain in the caller and a WKRelease in the block.
+        (setUpPagePolicyClient): Call get() on the result of the
+        makePolicyDecisionBlock function.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::animationValueFromKeyframeValue): Return a RetainPtr instead of an
+        autoreleased object.
+        (WebKit::createAnimation): Call get() on the result of the
+        animationValueFromKeyframeValue function.
+
 2021-04-09  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Silence a CFNetwork preference file access warning 

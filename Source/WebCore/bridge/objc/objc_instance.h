@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -58,6 +58,8 @@ public:
     JSValue stringValue(JSGlobalObject*) const;
     JSValue numberValue(JSGlobalObject*) const;
     JSValue booleanValue() const;
+
+    static bool isInStringValue();
 
 protected:
     virtual void virtualBegin();
