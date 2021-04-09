@@ -1,6 +1,0 @@
-
-PASS 10px - inline
-PASS 10% - inline
-PASS 10px - computed
-PASS 10% - computed
-

@@ -1,3 +1,0 @@
-
-PASS CSS Shapes Test: Inset Rectangles - invalid right arg
-
