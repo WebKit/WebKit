@@ -135,9 +135,11 @@
     RetainPtr<WKInspectorHighlightView> _inspectorHighlightView;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    RetainPtr<_UILayerHostView> _visibilityPropagationView;
+    RetainPtr<_UILayerHostView> _visibilityPropagationViewForWebProcess;
+#if ENABLE(GPU_PROCESS)
     RetainPtr<_UILayerHostView> _visibilityPropagationViewForGPUProcess;
-#endif
+#endif // ENABLE(GPU_PROCESS)
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
     WebCore::HistoricalVelocityData _historicalKinematicData;
 
@@ -204,8 +206,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    [self _setupVisibilityPropagationView];
+    [self _setupVisibilityPropagationViewForWebProcess];
+#if ENABLE(GPU_PROCESS)
     [self _setupVisibilityPropagationViewForGPUProcess];
+#endif
 #endif
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillResignActive:) name:UIApplicationWillResignActiveNotification object:[UIApplication sharedApplication]];
@@ -223,27 +227,28 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 }
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-- (void)_setupVisibilityPropagationView
+- (void)_setupVisibilityPropagationViewForWebProcess
 {
     auto processIdentifier = _page->process().processIdentifier();
-    auto contextID = _page->contextIDForVisibilityPropagation();
+    auto contextID = _page->contextIDForVisibilityPropagationInWebProcess();
     if (!processIdentifier || !contextID)
         return;
 
-    ASSERT(!_visibilityPropagationView);
+    ASSERT(!_visibilityPropagationViewForWebProcess);
     // Propagate the view's visibility state to the WebContent process so that it is marked as "Foreground Running" when necessary.
-    _visibilityPropagationView = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
-    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for WebContent process with PID=%d", _visibilityPropagationView.get(), contextID, processIdentifier);
-    [self addSubview:_visibilityPropagationView.get()];
+    _visibilityPropagationViewForWebProcess = adoptNS([[_UILayerHostView alloc] initWithFrame:CGRectZero pid:processIdentifier contextID:contextID]);
+    RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for WebContent process with PID=%d", _visibilityPropagationViewForWebProcess.get(), contextID, processIdentifier);
+    [self addSubview:_visibilityPropagationViewForWebProcess.get()];
 }
 
+#if ENABLE(GPU_PROCESS)
 - (void)_setupVisibilityPropagationViewForGPUProcess
 {
     auto* gpuProcess = _page->process().processPool().gpuProcess();
     if (!gpuProcess)
         return;
     auto processIdentifier = gpuProcess->processIdentifier();
-    auto contextID = gpuProcess->contextIDForVisibilityPropagation();
+    auto contextID = _page->contextIDForVisibilityPropagationInGPUProcess();
     if (!processIdentifier || !contextID)
         return;
 
@@ -255,15 +260,16 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     RELEASE_LOG(Process, "Created visibility propagation view %p (contextID=%u) for GPU process with PID=%d", _visibilityPropagationViewForGPUProcess.get(), contextID, processIdentifier);
     [self addSubview:_visibilityPropagationViewForGPUProcess.get()];
 }
+#endif // ENABLE(GPU_PROCESS)
 
-- (void)_removeVisibilityPropagationView
+- (void)_removeVisibilityPropagationViewForWebProcess
 {
-    if (!_visibilityPropagationView)
+    if (!_visibilityPropagationViewForWebProcess)
         return;
 
-    RELEASE_LOG(Process, "Removing visibility propagation view %p", _visibilityPropagationView.get());
-    [_visibilityPropagationView removeFromSuperview];
-    _visibilityPropagationView = nullptr;
+    RELEASE_LOG(Process, "Removing visibility propagation view %p", _visibilityPropagationViewForWebProcess.get());
+    [_visibilityPropagationViewForWebProcess removeFromSuperview];
+    _visibilityPropagationViewForWebProcess = nullptr;
 }
 
 - (void)_removeVisibilityPropagationViewForGPUProcess
@@ -275,7 +281,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     [_visibilityPropagationViewForGPUProcess removeFromSuperview];
     _visibilityPropagationViewForGPUProcess = nullptr;
 }
-#endif
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(NakedRef<WebKit::WebProcessPool>)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView
 {
@@ -635,7 +641,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _hideInspectorHighlight];
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    [self _removeVisibilityPropagationView];
+    [self _removeVisibilityPropagationViewForWebProcess];
 #endif
 
     _pdfPrintCallbackID = 0;
@@ -644,7 +650,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 #if ENABLE(GPU_PROCESS)
 - (void)_gpuProcessCrashed
 {
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
     [self _removeVisibilityPropagationViewForGPUProcess];
+#endif
 }
 #endif
 
@@ -659,14 +667,17 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     [self _accessibilityRegisterUIProcessTokens];
     [self setUpInteraction];
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    [self _setupVisibilityPropagationView];
+    [self _setupVisibilityPropagationViewForWebProcess];
+#if ENABLE(GPU_PROCESS)
+    [self _setupVisibilityPropagationViewForGPUProcess];
+#endif
 #endif
 }
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-- (void)_processDidCreateContextForVisibilityPropagation
+- (void)_webProcessDidCreateContextForVisibilityPropagation
 {
-    [self _setupVisibilityPropagationView];
+    [self _setupVisibilityPropagationViewForWebProcess];
 }
 
 - (void)_gpuProcessDidCreateContextForVisibilityPropagation

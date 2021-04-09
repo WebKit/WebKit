@@ -58,6 +58,8 @@ namespace WebKit {
 
 class DisplayListReaderHandle;
 class GPUConnectionToWebProcess;
+class LayerHostingContext;
+struct RemoteRenderingBackendCreationParameters;
 
 class RemoteRenderingBackend
     : private IPC::MessageSender
@@ -65,7 +67,7 @@ class RemoteRenderingBackend
     , public WebCore::DisplayList::ItemBufferReadingClient {
 public:
 
-    static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RenderingBackendIdentifier, IPC::Semaphore&& resumeDisplayListSemaphore);
+    static Ref<RemoteRenderingBackend> create(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
     virtual ~RemoteRenderingBackend();
     void stopListeningForIPC();
 
@@ -86,7 +88,7 @@ public:
     void dispatch(Function<void()>&&);
 
 private:
-    RemoteRenderingBackend(GPUConnectionToWebProcess&, RenderingBackendIdentifier, IPC::Semaphore&&);
+    RemoteRenderingBackend(GPUConnectionToWebProcess&, RemoteRenderingBackendCreationParameters&&);
     void startListeningForIPC();
 
     Optional<WebCore::DisplayList::ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t length, WebCore::DisplayList::ItemType, uint8_t* handleLocation) override;
@@ -161,6 +163,9 @@ private:
     IPC::Semaphore m_getImageDataSemaphore;
     RefPtr<SharedMemory> m_getImageDataSharedMemory;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
+#endif
 };
 
 } // namespace WebKit

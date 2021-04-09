@@ -335,8 +335,10 @@ public:
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    virtual void didCreateContextForVisibilityPropagation(LayerHostingContextID) { }
+    virtual void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID) { }
+#if ENABLE(GPU_PROCESS)
     virtual void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) { }
+#endif
 #endif
 
 #if ENABLE(GPU_PROCESS)

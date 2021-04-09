@@ -1,3 +1,116 @@
+2021-04-09  Chris Dumez  <cdumez@apple.com>
+
+        Need to propagate and use 'canShowWhileLocked' in the GPU Process
+        https://bugs.webkit.org/show_bug.cgi?id=224345
+        <rdar://76011262>
+
+        Reviewed by Tim Horton.
+
+        The GPUProcess was previously creating a single visibility propagation view even though
+        it was potentially serving several web views. Also, it would also pass
+        `canShowWhileLocked=false` when constructing the visibility propagation view, ignoring
+        the value of WKWebViewConfiguration._canShowWhileLocked. This would lead to issues for
+        apps relying on WKWebView to show content on the lock screen.
+
+        To address the issue, we now have the RemoteRenderingBackend construct its own
+        visibility propagation view in the GPUProcess. The GPUProcess constructs a
+        RemoteRenderingBackend per WebPage being served so this is convenient. When sending the
+        IPC to the GPUProcess to construct the RemoteRenderingBackend, the WebProcess now sends
+        the page identifier as well as the value of the canShowWhileLocked flag so that we
+        can use the correct canShowWhileLocked flag when constructing the visibility propagation
+        view.
+
+        The logic in the UIProcess for dealing with GPUProcess visibility propagation views
+        is now almost identical to WebProcess visibility propagation views. They are stored on
+        the WebPageProxy and get swapped on process-swap (since a new WebPage gets created).
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::create):
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackendCreationParameters.h: Added.
+        (WebKit::RemoteRenderingBackendCreationParameters::encode const):
+        (WebKit::RemoteRenderingBackendCreationParameters::decode):
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::didCreateContextInWebProcessForVisibilityPropagation):
+        (WebKit::WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation):
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::getGPUProcessConnection):
+        (WebKit::GPUProcessProxy::didCreateContextForVisibilityPropagation):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/GPU/GPUProcessProxy.messages.in:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::didCreateContextInWebProcessForVisibilityPropagation):
+        * UIProcess/ProvisionalPageProxy.cpp:
+        (WebKit::ProvisionalPageProxy::ProvisionalPageProxy):
+        (WebKit::ProvisionalPageProxy::didCreateContextInWebProcessForVisibilityPropagation):
+        (WebKit::ProvisionalPageProxy::didCreateContextInGPUProcessForVisibilityPropagation):
+        (WebKit::ProvisionalPageProxy::didReceiveMessage):
+        * UIProcess/ProvisionalPageProxy.h:
+        (WebKit::ProvisionalPageProxy::contextIDForVisibilityPropagationInWebProcess const):
+        (WebKit::ProvisionalPageProxy::contextIDForVisibilityPropagationInGPUProcess const):
+        * UIProcess/SuspendedPageProxy.cpp:
+        (WebKit::SuspendedPageProxy::SuspendedPageProxy):
+        * UIProcess/SuspendedPageProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::swapToProvisionalPage):
+        (WebKit::WebPageProxy::resetState):
+        (WebKit::WebPageProxy::gpuProcessCrashed):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didCreateContextInWebProcessForVisibilityPropagation):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        (-[WKContentView _setupVisibilityPropagationViewForWebProcess]):
+        (-[WKContentView _setupVisibilityPropagationViewForGPUProcess]):
+        (-[WKContentView _removeVisibilityPropagationViewForWebProcess]):
+        (-[WKContentView _processDidExit]):
+        (-[WKContentView _gpuProcessCrashed]):
+        (-[WKContentView _didRelaunchProcess]):
+        (-[WKContentView _webProcessDidCreateContextForVisibilityPropagation]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::create):
+        (WebKit::RemoteRenderingBackendProxy::RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::connectToGPUProcess):
+        (WebKit::RemoteRenderingBackendProxy::reestablishGPUProcessConnection):
+        (WebKit::RemoteRenderingBackendProxy::messageSenderDestinationID const):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidFlush):
+        (WebKit::RemoteRenderingBackendProxy::createImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::sharedMemoryForGetImageData):
+        (WebKit::RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory):
+        (WebKit::RemoteRenderingBackendProxy::getDataURLForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getDataForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getBGRADataForImageBuffer):
+        (WebKit::RemoteRenderingBackendProxy::getShareableBitmap):
+        (WebKit::RemoteRenderingBackendProxy::cacheNativeImage):
+        (WebKit::RemoteRenderingBackendProxy::cacheFont):
+        (WebKit::RemoteRenderingBackendProxy::deleteAllFonts):
+        (WebKit::RemoteRenderingBackendProxy::releaseRemoteResource):
+        (WebKit::RemoteRenderingBackendProxy::sendWakeupMessage):
+        (WebKit::RemoteRenderingBackendProxy::didAppendData):
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+        (WebKit::RemoteRenderingBackendProxy::renderingBackendIdentifier const):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::ensureRemoteRenderingBackendProxy):
+
 2021-04-08  Darin Adler  <darin@apple.com>
 
         [Cocoa] Reduce usage of autorelease, fix mistakes noticed nearby code using autorelease

@@ -198,16 +198,18 @@ void PageClientImpl::didRelaunchProcess()
 }
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-void PageClientImpl::didCreateContextForVisibilityPropagation(LayerHostingContextID)
+void PageClientImpl::didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID)
 {
-    [m_contentView _processDidCreateContextForVisibilityPropagation];
+    [m_contentView _webProcessDidCreateContextForVisibilityPropagation];
 }
 
+#if ENABLE(GPU_PROCESS)
 void PageClientImpl::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID)
 {
     [m_contentView _gpuProcessDidCreateContextForVisibilityPropagation];
 }
-#endif
+#endif // ENABLE(GPU_PROCESS)
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(GPU_PROCESS)
 void PageClientImpl::gpuProcessCrashed()

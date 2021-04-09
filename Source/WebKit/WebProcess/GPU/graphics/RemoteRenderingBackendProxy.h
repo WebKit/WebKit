@@ -33,6 +33,7 @@
 #include "ImageBufferBackendHandle.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteResourceCacheProxy.h"
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/DisplayList.h>
@@ -56,13 +57,14 @@ enum class RenderingMode : bool;
 namespace WebKit {
 
 class DisplayListWriterHandle;
+class WebPage;
 
 class RemoteRenderingBackendProxy
     : public IPC::MessageSender
     , private IPC::MessageReceiver
     , public GPUProcessConnection::Client {
 public:
-    static std::unique_ptr<RemoteRenderingBackendProxy> create();
+    static std::unique_ptr<RemoteRenderingBackendProxy> create(WebPage&);
 
     ~RemoteRenderingBackendProxy();
 
@@ -106,9 +108,10 @@ public:
     DidReceiveBackendCreationResult waitForDidCreateImageBufferBackend();
     bool waitForDidFlush();
 
-    RenderingBackendIdentifier renderingBackendIdentifier() const { return m_renderingBackendIdentifier; }
+    RenderingBackendIdentifier renderingBackendIdentifier() const;
+
 private:
-    RemoteRenderingBackendProxy();
+    explicit RemoteRenderingBackendProxy(WebPage&);
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
@@ -125,14 +128,13 @@ private:
 
     void sendWakeupMessage(const GPUProcessWakeupMessageArguments&);
 
+    RemoteRenderingBackendCreationParameters m_parameters;
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     HashMap<WebCore::DisplayList::ItemBufferIdentifier, RefPtr<DisplayListWriterHandle>> m_sharedDisplayListHandles;
     Deque<WebCore::DisplayList::ItemBufferIdentifier> m_identifiersOfReusableHandles;
-    RenderingBackendIdentifier m_renderingBackendIdentifier { RenderingBackendIdentifier::generate() };
     Optional<WebCore::RenderingResourceIdentifier> m_currentDestinationImageBufferIdentifier;
     Optional<GPUProcessWakeupMessageArguments> m_deferredWakeupMessageArguments;
     unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
-    IPC::Semaphore m_resumeDisplayListSemaphore;
     Optional<IPC::Semaphore> m_getImageDataSemaphore;
     RefPtr<SharedMemory> m_getImageDataSharedMemory;
     uint64_t m_getImageDataSharedMemoryLength { 0 };

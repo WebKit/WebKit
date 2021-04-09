@@ -83,10 +83,6 @@ public:
 
     void removeSession(PAL::SessionID);
 
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    LayerHostingContextID contextIDForVisibilityPropagation() const;
-#endif
-
 #if PLATFORM(MAC)
     void displayConfigurationChanged(CGDirectDisplayID, CGDisplayChangeSummaryFlags);
 #endif
@@ -123,7 +119,7 @@ private:
     void terminateWebProcess(WebCore::ProcessIdentifier);
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    void didCreateContextForVisibilityPropagation(LayerHostingContextID);
+    void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);
 #endif
 
     ProcessThrottler m_throttler;
@@ -133,11 +129,6 @@ private:
     uint64_t m_orientation { 0 };
 #endif
     HashSet<PAL::SessionID> m_sessionIDs;
-
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    LayerHostingContextID m_contextIDForVisibilityPropagation { 0 };
-    Vector<WeakPtr<WebProcessProxy>> m_processesPendingVisibilityPropagationNotification;
-#endif
 };
 
 } // namespace WebKit

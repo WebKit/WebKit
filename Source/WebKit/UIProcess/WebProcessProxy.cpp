@@ -1957,14 +1957,6 @@ void WebProcessProxy::enableServiceWorkers(const UserContentControllerIdentifier
 #endif
 }
 
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-void WebProcessProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID contextID)
-{
-    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
-        page->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
-}
-#endif
-
 void WebProcessProxy::didCreateSleepDisabler(SleepDisablerIdentifier identifier, const String& reason, bool display)
 {
     MESSAGE_CHECK(!reason.isNull());

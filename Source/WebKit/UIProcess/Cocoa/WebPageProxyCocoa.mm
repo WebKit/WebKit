@@ -397,17 +397,20 @@ void WebPageProxy::voicesDidChange()
 #endif // ENABLE(SPEECH_SYNTHESIS)
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-void WebPageProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
+void WebPageProxy::didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID contextID)
 {
-    m_contextIDForVisibilityPropagation = contextID;
-    pageClient().didCreateContextForVisibilityPropagation(contextID);
+    m_contextIDForVisibilityPropagationInWebProcess = contextID;
+    pageClient().didCreateContextInWebProcessForVisibilityPropagation(contextID);
 }
 
+#if ENABLE(GPU_PROCESS)
 void WebPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID contextID)
 {
+    m_contextIDForVisibilityPropagationInGPUProcess = contextID;
     pageClient().didCreateContextInGPUProcessForVisibilityPropagation(contextID);
 }
-#endif
+#endif // ENABLE(GPU_PROCESS)
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 void WebPageProxy::grantAccessToPreferenceService()
 {

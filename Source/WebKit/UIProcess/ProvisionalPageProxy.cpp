@@ -68,7 +68,10 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
     , m_provisionalLoadActivity(m_process->throttler().foregroundActivity("Provisional Load"_s))
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    , m_contextIDForVisibilityPropagation(suspendedPage ? suspendedPage->contextIDForVisibilityPropagation() : 0)
+    , m_contextIDForVisibilityPropagationInWebProcess(suspendedPage ? suspendedPage->contextIDForVisibilityPropagationInWebProcess() : 0)
+#if ENABLE(GPU_PROCESS)
+    , m_contextIDForVisibilityPropagationInGPUProcess(suspendedPage ? suspendedPage->contextIDForVisibilityPropagationInGPUProcess() : 0)
+#endif
 #endif
 {
     RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "ProvisionalPageProxy: suspendedPage=%p", suspendedPage.get());
@@ -393,12 +396,20 @@ void ProvisionalPageProxy::contentFilterDidBlockLoadForFrame(const WebCore::Cont
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-void ProvisionalPageProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
+void ProvisionalPageProxy::didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID contextID)
 {
-    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateContextForVisibilityPropagation: contextID=%u", contextID);
-    m_contextIDForVisibilityPropagation = contextID;
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateContextInWebProcessForVisibilityPropagation: contextID=%u", contextID);
+    m_contextIDForVisibilityPropagationInWebProcess = contextID;
 }
-#endif
+
+#if ENABLE(GPU_PROCESS)
+void ProvisionalPageProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID contextID)
+{
+    RELEASE_LOG_IF_ALLOWED(ProcessSwapping, "didCreateContextInGPUProcessForVisibilityPropagation: contextID=%u", contextID);
+    m_contextIDForVisibilityPropagationInGPUProcess = contextID;
+}
+#endif // ENABLE(GPU_PROCESS)
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 void ProvisionalPageProxy::unfreezeLayerTreeDueToSwipeAnimation()
 {
@@ -514,8 +525,8 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    if (decoder.messageName() == Messages::WebPageProxy::DidCreateContextForVisibilityPropagation::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::DidCreateContextForVisibilityPropagation>(decoder, this, &ProvisionalPageProxy::didCreateContextForVisibilityPropagation);
+    if (decoder.messageName() == Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation>(decoder, this, &ProvisionalPageProxy::didCreateContextInWebProcessForVisibilityPropagation);
         return;
     }
 #endif

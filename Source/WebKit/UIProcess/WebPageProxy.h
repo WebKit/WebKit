@@ -1224,9 +1224,12 @@ public:
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    void didCreateContextForVisibilityPropagation(LayerHostingContextID);
+    void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID);
+    LayerHostingContextID contextIDForVisibilityPropagationInWebProcess() const { return m_contextIDForVisibilityPropagationInWebProcess; }
+#if ENABLE(GPU_PROCESS)
     void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID);
-    LayerHostingContextID contextIDForVisibilityPropagation() const { return m_contextIDForVisibilityPropagation; }
+    LayerHostingContextID contextIDForVisibilityPropagationInGPUProcess() const { return m_contextIDForVisibilityPropagationInGPUProcess; }
+#endif
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -2918,7 +2921,10 @@ private:
     TextManipulationItemCallback m_textManipulationItemCallback;
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    LayerHostingContextID m_contextIDForVisibilityPropagation { 0 };
+    LayerHostingContextID m_contextIDForVisibilityPropagationInWebProcess { 0 };
+#if ENABLE(GPU_PROCESS)
+    LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
+#endif
 #endif
 
     HashMap<WebViewDidMoveToWindowObserver*, WeakPtr<WebViewDidMoveToWindowObserver>> m_webViewDidMoveToWindowObservers;

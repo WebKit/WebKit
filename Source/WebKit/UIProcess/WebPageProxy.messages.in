@@ -559,7 +559,7 @@ messages -> WebPageProxy {
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
+    DidCreateContextInWebProcessForVisibilityPropagation(WebKit::LayerHostingContextID contextID);
 #endif
 
 #if ENABLE(WEB_AUTHN)

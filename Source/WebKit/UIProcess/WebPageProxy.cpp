@@ -936,7 +936,10 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     m_websiteDataStore = m_process->websiteDataStore();
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    m_contextIDForVisibilityPropagation = provisionalPage->contextIDForVisibilityPropagation();
+    m_contextIDForVisibilityPropagationInWebProcess = provisionalPage->contextIDForVisibilityPropagationInWebProcess();
+#if ENABLE(GPU_PROCESS)
+    m_contextIDForVisibilityPropagationInGPUProcess = provisionalPage->contextIDForVisibilityPropagationInGPUProcess();
+#endif
 #endif
 
     if (m_logger)
@@ -7492,7 +7495,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     if (resetStateReason != ResetStateReason::NavigationSwap)
-        m_contextIDForVisibilityPropagation = 0;
+        m_contextIDForVisibilityPropagationInWebProcess = 0;
 #endif
 
     if (m_openPanelResultListener) {
@@ -10332,6 +10335,10 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 #if ENABLE(GPU_PROCESS)
 void WebPageProxy::gpuProcessCrashed()
 {
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextIDForVisibilityPropagationInGPUProcess = 0;
+#endif
+
     pageClient().gpuProcessCrashed();
 
 #if ENABLE(MEDIA_STREAM)

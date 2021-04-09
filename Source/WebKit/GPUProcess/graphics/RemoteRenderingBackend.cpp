@@ -30,10 +30,12 @@
 
 #include "DisplayListReaderHandle.h"
 #include "GPUConnectionToWebProcess.h"
+#include "LayerHostingContext.h"
 #include "Logging.h"
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
+#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -63,20 +65,28 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
+Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters)
 {
-    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, identifier, WTFMove(resumeDisplayListSemaphore)));
+    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(creationParameters)));
     instance->startListeningForIPC();
     return instance;
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
+RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters)
     : m_workQueue(WorkQueue::create("RemoteRenderingBackend work queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
-    , m_renderingBackendIdentifier(identifier)
-    , m_resumeDisplayListSemaphore(WTFMove(resumeDisplayListSemaphore))
+    , m_renderingBackendIdentifier(creationParameters.identifier)
+    , m_resumeDisplayListSemaphore(WTFMove(creationParameters.resumeDisplayListSemaphore))
 {
     ASSERT(RunLoop::isMain());
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({
+        creationParameters.canShowWhileLocked
+    });
+    RELEASE_LOG(Process, "RemoteRenderingBackend: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
+    m_gpuConnectionToWebProcess->gpuProcess().send(Messages::GPUProcessProxy::DidCreateContextForVisibilityPropagation(creationParameters.pageProxyID, creationParameters.pageID, m_contextForVisibilityPropagation->contextID()));
+#endif
 }
 
 void RemoteRenderingBackend::startListeningForIPC()

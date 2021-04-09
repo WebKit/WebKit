@@ -91,7 +91,11 @@ public:
     Vector<uint8_t> takeAccessibilityToken() { return WTFMove(m_accessibilityToken); }
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    LayerHostingContextID contextIDForVisibilityPropagation() const { return m_contextIDForVisibilityPropagation; }
+    LayerHostingContextID contextIDForVisibilityPropagationInWebProcess() const { return m_contextIDForVisibilityPropagationInWebProcess; }
+#if ENABLE(GPU_PROCESS)
+    void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID);
+    LayerHostingContextID contextIDForVisibilityPropagationInGPUProcess() const { return m_contextIDForVisibilityPropagationInGPUProcess; }
+#endif
 #endif
 
     void loadData(API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<NavigatingToAppBoundDomain>, Optional<WebsitePoliciesData>&& = WTF::nullopt);
@@ -142,7 +146,7 @@ private:
     void contentFilterDidBlockLoadForFrame(const WebCore::ContentFilterUnblockHandler&, WebCore::FrameIdentifier);
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    void didCreateContextForVisibilityPropagation(LayerHostingContextID);
+    void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID);
 #endif
 
     void initializeWebPage(RefPtr<API::WebsitePolicies>&&);
@@ -167,7 +171,10 @@ private:
     UniqueRef<ProcessThrottler::ForegroundActivity> m_provisionalLoadActivity;
 #endif
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    LayerHostingContextID m_contextIDForVisibilityPropagation { 0 };
+    LayerHostingContextID m_contextIDForVisibilityPropagationInWebProcess { 0 };
+#if ENABLE(GPU_PROCESS)
+    LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
+#endif
 #endif
 };
 

@@ -72,10 +72,14 @@ private:
     void processDidExit() override;
     void processWillSwap() override;
     void didRelaunchProcess() override;
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    void didCreateContextForVisibilityPropagation(LayerHostingContextID) override;
+    void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID) override;
+#if ENABLE(GPU_PROCESS)
     void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) override;
-#endif
+#endif // ENABLE(GPU_PROCESS)
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
+
 #if ENABLE(GPU_PROCESS)
     void gpuProcessCrashed() override;
 #endif
