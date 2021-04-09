@@ -1448,9 +1448,9 @@ void WebChromeClient::changeUniversalAccessZoomFocus(const WebCore::IntRect& vie
 
 #if ENABLE(IMAGE_EXTRACTION)
 
-void WebChromeClient::requestImageExtraction(Element& element)
+void WebChromeClient::requestImageExtraction(Element& element, CompletionHandler<void(RefPtr<Element>&&)>&& completion)
 {
-    m_page.requestImageExtraction(element);
+    m_page.requestImageExtraction(element, WTFMove(completion));
 }
 
 #endif

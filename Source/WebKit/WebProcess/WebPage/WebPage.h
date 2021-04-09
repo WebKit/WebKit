@@ -182,6 +182,7 @@ class Frame;
 class FrameSelection;
 class FrameView;
 class GraphicsContext;
+class HTMLElement;
 class HTMLImageElement;
 class HTMLMenuElement;
 class HTMLMenuItemElement;
@@ -1381,7 +1382,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(WebCore::Element&);
+    void requestImageExtraction(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&&);
     void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool)>&&);
 #endif
 
@@ -2306,7 +2307,8 @@ private:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    WeakHashSet<WebCore::Element> m_elementsWithExtractedImages;
+    Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingImageExtraction;
+    WeakHashSet<WebCore::HTMLElement> m_elementsWithExtractedImages;
 #endif
 };
 

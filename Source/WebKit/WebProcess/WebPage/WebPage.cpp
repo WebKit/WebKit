@@ -6183,6 +6183,11 @@ void WebPage::didCommitLoad(WebFrame* frame)
     unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 
 #if ENABLE(IMAGE_EXTRACTION)
+    for (auto& [element, completionHandlers] : m_elementsPendingImageExtraction) {
+        for (auto& completionHandler : completionHandlers)
+            completionHandler({ });
+    }
+    m_elementsPendingImageExtraction.clear();
     m_elementsWithExtractedImages.clear();
 #endif
 
@@ -7262,36 +7267,98 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
 
 #if ENABLE(IMAGE_EXTRACTION)
 
-void WebPage::requestImageExtraction(WebCore::Element& element)
+void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& completion)
 {
-    if (!is<HTMLElement>(element))
+    if (!is<HTMLElement>(element)) {
+        if (completion)
+            completion({ });
         return;
+    }
 
-    if (m_elementsWithExtractedImages.contains(element))
+    if (m_elementsWithExtractedImages.contains(element)) {
+        if (completion) {
+            ASSERT(is<HTMLElement>(element));
+            RefPtr<Element> imageOverlayHost;
+            if (is<HTMLElement>(element) && downcast<HTMLElement>(element).hasImageOverlay())
+                imageOverlayHost = makeRefPtr(element);
+            completion(WTFMove(imageOverlayHost));
+        }
         return;
+    }
+
+    auto matchIndex = m_elementsPendingImageExtraction.findMatching([&] (auto& elementAndCompletionHandlers) {
+        return elementAndCompletionHandlers.first == &element;
+    });
+
+    if (matchIndex != notFound) {
+        m_elementsPendingImageExtraction[matchIndex].second.append(WTFMove(completion));
+        return;
+    }
 
     auto* renderer = element.renderer();
-    if (!is<RenderImage>(renderer))
+    if (!is<RenderImage>(renderer)) {
+        if (completion)
+            completion({ });
         return;
+    }
 
     auto& renderImage = downcast<RenderImage>(*renderer);
-
-    m_elementsWithExtractedImages.add(element);
-
     auto bitmap = createShareableBitmap(renderImage);
-    if (!bitmap)
+    if (!bitmap) {
+        if (completion)
+            completion({ });
         return;
+    }
 
     ShareableBitmap::Handle bitmapHandle;
     bitmap->createHandle(bitmapHandle);
-    if (bitmapHandle.isNull())
+    if (bitmapHandle.isNull()) {
+        if (completion)
+            completion({ });
         return;
+    }
+
+    Vector<CompletionHandler<void(RefPtr<Element>&&)>> completionHandlers;
+    if (completion)
+        completionHandlers.append(WTFMove(completion));
+    m_elementsPendingImageExtraction.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
 
     auto imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
+        auto protectedPage = makeRefPtr(webPage.get());
+        if (!protectedPage)
+            return;
 
-    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(imageURL), WTFMove(bitmapHandle)), [weakElement = makeWeakPtr(element)] (ImageExtractionResult&& result) {
-        if (auto element = weakElement.get(); is<HTMLElement>(element))
-            downcast<HTMLElement>(*element).updateWithImageExtractionResult(WTFMove(result));
+        protectedPage->m_elementsPendingImageExtraction.removeAllMatching([&] (auto& elementAndCompletionHandlers) {
+            auto& [element, completionHandlers] = elementAndCompletionHandlers;
+            if (element)
+                return false;
+
+            for (auto& completionHandler : completionHandlers)
+                completionHandler({ });
+            return true;
+        });
+
+        auto protectedElement = makeRefPtr(weakElement.get());
+        if (!protectedElement)
+            return;
+
+        auto& htmlElement = downcast<HTMLElement>(*protectedElement);
+        htmlElement.updateWithImageExtractionResult(WTFMove(result));
+        protectedPage->m_elementsWithExtractedImages.add(htmlElement);
+
+        auto matchIndex = protectedPage->m_elementsPendingImageExtraction.findMatching([&] (auto& elementAndCompletionHandlers) {
+            return elementAndCompletionHandlers.first == &htmlElement;
+        });
+
+        if (matchIndex == notFound)
+            return;
+
+        auto imageOverlayHost = htmlElement.hasImageOverlay() ? makeRefPtr(htmlElement) : nullptr;
+        for (auto& completionHandler : protectedPage->m_elementsPendingImageExtraction[matchIndex].second)
+            completionHandler(imageOverlayHost.copyRef());
+
+        protectedPage->m_elementsPendingImageExtraction.remove(matchIndex);
     });
 }
 

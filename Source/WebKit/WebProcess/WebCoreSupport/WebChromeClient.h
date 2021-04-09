@@ -415,7 +415,7 @@ private:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(WebCore::Element&) final;
+    void requestImageExtraction(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& = { }) final;
 #endif
 
     bool needsImageOverlayControllerForSelectionPainting() const final

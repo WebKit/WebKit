@@ -560,7 +560,11 @@ public:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    virtual void requestImageExtraction(Element&) { }
+    virtual void requestImageExtraction(Element&, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
+    {
+        if (completion)
+            completion({ });
+    }
 #endif
     virtual bool needsImageOverlayControllerForSelectionPainting() const { return false; }
 
