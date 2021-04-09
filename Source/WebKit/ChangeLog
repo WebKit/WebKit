@@ -1,3 +1,13 @@
+2021-04-09  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed, fix for test crashes after r275779.
+        https://bugs.webkit.org/show_bug.cgi?id=224305
+        rdar://71962196
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::createWebIDBServer): hitting an assertion when deref the WeakPtr, so rolling back to
+        old impl.
+
 2021-04-09  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Don't set LD_RUNPATH_SEARCH_PATHS in the WebKit project file.

@@ -2326,9 +2326,8 @@ Ref<WebIDBServer> NetworkProcess::createWebIDBServer(PAL::SessionID sessionID)
         path = m_idbDatabasePaths.get(sessionID);
     }
 
-    auto spaceRequester = [weakThis = makeWeakPtr(this), sessionID](const auto& origin, uint64_t spaceRequested) {
-        auto protectedThis = makeRefPtr(weakThis.get());
-        RefPtr<StorageQuotaManager> storageQuotaManager = protectedThis? protectedThis->storageQuotaManager(sessionID, origin) : nullptr;
+    auto spaceRequester = [this, weakThis = makeWeakPtr(this), sessionID](const auto& origin, uint64_t spaceRequested) {
+        RefPtr<StorageQuotaManager> storageQuotaManager = weakThis ? this->storageQuotaManager(sessionID, origin) : nullptr;
         return storageQuotaManager ? storageQuotaManager->requestSpaceOnBackgroundThread(spaceRequested) : StorageQuotaManager::Decision::Deny;
     };
     auto closeHandler = [weakThis = makeWeakPtr(this), sessionID]() {
