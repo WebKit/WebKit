@@ -16,14 +16,6 @@
                         // Force async image decoding for this image.
                         internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
 
-                        // Change the background of the element.
-                        element.style.backgroundImage = 'url(' + image.src + ')';
-
-                        // Force layout and display so the image gets drawn.
-                        document.body.offsetHeight;
-                        if (window.testRunner)
-                            testRunner.display();
-
                         image.addEventListener("webkitImageFrameReady", function() {
                             internals.setLargeImageAsyncDecodingEnabledForTesting(image, false);
                             setTimeout(function() {
@@ -32,6 +24,13 @@
                                 resolve();
                             }, 0);
                         }, false);
+
+                        // Change the background of the element.
+                        element.style.backgroundImage = 'url(' + image.src + ')';
+
+                        // Force layout and display so the image gets drawn.
+                        document.body.offsetHeight;
+                        testRunner.display();
                     } else {
                         // Change the background of the element.
                         element.style.backgroundImage = 'url(' + image.src + ')';

@@ -1350,8 +1350,6 @@ webkit.org/b/223453 [ arm64 ] storage/indexeddb/IDBObject-leak.html [ Pass Failu
 
 webkit.org/b/223462 [ Debug arm64 ] imported/w3c/web-platform-tests/mediacapture-streams/GUM-optional-constraint.https.html [ Pass Crash ]
 
-webkit.org/b/223469 [ arm64 ] fast/images/async-image-background-change.html [ Pass Timeout ]
-
 webkit.org/b/223486 [ arm64 ] inspector/css/modify-inline-style.html [ Pass Failure ]
 
 # webkit.org/b/223488 The following three tests are flakey failing only on Apple Silicon.
