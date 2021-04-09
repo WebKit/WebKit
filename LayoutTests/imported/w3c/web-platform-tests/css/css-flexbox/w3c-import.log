@@ -1556,6 +1556,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-width-cross-axis.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-padding-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-002.html
