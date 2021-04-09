@@ -1,3 +1,118 @@
+2021-04-08  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r272707. rdar://problem/76375033
+
+    Use event loop to set title
+    https://bugs.webkit.org/show_bug.cgi?id=218496
+    
+    Patch by Rob Buis <rbuis@igalia.com> on 2021-02-10
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Use event loop to set title to avoid calling WebFrameLoaderClient
+    within HTMLTitleElement::insertedIntoAncestor.
+    
+    * dom/Document.cpp:
+    (WebCore::Document::updateTitle):
+    * dom/Document.h:
+    (WebCore::Document::titleWithDirection const):
+    * loader/DocumentLoader.cpp:
+    (WebCore::DocumentLoader::setTitle):
+    * loader/EmptyClients.h:
+    * page/Chrome.cpp:
+    (WebCore::Chrome::print):
+    * page/ChromeClient.h:
+    
+    Source/WebKit:
+    
+    Add title parameter to PrintFrame message.
+    
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::printFrame):
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::print):
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    
+    Source/WebKitLegacy/mac:
+    
+    Adjust to API change.
+    
+    * WebCoreSupport/WebChromeClient.h:
+    * WebCoreSupport/WebChromeClient.mm:
+    (WebChromeClient::print):
+    
+    Source/WebKitLegacy/win:
+    
+    Adjust to API change.
+    
+    * WebCoreSupport/WebChromeClient.cpp:
+    (WebChromeClient::print):
+    * WebCoreSupport/WebChromeClient.h:
+    
+    Tools:
+    
+    Adapt unit tests to wait for title change tasks
+    to be processed.
+    
+    * TestWebKitAPI/Tests/WebKit/PageLoadState.cpp:
+    (TestWebKitAPI::didChangeTitle):
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+    (TEST):
+    * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
+    (testWebViewAuthenticationFailure):
+    (testWebViewAuthenticationNoCredential):
+    (testWebViewAuthenticationSuccess):
+    (testWebViewAuthenticationEmptyRealm):
+    * TestWebKitAPI/Tests/WebKitGLib/TestBackForwardList.cpp:
+    (testBackForwardListNavigation):
+    * TestWebKitAPI/Tests/WebKitGLib/TestLoaderClient.cpp:
+    (testWebViewTitle):
+    * TestWebKitAPI/Tests/WebKitGLib/TestSSL.cpp:
+    (testLoadFailedWithTLSErrors):
+    * TestWebKitAPI/Tests/WebKitGLib/TestWebKitSettings.cpp:
+    (testWebKitSettingsJavaScriptMarkup):
+    * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+    (testWebViewTitleChange):
+    
+    LayoutTests:
+    
+    Adapt tests to make sure pending title change tasks
+    are processed before the test is done.
+    
+    * TestExpectations:
+    * fast/dom/title-text-property-2.html:
+    * fast/dom/title-text-property-assigning-empty-string.html:
+    * fast/dom/title-text-property.html:
+    * http/tests/globalhistory/history-delegate-basic-title-expected.txt:
+    * http/tests/globalhistory/history-delegate-basic-title.html:
+    * http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt:
+    * http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html:
+    * http/tests/loading/redirect-with-no-location-crash-expected.txt:
+    * http/tests/loading/redirect-with-no-location-crash.html:
+    * platform/mac-wk2/TestExpectations:
+    * platform/win/http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt: Copied from LayoutTests/http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt.
+    * platform/wk2/http/tests/loading/basic-auth-load-URL-with-consecutive-slashes-expected.txt:
+    * platform/wk2/http/tests/loading/redirect-with-no-location-crash-expected.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272707 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-10  Rob Buis  <rbuis@igalia.com>
+
+            Use event loop to set title
+            https://bugs.webkit.org/show_bug.cgi?id=218496
+
+            Reviewed by Darin Adler.
+
+            Adjust to API change.
+
+            * WebCoreSupport/WebChromeClient.h:
+            * WebCoreSupport/WebChromeClient.mm:
+            (WebChromeClient::print):
+
 2021-02-16  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r272550. rdar://problem/74409264

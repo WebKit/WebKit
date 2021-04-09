@@ -155,7 +155,7 @@ static void testWebViewTitle(LoadTrackingTest* test, gconstpointer)
 {
     g_assert_null(webkit_web_view_get_title(test->m_webView));
     test->loadHtml("<html><head><title>Welcome to WebKit-GTK+!</title></head></html>", 0);
-    test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
     g_assert_cmpstr(webkit_web_view_get_title(test->m_webView), ==, "Welcome to WebKit-GTK+!");
 }
 

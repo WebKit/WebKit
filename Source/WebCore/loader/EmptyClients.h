@@ -125,7 +125,7 @@ class EmptyChromeClient : public ChromeClient {
 
     void mouseDidMoveOverElement(const HitTestResult&, unsigned, const String&, TextDirection) final { }
 
-    void print(Frame&) final { }
+    void print(Frame&, const StringWithDirection&) final { }
 
     void exceededDatabaseQuota(Frame&, const String&, DatabaseDetails) final { }
 

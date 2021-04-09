@@ -169,6 +169,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
     test->loadURI(uriPage1.data());
     test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_false(webkit_web_view_can_go_back(test->m_webView));
     g_assert_false(webkit_web_view_can_go_forward(test->m_webView));
@@ -186,6 +187,7 @@ static void testBackForwardListNavigation(BackForwardListTest* test, gconstpoint
     test->m_changedFlags = BackForwardListTest::CurrentItem | BackForwardListTest::AddedItem;
     test->loadURI(uriPage2.data());
     test->waitUntilLoadFinished();
+    test->waitUntilTitleChanged();
 
     g_assert_true(webkit_web_view_can_go_back(test->m_webView));
     g_assert_false(webkit_web_view_can_go_forward(test->m_webView));

@@ -920,6 +920,7 @@ public:
     // Used by DOM bindings; no direction known.
     const String& title() const { return m_title.string; }
     WEBCORE_EXPORT void setTitle(const String&);
+    const StringWithDirection& titleWithDirection() const { return m_title; }
 
     WEBCORE_EXPORT const AtomString& dir() const;
     WEBCORE_EXPORT void setDir(const AtomString&);

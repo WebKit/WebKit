@@ -1720,7 +1720,8 @@ void DocumentLoader::setTitle(const StringWithDirection& title)
 
     frameLoader()->willChangeTitle(this);
     m_pageTitle = title;
-    frameLoader()->didChangeTitle(this);
+    if (frameLoader())
+        frameLoader()->didChangeTitle(this);
 }
 
 URL DocumentLoader::urlForHistory() const
