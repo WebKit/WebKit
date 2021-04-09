@@ -1,3 +1,13 @@
+2021-04-09  Aakash Jain  <aakash_jain@apple.com>
+
+        git-webkit find doesn't work well with unicode characters in author name (follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=223686
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/webkitscmpy/webkitscmpy/program/find.py:
+        (Info.main): Updated the error message.
+
 2021-04-09  Sam Sneddon  <gsnedders@apple.com>
 
         Make TestInput take a Test object, not a path
