@@ -1,3 +1,15 @@
+2021-04-09  Antoine Quint  <graouts@webkit.org>
+
+        [ Mac WK2 ] compositing/animation/keyframe-order.html is a flakey image failure
+        https://bugs.webkit.org/show_bug.cgi?id=221359
+
+        Reviewed by Dean Jackson.
+
+        Attempt to make this test more stable by awaiting the resolution of the animation.ready
+        promise as well as UIHelper.renderingUpdate() to ensure the animation has been committed.
+
+        * compositing/animation/keyframe-order.html:
+
 2021-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         ServiceWorker should save module scripts

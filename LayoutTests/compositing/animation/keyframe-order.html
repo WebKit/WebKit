@@ -45,21 +45,22 @@
         }
     }
     </style>
+    <script src="../../resources/ui-helper.js"></script>
     <script>
         if (window.testRunner)
             testRunner.waitUntilDone();
         
-        function doTest()
-        {
-            var box = document.getElementById('spinner');
-            box.addEventListener('webkitAnimationStart', function() {
-                if (window.testRunner)
-                    testRunner.notifyDone();
-            }, false);
+        window.addEventListener('load', async () => {
+            const box = document.getElementById('spinner');
             box.classList.add('animating');
-        }
+            const animation = box.getAnimations()[0];
 
-        window.addEventListener('load', doTest, false);
+            await animation.ready;
+            await UIHelper.renderingUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
     </script>
 </head>
 <body>
