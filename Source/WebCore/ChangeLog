@@ -1,3 +1,27 @@
+2021-04-09  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Fix min/max widths of grid affected by ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=222100
+
+        Reviewed by Reviewed by Javier Fernandez.
+
+        It's a reland of r273435, which got reverted because it broke 
+        imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-003.html. This change
+        narrows down the fix specificallly to the case when logical-width is recomputed.
+        We need to recalculate min/max widths of child that depend on the ancestor.
+        Before update logical-width, for element that needs preferredWidth recalcution,
+        it is necessary to make sure that min/max widths are set dirty.
+
+        This change is an import of chromium CL at 
+        https://chromium-review.googlesource.com/c/chromium/src/+/527640/
+        Only the parts that apply to this issue are imported.
+
+        Tests were already imported in WPT.       
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::shouldRecalculateMinMaxWidthsAffectedByAncestor):
+        (WebCore::RenderBlock::recomputeLogicalWidth):
+
 2021-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
 
         ServiceWorker should save module scripts
