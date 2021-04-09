@@ -247,7 +247,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (readwrite, assign) NSInteger _connectionCacheNumFastLanes;
 @property (readwrite, assign) NSInteger _connectionCacheMinimumFastLanePriority;
 #endif
-#if HAVE(HAVE_CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
+#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
 @property (nullable, copy) NSString *_attributedBundleIdentifier;
 #endif
 @end

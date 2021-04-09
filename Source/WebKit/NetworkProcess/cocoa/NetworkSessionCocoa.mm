@@ -1218,7 +1218,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     if (!m_sourceApplicationSecondaryIdentifier.isEmpty())
         configuration._sourceApplicationSecondaryIdentifier = m_sourceApplicationSecondaryIdentifier;
 
-#if HAVE(HAVE_CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
+#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
     if (!m_attributedBundleIdentifier.isEmpty()) {
         if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
             configuration._attributedBundleIdentifier = m_attributedBundleIdentifier;
@@ -1337,7 +1337,7 @@ SessionWrapper& NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSes
 #if PLATFORM(IOS_FAMILY)
     configuration._CTDataConnectionServiceType = existingConfiguration._CTDataConnectionServiceType;
 #endif
-#if HAVE(HAVE_CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
+#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
     if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
         configuration._attributedBundleIdentifier = existingConfiguration._attributedBundleIdentifier;
 #endif

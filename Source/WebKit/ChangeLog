@@ -1,3 +1,38 @@
+2021-04-09  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r275736. rdar://problem/76467285
+
+    Fix incorrect compile-time macro for CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER
+    https://bugs.webkit.org/show_bug.cgi?id=224347
+    <rdar://problem/76353792>
+    
+    Reviewed by Brent Fulgham.
+    
+    Source/WebCore/PAL:
+    
+    * pal/spi/cf/CFNetworkSPI.h:
+    
+    Source/WebKit:
+    
+    * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+    (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+    (WebKit::NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSessionIfNeeded):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275736 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
+
+            Fix incorrect compile-time macro for CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER
+            https://bugs.webkit.org/show_bug.cgi?id=224347
+            <rdar://problem/76353792>
+
+            Reviewed by Brent Fulgham.
+
+            * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+            (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+            (WebKit::NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSessionIfNeeded):
+
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r275682. rdar://problem/76424627
