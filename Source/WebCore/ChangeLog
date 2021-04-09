@@ -1,3 +1,20 @@
+2021-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Teardown shadow root renderers on SlotAssignment::didChangeSlot
+        https://bugs.webkit.org/show_bug.cgi?id=221386
+
+        Reviewed by Ryosuke Niwa.
+
+        This reverts r272900 to move the call to RenderTreeUpdater::tearDownRenderers() from hostChildElementDidChange()
+        to didChangeSlot(). This ensures the renderers are also cleared for other shadow root trees not using details
+        element.
+
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::addSlotElementByName):
+        (WebCore::SlotAssignment::didChangeSlot):
+        * dom/SlotAssignment.h:
+        (WebCore::ShadowRoot::hostChildElementDidChange):
+
 2021-04-09  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] fast/canvas/canvas-createPattern-video-loading.html is failing since r218170
