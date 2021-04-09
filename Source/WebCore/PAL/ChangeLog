@@ -1,3 +1,19 @@
+2021-04-09  Jer Noble  <jer.noble@apple.com>
+
+        WTF SoftLinking macros can cause collisions with their target functions
+        https://bugs.webkit.org/show_bug.cgi?id=224379
+        <rdar://76434202>
+
+        Reviewed by Eric Carlson.
+
+        * pal/cf/CoreMediaSoftLink.h:
+        * pal/cocoa/MediaToolboxSoftLink.h:
+        * pal/cocoa/OpenGLSoftLinkCocoa.h:
+        * pal/cocoa/PassKitSoftLink.h:
+        * pal/ios/UIKitSoftLink.h:
+        * pal/spi/cocoa/AccessibilitySupportSoftLink.cpp:
+        * pal/spi/cocoa/AccessibilitySupportSoftLink.h:
+
 2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
 
         Fix incorrect compile-time macro for CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER

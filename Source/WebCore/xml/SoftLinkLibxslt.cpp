@@ -26,7 +26,15 @@
 #include "config.h"
 
 #if OS(DARWIN) && !PLATFORM(GTK)
-#include "SoftLinkLibxslt.h"
+
+#include <libxslt/documents.h>
+#include <libxslt/imports.h>
+#include <libxslt/security.h>
+#include <libxslt/templates.h>
+#include <libxslt/variables.h>
+#include <libxslt/xsltutils.h>
+
+#include <wtf/SoftLinking.h>
 
 SOFT_LINK_LIBRARY_FOR_SOURCE(WebCore, libxslt)
 

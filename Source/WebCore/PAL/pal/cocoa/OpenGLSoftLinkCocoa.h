@@ -34,15 +34,26 @@
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, OpenGL)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLChoosePixelFormat, CGLError, (const CGLPixelFormatAttribute *attribs, CGLPixelFormatObj *pix, GLint *npix), (attribs, pix, npix))
+#define CGLChoosePixelFormat PAL::softLink_OpenGL_CGLChoosePixelFormat
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLCreateContext, CGLError, (CGLPixelFormatObj pix, CGLContextObj share, CGLContextObj *ctx), (pix, share, ctx))
+#define CGLCreateContext PAL::softLink_OpenGL_CGLCreateContext
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLDescribePixelFormat, CGLError, (CGLPixelFormatObj pix, GLint pix_num, CGLPixelFormatAttribute attrib, GLint *value), (pix, pix_num, attrib, value))
+#define CGLDescribePixelFormat PAL::softLink_OpenGL_CGLDescribePixelFormat
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLDescribeRenderer, CGLError, (CGLRendererInfoObj rend, GLint rend_num, CGLRendererProperty prop, GLint *value), (rend, rend_num, prop, value))
+#define CGLDescribeRenderer PAL::softLink_OpenGL_CGLDescribeRenderer
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLDestroyContext, CGLError, (CGLContextObj ctx), (ctx))
+#define CGLDestroyContext PAL::softLink_OpenGL_CGLDestroyContext
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLDestroyRendererInfo, CGLError, (CGLRendererInfoObj rend), (rend))
+#define CGLDestroyRendererInfo PAL::softLink_OpenGL_CGLDestroyRendererInfo
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLGetParameter, CGLError, (CGLContextObj ctx, CGLContextParameter pname, GLint *params), (ctx, pname, params))
+#define CGLGetParameter PAL::softLink_OpenGL_CGLGetParameter
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLQueryRendererInfo, CGLError, (GLuint display_mask, CGLRendererInfoObj *rend, GLint *nrend), (display_mask, rend, nrend))
+#define CGLQueryRendererInfo PAL::softLink_OpenGL_CGLQueryRendererInfo
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLReleasePixelFormat, void, (CGLPixelFormatObj pix), (pix))
+#define CGLReleasePixelFormat PAL::softLink_OpenGL_CGLReleasePixelFormat
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLSetVirtualScreen, CGLError, (CGLContextObj ctx, GLint screen), (ctx, screen))
+#define CGLSetVirtualScreen PAL::softLink_OpenGL_CGLSetVirtualScreen
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, OpenGL, CGLUpdateContext, CGLError, (CGLContextObj ctx), (ctx))
+#define CGLUpdateContext PAL::softLink_OpenGL_CGLUpdateContext
 
 #endif

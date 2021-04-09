@@ -1,3 +1,16 @@
+2021-04-09  Jer Noble  <jer.noble@apple.com>
+
+        WTF SoftLinking macros can cause collisions with their target functions
+        https://bugs.webkit.org/show_bug.cgi?id=224379
+        <rdar://76434202>
+
+        Reviewed by Eric Carlson.
+
+        Don't include the SoftLinkLibxslt.h file in the .cpp file.
+
+        * xml/SoftLinkLibxslt.cpp:
+        * xml/SoftLinkLibxslt.h:
+
 2021-04-09  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Set hasIntrinsicWidth & hasIntrinsicHeight properties for SVG element's intrinsic size

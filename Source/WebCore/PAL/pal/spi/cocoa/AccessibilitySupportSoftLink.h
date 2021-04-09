@@ -28,8 +28,6 @@
 #include <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #include <wtf/SoftLinking.h>
 
-WTF_EXTERN_C_BEGIN
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 SOFT_LINK_LIBRARY_FOR_HEADER(PAL, libAccessibility)
@@ -38,5 +36,3 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, libAccessibility, _AXSIsolatedTreeMo
 #define _AXSIsolatedTreeModeFunctionIsAvailable PAL::islibAccessibilityLibaryAvailable() && PAL::canLoad_libAccessibility__AXSIsolatedTreeMode
 
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-
-WTF_EXTERN_C_END
