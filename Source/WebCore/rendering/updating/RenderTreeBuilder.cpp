@@ -486,6 +486,12 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
         auto childToMove = detachFromRenderElement(from, child, WillBeDestroyed::No, RenderObject::IsInternalMove::Yes);
         attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild, RenderObject::IsInternalMove::Yes);
     }
+    if (is<RenderInline>(child)) {
+        // When moving a subtree out of a BFC we need to make sure that the line boxes generated for the inline tree are not accessible anymore from the renderers.
+        // They eventually get destroyed during the inline layout of the original BFC.
+        for (auto& descendant : descendantsOfType<RenderBox>(downcast<RenderInline>(child)))
+            descendant.setInlineBoxWrapper(nullptr);
+    }
 }
 
 void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, NormalizeAfterInsertion normalizeAfterInsertion)
