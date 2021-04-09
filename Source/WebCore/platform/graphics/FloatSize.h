@@ -72,6 +72,9 @@ public:
     float width() const { return m_width; }
     float height() const { return m_height; }
 
+    bool hasIntrinsicWidth = false;
+    bool hasIntrinsicHeight = false;
+
     void setWidth(float width) { m_width = width; }
     void setHeight(float height) { m_height = height; }
 
