@@ -1909,6 +1909,11 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     ]];
 }
 
+- (CGRect)tapHighlightViewRect
+{
+    return [_highlightView frame];
+}
+
 - (void)_showTapHighlight
 {
     auto shouldPaintTapHighlight = [&](const WebCore::FloatRect& rect) {
@@ -2674,15 +2679,25 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (void)_finishInteraction
 {
     _isTapHighlightIDValid = NO;
+    [self _fadeTapHighlightViewIfNeeded];
+}
+
+- (void)_fadeTapHighlightViewIfNeeded
+{
+    if (![_highlightView superview] || _isTapHighlightFading)
+        return;
+
+    _isTapHighlightFading = YES;
     CGFloat tapHighlightFadeDuration = _showDebugTapHighlightsForFastClicking ? 0.25 : 0.1;
     [UIView animateWithDuration:tapHighlightFadeDuration
-                     animations:^{
-                         [_highlightView layer].opacity = 0;
-                     }
-                     completion:^(BOOL finished){
-                         if (finished)
-                             [_highlightView removeFromSuperview];
-                     }];
+        animations:^{
+            [_highlightView layer].opacity = 0;
+        }
+        completion:^(BOOL finished) {
+            if (finished)
+                [_highlightView removeFromSuperview];
+            _isTapHighlightFading = NO;
+        }];
 }
 
 - (BOOL)canShowNonEmptySelectionView
@@ -2953,7 +2968,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     for (const auto& action : actionsToPerform)
         action();
 
-    [self _finishInteraction];
+    if (!_isTapHighlightIDValid)
+        [self _fadeTapHighlightViewIfNeeded];
 }
 
 - (void)_doubleTapDidFail:(UITapGestureRecognizer *)gestureRecognizer

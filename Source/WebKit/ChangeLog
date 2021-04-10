@@ -1,3 +1,65 @@
+2021-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r271660): Tap highlight no longer shows when tapping clickable elements without touch event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=224385
+        <rdar://problem/76462370>
+
+        Reviewed by Tim Horton.
+
+        In r271660, I added a call to `-finishInteraction` when resetting the synthetic tap gesture to fix a bug where
+        it was possible for the tap highlight to remain indefinitely when tapping on a clickable element with a touchend
+        event listener. This was because the touch end deferring gesture defers `-_singleTapDidReset:` until after
+        `-_didGetTapHighlightForRequest:…nodeHasBuiltInClickHandling:`, where we receive the tap highlight information.
+
+        ```
+        2021-04-09 13:05:27.141097-0700 -[WKContentView(WKInteraction) _singleTapIdentified:]
+        2021-04-09 13:05:27.148678-0700 -[WKContentView(WKInteraction) _didGetTapHighlightForRequest:…nodeHasBuiltInClickHandling:]
+        2021-04-09 13:05:27.162525-0700 -[WKContentView(WKInteraction) _singleTapRecognized:]
+        2021-04-09 13:05:27.162675-0700   ↳ -[WKContentView(WKInteraction) _showTapHighlight]
+        2021-04-09 13:05:27.163250-0700 -[WKContentView(WKInteraction) _singleTapDidReset:]
+        2021-04-09 13:05:51.849481-0700   ↳ -[WKContentView(WKInteraction) _finishInteraction]
+        ```
+
+        However, in the case where there is no touchend event listener and when fast-click is active, we reset the tap
+        gesture before receiving the tap highlight information:
+
+        ```
+        2021-04-09 13:05:51.836638-0700 -[WKContentView(WKInteraction) _singleTapIdentified:]
+        2021-04-09 13:05:51.846152-0700 -[WKContentView(WKInteraction) _singleTapRecognized:]
+        2021-04-09 13:05:51.847196-0700 -[WKContentView(WKInteraction) _singleTapDidReset:]
+        2021-04-09 13:05:51.848563-0700 -[WKContentView(WKInteraction) _didGetTapHighlightForRequest:…nodeHasBuiltInClickHandling:]
+        2021-04-09 13:05:51.848851-0700   ↳ -[WKContentView(WKInteraction) _showTapHighlight]
+        2021-04-09 13:05:51.849481-0700   ↳ -[WKContentView(WKInteraction) _finishInteraction]
+
+        ```
+
+        Critically, this means that calling `-_finishInteraction` in `-_singleTapDidReset:` prematurely flagged the
+        tap highlight request as complete (by setting `_isTapHighlightIDValid` to `NO`) in the case where we aren't
+        deferring gestures, which caused us to avoid showing the tap highlight at all when we eventually receive the tap
+        highlight information.
+
+        To fix this, only fade out the tap highlight view in `-_singleTapDidReset:` if the tap highlight request has
+        already finished (i.e. `_isTapHighlightIDValid` has been set to `NO`). Additionally, split logic for fading out
+        the highlight view into a separate method, and add a `BOOL` flag to make the fading idempotent.
+
+        Test: fast/events/touch/ios/tap-highlight-during-synthetic-click.html
+
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _tapHighlightViewRect]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView tapHighlightViewRect]):
+
+        Also add a testing-only method to report the frame of the tap highlight view. Note that this only attempts to
+        return the current `frame` of the tap highlight view instead of converting the frame to the coordinate system of
+        the content view (as other similar testing hooks do), since the tap highlight view only exists in the view
+        hierarchy for a brief duration.
+
+        (-[WKContentView _finishInteraction]):
+        (-[WKContentView _fadeTapHighlightViewIfNeeded]):
+        (-[WKContentView _singleTapDidReset:]):
+
 2021-04-09  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Correct process-info rules to restrict to self

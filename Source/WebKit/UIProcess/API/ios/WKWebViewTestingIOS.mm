@@ -331,6 +331,11 @@
 #endif
 }
 
+- (CGRect)_tapHighlightViewRect
+{
+    return [_contentView tapHighlightViewRect];
+}
+
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
     [_contentView _simulateElementAction:actionType atLocation:location];

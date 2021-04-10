@@ -819,6 +819,15 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static tapHighlightViewRect()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("JSON.stringify(uiController.tapHighlightViewRect)", jsonString => {
+                resolve(JSON.parse(jsonString));
+            });
+        });
+    }
+
     static replaceTextAtRange(text, location, length) {
         return new Promise(resolve => {
             testRunner.runUIScript(`(() => {

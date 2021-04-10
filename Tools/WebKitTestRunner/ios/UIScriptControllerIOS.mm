@@ -1172,6 +1172,11 @@ bool UIScriptControllerIOS::isAnimatingDragCancel() const
     return webView()._animatingDragCancel;
 }
 
+JSObjectRef UIScriptControllerIOS::tapHighlightViewRect() const
+{
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._tapHighlightViewRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
 JSObjectRef UIScriptControllerIOS::attachmentInfo(JSStringRef jsAttachmentIdentifier)
 {
     auto attachmentIdentifier = toWTFString(jsAttachmentIdentifier);

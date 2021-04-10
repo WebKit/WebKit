@@ -1,3 +1,24 @@
+2021-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r271660): Tap highlight no longer shows when tapping clickable elements without touch event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=224385
+        <rdar://problem/76462370>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test that exercises 3 scenarios, using the new testing SPI:
+
+        1.  Tapping on a `button` that prevents the "touchend" event (and therefore prevents clicking) should cause
+            the tap highlight to not show up.
+        2.  Tapping on a `button` that has a "touchend" event listener and does not prevent default should cause the tap
+            highlight to show up.
+        3.  Tapping on a `button` with no event listeners should cause the tap highlight to show up.
+
+        * fast/events/touch/ios/tap-highlight-during-synthetic-click-expected.txt: Added.
+        * fast/events/touch/ios/tap-highlight-during-synthetic-click.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.tapHighlightViewRect):
+
 2021-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove className() and toStringName() from the method table
