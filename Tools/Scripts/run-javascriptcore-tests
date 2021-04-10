@@ -932,9 +932,20 @@ sub runJSCStressTests
     }
     print "\n";
 
+    my @jscStressNoResultList = readAllLines($jscStressResultsDir . "/noresult");
+    my $numJSCStressNoResultTests = @jscStressNoResultList;
+
+    if ($numJSCStressNoResultTests) {
+        $isTestFailed = 1;
+    }
+    foreach my $testNoResult (@jscStressNoResultList) {
+            $reportData{$testNoResult} = {actual => "ERROR"};
+    }
+
     print "Results for JSC stress tests:\n";
     printThingsFound($numJSCStressFailures, "failure", "failures", "found");
-    print "    OK.\n" if $numJSCStressFailures == 0;
+    printThingsFound($numJSCStressNoResultTests, "test", "tests", "failed to complete");
+    print "    OK.\n" if $numJSCStressFailures == 0 and $numJSCStressNoResultTests == 0;
 
     print "\n";
 

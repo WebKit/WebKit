@@ -57,6 +57,9 @@ raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
 raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
 
 HELPERS_PATH = SCRIPTS_PATH + "jsc-stress-test-helpers"
+STATUS_FILE_PREFIX = "test_status_"
+STATUS_FILE_PASS = "P"
+STATUS_FILE_FAIL = "F"
 
 begin
     require 'shellwords'
@@ -134,6 +137,7 @@ $forceCollectContinuously = false
 $reportExecutionTime = false
 $ldd = nil
 $artifact_exec_wrapper = nil
+$runUniqueId = Random.new.bytes(16).unpack("H*")[0]
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -534,9 +538,6 @@ if $testWriter
         raise "Invalid test writer #{$testWriter} given"
     end
 end
-
-$numFailures = 0
-$numPasses = 0
 
 # We force all tests to use a smaller (1.5M) stack so that stack overflow tests can run faster.
 BASE_OPTIONS = ["--useFTLJIT=false", "--useFunctionDotArguments=true", "--validateExceptionChecks=true", "--useDollarVM=true", "--maxPerThreadStackUsage=1572864"]
@@ -1821,7 +1822,6 @@ def appendFailure(plan)
         | outp |
         outp.puts plan.name
     }
-    $numFailures += 1
 end
 
 def appendPass(plan)
@@ -1829,7 +1829,13 @@ def appendPass(plan)
         | outp |
         outp.puts plan.name
     }
-    $numPasses += 1
+end
+
+def appendNoResult(plan)
+    File.open($outputDir + "noresult", "a") {
+        | outp |
+        outp.puts plan.name
+    }
 end
 
 def appendResult(plan, didPass)
@@ -2037,7 +2043,7 @@ def cleanRunnerDirectory
     }
 end
 
-def sshRead(cmd, remoteIndex=0)
+def sshRead(cmd, remoteIndex=0, options={})
     raise unless $remote
 
     remoteHost = $remoteHosts[remoteIndex]
@@ -2050,7 +2056,7 @@ def sshRead(cmd, remoteIndex=0)
         result += line
       }
     }
-    raise "#{$?}" unless $?.success?
+    raise "#{$?}" unless $?.success? or options[:ignoreFailure]
     result
 end
 
@@ -2205,51 +2211,109 @@ def runTestRunner(remoteIndex=0)
     end
 end
 
-def detectFailures
-    raise if $bundle
-    failures = []
+def getStatusMap
+    name_re = /^[.]\/#{STATUS_FILE_PREFIX}(\d+)$/
+    map = {}
     if $remote
         $remoteHosts.each_with_index {
             | host, remoteIndex |
-            output = sshRead("cd #{host.remoteDirectory}/#{$outputDir.basename}/.runner && find . -maxdepth 1 -name \"test_fail_*\"", remoteIndex)
+            output = sshRead("cd #{host.remoteDirectory}/#{$outputDir.basename}/.runner && find . -maxdepth 1 -name \"#{STATUS_FILE_PREFIX}*\" -exec sh -c \"printf \\\"%s \\\" {}; cat {}\" \\;", remoteIndex, :ignoreFailure => true)
             output.split(/\n/).each {
                 | line |
-                next unless line =~ /test_fail_/
-                failures << $~.post_match.to_i
+                name, run_id, _, result = line.split(' ')
+                md = name_re.match(name)
+                if md.nil?
+                    $stderr.puts("Could not parse name in `#{line}`")
+                    exit(1)
+                end
+                if run_id != $runUniqueId
+                    # This may conceivably happen if a remote goes
+                    # away in the middle of a run and comes back
+                    # online in the middle of a different run.
+                    $stderr.puts("Ignoring stale status file for #{name} (ID #{run_id} but current ID is #{$runUniqueId})")
+                    next
+                end
+                index = md[1].to_i
+                if map.has_key?(index)
+                    $stderr.puts("Duplicate state file for #{index}")
+                    # One scenario in which this could happen:
+                    # Test T runs on remote host A and
+                    #   1. the status file reaches A's disk
+                    #   2. somehow the gnu parallel runner is not made aware of the test's completion (packet loss?)
+                    #   3. A machine crashes
+                    #   4. gnu parallel re-schedules the test to run on remote host B, where it runs to completion
+                    #   5. B comes back online before the end of the run
+                    #   6. we collect the status files from all remotes and end up with two status files for T.
+                    prev = map[index]
+                    # map[index] holds
+                    # - a number, if all results codes we've observed for a test are the same
+                    # - an array, if they diverge.
+                    if prev.is_a?(Array)
+                        prev.push(result)
+                    elsif prev != result
+                        # If the two results differ, keep them
+                        # both. This is simply a way to make note of
+                        # the divergence (for later reporting).
+                        map[index] = [prev, result]
+                    else
+                        # Got the same result, no need to do anything.
+                    end
+                else
+                    map[index] = result
+                end
             }
         }
     else
         Dir.foreach($runnerDir) {
             | filename |
-            next unless filename =~ /test_fail_/
-            failures << $~.post_match.to_i
+            md = name_re.match("./#{filename}")
+            next unless md
+            File.open("#{$runnerDir}/#{filename}", "r") { |f|
+                runId, _, result = f.read.chomp.split(' ')
+                if runId != $runUniqueId
+                    # We clean the dir before a starting a run.
+                    raise "Can't happen"
+                end
+                map[md[1].to_i] = result
+            }
         }
     end
+    map
+end
 
-    failureSet = {}
-
-    failures.each {
-        | failure | 
-        appendFailure($runlist[failure])
-        failureSet[failure] = true
-    }
-
+def detectFailures
+    raise if $bundle
+    noresult = 0
+    statusMap = getStatusMap
     familyMap = {}
+
     $runlist.each_with_index {
         | plan, index |
         unless familyMap[plan.family]
             familyMap[plan.family] = []
         end
-        if failureSet[index]
-            appendResult(plan, false)
-            familyMap[plan.family] << {:result => "FAIL", :plan => plan};
+        if not statusMap.has_key?(index) or statusMap[index].is_a?(Array)
+            appendNoResult(plan)
+            noresult += 1
             next
-        else
-            appendResult(plan, true)
-            familyMap[plan.family] << {:result => "PASS", :plan => plan};
         end
-        appendPass(plan)
+        result = nil
+        if statusMap[index] == STATUS_FILE_PASS
+            appendPass(plan)
+            result = "PASS"
+        else
+            appendFailure(plan)
+            result = "FAIL"
+        end
+        appendResult(plan, statusMap[index] == STATUS_FILE_PASS)
+        familyMap[plan.family] << {:result => result, :plan => plan }
     }
+
+    if noresult > 0
+        $stderr.puts("Could not get the exit status for #{noresult} tests")
+        # We can't change our exit code, as run-javascriptcore-tests
+        # expects 0 even when there are failures.
+    end
 
     File.open($outputDir + "resultsByFamily", "w") {
         | outp |
@@ -2261,7 +2325,7 @@ def detectFailures
             else
                 outp.puts
             end
-            
+
             outp.print "#{familyName}:"
 
             numPassed = 0
@@ -2299,6 +2363,7 @@ end
 
 clean($outputDir + "failed")
 clean($outputDir + "passed")
+clean($outputDir + "noresult")
 clean($outputDir + "results")
 clean($outputDir + "resultsByFamily")
 clean($outputDir + ".vm")
