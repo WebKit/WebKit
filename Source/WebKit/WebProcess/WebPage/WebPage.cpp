@@ -7299,7 +7299,8 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
     });
 
     if (matchIndex != notFound) {
-        m_elementsPendingImageExtraction[matchIndex].second.append(WTFMove(completion));
+        if (completion)
+            m_elementsPendingImageExtraction[matchIndex].second.append(WTFMove(completion));
         return;
     }
 

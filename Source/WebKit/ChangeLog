@@ -1,3 +1,21 @@
+2021-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web process crashes if image extraction is requested for an element that is pending image extraction
+        https://bugs.webkit.org/show_bug.cgi?id=224397
+        <rdar://problem/76472254>
+
+        Reviewed by Tim Horton.
+
+        Add a missing null check, so that we don't append (and then end up attempting to call) a null completion handler
+        in the case where image extraction is re-requested for an element that already has a pending image extraction
+        request.
+
+        This is currently not possible to reliably test this; in a future patch, I will add testing infrastructure that
+        will allow us to simulate image extraction requests and responses at the client layer.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestImageExtraction):
+
 2021-04-09  Sihui Liu  <sihui_liu@apple.com>
 
         Unreviewed, fix for test crashes after r275779.
