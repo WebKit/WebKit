@@ -325,6 +325,7 @@ struct MediaElementSessionInfo {
     bool isVisibleInViewportOrFullscreen : 1;
     bool isLargeEnoughForMainContent : 1;
     bool isPlayingAudio : 1;
+    bool hasEverNotifiedAboutPlaying : 1;
 };
 
 static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElementSession& session, MediaElementSession::PlaybackControlsPurpose purpose)
@@ -337,7 +338,8 @@ static MediaElementSessionInfo mediaElementSessionInfoForSession(const MediaElem
         session.canShowControlsManager(purpose),
         element.isFullscreen() || element.isVisibleInViewport(),
         session.isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls),
-        element.isPlaying() && element.hasAudio() && !element.muted()
+        element.isPlaying() && element.hasAudio() && !element.muted(),
+        element.hasEverNotifiedAboutPlaying()
     };
 }
 
@@ -346,13 +348,20 @@ static bool preferMediaControlsForCandidateSessionOverOtherCandidateSession(cons
     MediaElementSession::PlaybackControlsPurpose purpose = session.purpose;
     ASSERT(purpose == otherSession.purpose);
 
-    // For the controls manager, prioritize visible media over offscreen media.
-    if (purpose == MediaElementSession::PlaybackControlsPurpose::ControlsManager && session.isVisibleInViewportOrFullscreen != otherSession.isVisibleInViewportOrFullscreen)
+    // For the controls manager and MediaSession, prioritize visible media over offscreen media.
+    if ((purpose == MediaElementSession::PlaybackControlsPurpose::ControlsManager || purpose == MediaElementSession::PlaybackControlsPurpose::MediaSession)
+        && session.isVisibleInViewportOrFullscreen != otherSession.isVisibleInViewportOrFullscreen)
         return session.isVisibleInViewportOrFullscreen;
 
-    // For Now Playing, prioritize elements that would normally satisfy main content.
-    if (purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying && session.isLargeEnoughForMainContent != otherSession.isLargeEnoughForMainContent)
+    // For Now Playing and MediaSession, prioritize elements that would normally satisfy main content.
+    if ((purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying || purpose == MediaElementSession::PlaybackControlsPurpose::MediaSession)
+        && session.isLargeEnoughForMainContent != otherSession.isLargeEnoughForMainContent)
         return session.isLargeEnoughForMainContent;
+
+    // For MediaSession, prioritize elements that have been played before.
+    if (purpose == MediaElementSession::PlaybackControlsPurpose::MediaSession
+        && session.hasEverNotifiedAboutPlaying != otherSession.hasEverNotifiedAboutPlaying)
+        return session.hasEverNotifiedAboutPlaying;
 
     // As a tiebreaker, prioritize elements that the user recently interacted with.
     return session.timeOfLastUserInteraction > otherSession.timeOfLastUserInteraction;
@@ -360,6 +369,9 @@ static bool preferMediaControlsForCandidateSessionOverOtherCandidateSession(cons
 
 static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionInfo& session, MediaElementSession::PlaybackControlsPurpose purpose)
 {
+    if (purpose == MediaElementSession::PlaybackControlsPurpose::MediaSession)
+        return false;
+
     if (purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying)
         return session.isPlayingAudio;
 
@@ -581,12 +593,13 @@ HTMLMediaElement::~HTMLMediaElement()
         ThreadableBlobRegistry::unregisterBlobURL(m_blobURLForReading);
 }
 
-RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose purpose)
+RefPtr<HTMLMediaElement> HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose purpose, const Document* document)
 {
     Vector<MediaElementSessionInfo> candidateSessions;
     bool atLeastOneNonCandidateMayBeConfusedForMainContent = false;
-    PlatformMediaSessionManager::sharedManager().forEachMatchingSession([](auto& session) {
-        return is<MediaElementSession>(session);
+    PlatformMediaSessionManager::sharedManager().forEachMatchingSession([document](auto& session) {
+        return is<MediaElementSession>(session)
+            && (!document || &downcast<MediaElementSession>(session).element().document() == document);
     }, [&](auto& session) {
         auto mediaElementSessionInfo = mediaElementSessionInfoForSession(downcast<MediaElementSession>(session), purpose);
         if (mediaElementSessionInfo.canShowControlsManager)

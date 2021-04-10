@@ -525,7 +525,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return true;
     }
 
-    if (client().presentationType() == MediaType::Audio && purpose == PlaybackControlsPurpose::ControlsManager) {
+    if (client().presentationType() == MediaType::Audio && (purpose == PlaybackControlsPurpose::ControlsManager || purpose == PlaybackControlsPurpose::MediaSession)) {
         if (!hasBehaviorRestriction(RequireUserGestureToControlControlsManager) || m_element.document().processingUserGestureForMedia()) {
             INFO_LOG(LOGIDENTIFIER, "returning TRUE: audio element with user gesture");
             return true;
@@ -565,7 +565,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return false;
     }
 
-    if (!m_element.hasEverNotifiedAboutPlaying()) {
+    if (purpose != PlaybackControlsPurpose::MediaSession && !m_element.hasEverNotifiedAboutPlaying()) {
         INFO_LOG(LOGIDENTIFIER, "returning FALSE: hasn't fired playing notification");
         return false;
     }
@@ -597,7 +597,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         }
     }
 
-    if (purpose == PlaybackControlsPurpose::NowPlaying) {
+    if (purpose == PlaybackControlsPurpose::NowPlaying || purpose == PlaybackControlsPurpose::MediaSession) {
         INFO_LOG(LOGIDENTIFIER, "returning TRUE: potentially plays audio");
         return true;
     }
@@ -1135,10 +1135,7 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
         return;
     }
 
-    if (auto handler = session->handlerForAction(actionDetails.action))
-        handler->handleEvent(actionDetails);
-    else
-        ALWAYS_LOG(LOGIDENTIFIER, "Ignoring command, no action handler registered for ", actionDetails.action);
+    session->callActionHandler(actionDetails);
 }
 #endif
 

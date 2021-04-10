@@ -1,3 +1,18 @@
+2021-04-09  Jean-Yves Avenard  <jya@apple.com>
+
+        Media Session action should default to the MediaElement's default when no MediaSession handler are set
+        https://bugs.webkit.org/show_bug.cgi?id=224278
+        <rdar://problem/76339841>
+
+        Reviewed by Youenn Fablet .
+
+        * media/audio-background-playback-playlist-expected.txt: Renamed method
+        * media/audio-background-playback-playlist.html: Renamed method
+        * media/media-session/default-actionHandlers-expected.txt: Added.
+        * media/media-session/default-actionHandlers.html: Added.
+        * platform/mac/media/video-best-element-for-playback-controls-purpose-expected.txt: Renamed method
+        * platform/mac/media/video-best-element-for-playback-controls-purpose.html: Renamed method
+
 2021-04-09  Robert Jenner  <jenner@apple.com>
 
         [ macOS ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html is a flakey timeout

@@ -1,3 +1,56 @@
+2021-04-09  Jean-Yves Avenard  <jya@apple.com>
+
+        Media Session action should default to the MediaElement's default when no MediaSession handler are set
+        https://bugs.webkit.org/show_bug.cgi?id=224278
+        <rdar://problem/76339841>
+
+        Reviewed by Youenn Fablet .
+
+        When a media session doesn't explicitly define an action handler, we use the media element
+        default action of the same type.
+        Media Session doesn't track a particular media element, instead it loosely defines a guessed playback state
+        that tracks if some element in the current document is playing and not muted or otherwise paused.
+        (see https://w3c.github.io/mediasession/#playback-state-model)
+        We therefore need to determine what is currently the most suitable media element available in this document.
+        Unlike the Media Controller and the Now Playing policy that will only ever select a media
+        if it is currently playing and not muted, for the Media Session we may have to interact with paused media elements.
+        For this we add a new PlaybackControlsPurpose named MediaSession defining new search criterias.
+        A media element will be up for selection if it's playable (according to autoplay policy). From then,
+        the best element will be selected accoring to its visibility, its size, if it's beeing played previously and
+        the last time it was interacted with.
+
+        Test: media/media-session/default-actionHandlers.html
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::platformCommandForMediaSessionAction): New convenience method to convert one datatype into another.
+        (WebCore::MediaSession::callActionHandler): Use user defined handler if present or run the related action on
+        the most suitable media element
+        (WebCore::MediaSession::activeMediaElement const): Determine the currently active media element in the current
+        Media Session's document.
+        * Modules/mediasession/MediaSession.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::mediaElementSessionInfoForSession): Add new hasEverNotifiedAboutPlaying member.
+        (WebCore::preferMediaControlsForCandidateSessionOverOtherCandidateSession): Amend sorting algorithm to cater
+        for the MediaSession criterias described above.
+        (WebCore::mediaSessionMayBeConfusedWithMainContent): When using MediaSession purpose, there is no possible
+        ambiguity, amend as such.
+        (WebCore::HTMLMediaElement::bestMediaElementForRemoteControls): Renamed from bestMediaElementForShowingPlaybackControlsManager
+        method to better match how the method is actually used.
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::canShowControlsManager const): Amend for new Media Session criterias.
+        (WebCore::MediaElementSession::didReceiveRemoteControlCommand): Always let MediaSession manage the actions handling.
+        * html/MediaElementSession.h:
+        * page/Page.cpp: 
+        (WebCore::Page::playbackControlsManagerUpdateTimerFired): amend following method rename.
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::nowPlayingEligibleSession): amend following method rename.
+        * testing/Internals.cpp:
+        (WebCore::Internals::bestMediaElementForRemoteControls): Renamed from bestMediaElementForShowingPlaybackControlsManager as above.
+        (WebCore::Internals::sendMediaSessionAction): amend following method rename.
+        * testing/Internals.h: Rename method
+        * testing/Internals.idl: Rename method
+
 2021-04-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Cairo][GPUP] GraphicsContextGLOpenGL::paintToCanvas can't paint into a remote canvas

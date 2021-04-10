@@ -4423,9 +4423,9 @@ ExceptionOr<Internals::NowPlayingState> Internals::nowPlayingState() const
 }
 
 #if ENABLE(VIDEO)
-RefPtr<HTMLMediaElement> Internals::bestMediaElementForShowingPlaybackControlsManager(Internals::PlaybackControlsPurpose purpose)
+RefPtr<HTMLMediaElement> Internals::bestMediaElementForRemoteControls(Internals::PlaybackControlsPurpose purpose)
 {
-    return HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(purpose);
+    return HTMLMediaElement::bestMediaElementForRemoteControls(purpose);
 }
 
 Internals::MediaSessionState Internals::mediaSessionState(HTMLMediaElement& element)
@@ -6121,10 +6121,9 @@ ExceptionOr<double> Internals::currentMediaSessionPosition(const MediaSession& s
 
 ExceptionOr<void> Internals::sendMediaSessionAction(MediaSession& session, const MediaSessionActionDetails& actionDetails)
 {
-    if (auto handler = session.handlerForAction(actionDetails.action)) {
-        handler->handleEvent(actionDetails);
+    if (session.callActionHandler(actionDetails))
         return { };
-    }
+
     return Exception { InvalidStateError };
 }
 

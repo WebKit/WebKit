@@ -339,7 +339,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
 PlatformMediaSession* MediaSessionManagerCocoa::nowPlayingEligibleSession()
 {
     // FIXME: Fix this layering violation.
-    if (auto element = HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::NowPlaying))
+    if (auto element = HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::NowPlaying))
         return &element->mediaSession();
 
     return nullptr;
