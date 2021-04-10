@@ -1,3 +1,18 @@
+2021-04-09  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Correct process-info rules to restrict to self
+        https://bugs.webkit.org/show_bug.cgi?id=224383
+        <rdar://problem/66582454>
+
+        Reviewed by Eric Carlson.
+
+        The sandbox allows 'process-info' by default, so our allow rules have no real impact.
+        We need to deny access first, as we do on macOS, so that the allow rules have meaning.
+
+        I reviewed the macOS sandbox, and made sure the iOS sandbox allows the same items.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Web process crashes if image extraction is requested for an element that is pending image extraction
