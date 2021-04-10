@@ -1,3 +1,115 @@
+2021-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove className() and toStringName() from the method table
+        https://bugs.webkit.org/show_bug.cgi?id=224247
+
+        Reviewed by Darin Adler.
+
+        ES6 introduced Symbol.toStringTag to customize Object.prototype.toString return value.
+        It was adopted by WebIDL spec, Chrome's DevTools, Node.js etc. There is no reason to
+        keep 2 method table methods, each with only 1 call site, instead of using the symbol.
+
+        Also, it's a bit confusing that for some objects, method table's className() returns
+        different result than JSCell::className(VM&).
+
+        This change:
+
+        1. Removes JSProxy's className() / toStringName() methods because its target() is a
+           global object that never has these overrides and uses Symbol.toStringTag instead.
+
+        2. Removes DebuggerScope's className() / toStringName() overrides because its objectAtScope()
+           has these methods extremely rarely (e.g. `with (new Date) {}`), and its not displayed
+           by Web Inspector.
+
+        3. Merges JSCallbackObject's className() / toStringName() methods into Symbol.toStringTag
+           branch of getOwnPropertySlot(), with permissive property attributes. To avoid any possible
+           breakage, we make sure that it will be shadowed by a structure property.
+
+        4. Reworks JSObject::calculatedClassName() to rely on Symbol.toStringTag, matching Chrome's
+           DevTools behavior. On its own, it's a nice change for Web Inspector. We make sure to
+           lookup Symbol.toStringTag if `constructor.name` inference fails to avoid confusion when
+           extending builtins.
+
+        5. Removes now unused className() from the method table.
+
+        6. Removes toStringName() override from JSFinalizationRegistry because its builtin tag [1]
+           is already "Object".
+
+        7. Introduces BooleanObjectType for Boolean wrapper object, and Boolean.prototype as it's
+           also required to have a [[BooleanData]] internal slot [2].
+
+        8. Reworks Object.prototype.toString to determine builtin tag [1] based on JSType rather than
+           performing method table call. It's guaranteed that a) the set of types we are checking
+           against won't be expanded, and b) objects with these types have correct `className`.
+
+        9. Removes now unused toStringTag() from the method table.
+
+        This patch is performance-neutral and carefully preserves current behavior for API objects,
+        including isPokerBros() hack.
+
+        [1]: https://tc39.es/ecma262/#sec-object.prototype.tostring (steps 5-14)
+        [2]: https://tc39.es/ecma262/#sec-properties-of-the-boolean-prototype-object
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnPropertySlot):
+        (JSC::JSCallbackObject<Parent>::className): Deleted.
+        (JSC::JSCallbackObject<Parent>::toStringName): Deleted.
+        * API/tests/testapiScripts/testapi.js:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::className): Deleted.
+        (JSC::DebuggerScope::toStringName): Deleted.
+        * debugger/DebuggerScope.h:
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::toStringName): Deleted.
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/BooleanPrototype.h:
+        * runtime/ClassInfo.h:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::toStringName): Deleted.
+        * runtime/DateInstance.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::toStringName): Deleted.
+        * runtime/ErrorInstance.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::className): Deleted.
+        (JSC::JSCell::toStringName): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::toStringName): Deleted.
+        * runtime/JSFinalizationRegistry.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+        (JSC::JSObject::className): Deleted.
+        (JSC::isPokerBros): Deleted.
+        (JSC::JSObject::toStringName): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::className): Deleted.
+        (JSC::JSProxy::toStringName): Deleted.
+        * runtime/JSProxy.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::toStringName): Deleted.
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::isPokerBros):
+        (JSC::inferBuiltinTag):
+        (JSC::objectPrototypeToString):
+        1. Removes jsNontrivialString() because it's assertion may fail in case of iOS hack.
+        2. Utilizes AtomStringImpl to avoid allocating StringImpl for a small fixed set of strings.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::toStringName): Deleted.
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::toStringName): Deleted.
+        * runtime/StringObject.h:
+
 2021-04-08  Khem Raj  <raj.khem@gmail.com>
 
         [WPE] Build fixes for musl C library on Linux

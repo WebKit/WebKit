@@ -467,6 +467,7 @@ OWN PROPERTIES:
     Symbol(sym)
     Symbol(sym)
     Symbol()
+    Symbol(Symbol.toStringTag)
     __proto__
 
 DISPLAYABLE PROPERTIES:
@@ -476,6 +477,7 @@ DISPLAYABLE PROPERTIES:
     Symbol(sym)
     Symbol(sym)
     Symbol()
+    Symbol(Symbol.toStringTag)
     __proto__
 
 ALL PROPERTIES:
@@ -485,6 +487,7 @@ ALL PROPERTIES:
     Symbol(sym)
     Symbol(sym)
     Symbol()
+    Symbol(Symbol.toStringTag)
     toString
     toLocaleString
     valueOf
@@ -496,6 +499,65 @@ ALL PROPERTIES:
     __lookupGetter__
     __lookupSetter__
     constructor
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.objectWithSymbolToStringTag
+type: object
+description: Foo
+
+OWN PROPERTIES:
+    Symbol(Symbol.toStringTag)
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    Symbol(Symbol.toStringTag)
+    __proto__
+
+ALL PROPERTIES:
+    Symbol(Symbol.toStringTag)
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
+    constructor
+    __proto__
+-----------------------------------------------------
+
+-----------------------------------------------------
+EXPRESSION: window.objectWithShadowedSymbolToStringTag
+type: object
+description: Foo
+
+OWN PROPERTIES:
+    __proto__
+
+DISPLAYABLE PROPERTIES:
+    __proto__
+
+ALL PROPERTIES:
+    constructor
+    addEventListener
+    removeEventListener
+    dispatchEvent
+    Symbol(Symbol.toStringTag)
+    toString
+    toLocaleString
+    valueOf
+    hasOwnProperty
+    propertyIsEnumerable
+    isPrototypeOf
+    __defineGetter__
+    __defineSetter__
+    __lookupGetter__
+    __lookupSetter__
     __proto__
 -----------------------------------------------------
 

@@ -40,9 +40,4 @@ void BooleanObject::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 }
 
-String BooleanObject::toStringName(const JSObject*, JSGlobalObject*)
-{
-    return "Boolean"_s;
-}
-
 } // namespace JSC

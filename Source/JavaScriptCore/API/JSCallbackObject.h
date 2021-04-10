@@ -199,9 +199,6 @@ private:
     void finishCreation(VM&);
 
     static IsoSubspace* subspaceForImpl(VM&, SubspaceAccess);
-    static String className(const JSObject*, VM&);
-    static String toStringName(const JSObject*, JSGlobalObject*);
-
     static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);

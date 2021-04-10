@@ -52,18 +52,6 @@ void JSProxy::setTarget(VM& vm, JSGlobalObject* globalObject)
     setPrototypeDirect(vm, globalObject->getPrototypeDirect(vm));
 }
 
-String JSProxy::className(const JSObject* object, VM& vm)
-{
-    const JSProxy* thisObject = jsCast<const JSProxy*>(object);
-    return thisObject->target()->methodTable(vm)->className(thisObject->target(), vm);
-}
-
-String JSProxy::toStringName(const JSObject* object, JSGlobalObject* globalObject)
-{
-    const JSProxy* thisObject = jsCast<const JSProxy*>(object);
-    return thisObject->target()->methodTable(globalObject->vm())->toStringName(thisObject->target(), globalObject);
-}
-
 bool JSProxy::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     JSProxy* thisObject = jsCast<JSProxy*>(object);

@@ -216,18 +216,6 @@ void JSCell::getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyName
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-String JSCell::className(const JSObject*, VM&)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return String();
-}
-
-String JSCell::toStringName(const JSObject*, JSGlobalObject*)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return String();
-}
-
 const char* JSCell::className(VM& vm) const
 {
     return classInfo(vm)->className;
