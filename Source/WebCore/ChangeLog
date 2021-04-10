@@ -1,3 +1,36 @@
+2021-04-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS ] 3 webaudio/OfflineAudioContext/ layout-tests are flakey text failures
+        https://bugs.webkit.org/show_bug.cgi?id=224387
+        <rdar://problem/76468058>
+
+        Reviewed by Eric Carlson.
+
+        Replace internals.numberOfBaseAudioContexts() test infrastructure with
+        internals.baseAudioContextIdentifier() & internals.isBaseAudioContextAlive().
+        This allows tests to check if specific BaseAudioContext instances created by the
+        tests are actually alive. As a result, the tests are no longer impacted by tests
+        running before them (and potentially leaking, see Bug 224399) or in parallel to
+        them in the same process.
+
+        This is the same approach we used for leak testing Documents (internals.documentIdentifier()
+        & internals.isDocumentAlive()).
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::generateAudioContextID):
+        (WebCore::liveAudioContexts):
+        (WebCore::BaseAudioContext::BaseAudioContext):
+        (WebCore::BaseAudioContext::~BaseAudioContext):
+        (WebCore::BaseAudioContext::isContextAlive):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::contextID const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::countMatchesForText):
+        (WebCore::Internals::baseAudioContextIdentifier):
+        (WebCore::Internals::isBaseAudioContextAlive):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-04-10  Mark Lam  <mark.lam@apple.com>
 
         Enable VMTraps checks in RETURN_IF_EXCEPTION.

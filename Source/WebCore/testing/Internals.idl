@@ -537,13 +537,16 @@ enum TreeType {
 
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
-    unsigned long numberOfBaseAudioContexts();
     unsigned long referencingNodeCount(Document document);
     [Conditional=INTERSECTION_OBSERVER] unsigned long numberOfIntersectionObservers(Document document);
     [Conditional = RESIZE_OBSERVER] unsigned long numberOfResizeObservers(Document document);
     WindowProxy? openDummyInspectorFrontend(DOMString url);
     undefined closeDummyInspectorFrontend();
     undefined setInspectorIsUnderTest(boolean isUnderTest);
+
+    // BaseAudioContext lifetime testing.
+    [Conditional=WEB_AUDIO] unsigned long long baseAudioContextIdentifier(BaseAudioContext context);
+    [Conditional=WEB_AUDIO] boolean isBaseAudioContextAlive(unsigned long long contextID);
 
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);

@@ -2656,14 +2656,18 @@ unsigned Internals::referencingNodeCount(const Document& document) const
     return document.referencingNodeCount();
 }
 
-unsigned Internals::numberOfBaseAudioContexts() const
-{
 #if ENABLE(WEB_AUDIO)
-    return BaseAudioContext::numberOfInstances();
-#else
-    return 0;
-#endif
+uint64_t Internals::baseAudioContextIdentifier(const BaseAudioContext& context)
+{
+    return context.contextID();
 }
+
+bool Internals::isBaseAudioContextAlive(uint64_t contextID)
+{
+    ASSERT(contextID);
+    return BaseAudioContext::isContextAlive(contextID);
+}
+#endif // ENABLE(WEB_AUDIO)
 
 #if ENABLE(INTERSECTION_OBSERVER)
 unsigned Internals::numberOfIntersectionObservers(const Document& document) const

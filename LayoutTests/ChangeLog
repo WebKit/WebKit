@@ -1,3 +1,24 @@
+2021-04-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS ] 3 webaudio/OfflineAudioContext/ layout-tests are flakey text failures
+        https://bugs.webkit.org/show_bug.cgi?id=224387
+        <rdar://problem/76468058>
+
+        Reviewed by Eric Carlson.
+
+        Update OfflineAudioContext leak tests to use the new test infrastructure. They are no longer impacted
+        by tests running before them or in parallel to them.
+
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-expected.txt:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering.html:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-expected.txt:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended-expected.txt:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended.html:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak.html:
+        * webaudio/resources/audiocontext-leak-test.js: Added.
+        (didGCAtLeastOneContext):
+        (gcAndCheckForContextLeaks):
+
 2021-04-09  Antoine Quint  <graouts@webkit.org>
 
         calc() simplification for a multiplication should apply the multiplication to each value of an addition

@@ -2,26 +2,16 @@
 <html>
 <body>
 <script src="../../resources/js-test.js"></script>
+<script src="../resources/audiocontext-leak-test.js"></script>
 <script>
 description("Makes sure that the OfflineAudioContext objects are not leaking.");
 jsTestIsAsync = true;
 
 const instancesToCreate = 100;
+for (let i = 0; i < instancesToCreate; i++)
+    trackContextForLeaks(new OfflineAudioContext(2, 1, 44100));
 
-function allocateContexts() {
-    let contexts = [];
-    for (let i = 0; i < instancesToCreate; i++)
-        contexts.push(new OfflineAudioContext(2, 1, 44100));
-    shouldBeTrue("internals.numberOfBaseAudioContexts() >= instancesToCreate");
-}
-
-allocateContexts();
-gc();
-setTimeout(() => {
-    gc();
-    shouldBeTrue("internals.numberOfBaseAudioContexts() < instancesToCreate");
-    finishJSTest();
-}, 0);
+gcAndCheckForContextLeaks();
 </script>
 </body>
 </html>

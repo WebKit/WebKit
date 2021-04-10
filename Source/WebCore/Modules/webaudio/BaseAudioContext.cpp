@@ -115,8 +115,21 @@ bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
     return sampleRate >= 3000 && sampleRate <= 384000;
 }
 
-static unsigned numberOfBaseAudioContexts = 0;
-unsigned BaseAudioContext::s_hardwareContextCount = 0;
+unsigned BaseAudioContext::s_hardwareContextCount;
+
+static uint64_t generateAudioContextID()
+{
+    ASSERT(isMainThread());
+    static uint64_t contextIDSeed = 0;
+    return ++contextIDSeed;
+}
+
+static HashSet<uint64_t>& liveAudioContexts()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<HashSet<uint64_t>> contexts;
+    return contexts;
+}
 
 // Constructor for rendering to the audio hardware.
 BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, const AudioContextOptions& contextOptions)
@@ -125,11 +138,12 @@ BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContex
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
+    , m_contextID(generateAudioContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_destinationNode(makeUniqueRef<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
     , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
 {
-    ++numberOfBaseAudioContexts;
+    liveAudioContexts().add(m_contextID);
 
     // According to spec AudioContext must die only after page navigate.
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
@@ -155,20 +169,20 @@ BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContex
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
+    , m_contextID(generateAudioContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_isOfflineContext(true)
     , m_renderTarget(WTFMove(renderTarget))
     , m_destinationNode(makeUniqueRef<OfflineAudioDestinationNode>(*this, numberOfChannels, sampleRate, m_renderTarget.copyRef()))
     , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
 {
-    ++numberOfBaseAudioContexts;
+    liveAudioContexts().add(m_contextID);
     FFTFrame::initialize();
 }
 
 BaseAudioContext::~BaseAudioContext()
 {
-    ASSERT(numberOfBaseAudioContexts);
-    --numberOfBaseAudioContexts;
+    liveAudioContexts().remove(m_contextID);
 #if DEBUG_AUDIONODE_REFERENCES
     fprintf(stderr, "%p: BaseAudioContext::~AudioContext()\n", this);
 #endif
@@ -181,9 +195,9 @@ BaseAudioContext::~BaseAudioContext()
     // FIXME: Can we assert that m_deferredBreakConnectionList is empty?
 }
 
-unsigned BaseAudioContext::numberOfInstances()
+bool BaseAudioContext::isContextAlive(uint64_t contextID)
 {
-    return numberOfBaseAudioContexts;
+    return liveAudioContexts().contains(contextID);
 }
 
 void BaseAudioContext::lazyInitialize()

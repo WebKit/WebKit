@@ -53,6 +53,7 @@ class AnimationTimeline;
 class ArtworkImageLoader;
 class AudioContext;
 class AudioTrack;
+class BaseAudioContext;
 class CacheStorageConnection;
 class DOMPointReadOnly;
 class DOMRect;
@@ -455,7 +456,12 @@ public:
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
     unsigned referencingNodeCount(const Document&) const;
-    unsigned numberOfBaseAudioContexts() const;
+
+#if ENABLE(WEB_AUDIO)
+    // BaseAudioContext lifetime testing.
+    static uint64_t baseAudioContextIdentifier(const BaseAudioContext&);
+    static bool isBaseAudioContextAlive(uint64_t contextID);
+#endif
 
 #if ENABLE(INTERSECTION_OBSERVER)
     unsigned numberOfIntersectionObservers(const Document&) const;

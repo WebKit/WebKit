@@ -108,7 +108,8 @@ public:
     using ThreadSafeRefCounted::deref;
 
     // This is used for lifetime testing.
-    WEBCORE_EXPORT static unsigned numberOfInstances();
+    WEBCORE_EXPORT static bool isContextAlive(uint64_t contextID);
+    uint64_t contextID() const { return m_contextID; }
 
     Document* document() const;
     bool isInitialized() const;
@@ -351,6 +352,8 @@ private:
     uint64_t m_nextAudioNodeIdentifier { 0 };
     uint64_t m_nextAudioParameterIdentifier { 0 };
 #endif
+
+    uint64_t m_contextID;
 
     Ref<AudioWorklet> m_worklet;
 
