@@ -1,5 +1,17 @@
 2021-04-10  Sihui Liu  <sihui_liu@apple.com>
 
+        Unreviewed, reverting r275794, r275784, r275779
+
+        r275779 caused bots to crash and r275794, r275784 didn't fully fix it; reverting the patches to investigate.
+
+        Reverted changeset:
+
+        "Create WebIDBServer only when it is needed"
+        https://bugs.webkit.org/show_bug.cgi?id=224305
+        https://commits.webkit.org/r275779
+
+2021-04-10  Sihui Liu  <sihui_liu@apple.com>
+
         Unreviewed, fix test crashes after r275779
         https://bugs.webkit.org/show_bug.cgi?id=224305
         rdar://71962196

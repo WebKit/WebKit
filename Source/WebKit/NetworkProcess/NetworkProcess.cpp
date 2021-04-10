@@ -391,6 +391,8 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     connection.setOnLineState(NetworkStateNotifier::singleton().onLine());
 
     m_storageManagerSet->addConnection(connection.connection());
+
+    webIDBServer(sessionID).addConnection(connection.connection(), identifier);
 }
 
 void NetworkProcess::clearCachedCredentials(PAL::SessionID sessionID)
@@ -550,6 +552,8 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
 #endif
 
     m_storageManagerSet->remove(sessionID);
+
+    removeWebIDBServerIfPossible(sessionID);
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2326,15 +2330,10 @@ Ref<WebIDBServer> NetworkProcess::createWebIDBServer(PAL::SessionID sessionID)
         path = m_idbDatabasePaths.get(sessionID);
     }
 
-    auto spaceRequester = [this, weakThis = makeWeakPtr(this), sessionID](const auto& origin, uint64_t spaceRequested) {
+    return WebIDBServer::create(sessionID, path, [this, weakThis = makeWeakPtr(this), sessionID](const auto& origin, uint64_t spaceRequested) {
         RefPtr<StorageQuotaManager> storageQuotaManager = weakThis ? this->storageQuotaManager(sessionID, origin) : nullptr;
         return storageQuotaManager ? storageQuotaManager->requestSpaceOnBackgroundThread(spaceRequested) : StorageQuotaManager::Decision::Deny;
-    };
-    auto closeHandler = [weakThis = makeWeakPtr(this), sessionID]() {
-        if (weakThis)
-            weakThis->m_webIDBServers.remove(sessionID);
-    };
-    return WebIDBServer::create(sessionID, path, WTFMove(spaceRequester), WTFMove(closeHandler));
+    });
 }
 
 WebIDBServer& NetworkProcess::webIDBServer(PAL::SessionID sessionID)
@@ -2362,6 +2361,24 @@ void NetworkProcess::setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID ses
     auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID);
     ASSERT(sessionStorageQuotaManager);
     sessionStorageQuotaManager->setIDBRootPath(idbRootPath);
+}
+
+void NetworkProcess::removeWebIDBServerIfPossible(PAL::SessionID sessionID)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto iterator = m_webIDBServers.find(sessionID);
+    if (iterator == m_webIDBServers.end())
+        return;
+
+    if (m_networkSessions.contains(sessionID))
+        return;
+
+    if (iterator->value->hasConnection())
+        return;
+
+    iterator->value->close();
+    m_webIDBServers.remove(iterator);
 }
 
 void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
@@ -2650,8 +2667,10 @@ void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, P
 {
     m_storageManagerSet->removeConnection(connection);
 
-    if (auto* server = m_webIDBServers.get(sessionID))
-        server->removeConnection(connection);
+    auto* webIDBServer = m_webIDBServers.get(sessionID);
+    ASSERT(webIDBServer);
+    webIDBServer->removeConnection(connection);
+    removeWebIDBServerIfPossible(sessionID);
 }
 
 NetworkConnectionToWebProcess* NetworkProcess::webProcessConnection(ProcessIdentifier identifier) const
