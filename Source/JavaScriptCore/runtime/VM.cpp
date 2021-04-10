@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -958,13 +958,44 @@ void VM::clearSourceProviderCaches()
     sourceProviderCacheMap.clear();
 }
 
+bool VM::hasExceptionsAfterHandlingTraps()
+{
+    if (UNLIKELY(traps().needHandling(VMTraps::NonDebuggerAsyncEvents)))
+        m_traps.handleTraps(VMTraps::NonDebuggerAsyncEvents);
+    return exception();
+}
+
+void VM::clearException()
+{
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+    m_needExceptionCheck = false;
+    m_nativeStackTraceOfLastThrow = nullptr;
+    m_throwingThread = nullptr;
+#endif
+    m_exception = nullptr;
+    traps().clearTrapBit(VMTraps::NeedExceptionHandling);
+}
+
+void VM::setException(Exception* exception)
+{
+    m_exception = exception;
+    m_lastException = exception;
+    if (exception)
+        traps().setTrapBit(VMTraps::NeedExceptionHandling);
+}
+
 void VM::throwTerminationException()
 {
+    ASSERT(!m_traps.isDeferringTermination());
     setException(terminationException());
 }
 
 Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exceptionToThrow)
 {
+    // The TerminationException should never be overridden.
+    if (m_exception && isTerminationException(m_exception))
+        return m_exception;
+
     // The TerminationException is not like ordinary exceptions that should be
     // reported to the debugger. The fact that the TerminationException uses the
     // exception handling mechanism is just a VM internal implementation detail.

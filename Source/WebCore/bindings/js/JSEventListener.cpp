@@ -182,18 +182,18 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     JSExecState::instrumentFunction(&scriptExecutionContext, callData);
 
     JSValue thisValue = handleEventFunction == jsFunction ? toJS(lexicalGlobalObject, globalObject, event.currentTarget()) : jsFunction;
-    NakedPtr<JSC::Exception> exception;
-    JSValue retval = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, handleEventFunction, callData, thisValue, args, exception);
+    NakedPtr<JSC::Exception> uncaughtException;
+    JSValue retval = JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, handleEventFunction, callData, thisValue, args, uncaughtException);
 
     InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
     if (jsFunctionWindow)
         jsFunctionWindow->setCurrentEvent(savedEvent.get());
 
-    auto handleExceptionIfNeeded = [&] () -> bool {
+    auto handleExceptionIfNeeded = [&] (JSC::Exception* exception) -> bool {
         if (is<WorkerGlobalScope>(scriptExecutionContext)) {
             auto& scriptController = *downcast<WorkerGlobalScope>(scriptExecutionContext).script();
-            bool terminatorCausedException = (scope.exception() && vm.isTerminationException(scope.exception()));
+            bool terminatorCausedException = (exception && vm.isTerminationException(exception));
             if (terminatorCausedException || scriptController.isTerminatingExecution())
                 scriptController.forbidExecution();
         }
@@ -206,7 +206,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         return false;
     };
 
-    if (handleExceptionIfNeeded())
+    if (handleExceptionIfNeeded(uncaughtException))
         return;
 
     if (!m_isAttribute) {
@@ -221,8 +221,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
         if (is<BeforeUnloadEvent>(event)) {
             String resultStr = convert<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, retval);
             if (UNLIKELY(scope.exception())) {
-                exception = scope.exception();
-                if (handleExceptionIfNeeded())
+                if (handleExceptionIfNeeded(scope.exception()))
                     return;
             }
             handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), resultStr);

@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -265,6 +265,8 @@ const YarrEntryPtrTag = constexpr YarrEntryPtrTag
 const CSSSelectorPtrTag = constexpr CSSSelectorPtrTag
 const NoPtrTag = constexpr NoPtrTag
  
+# VMTraps data
+const VMTrapsAsyncEvents = constexpr VMTraps::AsyncEvents
 
 # Some register conventions.
 # - We use a pair of registers to represent the PC: one register for the
@@ -2193,7 +2195,8 @@ end)
 llintOp(op_check_traps, OpCheckTraps, macro (unused, unused, dispatch)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_vm[t1], t1
-    loadb VM::m_traps+VMTraps::m_needTrapHandling[t1], t0
+    loadi VM::m_traps+VMTraps::m_trapBits[t1], t0
+    andi VMTrapsAsyncEvents, t0
     btpnz t0, .handleTraps
 .afterHandlingTraps:
     dispatch()

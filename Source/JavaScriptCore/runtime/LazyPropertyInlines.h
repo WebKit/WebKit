@@ -97,8 +97,14 @@ ElementType* LazyProperty<OwnerType, ElementType>::callFunc(const Initializer& i
         return nullptr;
     initializer.property.m_pointer |= initializingTag;
     callStatelessLambda<void, Func>(initializer);
+    if (UNLIKELY(initializer.property.m_pointer & initializingTag)) {
+        VM& vm = initializer.vm;
+        Exception* exception = vm.exceptionForInspection();
+        RELEASE_ASSERT(exception && vm.isTerminationException(exception));
+        RELEASE_ASSERT(initializer.property.m_pointer & lazyTag);
+        return nullptr;
+    }
     RELEASE_ASSERT(!(initializer.property.m_pointer & lazyTag));
-    RELEASE_ASSERT(!(initializer.property.m_pointer & initializingTag));
     return bitwise_cast<ElementType*>(initializer.property.m_pointer);
 }
 

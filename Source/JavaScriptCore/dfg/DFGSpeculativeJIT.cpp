@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2222,8 +2222,9 @@ void SpeculativeJIT::compileCheckTraps(Node* node)
     GPRTemporary unused(this);
     GPRReg unusedGPR = unused.gpr();
 
-    JITCompiler::Jump needTrapHandling = m_jit.branchTest8(JITCompiler::NonZero,
-        JITCompiler::AbsoluteAddress(m_jit.vm().needTrapHandlingAddress()));
+    JITCompiler::Jump needTrapHandling = m_jit.branchTest32(JITCompiler::NonZero,
+        JITCompiler::AbsoluteAddress(m_jit.vm().traps().trapBitsAddress()),
+        TrustedImm32(VMTraps::AsyncEvents));
 
     addSlowPathGenerator(slowPathCall(needTrapHandling, this, operationHandleTraps, unusedGPR, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic))));
     noResult(node);

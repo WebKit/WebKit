@@ -801,10 +801,9 @@ failedJSONP:
     if (UNLIKELY(error))
         return checkedReturn(throwException(globalObject, throwScope, error));
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return throwScope.exception();
     }
 
     if (scope->structure(vm)->isUncacheableDictionary())
@@ -868,10 +867,9 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
     if (UNLIKELY(!vm.isSafeToRecurseSoft() || args.size() > maxArguments))
         return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return throwScope.exception();
     }
 
     CodeBlock* newCodeBlock = nullptr;
@@ -947,10 +945,9 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         return nullptr;
     }
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, nullptr);
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return nullptr;
     }
 
     CodeBlock* newCodeBlock = nullptr;
@@ -1062,10 +1059,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
         }
     }
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return throwScope.exception();
     }
 
     auto loadCodeBlock = [&](Exception*& compileError) -> EvalCodeBlock* {
@@ -1220,10 +1216,9 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return throwScope.exception();
     }
 
     if (scope->structure(vm)->isUncacheableDictionary())

@@ -1765,8 +1765,8 @@ JSC_DEFINE_JIT_OPERATION(operationHandleTraps, UnusedPtr, (JSGlobalObject* globa
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    ASSERT(vm.needTrapHandling());
-    vm.handleTraps(globalObject, callFrame);
+    ASSERT(vm.traps().needHandling(VMTraps::AsyncEvents));
+    vm.traps().handleTraps(VMTraps::AsyncEvents);
     return nullptr;
 }
 
@@ -1841,6 +1841,15 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
         return encodeResult(nullptr, nullptr);
     }
     
+    if (UNLIKELY(vm.terminationInProgress())) {
+        // If termination of the current stack of execution is in progress,
+        // then we need to hold off on optimized compiles so that termination
+        // checks will be called, and we can unwind out of the current stack.
+        CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("Terminating current execution"));
+        updateAllPredictionsAndOptimizeAfterWarmUp(codeBlock);
+        return encodeResult(nullptr, nullptr);
+    }
+
     Debugger* debugger = codeBlock->globalObject()->debugger();
     if (UNLIKELY(debugger && (debugger->isStepping() || codeBlock->baselineAlternative()->hasDebuggerRequests()))) {
         CODEBLOCK_LOG_EVENT(codeBlock, "delayOptimizeToDFG", ("debugger is stepping or has requests"));
@@ -3511,7 +3520,7 @@ JSC_DEFINE_JIT_OPERATION(operationProcessShadowChickenLog, void, (VM* vmPointer)
     vm.shadowChicken()->update(vm, callFrame);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCheckIfExceptionIsUncatchableAndNotifyProfiler, int32_t, (VM* vmPointer))
+JSC_DEFINE_JIT_OPERATION(operationRetrieveAndClearExceptionIfCatchable, JSCell*, (VM* vmPointer))
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -3519,11 +3528,17 @@ JSC_DEFINE_JIT_OPERATION(operationCheckIfExceptionIsUncatchableAndNotifyProfiler
     auto scope = DECLARE_THROW_SCOPE(vm);
     RELEASE_ASSERT(!!scope.exception());
 
-    if (vm.isTerminationException(scope.exception())) {
+    Exception* exception = scope.exception();
+    if (vm.isTerminationException(exception)) {
         genericUnwind(vm, callFrame);
-        return 1;
+        return nullptr;
     }
-    return 0;
+
+    // We want to clear the exception here rather than in the catch prologue
+    // JIT code because clearing it also entails clearing a bit in an Atomic
+    // bit field in VMTraps.
+    scope.clearException();
+    return exception;
 }
 
 } // namespace JSC

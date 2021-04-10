@@ -59,6 +59,7 @@
 #include "DatePrototype.h"
 #include "Debugger.h"
 #include "DebuggerScope.h"
+#include "DeferTermination.h"
 #include "DirectArguments.h"
 #include "ErrorConstructor.h"
 #include "ErrorPrototype.h"
@@ -1109,10 +1110,10 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         [] (const Initializer<IntlCollator>& init) {
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
             VM& vm = init.vm;
-            auto scope = DECLARE_CATCH_SCOPE(vm);
+            auto scope = DECLARE_THROW_SCOPE(vm);
             IntlCollator* collator = IntlCollator::create(vm, globalObject->collatorStructure());
             collator->initializeCollator(globalObject, jsUndefined(), jsUndefined());
-            scope.releaseAssertNoException();
+            RETURN_IF_EXCEPTION(scope, void());
             init.set(collator);
         });
 
@@ -2403,6 +2404,7 @@ JSGlobalObject* JSGlobalObject::create(VM& vm, Structure* structure)
 
 void JSGlobalObject::finishCreation(VM& vm)
 {
+    DeferTermination deferTermination(vm);
     Base::finishCreation(vm);
     structure(vm)->setGlobalObject(vm, this);
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);
@@ -2413,6 +2415,7 @@ void JSGlobalObject::finishCreation(VM& vm)
 
 void JSGlobalObject::finishCreation(VM& vm, JSObject* thisValue)
 {
+    DeferTermination deferTermination(vm);
     Base::finishCreation(vm);
     structure(vm)->setGlobalObject(vm, this);
     m_runtimeFlags = m_globalObjectMethodTable->javaScriptRuntimeFlags(this);

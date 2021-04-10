@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -2215,16 +2215,12 @@ commonOp(llint_op_catch, macro() end, macro (size)
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
 
-    callSlowPath(_llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
-    bpeq r1, 0, .isCatchableException
+    callSlowPath(_llint_slow_path_retrieve_and_clear_exception_if_catchable)
+    bpneq r1, 0, .isCatchableException
     jmp _llint_throw_from_slow_path_trampoline
 
 .isCatchableException:
-    loadp CodeBlock[cfr], t3
-    loadp CodeBlock::m_vm[t3], t3
-
-    loadp VM::m_exception[t3], t0
-    storep 0, VM::m_exception[t3]
+    move r1, t0
     get(size, OpCatch, m_exception, t2)
     storei t0, PayloadOffset[cfr, t2, 8]
     storei CellTag, TagOffset[cfr, t2, 8]

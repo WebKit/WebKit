@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,59 +41,145 @@ class JSGlobalObject;
 class VM;
 
 class VMTraps {
-    typedef uint8_t BitField;
 public:
-    enum class Error {
-        None,
-        LockUnavailable,
-        NotJITCode
+    using BitField = uint32_t;
+    static constexpr size_t bitsInBitField = sizeof(BitField) * CHAR_BIT;
+
+    // The following are the type of VMTrap events / signals that can be fired.
+    // This list should be sorted in servicing priority order from highest to
+    // lowest.
+    //
+    // The currently imlemented events are (in highest to lowest priority):
+    //
+    //  NeedShellTimeoutCheck
+    //  - Only used by the jsc shell to check if we need to force a hard shutdown.
+    //  - This event may fire more than once before the jsc shell forces the
+    //    shutdown (see NeedWatchdogCheck's discussion of CPU time for why
+    //    this may be).
+    //
+    //  NeedTermination
+    //  - Used to request the termination of execution of the "current" stack.
+    //    Note: "Termination" here simply means we terminate whatever is currently
+    //    executing on the stack. It does not mean termination of the VM, and hence,
+    //    is not permanent. Permanent VM termination mechanisms (like stopping the
+    //    request to stop a woker thread) may use this Event to terminate the
+    //    "current" stack, but it needs to do some additional work to prevent
+    //    re-entry into the VM.
+    //
+    //  - The mechanism for achieving this stack termination is by throwing the
+    //    uncatchable TerminationException that piggy back on the VM's exception
+    //    handling machinery to the unwind stack. The TerminationException is
+    //    uncatchable in the sense that the VM will refuse to let JS code's
+    //    catch handlers catch the exception. C++ code in the VM (that calls into
+    //    JS) needs to do exception checks, and make sure to propagate the
+    //    exception if it is the TerminationException.
+    //
+    //  - Again, the termination request is not permanent. Once the VM unwinds out
+    //    of the "current" execution state on the stack, the client may choose to
+    //    clear the exception, and re-enter the VM to executing JS code again.
+    //    See NeedWatchdogCheck below on why the VM watchdog needs this ability
+    //    to re-enter the VM after terminating the current stack.
+    //
+    //  - Many clients enter the VM via APIs that return an uncaught exception
+    //    in a NakedPointer<Exception>&. Those APIs would automatically clear
+    //    the uncaught TerminationException and return it via the
+    //    NakedPointer<Exception>&. Hence, the VM is ready for re-entry upon
+    //    returning to the client.
+    //
+    //  - In the above notes, "current" (as in "current" stack) is in quotes because
+    //    NeedTermination needs to guarantee that the TerminationException has
+    //    been thrown in response to this event. If the event fires just before
+    //    the VM exits and the TerminationException was not thrown yet, then we'll
+    //    keep the NeedTermination trap bit set for the next VM entry. In this case,
+    //    the termination will actual happen on the next stack of execution.
+    //
+    //    This behavior is needed because some clients rely on seeing an uncaught
+    //    TerminationException to know that a termination has been requested.
+    //    Technically, there are better ways for the client to know about the
+    //    termination request (after all, the termination is initiated by the
+    //    client). However, this is how some current client code works. So, we need
+    //    to retain this behavior until we can change all the clients that rely on
+    //    it.
+    //
+    //  NeedWatchdogCheck
+    //  - Used to request a check as to whether the watchdog timer has expired.
+    //    Note: the watchdog timeout is logically measured in CPU time. However,
+    //    the real timer implementation (that fires this NeedWatchdogCheck event)
+    //    has to operate on wall clock time. Hence, NeedWatchdogCheck firing does not
+    //    necessarily mean that the watchdog timeout has expired, and we can expect
+    //    to see NeedWatchdogCheck firing more than once for a single watchdog
+    //    timeout.
+    //
+    //  - The watchdog mechanism has the option to request termination of the
+    //    the current execution stack on watchdog timeout (see
+    //    Watchdog::shouldTerminate()). If termination is requested, it will
+    //    be executed via the same mechanism as NeedTermination (see how the
+    //    NeedWatchdogCheck case can fall through to the NeedTermination case in
+    //    VMTraps::handleTraps()).
+    //
+    //  - The watchdog timing out is not permanent i.e. after terminating the
+    //    current stack, the client may choose to re-enter the VM to execute more
+    //    JS. For example, a client may use the watchdog to ensure that an untrusted
+    //    3rd party script (that it runs) does not get trapped in an infinite loop.
+    //    If so, the watchdog timeout can terminate that script. After terminating
+    //    that bad script, the client may choose to allow other 3rd party scripts
+    //    to execute, or even allow more tries on the current one that timed out.
+    //    Hence, the timeout and termination must not be permanent.
+    //
+    //    This is why termination via the NeedTermination event is not permanent,
+    //    but only terminates the "current" stack.
+    //
+    //  NeedDebuggerBreak
+    //  - Services asynchronous debugger break requests.
+    //
+    //  NeedExceptionHandling
+    //  - Unlike the other events (which are asynchronous to the mutator thread),
+    //    NeedExceptionHandling is set when the mutator thread throws a JS exception
+    //    and cleared when the exception is handled / caught.
+    //
+    //  - The reason why NeedExceptionHandling is a bit on VMTraps as well is so
+    //    that we can piggy back on all the RETURN_IF_EXCEPTION checks in C++ code
+    //    to service VMTraps as well. Having the NeedExceptionHandling event as
+    //    part of VMTraps allows RETURN_IF_EXCEPTION to optimally only do a single
+    //    check to determine if the VM possibly has a pending exception to handle,
+    //    as well as if there are asynchronous VMTraps events to handle.
+
+#define FOR_EACH_VMTRAPS_EVENTS(v) \
+    v(NeedShellTimeoutCheck) \
+    v(NeedTermination) \
+    v(NeedWatchdogCheck) \
+    v(NeedDebuggerBreak) \
+    v(NeedExceptionHandling)
+
+#define DECLARE_VMTRAPS_EVENT_BIT_SHIFT(event__)  event__##BitShift,
+    enum EventBitShift {
+        FOR_EACH_VMTRAPS_EVENTS(DECLARE_VMTRAPS_EVENT_BIT_SHIFT)
+        NumberOfEvents, // This entry must be last in this list.
     };
+#undef DECLARE_VMTRAPS_EVENT_BIT_SHIFT
 
-    enum EventType {
-        // Sorted in servicing priority order from highest to lowest.
-        NeedDebuggerBreak,
-        NeedShellTimeoutCheck,
-        NeedTermination,
-        NeedWatchdogCheck,
-        NumberOfEventTypes, // This entry must be last in this list.
-        Invalid
-    };
+    using Event = BitField;
 
-    class Mask {
-    public:
-        enum AllEventTypes { AllEventTypesTag };
-        constexpr Mask(AllEventTypes)
-            : m_mask(std::numeric_limits<BitField>::max())
-        { }
-        static constexpr Mask allEventTypes() { return Mask(AllEventTypesTag); }
+#define DECLARE_VMTRAPS_EVENT(event__) \
+    static_assert(event__##BitShift < bitsInBitField); \
+    static constexpr Event event__ = (1 << event__##BitShift);
+    FOR_EACH_VMTRAPS_EVENTS(DECLARE_VMTRAPS_EVENT)
+#undef DECLARE_VMTRAPS_EVENT
 
-        constexpr Mask(const Mask&) = default;
-        constexpr Mask(Mask&&) = default;
+#undef FOR_EACH_VMTRAPS_EVENTS
 
-        template<typename... Arguments>
-        constexpr Mask(Arguments... args)
-            : m_mask(0)
-        {
-            init(args...);
-        }
+    static constexpr Event NoEvent = 0;
 
-        BitField bits() const { return m_mask; }
+    static_assert(NumberOfEvents <= bitsInBitField);
+    static constexpr BitField AllEvents = (1ull << NumberOfEvents) - 1;
+    static constexpr BitField AsyncEvents = AllEvents & ~NeedExceptionHandling;
+    static constexpr BitField NonDebuggerEvents = AllEvents & ~NeedDebuggerBreak;
+    static constexpr BitField NonDebuggerAsyncEvents = AsyncEvents & ~NeedDebuggerBreak;
 
-    private:
-        template<typename... Arguments>
-        constexpr void init(EventType eventType, Arguments... args)
-        {
-            ASSERT(eventType < NumberOfEventTypes);
-            m_mask |= (1 << eventType);
-            init(args...);
-        }
-
-        constexpr void init() { }
-
-        BitField m_mask;
-    };
-
-    static constexpr Mask interruptingTraps() { return Mask(NeedShellTimeoutCheck, NeedTermination, NeedWatchdogCheck); }
+    static constexpr bool onlyContainsAsyncEvents(BitField events)
+    {
+        return (AsyncEvents & events) && !(~AsyncEvents & events);
+    }
 
     ~VMTraps();
     VMTraps();
@@ -102,42 +188,40 @@ public:
 
     void willDestroyVM();
 
-    bool needTrapHandling() { return m_needTrapHandling; }
-    bool needTrapHandling(Mask mask) { return m_needTrapHandling & mask.bits(); }
-    void* needTrapHandlingAddress() { return &m_needTrapHandling; }
+    bool needHandling(BitField mask) const { return m_trapBits.loadRelaxed() & mask; }
+    void* trapBitsAddress() { return &m_trapBits; }
+
+    bool isDeferringTermination() const { return m_deferTerminationCount; }
+    JS_EXPORT_PRIVATE void deferTermination();
+    JS_EXPORT_PRIVATE void undoDeferTermination();
 
     void notifyGrabAllLocks()
     {
-        if (needTrapHandling())
+        if (needHandling(AsyncEvents))
             invalidateCodeBlocksOnStack();
     }
 
-    JS_EXPORT_PRIVATE void fireTrap(EventType);
+    bool hasTrapBit(Event event, BitField mask)
+    {
+        BitField maskedBits = event & mask;
+        return m_trapBits.loadRelaxed() & maskedBits;
+    }
+    void clearTrapBit(Event event) { m_trapBits.exchangeAnd(~event); }
+    void setTrapBit(Event event)
+    {
+        ASSERT((event & ~AllEvents) == 0);
+        m_trapBits.exchangeOr(event);
+    }
 
-    void handleTraps(JSGlobalObject*, CallFrame*, VMTraps::Mask);
+    JS_EXPORT_PRIVATE void fireTrap(Event);
+    void handleTraps(BitField mask = AsyncEvents);
 
     void tryInstallTrapBreakpoints(struct SignalContext&, StackBounds);
 
 private:
     VM& vm() const;
 
-    bool hasTrapForEvent(Locker<Lock>&, EventType eventType, Mask mask)
-    {
-        ASSERT(eventType < NumberOfEventTypes);
-        return (m_trapsBitField & mask.bits() & (1 << eventType));
-    }
-    void setTrapForEvent(Locker<Lock>&, EventType eventType)
-    {
-        ASSERT(eventType < NumberOfEventTypes);
-        m_trapsBitField |= (1 << eventType);
-    }
-    void clearTrapForEvent(Locker<Lock>&, EventType eventType)
-    {
-        ASSERT(eventType < NumberOfEventTypes);
-        m_trapsBitField &= ~(1 << eventType);
-    }
-
-    EventType takeTopPriorityTrap(Mask);
+    Event takeTopPriorityTrap(BitField mask);
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     class SignalSender;
@@ -154,14 +238,15 @@ private:
     void invalidateCodeBlocksOnStack(CallFrame*) { }
 #endif
 
+    static constexpr BitField NeedExceptionHandlingMask = ~(1 << NeedExceptionHandling);
+
     Box<Lock> m_lock;
     Ref<AutomaticThreadCondition> m_condition;
-    union {
-        BitField m_needTrapHandling { 0 };
-        BitField m_trapsBitField;
-    };
+    Atomic<BitField> m_trapBits { 0 };
     bool m_needToInvalidatedCodeBlocks { false };
     bool m_isShuttingDown { false };
+    bool m_suspendedTerminationException { false };
+    unsigned m_deferTerminationCount { 0 };
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
     RefPtr<SignalSender> m_signalSender;

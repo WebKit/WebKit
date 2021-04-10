@@ -1,3 +1,28 @@
+2021-04-10  Mark Lam  <mark.lam@apple.com>
+
+        Enable VMTraps checks in RETURN_IF_EXCEPTION.
+        https://bugs.webkit.org/show_bug.cgi?id=224078
+        rdar://75037057
+
+        Reviewed by Keith Miller.
+
+        1. Add DeferTermination in WorkerOrWorkletScriptController::initScript().
+           This allows us to avoid having to make all exception checking in
+           WorkerOrWorkletScriptController::initScript() very thorough and complete.
+           Currently, they aren't.
+
+        2. Fix WorkerOrWorkletScriptController::evaluate() to handle the TerminationException.
+
+        3. Fix JSEventListener::handleEvent() to handle the TerminationException correctly.
+           Previously, in one case, it was checking scope.exception() for the exception,
+           but the exception has already been taken out of there.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        * workers/WorkerOrWorkletScriptController.cpp:
+        (WebCore::WorkerOrWorkletScriptController::evaluate):
+        (WebCore::WorkerOrWorkletScriptController::initScript):
+
 2021-04-10  Zalan Bujtas  <zalan@apple.com>
 
         RenderFlexibleBox::m_hasDefiniteHeight should not need to be mutable

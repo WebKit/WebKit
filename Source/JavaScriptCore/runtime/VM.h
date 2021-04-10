@@ -338,6 +338,9 @@ public:
     WeakRandom& random() { return m_random; }
     Integrity::Random& integrityRandom() { return m_integrityRandom; }
 
+    bool terminationInProgress() const { return m_terminationInProgress; }
+    void setTerminationInProgress(bool value) { m_terminationInProgress = value; }
+
     JS_EXPORT_PRIVATE Exception* ensureTerminationException();
     Exception* terminationException() const
     {
@@ -1085,16 +1088,16 @@ public:
 
     VMTraps& traps() { return m_traps; }
 
-    void handleTraps(JSGlobalObject* globalObject, CallFrame* callFrame, VMTraps::Mask mask = VMTraps::Mask::allEventTypes()) { m_traps.handleTraps(globalObject, callFrame, mask); }
-
-    bool needTrapHandling() { return m_traps.needTrapHandling(); }
-    bool needTrapHandling(VMTraps::Mask mask) { return m_traps.needTrapHandling(mask); }
-    void* needTrapHandlingAddress() { return m_traps.needTrapHandlingAddress(); }
+    JS_EXPORT_PRIVATE bool hasExceptionsAfterHandlingTraps();
 
     // These may be called concurrently from another thread.
     void notifyNeedDebuggerBreak() { m_traps.fireTrap(VMTraps::NeedDebuggerBreak); }
     void notifyNeedShellTimeoutCheck() { m_traps.fireTrap(VMTraps::NeedShellTimeoutCheck); }
-    void notifyNeedTermination() { m_traps.fireTrap(VMTraps::NeedTermination); }
+    void notifyNeedTermination()
+    {
+        setTerminationInProgress(true);
+        m_traps.fireTrap(VMTraps::NeedTermination);
+    }
     void notifyNeedWatchdogCheck() { m_traps.fireTrap(VMTraps::NeedWatchdogCheck); }
 
     void promiseRejected(JSPromise*);
@@ -1112,12 +1115,24 @@ public:
     class DeferExceptionScope {
     public:
         DeferExceptionScope(VM& vm)
-            : m_savedException(vm.m_exception, nullptr)
+            : m_vm(vm)
+            , m_exceptionWasSet(vm.m_exception)
+            , m_savedException(vm.m_exception, nullptr)
             , m_savedLastException(vm.m_lastException, nullptr)
         {
+            if (m_exceptionWasSet)
+                m_vm.traps().clearTrapBit(VMTraps::NeedExceptionHandling);
+        }
+
+        ~DeferExceptionScope()
+        {
+            if (m_exceptionWasSet)
+                m_vm.traps().setTrapBit(VMTraps::NeedExceptionHandling);
         }
 
     private:
+        VM& m_vm;
+        bool m_exceptionWasSet;
         SetForScope<Exception*> m_savedException;
         SetForScope<Exception*> m_savedLastException;
     };
@@ -1145,11 +1160,6 @@ private:
         return curr >= stackLimit;
     }
 
-    void setException(Exception* exception)
-    {
-        m_exception = exception;
-        m_lastException = exception;
-    }
     Exception* exception() const
     {
 #if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
@@ -1157,15 +1167,9 @@ private:
 #endif
         return m_exception;
     }
-    void clearException()
-    {
-#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
-        m_needExceptionCheck = false;
-        m_nativeStackTraceOfLastThrow = nullptr;
-        m_throwingThread = nullptr;
-#endif
-        m_exception = nullptr;
-    }
+
+    JS_EXPORT_PRIVATE void clearException();
+    JS_EXPORT_PRIVATE void setException(Exception*);
 
 #if ENABLE(C_LOOP)
     bool ensureStackCapacityForCLoop(Register* newTopOfStack);
@@ -1253,6 +1257,8 @@ private:
 
     WTF::Function<void(VM&)> m_onEachMicrotaskTick;
     uintptr_t m_currentWeakRefVersion { 0 };
+
+    bool m_terminationInProgress { false };
 
     Lock m_loopHintExecutionCountLock;
     HashMap<const Instruction*, std::pair<unsigned, std::unique_ptr<uint64_t>>> m_loopHintExecutionCounts;

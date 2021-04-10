@@ -44,6 +44,7 @@
 #include "WorkerModuleScriptLoader.h"
 #include "WorkerScriptFetcher.h"
 #include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/DeferTermination.h>
 #include <JavaScriptCore/DeferredWorkTimer.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/ExceptionHelpers.h>
@@ -202,11 +203,16 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
     if (isExecutionForbidden())
         return;
 
-    NakedPtr<JSC::Exception> exception;
-    evaluate(sourceCode, exception, returnedExceptionMessage);
-    if (exception) {
-        JSLockHolder lock(vm());
-        reportException(m_globalScopeWrapper.get(), exception);
+    VM& vm = this->vm();
+    NakedPtr<JSC::Exception> uncaughtException;
+    evaluate(sourceCode, uncaughtException, returnedExceptionMessage);
+    if ((uncaughtException && vm.isTerminationException(uncaughtException)) || isTerminatingExecution()) {
+        forbidExecution();
+        return;
+    }
+    if (uncaughtException) {
+        JSLockHolder lock(vm);
+        reportException(m_globalScopeWrapper.get(), uncaughtException);
     }
 }
 
@@ -517,6 +523,9 @@ void WorkerOrWorkletScriptController::initScriptWithSubclass()
 
 void WorkerOrWorkletScriptController::initScript()
 {
+    ASSERT(m_vm.get());
+    JSC::DeferTermination deferTermination(*m_vm.get());
+
     if (is<DedicatedWorkerGlobalScope>(m_globalScope)) {
         initScriptWithSubclass<JSDedicatedWorkerGlobalScopePrototype, JSDedicatedWorkerGlobalScope, DedicatedWorkerGlobalScope>();
         return;

@@ -1,3 +1,309 @@
+2021-04-10  Mark Lam  <mark.lam@apple.com>
+
+        Enable VMTraps checks in RETURN_IF_EXCEPTION.
+        https://bugs.webkit.org/show_bug.cgi?id=224078
+        rdar://75037057
+
+        Reviewed by Keith Miller.
+
+        In pre-existing code, termination of a VM's execution can already be requested
+        asynchronously (with respect to the mutator thread).  For example, sources of such
+        a request can be a watchdog timer firing, or a request to stop execution issued
+        from a main web thread to a worker thread.
+
+        This request is made by firing the VMTraps::NeedTermination event on VMTraps.
+        Firing the event here only means setting a flag to indicate the presence of the
+        request.  We still have to wait till the mutator thread reaches one of the
+        pre-designated polling check points to call VMTraps::handleTraps() in order to
+        service the request.  As a result of this need to wait for a polling check point,
+        if the mutator is executing in a long running C++ loop, then a termination request
+        may not be serviced for a long time.
+
+        However, we observed that a lot of our C++ loops already have RETURN_IF_EXCEPTION
+        checks.  Hence, if we can check VMTraps::needHandling() there, we can service the
+        VMTraps events more frequently even in a lot of C++ loops, and get a better response.
+
+        Full details of what this patch changes:
+
+        1. Shorten some type and methods names in the VMTraps class to make code easier to
+           read e.g. EventType => Event, needTrapHandling => needHandling.
+
+        2. Remove the VMTraps::Mask class.  Mask was introduced so that we can express a
+           concatenation of multiple VMTraps events to form a bit mask in a simple way.
+           In the end, it isn't flexible enough but makes the code more complicated than
+           necessary.  It is now replaced by the simpler solution of using macros to define
+           the Events as bit fields.  Having Events as bit fields intrinsically make them
+           easy to concatenate (bitwise or) or filter (bitwise and).
+
+           Also removed the unused VMTraps::Error class.
+
+        3. Make VMTraps::BitField a uint32_t.  There was always unused padding in VMTraps
+           to allow for this.  So, we'll just extend it to a full 32-bit to make it easier
+           to add more events in the future for other uses.
+
+        4. Add NeedExceptionHandling as a VMTrap::Event.
+
+        5. Make VMTraps::m_trapBits Atomic.  This makes it easier to set and clear the
+           NeedExceptionHandling bit from the mutator without a lock.
+
+        6. RETURN_IF_EXCEPTION now checks VMTraps::m_trapBits (via VMTraps::needHandling())
+           instead of checking VM::m_exception.  If the VMTraps::m_trapBits is non-null,
+           the macro will call VM:hasExceptionsAfterHandlingTraps() to service VMTraps
+           events as appropriate before returning whether an exception is being thrown.
+           The result of VM:hasExceptionsAfterHandlingTraps() will determine if
+           RETURN_IF_EXCEPTION returns or not.
+
+           VM:hasExceptionsAfterHandlingTraps() is intentionally designed to take a minimum
+           of arguments (just the VM as this pointer).  This is because RETURN_IF_EXCEPTION
+           is called from many places, and we would like to minimize code size bloating
+           from this change.
+
+        7. Simplify paramaters of VMTraps::handleTraps().
+
+           NeedDebuggerBreak's callFrame argument was always vm.topCallFrame anyway.
+           So, the patch makes it explicit, and removes the callFrame parameter.
+
+           NeedWatchdogCheck's globalObject argument should have always been
+           vm.entryScope->globalObject(), and we can remove the globalObject parameter.
+
+           Before this, we pass in whichever globalObject was convenient to grab hold of.
+           However, the idea of the watchdog is to time out the current script executing
+           on the stack.  Hence, it makes sense to identify thay script by the globalObject
+           in use at VM entry.
+
+           So far, the only clients that uses the watchdog mechanism only operates in
+           scenarios with only one globalObject anyway.  So this formalization to use
+           VMEntryScope's globalObject does not change the expected behavior.
+
+        8. Make the execution of termination more robust.  Before reading this, please
+           read the description of the Events in VMTraps.h first, especially the section
+           on NeedTermination.
+
+           Here's the life cycle of a termination:
+
+           a. a client requests termination of the current execution stack by calling
+              VM::notifyNeedTermination().  notifyNeedTermination() does 2 things:
+
+               i. fire the NeedTermination event on VMTraps.
+              ii. set the VM::m_terminationInProgress flag.
+
+           b. Firing the NeedTermination event on VMTraps means setting the NeedTermination
+              bit on VMTraps::m_trapBits.  This bit will be polled by the mutator thread
+              later at various designated points (including RETURN_IF_EXCEPTION, which we
+              added in this patch).
+
+              Once the mutator sees the NeedTermination bit is set, it will clear the bit
+              and throw the TerminationException (see VMTraps::handleTraps()).  This is
+              unless the mutator thread is currently in a DeferTermination scope (see (8)
+              below).  If in a DeferTermination scope, then it will not throw the
+              TerminationException.
+
+              Since the NeedTermination bit is cleared, the VM will no longer call
+              VMTraps::handleTraps() to service the event.  If the mutator thread is in
+              a DeferTermination scope, then on exiting the scope (at scope destruction),
+              the scope will see that VM::m_terminationInProgress is set, and throw the
+              deferred TerminationException then.
+
+           c. The TerminationException will trigger unwinding out of the current stack
+              until we get to the outermost VMEntryScope.
+
+           d. At the the outermost VMEntryScope, we will clear VM::m_terminationInProgress
+              if the NeedTermination bit in VMtraps::m_trapBits is cleared.
+
+              If the NeedTermination bit is set, then that means we haven't thrown the
+              TerminationException yet.  Currently, clients expect that we must throw the
+              TerminationException if NeedTermination was requested (again, read comments
+              at the top of VMTraps.h).
+
+              If the NeedTermination bit is set, we'll leave VM::m_terminationInProgress
+              set until the next time we re-enter the VM and exit to the outermost
+              VMEntryScope.
+
+           e. The purpose of VM::m_terminationInProgress is to provide a summary of the
+              fact that the VM is in a state of trying to terminate the current stack.
+
+              Note that this state is first indicated by the NeedTermination bit being set
+              in VMTraps::m_trapBits.  Then, in VMTraps::handleTraps(), the state is
+              handed of with the NeedTermination bit being cleared, and the
+              TerminationException being thrown.
+
+              While the VM is in this termination state, we need to prevent new DFG/FTL
+              JIT code from being compiled and run.  The reason is the firing of the
+              NeedTermination event has invalidated DFG/FTL code on the stack, thereby
+              allowing their baseline / LLInt versions which have VMTraps polling checks
+              to run.  We don't want to compile new DFG / FTL code and possibly get stuck
+              in loops in there before the termination is complete.
+
+              In operationOptimize(), we check if VM::m_terminationInProgress is set, and
+              prevent new DFG (and therefore FTL) code from being compiled if needed.
+              Note: it is easier to check a single flag, VM::m_terminationInProgress,
+              then to check both if the NeedTermination bit is set or if the
+              TerminationException is being being thrown.
+
+        9. One complication of being able to service VMTraps in RETURN_IF_EXCEPTION checks
+           is that some of our code (usually for lengthier initializations and bootstrapping)
+           currently does not handle exceptions well, e.g. JSGlobalObject::init().  They
+           rely on the code crashing if an exception is thrown while still initializing.
+
+           However, for a worker thread, a TerminationException (requested by the main
+           thread) may arrive before the initialization is complete.  This can lead to
+           crashes because part of the initialization may be aborted in the presence of
+           an exception, while other parts still expect everything prior to have been
+           initialized correctly.  For resource exhaustion cases (which is abnormal), it
+           is OK to crash.  For the TerminationException (which can be part of normal
+           operation), we should not be crashing.
+
+           To work around this, we introduce a DeferTermination RAII scope object that we
+           deploy in this type of initialization code.  With the scope in effect,
+
+           a. if a TerminationException arrives but hasn't been thrown yet, it will be
+              deferred till the scope ends before being thrown.
+           b. if a TerminationException has already been thrown, the scope will stash
+              the exception, clear it from the VM so that the initialization code can
+              run to completion, and then re-throw the exception when the scope ends.
+
+           Currently, we only need to use the DeferTermination scope in a few places
+           where we know that initialization code will only run for a short period of time.
+
+           DeferTermination should not be used for code that can block waiting on an
+           external event for a long time.  Obviously, doing so will prevent the VM
+           termination mechanism from working.
+
+       10. Replaced llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler
+           and operationCheckIfExceptionIsUncatchableAndNotifyProfiler with
+           llint_slow_path_retrieve_and_clear_exception_if_catchable and
+           operationRetrieveAndClearExceptionIfCatchable.
+
+           The 2 runtime functions doesn't actually do anything to notify a profiler.
+           So, we drop that part of the name.
+
+           After returning from these runtime functions respectively, the previous LLInt
+           and JIT code, which calls these runtimes functions, would go on to load
+           VM::m_exception, and then store a nullptr there to clear it.  This is wasteful.
+
+           This patch changes the runtime function to clear and return the Exception
+           instead.  As a result, the calling LLInt and JIT code is simplified a bit.
+
+           Note also that clearing an exception now also entails clearing the
+           NeedExceptionHandling bit in VMTraps::m_trapBits in an atomic way.  The above
+           change makes it easy to do this clearing with C++ code.
+
+       11. Fix ScriptFunctionCall::call() to handle exceptions correctly.  Previously,
+           it had one case where it propagates an exception, while another eats it.
+           Change this function to eat the exception in both cases.  This is approproiate
+           because ScriptFunctionCall is only used to execute some Inspector instrumentation
+           calls.  It doesn't make sense to propagate the exception back to user code.
+
+       12. Fix the lazy initialization of JSGlobalObject::m_defaultCollator to be able to
+           handle the TerminationException.
+
+       13. Not related to TerminationException, but this patch also fixes
+           MarkedArgumentBuffer::expandCapacity() to use Gigacage::tryMalloc() instead of
+           Gigacage::malloc().  This is needed as one of the fixes to make the
+           accompanying test case work.
+
+        This patch increases code size by 320K (144K for JSC, 176K for WebCore) measured
+        on x86_64.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchTest32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchTest32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchTest32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckTraps):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckTraps):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::execute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_check_traps):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::expandCapacity):
+        * runtime/DeferTermination.h: Added.
+        (JSC::DeferTermination::DeferTermination):
+        (JSC::DeferTermination::~DeferTermination):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::exception const):
+        (JSC::ExceptionScope::exception): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/LazyPropertyInlines.h:
+        (JSC::ElementType>::callFunc):
+        * runtime/StringPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/VM.cpp:
+        (JSC::VM::hasExceptionsAfterHandlingTraps):
+        (JSC::VM::clearException):
+        (JSC::VM::setException):
+        (JSC::VM::throwTerminationException):
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::terminationInProgress const):
+        (JSC::VM::setTerminationInProgress):
+        (JSC::VM::notifyNeedTermination):
+        (JSC::VM::DeferExceptionScope::DeferExceptionScope):
+        (JSC::VM::DeferExceptionScope::~DeferExceptionScope):
+        (JSC::VM::handleTraps): Deleted.
+        (JSC::VM::needTrapHandling): Deleted.
+        (JSC::VM::needTrapHandlingAddress): Deleted.
+        (JSC::VM::setException): Deleted.
+        (JSC::VM::clearException): Deleted.
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::~VMEntryScope):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        (JSC::VMTraps::fireTrap):
+        (JSC::VMTraps::handleTraps):
+        (JSC::VMTraps::takeTopPriorityTrap):
+        (JSC::VMTraps::deferTermination):
+        (JSC::VMTraps::undoDeferTermination):
+        * runtime/VMTraps.h:
+        (JSC::VMTraps::onlyContainsAsyncEvents):
+        (JSC::VMTraps::needHandling const):
+        (JSC::VMTraps::trapBitsAddress):
+        (JSC::VMTraps::isDeferringTermination const):
+        (JSC::VMTraps::notifyGrabAllLocks):
+        (JSC::VMTraps::hasTrapBit):
+        (JSC::VMTraps::clearTrapBit):
+        (JSC::VMTraps::setTrapBit):
+        (JSC::VMTraps::Mask::Mask): Deleted.
+        (JSC::VMTraps::Mask::allEventTypes): Deleted.
+        (JSC::VMTraps::Mask::bits const): Deleted.
+        (JSC::VMTraps::Mask::init): Deleted.
+        (JSC::VMTraps::interruptingTraps): Deleted.
+        (JSC::VMTraps::needTrapHandling): Deleted.
+        (JSC::VMTraps::needTrapHandlingAddress): Deleted.
+        (JSC::VMTraps::hasTrapForEvent): Deleted.
+        (JSC::VMTraps::setTrapForEvent): Deleted.
+        (JSC::VMTraps::clearTrapForEvent): Deleted.
+
 2021-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove className() and toStringName() from the method table

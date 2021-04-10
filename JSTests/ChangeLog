@@ -1,3 +1,13 @@
+2021-04-10  Mark Lam  <mark.lam@apple.com>
+
+        Enable VMTraps checks in RETURN_IF_EXCEPTION.
+        https://bugs.webkit.org/show_bug.cgi?id=224078
+        rdar://75037057
+
+        Reviewed by Keith Miller.
+
+        * stress/watchdog-fire-while-in-forEachInIterable.js: Added.
+
 2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DUCET level-1 weighs are equal if characters are alphabets

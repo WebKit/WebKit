@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2939,6 +2939,13 @@ public:
     Jump branchTest32(ResultCondition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         load32(address, getCachedMemoryTempRegisterIDAndInvalidate());
+        return branchTest32(cond, memoryTempRegister, mask);
+    }
+
+    Jump branchTest32(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        move(TrustedImmPtr(address.m_ptr), getCachedMemoryTempRegisterIDAndInvalidate());
+        load32(Address(memoryTempRegister), memoryTempRegister);
         return branchTest32(cond, memoryTempRegister, mask);
     }
 

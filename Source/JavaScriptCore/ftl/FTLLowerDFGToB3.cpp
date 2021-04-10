@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13400,8 +13400,8 @@ private:
         LBasicBlock needTrapHandling = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
         
-        LValue state = m_out.load8ZeroExt32(m_out.absolute(vm().needTrapHandlingAddress()));
-        m_out.branch(m_out.isZero32(state),
+        LValue trapBits = m_out.load32(m_out.absolute(vm().traps().trapBitsAddress()));
+        m_out.branch(m_out.testIsZero32(trapBits, m_out.constInt32(VMTraps::AsyncEvents)),
             usually(continuation), rarely(needTrapHandling));
 
         LBasicBlock lastNext = m_out.appendTo(needTrapHandling, continuation);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1686,6 +1686,14 @@ public:
     {
         // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
         load32(address, addressTempRegister);
+        return branchTest32(cond, addressTempRegister, mask);
+    }
+
+    Jump branchTest32(ResultCondition cond, AbsoluteAddress address, TrustedImm32 mask = TrustedImm32(-1))
+    {
+        // use addressTempRegister incase the branchTest32 we call uses dataTempRegister. :-/
+        move(TrustedImmPtr(address.m_ptr), addressTempRegister);
+        load32(Address(addressTempRegister), addressTempRegister);
         return branchTest32(cond, addressTempRegister, mask);
     }
 
