@@ -1,5 +1,21 @@
 2021-04-10  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r275668) Potential null pointer deref in AudioParam::exponentialRampToValueAtTime(float, double)
+        https://bugs.webkit.org/show_bug.cgi?id=224400
+        <rdar://76450376>
+
+        Reviewed by Ryosuke Niwa.
+
+        In r275668, I added null-checks for the AudioContext in AudioParam, now that it holds a WeakPtr to its
+        context. However, I missed a null-check in AudioParam::exponentialRampToValueAtTime(). This patch adds
+        the missing check.
+
+        Test: webaudio/AudioParam/audioparam-exponentialRampToValueAtTime-nocontext-crash.html
+
+        * Modules/webaudio/AudioParam.cpp:
+
+2021-04-10  Chris Dumez  <cdumez@apple.com>
+
         [ macOS ] 3 webaudio/OfflineAudioContext/ layout-tests are flakey text failures
         https://bugs.webkit.org/show_bug.cgi?id=224387
         <rdar://problem/76468058>

@@ -182,6 +182,9 @@ ExceptionOr<AudioParam&> AudioParam::linearRampToValueAtTime(float value, double
 
 ExceptionOr<AudioParam&> AudioParam::exponentialRampToValueAtTime(float value, double endTime)
 {
+    if (!context())
+        return *this;
+
     if (!value)
         return Exception { RangeError, "value cannot be 0"_s };
     if (endTime < 0)
