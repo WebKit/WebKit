@@ -1,3 +1,13 @@
+2021-04-10  Sihui Liu  <sihui_liu@apple.com>
+
+        Unreviewed, fix test crashes after r275779
+        https://bugs.webkit.org/show_bug.cgi?id=224305
+        rdar://71962196
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::WebIDBServer): rolling back change on setting thread name as we see crash in 
+        pthread_setname_np.
+
 2021-04-09  Simon Fraser  <simon.fraser@apple.com>
 
         [iOS WK2] CADisplayLink in the web process is used unintentionally

@@ -40,7 +40,7 @@ Ref<WebIDBServer> WebIDBServer::create(PAL::SessionID sessionID, const String& d
 }
 
 WebIDBServer::WebIDBServer(PAL::SessionID sessionID, const String& directory, WebCore::IDBServer::IDBServer::StorageQuotaManagerSpaceRequester&& spaceRequester, CompletionHandler<void()>&& callback)
-    : CrossThreadTaskHandler(makeString("com.apple.WebKit.IndexedDBServer.", sessionID.toUInt64()).ascii().data(), WTF::CrossThreadTaskHandler::AutodrainedPoolForRunLoop::Use)
+    : CrossThreadTaskHandler("com.apple.WebKit.IndexedDBServer", WTF::CrossThreadTaskHandler::AutodrainedPoolForRunLoop::Use)
     , m_dataTaskCounter([weakThis = makeWeakPtr(this)](RefCounterEvent) {
         if (weakThis)
             weakThis->tryClose();
