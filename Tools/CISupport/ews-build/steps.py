@@ -1595,6 +1595,10 @@ class CompileWebKit(shell.Compile):
     def getResultSummary(self):
         if self.results == FAILURE:
             return {'step': 'Failed to compile WebKit'}
+        if self.results == SKIPPED:
+            if self.getProperty('fast_commit_queue'):
+                return {'step': 'Skipped compiling WebKit in fast-cq mode'}
+            return {'step': 'Skipped compiling WebKit'}
         return shell.Compile.getResultSummary(self)
 
 

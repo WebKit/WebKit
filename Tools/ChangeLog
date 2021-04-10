@@ -1,3 +1,14 @@
+2021-04-10  Aakash Jain  <aakash_jain@apple.com>
+
+        Improve step description when compile-webkit step is skipped
+        https://bugs.webkit.org/show_bug.cgi?id=224373
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (CompileWebKit.getResultSummary): Set custom summary when this step is skipped.
+        * CISupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2021-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r271660): Tap highlight no longer shows when tapping clickable elements without touch event listeners

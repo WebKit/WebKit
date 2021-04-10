@@ -1121,7 +1121,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
         self.setProperty('configuration', 'debug')
         self.setProperty('fast_commit_queue', True)
-        self.expectOutcome(result=SKIPPED, state_string='Compiled WebKit (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped compiling WebKit in fast-cq mode')
         return self.runStep()
 
 
@@ -1169,7 +1169,7 @@ class TestCompileWebKitWithoutPatch(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'ios-simulator-11')
         self.setProperty('configuration', 'release')
         self.expectHidden(True)
-        self.expectOutcome(result=SKIPPED, state_string='Compiled WebKit (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped compiling WebKit')
         return self.runStep()
 
 
