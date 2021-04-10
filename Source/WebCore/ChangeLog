@@ -1,3 +1,27 @@
+2021-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        scrollingTreeNodeDidScroll() should just trigger a rendering udpate
+        https://bugs.webkit.org/show_bug.cgi?id=224394
+
+        Reviewed by Tim Horton.
+
+        After handling wheel events on the scrolling thread,
+        ThreadedScrollingTree::scrollingTreeNodeDidScroll() appends to a queue of pending updates
+        and then triggers applyPendingScrollUpdates() on the main thread to process those updates.
+        However, every rendering update also processes pending scroll updates via
+        synchronizeStateFromScrollingTree(), so it's simpler if we just trigger a rendering update.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::scrollingThreadAddedPendingUpdate):
+        (WebCore::AsyncScrollingCoordinator::scheduleRenderingUpdate):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::scrollingTreeNodeDidScroll):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::scheduleTreeStateCommit):
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+        (WebCore::ScrollingCoordinatorNicosia::scheduleTreeStateCommit):
+
 2021-04-09  Jean-Yves Avenard  <jya@apple.com>
 
         Media Session action should default to the MediaElement's default when no MediaSession handler are set

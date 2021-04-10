@@ -89,6 +89,7 @@ void ScrollingCoordinatorNicosia::wheelEventWasProcessedByMainThread(const Platf
 
 void ScrollingCoordinatorNicosia::scheduleTreeStateCommit()
 {
+    // FIXME: This should probably just call scheduleRenderingUpdate().
     if (!m_scrollingStateTreeCommitterTimer.isActive())
         m_scrollingStateTreeCommitterTimer.startOneShot(0_s);
 }

@@ -69,6 +69,11 @@ void AsyncScrollingCoordinator::scrollingStateTreePropertiesChanged()
     scheduleTreeStateCommit();
 }
 
+void AsyncScrollingCoordinator::scrollingThreadAddedPendingUpdate()
+{
+    scheduleRenderingUpdate();
+}
+
 #if PLATFORM(COCOA)
 void AsyncScrollingCoordinator::handleWheelEventPhase(ScrollingNodeID nodeID, PlatformWheelEventPhase phase)
 {
@@ -303,6 +308,11 @@ void AsyncScrollingCoordinator::applyPendingScrollUpdates()
         LOG_WITH_STREAM(Scrolling, stream << "AsyncScrollingCoordinator::applyPendingScrollUpdates - node " << update.nodeID << " scroll position " << update.scrollPosition);
         updateScrollPositionAfterAsyncScroll(update.nodeID, update.scrollPosition, update.layoutViewportOrigin, ScrollType::User, update.updateLayerPositionAction);
     }
+}
+
+void AsyncScrollingCoordinator::scheduleRenderingUpdate()
+{
+    m_page->scheduleRenderingUpdate(RenderingUpdateStep::ScrollingTreeUpdate);
 }
 
 FrameView* AsyncScrollingCoordinator::frameViewForScrollingNode(ScrollingNodeID scrollingNodeID) const
