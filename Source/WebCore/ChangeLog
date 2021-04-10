@@ -1,3 +1,27 @@
+2021-04-10  Zalan Bujtas  <zalan@apple.com>
+
+        RenderFlexibleBox::m_hasDefiniteHeight should not need to be mutable
+        https://bugs.webkit.org/show_bug.cgi?id=224404
+
+        Reviewed by Antti Koivisto.
+
+        Let's just fix constness instead.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::childIntrinsicLogicalWidth):
+        (WebCore::RenderFlexibleBox::crossAxisIntrinsicExtentForChild):
+        (WebCore::RenderFlexibleBox::useChildAspectRatio):
+        (WebCore::RenderFlexibleBox::childMainSizeIsDefinite):
+        (WebCore::RenderFlexibleBox::childCrossSizeIsDefinite):
+        (WebCore::RenderFlexibleBox::childHasIntrinsicMainAxisSize):
+        (WebCore::RenderFlexibleBox::childIntrinsicLogicalWidth const): Deleted.
+        (WebCore::RenderFlexibleBox::crossAxisIntrinsicExtentForChild const): Deleted.
+        (WebCore::RenderFlexibleBox::useChildAspectRatio const): Deleted.
+        (WebCore::RenderFlexibleBox::childMainSizeIsDefinite const): Deleted.
+        (WebCore::RenderFlexibleBox::childCrossSizeIsDefinite const): Deleted.
+        (WebCore::RenderFlexibleBox::childHasIntrinsicMainAxisSize const): Deleted.
+        * rendering/RenderFlexibleBox.h:
+
 2021-04-09  Antoine Quint  <graouts@webkit.org>
 
         calc() simplification for a multiplication should apply the multiplication to each value of an addition
