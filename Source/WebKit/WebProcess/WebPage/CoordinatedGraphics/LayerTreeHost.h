@@ -213,7 +213,7 @@ inline void LayerTreeHost::setRootCompositingLayer(WebCore::GraphicsLayer*) { }
 inline void LayerTreeHost::setViewOverlayRootLayer(WebCore::GraphicsLayer*) { }
 inline void LayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect&) { }
 inline void LayerTreeHost::forceRepaint() { }
-inline bool LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&) { return false; }
+inline void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&&) { }
 inline void LayerTreeHost::sizeDidChange(const WebCore::IntSize&) { }
 inline void LayerTreeHost::pauseRendering() { }
 inline void LayerTreeHost::resumeRendering() { }
