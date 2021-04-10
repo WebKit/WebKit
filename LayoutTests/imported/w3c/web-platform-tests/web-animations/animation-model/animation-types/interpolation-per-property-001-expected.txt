@@ -201,7 +201,7 @@ FAIL flex-basis supports animating as combination units "px" and "%" assert_equa
 FAIL flex-basis supports animating as combination units "%" and "em" assert_equals: The value should be calc(5% + 10px) at 500ms expected "calc(5% + 10px)" but got "20px"
 PASS flex-basis supports animating as combination units "em" and "rem"
 FAIL flex-basis supports animating as combination units "px" and "calc" assert_equals: The value should be calc(10% + 10px) at 500ms expected "calc(10% + 10px)" but got "calc(20% + 10px)"
-FAIL flex-basis supports animating as a calc assert_equals: The value should be calc(15% + 15px) at 500ms expected "calc(15% + 15px)" but got "calc((0.5 * (10% + 10px)) + (0.5 * (20% + 20px)))"
+PASS flex-basis supports animating as a calc
 PASS flex-basis (type: discrete) has testInterpolation function
 PASS flex-basis uses discrete animation when animating between "auto" and "10px" with linear easing
 PASS flex-basis uses discrete animation when animating between "auto" and "10px" with effect easing
