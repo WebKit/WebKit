@@ -119,8 +119,8 @@ namespace {
 std::atomic<int> compileCounter;
 
 #if ASSERT_ENABLED
-NO_RETURN_DUE_TO_CRASH static void ftlUnreachable(
-    CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex)
+static NO_RETURN_DUE_TO_CRASH JSC_DECLARE_JIT_OPERATION(ftlUnreachable, void, (CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex));
+JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES(ftlUnreachable, NO_RETURN_DUE_TO_CRASH, void, (CodeBlock* codeBlock, BlockIndex blockIndex, unsigned nodeIndex))
 {
     dataLog("Crashing in thought-to-be-unreachable FTL-generated code for ", pointerDump(codeBlock), " at basic block #", blockIndex);
     if (nodeIndex != UINT_MAX)
@@ -19907,7 +19907,7 @@ private:
 #else // ASSERT_ENABLED
         m_out.call(
             Void,
-            m_out.constIntPtr(ftlUnreachable),
+            m_out.operation(ftlUnreachable),
             // We don't want the CodeBlock to have a weak pointer to itself because
             // that would cause it to always get collected.
             m_out.constIntPtr(bitwise_cast<intptr_t>(codeBlock())), m_out.constInt32(blockIndex),

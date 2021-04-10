@@ -290,6 +290,8 @@ void populateWithInterestingValues(Vector<B3Operand<FloatType>>& operands)
     operands.append({ "-0.6", static_cast<FloatType>(-0.6) });
     operands.append({ "1.", static_cast<FloatType>(1.) });
     operands.append({ "-1.", static_cast<FloatType>(-1.) });
+    operands.append({ "1.1", static_cast<FloatType>(1.1) });
+    operands.append({ "-1.1", static_cast<FloatType>(-1.1) });
     operands.append({ "2.", static_cast<FloatType>(2.) });
     operands.append({ "-2.", static_cast<FloatType>(-2.) });
     operands.append({ "M_PI", static_cast<FloatType>(M_PI) });
@@ -614,7 +616,9 @@ void testConvertDoubleToFloatMem(double value);
 void testConvertFloatToDoubleArg(float value);
 void testConvertFloatToDoubleImm(float value);
 void testConvertFloatToDoubleMem(float value);
+void testConvertDoubleToFloatToDouble(double value);
 void testConvertDoubleToFloatToDoubleToFloat(double value);
+void testConvertDoubleToFloatEqual(double value);
 void testLoadFloatConvertDoubleConvertFloatStoreFloat(float value);
 void testFroundArg(double value);
 void testFroundMem(double value);

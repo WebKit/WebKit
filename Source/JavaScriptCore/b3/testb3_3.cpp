@@ -2438,6 +2438,18 @@ void testConvertFloatToDoubleMem(float value)
     CHECK(isIdentical(compileAndRun<double>(proc, &value), static_cast<double>(value)));
 }
 
+void testConvertDoubleToFloatToDouble(double value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* asFloat = root->appendNew<Value>(proc, DoubleToFloat, Origin(), argument);
+    Value* asDouble = root->appendNew<Value>(proc, FloatToDouble, Origin(), asFloat);
+    root->appendNewControlValue(proc, Return, Origin(), asDouble);
+
+    CHECK(isIdentical(compileAndRun<double>(proc, value), static_cast<double>(static_cast<float>(value))));
+}
+
 void testConvertDoubleToFloatToDoubleToFloat(double value)
 {
     Procedure proc;
@@ -2449,6 +2461,20 @@ void testConvertDoubleToFloatToDoubleToFloat(double value)
     root->appendNewControlValue(proc, Return, Origin(), asFloatAgain);
 
     CHECK(isIdentical(compileAndRun<float>(proc, value), static_cast<float>(value)));
+}
+
+void testConvertDoubleToFloatEqual(double value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    Value* argument = root->appendNew<ArgumentRegValue>(proc, Origin(), FPRInfo::argumentFPR0);
+    Value* asFloat = root->appendNew<Value>(proc, DoubleToFloat, Origin(), argument);
+    Value* asDouble = root->appendNew<Value>(proc, FloatToDouble, Origin(), asFloat);
+    Value* constant = root->appendNew<ConstDoubleValue>(proc, Origin(), value);
+    Value* argsAreEqual = root->appendNew<Value>(proc, Equal, Origin(), asDouble, constant);
+    root->appendNewControlValue(proc, Return, Origin(), argsAreEqual);
+
+    CHECK(compileAndRun<bool>(proc, value) == (static_cast<double>(static_cast<float>(value)) == value));
 }
 
 void testLoadFloatConvertDoubleConvertFloatStoreFloat(float value)

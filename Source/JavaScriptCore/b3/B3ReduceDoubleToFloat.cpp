@@ -213,8 +213,20 @@ private:
         if (value->opcode() == FloatToDouble)
             return true;
 
-        if (value->hasDouble())
-            return true; // Double constant truncated to float.
+        if (value->hasDouble()) {
+            // When comparing double and float, some range of double values will be truncated into one float.
+            // So we need to ensure that this double value is one-on-one representation to the original double.
+            // Let's consider the case,
+            //
+            //     Equal(Double: 1.1, FloatToDouble(Float: 1.1))
+            //
+            // This should be false. This is because
+            //
+            //     static_cast<double>(static_cast<float>(1.1)) != 1.1
+            //
+            double constValue = value->asDouble();
+            return isIdentical(static_cast<double>(static_cast<float>(constValue)), constValue);
+        }
 
         if (value->opcode() == Phi) {
             return value->type() == Float

@@ -1687,6 +1687,10 @@ private:
             break;
 
         case FloatToDouble:
+            // We cannot convert some FloatToDouble(DoubleToFloat(value)) to value, because double-to-float will trancate some range of double values into one float.
+            // Example:
+            //     static_cast<double>(static_cast<float>(1.1)) != 1.1
+
             // Turn this: FloatToDouble(constant)
             // Into this: ConstDouble(constant)
             if (Value* constant = m_value->child(0)->floatToDoubleConstant(m_proc)) {

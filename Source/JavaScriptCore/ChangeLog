@@ -1,3 +1,37 @@
+2021-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] B3 reduce-double-to-float should reduce only when constant double is canonical one to reduced float value
+        https://bugs.webkit.org/show_bug.cgi?id=224403
+        <rdar://problem/76259599>
+
+        Reviewed by Mark Lam.
+
+        When reducing double-constant value to float in B3, we should check whether the double value is a canonical one
+        which can be converted back from the reduced float value. For example, double 1.1 is not the one since it is truncated
+        into float 1.1 by removing some bits.
+
+            static_cast<double>(static_cast<float>(1.1)) != 1.1
+
+        Reducing such a double to float changes the semantics.
+
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::dumpMeta const):
+        * b3/B3ConstFloatValue.cpp:
+        (JSC::B3::ConstFloatValue::dumpMeta const):
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.h:
+        (populateWithInterestingValues):
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_3.cpp:
+        (testConvertDoubleToFloatToDouble):
+        (testConvertDoubleToFloatEqual):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES):
+        (JSC::FTL::DFG::LowerDFGToB3::crash):
+        (JSC::FTL::DFG::ftlUnreachable): Deleted.
+
 2021-04-10  Mark Lam  <mark.lam@apple.com>
 
         Enable VMTraps checks in RETURN_IF_EXCEPTION.
