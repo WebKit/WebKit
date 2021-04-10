@@ -1,3 +1,24 @@
+2021-04-09  Simon Fraser  <simon.fraser@apple.com>
+
+        [iOS WK2] CADisplayLink in the web process is used unintentionally
+        https://bugs.webkit.org/show_bug.cgi?id=224395
+
+        Reviewed by Tim Horton.
+
+        When RemoteLayerTreeDrawingArea called windowScreenDidChange() from its constructor,
+        m_page.drawingArea() was null which resulted in DisplayRefreshMonitor::create()
+        receiving a null DisplayRefreshMonitorFactory*, so it fell back to the legacy
+        DisplayRefreshMonitorIOS, instead of using RemoteLayerTreeDisplayRefreshMonitor.
+
+        Fix by sending windowScreenDidChange() from the UI process, with the synthetic
+        DisplayID generated from the webPageID(). This has the advantage that
+        WebPageProxy will also store the correct DisplayID, and is more similar to macOS.
+
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+
 2021-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r271660): Tap highlight no longer shows when tapping clickable elements without touch event listeners
