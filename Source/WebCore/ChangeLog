@@ -1,3 +1,39 @@
+2021-04-11  Cameron McCormack  <heycam@apple.com>
+
+        Fix initial horizontal scrollbar position when vertical scrollbar is on the left.
+        https://bugs.webkit.org/show_bug.cgi?id=224409
+
+        Reviewed by Darin Adler.
+
+        Scrollable elements that place their vertical scrollbar on the left
+        (e.g. when they're `direction: rtl` or when the OS language is RTL and
+        the relevant setting to always follow OS scrollbar side is used) have
+        an incorrect scroll origin, which leads to creating a horizontal
+        scrollbar with an incorrect initial offset.  This is because
+        RenderLayerScrollableArea::computeScrollDimensions runs prior to the
+        scrollbars being created.  So whenever we start or stop having a
+        (non-overlay) vertical scrollbar on the left, we need to recompute
+        the scroll origin and fix up the horizontal scrollbar's offset.
+
+        Tests: fast/scrolling/rtl-scrollbars-initial-position-dynamic.html
+               fast/scrolling/rtl-scrollbars-initial-position.html
+
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::computeScrollDimensions):
+        (WebCore::RenderLayerScrollableArea::computeScrollOrigin): Split this
+        out of computeScrollDimensions so we can call it from
+        updateScrollbarsAfterLayout and updateScrollbarsAfterStyleChange, and
+        have it ask the horizontal scrollbar to update its offset.  We could
+        condition this on the scroll origin actually having changed, but
+        that's going to be a similar check that Scrollbar::offsetDidChange
+        does to ensure the offset value did indeed change.  We don't want to
+        condition this on shouldPlaceBlockDirectionScrollbarOnLeft(), since
+        that's dependent on the current style, and we may be reacting to a
+        style change removed the vertical scrollbar on the left.
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterLayout):
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterStyleChange):
+        * rendering/RenderLayerScrollableArea.h:
+
 2021-04-11  Darin Adler  <darin@apple.com>
 
         [Mac] Add a missing null check to slider thumb focus rendering

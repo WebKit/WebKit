@@ -1,3 +1,15 @@
+2021-04-11  Cameron McCormack  <heycam@apple.com>
+
+        Fix initial horizontal scrollbar position when vertical scrollbar is on the left.
+        https://bugs.webkit.org/show_bug.cgi?id=224409
+
+        Reviewed by Darin Adler.
+
+        * fast/scrolling/rtl-scrollbars-initial-position-dynamic-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-initial-position-dynamic.html: Added.
+        * fast/scrolling/rtl-scrollbars-initial-position-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-initial-position.html: Added.
+
 2021-04-11  Sam Weinig  <weinig@apple.com>
 
         Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior

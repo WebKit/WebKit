@@ -1006,13 +1006,19 @@ LayoutUnit RenderLayerScrollableArea::overflowRight() const
 
 void RenderLayerScrollableArea::computeScrollDimensions()
 {
-    RenderBox* box = m_layer.renderBox();
-    ASSERT(box);
-
     m_scrollDimensionsDirty = false;
 
     m_scrollWidth = roundToInt(overflowRight() - overflowLeft());
     m_scrollHeight = roundToInt(overflowBottom() - overflowTop());
+
+    computeScrollOrigin();
+    computeHasCompositedScrollableOverflow();
+}
+
+void RenderLayerScrollableArea::computeScrollOrigin()
+{
+    RenderBox* box = m_layer.renderBox();
+    ASSERT(box);
 
     int scrollableLeftOverflow = roundToInt(overflowLeft() - box->borderLeft());
     if (shouldPlaceBlockDirectionScrollbarOnLeft())
@@ -1020,7 +1026,10 @@ void RenderLayerScrollableArea::computeScrollDimensions()
     int scrollableTopOverflow = roundToInt(overflowTop() - box->borderTop());
     setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));
 
-    computeHasCompositedScrollableOverflow();
+    // Horizontal scrollbar offsets depend on the scroll origin when vertical
+    // scrollbars are on the left.
+    if (m_hBar)
+        m_hBar->offsetDidChange();
 }
 
 void RenderLayerScrollableArea::computeHasCompositedScrollableOverflow()
@@ -1094,6 +1103,9 @@ void RenderLayerScrollableArea::updateScrollbarsAfterLayout()
             setHasHorizontalScrollbar(hasHorizontalOverflow);
         if (box->hasVerticalScrollbarWithAutoBehavior())
             setHasVerticalScrollbar(hasVerticalOverflow);
+
+        if (autoVerticalScrollBarChanged && shouldPlaceBlockDirectionScrollbarOnLeft())
+            computeScrollOrigin();
 
         m_layer.updateSelfPaintingLayer();
 
@@ -1552,10 +1564,14 @@ void RenderLayerScrollableArea::updateScrollbarsAfterStyleChange(const RenderSty
     Overflow overflowY = box->style().overflowY();
 
     // To avoid doing a relayout in updateScrollbarsAfterLayout, we try to keep any automatic scrollbar that was already present.
-    bool needsHorizontalScrollbar = box->hasOverflowClip() && ((horizontalScrollbar() && styleDefinesAutomaticScrollbar(box->style(), HorizontalScrollbar)) || styleRequiresScrollbar(box->style(), HorizontalScrollbar));
-    bool needsVerticalScrollbar = box->hasOverflowClip() && ((verticalScrollbar() && styleDefinesAutomaticScrollbar(box->style(), VerticalScrollbar)) || styleRequiresScrollbar(box->style(), VerticalScrollbar));
+    bool hadVerticalScrollbar = m_vBar;
+    bool needsHorizontalScrollbar = box->hasOverflowClip() && ((m_hBar && styleDefinesAutomaticScrollbar(box->style(), HorizontalScrollbar)) || styleRequiresScrollbar(box->style(), HorizontalScrollbar));
+    bool needsVerticalScrollbar = box->hasOverflowClip() && ((m_vBar && styleDefinesAutomaticScrollbar(box->style(), VerticalScrollbar)) || styleRequiresScrollbar(box->style(), VerticalScrollbar));
     setHasHorizontalScrollbar(needsHorizontalScrollbar);
     setHasVerticalScrollbar(needsVerticalScrollbar);
+
+    if (hadVerticalScrollbar != needsVerticalScrollbar || (needsVerticalScrollbar && oldStyle && box->style().shouldPlaceBlockDirectionScrollbarOnLeft() != oldStyle->shouldPlaceBlockDirectionScrollbarOnLeft()))
+        computeScrollOrigin();
 
     // With non-overlay overflow:scroll, scrollbars are always visible but may be disabled.
     // When switching to another value, we need to re-enable them (see bug 11985).
