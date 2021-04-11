@@ -930,8 +930,9 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (newValue > stepRange.maximum())
         newValue = stepRange.maximum();
 
+    auto protectedThis = makeRef(*this);
     auto result = setValueAsDecimal(newValue, eventBehavior);
-    if (result.hasException())
+    if (result.hasException() || !element())
         return result;
 
     if (AXObjectCache* cache = element()->document().existingAXObjectCache())
