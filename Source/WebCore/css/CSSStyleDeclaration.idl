@@ -25,9 +25,6 @@
     JSCustomMarkFunction,
     SkipVTableValidation,
     Exposed=Window,
-#if !defined(ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION) || !ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION
-    DefaultDefineOwnProperty
-#endif
 ] interface CSSStyleDeclaration {
     // FIXME: These attributes and functions should use CSSOMString not DOMString.
 
@@ -46,12 +43,4 @@
     DOMString? getPropertyShorthand(optional DOMString propertyName);
     boolean isPropertyImplicit(optional DOMString propertyName);
     DeprecatedCSSOMValue? getPropertyCSSValue(DOMString propertyName);
-
-#if !defined(ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION) || !ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION
-    // Use named getters/setters for all support CSS property names. The spec says
-    // these should be normal attributes, but there are too many combinations with
-    // prefixes for this to be practical with current code generation.
-    getter (DOMString or double) (DOMString name);
-    [CEReactions, CallNamedSetterOnlyForSupportedProperties] setter undefined (DOMString name, [LegacyNullToEmptyString] DOMString value);
-#endif
 };

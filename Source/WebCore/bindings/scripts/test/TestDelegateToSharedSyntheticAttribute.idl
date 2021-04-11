@@ -27,6 +27,10 @@ typedef USVString CSSOMString;
 
 [
     Exposed=TestGlobalObject
-] interface TestCSSProperty {
-    [CEReactions, CSSProperty=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property;
+] interface TestDelegateToSharedSyntheticAttribute {
+    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property1;
+    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property2;
+    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute1, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property3;
+    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute2, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property4;
+    [CEReactions, DelegateToSharedSyntheticAttribute=sharedAttribute2, CallWith=PropertyName] attribute [LegacyNullToEmptyString] CSSOMString property5;
 };

@@ -1,3 +1,14 @@
+2021-04-11  Sam Weinig  <weinig@apple.com>
+
+        Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior
+        https://bugs.webkit.org/show_bug.cgi?id=222518
+        <rdar://problem/75136887>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformEnable.h:
+        Remove ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION, as it is now the default and on everwhere.
+
 2021-04-09  Jer Noble  <jer.noble@apple.com>
 
         WTF SoftLinking macros can cause collisions with their target functions

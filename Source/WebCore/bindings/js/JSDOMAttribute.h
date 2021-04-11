@@ -32,8 +32,10 @@ template<typename JSClass>
 class IDLAttribute {
 public:
     using Setter = bool(JSC::JSGlobalObject&, JSClass&, JSC::JSValue);
+    using SetterPassingPropertyName = bool(JSC::JSGlobalObject&, JSClass&, JSC::JSValue, JSC::PropertyName);
     using StaticSetter = bool(JSC::JSGlobalObject&, JSC::JSValue);
     using Getter = JSC::JSValue(JSC::JSGlobalObject&, JSClass&);
+    using GetterPassingPropertyName = JSC::JSValue(JSC::JSGlobalObject&, JSClass&, JSC::PropertyName);
     using StaticGetter = JSC::JSValue(JSC::JSGlobalObject&);
     
     static JSClass* cast(JSC::JSGlobalObject&, JSC::EncodedJSValue);
@@ -53,7 +55,24 @@ public:
 
         RELEASE_AND_RETURN(throwScope, (setter(lexicalGlobalObject, *thisObject, JSC::JSValue::decode(encodedValue))));
     }
-    
+
+    // FIXME: FIXME: This can be merged with `set` if we replace the explicit setter function template parameter with a generic lambda.
+    template<SetterPassingPropertyName setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static bool setPassingPropertyName(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue thisValue, JSC::EncodedJSValue encodedValue, JSC::PropertyName attributeName)
+    {
+        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
+
+        auto* thisObject = cast(lexicalGlobalObject, thisValue);
+        if (UNLIKELY(!thisObject)) {
+            if constexpr (shouldThrow == CastedThisErrorBehavior::Throw)
+                return JSC::throwVMDOMAttributeSetterTypeError(&lexicalGlobalObject, throwScope, JSClass::info(), attributeName);
+            else
+                return false;
+        }
+
+        RELEASE_AND_RETURN(throwScope, (setter(lexicalGlobalObject, *thisObject, JSC::JSValue::decode(encodedValue), attributeName)));
+    }
+
     template<StaticSetter setter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static bool setStatic(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue, JSC::EncodedJSValue encodedValue, JSC::PropertyName)
     {
@@ -83,7 +102,32 @@ public:
             RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject))));
         }
     }
-    
+
+    // FIXME: This can be merged with `get` if we replace the explicit setter function template parameter with a generic lambda.
+    template<GetterPassingPropertyName getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
+    static JSC::EncodedJSValue getPassingPropertyName(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue thisValue, JSC::PropertyName attributeName)
+    {
+        auto throwScope = DECLARE_THROW_SCOPE(JSC::getVM(&lexicalGlobalObject));
+
+        if constexpr (shouldThrow == CastedThisErrorBehavior::Assert) {
+            ASSERT(cast(lexicalGlobalObject, thisValue));
+            auto* thisObject = JSC::jsCast<JSClass*>(JSC::JSValue::decode(thisValue));
+            RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject, attributeName))));
+        } else {
+            auto* thisObject = cast(lexicalGlobalObject, thisValue);
+            if (UNLIKELY(!thisObject)) {
+                if constexpr (shouldThrow == CastedThisErrorBehavior::Throw)
+                    return JSC::throwVMDOMAttributeGetterTypeError(&lexicalGlobalObject, throwScope, JSClass::info(), attributeName);
+                else if constexpr (shouldThrow == CastedThisErrorBehavior::RejectPromise)
+                    RELEASE_AND_RETURN(throwScope, rejectPromiseWithGetterTypeError(lexicalGlobalObject, JSClass::info(), attributeName));
+                else
+                    return JSC::JSValue::encode(JSC::jsUndefined());
+            }
+
+            RELEASE_AND_RETURN(throwScope, (JSC::JSValue::encode(getter(lexicalGlobalObject, *thisObject, attributeName))));
+        }
+    }
+
     template<StaticGetter getter, CastedThisErrorBehavior shouldThrow = CastedThisErrorBehavior::Throw>
     static JSC::EncodedJSValue getStatic(JSC::JSGlobalObject& lexicalGlobalObject, JSC::EncodedJSValue, JSC::PropertyName)
     {

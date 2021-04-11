@@ -1,3 +1,31 @@
+2021-04-11  Sam Weinig  <weinig@apple.com>
+
+        Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior
+        https://bugs.webkit.org/show_bug.cgi?id=222518
+        <rdar://problem/75136887>
+
+        Reviewed by Darin Adler.
+
+        * fast/css/style-enumerate-properties-expected.txt:
+        * fast/css/style-enumerate-properties.html:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/domListEnumeration.html:
+        Remove existing tests for iteration order, which is not standardized, and not consistent among
+        browsers. Adds a new one that checks invariants of the 4 groupings of properties which we currently
+        expect to hold, at least in our implementation.
+
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor-expected.txt:
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor.html:
+        Update now that the properties are proper attributes on the prototype.
+
+        * js/dom/put-override-should-not-use-ic.html:
+        Switch to using a DOMStringList as the object that overrides put, since CSSStyleDeclaration no longer does.
+
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+        Remove Object.keys() aspect of the test, which is no longer meaningful since the
+        properties should no longer exist in the result set.
+
 2021-04-10  Chris Dumez  <cdumez@apple.com>
 
         Regression(r275668) Potential null pointer deref in AudioParam::exponentialRampToValueAtTime(float, double)

@@ -21,24 +21,24 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include "TestCSSProperty.h"
+#include "TestDelegateToSharedSyntheticAttribute.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-class JSTestCSSProperty : public JSDOMWrapper<TestCSSProperty> {
+class JSTestDelegateToSharedSyntheticAttribute : public JSDOMWrapper<TestDelegateToSharedSyntheticAttribute> {
 public:
-    using Base = JSDOMWrapper<TestCSSProperty>;
-    static JSTestCSSProperty* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestCSSProperty>&& impl)
+    using Base = JSDOMWrapper<TestDelegateToSharedSyntheticAttribute>;
+    static JSTestDelegateToSharedSyntheticAttribute* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, Ref<TestDelegateToSharedSyntheticAttribute>&& impl)
     {
-        JSTestCSSProperty* ptr = new (NotNull, JSC::allocateCell<JSTestCSSProperty>(globalObject->vm().heap)) JSTestCSSProperty(structure, *globalObject, WTFMove(impl));
+        JSTestDelegateToSharedSyntheticAttribute* ptr = new (NotNull, JSC::allocateCell<JSTestDelegateToSharedSyntheticAttribute>(globalObject->vm().heap)) JSTestDelegateToSharedSyntheticAttribute(structure, *globalObject, WTFMove(impl));
         ptr->finishCreation(globalObject->vm());
         return ptr;
     }
 
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
-    static TestCSSProperty* toWrapped(JSC::VM&, JSC::JSValue);
+    static TestDelegateToSharedSyntheticAttribute* toWrapped(JSC::VM&, JSC::JSValue);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -58,36 +58,36 @@ public:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestCSSProperty(JSC::Structure*, JSDOMGlobalObject&, Ref<TestCSSProperty>&&);
+    JSTestDelegateToSharedSyntheticAttribute(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDelegateToSharedSyntheticAttribute>&&);
 
     void finishCreation(JSC::VM&);
 };
 
-class JSTestCSSPropertyOwner final : public JSC::WeakHandleOwner {
+class JSTestDelegateToSharedSyntheticAttributeOwner final : public JSC::WeakHandleOwner {
 public:
     bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::AbstractSlotVisitor&, const char**) final;
     void finalize(JSC::Handle<JSC::Unknown>, void* context) final;
 };
 
-inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestCSSProperty*)
+inline JSC::WeakHandleOwner* wrapperOwner(DOMWrapperWorld&, TestDelegateToSharedSyntheticAttribute*)
 {
-    static NeverDestroyed<JSTestCSSPropertyOwner> owner;
+    static NeverDestroyed<JSTestDelegateToSharedSyntheticAttributeOwner> owner;
     return &owner.get();
 }
 
-inline void* wrapperKey(TestCSSProperty* wrappableObject)
+inline void* wrapperKey(TestDelegateToSharedSyntheticAttribute* wrappableObject)
 {
     return wrappableObject;
 }
 
-JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestCSSProperty&);
-inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestCSSProperty* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
-JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestCSSProperty>&&);
-inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestCSSProperty>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
+JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, TestDelegateToSharedSyntheticAttribute&);
+inline JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, TestDelegateToSharedSyntheticAttribute* impl) { return impl ? toJS(lexicalGlobalObject, globalObject, *impl) : JSC::jsNull(); }
+JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject*, Ref<TestDelegateToSharedSyntheticAttribute>&&);
+inline JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObject, RefPtr<TestDelegateToSharedSyntheticAttribute>&& impl) { return impl ? toJSNewlyCreated(lexicalGlobalObject, globalObject, impl.releaseNonNull()) : JSC::jsNull(); }
 
-template<> struct JSDOMWrapperConverterTraits<TestCSSProperty> {
-    using WrapperClass = JSTestCSSProperty;
-    using ToWrappedReturnType = TestCSSProperty*;
+template<> struct JSDOMWrapperConverterTraits<TestDelegateToSharedSyntheticAttribute> {
+    using WrapperClass = JSTestDelegateToSharedSyntheticAttribute;
+    using ToWrappedReturnType = TestDelegateToSharedSyntheticAttribute*;
 };
 
 } // namespace WebCore

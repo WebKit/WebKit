@@ -1,3 +1,14 @@
+2021-04-11  Sam Weinig  <weinig@apple.com>
+
+        Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior
+        https://bugs.webkit.org/show_bug.cgi?id=222518
+        <rdar://problem/75136887>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/cssom/cssstyledeclaration-properties-expected.txt:
+        Update test result now that it is passing.
+
 2021-04-10  Chris Dumez  <cdumez@apple.com>
 
         [ macOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html is a flakey text failure

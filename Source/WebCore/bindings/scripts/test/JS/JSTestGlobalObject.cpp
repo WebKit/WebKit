@@ -41,13 +41,13 @@
 #include "JSDOMWrapperCache.h"
 #include "JSTestCEReactions.h"
 #include "JSTestCEReactionsStringifier.h"
-#include "JSTestCSSProperty.h"
 #include "JSTestCallTracer.h"
 #include "JSTestClassWithJSBuiltinConstructor.h"
 #include "JSTestDOMJIT.h"
 #include "JSTestDefaultToJSONIndirectInheritance.h"
 #include "JSTestDefaultToJSONInherit.h"
 #include "JSTestDefaultToJSONInheritFinal.h"
+#include "JSTestDelegateToSharedSyntheticAttribute.h"
 #include "JSTestDomainSecurity.h"
 #include "JSTestEventConstructor.h"
 #include "JSTestEventTarget.h"
@@ -167,7 +167,6 @@ static JSC_DECLARE_CUSTOM_SETTER(setJSTestGlobalObject_enabledAtRuntimeAttribute
 #endif
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestCEReactionsConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestCEReactionsStringifierConstructor);
-static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestCSSPropertyConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestCallTracerConstructor);
 #if ENABLE(TEST_CONDITIONAL)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestCallbackInterfaceConstructor);
@@ -177,6 +176,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestDOMJITConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONIndirectInheritanceConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONInheritConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestDomainSecurityConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestEventConstructorConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestEventTargetConstructor);
@@ -238,7 +238,7 @@ using JSTestGlobalObjectDOMConstructor = JSDOMConstructorNotConstructable<JSTest
 
 /* Hash table */
 
-static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
+static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { 40, -1 },
     { -1, -1 },
@@ -280,7 +280,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 5, 267 },
+    { 65, -1 },
     { 13, 260 },
     { -1, -1 },
     { -1, -1 },
@@ -291,7 +291,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 38, -1 },
     { 19, 257 },
-    { 7, -1 },
+    { 6, -1 },
     { -1, -1 },
     { 45, -1 },
     { -1, -1 },
@@ -315,7 +315,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 6, -1 },
+    { 5, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -331,7 +331,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 10, 256 },
+    { 9, 256 },
     { -1, -1 },
     { 57, -1 },
     { 18, -1 },
@@ -390,7 +390,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 47, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 11, -1 },
+    { 10, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -438,7 +438,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
+    { 12, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -450,7 +450,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 12, -1 },
+    { 11, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -463,13 +463,13 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 1, -1 },
     { -1, -1 },
-    { 9, -1 },
+    { 8, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { 48, 263 },
-    { 8, 262 },
+    { 7, 262 },
     { -1, -1 },
     { 59, -1 },
     { -1, -1 },
@@ -506,7 +506,6 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { 54, -1 },
     { 60, -1 },
     { 64, -1 },
-    { 65, -1 },
 };
 
 
@@ -521,7 +520,6 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
 #endif
     { "TestCEReactions", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestCEReactionsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestCEReactionsStringifier", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestCEReactionsStringifierConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "TestCSSProperty", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestCSSPropertyConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestCallTracer", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestCallTracerConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(TEST_CONDITIONAL)
     { "TestCallbackInterface", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestCallbackInterfaceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
@@ -533,6 +531,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "TestDefaultToJSONIndirectInheritance", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestDefaultToJSONIndirectInheritanceConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestDefaultToJSONInherit", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestDefaultToJSONInheritConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestDefaultToJSONInheritFinal", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "TestDelegateToSharedSyntheticAttribute", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestDomainSecurity", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestDomainSecurityConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestEventConstructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestEventConstructorConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestEventTarget", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestEventTargetConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
@@ -889,17 +888,6 @@ JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCEReactionsStringifierConstructo
     return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestCEReactionsStringifierConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
-static inline JSValue jsTestGlobalObject_TestCSSPropertyConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
-{
-    UNUSED_PARAM(lexicalGlobalObject);
-    return JSTestCSSProperty::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
-}
-
-JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestCSSPropertyConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
-{
-    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestCSSPropertyConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
-}
-
 static inline JSValue jsTestGlobalObject_TestCallTracerConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
@@ -978,6 +966,17 @@ static inline JSValue jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructo
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
     return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestDefaultToJSONInheritFinalConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline JSValue jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestDelegateToSharedSyntheticAttribute::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestDelegateToSharedSyntheticAttributeConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 static inline JSValue jsTestGlobalObject_TestDomainSecurityConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)

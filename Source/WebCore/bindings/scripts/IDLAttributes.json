@@ -38,10 +38,6 @@
                 "url": "https://html.spec.whatwg.org/multipage/custom-elements.html#cereactions"
             }
         },
-        "CSSProperty": {
-            "contextsAllowed": ["attribute"],
-            "values": ["*"]
-        },
         "CachedAttribute": {
             "contextsAllowed": ["attribute"]
         },
@@ -57,7 +53,7 @@
         },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],
-            "values": ["Document", "ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World"],
+            "values": ["Document", "ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World", "PropertyName"],
             "supportsConjunction": true
         },
         "CheckSecurity": {
@@ -153,6 +149,9 @@
         },
         "DefaultDefineOwnProperty": {
             "contextsAllowed": ["interface"]
+        },
+        "DelegateToSharedSyntheticAttribute": {
+            "contextsAllowed": ["attribute"]
         },
         "DisabledByQuirk": {
             "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
@@ -475,7 +474,7 @@
         },
         "SetterCallWith": {
             "contextsAllowed": ["attribute"],
-            "values": ["ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow"],
+            "values": ["ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "PropertyName"],
             "supportsConjunction": true
         },
         "SettingsConditionallyReadWrite": {

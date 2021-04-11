@@ -1,3 +1,130 @@
+2021-04-11  Sam Weinig  <weinig@apple.com>
+
+        Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior
+        https://bugs.webkit.org/show_bug.cgi?id=222518
+        <rdar://problem/75136887>
+
+        Reviewed by Darin Adler.
+
+        Re-implement proper (not using named-getters) support for the CSSStyleDeclaration bindings
+        using a new DelegateToSharedSyntheticAttribute extended atttribute which allows IDL attributes
+        to share a custom getter / setter implementation and delegate their implementation to it. When
+        using this functionality, the synthetic attribute's implementation is passed the original property
+        name so it can implement functionality based on it.
+
+        We use this for CSSStyleDeclaration by breaking the huge list of generated properties into
+        four groups, each with their own synthetic attribute. The groups are based on the different
+        transformation rules in the spec.
+
+        * bindings/js/JSDOMAttribute.h:
+        (WebCore::IDLAttribute::setPassingPropertyName):
+        (WebCore::IDLAttribute::getPassingPropertyName):
+        Add overloads of get/set that pass the property name to the provided function. These can't
+        be simple overloads of get/set as MSVC does not allow overloading with only a non-type 
+        template parameters differentiating.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateInterface):
+        Eagerly generate the any synthetic attributes before the rest of code generation,
+        matching the behavior of other synthetic constructions like map/set/stringifiers.
+
+        (GetAttributeGetterName):
+        (GetAttributeSetterName):
+        Add special cases to getter/setter name generation to forward to the generated
+        name of the synthetic attribute when delegating.
+
+        (GenerateImplementation):
+        Extract attribute function forward declaration genation into a new GenerateAttributeGetterAndSetterDeclaration
+        subroutine and use it for generation of both normal and synthetic attributes. Also adds
+        synthetic attributes to the list of attributes to generate function implementations for.
+
+        (GenerateAttributeGetterAndSetterDeclaration):
+        Extracted from GenerateImplementation. Adds extra condition to bail if DelegateToSharedSyntheticAttribute
+        is specified.
+
+        (GenerateAttributeGetterBodyDefinition):
+        Add support for the new CallWith=PropertyName extended attribute by adding a PropertyName
+        argument to the signature of getter body if it is present. Removes now unnecessary support
+        for the CSSProperty extended attribute.
+
+        (GenerateAttributeGetterTrampolineDefinition):
+        Switch function name from get to getPassingPropertyName if CallWith=PropertyName is specified.
+
+        (GenerateAttributeGetterDefinition):
+        Adds extra condition to bail if DelegateToSharedSyntheticAttribute is specified.
+
+        (GenerateAttributeSetterBodyDefinition):
+        Add support for the new CallWith=PropertyName extended attribute by adding a PropertyName
+        argument to the signature of getter body if it is present. Removes now unnecessary support
+        for the CSSProperty extended attribute.
+
+        (GenerateAttributeSetterTrampolineDefinition):
+        Switch function name from get to getPassingPropertyName if CallWith=PropertyName is specified.
+
+        (GenerateAttributeSetterDefinition):
+        Adds extra condition to bail if DelegateToSharedSyntheticAttribute is specified.
+
+        (GenerateCallWith):
+        Add support for the PropertyName value to CallWith.
+
+        (MakeSharedSyntheticAttribute):
+        Helper to generate the synthetic attribute from the base attribute with DelegateToSharedSyntheticAttribute
+        specefied. Maintains all existing extended attributes of the base attribute except 
+        DelegateToSharedSyntheticAttribute is replaced with IsSharedSyntheticAttribute to avoid 
+        infinite recursion.
+
+        (AddSharedSyntheticAttributesIfNeeded):
+        Helper to find all delegating attributes and generate / store the synthetic attributes.
+
+        (GetSharedSyntheticAttribute):
+        Helper to get the corresponding synthetic attribute given an attribute with 
+        DelegateToSharedSyntheticAttribute specified on it.
+
+        * bindings/scripts/IDLAttributes.json:
+        Removes CSSProperty. Adds DelegateToSharedSyntheticAttribute. Adds PropertyName value to 
+        CallWith and SetterCallWith.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::lookupCSSPropertyFromIDLAttribute):
+        (WebCore::CSSStyleDeclaration::propertyValueForCamelCasedIDLAttribute):
+        (WebCore::CSSStyleDeclaration::setPropertyValueForCamelCasedIDLAttribute):
+        (WebCore::CSSStyleDeclaration::propertyValueForWebKitCasedIDLAttribute):
+        (WebCore::CSSStyleDeclaration::setPropertyValueForWebKitCasedIDLAttribute):
+        (WebCore::CSSStyleDeclaration::propertyValueForDashedIDLAttribute):
+        (WebCore::CSSStyleDeclaration::setPropertyValueForDashedIDLAttribute):
+        (WebCore::CSSStyleDeclaration::propertyValueForEpubCasedIDLAttribute):
+        (WebCore::CSSStyleDeclaration::setPropertyValueForEpubCasedIDLAttribute):
+        (WebCore::CSSStyleDeclaration::namedItem): Deleted.
+        (WebCore::CSSStyleDeclaration::setNamedItem): Deleted.
+        (WebCore::CSSStyleDeclaration::supportedPropertyNames const): Deleted.
+        * css/CSSStyleDeclaration.h:
+        Replace named-getter based implementation with helpers based on the definitions
+        in the CSSOM spec (plus one special set for 'epub' specializations we currently
+        maintain).
+
+        * css/CSSStyleDeclaration.idl:
+        Remove !ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION sections now that
+        we can fully support ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION.
+
+        * css/makeprop.pl:
+        Remove !ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION sections now that
+        we can fully support ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION.
+        Replaces CSSProperty extended attributes with DelegateToSharedSyntheticAttribute and 
+        CallWith=PropertyName, which together allow us to implement all the attributes with just
+        8 implementation functions.
+
+        * bindings/scripts/test/BindingTestGlobalConstructors.idl:
+        * bindings/scripts/test/JS/JSTestCSSProperty.cpp: Removed.
+        * bindings/scripts/test/JS/JSTestCSSProperty.h: Removed.
+        * bindings/scripts/test/JS/JSTestDelegateToSharedSyntheticAttribute.cpp: Added.
+        * bindings/scripts/test/JS/JSTestDelegateToSharedSyntheticAttribute.h: Added.
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/SupplementalDependencies.dep:
+        * bindings/scripts/test/TestCSSProperty.idl: Removed.
+        * bindings/scripts/test/TestDelegateToSharedSyntheticAttribute.idl: Added.
+        Replace CSSProperty tests with DelegateToSharedSyntheticAttribute tests and update results
+        all around for new generation.
+
 2021-04-11  Rob Buis  <rbuis@igalia.com>
 
         Store InputType in a Ref before calling setValueAsDecimal
