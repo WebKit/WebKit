@@ -1,3 +1,23 @@
+2021-04-11  Darin Adler  <darin@apple.com>
+
+        [Mac] Add a missing null check to slider thumb focus rendering
+        https://bugs.webkit.org/show_bug.cgi?id=224418
+        rdar://76450584
+
+        Reviewed by Sam Weinig.
+
+        * rendering/RenderThemeMac.h: Changed updateFocusedState to take a pointer.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::updateFocusedState): Check pointer for null. This was the
+        missing null check.
+        (WebCore::RenderThemeMac::paintSliderThumb): Pass delegate pointer instead of reference.
+        Also made sure we always update the focused state. Old code took the approach of just not
+        updating focus state when it encountered null for the focus delegate, but that's not a
+        good strategy. In future we may also want to change the focusDelegate function signature
+        to make it clear it will never return null, but that's not critical right now.
+        (WebCore::RenderThemeMac::setSearchCellState): Update since updateFocusedState now
+        takes a pointer.
+
 2021-04-11  Sam Weinig  <weinig@apple.com>
 
         Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior

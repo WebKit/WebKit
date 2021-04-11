@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -824,10 +824,10 @@ void RenderThemeMac::updateEnabledState(NSCell* cell, const RenderObject& o)
         [cell setEnabled:enabled];
 }
 
-void RenderThemeMac::updateFocusedState(NSCell* cell, const RenderObject& o)
+void RenderThemeMac::updateFocusedState(NSCell *cell, const RenderObject* o)
 {
     bool oldFocused = [cell showsFirstResponder];
-    bool focused = isFocused(o) && o.style().outlineStyleIsAuto() == OutlineIsAuto::On;
+    bool focused = o && isFocused(*o) && o->style().outlineStyleIsAuto() == OutlineIsAuto::On;
     if (focused != oldFocused)
         [cell setShowsFirstResponder:focused];
 }
@@ -1726,8 +1726,7 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
     // Update the various states we respond to.
     updateEnabledState(sliderThumbCell, o);
     auto focusDelegate = is<Element>(o.node()) ? downcast<Element>(*o.node()).focusDelegate() : nullptr;
-    if (focusDelegate)
-        updateFocusedState(sliderThumbCell, *focusDelegate->renderer());
+    updateFocusedState(sliderThumbCell, focusDelegate ? focusDelegate->renderer() : nullptr);
 
     // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
     bool oldPressed;
@@ -1824,7 +1823,7 @@ void RenderThemeMac::setSearchCellState(const RenderObject& o, const IntRect&)
 
     // Update the various states we respond to.
     updateEnabledState(search, o);
-    updateFocusedState(search, o);
+    updateFocusedState(search, &o);
 }
 
 const IntSize* RenderThemeMac::searchFieldSizes() const
