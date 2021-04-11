@@ -93,7 +93,7 @@ struct ResourceLoadInfo;
 struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
-class NetworkProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public RefCounted<NetworkProcessProxy> {
+class NetworkProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using RegistrableDomain = WebCore::RegistrableDomain;
