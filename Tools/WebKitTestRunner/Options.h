@@ -49,9 +49,6 @@ struct Options {
     bool forceComplexText { false };
     bool checkForWorldLeaks { false };
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    bool accessibilityIsolatedTreeMode { false };
-#endif
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
     TestFeatures features;

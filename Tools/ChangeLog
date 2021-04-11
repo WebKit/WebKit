@@ -1,3 +1,45 @@
+2021-04-11  Sam Weinig  <weinig@apple.com>
+
+        Simplify WebKitTestRunner preference reset to be more like DRT
+        https://bugs.webkit.org/show_bug.cgi?id=224410
+
+        Reviewed by Darin Adler.
+
+        - Use boolWebPreferenceFeatures consistently for accessibilityIsolatedTreeMode
+        - Adopt new WKPreferencesStartBatchingUpdates/WKPreferencesEndBatchingUpdates
+          to ensure all preferences updates are batched.
+        - Move all preference overrides that can be moved (two still require some
+          specialized handling for now) to TestOptions defaults.
+        - Remove now unnecessary platformResetPreferencesToConsistentValues()
+          platform configuration point.
+
+        * WebKitTestRunner/Options.cpp:
+        (WTR::handleOptionAccessibilityIsolatedTreeMode):
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::batchUpdatePreferences):
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        (WTR::TestController::resetStateToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::accessibilityIsolatedTreeMode const): Deleted.
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        * WebKitTestRunner/TestOptions.h:
+        (WTR::TestOptions::accessibilityIsolatedTreeMode const):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (WTR::TestController::platformResetPreferencesToConsistentValues): Deleted.
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::platformResetStateToConsistentValues):
+        (WTR::TestController::platformResetPreferencesToConsistentValues): Deleted.
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformResetPreferencesToConsistentValues): Deleted.
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformResetPreferencesToConsistentValues): Deleted.
+        * WebKitTestRunner/wpe/TestControllerWPE.cpp:
+        (WTR::TestController::platformResetPreferencesToConsistentValues): Deleted.
+
 2021-04-10  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] detect infrastructure failure for remote stress tests

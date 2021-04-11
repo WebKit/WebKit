@@ -1,3 +1,19 @@
+2021-04-11  Sam Weinig  <weinig@apple.com>
+
+        Simplify WebKitTestRunner preference reset to be more like DRT
+        https://bugs.webkit.org/show_bug.cgi?id=224410
+
+        Reviewed by Darin Adler.
+
+        Add WKPreferencesStartBatchingUpdates/WKPreferencesEndBatchingUpdates
+        to support batching preferences updates by clients.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesStartBatchingUpdates):
+        (WKPreferencesEndBatchingUpdates):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/WebPreferences.h:
+
 2021-04-10  Alex Christensen  <achristensen@webkit.org>
 
         Use WeakHashSet<WebProcessProxy> instead of HashSet<WebProcessProxy*>

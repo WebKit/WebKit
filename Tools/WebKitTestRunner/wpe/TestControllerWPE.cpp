@@ -132,10 +132,6 @@ void TestController::platformConfigureViewForTest(const TestInvocation&)
 {
 }
 
-void TestController::platformResetPreferencesToConsistentValues()
-{
-}
-
 bool TestController::platformResetStateToConsistentValues(const TestOptions&)
 {
     return true;

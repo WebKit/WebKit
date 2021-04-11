@@ -85,6 +85,9 @@ public:
     void setStringValueForKey(const String&, const String& value);
     void forceUpdate() { update(); }
 
+    void startBatchingUpdates();
+    void endBatchingUpdates();
+
 private:
     void platformInitializeStore();
 
@@ -106,9 +109,6 @@ private:
     private:
         WebPreferences& m_preferences;
     };
-
-    void startBatchingUpdates();
-    void endBatchingUpdates();
 
     void updateStringValueForKey(const String& key, const String& value);
     void updateBoolValueForKey(const String& key, bool value);

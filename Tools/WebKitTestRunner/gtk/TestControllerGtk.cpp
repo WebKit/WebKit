@@ -144,15 +144,11 @@ void TestController::platformConfigureViewForTest(const TestInvocation&)
     WKPageSetApplicationNameForUserAgent(mainWebView()->page(), WKStringCreateWithUTF8CString("WebKitTestRunnerGTK"));
 }
 
-void TestController::platformResetPreferencesToConsistentValues()
-{
-    if (!m_mainWebView)
-        return;
-    m_mainWebView->dismissAllPopupMenus();
-}
-
 bool TestController::platformResetStateToConsistentValues(const TestOptions&)
 {
+    if (m_mainWebView)
+        m_mainWebView->dismissAllPopupMenus();
+
     WKTextCheckerContinuousSpellCheckingEnabledStateChanged(true);
     return true;
 }

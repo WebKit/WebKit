@@ -142,18 +142,6 @@ void TestController::configureContentExtensionForTest(const TestInvocation&)
 {
 }
 
-void TestController::platformResetPreferencesToConsistentValues()
-{
-    WKPreferencesRef preferences = platformPreferences();
-    WKPreferencesSetTextAutosizingEnabled(preferences, false);
-    WKPreferencesSetTextAutosizingUsesIdempotentMode(preferences, false);
-    WKPreferencesSetContentChangeObserverEnabled(preferences, false);
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-    WKPreferencesSetVP9DecoderEnabled(preferences, false);
-    WKPreferencesSetMediaSourceEnabled(preferences, false);
-#endif
-}
-
 static _WKDragInteractionPolicy dragInteractionPolicy(const TestOptions& options)
 {
     auto policy = options.dragInteractionPolicy();
@@ -266,7 +254,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         }
         
         if (hasPresentedViewController) {
-            TestInvocation::dumpWebProcessUnresponsiveness("TestController::platformResetPreferencesToConsistentValues - Failed to remove presented view controller\n");
+            TestInvocation::dumpWebProcessUnresponsiveness("TestController::platformResetStateToConsistentValues - Failed to remove presented view controller\n");
             return false;
         }
     }

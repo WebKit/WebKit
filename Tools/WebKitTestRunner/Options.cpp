@@ -103,7 +103,7 @@ static bool handleOptionAllowAnyHTTPSCertificateForAllowedHosts(Options& options
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 static bool handleOptionAccessibilityIsolatedTreeMode(Options& options, const char*, const char*)
 {
-    options.accessibilityIsolatedTreeMode = true;
+    options.features.boolWebPreferenceFeatures.insert_or_assign("IsAccessibilityIsolatedTreeEnabled", true);
     return true;
 }
 #endif

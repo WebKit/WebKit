@@ -39,6 +39,12 @@ static constexpr bool captureAudioInGPUProcessEnabledValue = false;
 static constexpr bool captureVideoInGPUProcessEnabledValue = false;
 #endif
 
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+static constexpr bool mediaSourceEnabledValue = false;
+#else
+static constexpr bool mediaSourceEnabledValue = true;
+#endif
+
 const TestFeatures& TestOptions::defaults()
 {
     static TestFeatures features;
@@ -46,19 +52,36 @@ const TestFeatures& TestOptions::defaults()
         features.boolWebPreferenceFeatures = {
             // These are WebPreference values that must always be set as they may
             // differ from the default set in the WebPreferences*.yaml configuration.
+            
+            // Please do not add new options here if they are not necessary (e.g.
+            // an experimental feature which gets enabled by default automatically)
+            // as it adds a small amount of unnecessary work per-test.
+
             { "AcceleratedDrawingEnabled", false },
             { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
+            { "AllowsInlineMediaPlayback", true },
             { "AsyncFrameScrollingEnabled", false },
             { "AsyncOverflowScrollingEnabled", false },
+            { "CSSOMViewScrollingAPIEnabled", true },
             { "CaptureAudioInGPUProcessEnabled", captureAudioInGPUProcessEnabledValue },
             { "CaptureAudioInUIProcessEnabled", false },
             { "CaptureVideoInGPUProcessEnabled", captureVideoInGPUProcessEnabledValue },
             { "CaptureVideoInUIProcessEnabled", false },
+            { "ContentChangeObserverEnabled", false },
+            { "CustomPasteboardDataEnabled", true },
             { "DOMPasteAllowed", true },
+            { "DataTransferItemsEnabled", true },
+            { "DeveloperExtrasEnabled", true },
+            { "DirectoryUploadEnabled", true },
+            { "ExposeSpeakersEnabled", true },
             { "FrameFlatteningEnabled", false },
+            { "FullScreenEnabled", true },
             { "GenericCueAPIEnabled", false },
+            { "HiddenPageCSSAnimationSuspensionEnabled", false },
+            { "HiddenPageDOMTimerThrottlingEnabled", false },
+            { "InlineMediaPlaybackRequiresPlaysInlineAttribute", false },
             { "InputTypeDateEnabled", true },
             { "InputTypeDateTimeLocalEnabled", true },
             { "InputTypeMonthEnabled", true },
@@ -66,6 +89,11 @@ const TestFeatures& TestOptions::defaults()
             { "InputTypeWeekEnabled", true },
             { "JavaScriptCanAccessClipboard", true },
             { "JavaScriptCanOpenWindowsAutomatically", true },
+            { "LargeImageAsyncDecodingEnabled", false },
+            { "MediaDevicesEnabled", true },
+            { "MediaPreloadingEnabled", true },
+            { "MediaSourceEnabled", mediaSourceEnabledValue },
+            { "MockCaptureDevicesEnabled", true },
             { "MockScrollbarsEnabled", true },
             { "ModernMediaControlsEnabled", true },
             { "NeedsSiteSpecificQuirks", false },
@@ -73,10 +101,31 @@ const TestFeatures& TestOptions::defaults()
             { "OffscreenCanvasEnabled", true },
             { "PageVisibilityBasedProcessSuppressionEnabled", false },
             { "PluginsEnabled", true },
+            { "RequiresUserGestureForAudioPlayback", false },
+            { "RequiresUserGestureForMediaPlayback", false },
+            { "RequiresUserGestureForVideoPlayback", false },
             { "SpeakerSelectionRequiresUserGesture", false },
+            { "SubpixelAntialiasedLayerTextEnabled", false },
+            { "TabsToLinks", false },
+            { "TextAutosizingEnabled", false },
+            { "TextAutosizingUsesIdempotentMode", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
+            { "WebRTCMDNSICECandidatesEnabled", false },
             { "XSSAuditorEnabled", false },
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+            { "VP9DecoderEnabled", false },
+#endif
+        };
+        features.stringWebPreferenceFeatures = {
+            { "CursiveFontFamily", "Apple Chancery" },
+            { "DefaultTextEncodingName", "ISO-8859-1" },
+            { "FantasyFontFamily", "Papyrus" },
+            { "FixedFontFamily", "Courier" },
+            { "PictographFontFamily", "Apple Color Emoji" },
+            { "SansSerifFontFamily", "Helvetica" },
+            { "SerifFontFamily", "Times" },
+            { "StandardFontFamily", "Times" },
         };
         features.boolTestRunnerFeatures = {
             { "allowsLinkPreview", true },
