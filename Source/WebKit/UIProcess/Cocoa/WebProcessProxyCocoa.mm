@@ -201,13 +201,13 @@ Vector<String> WebProcessProxy::mediaMIMETypes() const
 void WebProcessProxy::requestHighPerformanceGPU()
 {
     LOG(WebGL, "WebProcessProxy::requestHighPerformanceGPU()");
-    HighPerformanceGPUManager::singleton().addProcessRequiringHighPerformance(this);
+    HighPerformanceGPUManager::singleton().addProcessRequiringHighPerformance(*this);
 }
 
 void WebProcessProxy::releaseHighPerformanceGPU()
 {
     LOG(WebGL, "WebProcessProxy::releaseHighPerformanceGPU()");
-    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(this);
+    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(*this);
 }
 #endif
 

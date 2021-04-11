@@ -60,19 +60,19 @@ void WebPasteboardProxy::addWebProcessProxy(WebProcessProxy& webProcessProxy)
 {
     // FIXME: Can we handle all of these on a background queue?
     webProcessProxy.addMessageReceiver(Messages::WebPasteboardProxy::messageReceiverName(), *this);
-    m_webProcessProxyList.add(&webProcessProxy);
+    m_webProcessProxySet.add(webProcessProxy);
 }
     
 void WebPasteboardProxy::removeWebProcessProxy(WebProcessProxy& webProcessProxy)
 {
-    m_webProcessProxyList.remove(&webProcessProxy);
+    m_webProcessProxySet.remove(webProcessProxy);
 }
 
 WebProcessProxy* WebPasteboardProxy::webProcessProxyForConnection(IPC::Connection& connection) const
 {
-    for (auto* webProcessProxy : m_webProcessProxyList) {
-        if (webProcessProxy->hasConnection(connection))
-            return webProcessProxy;
+    for (auto& webProcessProxy : m_webProcessProxySet) {
+        if (webProcessProxy.hasConnection(connection))
+            return &webProcessProxy;
     }
     return nullptr;
 }

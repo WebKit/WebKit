@@ -200,7 +200,7 @@ public:
     WebProcessCache& webProcessCache() { return m_webProcessCache.get(); }
 
     // Disconnect the process from the context.
-    void disconnectProcess(WebProcessProxy*);
+    void disconnectProcess(WebProcessProxy&);
 
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
@@ -316,7 +316,7 @@ public:
 
     void prewarmProcess();
 
-    bool shouldTerminate(WebProcessProxy*);
+    bool shouldTerminate(WebProcessProxy&);
 
     void disableProcessTermination() { m_processTerminationEnabled = false; }
     void enableProcessTermination();
@@ -712,7 +712,7 @@ private:
 #endif
 
 #if ENABLE(GAMEPAD)
-    HashSet<WebProcessProxy*> m_processesUsingGamepads;
+    WeakHashSet<WebProcessProxy> m_processesUsingGamepads;
 #endif
 
 #if PLATFORM(COCOA)

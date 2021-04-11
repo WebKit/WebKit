@@ -60,7 +60,7 @@ void WebPasteboardProxy::grantAccessToCurrentData(WebProcessProxy& process, cons
 
 void WebPasteboardProxy::grantAccess(WebProcessProxy& process, const String& pasteboardName, PasteboardAccessType type)
 {
-    if (!m_webProcessProxyList.contains(&process))
+    if (!m_webProcessProxySet.contains(process))
         return;
 
     if (pasteboardName.isEmpty()) {

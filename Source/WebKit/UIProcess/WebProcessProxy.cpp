@@ -260,7 +260,7 @@ WebProcessProxy::~WebProcessProxy()
         WebCore::enableSuddenTermination();
 
 #if PLATFORM(MAC)
-    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(this);
+    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(*this);
 #endif
 
     platformDestroy();
@@ -480,7 +480,7 @@ void WebProcessProxy::shutDown()
     m_routingArbitrator->processDidTerminate();
 #endif
 
-    m_processPool->disconnectProcess(this);
+    m_processPool->disconnectProcess(*this);
 }
 
 WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
@@ -1149,7 +1149,7 @@ void WebProcessProxy::maybeShutDown()
 {
     if (isDummyProcessProxy() && m_pageMap.isEmpty()) {
         ASSERT(state() == State::Terminated);
-        m_processPool->disconnectProcess(this);
+        m_processPool->disconnectProcess(*this);
         return;
     }
 
@@ -1170,7 +1170,7 @@ bool WebProcessProxy::canTerminateAuxiliaryProcess()
     if (isRunningServiceWorkers())
         return false;
 
-    if (!m_processPool->shouldTerminate(this))
+    if (!m_processPool->shouldTerminate(*this))
         return false;
 
     return true;
