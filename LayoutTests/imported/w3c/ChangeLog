@@ -1,3 +1,20 @@
+2021-04-12  Antoine Quint  <graouts@webkit.org>
+
+        border-image-width computed values should be a calc() value if it contains a percentage
+        https://bugs.webkit.org/show_bug.cgi?id=224420
+
+        Reviewed by Simon Fraser.
+
+        We now pass the final test that was a FAIL result for the border-image-width computed style test.
+        We also pass a fair few border-image-width interpolation tests since we used to fail them as a
+        result of the expected value being expected to be a resolved value rather than a calc() value
+        due the computed style we returned for such values. There are a few PASS results than became
+        FAIL results because we now correctly expect a calc() value, but we return the keyframe value
+        as-is for 0 and 1 progress, a bug we will fix shortly.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-width-computed-expected.txt:
+
 2021-04-12  Youenn Fablet  <youenn@apple.com>
 
         Block loading for port 10080

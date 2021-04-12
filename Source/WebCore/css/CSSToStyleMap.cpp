@@ -596,6 +596,8 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
         box.top() = Length(slices->top()->floatValue(), LengthType::Relative);
     else if (slices->top()->isPercentage())
         box.top() = Length(slices->top()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+    else if (slices->top()->isCalculatedPercentageWithLength())
+        box.top() = Length(slices->top()->cssCalcValue()->createCalculationValue(conversionData));
     else if (slices->top()->valueID() != CSSValueAuto)
         box.top() = slices->top()->computeLength<Length>(conversionData);
 
@@ -603,6 +605,8 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
         box.right() = Length(slices->right()->floatValue(), LengthType::Relative);
     else if (slices->right()->isPercentage())
         box.right() = Length(slices->right()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+    else if (slices->right()->isCalculatedPercentageWithLength())
+        box.right() = Length(slices->right()->cssCalcValue()->createCalculationValue(conversionData));
     else if (slices->right()->valueID() != CSSValueAuto)
         box.right() = slices->right()->computeLength<Length>(conversionData);
 
@@ -610,6 +614,8 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
         box.bottom() = Length(slices->bottom()->floatValue(), LengthType::Relative);
     else if (slices->bottom()->isPercentage())
         box.bottom() = Length(slices->bottom()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+    else if (slices->bottom()->isCalculatedPercentageWithLength())
+        box.bottom() = Length(slices->bottom()->cssCalcValue()->createCalculationValue(conversionData));
     else if (slices->bottom()->valueID() != CSSValueAuto)
         box.bottom() = slices->bottom()->computeLength<Length>(conversionData);
 
@@ -617,6 +623,8 @@ LengthBox CSSToStyleMap::mapNinePieceImageQuad(CSSValue& value)
         box.left() = Length(slices->left()->floatValue(), LengthType::Relative);
     else if (slices->left()->isPercentage())
         box.left() = Length(slices->left()->doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+    else if (slices->left()->isCalculatedPercentageWithLength())
+        box.left() = Length(slices->left()->cssCalcValue()->createCalculationValue(conversionData));
     else if (slices->left()->valueID() != CSSValueAuto)
         box.left() = slices->left()->computeLength<Length>(conversionData);
 

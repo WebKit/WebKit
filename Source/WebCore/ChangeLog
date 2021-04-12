@@ -1,3 +1,16 @@
+2021-04-12  Antoine Quint  <graouts@webkit.org>
+
+        border-image-width computed values should be a calc() value if it contains a percentage
+        https://bugs.webkit.org/show_bug.cgi?id=224420
+
+        Reviewed by Simon Fraser.
+
+        When handling calc() values containing a percentage, we must retain the calc() form when creating
+        the computed style for border-image-width.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapNinePieceImageQuad):
+
 2021-04-12  Youenn Fablet  <youenn@apple.com>
 
         Add support for RTCEncodedFrame metadata
