@@ -1,3 +1,17 @@
+2021-04-12  Sam Weinig  <weinig@apple.com>
+
+        Remove unused 'DefaultDefineOwnProperty' extended attribute support 
+        https://bugs.webkit.org/show_bug.cgi?id=224436
+
+        Reviewed by Antti Koivisto.
+
+        The old CSSStyleDeclaration named-getter based implementation was
+        the last user so this can now be removed.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (InstanceOverridesDefineOwnProperty):
+        * bindings/scripts/IDLAttributes.json:
+
 2021-04-12  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][WebRTC] An audio track should be muted when capture is interrupted by the OS.

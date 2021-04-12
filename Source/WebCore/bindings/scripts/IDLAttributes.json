@@ -147,9 +147,6 @@
         "Default": {
             "contextsAllowed": ["operation"]
         },
-        "DefaultDefineOwnProperty": {
-            "contextsAllowed": ["interface"]
-        },
         "DelegateToSharedSyntheticAttribute": {
             "contextsAllowed": ["attribute"]
         },
