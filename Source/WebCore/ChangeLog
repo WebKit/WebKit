@@ -1,3 +1,20 @@
+2021-04-12  Frédéric Wang  <fwang@igalia.com>
+
+        Out of memory crash with find('a'.repeat(2**30))
+        https://bugs.webkit.org/show_bug.cgi?id=223787
+
+        Reviewed by Ryosuke Niwa.
+
+        SearchBuffer::SearchBuffer allocates a buffer whose capacity is at least 8 times the size of
+        the searched text and at least 8192. It's possible to hit an out-of-memory crash by passing
+        a very long string to window.find. Since there is no reason to search for arbitrary large
+        text, limit it to a maximum length of 64kB.
+
+        Test: editing/find/find-long-string-crash.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::find const): Exit early if the string length is larger than a limit.
+
 2021-04-12  Chris Lord  <clord@igalia.com>
 
         Refactor font loading to make it possible for Worker to implement it
