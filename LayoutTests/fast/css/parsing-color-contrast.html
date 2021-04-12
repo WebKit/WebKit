@@ -26,7 +26,10 @@
         testComputedProperty("background-color", value, expected);
     }
 
-    debug('color-contrast(... vs ..., ...)');
+    debug('color-contrast(... vs ..., ... [to ...])');
+
+    debug('');
+    debug('Test with no specified target contrast')
 
     testComputed(`color-contrast(white vs red, blue)`, `rgb(0, 0, 255)`);
     testComputed(`color-contrast(white vs blue, red)`, `rgb(0, 0, 255)`);
@@ -38,6 +41,19 @@
     testComputed(`color-contrast(black vs blue, red)`, `rgb(255, 0, 0)`);
     testComputed(`color-contrast(black vs white, white)`, `rgb(255, 255, 255)`);
     testComputed(`color-contrast(red vs blue, rgb(255, 255, 255, .5))`, `rgba(255, 255, 255, 0.5)`);
+
+    debug('');
+    debug('Test with specified target contrast')
+
+    testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AA)`, `rgb(0, 100, 0)`); // darkgreen
+    testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AA-large)`, `rgb(128, 128, 0)`); // olive
+    testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to 5.8)`, `rgb(128, 0, 0)`); // olive maroon
+    
+    debug('');
+    debug('Test with specified target contrast that none meet')
+    testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive to 100)`, `rgb(0, 0, 0)`); // black
+    testComputed(`color-contrast(green vs bisque, darkgoldenrod, olive to 100)`, `rgb(255, 255, 255)`); // white
+
 
     debug('');
     debug('Test non-sRGB colors');
@@ -55,6 +71,9 @@
     testComputed(`color-contrast(white vs )`, `rgba(0, 0, 0, 0)`);
     testComputed(`color-contrast(white)`, `rgba(0, 0, 0, 0)`);
     testComputed(`color-contrast(white vs red green)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`color-contrast(white vs red, green to)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`color-contrast(white vs red, green to invalid)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`color-contrast(white vs red to AA)`, `rgba(0, 0, 0, 0)`);
 
 </script>
     

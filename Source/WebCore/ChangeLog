@@ -1,3 +1,27 @@
+2021-04-12  Sam Weinig  <weinig@apple.com>
+
+        Update color-contrast() to support a target contrast ratio
+        https://bugs.webkit.org/show_bug.cgi?id=224411
+
+        Reviewed by Antti Koivisto.
+
+        Updated fast/css/parsing-color-contrast.html with new test cases.
+
+        * css/CSSValueKeywords.in:
+        Add new keywords, AA and AA-large which are constants for contrast ratios of 4.5
+        and 3.0 respectively.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionParameters):
+        Remove now incorrect comment about adding support for fallback as fallback
+        has been removed from the spec. 
+        
+        (WebCore::CSSPropertyParserHelpers::selectFirstColorThatMeetsOrExceedsTargetContrast):
+        (WebCore::CSSPropertyParserHelpers::selectFirstColorWithHighestContrast):
+        (WebCore::CSSPropertyParserHelpers::parseColorContrastFunctionParameters):
+        Add support for the new optional target contrast ratio in color-contrast() that was
+        recently added to CSS Color 5.
+
 2021-04-12  Antti Koivisto  <antti@apple.com>
 
         Descendant style relations are sometimes reset when they shouldn't

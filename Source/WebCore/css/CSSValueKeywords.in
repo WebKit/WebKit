@@ -1438,6 +1438,8 @@ xyz
 // color-contast()
 color-contrast
 vs
+AA
+AA-large
 
 // color-mix()
 color-mix

@@ -1,3 +1,15 @@
+2021-04-12  Sam Weinig  <weinig@apple.com>
+
+        Update color-contrast() to support a target contrast ratio
+        https://bugs.webkit.org/show_bug.cgi?id=224411
+
+        Reviewed by Antti Koivisto.
+
+        Add tests and update results for target contrast ratios in color-contrast().
+
+        * fast/css/parsing-color-contrast-expected.txt:
+        * fast/css/parsing-color-contrast.html:
+
 2021-04-12  Antti Koivisto  <antti@apple.com>
 
         Descendant style relations are sometimes reset when they shouldn't
