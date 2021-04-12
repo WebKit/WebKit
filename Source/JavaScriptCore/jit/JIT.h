@@ -128,7 +128,7 @@ namespace JSC {
 
         union {
             SimpleJumpTable* simpleJumpTable;
-            StringJumpTable* stringJumpTable;
+            unsigned tableIndex;
         } jumpTable;
 
         BytecodeIndex bytecodeIndex;
@@ -142,12 +142,12 @@ namespace JSC {
             this->jumpTable.simpleJumpTable = jumpTable;
         }
 
-        SwitchRecord(StringJumpTable* jumpTable, BytecodeIndex bytecodeIndex, unsigned defaultOffset)
-            : type(String)
+        SwitchRecord(unsigned tableIndex, BytecodeIndex bytecodeIndex, unsigned defaultOffset, Type type)
+            : type(type)
             , bytecodeIndex(bytecodeIndex)
             , defaultOffset(defaultOffset)
         {
-            this->jumpTable.stringJumpTable = jumpTable;
+            this->jumpTable.tableIndex = tableIndex;
         }
     };
 

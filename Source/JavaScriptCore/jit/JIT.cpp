@@ -857,6 +857,11 @@ CompilationResult JIT::link()
     if (patchBuffer.didFailToAllocate())
         return CompilationFailed;
 
+    if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables()) {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+    }
+
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (auto& record : m_switches) {
         unsigned bytecodeOffset = record.bytecodeIndex.offset();
@@ -877,15 +882,17 @@ CompilationResult JIT::link()
         } else {
             ASSERT(record.type == SwitchRecord::String);
 
-            auto* stringJumpTable = record.jumpTable.stringJumpTable;
-            stringJumpTable->ctiDefault =
-                patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
+            unsigned tableIndex = record.jumpTable.tableIndex;
+            const UnlinkedStringJumpTable& unlinkedTable = m_codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
+            StringJumpTable& linkedTable = m_codeBlock->stringSwitchJumpTable(tableIndex);
+            linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
+            linkedTable.m_ctiOffsets = FixedVector<CodeLocationLabel<JSSwitchPtrTag>>(unlinkedTable.m_offsetTable.size());
 
-            for (auto& location : stringJumpTable->offsetTable.values()) {
-                unsigned offset = location.branchOffset;
-                location.ctiOffset = offset
+            for (auto& location : unlinkedTable.m_offsetTable.values()) {
+                unsigned offset = location.m_branchOffset;
+                linkedTable.m_ctiOffsets[location.m_indexInTable] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
-                    : stringJumpTable->ctiDefault;
+                    : linkedTable.m_ctiDefault;
             }
         }
     }

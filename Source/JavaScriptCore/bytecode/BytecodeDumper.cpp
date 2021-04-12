@@ -196,15 +196,13 @@ void CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables()
 template<class Block>
 void CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables()
 {
-    if (unsigned count = this->block()->numberOfStringSwitchJumpTables()) {
+    if (unsigned count = this->block()->numberOfUnlinkedStringSwitchJumpTables()) {
         this->m_out.printf("\nString Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             this->m_out.printf("  %1d = {\n", i);
-            const auto& stringSwitchJumpTable = this->block()->stringSwitchJumpTable(i);
-            auto end = stringSwitchJumpTable.offsetTable.end();
-            for (auto iter = stringSwitchJumpTable.offsetTable.begin(); iter != end; ++iter)
-                this->m_out.printf("\t\t\"%s\" => %04d\n", iter->key->utf8().data(), iter->value.branchOffset);
+            for (const auto& entry : this->block()->unlinkedStringSwitchJumpTable(i).m_offsetTable)
+                this->m_out.printf("\t\t\"%s\" => %04d\n", entry.key->utf8().data(), entry.value.m_branchOffset);
             this->m_out.printf("      }\n");
             ++i;
         } while (i < count);

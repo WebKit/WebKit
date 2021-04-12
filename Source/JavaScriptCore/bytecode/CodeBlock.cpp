@@ -327,7 +327,6 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
         
         m_rareData->m_exceptionHandlers = other.m_rareData->m_exceptionHandlers;
         m_rareData->m_switchJumpTables = other.m_rareData->m_switchJumpTables;
-        m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
     }
 }
 
@@ -419,7 +418,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         m_functionExprs[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), WTF::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
     }
 
-    if (unlinkedCodeBlock->hasRareData()) {
+    if (unlinkedCodeBlock->numberOfExceptionHandlers() || unlinkedCodeBlock->numberOfSwitchJumpTables()) {
         createRareDataIfNecessary();
 
         if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
@@ -433,19 +432,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 #else
                 handler.initialize(unlinkedHandler);
 #endif
-            }
-        }
-
-        if (size_t count = unlinkedCodeBlock->numberOfStringSwitchJumpTables()) {
-            m_rareData->m_stringSwitchJumpTables.resizeToFit(count);
-            for (size_t i = 0; i < count; i++) {
-                UnlinkedStringJumpTable::StringOffsetTable::iterator ptr = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.begin();
-                UnlinkedStringJumpTable::StringOffsetTable::iterator end = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.end();
-                for (; ptr != end; ++ptr) {
-                    OffsetLocation offset;
-                    offset.branchOffset = ptr->value.branchOffset;
-                    m_rareData->m_stringSwitchJumpTables[i].offsetTable.add(ptr->key, offset);
-                }
             }
         }
 
@@ -2141,10 +2127,8 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
     m_constantsSourceCodeRepresentation.shrinkToFit();
 
     if (shrinkMode == ShrinkMode::EarlyShrink) {
-        if (m_rareData) {
+        if (m_rareData)
             m_rareData->m_switchJumpTables.shrinkToFit();
-            m_rareData->m_stringSwitchJumpTables.shrinkToFit();
-        }
     } // else don't shrink these, because we would have already pointed pointers into these tables.
 }
 

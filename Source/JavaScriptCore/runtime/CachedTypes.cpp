@@ -884,12 +884,12 @@ class CachedStringJumpTable : public CachedObject<UnlinkedStringJumpTable> {
 public:
     void encode(Encoder& encoder, const UnlinkedStringJumpTable& jumpTable)
     {
-        m_offsetTable.encode(encoder, jumpTable.offsetTable);
+        m_offsetTable.encode(encoder, jumpTable.m_offsetTable);
     }
 
     void decode(Decoder& decoder, UnlinkedStringJumpTable& jumpTable) const
     {
-        m_offsetTable.decode(decoder, jumpTable.offsetTable);
+        m_offsetTable.decode(decoder, jumpTable.m_offsetTable);
     }
 
 private:
@@ -951,7 +951,7 @@ public:
     {
         m_exceptionHandlers.encode(encoder, rareData.m_exceptionHandlers);
         m_switchJumpTables.encode(encoder, rareData.m_switchJumpTables);
-        m_stringSwitchJumpTables.encode(encoder, rareData.m_stringSwitchJumpTables);
+        m_unlinkedStringSwitchJumpTables.encode(encoder, rareData.m_unlinkedStringSwitchJumpTables);
         m_expressionInfoFatPositions.encode(encoder, rareData.m_expressionInfoFatPositions);
         m_typeProfilerInfoMap.encode(encoder, rareData.m_typeProfilerInfoMap);
         m_opProfileControlFlowBytecodeOffsets.encode(encoder, rareData.m_opProfileControlFlowBytecodeOffsets);
@@ -966,7 +966,7 @@ public:
         UnlinkedCodeBlock::RareData* rareData = new UnlinkedCodeBlock::RareData { };
         m_exceptionHandlers.decode(decoder, rareData->m_exceptionHandlers);
         m_switchJumpTables.decode(decoder, rareData->m_switchJumpTables);
-        m_stringSwitchJumpTables.decode(decoder, rareData->m_stringSwitchJumpTables);
+        m_unlinkedStringSwitchJumpTables.decode(decoder, rareData->m_unlinkedStringSwitchJumpTables);
         m_expressionInfoFatPositions.decode(decoder, rareData->m_expressionInfoFatPositions);
         m_typeProfilerInfoMap.decode(decoder, rareData->m_typeProfilerInfoMap);
         m_opProfileControlFlowBytecodeOffsets.decode(decoder, rareData->m_opProfileControlFlowBytecodeOffsets);
@@ -980,7 +980,7 @@ public:
 private:
     CachedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
     CachedVector<CachedSimpleJumpTable> m_switchJumpTables;
-    CachedVector<CachedStringJumpTable> m_stringSwitchJumpTables;
+    CachedVector<CachedStringJumpTable> m_unlinkedStringSwitchJumpTables;
     CachedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     CachedHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     CachedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;

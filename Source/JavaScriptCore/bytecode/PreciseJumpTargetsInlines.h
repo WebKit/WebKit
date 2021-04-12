@@ -77,11 +77,9 @@ namespace JSC {
     } \
     case op_switch_string: { \
         auto bytecode = instruction->as<OpSwitchString>(); \
-        auto& table = codeBlock->stringSwitchJumpTable(bytecode.m_tableIndex); \
-        auto iter = table.offsetTable.begin(); \
-        auto end = table.offsetTable.end(); \
-        for (; iter != end; ++iter) \
-            SWITCH_CASE(iter->value.branchOffset); \
+        auto& table = codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex); \
+        for (auto& entry : table.m_offsetTable) \
+            SWITCH_CASE(entry.value.m_branchOffset); \
         SWITCH_DEFAULT_OFFSET(OpSwitchString); \
         break; \
     } \

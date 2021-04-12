@@ -2716,8 +2716,10 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchString, char*, (JSGlobalObject* globalOb
     StringImpl* strImpl = string->value(globalObject).impl();
 
     RETURN_IF_EXCEPTION(throwScope, nullptr);
-
-    return callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).ctiForValue(strImpl).executableAddress<char*>();
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    const StringJumpTable& linkedTable = codeBlock->stringSwitchJumpTable(tableIndex);
+    const UnlinkedStringJumpTable& unlinkedTable = codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
+    return linkedTable.ctiForValue(unlinkedTable, strImpl).executableAddress<char*>();
 }
 
 JSC_DEFINE_JIT_OPERATION(operationCompareStringImplLess, uintptr_t, (StringImpl* a, StringImpl* b))

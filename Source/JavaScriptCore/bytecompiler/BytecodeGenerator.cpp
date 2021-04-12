@@ -4048,8 +4048,8 @@ void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::S
         break;
     }
     case SwitchInfo::SwitchString: {
-        size_t tableIndex = m_codeBlock->numberOfStringSwitchJumpTables();
-        m_codeBlock->addStringSwitchJumpTable();
+        size_t tableIndex = m_codeBlock->numberOfUnlinkedStringSwitchJumpTables();
+        m_codeBlock->addUnlinkedStringSwitchJumpTable();
         OpSwitchString::emit(this, tableIndex, BoundLabel(), scrutineeRegister);
         break;
     }
@@ -4111,7 +4111,9 @@ static void prepareJumpTableForStringSwitch(UnlinkedStringJumpTable& jumpTable, 
         
         ASSERT(nodes[i]->isString());
         StringImpl* clause = static_cast<StringNode*>(nodes[i])->value().impl();
-        jumpTable.offsetTable.add(clause, UnlinkedStringJumpTable::OffsetLocation { labels[i]->bind(switchAddress) });
+        auto result = jumpTable.m_offsetTable.add(clause, UnlinkedStringJumpTable::OffsetLocation { labels[i]->bind(switchAddress), 0 });
+        if (result.isNewEntry)
+            result.iterator->value.m_indexInTable = jumpTable.m_offsetTable.size() - 1;
     }
 }
 
@@ -4152,7 +4154,7 @@ void BytecodeGenerator::endSwitch(uint32_t clauseCount, const Vector<Ref<Label>,
             return BoundLabel();
         });
 
-        UnlinkedStringJumpTable& jumpTable = m_codeBlock->stringSwitchJumpTable(ref->as<OpSwitchString>().m_tableIndex);
+        UnlinkedStringJumpTable& jumpTable = m_codeBlock->unlinkedStringSwitchJumpTable(ref->as<OpSwitchString>().m_tableIndex);
         prepareJumpTableForStringSwitch(jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, nodes);
         break;
     }

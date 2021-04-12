@@ -30,51 +30,27 @@
 #pragma once
 
 #include "CodeLocation.h"
+#include "UnlinkedCodeBlock.h"
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
 
-    struct OffsetLocation {
-        int32_t branchOffset;
 #if ENABLE(JIT)
-        CodeLocationLabel<JSSwitchPtrTag> ctiOffset;
-#endif
-    };
-
     struct StringJumpTable {
-        using StringOffsetTable = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, OffsetLocation>;
-        StringOffsetTable offsetTable;
-#if ENABLE(JIT)
-        CodeLocationLabel<JSSwitchPtrTag> ctiDefault; // FIXME: it should not be necessary to store this.
-#endif
+        FixedVector<CodeLocationLabel<JSSwitchPtrTag>> m_ctiOffsets;
+        CodeLocationLabel<JSSwitchPtrTag> m_ctiDefault; // FIXME: it should not be necessary to store this.
 
-        inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset)
+        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(const UnlinkedStringJumpTable& unlinkedTable, StringImpl* value) const
         {
-            StringOffsetTable::const_iterator end = offsetTable.end();
-            StringOffsetTable::const_iterator loc = offsetTable.find(value);
-            if (loc == end)
-                return defaultOffset;
-            return loc->value.branchOffset;
-        }
-
-#if ENABLE(JIT)
-        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(StringImpl* value)
-        {
-            StringOffsetTable::const_iterator end = offsetTable.end();
-            StringOffsetTable::const_iterator loc = offsetTable.find(value);
-            if (loc == end)
-                return ctiDefault;
-            return loc->value.ctiOffset;
-        }
-#endif
-        
-        void clear()
-        {
-            offsetTable.clear();
+            auto loc = unlinkedTable.m_offsetTable.find(value);
+            if (loc == unlinkedTable.m_offsetTable.end())
+                return m_ctiDefault;
+            return m_ctiOffsets[loc->value.m_indexInTable];
         }
     };
+#endif
 
     struct SimpleJumpTable {
         // FIXME: The two Vectors can be combined into one Vector<OffsetLocation>

@@ -16747,7 +16747,7 @@ private:
             Int32, operationSwitchStringAndGetBranchOffset,
             weakPointer(globalObject), m_out.constIntPtr(data->switchTableIndex), string);
         
-        StringJumpTable& table = codeBlock()->stringSwitchJumpTable(data->switchTableIndex);
+        const UnlinkedStringJumpTable& table = codeBlock()->unlinkedStringSwitchJumpTable(data->switchTableIndex);
         
         Vector<SwitchCase> cases;
         // These may be negative, or zero, or probably other stuff, too. We don't want to mess with HashSet's corner cases and we don't really care about throughput here.
@@ -16785,15 +16785,14 @@ private:
             // https://bugs.webkit.org/show_bug.cgi?id=144635
             
             DFG::SwitchCase myCase = data->cases[i];
-            StringJumpTable::StringOffsetTable::iterator iter =
-                table.offsetTable.find(myCase.value.stringImpl());
-            DFG_ASSERT(m_graph, m_node, iter != table.offsetTable.end());
+            auto iter = table.m_offsetTable.find(myCase.value.stringImpl());
+            DFG_ASSERT(m_graph, m_node, iter != table.m_offsetTable.end());
             
-            if (!alreadyHandled.insert(iter->value.branchOffset).second)
+            if (!alreadyHandled.insert(iter->value.m_branchOffset).second)
                 continue;
 
             cases.append(SwitchCase(
-                m_out.constInt32(iter->value.branchOffset),
+                m_out.constInt32(iter->value.m_branchOffset),
                 lowBlock(myCase.target.block), Weight(myCase.target.count)));
         }
         

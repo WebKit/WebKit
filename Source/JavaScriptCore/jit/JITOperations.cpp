@@ -2845,16 +2845,17 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     void* result;
-    StringJumpTable& jumpTable = codeBlock->stringSwitchJumpTable(tableIndex);
+    const StringJumpTable& linkedTable = codeBlock->stringSwitchJumpTable(tableIndex);
 
     if (key.isString()) {
         StringImpl* value = asString(key)->value(globalObject).impl();
 
         RETURN_IF_EXCEPTION(throwScope, nullptr);
 
-        result = jumpTable.ctiForValue(value).executableAddress();
+        const UnlinkedStringJumpTable& unlinkedTable = codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
+        result = linkedTable.ctiForValue(unlinkedTable, value).executableAddress();
     } else
-        result = jumpTable.ctiDefault.executableAddress();
+        result = linkedTable.m_ctiDefault.executableAddress();
 
     assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);

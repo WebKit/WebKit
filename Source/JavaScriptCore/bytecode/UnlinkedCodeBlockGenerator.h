@@ -94,9 +94,9 @@ public:
     UnlinkedSimpleJumpTable& addSwitchJumpTable() { m_switchJumpTables.append(UnlinkedSimpleJumpTable()); return m_switchJumpTables.last(); }
     UnlinkedSimpleJumpTable& switchJumpTable(int tableIndex) { return m_switchJumpTables[tableIndex]; }
 
-    size_t numberOfStringSwitchJumpTables() const { return m_stringSwitchJumpTables.size(); }
-    UnlinkedStringJumpTable& addStringSwitchJumpTable() { m_stringSwitchJumpTables.append(UnlinkedStringJumpTable()); return m_stringSwitchJumpTables.last(); }
-    UnlinkedStringJumpTable& stringSwitchJumpTable(int tableIndex) { return m_stringSwitchJumpTables[tableIndex]; }
+    size_t numberOfUnlinkedStringSwitchJumpTables() const { return m_unlinkedStringSwitchJumpTables.size(); }
+    UnlinkedStringJumpTable& addUnlinkedStringSwitchJumpTable() { m_unlinkedStringSwitchJumpTables.append(UnlinkedStringJumpTable()); return m_unlinkedStringSwitchJumpTables.last(); }
+    UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(int tableIndex) { return m_unlinkedStringSwitchJumpTables[tableIndex]; }
 
     size_t numberOfExceptionHandlers() const { return m_exceptionHandlers.size(); }
     UnlinkedHandlerInfo& exceptionHandler(int index) { return m_exceptionHandlers[index]; }
@@ -205,7 +205,7 @@ private:
     // In RareData.
     Vector<UnlinkedHandlerInfo> m_exceptionHandlers;
     Vector<UnlinkedSimpleJumpTable> m_switchJumpTables;
-    Vector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
+    Vector<UnlinkedStringJumpTable> m_unlinkedStringSwitchJumpTables;
     Vector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     HashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     Vector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;

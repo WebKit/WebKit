@@ -278,6 +278,7 @@ public:
         SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
         SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
         FixedVector<RareCaseProfile> m_rareCaseProfiles;
+        FixedVector<StringJumpTable> m_stringSwitchJumpTables;
         std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
         std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
         JITCodeMap m_jitCodeMap;
@@ -630,8 +631,15 @@ public:
     }
 #endif
 
-    size_t numberOfStringSwitchJumpTables() const { return m_rareData ? m_rareData->m_stringSwitchJumpTables.size() : 0; }
-    StringJumpTable& stringSwitchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
+#if ENABLE(JIT)
+    StringJumpTable& stringSwitchJumpTable(int tableIndex)
+    {
+        RELEASE_ASSERT(m_jitData);
+        return m_jitData->m_stringSwitchJumpTables[tableIndex];
+    }
+#endif
+    size_t numberOfUnlinkedStringSwitchJumpTables() const { return m_unlinkedCode->numberOfUnlinkedStringSwitchJumpTables(); }
+    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(int tableIndex) { return m_unlinkedCode->unlinkedStringSwitchJumpTable(tableIndex); }
 
     DirectEvalCodeCache& directEvalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_directEvalCodeCache; }
 
@@ -883,7 +891,6 @@ public:
 
         // Jump Tables
         Vector<SimpleJumpTable> m_switchJumpTables;
-        Vector<StringJumpTable> m_stringSwitchJumpTables;
 
         Vector<std::unique_ptr<ValueProfileAndVirtualRegisterBuffer>> m_catchProfiles;
 

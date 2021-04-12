@@ -77,19 +77,19 @@ typedef unsigned UnlinkedLLIntCallLinkInfo;
 
 struct UnlinkedStringJumpTable {
     struct OffsetLocation {
-        int32_t branchOffset;
+        int32_t m_branchOffset;
+        unsigned m_indexInTable;
     };
 
     using StringOffsetTable = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, OffsetLocation>;
-    StringOffsetTable offsetTable;
+    StringOffsetTable m_offsetTable;
 
-    inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset)
+    inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset) const
     {
-        StringOffsetTable::const_iterator end = offsetTable.end();
-        StringOffsetTable::const_iterator loc = offsetTable.find(value);
-        if (loc == end)
+        auto loc = m_offsetTable.find(value);
+        if (loc == m_offsetTable.end())
             return defaultOffset;
-        return loc->value.branchOffset;
+        return loc->value.m_branchOffset;
     }
 
 };
@@ -188,8 +188,8 @@ public:
     size_t numberOfSwitchJumpTables() const { return m_rareData ? m_rareData->m_switchJumpTables.size() : 0; }
     UnlinkedSimpleJumpTable& switchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_switchJumpTables[tableIndex]; }
 
-    size_t numberOfStringSwitchJumpTables() const { return m_rareData ? m_rareData->m_stringSwitchJumpTables.size() : 0; }
-    UnlinkedStringJumpTable& stringSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_stringSwitchJumpTables[tableIndex]; }
+    size_t numberOfUnlinkedStringSwitchJumpTables() const { return m_rareData ? m_rareData->m_unlinkedStringSwitchJumpTables.size() : 0; }
+    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_unlinkedStringSwitchJumpTables[tableIndex]; }
 
     UnlinkedFunctionExecutable* functionDecl(int index) { return m_functionDecls[index].get(); }
     size_t numberOfFunctionDecls() { return m_functionDecls.size(); }
@@ -400,7 +400,7 @@ public:
 
         // Jump Tables
         FixedVector<UnlinkedSimpleJumpTable> m_switchJumpTables;
-        FixedVector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
+        FixedVector<UnlinkedStringJumpTable> m_unlinkedStringSwitchJumpTables;
 
         FixedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
 

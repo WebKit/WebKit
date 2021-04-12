@@ -1630,7 +1630,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
 
         LLINT_CHECK_EXCEPTION();
 
-        JUMP_TO(codeBlock->stringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(scrutineeStringImpl, defaultOffset));
+        JUMP_TO(codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(scrutineeStringImpl, defaultOffset));
     }
     LLINT_END();
 }

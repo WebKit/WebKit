@@ -6913,15 +6913,13 @@ void ByteCodeParser::parseBlock(unsigned limit)
             data.kind = SwitchString;
             data.switchTableIndex = bytecode.m_tableIndex;
             data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
-            StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
-            StringJumpTable::StringOffsetTable::iterator iter;
-            StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
-            for (iter = table.offsetTable.begin(); iter != end; ++iter) {
-                unsigned target = m_currentIndex.offset() + iter->value.branchOffset;
+            const UnlinkedStringJumpTable& table = m_codeBlock->unlinkedStringSwitchJumpTable(data.switchTableIndex);
+            for (const auto& entry : table.m_offsetTable) {
+                unsigned target = m_currentIndex.offset() + entry.value.m_branchOffset;
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(
-                    SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(iter->key.get()), target));
+                    SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(entry.key.get()), target));
             }
             addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);

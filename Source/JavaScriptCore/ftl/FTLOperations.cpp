@@ -709,7 +709,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringAndGetBranchOffset, int32_t, (JSGl
 
     RETURN_IF_EXCEPTION(throwScope, 0);
 
-    return callFrame->codeBlock()->stringSwitchJumpTable(tableIndex).offsetForValue(strImpl, std::numeric_limits<int32_t>::min());
+    return callFrame->codeBlock()->unlinkedStringSwitchJumpTable(tableIndex).offsetForValue(strImpl, std::numeric_limits<int32_t>::min());
 }
 
 JSC_DEFINE_JIT_OPERATION(operationTypeOfObjectAsTypeofType, int32_t, (JSGlobalObject* globalObject, JSCell* object))

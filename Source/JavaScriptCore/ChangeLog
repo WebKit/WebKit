@@ -1,3 +1,85 @@
+2021-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not copy StringSwitchJumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=224414
+
+        Reviewed by Keith Miller.
+
+        Previously, we were copying UnlinkedStringJumpTable to CodeBlock's StringJumpTable because we embed CodeLocation pointer
+        inside CodeBlock's StringJumpTable. This is copying a mostly identical hashtable to each CodeBlock even in DFG and FTL. This
+        even prevents us from inlining op_switch_string in DFG and FTL because (1) we don't want to copy this string tables collected from
+        each inlined CodeBlock into a new DFG / FTL CodeBlock and (2) we cannot ref/deref StringImpl inside DFG / FTL compilers so copying
+        these tables in the compiler threads need additional "DesiredStringSwitchJumpTable" etc.
+
+        In this patch, we stop copying StringSwitchJumpTable. We decouple CodeLocation pointers from the hashtable so that we can use
+        UnlinkedStringJumpTable in UnlinkedCodeBlock. UnlinkedStringJumpTable's hashtable inclues m_indexInTable in each entry so that
+        we can have array of CodeLocation pointers in CodeBlock's JITData to have JIT jump targets separately. This design prevents us
+        from copying unnecessary hashtables, and even this paves the way to inlining switch_string in DFG and FTL.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::stringSwitchJumpTable):
+        (JSC::CodeBlock::numberOfUnlinkedStringSwitchJumpTables const):
+        (JSC::CodeBlock::unlinkedStringSwitchJumpTable):
+        (JSC::CodeBlock::numberOfStringSwitchJumpTables const): Deleted.
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::ctiForValue const):
+        (JSC::StringJumpTable::offsetForValue): Deleted.
+        (JSC::StringJumpTable::ctiForValue): Deleted.
+        (JSC::StringJumpTable::clear): Deleted.
+        * bytecode/PreciseJumpTargetsInlines.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedStringJumpTable::offsetForValue const):
+        (JSC::UnlinkedCodeBlock::numberOfUnlinkedStringSwitchJumpTables const):
+        (JSC::UnlinkedCodeBlock::unlinkedStringSwitchJumpTable):
+        (JSC::UnlinkedStringJumpTable::offsetForValue): Deleted.
+        (JSC::UnlinkedCodeBlock::numberOfStringSwitchJumpTables const): Deleted.
+        (JSC::UnlinkedCodeBlock::stringSwitchJumpTable): Deleted.
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::numberOfUnlinkedStringSwitchJumpTables const):
+        (JSC::UnlinkedCodeBlockGenerator::addUnlinkedStringSwitchJumpTable):
+        (JSC::UnlinkedCodeBlockGenerator::unlinkedStringSwitchJumpTable):
+        (JSC::UnlinkedCodeBlockGenerator::numberOfStringSwitchJumpTables const): Deleted.
+        (JSC::UnlinkedCodeBlockGenerator::addStringSwitchJumpTable): Deleted.
+        (JSC::UnlinkedCodeBlockGenerator::stringSwitchJumpTable): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::prepareJumpTableForStringSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringSlow):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        (JSC::SwitchRecord::SwitchRecord):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedStringJumpTable::encode):
+        (JSC::CachedStringJumpTable::decode const):
+        (JSC::CachedCodeBlockRareData::encode):
+        (JSC::CachedCodeBlockRareData::decode const):
+
 2021-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] B3 reduce-double-to-float should reduce only when constant double is canonical one to reduced float value
