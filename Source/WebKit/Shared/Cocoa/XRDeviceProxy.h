@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,34 +25,45 @@
 
 #pragma once
 
-#if PLATFORM(MAC)
+#if ENABLE(WEBXR)
 
-#include <OpenGL/CGLTypes.h>
-#include <WebCore/Timer.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/WeakHashSet.h>
+#include "XRDeviceIdentifier.h"
+#include <WebCore/PlatformXR.h>
+#include <wtf/Optional.h>
+#include <wtf/Ref.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class WebProcessProxy;
+class PlatformXRSystemProxy;
 
-class HighPerformanceGPUManager {
-    friend NeverDestroyed<HighPerformanceGPUManager>;
+struct XRDeviceInfo;
+
+class XRDeviceProxy final : public PlatformXR::Device {
 public:
-    static HighPerformanceGPUManager& singleton();
+    static Ref<XRDeviceProxy> create(XRDeviceInfo&&, PlatformXRSystemProxy&);
+    XRDeviceIdentifier identifier() const { return m_identifier; }
 
-    void addProcessRequiringHighPerformance(WebProcessProxy&);
-    void removeProcessRequiringHighPerformance(WebProcessProxy&);
+    void sessionDidEnd();
 
 private:
-    HighPerformanceGPUManager();
-    ~HighPerformanceGPUManager();
-    void updateState();
+    XRDeviceProxy(XRDeviceInfo&&, PlatformXRSystemProxy&);
 
-    WeakHashSet<WebProcessProxy> m_processesRequiringHighPerformance;
-    CGLPixelFormatObj m_pixelFormatObj { nullptr };
-    WebCore::Timer m_updateStateTimer;
+    void initializeTrackingAndRendering(PlatformXR::SessionMode) final;
+    void shutDownTrackingAndRendering() final;
+    bool supportsSessionShutdownNotification() const final { return true; }
+    void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
+    Vector<PlatformXR::Device::ViewData> views(PlatformXR::SessionMode) const final;
+    void requestFrame(PlatformXR::Device::RequestFrameCallback&&) final;
+    Optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t, uint32_t, bool) override { return WTF::nullopt; };
+    void deleteLayer(PlatformXR::LayerHandle) override { };
+
+    XRDeviceIdentifier m_identifier;
+    WeakPtr<PlatformXRSystemProxy> m_xrSystem;
+    bool m_supportsStereoRendering { false };
 };
 
-}
-#endif
+} // namespace WebKit
+
+#endif // ENABLE(WEBXR)

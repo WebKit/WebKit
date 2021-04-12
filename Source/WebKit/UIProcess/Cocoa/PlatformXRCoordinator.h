@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,34 @@
 
 #pragma once
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
-#include "PlatformXR.h"
-#include <WebKitAdditions/PlatformXRAdditions.h>
-#endif
+#if ENABLE(WEBXR)
+
+#include "XRDeviceIdentifier.h"
+#include "XRDeviceInfo.h"
+#include <WebCore/PlatformXR.h>
+#include <wtf/Function.h>
+#include <wtf/Optional.h>
+
+namespace WebKit {
+
+class WebPageProxy;
+
+class PlatformXRCoordinator {
+public:
+    virtual ~PlatformXRCoordinator() = default;
+
+    using DeviceInfoCallback = Function<void(Optional<XRDeviceInfo>)>;
+    virtual void getPrimaryDeviceInfo(DeviceInfoCallback&&) = 0;
+
+    // Session creation/termination.
+    using OnSessionEndCallback = Function<void(XRDeviceIdentifier)>;
+    virtual void startSession(WebPageProxy&, OnSessionEndCallback&&) = 0;
+    virtual void endSessionIfExists(WebPageProxy&) = 0;
+
+    // Session display loop.
+    virtual void scheduleAnimationFrame(WebPageProxy&, PlatformXR::Device::RequestFrameCallback&&) = 0;
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(WEBXR)

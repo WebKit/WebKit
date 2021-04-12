@@ -343,6 +343,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::TransactionID',
         'WebKit::UserContentControllerIdentifier',
         'WebKit::WebPageProxyIdentifier',
+        'WebKit::XRDeviceIdentifier',
     ])
 
 
@@ -777,6 +778,7 @@ def headers_for_type(type):
         'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
         'webrtc::WebKitEncodedFrameInfo': ['<webrtc/sdk/WebKit/WebKitEncoder.h>', '<WebCore/LibWebRTCEnumTraits.h>'],
+        'PlatformXR::Device::FrameData': ['<WebCore/PlatformXR.h>'],
     }
 
     headers = []

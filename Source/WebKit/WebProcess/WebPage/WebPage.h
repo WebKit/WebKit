@@ -144,6 +144,10 @@ typedef struct _AtkObject AtkObject;
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
 
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#include "PlatformXRSystemProxy.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "DynamicViewportSizeUpdate.h"
 #include <WebCore/VisibleSelection.h>
@@ -1428,7 +1432,11 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     void textAutosizingUsesIdempotentModeChanged();
 #endif
-    
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    PlatformXRSystemProxy& xrSystemProxy();
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2309,6 +2317,10 @@ private:
 #if ENABLE(IMAGE_EXTRACTION)
     Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingImageExtraction;
     WeakHashSet<WebCore::HTMLElement> m_elementsWithExtractedImages;
+#endif
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    std::unique_ptr<PlatformXRSystemProxy> m_xrSystemProxy;
 #endif
 };
 

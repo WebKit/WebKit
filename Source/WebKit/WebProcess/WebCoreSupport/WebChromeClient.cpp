@@ -1473,4 +1473,11 @@ void WebChromeClient::showMediaControlsContextMenu(FloatRect&& targetFrame, Vect
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+void WebChromeClient::enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&& completionHandler)
+{
+    m_page.xrSystemProxy().enumerateImmersiveXRDevices(WTFMove(completionHandler));
+}
+#endif
+
 } // namespace WebKit

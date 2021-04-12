@@ -1,3 +1,33 @@
+2021-04-12  Ada Chan  <ada.chan@apple.com>
+
+        Initial implementation of WebChromeClient::enumerateImmersiveXRDevices() and XRDeviceProxy
+        https://bugs.webkit.org/show_bug.cgi?id=224353
+
+        Reviewed by Dean Jackson.
+
+        Remove PlatformXRDeviceCocoa as WebKit::XRDeviceProxy will be implementing PlatformXR::Device.
+        Implement the encode/decode methods to enable PlatformXR::Device::FrameData to
+        be sent over IPC.
+
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::trackingAndRenderingClient const):
+        (PlatformXR::Device::FrameData::FloatQuaternion::encode const):
+        (PlatformXR::Device::FrameData::FloatQuaternion::decode):
+        (PlatformXR::Device::FrameData::Pose::encode const):
+        (PlatformXR::Device::FrameData::Pose::decode):
+        (PlatformXR::Device::FrameData::Fov::encode const):
+        (PlatformXR::Device::FrameData::Fov::decode):
+        (PlatformXR::Device::FrameData::View::encode const):
+        (PlatformXR::Device::FrameData::View::decode):
+        (PlatformXR::Device::FrameData::StageParameters::encode const):
+        (PlatformXR::Device::FrameData::StageParameters::decode):
+        (PlatformXR::Device::FrameData::LayerData::encode const):
+        (PlatformXR::Device::FrameData::LayerData::decode):
+        (PlatformXR::Device::FrameData::encode const):
+        (PlatformXR::Device::FrameData::decode):
+        * platform/xr/cocoa/PlatformXRCocoa.h:
+        (): Deleted.
+
 2021-04-12  Antoine Quint  <graouts@webkit.org>
 
         border-image-width computed values should be a calc() value if it contains a percentage

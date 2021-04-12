@@ -95,6 +95,7 @@ public:
 
     virtual void initializeTrackingAndRendering(SessionMode) = 0;
     virtual void shutDownTrackingAndRendering() = 0;
+    TrackingAndRenderingClient* trackingAndRenderingClient() const { return m_trackingAndRenderingClient.get(); }
     void setTrackingAndRenderingClient(WeakPtr<TrackingAndRenderingClient>&& client) { m_trackingAndRenderingClient = WTFMove(client); }
 
     // If this method returns true, that means the device will notify TrackingAndRenderingClient
@@ -110,11 +111,17 @@ public:
             float y { 0.0f };
             float z { 0.0f };
             float w { 1.0f };
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static Optional<FloatQuaternion> decode(Decoder&);
         };
 
         struct Pose {
             WebCore::FloatPoint3D position;
             FloatQuaternion orientation;
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static Optional<Pose> decode(Decoder&);
         };
 
         struct Fov {
@@ -123,22 +130,37 @@ public:
             float down { 0.0f };
             float left { 0.0f };
             float right { 0.0f };
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static Optional<Fov> decode(Decoder&);
         };
 
-        using Projection = Variant<Fov, std::array<float, 16>, std::nullptr_t>;
+        static constexpr size_t projectionMatrixSize = 16;
+        typedef std::array<float, projectionMatrixSize> ProjectionMatrix;
+
+        using Projection = Variant<Fov, ProjectionMatrix, std::nullptr_t>;
 
         struct View {
             Pose offset;
             Projection projection = { nullptr };
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static Optional<View> decode(Decoder&);
         };
 
         struct StageParameters {
             int id { 0 };
             Vector<WebCore::FloatPoint> bounds;
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static Optional<StageParameters> decode(Decoder&);
         };
 
         struct LayerData {
             PlatformGLObject opaqueTexture { 0 };
+
+            template<class Encoder> void encode(Encoder&) const;
+            template<class Decoder> static Optional<LayerData> decode(Decoder&);
         };
 
         bool isTrackingValid { false };
@@ -151,6 +173,9 @@ public:
         StageParameters stageParameters;
         Vector<View> views;
         HashMap<LayerHandle, LayerData> layers;
+
+        template<class Encoder> void encode(Encoder&) const;
+        template<class Decoder> static Optional<FrameData> decode(Decoder&);
     };
 
     struct LayerView {
@@ -207,6 +232,221 @@ private:
     DeviceList m_immersiveXRDevices;
 };
 
+template<class Encoder>
+void Device::FrameData::FloatQuaternion::encode(Encoder& encoder) const
+{
+    encoder << x << y << z << w;
+}
+
+template<class Decoder>
+Optional<Device::FrameData::FloatQuaternion> Device::FrameData::FloatQuaternion::decode(Decoder& decoder)
+{
+    Device::FrameData::FloatQuaternion floatQuaternion;
+    if (!decoder.decode(floatQuaternion.x))
+        return WTF::nullopt;
+    if (!decoder.decode(floatQuaternion.y))
+        return WTF::nullopt;
+    if (!decoder.decode(floatQuaternion.z))
+        return WTF::nullopt;
+    if (!decoder.decode(floatQuaternion.w))
+        return WTF::nullopt;
+    return floatQuaternion;
+}
+
+template<class Encoder>
+void Device::FrameData::Pose::encode(Encoder& encoder) const
+{
+    encoder << position << orientation;
+}
+
+template<class Decoder>
+Optional<Device::FrameData::Pose> Device::FrameData::Pose::decode(Decoder& decoder)
+{
+    Device::FrameData::Pose pose;
+    if (!decoder.decode(pose.position))
+        return WTF::nullopt;
+    if (!decoder.decode(pose.orientation))
+        return WTF::nullopt;
+    return pose;
+}
+
+template<class Encoder>
+void Device::FrameData::Fov::encode(Encoder& encoder) const
+{
+    encoder << up << down << left << right;
+}
+
+template<class Decoder>
+Optional<Device::FrameData::Fov> Device::FrameData::Fov::decode(Decoder& decoder)
+{
+    Device::FrameData::Fov fov;
+    if (!decoder.decode(fov.up))
+        return WTF::nullopt;
+    if (!decoder.decode(fov.down))
+        return WTF::nullopt;
+    if (!decoder.decode(fov.left))
+        return WTF::nullopt;
+    if (!decoder.decode(fov.right))
+        return WTF::nullopt;
+    return fov;
+}
+
+template<class Encoder>
+void Device::FrameData::View::encode(Encoder& encoder) const
+{
+    encoder << offset;
+
+    bool hasFov = WTF::holds_alternative<PlatformXR::Device::FrameData::Fov>(projection);
+    encoder << hasFov;
+    if (hasFov) {
+        encoder << WTF::get<PlatformXR::Device::FrameData::Fov>(projection);
+        return;
+    }
+
+    bool hasProjectionMatrix = WTF::holds_alternative<PlatformXR::Device::FrameData::ProjectionMatrix>(projection);
+    encoder << hasProjectionMatrix;
+    if (hasProjectionMatrix) {
+        for (float f : WTF::get<PlatformXR::Device::FrameData::ProjectionMatrix>(projection))
+            encoder << f;
+        return;
+    }
+
+    ASSERT(WTF::holds_alternative<std::nullptr_t>(projection));
+}
+
+template<class Decoder>
+Optional<Device::FrameData::View> Device::FrameData::View::decode(Decoder& decoder)
+{
+    PlatformXR::Device::FrameData::View view;
+    if (!decoder.decode(view.offset))
+        return WTF::nullopt;
+
+    bool hasFov;
+    if (!decoder.decode(hasFov))
+        return WTF::nullopt;
+
+    if (hasFov) {
+        PlatformXR::Device::FrameData::Fov fov;
+        if (!decoder.decode(fov))
+            return WTF::nullopt;
+        view.projection = { WTFMove(fov) };
+        return view;
+    }
+
+    bool hasProjectionMatrix;
+    if (!decoder.decode(hasProjectionMatrix))
+        return WTF::nullopt;
+
+    if (hasProjectionMatrix) {
+        PlatformXR::Device::FrameData::ProjectionMatrix projectionMatrix;
+        for (size_t i = 0; i < PlatformXR::Device::FrameData::projectionMatrixSize; ++i) {
+            float f;
+            if (!decoder.decode(f))
+                return WTF::nullopt;
+            projectionMatrix[i] = f;
+        }
+        view.projection = { WTFMove(projectionMatrix) };
+        return view;
+    }
+
+    view.projection = { nullptr };
+    return view;
+}
+
+template<class Encoder>
+void Device::FrameData::StageParameters::encode(Encoder& encoder) const
+{
+    encoder << id;
+    encoder << bounds;
+}
+
+template<class Decoder>
+Optional<Device::FrameData::StageParameters> Device::FrameData::StageParameters::decode(Decoder& decoder)
+{
+    PlatformXR::Device::FrameData::StageParameters stageParameters;
+    if (!decoder.decode(stageParameters.id))
+        return WTF::nullopt;
+    if (!decoder.decode(stageParameters.bounds))
+        return WTF::nullopt;
+    return stageParameters;
+}
+
+template<class Encoder>
+void Device::FrameData::LayerData::encode(Encoder& encoder) const
+{
+    encoder << opaqueTexture;
+}
+
+template<class Decoder>
+Optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
+{
+    PlatformXR::Device::FrameData::LayerData layerData;
+    if (!decoder.decode(layerData.opaqueTexture))
+        return WTF::nullopt;
+    return layerData;
+}
+
+template<class Encoder>
+void Device::FrameData::encode(Encoder& encoder) const
+{
+    encoder << isTrackingValid;
+    encoder << isPositionValid;
+    encoder << isPositionEmulated;
+    encoder << shouldRender;
+    encoder << predictedDisplayTime;
+    encoder << origin;
+    encoder << floorTransform;
+    encoder << stageParameters;
+    encoder << views;
+    encoder << layers;
+}
+
+template<class Decoder>
+Optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
+{
+    PlatformXR::Device::FrameData frameData;
+    if (!decoder.decode(frameData.isTrackingValid))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.isPositionValid))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.isPositionEmulated))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.shouldRender))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.predictedDisplayTime))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.origin))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.floorTransform))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.stageParameters))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.views))
+        return WTF::nullopt;
+    if (!decoder.decode(frameData.layers))
+        return WTF::nullopt;
+    return frameData;
+}
+
 #endif // ENABLE(WEBXR)
 
 } // namespace PlatformXR
+
+#if ENABLE(WEBXR)
+
+namespace WTF {
+
+template<> struct EnumTraits<PlatformXR::ReferenceSpaceType> {
+    using values = EnumValues<
+        PlatformXR::ReferenceSpaceType,
+        PlatformXR::ReferenceSpaceType::Viewer,
+        PlatformXR::ReferenceSpaceType::Local,
+        PlatformXR::ReferenceSpaceType::LocalFloor,
+        PlatformXR::ReferenceSpaceType::BoundedFloor,
+        PlatformXR::ReferenceSpaceType::Unbounded
+    >;
+};
+
+}
+
+#endif

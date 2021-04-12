@@ -1,3 +1,88 @@
+2021-04-12  Ada Chan  <ada.chan@apple.com>
+
+        Initial implementation of WebChromeClient::enumerateImmersiveXRDevices() and XRDeviceProxy
+        https://bugs.webkit.org/show_bug.cgi?id=224353
+
+        Reviewed by Dean Jackson
+
+        - Add XRDeviceProxy which implements PlatformXR::Device.
+        - Implement WebChromeClient::enumerateImmersiveXRDevices(), which calls PlatformXRSystemProxy
+        to get the list of XRDeviceProxy.
+        - XRDeviceProxy goes through PlatformXRSystemProxy to handle its operations.
+        PlatformXRSystemProxy sends messages over IPC to PlatformXRSystem on the UI process side,
+        which handles XR device discovery and manages sessions via the PlatformXRCoordinator interface.
+        PlatformXRSystem::xrCoordinator() returns null for now and will be handled in a later patch.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Platform/Logging.h:
+        * Scripts/webkit/messages.py:
+        (types_that_cannot_be_forward_declared):
+        (headers_for_type):
+        * Shared/Cocoa/XRDeviceProxy.h: Added.
+        * Shared/Cocoa/XRDeviceProxy.mm: Added.
+        (WebKit::XRDeviceProxy::create):
+        (WebKit::XRDeviceProxy::XRDeviceProxy):
+        Initialize its data members based on the XRDeviceInfo passed in.
+        Keep a weak pointer to PlatformXRSystemProxy (as PlatformXRSystemProxy has
+        strong references to its list of XRDeviceProxy).
+        (WebKit::XRDeviceProxy::sessionDidEnd):
+        Notify the TrackingAndRenderingClient that the session has ended.
+        (WebKit::XRDeviceProxy::initializeTrackingAndRendering):
+        (WebKit::XRDeviceProxy::shutDownTrackingAndRendering):
+        (WebKit::XRDeviceProxy::views const):
+        Return left and right views if the device supports stereo rendering.
+        Otherwise return just one view.
+        (WebKit::XRDeviceProxy::requestFrame):
+        * Shared/WebCoreArgumentCoders.h:
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/PlatformXRCoordinator.h: Copied from Source/WebCore/platform/xr/cocoa/PlatformXRCocoa.h.
+        Initial interface for communicating with the platform regarding XR devices and sessions.
+        For now, the interface covers session creation and termination, and scheduling frame updates.
+        * UIProcess/Cocoa/PlatformXRSystem.h: Copied from Source/WebCore/platform/xr/cocoa/PlatformXRCocoa.h.
+        * UIProcess/Cocoa/PlatformXRSystem.messages.in: Copied from Source/WebCore/platform/xr/cocoa/PlatformXRCocoa.h.
+        * UIProcess/Cocoa/PlatformXRSystem.mm: Added.
+        (WebKit::PlatformXRSystem::PlatformXRSystem):
+        (WebKit::PlatformXRSystem::~PlatformXRSystem):
+        (WebKit::PlatformXRSystem::invalidate):
+        End any existing session on invalidation.
+        (WebKit::PlatformXRSystem::enumerateImmersiveXRDevices):
+        (WebKit::PlatformXRSystem::initializeTrackingAndRendering):
+        (WebKit::PlatformXRSystem::shutDownTrackingAndRendering):
+        (WebKit::PlatformXRSystem::requestFrame):
+        (WebKit::PlatformXRSystem::xrCoordinator):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didAttachToRunningProcess):
+        Set up the PlatformXRSystem held by the WebPageProxy.
+        (WebKit::WebPageProxy::resetState):
+        Invalidate m_xrSystem so existing session is ended properly.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/HighPerformanceGPUManager.h:
+        Include WeakHashSet.h due to recent type change of m_processesRequiringHighPerformance
+        from HashSet to WeakHashSet.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::enumerateImmersiveXRDevices):
+        Get the list of XRDeviceInfo that represents the immersive devices returned
+        from PlatformXRSystem. Reuse any existing XRDeviceProxy instances that have the same
+        XRDeviceIdentifier. Otherwise, create new ones.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::xrSystemProxy):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/cocoa/PlatformXRSystemProxy.h: Copied from Source/WebCore/platform/xr/cocoa/PlatformXRCocoa.h.
+        * WebProcess/cocoa/PlatformXRSystemProxy.messages.in: Copied from Source/WebCore/platform/xr/cocoa/PlatformXRCocoa.h.
+        * WebProcess/cocoa/PlatformXRSystemProxy.mm: Added.
+        (WebKit::PlatformXRSystemProxy::PlatformXRSystemProxy):
+        (WebKit::PlatformXRSystemProxy::~PlatformXRSystemProxy):
+        (WebKit::PlatformXRSystemProxy::enumerateImmersiveXRDevices):
+        (WebKit::PlatformXRSystemProxy::initializeTrackingAndRendering):
+        (WebKit::PlatformXRSystemProxy::shutDownTrackingAndRendering):
+        (WebKit::PlatformXRSystemProxy::requestFrame):
+        (WebKit::PlatformXRSystemProxy::sessionDidEnd):
+        (WebKit::PlatformXRSystemProxy::deviceByIdentifier):
+
 2021-04-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Use g_object_notify_by_pspec() whenever possible

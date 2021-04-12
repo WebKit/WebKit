@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,10 +22,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#if PLATFORM(COCOA) && ENABLE(WEBXR)
 
-#pragma once
+messages -> PlatformXRSystem NotRefCounted {
+    EnumerateImmersiveXRDevices() -> (Vector<WebKit::XRDeviceInfo> devicesInfos) Async
+    InitializeTrackingAndRendering()
+    ShutDownTrackingAndRendering()
+    RequestFrame() -> (struct PlatformXR::Device::FrameData frameData) Async
+}
 
-#if ENABLE(WEBXR) && PLATFORM(COCOA)
-#include "PlatformXR.h"
-#include <WebKitAdditions/PlatformXRAdditions.h>
 #endif

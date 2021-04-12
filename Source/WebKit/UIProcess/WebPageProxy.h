@@ -183,6 +183,10 @@ interface ID3D11Device1;
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
 
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#include "PlatformXRSystem.h"
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebPageProxyAdditionsBefore.h>
 #endif
@@ -2990,6 +2994,10 @@ private:
     bool m_lastNavigationWasAppBound { false };
 
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    std::unique_ptr<PlatformXRSystem> m_xrSystem;
+#endif
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebPageProxyAdditionsAfter.h>

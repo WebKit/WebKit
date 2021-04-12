@@ -1025,6 +1025,11 @@ void WebPageProxy::didAttachToRunningProcess()
     ASSERT(!m_webDeviceOrientationUpdateProviderProxy);
     m_webDeviceOrientationUpdateProviderProxy = makeUnique<WebDeviceOrientationUpdateProviderProxy>(*this);
 #endif
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    ASSERT(!m_xrSystem);
+    m_xrSystem = makeUnique<PlatformXRSystem>(*this);
+#endif
 }
 
 RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
@@ -7588,6 +7593,13 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
     m_speechRecognitionPermissionManager = nullptr;
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    if (m_xrSystem) {
+        m_xrSystem->invalidate();
+        m_xrSystem = nullptr;
+    }
+#endif
 }
 
 void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)

@@ -1039,19 +1039,4 @@ template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesti
 };
 #endif
 
-#if ENABLE(WEBXR)
-
-template<> struct EnumTraits<PlatformXR::ReferenceSpaceType> {
-    using values = EnumValues<
-        PlatformXR::ReferenceSpaceType,
-        PlatformXR::ReferenceSpaceType::Viewer,
-        PlatformXR::ReferenceSpaceType::Local,
-        PlatformXR::ReferenceSpaceType::LocalFloor,
-        PlatformXR::ReferenceSpaceType::BoundedFloor,
-        PlatformXR::ReferenceSpaceType::Unbounded
-    >;
-};
-
-#endif
-
 } // namespace WTF
