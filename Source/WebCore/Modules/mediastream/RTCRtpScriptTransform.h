@@ -41,7 +41,7 @@ class RTCRtpTransformBackend;
 class Worker;
 
 class RTCRtpScriptTransform final
-    : public ThreadSafeRefCounted<RTCRtpScriptTransform>
+    : public ThreadSafeRefCounted<RTCRtpScriptTransform, WTF::DestructionThread::Main>
     , public ActiveDOMObject
     , public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(RTCRtpScriptTransform);

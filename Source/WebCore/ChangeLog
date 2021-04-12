@@ -1,3 +1,15 @@
+2021-04-12  Youenn Fablet  <youenn@apple.com>
+
+        Use DestructionThread::Main for RTCRtpScriptTransform
+        https://bugs.webkit.org/show_bug.cgi?id=224368
+        <rdar://76404727>
+
+        Reviewed by Eric Carlson.
+
+        It is safer to make it DestructionThread::Main to guarantee it is destroyed in main thread.
+
+        * Modules/mediastream/RTCRtpScriptTransform.h:
+
 2021-04-11  Cameron McCormack  <heycam@apple.com>
 
         Fix initial horizontal scrollbar position when vertical scrollbar is on the left.
