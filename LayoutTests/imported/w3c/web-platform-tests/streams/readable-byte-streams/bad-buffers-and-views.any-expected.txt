@@ -18,9 +18,7 @@ FAIL ReadableStream with byte source: respondWithNewView() throws if the supplie
 FAIL ReadableStream with byte source: respondWithNewView() throws if the supplied view is zero-length on a non-zero-length buffer (in the readable state) assert_throws_js: function "() => c.byobRequest.respondWithNewView(view)" threw object "RangeError: Invalid value for view.byteLength" ("RangeError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL ReadableStream with byte source: respondWithNewView() throws if the supplied view's buffer has been detached (in the closed state) assert_throws_js: function "() => c.byobRequest.respondWithNewView(zeroLengthView)" threw object "RangeError: Invalid value for view.byteLength" ("RangeError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS ReadableStream with byte source: respondWithNewView() throws if the supplied view's buffer has been detached (in the closed state)
 FAIL ReadableStream with byte source: respondWithNewView() throws if the supplied view's buffer is zero-length (in the closed state) assert_throws_js: function "() => c.byobRequest.respondWithNewView(view)" threw object "RangeError: Invalid value for view.byteLength" ("RangeError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")

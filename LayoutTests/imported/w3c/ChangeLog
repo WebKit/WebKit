@@ -1,3 +1,39 @@
+2021-04-12  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT streams test to ToT
+        https://bugs.webkit.org/show_bug.cgi?id=224284
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/streams/README.md:
+        * web-platform-tests/streams/piping/general.any-expected.txt:
+        * web-platform-tests/streams/piping/general.any.js:
+        (promise_test.t.const.rs.new.ReadableStream.start):
+        * web-platform-tests/streams/piping/general.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any.js:
+        * web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.any-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.any.js:
+        (test):
+        * web-platform-tests/streams/readable-byte-streams/general.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/async-iterator.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/async-iterator.any.js:
+        (promise_test.async const):
+        (promise_test):
+        * web-platform-tests/streams/readable-streams/async-iterator.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.any.js:
+        (promise_test.t.const.rs.new.ReadableStream.start):
+        * web-platform-tests/streams/readable-streams/default-reader.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.any.js:
+        (promise_test):
+        * web-platform-tests/streams/readable-streams/general.any.worker-expected.txt:
+        * web-platform-tests/streams/transform-streams/patched-global.any-expected.txt:
+        * web-platform-tests/streams/transform-streams/patched-global.any.js:
+        * web-platform-tests/streams/transform-streams/patched-global.any.worker-expected.txt:
+
 2021-04-11  Sam Weinig  <weinig@apple.com>
 
         Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior

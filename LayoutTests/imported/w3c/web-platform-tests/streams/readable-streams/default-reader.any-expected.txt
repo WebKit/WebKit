@@ -15,6 +15,8 @@ PASS Reading from a reader for an empty stream will wait until a chunk is availa
 PASS cancel() on a reader does not release the reader
 PASS closed should be fulfilled after stream is closed (.closed access before acquiring)
 PASS closed should be rejected after reader releases its lock (multiple stream locks)
+PASS closed is replaced when stream closes and reader releases its lock
+PASS closed is replaced when stream errors and reader releases its lock
 PASS Multiple readers can access the stream in sequence
 PASS Cannot use an already-released reader to unlock a stream again
 PASS cancel() on a released reader is a no-op and does not pass through
