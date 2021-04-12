@@ -37,8 +37,9 @@ ALLOW_UNUSED_PARAMETERS_END
 
 namespace WebCore {
 
-LibWebRTCRtpTransformableFrame::LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&& frame)
+LibWebRTCRtpTransformableFrame::LibWebRTCRtpTransformableFrame(std::unique_ptr<webrtc::TransformableFrameInterface>&& frame, bool isAudioSenderFrame)
     : m_rtcFrame(WTFMove(frame))
+    , m_isAudioSenderFrame(isAudioSenderFrame)
 {
 }
 
@@ -70,6 +71,47 @@ bool LibWebRTCRtpTransformableFrame::isKeyFrame() const
     ASSERT(m_rtcFrame);
     auto* videoFrame = static_cast<webrtc::TransformableVideoFrameInterface*>(m_rtcFrame.get());
     return videoFrame && videoFrame->IsKeyFrame();
+}
+
+uint64_t LibWebRTCRtpTransformableFrame::timestamp() const
+{
+    return m_rtcFrame ? m_rtcFrame->GetTimestamp() : 0;
+}
+
+RTCEncodedAudioFrameMetadata LibWebRTCRtpTransformableFrame::audioMetadata() const
+{
+    if (!m_rtcFrame)
+        return { };
+
+    Vector<uint32_t> cssrcs;
+    if (!m_isAudioSenderFrame) {
+        auto* audioFrame = static_cast<webrtc::TransformableAudioFrameInterface*>(m_rtcFrame.get());
+        auto& header = audioFrame->GetHeader();
+        if (header.numCSRCs) {
+            cssrcs.reserveInitialCapacity(header.numCSRCs);
+            for (size_t cptr = 0; cptr < header.numCSRCs; ++cptr)
+                cssrcs.uncheckedAppend(header.arrOfCSRCs[cptr]);
+        }
+    }
+    return { m_rtcFrame->GetSsrc(), WTFMove(cssrcs) };
+}
+
+RTCEncodedVideoFrameMetadata LibWebRTCRtpTransformableFrame::videoMetadata() const
+{
+    if (!m_rtcFrame)
+        return { };
+    auto* videoFrame = static_cast<webrtc::TransformableVideoFrameInterface*>(m_rtcFrame.get());
+    auto& metadata = videoFrame->GetMetadata();
+
+    Optional<int64_t> frameId;
+    if (metadata.GetFrameId())
+        frameId = *metadata.GetFrameId();
+
+    Vector<int64_t> dependencies;
+    for (auto value : metadata.GetFrameDependencies())
+        dependencies.append(value);
+
+    return { frameId, WTFMove(dependencies), metadata.GetWidth(), metadata.GetHeight(), metadata.GetSpatialIndex(), metadata.GetTemporalIndex(), m_rtcFrame->GetSsrc(), { } };
 }
 
 } // namespace WebCore

@@ -37,6 +37,18 @@ RTCEncodedAudioFrame::RTCEncodedAudioFrame(Ref<RTCRtpTransformableFrame>&& frame
 
 RTCEncodedAudioFrame::~RTCEncodedAudioFrame() = default;
 
+uint64_t RTCEncodedAudioFrame::timestamp() const
+{
+    return m_frame->timestamp();
+}
+
+const RTCEncodedAudioFrame::Metadata& RTCEncodedAudioFrame::getMetadata()
+{
+    if (!m_metadata)
+        m_metadata = m_frame->audioMetadata();
+    return *m_metadata;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC)

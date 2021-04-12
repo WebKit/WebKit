@@ -25,11 +25,20 @@
 
 [
     Conditional=WEB_RTC,
+    JSGenerateToJSObject,
+]
+dictionary RTCEncodedAudioFrameMetadata {
+    unsigned long synchronizationSource;
+    sequence<unsigned long> contributingSources;
+};
+
+[
+    Conditional=WEB_RTC,
     EnabledBySetting=WebRTCInsertableStreams,
     Exposed=DedicatedWorker,
     ImplementationLacksVTable,
 ] interface RTCEncodedAudioFrame {
-    // readonly attribute unsigned long long timestamp;
+    readonly attribute unsigned long long timestamp;
     attribute ArrayBuffer data;
-    // RTCAudioFrameMetadata getMetadata();
+    RTCEncodedAudioFrameMetadata getMetadata();
 };
