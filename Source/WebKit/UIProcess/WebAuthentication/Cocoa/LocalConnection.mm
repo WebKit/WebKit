@@ -99,6 +99,14 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
         });
     });
 
+#if USE(APPLE_INTERNAL_SDK)
+    // A quirk to force the compatible mode to always show UI.
+    if (shouldUseAlternateAttributes()) {
+        [m_context evaluatePolicy:LAPolicyDeviceOwnerAuthentication options:options.get() reply:reply.get()];
+        return;
+    }
+#endif
+
     [m_context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign options:options.get() reply:reply.get()];
 }
 
