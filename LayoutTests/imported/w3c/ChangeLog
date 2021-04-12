@@ -1,3 +1,87 @@
+2021-04-12  Sam Weinig  <weinig@apple.com>
+
+        Update WPT css/css-color tests
+        https://bugs.webkit.org/show_bug.cgi?id=224419
+
+        Reviewed by Antti Koivisto.
+
+        Update to the latest version of the css/css-color tests.
+
+        * web-platform-tests/css/css-color/META.yml:
+        * web-platform-tests/css/css-color/hex-001-expected.html:
+        * web-platform-tests/css/css-color/hex-001.html:
+        * web-platform-tests/css/css-color/hex-002-expected.html:
+        * web-platform-tests/css/css-color/hex-002.html:
+        * web-platform-tests/css/css-color/hex-003-expected.html:
+        * web-platform-tests/css/css-color/hex-003.html:
+        * web-platform-tests/css/css-color/hex-004-expected.html:
+        * web-platform-tests/css/css-color/hex-004.html:
+        * web-platform-tests/css/css-color/hsl-001-expected.html:
+        * web-platform-tests/css/css-color/hsl-001.html:
+        * web-platform-tests/css/css-color/hsl-002-expected.html:
+        * web-platform-tests/css/css-color/hsl-002.html:
+        * web-platform-tests/css/css-color/hsl-003-expected.html:
+        * web-platform-tests/css/css-color/hsl-003.html:
+        * web-platform-tests/css/css-color/hsl-004-expected.html:
+        * web-platform-tests/css/css-color/hsl-004.html:
+        * web-platform-tests/css/css-color/hsl-005-expected.html:
+        * web-platform-tests/css/css-color/hsl-005.html:
+        * web-platform-tests/css/css-color/hsl-006-expected.html:
+        * web-platform-tests/css/css-color/hsl-006.html:
+        * web-platform-tests/css/css-color/hsl-007-expected.html:
+        * web-platform-tests/css/css-color/hsl-007.html:
+        * web-platform-tests/css/css-color/hsl-008-expected.html:
+        * web-platform-tests/css/css-color/hsl-008.html:
+        * web-platform-tests/css/css-color/hsla-001-expected.html:
+        * web-platform-tests/css/css-color/hsla-001.html:
+        * web-platform-tests/css/css-color/hsla-002-expected.html:
+        * web-platform-tests/css/css-color/hsla-002.html:
+        * web-platform-tests/css/css-color/hsla-003-expected.html:
+        * web-platform-tests/css/css-color/hsla-003.html:
+        * web-platform-tests/css/css-color/hsla-004-expected.html:
+        * web-platform-tests/css/css-color/hsla-004.html:
+        * web-platform-tests/css/css-color/hsla-005-expected.html:
+        * web-platform-tests/css/css-color/hsla-005.html:
+        * web-platform-tests/css/css-color/hsla-006-expected.html:
+        * web-platform-tests/css/css-color/hsla-006.html:
+        * web-platform-tests/css/css-color/hsla-007-expected.html:
+        * web-platform-tests/css/css-color/hsla-007.html:
+        * web-platform-tests/css/css-color/hsla-008-expected.html:
+        * web-platform-tests/css/css-color/hsla-008.html:
+        * web-platform-tests/css/css-color/rgb-001-expected.html:
+        * web-platform-tests/css/css-color/rgb-001.html:
+        * web-platform-tests/css/css-color/rgb-002-expected.html:
+        * web-platform-tests/css/css-color/rgb-002.html:
+        * web-platform-tests/css/css-color/rgb-003-expected.html:
+        * web-platform-tests/css/css-color/rgb-003.html:
+        * web-platform-tests/css/css-color/rgb-004-expected.html:
+        * web-platform-tests/css/css-color/rgb-004.html:
+        * web-platform-tests/css/css-color/rgb-005-expected.html:
+        * web-platform-tests/css/css-color/rgb-005.html:
+        * web-platform-tests/css/css-color/rgb-006-expected.html:
+        * web-platform-tests/css/css-color/rgb-006.html:
+        * web-platform-tests/css/css-color/rgb-007-expected.html:
+        * web-platform-tests/css/css-color/rgb-007.html:
+        * web-platform-tests/css/css-color/rgb-008-expected.html:
+        * web-platform-tests/css/css-color/rgb-008.html:
+        * web-platform-tests/css/css-color/rgba-001-expected.html:
+        * web-platform-tests/css/css-color/rgba-001.html:
+        * web-platform-tests/css/css-color/rgba-002-expected.html:
+        * web-platform-tests/css/css-color/rgba-002.html:
+        * web-platform-tests/css/css-color/rgba-003-expected.html:
+        * web-platform-tests/css/css-color/rgba-003.html:
+        * web-platform-tests/css/css-color/rgba-004-expected.html:
+        * web-platform-tests/css/css-color/rgba-004.html:
+        * web-platform-tests/css/css-color/rgba-005-expected.html:
+        * web-platform-tests/css/css-color/rgba-005.html:
+        * web-platform-tests/css/css-color/rgba-006-expected.html:
+        * web-platform-tests/css/css-color/rgba-006.html:
+        * web-platform-tests/css/css-color/rgba-007-expected.html:
+        * web-platform-tests/css/css-color/rgba-007.html:
+        * web-platform-tests/css/css-color/rgba-008-expected.html:
+        * web-platform-tests/css/css-color/rgba-008.html:
+        * web-platform-tests/css/css-color/w3c-import.log:
+
 2021-04-12  Youenn Fablet  <youenn@apple.com>
 
         Update WPT streams test to ToT
