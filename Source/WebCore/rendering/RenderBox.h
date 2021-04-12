@@ -320,8 +320,8 @@ public:
     void clearOverridingLogicalHeight();
     void clearOverridingLogicalWidth();
 
-    LayoutUnit overridingContentLogicalWidth() const { return overridingLogicalWidth() - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth(); }
-    LayoutUnit overridingContentLogicalHeight() const { return overridingLogicalHeight() - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight(); }
+    LayoutUnit overridingContentLogicalWidth() const { return std::max(LayoutUnit(), overridingLogicalWidth() - borderAndPaddingLogicalWidth() - scrollbarLogicalWidth()); }
+    LayoutUnit overridingContentLogicalHeight() const { return std::max(LayoutUnit(), overridingLogicalHeight() - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight()); }
 
     Optional<LayoutUnit> overridingContainingBlockContentWidth() const override;
     Optional<LayoutUnit> overridingContainingBlockContentHeight() const override;
