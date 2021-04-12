@@ -12,7 +12,7 @@ if (window.internals)
 
 (function() {
     var pc = new RTCPeerConnection();
-    pc.addIceCandidate({ candidate : "2013266431 1 udp 2013266432 192.168.0.100 38838 typ host generation 0" });
+    pc.addIceCandidate({ candidate : "2013266431 1 udp 2013266432 192.168.0.100 38838 typ host generation 0", sdpMid: "0", sdpMLineIndex: 0 });
     pc.createOffer();
     pc.close();
 })();

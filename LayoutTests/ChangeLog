@@ -1,3 +1,18 @@
+2021-04-12  Youenn Fablet  <youenn@apple.com>
+
+        [ macOS wk2 ] webrtc/libwebrtc/release-while-creating-offer.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=224256
+        <rdar://problem/76296126>
+
+        Reviewed by Eric Carlson.
+
+        Pass a valid candidate to remove the rejection message.
+
+        * platform/mac-wk2/TestExpectations:
+        * webrtc/libwebrtc/release-while-creating-offer-expected.txt:
+        * webrtc/libwebrtc/release-while-creating-offer.html:
+        * webrtc/libwebrtc/release-while-setting-local-description.html:
+
 2021-04-12  Philippe Normand  <pnormand@igalia.com>
 
         [MSE][GStreamer] Crash in WebCore::PlaybackPipeline::addSourceBuffer when setting duration and preload is set to none
