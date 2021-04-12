@@ -1,3 +1,56 @@
+2021-04-12  Antti Koivisto  <antti@apple.com>
+
+        Descendant style relations are sometimes reset when they shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=224431
+        rdar://76267783
+
+        Reviewed by Sam Weinig.
+        
+        Some style relations computed during resolution of descendants are set on a parent element.
+        The parent element shouldn't reset them unless we are actually also computing the descendants.
+
+        Test: fast/css/first-letter-style-relation-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::resetStyleRelations):
+        (WebCore::Element::resetChildStyleRelations):
+        (WebCore::Element::resetAllDescendantStyleRelations):
+        
+        Split resetStyleRelations into separate parts.
+        
+        * dom/Element.h:
+        (WebCore::Element::styleAffectedByEmpty const):
+        (WebCore::Element::childrenAffectedByForwardPositionalRules const):
+        (WebCore::Element::descendantsAffectedByForwardPositionalRules const):
+        (WebCore::Element::childrenAffectedByBackwardPositionalRules const):
+        (WebCore::Element::descendantsAffectedByBackwardPositionalRules const):
+        (WebCore::Element::childrenAffectedByPropertyBasedBackwardPositionalRules const):
+        (WebCore::Element::setStyleAffectedByEmpty):
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules):
+        (WebCore::Element::setDescendantsAffectedByForwardPositionalRules):
+        (WebCore::Element::setChildrenAffectedByBackwardPositionalRules):
+        (WebCore::Element::setDescendantsAffectedByBackwardPositionalRules):
+        (WebCore::Element::setChildrenAffectedByPropertyBasedBackwardPositionalRules):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::resetStyleRelations): Deleted.
+        * dom/Node.h:
+        (WebCore::Node::StyleBitfields::clearFlags):
+        (WebCore::Node::clearStyleFlags):
+        (WebCore::Node::StyleBitfields::dynamicStyleRelations const): Deleted.
+        (WebCore::Node::StyleBitfields::setDynamicStyleRelation): Deleted.
+        (WebCore::Node::StyleBitfields::clearDynamicStyleRelations): Deleted.
+        (WebCore::Node::hasDynamicStyleRelationFlag const): Deleted.
+        (WebCore::Node::setDynamicStyleRelationFlag): Deleted.
+        
+        Remove the meaningless DynamicStyleRelation concept and merge these flags with the others.
+        
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        
+        Only clear the descendant or child style relation bits if we are actually re-resolving
+        descendants or children.
+
 2021-04-12  Rob Buis  <rbuis@igalia.com>
 
         Clamp overridingContentLogicalWidth/Height to zero

@@ -4257,13 +4257,31 @@ void Element::resetComputedStyle()
 
 void Element::resetStyleRelations()
 {
-    // FIXME: Make this code more consistent.
-    auto bitfields = styleBitfields();
-    bitfields.clearDynamicStyleRelations();
-    setStyleBitfields(bitfields);
+    clearStyleFlags(NodeStyleFlag::StyleAffectedByEmpty);
     if (!hasRareData())
         return;
-    elementRareData()->resetStyleRelations();
+    elementRareData()->setChildIndex(0);
+}
+
+void Element::resetChildStyleRelations()
+{
+    clearStyleFlags({
+        NodeStyleFlag::ChildrenAffectedByFirstChildRules,
+        NodeStyleFlag::ChildrenAffectedByLastChildRules,
+        NodeStyleFlag::ChildrenAffectedByForwardPositionalRules,
+        NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules,
+        NodeStyleFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules
+    });
+}
+
+void Element::resetAllDescendantStyleRelations()
+{
+    resetChildStyleRelations();
+    
+    clearStyleFlags({
+        NodeStyleFlag::DescendantsAffectedByForwardPositionalRules,
+        NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules
+    });
 }
 
 void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()

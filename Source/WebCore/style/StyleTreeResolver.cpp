@@ -482,6 +482,21 @@ static std::unique_ptr<RenderStyle> createInheritedDisplayContentsStyleIfNeeded(
     return style;
 }
 
+static void resetDescendantStyleRelations(Element& element, DescendantsToResolve descendantsToResolve)
+{
+    switch (descendantsToResolve) {
+    case DescendantsToResolve::None:
+    case DescendantsToResolve::ChildrenWithExplicitInherit:
+        break;
+    case DescendantsToResolve::Children:
+        element.resetChildStyleRelations();
+        break;
+    case DescendantsToResolve::All:
+        element.resetAllDescendantStyleRelations();
+        break;
+    };
+}
+
 void TreeResolver::resolveComposedTree()
 {
     ASSERT(m_parentStack.size() == 1);
@@ -564,6 +579,8 @@ void TreeResolver::resolveComposedTree()
             it.traverseNextSkippingChildren();
             continue;
         }
+        
+        resetDescendantStyleRelations(element, descendantsToResolve);
 
         pushParent(element, *style, change, descendantsToResolve);
 

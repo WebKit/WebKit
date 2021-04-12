@@ -55,7 +55,6 @@ public:
     PseudoElement* afterPseudoElement() const { return m_afterPseudoElement.get(); }
 
     void resetComputedStyle();
-    void resetStyleRelations();
 
     int unusualTabIndex() const;
     void setUnusualTabIndex(int);
@@ -218,11 +217,6 @@ inline void ElementRareData::setAfterPseudoElement(RefPtr<PseudoElement>&& pseud
 inline void ElementRareData::resetComputedStyle()
 {
     m_computedStyle = nullptr;
-}
-
-inline void ElementRareData::resetStyleRelations()
-{
-    setChildIndex(0);
 }
 
 inline int ElementRareData::unusualTabIndex() const
