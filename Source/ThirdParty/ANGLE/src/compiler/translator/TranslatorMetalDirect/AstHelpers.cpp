@@ -273,7 +273,7 @@ TIntermTyped &sh::SubVector(TIntermTyped &vectorNode, int begin, int end)
     }
     TVector<int> offsets(static_cast<size_t>(end - begin));
     std::iota(offsets.begin(), offsets.end(), begin);
-    auto *swizzle = new TIntermSwizzle(&vectorNode, offsets);
+    auto *swizzle = new TIntermSwizzle(vectorNode.deepCopy(), offsets);
     return *swizzle;
 }
 
@@ -420,18 +420,46 @@ bool sh::HasArrayField(const TStructure &structure)
     return false;
 }
 
-TIntermTyped &sh::CoerceSimple(TBasicType toType, TIntermTyped &fromNode)
+TIntermTyped &sh::CoerceSimple(TBasicType toBasicType, TIntermTyped &fromNode)
 {
     const TType &fromType = fromNode.getType();
 
-    ASSERT(HasScalarBasicType(toType));
+    ASSERT(HasScalarBasicType(toBasicType));
     ASSERT(HasScalarBasicType(fromType));
     ASSERT(!fromType.isArray());
+    
+    const TBasicType fromBasicType = fromType.getBasicType();
 
-    if (toType != fromType.getBasicType())
+    if (toBasicType != fromBasicType)
     {
+        if (toBasicType == TBasicType::EbtBool &&
+            fromNode.isVector())
+        {
+            switch (fromBasicType)
+            {
+                case TBasicType::EbtFloat:
+                case TBasicType::EbtDouble:
+                case TBasicType::EbtInt:
+                case TBasicType::EbtUInt:
+                {
+                    TIntermTyped &fromTypeSwizzle = SubVector(fromNode, 0, 1);
+                    TIntermAggregate *boolConstructor = TIntermAggregate::CreateConstructor(
+                        *new TType(toBasicType, 1, 1),
+                         new TIntermSequence{&fromTypeSwizzle});
+                    TIntermSequence *argsSequence = new TIntermSequence({boolConstructor});
+                    return *TIntermAggregate::CreateConstructor(
+                        *new TType(toBasicType, fromType.getNominalSize(), fromType.getSecondarySize()),
+                        argsSequence);
+                    
+                }
+                    break;
+                default:
+                    break; // No explicit conversion needed
+            }
+        }
+        
         return *TIntermAggregate::CreateConstructor(
-            *new TType(toType, fromType.getNominalSize(), fromType.getSecondarySize()),
+            *new TType(toBasicType, fromType.getNominalSize(), fromType.getSecondarySize()),
             new TIntermSequence{&fromNode});
     }
     return fromNode;
@@ -447,9 +475,43 @@ TIntermTyped &sh::CoerceSimple(const TType &toType, TIntermTyped &fromNode)
     ASSERT(toType.getSecondarySize() == fromType.getSecondarySize());
     ASSERT(!toType.isArray());
     ASSERT(!fromType.isArray());
+    
+    const TBasicType toBasicType   = toType.getBasicType();
+    const TBasicType fromBasicType = fromType.getBasicType();
 
-    if (toType.getBasicType() != fromType.getBasicType())
+    if (toBasicType != fromBasicType)
     {
+        if (toBasicType == TBasicType::EbtBool &&
+            fromNode.isVector())
+        {
+            switch (fromBasicType)
+            {
+                case TBasicType::EbtFloat:
+                case TBasicType::EbtDouble:
+                case TBasicType::EbtInt:
+                case TBasicType::EbtUInt:
+                {
+                    
+                    TIntermSequence *argsSequence = new TIntermSequence();
+                    for (int i = 0; i < fromType.getNominalSize(); i++)
+                    {
+                        TIntermTyped &fromTypeSwizzle = SubVector(fromNode, i, i+1);
+                        TIntermAggregate *boolConstructor = TIntermAggregate::CreateConstructor(
+                            *new TType(toBasicType, 1, 1),
+                             new TIntermSequence{&fromTypeSwizzle});
+                        argsSequence->push_back(boolConstructor);
+                    }
+                    return *TIntermAggregate::CreateConstructor(
+                        *new TType(toBasicType, fromType.getNominalSize(), fromType.getSecondarySize()),
+                        new TIntermSequence{*argsSequence});
+                    
+                }
+                    break;
+                default:
+                    break; // No explicit conversion needed
+            }
+        }
+        
         return *TIntermAggregate::CreateConstructor(toType, new TIntermSequence{&fromNode});
     }
     return fromNode;

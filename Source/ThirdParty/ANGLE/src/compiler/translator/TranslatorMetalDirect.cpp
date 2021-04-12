@@ -1453,8 +1453,8 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
     {
         return false;
     }
-
-    if (!AddExplicitTypeCasts(*this, root, symbolEnv))
+    const bool needsExplicitBoolCasts = (compileOptions & SH_ADD_EXPLICIT_BOOL_CASTS) != 0;
+    if (!AddExplicitTypeCasts(*this, root, symbolEnv, needsExplicitBoolCasts))
     {
         return false;
     }

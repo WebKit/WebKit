@@ -136,6 +136,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compile(const gl::Context *cont
     {
         compileOptions |= SH_REWRITE_ROW_MAJOR_MATRICES;
     }
+    
+    if (contextMtl->getDisplay()->getFeatures().intelExplicitBoolCastWorkaround.enabled)
+    {
+        compileOptions |= SH_ADD_EXPLICIT_BOOL_CASTS;
+    }
 
     return compileImplMtl(context, compilerInstance, getState().getSource(), compileOptions | options);
 }

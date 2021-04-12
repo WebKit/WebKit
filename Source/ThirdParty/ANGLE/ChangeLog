@@ -1,3 +1,32 @@
+2021-04-12  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (Metal ANGLE): [Catalina] 6 consistent WebGL failures / timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=224016
+        <rdar://problem/76070325>
+
+        Patch by John Cunningham <johncunnigham@apple.com>
+        Reviewed by Dean Jackson.
+
+        Implement a workaround for Intel GPUs where we explicitly type cast floating
+        point values to booleans. This is only needed for Catalina systems.
+
+        * include/GLSLANG/ShaderLang.h:
+        * include/platform/FeaturesMtl.h:
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect/AddExplicitTypeCasts.cpp:
+        (sh::Rewriter::Rewriter):
+        (sh::AddExplicitTypeCasts):
+        * src/compiler/translator/TranslatorMetalDirect/AddExplicitTypeCasts.h:
+        * src/compiler/translator/TranslatorMetalDirect/AstHelpers.cpp:
+        (sh::SubVector):
+        (sh::CoerceSimple):
+        * src/compiler/translator/TranslatorMetalDirect/AstHelpers.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeFeatures):
+        * src/libANGLE/renderer/metal/ShaderMtl.mm:
+        (rx::ShaderMtl::compile):
+
 2021-04-12  Kyle Piddington  <kpiddington@apple.com>
 
         Crash in webgl/2.0.y/conformance/glsl/misc/uninitialized-local-global-variables.html ANGLE+METAL

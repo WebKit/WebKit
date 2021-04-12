@@ -16,10 +16,11 @@ namespace
 class Rewriter : public TIntermRebuild
 {
     SymbolEnv &mSymbolEnv;
+    bool mNeedsExplicitBoolCasts = false;
 
   public:
-    Rewriter(TCompiler &compiler, SymbolEnv &symbolEnv)
-        : TIntermRebuild(compiler, false, true), mSymbolEnv(symbolEnv)
+    Rewriter(TCompiler &compiler, SymbolEnv &symbolEnv, bool needsExplicitBoolCasts)
+        : TIntermRebuild(compiler, false, true), mSymbolEnv(symbolEnv), mNeedsExplicitBoolCasts(needsExplicitBoolCasts)
     {}
 
     PostResult visitAggregatePost(TIntermAggregate &callNode) override
@@ -84,9 +85,9 @@ class Rewriter : public TIntermRebuild
 
 }  // anonymous namespace
 
-bool sh::AddExplicitTypeCasts(TCompiler &compiler, TIntermBlock &root, SymbolEnv &symbolEnv)
+bool sh::AddExplicitTypeCasts(TCompiler &compiler, TIntermBlock &root, SymbolEnv &symbolEnv, bool needsExplicitBoolCasts)
 {
-    Rewriter rewriter(compiler, symbolEnv);
+    Rewriter rewriter(compiler, symbolEnv, needsExplicitBoolCasts);
     if (!rewriter.rebuildRoot(root))
     {
         return false;
