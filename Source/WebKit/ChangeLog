@@ -1,3 +1,53 @@
+2021-04-12  Sihui Liu  <sihui_liu@apple.com>
+
+        Create WebIDBServer only when it is needed
+        https://bugs.webkit.org/show_bug.cgi?id=224305
+        rdar://71962196
+
+        Reviewed by Alex Christensen.
+
+        Currently each WebIDBServer has a separate thread, so we don't want to create or keep WebIDBServer if it's not 
+        in use. There are two cases where network process needs a WebIDBServer:
+        1. handle requests from UI process to collect or remove data
+        2. handle requests from Web process to perform IDB operations 
+
+        Previously, we created a WebIDBServer when network process connects to a web process, but that does not mean web
+        process will perform IDB operations and we may create a thread that's not used. To avoid this, add a new message
+        AddIDBConnection for web process to ensure network process has WebIDBServer when it's about to perform operation.
+
+        Also, previously network process removes a WebIDBServer when session is removed and WebIDBServer is not binded 
+        with any web process connection. Now we remove WebIDBServer when it's done handling requests, that is count of
+        pending requests from UI process is 0 and WebIDBServer is not binded with web process connection. We also remove
+        WebIDBServer at when network process is about to be destroyed (NetworkProcess::didClose) so we can break the 
+        reference cycle of NetworkProcess-WebIDBServer-IDBServer, and make sure thread exits.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::create):
+        (WebKit::WebIDBServer::WebIDBServer):
+        (WebKit::m_closeCallback):
+        (WebKit::WebIDBServer::~WebIDBServer):
+        (WebKit::WebIDBServer::getOrigins):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::renameOrigin):
+        (WebKit::WebIDBServer::removeConnection):
+        (WebKit::WebIDBServer::close):
+        (WebKit::WebIDBServer::tryClose):
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::addIDBConnection):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::createNetworkConnectionToWebProcess):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::createWebIDBServer):
+        (WebKit::NetworkProcess::connectionToWebProcessClosed):
+        (WebKit::NetworkProcess::removeWebIDBServerIfPossible): Deleted. Move the removal code to WebIDBServer.
+        * WebProcess/Databases/IndexedDB/WebIDBConnectionToServer.cpp:
+        (WebKit::WebIDBConnectionToServer::WebIDBConnectionToServer):
+
 2021-04-12  Chris Dumez  <cdumez@apple.com>
 
         Make sure AuxiliaryProcessProxy::sendMessage() is called on the main thread
