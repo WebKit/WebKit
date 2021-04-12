@@ -1,3 +1,9 @@
+2021-04-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, update libsoup 2.99.3 ref
+
+        * elements/sdk/libsoup3.bst: Previous ref had 2.99.2 version set in meson.build.
+
 2021-04-09  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Update to libsoup 2.99.3
