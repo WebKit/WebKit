@@ -223,20 +223,25 @@ Optional<RTCRtpTransceiverDirection> RTCRtpSender::currentTransceiverDirection()
     return senderTransceiver->currentDirection();
 }
 
-ExceptionOr<void> RTCRtpSender::setTransform(Optional<RTCRtpTransform>&& transform)
+ExceptionOr<void> RTCRtpSender::setTransform(std::unique_ptr<RTCRtpTransform>&& transform)
 {
     ALWAYS_LOG_IF(m_connection, LOGIDENTIFIER_SENDER);
 
     if (transform && m_transform && *transform == *m_transform)
         return { };
-    if (transform && transform->isAttached())
+    if (!transform) {
+        if (m_transform) {
+            m_transform->detachFromSender(*this);
+            m_transform = { };
+        }
+        return { };
+    }
+
+    if (transform->isAttached())
         return Exception { InvalidStateError, "transform is already in use"_s };
 
-    if (m_transform)
-        m_transform->detachFromSender(*this);
+    transform->attachToSender(*this, m_transform.get());
     m_transform = WTFMove(transform);
-    if (m_transform)
-        m_transform->attachToSender(*this);
 
     return { };
 }

@@ -39,7 +39,7 @@ public:
     virtual RTCRtpParameters getParameters() { return { }; }
     virtual Vector<RTCRtpContributingSource> getContributingSources() const { return { }; }
     virtual Vector<RTCRtpSynchronizationSource> getSynchronizationSources() const { return { }; }
-    virtual Ref<RTCRtpTransformBackend> createRTCRtpTransformBackend() = 0;
+    virtual Ref<RTCRtpTransformBackend> rtcRtpTransformBackend() = 0;
 };
 
 } // namespace WebCore

@@ -130,9 +130,9 @@ void RTCRtpScriptTransformer::start(Ref<RTCRtpTransformBackend>&& backend)
     });
 }
 
-void RTCRtpScriptTransformer::clear()
+void RTCRtpScriptTransformer::clear(ClearCallback clearCallback)
 {
-    if (m_backend)
+    if (m_backend && clearCallback == ClearCallback::Yes)
         m_backend->clearTransformableFrameCallback();
     m_backend = nullptr;
     stopPendingActivity();

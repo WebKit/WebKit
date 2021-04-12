@@ -61,7 +61,9 @@ public:
 
     void startPendingActivity() { m_pendingActivity = makePendingActivity(*this); }
     void start(Ref<RTCRtpTransformBackend>&&);
-    void clear();
+
+    enum class ClearCallback { No, Yes};
+    void clear(ClearCallback);
 
 private:
     RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Ref<MessagePort>&&, Ref<ReadableStream>&&, Ref<SimpleReadableStreamSource>&&);

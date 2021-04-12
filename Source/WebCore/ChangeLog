@@ -1,3 +1,48 @@
+2021-04-12  Youenn Fablet  <youenn@apple.com>
+
+        Make sure all frames get transformed when overriding a transform with another one
+        https://bugs.webkit.org/show_bug.cgi?id=224367
+
+        Reviewed by Eric Carlson.
+
+        We were previously removing the old transform, then attaching the new transforn.
+        There was a time where no transform was attached and a few samples could get missed.
+        To prevent this, we add a new code path where we transfer a backend from one transform to another.
+        In that case, we synchronoulsy change the input callback from the old one to the new one instead of setting it to null in between.
+
+        Test: http/wpt/webrtc/change-encoded-transform.html
+
+        * Modules/mediastream/RTCRtpReceiver.cpp:
+        (WebCore::RTCRtpReceiver::setTransform):
+        * Modules/mediastream/RTCRtpReceiver.h:
+        * Modules/mediastream/RTCRtpReceiverBackend.h:
+        * Modules/mediastream/RTCRtpScriptTransform.cpp:
+        (WebCore::RTCRtpScriptTransform::~RTCRtpScriptTransform):
+        (WebCore::RTCRtpScriptTransform::willClearBackend):
+        (WebCore::RTCRtpScriptTransform::clear):
+        * Modules/mediastream/RTCRtpScriptTransform.h:
+        * Modules/mediastream/RTCRtpScriptTransformer.cpp:
+        (WebCore::RTCRtpScriptTransformer::clear):
+        * Modules/mediastream/RTCRtpScriptTransformer.h:
+        * Modules/mediastream/RTCRtpSender.cpp:
+        (WebCore::RTCRtpSender::setTransform):
+        * Modules/mediastream/RTCRtpSender.h:
+        * Modules/mediastream/RTCRtpSenderBackend.h:
+        * Modules/mediastream/RTCRtpTransform.cpp:
+        (WebCore::RTCRtpTransform::from):
+        (WebCore::RTCRtpTransform::attachToReceiver):
+        (WebCore::RTCRtpTransform::attachToSender):
+        (WebCore::RTCRtpTransform::backendTransferedToNewTransform):
+        * Modules/mediastream/RTCRtpTransform.h:
+        (WebCore::RTCRtpTransform::takeBackend):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.cpp:
+        (WebCore::LibWebRTCRtpReceiverBackend::rtcRtpTransformBackend):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend):
+        (WebCore::LibWebRTCRtpSenderBackend::rtcRtpTransformBackend):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderBackend.h:
+
 2021-04-12  Frédéric Wang  <fwang@igalia.com>
 
         Out of memory crash with find('a'.repeat(2**30))

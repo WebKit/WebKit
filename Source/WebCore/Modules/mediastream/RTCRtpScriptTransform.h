@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "MessagePort.h"
+#include "RTCRtpScriptTransformer.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -57,6 +58,7 @@ public:
     void initializeBackendForReceiver(RTCRtpTransformBackend&);
     void initializeBackendForSender(RTCRtpTransformBackend&);
     void willClearBackend(RTCRtpTransformBackend&);
+    void backendTransferedToNewTransform() { clear(RTCRtpScriptTransformer::ClearCallback::No); }
 
     using ThreadSafeRefCounted::ref;
     using ThreadSafeRefCounted::deref;
@@ -66,7 +68,7 @@ private:
 
     void initializeTransformer(RTCRtpTransformBackend&);
     bool setupTransformer(Ref<RTCRtpTransformBackend>&&);
-    void clear();
+    void clear(RTCRtpScriptTransformer::ClearCallback);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const { return "RTCRtpScriptTransform"; }

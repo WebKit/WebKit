@@ -92,20 +92,25 @@ Optional<RTCRtpCapabilities> RTCRtpReceiver::getCapabilities(ScriptExecutionCont
     return PeerConnectionBackend::receiverCapabilities(context, kind);
 }
 
-ExceptionOr<void> RTCRtpReceiver::setTransform(Optional<RTCRtpTransform>&& transform)
+ExceptionOr<void> RTCRtpReceiver::setTransform(std::unique_ptr<RTCRtpTransform>&& transform)
 {
     ALWAYS_LOG_IF(m_connection, LOGIDENTIFIER_RECEIVER);
 
     if (transform && m_transform && *transform == *m_transform)
         return { };
-    if (transform && transform->isAttached())
+    if (!transform) {
+        if (m_transform) {
+            m_transform->detachFromReceiver(*this);
+            m_transform = { };
+        }
+        return { };
+    }
+
+    if (transform->isAttached())
         return Exception { InvalidStateError, "transform is already in use"_s };
 
-    if (m_transform)
-        m_transform->detachFromReceiver(*this);
+    transform->attachToReceiver(*this, m_transform.get());
     m_transform = WTFMove(transform);
-    if (m_transform)
-        m_transform->attachToReceiver(*this);
 
     return { };
 }

@@ -116,9 +116,11 @@ Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Ref<RTCRtpTransformBackend> LibWebRTCRtpReceiverBackend::createRTCRtpTransformBackend()
+Ref<RTCRtpTransformBackend> LibWebRTCRtpReceiverBackend::rtcRtpTransformBackend()
 {
-    return LibWebRTCRtpReceiverTransformBackend::create(m_rtcReceiver);
+    if (!m_transformBackend)
+        m_transformBackend = LibWebRTCRtpReceiverTransformBackend::create(m_rtcReceiver);
+    return *m_transformBackend;
 }
 
 } // namespace WebCore

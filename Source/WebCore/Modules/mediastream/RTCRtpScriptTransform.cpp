@@ -76,7 +76,7 @@ RTCRtpScriptTransform::RTCRtpScriptTransform(ScriptExecutionContext& context, Re
 
 RTCRtpScriptTransform::~RTCRtpScriptTransform()
 {
-    clear();
+    clear(RTCRtpScriptTransformer::ClearCallback::Yes);
 }
 
 void RTCRtpScriptTransform::setTransformer(RTCRtpScriptTransformer& transformer)
@@ -107,7 +107,7 @@ void RTCRtpScriptTransform::initializeBackendForSender(RTCRtpTransformBackend& b
 
 void RTCRtpScriptTransform::willClearBackend(RTCRtpTransformBackend&)
 {
-    clear();
+    clear(RTCRtpScriptTransformer::ClearCallback::Yes);
 }
 
 void RTCRtpScriptTransform::initializeTransformer(RTCRtpTransformBackend& backend)
@@ -130,15 +130,15 @@ bool RTCRtpScriptTransform::setupTransformer(Ref<RTCRtpTransformBackend>&& backe
     return true;
 }
 
-void RTCRtpScriptTransform::clear()
+void RTCRtpScriptTransform::clear(RTCRtpScriptTransformer::ClearCallback clearCallback)
 {
     m_isAttached = false;
 
     auto locker = holdLock(m_transformerLock);
     m_isTransformerInitialized = false;
-    m_worker->postTaskToWorkerGlobalScope([transformer = WTFMove(m_transformer)](auto&) mutable {
+    m_worker->postTaskToWorkerGlobalScope([transformer = WTFMove(m_transformer), clearCallback](auto&) mutable {
         if (transformer)
-            transformer->clear();
+            transformer->clear(clearCallback);
     });
 }
 
