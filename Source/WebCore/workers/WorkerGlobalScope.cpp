@@ -112,8 +112,6 @@ WorkerGlobalScope::~WorkerGlobalScope()
         allWorkerGlobalScopeIdentifiers(locker).remove(contextIdentifier());
     }
 
-    if (m_cssFontSelector)
-        m_cssFontSelector->stopLoadingAndClearFonts();
     m_performance = nullptr;
     m_crypto = nullptr;
 

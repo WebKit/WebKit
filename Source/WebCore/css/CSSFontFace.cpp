@@ -76,10 +76,9 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Sc
         if (!item.isLocal()) {
             const auto* settings = context ? &context->settingsValues() : nullptr;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled);
-            if (allowDownloading && item.isSupportedFormat() && is<Document>(context)) {
-                auto& document = downcast<Document>(*context);
-                if (CachedFont* cachedFont = item.cachedFont(&document, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
-                    source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), document.fontSelector(), *cachedFont);
+            if (allowDownloading && item.isSupportedFormat()) {
+                if (auto fontRequest = item.fontLoadRequest(context, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
+                    source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(fontRequest)));
             }
         } else
             source = (fontFaceElement ? makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *fontFaceElement)

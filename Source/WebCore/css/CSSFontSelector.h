@@ -64,7 +64,7 @@ public:
     size_t fallbackFontCount() final;
     RefPtr<Font> fallbackFontAt(const FontDescription&, size_t) final;
 
-    void stopLoadingAndClearFonts();
+    void clearFonts();
     void emptyCaches();
     void buildStarted();
     void buildCompleted();
@@ -80,9 +80,6 @@ public:
     void unregisterForInvalidationCallbacks(FontSelectorClient&) final;
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_context.get(); }
-
-    void beginLoadingFontSoon(CachedFont&);
-    void suspendFontLoadingTimer();
 
     FontFaceSet* fontFaceSetIfExists();
     FontFaceSet& fontFaceSet();
@@ -110,12 +107,8 @@ private:
     void fontStyleUpdateNeeded(CSSFontFace&) final;
 
     void fontModified();
-    void fontLoadingTimerFired();
 
     // ActiveDOMObject
-    void stop() final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
     const char* activeDOMObjectName() const final { return "CSSFontSelector"_s; }
 
     struct PendingFontFaceRule {
@@ -130,14 +123,10 @@ private:
     Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;
 
-    Vector<CachedResourceHandle<CachedFont>> m_fontsToBeginLoading;
     HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
     HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
 
     CSSFontFaceSet::FontModifiedObserver m_fontModifiedObserver;
-
-    Timer m_fontLoadingTimer;
-    bool m_isFontLoadingSuspended { false };
 
     unsigned m_uniqueId;
     unsigned m_version;

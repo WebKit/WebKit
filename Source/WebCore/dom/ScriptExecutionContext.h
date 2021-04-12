@@ -30,6 +30,7 @@
 #include "ActiveDOMObject.h"
 #include "DOMTimer.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
+#include "ResourceLoaderOptions.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "SecurityContext.h"
 #include "ServiceWorkerTypes.h"
@@ -66,6 +67,7 @@ class EventQueue;
 class EventLoopTaskGroup;
 class EventTarget;
 class FontCache;
+class FontLoadRequest;
 class MessagePort;
 class PublicURLManager;
 class RejectedPromiseTracker;
@@ -165,6 +167,8 @@ public:
 
     virtual FontCache& fontCache();
     virtual CSSFontSelector* cssFontSelector() { return nullptr; }
+    virtual std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
+    virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 
     void ref() { refScriptExecutionContext(); }
     void deref() { derefScriptExecutionContext(); }

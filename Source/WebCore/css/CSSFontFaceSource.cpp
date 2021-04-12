@@ -28,7 +28,7 @@
 
 #include "CSSFontFace.h"
 #include "CSSFontSelector.h"
-#include "CachedFont.h"
+#include "CachedFontLoadRequest.h"
 #include "CachedSVGFont.h"
 #include "Document.h"
 #include "Font.h"
@@ -72,19 +72,19 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
 {
 }
 
-CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CSSFontSelector& fontSelector, CachedFont& font)
+CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CSSFontSelector& fontSelector, UniqueRef<FontLoadRequest>&& request)
     : m_familyNameOrURI(familyNameOrURI)
     , m_face(owner)
     , m_fontSelector(makeWeakPtr(fontSelector))
-    , m_font(&font)
+    , m_fontRequest(request.moveToUniquePtr())
 {
     // This may synchronously call fontLoaded().
-    m_font->addClient(*this);
+    m_fontRequest->setClient(this);
 
-    if (status() == Status::Pending && m_font->isLoaded()) {
+    if (status() == Status::Pending && !m_fontRequest->isLoading()) {
         setStatus(Status::Loading);
         if (!shouldIgnoreFontLoadCompletions()) {
-            if (m_font->errorOccurred())
+            if (m_fontRequest->errorOccurred())
                 setStatus(Status::Failure);
             else
                 setStatus(Status::Success);
@@ -109,8 +109,8 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
 
 CSSFontFaceSource::~CSSFontFaceSource()
 {
-    if (m_font)
-        m_font->removeClient(*this);
+    if (m_fontRequest)
+        m_fontRequest->setClient(nullptr);
 }
 
 bool CSSFontFaceSource::shouldIgnoreFontLoadCompletions() const
@@ -120,29 +120,29 @@ bool CSSFontFaceSource::shouldIgnoreFontLoadCompletions() const
 
 void CSSFontFaceSource::opportunisticallyStartFontDataURLLoading()
 {
-    if (status() == Status::Pending && m_font && m_font->url().protocolIsData() && m_familyNameOrURI.length() < MB)
+    if (status() == Status::Pending && m_fontRequest && m_fontRequest->url().protocolIsData() && m_familyNameOrURI.length() < MB)
         load();
 }
 
-void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
+void CSSFontFaceSource::fontLoaded(FontLoadRequest& fontRequest)
 {
-    ASSERT_UNUSED(loadedFont, &loadedFont == m_font.get());
+    ASSERT_UNUSED(fontRequest, &fontRequest == m_fontRequest.get());
 
     if (shouldIgnoreFontLoadCompletions())
         return;
 
     Ref<CSSFontFace> protectedFace(m_face);
 
-    // If the font is in the cache, this will be synchronously called from CachedFont::addClient().
+    // If the font is in the cache, this will be synchronously called from FontLoadRequest::addClient().
     if (m_status == Status::Pending)
         setStatus(Status::Loading);
     else if (m_status == Status::Failure) {
         // This function may be called twice if loading was cancelled.
-        ASSERT(m_font->errorOccurred());
+        ASSERT(m_fontRequest->errorOccurred());
         return;
     }
 
-    if (m_font->errorOccurred() || !m_font->ensureCustomFontData(m_familyNameOrURI))
+    if (m_fontRequest->errorOccurred() || !m_fontRequest->ensureCustomFontData(m_familyNameOrURI))
         setStatus(Status::Failure);
     else
         setStatus(Status::Success);
@@ -154,9 +154,10 @@ void CSSFontFaceSource::load(Document* document)
 {
     setStatus(Status::Loading);
 
-    if (m_font) {
+    if (m_fontRequest) {
         ASSERT(m_fontSelector);
-        m_fontSelector->beginLoadingFontSoon(*m_font);
+        if (auto* context = m_fontSelector->scriptExecutionContext())
+            context->beginLoadingFontSoon(*m_fontRequest);
     } else {
         bool success = false;
         if (m_hasSVGFontFaceElement) {
@@ -198,7 +199,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
     bool usesInDocumentSVGFont = m_hasSVGFontFaceElement;
 
-    if (!m_font && !usesInDocumentSVGFont) {
+    if (!m_fontRequest && !usesInDocumentSVGFont) {
         if (m_immediateSource) {
             if (!m_immediateFontCustomPlatformData)
                 return nullptr;
@@ -210,12 +211,12 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
         return FontCache::singleton().fontForFamily(fontDescription, m_familyNameOrURI, &fontFaceFeatures, fontFaceCapabilities, true);
     }
 
-    if (m_font) {
-        auto success = m_font->ensureCustomFontData(m_familyNameOrURI);
+    if (m_fontRequest) {
+        auto success = m_fontRequest->ensureCustomFontData(m_familyNameOrURI);
         ASSERT_UNUSED(success, success);
 
         ASSERT(status() == Status::Success);
-        auto result = m_font->createFont(fontDescription, m_familyNameOrURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities);
+        auto result = m_fontRequest->createFont(fontDescription, m_familyNameOrURI, syntheticBold, syntheticItalic, fontFaceFeatures, fontFaceCapabilities);
         ASSERT(result);
         return result;
     }
@@ -232,7 +233,7 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {
-    return m_hasSVGFontFaceElement || is<CachedSVGFont>(m_font.get());
+    return m_hasSVGFontFaceElement || (is<CachedFontLoadRequest>(m_fontRequest.get()) && is<CachedSVGFont>(downcast<CachedFontLoadRequest>(m_fontRequest.get())->cachedFont()));
 }
 
 }

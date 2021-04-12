@@ -1,3 +1,98 @@
+2021-04-12  Chris Lord  <clord@igalia.com>
+
+        Refactor font loading to make it possible for Worker to implement it
+        https://bugs.webkit.org/show_bug.cgi?id=224277
+
+        Reviewed by Darin Adler.
+
+        Introduce FontLoadRequest and FontLoadRequestClient as an abstraction
+        separate from CachedFont and CachedFontClient to allow for separate
+        implementations. Also move Document-specific font-loading behaviour
+        from CSSFontSelector into Document and add non-Document specific
+        accessors to ScriptExecutionContext.
+
+        These changes should allow for custom font loading to be implementable
+        on a Worker, which will be necessary for FontFace support in
+        OffscreenCanvas.
+
+        No new tests, no change in behavior.
+
+        * Headers.cmake: Added FontLoadRequest.h, CachedFontLoadRequest.h
+          and DocumentFontLoader.h.
+        * Sources.txt: Added DocumentFontLoader.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Added files listed above.
+
+        * css/CSSFontFace.cpp: Update to not require Document for custom font loading.
+        (WebCore::CSSFontFace::appendSources):
+
+        * css/CSSFontFaceSource.cpp: Update to use FontLoadRequest instead of CachedFont.
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::~CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::opportunisticallyStartFontDataURLLoading):
+        (WebCore::CSSFontFaceSource::fontLoaded):
+        (WebCore::CSSFontFaceSource::load):
+        (WebCore::CSSFontFaceSource::font):
+        (WebCore::CSSFontFaceSource::isSVGFontFaceSource const):
+        * css/CSSFontFaceSource.h:
+
+        * css/CSSFontFaceSrcValue.cpp: Update to use FontLoadRequest and
+          ScriptExecutionContext instead of CachedResourceLoader.
+        (WebCore::CSSFontFaceSrcValue::fontLoadRequest):
+        * css/CSSFontFaceSrcValue.h:
+
+        * css/CSSFontSelector.cpp: Remove Document-specific code.
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        (WebCore::CSSFontSelector::clearFonts):
+        * css/CSSFontSelector.h:
+
+        * dom/Document.cpp: Implement ScriptExecutionContext::fontLoadRequest
+          and ::beginLoadingFontSoon.
+        (WebCore::Document::~Document):
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::suspendFontLoading):
+        (WebCore::Document::fontLoadRequest):
+        (WebCore::Document::beginLoadingFontSoon):
+        (WebCore::Document::suspend):
+        (WebCore::Document::resume):
+        * dom/Document.h:
+
+        * dom/DocumentFontLoader.cpp: Added. New class to handle Document-specific
+          font-loading code that was previously in CSSFontSelector and
+          CSSFontFaceSrcValue.
+        (WebCore::DocumentFontLoader::DocumentFontLoader):
+        (WebCore::DocumentFontLoader::~DocumentFontLoader):
+        (WebCore::DocumentFontLoader::cachedFont):
+        (WebCore::DocumentFontLoader::beginLoadingFontSoon):
+        (WebCore::DocumentFontLoader::loadPendingFonts):
+        (WebCore::DocumentFontLoader::fontLoadingTimerFired):
+        (WebCore::DocumentFontLoader::stopLoadingAndClearFonts):
+        (WebCore::DocumentFontLoader::suspendFontLoading):
+        (WebCore::DocumentFontLoader::resumeFontLoading):
+        * dom/DocumentFontLoader.h:
+
+        * dom/ScriptExecutionContext.cpp: Add functions to initiate font load requests.
+        (WebCore::ScriptExecutionContext::fontLoadRequest):
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::beginLoadingFontSoon):
+
+        * loader/DocumentLoader.cpp: CSSFontSelector::suspendFontLoadingTimer
+          is now Document::suspendFontLoading.
+        (WebCore::DocumentLoader::stopLoading):
+
+        * loader/FontLoadRequest.h: Added. An interface to manage font loading
+          that abstracts some of the behaviour of CachedResource, CachedFont and
+          CachedFontClient.
+        (WebCore::FontLoadRequestClient::fontLoaded):
+        (WebCore::FontLoadRequestClient::isCachedFontLoadRequest const):
+
+        * loader/cache/CachedFontLoadRequest.h: Added. An implementation of
+          FontLoadRequest for CachedFont.
+
+        * workers/WorkerGlobalScope.cpp: Remove now-redundant CSSFontSelector call.
+        (WebCore::WorkerGlobalScope::~WorkerGlobalScope):
+
 2021-04-12  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Use g_object_notify_by_pspec() whenever possible
