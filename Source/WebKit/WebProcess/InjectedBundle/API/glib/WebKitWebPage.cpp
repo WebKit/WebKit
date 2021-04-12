@@ -79,9 +79,11 @@ enum {
 
 enum {
     PROP_0,
-
-    PROP_URI
+    PROP_URI,
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 struct _WebKitWebPagePrivate {
     WebPage* webPage;
@@ -149,7 +151,7 @@ static void webkitWebPageSetURI(WebKitWebPage* webPage, const CString& uri)
         return;
 
     webPage->priv->uri = uri;
-    g_object_notify(G_OBJECT(webPage), "uri");
+    g_object_notify_by_pspec(G_OBJECT(webPage), sObjProperties[PROP_URI]);
 }
 
 static void webkitWebPageDidSendConsoleMessage(WebKitWebPage* webPage, MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
@@ -439,15 +441,15 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
      *
      * The current active URI of the #WebKitWebPage.
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_URI,
+    sObjProperties[PROP_URI] =
         g_param_spec_string(
             "uri",
             _("URI"),
             _("The current active URI of the web page"),
             0,
-            WEBKIT_PARAM_READABLE));
+            WEBKIT_PARAM_READABLE);
+
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
     /**
      * WebKitWebPage::document-loaded:

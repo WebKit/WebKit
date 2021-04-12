@@ -62,12 +62,14 @@ enum {
 
 enum {
     PROP_0,
-
     PROP_DESTINATION,
     PROP_RESPONSE,
     PROP_ESTIMATED_PROGRESS,
-    PROP_ALLOW_OVERWRITE
+    PROP_ALLOW_OVERWRITE,
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 struct _WebKitDownloadPrivate {
     ~_WebKitDownloadPrivate()
@@ -143,7 +145,7 @@ static gboolean webkitDownloadDecideDestination(WebKitDownload* download, const 
     GUniquePtr<char> destination(g_build_filename(downloadsDir, filename.get(), NULL));
     GUniquePtr<char> destinationURI(g_filename_to_uri(destination.get(), 0, 0));
     download->priv->destinationURI = destinationURI.get();
-    g_object_notify(G_OBJECT(download), "destination");
+    g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
     return TRUE;
 }
 
@@ -160,26 +162,26 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      *
      * The local URI to where the download will be saved.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_DESTINATION,
-                                    g_param_spec_string("destination",
-                                                        _("Destination"),
-                                                        _("The local URI to where the download will be saved"),
-                                                        0,
-                                                        WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_DESTINATION] =
+        g_param_spec_string(
+            "destination",
+            _("Destination"),
+            _("The local URI to where the download will be saved"),
+            nullptr,
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitDownload:response:
      *
      * The #WebKitURIResponse associated with this download.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_RESPONSE,
-                                    g_param_spec_object("response",
-                                                        _("Response"),
-                                                        _("The response of the download"),
-                                                        WEBKIT_TYPE_URI_RESPONSE,
-                                                        WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_RESPONSE] =
+        g_param_spec_object(
+            "response",
+            _("Response"),
+            _("The response of the download"),
+            WEBKIT_TYPE_URI_RESPONSE,
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitDownload:estimated-progress:
@@ -191,13 +193,13 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * If you need a more accurate progress information you can connect to
      * #WebKitDownload::received-data signal to track the progress.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_ESTIMATED_PROGRESS,
-                                    g_param_spec_double("estimated-progress",
-                                                        _("Estimated Progress"),
-                                                        _("Determines the current progress of the download"),
-                                                        0.0, 1.0, 1.0,
-                                                        WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_ESTIMATED_PROGRESS] =
+        g_param_spec_double(
+            "estimated-progress",
+            _("Estimated Progress"),
+            _("Determines the current progress of the download"),
+            0.0, 1.0, 1.0,
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitDownload:allow-overwrite:
@@ -208,15 +210,15 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      *
      * Since: 2.6
      */
-    g_object_class_install_property(
-        objectClass,
-        PROP_ALLOW_OVERWRITE,
+    sObjProperties[PROP_ALLOW_OVERWRITE] =
         g_param_spec_boolean(
             "allow-overwrite",
             _("Allow Overwrite"),
             _("Whether the destination may be overwritten"),
             FALSE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READWRITE);
+
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 
     /**
      * WebKitDownload::received-data:
@@ -339,7 +341,7 @@ void webkitDownloadStarted(WebKitDownload* download)
 void webkitDownloadSetResponse(WebKitDownload* download, WebKitURIResponse* response)
 {
     download->priv->response = response;
-    g_object_notify(G_OBJECT(download), "response");
+    g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_RESPONSE]);
 }
 
 void webkitDownloadSetWebView(WebKitDownload* download, WebKitWebView* webView)
@@ -381,7 +383,7 @@ void webkitDownloadNotifyProgress(WebKitDownload* download, guint64 bytesReceive
     }
     priv->lastElapsed = currentElapsed;
     priv->lastProgress = currentProgress;
-    g_object_notify(G_OBJECT(download), "estimated-progress");
+    g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_ESTIMATED_PROGRESS]);
 }
 
 void webkitDownloadFailed(WebKitDownload* download, const ResourceError& resourceError)
@@ -503,7 +505,7 @@ void webkit_download_set_destination(WebKitDownload* download, const gchar* uri)
         return;
 
     priv->destinationURI = uri;
-    g_object_notify(G_OBJECT(download), "destination");
+    g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_DESTINATION]);
 }
 
 /**
@@ -661,5 +663,5 @@ void webkit_download_set_allow_overwrite(WebKitDownload* download, gboolean allo
         return;
 
     download->priv->allowOverwrite = allowed;
-    g_object_notify(G_OBJECT(download), "allow-overwrite");
+    g_object_notify_by_pspec(G_OBJECT(download), sObjProperties[PROP_ALLOW_OVERWRITE]);
 }

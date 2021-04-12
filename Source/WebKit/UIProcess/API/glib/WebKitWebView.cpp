@@ -203,8 +203,12 @@ enum {
     PROP_EDITABLE,
     PROP_PAGE_ID,
     PROP_IS_MUTED,
-    PROP_WEBSITE_POLICIES
+    PROP_WEBSITE_POLICIES,
+
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
 typedef HashMap<uint64_t, GRefPtr<GTask> > SnapshotResultsMap;
@@ -336,12 +340,12 @@ static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
         return;
 
     webView->priv->isLoading = isLoading;
-    g_object_notify(G_OBJECT(webView), "is-loading");
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_LOADING]);
 }
 
 void webkitWebViewIsPlayingAudioChanged(WebKitWebView* webView)
 {
-    g_object_notify(G_OBJECT(webView), "is-playing-audio");
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_PLAYING_AUDIO]);
 }
 
 class PageLoadStateObserver final : public PageLoadState::Observer {
@@ -370,7 +374,7 @@ private:
     void didChangeTitle() override
     {
         m_webView->priv->title = getPage(m_webView).pageLoadState().title().utf8();
-        g_object_notify(G_OBJECT(m_webView), "title");
+        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_TITLE]);
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
@@ -385,7 +389,7 @@ private:
         if (m_webView->priv->isActiveURIChangeBlocked)
             return;
         m_webView->priv->activeURI = getPage(m_webView).pageLoadState().activeURL().utf8();
-        g_object_notify(G_OBJECT(m_webView), "uri");
+        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_URI]);
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
@@ -398,7 +402,7 @@ private:
     }
     void didChangeEstimatedProgress() override
     {
-        g_object_notify(G_OBJECT(m_webView), "estimated-load-progress");
+        g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_ESTIMATED_LOAD_PROGRESS]);
         g_object_thaw_notify(G_OBJECT(m_webView));
     }
 
@@ -562,7 +566,7 @@ static void webkitWebViewUpdateFavicon(WebKitWebView* webView, cairo_surface_t* 
         return;
 
     priv->favicon = favicon;
-    g_object_notify(G_OBJECT(webView), "favicon");
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_FAVICON]);
 }
 
 static void webkitWebViewCancelFaviconRequest(WebKitWebView* webView)
@@ -1005,15 +1009,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * since: 2.20
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_BACKEND,
+    sObjProperties[PROP_BACKEND] =
         g_param_spec_boxed(
             "backend",
             _("Backend"),
             _("The backend for the web view"),
             WEBKIT_TYPE_WEB_VIEW_BACKEND,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 #endif
 
     /**
@@ -1021,13 +1023,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * The #WebKitWebContext of the view.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_WEB_CONTEXT,
-                                    g_param_spec_object("web-context",
-                                                        _("Web Context"),
-                                                        _("The web context for the view"),
-                                                        WEBKIT_TYPE_WEB_CONTEXT,
-                                                        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+    sObjProperties[PROP_WEB_CONTEXT] =
+        g_param_spec_object(
+            "web-context",
+            _("Web Context"),
+            _("The web context for the view"),
+            WEBKIT_TYPE_WEB_CONTEXT,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
     /**
      * WebKitWebView:related-view:
      *
@@ -1037,15 +1039,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.4
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_RELATED_VIEW,
+    sObjProperties[PROP_RELATED_VIEW] =
         g_param_spec_object(
             "related-view",
             _("Related WebView"),
             _("The related WebKitWebView used when creating the view to share the same web process"),
             WEBKIT_TYPE_WEB_VIEW,
-            static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
     /**
      * WebKitWebView:settings:
@@ -1054,15 +1054,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.6
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_SETTINGS,
+    sObjProperties[PROP_SETTINGS] =
         g_param_spec_object(
             "settings",
             _("WebView settings"),
             _("The WebKitSettings of the view"),
             WEBKIT_TYPE_SETTINGS,
-            static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
 
     /**
      * WebKitWebView:user-content-manager:
@@ -1071,15 +1069,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.6
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_USER_CONTENT_MANAGER,
+    sObjProperties[PROP_USER_CONTENT_MANAGER] =
         g_param_spec_object(
             "user-content-manager",
             _("WebView user content manager"),
             _("The WebKitUserContentManager of the view"),
             WEBKIT_TYPE_USER_CONTENT_MANAGER,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     /**
      * WebKitWebView:title:
@@ -1087,13 +1083,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The main frame document title of this #WebKitWebView. If
      * the title has not been received yet, it will be %NULL.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_TITLE,
-                                    g_param_spec_string("title",
-                                                        _("Title"),
-                                                        _("Main frame document title"),
-                                                        0,
-                                                        WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_TITLE] =
+        g_param_spec_string(
+            "title",
+            _("Title"),
+            _("Main frame document title"),
+            nullptr,
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitWebView:estimated-load-progress:
@@ -1106,13 +1102,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * to be received for a document, including all its possible subresources
      * and child documents.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_ESTIMATED_LOAD_PROGRESS,
-                                    g_param_spec_double("estimated-load-progress",
-                                                        _("Estimated Load Progress"),
-                                                        _("An estimate of the percent completion for a document load"),
-                                                        0.0, 1.0, 0.0,
-                                                        WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_ESTIMATED_LOAD_PROGRESS] =
+        g_param_spec_double(
+            "estimated-load-progress",
+            _("Estimated Load Progress"),
+            _("An estimate of the percent completion for a document load"),
+            0.0, 1.0, 0.0,
+            WEBKIT_PARAM_READABLE);
+
 #if PLATFORM(GTK)
     /**
      * WebKitWebView:favicon:
@@ -1120,12 +1117,12 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The favicon currently associated to the #WebKitWebView.
      * See webkit_web_view_get_favicon() for more details.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_FAVICON,
-                                    g_param_spec_pointer("favicon",
-                                                         _("Favicon"),
-                                                         _("The favicon associated to the view, if any"),
-                                                         WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_FAVICON] =
+        g_param_spec_pointer(
+            "favicon",
+            _("Favicon"),
+            _("The favicon associated to the view, if any"),
+            WEBKIT_PARAM_READABLE);
 #endif
 
     /**
@@ -1134,13 +1131,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The current active URI of the #WebKitWebView.
      * See webkit_web_view_get_uri() for more details.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_URI,
-                                    g_param_spec_string("uri",
-                                                        _("URI"),
-                                                        _("The current active URI of the view"),
-                                                        0,
-                                                        WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_URI] =
+        g_param_spec_string(
+            "uri",
+            _("URI"),
+            _("The current active URI of the view"),
+            nullptr,
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitWebView:zoom-level:
@@ -1148,15 +1145,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * The zoom level of the #WebKitWebView content.
      * See webkit_web_view_set_zoom_level() for more details.
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_ZOOM_LEVEL,
+    sObjProperties[PROP_ZOOM_LEVEL] =
         g_param_spec_double(
             "zoom-level",
             _("Zoom level"),
             _("The zoom level of the view content"),
             0, G_MAXDOUBLE, 1,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READWRITE);
 
     /**
      * WebKitWebView:is-loading:
@@ -1168,15 +1163,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * When the load operation finishes the property is set to %FALSE before
      * #WebKitWebView::load-changed is emitted with %WEBKIT_LOAD_FINISHED.
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_IS_LOADING,
+    sObjProperties[PROP_IS_LOADING] =
         g_param_spec_boolean(
             "is-loading",
             _("Is Loading"),
             _("Whether the view is loading a page"),
             FALSE,
-            WEBKIT_PARAM_READABLE));
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitWebView:is-playing-audio:
@@ -1188,15 +1181,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.8
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_IS_PLAYING_AUDIO,
+    sObjProperties[PROP_IS_PLAYING_AUDIO] =
         g_param_spec_boolean(
             "is-playing-audio",
             "Is Playing Audio",
             _("Whether the view is playing audio"),
             FALSE,
-            WEBKIT_PARAM_READABLE));
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitWebView:is-ephemeral:
@@ -1216,15 +1207,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.16
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_IS_EPHEMERAL,
+    sObjProperties[PROP_IS_EPHEMERAL] =
         g_param_spec_boolean(
             "is-ephemeral",
             "Is Ephemeral",
             _("Whether the web view is ephemeral"),
             FALSE,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     /**
      * WebKitWebView:is-controlled-by-automation:
@@ -1235,15 +1224,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.18
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_IS_CONTROLLED_BY_AUTOMATION,
+    sObjProperties[PROP_IS_CONTROLLED_BY_AUTOMATION] =
         g_param_spec_boolean(
             "is-controlled-by-automation",
             "Is Controlled By Automation",
             _("Whether the web view is controlled by automation"),
             FALSE,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     /**
      * WebKitWebView:automation-presentation-type:
@@ -1255,16 +1242,14 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.28
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_AUTOMATION_PRESENTATION_TYPE,
+    sObjProperties[PROP_AUTOMATION_PRESENTATION_TYPE] =
         g_param_spec_enum(
             "automation-presentation-type",
             "Automation Presentation Type",
             _("The browsing context presentation type for automation"),
             WEBKIT_TYPE_AUTOMATION_BROWSING_CONTEXT_PRESENTATION,
             WEBKIT_AUTOMATION_BROWSING_CONTEXT_PRESENTATION_WINDOW,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     /**
      * WebKitWebView:editable:
@@ -1274,15 +1259,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.8
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_EDITABLE,
+    sObjProperties[PROP_EDITABLE] =
         g_param_spec_boolean(
             "editable",
             _("Editable"),
             _("Whether the content can be modified by the user."),
             FALSE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READWRITE);
 
     /**
      * WebKitWebView:page-id:
@@ -1291,15 +1274,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.28
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_PAGE_ID,
+    sObjProperties[PROP_PAGE_ID] =
         g_param_spec_uint64(
             "page-id",
             _("Page Identifier"),
             _("The page identifier."),
             0, G_MAXUINT64, 0,
-            WEBKIT_PARAM_READABLE));
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitWebView:is-muted:
@@ -1309,15 +1290,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.30
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_IS_MUTED,
+    sObjProperties[PROP_IS_MUTED] =
         g_param_spec_boolean(
             "is-muted",
             "Is Muted",
             _("Whether the view audio is muted"),
             FALSE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READWRITE);
 
     /**
      * WebKitWebView:website-policies:
@@ -1326,15 +1305,15 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * Since: 2.30
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_WEBSITE_POLICIES,
+    sObjProperties[PROP_WEBSITE_POLICIES] =
         g_param_spec_object(
             "website-policies",
             _("Default Website Policies"),
             _("The default policy object for sites loaded in this view"),
             WEBKIT_TYPE_WEBSITE_POLICIES,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
     /**
      * WebKitWebView::load-changed:
@@ -2341,7 +2320,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         // again with the page load state.
         if (activeURL != priv->activeURI) {
             priv->activeURI = activeURL;
-            g_object_notify(G_OBJECT(webView), "uri");
+            g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_URI]);
         }
 #if PLATFORM(GTK)
         WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(priv->context.get());
@@ -2785,7 +2764,7 @@ bool webkitWebViewShowOptionMenu(WebKitWebView* webView, const IntRect& rect, We
 
 void webkitWebViewDidChangePageID(WebKitWebView* webView)
 {
-    g_object_notify(G_OBJECT(webView), "page-id");
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_PAGE_ID]);
 }
 
 void webkitWebViewDidReceiveUserMessage(WebKitWebView* webView, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
@@ -3269,7 +3248,7 @@ void webkit_web_view_set_is_muted(WebKitWebView* webView, gboolean muted)
         return;
 
     getPage(webView).setMuted(muted ? WebCore::MediaProducer::AudioIsMuted : WebCore::MediaProducer::NoneMuted);
-    g_object_notify(G_OBJECT(webView), "is-muted");
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_MUTED]);
 }
 
 /**
@@ -3553,7 +3532,7 @@ void webkit_web_view_set_settings(WebKitWebView* webView, WebKitSettings* settin
 
     webView->priv->settings = settings;
     webkitWebViewUpdateSettings(webView);
-    g_object_notify(G_OBJECT(webView), "settings");
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_SETTINGS]);
 }
 
 /**
@@ -3618,7 +3597,7 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gdouble zoomLevel)
         page.setTextZoomFactor(zoomLevel * webView->priv->textScaleFactor);
     else
         page.setPageZoomFactor(zoomLevel);
-    g_object_notify(G_OBJECT(webView), "zoom-level");
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_ZOOM_LEVEL]);
 }
 
 /**
@@ -4471,7 +4450,7 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean editable)
 
     getPage(webView).setEditable(editable);
 
-    g_object_notify(G_OBJECT(webView), "editable");
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_EDITABLE]);
 }
 
 /**

@@ -42,7 +42,10 @@ enum {
     PROP_PAD_0,
     PROP_PAD_TAGS,
     PROP_INNER_COMBINER_PAD,
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 #define webkit_text_combiner_pad_parent_class parent_class
 WEBKIT_DEFINE_TYPE(WebKitTextCombinerPad, webkit_text_combiner_pad, GST_TYPE_GHOST_PAD);
@@ -66,7 +69,7 @@ static gboolean webkitTextCombinerPadEvent(GstPad* pad, GstObject* parent, GstEv
             gst_tag_list_insert(combinerPad->priv->tags.get(), tags, GST_TAG_MERGE_REPLACE);
         GST_OBJECT_UNLOCK(pad);
 
-        g_object_notify(G_OBJECT(pad), "tags");
+        g_object_notify_by_pspec(G_OBJECT(pad), sObjProperties[PROP_PAD_TAGS]);
         break;
     }
     default:
@@ -126,13 +129,15 @@ static void webkit_text_combiner_pad_class_init(WebKitTextCombinerPadClass* klas
     gobjectClass->get_property = GST_DEBUG_FUNCPTR(webkitTextCombinerPadGetProperty);
     gobjectClass->set_property = GST_DEBUG_FUNCPTR(webkitTextCombinerPadSetProperty);
 
-    g_object_class_install_property(gobjectClass, PROP_PAD_TAGS,
+    sObjProperties[PROP_PAD_TAGS] =
         g_param_spec_boxed("tags", "Tags", "The currently active tags on the pad", GST_TYPE_TAG_LIST,
-            static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
+            static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
-    g_object_class_install_property(gobjectClass, PROP_INNER_COMBINER_PAD,
+    sObjProperties[PROP_INNER_COMBINER_PAD] =
         g_param_spec_object("inner-combiner-pad", "Internal Combiner Pad", "The internal funnel (or concat) pad associated with this pad", GST_TYPE_PAD,
-            static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+            static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+    g_object_class_install_properties(gobjectClass, N_PROPERTIES, sObjProperties);
 }
 
 GstPad* webKitTextCombinerPadLeakInternalPadRef(WebKitTextCombinerPad* pad)

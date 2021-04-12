@@ -1,3 +1,19 @@
+2021-04-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Use g_object_notify_by_pspec() whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=224366
+
+        Reviewed by Carlos Garcia Campos.
+
+        Keep a static array with the GParamSpec pointer for each property, and trigger
+        property change notifications using g_object_notify_by_pspec() to avoid looking
+        up by its name each time.
+
+        No new tests needed.
+
+        * platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp:
+        (webkit_text_combiner_pad_class_init):
+
 2021-04-12  Youenn Fablet  <youenn@apple.com>
 
         Use DestructionThread::Main for RTCRtpScriptTransform

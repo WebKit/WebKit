@@ -1,3 +1,135 @@
+2021-04-12  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Use g_object_notify_by_pspec() whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=224366
+
+        Reviewed by Carlos Garcia Campos.
+
+        Keep a static array with the GParamSpec pointer for each property, and trigger
+        property change notifications using g_object_notify_by_pspec() to avoid looking
+        up by its name each time.
+
+        * Shared/API/glib/WebKitURIRequest.cpp:
+        (webkit_uri_request_class_init):
+        (webkit_uri_request_set_uri):
+        * UIProcess/API/glib/WebKitDownload.cpp:
+        (webkitDownloadDecideDestination):
+        (webkit_download_class_init):
+        (webkitDownloadSetResponse):
+        (webkitDownloadNotifyProgress):
+        (webkit_download_set_destination):
+        (webkit_download_set_allow_overwrite):
+        * UIProcess/API/glib/WebKitEditorState.cpp:
+        (webkit_editor_state_class_init):
+        (webkitEditorStateSetTypingAttributes):
+        * UIProcess/API/glib/WebKitGeolocationManager.cpp:
+        (webkitGeolocationManagerSetEnableHighAccuracy):
+        (webkit_geolocation_manager_class_init):
+        * UIProcess/API/glib/WebKitInputMethodContext.cpp:
+        (webkit_input_method_context_class_init):
+        (webkit_input_method_context_set_input_purpose):
+        (webkit_input_method_context_set_input_hints):
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webkit_settings_class_init):
+        (webkit_settings_set_enable_javascript):
+        (webkit_settings_set_auto_load_images):
+        (webkit_settings_set_load_icons_ignoring_image_load_setting):
+        (webkit_settings_set_enable_offline_web_application_cache):
+        (webkit_settings_set_enable_html5_local_storage):
+        (webkit_settings_set_enable_html5_database):
+        (webkit_settings_set_enable_xss_auditor):
+        (webkit_settings_set_enable_frame_flattening):
+        (webkit_settings_set_enable_java):
+        (webkit_settings_set_javascript_can_open_windows_automatically):
+        (webkit_settings_set_enable_hyperlink_auditing):
+        (webkit_settings_set_default_font_family):
+        (webkit_settings_set_monospace_font_family):
+        (webkit_settings_set_serif_font_family):
+        (webkit_settings_set_sans_serif_font_family):
+        (webkit_settings_set_cursive_font_family):
+        (webkit_settings_set_fantasy_font_family):
+        (webkit_settings_set_pictograph_font_family):
+        (webkit_settings_set_default_font_size):
+        (webkit_settings_set_default_monospace_font_size):
+        (webkit_settings_set_minimum_font_size):
+        (webkit_settings_set_default_charset):
+        (webkit_settings_set_enable_developer_extras):
+        (webkit_settings_set_enable_resizable_text_areas):
+        (webkit_settings_set_enable_tabs_to_links):
+        (webkit_settings_set_enable_dns_prefetching):
+        (webkit_settings_set_enable_caret_browsing):
+        (webkit_settings_set_enable_fullscreen):
+        (webkit_settings_set_print_backgrounds):
+        (webkit_settings_set_enable_webaudio):
+        (webkit_settings_set_enable_webgl):
+        (webkit_settings_set_allow_modal_dialogs):
+        (webkit_settings_set_zoom_text_only):
+        (webkit_settings_set_javascript_can_access_clipboard):
+        (webkit_settings_set_media_playback_requires_user_gesture):
+        (webkit_settings_set_media_playback_allows_inline):
+        (webkit_settings_set_draw_compositing_indicators):
+        (webkit_settings_set_enable_site_specific_quirks):
+        (webkit_settings_set_enable_page_cache):
+        (webkit_settings_set_user_agent):
+        (webkit_settings_set_enable_smooth_scrolling):
+        (webkit_settings_set_enable_write_console_messages_to_stdout):
+        (webkit_settings_set_enable_media_stream):
+        (webkit_settings_set_enable_mock_capture_devices):
+        (webkit_settings_set_enable_spatial_navigation):
+        (webkit_settings_set_enable_mediasource):
+        (webkit_settings_set_enable_encrypted_media):
+        (webkit_settings_set_enable_media_capabilities):
+        (webkit_settings_set_allow_file_access_from_file_urls):
+        (webkit_settings_set_allow_universal_access_from_file_urls):
+        (webkit_settings_set_allow_top_navigation_to_data_urls):
+        (webkit_settings_set_hardware_acceleration_policy):
+        (webkit_settings_set_enable_back_forward_navigation_gestures):
+        (webkit_settings_set_enable_javascript_markup):
+        (webkit_settings_set_enable_media):
+        (webkit_settings_set_media_content_types_requiring_hardware_support):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkitWebContextGetProperty):
+        (webkitWebContextSetProperty):
+        (webkit_web_context_class_init):
+        (webkit_web_context_set_use_system_appearance_for_scrollbars):
+        * UIProcess/API/glib/WebKitWebResource.cpp:
+        (webkit_web_resource_class_init):
+        (webkitWebResourceUpdateURI):
+        (webkitWebResourceSetResponse):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewSetIsLoading):
+        (webkitWebViewIsPlayingAudioChanged):
+        (webkitWebViewUpdateFavicon):
+        (webkit_web_view_class_init):
+        (webkitWebViewLoadChanged):
+        (webkitWebViewDidChangePageID):
+        (webkit_web_view_set_is_muted):
+        (webkit_web_view_set_settings):
+        (webkit_web_view_set_zoom_level):
+        (webkit_web_view_set_editable):
+        * UIProcess/API/glib/WebKitWindowProperties.cpp:
+        (webkit_window_properties_class_init):
+        (webkitWindowPropertiesSetGeometry):
+        (webkitWindowPropertiesSetToolbarVisible):
+        (webkitWindowPropertiesSetMenubarVisible):
+        (webkitWindowPropertiesSetStatusbarVisible):
+        (webkitWindowPropertiesSetLocationbarVisible):
+        (webkitWindowPropertiesSetScrollbarsVisible):
+        (webkitWindowPropertiesSetResizable):
+        (webkitWindowPropertiesSetFullscreen):
+        * UIProcess/API/gtk/WebKitColorChooserRequest.cpp:
+        (webkit_color_chooser_request_class_init):
+        (webkit_color_chooser_request_set_rgba):
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (webkit_print_operation_class_init):
+        (webkit_print_operation_set_print_settings):
+        (webkit_print_operation_set_page_setup):
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (webkit_web_inspector_class_init):
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkitWebPageSetURI):
+        (webkit_web_page_class_init):
+
 2021-04-11  Sam Weinig  <weinig@apple.com>
 
         Simplify WebKitTestRunner preference reset to be more like DRT

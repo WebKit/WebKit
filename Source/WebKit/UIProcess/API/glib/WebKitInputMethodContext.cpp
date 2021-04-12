@@ -49,10 +49,12 @@ using namespace WebCore;
 
 enum {
     PROP_0,
-
     PROP_INPUT_PURPOSE,
-    PROP_INPUT_HINTS
+    PROP_INPUT_HINTS,
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 enum {
     PREEDIT_STARTED,
@@ -217,16 +219,14 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
      *
      * Since: 2.28
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_INPUT_PURPOSE,
+    sObjProperties[PROP_INPUT_PURPOSE] =
         g_param_spec_enum(
             "input-purpose",
             _("Input Purpose"),
             _("The purpose of the input associated"),
             WEBKIT_TYPE_INPUT_PURPOSE,
             WEBKIT_INPUT_PURPOSE_FREE_FORM,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READWRITE);
 
     /**
      * WebKitInputMethodContext::input-hints:
@@ -235,16 +235,16 @@ static void webkit_input_method_context_class_init(WebKitInputMethodContextClass
      *
      * Since: 2.28
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_INPUT_HINTS,
+    sObjProperties[PROP_INPUT_HINTS] =
         g_param_spec_flags(
             "input-hints",
             _("Input Hints"),
             _("The hints of the input associated"),
             WEBKIT_TYPE_INPUT_HINTS,
             WEBKIT_INPUT_HINT_NONE,
-            WEBKIT_PARAM_READWRITE));
+            WEBKIT_PARAM_READWRITE);
+
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
     /**
      * WebKitInputMethodContext::preedit-started:
@@ -536,7 +536,7 @@ void webkit_input_method_context_set_input_purpose(WebKitInputMethodContext* con
         return;
 
     context->priv->purpose = purpose;
-    g_object_notify(G_OBJECT(context), "input-purpose");
+    g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_INPUT_PURPOSE]);
 }
 
 /**
@@ -573,5 +573,5 @@ void webkit_input_method_context_set_input_hints(WebKitInputMethodContext* conte
         return;
 
     context->priv->hints = hints;
-    g_object_notify(G_OBJECT(context), "input-hints");
+    g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_INPUT_HINTS]);
 }
