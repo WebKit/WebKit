@@ -328,7 +328,7 @@ void MediaPlayerPrivateGStreamer::loadFull(const String& urlString, const String
     setPlaybinURL(url);
 
     GST_DEBUG_OBJECT(pipeline(), "preload: %s", convertEnumerationToString(m_preload).utf8().data());
-    if (m_preload == MediaPlayer::Preload::None) {
+    if (m_preload == MediaPlayer::Preload::None && !isMediaSource()) {
         GST_INFO_OBJECT(pipeline(), "Delaying load.");
         m_isDelayingLoad = true;
     }

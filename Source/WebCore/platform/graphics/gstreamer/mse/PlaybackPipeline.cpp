@@ -103,6 +103,7 @@ WebKitMediaSrc* PlaybackPipeline::webKitMediaSrc()
 
 MediaSourcePrivate::AddStatus PlaybackPipeline::addSourceBuffer(RefPtr<SourceBufferPrivateGStreamer> sourceBufferPrivate)
 {
+    ASSERT(m_webKitMediaSrc);
     WebKitMediaSrcPrivate* priv = m_webKitMediaSrc->priv;
 
     if (priv->allTracksConfigured) {
@@ -258,6 +259,7 @@ void PlaybackPipeline::reattachTrack(RefPtr<SourceBufferPrivateGStreamer> source
 
 void PlaybackPipeline::notifyDurationChanged()
 {
+    ASSERT(m_webKitMediaSrc);
     gst_element_post_message(GST_ELEMENT(m_webKitMediaSrc.get()), gst_message_new_duration_changed(GST_OBJECT(m_webKitMediaSrc.get())));
     // WebKitMediaSrc will ask MediaPlayerPrivateGStreamerMSE for the new duration later, when somebody asks for it.
 }
