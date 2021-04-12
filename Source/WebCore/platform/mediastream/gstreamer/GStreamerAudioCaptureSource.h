@@ -53,6 +53,9 @@ protected:
     mutable Optional<RealtimeMediaSourceSettings> m_currentSettings;
 
 private:
+    bool interrupted() const final;
+    void setInterruptedForTesting(bool) final;
+
     bool isCaptureSource() const final { return true; }
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
