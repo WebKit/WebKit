@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "JSAudioBuffer.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -73,20 +74,7 @@ void OfflineAudioContext::uninitialize()
 {
     BaseAudioContext::uninitialize();
 
-    Vector<RefPtr<DeferredPromise>> promisesToReject;
-
-    {
-        AutoLocker locker(*this);
-        promisesToReject.reserveInitialCapacity(m_suspendRequests.size());
-        for (auto& promise : m_suspendRequests.values())
-            promisesToReject.uncheckedAppend(promise);
-        m_suspendRequests.clear();
-    }
-
-    if (m_pendingOfflineRenderingPromise)
-        promisesToReject.append(std::exchange(m_pendingOfflineRenderingPromise, nullptr));
-
-    for (auto& promise : promisesToReject)
+    if (auto promise = std::exchange(m_pendingOfflineRenderingPromise, nullptr))
         promise->reject(Exception { InvalidStateError, "Context is going away"_s });
 }
 
@@ -210,7 +198,10 @@ void OfflineAudioContext::didSuspendRendering(size_t frame)
 
 void OfflineAudioContext::didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&& result)
 {
-    m_didStartOfflineRendering = false;
+    auto finishedRenderingScope = WTF::makeScopeExit([this] {
+        uninitialize();
+        clear();
+    });
 
     if (!m_pendingOfflineRenderingPromise)
         return;

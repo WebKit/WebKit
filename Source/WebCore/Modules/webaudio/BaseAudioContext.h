@@ -316,10 +316,9 @@ protected:
     void setState(State);
 
     virtual void didFinishOfflineRendering(ExceptionOr<Ref<AudioBuffer>>&&) { }
-
-private:
     void clear();
 
+private:
     void scheduleNodeDeletion();
     void workletIsReady();
 

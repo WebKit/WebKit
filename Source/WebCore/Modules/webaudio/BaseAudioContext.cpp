@@ -202,7 +202,7 @@ bool BaseAudioContext::isContextAlive(uint64_t contextID)
 
 void BaseAudioContext::lazyInitialize()
 {
-    if (isStopped())
+    if (isStopped() || isClosed())
         return;
 
     if (m_isInitialized)

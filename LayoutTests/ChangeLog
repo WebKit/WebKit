@@ -1,3 +1,17 @@
+2021-04-12  Chris Dumez  <cdumez@apple.com>
+
+        webaudio/AudioListener/audiolistener-set-position.html is leaking PannerNodes
+        https://bugs.webkit.org/show_bug.cgi?id=224399
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * webaudio/OfflineAudioContext/offlineaudiocontext-can-only-render-once-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-can-only-render-once.html: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-with-nodes-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-with-nodes.html: Added.
+
 2021-04-12  Zalan Bujtas  <zalan@apple.com>
 
         ASSERTION FAILED: &layoutState().establishedFormattingState(layoutBox.formattingContextRoot()) == this in WebCore::Layout::FormattingState::boxGeometry

@@ -1,3 +1,79 @@
+2021-04-12  Chris Dumez  <cdumez@apple.com>
+
+        webaudio/AudioListener/audiolistener-set-position.html is leaking PannerNodes
+        https://bugs.webkit.org/show_bug.cgi?id=224399
+
+        Reviewed by Geoffrey Garen.
+
+        The test was leaking all its nodes and contexts due to several logic issues in our code.
+
+        Tests: webaudio/OfflineAudioContext/offlineaudiocontext-can-only-render-once.html
+               webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-with-nodes.html
+
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::AudioScheduledSourceNode):
+        (WebCore::AudioScheduledSourceNode::virtualHasPendingActivity const):
+        (WebCore::AudioScheduledSourceNode::finish):
+        * Modules/webaudio/AudioScheduledSourceNode.h:
+        1. Stop using an ActiveDOMObject::PendingActivity to keep our wrapper alive as this was causing
+           a reference cycle. PendingActivity keeps a ref to |this| and this is ref'ing the PendingActivity.
+           2 things could break the cycle:
+           - finish() gets called but the audio context may go away without finish getting called.
+           - didBecomeMarkedForDeletion() gets called. However, it was getting called from
+             AudioNode::markNodeForDeletionIfNecessary(). This function would early return if m_normalRefCount
+             is not 0. Here m_normalRefCount could NOT be 0, since PendingActity was ref'ing the Node.
+        2. Instead of a PendingActivity, we now override ActiveDOMObject::virtualHasPendingActivity() to keep
+           the wrapper alive. The behavior is the same since its return true when the state is not finished
+           and the node has not been marked for deletion. However, I added a condition to make sure it starts
+           returning false as soon as the context is closed. There is also no need to keep the JS wrapper alive
+           if there is no 'ended' event listener.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::lazyInitialize):
+        Early return if lazyInitialize() gets called for an audiocontext is closed. Nothing prevents JS from
+        creating an AudioNode after the AudioContext is closed. Constructing an AudioNode ends up lazy
+        initializing the audio context. In such case, we would already early return in release because if the
+        m_isAudioThreadFinished check. However, we would crash in debug because of the m_isAudioThreadFinished
+        ASSERT().
+
+        * Modules/webaudio/BaseAudioContext.h:
+        Make clear() member function protected so it can get called by OfflineAudioContext when rendering is
+        complete.
+
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::uninitialize):
+        Stop rejecting the suspend promises when the OfflineAudioContext gets uninitialized. Previously this
+        would only happen on navigation so we did not notice the issue. However, the OfflineAudioContext now
+        gets uninitialized as soon as it is done rendering and rejecting those promises in this case would
+        start causing test failures.
+
+        (WebCore::OfflineAudioContext::didFinishOfflineRendering):
+        - Stop clearing the m_didStartOfflineRendering flag when rendering is finished. This flag is called
+          [[rendering started]] in the WebAudio specification [1]. As per the specification, it gets set to true
+          in startRendering() and never gets reset to false. This means that an offline audio context cannot
+          start rendering again once it is done rendering. I have added a layout test for this behavior change
+          and verified that this test is passing is both Firefox and Chrome.
+          [1] https://webaudio.github.io/web-audio-api/#dom-offlineaudiocontext-startrendering
+        - Call uninitialize() and clear() when rendering has finished to clear as much memory as possible as
+          soon as we can. This is acceptable because it is no longer possible to start rendering again once
+          it's finished. Previously, uninitialize() / clear() would only happen when navigating away and when
+          the document would get destroyed.
+
+2021-04-12  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext with nodes that completed rendering do not get freed until navigating away
+        https://bugs.webkit.org/show_bug.cgi?id=224439
+
+        Reviewed by Geoffrey Garen.
+
+        Tests: webaudio/OfflineAudioContext/offlineaudiocontext-can-only-render-once.html
+               webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-with-nodes.html
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::finishedRendering):
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::didFinishOfflineRendering):
+
 2021-04-12  Ada Chan  <ada.chan@apple.com>
 
         Initial implementation of WebChromeClient::enumerateImmersiveXRDevices() and XRDeviceProxy
