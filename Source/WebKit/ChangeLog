@@ -1,3 +1,18 @@
+2021-04-12  Chris Dumez  <cdumez@apple.com>
+
+        Make sure AuxiliaryProcessProxy::sendMessage() is called on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=224448
+
+        Reviewed by Geoffrey Garen.
+
+        Make sure AuxiliaryProcessProxy::sendMessage() is called on the main thread. This is a follow-up to
+        Bug 224377 but for trunk.
+
+        * UIProcess/AuxiliaryProcessProxy.cpp:
+        (WebKit::AuxiliaryProcessProxy::sendMessage):
+        (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+        (WebKit::AuxiliaryProcessProxy::replyToPendingMessages):
+
 2021-04-12  Ada Chan  <ada.chan@apple.com>
 
         Initial implementation of WebChromeClient::enumerateImmersiveXRDevices() and XRDeviceProxy
