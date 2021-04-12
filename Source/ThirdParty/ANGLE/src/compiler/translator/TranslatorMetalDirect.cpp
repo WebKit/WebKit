@@ -1435,7 +1435,7 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
         return false;
     }
 
-    if (!SeparateCompoundStructDeclarations(*this, root))
+    if (!SeparateCompoundStructDeclarations(*this, idGen, root))
     {
         return false;
     }

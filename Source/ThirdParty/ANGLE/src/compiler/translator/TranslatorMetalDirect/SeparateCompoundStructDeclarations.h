@@ -9,7 +9,7 @@
 
 #include "common/angleutils.h"
 #include "compiler/translator/Compiler.h"
-
+#include "compiler/translator/TranslatorMetalDirect/IdGen.h"
 namespace sh
 {
 
@@ -17,7 +17,7 @@ namespace sh
 //  struct Foo { int x; } foo;
 // Becomes:
 //  struct Foo {int x; }; Foo foo;
-ANGLE_NO_DISCARD bool SeparateCompoundStructDeclarations(TCompiler &compiler, TIntermBlock &root);
+ANGLE_NO_DISCARD bool SeparateCompoundStructDeclarations(TCompiler &compiler, IdGen &idGen, TIntermBlock &root);
 
 }  // namespace sh
 

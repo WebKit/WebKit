@@ -1,3 +1,22 @@
+2021-04-12  Kyle Piddington  <kpiddington@apple.com>
+
+        Crash in webgl/2.0.y/conformance/glsl/misc/uninitialized-local-global-variables.html ANGLE+METAL
+        https://bugs.webkit.org/show_bug.cgi?id=223923
+	
+        Anonymous structs require a name in MSL, add a default name ANGLE__unnamed$id to any structs.
+        Also add a unit test to ensure this works.
+        Reviewed by Kenneth Russell.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.cpp:
+        (sh::Separator::Separator):
+        (sh::SeparateCompoundStructDeclarations):
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.h:
+        * src/tests/BUILD.gn:
+        * src/tests/angle_unittests.gni:
+        * src/tests/compiler_tests/MSLOutput_Test.cpp:
+
 2021-04-08  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal-ANGLE] Support GPU power preferences, select low-power GPU by default.

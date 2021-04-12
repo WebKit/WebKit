@@ -154,6 +154,8 @@ if (is_android) {
       [ "../tests/compiler_tests/ImmutableString_test_autogen.cpp" ]
 }
 
+angle_unittests_msl_sources = [ "../tests/compiler_tests/MSLOutput_test.cpp" ]
+
 if (!is_android && !is_fuchsia) {
   angle_unittests_sources +=
       [ "../tests/test_utils/runner/TestSuite_unittest.cpp" ]
