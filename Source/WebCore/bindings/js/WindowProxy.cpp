@@ -188,7 +188,7 @@ void WindowProxy::setDOMWindow(AbstractDOMWindow* newDOMWindow)
         windowProxy->attachDebugger(page ? page->debugger() : nullptr);
         if (page)
             windowProxy->window()->setProfileGroup(page->group().identifier());
-        windowProxy->window()->setConsoleClient(page ? &page->console() : nullptr);
+        windowProxy->window()->setConsoleClient(page ? makeWeakPtr(page->console()) : nullptr);
     }
 }
 

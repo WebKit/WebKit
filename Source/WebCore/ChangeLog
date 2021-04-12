@@ -1,3 +1,22 @@
+2021-04-12  BJ Burg  <bburg@apple.com>
+
+        Modernize uses of ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=224398
+
+        Reviewed by David Kilzer.
+
+        ConsoleClient acts like a delegate, so its callers
+        should be using weak references to it.
+
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::restore):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::initScriptForWindowProxy):
+        * bindings/js/WindowProxy.cpp:
+        (WebCore::WindowProxy::setDOMWindow):
+        * workers/WorkerOrWorkletScriptController.cpp:
+        (WebCore::WorkerOrWorkletScriptController::initScriptWithSubclass):
+
 2021-04-12  Chris Dumez  <cdumez@apple.com>
 
         webaudio/AudioListener/audiolistener-set-position.html is leaking PannerNodes
