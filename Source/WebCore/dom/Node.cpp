@@ -371,7 +371,7 @@ Node::~Node()
 
     auto* textManipulationController = document().textManipulationControllerIfExists();
     if (UNLIKELY(textManipulationController))
-        textManipulationController->removeNode(this);
+        textManipulationController->removeNode(*this);
 
     if (!isContainerNode())
         willBeDeletedFrom(document());
@@ -2066,7 +2066,7 @@ void Node::moveNodeToNewDocument(Document& oldDocument, Document& newDocument)
 
     auto* textManipulationController = oldDocument.textManipulationControllerIfExists();
     if (UNLIKELY(textManipulationController))
-        textManipulationController->removeNode(this);
+        textManipulationController->removeNode(*this);
 
     if (auto* eventTargetData = this->eventTargetData()) {
         if (!eventTargetData->eventListenerMap.isEmpty()) {
