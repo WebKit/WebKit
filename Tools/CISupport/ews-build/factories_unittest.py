@@ -411,6 +411,7 @@ class TestCommitQueueFactory(TestCase):
             _BuildStepFactory(steps.ValidatePatch, verifycqplus=True),
             _BuildStepFactory(steps.ValidateCommiterAndReviewer),
             _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CleanGitRepo),
             _BuildStepFactory(steps.CheckOutSource),
             _BuildStepFactory(steps.FetchBranches),
             _BuildStepFactory(steps.ShowIdentifier),

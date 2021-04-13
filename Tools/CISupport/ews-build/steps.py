@@ -3128,6 +3128,31 @@ class PrintConfiguration(steps.ShellSequence):
         return {'step': configuration}
 
 
+class CleanGitRepo(steps.ShellSequence):
+    name = 'clean-up-git-repo'
+    haltOnFailure = False
+    flunkOnFailure = False
+    logEnviron = False
+    # This somewhat quirky sequence of steps seems to clear up all the broken
+    # git situations we've gotten ourself into in the past.
+    command_list = [['git', 'clean', '-f'],  # Remove any left-over layout test results, added files, etc.
+                    ['git', 'fetch', 'origin'],  # Avoid updating the working copy to a stale revision.
+                    ['git', 'checkout', 'origin/main', '-f'],
+                    ['git', 'branch', '-D', 'main'],
+                    ['git', 'checkout', 'origin/main', '-b', 'main']]
+
+    def run(self):
+        self.commands = []
+        for command in self.command_list:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+        return super(CleanGitRepo, self).run()
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Encountered some issues during cleanup'}
+        return {'step': 'Cleaned up git repository'}
+
+
 class ApplyWatchList(shell.ShellCommand):
     name = 'apply-watch-list'
     description = ['applying watchilist']

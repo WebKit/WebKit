@@ -1,3 +1,20 @@
+2021-04-12  Aakash Jain  <aakash_jain@apple.com>
+
+        Make Commit Queue robust by adding few git commands to clean up repository
+        https://bugs.webkit.org/show_bug.cgi?id=224444
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (CleanGitRepo): Build step to run few commands to cleanup git repository.
+        (CleanGitRepo.run):
+        (CleanGitRepo.getResultSummary): Custom failure message.
+        * CISupport/ews-build/steps_unittest.py: Added unit-tests.
+        * CISupport/ews-build/factories.py:
+        (CommitQueueFactory.__init__):
+        * CISupport/ews-build/factories_unittest.py:
+        (TestCommitQueueFactory.test_commit_queue_factory): Updated unit-test.
+
 2021-04-11  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r275801.
