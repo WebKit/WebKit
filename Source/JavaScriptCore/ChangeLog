@@ -1,3 +1,20 @@
+2021-04-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Inspector code is wrongly including some private headers
+        https://bugs.webkit.org/show_bug.cgi?id=224456
+
+        Reviewed by Alex Christensen.
+
+        These files were including some headers using #include <JavaScriptCore/Foo.h> style instead
+        of "Foo.h" style. This caused a build error when attempting to revive the Mac CMake build
+        since those headers were private and private headers are generated after the JavaScriptCore
+        build. No other ports were have ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS turned on so the
+        issue hadn't manifested until now. 
+
+        * API/JSContextRefInspectorSupport.h:
+        * inspector/augmentable/AlternateDispatchableAgent.h:
+        * inspector/augmentable/AugmentableInspectorController.h:
+
 2021-04-12  BJ Burg  <bburg@apple.com>
 
         Modernize uses of ConsoleClient
