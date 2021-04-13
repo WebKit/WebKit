@@ -1,3 +1,19 @@
+2021-04-13  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete various old EWS specific scripts
+        https://bugs.webkit.org/show_bug.cgi?id=224460
+
+        Reviewed by Alexey Proskuryakov.
+
+        * EWSTools/Start-Queue.ps1: Removed.
+        * EWSTools/boot.sh: Removed.
+        * EWSTools/build-boot-cmd.sh: Removed.
+        * EWSTools/screen-config: Removed.
+        * EWSTools/start-queue-mac.sh: Removed.
+        * EWSTools/start-queue-win.sh: Removed.
+        * EWSTools/start-queue.sh: Removed.
+        * EWSTools/ubuntu-ews-packages: Removed.
+
 2021-04-12  Aakash Jain  <aakash_jain@apple.com>
 
         Make Commit Queue robust by adding few git commands to clean up repository
