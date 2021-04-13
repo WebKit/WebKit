@@ -1,3 +1,21 @@
+2021-04-13  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r275262) [WebDriver] Make automation JS code aware of injected script headers
+        https://bugs.webkit.org/show_bug.cgi?id=224422
+
+        Reviewed by BJ Burg.
+
+        r275262 introduced "//# sourceURL..." prefixes to injected scripts and
+        this broke Automation JS evaluation, as the code evaluated is wrapped
+        with "(async " + CODE + ")". This results in "Unexpected keyword 'function'.
+        Expected ')' to end a compound expression." errors.
+
+        Covered by existing tests.
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (let.AutomationSessionProxy.prototype._execute): Move initial lines
+        with leading comments before the async expression.
+
 2021-04-13  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Color picker sheet should use default height
