@@ -1,3 +1,35 @@
+2021-04-13  Sam Sneddon  <gsnedders@apple.com>
+
+        Test objects should know if they need servers
+        https://bugs.webkit.org/show_bug.cgi?id=224442
+
+        Reviewed by Jonathan Bedard.
+
+        This also removes the unused Manager.needs_servers
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.__init__): Move known paths from Manager.__init__
+        (LayoutTestFinder.find_tests_by_path):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager._is_http_test): Deleted.
+        (Manager._is_websocket_test): Deleted.
+        (Manager._needs_web_platform_test): Deleted.
+        (Manager._http_tests): Deleted.
+        (Manager._tests_to_run):
+        (Manager._test_input_for_file):
+        (Manager.needs_servers): Deleted.
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_needs_servers): Deleted.
+        (ManagerTest.integration_test_needs_servers): Deleted.
+        * Scripts/webkitpy/layout_tests/models/test.py:
+        (Test):
+        (Test.needs_http_server):
+        (Test.needs_websocket_server):
+        (Test.needs_wpt_server):
+        (Test.needs_any_server):
+
 2021-04-13  Chris Dumez  <cdumez@apple.com>
 
         The GPUProcess should only launch when it is needed

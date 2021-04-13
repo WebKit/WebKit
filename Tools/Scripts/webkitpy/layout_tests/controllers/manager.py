@@ -82,10 +82,6 @@ class Manager(object):
         self._options = options
         self._printer = printer
         self._expectations = OrderedDict()
-        self.HTTP_SUBDIR = 'http' + port.TEST_PATH_SEPARATOR + 'test'
-        self.WEBSOCKET_SUBDIR = 'websocket' + port.TEST_PATH_SEPARATOR
-        self.web_platform_test_subdir = self._port.web_platform_test_server_doc_root()
-        self.webkit_specific_web_platform_test_subdir = 'http' + port.TEST_PATH_SEPARATOR + 'wpt' + port.TEST_PATH_SEPARATOR
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._results_directory = self._port.results_directory()
         self._finder = LayoutTestFinder(self._port, self._options)
@@ -122,18 +118,6 @@ class Manager(object):
         aggregate_tests_to_skip = aggregate_tests - aggregate_tests_to_run
 
         return tests_to_run_by_device, aggregate_tests_to_skip
-
-    def _is_http_test(self, test):
-        return self.HTTP_SUBDIR in test or self._is_websocket_test(test) or self._needs_web_platform_test(test)
-
-    def _is_websocket_test(self, test):
-        return self.WEBSOCKET_SUBDIR in test
-
-    def _needs_web_platform_test(self, test):
-        return self.web_platform_test_subdir in test or self.webkit_specific_web_platform_test_subdir in test
-
-    def _http_tests(self, test_names):
-        return set(test for test in test_names if self._is_http_test(test))
 
     def _skip_tests(self, all_tests_list, expectations, http_tests):
         all_tests = set(all_tests_list)
@@ -215,7 +199,9 @@ class Manager(object):
 
     def _tests_to_run(self, tests, device_type):
         test_names = {test.test_path for test in tests}
-        test_names_to_skip = self._skip_tests(test_names, self._expectations[device_type], self._http_tests(test_names))
+        test_names_to_skip = self._skip_tests(test_names,
+                                              self._expectations[device_type],
+                                              {test.test_path for test in tests if test.needs_any_server})
         tests_to_run = [test for test in tests if test.test_path not in test_names_to_skip]
 
         # Create a sorted list of test files so the subset chunk,
@@ -232,7 +218,7 @@ class Manager(object):
         return TestInput(
             test_file,
             self._options.slow_time_out_ms if self._test_is_slow(test_file.test_path, device_type=device_type) else self._options.time_out_ms,
-            self._is_http_test(test_file.test_path),
+            test_file.needs_any_server,
             should_dump_jsconsolelog_in_stderr=self._test_should_dump_jsconsolelog_in_stderr(test_file.test_path, device_type=device_type))
 
     def _test_is_slow(self, test_file, device_type):
@@ -242,9 +228,6 @@ class Manager(object):
 
     def _test_should_dump_jsconsolelog_in_stderr(self, test_file, device_type):
         return self._expectations[device_type].model().has_modifier(test_file, test_expectations.DUMPJSCONSOLELOGINSTDERR)
-
-    def needs_servers(self, test_names):
-        return any(self._is_http_test(test_name) for test_name in test_names) and self._options.http
 
     def _get_test_inputs(self, tests_to_run, repeat_each, iterations, device_type):
         test_inputs = []
@@ -337,9 +320,9 @@ class Manager(object):
         # Create the output directory if it doesn't already exist.
         self._port.host.filesystem.maybe_make_directory(self._results_directory)
 
-        needs_http = any((self._is_http_test(test.test_path) and not self._needs_web_platform_test(test.test_path)) for tests in itervalues(tests_to_run_by_device) for test in tests)
-        needs_web_platform_test_server = any(self._needs_web_platform_test(test.test_path) for tests in itervalues(tests_to_run_by_device) for test in tests)
-        needs_websockets = any(self._is_websocket_test(test.test_path) for tests in itervalues(tests_to_run_by_device) for test in tests)
+        needs_http = any(test.needs_http_server for tests in itervalues(tests_to_run_by_device) for test in tests)
+        needs_web_platform_test_server = any(test.needs_wpt_server for tests in itervalues(tests_to_run_by_device) for test in tests)
+        needs_websockets = any(test.needs_websocket_server for tests in itervalues(tests_to_run_by_device) for test in tests)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow,
                                         needs_http=needs_http, needs_web_platform_test_server=needs_web_platform_test_server, needs_websockets=needs_websockets)
 

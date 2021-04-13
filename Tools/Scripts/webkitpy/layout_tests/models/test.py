@@ -41,3 +41,22 @@ class Test(object):
     expected_checksum_path = attr.ib(default=None, type=str)
     expected_audio_path = attr.ib(default=None, type=str)
     reference_files = attr.ib(default=None, type=list)
+    is_http_test = attr.ib(default=None, type=bool)
+    is_websocket_test = attr.ib(default=None, type=bool)
+    is_wpt_test = attr.ib(default=None, type=bool)
+
+    @property
+    def needs_http_server(self):
+        return self.is_http_test or self.is_websocket_test
+
+    @property
+    def needs_websocket_server(self):
+        return self.is_websocket_test
+
+    @property
+    def needs_wpt_server(self):
+        return self.is_wpt_test
+
+    @property
+    def needs_any_server(self):
+        return self.needs_http_server or self.needs_websocket_server or self.needs_wpt_server
