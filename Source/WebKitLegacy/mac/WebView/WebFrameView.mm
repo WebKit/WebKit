@@ -35,6 +35,7 @@
 #import "WebDynamicScrollBarsViewInternal.h"
 #import "WebFrame.h"
 #import "WebFrameInternal.h"
+#import "WebFrameLoaderClient.h"
 #import "WebFrameViewInternal.h"
 #import "WebFrameViewPrivate.h"
 #import "WebHistoryItemInternal.h"

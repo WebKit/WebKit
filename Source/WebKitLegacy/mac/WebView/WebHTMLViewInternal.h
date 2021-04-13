@@ -29,6 +29,7 @@
 // Things internal to the WebKit framework; not SPI.
 
 #import "WebHTMLViewPrivate.h"
+#import <wtf/NakedPtr.h>
 
 @class CALayer;
 @class WebFrame;
