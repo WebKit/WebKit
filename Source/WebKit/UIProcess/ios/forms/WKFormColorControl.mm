@@ -96,22 +96,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)configurePresentation
 {
-    if (WebKit::currentUserInterfaceIdiomIsPadOrMac()) {
-        [_colorPickerViewController setModalPresentationStyle:UIModalPresentationPopover];
-        UIPopoverPresentationController *presentationController = [_colorPickerViewController popoverPresentationController];
-        presentationController.delegate = self;
-        presentationController.sourceView = _view;
-        presentationController.sourceRect = CGRectIntegral(_view.focusedElementInformation.interactionRect);
-    } else {
-        UIPresentationController *presentationController = [_colorPickerViewController presentationController];
-        presentationController.delegate = self;
-        if ([presentationController isKindOfClass:[_UISheetPresentationController class]]) {
-            _UISheetPresentationController *sheetPresentationController = (_UISheetPresentationController *)presentationController;
-            sheetPresentationController._detents = @[_UISheetDetent._mediumDetent, _UISheetDetent._largeDetent];
-            sheetPresentationController._widthFollowsPreferredContentSizeWhenBottomAttached = YES;
-            sheetPresentationController._wantsBottomAttachedInCompactHeight = YES;
-        }
-    }
+    [_colorPickerViewController setModalPresentationStyle:UIModalPresentationPopover];
+
+    UIPopoverPresentationController *presentationController = [_colorPickerViewController popoverPresentationController];
+    presentationController.delegate = self;
+    presentationController.sourceView = _view;
+    presentationController.sourceRect = CGRectIntegral(_view.focusedElementInformation.interactionRect);
 }
 
 #pragma mark WKFormControl

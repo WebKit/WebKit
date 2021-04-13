@@ -1,3 +1,26 @@
+2021-04-13  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Color picker sheet should use default height
+        https://bugs.webkit.org/show_bug.cgi?id=224371
+        <rdar://problem/76416775>
+
+        Reviewed by Wenson Hsieh.
+
+        System color pickers have a default height that is between a half-sheet
+        and a full sheet. WebKit should match the default so that users do not
+        need to swipe up and down to access all of the controls in the color
+        picker.
+
+        * UIProcess/ios/forms/WKFormColorControl.mm:
+        (-[WKColorPicker configurePresentation]):
+
+        Always use UIModalPresentationPopover when presenting the
+        UIColorPickerViewController. In compact environments, this style
+        behaves the same as UIModalPresentationFormSheet, and the presented
+        height of the color picker matches the system default.
+
+        This method of presentation matches the logic in UIColorWell.
+
 2021-04-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Refactor logic for presenting the shared QLPreviewPanel when revealing an image
