@@ -97,6 +97,7 @@ private:
 
     void tryClose();
 
+    Lock m_serverLock;
     std::unique_ptr<WebCore::IDBServer::IDBServer> m_server;
     bool m_isSuspended { false };
 

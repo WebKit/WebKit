@@ -1,3 +1,41 @@
+2021-04-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Make WebIDBServer not block main thread during initialization
+        https://bugs.webkit.org/show_bug.cgi?id=224299
+
+        Reviewed by Geoffrey Garen.
+
+        * Storage/InProcessIDBServer.cpp:
+        (InProcessIDBServer::InProcessIDBServer):
+        (InProcessIDBServer::deleteDatabase):
+        (InProcessIDBServer::openDatabase):
+        (InProcessIDBServer::abortTransaction):
+        (InProcessIDBServer::commitTransaction):
+        (InProcessIDBServer::didFinishHandlingVersionChangeTransaction):
+        (InProcessIDBServer::createObjectStore):
+        (InProcessIDBServer::deleteObjectStore):
+        (InProcessIDBServer::renameObjectStore):
+        (InProcessIDBServer::clearObjectStore):
+        (InProcessIDBServer::createIndex):
+        (InProcessIDBServer::deleteIndex):
+        (InProcessIDBServer::renameIndex):
+        (InProcessIDBServer::putOrAdd):
+        (InProcessIDBServer::getRecord):
+        (InProcessIDBServer::getAllRecords):
+        (InProcessIDBServer::getCount):
+        (InProcessIDBServer::deleteRecord):
+        (InProcessIDBServer::openCursor):
+        (InProcessIDBServer::iterateCursor):
+        (InProcessIDBServer::establishTransaction):
+        (InProcessIDBServer::databaseConnectionPendingClose):
+        (InProcessIDBServer::databaseConnectionClosed):
+        (InProcessIDBServer::abortOpenAndUpgradeNeeded):
+        (InProcessIDBServer::didFireVersionChangeEvent):
+        (InProcessIDBServer::openDBRequestCancelled):
+        (InProcessIDBServer::getAllDatabaseNamesAndVersions):
+        (InProcessIDBServer::closeAndDeleteDatabasesModifiedSince):
+        * Storage/InProcessIDBServer.h:
+
 2021-04-08  Sihui Liu  <sihui_liu@apple.com>
 
         Remove logging for investigating http/tests/IndexedDB/storage-limit-1.html failure

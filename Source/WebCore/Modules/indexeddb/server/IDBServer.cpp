@@ -44,9 +44,10 @@
 namespace WebCore {
 namespace IDBServer {
 
-IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& spaceRequester)
+IDBServer::IDBServer(PAL::SessionID sessionID, const String& databaseDirectoryPath, StorageQuotaManagerSpaceRequester&& spaceRequester, Lock& lock)
     : m_sessionID(sessionID)
     , m_spaceRequester(WTFMove(spaceRequester))
+    , m_lock(lock)
 {
     ASSERT(!isMainThread());
     ASSERT(databaseDirectoryPath.isSafeToSendToAnotherThread());

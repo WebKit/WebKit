@@ -1,3 +1,52 @@
+2021-04-13  Sihui Liu  <sihui_liu@apple.com>
+
+        Make WebIDBServer not block main thread during initialization
+        https://bugs.webkit.org/show_bug.cgi?id=224299
+
+        Reviewed by Geoffrey Garen.
+
+        Move Lock from WebCore::IDBServer to WebIDBServer so we can block background thread in suspend() when m_server 
+        is uninitialized.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::m_closeCallback):
+        (WebKit::WebIDBServer::getOrigins):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::renameOrigin):
+        (WebKit::WebIDBServer::suspend):
+        (WebKit::WebIDBServer::resume):
+        (WebKit::WebIDBServer::openDatabase):
+        (WebKit::WebIDBServer::deleteDatabase):
+        (WebKit::WebIDBServer::abortTransaction):
+        (WebKit::WebIDBServer::commitTransaction):
+        (WebKit::WebIDBServer::didFinishHandlingVersionChangeTransaction):
+        (WebKit::WebIDBServer::createObjectStore):
+        (WebKit::WebIDBServer::deleteObjectStore):
+        (WebKit::WebIDBServer::renameObjectStore):
+        (WebKit::WebIDBServer::clearObjectStore):
+        (WebKit::WebIDBServer::createIndex):
+        (WebKit::WebIDBServer::deleteIndex):
+        (WebKit::WebIDBServer::renameIndex):
+        (WebKit::WebIDBServer::putOrAdd):
+        (WebKit::WebIDBServer::getRecord):
+        (WebKit::WebIDBServer::getAllRecords):
+        (WebKit::WebIDBServer::getCount):
+        (WebKit::WebIDBServer::deleteRecord):
+        (WebKit::WebIDBServer::openCursor):
+        (WebKit::WebIDBServer::iterateCursor):
+        (WebKit::WebIDBServer::establishTransaction):
+        (WebKit::WebIDBServer::databaseConnectionPendingClose):
+        (WebKit::WebIDBServer::databaseConnectionClosed):
+        (WebKit::WebIDBServer::abortOpenAndUpgradeNeeded):
+        (WebKit::WebIDBServer::didFireVersionChangeEvent):
+        (WebKit::WebIDBServer::openDBRequestCancelled):
+        (WebKit::WebIDBServer::getAllDatabaseNamesAndVersions):
+        (WebKit::WebIDBServer::addConnection):
+        (WebKit::WebIDBServer::removeConnection):
+        (WebKit::WebIDBServer::close):
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+
 2021-04-13  Chris Dumez  <cdumez@apple.com>
 
         The GPUProcess should only launch when it is needed

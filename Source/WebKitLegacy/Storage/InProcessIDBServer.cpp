@@ -96,9 +96,9 @@ InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& d
     m_thread->start();
     dispatchTask([this, protectedThis = makeRef(*this), sessionID, directory = databaseDirectoryPath.isolatedCopy(), spaceRequester = storageQuotaManagerSpaceRequester(*this)] () mutable {
         m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
-        m_server = makeUnique<IDBServer::IDBServer>(sessionID, directory, WTFMove(spaceRequester));
 
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
+        m_server = makeUnique<IDBServer::IDBServer>(sessionID, directory, WTFMove(spaceRequester), m_serverLock);
         m_server->registerConnection(*m_connectionToClient);
     });
 }
@@ -123,7 +123,7 @@ IDBServer::IDBConnectionToClient& InProcessIDBServer::connectionToClient() const
 void InProcessIDBServer::deleteDatabase(const WebCore::IDBRequestData& requestData)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->deleteDatabase(requestData);
     });
 }
@@ -138,7 +138,7 @@ void InProcessIDBServer::didDeleteDatabase(const IDBResultData& resultData)
 void InProcessIDBServer::openDatabase(const WebCore::IDBRequestData& requestData)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->openDatabase(requestData);
     });
 }
@@ -265,7 +265,7 @@ void InProcessIDBServer::didIterateCursor(const IDBResultData& resultData)
 void InProcessIDBServer::abortTransaction(const WebCore::IDBResourceIdentifier& resourceIdentifier)
 {
     dispatchTask([this, protectedThis = makeRef(*this), resourceIdentifier = resourceIdentifier.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->abortTransaction(resourceIdentifier);
     });
 }
@@ -273,7 +273,7 @@ void InProcessIDBServer::abortTransaction(const WebCore::IDBResourceIdentifier& 
 void InProcessIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier& resourceIdentifier)
 {
     dispatchTask([this, protectedThis = makeRef(*this), resourceIdentifier = resourceIdentifier.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->commitTransaction(resourceIdentifier);
     });
 }
@@ -281,7 +281,7 @@ void InProcessIDBServer::commitTransaction(const WebCore::IDBResourceIdentifier&
 void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
 {
     dispatchTask([this, protectedThis = makeRef(*this), databaseConnectionIdentifier, transactionIdentifier = transactionIdentifier.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->didFinishHandlingVersionChangeTransaction(databaseConnectionIdentifier, transactionIdentifier);
     });
 }
@@ -289,7 +289,7 @@ void InProcessIDBServer::didFinishHandlingVersionChangeTransaction(uint64_t data
 void InProcessIDBServer::createObjectStore(const WebCore::IDBRequestData& resultData, const IDBObjectStoreInfo& info)
 {
     dispatchTask([this, protectedThis = makeRef(*this), resultData = resultData.isolatedCopy(), info = info.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->createObjectStore(resultData, info);
     });
 }
@@ -297,7 +297,7 @@ void InProcessIDBServer::createObjectStore(const WebCore::IDBRequestData& result
 void InProcessIDBServer::deleteObjectStore(const WebCore::IDBRequestData& requestData, const String& objectStoreName)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), objectStoreName = objectStoreName.isolatedCopy()] () mutable {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->deleteObjectStore(requestData, objectStoreName);
     });
 }
@@ -305,7 +305,7 @@ void InProcessIDBServer::deleteObjectStore(const WebCore::IDBRequestData& reques
 void InProcessIDBServer::renameObjectStore(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& newName)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), objectStoreIdentifier, newName = newName.isolatedCopy()] () mutable {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->renameObjectStore(requestData, objectStoreIdentifier, newName);
     });
 }
@@ -313,7 +313,7 @@ void InProcessIDBServer::renameObjectStore(const WebCore::IDBRequestData& reques
 void InProcessIDBServer::clearObjectStore(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), objectStoreIdentifier] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->clearObjectStore(requestData, objectStoreIdentifier);
     });
 }
@@ -321,7 +321,7 @@ void InProcessIDBServer::clearObjectStore(const WebCore::IDBRequestData& request
 void InProcessIDBServer::createIndex(const WebCore::IDBRequestData& requestData, const IDBIndexInfo& info)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), info = info.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->createIndex(requestData, info);
     });
 }
@@ -329,7 +329,7 @@ void InProcessIDBServer::createIndex(const WebCore::IDBRequestData& requestData,
 void InProcessIDBServer::deleteIndex(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, const String& indexName)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexName = indexName.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->deleteIndex(requestData, objectStoreIdentifier, indexName);
     });
 }
@@ -337,7 +337,7 @@ void InProcessIDBServer::deleteIndex(const WebCore::IDBRequestData& requestData,
 void InProcessIDBServer::renameIndex(const WebCore::IDBRequestData& requestData, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, const String& newName)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), objectStoreIdentifier, indexIdentifier, newName = newName.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
     });
 }
@@ -345,7 +345,7 @@ void InProcessIDBServer::renameIndex(const WebCore::IDBRequestData& requestData,
 void InProcessIDBServer::putOrAdd(const WebCore::IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), keyData = keyData.isolatedCopy(), value = value.isolatedCopy(), overwriteMode] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->putOrAdd(requestData, keyData, value, overwriteMode);
     });
 }
@@ -353,7 +353,7 @@ void InProcessIDBServer::putOrAdd(const WebCore::IDBRequestData& requestData, co
 void InProcessIDBServer::getRecord(const WebCore::IDBRequestData& requestData, const IDBGetRecordData& getRecordData)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), getRecordData = getRecordData.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->getRecord(requestData, getRecordData);
     });
 }
@@ -361,7 +361,7 @@ void InProcessIDBServer::getRecord(const WebCore::IDBRequestData& requestData, c
 void InProcessIDBServer::getAllRecords(const WebCore::IDBRequestData& requestData, const IDBGetAllRecordsData& getAllRecordsData)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), getAllRecordsData = getAllRecordsData.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->getAllRecords(requestData, getAllRecordsData);
     });
 }
@@ -369,7 +369,7 @@ void InProcessIDBServer::getAllRecords(const WebCore::IDBRequestData& requestDat
 void InProcessIDBServer::getCount(const WebCore::IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), keyRangeData = keyRangeData.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->getCount(requestData, keyRangeData);
     });
 }
@@ -377,7 +377,7 @@ void InProcessIDBServer::getCount(const WebCore::IDBRequestData& requestData, co
 void InProcessIDBServer::deleteRecord(const WebCore::IDBRequestData& requestData, const IDBKeyRangeData& keyRangeData)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), keyRangeData = keyRangeData.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->deleteRecord(requestData, keyRangeData);
     });
 }
@@ -385,7 +385,7 @@ void InProcessIDBServer::deleteRecord(const WebCore::IDBRequestData& requestData
 void InProcessIDBServer::openCursor(const WebCore::IDBRequestData& requestData, const IDBCursorInfo& info)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), info = info.isolatedCopy()] () mutable {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->openCursor(requestData, info);
     });
 }
@@ -393,7 +393,7 @@ void InProcessIDBServer::openCursor(const WebCore::IDBRequestData& requestData, 
 void InProcessIDBServer::iterateCursor(const WebCore::IDBRequestData& requestData, const IDBIterateCursorData& data)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy(), data = data.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->iterateCursor(requestData, data);
     });
 }
@@ -401,7 +401,7 @@ void InProcessIDBServer::iterateCursor(const WebCore::IDBRequestData& requestDat
 void InProcessIDBServer::establishTransaction(uint64_t databaseConnectionIdentifier, const IDBTransactionInfo& info)
 {
     dispatchTask([this, protectedThis = makeRef(*this), databaseConnectionIdentifier, info = info.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->establishTransaction(databaseConnectionIdentifier, info);
     });
 }
@@ -437,7 +437,7 @@ void InProcessIDBServer::notifyOpenDBRequestBlocked(const WebCore::IDBResourceId
 void InProcessIDBServer::databaseConnectionPendingClose(uint64_t databaseConnectionIdentifier)
 {
     dispatchTask([this, protectedThis = makeRef(*this), databaseConnectionIdentifier] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->databaseConnectionPendingClose(databaseConnectionIdentifier);
     });
 }
@@ -445,7 +445,7 @@ void InProcessIDBServer::databaseConnectionPendingClose(uint64_t databaseConnect
 void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIdentifier)
 {
     dispatchTask([this, protectedThis = makeRef(*this), databaseConnectionIdentifier] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->databaseConnectionClosed(databaseConnectionIdentifier);
     });
 }
@@ -453,7 +453,7 @@ void InProcessIDBServer::databaseConnectionClosed(uint64_t databaseConnectionIde
 void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& transactionIdentifier)
 {
     dispatchTask([this, protectedThis = makeRef(*this), databaseConnectionIdentifier, transactionIdentifier = transactionIdentifier.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->abortOpenAndUpgradeNeeded(databaseConnectionIdentifier, transactionIdentifier);
     });
 }
@@ -461,7 +461,7 @@ void InProcessIDBServer::abortOpenAndUpgradeNeeded(uint64_t databaseConnectionId
 void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionIdentifier, const WebCore::IDBResourceIdentifier& requestIdentifier, const IndexedDB::ConnectionClosedOnBehalfOfServer connectionClosed)
 {
     dispatchTask([this, protectedThis = makeRef(*this), databaseConnectionIdentifier, requestIdentifier = requestIdentifier.isolatedCopy(), connectionClosed] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->didFireVersionChangeEvent(databaseConnectionIdentifier, requestIdentifier, connectionClosed);
     });
 }
@@ -469,7 +469,7 @@ void InProcessIDBServer::didFireVersionChangeEvent(uint64_t databaseConnectionId
 void InProcessIDBServer::openDBRequestCancelled(const WebCore::IDBRequestData& requestData)
 {
     dispatchTask([this, protectedThis = makeRef(*this), requestData = requestData.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->openDBRequestCancelled(requestData);
     });
 }
@@ -477,7 +477,7 @@ void InProcessIDBServer::openDBRequestCancelled(const WebCore::IDBRequestData& r
 void InProcessIDBServer::getAllDatabaseNamesAndVersions(const WebCore::IDBResourceIdentifier& requestIdentifier, const ClientOrigin& origin)
 {
     dispatchTask([this, protectedThis = makeRef(*this), identifier = m_connectionToServer->identifier(), requestIdentifier, origin = origin.isolatedCopy()] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->getAllDatabaseNamesAndVersions(identifier, requestIdentifier, origin);
     });
 }
@@ -492,7 +492,7 @@ void InProcessIDBServer::didGetAllDatabaseNamesAndVersions(const WebCore::IDBRes
 void InProcessIDBServer::closeAndDeleteDatabasesModifiedSince(WallTime modificationTime)
 {
     dispatchTask([this, protectedThis = makeRef(*this), modificationTime] {
-        LockHolder locker(m_server->lock());
+        LockHolder locker(m_serverLock);
         m_server->closeAndDeleteDatabasesModifiedSince(modificationTime);
     });
 }

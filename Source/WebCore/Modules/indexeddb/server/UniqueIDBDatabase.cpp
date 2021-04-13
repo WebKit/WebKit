@@ -1189,7 +1189,6 @@ void UniqueIDBDatabase::immediateClose()
 void UniqueIDBDatabase::abortActiveTransactions()
 {
     ASSERT(isMainThread());
-    ASSERT(m_server.lock().isHeld());
 
     for (auto& identifier : copyToVector(m_inProgressTransactions.keys())) {
         auto transaction = m_inProgressTransactions.get(identifier);
