@@ -602,7 +602,7 @@ void WTFReleaseLogStackTrace(WTFLogChannel* channel)
 
 } // extern "C"
 
-#if OS(DARWIN) && (CPU(X86_64) || CPU(ARM64))
+#if (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X86_64) || CPU(ARM64))
 #if CPU(X86_64)
 
 #define CRASH_INST "int3"
@@ -713,7 +713,7 @@ void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t
 void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t, uint64_t) { CRASH(); }
 void WTFCrashWithInfoImpl(int, const char*, const char*, int, uint64_t) { CRASH(); }
 
-#endif // OS(DARWIN) && (CPU(X64_64) || CPU(ARM64))
+#endif // (OS(DARWIN) || PLATFORM(PLAYSTATION)) && (CPU(X64_64) || CPU(ARM64))
 
 namespace WTF {
 

@@ -1,3 +1,15 @@
+2021-04-12  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Enable WTFCrashWithInfo implementation
+        https://bugs.webkit.org/show_bug.cgi?id=224458
+
+        Reviewed by Don Olmstead.
+
+        Enable WTFCrashWithInfo implementation for PlayStation platform. It is x86_64 and uses clang
+        so that it can share Darwin's implemetation with us.
+
+        * wtf/Assertions.cpp:
+
 2021-04-12  Youenn Fablet  <youenn@apple.com>
 
         Block loading for port 10080
