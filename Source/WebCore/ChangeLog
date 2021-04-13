@@ -1,3 +1,29 @@
+2021-04-13  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Incorrect track sizing when using relative sized items in 'auto' column tracks
+        https://bugs.webkit.org/show_bug.cgi?id=191627
+
+        Reviewed by Javier Fernandez.
+
+        This is a reland of r274596. The original patch was reverted because Google logo is not visible
+        on google.com.
+
+        Containing block for a grid item is the grid area it's located in. During the GridTrackSizingAlgorithm,
+        we determine that this item has a relative size (percent in this case) and that the grid area is still
+        indefinite. Hence, we set nullopt for the grid area width and mark the item for layout. During the item's
+        layout, we call this RenderBox::containingBlockLogicalWidthForContent to determine the available height.
+        However, this method checks the containing block's width if the overridingContentLogicalWidth is nullopt,
+        which is incorrect for grid items. We should never use the grid container for resolving grid item's size.
+
+        This change is to return 0_lu for grid item when overridingContainingBlockContentLogicalWidth() returns
+        nullopt rather than use containing block's width. It also comments that there might be an issue with 
+        RenderBox::containingBlockLogicalHeightForContent for grid item. It should return whatever value we get from
+        overridingContainingBlockContentLogicalHeight(), including WTF::nullopt.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockLogicalWidthForContent const):
+        (WebCore::RenderBox::containingBlockLogicalHeightForContent const):
+
 2021-04-13  Devin Rousso  <drousso@apple.com>
 
         [WebIDL] includes for `Conditional` dictionary members should also be guarded

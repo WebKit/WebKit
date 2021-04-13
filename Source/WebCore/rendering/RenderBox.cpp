@@ -2044,10 +2044,8 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
-    if (hasOverridingContainingBlockContentLogicalWidth()) {
-        if (auto width = overridingContainingBlockContentLogicalWidth())
-            return width.value();
-    }
+    if (hasOverridingContainingBlockContentLogicalWidth())
+        return overridingContainingBlockContentLogicalWidth().valueOr(0_lu);
 
     if (RenderBlock* cb = containingBlock())
         return cb->availableLogicalWidth();
@@ -2057,6 +2055,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHeightType heightType) const
 {
     if (hasOverridingContainingBlockContentLogicalHeight()) {
+        // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
+        // height value we get from overridingContainingBlockContentLogicalHeight() here, including WTF::nullopt.
         if (auto height = overridingContainingBlockContentLogicalHeight())
             return height.value();
     }
