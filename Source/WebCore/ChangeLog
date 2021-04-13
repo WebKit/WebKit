@@ -1,3 +1,17 @@
+2021-04-13  Antoine Quint  <graouts@webkit.org>
+
+        calc() simplification for a multiplication should apply the multiplication to each value of an addition
+        https://bugs.webkit.org/show_bug.cgi?id=224376
+
+        Reviewed by Simon Fraser.
+
+        An expression such as calc(0.5 * (100% + 100px)) should be simplified to calc(50% + 50px). We produce
+        these types of expressions when blending between a percentage and a dimension, and they can also be
+        specified explicitly in style.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcOperationNode::combineChildren):
+
 2021-04-13  Said Abou-Hallawa  <said@apple.com>
 
         SVG paced value animations overwrite user-provided keyTimes

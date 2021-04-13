@@ -1,3 +1,24 @@
+2021-04-13  Antoine Quint  <graouts@webkit.org>
+
+        calc() simplification for a multiplication should apply the multiplication to each value of an addition
+        https://bugs.webkit.org/show_bug.cgi?id=224376
+
+        Reviewed by Simon Fraser.
+
+        Mark 99 WPT progressions.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-margin-003-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-008-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-009-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-006-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
 2021-04-13  Said Abou-Hallawa  <said@apple.com>
 
         SVG paced value animations overwrite user-provided keyTimes
