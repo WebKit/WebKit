@@ -1694,6 +1694,21 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(NSUs
     return _data->_impl->useSystemAppearance();
 }
 
+- (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    return _data->_impl->acceptsPreviewPanelControl(panel);
+}
+
+- (void)beginPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    _data->_impl->beginPreviewPanelControl(panel);
+}
+
+- (void)endPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    _data->_impl->endPreviewPanelControl(panel);
+}
+
 @end
 ALLOW_DEPRECATED_DECLARATIONS_END
 

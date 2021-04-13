@@ -1,3 +1,71 @@
+2021-04-13  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Refactor logic for presenting the shared QLPreviewPanel when revealing an image
+        https://bugs.webkit.org/show_bug.cgi?id=224445
+        <rdar://problem/76552762>
+
+        Reviewed by Andy Estes and Devin Rousso.
+
+        `QLPreviewPanel.h` states that `QLPreviewPanel`'s state should never be modified by something that is not
+        currently controlling it (where "control" is determined through the `QLPreviewPanelController` category
+        methods declared in the same header file). Currently, WebKit code for revealing an image using the shared
+        QuickLook panel does not respect this requirement, and instead attempts to set the `dataSource` and `delegate`
+        properties of `QLPreviewPanel` out of band.
+
+        While this is not an issue if nothing in the responder chain accepts preview panel control (i.e. implements the
+        method `-acceptsPreviewPanelControl:` and returns `YES`), it leads to compatibility issues in apps like Mail
+        that override these methods and replace the `dataSource` and `delegate` properties on `QLPreviewPanel`. The end
+        result is that `WebPageProxy` ends up in an unexpected state where `WKImageExtractionPreviewController` has been
+        created, but will never be destroyed (until the web view itself is destroyed) because we're no longer the
+        delegate for the shared `QLPreviewPanel`, and therefore won't receive the teardown message when the preview
+        window is dismissed.
+
+        To address this, we refactor this logic so that `WKWebView` (or `WKView`, if applicable) is capable of accepting
+        preview panel control. See below for more details.
+
+        * SourcesCocoa.txt:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView acceptsPreviewPanelControl:]):
+        (-[WKView beginPreviewPanelControl:]):
+        (-[WKView endPreviewPanelControl:]):
+
+        Implement `QLPreviewPanelController` hooks on `WKView`, and plumb directly into `WebViewImpl`.
+
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        (-[WKWebView acceptsPreviewPanelControl:]):
+        (-[WKWebView beginPreviewPanelControl:]):
+        (-[WKWebView endPreviewPanelControl:]):
+
+        Implement `QLPreviewPanelController` hooks on `WKWebView`, and plumb directly into `WebViewImpl`.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::acceptsPreviewPanelControl):
+
+        Only accept control of the preview panel if we have an active image extraction preview controller.
+
+        (WebKit::WebViewImpl::beginPreviewPanelControl):
+        (WebKit::WebViewImpl::endPreviewPanelControl):
+
+        When beginning to take control (and relinquishing control) of the preview panel, respectively set and unset the
+        `dataSource` and `delegate` properties to the active image extraction preview controller.
+
+        * UIProcess/mac/WKImageExtractionPreviewController.h: Added.
+        * UIProcess/mac/WKImageExtractionPreviewController.mm: Added.
+        (-[WKImageExtractionPreviewItem initWithURL:title:]):
+        (-[WKImageExtractionPreviewItem dealloc]):
+        (-[WKImageExtractionPreviewItem previewItemURL]):
+        (-[WKImageExtractionPreviewItem previewItemTitle]):
+        (-[WKImageExtractionPreviewController initWithPage:url:title:]):
+        (-[WKImageExtractionPreviewController numberOfPreviewItemsInPreviewPanel:]):
+        (-[WKImageExtractionPreviewController previewPanel:previewItemAtIndex:]):
+
+        Partially upstream `_WKImageExtractionPreviewController` to OpenSource, as `WKImageExtractionPreviewController`
+        (the underscore is unnecessary because this object is not SPI- or API-exposed). Additionally, move it out into
+        its own header and source, so that it can be imported elsewhere.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove support for NPAPI plugins in WKWebView

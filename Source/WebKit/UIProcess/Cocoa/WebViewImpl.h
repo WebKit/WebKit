@@ -54,6 +54,7 @@ OBJC_CLASS NSImmediateActionGestureRecognizer;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
+OBJC_CLASS QLPreviewPanel;
 OBJC_CLASS WKAccessibilitySettingsObserver;
 OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKDOMPasteMenuDelegate;
@@ -589,6 +590,10 @@ public:
     void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
     void computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
+
+    bool acceptsPreviewPanelControl(QLPreviewPanel *);
+    void beginPreviewPanelControl(QLPreviewPanel *);
+    void endPreviewPanelControl(QLPreviewPanel *);
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
 

@@ -61,6 +61,7 @@
 #import "WKEditCommand.h"
 #import "WKErrorInternal.h"
 #import "WKFullScreenWindowController.h"
+#import "WKImageExtractionPreviewController.h"
 #import "WKImmediateActionController.h"
 #import "WKNSURLExtras.h"
 #import "WKPDFHUDView.h"
@@ -94,6 +95,7 @@
 #import <WebCore/Editor.h>
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/FontAttributes.h>
+#import <WebCore/ImageExtractionResult.h>
 #import <WebCore/KeypressCommand.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
@@ -134,10 +136,6 @@
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringConcatenate.h>
-
-#if ENABLE(IMAGE_EXTRACTION)
-#import <WebCore/ImageExtractionResult.h>
-#endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include <WebKit/MediaSessionCoordinatorProxyPrivate.h>
@@ -5633,6 +5631,48 @@ void WebViewImpl::handleContextMenuTranslation(const String& text, const IntRect
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+bool WebViewImpl::acceptsPreviewPanelControl(QLPreviewPanel *)
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    return !!m_page->imageExtractionPreviewController();
+#else
+    return false;
+#endif
+}
+
+void WebViewImpl::beginPreviewPanelControl(QLPreviewPanel *panel)
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    auto controller = m_page->imageExtractionPreviewController();
+    if (!controller)
+        return;
+
+    panel.dataSource = controller;
+    panel.delegate = controller;
+#else
+    UNUSED_PARAM(panel);
+#endif
+}
+
+void WebViewImpl::endPreviewPanelControl(QLPreviewPanel *panel)
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    auto controller = m_page->imageExtractionPreviewController();
+    if (!controller)
+        return;
+
+    if (panel.dataSource == controller)
+        panel.dataSource = nil;
+
+    if (panel.delegate == controller)
+        panel.delegate = nil;
+
+    m_page->resetImageExtractionPreview();
+#else
+    UNUSED_PARAM(panel);
+#endif
+}
 
 } // namespace WebKit
 

@@ -1223,6 +1223,23 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     // Only called with UI-side compositing.
 }
 
+#pragma mark - QLPreviewPanelController
+
+- (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    return _impl->acceptsPreviewPanelControl(panel);
+}
+
+- (void)beginPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    _impl->beginPreviewPanelControl(panel);
+}
+
+- (void)endPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    _impl->endPreviewPanelControl(panel);
+}
+
 #pragma mark -
 
 - (void)_setupScrollAndContentViews
