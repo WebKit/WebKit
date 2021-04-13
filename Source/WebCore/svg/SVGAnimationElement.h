@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron McCormack <cam@mcc.id.au>
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
@@ -123,6 +123,7 @@ private:
     virtual void calculateAnimatedValue(float percent, unsigned repeatCount) = 0;
     virtual Optional<float> calculateDistance(const String& /*fromString*/, const String& /*toString*/) = 0;
 
+    const Vector<float>& keyTimes() const;
     void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);
     void calculateKeyTimesForCalcModePaced();
     float calculatePercentFromKeyPoints(float percent) const;
@@ -137,7 +138,8 @@ private:
 
     AttributeType m_attributeType { AttributeType::Auto };
     Vector<String> m_values;
-    Vector<float> m_keyTimes;
+    Vector<float> m_keyTimesFromAttribute;
+    Vector<float> m_keyTimesForPaced;
     Vector<float> m_keyPoints;
     Vector<UnitBezier> m_keySplines;
     String m_lastValuesAnimationFrom;

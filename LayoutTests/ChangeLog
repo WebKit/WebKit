@@ -1,3 +1,15 @@
+2021-04-13  Said Abou-Hallawa  <said@apple.com>
+
+        SVG paced value animations overwrite user-provided keyTimes
+        https://bugs.webkit.org/show_bug.cgi?id=109010
+
+        Reviewed by Ryosuke Niwa.
+
+        Simplified from the WPT paced-value-animation-overwrites-keyTimes.html.
+
+        * svg/animations/animate-calcMode-paced-overwrite-key-times-expected.html: Added.
+        * svg/animations/animate-calcMode-paced-overwrite-key-times.html: Added.
+
 2021-04-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] media/track/text-track-cue-is-reachable.html is flaky crashing in X11 release
