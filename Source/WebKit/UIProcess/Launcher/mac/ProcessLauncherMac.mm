@@ -337,8 +337,22 @@ void ProcessLauncher::platformInvalidate()
         return;
 
     xpc_connection_cancel(m_xpcConnection.get());
-    terminate_with_reason(xpc_connection_get_pid(m_xpcConnection.get()), OS_REASON_WEBKIT, static_cast<uint64_t>(WebKit::ReasonCode::Invalidation), "ProcessLauncher::platformInvalidate", OS_REASON_FLAG_NO_CRASH_REPORT);
+    terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::Invalidation, "ProcessLauncher::platformInvalidate");
     m_xpcConnection = nullptr;
+}
+
+void terminateWithReason(xpc_connection_t connection, ReasonCode reasonCode, const char* reason)
+{
+#if PLATFORM(MACCATALYST)
+    // FIXME: Remove this once rdar://76601307 is fixed.
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    xpc_connection_kill(connection, SIGKILL);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    UNUSED_PARAM(reasonCode);
+    UNUSED_PARAM(reason);
+#else
+    terminate_with_reason(xpc_connection_get_pid(connection), OS_REASON_WEBKIT, static_cast<uint64_t>(reasonCode), reason, OS_REASON_FLAG_NO_CRASH_REPORT);
+#endif
 }
 
 } // namespace WebKit

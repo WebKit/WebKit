@@ -97,7 +97,7 @@ private:
     
     void watchdogTimerFired()
     {
-        terminate_with_reason(xpc_connection_get_pid(m_xpcConnection.get()), OS_REASON_WEBKIT, static_cast<uint64_t>(WebKit::ReasonCode::WatchdogTimerFired), "ConnectionTerminationWatchdog::watchdogTimerFired", OS_REASON_FLAG_NO_CRASH_REPORT);
+        terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::WatchdogTimerFired, "ConnectionTerminationWatchdog::watchdogTimerFired");
         delete this;
     }
 
@@ -608,7 +608,7 @@ Optional<audit_token_t> Connection::getAuditToken()
 bool Connection::kill()
 {
     if (m_xpcConnection) {
-        terminate_with_reason(xpc_connection_get_pid(m_xpcConnection.get()), OS_REASON_WEBKIT, static_cast<uint64_t>(WebKit::ReasonCode::ConnectionKilled), "Connection::kill", OS_REASON_FLAG_NO_CRASH_REPORT);
+        terminateWithReason(m_xpcConnection.get(), WebKit::ReasonCode::ConnectionKilled, "Connection::kill");
         m_wasKilled = true;
         return true;
     }

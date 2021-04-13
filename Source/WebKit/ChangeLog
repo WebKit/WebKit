@@ -1,3 +1,22 @@
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r275172
+        https://bugs.webkit.org/show_bug.cgi?id=224499
+        <rdar://76396241>
+
+        Reviewed by Tim Horton.
+
+        It turns out that terminate_with_reason uses a different syscall than xpc_connection_kill in its implementation,
+        and the former is not allowed by Messages's sandbox yet.  Revert for Messages until they add it.
+
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+        (IPC::Connection::kill):
+        * Platform/spi/Cocoa/ReasonSPI.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::platformInvalidate):
+        (WebKit::terminateWithReason):
+
 2021-04-13  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] remove link-time dependency on WebKitSwift

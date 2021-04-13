@@ -1,3 +1,13 @@
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r275172
+        https://bugs.webkit.org/show_bug.cgi?id=224499
+        <rdar://76396241>
+
+        Reviewed by Tim Horton.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2021-04-12  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Enable WTFCrashWithInfo implementation
