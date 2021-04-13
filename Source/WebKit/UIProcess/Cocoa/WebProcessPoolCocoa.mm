@@ -605,10 +605,8 @@ void WebProcessPool::colorPreferencesDidChangeCallback(CFNotificationCenterRef c
 void WebProcessPool::remoteWebInspectorEnabledCallback(CFNotificationCenterRef, void *observer, CFStringRef name, const void *, CFDictionaryRef userInfo)
 {
     auto* pool = reinterpret_cast<WebProcessPool*>(observer);
-    for (size_t i = 0; i < pool->m_processes.size(); ++i) {
-        auto process = pool->m_processes[i];
+    for (auto& process : pool->m_processes)
         process->enableRemoteInspectorIfNeeded();
-    }
 }
 #endif
 
@@ -698,11 +696,11 @@ void WebProcessPool::registerNotificationObservers()
     m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
         if (!_AXSApplicationAccessibilityEnabled())
             return;
-        for (size_t i = 0; i < m_processes.size(); ++i) {
+        for (auto& process : m_processes) {
 #if ENABLE(CFPREFS_DIRECT_MODE)
-            m_processes[i]->unblockPreferenceServiceIfNeeded();
+            process->unblockPreferenceServiceIfNeeded();
 #endif
-            m_processes[i]->unblockAccessibilityServerIfNeeded();
+            process->unblockAccessibilityServerIfNeeded();
         }
     }];
 #if ENABLE(CFPREFS_DIRECT_MODE)

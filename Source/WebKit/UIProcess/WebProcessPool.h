@@ -186,7 +186,7 @@ public:
     void setCustomWebContentServiceBundleIdentifier(const String&);
     const String& customWebContentServiceBundleIdentifier() { return m_configuration->customWebContentServiceBundleIdentifier(); }
 
-    const Vector<RefPtr<WebProcessProxy>>& processes() const { return m_processes; }
+    const Vector<Ref<WebProcessProxy>>& processes() const { return m_processes; }
 
     // WebProcessProxy object which does not have a running process which is used for convenience, to avoid
     // null checks in WebPageProxy.
@@ -195,7 +195,7 @@ public:
     template<typename T> void sendToAllProcesses(const T& message);
     template<typename T> void sendToAllProcessesForSession(const T& message, PAL::SessionID);
 
-    void processDidFinishLaunching(WebProcessProxy*);
+    void processDidFinishLaunching(WebProcessProxy&);
 
     WebProcessCache& webProcessCache() { return m_webProcessCache.get(); }
 
@@ -596,8 +596,8 @@ private:
 
     IPC::MessageReceiverMap m_messageReceiverMap;
 
-    Vector<RefPtr<WebProcessProxy>> m_processes;
-    WebProcessProxy* m_prewarmedProcess { nullptr };
+    Vector<Ref<WebProcessProxy>> m_processes;
+    WeakPtr<WebProcessProxy> m_prewarmedProcess;
 
     HashMap<PAL::SessionID, WeakPtr<WebProcessProxy>> m_dummyProcessProxies; // Lightweight WebProcessProxy objects without backing process.
 
@@ -797,9 +797,7 @@ private:
 template<typename T>
 void WebProcessPool::sendToAllProcesses(const T& message)
 {
-    size_t processCount = m_processes.size();
-    for (size_t i = 0; i < processCount; ++i) {
-        WebProcessProxy* process = m_processes[i].get();
+    for (auto& process : m_processes) {
         if (process->canSendMessage())
             process->send(T(message), 0);
     }
@@ -808,9 +806,7 @@ void WebProcessPool::sendToAllProcesses(const T& message)
 template<typename T>
 void WebProcessPool::sendToAllProcessesForSession(const T& message, PAL::SessionID sessionID)
 {
-    size_t processCount = m_processes.size();
-    for (size_t i = 0; i < processCount; ++i) {
-        WebProcessProxy* process = m_processes[i].get();
+    for (auto& process : m_processes) {
         if (process->canSendMessage() && !process->isPrewarmed() && process->sessionID() == sessionID)
             process->send(T(message), 0);
     }
