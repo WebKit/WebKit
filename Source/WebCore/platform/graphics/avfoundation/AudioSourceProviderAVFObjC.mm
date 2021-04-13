@@ -191,6 +191,7 @@ void AudioSourceProviderAVFObjC::destroyMixIfNeeded()
     [m_avAudioMix setInputParameters:@[ ]];
     m_avAudioMix.clear();
     m_tap.clear();
+    m_weakFactory.revokeAll();
 }
 
 void AudioSourceProviderAVFObjC::createMixIfNeeded()
@@ -229,6 +230,7 @@ void AudioSourceProviderAVFObjC::createMixIfNeeded()
     
     [m_avAudioMix setInputParameters:@[parameters.get()]];
     [m_avPlayerItem setAudioMix:m_avAudioMix.get()];
+    m_weakFactory.initializeIfNeeded(*this);
 }
 
 void AudioSourceProviderAVFObjC::initCallback(MTAudioProcessingTapRef tap, void* clientInfo, void** tapStorageOut)
@@ -346,8 +348,10 @@ void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStrea
     memset(m_list.get(), 0, bufferListSize);
     m_list->mNumberBuffers = numberOfChannels;
 
-    callOnMainThread([protectedThis = makeRef(*this), numberOfChannels, sampleRate] {
-        protectedThis->m_client->setFormat(numberOfChannels, sampleRate);
+    callOnMainThread([weakThis = m_weakFactory.createWeakPtr(*this), numberOfChannels, sampleRate] {
+        auto* self = weakThis.get();
+        if (self && self->m_client)
+            self->m_client->setFormat(numberOfChannels, sampleRate);
     });
 }
 

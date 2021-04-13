@@ -1,5 +1,22 @@
 2021-04-13  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        AudioSourceProviderAVFObjC should check for m_client when dispatching setFormat
+        https://bugs.webkit.org/show_bug.cgi?id=224479
+
+        Reviewed by Eric Carlson.
+
+        Use a weak pointer to schedule the setFormat client callback.
+        If client is unset before any callback is run, cancel the
+        pending callbacks.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::destroyMixIfNeeded):
+        (WebCore::AudioSourceProviderAVFObjC::createMixIfNeeded):
+        (WebCore::AudioSourceProviderAVFObjC::prepare):
+
+2021-04-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         AudioSourceProviderAVFObjC::setClient should check for m_avAssetTrack
         https://bugs.webkit.org/show_bug.cgi?id=224478
 
