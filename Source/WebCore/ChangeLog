@@ -1,3 +1,22 @@
+2021-04-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        AudioSourceProviderAVFObjC::setClient should check for m_avAssetTrack
+        https://bugs.webkit.org/show_bug.cgi?id=224478
+
+        Reviewed by Eric Carlson.
+
+        Check for m_avAssetTrack when setting the client.
+        This is done for consistency, it is unclear if this affects
+        real world content.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::setClient):
+        (WebCore::AudioSourceProviderAVFObjC::setPlayerItem):
+        (WebCore::AudioSourceProviderAVFObjC::setAudioTrack):
+        (WebCore::AudioSourceProviderAVFObjC::destroyMixIfNeeded):
+        (WebCore::AudioSourceProviderAVFObjC::createMixIfNeeded):
+
 2021-04-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r275889.

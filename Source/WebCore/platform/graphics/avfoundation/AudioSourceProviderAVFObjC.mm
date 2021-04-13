@@ -158,46 +158,34 @@ void AudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
 {
     if (m_client == client)
         return;
-
-    if (m_avAudioMix)
-        destroyMix();
-
+    destroyMixIfNeeded();
     m_client = client;
-
-    if (m_client && m_avPlayerItem)
-        createMix();
+    createMixIfNeeded();
 }
 
 void AudioSourceProviderAVFObjC::setPlayerItem(AVPlayerItem *avPlayerItem)
 {
     if (m_avPlayerItem == avPlayerItem)
         return;
-
-    if (m_avAudioMix)
-        destroyMix();
-
+    destroyMixIfNeeded();
     m_avPlayerItem = avPlayerItem;
-
-    if (m_client && m_avPlayerItem && m_avAssetTrack)
-        createMix();
+    createMixIfNeeded();
 }
 
 void AudioSourceProviderAVFObjC::setAudioTrack(AVAssetTrack *avAssetTrack)
 {
     if (m_avAssetTrack == avAssetTrack)
         return;
-
-    if (m_avAudioMix)
-        destroyMix();
-
+    destroyMixIfNeeded();
     m_avAssetTrack = avAssetTrack;
-
-    if (m_client && m_avPlayerItem && m_avAssetTrack)
-        createMix();
+    createMixIfNeeded();
 }
 
-void AudioSourceProviderAVFObjC::destroyMix()
+void AudioSourceProviderAVFObjC::destroyMixIfNeeded()
 {
+    if (!m_avAudioMix)
+        return;
+
     if (m_avPlayerItem)
         [m_avPlayerItem setAudioMix:nil];
     [m_avAudioMix setInputParameters:@[ ]];
@@ -205,11 +193,12 @@ void AudioSourceProviderAVFObjC::destroyMix()
     m_tap.clear();
 }
 
-void AudioSourceProviderAVFObjC::createMix()
+void AudioSourceProviderAVFObjC::createMixIfNeeded()
 {
+    if (!m_client || !m_avPlayerItem || !m_avAssetTrack)
+        return;
+
     ASSERT(!m_avAudioMix);
-    ASSERT(m_avPlayerItem);
-    ASSERT(m_client);
 
     m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstance() init]);
 
