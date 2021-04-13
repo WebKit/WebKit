@@ -94,7 +94,7 @@ var tests = [
     name: "Big-5 page with Big-5 hash",
     charset: "Big5",
     script: "didRunInlineScript+%3D+true%3B+//+%A4%F4",
-    hashSource: "'sha256-J08nmORtZZyj86mnbklnHBObVEnsakqZcYsabqsSJmc='",
+    hashSource: "'sha256-CAEkHFV/oUoz+L2Oa6gIFelb73og89vCbxrz4u/jAY4='",
     expectedResult: RunInlineScript,
 },
 {
@@ -255,7 +255,7 @@ function runNextTest()
         hashSource: encodeURIComponent(test.hashSource),
     };
     var queryString = Object.keys(queryStringArguments).map(function (key) { return key + "=" + queryStringArguments[key]; }).join("&");
-    frame.src = "http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/resources/testScriptHash.php?" + queryString;
+    frame.src = "http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/resources/testScriptHash.py?" + queryString;
 }
 
 window.onload = function ()

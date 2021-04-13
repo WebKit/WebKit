@@ -3,7 +3,7 @@
 import sys
 
 sys.stdout.write(
-    'Content-Security-Policy: default-src \'self\'; report-uri ../resources/save-report.php\r\n'
+    'Content-Security-Policy: default-src \'self\'; report-uri ../resources/save-report.py\r\n'
     'Content-Type: text/html\r\n\r\n'
     '<!DOCTYPE html>\n'
     '<html>\n'

@@ -1,7 +1,13 @@
-<?php
-    setcookie("test_cookie", "1", 0, "/");
-?>
-<!DOCTYPE html>
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write(
+    'Set-Cookie: test_cookie=1; path=/\r\n'
+    'Content-Type: text/html\r\n\r\n'
+)
+
+print('''<!DOCTYPE html>
 <html>
 <script>
 function checkCookie()
@@ -19,4 +25,4 @@ function checkCookie()
 <body onload="checkCookie()">
 <div id="log"></div>
 </body>
-</html>
+</html>''')

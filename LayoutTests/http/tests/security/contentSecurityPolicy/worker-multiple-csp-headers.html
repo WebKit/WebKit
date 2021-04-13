@@ -7,7 +7,7 @@
 <body>
   <script>
   async_test(function () {
-      var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.php?type=multiple-headers');
+      var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.py?type=multiple-headers');
       var evalBlocked = false;
       var xhrBlocked = false;
       var numMessages = 0;

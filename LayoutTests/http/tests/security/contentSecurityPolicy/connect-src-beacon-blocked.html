@@ -16,7 +16,7 @@ function log(msg)
 }
 
 try {
-    navigator.sendBeacon("http://localhost:8000/security/contentSecurityPolicy/resources/echo-report.php");
+    navigator.sendBeacon("http://localhost:8000/security/contentSecurityPolicy/resources/echo-report.py");
     log("Pass");
 } catch(e) {
     log("Fail");
