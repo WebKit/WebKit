@@ -1,3 +1,41 @@
+2021-04-13  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make ImageBuffer calculate its memoryCost() from its size
+        https://bugs.webkit.org/show_bug.cgi?id=224306
+
+        Reviewed by Simon Fraser.
+
+        * Shared/ShareableBitmap.h:
+        Make ShareableBitmap::calculateBytesPerRow() public.
+
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::configuration):
+        (WebKit::ImageBufferShareableBitmapBackend::calculateSafeBackendSize):
+        (WebKit::ImageBufferShareableBitmapBackend::calculateBytesPerRow):
+        (WebKit::ImageBufferShareableBitmapBackend::calculateMemoryCost):
+        (WebKit::ImageBufferShareableBitmapBackend::create):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.h:
+        ShareableBitmap::calculateBytesPerRow() is used to get the bytesPerRow()
+        by giving it the scaled backend size.
+
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::create):
+        Use the new name of the function calculateSafeBackendSize().
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableIOSurfaceBackend::calculateSafeBackendSize):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::calculateMemoryCost):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::calculateExternalMemoryCost):
+        (WebKit::ImageBufferShareableIOSurfaceBackend::bytesPerRow const):
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableIOSurfaceBackend.h:
+        Implement these static functions and make them call the corresponding 
+        functions from ImageBufferIOSurfaceBackend because this class is derived
+        from ImageBufferBackend.
+
+        * WebProcess/GPU/graphics/cocoa/ImageBufferShareableMappedIOSurfaceBackend.cpp:
+        (WebKit::ImageBufferShareableMappedIOSurfaceBackend::create):
+        Use the new name of the function calculateSafeBackendSize().
+
 2021-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Revert r275172

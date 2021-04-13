@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,11 @@ class WEBCORE_EXPORT ImageBufferIOSurfaceBackend : public ImageBufferCGBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferIOSurfaceBackend);
 public:
-    static IntSize calculateBackendSize(const FloatSize& logicalSize, float resolutionScale);
-
+    static IntSize calculateSafeBackendSize(const Parameters&);
+    static unsigned calculateBytesPerRow(const IntSize& backendSize);
+    static size_t calculateMemoryCost(const Parameters&);
+    static size_t calculateExternalMemoryCost(const Parameters&);
+    
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, CGColorSpaceRef, const HostWindow*);
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const HostWindow*);
     static std::unique_ptr<ImageBufferIOSurfaceBackend> create(const Parameters&, const GraphicsContext&);
@@ -50,9 +53,6 @@ public:
 
     IntSize backendSize() const override;
     
-    size_t memoryCost() const override;
-    size_t externalMemoryCost() const override;
-
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy = CopyBackingStore) const override;
     RefPtr<NativeImage> sinkIntoNativeImage() override;
 

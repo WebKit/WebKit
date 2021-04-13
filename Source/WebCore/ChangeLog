@@ -1,3 +1,67 @@
+2021-04-13  Said Abou-Hallawa  <said@apple.com>
+
+        [GPU Process] Make ImageBuffer calculate its memoryCost() from its size
+        https://bugs.webkit.org/show_bug.cgi?id=224306
+
+        Reviewed by Simon Fraser.
+
+        Instead of round-trip processes to get the backend memoryCost(), we can 
+        calculate it from the size and the bytes alignment of each row in the
+        backend. These are static values so in the case of RemoteImageBufferProxy,
+        there is no need to ensure the backend is created in GPUP and it is mapped
+        in the Web Process.
+
+        * platform/graphics/ConcreteImageBuffer.h:
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::calculateBackendSize):
+        (WebCore::ImageBufferBackend::calculateMemoryCost):
+        (WebCore::ImageBufferBackend::ImageBufferBackend):
+        * platform/graphics/ImageBufferBackend.h:
+        (WebCore::ImageBufferBackend::calculateExternalMemoryCost):
+        (WebCore::ImageBufferBackend::memoryCost const): Deleted.
+        (WebCore::ImageBufferBackend::externalMemoryCost const): Deleted.
+        (WebCore::ImageBufferBackend::bytesPerRow const): Deleted.
+        - This is the general case of the backend which is 4-bytes aligned rows.
+        - calculateSafeBackendSize() returns the size whose bytesPerRow does not
+        overflow unsigned and whose memoryCost does not not overflow size_t.
+
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.cpp:
+        (WebCore::ImageBufferCairoImageSurfaceBackend::calculateSafeBackendSize):
+        (WebCore::ImageBufferCairoImageSurfaceBackend::calculateBytesPerRow):
+        (WebCore::ImageBufferCairoImageSurfaceBackend::calculateMemoryCost):
+        (WebCore::ImageBufferCairoImageSurfaceBackend::create):
+        (WebCore::ImageBufferCairoImageSurfaceBackend::bytesPerRow const):
+        * platform/graphics/cairo/ImageBufferCairoImageSurfaceBackend.h:
+        cairo_format_stride_for_width() is used to calculate the bytesPerRow()
+        for Cairo port.
+
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::calculateBytesPerRow):
+        * platform/graphics/cg/ImageBufferCGBackend.h:
+        This is the CG case when the backend is 4-bytes aligned rows.
+
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.cpp:
+        (WebCore::ImageBufferCGBitmapBackend::calculateSafeBackendSize):
+        (WebCore::ImageBufferCGBitmapBackend::calculateMemoryCost):
+        (WebCore::ImageBufferCGBitmapBackend::create):
+        (WebCore::ImageBufferCGBitmapBackend::bytesPerRow const):
+        * platform/graphics/cg/ImageBufferCGBitmapBackend.h:
+        This is the CG bitmap case where the backend is 4-bytes aligned rows.
+
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.cpp:
+        (WebCore::ImageBufferIOSurfaceBackend::calculateSafeBackendSize):
+        (WebCore::ImageBufferIOSurfaceBackend::calculateBytesPerRow):
+        (WebCore::ImageBufferIOSurfaceBackend::calculateMemoryCost):
+        (WebCore::ImageBufferIOSurfaceBackend::calculateExternalMemoryCost):
+        (WebCore::ImageBufferIOSurfaceBackend::create):
+        (WebCore::ImageBufferIOSurfaceBackend::context const):
+        (WebCore::ImageBufferIOSurfaceBackend::calculateBackendSize): Deleted.
+        (WebCore::ImageBufferIOSurfaceBackend::memoryCost const): Deleted.
+        (WebCore::ImageBufferIOSurfaceBackend::externalMemoryCost const): Deleted.
+        * platform/graphics/cg/ImageBufferIOSurfaceBackend.h:
+        IOSurfaceAlignProperty() is used to align the CG bytesPerRow to the proper
+        IOSurface alignment.
+
 2021-04-13  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Forced color scheme should reset on page refresh

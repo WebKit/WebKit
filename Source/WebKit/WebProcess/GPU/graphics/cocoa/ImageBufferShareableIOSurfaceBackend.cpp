@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if HAVE(IOSURFACE)
 
 #include <WebCore/GraphicsContextCG.h>
+#include <WebCore/ImageBufferIOSurfaceBackend.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 
@@ -36,6 +37,21 @@ namespace WebKit {
 using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableIOSurfaceBackend);
+
+IntSize ImageBufferShareableIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
+{
+    return ImageBufferIOSurfaceBackend::calculateSafeBackendSize(parameters);
+}
+
+size_t ImageBufferShareableIOSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
+{
+    return ImageBufferIOSurfaceBackend::calculateMemoryCost(parameters);
+}
+
+size_t ImageBufferShareableIOSurfaceBackend::calculateExternalMemoryCost(const Parameters& parameters)
+{
+    return ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(parameters);
+}
 
 std::unique_ptr<ImageBufferShareableIOSurfaceBackend> ImageBufferShareableIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
@@ -56,6 +72,12 @@ GraphicsContext& ImageBufferShareableIOSurfaceBackend::context() const
 {
     RELEASE_ASSERT_NOT_REACHED();
     return *(GraphicsContext*)nullptr;
+}
+
+unsigned ImageBufferShareableIOSurfaceBackend::bytesPerRow() const
+{
+    IntSize backendSize = calculateBackendSize(m_parameters);
+    return ImageBufferIOSurfaceBackend::calculateBytesPerRow(backendSize);
 }
 
 RefPtr<NativeImage> ImageBufferShareableIOSurfaceBackend::copyNativeImage(BackingStoreCopy) const

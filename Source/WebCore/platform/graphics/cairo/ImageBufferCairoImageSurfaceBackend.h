@@ -3,7 +3,7 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther <zecke@selfish.org>
  * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,11 +40,17 @@ class ImageBufferCairoImageSurfaceBackend : public ImageBufferCairoSurfaceBacken
     WTF_MAKE_ISO_ALLOCATED(ImageBufferCairoImageSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCairoImageSurfaceBackend);
 public:
+    static IntSize calculateSafeBackendSize(const Parameters&);
+    static unsigned calculateBytesPerRow(const IntSize& backendSize);
+    static size_t calculateMemoryCost(const Parameters&);
+
     static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const Parameters&, const HostWindow*);
     static std::unique_ptr<ImageBufferCairoImageSurfaceBackend> create(const Parameters&, const GraphicsContext&);
 
 private:
     ImageBufferCairoImageSurfaceBackend(const Parameters&, RefPtr<cairo_surface_t>&&);
+
+    unsigned bytesPerRow() const override;
 
     void platformTransformColorSpace(const std::array<uint8_t, 256>& lookUpTable) override;
 };

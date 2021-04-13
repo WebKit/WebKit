@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,28 +31,25 @@
 
 namespace WebCore {
 
-ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
-    : m_parameters(parameters)
+IntSize ImageBufferBackend::calculateBackendSize(const Parameters& parameters)
 {
-}
-
-IntSize ImageBufferBackend::calculateBackendSize(const FloatSize& size, float resolutionScale)
-{
-    FloatSize scaledSize = { ceilf(resolutionScale * size.width()), ceilf(resolutionScale * size.height()) };
+    FloatSize scaledSize = { ceilf(parameters.resolutionScale * parameters.logicalSize.width()), ceilf(parameters.resolutionScale * parameters.logicalSize.height()) };
     if (scaledSize.isEmpty() || !scaledSize.isExpressibleAsIntSize())
         return { };
 
-    IntSize backendSize = IntSize(scaledSize);
+    return IntSize(scaledSize);
+}
 
-    Checked<unsigned, RecordOverflow> bytesPerRow = 4 * Checked<unsigned, RecordOverflow>(backendSize.width());
-    if (bytesPerRow.hasOverflowed())
-        return { };
-
+size_t ImageBufferBackend::calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow)
+{
+    ASSERT(!backendSize.isEmpty());
     CheckedSize numBytes = Checked<unsigned, RecordOverflow>(backendSize.height()) * bytesPerRow;
-    if (numBytes.hasOverflowed())
-        return { };
+    return numBytes.unsafeGet();
+}
 
-    return backendSize;
+ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
+    : m_parameters(parameters)
+{
 }
 
 RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
