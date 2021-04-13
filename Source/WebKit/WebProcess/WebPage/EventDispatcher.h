@@ -74,7 +74,7 @@ public:
 
     void initializeConnection(IPC::Connection*);
 
-    void notifyScrollingTreesDisplayWasRefreshed(WebCore::PlatformDisplayID);
+    void notifyScrollingTreesDisplayWasRefreshed(WebCore::PlatformDisplayID, bool shouldSyncWithMainThread = true);
 
 private:
     EventDispatcher();

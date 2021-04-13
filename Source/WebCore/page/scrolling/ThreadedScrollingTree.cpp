@@ -210,11 +210,17 @@ void ThreadedScrollingTree::scrollingTreeNodeDidScroll(ScrollingTreeScrollingNod
         return;
     }
 
-    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " triggering main thread rendering update");
-
     auto scrollUpdate = ScrollUpdate { node.scrollingNodeID(), scrollPosition, layoutViewportOrigin, scrollingLayerPositionAction };
     addPendingScrollUpdate(WTFMove(scrollUpdate));
 
+    if (m_hasScheduledNextRenderingUpdate) {
+        LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " - rendering update already scheduled");
+        return;
+    }
+
+    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::scrollingTreeNodeDidScroll " << node.scrollingNodeID() << " to " << scrollPosition << " bouncing to main thread");
+
+    m_hasScheduledNextRenderingUpdate = true;
     auto deferrer = WheelEventTestMonitorCompletionDeferrer { wheelEventTestMonitor(), reinterpret_cast<WheelEventTestMonitor::ScrollableAreaIdentifier>(node.scrollingNodeID()), WheelEventTestMonitor::ScrollingThreadSyncNeeded };
     RunLoop::main().dispatch([strongThis = makeRef(*this), deferrer = WTFMove(deferrer)] {
         if (auto* scrollingCoordinator = strongThis->m_scrollingCoordinator.get())
@@ -274,8 +280,15 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
 {
     ASSERT(isMainThread());
 
-    if (!hasProcessedWheelEventsRecently())
+    {
+        LockHolder treeLocker(m_treeMutex);
+        m_hasScheduledNextRenderingUpdate = false;
+    }
+
+    if (!hasProcessedWheelEventsRecently()) {
+        LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::willStartRenderingUpdate - no recent events");
         return;
+    }
 
     tracePoint(ScrollingThreadRenderUpdateSyncStart);
 
@@ -371,6 +384,8 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
     LockHolder treeLocker(m_treeMutex);
 
+    LOG_WITH_STREAM(Scrolling, stream << "ThreadedScrollingTree::displayDidRefreshOnScrollingThread - hasScheduledNextRenderingUpdate " << m_hasScheduledNextRenderingUpdate);
+
     if (m_state != SynchronizationState::Idle && canUpdateLayersOnScrollingThread())
         applyLayerPositionsInternal();
 
@@ -388,7 +403,7 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
     }
 }
 
-void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
+void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID, ShouldSyncWithMainThread)
 {
     // We're on the EventDispatcher thread or in the ThreadedCompositor thread here.
 

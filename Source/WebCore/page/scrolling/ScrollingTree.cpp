@@ -422,6 +422,8 @@ void ScrollingTree::applyLayerPositionsInternal()
     if (!m_rootNode)
         return;
 
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTree::applyLayerPositionsInternal - main thread " << isMainThread());
+
     applyLayerPositionsRecursive(*m_rootNode);
 }
 
