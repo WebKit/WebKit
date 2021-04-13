@@ -28,6 +28,9 @@
 
 namespace WebCore {
 
+GST_DEBUG_CATEGORY(webkitGStreamerCaptureDeviceManagerDebugCategory);
+#define GST_CAT_DEFAULT webkitGStreamerCaptureDeviceManagerDebugCategory
+
 static gint sortDevices(gconstpointer a, gconstpointer b)
 {
     GstDevice* adev = GST_DEVICE(a), *bdev = GST_DEVICE(b);
@@ -66,6 +69,12 @@ GStreamerDisplayCaptureDeviceManager& GStreamerDisplayCaptureDeviceManager::sing
     return manager;
 }
 
+GStreamerCaptureDeviceManager::~GStreamerCaptureDeviceManager()
+{
+    if (m_deviceMonitor)
+        gst_device_monitor_stop(m_deviceMonitor.get());
+}
+
 Optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
 {
     captureDevices();
@@ -80,6 +89,10 @@ Optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceW
 const Vector<CaptureDevice>& GStreamerCaptureDeviceManager::captureDevices()
 {
     ensureGStreamerInitialized();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkitGStreamerCaptureDeviceManagerDebugCategory, "webkitcapturedevicemanager", 0, "WebKit Capture Device Manager");
+    });
     if (m_devices.isEmpty())
         refreshCaptureDevices();
 
@@ -105,6 +118,7 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
     // This isn't really a UID but should be good enough (libwebrtc
     // itself does that at least for pulseaudio devices).
     GUniquePtr<char> deviceName(gst_device_get_display_name(device.get()));
+    GST_INFO("Registering device %s", deviceName.get());
     gboolean isDefault = FALSE;
     gst_structure_get_boolean(properties.get(), "is-default", &isDefault);
 
@@ -121,37 +135,71 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
 
 void GStreamerCaptureDeviceManager::refreshCaptureDevices()
 {
+    m_devices.clear();
     if (!m_deviceMonitor) {
         m_deviceMonitor = adoptGRef(gst_device_monitor_new());
 
-        CaptureDevice::DeviceType type = deviceType();
-        if (type == CaptureDevice::DeviceType::Camera) {
-            GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
+        switch (deviceType()) {
+        case CaptureDevice::DeviceType::Camera: {
+            auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
             gst_device_monitor_add_filter(m_deviceMonitor.get(), "Video/Source", caps.get());
-        } else if (type == CaptureDevice::DeviceType::Microphone) {
-            GRefPtr<GstCaps> caps = adoptGRef(gst_caps_new_empty_simple("audio/x-raw"));
+            break;
+        }
+        case CaptureDevice::DeviceType::Microphone: {
+            auto caps = adoptGRef(gst_caps_new_empty_simple("audio/x-raw"));
             gst_device_monitor_add_filter(m_deviceMonitor.get(), "Audio/Source", caps.get());
-        } else
+            break;
+        }
+        case CaptureDevice::DeviceType::Speaker:
+            // FIXME: Add Audio/Sink filter. See https://bugs.webkit.org/show_bug.cgi?id=216880
+        case CaptureDevice::DeviceType::Screen:
+        case CaptureDevice::DeviceType::Window:
+            break;
+        case CaptureDevice::DeviceType::Unknown:
             return;
-    }
+        }
 
-    // FIXME: Add monitor for added/removed messages on the bus.
-    if (!gst_device_monitor_start(m_deviceMonitor.get())) {
-        GST_WARNING_OBJECT(m_deviceMonitor.get(), "Could not start device monitor");
-        m_deviceMonitor = nullptr;
+        auto bus = adoptGRef(gst_device_monitor_get_bus(m_deviceMonitor.get()));
+        gst_bus_add_watch(bus.get(), reinterpret_cast<GstBusFunc>(+[](GstBus*, GstMessage* message, GStreamerCaptureDeviceManager* manager) -> gboolean {
+#ifndef GST_DISABLE_GST_DEBUG
+            GRefPtr<GstDevice> device;
+            GUniquePtr<char> name;
+#endif
+            switch (GST_MESSAGE_TYPE(message)) {
+            case GST_MESSAGE_DEVICE_ADDED:
+#ifndef GST_DISABLE_GST_DEBUG
+                gst_message_parse_device_added(message, &device.outPtr());
+                name.reset(gst_device_get_display_name(device.get()));
+                GST_INFO("Device added: %s", name.get());
+#endif
+                manager->deviceChanged();
+                break;
+            case GST_MESSAGE_DEVICE_REMOVED:
+#ifndef GST_DISABLE_GST_DEBUG
+                gst_message_parse_device_removed(message, &device.outPtr());
+                name.reset(gst_device_get_display_name(device.get()));
+                GST_INFO("Device removed: %s", name.get());
+#endif
+                manager->deviceChanged();
+                break;
+            default:
+                break;
+            }
+            return G_SOURCE_CONTINUE;
+        }), this);
 
-        return;
+        if (!gst_device_monitor_start(m_deviceMonitor.get())) {
+            GST_WARNING_OBJECT(m_deviceMonitor.get(), "Could not start device monitor");
+            m_deviceMonitor = nullptr;
+            return;
+        }
     }
 
     GList* devices = g_list_sort(gst_device_monitor_get_devices(m_deviceMonitor.get()), sortDevices);
     while (devices) {
-        GRefPtr<GstDevice> device = adoptGRef(GST_DEVICE_CAST(devices->data));
-
-        addDevice(WTFMove(device));
+        addDevice(GST_DEVICE_CAST(devices->data));
         devices = g_list_delete_link(devices, devices);
     }
-
-    gst_device_monitor_stop(m_deviceMonitor.get());
 }
 
 } // namespace WebCore

@@ -32,6 +32,7 @@ namespace WebCore {
 
 class GStreamerCaptureDeviceManager : public CaptureDeviceManager {
 public:
+    ~GStreamerCaptureDeviceManager();
     Optional<GStreamerCaptureDevice> gstreamerDeviceWithUID(const String&);
 
     const Vector<CaptureDevice>& captureDevices() final;
@@ -53,7 +54,6 @@ public:
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Microphone; }
 private:
     GStreamerAudioCaptureDeviceManager() = default;
-    ~GStreamerAudioCaptureDeviceManager() = default;
 };
 
 class GStreamerVideoCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
@@ -64,7 +64,6 @@ public:
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Camera; }
 private:
     GStreamerVideoCaptureDeviceManager() = default;
-    ~GStreamerVideoCaptureDeviceManager() = default;
 };
 
 class GStreamerDisplayCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
@@ -74,7 +73,6 @@ public:
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Screen; }
 private:
     GStreamerDisplayCaptureDeviceManager() = default;
-    ~GStreamerDisplayCaptureDeviceManager() = default;
 };
 
 }

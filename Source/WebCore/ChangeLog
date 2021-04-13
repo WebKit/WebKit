@@ -1,3 +1,21 @@
+2021-04-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] CaptureDevice monitoring is not implemented
+        https://bugs.webkit.org/show_bug.cgi?id=222889
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        GStreamer capture device events are notified through a message bus associated to the the
+        GstDeviceMonitor, so we need to watch out for those messages and notify the
+        RealtimeSourceMediaCenter accordingly.
+
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp:
+        (WebCore::GStreamerCaptureDeviceManager::~GStreamerCaptureDeviceManager):
+        (WebCore::GStreamerCaptureDeviceManager::captureDevices):
+        (WebCore::GStreamerCaptureDeviceManager::addDevice):
+        (WebCore::GStreamerCaptureDeviceManager::refreshCaptureDevices):
+        * platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.h:
+
 2021-04-13  Frédéric Wang  <fwang@igalia.com>
 
         ASSERTION FAILED: !m_needExceptionCheck in RTCPeerConnection::CertificateParameters
