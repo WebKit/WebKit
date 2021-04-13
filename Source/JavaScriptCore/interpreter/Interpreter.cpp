@@ -648,6 +648,8 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
     JSGlobalObject* globalObject = scope->globalObject(vm);
     JSCallee* globalCallee = globalObject->globalCallee();
 
+    VMEntryScope entryScope(vm, globalObject);
+
     auto clobberizeValidator = makeScopeExit([&] {
         vm.didEnterVM = true;
     });
@@ -792,8 +794,6 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
 failedJSONP:
     // If we get here, then we have already proven that the script is not a JSON
     // object.
-
-    VMEntryScope entryScope(vm, globalObject);
 
     // Compile source to bytecode if necessary:
     JSObject* error = program->initializeGlobalProperties(vm, globalObject, scope);

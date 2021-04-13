@@ -1,3 +1,16 @@
+2021-04-12  Mark Lam  <mark.lam@apple.com>
+
+        Interpreter::executeProgram() should install its VMEntryScope at the top.
+        https://bugs.webkit.org/show_bug.cgi?id=224450
+        rdar://76530841
+
+        Reviewed by Yusuke Suzuki.
+
+        "top" includes before any VM code that can throw exceptions is run.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+
 2021-04-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         ICU 69 deprecates ubrk_safeClone in favor of ubrk_clone
