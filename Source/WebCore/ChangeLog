@@ -1,3 +1,16 @@
+2021-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use WTF::compactMap in HTMLSlotElement
+        https://bugs.webkit.org/show_bug.cgi?id=224470
+
+        Reviewed by Antti Koivisto.
+
+        Cleaned up the code in assignedNodes and assignedElements with WTF::compactMap.
+
+        * html/HTMLSlotElement.cpp:
+        (WebCore::HTMLSlotElement::assignedNodes const):
+        (WebCore::HTMLSlotElement::assignedElements const):
+
 2021-04-13  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] CaptureDevice monitor used from UIProcess
