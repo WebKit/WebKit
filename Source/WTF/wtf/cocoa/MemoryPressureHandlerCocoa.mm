@@ -124,7 +124,7 @@ void MemoryPressureHandler::install()
         logFootprintComparison(footprintBefore, footprintAfter);
 #endif
 
-        dispatch_async(m_dispatchQueue.get(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC), m_dispatchQueue.get(), ^{
             endSimulatedMemoryPressure();
         });
     });
