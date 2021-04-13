@@ -124,7 +124,17 @@ public:
     const WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()]; }
     const Vector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
     ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
-    const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
+
+    SourceCodeRepresentation constantSourceCodeRepresentation(VirtualRegister reg) const
+    {
+        return constantSourceCodeRepresentation(reg.toConstantIndex());
+    }
+    SourceCodeRepresentation constantSourceCodeRepresentation(unsigned index) const
+    {
+        if (index < m_constantsSourceCodeRepresentation.size())
+            return m_constantsSourceCodeRepresentation[index];
+        return SourceCodeRepresentation::Other;
+    }
 
     unsigned addConstant(JSValue v, SourceCodeRepresentation sourceCodeRepresentation = SourceCodeRepresentation::Other)
     {

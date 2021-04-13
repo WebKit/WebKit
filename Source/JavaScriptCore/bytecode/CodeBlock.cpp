@@ -296,7 +296,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_vm(other.m_vm)
     , m_instructionsRawPointer(other.m_instructionsRawPointer)
     , m_constantRegisters(other.m_constantRegisters)
-    , m_constantsSourceCodeRepresentation(other.m_constantsSourceCodeRepresentation)
     , m_functionDecls(other.m_functionDecls)
     , m_functionExprs(other.m_functionExprs)
     , m_osrExitCounter(0)
@@ -883,12 +882,10 @@ void CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& c
     {
         ConcurrentJSLocker locker(m_lock);
         m_constantRegisters.resizeToFit(count);
-        m_constantsSourceCodeRepresentation.resizeToFit(count);
     }
     for (size_t i = 0; i < count; i++) {
         JSValue constant = constants[i].get();
         SourceCodeRepresentation representation = constantsSourceCodeRepresentation[i];
-        m_constantsSourceCodeRepresentation[i] = representation;
         switch (representation) {
         case SourceCodeRepresentation::LinkTimeConstant:
             constant = globalObject->linkTimeConstant(static_cast<LinkTimeConstant>(constant.asInt32AsAnyInt()));
@@ -2124,7 +2121,6 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
 #else
     m_constantRegisters.shrinkToFit();
 #endif
-    m_constantsSourceCodeRepresentation.shrinkToFit();
 
     if (shrinkMode == ShrinkMode::EarlyShrink) {
         if (m_rareData)

@@ -161,6 +161,17 @@ public:
     ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
     const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
 
+    SourceCodeRepresentation constantSourceCodeRepresentation(VirtualRegister reg) const
+    {
+        return constantSourceCodeRepresentation(reg.toConstantIndex());
+    }
+    SourceCodeRepresentation constantSourceCodeRepresentation(unsigned index) const
+    {
+        if (index < m_constantsSourceCodeRepresentation.size())
+            return m_constantsSourceCodeRepresentation[index];
+        return SourceCodeRepresentation::Other;
+    }
+
     unsigned numberOfConstantIdentifierSets() const { return m_rareData ? m_rareData->m_constantIdentifierSets.size() : 0; }
     const FixedVector<IdentifierSet>& constantIdentifierSets() { ASSERT(m_rareData); return m_rareData->m_constantIdentifierSets; }
 

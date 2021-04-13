@@ -1,3 +1,38 @@
+2021-04-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove CodeBlock::m_constantsSourceCodeRepresentation
+        https://bugs.webkit.org/show_bug.cgi?id=224473
+
+        Reviewed by Mark Lam.
+
+        CodeBlock::m_constantsSourceCodeRepresentation is identical to UnlinkedCodeBlock::m_constantsSourceCodeRepresentation.
+
+        1. For all constants existing at bytecode compile time, elements of the above vectors are identical.
+        2. For lazily added constants from DFG, it is always SourceCodeRepresentation::Other.
+
+        And the array is effectively accessed only when compiling DFG code. So we should remove copy of that in CodeBlock, and
+        get SourceCodeRepresentation from UnlinkedCodeBlock.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpConstants):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::constants):
+        (JSC::CodeBlock::addConstant):
+        (JSC::CodeBlock::addConstantLazily):
+        (JSC::CodeBlock::constantSourceCodeRepresentation const):
+        (JSC::CodeBlock::constantsSourceCodeRepresentation): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::constantSourceCodeRepresentation const):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::constantSourceCodeRepresentation const):
+        (JSC::UnlinkedCodeBlockGenerator::constantsSourceCodeRepresentation): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::registerFrozenValues):
+
 2021-04-12  Mark Lam  <mark.lam@apple.com>
 
         Interpreter::executeProgram() should install its VMEntryScope at the top.

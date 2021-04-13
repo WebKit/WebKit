@@ -137,7 +137,7 @@ void CodeBlockBytecodeDumper<Block>::dumpConstants()
         size_t i = 0;
         for (const auto& constant : this->block()->constantRegisters()) {
             const char* sourceCodeRepresentationDescription = nullptr;
-            switch (this->block()->constantsSourceCodeRepresentation()[i]) {
+            switch (this->block()->constantSourceCodeRepresentation(i)) {
             case SourceCodeRepresentation::Double:
                 sourceCodeRepresentationDescription = ": in source as double";
                 break;
