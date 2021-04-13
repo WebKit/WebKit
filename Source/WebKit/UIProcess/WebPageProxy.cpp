@@ -7215,6 +7215,13 @@ void WebPageProxy::logDiagnosticMessage(const String& message, const String& des
     effectiveClient->logDiagnosticMessage(this, message, description);
 }
 
+void WebPageProxy::logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessage(message, description, shouldSample);
+}
+
 void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
 {
     auto* effectiveClient = effectiveDiagnosticLoggingClient(shouldSample);
@@ -7222,6 +7229,13 @@ void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const S
         return;
 
     effectiveClient->logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
+}
+
+void WebPageProxy::logDiagnosticMessageWithResultFromWebProcess(const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithResult(message, description, result, shouldSample);
 }
 
 void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample shouldSample)
@@ -7233,6 +7247,13 @@ void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const St
     effectiveClient->logDiagnosticMessageWithValue(this, message, description, String::numberToStringFixedPrecision(value, significantFigures));
 }
 
+void WebPageProxy::logDiagnosticMessageWithValueFromWebProcess(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithValue(message, description, value, significantFigures, shouldSample);
+}
+
 void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, ShouldSample shouldSample)
 {
     auto* effectiveClient = effectiveDiagnosticLoggingClient(shouldSample);
@@ -7240,6 +7261,13 @@ void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message
         return;
 
     effectiveClient->logDiagnosticMessageWithEnhancedPrivacy(this, message, description);
+}
+
+void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacyFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithEnhancedPrivacy(message, description, shouldSample);
 }
 
 void WebPageProxy::logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary& valueDictionary, WebCore::ShouldSample shouldSample)
@@ -7263,6 +7291,13 @@ void WebPageProxy::logDiagnosticMessageWithValueDictionary(const String& message
     effectiveClient->logDiagnosticMessageWithValueDictionary(this, message, description, WTFMove(apiDictionary));
 }
 
+void WebPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary& valueDictionary, WebCore::ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithValueDictionary(message, description, valueDictionary, shouldSample);
+}
+
 void WebPageProxy::logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain domain)
 {
     auto* effectiveClient = effectiveDiagnosticLoggingClient(ShouldSample::No);
@@ -7270,6 +7305,13 @@ void WebPageProxy::logDiagnosticMessageWithDomain(const String& message, WebCore
         return;
 
     effectiveClient->logDiagnosticMessageWithDomain(this, message, domain);
+}
+
+void WebPageProxy::logDiagnosticMessageWithDomainFromWebProcess(const String& message, WebCore::DiagnosticLoggingDomain domain)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithDomain(message, domain);
 }
 
 void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)

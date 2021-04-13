@@ -1533,6 +1533,13 @@ public:
     void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary&, WebCore::ShouldSample);
     void logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain);
 
+    void logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithResultFromWebProcess(const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValueFromWebProcess(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
+    void logDiagnosticMessageWithEnhancedPrivacyFromWebProcess(const String& message, const String& description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValueDictionaryFromWebProcess(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary&, WebCore::ShouldSample);
+    void logDiagnosticMessageWithDomainFromWebProcess(const String& message, WebCore::DiagnosticLoggingDomain);
+
     // Performance logging.
     void logScrollingEvent(uint32_t eventType, MonotonicTime, uint64_t);
 
