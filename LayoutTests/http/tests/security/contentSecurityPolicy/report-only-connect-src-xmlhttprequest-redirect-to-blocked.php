@@ -1,13 +1,7 @@
-#!/usr/bin/env python3
-
-import sys
-
-sys.stdout.write(
-    'Content-Security-Policy-Report-Only: connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py\r\n'
-    'Content-Type: text/html\r\n\r\n'
-)
-
-print('''<!DOCTYPE html>
+<?php
+    header("Content-Security-Policy-Report-Only: connect-src http://127.0.0.1:8000/security/contentSecurityPolicy/resources/redir.py");
+?>
+<!DOCTYPE html>
 <html>
 <head>
     <script src="/js-test-resources/js-test-pre.js"></script>
@@ -16,7 +10,7 @@ print('''<!DOCTYPE html>
     <script>
         window.jsTestIsAsync = true;
         function log(msg) {
-            document.getElementById("console").appendChild(document.createTextNode(msg + "\\n"));
+            document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
         }
 
         var xhr = new XMLHttpRequest;
@@ -42,4 +36,4 @@ print('''<!DOCTYPE html>
 </script>
 <script src="/js-test-resources/js-test-post.js"></script>
 </body>
-</html>''')
+</html>

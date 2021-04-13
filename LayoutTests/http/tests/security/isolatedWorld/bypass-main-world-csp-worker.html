@@ -25,7 +25,7 @@ function runTest()
     var worker;
     try {
         // We ignore the message posted by the worker (by not registering an onmessage handler) as we are only interested in knowing whether an exception occurred.
-        worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.py?type=post-message-pass");
+        worker = new Worker("http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.php?type=post-message-pass");
         window.postMessage("PASS worker instantiated.", "*");
     } catch (exception) {
         window.postMessage("FAIL should not have thrown an exception when creating worker. Threw exception " + exception + ".", "*");

@@ -29,7 +29,7 @@ async function doTest()
 
     const currentCallbackCounts = window.testRunner.serverTrustEvaluationCallbackCallsCount;
 
-    const iframe = await with_iframe("https://localhost:8443/resources/basic-auth.py?uid=user");
+    const iframe = await with_iframe("https://localhost:8443/resources/basic-auth.php?uid=user");
     iframe.remove();
 
     assert_equals(window.testRunner.serverTrustEvaluationCallbackCallsCount - currentCallbackCounts, 1);

@@ -32,7 +32,7 @@ sys.stdout.write(
     '            testRunner.notifyDone();\n'
     '    }}\n'
     '}};\n'
-    'request.open(\'GET\', \'http://127.0.0.1:8000/security/resources/basic-auth.py?username=testuser&password=testpass\', true);\n'
+    'request.open(\'GET\', \'http://127.0.0.1:8000/security/resources/basic-auth.php?username=testuser&password=testpass\', true);\n'
     'request.send(null);\n'
     '</script>\n'.format(username, password)
 )

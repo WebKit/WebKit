@@ -12,7 +12,7 @@ if (window.testRunner) {
 }
       </script>
       <body>
-        <iframe src="http://localhost:8000/security/cookies/resources/set-a-cookie.py"></iframe>
+        <iframe src="http://localhost:8000/security/cookies/resources/set-a-cookie.php"></iframe>
       </body>
     </html>
   </xsl:template>

@@ -40,7 +40,7 @@ function showPingResult() {
 
 <body>
 This test creates a CSP violation report, but the report URL matches a 'block-cookie' rule.
-<img src="/cookies/resources/cookie-utility.py?queryfunction=setFooCookie"
+<img src="/cookies/resources/cookie-utility.php?queryfunction=setFooCookie"
     onerror="deletePing();">
 <div id="delete_ping_container"></div>
 <iframe id="result_frame" name="result_frame"><!-- Will contain ping data received by server --></iframe>

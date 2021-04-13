@@ -11,7 +11,7 @@
   // have no CSP, not the CSP of the responsible document.
 
   async_test(function () {
-      var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.py?type=make-xhr');
+      var worker = new Worker('http://127.0.0.1:8000/security/contentSecurityPolicy/resources/worker.php?type=make-xhr');
       worker.onmessage = this.step_func(function (event) {
           assert_equals(event.data, "xhr allowed");
           this.done();

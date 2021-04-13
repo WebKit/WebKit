@@ -3,7 +3,7 @@
 import sys
 
 sys.stdout.write(
-    'Content-Security-Policy: img-src \'none\'; report-uri /security/contentSecurityPolicy/resources/save-report.py\r\n'
+    'Content-Security-Policy: img-src \'none\'; report-uri /security/contentSecurityPolicy/resources/save-report.php\r\n'
     'Content-Type: text/html\r\n\r\n'
     '<!-- webkit-test-runner [ useEphemeralSession=true ] -->\n'
     '<!DOCTYPE html>\n'

@@ -14,6 +14,6 @@ sys.stdout.write(
     '}}\n'
     '\n'
     'window.onload = function () {{\n'
-    '    window.location = "/security/contentSecurityPolicy/resources/echo-report.py?test={}";\n'
+    '    window.location = "/security/contentSecurityPolicy/resources/echo-report.php?test={}";\n'
     '}}\n'.format(test)
 )

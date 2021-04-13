@@ -1,13 +1,7 @@
-#!/usr/bin/env python3
-
-import sys
-
-sys.stdout.write(
-    'Content-Security-Policy-Report-Only: script-src \'unsafe-inline\' \'self\'; report-uri resources/does-not-exist\r\n'
-    'Content-Type: text/html\r\n\r\n'
-)
-
-print('''<!DOCTYPE html>
+<?php
+header("Content-Security-Policy-Report-Only: script-src 'unsafe-inline' 'self'; report-uri resources/does-not-exist");
+?>
+<!DOCTYPE html>
 <html>
 <body>
 <p>This tests that multiple violations on a page trigger multiple reports
@@ -18,4 +12,4 @@ for (var i = 0; i< 5; i++)
     setTimeout("alert('PASS: setTimeout #" + i + " executed.');", 0);
 </script>
 </body>
-</html>''')
+</html>

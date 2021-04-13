@@ -1,13 +1,7 @@
-#!/usr/bin/env python3
-
-import sys
-
-sys.stdout.write(
-    'Content-Security-Policy: img-src \'none\'; report-uri http://localhost:8080/security/contentSecurityPolicy/resources/save-report.py\r\n'
-    'Content-Type: text/html\r\n\r\n'
-)
-
-print('''<!DOCTYPE html>
+<?php
+    header("Content-Security-Policy: img-src 'none'; report-uri http://localhost:8080/security/contentSecurityPolicy/resources/save-report.php");
+?>
+<!DOCTYPE html>
 <html>
 <body>
 <script>
@@ -26,4 +20,4 @@ print('''<!DOCTYPE html>
 
 <script src="resources/go-to-echo-report.js"></script>
 </body>
-</html>''')
+</html>

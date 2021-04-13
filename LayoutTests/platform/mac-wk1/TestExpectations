@@ -152,7 +152,7 @@ imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-beacon-redirect-to-blocked.sub.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
-http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.py [ Skip ]
+http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php [ Skip ]
 
 # testRunner.setStatisticsShouldDowngradeReferrer() is not supported on WK1
 http/tests/referrer-policy-script/ [ Skip ]

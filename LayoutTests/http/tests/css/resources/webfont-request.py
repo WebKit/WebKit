@@ -5,21 +5,26 @@ import sys
 import tempfile
 from urllib.parse import parse_qs
 
-file = __file__.split(':/cygwin')[-1]
-http_root = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(file))))
-sys.path.insert(0, http_root)
+def get_request_count(file):
+    if not os.path.isfile(file):
+        return 0
 
-from resources.portabilityLayer import get_state, set_state
+    with open(file, 'r') as file:
+        return int(file.read())
+
+def set_request_count(file, count):
+    with open(file, 'r') as file:
+        file.write(count)
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
-filename = query.get('filename', ['404.txt'])[0]
+filename = query.get('filename', [''])[0]
 mode = query.get('mode', [''])[0]
 
 tmp_file = os.path.join(tempfile.gettempdir(), filename)
-current_count = int(get_state(tmp_file, 0))
+current_count = get_request_count(tmp_file)
 
 if mode == 'getFont':
-    set_state(tmp_file, str(current_count + 1))
+    set_request_count(tmp_file, current_count + 1)
     sys.stdout.write(
         'Access-control-max-age: 0\r\n'
         'Access-control-allow-origin: *\r\n'
