@@ -1,3 +1,21 @@
+2021-04-12  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r275792): [ iOS wk2 ] TestWebKitAPI.IndexedDB.DatabaseProcessKill is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=224454
+
+        Reviewed by Brady Eidson, Sihui Liu.
+
+        This test was racey; the content ran script immediately, and it was possible for
+        the first set of messages to be received before -_test_waitForDidFinishNavigation
+        returned; the test would then stall because nothing triggered any more messages.
+
+        Fix by removing the call to -_test_waitForDidFinishNavigation and setting
+        receivedScriptMessage to false after waiting for the previous message.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBDatabaseProcessKill-1.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/IndexedDBDatabaseProcessKill.mm:
+        (TEST):
+
 2021-04-13  Sam Sneddon  <gsnedders@apple.com>
 
         Test objects should know if they need servers

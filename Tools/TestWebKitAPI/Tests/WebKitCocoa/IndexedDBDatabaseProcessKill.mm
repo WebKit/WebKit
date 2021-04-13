@@ -82,15 +82,14 @@ TEST(IndexedDB, DatabaseProcessKill)
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"IndexedDBDatabaseProcessKill-1" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
-    [webView _test_waitForDidFinishNavigation];
 
     bool killedDBProcess = false;
     while (true) {
         if (databaseErrorReceived)
             break;
 
-        receivedScriptMessage = false;
         TestWebKitAPI::Util::run(&receivedScriptMessage);
+        receivedScriptMessage = false;
         if (!killedDBProcess && openRequestUpgradeNeeded) {
             killedDBProcess = true;
             [configuration.get().websiteDataStore _terminateNetworkProcess];
