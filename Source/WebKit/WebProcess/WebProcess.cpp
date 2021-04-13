@@ -1209,6 +1209,17 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         ASSERT(connectionInfo.auditToken);
         m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
+
+        // FIXME: This will no longer be needed once we use the GPUProcess for DOM rendering.
+        // For now, it is possible to use the GPUProcess for media playback only. Because media does not
+        // use the RemoteRenderingBackend, we need to force the creation of a RemoteRenderingBackend in
+        // the GPUProcess so that the page gets a visibility propagation view.
+        RunLoop::main().dispatch([this] {
+            if (m_useGPUProcessForMedia && !m_useGPUProcessForDOMRendering) {
+                for (auto& page : m_pageMap.values())
+                    page->ensureRemoteRenderingBackendProxy();
+            }
+        });
     }
     
     return *m_gpuProcessConnection;
@@ -1954,13 +1965,11 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
     m_useGPUProcessForMedia = useGPUProcessForMedia;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    auto& cdmFactories = CDMFactory::registeredFactories();
-    cdmFactories.clear();
-
-    if (useGPUProcessForMedia)
-        ensureGPUProcessConnection().cdmFactory().registerFactory(cdmFactories);
-    else
+    if (!useGPUProcessForMedia) {
+        auto& cdmFactories = CDMFactory::registeredFactories();
+        cdmFactories.clear();
         CDMFactory::platformRegisterFactories(cdmFactories);
+    }
 #endif
 
 #if USE(AUDIO_SESSION)
@@ -1978,15 +1987,11 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (useGPUProcessForMedia)
-        ensureGPUProcessConnection().legacyCDMFactory().registerFactory();
-    else
+    if (!useGPUProcessForMedia)
         LegacyCDM::resetFactories();
 #endif
 
-    if (useGPUProcessForMedia)
-        ensureGPUProcessConnection().mediaEngineConfigurationFactory().registerFactory();
-    else
+    if (!useGPUProcessForMedia)
         MediaEngineConfigurationFactory::resetFactories();
 
     if (useGPUProcessForMedia)

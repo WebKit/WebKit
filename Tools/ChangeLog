@@ -1,3 +1,15 @@
+2021-04-13  Chris Dumez  <cdumez@apple.com>
+
+        The GPUProcess should only launch when it is needed
+        https://bugs.webkit.org/show_bug.cgi?id=224461
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2021-04-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK4] WTR crash in PlatformWebView::dismissAllPopupMenus()

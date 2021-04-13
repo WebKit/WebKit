@@ -1,3 +1,81 @@
+2021-04-13  Chris Dumez  <cdumez@apple.com>
+
+        The GPUProcess should only launch when it is needed
+        https://bugs.webkit.org/show_bug.cgi?id=224461
+
+        Reviewed by Eric Carlson.
+
+        The GPUProcess should only launch when it is needed. This avoids wasting memory
+        on simple pages, especially until we enable "DOM rendering in GPU Process".
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::GPUProcessConnection):
+        As soon as we create a GPUProcessConnection, if "Media in GPUProcess" is enabled
+        we do some media-related initialization that we used to do in
+        WebProcess::setUseGPUProcessForMedia(). setUseGPUProcessForMedia() gets called
+        when constructing a WebPage and this initialization requires a GPUProcess. We
+        thus want to delay the initialization until we actually need a GPUProcess.
+
+        (WebKit::GPUProcessConnection::enableVP9Decoders):
+        Rename function to make it clear it is only used for VP9.
+
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::create):
+        (WebKit::RemoteAudioSession::RemoteAudioSession):
+        (WebKit::RemoteAudioSession::~RemoteAudioSession):
+        (WebKit::RemoteAudioSession::gpuProcessConnectionDidClose):
+        (WebKit::RemoteAudioSession::ensureConnection):
+        (WebKit::RemoteAudioSession::configuration const):
+        (WebKit::RemoteAudioSession::configuration):
+        (WebKit::RemoteAudioSession::setCategory):
+        (WebKit::RemoteAudioSession::setPreferredBufferSize):
+        (WebKit::RemoteAudioSession::tryToSetActiveInternal):
+        (WebKit::RemoteAudioSession::category const):
+        (WebKit::RemoteAudioSession::configurationChanged):
+        * WebProcess/GPU/media/RemoteAudioSession.h:
+        Update RemoteAudioSession to lazily initiate the GPUProcess connection instead
+        of doing it on construction. The RemoteAudioSession gets created as soon as we
+        create a WebPage, at which point we may not need a GPUProcess yet.
+
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp:
+        (WebKit::RemoteMediaSessionHelper::RemoteMediaSessionHelper):
+        (WebKit::RemoteMediaSessionHelper::ensureConnection):
+        (WebKit::RemoteMediaSessionHelper::gpuProcessConnectionDidClose):
+        (WebKit::RemoteMediaSessionHelper::startMonitoringWirelessRoutesInternal):
+        (WebKit::RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal):
+        (WebKit::RemoteMediaSessionHelper::providePresentingApplicationPID):
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.h:
+        Update RemoteMediaSessionHelper to lazily initiate the GPUProcess connection instead
+        of doing it on construction. The RemoteAudioSession gets created as soon as we
+        create a WebPage, at which point we may not need a GPUProcess yet.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        - Update GPUProcessConnection::updateParameters() call to enableVP9Decoders() due to rename.
+          This makes it clear it is only useful for VP9. We also only call it if there is already
+          a GPUProcess connection. If there is no connection right now, the GPUProcessConnection
+          constructor will take care of getting the latest values from the PlatformMediaSessionManager
+          and send them to the GPUProcess.
+        - Call ensureRemoteRenderingBackendProxy() only if we already have a GPUProcessConnection, to
+          avoid eagerly launching the GPUProcess. If no GPUProcessConnection exists,
+          WebProcess::ensureGPUProcessConnection() will take care of calling ensureRemoteRenderingBackendProxy()
+          on its pages.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureGPUProcessConnection):
+        This logic used to happen in WebPage::updatePreferences(). However, I had to make it conditional on
+        have a GPUProcessConnection to avoid eagerly launching the GPUProcess. As a result, I now need some
+        logic when we initiate the GPUProcessConnection to call ensureRemoteRenderingBackendProxy() on the
+        WebPages. Note that this is a temporary workaround until we enable DOM Rendering in the GPUProcess.
+
+        (WebKit::WebProcess::setUseGPUProcessForMedia):
+        setUseGPUProcessForMedia() gets called when constructing a WebPage, at which point a GPUProcess is
+        not useful yet. As a result, we should make sure setUseGPUProcessForMedia() does not call
+        ensureGPUProcessConnection() to avoid eagerly launching the GPUProcess and potentially wasting memory.
+        To fix this, I moved some of the logic to the GPUProcessConnection constructor so that we do the
+        media-related GPUProcess initialization ONLY once we actually have a GPUProcess.
+
 2021-04-13  Sihui Liu  <sihui_liu@apple.com>
 
         StorageArea in LocalStorageNamespace can be abandoned

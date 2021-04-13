@@ -213,6 +213,22 @@ TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
     EXPECT_TRUE([webView _isPlayingAudio]);
 }
 
+TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessary)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
+}
+
 TEST(GPUProcess, CrashWhilePlayingVideo)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

@@ -851,19 +851,16 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     send(Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
 #endif
 
-#if ENABLE(GPU_PROCESS)
-    if (m_shouldPlayMediaInGPUProcess)
-        WebProcess::singleton().ensureGPUProcessConnection().updateParameters(parameters);
-#endif
-
 #if ENABLE(IPC_TESTING_API)
     m_visitedLinkTableID = parameters.visitedLinkTableID;
 #endif
 
 #if ENABLE(VP9)
-    PlatformMediaSessionManager::setShouldEnableVP9Decoder(parameters.shouldEnableVP9Decoder);
     PlatformMediaSessionManager::setShouldEnableVP8Decoder(parameters.shouldEnableVP8Decoder);
+    PlatformMediaSessionManager::setShouldEnableVP9Decoder(parameters.shouldEnableVP9Decoder);
     PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(parameters.shouldEnableVP9SWDecoder);
+    if (m_shouldPlayMediaInGPUProcess && WebProcess::singleton().existingGPUProcessConnection())
+        WebProcess::singleton().existingGPUProcessConnection()->enableVP9Decoders(parameters.shouldEnableVP8Decoder, parameters.shouldEnableVP9Decoder, parameters.shouldEnableVP9SWDecoder);
 #endif
 
     m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
@@ -3938,7 +3935,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     // For now, it is possible to use the GPUProcess for media playback only. Because media does not
     // use the RemoteRenderingBackend, we need to force the creation of a RemoteRenderingBackend in
     // the GPUProcess so that the page gets a visibility propagation view.
-    if (m_shouldPlayMediaInGPUProcess && !usingGPUProcessForDOMRendering)
+    if (m_shouldPlayMediaInGPUProcess && !usingGPUProcessForDOMRendering && WebProcess::singleton().existingGPUProcessConnection())
         ensureRemoteRenderingBackendProxy();
 #endif
 

@@ -82,10 +82,11 @@ public:
 
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 
-    void updateParameters(const WebPageCreationParameters&);
     void updateMediaConfiguration();
 
 #if ENABLE(VP9)
+    void enableVP9Decoders(bool enableVP8Decoder, bool enableVP9Decoder, bool enableVP9SWDecoder);
+
     bool isVP8DecoderEnabled() const { return m_enableVP8Decoder; }
     bool isVP9DecoderEnabled() const { return m_enableVP9Decoder; }
     bool isVPSWDecoderEnabled() const { return m_enableVP9SWDecoder; }
