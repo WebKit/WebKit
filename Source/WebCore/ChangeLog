@@ -1,3 +1,22 @@
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove SharedBuffer's equality operators with Ref<SharedBuffer>
+        https://bugs.webkit.org/show_bug.cgi?id=224464
+
+        Reviewed by Chris Dumez.
+
+        No change in behavior.
+
+        I'm doing this to make a Ref comparator for all Refs to remove another reason we use RefPtr instead of Ref, even when they're all non-null.
+        See bug 224412
+
+        * platform/SharedBuffer.h:
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+        (WebCore::CDMInstanceFairPlayStreamingAVFObjC::sessionForKeyIDs const):
+        (WebCore::CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense):
+
 2021-04-13  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         AudioSourceProviderAVFObjC should check for m_client when dispatching setFormat
