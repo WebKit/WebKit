@@ -1,3 +1,16 @@
+2021-04-13  Frédéric Wang  <fwang@igalia.com>
+
+        ASSERTION FAILED: !m_needExceptionCheck in RTCPeerConnection::CertificateParameters
+        https://bugs.webkit.org/show_bug.cgi?id=223788
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * js/dom/missing-exception-check-in-convertNumbers-expected.txt: Added.
+        * js/dom/missing-exception-check-in-convertNumbers.html: Added.
+        * platform/win/TestExpectations: Skip test on windows since there is no WebRTC support.
+
 2021-04-13  Youenn Fablet  <youenn@apple.com>
 
         SFrameTransform should be able to take array buffer views as input

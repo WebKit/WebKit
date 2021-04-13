@@ -291,6 +291,7 @@ template<> struct Converter<IDLFloat> : DefaultConverter<IDLFloat> {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
         double number = value.toNumber(&lexicalGlobalObject);
+        RETURN_IF_EXCEPTION(scope, 0.0);
         if (UNLIKELY(!std::isfinite(number)))
             throwNonFiniteTypeError(lexicalGlobalObject, scope);
         return static_cast<float>(number);
@@ -346,6 +347,7 @@ template<> struct Converter<IDLDouble> : DefaultConverter<IDLDouble> {
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
         double number = value.toNumber(&lexicalGlobalObject);
+        RETURN_IF_EXCEPTION(scope, 0.0);
         if (UNLIKELY(!std::isfinite(number)))
             throwNonFiniteTypeError(lexicalGlobalObject, scope);
         return number;
