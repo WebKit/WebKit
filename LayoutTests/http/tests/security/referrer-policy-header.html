@@ -53,7 +53,7 @@ let isTestingMultipart = false;
 onmessage = (msg) => {
     actualReferrer = msg.data;
     if (currentTest[1] === fullSourceURL)
-        shouldBeEqualToString("actualReferrer", sourceOrigin + "security/resources/serve-referrer-policy-and-test.php?value=" + currentTest[0] + "&destinationOrigin=" + currentTest[2] + "&isTestingMultipart=" + (isTestingMultipart ? "1" : "0"));
+        shouldBeEqualToString("actualReferrer", sourceOrigin + "security/resources/serve-referrer-policy-and-test.py?value=" + currentTest[0] + "&destinationOrigin=" + currentTest[2] + "&isTestingMultipart=" + (isTestingMultipart ? "1" : "0"));
     else
         shouldBeEqualToString("actualReferrer", "" + currentTest[1]);
     debug("");
@@ -78,7 +78,7 @@ function runNextTest()
     currentTest = tests[currentTestIndex];
     debug("Testing 'Referrer-Policy: " + currentTest[0] + "' - referrer origin: " + sourceOrigin + " - destination origin: " + currentTest[2] + " - isMultipartResponse? " + isTestingMultipart);
     frame = document.createElement("iframe");
-    frame.src = sourceOrigin + "security/resources/serve-referrer-policy-and-test.php?value=" + currentTest[0] + "&destinationOrigin=" + currentTest[2] + "&isTestingMultipart=" + (isTestingMultipart ? "1" : "0");
+    frame.src = sourceOrigin + "security/resources/serve-referrer-policy-and-test.py?value=" + currentTest[0] + "&destinationOrigin=" + currentTest[2] + "&isTestingMultipart=" + (isTestingMultipart ? "1" : "0");
     document.body.appendChild(frame);    
 }
 

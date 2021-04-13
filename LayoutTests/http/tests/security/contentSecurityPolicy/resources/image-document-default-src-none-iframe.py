@@ -3,7 +3,7 @@
 import os
 import sys
 
-filename = '../../../resources/square.png'
+filename = os.path.join('/'.join(__file__.split('/')[0:-4]), 'resources', 'square.png')
 filesize = os.path.getsize(filename)
 handle = open(filename, 'rb')
 contents = handle.read()

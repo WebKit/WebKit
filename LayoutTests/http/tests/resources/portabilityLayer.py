@@ -20,7 +20,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import cgi
 import os
+from urllib.parse import parse_qs
+
 
 def get_cookies():
     cookies = {}
@@ -34,6 +37,24 @@ def get_cookies():
 
     return cookies
 
+
+def get_request():
+    request = {}
+    request_method = os.environ.get('REQUEST_METHOD', '')
+    if request_method == 'POST':
+        form = cgi.FieldStorage()
+        for key in form.keys():
+            request.update({key: form.getvalue(key)})
+    else:
+        query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
+        for key in query.keys():
+            request.update({key: query[key][0]})
+
+    request.update(get_cookies())
+
+    return request
+
+
 def get_count(file):
     if not os.path.isfile(file):
         with open(file, 'w') as open_file:
@@ -43,16 +64,19 @@ def get_count(file):
     with open(file, 'r') as open_file:
         return open_file.read()
 
+
 def get_state(file, default='Uninitialized'):
     if not os.path.isfile(file):
         return default
     with open(file, 'r') as file:
         return file.read()
 
+
 def set_state(state, file):
-    with open(file, 'w') as file:
-        file.write(state)
+    with open(file, 'w') as open_file:
+        open_file.write(state)
     return state
+
 
 def step_state(file):
     state = get_count(file)

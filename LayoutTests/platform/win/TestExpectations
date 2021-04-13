@@ -2166,7 +2166,7 @@ webkit.org/b/140703 [ Release ] http/tests/misc/link-rel-icon-beforeload.html [ 
 webkit.org/b/140703 [ Debug ] http/tests/misc/link-rel-icon-beforeload.html [ Skip ] # Crashing
 webkit.org/b/140703 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 webkit.org/b/140703 http/tests/misc/window-dot-stop.html [ Failure ]
-webkit.org/b/140703 http/tests/security/401-logout/401-logout.php [ Failure ]
+webkit.org/b/140703 http/tests/security/401-logout/401-logout.py [ Failure ]
 webkit.org/b/146701 http/tests/security/private-browsing-http-auth.html [ Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-allowall.html [ Failure ]
 webkit.org/b/140703 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-cached.html [ Crash ]
@@ -3713,7 +3713,7 @@ imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-beacon-redirect-to-blocked.sub.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
-http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php [ Skip ]
+http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.py [ Skip ]
 
 # Async image tests are currently failing on Windows.
 webkit.org/b/174653 fast/images/async-image-background-image-repeated.html [ Timeout ]
