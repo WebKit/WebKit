@@ -94,8 +94,6 @@ class TextureMapperGCGLPlatformLayer;
 
 typedef WTF::HashMap<CString, uint64_t> ShaderNameHash;
 
-class GraphicsContextGLOpenGLPrivate;
-
 class WEBCORE_EXPORT GraphicsContextGLOpenGL final : public GraphicsContextGL
 {
 public:
@@ -755,9 +753,6 @@ private:
 #elif USE(TEXTURE_MAPPER)
     friend class TextureMapperGCGLPlatformLayer;
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
-#elif PLATFORM(WIN) && USE(CA)
-    friend class GraphicsContextGLOpenGLPrivate;
-    std::unique_ptr<GraphicsContextGLOpenGLPrivate> m_private;
 #endif
 
     bool m_isForWebGL2 { false };
