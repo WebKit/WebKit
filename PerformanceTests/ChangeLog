@@ -1,3 +1,12 @@
+2021-04-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] CDC COVID Vaccine Tracker: Safari garbles data table
+        https://bugs.webkit.org/show_bug.cgi?id=222581
+
+        Reviewed by Zalan Bujtas.
+
+        * Layout/nested-flexboxes-percentage-flex-basis.html: Added.
+
 2021-03-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Laying out complex text in columns is O(n^2)

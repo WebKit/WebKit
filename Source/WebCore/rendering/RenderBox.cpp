@@ -3102,7 +3102,7 @@ static bool tableCellShouldHaveZeroInitialSize(const RenderBlock& block, const R
     return scrollsOverflowY && !child.shouldTreatChildAsReplacedInTableCells() && (!cell.style().logicalHeight().isAuto() || !cell.table()->style().logicalHeight().isAuto());
 }
 
-Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& height) const
+Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants updateDescendants) const
 {
     Optional<LayoutUnit> availableHeight;
 
@@ -3118,7 +3118,8 @@ Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& hei
         containingBlockChild = cb;
         cb = cb->containingBlock();
     }
-    cb->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+    if (updateDescendants == UpdatePercentageHeightDescendants::Yes)
+        cb->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
 
     if (isHorizontal != cb->isHorizontalWritingMode())
         availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();

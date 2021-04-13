@@ -832,27 +832,30 @@ void RenderFlexibleBox::setFlowAwareLocationForChild(RenderBox& child, const Lay
     else
         child.setLocation(location.transposedPoint());
 }
-    
+
+bool RenderFlexibleBox::canComputePercentageFlexBasis(const RenderBox& child, const Length& flexBasis, UpdatePercentageHeightDescendants updateDescendants)
+{
+    if (!isColumnFlow() || m_hasDefiniteHeight == SizeDefiniteness::Definite)
+        return true;
+    if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
+        return false;
+    bool definite = child.computePercentageLogicalHeight(flexBasis, updateDescendants).hasValue();
+    if (m_inLayout && (isHorizontalWritingMode() == child.isHorizontalWritingMode())) {
+        // We can reach this code even while we're not laying ourselves out, such
+        // as from mainSizeForPercentageResolution.
+        m_hasDefiniteHeight = definite ? SizeDefiniteness::Definite : SizeDefiniteness::Indefinite;
+    }
+    return definite;
+}
+
 bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Length& flexBasis)
 {
     if (flexBasis.isAuto())
         return false;
     if (isColumnFlow() && flexBasis.isIntrinsic())
         return false;
-    if (flexBasis.isPercentOrCalculated()) {
-        if (!isColumnFlow() || m_hasDefiniteHeight == SizeDefiniteness::Definite)
-            return true;
-        if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
-            return false;
-        bool definite = child.computePercentageLogicalHeight(flexBasis).hasValue();
-        // Do not cache the definite height state with orthogonal children as in that case the logical height
-        // of the child is not in the same axis as the logical height of the flex container. Also do not cache it
-        // outside the layout process (we can reach this code as from mainSizeForPercentageResolution()).
-        if (m_inLayout && (isHorizontalWritingMode() == child.isHorizontalWritingMode()))
-            m_hasDefiniteHeight = definite ? SizeDefiniteness::Definite : SizeDefiniteness::Indefinite;
-
-        return definite;
-    }
+    if (flexBasis.isPercentOrCalculated())
+        return canComputePercentageFlexBasis(child, flexBasis, UpdatePercentageHeightDescendants::No);
     return true;
 }
 
@@ -1244,7 +1247,8 @@ bool RenderFlexibleBox::useChildOverridingMainSizeForPercentageResolution(const 
     // This function implements section 9.8. Definite and Indefinite Sizes, case 2) of the flexbox spec.
     // If the flex container has a definite main size the flex item post-flexing main size is also treated
     // as definite. We make up a percentage to check whether we have a definite size.
-    if (!childMainSizeIsDefinite(child, Length(0, LengthType::Percent)))
+    auto updateDescendants = m_inLayout ? UpdatePercentageHeightDescendants::Yes : UpdatePercentageHeightDescendants::No;
+    if (!canComputePercentageFlexBasis(child, Length(0, LengthType::Percent), updateDescendants))
         return false;
 
     return child.hasOverridingLogicalHeight();

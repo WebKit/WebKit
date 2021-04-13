@@ -1,3 +1,31 @@
+2021-04-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] CDC COVID Vaccine Tracker: Safari garbles data table
+        https://bugs.webkit.org/show_bug.cgi?id=222581
+
+        Reviewed by Zalan Bujtas.
+
+        With nested flexboxes in which the flex-basis is a percentage the current code that stretches the item forces a relayout
+        of the children because it thinks it has percentage height descendants. That happens because we call
+        computePercentageLogicalHeights() with a mock percentage length to check whether a size is definite and that call performs
+        the addPercentageHeightDescendants() call. We should avoid calling the latter in those cases as we're just trying to
+        figure out whether we can compute the flex-basis used value or not.
+
+        Adding a new parameter to the aforementioned method so that the percentage height descendants map could be left untouched
+        in those cases where we just want to test size definiteness.
+
+        Apart from making the implementation more correct this brings some performance improvements for the cases described in the
+        first paragraph as it can be seen in the provided performance test (24.5% of improvement).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePercentageLogicalHeight const):
+        * rendering/RenderBox.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::canComputePercentageFlexBasis const):
+        (WebCore::RenderFlexibleBox::childMainSizeIsDefinite const):
+        (WebCore::RenderFlexibleBox::useChildOverridingMainSizeForPercentageResolution):
+        * rendering/RenderFlexibleBox.h:
+
 2021-04-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use WTF::compactMap in HTMLSlotElement
