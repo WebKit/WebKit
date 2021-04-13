@@ -1,3 +1,13 @@
+2021-04-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] webrtc/video-update-often.html is flaky crashing
+        https://bugs.webkit.org/show_bug.cgi?id=210360
+
+        Unreviewed.
+
+        * platform/gtk-wayland/TestExpectations: Unflag test, it's
+        passing.
+
 2021-04-12  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         [CoreIPC] Crash in logDiagnosticMessage code
