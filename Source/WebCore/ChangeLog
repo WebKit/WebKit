@@ -1,3 +1,26 @@
+2021-04-13  Devin Rousso  <drousso@apple.com>
+
+        [WebIDL] includes for `Conditional` dictionary members should also be guarded
+        https://bugs.webkit.org/show_bug.cgi?id=224501
+        <rdar://problem/76598492>
+
+        Reviewed by Tim Horton.
+
+        WebKitAdditions sometimes needs to conditionally include IDL files and in those cases the
+        generated `JS*.h` might not get created even though the wrapped C++ type does exist. In
+        these cases, we should also guard the `#include JS*.h` (in addition to the already guarded
+        usage of the wrapped C++ type in `convertDictionary`).
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+
+        * bindings/scripts/test/TestDictionary.idl: Added.
+        * bindings/scripts/test/JS/JSTestDictionary.h: Added.
+        * bindings/scripts/test/JS/JSTestDictionary.cpp: Added.
+        * bindings/scripts/test/TestDictionaryWithOnlyConditionalMembers.idl:
+        * bindings/scripts/test/JS/JSTestDictionaryWithOnlyConditionalMembers.cpp:
+        * bindings/scripts/test/SupplementalDependencies.dep:
+
 2021-04-13  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Make ImageBuffer calculate its memoryCost() from its size
