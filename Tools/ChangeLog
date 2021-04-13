@@ -1,3 +1,16 @@
+2021-04-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] WTR crash in PlatformWebView::dismissAllPopupMenus()
+        https://bugs.webkit.org/show_bug.cgi?id=224487
+
+        Reviewed by Philippe Normand.
+
+        This is because we are using a for loop to iterate children that are destroyed. We should not be destroying the
+        children, though, we should just hide them, since they are owned by the web view.
+
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::dismissAllPopupMenus):
+
 2021-04-13  Aakash Jain  <aakash_jain@apple.com>
 
         Delete various old EWS specific scripts
