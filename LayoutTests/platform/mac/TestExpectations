@@ -2199,7 +2199,7 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 [ arm64 ] webrtc/concurrentVideoPlayback.html [ Pass Timeout ]
 [ arm64 ] webrtc/direction-change.html [ Pass Timeout ]
 [ arm64 ] webrtc/multi-video.html [ Pass Timeout ]
-[ arm64 ] webrtc/multi-audio.html [ Pass Timeout ]
+[ arm64 ] webrtc/multi-audio.html [ Pass Timeout Crash ]
 [ arm64 ] webrtc/h265.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-setDirection.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-rotation.html [ Pass Timeout ]
