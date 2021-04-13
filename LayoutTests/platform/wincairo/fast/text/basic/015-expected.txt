@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,110) size 85x42 [border: (1px solid #00FFFF)]
         RenderText {#text} at (1,1) size 79x19
           text run at (1,1) width 79: "Lorem ipsum"
-        RenderInline {SPAN} at (0,0) size 32x19
+        RenderInline {SPAN} at (0,0) size 79x39
           RenderText {#text} at (1,21) size 32x19
             text run at (1,21) width 32: "dolor"
         RenderText {#text} at (0,0) size 0x0
