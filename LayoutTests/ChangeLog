@@ -1,3 +1,13 @@
+2021-04-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] media/track/text-track-cue-is-reachable.html is flaky crashing in X11 release
+        https://bugs.webkit.org/show_bug.cgi?id=210370
+
+        Unreviewed.
+
+        * platform/gtk-wayland/TestExpectations:
+        * platform/gtk/TestExpectations: Unflagged test.
+
 2021-04-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
