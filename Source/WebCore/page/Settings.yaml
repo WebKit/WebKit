@@ -447,7 +447,6 @@ QuickTimePluginReplacementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      PLATFORM(IOS_FAMILY): true
       default: false
 
 RepaintOutsideLayoutEnabled:
@@ -642,5 +641,4 @@ YouTubeFlashPluginReplacementEnabled:
   type: bool
   defaultValue:
     WebCore:
-      PLATFORM(COCOA): true
       default: false
