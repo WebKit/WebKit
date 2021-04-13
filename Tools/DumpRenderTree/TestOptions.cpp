@@ -63,6 +63,7 @@ const TestFeatures& TestOptions::defaults()
     static TestFeatures features;
     if (features.boolWebPreferenceFeatures.empty()) {
         features.boolWebPreferenceFeatures = {
+            { "PluginsEnabled", true },
 #if PLATFORM(COCOA)
             // These are non-experimental WebPreference values that must always be set as they
             // differ from the default set in the WebPreferences*.yaml configuration.
@@ -154,7 +155,6 @@ const TestFeatures& TestOptions::defaults()
             { "ModernMediaControlsEnabled", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OverscrollBehaviorEnabled", true },
-            { "PluginsEnabled", true },
             { "PrivateClickMeasurementEnabled", false },
             { "RequestIdleCallbackEnabled", false },
             { "ResizeObserverEnabled", false },

@@ -900,7 +900,8 @@ public:
 
 - (void)setPlugInsEnabled:(BOOL)flag
 {
-    [self _setBoolValue: flag forKey: WebKitPluginsEnabledPreferenceKey];
+    if (flag)
+        RELEASE_LOG_FAULT(Plugins, "Application attempted to enable WebView NPAPI plug ins, which are no longer supported");
 }
 
 - (BOOL)allowsAnimatedImages

@@ -1,5 +1,17 @@
 2021-04-13  Alex Christensen  <achristensen@webkit.org>
 
+        Remove support for NPAPI plugins in WebView
+        https://bugs.webkit.org/show_bug.cgi?id=224449
+
+        Reviewed by Chris Dumez.
+
+        Keep them on in tests until we remove the code.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
         Remove support for NPAPI plugins in WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=224451
 
