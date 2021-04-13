@@ -37,11 +37,6 @@ namespace WebCore {
 
 class AsyncScrollingCoordinator;
 
-enum class ShouldSyncWithMainThread : bool {
-    No,
-    Yes
-};
-
 // The ThreadedScrollingTree class lives almost exclusively on the scrolling thread and manages the
 // hierarchy of scrollable regions on the page. It's also responsible for dispatching events
 // to the correct scrolling tree nodes or dispatching events back to the ScrollingCoordinator
@@ -60,7 +55,7 @@ public:
 
     void invalidate() override;
 
-    WEBCORE_EXPORT void displayDidRefresh(PlatformDisplayID, ShouldSyncWithMainThread);
+    WEBCORE_EXPORT void displayDidRefresh(PlatformDisplayID);
 
     void willStartRenderingUpdate();
     void didCompleteRenderingUpdate();
@@ -119,7 +114,6 @@ private:
 
     bool m_scrollAnimatorEnabled { false };
     bool m_hasNodesWithSynchronousScrollingReasons { false };
-    bool m_hasScheduledNextRenderingUpdate { false };
 };
 
 } // namespace WebCore

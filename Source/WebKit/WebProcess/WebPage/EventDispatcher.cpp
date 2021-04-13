@@ -279,12 +279,12 @@ void EventDispatcher::sendDidReceiveEvent(PageIdentifier pageID, WebEvent::Type 
 }
 #endif
 
-void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID displayID, bool shouldSyncWithMainThread)
+void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID displayID)
 {
 #if ENABLE(SCROLLING_THREAD)
     LockHolder locker(m_scrollingTreesMutex);
     for (auto keyValuePair : m_scrollingTrees)
-        keyValuePair.value->displayDidRefresh(displayID, shouldSyncWithMainThread ? ShouldSyncWithMainThread::Yes : ShouldSyncWithMainThread::No);
+        keyValuePair.value->displayDidRefresh(displayID);
 #endif
 }
 
@@ -292,9 +292,8 @@ void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID 
 void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool sendToMainThread)
 {
     ASSERT(!RunLoop::isMain());
-    notifyScrollingTreesDisplayWasRefreshed(displayID, sendToMainThread);
+    notifyScrollingTreesDisplayWasRefreshed(displayID);
 
-    // FIXME: We need ensure that the last update in a sequence always has "send to main thread".
     if (!sendToMainThread)
         return;
 
