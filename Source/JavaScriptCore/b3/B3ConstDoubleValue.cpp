@@ -194,7 +194,7 @@ TriState ConstDoubleValue::equalOrUnorderedConstant(const Value* other) const
 void ConstDoubleValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(comma);
-    out.printf("%le(%llu)", m_value, bitwise_cast<uint64_t>(m_value));
+    out.printf("%le(%llu)", m_value, static_cast<unsigned long long>(bitwise_cast<uint64_t>(m_value)));
 }
 
 } } // namespace JSC::B3
