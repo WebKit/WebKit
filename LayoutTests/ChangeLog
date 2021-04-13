@@ -1,5 +1,14 @@
 2021-04-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
+        [GStreamer] media/media-source/media-source-seek-back.html is flaky crashing with 3 kinds of traces
+        https://bugs.webkit.org/show_bug.cgi?id=210528
+
+        Unreviewed.
+
+        * platform/glib/TestExpectations: Unflagged test.
+
+2021-04-12  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
         [GTK] webrtc/video-update-often.html is flaky crashing
         https://bugs.webkit.org/show_bug.cgi?id=210360
 
