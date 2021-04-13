@@ -1912,7 +1912,7 @@ void WebPageProxy::setUnderlayColor(const Color& color)
 
 Color WebPageProxy::scrollAreaBackgroundColor() const
 {
-    if (m_preferences->useThemeColorForScrollAreaBackgroundColor())
+    if (m_preferences->useThemeColorForScrollAreaBackgroundColor() && m_themeColor.isValid())
         return m_themeColor;
 
     return m_pageExtendedBackgroundColor;

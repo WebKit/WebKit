@@ -28,7 +28,9 @@
 #import "CocoaColor.h"
 #import "TestCocoa.h"
 #import "TestWKWebView.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKInternalDebugFeature.h>
 #import <wtf/RetainPtr.h>
 
 #define EXPECT_NSSTRING_EQ(expected, actual) \
@@ -167,3 +169,52 @@ TEST(HTMLMetaThemeColor, KVO)
     EXPECT_NSSTRING_EQ("after-node-removed", [themeColorObserver state]);
     EXPECT_TRUE(![webView _themeColor]);
 }
+
+#if PLATFORM(IOS_FAMILY)
+
+// There's no API/SPI to get the background color of the scroll area on macOS.
+
+enum class UseThemeColorForScrollAreaBackgroundColor : bool { Yes, No };
+static RetainPtr<TestWKWebView> createWebView(UseThemeColorForScrollAreaBackgroundColor useThemeColorForScrollAreaBackgroundColor)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKInternalDebugFeature *feature in [WKPreferences _internalDebugFeatures]) {
+        if ([feature.key isEqualToString:@"UseThemeColorForScrollAreaBackgroundColor"]) {
+            [[configuration preferences] _setEnabled:(useThemeColorForScrollAreaBackgroundColor == UseThemeColorForScrollAreaBackgroundColor::Yes) forInternalDebugFeature:feature];
+            break;
+        }
+    }
+
+    return adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+}
+
+TEST(HTMLMetaThemeColor, ExperimentalUseThemeColorForScrollAreaBackgroundColor)
+{
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    auto blueColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blueColorComponents));
+
+    auto webViewWithoutThemeColorForScrollAreaBackgroundColor = createWebView(UseThemeColorForScrollAreaBackgroundColor::No);
+    EXPECT_TRUE(![webViewWithoutThemeColorForScrollAreaBackgroundColor _themeColor]);
+
+    [webViewWithoutThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='background-color: blue'>"];
+    EXPECT_TRUE(![webViewWithoutThemeColorForScrollAreaBackgroundColor _themeColor]);
+    EXPECT_TRUE(CGColorEqualToColor([webViewWithoutThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor, blueColor.get()));
+
+    [webViewWithoutThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red'><body style='background-color: blue'>"];
+    EXPECT_TRUE(CGColorEqualToColor([webViewWithoutThemeColorForScrollAreaBackgroundColor _themeColor].CGColor, redColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webViewWithoutThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor, blueColor.get()));
+
+    auto webViewWithThemeColorForScrollAreaBackgroundColor = createWebView(UseThemeColorForScrollAreaBackgroundColor::Yes);
+    EXPECT_TRUE(![webViewWithThemeColorForScrollAreaBackgroundColor _themeColor]);
+
+    [webViewWithThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='background-color: blue'>"];
+    EXPECT_TRUE(![webViewWithThemeColorForScrollAreaBackgroundColor _themeColor]);
+    EXPECT_TRUE(CGColorEqualToColor([webViewWithThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor, blueColor.get()));
+
+    [webViewWithThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red'><body style='background-color: blue'>"];
+    EXPECT_TRUE(CGColorEqualToColor([webViewWithThemeColorForScrollAreaBackgroundColor _themeColor].CGColor, redColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webViewWithThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor, redColor.get()));
+}
+
+#endif // PLATFORM(IOS_FAMILY)
