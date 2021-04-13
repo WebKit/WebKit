@@ -1,3 +1,17 @@
+2021-04-13  Kate Cheney  <katherine_cheney@apple.com>
+
+        http/.../contentSecurityPolicy/report-document-uri-after-blocked-redirect.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=224498
+        <rdar://problem/76602331>
+
+        The error reported by the xhr may not always happen before the
+        document URI is reported. We should only end the test if both
+        the error and URI have been reported.
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/security/contentSecurityPolicy/report-document-uri-after-blocked-redirect.html:
+
 2021-04-13  Peng Liu  <peng.liu6@apple.com>
 
         [macOS] Netflix videos opened in background tab never become playable after foregrounding

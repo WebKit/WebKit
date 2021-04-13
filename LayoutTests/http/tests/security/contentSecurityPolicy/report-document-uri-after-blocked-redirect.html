@@ -11,10 +11,15 @@
             document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
         }
 
+        var haveReportedXhrError = false;
+        var haveReportedDocumentURI = false;
+
         // Expect the document URI to be the document URL stripped for reporting.
         document.addEventListener('securitypolicyviolation', e => {
             document.body.innerHTML += `documentURI = <b>${e.documentURI}</b><br/><br/>`;
-            finishJSTest();
+            haveReportedDocumentURI = true;
+            if (haveReportedXhrError)
+                finishJSTest();
         });
 
         var xhr = new XMLHttpRequest;
@@ -33,6 +38,9 @@
 
         xhr.onerror = function () {
             testPassed("XMLHttpRequest.send() did not follow the disallowed redirect.");
+            haveReportedXhrError = true;
+            if (haveReportedDocumentURI)
+                finishJSTest();
         };
 
         xhr.send();
