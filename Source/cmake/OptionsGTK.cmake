@@ -435,9 +435,9 @@ if (USE_WOFF2)
 endif ()
 
 if (USE_AVIF)
-    find_package(AVIF 0.7.3)
+    find_package(AVIF 0.9.0)
     if (NOT AVIF_FOUND)
-        message(FATAL_ERROR "libavif 0.7.3 is required for USE_AVIF.")
+        message(FATAL_ERROR "libavif 0.9.0 is required for USE_AVIF.")
     endif ()
 endif ()
 

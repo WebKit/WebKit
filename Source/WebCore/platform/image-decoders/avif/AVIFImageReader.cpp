@@ -40,16 +40,12 @@ AVIFImageReader::~AVIFImageReader() = default;
 
 void AVIFImageReader::parseHeader(const SharedBuffer::DataSegment& data, bool allDataReceived)
 {
-    avifROData avifData;
-    avifData.data = reinterpret_cast<const uint8_t*>(data.data());
-    avifData.size = data.size();
-
-    if (!avifPeekCompatibleFileType(&avifData)) {
+    if (avifDecoderSetIOMemory(m_avifDecoder.get(), reinterpret_cast<const uint8_t*>(data.data()), data.size()) != AVIF_RESULT_OK) {
         m_decoder->setFailed();
         return;
     }
 
-    if (avifDecoderParse(m_avifDecoder.get(), &avifData) != AVIF_RESULT_OK
+    if (avifDecoderParse(m_avifDecoder.get()) != AVIF_RESULT_OK
         || avifDecoderNextImage(m_avifDecoder.get()) != AVIF_RESULT_OK) {
         m_decoder->setFailed();
         return;
@@ -68,11 +64,12 @@ void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& 
         return;
 
     if (!m_dataParsed) {
-        avifROData avifData;
-        avifData.data = reinterpret_cast<const uint8_t*>(data.data());
-        avifData.size = data.size();
+        if (avifDecoderSetIOMemory(m_avifDecoder.get(), reinterpret_cast<const uint8_t*>(data.data()), data.size()) != AVIF_RESULT_OK) {
+            m_decoder->setFailed();
+            return;
+        }
 
-        if (avifDecoderParse(m_avifDecoder.get(), &avifData) != AVIF_RESULT_OK) {
+        if (avifDecoderParse(m_avifDecoder.get()) != AVIF_RESULT_OK) {
             m_decoder->setFailed();
             return;
         }
