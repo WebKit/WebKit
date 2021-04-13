@@ -1,3 +1,19 @@
+2021-04-13  Youenn Fablet  <youenn@apple.com>
+
+        SFrameTransform should be able to take array buffer views as input
+        https://bugs.webkit.org/show_bug.cgi?id=224437
+
+        Reviewed by Eric Carlson.
+
+        Add support for processing ArrayBufferView.
+        We still output ArrayBuffer as output.
+
+        Test: webrtc/sframe-transform-buffer-source.html
+
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::transformFrame):
+        (WebCore::RTCRtpSFrameTransform::createStreams):
+
 2021-04-12  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] CDC COVID Vaccine Tracker: Safari garbles data table
