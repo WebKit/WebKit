@@ -1,3 +1,27 @@
+2021-04-13  Peng Liu  <peng.liu6@apple.com>
+
+        [macOS] Netflix videos opened in background tab never become playable after foregrounding
+        https://bugs.webkit.org/show_bug.cgi?id=224384
+
+        Reviewed by Eric Carlson.
+
+        When a page calls `navigator.requestMediaKeySystemAccess()` in a background tab, the request
+        will be added to a pending request hash map. However, the current implementation of
+        `MediaKeySystemPermissionRequestManager` does not send the request when the tab switches
+        to foreground. This patch fixes this issue by adding the `MediaKeySystemPermissionRequestManager`
+        object as a `MediaCanStartListener` of `Document`, so that it will send its pending requests
+        when the tab switches to foreground (`mediaCanStart()`).
+
+        * WebKit.xcodeproj/project.pbxproj: Add two cpp files to the xcode project.
+
+        * WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.cpp:
+        Add the object as a `MediaCanStartListener` so that it can send the `MediaKeySystemRequest`
+        to the UI process when the tab switches to foreground.
+        (WebKit::MediaKeySystemPermissionRequestManager::startMediaKeySystemRequest):
+        (WebKit::MediaKeySystemPermissionRequestManager::cancelMediaKeySystemRequest):
+        (WebKit::MediaKeySystemPermissionRequestManager::mediaCanStart):
+        * WebProcess/EncryptedMedia/MediaKeySystemPermissionRequestManager.h:
+
 2021-04-13  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] CaptureDevice monitor used from UIProcess

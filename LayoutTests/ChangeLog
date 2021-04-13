@@ -1,3 +1,13 @@
+2021-04-13  Peng Liu  <peng.liu6@apple.com>
+
+        [macOS] Netflix videos opened in background tab never become playable after foregrounding
+        https://bugs.webkit.org/show_bug.cgi?id=224384
+
+        Reviewed by Eric Carlson.
+
+        * media/encrypted-media/mock-navigator-requestMediaKeySystemAccess-in-background-expected.txt: Added.
+        * media/encrypted-media/mock-navigator-requestMediaKeySystemAccess-in-background.html: Added.
+
 2021-04-13  Frédéric Wang  <fwang@igalia.com>
 
         ASSERTION FAILED: !m_needExceptionCheck in CloneSerializer::serialize with postMessage({g:42})
