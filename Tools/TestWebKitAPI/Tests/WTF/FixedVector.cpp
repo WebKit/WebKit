@@ -146,6 +146,31 @@ TEST(WTF_FixedVector, MoveAssign)
         EXPECT_EQ(vec2[i], i);
 }
 
+TEST(WTF_FixedVector, MoveVector)
+{
+    auto vec1 = Vector<MoveOnly>::from(MoveOnly(0), MoveOnly(1), MoveOnly(2), MoveOnly(3));
+    EXPECT_EQ(vec1.size(), 4U);
+    FixedVector<MoveOnly> vec2(WTFMove(vec1));
+    EXPECT_EQ(vec1.size(), 0U);
+    EXPECT_EQ(vec2.size(), 4U);
+    for (unsigned index = 0; index < vec2.size(); ++index)
+        EXPECT_EQ(vec2[index].value(), index);
+}
+
+TEST(WTF_FixedVector, MoveAssignVector)
+{
+    FixedVector<MoveOnly> vec2;
+    {
+        auto vec1 = Vector<MoveOnly>::from(MoveOnly(0), MoveOnly(1), MoveOnly(2), MoveOnly(3));
+        EXPECT_EQ(vec1.size(), 4U);
+        vec2 = WTFMove(vec1);
+        EXPECT_EQ(vec1.size(), 0U);
+    }
+    EXPECT_EQ(vec2.size(), 4U);
+    for (unsigned index = 0; index < vec2.size(); ++index)
+        EXPECT_EQ(vec2[index].value(), index);
+}
+
 TEST(WTF_FixedVector, Swap)
 {
     FixedVector<unsigned> vec1(3);
@@ -260,6 +285,44 @@ TEST(WTF_FixedVector, DestructorAfterMove)
     }
     for (unsigned i = 0; i < flags.size(); ++i)
         EXPECT_TRUE(flags[i]);
+}
+
+TEST(WTF_FixedVector, MoveKeepsData)
+{
+    {
+        FixedVector<unsigned> vec1(3);
+        auto* data1 = vec1.data();
+        FixedVector<unsigned> vec2(WTFMove(vec1));
+        EXPECT_EQ(vec2.data(), data1);
+    }
+    {
+        FixedVector<unsigned> vec1(3);
+        auto* data1 = vec1.data();
+        FixedVector<unsigned> vec2;
+        vec2 = WTFMove(vec1);
+        EXPECT_EQ(vec2.data(), data1);
+    }
+}
+
+TEST(WTF_FixedVector, MoveKeepsDataNested)
+{
+    {
+        Vector<FixedVector<unsigned>> vec1;
+        vec1.append(FixedVector<unsigned>(3));
+        auto* data1 = vec1[0].data();
+        FixedVector<FixedVector<unsigned>> vec2(WTFMove(vec1));
+        EXPECT_EQ(vec2.size(), 1U);
+        EXPECT_EQ(vec2[0].data(), data1);
+    }
+    {
+        Vector<FixedVector<unsigned>> vec1;
+        vec1.append(FixedVector<unsigned>(3));
+        auto* data1 = vec1[0].data();
+        FixedVector<FixedVector<unsigned>> vec2;
+        vec2 = WTFMove(vec1);
+        EXPECT_EQ(vec2.size(), 1U);
+        EXPECT_EQ(vec2[0].data(), data1);
+    }
 }
 
 } // namespace TestWebKitAPI
