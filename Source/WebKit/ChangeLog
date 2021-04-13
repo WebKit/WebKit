@@ -1,3 +1,16 @@
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove support for NPAPI plugins in WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=224451
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences encodeWithCoder:]):
+        (-[WKPreferences initWithCoder:]):
+        (-[WKPreferences plugInsEnabled]):
+        (-[WKPreferences setPlugInsEnabled:]):
+
 2021-04-13  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] Make ImageBuffer calculate its memoryCost() from its size

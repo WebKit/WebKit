@@ -718,32 +718,6 @@ TEST(WebKit, NotificationPermission)
     TestWebKitAPI::Util::run(&done);
 }
 
-@interface PlugInDelegate : NSObject <WKUIDelegatePrivate>
-@end
-
-@implementation PlugInDelegate
-
-- (void)_webView:(WKWebView *)webView unavailablePlugInButtonClickedWithReason:(_WKPlugInUnavailabilityReason)reason plugInInfo:(NSDictionary *)plugInInfo
-{
-    ASSERT_EQ(_WKPlugInUnavailabilityReasonPluginMissing, reason);
-    ASSERT_TRUE([@"application/x-shockwave-flash" isEqualToString:[plugInInfo objectForKey:@"PluginInformationMIMEType"]]);
-    done = true;
-}
-
-@end
-
-TEST(WebKit, UnavailablePlugIn)
-{
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration preferences] setPlugInsEnabled:YES];
-    auto delegate = adoptNS([[PlugInDelegate alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
-    [webView setUIDelegate:delegate.get()];
-    [webView synchronouslyLoadHTMLString:@"<object type='application/x-shockwave-flash'/>"];
-    [webView sendClicksAtPoint:NSMakePoint(210, 600 - 80) numberOfClicks:1];
-    TestWebKitAPI::Util::run(&done);
-}
-
 bool firstToolbarDone;
 
 @interface ToolbarDelegate : NSObject <WKUIDelegatePrivate>
