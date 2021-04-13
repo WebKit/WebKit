@@ -1,3 +1,18 @@
+2021-04-13  Mark Lam  <mark.lam@apple.com>
+
+        Reduce functionWithHellaArguments3()'s number of arguments from 5000 to 500.
+        https://bugs.webkit.org/show_bug.cgi?id=224474
+        rdar://73614896
+
+        Reviewed by Yusuke Suzuki.
+
+        Using 5000 arguments seems excessive, and may blow out the stack on more resource
+        constrained devices.  500 should be high enough.
+
+        * b3/testb3_5.cpp:
+        (JSC_DEFINE_JIT_OPERATION):
+        (testCallFunctionWithHellaArguments3):
+
 2021-04-12  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove CodeBlock::m_constantsSourceCodeRepresentation
