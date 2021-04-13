@@ -148,6 +148,28 @@ void UserMediaPermissionRequestManager::enumerateMediaDevices(Document& document
     m_page.sendWithAsyncReply(Messages::WebPageProxy::EnumerateMediaDevicesForFrame { WebFrame::fromCoreFrame(*frame)->frameID(), document.securityOrigin().data(), document.topOrigin().data() }, WTFMove(completionHandler));
 }
 
+#if USE(GSTREAMER)
+void UserMediaPermissionRequestManager::updateCaptureDevices(ShouldNotify shouldNotify)
+{
+    WebCore::RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([weakThis = makeWeakPtr(*this), this, shouldNotify](auto&& newDevices) mutable {
+        if (!weakThis)
+            return;
+
+        if (!haveDevicesChanged(m_captureDevices, newDevices))
+            return;
+
+        m_captureDevices = WTFMove(newDevices);
+        if (shouldNotify == ShouldNotify::Yes)
+            captureDevicesChanged();
+    });
+}
+
+void UserMediaPermissionRequestManager::devicesChanged()
+{
+    updateCaptureDevices(ShouldNotify::Yes);
+}
+#endif
+
 UserMediaClient::DeviceChangeObserverToken UserMediaPermissionRequestManager::addDeviceChangeObserver(Function<void()>&& observer)
 {
     auto identifier = UserMediaClient::DeviceChangeObserverToken::generate();
@@ -155,7 +177,12 @@ UserMediaClient::DeviceChangeObserverToken UserMediaPermissionRequestManager::ad
 
     if (!m_monitoringDeviceChange) {
         m_monitoringDeviceChange = true;
+#if USE(GSTREAMER)
+        updateCaptureDevices(ShouldNotify::No);
+        WebCore::RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver(*this);
+#else
         m_page.send(Messages::WebPageProxy::BeginMonitoringCaptureDevices());
+#endif
     }
     return identifier;
 }

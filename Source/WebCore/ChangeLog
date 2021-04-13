@@ -1,3 +1,26 @@
+2021-04-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] CaptureDevice monitor used from UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222888
+
+        Reviewed by Youenn Fablet .
+
+        Move the device observer infrastructure from the WebKit UserMediaProcessManager to the
+        RealtimeMediaSourceCenter.
+
+        * platform/mediastream/CaptureDevice.h:
+        (WebCore::haveDevicesChanged):
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::RealtimeMediaSourceCenter):
+        (WebCore::RealtimeMediaSourceCenter::Observer::~Observer):
+        (WebCore::RealtimeMediaSourceCenter::addDevicesChangedObserver):
+        (WebCore::RealtimeMediaSourceCenter::removeDevicesChangedObserver):
+        (WebCore::RealtimeMediaSourceCenter::captureDevicesChanged):
+        (WebCore::RealtimeMediaSourceCenter::triggerDevicesChangedObservers):
+        (WebCore::RealtimeMediaSourceCenter::setDevicesChangedObserver): Deleted.
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+        (WebCore::RealtimeMediaSourceCenter::Observer::devicesChanged):
+
 2021-04-13  Antoine Quint  <graouts@webkit.org>
 
         calc() simplification for a multiplication should apply the multiplication to each value of an addition

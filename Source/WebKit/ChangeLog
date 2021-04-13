@@ -1,3 +1,35 @@
+2021-04-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] CaptureDevice monitor used from UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=222888
+
+        Reviewed by Youenn Fablet.
+
+        GStreamer ports aim to reduce usage of the GStreamer library in the UIProcess and thus
+        should not relay capture devicechange monitoring to the UIProcess. For the long term we plan
+        to migrate media processing to the GPUProcess but for now we have to maintain the media
+        pipelines in the WebProcess. Initializing GStreamer in multiple processes (including the
+        UIProcess) has a significant performance impact on embedded platforms, that's why we try to
+        avoid it as much as possible.
+
+        The device monitoring code from the UserMediaProcessManager was partly moved to the
+        RealtimeMediaSourceCenter so that it can be easily reused by GStreamer ports from the
+        UserMediaPermissionRequestManager.
+
+        * UIProcess/UserMediaProcessManager.cpp:
+        (WebKit::UserMediaProcessManager::UserMediaProcessManager):
+        (WebKit::UserMediaProcessManager::updateCaptureDevices):
+        (WebKit::UserMediaProcessManager::devicesChanged):
+        (WebKit::UserMediaProcessManager::beginMonitoringCaptureDevices):
+        * UIProcess/UserMediaProcessManager.h:
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp:
+        (WebKit::UserMediaPermissionRequestManager::UserMediaPermissionRequestManager):
+        (WebKit::UserMediaPermissionRequestManager::updateCaptureDevices):
+        (WebKit::UserMediaPermissionRequestManager::DeviceObserver::devicesChanged):
+        (WebKit::UserMediaPermissionRequestManager::addDeviceChangeObserver):
+        * WebProcess/MediaStream/UserMediaPermissionRequestManager.h:
+        (WebKit::UserMediaPermissionRequestManager::DeviceObserver::DeviceObserver):
+
 2021-04-12  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         [CoreIPC] Crash in logDiagnosticMessage code

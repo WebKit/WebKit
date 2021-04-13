@@ -39,8 +39,10 @@
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceFactory.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
+#include "UserMediaClient.h"
 #include <wtf/Function.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -52,9 +54,16 @@ class RealtimeMediaSourceSupportedConstraints;
 class TrackSourceInfo;
 
 struct MediaConstraints;
-    
-class RealtimeMediaSourceCenter {
+
+class WEBCORE_EXPORT RealtimeMediaSourceCenter : public ThreadSafeRefCounted<RealtimeMediaSourceCenter, WTF::DestructionThread::MainRunLoop> {
 public:
+    class Observer : public CanMakeWeakPtr<Observer> {
+    public:
+        virtual ~Observer();
+
+        virtual void devicesChanged() = 0;
+    };
+
     ~RealtimeMediaSourceCenter();
 
     WEBCORE_EXPORT static RealtimeMediaSourceCenter& singleton();
@@ -84,7 +93,8 @@ public:
 
     WEBCORE_EXPORT String hashStringWithSalt(const String& id, const String& hashSalt);
 
-    WEBCORE_EXPORT void setDevicesChangedObserver(std::function<void()>&&);
+    WEBCORE_EXPORT void addDevicesChangedObserver(Observer&);
+    WEBCORE_EXPORT void removeDevicesChangedObserver(Observer&);
 
     void captureDevicesChanged();
 
@@ -108,7 +118,10 @@ private:
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
 
-    WTF::Function<void()> m_deviceChangedObserver;
+    RunLoop::Timer<RealtimeMediaSourceCenter> m_debounceTimer;
+    void triggerDevicesChangedObservers();
+
+    WeakHashSet<Observer> m_observers;
 
     AudioCaptureFactory* m_audioCaptureFactoryOverride { nullptr };
     VideoCaptureFactory* m_videoCaptureFactoryOverride { nullptr };
