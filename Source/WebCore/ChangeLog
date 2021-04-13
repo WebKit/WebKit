@@ -1,3 +1,17 @@
+2021-04-13  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Forced color scheme should reset on page refresh
+        https://bugs.webkit.org/show_bug.cgi?id=224485
+        <rdar://76227216>
+
+        Reviewed by BJ Burg.
+
+        Reset the forced color scheme on page reload to keep in sync with Web Inspector
+        behavior for other forced states, like pseudo-classes.
+
+        * page/Page.cpp:
+        (WebCore::Page::didCommitLoad):
+
 2021-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove SharedBuffer's equality operators with Ref<SharedBuffer>

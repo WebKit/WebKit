@@ -1252,6 +1252,11 @@ void Page::didCommitLoad()
 #if ENABLE(EDITABLE_REGION)
     m_isEditableRegionEnabled = false;
 #endif
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    setUseDarkAppearanceOverride(WTF::nullopt);
+#endif
+
     resetSeenPlugins();
     resetSeenMediaEngines();
 }
