@@ -268,7 +268,7 @@ void GPUProcessConnection::enableVP9Decoders(bool enableVP8Decoder, bool enableV
     if (m_enableVP8Decoder == enableVP8Decoder && m_enableVP9Decoder == enableVP9Decoder && m_enableVP9SWDecoder == enableVP9SWDecoder)
         return;
 
-    m_enableVP9Decoder = enableVP8Decoder;
+    m_enableVP8Decoder = enableVP8Decoder;
     m_enableVP9Decoder = enableVP9Decoder;
     m_enableVP9SWDecoder = enableVP9SWDecoder;
     connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(enableVP8Decoder, enableVP9Decoder, enableVP9SWDecoder), { });
