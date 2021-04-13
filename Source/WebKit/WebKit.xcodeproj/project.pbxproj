@@ -1924,8 +1924,6 @@
 		CDE555332406EB8C008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552A2406B896008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp */; };
 		CDE555342406EB8C008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552E2406B897008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp */; };
 		CDE555352406EB8C008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */; };
-		CDF17C9C260D4B8D00F0A4E8 /* WKCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = CDF17C9A260D4B8D00F0A4E8 /* WKCoordinator.h */; };
-		CDF17C9D260D4B8D00F0A4E8 /* WKCoordinator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDF17C9B260D4B8D00F0A4E8 /* WKCoordinator.mm */; };
 		CE11AD521CBC482F00681EE5 /* CodeSigning.h in Headers */ = {isa = PBXBuildFile; fileRef = CE11AD511CBC482F00681EE5 /* CodeSigning.h */; };
 		CE1A0BD61A48E6C60054EF74 /* TCCSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD01A48E6C60054EF74 /* TCCSPI.h */; };
 		CE1A0BD71A48E6C60054EF74 /* TextInputSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A0BD11A48E6C60054EF74 /* TextInputSPI.h */; };
@@ -5782,8 +5780,6 @@
 		CDE5552F2406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMSessionProxyMessages.h; sourceTree = "<group>"; };
 		CDE555302406B897008A3DDB /* RemoteLegacyCDMSessionMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMSessionMessagesReplies.h; sourceTree = "<group>"; };
 		CDE555312406B897008A3DDB /* RemoteLegacyCDMSessionProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLegacyCDMSessionProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-		CDF17C9A260D4B8D00F0A4E8 /* WKCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKCoordinator.h; sourceTree = "<group>"; };
-		CDF17C9B260D4B8D00F0A4E8 /* WKCoordinator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKCoordinator.mm; sourceTree = "<group>"; };
 		CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WKGroupSession.swift; sourceTree = "<group>"; };
 		CE11AD4F1CBC47F800681EE5 /* CodeSigning.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CodeSigning.mm; sourceTree = "<group>"; };
 		CE11AD511CBC482F00681EE5 /* CodeSigning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSigning.h; sourceTree = "<group>"; };
@@ -11417,8 +11413,6 @@
 		CDF17C93260D3B5200F0A4E8 /* Coordinator */ = {
 			isa = PBXGroup;
 			children = (
-				CDF17C9A260D4B8D00F0A4E8 /* WKCoordinator.h */,
-				CDF17C9B260D4B8D00F0A4E8 /* WKCoordinator.mm */,
 				CDF17CC3260E8FAB00F0A4E8 /* WKGroupSession.swift */,
 			);
 			name = Coordinator;
@@ -12667,7 +12661,6 @@
 				BCC938E11180DE440085E5FE /* WKContextPrivate.h in Headers */,
 				9FB5F395169E6A80002C25BF /* WKContextPrivateMac.h in Headers */,
 				3309345B1315B9980097A7BC /* WKCookieManager.h in Headers */,
-				CDF17C9C260D4B8D00F0A4E8 /* WKCoordinator.h in Headers */,
 				A1FB68241F6E518200C43F9F /* WKCrashReporter.h in Headers */,
 				512F58FA12A88A5400629530 /* WKCredential.h in Headers */,
 				518ACF1112B015F800B04B83 /* WKCredentialTypes.h in Headers */,
@@ -14459,7 +14452,6 @@
 				C6A4CA0C2252899800169289 /* WKBundlePageMac.mm in Sources */,
 				2D931169212F61B200044BFE /* WKContentView.mm in Sources */,
 				2D93116A212F61B500044BFE /* WKContentViewInteraction.mm in Sources */,
-				CDF17C9D260D4B8D00F0A4E8 /* WKCoordinator.mm in Sources */,
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
 				DF84CEE4249AA24D009096F6 /* WKPDFHUDView.mm in Sources */,

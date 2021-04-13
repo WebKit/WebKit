@@ -1,3 +1,9 @@
+2021-04-13  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix after r275898; remove unnecessary files from the project.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-04-13  Alex Christensen  <achristensen@webkit.org>
 
         WebProcessPool should store Vector<Ref<WebProcessProxy>> instead of Vector<RefPtr>
