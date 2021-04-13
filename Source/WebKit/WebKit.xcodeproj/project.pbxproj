@@ -2197,13 +2197,6 @@
 			remoteGlobalIDString = BC3DE46515A91763008D26FC;
 			remoteInfo = WebKit2Service;
 		};
-		CD954940261590B4008372D9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CD95493426159004008372D9;
-			remoteInfo = WebKitSwift;
-		};
 		E1AC2E2D20F7B98800B0897D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -13105,7 +13098,6 @@
 				535E08C422545B7200DF00CA /* PBXBuildRule */,
 			);
 			dependencies = (
-				CD954941261590B4008372D9 /* PBXTargetDependency */,
 				E1AC2E3E20F7B9C000B0897D /* PBXTargetDependency */,
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				2D11BA052126A5AE006F8878 /* PBXTargetDependency */,
@@ -14594,11 +14586,6 @@
 			isa = PBXTargetDependency;
 			target = BC3DE46515A91763008D26FC /* WebContent */;
 			targetProxy = BCA8D46715BCE0D6009DC1F1 /* PBXContainerItemProxy */;
-		};
-		CD954941261590B4008372D9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CD95493426159004008372D9 /* WebKitSwift */;
-			targetProxy = CD954940261590B4008372D9 /* PBXContainerItemProxy */;
 		};
 		E1AC2E2E20F7B98800B0897D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

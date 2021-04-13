@@ -1,3 +1,28 @@
+2021-04-13  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r275898. rdar://problem/76520529
+
+    [Cocoa] remove link-time dependency on WebKitSwift
+    https://bugs.webkit.org/show_bug.cgi?id=224493
+    
+    Reviewed by Eric Carlson.
+    
+    * Configurations/WebKit.xcconfig:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275898 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-13  Jer Noble  <jer.noble@apple.com>
+
+            [Cocoa] remove link-time dependency on WebKitSwift
+            https://bugs.webkit.org/show_bug.cgi?id=224493
+
+            Reviewed by Eric Carlson.
+
+            * Configurations/WebKit.xcconfig:
+            * WebKit.xcodeproj/project.pbxproj:
+
 2021-04-11  Sam Weinig  <weinig@apple.com>
 
         Simplify WebKitTestRunner preference reset to be more like DRT
