@@ -52,6 +52,7 @@ public:
 
     void clearStorageAreasMatchingOrigin(const WebCore::SecurityOriginData&);
     void clearAllStorageAreas();
+    void removeStorageArea(const WebCore::SecurityOriginData&);
     void flushAndClose(const WebCore::SecurityOriginData&);
 
     Vector<WebCore::SecurityOriginData> ephemeralOrigins() const;
