@@ -504,13 +504,6 @@ protected:
     {
     }
 
-    bool shouldTerminate()
-    {
-        VM& vm = m_lexicalGlobalObject->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        return scope.exception();
-    }
-
     void fail()
     {
         m_failed = true;
@@ -1767,6 +1760,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<WalkerState, 16> stateStack;
     WalkerState lexicalGlobalObject = StateUnknown;
     JSValue inValue = in;
+    auto scope = DECLARE_THROW_SCOPE(vm);
     while (1) {
         switch (lexicalGlobalObject) {
             arrayStartState:
@@ -1794,6 +1788,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     array->getOwnNonIndexPropertyNames(m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (UNLIKELY(scope.exception()))
+                        return SerializationReturnCode::ExistingExceptionError;
                     if (propertyStack.last().size()) {
                         write(NonIndexPropertiesTag);
                         indexStack.append(0);
@@ -1806,6 +1802,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     break;
                 }
                 inValue = array->getDirectIndex(m_lexicalGlobalObject, index);
+                if (UNLIKELY(scope.exception()))
+                    return SerializationReturnCode::ExistingExceptionError;
                 if (!inValue) {
                     indexStack.last()++;
                     goto arrayStartVisitMember;
@@ -1844,6 +1842,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                 inObject->methodTable(vm)->getOwnPropertyNames(inObject, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                if (UNLIKELY(scope.exception()))
+                    return SerializationReturnCode::ExistingExceptionError;
             }
             objectStartVisitMember:
             FALLTHROUGH;
@@ -1859,7 +1859,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     break;
                 }
                 inValue = getProperty(vm, object, properties[index]);
-                if (shouldTerminate())
+                if (UNLIKELY(scope.exception()))
                     return SerializationReturnCode::ExistingExceptionError;
 
                 if (!inValue) {
@@ -1869,7 +1869,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 }
                 write(properties[index]);
 
-                if (shouldTerminate())
+                if (UNLIKELY(scope.exception()))
                     return SerializationReturnCode::ExistingExceptionError;
 
                 auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
@@ -1882,7 +1882,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 FALLTHROUGH;
             }
             case ObjectEndVisitMember: {
-                if (shouldTerminate())
+                if (UNLIKELY(scope.exception()))
                     return SerializationReturnCode::ExistingExceptionError;
 
                 indexStack.last()++;
@@ -1912,6 +1912,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     ASSERT(jsDynamicCast<JSMap*>(vm, object));
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable(vm)->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (UNLIKELY(scope.exception()))
+                        return SerializationReturnCode::ExistingExceptionError;
                     write(NonMapPropertiesTag);
                     indexStack.append(0);
                     goto objectStartVisitMember;
@@ -1956,6 +1958,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     ASSERT(jsDynamicCast<JSSet*>(vm, object));
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable(vm)->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (UNLIKELY(scope.exception()))
+                        return SerializationReturnCode::ExistingExceptionError;
                     write(NonSetPropertiesTag);
                     indexStack.append(0);
                     goto objectStartVisitMember;

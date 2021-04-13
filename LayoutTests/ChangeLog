@@ -1,3 +1,15 @@
+2021-04-13  Frédéric Wang  <fwang@igalia.com>
+
+        ASSERTION FAILED: !m_needExceptionCheck in CloneSerializer::serialize with postMessage({g:42})
+        https://bugs.webkit.org/show_bug.cgi?id=223785
+
+        Reviewed by Yusuke Suzuki.
+
+        Add regression test.
+
+        * js/dom/missing-exception-check-in-clone-serializer-serialize-expected.txt: Added.
+        * js/dom/missing-exception-check-in-clone-serializer-serialize.html: Added.
+
 2021-04-13  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r275849.

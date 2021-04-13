@@ -1,3 +1,17 @@
+2021-04-13  Frédéric Wang  <fwang@igalia.com>
+
+        ASSERTION FAILED: !m_needExceptionCheck in CloneSerializer::serialize with postMessage({g:42})
+        https://bugs.webkit.org/show_bug.cgi?id=223785
+
+        Reviewed by Yusuke Suzuki.
+
+        Test: js/dom/missing-exception-check-in-clone-serializer-serialize.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize): Use a local throw scope within this method and
+        handle potential exceptions.
+        (WebCore::CloneBase::shouldTerminate): Deleted.
+
 2021-04-13  Philippe Normand  <pnormand@igalia.com>
 
         [GTK][WPE] Avif decoder build broken
