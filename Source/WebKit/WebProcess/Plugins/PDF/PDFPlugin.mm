@@ -219,8 +219,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return @[ _pdfLayerController ];
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return NSAccessibilityGroupRole;
-    if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
-        return [_parent accessibilityAttributeValue:NSAccessibilityPrimaryScreenHeightAttribute];
 
     return 0;
 }
@@ -267,8 +265,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             NSAccessibilityPositionAttribute,
             NSAccessibilityFocusedAttribute,
             // PDFLayerController has its own accessibilityChildren.
-            NSAccessibilityChildrenAttribute,
-            NSAccessibilityPrimaryScreenHeightAttribute
+            NSAccessibilityChildrenAttribute
             ];
         [attributeNames retain];
     }
@@ -2040,10 +2037,7 @@ IntRect PDFPlugin::boundsOnScreen() const
 
     FloatRect bounds = FloatRect(FloatPoint(), size());
     FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().valueOr(AffineTransform()).mapRect(bounds);
-    auto* page = m_frame->coreFrame()->page();
-    if (!page)
-        return { };
-    return page->chrome().rootViewToScreen(enclosingIntRect(rectInRootViewCoordinates));
+    return frameView->contentsToScreen(enclosingIntRect(rectInRootViewCoordinates));
 }
 
 void PDFPlugin::visibilityDidChange(bool visible)

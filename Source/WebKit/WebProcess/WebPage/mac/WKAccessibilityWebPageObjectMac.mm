@@ -42,7 +42,6 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageOverlayController.h>
-#import <WebCore/PlatformScreen.h>
 #import <WebCore/ScrollView.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
@@ -186,7 +185,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [self accessibilityAttributePositionValue];
     
     if ([attribute isEqualToString:NSAccessibilityPrimaryScreenHeightAttribute])
-        return @(WebCore::screenRectForPrimaryScreen().size().height());
+        return [[self accessibilityRootObjectWrapper] accessibilityAttributeValue:attribute];
     
     if ([attribute isEqualToString:NSAccessibilitySizeAttribute])
         return [self accessibilityAttributeSizeValue];
