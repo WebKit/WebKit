@@ -1,3 +1,14 @@
+2021-04-14  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Unskip typedarray-functions-with-neutered.js on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=224428
+
+        Unreviewed test gardening.
+
+        This appears to no longer fail.
+
+        * stress/typedarray-functions-with-neutered.js:
+
 2021-04-13  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Unskip stress/intl-displaynames.js on ARM
