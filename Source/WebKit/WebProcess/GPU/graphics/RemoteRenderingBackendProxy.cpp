@@ -55,30 +55,42 @@ RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(WebPage& webPage)
         webPage.identifier()
     }
 {
-    connectToGPUProcess();
 }
 
 RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
 {
+    if (!m_gpuProcessConnection)
+        return;
+
     // Un-register itself as a MessageReceiver.
-    IPC::MessageReceiverMap& messageReceiverMap = WebProcess::singleton().ensureGPUProcessConnection().messageReceiverMap();
-    messageReceiverMap.removeMessageReceiver(*this);
+    m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(*this);
 
     // Release the RemoteRenderingBackend.
     send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(renderingBackendIdentifier()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void RemoteRenderingBackendProxy::connectToGPUProcess()
+GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
 {
-    auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
-    connection.addClient(*this);
-    connection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), renderingBackendIdentifier().toUInt64(), *this);
-    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    if (!m_gpuProcessConnection) {
+        auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
+        gpuProcessConnection.addClient(*this);
+        gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), renderingBackendIdentifier().toUInt64(), *this);
+        gpuProcessConnection.connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        m_gpuProcessConnection = makeWeakPtr(gpuProcessConnection);
+    }
+    return *m_gpuProcessConnection;
 }
 
-void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
+void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnection& previousConnection)
 {
-    connectToGPUProcess();
+    previousConnection.removeClient(*this);
+    m_gpuProcessConnection = nullptr;
+
+    m_identifiersOfReusableHandles.clear();
+    m_sharedDisplayListHandles.clear();
+    m_currentDestinationImageBufferIdentifier = WTF::nullopt;
+    m_deferredWakeupMessageArguments = WTF::nullopt;
+    m_remainingItemsToAppendBeforeSendingWakeup = 0;
 
     for (auto& imageBuffer : m_remoteResourceCacheProxy.imageBuffers().values()) {
         if (!imageBuffer)
@@ -88,22 +100,9 @@ void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
     }
 }
 
-void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnection& previousConnection)
-{
-    previousConnection.removeClient(*this);
-
-    m_identifiersOfReusableHandles.clear();
-    m_sharedDisplayListHandles.clear();
-    m_currentDestinationImageBufferIdentifier = WTF::nullopt;
-    m_deferredWakeupMessageArguments = WTF::nullopt;
-    m_remainingItemsToAppendBeforeSendingWakeup = 0;
-
-    reestablishGPUProcessConnection();
-}
-
 IPC::Connection* RemoteRenderingBackendProxy::messageSenderConnection() const
 {
-    return &WebProcess::singleton().ensureGPUProcessConnection().connection();
+    return &const_cast<RemoteRenderingBackendProxy&>(*this).ensureGPUProcessConnection().connection();
 }
 
 uint64_t RemoteRenderingBackendProxy::messageSenderDestinationID() const
@@ -113,7 +112,7 @@ uint64_t RemoteRenderingBackendProxy::messageSenderDestinationID() const
 
 RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
 {
-    Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+    auto connection = makeRefPtr(messageSenderConnection());
     if (!connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives))
         return DidReceiveBackendCreationResult::TimeoutOrIPCFailure;
     return DidReceiveBackendCreationResult::ReceivedAnyResponse;
@@ -121,7 +120,7 @@ RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBack
 
 bool RemoteRenderingBackendProxy::waitForDidFlush()
 {
-    Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+    auto connection = makeRefPtr(messageSenderConnection());
     return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 

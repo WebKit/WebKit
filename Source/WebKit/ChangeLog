@@ -1,5 +1,30 @@
 2021-04-13  Chris Dumez  <cdumez@apple.com>
 
+        RemoteRenderingBackendProxy should only relaunch the GPUProcess if it actually needs it
+        https://bugs.webkit.org/show_bug.cgi?id=224516
+
+        Reviewed by Geoff Garen.
+
+        Previously, RemoteRenderingBackendProxy would launch the GPUProcess as soon as it was
+        constructed. This went against the goals of r275887 to delay the GPUProcess launch
+        until it is actually needed. Also, in case a a GPUProcess crash/termination,
+        RemoteRenderingBackendProxy would relaunch the GPUProcess right away, even if it
+        did not need it (No live ImageBuffers). This patch addresses both issues.
+
+        This patch is a pre-requirement for terminating the GPUProcess on memory pressure when
+        it is not used by any tabs.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy):
+        (WebKit::RemoteRenderingBackendProxy::ensureGPUProcessConnection):
+        (WebKit::RemoteRenderingBackendProxy::gpuProcessConnectionDidClose):
+        (WebKit::RemoteRenderingBackendProxy::messageSenderConnection const):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend):
+        (WebKit::RemoteRenderingBackendProxy::waitForDidFlush):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+
+2021-04-13  Chris Dumez  <cdumez@apple.com>
+
         Stop requiring a RemoteRenderingBackend for visibility propagation views
         https://bugs.webkit.org/show_bug.cgi?id=224513
 
