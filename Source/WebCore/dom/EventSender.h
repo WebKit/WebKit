@@ -27,7 +27,6 @@
 
 #include "Timer.h"
 #include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -55,8 +54,8 @@ private:
 
     AtomString m_eventType;
     Timer m_timer;
-    Vector<WeakPtr<T>> m_dispatchSoonList;
-    Vector<WeakPtr<T>> m_dispatchingList;
+    Vector<T*> m_dispatchSoonList;
+    Vector<T*> m_dispatchingList;
 };
 
 template<typename T> EventSender<T>::EventSender(const AtomString& eventType)
@@ -67,7 +66,7 @@ template<typename T> EventSender<T>::EventSender(const AtomString& eventType)
 
 template<typename T> void EventSender<T>::dispatchEventSoon(T& sender)
 {
-    m_dispatchSoonList.append(makeWeakPtr(sender));
+    m_dispatchSoonList.append(&sender);
     if (!m_timer.isActive())
         m_timer.startOneShot(0_s);
 }
@@ -100,7 +99,7 @@ template<typename T> void EventSender<T>::dispatchPendingEvents(Page* page)
 
     m_dispatchingList.swap(m_dispatchSoonList);
     for (auto& event : m_dispatchingList) {
-        if (WeakPtr<T> sender = event) {
+        if (T* sender = event) {
             event = nullptr;
             if (!page || sender->document().page() == page)
                 sender->dispatchPendingEvent(this);

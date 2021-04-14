@@ -42,7 +42,7 @@ typedef EventSender<ImageLoader> ImageEventSender;
 
 enum class RelevantMutation : bool { Yes, No };
 
-class ImageLoader : public CachedImageClient, public CanMakeWeakPtr<ImageLoader> {
+class ImageLoader : public CachedImageClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~ImageLoader();
