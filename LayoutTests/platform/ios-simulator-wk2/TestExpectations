@@ -168,3 +168,5 @@ webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Fail
 # webkit.org/b/224558 The following two page-cache tests are flakey crasing:
 webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
 http/tests/navigation/page-cache-mediastream.html [ Pass Crash ]
+
+webkit.org/b/224566 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Pass Crash ]

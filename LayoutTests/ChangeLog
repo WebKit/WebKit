@@ -1,5 +1,14 @@
 2021-04-14  Robert Jenner  <jenner@apple.com>
 
+        [ wk2 ] http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=224566
+
+        Unrviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updating test expectations to Pass Crash, while test is reviewed.
+
+2021-04-14  Robert Jenner  <jenner@apple.com>
+
         [ wk2 ] 2 page-cache layout-tests are flakey crashing
         https://bugs.webkit.org/show_bug.cgi?id=224558
 
