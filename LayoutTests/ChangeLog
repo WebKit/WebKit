@@ -1,3 +1,14 @@
+2021-04-13  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] MediaSource.addSourceBuffer() will throw if given the same parameter as a previous call to HTMLMediaElement.canPlayType()
+        https://bugs.webkit.org/show_bug.cgi?id=224273
+        <rdar://74805071>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-addsourcebuffer-after-canplaytype-expected.txt: Added.
+        * media/media-source/media-source-addsourcebuffer-after-canplaytype.html: Added.
+
 2021-04-13  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Skip sframe tests added in r275656 and r275874.

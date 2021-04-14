@@ -1,3 +1,26 @@
+2021-04-13  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP] MediaSource.addSourceBuffer() will throw if given the same parameter as a previous call to HTMLMediaElement.canPlayType()
+        https://bugs.webkit.org/show_bug.cgi?id=224273
+        <rdar://74805071>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-addsourcebuffer-after-canplaytype.html
+
+        RemoteMediaPlayerMIMETypeCache will receive requests to verify whether it can handle a MIME/codec combination,
+        as well as whether this indicates a MediaStream, MSE source, or neither. If a cache for the MSE back-end receives
+        a query for a MIME type, but the query parameters indicate this is not a MSE source, it will say no and cache the
+        response. However the cache is keyed solely on the MIME/codec, so when a subsequent call to create a SourceBuffer
+        hits the cache entry, it thinks it will be unable to handle the MIME and rejects.
+
+        Make the mime-type cache triple keyed: use both the raw ContentType (MIME & codecs) as well as the flags stating
+        whether the source is a MediaStream, MSE, or neither.
+
+        * WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.cpp:
+        (WebKit::RemoteMediaPlayerMIMETypeCache::supportsTypeAndCodecs):
+        * WebProcess/GPU/media/RemoteMediaPlayerMIMETypeCache.h:
+
 2021-04-13  Ada Chan  <ada.chan@apple.com>
 
         Implement PlatformXRSystem::xrCoordinator() for USE(APPLE_INTERNAL_SDK)
