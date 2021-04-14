@@ -96,77 +96,10 @@ public:
     bool tracksDrawingItemExtents() const { return m_tracksDrawingItemExtents; }
     WEBCORE_EXPORT void setTracksDrawingItemExtents(bool);
 
-    class iterator {
-    public:
-        enum class ImmediatelyMoveToEnd { No, Yes };
-        iterator(const DisplayList& displayList, ImmediatelyMoveToEnd immediatelyMoveToEnd = ImmediatelyMoveToEnd::No)
-            : m_displayList(displayList)
-        {
-            if (immediatelyMoveToEnd == ImmediatelyMoveToEnd::Yes)
-                moveToEnd();
-            else {
-                moveCursorToStartOfCurrentBuffer();
-                updateCurrentItem();
-            }
-        }
+    class Iterator;
 
-        ~iterator()
-        {
-            clearCurrentItem();
-        }
-
-        bool operator==(const iterator& other) { return &m_displayList == &other.m_displayList && m_cursor == other.m_cursor; }
-        bool operator!=(const iterator& other) { return !(*this == other); }
-        void operator++() { advance(); }
-
-        struct Value {
-            ItemHandle item;
-            Optional<FloatRect> extent;
-            size_t itemSizeInBuffer { 0 };
-        };
-
-        Optional<Value> operator*() const
-        {
-            if (!m_isValid)
-                return WTF::nullopt;
-            return {{
-                ItemHandle { m_currentBufferForItem },
-                m_currentExtent,
-                m_currentItemSizeInBuffer,
-            }};
-        }
-
-    private:
-        static constexpr size_t sizeOfFixedBufferForCurrentItem = 256;
-
-        WEBCORE_EXPORT void moveCursorToStartOfCurrentBuffer();
-        WEBCORE_EXPORT void moveToEnd();
-        WEBCORE_EXPORT void clearCurrentItem();
-        WEBCORE_EXPORT void updateCurrentItem();
-        WEBCORE_EXPORT void advance();
-
-        enum class ExtentUpdateResult : bool { Failure, Success };
-        ExtentUpdateResult updateCurrentDrawingItemExtent(ItemType);
-
-        bool atEnd() const;
-
-        ItemBuffer* itemBuffer() const { return m_displayList.itemBufferIfExists(); }
-
-        const DisplayList& m_displayList;
-        uint8_t* m_cursor { nullptr };
-        size_t m_readOnlyBufferIndex { 0 };
-        size_t m_drawingItemIndex { 0 };
-        uint8_t* m_currentEndOfBuffer { nullptr };
-
-        uint8_t m_fixedBufferForCurrentItem[sizeOfFixedBufferForCurrentItem] { 0 };
-        uint8_t* m_currentBufferForItem { nullptr };
-        Optional<FloatRect> m_currentExtent;
-        size_t m_currentItemSizeInBuffer { 0 };
-        bool m_isValid { true };
-    };
-
-    iterator begin() const { return { *this }; }
-    iterator end() const { return { *this, iterator::ImmediatelyMoveToEnd::Yes }; }
+    WEBCORE_EXPORT Iterator begin() const;
+    WEBCORE_EXPORT Iterator end() const;
 
 private:
     ItemBuffer* itemBufferIfExists() const { return m_items.get(); }

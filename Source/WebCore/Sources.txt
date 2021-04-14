@@ -2026,6 +2026,7 @@ platform/graphics/displaylists/DisplayListDrawingContext.cpp
 platform/graphics/displaylists/DisplayListItems.cpp
 platform/graphics/displaylists/DisplayListItemBuffer.cpp
 platform/graphics/displaylists/DisplayListItemType.cpp
+platform/graphics/displaylists/DisplayListIterator.cpp
 platform/graphics/displaylists/DisplayListRecorder.cpp
 platform/graphics/displaylists/DisplayListReplayer.cpp
 platform/graphics/displaylists/InMemoryDisplayList.cpp

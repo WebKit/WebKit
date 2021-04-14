@@ -1,3 +1,57 @@
+2021-04-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 4: Move DisplayList::Iterator to its own .h/.cpp files
+        https://bugs.webkit.org/show_bug.cgi?id=224146
+
+        Reviewed by Wenson Hsieh.
+
+        This doesn't actually change any lines of code; it just moves code into different files.
+        This patch isn't strictly necessary, but I think it helps, because the iterator contains
+        a non-trivial amount of logic.
+
+        No new tests because there is no behavior change.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::begin const):
+        (WebCore::DisplayList::DisplayList::end const):
+        (WebCore::DisplayList::DisplayList::iterator::atEnd const): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::updateCurrentDrawingItemExtent): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::updateCurrentItem): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::advance): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::clearCurrentItem): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::moveToEnd): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::moveCursorToStartOfCurrentBuffer): Deleted.
+        * platform/graphics/displaylists/DisplayList.h:
+        (WebCore::DisplayList::DisplayList::iterator::iterator): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::~iterator): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::operator==): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::operator!=): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::operator++): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::operator* const): Deleted.
+        (WebCore::DisplayList::DisplayList::iterator::itemBuffer const): Deleted.
+        (WebCore::DisplayList::DisplayList::begin const): Deleted.
+        (WebCore::DisplayList::DisplayList::end const): Deleted.
+        * platform/graphics/displaylists/DisplayListIterator.cpp: Added.
+        (WebCore::DisplayList::DisplayList::Iterator::atEnd const):
+        (WebCore::DisplayList::DisplayList::Iterator::updateCurrentDrawingItemExtent):
+        (WebCore::DisplayList::DisplayList::Iterator::updateCurrentItem):
+        (WebCore::DisplayList::DisplayList::Iterator::advance):
+        (WebCore::DisplayList::DisplayList::Iterator::clearCurrentItem):
+        (WebCore::DisplayList::DisplayList::Iterator::moveToEnd):
+        (WebCore::DisplayList::DisplayList::Iterator::moveCursorToStartOfCurrentBuffer):
+        * platform/graphics/displaylists/DisplayListIterator.h: Added.
+        (WebCore::DisplayList::DisplayList::Iterator::Iterator):
+        (WebCore::DisplayList::DisplayList::Iterator::~Iterator):
+        (WebCore::DisplayList::DisplayList::Iterator::operator==):
+        (WebCore::DisplayList::DisplayList::Iterator::operator!=):
+        (WebCore::DisplayList::DisplayList::Iterator::operator++):
+        (WebCore::DisplayList::DisplayList::Iterator::operator* const):
+        (WebCore::DisplayList::DisplayList::Iterator::itemBuffer const):
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+
 2021-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Disable YouTube Flash and QuickTime plug in replacements on iOS

@@ -27,6 +27,7 @@
 
 #include <WebCore/DisplayList.h>
 #include <WebCore/DisplayListItems.h>
+#include <WebCore/DisplayListIterator.h>
 #include <WebCore/Gradient.h>
 #include <WebCore/InMemoryDisplayList.h>
 

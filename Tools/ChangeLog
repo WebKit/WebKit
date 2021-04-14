@@ -1,3 +1,12 @@
+2021-04-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [GPU Process] Simplify DisplayList::Iterator part 4: Move DisplayList::Iterator to its own .h/.cpp files
+        https://bugs.webkit.org/show_bug.cgi?id=224146
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp:
+
 2021-04-13  Alex Christensen  <achristensen@webkit.org>
 
         Remove support for NPAPI plugins in WebView
