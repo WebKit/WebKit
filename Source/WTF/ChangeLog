@@ -1,5 +1,15 @@
 2021-04-14  Alex Christensen  <achristensen@webkit.org>
 
+        Revert important part of r275948
+        https://bugs.webkit.org/show_bug.cgi?id=224381
+
+        It caused an internal build failure.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
         Reduce maximum HashTable entry size to 128 bytes
         https://bugs.webkit.org/show_bug.cgi?id=224381
 
