@@ -158,9 +158,9 @@ TEST(WebKit, SOCKS5)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
 
-TEST(WebKit, HTTPProxyAuthentication)
+static TCPServer proxyAuthenticationServer()
 {
-    TCPServer server([] (int socket) {
+    return TCPServer([] (int socket) {
         auto requestShouldContain = [] (const auto& request, const char* str) {
             EXPECT_TRUE(strnstr(reinterpret_cast<const char*>(request.data()), str, request.size()));
         };
@@ -185,7 +185,10 @@ TEST(WebKit, HTTPProxyAuthentication)
 
         TCPServer::startSecureConnection(socket, TCPServer::respondWithOK);
     });
-    
+}
+
+static std::pair<RetainPtr<WKWebView>, RetainPtr<ProxyDelegate>> webViewAndDelegate(const TCPServer& server)
+{
     auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
     [storeConfiguration setProxyConfiguration:@{
         (NSString *)kCFStreamPropertyHTTPSProxyHost: @"127.0.0.1",
@@ -200,9 +203,25 @@ TEST(WebKit, HTTPProxyAuthentication)
     auto delegate = adoptNS([ProxyDelegate new]);
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
+    return { webView, delegate };
+}
+
+TEST(WebKit, HTTPProxyAuthentication)
+{
+    auto server = proxyAuthenticationServer();
+    auto [webView, delegate] = webViewAndDelegate(server);
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/"]]];
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
+}
+
+TEST(WebKit, HTTPProxyAuthenticationCrossOrigin)
+{
+    auto server = proxyAuthenticationServer();
+    auto [webView, delegate] = webViewAndDelegate(server);
+
+    [webView loadHTMLString:@"<script>fetch('https://example.com/',{mode:'no-cors'}).then(()=>{alert('fetched successfully!')}).catch(()=>{alert('failure!')})</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    EXPECT_WK_STREQ([delegate waitForAlert], "fetched successfully!");
 }
 
 TEST(WebKit, SecureProxyConnection)

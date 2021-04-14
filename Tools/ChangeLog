@@ -1,3 +1,15 @@
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Don't block proxy authentication challenges
+        https://bugs.webkit.org/show_bug.cgi?id=224564
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Proxy.mm:
+        (TestWebKitAPI::proxyAuthenticationServer):
+        (TestWebKitAPI::webViewAndDelegate):
+        (TestWebKitAPI::TEST):
+
 2021-04-14  Jonathan Bedard  <jbedard@apple.com>
 
         [GitHub] Add script to verify integrity of the mirror

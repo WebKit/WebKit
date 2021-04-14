@@ -1,3 +1,21 @@
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Don't block proxy authentication challenges
+        https://bugs.webkit.org/show_bug.cgi?id=224564
+        <rdar://76542907>
+
+        Reviewed by Brady Eidson.
+
+        You have to use SPI to get WebKit to tell CFNetwork to not handle proxy authentication by default,
+        but if you do it only works for first-party requests.  Our challenge blocking to prevent cross-site fetches from
+        asking for basic auth credentials should not block challenges for proxy authentication.  The radar has an application
+        that wants to handle them.
+
+        Covered by an API test.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::didReceiveChallenge):
+
 2021-04-14  Don Olmstead  <don.olmstead@sony.com>
 
         [GPUP] RemoteGraphicsContextsGL shouldn't be referenced when ENABLE_WEBGL is off
