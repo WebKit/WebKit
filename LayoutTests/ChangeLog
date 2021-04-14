@@ -1,5 +1,19 @@
 2021-04-13  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Update baselines after r275515.
+
+        r275515 updated several general baselines that resulted into test
+        failures for GTK. Emit new baselines for GTK. Other pre-existing GTK
+        baselines just required an update.
+
+        * platform/glib/tables/mozilla/bugs/bug113424-expected.txt:
+        * platform/gtk/fast/css/empty-inline-003-quirksmode-expected.txt: Added.
+        * platform/gtk/fast/lists/marker-before-empty-inline-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/orthogonal-flex-item-crash-expected.txt: Added.
+        * platform/gtk/imported/w3c/web-platform-tests/innerText/getter-expected.txt: Added.
+
+2021-04-13  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Several 'editing/selections' tests are flaky after r275810.
 
         * platform/gtk/TestExpectations:
