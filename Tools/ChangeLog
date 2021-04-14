@@ -1,3 +1,14 @@
+2021-04-14  Youenn Fablet  <youenn@apple.com>
+
+        Update WKPageSet implementation according new MediaProducer::MutedState values
+        https://bugs.webkit.org/show_bug.cgi?id=224548
+
+        Reviewed by Eric Carlson.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (TestWebKitAPI::doCaptureMuteTest):
+        (TestWebKitAPI::TEST):
+
 2021-04-14  Alex Christensen  <achristensen@webkit.org>
 
         Don't block proxy authentication challenges

@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import "UserMediaCaptureUIDelegate.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -83,6 +84,10 @@ static bool done;
 }
 @end
 
+@interface WKWebView ()
+- (WKPageRef)_pageForTesting;
+@end
+
 namespace TestWebKitAPI {
 
 static String wkMediaCaptureStateString(_WKMediaCaptureStateDeprecated flags)
@@ -123,7 +128,7 @@ bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprecated ex
     return false;
 }
 
-TEST(WebKit2, CaptureMute)
+void doCaptureMuteTest(const Function<void(TestWKWebView*, _WKMediaMutedState)>& setPageMuted)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -140,9 +145,9 @@ TEST(WebKit2, CaptureMute)
     [webView loadTestPageNamed:@"getUserMedia"];
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
-    [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
+    setPageMuted(webView.get(), _WKMediaCaptureDevicesMuted);
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedCamera));
-    [webView _setPageMuted: _WKMediaNoneMuted];
+    setPageMuted(webView.get(), _WKMediaNoneMuted);
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
@@ -150,12 +155,12 @@ TEST(WebKit2, CaptureMute)
 
     [webView stringByEvaluatingJavaScript:@"captureAudio()"];
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveMicrophone));
-    [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
+    setPageMuted(webView.get(), _WKMediaCaptureDevicesMuted);
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedMicrophone));
-    [webView _setPageMuted: _WKMediaNoneMuted];
+    setPageMuted(webView.get(), _WKMediaNoneMuted);
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveMicrophone));
 
-    [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
+    setPageMuted(webView.get(), _WKMediaCaptureDevicesMuted);
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedMicrophone));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
@@ -163,13 +168,27 @@ TEST(WebKit2, CaptureMute)
 
     [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo()"];
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera | _WKMediaCaptureStateDeprecatedActiveMicrophone));
-    [webView _setPageMuted: _WKMediaCaptureDevicesMuted];
+    setPageMuted(webView.get(), _WKMediaCaptureDevicesMuted);
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedMutedCamera | _WKMediaCaptureStateDeprecatedMutedMicrophone));
-    [webView _setPageMuted: _WKMediaNoneMuted];
+    setPageMuted(webView.get(), _WKMediaNoneMuted);
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedActiveCamera | _WKMediaCaptureStateDeprecatedActiveMicrophone));
 
     [webView stringByEvaluatingJavaScript:@"stop()"];
     EXPECT_TRUE(waitUntilCaptureState(webView.get(), _WKMediaCaptureStateDeprecatedNone));
+}
+
+TEST(WebKit2, CaptureMute)
+{
+    doCaptureMuteTest([](auto* webView, auto state) {
+        [webView _setPageMuted: state];
+    });
+}
+
+TEST(WebKit2, CaptureMute2)
+{
+    doCaptureMuteTest([](auto* webView, auto state) {
+        WKPageSetMuted([webView _pageForTesting], state);
+    });
 }
 
 TEST(WebKit2, CaptureStop)
