@@ -293,14 +293,13 @@ const HashSet<SVGElement*>& SVGElement::instances() const
     return m_svgRareData->instances();
 }
 
-bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
+Optional<FloatRect> SVGElement::getBoundingBox() const
 {
-    // FIXME: should retrieve the value from the associated RenderObject.
     if (is<SVGGraphicsElement>(*this)) {
-        rect = downcast<SVGGraphicsElement>(*this).getBBox(styleUpdateStrategy);
-        return true;
+        if (auto renderer = this->renderer())
+            return renderer->objectBoundingBox();
     }
-    return false;
+    return WTF::nullopt;
 }
 
 SVGElement* SVGElement::correspondingElement() const
