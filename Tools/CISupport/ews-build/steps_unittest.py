@@ -4063,6 +4063,17 @@ class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
+    def get_patch(self, title='Patch', obsolete=0):
+        return json.loads('''{{"bug_id": 224460,
+                     "creator":"aakash_jain@apple.com",
+                     "data": "patch-contents",
+                     "file_name":"bug-224460-20210412192105.patch",
+                     "flags": [{{"creation_date" : "2021-04-12T23:21:06Z", "id": 445872, "modification_date": "2021-04-12T23:55:36Z", "name": "review", "setter": "ap@webkit.org", "status": "+", "type_id": 1}}],
+                     "id": 425806,
+                     "is_obsolete": {},
+                     "is_patch": 1,
+                     "summary": "{}"}}'''.format(obsolete, title))
+
     def test_skipped(self):
         self.setupStep(ValidatePatch())
         self.setProperty('patch_id', '1234')
@@ -4070,6 +4081,42 @@ class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('skip_validation', True)
         self.expectOutcome(result=SKIPPED, state_string='Validated patch (skipped)')
         return self.runStep()
+
+    def test_success(self):
+        self.setupStep(ValidatePatch(verifyBugClosed=False))
+        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch()
+        self.setProperty('patch_id', '425806')
+        self.expectOutcome(result=SUCCESS, state_string='Validated patch')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+    def test_obsolete_patch(self):
+        self.setupStep(ValidatePatch(verifyBugClosed=False))
+        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(obsolete=1)
+        self.setProperty('patch_id', '425806')
+        self.expectOutcome(result=FAILURE, state_string='Patch 425806 is obsolete')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+    def test_revert_patch_trigger_fast_cq_mode(self):
+        self.setupStep(ValidatePatch(verifyBugClosed=False))
+        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(title='REVERT OF r123456')
+        self.setProperty('patch_id', '425806')
+        self.expectOutcome(result=SUCCESS, state_string='Validated patch')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), True, 'fast_commit_queue is not set')
+        return rc
+
+    def test_fast_cq_patch_trigger_fast_cq_mode(self):
+        self.setupStep(ValidatePatch(verifyBugClosed=False))
+        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(title='[fast-cq] Patch')
+        self.setProperty('patch_id', '425806')
+        self.expectOutcome(result=SUCCESS, state_string='Validated patch')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), True, 'fast_commit_queue is not set')
+        return rc
 
 
 class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):

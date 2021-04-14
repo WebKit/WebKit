@@ -528,7 +528,7 @@ class BugzillaMixin(object):
     addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
-    revert_preamble = 'REVERT of r'
+    revert_preamble = 'revert of r'
     fast_cq_preamble = '[fast-cq]'
 
     @defer.inlineCallbacks
