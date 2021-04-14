@@ -1,3 +1,19 @@
+2021-04-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Skip sframe tests added in r275656 and r275874.
+
+        Currently SFrames are not supported in GTK and WPE ports.
+
+        * platform/glib/TestExpectations:
+
+2021-04-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Skip sframe tests added in r275656 and r275874.
+
+        Currently SFrames are not supported in GTK and WPE ports.
+
+        * platform/glib/TestExpectations:
+
 2021-04-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Table caption jumps to the bottom of the table after simplified table relayout

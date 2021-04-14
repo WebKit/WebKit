@@ -1569,6 +1569,8 @@ webkit.org/b/136224 fast/speechrecognition [ Skip ]
 http/wpt/webrtc/sframe-transform.html [ Skip ]
 http/wpt/webrtc/sframe-transform-in-worker.html [ Skip ]
 webrtc/audio-sframe.html [ Skip ]
+webrtc/sframe-test-vectors.html [ Skip ]
+webrtc/sframe-transform-buffer-source.html [ Skip ]
 webrtc/video-sframe.html [ Skip ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
