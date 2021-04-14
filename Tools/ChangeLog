@@ -1,3 +1,16 @@
+2021-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK4] Use a while loop in PlatformWebView::dismissAllPopupMenus()
+        https://bugs.webkit.org/show_bug.cgi?id=224534
+
+        Reviewed by Philippe Normand.
+
+        The child might be destroyed during the loop iteration. Using a while loop we ensure we get the next sibling
+        before the current child is destroyed.
+
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::dismissAllPopupMenus):
+
 2021-04-14  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Add a property to the WebKitWebView indicating whether the web process is responsive
