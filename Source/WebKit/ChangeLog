@@ -1,3 +1,19 @@
+2021-04-14  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r275918. rdar://problem/76648077
+
+    Unreviewed build fix after r275898; remove unnecessary files from the project.
+    
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275918 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-13  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix after r275898; remove unnecessary files from the project.
+
+            * WebKit.xcodeproj/project.pbxproj:
+
 2021-04-13  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r275898. rdar://problem/76520529
