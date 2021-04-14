@@ -43,10 +43,16 @@ using RequestDomain = WebCore::RegistrableDomain;
 #if PLATFORM(COCOA)
 struct AppBoundNavigationTestingData {
 
+    void setDidPerformSoftUpdate()
+    {
+        didPerformSoftUpdate = true;
+    }
+    
     void clearAppBoundNavigationDataTesting()
     {
         hasLoadedAppBoundRequestTesting = false;
         hasLoadedNonAppBoundRequestTesting = false;
+        didPerformSoftUpdate = false;
         contextData.clear();
     }
 
@@ -60,6 +66,7 @@ struct AppBoundNavigationTestingData {
     {
         encoder << hasLoadedAppBoundRequestTesting;
         encoder << hasLoadedNonAppBoundRequestTesting;
+        encoder << didPerformSoftUpdate;
         encoder << contextData;
     }
 
@@ -74,17 +81,23 @@ struct AppBoundNavigationTestingData {
         decoder >> hasLoadedNonAppBoundRequestTesting;
         if (!hasLoadedNonAppBoundRequestTesting)
             return WTF::nullopt;
+        
+        Optional<bool> didPerformSoftUpdate;
+        decoder >> didPerformSoftUpdate;
+        if (!didPerformSoftUpdate)
+            return WTF::nullopt;
 
         Optional<HashMap<RequestDomain, ContextDomain>> contextData;
         decoder >> contextData;
         if (!contextData)
             return WTF::nullopt;
 
-        return {{ *hasLoadedAppBoundRequestTesting, *hasLoadedNonAppBoundRequestTesting, WTFMove(*contextData) }};
+        return {{ *hasLoadedAppBoundRequestTesting, *hasLoadedNonAppBoundRequestTesting, *didPerformSoftUpdate, WTFMove(*contextData) }};
     }
 
     bool hasLoadedAppBoundRequestTesting { false };
     bool hasLoadedNonAppBoundRequestTesting { false };
+    bool didPerformSoftUpdate { false };
     HashMap<RequestDomain, ContextDomain> contextData;
 };
 #endif

@@ -1513,6 +1513,11 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
 }
 #endif
 
+bool NetworkResourceLoader::isAppBound()
+{
+    return m_parameters.request.isAppBound();
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

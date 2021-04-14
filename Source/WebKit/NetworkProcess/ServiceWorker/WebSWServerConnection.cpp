@@ -187,7 +187,8 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
     bool shouldSoftUpdate = registration && registration->shouldSoftUpdate(loader.parameters().options);
     if (worker->shouldSkipFetchEvent()) {
         if (shouldSoftUpdate)
-            registration->scheduleSoftUpdate();
+            registration->scheduleSoftUpdate(loader.isAppBound() ? WebCore::IsAppBound::Yes : WebCore::IsAppBound::No);
+
         return nullptr;
     }
 

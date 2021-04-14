@@ -1,3 +1,36 @@
+2021-04-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Service worker soft-update loads not being marked app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=223200
+        <rdar://problem/75438555>
+
+        Reviewed by Youenn Fablet.
+
+        We should pass the app-bound request value when doing a soft update.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::isAppBound):
+        * NetworkProcess/NetworkResourceLoader.h:
+        Make a helper function to get the request's app-bound value.
+
+        * NetworkProcess/ServiceWorker/ServiceWorkerFetchTask.cpp:
+        (WebKit::ServiceWorkerFetchTask::softUpdateIfNeeded):
+        * NetworkProcess/ServiceWorker/ServiceWorkerSoftUpdateLoader.cpp:
+        (WebKit::ServiceWorkerSoftUpdateLoader::loadFromNetwork):
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::createFetchTask):
+        * Shared/NavigatingToAppBoundDomain.h:
+        (WebKit::AppBoundNavigationTestingData::setDidPerformSoftUpdate):
+        (WebKit::AppBoundNavigationTestingData::clearAppBoundNavigationDataTesting):
+        (WebKit::AppBoundNavigationTestingData::encode const):
+        (WebKit::AppBoundNavigationTestingData::decode):
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _appBoundNavigationData:]):
+        Update testing struct to make sure a soft-update occurred before
+        checking app-bound data. This accounts for the delay between the
+        page load and the soft update.
+
 2021-04-14  Alex Christensen  <achristensen@webkit.org>
 
         Reduce maximum HashTable entry size to 128 bytes

@@ -129,6 +129,10 @@ void ServiceWorkerSoftUpdateLoader::loadFromNetwork(NetworkSession& session, Res
     parameters.request = WTFMove(request);
     m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), session);
     m_networkLoad->start();
+
+#if PLATFORM(COCOA)
+    session.appBoundNavigationTestingData().setDidPerformSoftUpdate();
+#endif
 }
 
 void ServiceWorkerSoftUpdateLoader::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&&, ResourceResponse&&)

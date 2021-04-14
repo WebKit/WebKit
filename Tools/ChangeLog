@@ -1,3 +1,18 @@
+2021-04-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Service worker soft-update loads not being marked app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=223200
+        <rdar://problem/75438555>
+
+        Reviewed by Youenn Fablet.
+
+        API test coverage. Refactor to avoid code duplication in other tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/InAppBrowserPrivacy.mm:
+        A soft update might be delayed after the synthetic response comes
+        back. We should wait until we receive the test data indicating that
+        a soft update has occurred before checking the app-bound values.
+
 2021-04-14  Aakash Jain  <aakash_jain@apple.com>
 
         Add support for using local-worker for build.webkit.org

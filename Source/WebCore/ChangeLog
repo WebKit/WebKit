@@ -1,3 +1,30 @@
+2021-04-14  Kate Cheney  <katherine_cheney@apple.com>
+
+        Service worker soft-update loads not being marked app-bound
+        https://bugs.webkit.org/show_bug.cgi?id=223200
+        <rdar://problem/75438555>
+
+        Reviewed by Youenn Fablet.
+
+        We need to mark requests initiated by service worker soft updates as
+        app-bound based on the last navigation. We should get this value from the
+        NetworkResourceLoader and store it in SWServerRegistration so we can
+        use it to build a new request.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::startScriptFetch):
+        * workers/service/server/SWServer.h:
+        Pass the entire SWServerRegistration to SWServer::startScriptFetch
+        now that we need more than one value from it. Move shouldRefreshCache
+        logic here instead of SWServerJobQueue::runUpdateJob.
+
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::runUpdateJob):
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::scheduleSoftUpdate):
+        * workers/service/server/SWServerRegistration.h:
+        (WebCore::SWServerRegistration::isAppBound):
+
 2021-04-14  Eric Carlson  <eric.carlson@apple.com>
 
         Allow text tracks to purge cues outside of the buffered range
