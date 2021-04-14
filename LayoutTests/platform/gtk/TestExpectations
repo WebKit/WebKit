@@ -1573,6 +1573,25 @@ webkit.org/b/224108 gamepad/gamepad-visibility-1.html [ Failure Pass ]
 
 webkit.org/b/224117 intersection-observer/intersection-observer-keeps-js-wrapper-of-target-alive.html [ Failure Pass ]
 
+webkit.org/b/224524 editing/selection/extend-after-mouse-selection.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/extend-selection-backward-at-beginning-of-line-by-sentence-granularity.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/extend-selection-backward-at-beginning-of-line-by-word-granularity.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/focus-contenteditable-iframe.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/getRangeAt.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/move-by-word-visually-across-object-element-1.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/move-by-word-visually-across-object-element-2.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/move-by-word-visually-across-object-element-3.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/select-all-user-select-none.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/select-out-of-floated-non-editable-02.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/select-out-of-floated-non-editable-07.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/select-out-of-floated-non-editable-10.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/shift-click.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/shift-click-includes-existing-selection.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/toString-1.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/user-select-all-selection.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/user-select-all-with-shift.html [ Failure Pass ]
+webkit.org/b/224524 editing/selection/user-select-all-with-single-click.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////

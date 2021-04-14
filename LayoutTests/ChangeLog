@@ -1,3 +1,9 @@
+2021-04-13  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Several 'editing/selections' tests are flaky after r275810.
+
+        * platform/gtk/TestExpectations:
+
 2021-04-13  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Mac] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html is passing
