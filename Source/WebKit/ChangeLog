@@ -1,5 +1,17 @@
 2021-04-13  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed fix after r275921 to address crashes on the iOS bots.
+
+        The crash would occur when the WebPage constructor would end up calling WebProcess::ensureGPUProcessConnection().
+        Since we're in the middle of constructing the page, the pageID has been added to m_pageMap but not the page yet.
+        ensureGPUProcessConnection() was iterating over m_pageMap and expecting pages in the map to be non-null.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        (WebKit::WebProcess::ensureGPUProcessConnection):
+
+2021-04-13  Chris Dumez  <cdumez@apple.com>
+
         RemoteRenderingBackendProxy should only relaunch the GPUProcess if it actually needs it
         https://bugs.webkit.org/show_bug.cgi?id=224516
 

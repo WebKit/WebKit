@@ -755,11 +755,12 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
     auto result = m_pageMap.add(pageID, nullptr);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
-        result.iterator->value = WebPage::create(pageID, WTFMove(parameters));
+        auto page = WebPage::create(pageID, WTFMove(parameters));
+        result.iterator->value = page.ptr();
 
 #if ENABLE(GPU_PROCESS)
         if (m_gpuProcessConnection)
-            result.iterator->value->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
+            page->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
 #endif
 
         // Balanced by an enableTermination in removeWebPage.
@@ -1215,8 +1216,11 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
 
-        for (auto& page : m_pageMap.values())
-            page->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
+        for (auto& page : m_pageMap.values()) {
+            // If page is null, then it is currently being constructed.
+            if (page)
+                page->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
+        }
     }
     
     return *m_gpuProcessConnection;
