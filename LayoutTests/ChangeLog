@@ -1,3 +1,17 @@
+2021-04-14  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in RenderBlock::addOverflowFromChildren
+        https://bugs.webkit.org/show_bug.cgi?id=223539
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regressions tests for the crash and for isOutermostSVGSVGElement().
+
+        * svg/foreignObject/svg-child-of-foreign-object-in-shadow-tree-crash-expected.txt: Added.
+        * svg/foreignObject/svg-child-of-foreign-object-in-shadow-tree-crash.html: Added.
+        * svg/outermost-svg-root-expected.txt: Added.
+        * svg/outermost-svg-root.html: Added.
+
 2021-04-13  Jer Noble  <jer.noble@apple.com>
 
         [GPUP] MediaSource.addSourceBuffer() will throw if given the same parameter as a previous call to HTMLMediaElement.canPlayType()
