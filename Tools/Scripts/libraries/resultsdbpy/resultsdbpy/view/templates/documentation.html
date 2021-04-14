@@ -1,5 +1,5 @@
 <!--
- Copyright (C) 2019 Apple Inc. All rights reserved.
+ Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions
@@ -86,13 +86,13 @@ const documentation = {
             documentEndpoint(
                 '/api/commits',
                 ['GET', 'POST'],
-                ['Branch', 'Limit', 'Repository', 'UUID'],
+                ['Branch', 'Limit', 'Repository', 'Ref', 'UUID'],
                 [`Endpoint for finding and registering commits. The GET behavior is identical to ${localLink(['API', '/api/commits/find'], '/api/commits/find')}. The POST behavior is identical to ${localLink(['API', '/commits/register'], '/commits/register')}.`],
             ),
             documentEndpoint(
                 '/api/commits/find',
                 ['GET'],
-                ['Branch', 'Limit', 'Repository', 'UUID'],
+                ['Branch', 'Limit', 'Repository', 'Ref', 'UUID'],
                 [`Return a list of ${localLink(['API', 'Commits'], 'commit objects')} satisfying the query. This list will be ordered, with the oldest commit first and the newest last.`],
             ),
             documentEndpoint(
@@ -134,7 +134,7 @@ const documentation = {
             documentEndpoint(
                 '/api/commits/siblings',
                 ['GET'],
-                ['Branch', 'Repository', 'UUID'],
+                ['Branch', 'Repository', 'Ref', 'UUID'],
                 [
                     `With multiple repositories, every commit has a least 1 other commit which was the tip of the tree on the other repository (or repositories) while the primary commit was the tip of it's repository. We refer to these commits as the 'sibling' commits. Given a query which refers to a single commit, this endpoint will return all sibling commits associated with that commit. The result will be a dictionary of lists formated like this:`,
                     codeBlock('{\n' + 
@@ -147,13 +147,13 @@ const documentation = {
             documentEndpoint(
                 '/api/commits/next',
                 ['GET'],
-                ['Branch', 'Repository', 'UUID'],
+                ['Branch', 'Repository', 'Ref', 'UUID'],
                 [`Return a list containing a single ${localLink(['API', 'Commits'], 'commit objects')} which occurred imiediately after the commit specified by the provided query. Note that while the next endpoint accepts the standard ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple commits`],
             ),
             documentEndpoint(
                 '/api/commits/previous',
                 ['GET'],
-                ['Branch', 'Repository', 'UUID'],
+                ['Branch', 'Repository', 'Ref', 'UUID'],
                 [`Return a list containing a single ${localLink(['API', 'Commits'], 'commit objects')} which occurred imiediately before the commit specified by the provided query. Note that while the previous endpoint accepts the standard ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple commits`],
             ),
             documentEndpoint(
@@ -169,7 +169,7 @@ const documentation = {
             documentEndpoint(
                 '/commits/info',
                 ['GET'],
-                ['Branch', 'Repository', 'UUID'],
+                ['Branch', 'Repository', 'Ref', 'UUID'],
                 [`Redirect to the source-control URL with more information about the specified commit. Note that while the info endpoint accepts the standard ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple commits`],
             ),
         ], 'Uploads': [
@@ -209,7 +209,7 @@ const documentation = {
             documentEndpoint(
                 '/api/upload',
                 ['GET', 'POST'],
-                ['Branch', 'Configuration', 'Limit', 'Repository', 'Suite', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Suite', 'Ref', 'UUID'],
                 [
                     `GET requests against the upload endpoint will return a list of ${localLink(['API', 'Uploads'], 'upload objects')}. This endpoint can be used to transfer results from one results database to another, which is especially useful for testing`,
                     `POST requests against the upload endpoint will take the uploaded file, and parse it as json, expecting an ${localLink(['API', 'Uploads'], 'upload object')}. Uploading results will register the commits associated with those results and ${localLink(['API', '/api/upload/process'], 'process the result')}. Note that the POST endpoint does not accept any query paramters.`,
@@ -218,7 +218,7 @@ const documentation = {
             documentEndpoint(
                 '/api/upload/process',
                 ['POST'],
-                ['Branch', 'Configuration', 'Limit', 'Repository', 'Suite', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Suite', 'Ref', 'UUID'],
                 [
                     `Every upload must be processed, to create individual database entries for each test result. The results database conceptually seperates this processing so that uploads can be reprocessed by a POST request to this endpoint. The parameters to this endpoint should be the same parameters you would send to the ${localLink(['API', '/api/upload'], '/api/upload')} endpoint.`,
                     `This endpoint will queue the processing and return before the processing has been completed and will return a list of dictionaries looking like this:`,
@@ -283,7 +283,7 @@ const documentation = {
             documentEndpoint(
                 '/api/results/&ltsuite&gt',
                 ['GET'],
-                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'Ref', 'UUID'],
                 [
                     `Endpoint which returns results for a specific test run. On this endpoint, results are aggregated results in a dictionary formated like this:`,
                     codeBlock('{\n' +
@@ -330,7 +330,7 @@ const documentation = {
             documentEndpoint(
                 '/api/results/&ltsuite&gt/&lttest&gt',
                 ['GET'],
-                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'Ref', 'UUID'],
                 [
                     `Access results for a specific test on a specific commit with a specific configuration. This endpoint only returns results for a single test. Each result is stored in dictionary formatted like this:`,
                     codeBlock('{\n' +
@@ -364,7 +364,7 @@ const documentation = {
             documentEndpoint(
                 '/api/failures/&ltsuite&gt',
                 ['GET'],
-                ['Aggregation', 'Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                ['Aggregation', 'Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'Ref', 'UUID'],
                 [
                     `Returns a list of tests which failed during test runs matching the specified criteria. When collapsed, these results will be a sorted list looking like this:`,
                     codeBlock('[\n' +
@@ -423,7 +423,7 @@ const documentation = {
             documentEndpoint(
                 '/api/urls',
                 ['GET'],
-                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'Ref', 'UUID'],
                 [
                     `Returns a list of dictionaries which associate ${localLink(['Query Parameters', 'Configuration'], 'configuration objects')} and ${localLink(['Query Parameters', 'UUID'], 'UUIDs')} with specific queue, worker and build links. The list is organized like this:`,
                     codeBlock('[\n' +
@@ -463,13 +463,13 @@ const documentation = {
             documentEndpoint(
                 '/urls/worker',
                 ['GET'],
-                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'Ref', 'UUID'],
                 [`Redirect to the continuous integration URL for a specific worker associated with the provided parameters. Note that while this endpoint accepts the standard ${localLink(['Query Parameters', 'Configuration'], 'configuration')} and ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple workers.`],
             ),
             documentEndpoint(
                 '/urls/build',
                 ['GET'],
-                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'UUID'],
+                ['Branch', 'Configuration', 'Limit', 'Repository', 'Time', 'Ref', 'UUID'],
                 [`Redirect to the continuous integration URL for a specific build associated with the provided parameters. Note that while this endpoint accepts the standard ${localLink(['Query Parameters', 'Configuration'], 'configuration')} and ${localLink(['Query Parameters', 'UUID'], 'UUID')} query parameters, this endpoint will return an error if the query parameters refer to multiple builds.`],
             ),
         ],
@@ -537,6 +537,16 @@ const documentation = {
             `It is also valid to define multiple tests in a single query on endpoints test support test queries, like this:`,
             codeBlock('test=test.name&test=other.name'),
             `A query like this will return test names that start with either 'test.name' or 'other.name'.`,
+        ],
+        'Ref': [
+            `Although ${localLink(['Query Parameters', 'UUID'], 'UUIDs')} are the primary mechanism by which commits are identified in the results database, many APIs allow callers to specify a more generic commit ref instead. A commit ref is a string representation of a commit that will be converted to a ${localLink(['Query Parameters', 'UUID'], 'UUID')}. This ref will be different depending on the underlying repository, but should be a commit revision, identifier or hash. Some examples of commit refs in queries are:`,
+            codeBlock('ref=r275886'),
+            codeBlock('ref=57015967fef9'),
+            codeBlock('ref=236452@main'),
+            `For both revision and identifier representations, it may be necessary to specify a repository if the results database instance has multiple repositories, because an identifier or revision may exist in both repositories.`,
+            codeBlock('ref=236452@main&repository_id=webkit'),
+            `Much like ${localLink(['Query Parameters', 'UUID'], 'UUIDs')}, commit refs can be prefixed by 'before_' and 'after_' to provide a range:`,
+            codeBlock('after_ref=22a1e116cb25&before_ref=57015967fef9'),
         ],
         'UUID': [
             `Ultimately, most data in the results database is sorted by UUID. As mentioned in the ${localLink(['API', 'Commits'], 'commits section')}, UUIDs are defined by the timestamp of a commit and the commit order, where the commit order is the order a commit appears in it's patch series. Since most commits are not in a patch series, most commits have an order of 0. Commit UUIDs are calculated with the following equation:`,
