@@ -31,6 +31,7 @@
 
 namespace JSC {
 
+template<VMTraps::DeferAction deferAction = VMTraps::DeferAction::DeferUntilEndOfScope>
 class DeferTermination {
     WTF_MAKE_NONCOPYABLE(DeferTermination);
     WTF_FORBID_HEAP_ALLOCATION;
@@ -38,16 +39,18 @@ public:
     DeferTermination(VM& vm)
         : m_vm(vm)
     {
-        m_vm.traps().deferTermination();
+        m_vm.traps().deferTermination(deferAction);
     }
     
     ~DeferTermination()
     {
-        m_vm.traps().undoDeferTermination();
+        m_vm.traps().undoDeferTermination(deferAction);
     }
 
 private:
     VM& m_vm;
 };
+
+using DeferTerminationForAWhile = DeferTermination<VMTraps::DeferAction::DeferForAWhile>;
 
 } // namespace JSC

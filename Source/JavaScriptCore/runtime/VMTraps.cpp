@@ -415,7 +415,7 @@ auto VMTraps::takeTopPriorityTrap(VMTraps::BitField mask) -> Event
     return NoEvent;
 }
 
-void VMTraps::deferTermination()
+void VMTraps::deferTermination(DeferAction)
 {
     auto locker = holdLock(*m_lock);
     m_deferTerminationCount++;
@@ -429,14 +429,17 @@ void VMTraps::deferTermination()
     }
 }
 
-void VMTraps::undoDeferTermination()
+void VMTraps::undoDeferTermination(DeferAction action)
 {
     auto locker = holdLock(*m_lock);
     ASSERT(m_deferTerminationCount > 0);
     if (--m_deferTerminationCount == 0) {
         VM& vm = this->vm();
-        if (m_suspendedTerminationException || vm.terminationInProgress())
-            vm.setException(vm.terminationException());
+        if (m_suspendedTerminationException
+            || ((action == DeferAction::DeferUntilEndOfScope) && vm.terminationInProgress()))
+            vm.throwTerminationException();
+        else if ((action == DeferAction::DeferForAWhile) && vm.terminationInProgress())
+            setTrapBit(NeedTermination); // Let the next trap check handle it.
     }
 }
 

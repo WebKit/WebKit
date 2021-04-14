@@ -191,9 +191,14 @@ public:
     bool needHandling(BitField mask) const { return m_trapBits.loadRelaxed() & mask; }
     void* trapBitsAddress() { return &m_trapBits; }
 
+    enum class DeferAction {
+        DeferForAWhile,
+        DeferUntilEndOfScope
+    };
+
     bool isDeferringTermination() const { return m_deferTerminationCount; }
-    JS_EXPORT_PRIVATE void deferTermination();
-    JS_EXPORT_PRIVATE void undoDeferTermination();
+    JS_EXPORT_PRIVATE void deferTermination(DeferAction);
+    JS_EXPORT_PRIVATE void undoDeferTermination(DeferAction);
 
     void notifyGrabAllLocks()
     {

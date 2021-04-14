@@ -1,3 +1,13 @@
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Defer TerminationExceptions when evaluating ASSERT in HashMapIml::addNormalized().
+        https://bugs.webkit.org/show_bug.cgi?id=224565
+        rdar://76645980
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/suppress-TerrminationException-in-ASSERT-in-HashMapImpl-addNormalized.js: Added.
+
 2021-04-14  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC] Unskip stress/intl-segmenter.js

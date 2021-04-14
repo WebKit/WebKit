@@ -496,10 +496,11 @@ public:
 
     ALWAYS_INLINE HashMapBucketType* addNormalized(JSGlobalObject* globalObject, JSValue key, JSValue value, uint32_t hash)
     {
+        VM& vm = getVM(globalObject);
         ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
-        ASSERT_WITH_MESSAGE(jsMapHash(globalObject, getVM(globalObject), key) == hash, "We expect hash value is what we expect.");
+        DEFER_TERMINATION_AND_ASSERT_WITH_MESSAGE(vm, jsMapHash(globalObject, getVM(globalObject), key) == hash, "We expect hash value is what we expect.");
 
-        auto* bucket = addNormalizedInternal(getVM(globalObject), key, value, hash, [&] (HashMapBucketType* bucket) {
+        auto* bucket = addNormalizedInternal(vm, key, value, hash, [&] (HashMapBucketType* bucket) {
             return !isDeleted(bucket) && areKeysEqual(globalObject, key, bucket->key());
         });
         if (shouldRehashAfterAdd())
