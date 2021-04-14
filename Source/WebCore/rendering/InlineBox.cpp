@@ -242,22 +242,6 @@ InlineBox* InlineBox::previousLeafOnLine() const
     return leaf;
 }
 
-InlineBox* InlineBox::nextLeafOnLineIgnoringLineBreak() const
-{
-    InlineBox* leaf = nextLeafOnLine();
-    if (leaf && leaf->isLineBreak())
-        return nullptr;
-    return leaf;
-}
-
-InlineBox* InlineBox::previousLeafOnLineIgnoringLineBreak() const
-{
-    InlineBox* leaf = previousLeafOnLine();
-    if (leaf && leaf->isLineBreak())
-        return nullptr;
-    return leaf;
-}
-
 RenderObject::HighlightState InlineBox::selectionState()
 {
     return renderer().selectionState();

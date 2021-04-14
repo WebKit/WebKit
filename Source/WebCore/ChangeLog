@@ -1,3 +1,15 @@
+2021-04-14  Antti Koivisto  <antti@apple.com>
+
+        Remove unused InlineBox::next/previousLeafOnLineIgnoringLineBreak()
+        https://bugs.webkit.org/show_bug.cgi?id=224542
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nextLeafOnLineIgnoringLineBreak const): Deleted.
+        (WebCore::InlineBox::previousLeafOnLineIgnoringLineBreak const): Deleted.
+        * rendering/InlineBox.h:
+
 2021-04-14  Frédéric Wang  <fwang@igalia.com>
 
         Crash in RenderBlock::addOverflowFromChildren

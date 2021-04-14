@@ -135,12 +135,6 @@ public:
     InlineBox* nextLeafOnLine() const;
     InlineBox* previousLeafOnLine() const;
 
-    // Helper functions for editing and hit-testing code.
-    // FIXME: These two functions should be moved to RenderedPosition once the code to convert between
-    // Position and inline box, offset pair is moved to RenderedPosition.
-    InlineBox* nextLeafOnLineIgnoringLineBreak() const;
-    InlineBox* previousLeafOnLineIgnoringLineBreak() const;
-
     // FIXME: Hide this once all callers are using tighter types.
     RenderObject& renderer() const { return *m_renderer; }
 
