@@ -1,3 +1,14 @@
+2021-04-14  Antti Koivisto  <antti@apple.com>
+
+        RunIterator::traverseNext/PreviousOnLineIgnoringLineBreak should skip over WBRs
+        https://bugs.webkit.org/show_bug.cgi?id=224545
+        rdar://76101143
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/editing/wbr-iterator-crash-expected.txt: Added.
+        * fast/editing/wbr-iterator-crash.html: Added.
+
 2021-04-14  Robert Jenner  <jenner@apple.com>
 
         [ wk2 ] http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html is flakey crashing

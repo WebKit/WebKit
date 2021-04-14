@@ -1,3 +1,19 @@
+2021-04-14  Antti Koivisto  <antti@apple.com>
+
+        RunIterator::traverseNext/PreviousOnLineIgnoringLineBreak should skip over WBRs
+        https://bugs.webkit.org/show_bug.cgi?id=224545
+        rdar://76101143
+
+        Reviewed by Zalan Bujtas.
+        
+        Test: fast/editing/wbr-iterator-crash.html
+
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::traverseNextOnLineIgnoringLineBreak):
+        (WebCore::LayoutIntegration::RunIterator::traversePreviousOnLineIgnoringLineBreak):
+        
+        Skip over (instead of bailing) runs with isLineBreak() set. It is true for <WBR> so there can be multiple on a line.
+
 2021-04-14  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r275948) Wrap sh::ShaderVariable into UniqueRef to fit in HashMap
