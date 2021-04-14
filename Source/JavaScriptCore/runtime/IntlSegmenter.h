@@ -75,8 +75,4 @@ private:
     Granularity m_granularity { Granularity::Grapheme };
 };
 
-// Abstraction to call ubrk_safeClone or ubrk_clone depending on ICU version.
-// This is implemented in IntlWorkaround.cpp in order to confine draft API visibility.
-UBreakIterator* cloneUBreakIterator(const UBreakIterator*, UErrorCode*);
-
 } // namespace JSC

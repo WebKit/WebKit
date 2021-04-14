@@ -29,6 +29,7 @@
 
 #include "IntlObjectInlines.h"
 #include "IntlSegmentIterator.h"
+#include "IntlWorkaround.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include <unicode/ucurr.h>
