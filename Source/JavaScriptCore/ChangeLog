@@ -1,5 +1,19 @@
 2021-04-14  Mark Lam  <mark.lam@apple.com>
 
+        Apply DeferTermination in some utility functions in the jsc shell.
+        https://bugs.webkit.org/show_bug.cgi?id=224572
+        rdar://76646089
+
+        Reviewed by Yusuke Suzuki.
+
+        This is to make sure that these functions don't get in the way of testing with
+        the watchdog.  Since these are only test utility functions, just doing the simple
+        thing of using a DeferTermination scope is the right thing to do here.
+
+        * jsc.cpp:
+
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
         Defer TerminationExceptions when evaluating ASSERT in HashMapIml::addNormalized().
         https://bugs.webkit.org/show_bug.cgi?id=224565
         rdar://76645980
