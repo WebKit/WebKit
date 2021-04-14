@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2013 Google Inc. All rights reserved.
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -368,6 +368,33 @@ ExceptionOr<void> TextTrack::removeCue(TextTrackCue& cue)
         m_client->textTrackRemoveCue(*this, cue);
 
     return { };
+}
+
+void TextTrack::removeCuesNotInTimeRanges(PlatformTimeRanges& buffered)
+{
+    ASSERT(shouldPurgeCuesFromUnbufferedRanges());
+
+    if (!m_cues)
+        return;
+
+    Vector<Ref<TextTrackCue>> toPurge;
+    for (size_t i = 0; i < m_cues->length(); ++i) {
+        auto cue = m_cues->item(i);
+        ASSERT(cue->track() == this);
+
+        PlatformTimeRanges activeCueRange { cue->startMediaTime(), cue->endMediaTime() };
+        activeCueRange.intersectWith(buffered);
+        if (!activeCueRange.length())
+            toPurge.append(*cue);
+    }
+
+    if (!toPurge.size())
+        return;
+
+    INFO_LOG(LOGIDENTIFIER, "purging ", toPurge.size());
+
+    for (auto& cue : toPurge)
+        removeCue(cue);
 }
 
 VTTRegionList& TextTrack::ensureVTTRegionList()

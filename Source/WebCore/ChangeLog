@@ -1,3 +1,39 @@
+2021-04-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow text tracks to purge cues outside of the buffered range
+        https://bugs.webkit.org/show_bug.cgi?id=224489
+
+        Reviewed by Jer Noble.
+
+        TextTrackCues associated in-band tracks live "forever" - until the video element 
+        is deleted or reloaded. This is fine for relatively short files, but not so good
+        for long lived files (eg. a very long live stream), or for timed metadata where
+        the "cue" size can be much larger than a text sample. 
+
+        Allow text tracks to opt in to purging cues who's time range does not intersect
+        with the `buffered` range, where audio and video data is also not available. Only
+        AVFoundation backed in-band tracks opt in at this time, because AVFoundation will
+        redeliver cues if a time range is played again.
+
+        Tested manually as the only way to test this currently would be with an HLS stream
+        that would have to play too long for a layout test, or with an MSE text track but
+        we won't support text tracks in MSE yet.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged): Allow tracks
+        that support purging cues to do so.
+        * html/HTMLMediaElement.h:
+
+        * html/track/InbandDataTextTrack.h: Return true for shouldPurgeCuesFromUnbufferedRanges();
+
+        * html/track/InbandGenericTextTrack.h: Ditto.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::removeCuesNotInTimeRanges): Remove all cues who's time range
+        does not intersect with the buffered range.
+        * html/track/TextTrack.h:
+        (WebCore::TextTrack::shouldPurgeCuesFromUnbufferedRanges const):
+
 2021-04-14  Antti Koivisto  <antti@apple.com>
 
         Remove unused InlineBox::next/previousLeafOnLineIgnoringLineBreak()

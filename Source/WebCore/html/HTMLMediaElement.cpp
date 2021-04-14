@@ -7088,6 +7088,39 @@ bool HTMLMediaElement::mediaPlayerShouldCheckHardwareSupport() const
     return true;
 }
 
+void HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged()
+{
+    if (!m_textTracks || m_bufferedTimeRangesChangedQueue.hasPendingTask())
+        return;
+
+    auto logSiteIdentifier = LOGIDENTIFIER;
+    ALWAYS_LOG(logSiteIdentifier, "task scheduled");
+    m_bufferedTimeRangesChangedQueue.scheduleTask([this, logSiteIdentifier] {
+        UNUSED_PARAM(logSiteIdentifier);
+        ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
+        if (!m_player || !m_textTracks)
+            return;
+
+        std::unique_ptr<PlatformTimeRanges> buffered;
+        for (unsigned i = 0; i < m_textTracks->length(); ++i) {
+            auto& track = *m_textTracks->item(i);
+            if (!track.shouldPurgeCuesFromUnbufferedRanges())
+                continue;
+
+            if (!buffered) {
+#if ENABLE(MEDIA_SOURCE)
+                if (m_mediaSource)
+                    buffered = m_mediaSource->buffered();
+                else
+#endif
+                    buffered = m_player->buffered();
+
+                track.removeCuesNotInTimeRanges(*buffered);
+            }
+        }
+    });
+}
+
 #if USE(GSTREAMER)
 void HTMLMediaElement::requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback& callback)
 {
