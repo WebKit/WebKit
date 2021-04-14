@@ -42,7 +42,6 @@ STEP_NAME_LENGTH_LIMIT = 50
 
 def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     config = json.load(open(os.path.join(master_prefix_path, 'config.json')))
-    use_localhost_worker = is_test_mode_enabled
     if is_test_mode_enabled:
         passwords = {}
     else:
@@ -52,7 +51,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     checkValidSchedulers(config, config['schedulers'])
 
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=worker.get('max_builds', 1)) for worker in config['workers']]
-    if use_localhost_worker:
+    if is_test_mode_enabled:
         c['workers'].append(Worker('local-worker', 'password', max_builds=1))
 
     c['builders'] = []
@@ -70,7 +69,7 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
 
         builder['factory'] = factory(**factorykwargs)
 
-        if use_localhost_worker:
+        if is_test_mode_enabled:
             builder['workernames'].append('local-worker')
 
         c['builders'].append(builder)

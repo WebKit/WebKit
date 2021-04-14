@@ -1,5 +1,17 @@
 2021-04-14  Aakash Jain  <aakash_jain@apple.com>
 
+        Add support for using local-worker for build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=224551
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * CISupport/build-webkit-org/loadConfig.py:
+        (loadBuilderConfig): Added local-worker support.
+        * CISupport/ews-build/loadConfig.py:
+        (loadBuilderConfig): Removed use_localhost_worker variable.
+
+2021-04-14  Aakash Jain  <aakash_jain@apple.com>
+
         Commit queue isn't skipping builds and test on revert patches
         https://bugs.webkit.org/show_bug.cgi?id=224477
 

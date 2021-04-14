@@ -61,6 +61,8 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     checkValidSchedulers(config, config['schedulers'])
 
     c['workers'] = [Worker(worker['name'], passwords.get(worker['name'], 'password'), max_builds=1) for worker in config['workers']]
+    if is_test_mode_enabled:
+        c['workers'].append(Worker('local-worker', 'password', max_builds=1))
 
     c['schedulers'] = []
     for scheduler in config['schedulers']:
@@ -90,6 +92,9 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
                 factorykwargs[key] = value
 
         builder['factory'] = factory(**factorykwargs)
+
+        if is_test_mode_enabled:
+            builder['workernames'].append('local-worker')
 
         builder_name = builder['name']
         for step in builder["factory"].steps:
