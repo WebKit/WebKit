@@ -1,3 +1,14 @@
+2021-04-13  Ada Chan  <ada.chan@apple.com>
+
+        Implement PlatformXRSystem::xrCoordinator() for USE(APPLE_INTERNAL_SDK)
+        https://bugs.webkit.org/show_bug.cgi?id=224510
+
+        Reviewed by Dean Jackson.
+
+        Update ENABLE_WEBXR flag
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-04-13  Alex Christensen  <achristensen@webkit.org>
 
         WebProcessPool should store Vector<Ref<WebProcessProxy>> instead of Vector<RefPtr>

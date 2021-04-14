@@ -99,12 +99,19 @@ void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::Device::F
         xrCoordinator->scheduleAnimationFrame(m_page, WTFMove(completionHandler));
 }
 
+}
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/PlatformXRSystemAdditions.mm>
+#else
+namespace WebKit {
+
 PlatformXRCoordinator* PlatformXRSystem::xrCoordinator()
 {
-    // FIXME: Implement this
     return nullptr;
 }
 
 }
+#endif
 
 #endif // ENABLE(WEBXR)
