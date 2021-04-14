@@ -1,3 +1,12 @@
+2021-04-13  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Mac] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html is passing
+        <rdar://problem/66399069>
+
+        Unreviewed.
+
+        * platform/mac/TestExpectations:
+
 2021-04-13  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/security convert PHP to Python
