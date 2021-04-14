@@ -415,12 +415,10 @@ void RenderTable::distributeExtraLogicalHeight(LayoutUnit extraLogicalHeight)
 
 void RenderTable::simplifiedNormalFlowLayout()
 {
-    layoutCaptions();
     for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
         section->layoutIfNeeded();
         section->computeOverflowFromCells();
     }
-    layoutCaptions(BottomCaptionLayoutPhase::Yes);
 }
 
 void RenderTable::layout()
