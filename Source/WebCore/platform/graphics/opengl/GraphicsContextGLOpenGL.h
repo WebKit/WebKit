@@ -581,7 +581,7 @@ private:
 #endif
 
 #if !USE(ANGLE)
-    typedef HashMap<String, sh::ShaderVariable> ShaderSymbolMap;
+    typedef HashMap<String, UniqueRef<sh::ShaderVariable>> ShaderSymbolMap;
 
     struct ShaderSourceEntry {
         GCGLenum type;

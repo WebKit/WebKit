@@ -1,3 +1,20 @@
+2021-04-14  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r275948) Wrap sh::ShaderVariable into UniqueRef to fit in HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=224567
+
+        Unreviewed build fix.
+
+        * platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp:
+        (WebCore::ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+        * platform/graphics/opengl/GraphicsContextGLOpenGLCommon.cpp:
+        (WebCore::GraphicsContextGLOpenGL::precisionsMatch const):
+        (WebCore::GraphicsContextGLOpenGL::mappedSymbolInShaderSourceMap):
+        (WebCore::GraphicsContextGLOpenGL::originalSymbolInShaderSourceMap):
+        (WebCore::GraphicsContextGLOpenGL::mappedSymbolName):
+        (WebCore::GraphicsContextGLOpenGL::shaderSource):
+
 2021-04-14  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
