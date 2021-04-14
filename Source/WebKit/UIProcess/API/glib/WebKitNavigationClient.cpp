@@ -125,6 +125,16 @@ private:
         return false;
     }
 
+    void processDidBecomeResponsive(WebKit::WebPageProxy&) override
+    {
+        webkitWebViewSetIsWebProcessResponsive(m_webView, true);
+    }
+
+    void processDidBecomeUnresponsive(WebKit::WebPageProxy&) override
+    {
+        webkitWebViewSetIsWebProcessResponsive(m_webView, false);
+    }
+
     void decidePolicyForNavigationAction(WebPageProxy&, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* /* userData */) override
     {
         WebKitPolicyDecisionType decisionType = navigationAction->targetFrame() ? WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION : WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION;

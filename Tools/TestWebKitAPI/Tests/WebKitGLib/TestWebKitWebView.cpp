@@ -1177,6 +1177,56 @@ static void testWebViewAutoplayPolicy(WebViewTest* test, gconstpointer)
     g_assert_cmpint(webkit_website_policies_get_autoplay_policy(policies), ==, WEBKIT_AUTOPLAY_ALLOW_WITHOUT_SOUND);
 }
 
+class WebViewIsWebProcessResponsiveTest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(WebViewIsWebProcessResponsiveTest);
+
+    static void isWebProcessResponsiveChanged(WebKitWebView* view, GParamSpec*, WebViewIsWebProcessResponsiveTest* test)
+    {
+        g_signal_handlers_disconnect_by_func(test->m_webView, reinterpret_cast<void*>(isWebProcessResponsiveChanged), test);
+        g_main_loop_quit(test->m_mainLoop);
+    }
+
+    void waitUntilIsWebProcessResponsiveChanged()
+    {
+        g_signal_connect(m_webView, "notify::is-web-process-responsive", G_CALLBACK(isWebProcessResponsiveChanged), this);
+        g_main_loop_run(m_mainLoop);
+    }
+};
+
+static void testWebViewIsWebProcessResponsive(WebViewIsWebProcessResponsiveTest* test, gconstpointer)
+{
+    static const char* hangHTML =
+        "<html>"
+        " <body>"
+        "  <script>"
+        "   setTimeout(function() {"
+        "    var start = new Date().getTime();"
+        "    var end = start;"
+        "     while(end < start + 4000) {"
+        "      end = new Date().getTime();"
+        "     }"
+        "    }, 500);"
+        "  </script>"
+        " </body>"
+        "</html>";
+
+    g_assert_true(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+    test->loadHtml(hangHTML, nullptr);
+    test->waitUntilLoadFinished();
+    // Wait 1 second, so the js while loop kicks in and blocks the web process. Then try to load a new
+    // page. As the web process is busy this won't work, and after 3 seconds the web process will be marked
+    // as unresponsive.
+    test->wait(1);
+    test->loadHtml("<html></html>", nullptr);
+    test->waitUntilIsWebProcessResponsiveChanged();
+    g_assert_false(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+    // 500ms after the web process is marked as unresponsive, the js while loop will finish and the process
+    // will be responsive again, finishing the pending load.
+    test->waitUntilLoadFinished();
+    g_assert_true(webkit_web_view_get_is_web_process_responsive(test->m_webView));
+}
+
 static void testWebViewBackgroundColor(WebViewTest* test, gconstpointer)
 {
 #if PLATFORM(GTK)
@@ -1578,6 +1628,7 @@ void beforeAll()
 #if PLATFORM(WPE) && USE(WPEBACKEND_FDO_AUDIO_EXTENSION)
     AudioRenderingWebViewTest::add("WebKitWebView", "external-audio-rendering", testWebViewExternalAudioRendering);
 #endif
+    WebViewIsWebProcessResponsiveTest::add("WebKitWebView", "is-web-process-responsive", testWebViewIsWebProcessResponsive);
 }
 
 void afterAll()

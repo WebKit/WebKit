@@ -204,6 +204,7 @@ enum {
     PROP_PAGE_ID,
     PROP_IS_MUTED,
     PROP_WEBSITE_POLICIES,
+    PROP_IS_WEB_PROCESS_RESPONSIVE,
 
     N_PROPERTIES,
 };
@@ -312,6 +313,8 @@ struct _WebKitWebViewPrivate {
     GRefPtr<WebKitWebsitePolicies> websitePolicies;
 
     double textScaleFactor;
+
+    bool isWebProcessResponsive;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -811,6 +814,8 @@ static void webkitWebViewConstructed(GObject* object)
         webView->priv->textScaleFactor = WebCore::screenDPI() / 96.;
         page.setTextZoomFactor(zoomFactor * webView->priv->textScaleFactor);
     }, webView);
+
+    priv->isWebProcessResponsive = true;
 }
 
 static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -933,6 +938,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
         break;
     case PROP_WEBSITE_POLICIES:
         g_value_set_object(value, webkit_web_view_get_website_policies(webView));
+        break;
+    case PROP_IS_WEB_PROCESS_RESPONSIVE:
+        g_value_set_boolean(value, webkit_web_view_get_is_web_process_responsive(webView));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
@@ -1312,6 +1320,21 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             _("The default policy object for sites loaded in this view"),
             WEBKIT_TYPE_WEBSITE_POLICIES,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+    /**
+     * WebKitWebView:is-web-process-responsive:
+     *
+     * Whether the web process currently associated to the #WebKitWebView is responsive.
+     *
+     * Since: 2.34
+     */
+    sObjProperties[PROP_IS_WEB_PROCESS_RESPONSIVE] =
+        g_param_spec_boolean(
+            "is-web-process-responsive",
+            "Is Web Process Responsive",
+            _("Whether the web process currently associated to the web view is responsive"),
+            TRUE,
+            WEBKIT_PARAM_READABLE);
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
@@ -4702,4 +4725,30 @@ WebKitWebsitePolicies* webkit_web_view_get_website_policies(WebKitWebView* webVi
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
     return webView->priv->websitePolicies.get();
+}
+
+void webkitWebViewSetIsWebProcessResponsive(WebKitWebView* webView, bool isResponsive)
+{
+    if (webView->priv->isWebProcessResponsive == isResponsive)
+        return;
+
+    webView->priv->isWebProcessResponsive = isResponsive;
+    g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_WEB_PROCESS_RESPONSIVE]);
+}
+
+/**
+ * webkit_web_view_is_web_process_responsive:
+ * @web_view: a #WebKitWebView
+ *
+ * Get whether the current web process of a #WebKitWebView is responsive.
+ *
+ * Returns: %TRUE if the web process attached to @web_view is responsive, or %FALSE otherwise.
+ *
+ * Since: 2.34
+ */
+gboolean webkit_web_view_get_is_web_process_responsive(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    return webView->priv->isWebProcessResponsive;
 }

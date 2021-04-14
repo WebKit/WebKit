@@ -589,6 +589,8 @@ webkit_web_view_get_input_method_context             (WebKitWebView             
 WEBKIT_API WebKitWebsitePolicies *
 webkit_web_view_get_website_policies                 (WebKitWebView             *web_view);
 
+WEBKIT_API gboolean
+webkit_web_view_get_is_web_process_responsive        (WebKitWebView             *web_view);
 
 G_END_DECLS
 
