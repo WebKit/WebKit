@@ -1,3 +1,26 @@
+2021-04-14  Devin Rousso  <drousso@apple.com>
+
+        [iOS] limit how often `WebAVPlayerController` notifies the `PlaybackSessionModel` about changes to playback speed
+        https://bugs.webkit.org/show_bug.cgi?id=224515
+        <rdar://problem/75901463>
+
+        Reviewed by Eric Carlson.
+
+        This change will cause `HTMLMediaElement::setPlaybackRate` to not send IPC back and forth
+        between the WebProcess and UIProcess, as a modification to the `WebAVPlayerController` in
+        the UIProcess would notify its `PlaybackSessionModel` "delegate", which would in turn make
+        it's way back to the related `HTMLMediaElement::setPlaybackRate` in the WebProcess.
+
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.h:
+        * UIProcess/Cocoa/PlaybackSessionManagerProxy.mm:
+        (WebKit::PlaybackSessionModelContext::setPlaybackRate): Added.
+        (WebKit::PlaybackSessionManagerProxy::setPlaybackRate): Added.
+        * WebProcess/cocoa/PlaybackSessionManager.messages.in:
+        * WebProcess/cocoa/PlaybackSessionManager.h:
+        * WebProcess/cocoa/PlaybackSessionManager.mm:
+        (WebKit::PlaybackSessionManager::setPlaybackRate): Added.
+        Add support for handling when the `rate` of the `AVPlayerController` changes too.
+
 2021-04-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Service worker soft-update loads not being marked app-bound

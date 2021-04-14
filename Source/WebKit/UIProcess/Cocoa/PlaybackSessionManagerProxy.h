@@ -112,6 +112,7 @@ private:
     void beginScanningBackward() final;
     void endScanning() final;
     void setDefaultPlaybackRate(float) final;
+    void setPlaybackRate(float) final;
     void selectAudioMediaOption(uint64_t) final;
     void selectLegibleMediaOption(uint64_t) final;
     void togglePictureInPicture() final;
@@ -238,6 +239,7 @@ private:
     void beginScanningBackward(PlaybackSessionContextIdentifier);
     void endScanning(PlaybackSessionContextIdentifier);
     void setDefaultPlaybackRate(PlaybackSessionContextIdentifier, float);
+    void setPlaybackRate(PlaybackSessionContextIdentifier, float);
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void togglePictureInPicture(PlaybackSessionContextIdentifier);

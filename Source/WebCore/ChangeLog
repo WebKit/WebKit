@@ -1,3 +1,37 @@
+2021-04-14  Devin Rousso  <drousso@apple.com>
+
+        [iOS] limit how often `WebAVPlayerController` notifies the `PlaybackSessionModel` about changes to playback speed
+        https://bugs.webkit.org/show_bug.cgi?id=224515
+        <rdar://problem/75901463>
+
+        Reviewed by Eric Carlson.
+
+        This change will cause `HTMLMediaElement::setPlaybackRate` to not send IPC back and forth
+        between the WebProcess and UIProcess, as a modification to the `WebAVPlayerController` in
+        the UIProcess would notify its `PlaybackSessionModel` "delegate", which would in turn make
+        it's way back to the related `HTMLMediaElement::setPlaybackRate` in the WebProcess.
+
+        * platform/ios/WebAVPlayerController.mm:
+        (-[WebAVPlayerController init]):
+        (-[WebAVPlayerController dealloc]):
+        (-[WebAVPlayerController defaultPlaybackRate]): Added.
+        (-[WebAVPlayerController setDefaultPlaybackRate:]): Added.
+        (-[WebAVPlayerController rate]): Added.
+        (-[WebAVPlayerController setRate:]): Added.
+        (-[WebAVPlayerController observeValueForKeyPath:ofObject:change:context:]):
+        Instead of relying on ObjC KVO on `self` to handle changes to `defaultPlaybackRate` (and
+        `rate`), create an actual `setDefaultPlaybackRate:` so that we can handle cases where the
+        value is the same. Limit when we notify the `PlaybackSessionModel` to only when it has a
+        different value.
+
+        * platform/cocoa/PlaybackSessionModel.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.h:
+        * platform/cocoa/PlaybackSessionModelMediaElement.mm:
+        (WebCore::PlaybackSessionModelMediaElement::setPlaybackRate): Added.
+        * platform/ios/WebVideoFullscreenControllerAVKit.mm:
+        (VideoFullscreenControllerContext::setPlaybackRate): Added.
+        Add support for handling when the `rate` of the `AVPlayerController` changes too.
+
 2021-04-14  Kate Cheney  <katherine_cheney@apple.com>
 
         Service worker soft-update loads not being marked app-bound

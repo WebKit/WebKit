@@ -475,6 +475,12 @@ void PlaybackSessionManager::setDefaultPlaybackRate(PlaybackSessionContextIdenti
     ensureModel(contextId).setDefaultPlaybackRate(defaultPlaybackRate);
 }
 
+void PlaybackSessionManager::setPlaybackRate(PlaybackSessionContextIdentifier contextId, float playbackRate)
+{
+    UserGestureIndicator indicator(ProcessingUserGesture);
+    ensureModel(contextId).setPlaybackRate(playbackRate);
+}
+
 void PlaybackSessionManager::selectAudioMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)
 {
     UserGestureIndicator indicator(ProcessingUserGesture);

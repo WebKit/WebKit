@@ -155,6 +155,7 @@ protected:
     void beginScanningBackward(PlaybackSessionContextIdentifier);
     void endScanning(PlaybackSessionContextIdentifier);
     void setDefaultPlaybackRate(PlaybackSessionContextIdentifier, float);
+    void setPlaybackRate(PlaybackSessionContextIdentifier, float);
     void selectAudioMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void selectLegibleMediaOption(PlaybackSessionContextIdentifier, uint64_t index);
     void handleControlledElementIDRequest(PlaybackSessionContextIdentifier);

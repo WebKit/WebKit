@@ -308,6 +308,12 @@ void PlaybackSessionModelMediaElement::setDefaultPlaybackRate(float defaultPlayb
         m_mediaElement->setDefaultPlaybackRate(defaultPlaybackRate);
 }
 
+void PlaybackSessionModelMediaElement::setPlaybackRate(float playbackRate)
+{
+    if (m_mediaElement)
+        m_mediaElement->setPlaybackRate(playbackRate);
+}
+
 void PlaybackSessionModelMediaElement::selectAudioMediaOption(uint64_t selectedAudioIndex)
 {
     if (!m_mediaElement)
