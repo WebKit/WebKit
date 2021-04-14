@@ -343,8 +343,8 @@ void ProcessLauncher::platformInvalidate()
 
 void terminateWithReason(xpc_connection_t connection, ReasonCode reasonCode, const char* reason)
 {
-#if PLATFORM(MACCATALYST)
-    // FIXME: Remove this once rdar://76601307 is fixed.
+#if PLATFORM(MACCATALYST) || PLATFORM(IOS)
+    // FIXME: Remove this once rdar://76601307 and rdar://76652763 are fixed.
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     xpc_connection_kill(connection, SIGKILL);
     ALLOW_DEPRECATED_DECLARATIONS_END
