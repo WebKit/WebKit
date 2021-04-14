@@ -1,3 +1,18 @@
+2021-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Do not reset computed style for element children with display contents style
+        https://bugs.webkit.org/show_bug.cgi?id=223794
+
+        Reviewed by Antti Koivisto.
+
+        We were checking hasDisplayContents() was false before calling resetComputedStyle() on the parent, but we don't
+        check it when iterating the children.
+
+        * dom/Element.cpp:
+        (WebCore::Element::resetComputedStyle):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+
 2021-04-13  Rob Buis  <rbuis@igalia.com>
 
         Make SVGElement::getBoundingBox retrieve bbox from RenderObject
