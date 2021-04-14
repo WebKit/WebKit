@@ -98,9 +98,9 @@ template<typename T> void EventSender<T>::dispatchPendingEvents(Page* page)
 
     m_dispatchSoonList.checkConsistency();
 
-    m_dispatchingList = std::exchange(m_dispatchSoonList, { });
+    m_dispatchingList.swap(m_dispatchSoonList);
     for (auto& event : m_dispatchingList) {
-        if (auto sender = event.get()) {
+        if (WeakPtr<T> sender = event) {
             event = nullptr;
             if (!page || sender->document().page() == page)
                 sender->dispatchPendingEvent(this);
