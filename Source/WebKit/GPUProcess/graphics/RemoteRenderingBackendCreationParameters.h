@@ -39,16 +39,10 @@ struct RemoteRenderingBackendCreationParameters {
     IPC::Semaphore resumeDisplayListSemaphore;
     WebPageProxyIdentifier pageProxyID;
     WebCore::PageIdentifier pageID;
-#if PLATFORM(IOS_FAMILY)
-    bool canShowWhileLocked { false };
-#endif
 
     void encode(IPC::Encoder& encoder) const
     {
         encoder << identifier << resumeDisplayListSemaphore << pageProxyID << pageID;
-#if PLATFORM(IOS_FAMILY)
-        encoder << canShowWhileLocked;
-#endif
     }
 
     static Optional<RemoteRenderingBackendCreationParameters> decode(IPC::Decoder& decoder)
@@ -73,19 +67,7 @@ struct RemoteRenderingBackendCreationParameters {
         if (!pageID)
             return WTF::nullopt;
 
-#if PLATFORM(IOS_FAMILY)
-        Optional<bool> canShowWhileLocked;
-        decoder >> canShowWhileLocked;
-        if (!canShowWhileLocked)
-            return WTF::nullopt;
-#endif
-
-        return {{
-            *identifier, WTFMove(*resumeDisplayListSemaphore), *pageProxyID, *pageID
-#if PLATFORM(IOS_FAMILY)
-            , *canShowWhileLocked
-#endif
-        }};
+        return {{ *identifier, WTFMove(*resumeDisplayListSemaphore), *pageProxyID, *pageID }};
     }
 };
 

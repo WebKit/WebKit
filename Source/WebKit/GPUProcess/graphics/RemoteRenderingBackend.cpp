@@ -30,7 +30,6 @@
 
 #include "DisplayListReaderHandle.h"
 #include "GPUConnectionToWebProcess.h"
-#include "LayerHostingContext.h"
 #include "Logging.h"
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteMediaPlayerManagerProxy.h"
@@ -79,14 +78,6 @@ RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuCon
     , m_resumeDisplayListSemaphore(WTFMove(creationParameters.resumeDisplayListSemaphore))
 {
     ASSERT(RunLoop::isMain());
-
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    m_contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({
-        creationParameters.canShowWhileLocked
-    });
-    RELEASE_LOG(Process, "RemoteRenderingBackend: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
-    m_gpuConnectionToWebProcess->gpuProcess().send(Messages::GPUProcessProxy::DidCreateContextForVisibilityPropagation(creationParameters.pageProxyID, creationParameters.pageID, m_contextForVisibilityPropagation->contextID()));
-#endif
 }
 
 void RemoteRenderingBackend::startListeningForIPC()

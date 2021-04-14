@@ -55,6 +55,7 @@
 namespace WebKit {
 
 class GPUProcess;
+class LayerHostingContext;
 class LibWebRTCCodecsProxy;
 class RemoteAudioDestinationManager;
 class RemoteAudioHardwareListenerProxy;
@@ -175,6 +176,11 @@ private:
     void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
 #endif
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void createVisibilityPropagationContextForPage(WebPageProxyIdentifier, WebCore::PageIdentifier, bool canShowWhileLocked);
+    void destroyVisibilityPropagationContextForPage(WebPageProxyIdentifier, WebCore::PageIdentifier);
+#endif
+
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxy& audioSessionProxy();
     using EnsureAudioSessionCompletion = CompletionHandler<void(const RemoteAudioSessionConfiguration&)>;
@@ -264,6 +270,10 @@ private:
 #endif
 
     std::unique_ptr<RemoteMediaEngineConfigurationFactoryProxy> m_mediaEngineConfigurationFactoryProxy;
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    HashMap<std::pair<WebPageProxyIdentifier, WebCore::PageIdentifier>, std::unique_ptr<LayerHostingContext>> m_visibilityPropagationContexts;
+#endif
 
     using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, std::unique_ptr<RemoteAudioHardwareListenerProxy>>;
     RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;

@@ -52,10 +52,7 @@ RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(WebPage& webPage)
         RenderingBackendIdentifier::generate(),
         IPC::Semaphore { },
         webPage.webPageProxyIdentifier(),
-        webPage.identifier(),
-#if PLATFORM(IOS_FAMILY)
-        webPage.canShowWhileLocked()
-#endif
+        webPage.identifier()
     }
 {
     connectToGPUProcess();

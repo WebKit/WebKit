@@ -1,3 +1,41 @@
+2021-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Stop requiring a RemoteRenderingBackend for visibility propagation views
+        https://bugs.webkit.org/show_bug.cgi?id=224513
+
+        Reviewed by Geoff Garen.
+
+        Stop requiring a RemoteRenderingBackend for visibility propagation views. This is
+        inconvenient because doing media playback in the GPUProcess does not require a
+        RemoteRenderingBackend. This was also making things difficult to exit the
+        GPUProcess on memory pressure when unused.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createVisibilityPropagationContextForPage):
+        (WebKit::GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::RemoteRenderingBackend):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/graphics/RemoteRenderingBackendCreationParameters.h:
+        (WebKit::RemoteRenderingBackendCreationParameters::encode const):
+        (WebKit::RemoteRenderingBackendCreationParameters::decode):
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::createVisibilityPropagationContextForPage):
+        (WebKit::GPUProcessConnection::destroyVisibilityPropagationContextForPage):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::RemoteRenderingBackendProxy):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+        (WebKit::WebPage::gpuProcessConnectionDidBecomeAvailable):
+        (WebKit::WebPage::~WebPage):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensureGPUProcessConnection):
+
 2021-04-13  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r275898; remove unnecessary files from the project.

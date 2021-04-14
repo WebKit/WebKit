@@ -252,6 +252,7 @@ namespace WebKit {
 
 class DrawingArea;
 class FindController;
+class GPUProcessConnection;
 class GamepadData;
 class GeolocationPermissionRequestManager;
 class LayerHostingContext;
@@ -1403,6 +1404,7 @@ public:
     void synchronizeCORSDisablingPatternsWithNetworkProcess();
 
 #if ENABLE(GPU_PROCESS)
+    void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
 #endif
 

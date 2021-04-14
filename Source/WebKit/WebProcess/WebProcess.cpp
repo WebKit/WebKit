@@ -757,6 +757,11 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
         ASSERT(!result.iterator->value);
         result.iterator->value = WebPage::create(pageID, WTFMove(parameters));
 
+#if ENABLE(GPU_PROCESS)
+        if (m_gpuProcessConnection)
+            result.iterator->value->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
+#endif
+
         // Balanced by an enableTermination in removeWebPage.
         disableTermination();
         updateCPULimit();
@@ -1210,16 +1215,8 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
 
-        // FIXME: This will no longer be needed once we use the GPUProcess for DOM rendering.
-        // For now, it is possible to use the GPUProcess for media playback only. Because media does not
-        // use the RemoteRenderingBackend, we need to force the creation of a RemoteRenderingBackend in
-        // the GPUProcess so that the page gets a visibility propagation view.
-        RunLoop::main().dispatch([this] {
-            if (m_useGPUProcessForMedia && !m_useGPUProcessForDOMRendering) {
-                for (auto& page : m_pageMap.values())
-                    page->ensureRemoteRenderingBackendProxy();
-            }
-        });
+        for (auto& page : m_pageMap.values())
+            page->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
     }
     
     return *m_gpuProcessConnection;

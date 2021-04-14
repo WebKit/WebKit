@@ -849,7 +849,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     });
     RELEASE_LOG_IF_ALLOWED(Process, "WebPage: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
     send(Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
-#endif
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(IPC_TESTING_API)
     m_visitedLinkTableID = parameters.visitedLinkTableID;
@@ -867,6 +867,17 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     updateThrottleState();
 }
+
+#if ENABLE(GPU_PROCESS)
+void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
+{
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    gpuProcessConnection.createVisibilityPropagationContextForPage(*this);
+#else
+    UNUSED_PARAM(gpuProcessConnection);
+#endif
+}
+#endif
 
 void WebPage::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)
 {
@@ -996,6 +1007,11 @@ WebPage::~WebPage()
 #ifndef NDEBUG
     webPageCounter.decrement();
 #endif
+
+#if ENABLE(GPU_PROCESS) && HAVE(VISIBILITY_PROPAGATION_VIEW)
+    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+        gpuProcessConnection->destroyVisibilityPropagationContextForPage(*this);
+#endif // ENABLE(GPU_PROCESS)
     
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (m_playbackSessionManager)
@@ -3930,14 +3946,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(WEBGL)
     WebProcess::singleton().setUseGPUProcessForWebGL(m_shouldRenderWebGLInGPUProcess);
 #endif
-
-    // FIXME: This will no longer be needed once we use the GPUProcess for DOM rendering.
-    // For now, it is possible to use the GPUProcess for media playback only. Because media does not
-    // use the RemoteRenderingBackend, we need to force the creation of a RemoteRenderingBackend in
-    // the GPUProcess so that the page gets a visibility propagation view.
-    if (m_shouldPlayMediaInGPUProcess && !usingGPUProcessForDOMRendering && WebProcess::singleton().existingGPUProcessConnection())
-        ensureRemoteRenderingBackendProxy();
-#endif
+#endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(IPC_TESTING_API)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());

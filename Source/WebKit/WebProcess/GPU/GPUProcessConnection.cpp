@@ -262,6 +262,18 @@ void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteC
     PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
 }
 
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+void GPUProcessConnection::createVisibilityPropagationContextForPage(WebPage& page)
+{
+    connection().send(Messages::GPUConnectionToWebProcess::CreateVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier(), page.canShowWhileLocked()), { });
+}
+
+void GPUProcessConnection::destroyVisibilityPropagationContextForPage(WebPage& page)
+{
+    connection().send(Messages::GPUConnectionToWebProcess::DestroyVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier()), { });
+}
+#endif
+
 #if ENABLE(VP9)
 void GPUProcessConnection::enableVP9Decoders(bool enableVP8Decoder, bool enableVP9Decoder, bool enableVP9SWDecoder)
 {

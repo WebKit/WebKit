@@ -44,6 +44,7 @@ class RemoteCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
 class RemoteMediaPlayerManager;
 class RemoteLegacyCDMFactory;
+class WebPage;
 struct OverrideScreenDataForTesting;
 struct WebPageCreationParameters;
 
@@ -90,6 +91,11 @@ public:
     bool isVP8DecoderEnabled() const { return m_enableVP8Decoder; }
     bool isVP9DecoderEnabled() const { return m_enableVP9Decoder; }
     bool isVPSWDecoderEnabled() const { return m_enableVP9SWDecoder; }
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void createVisibilityPropagationContextForPage(WebPage&);
+    void destroyVisibilityPropagationContextForPage(WebPage&);
 #endif
 
     class Client : public CanMakeWeakPtr<Client> {
