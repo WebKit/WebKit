@@ -217,7 +217,7 @@ public:
     static bool fullKeyboardAccessEnabled();
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
-    static void notifyHasMouseDeviceChanged();
+    static void notifyHasMouseDeviceChanged(bool hasMouseDevice);
 #endif
 
     static void notifyHasStylusDeviceChanged(bool hasStylusDevice);

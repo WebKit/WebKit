@@ -58,9 +58,9 @@ void WebProcessProxy::platformDestroy()
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT) && PLATFORM(IOS)
 
-void WebProcessProxy::notifyHasMouseDeviceChanged()
+void WebProcessProxy::notifyHasMouseDeviceChanged(bool hasMouseDevice)
 {
-    bool hasMouseDevice = [[WKMouseDeviceObserver sharedInstance] hasMouseDevice];
+    ASSERT(isMainRunLoop());
     for (auto* webProcessProxy : WebProcessProxy::allProcesses().values())
         webProcessProxy->send(Messages::WebProcess::SetHasMouseDevice(hasMouseDevice), 0);
 }
