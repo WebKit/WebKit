@@ -1,3 +1,27 @@
+2021-04-14  Zalan Bujtas  <zalan@apple.com>
+
+        InlineBox should not hold a reference to RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=224506
+
+        Reviewed by Antti Koivisto.
+
+        The InlineBox/RenderObject relationship is somewhat error-prone (see RenderBox::setInlineBoxWrapper vs. InlineElementBox::extractLine) and it's rather easy to delete one without letting the other know.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::showNodeTreeForThis const):
+        (WebCore::InlineBox::showLineTreeForThis const):
+        (WebCore::InlineBox::caretMinOffset const):
+        (WebCore::InlineBox::caretMaxOffset const):
+        (WebCore::InlineBox::adjustPosition):
+        (WebCore::InlineBox::selectionState):
+        (WebCore::InlineBox::canAccommodateEllipsis const):
+        (WebCore::InlineBox::locationIncludingFlipping const):
+        (WebCore::InlineBox::flipForWritingMode const):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::renderer const):
+        (WebCore::InlineBox::boxModelObject const):
+        (WebCore::InlineBox::InlineBox):
+
 2021-04-14  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Indeterminate progress bars should update at 60fps
