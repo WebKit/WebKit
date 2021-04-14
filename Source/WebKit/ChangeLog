@@ -1,3 +1,11 @@
+2021-04-14  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Unreviewed, a comment fix after r275847
+
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::verifyUser):
+        Explains why instead of what.
+
 2021-04-14  Alex Christensen  <achristensen@webkit.org>
 
         Temporarily fix more terminate_with_reason-related crashes

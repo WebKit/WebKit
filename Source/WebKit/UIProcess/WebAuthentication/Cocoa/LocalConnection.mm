@@ -100,7 +100,8 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
     });
 
 #if USE(APPLE_INTERNAL_SDK)
-    // A quirk to force the compatible mode to always show UI.
+    // Depending on certain internal requirements, accessControl might not require user verifications.
+    // Hence, here introduces a quirk to force the compatible mode to always require user verifications.
     if (shouldUseAlternateAttributes()) {
         [m_context evaluatePolicy:LAPolicyDeviceOwnerAuthentication options:options.get() reply:reply.get()];
         return;
