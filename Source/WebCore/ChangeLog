@@ -1,3 +1,15 @@
+2021-04-14  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds()
+        https://bugs.webkit.org/show_bug.cgi?id=224520
+
+        Reviewed by Ryosuke Niwa.
+
+        Adopt RefPtr<Node> instead of using plain Node* here to avoid a crash.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeUnrenderedTextNodesAtEnds):
+
 2021-04-14  Devin Rousso  <drousso@apple.com>
 
         [iOS] limit how often `WebAVPlayerController` notifies the `PlaybackSessionModel` about changes to playback speed
