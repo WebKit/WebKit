@@ -1,3 +1,16 @@
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 128 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224381
+
+        Reviewed by Yusuke Suzuki.
+
+        * WebProcess/WebPage/ViewUpdateDispatcher.cpp:
+        (WebKit::ViewUpdateDispatcher::visibleContentRectUpdate):
+        (WebKit::ViewUpdateDispatcher::dispatchVisibleContentRectUpdate):
+        * WebProcess/WebPage/ViewUpdateDispatcher.h:
+        (WebKit::ViewUpdateDispatcher::UpdateData::UpdateData):
+
 2021-04-14  Chris Dumez  <cdumez@apple.com>
 
         [iOS] WKMouseDeviceObserver is calling WebProcessProxy::send() on a non-main thread

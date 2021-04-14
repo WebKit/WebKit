@@ -1,3 +1,17 @@
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 128 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224381
+
+        Reviewed by Yusuke Suzuki.
+
+        It turns out that HashMaps use HashTable::Value as KeyValuePair, so sizeof(Key) + sizeof(Value) was double counting the key size.
+        This caused FontCascadeCache to be a false positive.  It has a key size of a little over 100 bytes.  Only counting it once reflects what is intended.
+        Also, the USE(ANGLE) exception was convenient for a downstream branch, but isn't needed.  Next time they rebase they will use UniqueRef.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
 2021-04-13  Ada Chan  <ada.chan@apple.com>
 
         Implement PlatformXRSystem::xrCoordinator() for USE(APPLE_INTERNAL_SDK)

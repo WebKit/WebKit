@@ -54,13 +54,18 @@ private:
     void dispatchVisibleContentRectUpdate();
 
     struct UpdateData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        UpdateData(const VisibleContentRectUpdateInfo& info, MonotonicTime timestamp)
+            : visibleContentRectUpdateInfo(info)
+            , oldestTimestamp(timestamp) { }
+
         VisibleContentRectUpdateInfo visibleContentRectUpdateInfo;
         MonotonicTime oldestTimestamp;
     };
 
     Ref<WorkQueue> m_queue;
     Lock m_dataMutex;
-    HashMap<WebCore::PageIdentifier, UpdateData> m_latestUpdate;
+    HashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> m_latestUpdate;
 };
 
 } // namespace WebKit
