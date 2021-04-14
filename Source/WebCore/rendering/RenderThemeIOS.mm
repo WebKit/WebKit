@@ -2132,10 +2132,7 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     return false;
 }
 
-// Animate the indeterminate progress bar at 30 fps. This value was chosen to
-// ensure a smooth animation, while trying to reduce the number of times the
-// progress bar is repainted.
-constexpr Seconds progressAnimationRepeatInterval = 33_ms;
+constexpr Seconds progressAnimationRepeatInterval = 16_ms;
 
 constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
 constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;

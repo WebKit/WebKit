@@ -1,3 +1,23 @@
+2021-04-14  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Indeterminate progress bars should update at 60fps
+        https://bugs.webkit.org/show_bug.cgi?id=224372
+        <rdar://problem/76416848>
+
+        Reviewed by Wenson Hsieh.
+
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::animationTimerFired):
+
+        Added a FIXME to state that progress bar animation should be performed
+        as part of the rendering update lifecycle. Progress bars have always
+        maintained their own timers for animation, however, the update interval
+        may not always match the display's refresh rate.
+
+        * rendering/RenderThemeIOS.mm:
+
+        Ensure a smoother animation by increasing the frame rate to 60fps.
+
 2021-04-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Do not reset computed style for element children with display contents style
