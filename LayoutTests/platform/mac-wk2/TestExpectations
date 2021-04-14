@@ -1372,3 +1372,7 @@ webkit.org/b/224135 media/modern-media-controls/macos-fullscreen-media-controls/
 webkit.org/b/224294 [ Debug ] inspector/indexeddb/requestDatabaseNames.html [ Pass Failure ]
 
 webkit.org/b/224463 [ Debug arm64 ] webrtc/disable-encryption.html [ Pass Timeout ]
+
+# webkit.org/b/224558 The following two page-cache tests are flakey crasing:
+webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
+http/tests/navigation/page-cache-mediastream.html [ Pass Crash ]

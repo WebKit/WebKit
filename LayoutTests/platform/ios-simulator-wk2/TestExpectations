@@ -164,3 +164,7 @@ webkit.org/b/222808 imported/w3c/web-platform-tests/webrtc/protocol/candidate-ex
 webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
 
 webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Failure ]
+
+# webkit.org/b/224558 The following two page-cache tests are flakey crasing:
+webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
+http/tests/navigation/page-cache-mediastream.html [ Pass Crash ]
