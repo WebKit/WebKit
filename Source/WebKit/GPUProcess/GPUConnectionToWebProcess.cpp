@@ -239,8 +239,10 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     // to break the reference cycle by destroying them.
     m_remoteRenderingBackendMap.clear();
 
+#if ENABLE(WEBGL)
     // RemoteGraphicsContextsGL objects are unneeded after connection closes.
     m_remoteGraphicsContextGLMap.clear();
+#endif
 
     gpuProcess().connectionToWebProcessClosed(connection);
     gpuProcess().removeGPUConnectionToWebProcess(*this); // May destroy |this|.
