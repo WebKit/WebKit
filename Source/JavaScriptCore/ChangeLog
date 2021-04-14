@@ -1,3 +1,19 @@
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Keep UniqueRef<MathICGenerationState> instead of MathICGenerationState in HashTables
+        https://bugs.webkit.org/show_bug.cgi?id=224569
+
+        Reviewed by Geoffrey Garen.
+
+        sizeof(KeyValuePair<const Instruction*, MathICGenerationState>) is 136 on some platforms.
+        That's on the big side for sparse HashTable entries.  I think using UniqueRef will help performance.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITMathIC.h:
+
 2021-04-14  Mark Lam  <mark.lam@apple.com>
 
         Apply DeferTermination in some utility functions in the jsc shell.

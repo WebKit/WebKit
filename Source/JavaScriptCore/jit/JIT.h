@@ -47,6 +47,7 @@
 #include "JSInterfaceJIT.h"
 #include "PCToCodeOriginMap.h"
 #include "UnusedPointer.h"
+#include <wtf/UniqueRef.h>
 
 namespace JSC {
 
@@ -1028,7 +1029,7 @@ namespace JSC {
         PCToCodeOriginMapBuilder m_pcToCodeOriginMapBuilder;
 
         HashMap<const Instruction*, void*> m_instructionToMathIC;
-        HashMap<const Instruction*, MathICGenerationState> m_instructionToMathICGenerationState;
+        HashMap<const Instruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
 
         bool m_canBeOptimized;
         bool m_canBeOptimizedOrInlined;
