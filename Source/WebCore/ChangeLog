@@ -1,3 +1,31 @@
+2021-04-13  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        AudioSourceProviderAVFObjC should lock all multithreaded objects
+        https://bugs.webkit.org/show_bug.cgi?id=224230
+
+        Reviewed by Eric Carlson.
+
+        Lock following objects with TapStorage::lock:
+          AudioSourceProviderAVFObjC::m_tapStorage
+          AudioSourceProviderAVFObjC::m_avPlayerItem
+
+        Do not clear the tapStorage nor the _this pointer from
+        the audio thread. This is a race that cannot be overcome
+        since the main thread needs to access the m_tapStorage pointer to
+        lock the m_tapStorage pointer for modification.
+
+        Initialize m_tap in more robust way, in case initialization fails.
+
+        Do not leave stale m_tapStorage present when destroying the mixer.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC):
+        (WebCore::AudioSourceProviderAVFObjC::destroyMixIfNeeded):
+        (WebCore::AudioSourceProviderAVFObjC::createMixIfNeeded):
+        (WebCore::AudioSourceProviderAVFObjC::initCallback):
+        (WebCore::AudioSourceProviderAVFObjC::finalizeCallback):
+
 2021-04-13  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Table caption jumps to the bottom of the table after simplified table relayout

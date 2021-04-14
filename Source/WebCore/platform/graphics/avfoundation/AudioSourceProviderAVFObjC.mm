@@ -86,13 +86,10 @@ AudioSourceProviderAVFObjC::AudioSourceProviderAVFObjC(AVPlayerItem *item)
 
 AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
 {
+    // FIXME: this is not correct, as this indicates that there might be simultaneous calls
+    // to the destructor and a member function. This undefined behavior will be addressed in the future
+    // commits. https://bugs.webkit.org/show_bug.cgi?id=224480
     setClient(nullptr);
-    if (m_tapStorage) {
-        auto locker = holdLock(m_tapStorage->lock);
-        m_tapStorage->_this = nullptr;
-    }
-
-    m_tapStorage = nullptr;
 }
 
 void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProcess)
@@ -185,12 +182,17 @@ void AudioSourceProviderAVFObjC::destroyMixIfNeeded()
 {
     if (!m_avAudioMix)
         return;
-
+    ASSERT(m_tapStorage);
+    auto locker = holdLock(m_tapStorage->lock);
     if (m_avPlayerItem)
         [m_avPlayerItem setAudioMix:nil];
     [m_avAudioMix setInputParameters:@[ ]];
     m_avAudioMix.clear();
     m_tap.clear();
+    m_tapStorage->_this = nullptr;
+    m_tapStorage = nullptr;
+    // Call unprepare, since Tap cannot call it after clear.
+    unprepare();
     m_weakFactory.revokeAll();
 }
 
@@ -200,12 +202,15 @@ void AudioSourceProviderAVFObjC::createMixIfNeeded()
         return;
 
     ASSERT(!m_avAudioMix);
+    ASSERT(!m_tapStorage);
+    ASSERT(!m_tap);
 
-    m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstance() init]);
+    auto tapStorage = adoptRef(new TapStorage(this));
+    auto locker = holdLock(tapStorage->lock);
 
     MTAudioProcessingTapCallbacks callbacks = {
         0,
-        this,
+        tapStorage.get(),
         initCallback,
         finalizeCallback,
         prepareCallback,
@@ -215,12 +220,14 @@ void AudioSourceProviderAVFObjC::createMixIfNeeded()
 
     MTAudioProcessingTapRef tap = nullptr;
     OSStatus status = MTAudioProcessingTapCreate(kCFAllocatorDefault, &callbacks, 1, &tap);
-    ASSERT(tap);
-    ASSERT(m_tap == tap);
     if (status != noErr) {
-        m_tap = nullptr;
+        if (tap)
+            CFRelease(tap);
         return;
     }
+    m_tap = adoptCF(tap);
+    m_tapStorage = WTFMove(tapStorage);
+    m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstance() init]);
 
     RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([PAL::allocAVMutableAudioMixInputParametersInstance() init]);
     [parameters setAudioTapProcessor:m_tap.get()];
@@ -235,27 +242,17 @@ void AudioSourceProviderAVFObjC::createMixIfNeeded()
 
 void AudioSourceProviderAVFObjC::initCallback(MTAudioProcessingTapRef tap, void* clientInfo, void** tapStorageOut)
 {
-    ASSERT(tap);
-    AudioSourceProviderAVFObjC* _this = static_cast<AudioSourceProviderAVFObjC*>(clientInfo);
-    _this->m_tap = adoptCF(tap);
-    _this->m_tapStorage = adoptRef(new TapStorage(_this));
-    _this->init(clientInfo, tapStorageOut);
-    *tapStorageOut = _this->m_tapStorage.get();
-
+    ASSERT_UNUSED(tap, tap);
+    TapStorage* tapStorage = static_cast<TapStorage*>(clientInfo);
+    *tapStorageOut = tapStorage;
     // ref balanced by deref in finalizeCallback:
-    _this->m_tapStorage->ref();
+    tapStorage->ref();
 }
 
 void AudioSourceProviderAVFObjC::finalizeCallback(MTAudioProcessingTapRef tap)
 {
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
-
-    {
-        auto locker = holdLock(tapStorage->lock);
-        if (tapStorage->_this)
-            tapStorage->_this->finalize();
-    }
     tapStorage->deref();
 }
 
@@ -290,21 +287,6 @@ void AudioSourceProviderAVFObjC::processCallback(MTAudioProcessingTapRef tap, CM
 
     if (tapStorage->_this)
         tapStorage->_this->process(tap, numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut);
-}
-
-void AudioSourceProviderAVFObjC::init(void* clientInfo, void** tapStorageOut)
-{
-    ASSERT(clientInfo == this);
-    UNUSED_PARAM(clientInfo);
-    *tapStorageOut = this;
-}
-
-void AudioSourceProviderAVFObjC::finalize()
-{
-    if (m_tapStorage) {
-        m_tapStorage->_this = nullptr;
-        m_tapStorage = nullptr;
-    }
 }
 
 void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStreamBasicDescription *processingFormat)
