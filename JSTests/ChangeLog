@@ -1,3 +1,15 @@
+2021-04-14  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Unskip stress/intl-segmenter.js
+        https://bugs.webkit.org/show_bug.cgi?id=224553
+
+        Unreviewed test gardening.
+
+        It shouldn't fail any more on our bots now that our handling of libicu
+        is more robust.
+
+        * stress/intl-segmenter.js:
+
 2021-04-14  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Unskip typedarray-functions-with-neutered.js on MIPS
