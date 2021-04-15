@@ -33,6 +33,7 @@
 #include <WebCore/ResourceResponse.h>
 #include <wtf/RunLoop.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/CString.h>
 
 namespace WebKit {
 
@@ -63,13 +64,22 @@ private:
     enum class WasBlockingCookies { No, Yes };
     void createRequest(WebCore::ResourceRequest&&, WasBlockingCookies);
     void clearRequest();
-    static void sendRequestCallback(SoupRequest*, GAsyncResult*, NetworkDataTaskSoup*);
+
+    struct SendRequestData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+        GRefPtr<SoupMessage> soupMessage;
+        RefPtr<NetworkDataTaskSoup> task;
+    };
+    static void sendRequestCallback(SoupSession*, GAsyncResult*, SendRequestData*);
     void didSendRequest(GRefPtr<GInputStream>&&);
     void dispatchDidReceiveResponse();
     void dispatchDidCompleteWithError(const WebCore::ResourceError&);
 
     static gboolean tlsConnectionAcceptCertificateCallback(GTlsConnection*, GTlsCertificate*, GTlsCertificateFlags, NetworkDataTaskSoup*);
     bool tlsConnectionAcceptCertificate(GTlsCertificate*, GTlsCertificateFlags);
+
+    static void didSniffContentCallback(SoupMessage*, const char* contentType, GHashTable* parameters, NetworkDataTaskSoup*);
+    void didSniffContent(CString&&);
 
     bool persistentCredentialStorageEnabled() const;
     void applyAuthenticationToRequest(WebCore::ResourceRequest&);
@@ -136,7 +146,6 @@ private:
     WebCore::PageIdentifier m_pageID;
     State m_state { State::Suspended };
     WebCore::ContentSniffingPolicy m_shouldContentSniff;
-    GRefPtr<SoupRequest> m_soupRequest;
     GRefPtr<SoupMessage> m_soupMessage;
     GRefPtr<GFile> m_file;
     GRefPtr<GInputStream> m_inputStream;
@@ -147,6 +156,7 @@ private:
     WebCore::Credential m_credentialForPersistentStorage;
     WebCore::ResourceRequest m_currentRequest;
     WebCore::ResourceResponse m_response;
+    CString m_sniffedContentType;
     Vector<char> m_readBuffer;
     unsigned m_redirectCount { 0 };
     uint64_t m_bodyDataTotalBytesSent { 0 };

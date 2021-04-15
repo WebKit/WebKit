@@ -42,25 +42,17 @@ static URL failingURI(SoupURI* soupURI)
     return soupURIToURL(soupURI);
 }
 
-static URL failingURI(SoupRequest* request)
+ResourceError ResourceError::transportError(const URL& failingURL, int statusCode, const String& reasonPhrase)
 {
-    ASSERT(request);
-    return failingURI(soup_request_get_uri(request));
+    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), statusCode, failingURL, reasonPhrase);
 }
 
-ResourceError ResourceError::transportError(SoupRequest* request, int statusCode, const String& reasonPhrase)
+ResourceError ResourceError::httpError(SoupMessage* message, GError* error)
 {
-    return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR), statusCode,
-        failingURI(request), reasonPhrase);
-}
-
-ResourceError ResourceError::httpError(SoupMessage* message, GError* error, SoupRequest* request)
-{
-    if (message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code))
-        return transportError(request, message->status_code,
-            String::fromUTF8(message->reason_phrase));
-    else
-        return genericGError(error, request);
+    ASSERT(message);
+    if (SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code))
+        return transportError(failingURI(soup_message_get_uri(message)), message->status_code, String::fromUTF8(message->reason_phrase));
+    return genericGError(failingURI(soup_message_get_uri(message)), error);
 }
 
 ResourceError ResourceError::authenticationError(SoupMessage* message)
@@ -70,10 +62,9 @@ ResourceError ResourceError::authenticationError(SoupMessage* message)
         failingURI(soup_message_get_uri(message)), String::fromUTF8(message->reason_phrase));
 }
 
-ResourceError ResourceError::genericGError(GError* error, SoupRequest* request)
+ResourceError ResourceError::genericGError(const URL& failingURL, GError* error)
 {
-    return ResourceError(g_quark_to_string(error->domain), error->code,
-        failingURI(request), String::fromUTF8(error->message));
+    return ResourceError(g_quark_to_string(error->domain), error->code, failingURL, String::fromUTF8(error->message));
 }
 
 ResourceError ResourceError::tlsError(const URL& failingURL, unsigned tlsErrors, GTlsCertificate* certificate)
