@@ -1,3 +1,16 @@
+2021-04-15  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in ReplaceSelectionCommand::mergeEndIfNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=224587
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test to catch the editing crash fixed here; thanks to Tuomas Karkkainen
+        for its basic structure and Ryosuke Niwa for some fixes.
+
+        * editing/inserting/insert-horizontal-rule-with-style-crash-expected.txt: Added.
+        * editing/inserting/insert-horizontal-rule-with-style-crash.html: Added.
+
 2021-04-15  Antoine Quint  <graouts@webkit.org>
 
         calc() simplification for a multiplication should apply the multiplication to each value of an addition

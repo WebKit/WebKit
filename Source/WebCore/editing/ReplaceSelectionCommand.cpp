@@ -990,6 +990,10 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
         ASSERT_NOT_REACHED();
         return;
     }
+
+    ASSERT(startOfInsertedContent.isNull() == endOfInsertedContent.isNull());
+    if (startOfInsertedContent.isNull() || endOfInsertedContent.isNull())
+        return;
     
     // Merging two paragraphs will destroy the moved one's block styles.  Always move the end of inserted forward 
     // to preserve the block style of the paragraph already in the document, unless the paragraph to move would 
