@@ -1,3 +1,37 @@
+2021-04-15  Antoine Quint  <graouts@webkit.org>
+
+        calc() should not contain 0 values other than percentages
+        https://bugs.webkit.org/show_bug.cgi?id=224611
+
+        Reviewed by Simon Fraser.
+
+        A calc() value containing a 0px value, such as calc(10% + 0px), was incorrectly serialized
+        as-is for the computed style, instead of the simplified form containing on the percentage.
+
+        For the correct behavior we need to make four changes in css/CSSCalculationValue.cpp:
+
+        1. in createCSS(const CalcExpressionNode&, const RenderStyle&), when dealing with a node
+        that is CalcExpressionNodeType::Length, we return nullptr in the case then node's Length
+        is a 0 value that's not a percentage,
+
+        2. additionally, in createCSS(const Vector<std::unique_ptr<CalcExpressionNode>>&, const RenderStyle&),
+        we no longer bail when a nullptr value is returned for a child and instead proceed with the
+        processing of further children, ensuring that a 0px value in, say, a Sum operation is removed
+        while retaining other non-zero values,
+
+        3. back in createCSS(const CalcExpressionNode&, const RenderStyle&), for CalcExpressionNodeType::Operation
+        nodes, when there is single parameter to a Sum operation we return that parameter rather than
+        a Sum operation, and do the same for a Negate operation, making sure we return negated node if
+        it is the second child,
+
+        4. finally, in CSSCalcOperationNode::buildCSSText(const CSSCalcExpressionNode&, StringBuilder&)
+        when we serialize a calculated value, we do not enclose the value in a `calc()` string if the
+        node is a CSSCalcPrimitiveValueNode.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcOperationNode::buildCSSText):
+        (WebCore::createCSS):
+
 2021-04-15  Mark Lam  <mark.lam@apple.com>
 
         Refactor inline functions out of HashMapImpl.h into HashMapImplInlines.h.

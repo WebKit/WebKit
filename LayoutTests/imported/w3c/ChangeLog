@@ -1,3 +1,23 @@
+2021-04-15  Antoine Quint  <graouts@webkit.org>
+
+        calc() should not contain 0 values other than percentages
+        https://bugs.webkit.org/show_bug.cgi?id=224611
+
+        Reviewed by Simon Fraser.
+
+        Fix expectation of existing WPT tests and make some modifications to existing WPT tests.
+
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed-expected.txt:
+        * web-platform-tests/css/css-shapes/parsing/shape-outside-computed-expected.txt:
+        * web-platform-tests/css/css-shapes/parsing/shape-outside-computed.html: Add a new assertion checking
+        that the computed style for shape-outside may not contain 0px values in calc() values.
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation.html: Use 40% rather than
+        calc(0px + 40%) as the expected value for the computed style at the 100% keyframe when blending from 40px
+        to 40%. The test would have passed with calc(0px + 40%) as well, since it would now compute to 40%, but
+        the test is clearer when the actual computed form is used.
+        * web-platform-tests/css/css-values/minmax-percentage-serialize-expected.txt:
+
 2021-04-14  Tim Nguyen  <ntim@apple.com>
 
         Omit default position/angle when serializing radial & conic gradients

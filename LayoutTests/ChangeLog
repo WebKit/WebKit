@@ -1,3 +1,15 @@
+2021-04-15  Antoine Quint  <graouts@webkit.org>
+
+        calc() should not contain 0 values other than percentages
+        https://bugs.webkit.org/show_bug.cgi?id=224611
+
+        Reviewed by Simon Fraser.
+
+        Adjust a non-WPT test to not feature a 0px addition. 
+
+        * fast/shapes/shape-outside-floats/shape-outside-animation-expected.txt:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+
 2021-04-15  Amir Mark Jr  <amir_mark@apple.com>
 
         [ MacOS wk2 ] webgl/1.0.3/conformance/glsl/functions/glsl-function-abs.html is flaky crashing
