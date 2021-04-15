@@ -36,6 +36,7 @@ platform/network/soup/ResourceResponseSoup.cpp
 platform/network/soup/SoupNetworkSession.cpp
 platform/network/soup/SynchronousLoaderClientSoup.cpp
 platform/network/soup/URLSoup.cpp
+platform/network/soup/WebKitFormDataInputStream.cpp @no-unify
 
 platform/soup/PublicSuffixSoup.cpp
 platform/soup/SharedBufferSoup.cpp

@@ -1,5 +1,57 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272051. rdar://problem/76375364
+
+    [SOUP] Use a GInputStream to set the request body in preparation for libsoup3
+    https://bugs.webkit.org/show_bug.cgi?id=221034
+    
+    Reviewed by Adrian Perez de Castro.
+    
+    Source/WebCore:
+    
+    In libsoup3, the request body can be set using a stream. Add the stream now, that can still be used in libsoup2
+    to set the body data. This moves the FormData processing code to WebKitFormDataInputStream and also implements
+    the file seek and range length, which makes test http/tests/local/blob/send-hybrid-blob-using-open-panel.html pass.
+    
+    * platform/SourcesSoup.txt:
+    * platform/network/soup/ResourceRequestSoup.cpp:
+    (WebCore::ResourceRequest::updateSoupMessageBody const):
+    * platform/network/soup/WebKitFormDataInputStream.cpp: Added.
+    (webkitFormDataInputStreamCreateNextStream):
+    (webkitFormDataInputStreamRead):
+    (webkitFormDataInputStreamClose):
+    (webkit_form_data_input_stream_class_init):
+    (webkitFormDataInputStreamNew):
+    (webkitFormDataInputStreamReadAll):
+    * platform/network/soup/WebKitFormDataInputStream.h: Added.
+    
+    Tools:
+    
+    Add WebKitFormDataInputStream as an exception for some style checker rules.
+    
+    * Scripts/webkitpy/style/checker.py:
+    
+    LayoutTests:
+    
+    Remove expectations of http/tests/local/blob/send-hybrid-blob-using-open-panel.html that is now passing.
+    
+    * platform/gtk/TestExpectations:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272051 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            [SOUP] Use a GInputStream to set the request body in preparation for libsoup3
+            https://bugs.webkit.org/show_bug.cgi?id=221034
+
+            Reviewed by Adrian Perez de Castro.
+
+            Add WebKitFormDataInputStream as an exception for some style checker rules.
+
+            * Scripts/webkitpy/style/checker.py:
+
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271879. rdar://problem/76375364
 
     [SOUP] Stop using SoupRequest API to load files in preparation for libsoup3
