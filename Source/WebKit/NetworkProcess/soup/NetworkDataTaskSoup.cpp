@@ -64,7 +64,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
 
     auto request = requestWithCredentials;
     if (request.url().protocolIsInHTTPFamily()) {
-        m_startTime = MonotonicTime::now();
+        m_networkLoadMetrics.fetchStart = MonotonicTime::now().secondsSinceEpoch();
         auto url = request.url();
         if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
             m_user = url.user();
@@ -403,7 +403,7 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
     else
         m_inputStream = WTFMove(inputStream);
 
-    m_networkLoadMetrics.responseStart = MonotonicTime::now() - m_startTime;
+    m_networkLoadMetrics.responseStart = MonotonicTime::now().secondsSinceEpoch() - m_networkLoadMetrics.fetchStart;
     dispatchDidReceiveResponse();
 }
 
@@ -420,8 +420,6 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
     timing->connectEnd = m_networkLoadMetrics.connectEnd;
     timing->requestStart = m_networkLoadMetrics.requestStart;
     timing->responseStart = m_networkLoadMetrics.responseStart;
-    // FIXME: Remove this once nobody depends on deprecatedNetworkLoadMetrics.
-    m_response.setDeprecatedNetworkLoadMetrics(WTFMove(timing));
 
     didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed) {
@@ -454,7 +452,7 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
 
 void NetworkDataTaskSoup::dispatchDidCompleteWithError(const ResourceError& error)
 {
-    m_networkLoadMetrics.responseEnd = MonotonicTime::now() - m_startTime;
+    m_networkLoadMetrics.responseEnd = MonotonicTime::now().secondsSinceEpoch() - m_networkLoadMetrics.fetchStart;
     m_networkLoadMetrics.markComplete();
 
     m_client->didCompleteWithError(error, m_networkLoadMetrics);
@@ -823,8 +821,8 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         auto request = newRequest;
         if (request.url().protocolIsInHTTPFamily()) {
             if (isCrossOrigin) {
-                m_startTime = MonotonicTime::now();
                 m_networkLoadMetrics = { };
+                m_networkLoadMetrics.fetchStart = MonotonicTime::now().secondsSinceEpoch();
             }
 
             applyAuthenticationToRequest(request);
@@ -1186,7 +1184,7 @@ void NetworkDataTaskSoup::networkEventCallback(SoupMessage* soupMessage, GSocket
 
 void NetworkDataTaskSoup::networkEvent(GSocketClientEvent event, GIOStream* stream)
 {
-    Seconds deltaTime = MonotonicTime::now() - m_startTime;
+    Seconds deltaTime = MonotonicTime::now().secondsSinceEpoch() - m_networkLoadMetrics.fetchStart;
     switch (event) {
     case G_SOCKET_CLIENT_RESOLVING:
         m_networkLoadMetrics.domainLookupStart = deltaTime;
@@ -1277,7 +1275,7 @@ void NetworkDataTaskSoup::hstsEnforced(SoupMessage* soupMessage, NetworkDataTask
 
 void NetworkDataTaskSoup::didStartRequest()
 {
-    m_networkLoadMetrics.requestStart = MonotonicTime::now() - m_startTime;
+    m_networkLoadMetrics.requestStart = MonotonicTime::now().secondsSinceEpoch() - m_networkLoadMetrics.fetchStart;
 }
 
 void NetworkDataTaskSoup::restartedCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
@@ -1293,8 +1291,8 @@ void NetworkDataTaskSoup::restartedCallback(SoupMessage* soupMessage, NetworkDat
 
 void NetworkDataTaskSoup::didRestart()
 {
-    m_startTime = MonotonicTime::now();
     m_networkLoadMetrics = { };
+    m_networkLoadMetrics.fetchStart = MonotonicTime::now().secondsSinceEpoch();
 #if !USE(SOUP2)
     m_currentRequest.updateSoupMessageBody(m_soupMessage.get(), m_session->blobRegistry());
 #endif

@@ -185,7 +185,6 @@ private:
     GRefPtr<GOutputStream> m_downloadOutputStream;
     bool m_allowOverwriteDownload { false };
     WebCore::NetworkLoadMetrics m_networkLoadMetrics;
-    MonotonicTime m_startTime;
     bool m_isBlockingCookies { false };
     RunLoop::Timer<NetworkDataTaskSoup> m_timeoutSource;
 };
