@@ -1,3 +1,108 @@
+2021-04-15  Chris Lord  <clord@igalia.com>
+
+        Make FontFace parsing worker-safe
+        https://bugs.webkit.org/show_bug.cgi?id=224426
+
+        Reviewed by Darin Adler.
+
+        Make CSS FontFace property parsing safe to do in a Worker. Instead of
+        constructing a rule per property and using the full CSSPropertyParser
+        path, instead factor out the specific, necessary property parsers into a
+        new CSSPropertyParserWorkerSafe and make sure they're safe to use in a
+        Worker (mainly by allowing for specifying the CSSValuePool so that
+        main-thread singletons don't get used).
+
+        No new tests, no change in behavior.
+
+        * Sources.txt: Add CSSPropertyParserWorkerSafe.cpp/.h
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * css/FontFace.cpp: Call setters with the ScriptExecutionContext so
+          that we have access to ::cssValuePool() and use new worker-safe
+          parser functions.
+        (WebCore::FontFace::create):
+        (WebCore::FontFace::setFamily):
+        (WebCore::FontFace::setStyle):
+        (WebCore::FontFace::setWeight):
+        (WebCore::FontFace::setStretch):
+        (WebCore::FontFace::setUnicodeRange):
+        (WebCore::FontFace::setFeatureSettings):
+        (WebCore::FontFace::setDisplay):
+        * css/FontFace.h:
+        * css/FontFace.idl:
+
+        * css/parser/CSSParser.cpp: Move WorkerSafe parsing functions to
+          CSSPropertyParserWorkerSafe and remove now-unnecessary
+          parseFontFaceDescriptor.
+        * css/parser/CSSParser.h:
+
+        * css/parser/CSSPropertyParser.cpp: Move FontFace property parsers to
+          CSSPropertyParserWorkerSafe.
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseFontFaceDescriptor):
+        (WebCore::CSSPropertyParser::consumeFont):
+        * css/parser/CSSPropertyParser.h:
+
+        * css/parser/CSSPropertyParserHelpers.cpp: Add WorkerSafe variants for
+          some of the basic consume helpers.
+        (WebCore::CSSPropertyParserHelpers::CalcParser::CalcParser):
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeValue):
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::CalcParser::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumberWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumePercent):
+        (WebCore::CSSPropertyParserHelpers::consumePercentWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeAngle):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeIdentWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeFontRaw):
+        * css/parser/CSSPropertyParserHelpers.h:
+        (WebCore::CSSPropertyParserHelpers::consumeIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeIdentWorkerSafe):
+
+        * css/parser/CSSPropertyParserWorkerSafe.cpp: Added.
+        (WebCore::CSSPropertyParserWorkerSafe::parseFont):
+        (WebCore::CSSPropertyParserWorkerSafe::parseColor):
+        (WebCore::CSSPropertyParserWorkerSafe::parseFontFaceSrc):
+        (WebCore::CSSPropertyParserWorkerSafe::parseFontFaceStyle):
+        (WebCore::CSSPropertyParserWorkerSafe::parseFontFaceWeight):
+        (WebCore::CSSPropertyParserWorkerSafe::parseFontFaceStretch):
+        (WebCore::CSSPropertyParserWorkerSafe::parseFontFaceUnicodeRange):
+        (WebCore::CSSPropertyParserWorkerSafe::parseFontFaceFeatureSettings):
+        (WebCore::CSSPropertyParserWorkerSafe::parseFontFaceDisplay):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceSrcURI):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceSrcLocal):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceSrc):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStyle):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStyleKeywordValue):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStyleRange):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontWeightAbsoluteKeywordValue):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontWeightAbsoluteRange):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontWeightAbsolute):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStretchKeywordValue):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::fontStretchIsWithinRange):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStretch):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStretchRange):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceUnicodeRange):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFeatureTag):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFeatureSettings):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceFontDisplay):
+        * css/parser/CSSPropertyParserWorkerSafe.h: Added.
+
+        * dom/ScriptExecutionContext.cpp: Add ::cssValuePool().
+        (WebCore::ScriptExecutionContext::cssValuePool):
+        * dom/ScriptExecutionContext.h:
+
+        * html/canvas/CanvasRenderingContext2D.cpp: Update due to refactoring.
+        (WebCore::CanvasRenderingContext2D::setFontWithoutUpdatingStyle):
+        * html/canvas/CanvasStyle.cpp:
+        (WebCore::parseColor):
+        * html/canvas/OffscreenCanvasRenderingContext2D.cpp:
+        (WebCore::OffscreenCanvasRenderingContext2D::setFont):
+        * workers/WorkerGlobalScope.h:
+
 2021-04-15  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Move FocusRemovalEventsMode into FocusOptions

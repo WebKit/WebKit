@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ScriptExecutionContext.h"
 
+#include "CSSValuePool.h"
 #include "CachedScript.h"
 #include "CommonVM.h"
 #include "DOMTimer.h"
@@ -231,6 +232,11 @@ void ScriptExecutionContext::didLoadResourceSynchronously(const URL&)
 FontCache& ScriptExecutionContext::fontCache()
 {
     return FontCache::singleton();
+}
+
+CSSValuePool& ScriptExecutionContext::cssValuePool()
+{
+    return CSSValuePool::singleton();
 }
 
 std::unique_ptr<FontLoadRequest> ScriptExecutionContext::fontLoadRequest(String&, bool, bool, LoadedFromOpaqueSource)

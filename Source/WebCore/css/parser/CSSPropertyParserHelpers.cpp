@@ -97,9 +97,10 @@ static Optional<double> consumeNumberOrPercentDividedBy100Raw(CSSParserTokenRang
 // FIXME: consider pulling in the parsing logic from CSSCalculationValue.cpp.
 class CalcParser {
 public:
-    explicit CalcParser(CSSParserTokenRange& range, CalculationCategory destinationCategory, ValueRange valueRange = ValueRangeAll)
+    explicit CalcParser(CSSParserTokenRange& range, CalculationCategory destinationCategory, ValueRange valueRange = ValueRangeAll, CSSValuePool& cssValuePool = CSSValuePool::singleton())
         : m_sourceRange(range)
         , m_range(range)
+        , m_valuePool(cssValuePool)
     {
         const CSSParserToken& token = range.peek();
         auto functionId = token.functionId();
@@ -114,7 +115,7 @@ public:
         if (!m_calcValue)
             return nullptr;
         m_sourceRange = m_range;
-        return CSSValuePool::singleton().createValue(WTFMove(m_calcValue));
+        return m_valuePool.createValue(WTFMove(m_calcValue));
     }
 
     RefPtr<CSSPrimitiveValue> consumeInteger(double minimumValue)
@@ -122,7 +123,7 @@ public:
         if (!m_calcValue)
             return nullptr;
         m_sourceRange = m_range;
-        return CSSValuePool::singleton().createValue(std::round(std::max(m_calcValue->doubleValue(), minimumValue)), CSSUnitType::CSS_NUMBER);
+        return m_valuePool.createValue(std::round(std::max(m_calcValue->doubleValue(), minimumValue)), CSSUnitType::CSS_NUMBER);
     }
 
     template<typename IntType> Optional<IntType> consumeIntegerTypeRaw(double minimumValue)
@@ -138,7 +139,7 @@ public:
         if (!m_calcValue)
             return nullptr;
         m_sourceRange = m_range;
-        return CSSValuePool::singleton().createValue(m_calcValue->doubleValue(), CSSUnitType::CSS_NUMBER);
+        return m_valuePool.createValue(m_calcValue->doubleValue(), CSSUnitType::CSS_NUMBER);
     }
 
     Optional<double> consumeNumberRaw()
@@ -199,6 +200,7 @@ private:
     CSSParserTokenRange& m_sourceRange;
     CSSParserTokenRange m_range;
     RefPtr<CSSCalcValue> m_calcValue;
+    CSSValuePool& m_valuePool;
 };
 
 template<typename IntType> Optional<IntType> consumeIntegerTypeRaw(CSSParserTokenRange& range, double minimumValue)
@@ -317,8 +319,13 @@ Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
 
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
 {
+    return consumeFontWeightNumberWorkerSafe(range, CSSValuePool::singleton());
+}
+
+RefPtr<CSSPrimitiveValue> consumeFontWeightNumberWorkerSafe(CSSParserTokenRange& range, CSSValuePool& cssValuePool)
+{
     if (auto result = consumeFontWeightNumberRaw(range))
-        return CSSValuePool::singleton().createValue(*result, CSSUnitType::CSS_NUMBER);
+        return cssValuePool.createValue(*result, CSSUnitType::CSS_NUMBER);
     return nullptr;
 }
 
@@ -418,9 +425,14 @@ Optional<double> consumePercentRaw(CSSParserTokenRange& range, ValueRange valueR
 
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange& range, ValueRange valueRange)
 {
+    return consumePercentWorkerSafe(range, valueRange, CSSValuePool::singleton());
+}
+
+RefPtr<CSSPrimitiveValue> consumePercentWorkerSafe(CSSParserTokenRange& range, ValueRange valueRange, CSSValuePool& cssValuePool)
+{
     const CSSParserToken& token = range.peek();
     if (token.type() == FunctionToken) {
-        CalcParser calcParser(range, CalculationCategory::Percent, valueRange);
+        CalcParser calcParser(range, CalculationCategory::Percent, valueRange, cssValuePool);
         if (const CSSCalcValue* calculation = calcParser.value()) {
             if (calculation->category() == CalculationCategory::Percent)
                 return calcParser.consumeValue();
@@ -429,7 +441,7 @@ RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange& range, ValueRange 
     }
 
     if (auto percent = consumePercentRaw(range, valueRange))
-        return CSSValuePool::singleton().createValue(*percent, CSSUnitType::CSS_PERCENTAGE);
+        return cssValuePool.createValue(*percent, CSSUnitType::CSS_PERCENTAGE);
 
     return nullptr;
 }
@@ -523,9 +535,14 @@ Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode css
 
 RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode cssParserMode, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
 {
+    return consumeAngleWorkerSafe(range, cssParserMode, CSSValuePool::singleton(), unitless, unitlessZero);
+}
+
+RefPtr<CSSPrimitiveValue> consumeAngleWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParserMode, CSSValuePool& cssValuePool, UnitlessQuirk unitless, UnitlessZeroQuirk unitlessZero)
+{
     const CSSParserToken& token = range.peek();
     if (token.type() == FunctionToken) {
-        CalcParser calcParser(range, CalculationCategory::Angle, ValueRangeAll);
+        CalcParser calcParser(range, CalculationCategory::Angle, ValueRangeAll, cssValuePool);
         if (const CSSCalcValue* calculation = calcParser.value()) {
             if (calculation->category() == CalculationCategory::Angle)
                 return calcParser.consumeValue();
@@ -534,7 +551,7 @@ RefPtr<CSSPrimitiveValue> consumeAngle(CSSParserTokenRange& range, CSSParserMode
     }
 
     if (auto angle = consumeAngleRaw(range, cssParserMode, unitless, unitlessZero))
-        return CSSValuePool::singleton().createValue(angle->value, angle->type);
+        return cssValuePool.createValue(angle->value, angle->type);
 
     return nullptr;
 }
@@ -626,8 +643,13 @@ Optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
 
 RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)
 {
+    return consumeIdentWorkerSafe(range, CSSValuePool::singleton());
+}
+
+RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange& range, CSSValuePool& cssValuePool)
+{
     if (auto result = consumeIdentRaw(range))
-        return CSSValuePool::singleton().createIdentifierValue(*result);
+        return cssValuePool.createIdentifierValue(*result);
     return nullptr;
 }
 
@@ -3040,7 +3062,7 @@ Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange& range, CSSPars
     return WTF::nullopt;
 }
 
-Optional<FontRaw> consumeFontWorkerSafe(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+Optional<FontRaw> consumeFontRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     // Let's check if there is an inherit or initial somewhere in the shorthand.
     CSSParserTokenRange rangeCopy = range;

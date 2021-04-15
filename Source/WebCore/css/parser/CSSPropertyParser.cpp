@@ -190,6 +190,7 @@ CSSPropertyID cssPropertyID(StringView string)
 }
     
 using namespace CSSPropertyParserHelpers;
+using namespace CSSPropertyParserHelpersWorkerSafe;
 
 CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range, const CSSParserContext& context, Vector<CSSProperty, 256>* parsedProperties, bool consumeWhitespace)
     : m_range(range)
@@ -424,54 +425,6 @@ static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
     }
 
     return values;
-}
-
-static RefPtr<CSSFontFeatureValue> consumeFontFeatureTag(CSSParserTokenRange& range)
-{
-    // Feature tag name consists of 4-letter characters.
-    static const unsigned tagNameLength = 4;
-
-    const CSSParserToken& token = range.consumeIncludingWhitespace();
-    // Feature tag name comes first
-    if (token.type() != StringToken)
-        return nullptr;
-    if (token.value().length() != tagNameLength)
-        return nullptr;
-    
-    FontTag tag;
-    for (unsigned i = 0; i < tag.size(); ++i) {
-        // Limits the range of characters to 0x20-0x7E, following the tag name rules defiend in the OpenType specification.
-        UChar character = token.value()[i];
-        if (character < 0x20 || character > 0x7E)
-            return nullptr;
-        tag[i] = toASCIILower(character);
-    }
-
-    int tagValue = 1;
-    if (!range.atEnd() && range.peek().type() != CommaToken) {
-        // Feature tag values could follow: <integer> | on | off
-        if (auto integer = consumeIntegerRaw(range, 0))
-            tagValue = *integer;
-        else if (range.peek().id() == CSSValueOn || range.peek().id() == CSSValueOff)
-            tagValue = range.consumeIncludingWhitespace().id() == CSSValueOn;
-        else
-            return nullptr;
-    }
-    return CSSFontFeatureValue::create(WTFMove(tag), tagValue);
-}
-
-static RefPtr<CSSValue> consumeFontFeatureSettings(CSSParserTokenRange& range)
-{
-    if (range.peek().id() == CSSValueNormal)
-        return consumeIdent(range);
-    RefPtr<CSSValueList> settings = CSSValueList::createCommaSeparated();
-    do {
-        RefPtr<CSSFontFeatureValue> fontFeatureValue = consumeFontFeatureTag(range);
-        if (!fontFeatureValue)
-            return nullptr;
-        settings->append(fontFeatureValue.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    return settings;
 }
 
 #if ENABLE(VARIATION_FONTS)
@@ -849,140 +802,6 @@ static RefPtr<CSSPrimitiveValue> consumeFontWeight(CSSParserTokenRange& range)
     }
     return nullptr;
 }
-
-static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsoluteKeywordValue(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueNormal, CSSValueBold>(range);
-}
-
-#if ENABLE(VARIATION_FONTS)
-static RefPtr<CSSValue> consumeFontWeightAbsoluteRange(CSSParserTokenRange& range)
-{
-    if (auto result = consumeFontWeightAbsoluteKeywordValue(range))
-        return result;
-    auto firstNumber = consumeFontWeightNumber(range);
-    if (!firstNumber)
-        return nullptr;
-    if (range.atEnd())
-        return firstNumber;
-    auto secondNumber = consumeFontWeightNumber(range);
-    if (!secondNumber || firstNumber->floatValue() > secondNumber->floatValue())
-        return nullptr;
-    auto result = CSSValueList::createSpaceSeparated();
-    result->append(firstNumber.releaseNonNull());
-    result->append(secondNumber.releaseNonNull());
-    return RefPtr<CSSValue>(WTFMove(result));
-}
-#else
-static RefPtr<CSSPrimitiveValue> consumeFontWeightAbsolute(CSSParserTokenRange& range)
-{
-    if (auto result = consumeFontWeightAbsoluteKeywordValue(range))
-        return result;
-    return consumeFontWeightNumber(range);
-}
-#endif
-
-static RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRange& range)
-{
-    if (auto valueID = consumeFontStretchKeywordValueRaw(range))
-        return CSSValuePool::singleton().createIdentifierValue(*valueID);
-    return nullptr;
-}
-
-#if ENABLE(VARIATION_FONTS)
-static bool fontStretchIsWithinRange(float stretch)
-{
-    return stretch >= 0;
-}
-#endif
-
-static RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range)
-{
-    if (auto result = consumeFontStretchKeywordValue(range))
-        return result;
-#if ENABLE(VARIATION_FONTS)
-    if (auto percent = consumePercent(range, ValueRangeNonNegative))
-        return fontStretchIsWithinRange(percent->value<float>()) ? percent : nullptr;
-#endif
-    return nullptr;
-}
-
-#if ENABLE(VARIATION_FONTS)
-static RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange& range)
-{
-    if (auto result = consumeFontStretchKeywordValue(range))
-        return result;
-    auto firstPercent = consumePercent(range, ValueRangeNonNegative);
-    if (!firstPercent || !fontStretchIsWithinRange(firstPercent->value<float>()))
-        return nullptr;
-    if (range.atEnd())
-        return firstPercent;
-    auto secondPercent = consumePercent(range, ValueRangeNonNegative);
-    if (!secondPercent || !fontStretchIsWithinRange(secondPercent->value<float>()) || firstPercent->floatValue() > secondPercent->floatValue())
-        return nullptr;
-    auto result = CSSValueList::createSpaceSeparated();
-    result->append(firstPercent.releaseNonNull());
-    result->append(secondPercent.releaseNonNull());
-    return RefPtr<CSSValue>(WTFMove(result));
-}
-#endif
-
-static RefPtr<CSSPrimitiveValue> consumeFontStyleKeywordValue(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueNormal, CSSValueItalic, CSSValueOblique>(range);
-}
-
-static RefPtr<CSSFontStyleValue> consumeFontStyle(CSSParserTokenRange& range, CSSParserMode cssParserMode)
-{
-    if (auto result = consumeFontStyleRaw(range, cssParserMode)) {
-#if ENABLE(VARIATION_FONTS)
-        if (result->style == CSSValueOblique && result->angle) {
-            return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueOblique),
-                CSSValuePool::singleton().createValue(result->angle->value, result->angle->type));
-        }
-#endif
-        return CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(result->style));
-    }
-    return nullptr;
-}
-
-#if ENABLE(VARIATION_FONTS)
-static RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range, CSSParserMode cssParserMode)
-{
-    auto keyword = consumeFontStyleKeywordValue(range);
-    if (!keyword)
-        return nullptr;
-
-    if (keyword->valueID() != CSSValueOblique || range.atEnd())
-        return CSSFontStyleRangeValue::create(keyword.releaseNonNull());
-
-    // FIXME: This should probably not allow the unitless zero.
-    if (auto firstAngle = consumeAngle(range, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)) {
-        auto firstAngleInDegrees = firstAngle->doubleValue(CSSUnitType::CSS_DEG);
-        if (!isFontStyleAngleInRange(firstAngleInDegrees))
-            return nullptr;
-        if (range.atEnd()) {
-            auto result = CSSValueList::createSpaceSeparated();
-            result->append(firstAngle.releaseNonNull());
-            return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
-        }
-
-        // FIXME: This should probably not allow the unitless zero.
-        auto secondAngle = consumeAngle(range, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
-        if (!secondAngle)
-            return nullptr;
-        auto secondAngleInDegrees = secondAngle->doubleValue(CSSUnitType::CSS_DEG);
-        if (!isFontStyleAngleInRange(secondAngleInDegrees) || firstAngleInDegrees > secondAngleInDegrees)
-            return nullptr;
-        auto result = CSSValueList::createSpaceSeparated();
-        result->append(firstAngle.releaseNonNull());
-        result->append(secondAngle.releaseNonNull());
-        return CSSFontStyleRangeValue::create(keyword.releaseNonNull(), WTFMove(result));
-    }
-
-    return nullptr;
-}
-#endif
 
 static RefPtr<CSSValue> consumeFamilyName(CSSParserTokenRange& range)
 {
@@ -4078,15 +3897,15 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyFontVariantEastAsian:
         return consumeFontVariantEastAsian(m_range);
     case CSSPropertyFontFeatureSettings:
-        return consumeFontFeatureSettings(m_range);
+        return consumeFontFeatureSettings(m_range, CSSValuePool::singleton());
     case CSSPropertyFontFamily:
         return consumeFontFamily(m_range);
     case CSSPropertyFontWeight:
         return consumeFontWeight(m_range);
     case CSSPropertyFontStretch:
-        return consumeFontStretch(m_range);
+        return consumeFontStretch(m_range, CSSValuePool::singleton());
     case CSSPropertyFontStyle:
-        return consumeFontStyle(m_range, m_context.mode);
+        return consumeFontStyle(m_range, m_context.mode, CSSValuePool::singleton());
     case CSSPropertyFontSynthesis:
         return consumeFontSynthesis(m_range);
 #if ENABLE(VARIATION_FONTS)
@@ -4615,90 +4434,6 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     return nullptr;
 }
 
-static RefPtr<CSSValueList> consumeFontFaceUnicodeRange(CSSParserTokenRange& range)
-{
-    RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
-
-    do {
-        const CSSParserToken& token = range.consumeIncludingWhitespace();
-        if (token.type() != UnicodeRangeToken)
-            return nullptr;
-
-        UChar32 start = token.unicodeRangeStart();
-        UChar32 end = token.unicodeRangeEnd();
-        if (start > end)
-            return nullptr;
-        values->append(CSSUnicodeRangeValue::create(start, end));
-    } while (consumeCommaIncludingWhitespace(range));
-
-    return values;
-}
-
-static RefPtr<CSSPrimitiveValue> consumeFontFaceFontDisplay(CSSParserTokenRange& range)
-{
-    return consumeIdent<CSSValueAuto, CSSValueBlock, CSSValueSwap, CSSValueFallback, CSSValueOptional>(range);
-}
-
-static RefPtr<CSSValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    String url = consumeUrlAsStringView(range).toString();
-    if (url.isNull())
-        return nullptr;
-
-    RefPtr<CSSFontFaceSrcValue> uriValue = CSSFontFaceSrcValue::create(context.completeURL(url).string(), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
-
-    if (range.peek().functionId() != CSSValueFormat)
-        return uriValue;
-
-    // FIXME: https://drafts.csswg.org/css-fonts says that format() contains a comma-separated list of strings,
-    // but CSSFontFaceSrcValue stores only one format. Allowing one format for now.
-    // FIXME: We're allowing the format to be an identifier as well as a string, because the old
-    // parser did. It's not clear if we need to continue to support this behavior, but we have lots of
-    // layout tests that rely on it.
-    CSSParserTokenRange args = consumeFunction(range);
-    const CSSParserToken& arg = args.consumeIncludingWhitespace();
-    if ((arg.type() != StringToken && arg.type() != IdentToken) || !args.atEnd())
-        return nullptr;
-    uriValue->setFormat(arg.value().toString());
-    return uriValue;
-}
-
-static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)
-{
-    CSSParserTokenRange args = consumeFunction(range);
-    if (args.peek().type() == StringToken) {
-        const CSSParserToken& arg = args.consumeIncludingWhitespace();
-        if (!args.atEnd())
-            return nullptr;
-        return CSSFontFaceSrcValue::createLocal(arg.value().toString());
-    }
-    if (args.peek().type() == IdentToken) {
-        String familyName = concatenateFamilyName(args);
-        if (!args.atEnd())
-            return nullptr;
-        return CSSFontFaceSrcValue::createLocal(familyName);
-    }
-    return nullptr;
-}
-
-static RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    RefPtr<CSSValueList> values = CSSValueList::createCommaSeparated();
-
-    do {
-        const CSSParserToken& token = range.peek();
-        RefPtr<CSSValue> parsedValue;
-        if (token.functionId() == CSSValueLocal)
-            parsedValue = consumeFontFaceSrcLocal(range);
-        else
-            parsedValue = consumeFontFaceSrcURI(range, context);
-        if (!parsedValue)
-            return nullptr;
-        values->append(parsedValue.releaseNonNull());
-    } while (consumeCommaIncludingWhitespace(range));
-    return values;
-}
-
 bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
 {
     RefPtr<CSSValue> parsedValue;
@@ -4713,27 +4448,27 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
         parsedValue = consumeFontFaceUnicodeRange(m_range);
         break;
     case CSSPropertyFontDisplay:
-        parsedValue = consumeFontFaceFontDisplay(m_range);
+        parsedValue = consumeFontFaceFontDisplay(m_range, CSSValuePool::singleton());
         break;
     case CSSPropertyFontWeight:
 #if ENABLE(VARIATION_FONTS)
-        parsedValue = consumeFontWeightAbsoluteRange(m_range);
+        parsedValue = consumeFontWeightAbsoluteRange(m_range, CSSValuePool::singleton());
 #else
-        parsedValue = consumeFontWeightAbsolute(m_range);
+        parsedValue = consumeFontWeightAbsolute(m_range, CSSValuePool::singleton());
 #endif
         break;
     case CSSPropertyFontStretch:
 #if ENABLE(VARIATION_FONTS)
-        parsedValue = consumeFontStretchRange(m_range);
+        parsedValue = consumeFontStretchRange(m_range, CSSValuePool::singleton());
 #else
-        parsedValue = consumeFontStretch(m_range);
+        parsedValue = consumeFontStretch(m_range, CSSValuePool::singleton());
 #endif
         break;
     case CSSPropertyFontStyle:
 #if ENABLE(VARIATION_FONTS)
-        parsedValue = consumeFontStyleRange(m_range, m_context.mode);
+        parsedValue = consumeFontStyleRange(m_range, m_context.mode, CSSValuePool::singleton());
 #else
-        parsedValue = consumeFontStyle(m_range, m_context.mode);
+        parsedValue = consumeFontStyle(m_range, m_context.mode, CSSValuePool::singleton());
 #endif
         break;
     case CSSPropertyFontVariantCaps:
@@ -4757,7 +4492,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
     case CSSPropertyFontVariant:
         return consumeFontVariantShorthand(false);
     case CSSPropertyFontFeatureSettings:
-        parsedValue = consumeFontFeatureSettings(m_range);
+        parsedValue = consumeFontFeatureSettings(m_range, CSSValuePool::singleton());
         break;
     default:
         break;
@@ -4814,7 +4549,7 @@ bool CSSPropertyParser::consumeFont(bool important)
     while (!m_range.atEnd()) {
         CSSValueID id = m_range.peek().id();
         if (!fontStyle) {
-            fontStyle = consumeFontStyle(m_range, m_context.mode);
+            fontStyle = consumeFontStyle(m_range, m_context.mode, CSSValuePool::singleton());
             if (fontStyle)
                 continue;
         }
@@ -4831,7 +4566,7 @@ bool CSSPropertyParser::consumeFont(bool important)
                 continue;
         }
         if (!fontStretch) {
-            fontStretch = consumeFontStretchKeywordValue(m_range);
+            fontStretch = consumeFontStretchKeywordValue(m_range, CSSValuePool::singleton());
             if (fontStretch)
                 continue;
         }

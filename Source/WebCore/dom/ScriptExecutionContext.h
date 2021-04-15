@@ -62,6 +62,7 @@ namespace WebCore {
 class EventLoop;
 class CachedScript;
 class CSSFontSelector;
+class CSSValuePool;
 class DatabaseContext;
 class EventQueue;
 class EventLoopTaskGroup;
@@ -167,6 +168,7 @@ public:
 
     virtual FontCache& fontCache();
     virtual CSSFontSelector* cssFontSelector() { return nullptr; }
+    virtual CSSValuePool& cssValuePool();
     virtual std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource);
     virtual void beginLoadingFontSoon(FontLoadRequest&) { }
 

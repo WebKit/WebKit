@@ -34,6 +34,7 @@ namespace WebCore {
 
 class CSSParserObserver;
 class CSSSelectorList;
+class CSSValueList;
 class CSSValuePool;
 class Color;
 class Element;
@@ -79,8 +80,6 @@ public:
     static ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important, const CSSParserContext&);
     static ParseResult parseCustomPropertyValue(MutableStyleProperties&, const AtomString& propertyName, const String&, bool important, const CSSParserContext&);
     
-    static RefPtr<CSSValue> parseFontFaceDescriptor(CSSPropertyID, const String&, const CSSParserContext&);
-
     static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const String&, const CSSParserContext& = strictCSSParserContext());
 
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
@@ -91,12 +90,9 @@ public:
     RefPtr<CSSValue> parseValueWithVariableReferences(CSSPropertyID, const CSSValue&, Style::BuilderState&);
 
     WEBCORE_EXPORT static Color parseColor(const String&, bool strict = false);
-    static Color parseColorWorkerSafe(const String&);
     static Color parseSystemColor(StringView);
     static Optional<SRGBA<uint8_t>> parseNamedColor(StringView);
     static Optional<SRGBA<uint8_t>> parseHexColor(StringView);
-
-    static Optional<CSSPropertyParserHelpers::FontRaw> parseFontWorkerSafe(const String&, CSSParserMode = HTMLStandardMode);
 
 private:
     ParseResult parseValue(MutableStyleProperties&, CSSPropertyID, const String&, bool important);

@@ -121,7 +121,7 @@ public:
     void createImageBitmap(ImageBitmap::Source&&, ImageBitmapOptions&&, ImageBitmap::Promise&&);
     void createImageBitmap(ImageBitmap::Source&&, int sx, int sy, int sw, int sh, ImageBitmapOptions&&, ImageBitmap::Promise&&);
 
-    CSSValuePool& cssValuePool();
+    CSSValuePool& cssValuePool() final;
     CSSFontSelector* cssFontSelector() final;
     FontCache& fontCache() final;
 

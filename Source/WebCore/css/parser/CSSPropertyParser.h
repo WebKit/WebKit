@@ -24,6 +24,7 @@
 
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParserWorkerSafe.h"
 #include "StyleRule.h"
 #include <wtf/text/StringView.h>
 
@@ -31,6 +32,7 @@ namespace WebCore {
 
 class CSSProperty;
 class CSSValue;
+class CSSValueList;
 class StylePropertyShorthand;
 class StyleSheetContents;
 
