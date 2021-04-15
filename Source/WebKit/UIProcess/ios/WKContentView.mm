@@ -44,6 +44,7 @@
 #import "WKInspectorHighlightView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewIOS.h"
 #import "WebFrameProxy.h"
@@ -548,17 +549,17 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
 - (BOOL)canBecomeFocused
 {
-    return [_webView canBecomeFocused];
-}
+    auto delegate = static_cast<id <WKUIDelegatePrivate>>(self.webView.UIDelegate);
+    if ([delegate respondsToSelector:@selector(_webViewCanBecomeFocused:)])
+        return [delegate _webViewCanBecomeFocused:self.webView];
 
-- (BOOL)canBecomeFocusedForWebView
-{
-    return YES;
+    return [delegate respondsToSelector:@selector(_webView:takeFocus:)];
 }
 
 - (void)didUpdateFocusInContext:(UIFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator
 {
-    [self _becomeFirstResponderWithSelectionMovingForward:context.focusHeading == UIFocusHeadingNext completionHandler:nil];
+    if (context.nextFocusedView == self)
+        [self _becomeFirstResponderWithSelectionMovingForward:context.focusHeading == UIFocusHeadingNext completionHandler:nil];
 }
 
 #pragma mark Internal

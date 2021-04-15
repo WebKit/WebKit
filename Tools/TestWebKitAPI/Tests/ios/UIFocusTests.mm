@@ -28,35 +28,44 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "TestWKWebView.h"
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 
-@interface UIFocusTestWKWebView : TestWKWebView
-@property (nonatomic) Optional<BOOL> overrideCanBecomeFocused;
+@interface UIFocusDelegate : NSObject<WKUIDelegatePrivate>
+@property (nonatomic) BOOL canBecomeFocused;
 @end
 
-@implementation UIFocusTestWKWebView
+@implementation UIFocusDelegate
 
-- (BOOL)canBecomeFocused
+- (BOOL)_webViewCanBecomeFocused:(WKWebView *)webView
 {
-    return self.overrideCanBecomeFocused.valueOr([super canBecomeFocused]);
+    return self.canBecomeFocused;
+}
+
+- (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction
+{
 }
 
 @end
 
 namespace TestWebKitAPI {
 
-TEST(UIFocusTests, OverrideCanBecomeFocused)
+TEST(UIFocusTests, ContentViewCanBecomeFocused)
 {
-    auto webView = adoptNS([[UIFocusTestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"simple-form"];
-    EXPECT_TRUE([webView textInputContentView].canBecomeFocused);
 
-    [webView setOverrideCanBecomeFocused:NO];
-    EXPECT_FALSE([webView textInputContentView].canBecomeFocused);
+    auto contentView = [webView textInputContentView];
+    EXPECT_FALSE(contentView.canBecomeFocused);
 
-    [webView setOverrideCanBecomeFocused:YES];
-    EXPECT_TRUE([webView textInputContentView].canBecomeFocused);
+    auto delegate = adoptNS([[UIFocusDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [delegate setCanBecomeFocused:YES];
+    EXPECT_TRUE(contentView.canBecomeFocused);
+
+    [delegate setCanBecomeFocused:NO];
+    EXPECT_FALSE(contentView.canBecomeFocused);
 }
 
 } // namespace TestWebKitAPI

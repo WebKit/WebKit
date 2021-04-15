@@ -1,3 +1,19 @@
+2021-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKContentView should become focused without requiring -[WKWebView canBecomeFocused] to return YES
+        https://bugs.webkit.org/show_bug.cgi?id=224613
+        <rdar://problem/76710314>
+
+        Reviewed by Tim Horton.
+
+        Adjust an existing API test so that it adopts the new UI delegate method.
+
+        * TestWebKitAPI/Tests/ios/UIFocusTests.mm:
+        (-[UIFocusDelegate _webViewCanTakeFocus:]):
+        (-[UIFocusDelegate _webView:takeFocus:]):
+        (TestWebKitAPI::TEST):
+        (-[UIFocusTestWKWebView canBecomeFocused]): Deleted.
+
 2021-04-15  Jonathan Bedard  <jbedard@apple.com>
 
         [results.webkit.org] Fully report git commits

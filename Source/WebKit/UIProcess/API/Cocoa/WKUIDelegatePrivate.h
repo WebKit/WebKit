@@ -223,6 +223,8 @@ struct UIEdgeInsets;
  */
 - (void)_webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
+- (BOOL)_webViewCanBecomeFocused:(WKWebView *)webView WK_API_AVAILABLE(ios(WK_IOS_TBA));
+
 #else // !TARGET_OS_IPHONE
 
 - (void)_prepareForImmediateActionAnimationForWebView:(WKWebView *)webView WK_API_AVAILABLE(macos(10.13.4));

@@ -1,3 +1,41 @@
+2021-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WKContentView should become focused without requiring -[WKWebView canBecomeFocused] to return YES
+        https://bugs.webkit.org/show_bug.cgi?id=224613
+        <rdar://problem/76710314>
+
+        Reviewed by Tim Horton.
+
+        Make a couple of minor tweaks to `WKContentView`'s implementation of the `UIFocus` protocol methods.
+
+        Test: UIFocusTests.ContentViewCanBecomeFocused
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView canBecomeFocused]): Deleted.
+
+        Remove the ability for clients to influence `-[WKContentView canBecomeFocused]` by overriding `-[WKWebView
+        canBecomeFocused]`. Apparently, making `WKWebView` focusable by UIKit in addition to the content view causes the
+        web view to occasionally take first responder instead of the content view, which then breaks key event handling.
+
+        Instead, make it so that `-[WKContentView canBecomeFocused]` still returns `NO` by default, return `YES` for
+        internal clients that override the private UI delegate method `-_webView:takeFocus:`, and additionally introduce
+        a new delegate method, `-_webViewCanBecomeFocused:`, so that clients can make `-[WKContentView canBecomeFocused]`
+        return `NO` even if the delegate responds to `-_webView:takeFocus:`. This is because it doesn't make sense for a
+        WebKit client to allow UIKit's focus engine to (effectively) descend into web content without a way for the
+        embedder to handle the case where focus later ascends out of web content (and asks the UI delegate to take
+        focus).
+
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView canBecomeFocused]):
+        (-[WKContentView didUpdateFocusInContext:withAnimationCoordinator:]):
+
+        Also, make a minor adjustment here to avoid moving focus to the next or previous focusable element in the case
+        where focus is being moved _away from_ the content view, by consulting `-[UIFocusUpdateContext nextFocusedView]`.
+
+        (-[WKContentView canBecomeFocusedForWebView]): Deleted.
+
 2021-04-15  Brady Eidson  <beidson@apple.com>
 
         Move WKURLSchemeTask redirect API to SPI
