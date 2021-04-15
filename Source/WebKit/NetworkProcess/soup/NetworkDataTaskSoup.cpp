@@ -1001,6 +1001,8 @@ void NetworkDataTaskSoup::didGetHeaders()
             requestHeaders.set(String(headerName), String(headerValue));
         m_networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
     }
+
+    m_networkLoadMetrics.protocol = soup_message_get_http_version(m_soupMessage.get()) == SOUP_HTTP_1_0 ? "http/1.0" : "http/1.1";
 }
 
 #if USE(SOUP2)
