@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HashMapImpl.h"
 
+#include "HashMapImplInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {

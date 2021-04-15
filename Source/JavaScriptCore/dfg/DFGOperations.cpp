@@ -60,7 +60,7 @@
 #include "JSPropertyNameEnumerator.h"
 #include "JSSet.h"
 #include "JSSetIterator.h"
-#include "JSWeakMap.h"
+#include "JSWeakMapInlines.h"
 #include "JSWeakSet.h"
 #include "NumberConstructor.h"
 #include "ObjectConstructor.h"

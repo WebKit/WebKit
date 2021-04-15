@@ -1,3 +1,13 @@
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
+        Refactor inline functions out of HashMapImpl.h into HashMapImplInlines.h.
+        https://bugs.webkit.org/show_bug.cgi?id=224616
+        rdar://76713709
+
+        Reviewed by Yusuke Suzuki.
+
+        * bindings/js/SerializedScriptValue.cpp:
+
 2021-04-15  Alex Christensen  <achristensen@webkit.org>
 
         Use WTF::Function instead of std::function in SVGPropertyAnimatorFactory::attributeAnimatorCreator

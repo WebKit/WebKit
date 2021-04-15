@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple, Inc. All rights reserved.
+ * Copyright (C) 2021 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,43 +20,19 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "JSObject.h"
-#include "WeakMapImpl.h"
+#include "JSWeakMap.h"
+#include "WeakMapImplInlines.h"
 
 namespace JSC {
 
-class JSWeakMap final : public WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>> {
-public:
-    using Base = WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>;
-
-    DECLARE_EXPORT_INFO;
-
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(JSWeakMapType, StructureFlags), info());
-    }
-
-    static JSWeakMap* create(VM& vm, Structure* structure)
-    {
-        JSWeakMap* instance = new (NotNull, allocateCell<JSWeakMap>(vm.heap)) JSWeakMap(vm, structure);
-        instance->finishCreation(vm);
-        return instance;
-    }
-
-    ALWAYS_INLINE void set(VM&, JSObject* key, JSValue);
-
-private:
-    JSWeakMap(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    {
-    }
-};
-
-static_assert(std::is_final<JSWeakMap>::value, "Required for JSType based casting");
+ALWAYS_INLINE void JSWeakMap::set(VM& vm, JSObject* key, JSValue value)
+{
+    add(vm, key, value);
+}
 
 } // namespace JSC

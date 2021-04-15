@@ -2011,6 +2011,10 @@
 		FED94F2F171E3E2300BE77A4 /* Watchdog.h in Headers */ = {isa = PBXBuildFile; fileRef = FED94F2C171E3E2300BE77A4 /* Watchdog.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF040511AAE662D00BD28B0 /* CompareAndSwapTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEF040501AAE662D00BD28B0 /* CompareAndSwapTest.cpp */; };
 		FEF49AAB1EB9484B00653BDB /* MultithreadedMultiVMExecutionTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEF49AA91EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.cpp */; };
+		FEF5B4232628A0EE0016E776 /* HashMapImplInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4222628A0EE0016E776 /* HashMapImplInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEF5B4252628A8500016E776 /* JSMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4242628A8500016E776 /* JSMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEF5B4272628ABD90016E776 /* JSWeakMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4262628ABD90016E776 /* JSWeakMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEF5B4292628B5240016E776 /* JSSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4282628B5240016E776 /* JSSetInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -5417,6 +5421,10 @@
 		FEF3476420362B2300B7C0EF /* generate_offset_extractor.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = generate_offset_extractor.rb; sourceTree = "<group>"; };
 		FEF49AA91EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MultithreadedMultiVMExecutionTest.cpp; path = API/tests/MultithreadedMultiVMExecutionTest.cpp; sourceTree = "<group>"; };
 		FEF49AAA1EB947FE00653BDB /* MultithreadedMultiVMExecutionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultithreadedMultiVMExecutionTest.h; path = API/tests/MultithreadedMultiVMExecutionTest.h; sourceTree = "<group>"; };
+		FEF5B4222628A0EE0016E776 /* HashMapImplInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashMapImplInlines.h; sourceTree = "<group>"; };
+		FEF5B4242628A8500016E776 /* JSMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMapInlines.h; sourceTree = "<group>"; };
+		FEF5B4262628ABD90016E776 /* JSWeakMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakMapInlines.h; sourceTree = "<group>"; };
+		FEF5B4282628B5240016E776 /* JSSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSetInlines.h; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -7392,6 +7400,7 @@
 				E355D38D2244686B008F1AD6 /* GlobalExecutable.h */,
 				79A0907D1D768465008B889B /* HashMapImpl.cpp */,
 				79A0907E1D768465008B889B /* HashMapImpl.h */,
+				FEF5B4222628A0EE0016E776 /* HashMapImplInlines.h */,
 				79DFCBDA1D88C59600527D03 /* HasOwnPropertyCache.h */,
 				933A349D038AE80F008635CE /* Identifier.cpp */,
 				933A349A038AE7C6008635CE /* Identifier.h */,
@@ -7589,6 +7598,7 @@
 				65EA4C9A092AF9E20093D800 /* JSLock.h */,
 				A700873F17CBE8EB00C3E643 /* JSMap.cpp */,
 				A700874017CBE8EB00C3E643 /* JSMap.h */,
+				FEF5B4242628A8500016E776 /* JSMapInlines.h */,
 				A74DEF8F182D991400522C22 /* JSMapIterator.cpp */,
 				A74DEF90182D991400522C22 /* JSMapIterator.h */,
 				7013CA891B491A9400CAE613 /* JSMicrotask.cpp */,
@@ -7630,6 +7640,7 @@
 				0F919D0F157F3327004A4E7D /* JSSegmentedVariableObject.h */,
 				A7299D9B17D12837005F5FF9 /* JSSet.cpp */,
 				A7299D9C17D12837005F5FF9 /* JSSet.h */,
+				FEF5B4282628B5240016E776 /* JSSetInlines.h */,
 				A790DD69182F499700588807 /* JSSetIterator.cpp */,
 				A790DD6A182F499700588807 /* JSSetIterator.h */,
 				F73926918DC64330AFCDF0D7 /* JSSourceCode.cpp */,
@@ -7664,6 +7675,7 @@
 				0F2B66D317B6B5AB00A7AE3F /* JSUint8ClampedArray.h */,
 				A7CA3AE117DA41AE006538AF /* JSWeakMap.cpp */,
 				A7CA3AE217DA41AE006538AF /* JSWeakMap.h */,
+				FEF5B4262628ABD90016E776 /* JSWeakMapInlines.h */,
 				539BFBB122AD3D8C0023F4C0 /* JSWeakObjectRef.cpp */,
 				539BFBAF22AD3CDC0023F4C0 /* JSWeakObjectRef.h */,
 				709FB8611AE335C60039D069 /* JSWeakSet.cpp */,
@@ -9435,6 +9447,7 @@
 				BC18C45E0E16F5CD00B34460 /* CLoopStack.h in Headers */,
 				A7C1EAF017987AB600299DB2 /* CLoopStackInlines.h in Headers */,
 				969A07970ED1D3AE00F1F681 /* CodeBlock.h in Headers */,
+				FEF5B4292628B5240016E776 /* JSSetInlines.h in Headers */,
 				0F8F94411667633200D61971 /* CodeBlockHash.h in Headers */,
 				0FC97F34182020D7002C9B26 /* CodeBlockJettisoningWatchpoint.h in Headers */,
 				0FD8A31417D4326C00CA2C40 /* CodeBlockSet.h in Headers */,
@@ -9633,6 +9646,7 @@
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
+				FEF5B4272628ABD90016E776 /* JSWeakMapInlines.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
 				0FFB921C16D02F110055A5DB /* DFGOSRExitCompilationInfo.h in Headers */,
 				0F7025AA1714B0FC00382C0E /* DFGOSRExitCompilerCommon.h in Headers */,
@@ -9763,6 +9777,7 @@
 				0FEA0A0C170513DB00BB722C /* FTLCompile.h in Headers */,
 				0F9D4C0D1C3E1C11006CD984 /* FTLExceptionTarget.h in Headers */,
 				0F235BD417178E1C00690C7F /* FTLExitArgument.h in Headers */,
+				FEF5B4232628A0EE0016E776 /* HashMapImplInlines.h in Headers */,
 				0F235BD617178E1C00690C7F /* FTLExitArgumentForOperand.h in Headers */,
 				0F2B9CF519D0BAC100B1D1B5 /* FTLExitPropertyValue.h in Headers */,
 				0F2B9CF719D0BAC100B1D1B5 /* FTLExitTimeObjectMaterialization.h in Headers */,
@@ -10540,6 +10555,7 @@
 				BCDE3AB80E6C82F5001453A7 /* Structure.h in Headers */,
 				7986943B1F8C0ACC009232AE /* StructureCache.h in Headers */,
 				7E4EE7090EBB7963005934AA /* StructureChain.h in Headers */,
+				FEF5B4252628A8500016E776 /* JSMapInlines.h in Headers */,
 				2AAAA31218BD49D100394CC8 /* StructureIDBlob.h in Headers */,
 				2AF7382D18BBBF92008A5A37 /* StructureIDTable.h in Headers */,
 				0FD2C92416D01EE900C7803F /* StructureInlines.h in Headers */,

@@ -917,6 +917,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/GetVM.h
     runtime/GlobalExecutable.h
     runtime/HashMapImpl.h
+    runtime/HashMapImplInlines.h
     runtime/Identifier.h
     runtime/IdentifierInlines.h
     runtime/IndexingHeader.h
@@ -974,6 +975,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSMicrotask.h
     runtime/JSLock.h
     runtime/JSMap.h
+    runtime/JSMapInlines.h
     runtime/JSMapIterator.h
     runtime/JSModuleLoader.h
     runtime/JSModuleRecord.h
@@ -991,6 +993,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSScriptFetcher.h
     runtime/JSSegmentedVariableObject.h
     runtime/JSSet.h
+    runtime/JSSetInlines.h
     runtime/JSSetIterator.h
     runtime/JSSourceCode.h
     runtime/JSString.h
@@ -999,6 +1002,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSType.h
     runtime/JSTypeInfo.h
     runtime/JSTypedArrays.h
+    runtime/JSWeakMap.h
+    runtime/JSWeakMapInlines.h
     runtime/JSWithScope.h
     runtime/JSWrapperObject.h
     runtime/LazyClassStructure.h

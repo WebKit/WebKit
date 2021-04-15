@@ -1,3 +1,100 @@
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
+        Refactor inline functions out of HashMapImpl.h into HashMapImplInlines.h.
+        https://bugs.webkit.org/show_bug.cgi?id=224616
+        rdar://76713709
+
+        Reviewed by Yusuke Suzuki.
+
+        Also do the same for clients of HashMapImpl that require similar refactoring.
+        This fixes the #include of JSCJSValueInlines.h in HashMapImpl.h, as well as makes
+        it easier to use other inline functions from other classes in the implementation
+        of HashMapImpl's inline functions in the future.
+
+        This patch only moves inline functions out to their respective *Inlines.h.
+        There are no behavior changes.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        * dfg/DFGOperations.cpp:
+        * runtime/AbstractModuleRecord.cpp:
+        * runtime/HashMapImpl.cpp:
+        * runtime/HashMapImpl.h:
+        (JSC::areKeysEqual): Deleted.
+        (JSC::normalizeMapKey): Deleted.
+        (JSC::wangsInt64Hash): Deleted.
+        (JSC::jsMapHash): Deleted.
+        (JSC::concurrentJSMapHash): Deleted.
+        (JSC::shouldShrink): Deleted.
+        (JSC::shouldRehashAfterAdd): Deleted.
+        (JSC::nextCapacity): Deleted.
+        (JSC::HashMapImpl::finishCreation): Deleted.
+        (JSC::HashMapImpl::findBucket): Deleted.
+        (JSC::HashMapImpl::get): Deleted.
+        (JSC::HashMapImpl::has): Deleted.
+        (JSC::HashMapImpl::add): Deleted.
+        (JSC::HashMapImpl::addNormalized): Deleted.
+        (JSC::HashMapImpl::remove): Deleted.
+        (JSC::HashMapImpl::clear): Deleted.
+        (JSC::HashMapImpl::setUpHeadAndTail): Deleted.
+        (JSC::HashMapImpl::addNormalizedNonExistingForCloning): Deleted.
+        (JSC::HashMapImpl::addNormalizedInternal): Deleted.
+        (JSC::HashMapImpl::findBucketAlreadyHashedAndNormalized): Deleted.
+        (JSC::HashMapImpl::rehash): Deleted.
+        (JSC::HashMapImpl::checkConsistency const): Deleted.
+        (JSC::HashMapImpl::makeAndSetNewBuffer): Deleted.
+        (JSC::HashMapImpl::assertBufferIsEmpty const): Deleted.
+        * runtime/HashMapImplInlines.h: Added.
+        (JSC::areKeysEqual):
+        (JSC::normalizeMapKey):
+        (JSC::wangsInt64Hash):
+        (JSC::jsMapHash):
+        (JSC::concurrentJSMapHash):
+        (JSC::shouldShrink):
+        (JSC::shouldRehashAfterAdd):
+        (JSC::nextCapacity):
+        (JSC::HashMapImpl<HashMapBucketType>::finishCreation):
+        (JSC::HashMapImpl<HashMapBucketType>::findBucket):
+        (JSC::HashMapImpl<HashMapBucketType>::get):
+        (JSC::HashMapImpl<HashMapBucketType>::has):
+        (JSC::HashMapImpl<HashMapBucketType>::add):
+        (JSC::HashMapImpl<HashMapBucketType>::addNormalized):
+        (JSC::HashMapImpl<HashMapBucketType>::remove):
+        (JSC::HashMapImpl<HashMapBucketType>::clear):
+        (JSC::HashMapImpl<HashMapBucketType>::setUpHeadAndTail):
+        (JSC::HashMapImpl<HashMapBucketType>::addNormalizedNonExistingForCloning):
+        (JSC::HashMapImpl<HashMapBucketType>::addNormalizedInternal):
+        (JSC::HashMapImpl<HashMapBucketType>::findBucketAlreadyHashedAndNormalized):
+        (JSC::HashMapImpl<HashMapBucketType>::rehash):
+        (JSC::HashMapImpl<HashMapBucketType>::checkConsistency const):
+        (JSC::HashMapImpl<HashMapBucketType>::makeAndSetNewBuffer):
+        (JSC::HashMapImpl<HashMapBucketType>::assertBufferIsEmpty const):
+        * runtime/JSMap.h:
+        * runtime/JSMapInlines.h: Added.
+        (JSC::JSMap::set):
+        * runtime/JSSetInlines.h: Added.
+        * runtime/JSWeakMap.h:
+        * runtime/JSWeakMapInlines.h: Added.
+        (JSC::JSWeakMap::set):
+        * runtime/MapConstructor.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/SetConstructor.cpp:
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakMapImpl.h:
+        (JSC::jsWeakMapHash): Deleted.
+        (JSC::nextCapacityAfterBatchRemoval): Deleted.
+        (JSC::WeakMapImpl::add): Deleted.
+        (JSC::WeakMapImpl::shouldRehashAfterAdd const): Deleted.
+        (JSC::WeakMapImpl::rehash): Deleted.
+        * runtime/WeakMapImplInlines.h:
+        (JSC::jsWeakMapHash):
+        (JSC::nextCapacityAfterBatchRemoval):
+        (JSC::WeakMapImpl<WeakMapBucket>::add):
+        (JSC::WeakMapImpl<WeakMapBucket>::rehash):
+        (JSC::WeakMapImpl<WeakMapBucket>::shouldRehashAfterAdd const):
+        * runtime/WeakMapPrototype.cpp:
+
 2021-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Change Vector<> to FixedVector<> in DFG::CommonData if possible
