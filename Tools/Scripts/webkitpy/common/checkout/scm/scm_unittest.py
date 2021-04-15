@@ -35,7 +35,6 @@ import getpass
 import logging
 import os
 import os.path
-import pathlib
 import re
 import stat
 import sys
@@ -61,6 +60,11 @@ from webkitpy.common.checkout.scm.scm import CheckoutNeedsUpdate, commit_error_h
 from webkitpy.common.checkout.scm.svn import SVN
 
 from webkitcorepy import OutputCapture
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 
 # We cache the mock SVN repo so that we don't create it again for each call to an SVNTest or GitTest test_ method.

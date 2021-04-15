@@ -139,6 +139,18 @@ class Package(object):
         self.aliases = aliases or []
         self.implicit_deps = implicit_deps or []
 
+    def __repr__(self):
+        return ("Package("
+                "import_name={self.name!r}, "
+                "version={self.version!r}, "
+                "pypi_name={self.pypi_name!r}, "
+                "slow_install={self.slow_install!r}, "
+                "wheel={self.wheel!r}, "
+                "aliases={self.aliases!r}, "
+                "implicit_deps={self.implicit_deps!r}"
+                ")"
+                ).format(self=self)
+
     @property
     def location(self):
         if not AutoInstall.directory:

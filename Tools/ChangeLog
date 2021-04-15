@@ -1,3 +1,15 @@
+2021-04-15  Sam Sneddon  <gsnedders@apple.com>
+
+        scm_unittest.py fails at import-time on Python 2
+        https://bugs.webkit.org/show_bug.cgi?id=224627
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.__repr__): Add a __repr__ for debug friendliness
+        * Scripts/webkitpy/__init__.py: pathlib2 never provides pathlib
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: ditto
+
 2021-04-15  Jonathan Bedard  <jbedard@apple.com>
 
         style checker should warn about adding new PHP files
