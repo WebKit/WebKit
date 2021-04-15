@@ -52,13 +52,6 @@ bool RunIterator::atEnd() const
     });
 }
 
-void RunIterator::setAtEnd()
-{
-    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
-        path.setAtEnd();
-    });
-}
-
 RunIterator RunIterator::nextOnLine() const
 {
     return RunIterator(*this).traverseNextOnLine();

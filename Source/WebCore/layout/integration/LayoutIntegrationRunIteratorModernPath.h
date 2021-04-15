@@ -195,7 +195,6 @@ public:
     bool operator==(const RunIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_runIndex == other.m_runIndex; }
 
     bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
-    void setAtEnd() { m_runIndex = runs().size(); }
 
     InlineBox* legacyInlineBox() const
     {
@@ -234,6 +233,8 @@ private:
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         return textRun;
     };
+
+    void setAtEnd() { m_runIndex = runs().size(); }
 
     const InlineContent::Runs& runs() const { return m_inlineContent->runs; }
     const Run& run() const { return runs()[m_runIndex]; }

@@ -1,3 +1,26 @@
+2021-04-15  Antti Koivisto  <antti@apple.com>
+
+        Remove unused RunIterator::setAtEnd
+        https://bugs.webkit.org/show_bug.cgi?id=224597
+
+        Reviewed by Zalan Bujtas.
+
+        * layout/integration/LayoutIntegrationLineIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::LineIteratorLegacyPath::atEnd const):
+        (WebCore::LayoutIntegration::LineIteratorLegacyPath::setAtEnd): Deleted.
+        * layout/integration/LayoutIntegrationLineIteratorModernPath.h:
+        (WebCore::LayoutIntegration::LineIteratorModernPath::atEnd const):
+        (WebCore::LayoutIntegration::LineIteratorModernPath::setAtEnd):
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::RunIterator::setAtEnd): Deleted.
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::atEnd const):
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::setAtEnd): Deleted.
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::atEnd const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::setAtEnd):
+
 2021-04-15  Philippe Normand  <pnormand@igalia.com>
 
         [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system

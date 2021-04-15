@@ -118,7 +118,6 @@ public:
     bool operator==(const RunIteratorLegacyPath& other) const { return m_inlineBox == other.m_inlineBox; }
 
     bool atEnd() const { return !m_inlineBox; }
-    void setAtEnd() { m_inlineBox = nullptr; }
 
     InlineBox* legacyInlineBox() const { return const_cast<InlineBox*>(m_inlineBox); }
     const RootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }

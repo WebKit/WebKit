@@ -74,7 +74,6 @@ public:
     bool operator==(const LineIteratorLegacyPath& other) const { return m_rootInlineBox == other.m_rootInlineBox; }
 
     bool atEnd() const { return !m_rootInlineBox; }
-    void setAtEnd() { m_rootInlineBox = nullptr; }
 
     RunIteratorLegacyPath firstRun() const
     {

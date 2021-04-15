@@ -90,7 +90,6 @@ public:
     bool operator==(const LineIteratorModernPath& other) const { return m_inlineContent == other.m_inlineContent && m_lineIndex == other.m_lineIndex; }
 
     bool atEnd() const { return m_lineIndex == lines().size(); }
-    void setAtEnd() { m_lineIndex = lines().size(); }
 
     RunIteratorModernPath firstRun() const
     {
@@ -117,8 +116,9 @@ public:
         return lastRun();
     }
 
-
 private:
+    void setAtEnd() { m_lineIndex = lines().size(); }
+
     const InlineContent::Lines& lines() const { return m_inlineContent->lines; }
     const Line& line() const { return lines()[m_lineIndex]; }
 
