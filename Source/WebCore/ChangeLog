@@ -1,3 +1,16 @@
+2021-04-14  Chris Dumez  <cdumez@apple.com>
+
+        Flaky crash under AudioSummingJunction::removeOutput() on Debug bots
+        https://bugs.webkit.org/show_bug.cgi?id=224584
+
+        Reviewed by Eric Carlson.
+
+        Add DisableMallocRestrictionsForCurrentThreadScope to allow the heap allocation until I can investigate
+        if we can avoid it.
+
+        * Modules/webaudio/AudioSummingJunction.cpp:
+        (WebCore::AudioSummingJunction::removeOutput):
+
 2021-04-13  BJ Burg  <bburg@apple.com>
 
         Web Inspector: add setting to allow inspecting Web Inspector
