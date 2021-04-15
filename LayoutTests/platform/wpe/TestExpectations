@@ -697,6 +697,25 @@ imported/w3c/web-platform-tests/webxr/ar-module/xrDevice_requestSession_immersiv
 # LFC/IFC.
 webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
 
+# Test failing since async scrolling was activated in WPE.
+webkit.org/b/224596 fast/spatial-navigation/snav-clipped-overflowed-content.html [ Failure ]
+webkit.org/b/224596 fast/spatial-navigation/snav-only-clipped-overflow-content.html [ Failure ]
+webkit.org/b/224596 fast/spatial-navigation/snav-simple-content-overflow.html [ Failure ]
+webkit.org/b/224596 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on-parent.html [ ImageOnlyFailure ]
+webkit.org/b/224596 css3/filters/clipping-overflow-scroll-with-pixel-moving-effect-on.html [ ImageOnlyFailure ]
+webkit.org/b/224596 fast/scrolling/rtl-scrollbars-overflow-dir-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/224596 fast/scrolling/rtl-scrollbars-overflow-padding.html [ ImageOnlyFailure ]
+webkit.org/b/224596 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll-2.html [ ImageOnlyFailure ]
+webkit.org/b/224596 fast/scrolling/rtl-scrollbars-sticky-overflow-scroll.html [ ImageOnlyFailure ]
+webkit.org/b/224596 imported/blink/compositing/animation/hidden-animated-layer-should-not-have-scrollbars.html [ ImageOnlyFailure ]
+webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-001.html [ ImageOnlyFailure ]
+webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-lr-001.html [ ImageOnlyFailure ]
+webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-grid/grid-model/grid-container-scrollbar-vertical-rl-001.html [ ImageOnlyFailure ]
+webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-empty-002.html [ ImageOnlyFailure ]
+webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent.html [ ImageOnlyFailure ]
+webkit.org/b/224596 imported/w3c/web-platform-tests/css/css-ui/outline-negative-offset-composited-scroll.html [ ImageOnlyFailure ]
+webkit.org/b/224596 imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/the-fieldset-and-legend-elements/fieldset-overflow.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
