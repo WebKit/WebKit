@@ -113,6 +113,9 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
         return;
     }
 
+    if (m_currentRequest.url().protocolIsData())
+        return;
+
     if (!m_currentRequest.url().protocolIsInHTTPFamily()) {
         scheduleFailure(InvalidURLFailure);
         return;
@@ -191,6 +194,7 @@ void NetworkDataTaskSoup::clearRequest()
 
     stopTimeout();
     m_pendingResult = nullptr;
+    m_pendingDataURLResult = WTF::nullopt;
     m_file = nullptr;
     m_inputStream = nullptr;
     m_multipartInputStream = nullptr;
@@ -241,6 +245,24 @@ void NetworkDataTaskSoup::resume()
         return;
     }
 
+    if (m_currentRequest.url().protocolIsData() && !m_cancellable) {
+        m_cancellable = adoptGRef(g_cancellable_new());
+        DataURLDecoder::decode(m_currentRequest.url(), { }, DataURLDecoder::Mode::Legacy, [this, protectedThis = WTFMove(protectedThis)](auto decodeResult) mutable {
+            if (m_state == State::Canceling || m_state == State::Completed || !m_client) {
+                clearRequest();
+                return;
+            }
+
+            if (m_state == State::Suspended) {
+                m_pendingDataURLResult = WTFMove(decodeResult);
+                return;
+            }
+
+            didReadDataURL(WTFMove(decodeResult));
+        });
+        return;
+    }
+
     if (m_pendingResult) {
         GRefPtr<GAsyncResult> pendingResult = WTFMove(m_pendingResult);
         if (m_inputStream)
@@ -257,7 +279,8 @@ void NetworkDataTaskSoup::resume()
                 readFileCallback(m_file.get(), pendingResult.get(), protectedThis.leakRef());
         } else
             ASSERT_NOT_REACHED();
-    }
+    } else if (m_currentRequest.url().protocolIsData())
+        didReadDataURL(WTFMove(m_pendingDataURLResult));
 }
 
 void NetworkDataTaskSoup::cancel()
@@ -1294,6 +1317,24 @@ void NetworkDataTaskSoup::enumerateFileChildrenCallback(GFile* file, GAsyncResul
 void NetworkDataTaskSoup::didReadFile(GRefPtr<GInputStream>&& inputStream)
 {
     m_inputStream = WTFMove(inputStream);
+    dispatchDidReceiveResponse();
+}
+
+void NetworkDataTaskSoup::didReadDataURL(Optional<DataURLDecoder::Result>&& result)
+{
+    if (g_cancellable_is_cancelled(m_cancellable.get())) {
+        didFail(cancelledError(m_currentRequest));
+        return;
+    }
+
+    if (!result) {
+        didFail(internalError(m_currentRequest.url()));
+        return;
+    }
+
+    m_response = ResourceResponse::dataURLResponse(m_currentRequest.url(), result.value());
+    auto bytes = SharedBuffer::create(WTFMove(result->data))->createGBytes();
+    m_inputStream = adoptGRef(g_memory_input_stream_new_from_bytes(bytes.get()));
     dispatchDidReceiveResponse();
 }
 
