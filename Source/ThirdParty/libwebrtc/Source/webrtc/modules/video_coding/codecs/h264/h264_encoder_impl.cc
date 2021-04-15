@@ -29,10 +29,18 @@
 #include "system_wrappers/include/metrics.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
+
+#if defined(WEBKIT_LIBWEBRTC_OPENH264_ENCODER) && WEBKIT_LIBWEBRTC_OPENH264_ENCODER
+#include "wels/codec_api.h"
+#include "wels/codec_app_def.h"
+#include "wels/codec_def.h"
+#include "wels/codec_ver.h"
+#else
 #include "third_party/openh264/src/codec/api/svc/codec_api.h"
 #include "third_party/openh264/src/codec/api/svc/codec_app_def.h"
 #include "third_party/openh264/src/codec/api/svc/codec_def.h"
 #include "third_party/openh264/src/codec/api/svc/codec_ver.h"
+#endif
 
 namespace webrtc {
 

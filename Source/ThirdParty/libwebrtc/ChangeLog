@@ -1,3 +1,21 @@
+2021-04-15  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system
+        https://bugs.webkit.org/show_bug.cgi?id=202538
+        <rdar://problem/76047172>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In WPE/GTK we would like to have the libwebrtc openh264 encoder enabled if libopenh264 is
+        present on the host (eg not vendored).
+
+        * CMakeLists.txt:
+        * LibWebRTCWebKitMacros.h.in: Added.
+        * Source/webrtc/modules/video_coding/codecs/h264/h264.cc:
+        * Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.cc:
+        * Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.h:
+        * cmake/FindOpenh264.cmake: Added.
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r275275): Broke some build configs lacking openh264

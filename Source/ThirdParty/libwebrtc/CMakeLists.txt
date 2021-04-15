@@ -1527,6 +1527,19 @@ if (APPLE)
         Source/third_party/opus/src/include/opus_types.h
         DESTINATION ${libwebrtc_PRIVATE_HEADERS_DIR})
 else ()
+    find_package(Openh264)
+    if (NOT Openh264_FOUND)
+        message(WARNING "openh264 is not found, not building support.")
+        set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 0)
+    else()
+        list(APPEND webrtc_SOURCES
+            Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.cc
+        )
+        set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 1)
+    endif ()
+
+    add_definitions(-DWEBKIT_LIBWEBRTC_OPENH264_ENCODER=${WEBKIT_LIBWEBRTC_OPENH264_ENCODER})
+    configure_file(LibWebRTCWebKitMacros.h.in LibWebRTCWebKitMacros.h @ONLY)
 
     list(APPEND webrtc_SOURCES
         Source/third_party/boringssl/src/crypto/cpu-aarch64-linux.c
@@ -1647,6 +1660,11 @@ else ()
         __Userspace__
         __Userspace_os_Linux
     )
+    if (Openh264_FOUND)
+        target_compile_definitions(webrtc PRIVATE
+            WEBRTC_USE_H264
+        )
+    endif ()
 endif ()
 
 if (WTF_CPU_ARM)
@@ -1698,6 +1716,9 @@ else ()
     target_link_libraries(webrtc ${LIBVPX_LIBRARY})
     target_link_libraries(webrtc ${LIBEVENT_LIBRARY})
     target_link_libraries(webrtc ${LIBOPUS_LIBRARY})
+    if (Openh264_FOUND)
+        target_link_libraries(webrtc ${Openh264_LIBRARY})
+    endif ()
 endif ()
 
 target_include_directories(webrtc ${webrtc_INCLUDE_DIRECTORIES})

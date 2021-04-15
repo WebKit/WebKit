@@ -1,3 +1,14 @@
+2021-04-15  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system
+        https://bugs.webkit.org/show_bug.cgi?id=202538
+        <rdar://problem/76047172>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/GStreamerChecks.cmake:
+
 2021-04-14  Don Olmstead  <don.olmstead@sony.com>
 
         [PlayStation] Disable WebGL

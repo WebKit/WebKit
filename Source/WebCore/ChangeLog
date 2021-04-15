@@ -1,3 +1,22 @@
+2021-04-15  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system
+        https://bugs.webkit.org/show_bug.cgi?id=202538
+        <rdar://problem/76047172>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Enable the openh264 encoder if it is available, it would be preferred over existing
+        GStreamer H.264 encoders in such case.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoCommon.cpp:
+        (WebCore::supportedH264Formats):
+        * platform/mediastream/libwebrtc/GStreamerVideoCommon.h:
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp:
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoderFactory::CreateVideoEncoder):
+        (WebCore::GStreamerVideoEncoderFactory::GetSupportedFormats const):
+
 2021-04-15  Youenn Fablet  <youenn@apple.com>
 
         Make RTCEncodedVideoFrameMetadata.contributingSources undefined until properly supported
