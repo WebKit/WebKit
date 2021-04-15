@@ -55,5 +55,5 @@ extern "C" WK_EXPORT void NETWORK_SERVICE_INITIALIZER(xpc_connection_t connectio
 void NETWORK_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
 {
     WTF::initializeMainThread();
-    XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
+    XPCServiceInitializer<NetworkProcess, NetworkServiceInitializerDelegate>(connection, initializerMessage, priorityBoostMessage);
 }

@@ -64,6 +64,8 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
 {
     static xpc_object_t priorityBoostMessage = nullptr;
 
+    OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
+
     xpc_connection_set_target_queue(peer, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
         xpc_type_t type = xpc_get_type(event);
@@ -118,7 +120,7 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                     dup2(fd, STDERR_FILENO);
 
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    initializerFunctionPtr(peer, event, priorityBoostMessage);
+                    initializerFunctionPtr(retainedPeerConnection.get(), event, priorityBoostMessage);
 
                     setAppleLanguagesPreference();
                 });
