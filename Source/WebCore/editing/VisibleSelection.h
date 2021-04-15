@@ -87,6 +87,7 @@ public:
     bool isNonOrphanedRange() const { return isRange() && !start().isOrphan() && !end().isOrphan(); }
     bool isNoneOrOrphaned() const { return isNone() || start().isOrphan() || end().isOrphan(); }
     bool isOrphan() const;
+    RefPtr<Document> document() const;
 
     bool isBaseFirst() const { return m_anchorIsFirst; }
     bool isDirectional() const { return m_isDirectional; }

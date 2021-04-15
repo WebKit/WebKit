@@ -243,6 +243,8 @@ void EditCommandComposition::unapply()
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForUnapply(m_document->existingAXObjectCache());
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_document->selection().isNone() || m_document->selection().isConnectedToDocument());
 }
 
 void EditCommandComposition::reapply()
@@ -270,6 +272,8 @@ void EditCommandComposition::reapply()
 
     if (AXObjectCache::accessibilityEnabled())
         m_replacedText.postTextStateChangeNotificationForReapply(m_document->existingAXObjectCache());
+
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_document->selection().isNone() || m_document->selection().isConnectedToDocument());
 }
 
 void EditCommandComposition::append(SimpleEditCommand* command)
