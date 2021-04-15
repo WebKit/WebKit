@@ -55,10 +55,10 @@ static void runTest(NSEventModifierFlags flags, NSEventType mouseDownType, NSEve
     [webView setUIDelegate:uiDelegate.get()];
 
     __block bool done = false;
-    __block void(^completionHandlerCopy)(NSMenu *);
+    __block BlockPtr<void(NSMenu *)> completionHandlerCopy;
     [uiDelegate setGetContextMenuFromProposedMenu:^(NSMenu *, _WKContextMenuElementInfo *, id <NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            completionHandlerCopy = [completionHandler copy];
+            completionHandlerCopy = completionHandler;
             done = true;
         });
     }];

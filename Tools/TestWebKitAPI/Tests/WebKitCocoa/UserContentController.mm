@@ -132,7 +132,7 @@ TEST(WKUserContentController, ScriptMessageHandlerBasicPostIsolatedWorld)
         TestWebKitAPI::Util::run(&isDoneWithNavigation);
 
     __block bool isDoneEvaluatingScript = false;
-    __block NSString *resultValue = @"";
+    __block RetainPtr<NSString> resultValue = @"";
     [webView evaluateJavaScript:
         @"var result;"
          "if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.testHandler) {"
@@ -142,13 +142,13 @@ TEST(WKUserContentController, ScriptMessageHandlerBasicPostIsolatedWorld)
          "} " 
          "result;"
          completionHandler:^(id value, NSError *error) {
-            resultValue = [((NSDictionary *)value)[@"result"] copy];
+            resultValue = ((NSDictionary *)value)[@"result"];
             isDoneEvaluatingScript = true;
         }];
 
     TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
 
-    EXPECT_WK_STREQ(@"PASS", resultValue);
+    EXPECT_WK_STREQ(@"PASS", resultValue.get());
 }
 
 TEST(WKUserContentController, ScriptMessageHandlerBasicRemove)
