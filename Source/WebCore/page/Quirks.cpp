@@ -1302,7 +1302,6 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
         auto host = m_document->topDocument().url().host();
         m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = equalLettersIgnoringASCIICase(host, "trailers.apple.com");
 
-        auto host = m_document->topDocument().url().host();
         m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = equalLettersIgnoringASCIICase(host, "trailers.apple.com");
 
         auto domain = RegistrableDomain(m_document->topDocument().url());
