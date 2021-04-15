@@ -18,4 +18,5 @@ This tests parse time simplification in calc()
 100px + 1em => calc(1em + 100px)
 100px + 1em + 100px => calc(1em + 200px)
 1em + 1rem => calc(1em + 1rem)
+5 * (1px + 1% + 1em) => calc(5% + 5em + 5px)
 

@@ -1,5 +1,20 @@
 2021-04-15  Antoine Quint  <graouts@webkit.org>
 
+        calc() simplification for a multiplication should apply the multiplication to each value of an addition
+        https://bugs.webkit.org/show_bug.cgi?id=224376
+
+        Reviewed by Dean Jackson.
+
+        Add a test for a multiplication with more than 2 values on the multiplied side such that
+        we check that we correctly handle a larger number of children in Add node than we did in
+        the Product node, which led to a crash in an earlier version of the patch that
+        landed for bug 224376 (r275793) but was then corrected in r275869. 
+
+        * css3/calc/simplification-expected.txt:
+        * css3/calc/simplification.html:
+
+2021-04-15  Antoine Quint  <graouts@webkit.org>
+
         calc() should not contain 0 values other than percentages
         https://bugs.webkit.org/show_bug.cgi?id=224611
 
