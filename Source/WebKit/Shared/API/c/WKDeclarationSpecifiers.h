@@ -35,11 +35,11 @@
 #if defined(WK_NO_EXPORT)
 #define WK_EXPORT
 #elif defined(WIN32) || defined(_WIN32) || defined(__CC_ARM) || defined(__ARMCC__) || (__has_declspec_attribute(dllimport) && __has_declspec_attribute(dllexport))
-#if BUILDING_WebKit
+#if defined(BUILDING_WebKit)
 #define WK_EXPORT __declspec(dllexport)
 #else
 #define WK_EXPORT __declspec(dllimport)
-#endif /* BUILDING_WebKit */
+#endif /* defined(BUILDING_WebKit) */
 #elif defined(__GNUC__)
 #define WK_EXPORT __attribute__((visibility("default")))
 #else /* !defined(WK_NO_EXPORT) */
