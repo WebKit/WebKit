@@ -1,3 +1,16 @@
+2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Make image extraction interactions work for elements inside links
+        https://bugs.webkit.org/show_bug.cgi?id=224576
+        <rdar://problem/76664721>
+
+        Reviewed by Devin Rousso.
+
+        Add a layout test to exercise the change.
+
+        * fast/images/image-extraction/mac/select-image-overlay-in-link-with-mouse-drag-expected.txt: Added.
+        * fast/images/image-extraction/mac/select-image-overlay-in-link-with-mouse-drag.html: Added.
+
 2021-04-14  Robert Jenner  <jenner@apple.com>
 
         [ wk2 ] http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html is flakey crashing

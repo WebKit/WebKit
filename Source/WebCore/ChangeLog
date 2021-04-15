@@ -1,3 +1,35 @@
+2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Make image extraction interactions work for elements inside links
+        https://bugs.webkit.org/show_bug.cgi?id=224576
+        <rdar://problem/76664721>
+
+        Reviewed by Devin Rousso.
+
+        Make a slight adjustment to `EventHandler::canMouseDownStartSelect` to allow selection to begin when handling a
+        mousedown over text inside an image overlay.
+
+        Test: fast/images/image-extraction/mac/select-image-overlay-in-link-with-mouse-drag.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::isImageOverlayText):
+
+        Add an overloaded version of this helper method that takes a pointer instead of a reference, and use it in
+        several places where we current check the nullity of a `Node*` before dereferencing it and passing it into
+        `isImageOverlayText()`.
+
+        * html/HTMLElement.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::draggableElement const):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::canMouseDownStartSelect):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+
+        Additionally, make it so that we only invalidate a click (i.e. prevent mouse release from dispatching a click
+        event) in `EventHandler::updateSelectionForMouseDrag` in the case where we're selecting text in an image
+        overlay, if the selection hasn't actually changed.
+
 2021-04-14  Devin Rousso  <drousso@apple.com>
 
         [Apple Pay] add WKA hooks for `ApplePayModifier`

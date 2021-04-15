@@ -2721,7 +2721,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     info.isElement = true;
     info.idAttribute = element.getIdAttribute();
-    info.isImageOverlayText = innerNonSharedNode && HTMLElement::isImageOverlayText(*innerNonSharedNode);
+    info.isImageOverlayText = HTMLElement::isImageOverlayText(innerNonSharedNode);
 
     info.title = element.attributeWithoutSynchronization(HTMLNames::titleAttr).string();
     if (linkElement && info.title.isEmpty())

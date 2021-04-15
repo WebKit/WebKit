@@ -1267,6 +1267,11 @@ bool HTMLElement::isInsideImageOverlay(const Node& node)
     return host->userAgentShadowRoot()->contains(node);
 }
 
+bool HTMLElement::isImageOverlayText(const Node* node)
+{
+    return node && isImageOverlayText(*node);
+}
+
 bool HTMLElement::isImageOverlayText(const Node& node)
 {
     auto host = imageOverlayHost(node);

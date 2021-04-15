@@ -134,6 +134,7 @@ public:
     static bool isInsideImageOverlay(const SimpleRange&);
     static bool isInsideImageOverlay(const Node&);
     WEBCORE_EXPORT static bool isImageOverlayText(const Node&);
+    WEBCORE_EXPORT static bool isImageOverlayText(const Node*);
 
 #if ENABLE(IMAGE_EXTRACTION)
     WEBCORE_EXPORT void updateWithImageExtractionResult(ImageExtractionResult&&);

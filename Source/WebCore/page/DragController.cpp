@@ -786,7 +786,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
 #endif
 
     auto selectionDragElement = state.type.contains(DragSourceAction::Selection) && m_dragSourceAction.contains(DragSourceAction::Selection) ? startElement : nullptr;
-    if (startElement && HTMLElement::isImageOverlayText(*startElement))
+    if (HTMLElement::isImageOverlayText(startElement))
         return selectionDragElement;
 
     for (auto* element = startElement; element; element = element->parentOrShadowHostElement()) {
