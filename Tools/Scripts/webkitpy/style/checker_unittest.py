@@ -551,7 +551,6 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
            "foo.html",
            "foo.idl",
            "foo.in",
-           "foo.php",
            "foo.pl",
            "foo.pm",
            "foo.pri",
@@ -602,10 +601,11 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def test_none_paths(self):
         """Test paths that have no file type.."""
         paths = [
-           "Makefile",
-           "foo.asdf",  # Non-sensical file extension.
-           "foo.exe",
-            ]
+            "Makefile",
+            "foo.asdf",  # Non-sensical file extension.
+            "foo.exe",
+            "foo.php",
+        ]
 
         for path in paths:
             self.assert_checker_none(path)
@@ -728,6 +728,9 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         def __init__(self):
             self.dispatched_checker = None
 
+        def is_valid_file(self, file_path):
+            return not file_path.endswith('invalid_file.txt')
+
         def should_skip_with_warning(self, file_path):
             return file_path.endswith('skip_with_warning.txt')
 
@@ -837,6 +840,15 @@ class StyleProcessor_CodeCoverageTest(LoggingTestCase):
         file_path = os.path.join('foo', 'skip_process.txt')
 
         self.assertTrue(self._processor.should_process(file_path))
+
+    def test_invalid_file(self):
+        """Test should_process() for an invalid file."""
+        file_path = os.path.join('foo', 'invalid_file.txt')
+
+        self.assertFalse(self._processor.should_process(file_path))
+
+        self.assertLog(['ERROR: foo/invalid_file.txt(-):  File type is unsupported by the WebKit '
+                        'project  [policy/language] [5]\n'.format(os.path.join('foo', 'skip_with_warning.txt'))])
 
     def test_process__checker_dispatched(self):
         """Test the process() method for a path with a dispatched checker."""

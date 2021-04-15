@@ -4604,6 +4604,7 @@ class CppChecker(object):
         'build/wk_api_available',
         'build/version_check',
         'legal/copyright',
+        'policy/language',
         'readability/braces',
         'readability/casting',
         'readability/check',

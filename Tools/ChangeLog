@@ -1,3 +1,24 @@
+2021-04-15  Jonathan Bedard  <jbedard@apple.com>
+
+        style checker should warn about adding new PHP files
+        https://bugs.webkit.org/show_bug.cgi?id=223905
+        <rdar://problem/76112036>
+
+        Reviewed by Youenn Fablet.
+
+        * Scripts/webkitpy/style/checker.py:
+        (CheckerDispatcher.is_valid_file): Check if a file has a file extension for an unsupported language.
+        (StyleProcessor.should_process): If a file has an extension of an unsupported language, report a
+        style error.
+        * Scripts/webkitpy/style/checker_unittest.py:
+        (CheckerDispatcherDispatchTest.test_text_paths): php files are now invalid extensions.
+        (CheckerDispatcherDispatchTest.test_none_paths): php files have no checker.
+        (StyleProcessor_CodeCoverageTest.MockDispatcher.is_valid_file):
+        (StyleProcessor_CodeCoverageTest.test_invalid_file): Check that an error is returned when checking
+        a file with an invalid extension.
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (CppChecker): Add a language rule.
+
 2021-04-15  Sam Sneddon  <gsnedders@apple.com>
 
         webkitpy classes need not define loads/dumps helpers for pickle
