@@ -128,7 +128,7 @@ layer at (0,0) size 785x2360
           RenderTableSection {TBODY} at (1,1) size 652x60
             RenderTableRow {TR} at (0,2) size 652x56
               RenderTableCell {TH} at (2,2) size 648x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 0x17
                 RenderText {#text} at (11,11) size 95x17
                   text run at (11,11) width 95: "Test Case #1: "
                 RenderInline {FONT} at (0,0) size 312x17 [color=#0000FF]
@@ -488,7 +488,7 @@ layer at (0,0) size 785x2360
           RenderTableSection {TBODY} at (1,1) size 652x60
             RenderTableRow {TR} at (0,2) size 652x56
               RenderTableCell {TH} at (2,2) size 648x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 0x17
                 RenderText {#text} at (11,11) size 95x17
                   text run at (11,11) width 95: "Test Case #2: "
                 RenderInline {FONT} at (0,0) size 295x17 [color=#0000FF]
@@ -879,7 +879,7 @@ layer at (0,0) size 785x2360
           RenderTableSection {TBODY} at (1,1) size 652x60
             RenderTableRow {TR} at (0,2) size 652x56
               RenderTableCell {TH} at (2,2) size 648x56 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 0x17
                 RenderText {#text} at (11,11) size 95x17
                   text run at (11,11) width 95: "Test Case #3: "
                 RenderInline {FONT} at (0,0) size 410x17 [color=#0000FF]

@@ -153,8 +153,8 @@ layer at (0,0) size 785x1396
                 RenderInline {A} at (0,0) size 25x17
                   RenderText {#text} at (0,0) size 25x17
                     text run at (0,0) width 25: "The"
-                RenderText {#text} at (25,0) size 715x17
-                  text run at (25,0) width 715: " following image is also an anchor which points to a target on this page, but it should not have a border around it: "
+                RenderText {#text} at (25,0) size 711x17
+                  text run at (25,0) width 711: " following image is also an anchor which points to a target on this page, but it should not have a border around it:"
                 RenderInline {A} at (0,0) size 15x17 [color=#0000FF]
                   RenderImage {IMG} at (0,18) size 15x15
                 RenderText {#text} at (15,19) size 4x17

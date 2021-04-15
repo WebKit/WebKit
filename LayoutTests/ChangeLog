@@ -1,5 +1,90 @@
 2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Update stale baselines.
+
+        Also add missing .png images.
+
+        * platform/gtk/fast/css/word-space-extra-expected.png: Renamed from LayoutTests/platform/glib/fast/css/word-space-extra-expected.png.
+        * platform/wpe/css1/box_properties/border-expected.png: Added.
+        * platform/wpe/css1/box_properties/border-expected.txt:
+        * platform/wpe/css1/text_properties/text_decoration-expected.png: Added.
+        * platform/wpe/css1/text_properties/text_decoration-expected.txt:
+        * platform/wpe/css1/text_properties/vertical_align-expected.png: Added.
+        * platform/wpe/css1/text_properties/vertical_align-expected.txt:
+        * platform/wpe/css1/text_properties/word_spacing-expected.txt:
+        * platform/wpe/fast/block/basic/014-expected.png: Added.
+        * platform/wpe/fast/block/basic/014-expected.txt:
+        * platform/wpe/fast/block/positioning/057-expected.png: Added.
+        * platform/wpe/fast/block/positioning/057-expected.txt:
+        * platform/wpe/fast/css-generated-content/after-duplicated-after-split-expected.png: Added.
+        * platform/wpe/fast/css-generated-content/after-duplicated-after-split-expected.txt:
+        * platform/wpe/fast/css/word-space-extra-expected.png:
+        * platform/wpe/fast/css/word-space-extra-expected.txt:
+        * platform/wpe/fast/encoding/utf-16-big-endian-expected.png: Added.
+        * platform/wpe/fast/encoding/utf-16-big-endian-expected.txt:
+        * platform/wpe/fast/inline/drawStyledEmptyInlines-expected.png: Added.
+        * platform/wpe/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/wpe/fast/invalid/missing-end-tag-expected.png: Added.
+        * platform/wpe/fast/invalid/missing-end-tag-expected.txt:
+        * platform/wpe/fast/lists/marker-before-empty-inline-expected.png: Added.
+        * platform/wpe/fast/lists/marker-before-empty-inline-expected.txt:
+        * platform/wpe/fast/overflow/scrollRevealButton-expected.png: Added.
+        * platform/wpe/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/wpe/fast/parser/nofoo-tags-inside-paragraph-expected.png: Added.
+        * platform/wpe/fast/parser/nofoo-tags-inside-paragraph-expected.txt:
+        * platform/wpe/fast/parser/xhtml-alternate-entities-expected.png: Added.
+        * platform/wpe/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/wpe/fast/selectors/visited-descendant-expected.png: Added.
+        * platform/wpe/fast/selectors/visited-descendant-expected.txt:
+        * platform/wpe/fast/text/basic/013-expected.png: Added.
+        * platform/wpe/fast/text/basic/013-expected.txt:
+        * platform/wpe/fast/text/mark-matches-overflow-clip-expected.txt:
+        * platform/wpe/fast/text/whitespace/018-expected.png: Added.
+        * platform/wpe/fast/text/whitespace/018-expected.txt:
+        * platform/wpe/fast/text/word-break-expected.png: Added.
+        * platform/wpe/fast/text/word-break-expected.txt:
+        * platform/wpe/scrollingcoordinator/scrolling-tree/coordinated-frame-expected.txt:
+        * platform/wpe/scrollingcoordinator/scrolling-tree/coordinated-frame-gain-scrolling-ancestor-expected.txt:
+        * platform/wpe/scrollingcoordinator/scrolling-tree/coordinated-frame-in-fixed-expected.txt:
+        * platform/wpe/scrollingcoordinator/scrolling-tree/coordinated-frame-lose-scrolling-ancestor-expected.txt:
+        * platform/wpe/svg/custom/svg-fonts-in-html-expected.png: Added.
+        * platform/wpe/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/wpe/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug113235-1-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug113235-2-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1188-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug126742-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug126742-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug1318-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug16252-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug18359-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug4527-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug57300-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug57300-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug57828-2-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug57828-2-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug7342-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/wpe/tables/mozilla/core/bloomberg-expected.png: Added.
+        * platform/wpe/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/wpe/tables/mozilla/other/ms-expected.png: Added.
+        * platform/wpe/tables/mozilla/other/ms-expected.txt:
+        * platform/wpe/tables/mozilla/other/wa_table_thtd_rowspan-expected.png: Added.
+        * platform/wpe/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/wpe/tables/mozilla/other/wa_table_tr_align-expected.png: Added.
+        * platform/wpe/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug89315-expected.png: Added.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+
+2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. Emit specific baselines for WPE.
 
         Several baselines that were common to GTK and WPE are no longer valid.

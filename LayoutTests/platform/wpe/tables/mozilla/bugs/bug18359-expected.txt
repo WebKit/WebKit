@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
           RenderTableSection {TBODY} at (0,0) size 754x75
             RenderTableRow {TR} at (0,2) size 754x33
               RenderTableCell {TD} at (2,8) size 107x21 [r=0 c=0 rs=1 cs=1]
-                RenderInline {B} at (0,0) size 96x17
+                RenderInline {B} at (0,0) size 96x18
                   RenderText {#text} at (1,1) size 96x18
                     text run at (1,2) width 96: "Trigger URL:"
               RenderTableCell {TD} at (111,3) size 539x31 [r=0 c=1 rs=1 cs=1]

@@ -14,7 +14,7 @@ layer at (0,0) size 800x187
         RenderText {#text} at (0,0) size 429x21
           text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
     RenderBlock (anonymous) at (0,168) size 800x19
-      RenderInline {h1} at (0,0) size 0x0
+      RenderInline {h1} at (0,0) size 0x17
         RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
