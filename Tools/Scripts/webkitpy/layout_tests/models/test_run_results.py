@@ -374,7 +374,7 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
         # FIXME: Do we really need to populate this both here and in the json_results_generator?
         if port_obj.get_option("builder_name"):
             port_obj.host.initialize_scm()
-            results['revision'] = port_obj.commits_for_upload()[0]['id']
+            results['revision'] = str(port_obj.commits_for_upload()[0].get('revision', port_obj.commits_for_upload()[0].get('id')))
     except Exception as e:
         _log.warn("Failed to determine svn revision for checkout (cwd: %s, webkit_base: %s), leaving 'revision' key blank in full_results.json.\n%s" % (port_obj._filesystem.getcwd(), port_obj.path_from_webkit_base(), e))
         # Handle cases where we're running outside of version control.

@@ -1527,16 +1527,20 @@ class Port(object):
 
         commits = []
         for repo_id, repo in repos.items():
-            commit = repo.commit(include_log=False, include_identifier=False)
+            if repo.is_git:
+                # Git commits are completely defined locally, so upload the fully defined commit.
+                commit = repo.commit()
+                commit = commit.Encoder().default(commit)
+                commit['repository_id'] = repo_id
+                commits.append(commit)
 
-            # Special case for WebKit since we have multiple representations at the moment
-            branch = commit.branch
-            if repo_id == 'webkit' and branch in repo.DEFAULT_BRANCHES:
-                branch = 'trunk'
-
-            commits.append(Upload.create_commit(
-                repository_id=repo_id,
-                id=str(commit.revision or commit.hash),
-                branch=branch,
-            ))
+            else:
+                # Subversion commits require network requests to become fully defined, so provide partial commits
+                # and let the backend handle them.
+                commit = repo.commit(include_log=False, include_identifier=False)
+                commits.append(Upload.create_commit(
+                    repository_id=repo_id,
+                    id=str(commit.revision or commit.hash),
+                    branch=commit.branch,
+                ))
         return commits
