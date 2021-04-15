@@ -126,12 +126,19 @@ private:
     static void restartedCallback(SoupMessage*, NetworkDataTaskSoup*);
     void didRestart();
 
+    static void fileQueryInfoCallback(GFile*, GAsyncResult*, NetworkDataTaskSoup*);
+    void didGetFileInfo(GFileInfo*);
+    static void readFileCallback(GFile*, GAsyncResult*, NetworkDataTaskSoup*);
+    static void enumerateFileChildrenCallback(GFile*, GAsyncResult*, NetworkDataTaskSoup*);
+    void didReadFile(GRefPtr<GInputStream>&&);
+
     WebCore::FrameIdentifier m_frameID;
     WebCore::PageIdentifier m_pageID;
     State m_state { State::Suspended };
     WebCore::ContentSniffingPolicy m_shouldContentSniff;
     GRefPtr<SoupRequest> m_soupRequest;
     GRefPtr<SoupMessage> m_soupMessage;
+    GRefPtr<GFile> m_file;
     GRefPtr<GInputStream> m_inputStream;
     GRefPtr<SoupMultipartInputStream> m_multipartInputStream;
     GRefPtr<GCancellable> m_cancellable;

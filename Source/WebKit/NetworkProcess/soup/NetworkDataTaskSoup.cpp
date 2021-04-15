@@ -34,6 +34,7 @@
 #include "NetworkProcess.h"
 #include "NetworkSessionSoup.h"
 #include "WebErrors.h"
+#include "WebKitDirectoryInputStream.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/HTTPParsers.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -107,6 +108,10 @@ void NetworkDataTaskSoup::setPendingDownloadLocation(const String& filename, San
 void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCookies wasBlockingCookies)
 {
     m_currentRequest = WTFMove(request);
+    if (m_currentRequest.url().isLocalFile()) {
+        m_file = adoptGRef(g_file_new_for_path(m_currentRequest.url().fileSystemPath().utf8().data()));
+        return;
+    }
 
     GUniquePtr<SoupURI> soupURI = m_currentRequest.createSoupURI();
     if (!soupURI) {
@@ -121,11 +126,6 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
     }
 
     m_currentRequest.updateSoupRequest(soupRequest.get());
-
-    if (!m_currentRequest.url().protocolIsInHTTPFamily()) {
-        m_soupRequest = WTFMove(soupRequest);
-        return;
-    }
 
     // HTTP request.
     GRefPtr<SoupMessage> soupMessage = adoptGRef(soup_request_http_get_message(SOUP_REQUEST_HTTP(soupRequest.get())));
@@ -203,6 +203,7 @@ void NetworkDataTaskSoup::clearRequest()
     stopTimeout();
     m_pendingResult = nullptr;
     m_soupRequest = nullptr;
+    m_file = nullptr;
     m_inputStream = nullptr;
     m_multipartInputStream = nullptr;
     m_downloadOutputStream = nullptr;
@@ -240,6 +241,13 @@ void NetworkDataTaskSoup::resume()
         return;
     }
 
+    if (m_file && !m_cancellable) {
+        m_cancellable = adoptGRef(g_cancellable_new());
+        g_file_query_info_async(m_file.get(), G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE,
+            G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(fileQueryInfoCallback), protectedThis.leakRef());
+        return;
+    }
+
     if (m_pendingResult) {
         GRefPtr<GAsyncResult> pendingResult = WTFMove(m_pendingResult);
         if (m_inputStream)
@@ -248,7 +256,12 @@ void NetworkDataTaskSoup::resume()
             requestNextPartCallback(m_multipartInputStream.get(), pendingResult.get(), protectedThis.leakRef());
         else if (m_soupRequest)
             sendRequestCallback(m_soupRequest.get(), pendingResult.get(), protectedThis.leakRef());
-        else
+        else if (m_file) {
+            if (m_response.expectedContentLength() == -1)
+                enumerateFileChildrenCallback(m_file.get(), pendingResult.get(), protectedThis.leakRef());
+            else
+                readFileCallback(m_file.get(), pendingResult.get(), protectedThis.leakRef());
+        } else
             ASSERT_NOT_REACHED();
     }
 }
@@ -339,37 +352,24 @@ void NetworkDataTaskSoup::sendRequestCallback(SoupRequest* soupRequest, GAsyncRe
 
 void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
 {
-    if (m_soupMessage) {
-        if (m_shouldContentSniff == ContentSniffingPolicy::SniffContent && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
-            m_response.setSniffedContentType(soup_request_get_content_type(m_soupRequest.get()));
-        m_response.updateFromSoupMessage(m_soupMessage.get());
-        if (m_response.mimeType().isEmpty() && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
-            m_response.setMimeType(MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()));
+    if (m_shouldContentSniff == ContentSniffingPolicy::SniffContent && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
+        m_response.setSniffedContentType(soup_request_get_content_type(m_soupRequest.get()));
+    m_response.updateFromSoupMessage(m_soupMessage.get());
+    if (m_response.mimeType().isEmpty() && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
+        m_response.setMimeType(MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()));
 
-        if (shouldStartHTTPRedirection()) {
-            m_inputStream = WTFMove(inputStream);
-            skipInputStreamForRedirection();
-            return;
-        }
-
-        if (m_response.isMultipart())
-            m_multipartInputStream = adoptGRef(soup_multipart_input_stream_new(m_soupMessage.get(), inputStream.get()));
-        else
-            m_inputStream = WTFMove(inputStream);
-
-        m_networkLoadMetrics.responseStart = MonotonicTime::now() - m_startTime;
-    } else {
-        m_response.setURL(m_firstRequest.url());
-        const gchar* contentType = soup_request_get_content_type(m_soupRequest.get());
-        m_response.setMimeType(extractMIMETypeFromMediaType(contentType));
-        m_response.setTextEncodingName(extractCharsetFromMediaType(contentType));
-        m_response.setExpectedContentLength(soup_request_get_content_length(m_soupRequest.get()));
-        if (m_response.mimeType().isEmpty())
-            m_response.setMimeType(MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()));
-
+    if (shouldStartHTTPRedirection()) {
         m_inputStream = WTFMove(inputStream);
+        skipInputStreamForRedirection();
+        return;
     }
 
+    if (m_response.isMultipart())
+        m_multipartInputStream = adoptGRef(soup_multipart_input_stream_new(m_soupMessage.get(), inputStream.get()));
+    else
+        m_inputStream = WTFMove(inputStream);
+
+    m_networkLoadMetrics.responseStart = MonotonicTime::now() - m_startTime;
     dispatchDidReceiveResponse();
 }
 
@@ -757,9 +757,14 @@ void NetworkDataTaskSoup::readCallback(GInputStream* inputStream, GAsyncResult* 
 
     GUniqueOutPtr<GError> error;
     gssize bytesRead = g_input_stream_read_finish(inputStream, result, &error.outPtr());
-    if (error)
-        task->didFail(ResourceError::genericGError(error.get(), task->m_soupRequest.get()));
-    else if (bytesRead > 0)
+    if (error) {
+        if (task->m_soupRequest)
+            task->didFail(ResourceError::genericGError(error.get(), task->m_soupRequest.get()));
+        else if (task->m_file)
+            task->didFail(ResourceError(g_quark_to_string(error->domain), error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+    } else if (bytesRead > 0)
         task->didRead(bytesRead);
     else
         task->didFinishRead();
@@ -1169,6 +1174,100 @@ void NetworkDataTaskSoup::didRestart()
 {
     m_startTime = MonotonicTime::now();
     m_networkLoadMetrics = { };
+}
+
+void NetworkDataTaskSoup::fileQueryInfoCallback(GFile* file, GAsyncResult* result, NetworkDataTaskSoup* task)
+{
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
+    ASSERT(file == task->m_file.get());
+
+    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+        task->clearRequest();
+        return;
+    }
+
+    // Ignore the error here, it will be handled by g_file_read_async below.
+    if (GRefPtr<GFileInfo> info = adoptGRef(g_file_query_info_finish(file, result, nullptr))) {
+        task->didGetFileInfo(info.get());
+
+        if (g_file_info_get_file_type(info.get()) == G_FILE_TYPE_DIRECTORY) {
+            g_file_enumerate_children_async(file, "*", G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, task->m_cancellable.get(),
+                reinterpret_cast<GAsyncReadyCallback>(enumerateFileChildrenCallback), protectedThis.leakRef());
+            return;
+        }
+    }
+
+    g_file_read_async(file, RunLoopSourcePriority::AsyncIONetwork, task->m_cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(readFileCallback), protectedThis.leakRef());
+}
+
+void NetworkDataTaskSoup::didGetFileInfo(GFileInfo* info)
+{
+    m_response.setURL(m_firstRequest.url());
+    if (g_file_info_get_file_type(info) == G_FILE_TYPE_DIRECTORY) {
+        m_response.setMimeType("text/html");
+        m_response.setExpectedContentLength(-1);
+    } else {
+        const gchar* contentType = g_file_info_get_content_type(info);
+        m_response.setMimeType(extractMIMETypeFromMediaType(contentType));
+        m_response.setTextEncodingName(extractCharsetFromMediaType(contentType));
+        if (m_response.mimeType().isEmpty())
+            m_response.setMimeType(MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()));
+        m_response.setExpectedContentLength(g_file_info_get_size(info));
+    }
+}
+
+void NetworkDataTaskSoup::readFileCallback(GFile* file, GAsyncResult* result, NetworkDataTaskSoup* task)
+{
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
+    ASSERT(file == task->m_file.get());
+
+    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+        task->clearRequest();
+        return;
+    }
+
+    if (task->state() == State::Suspended) {
+        ASSERT(!task->m_pendingResult);
+        task->m_pendingResult = result;
+        return;
+    }
+
+    GUniqueOutPtr<GError> error;
+    GRefPtr<GInputStream> inputStream = adoptGRef(G_INPUT_STREAM(g_file_read_finish(file, result, &error.outPtr())));
+    if (error)
+        task->didFail(ResourceError(g_quark_to_string(error->domain), error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
+    else
+        task->didReadFile(WTFMove(inputStream));
+}
+
+void NetworkDataTaskSoup::enumerateFileChildrenCallback(GFile* file, GAsyncResult* result, NetworkDataTaskSoup* task)
+{
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
+    ASSERT(file == task->m_file.get());
+
+    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+        task->clearRequest();
+        return;
+    }
+
+    if (task->state() == State::Suspended) {
+        ASSERT(!task->m_pendingResult);
+        task->m_pendingResult = result;
+        return;
+    }
+
+    GUniqueOutPtr<GError> error;
+    GRefPtr<GFileEnumerator> enumerator = adoptGRef(g_file_enumerate_children_finish(file, result, &error.outPtr()));
+    if (error)
+        task->didFail(ResourceError(g_quark_to_string(error->domain), error->code, task->m_firstRequest.url(), String::fromUTF8(error->message)));
+    else
+        task->didReadFile(webkitDirectoryInputStreamNew(WTFMove(enumerator), task->m_firstRequest.url().string().utf8()));
+}
+
+void NetworkDataTaskSoup::didReadFile(GRefPtr<GInputStream>&& inputStream)
+{
+    m_inputStream = WTFMove(inputStream);
+    dispatchDidReceiveResponse();
 }
 
 } // namespace WebKit

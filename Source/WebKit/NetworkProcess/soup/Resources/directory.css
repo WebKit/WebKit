@@ -1,0 +1,72 @@
+/* This CSS file has been copied from libsoup, distributed under LPGL license. */
+
+:root {
+  background-color: #f6f5f4;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  margin: 0 auto;
+}
+
+th > a {
+  color: inherit;
+}
+
+table[order] > thead > tr > th::after {
+  display: none;
+  width: .8em;
+  margin-inline-end: -.8em;
+  text-align: end;
+}
+
+table[order="asc"] > thead > tr > th::after {
+  content: "\2193";
+}
+table[order="desc"] > thead > tr > th::after {
+  content: "\2191";
+}
+
+table[order][order-by="0"] > thead > tr > th:first-child > a ,
+table[order][order-by="1"] > thead > tr > th:first-child + th > a ,
+table[order][order-by="2"] > thead > tr > th:first-child + th + th > a {
+  text-decoration: underline;
+}
+
+table[order][order-by="0"] > thead > tr > th:first-child::after ,
+table[order][order-by="1"] > thead > tr > th:first-child + th::after ,
+table[order][order-by="2"] > thead > tr > th:first-child + th + th::after {
+  display: inline-block;
+}
+
+td:first-child {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+@media (min-width: 550px) {
+  body {
+    padding: 3em;
+    background-color: white;
+    border-radius: 1em;
+    border: 2px solid rgba(211, 215, 207);
+    max-width: 65em;
+    margin: 2em auto;
+  }
+}
+

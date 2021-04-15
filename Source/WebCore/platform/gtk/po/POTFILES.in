@@ -4,6 +4,7 @@ LocalizedStringsGtk.cpp
 ../network/soup/NetworkStorageSessionSoup.cpp
 ../../editing/EditAction.cpp
 ../../../JavaScriptCore/API/glib/JSCOptions.cpp
+../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp
 ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp
 ../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp
 ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp
