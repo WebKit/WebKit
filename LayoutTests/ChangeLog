@@ -1,3 +1,9 @@
+2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update tests expected to fail but passing.
+
+        * platform/gtk/TestExpectations:
+
 2021-04-14  Tim Nguyen  <ntim@apple.com>
 
         Omit default position/angle when serializing radial & conic gradients
