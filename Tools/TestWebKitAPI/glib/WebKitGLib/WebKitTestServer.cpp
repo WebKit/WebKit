@@ -24,30 +24,44 @@
 #include <wtf/Threading.h>
 #include <wtf/glib/GUniquePtr.h>
 
-WebKitTestServer::WebKitTestServer(ServerOptions options)
+WebKitTestServer::WebKitTestServer(ServerOptionsBitSet options)
 {
-    if (options & ServerRunInThread) {
+    if (options[ServerRunInThread]) {
         WTF::initialize();
         m_queue = WorkQueue::create("WebKitTestServer");
     }
 
     GUniquePtr<char> sslCertificateFile;
     GUniquePtr<char> sslKeyFile;
-    if (options & ServerHTTPS) {
+    if (options[ServerHTTPS]) {
         CString resourcesDir = Test::getResourcesDir();
         sslCertificateFile.reset(g_build_filename(resourcesDir.data(), "test-cert.pem", NULL));
         sslKeyFile.reset(g_build_filename(resourcesDir.data(), "test-key.pem", NULL));
     }
 
-    GRefPtr<SoupAddress> address = adoptGRef(soup_address_new("127.0.0.1", SOUP_ADDRESS_ANY_PORT));
-    soup_address_resolve_sync(address.get(), 0);
-
-    m_soupServer = adoptGRef(soup_server_new(SOUP_SERVER_INTERFACE, address.get(),
+    m_soupServer = adoptGRef(soup_server_new(
         SOUP_SERVER_ASYNC_CONTEXT, m_queue ? m_queue->runLoop().mainContext() : nullptr,
         SOUP_SERVER_SSL_CERT_FILE, sslCertificateFile.get(),
         SOUP_SERVER_SSL_KEY_FILE, sslKeyFile.get(), nullptr));
-    m_baseURI = options & ServerHTTPS ? soup_uri_new("https://127.0.0.1/") : soup_uri_new("http://127.0.0.1/");
-    soup_uri_set_port(m_baseURI, soup_server_get_port(m_soupServer.get()));
+
+    GUniqueOutPtr<GError> error;
+    SoupServerListenOptions serverOptions = static_cast<SoupServerListenOptions>(options[ServerHTTPS] ? SOUP_SERVER_LISTEN_IPV4_ONLY : SOUP_SERVER_LISTEN_IPV4_ONLY | SOUP_SERVER_LISTEN_HTTPS);
+    bool serverStarted = false;
+    if (options[ServerNonLoopback]) {
+        GRefPtr<SoupAddress> address = adoptGRef(soup_address_new("localhost", SOUP_ADDRESS_ANY_PORT));
+        soup_address_resolve_sync(address.get(), nullptr);
+        serverStarted = soup_server_listen(m_soupServer.get(), soup_address_get_gsockaddr(address.get()), serverOptions, &error.outPtr());
+    } else
+        serverStarted = soup_server_listen_local(m_soupServer.get(), SOUP_ADDRESS_ANY_PORT, serverOptions, &error.outPtr());
+    if (!serverStarted) {
+        WTFLogAlways("Failed to start HTTP server: %s", error->message);
+        CRASH();
+    }
+
+    GSList* uris = soup_server_get_uris(m_soupServer.get());
+    ASSERT(uris);
+    m_baseURI = static_cast<SoupURI*>(g_object_ref(uris->data));
+    g_slist_free_full(uris, g_object_unref);
 }
 
 WebKitTestServer::~WebKitTestServer()

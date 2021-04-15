@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include <bitset>
 #include <libsoup/soup.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/glib/GRefPtr.h>
@@ -29,12 +30,13 @@ class WebKitTestServer {
 public:
 
     enum ServerOptions {
-        ServerHTTP = 0,
-        ServerHTTPS = 1 << 1,
-        ServerRunInThread = 1 << 2,
+        ServerHTTPS = 0,
+        ServerRunInThread = 1,
+        ServerNonLoopback = 2,
     };
+    using ServerOptionsBitSet = std::bitset<3>;
 
-    WebKitTestServer(ServerOptions = ServerHTTP);
+    WebKitTestServer(ServerOptionsBitSet = 0);
     virtual ~WebKitTestServer();
 
     SoupURI* baseURI() const { return m_baseURI; }
