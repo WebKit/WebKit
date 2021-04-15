@@ -45,7 +45,7 @@ public:
     Node* lastChild() const { return m_lastChild; }
     static ptrdiff_t lastChildMemoryOffset() { return OBJECT_OFFSETOF(ContainerNode, m_lastChild); }
     bool hasChildNodes() const { return m_firstChild; }
-    bool hasOneChild() const { return m_firstChild && !m_firstChild->nextSibling(); }
+    bool hasOneChild() const { return m_firstChild && m_firstChild == m_lastChild; }
 
     bool directChildNeedsStyleRecalc() const { return hasStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }
     void setDirectChildNeedsStyleRecalc() { setStyleFlag(NodeStyleFlag::DirectChildNeedsStyleResolution); }

@@ -1,5 +1,18 @@
 2021-04-14  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Avoid indirect load in ContainerNode::hasOneChild()
+        https://bugs.webkit.org/show_bug.cgi?id=224589
+
+        Reviewed by Chris Dumez.
+
+        Getting nextSibling() will involve loading the first child into the register.
+        Avoid that and just check m_firstChild and m_lastChild instead to avoid this extra memory load.
+
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::hasOneChild const):
+
+2021-04-14  Ryosuke Niwa  <rniwa@webkit.org>
+
         Crash in in ReplaceSelectionCommand::mergeEndIfNeeded()
         https://bugs.webkit.org/show_bug.cgi?id=222941
 
