@@ -1,3 +1,16 @@
+2021-04-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use WTF::Function instead of std::function in SVGPropertyAnimatorFactory::attributeAnimatorCreator
+        https://bugs.webkit.org/show_bug.cgi?id=224586
+
+        Reviewed by Darin Adler.
+
+        sizeof(WTF::Function<void()>) is 8.
+        sizeof(std::function<void()>) is 48.
+
+        * svg/properties/SVGPropertyAnimatorFactory.h:
+        (WebCore::SVGPropertyAnimatorFactory::attributeAnimatorCreator):
+
 2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Image extraction fails in Google search results

@@ -92,10 +92,20 @@ public:
 
     HashMap(std::initializer_list<KeyValuePairType> initializerList)
     {
+        reserveInitialCapacity(initializerList.size());
         for (const auto& keyValuePair : initializerList)
             add(keyValuePair.key, keyValuePair.value);
     }
     
+    template<typename... Items>
+    static HashMap from(Items&&... items)
+    {
+        HashMap result;
+        result.reserveInitialCapacity(sizeof...(items));
+        result.addForInitialization(std::forward<Items>(items)...);
+        return result;
+    }
+
     void swap(HashMap&);
 
     unsigned size() const;
@@ -195,6 +205,18 @@ private:
 
     template<typename K, typename F>
     AddResult inlineEnsure(K&&, F&&);
+
+    template<typename... Items>
+    void addForInitialization(KeyValuePairType&& item, Items&&... items)
+    {
+        add(WTFMove(item.key), WTFMove(item.value));
+        addForInitialization(std::forward<Items>(items)...);
+    }
+
+    void addForInitialization(KeyValuePairType&& item)
+    {
+        add(WTFMove(item.key), WTFMove(item.value));
+    }
 
     HashTableType m_impl;
 };

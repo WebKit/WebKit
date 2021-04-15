@@ -1,3 +1,15 @@
+2021-04-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use WTF::Function instead of std::function in SVGPropertyAnimatorFactory::attributeAnimatorCreator
+        https://bugs.webkit.org/show_bug.cgi?id=224586
+
+        Reviewed by Darin Adler.
+
+        This requires something like r223122 until something like http://wg21.link/P1249 is accepted.
+        I also added a missing reserveInitialCapacity call that could reduce rehashing when constructing a HashMap from an initializer_list.
+
+        * wtf/HashMap.h:
+
 2021-04-14  Alex Christensen  <achristensen@webkit.org>
 
         Revert important part of r275948
