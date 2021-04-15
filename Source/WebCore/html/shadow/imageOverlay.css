@@ -30,6 +30,8 @@ div#image-overlay {
     text-align: center;
     white-space: nowrap;
     line-height: 100%;
+    font-family: system-ui;
+    font-size: 16px;
 }
 
 div.image-overlay-text {

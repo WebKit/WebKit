@@ -152,6 +152,10 @@ public:
 
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
+#if ENABLE(IMAGE_EXTRACTION)
+    bool needsToForceUserSelectWhenInstallingImageOverlay() const;
+#endif
+
 private:
     bool needsQuirks() const;
 

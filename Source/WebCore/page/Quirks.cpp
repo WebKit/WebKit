@@ -1463,4 +1463,20 @@ bool Quirks::shouldBypassUserGestureRequirementForWebAuthn() const
 }
 #endif
 
+#if ENABLE(IMAGE_EXTRACTION)
+
+bool Quirks::needsToForceUserSelectWhenInstallingImageOverlay() const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto& url = m_document->topDocument().url();
+    if (topPrivatelyControlledDomain(url.host().toString()).startsWith("google.") && url.path() == "/search")
+        return true;
+
+    return false;
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
+
 }

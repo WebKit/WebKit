@@ -1328,6 +1328,9 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         container->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
     shadowRoot->appendChild(container);
 
+    if (document().quirks().needsToForceUserSelectWhenInstallingImageOverlay())
+        setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
+
     static MainThreadNeverDestroyed<const AtomString> imageOverlayTextClass("image-overlay-text", AtomString::ConstructFromLiteral);
 
     IntSize containerSize { offsetWidth(), offsetHeight() };

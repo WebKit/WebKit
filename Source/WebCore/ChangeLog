@@ -1,3 +1,29 @@
+2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Image extraction fails in Google search results
+        https://bugs.webkit.org/show_bug.cgi?id=224527
+        <rdar://problem/76500331>
+
+        Reviewed by Andy Estes.
+
+        Override the `-webkit-user-select` CSS property in Google search results pages, and make a slight adjustment to
+        the user agent stylesheet.
+
+        Test: fast/images/image-extraction/image-overlay-in-image-with-zero-font-size.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithImageExtractionResult):
+        * html/shadow/imageOverlay.css:
+        (div#image-overlay):
+
+        Additionally force a default value for the font size and font family of the image overlay text, so that a
+        cascading font size of 0 won't end up breaking logic for computing image overlay CSS transforms. See layout test
+        for more details.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::needsToForceUserSelectWhenInstallingImageOverlay const):
+        * page/Quirks.h:
+
 2021-04-15  Antti Koivisto  <antti@apple.com>
 
         Remove unused RunIterator::setAtEnd

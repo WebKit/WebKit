@@ -1,3 +1,16 @@
+2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Image extraction fails in Google search results
+        https://bugs.webkit.org/show_bug.cgi?id=224527
+        <rdar://problem/76500331>
+
+        Reviewed by Andy Estes.
+
+        Add a new layout test to exercise the user agent stylesheet change.
+
+        * fast/images/image-extraction/image-overlay-in-image-with-zero-font-size-expected-mismatch.html: Added.
+        * fast/images/image-extraction/image-overlay-in-image-with-zero-font-size.html: Added.
+
 2021-04-15  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/media convert PHP to Python
