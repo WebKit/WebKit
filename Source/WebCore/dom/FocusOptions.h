@@ -30,9 +30,12 @@
 
 namespace WebCore {
 
+enum class FocusRemovalEventsMode { Dispatch, DoNotDispatch };
+
 struct FocusOptions {
     SelectionRestorationMode selectionRestorationMode { SelectionRestorationMode::RestoreOrSelectAll };
     FocusDirection direction { FocusDirection::None };
+    FocusRemovalEventsMode removalEventsMode { FocusRemovalEventsMode::Dispatch };
     bool preventScroll { false };
 };
 

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ActivityState.h"
-#include "FocusDirection.h"
+#include "FocusOptions.h"
 #include "LayoutRect.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
@@ -59,7 +59,7 @@ public:
     WEBCORE_EXPORT bool setInitialFocus(FocusDirection, KeyboardEvent*);
     bool advanceFocus(FocusDirection, KeyboardEvent*, bool initialFocus = false);
 
-    WEBCORE_EXPORT bool setFocusedElement(Element*, Frame&, FocusDirection = FocusDirection::None);
+    WEBCORE_EXPORT bool setFocusedElement(Element*, Frame&, const FocusOptions& = { });
 
     void setActivityState(OptionSet<ActivityState::Flag>);
 

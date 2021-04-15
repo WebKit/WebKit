@@ -1,3 +1,28 @@
+2021-04-15  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Move FocusRemovalEventsMode into FocusOptions
+        https://bugs.webkit.org/show_bug.cgi?id=224549
+
+        Reviewed by Darin Adler.
+
+        This patch is just a refactoring that moves FocusRemovalEventsMode enum into FocusOptions.
+        This allows us to simplify some method signatures, as they'll just receive a FocusOptions parameter, instead of two parameters for FocusRemovalEventsMode and FocusDirection.
+
+        There is no change of behavior, just a code refactoring.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adjustFocusedNodeOnNodeRemoval):
+        (WebCore::Document::setFocusedElement):
+        * dom/Document.h:
+        (WebCore::Document::setFocusedElement):
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        * dom/FocusOptions.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setFocusedElement):
+        * page/FocusController.h:
+        (WebCore::FocusController::setFocusedElement):
+
 2021-04-09  Sergio Villar Senin  <svillar@igalia.com>
 
         Empty value is added in codePointsFromString in CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts
