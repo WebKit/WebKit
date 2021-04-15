@@ -39,10 +39,6 @@
 
 namespace WebCore {
 
-namespace DataURLDecoder {
-struct Result;
-}
-
 class ResourceResponse;
 
 bool isScriptAllowedByNosniff(const ResourceResponse&);
@@ -214,8 +210,6 @@ public:
     void setAsRangeRequested() { m_isRangeRequested = true; }
 
     bool containsInvalidHTTPHeaders() const;
-
-    WEBCORE_EXPORT static ResourceResponse dataURLResponse(const URL&, const DataURLDecoder::Result&);
 
 protected:
     enum InitLevel {

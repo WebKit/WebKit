@@ -271,10 +271,15 @@ void ResourceLoader::loadDataURL()
         }
         if (this->wasCancelled())
             return;
+        auto& result = decodeResult.value();
+        auto dataSize = result.data ? result.data->size() : 0;
 
-        auto dataSize = decodeResult->data.size();
-        ResourceResponse dataResponse = ResourceResponse::dataURLResponse(url, decodeResult.value());
-        this->didReceiveResponse(dataResponse, [this, protectedThis = WTFMove(protectedThis), dataSize, data = SharedBuffer::create(WTFMove(decodeResult->data))]() mutable {
+        ResourceResponse dataResponse { url, result.mimeType, static_cast<long long>(dataSize), result.charset };
+        dataResponse.setHTTPStatusCode(200);
+        dataResponse.setHTTPStatusText("OK"_s);
+        dataResponse.setHTTPHeaderField(HTTPHeaderName::ContentType, result.contentType);
+        dataResponse.setSource(ResourceResponse::Source::Network);
+        this->didReceiveResponse(dataResponse, [this, protectedThis = WTFMove(protectedThis), dataSize, data = result.data.releaseNonNull()]() mutable {
             if (!this->reachedTerminalState() && dataSize && m_request.httpMethod() != "HEAD")
                 this->didReceiveBuffer(WTFMove(data), dataSize, DataPayloadWholeResource);
 
