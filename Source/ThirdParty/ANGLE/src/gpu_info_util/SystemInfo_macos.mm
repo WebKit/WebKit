@@ -28,8 +28,11 @@ constexpr CGLRendererProperty kCGLRPRegistryIDHigh = static_cast<CGLRendererProp
 
 std::string GetMachineModel()
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     io_service_t platformExpert = IOServiceGetMatchingService(
         kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"));
+#pragma clang diagnostic pop
 
     if (platformExpert == IO_OBJECT_NULL)
     {
@@ -91,11 +94,14 @@ void GetIORegistryDevices(std::vector<GPUDeviceInfo> *devices)
         CFMutableDictionaryRef matchDictionary = IOServiceMatching(kServiceNames[i]);
 
         io_iterator_t entryIterator;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if (IOServiceGetMatchingServices(kIOMasterPortDefault, matchDictionary, &entryIterator) !=
             kIOReturnSuccess)
         {
             continue;
         }
+#pragma clang diagnostic pop
 
         io_registry_entry_t entry = IO_OBJECT_NULL;
         while ((entry = IOIteratorNext(entryIterator)) != IO_OBJECT_NULL)
@@ -150,7 +156,10 @@ void SetActiveGPUIndex(SystemInfo *info)
         return;
 
     CFMutableDictionaryRef matchDictionary = IORegistryEntryIDMatching(gpuID);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     io_service_t gpuEntry = IOServiceGetMatchingService(kIOMasterPortDefault, matchDictionary);
+#pragma clang diagnostic pop
 
     if (gpuEntry == IO_OBJECT_NULL)
     {
@@ -251,8 +260,11 @@ VendorID GetVendorIDFromMetalDeviceRegistryID(uint64_t registryID)
 
         // IOServiceGetMatchingService will consume the reference on the matching dictionary,
         // so we don't need to release the dictionary.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         io_registry_entry_t acceleratorEntry =
             IOServiceGetMatchingService(kIOMasterPortDefault, matchingDict);
+#pragma clang diagnostic pop
         if (acceleratorEntry == IO_OBJECT_NULL)
         {
             return 0;

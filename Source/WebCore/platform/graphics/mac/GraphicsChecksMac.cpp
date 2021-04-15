@@ -45,8 +45,10 @@ static io_connect_t attachToAppleGraphicsControl()
 {
     mach_port_t masterPort = MACH_PORT_NULL;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (IOMasterPort(MACH_PORT_NULL, &masterPort) != KERN_SUCCESS)
         return IO_OBJECT_NULL;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     CFDictionaryRef classToMatch = IOServiceMatching("AppleGraphicsControl");
     if (!classToMatch)

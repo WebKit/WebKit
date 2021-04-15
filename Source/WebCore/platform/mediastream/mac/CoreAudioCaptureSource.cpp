@@ -576,7 +576,13 @@ OSStatus CoreAudioSharedUnit::defaultOutputDevice(uint32_t* deviceID)
 {
     OSErr err = -1;
 #if PLATFORM(MAC)
-    AudioObjectPropertyAddress address = { kAudioHardwarePropertyDefaultOutputDevice, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+    AudioObjectPropertyAddress address = {
+        kAudioHardwarePropertyDefaultOutputDevice,
+        kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
 
     if (AudioObjectHasProperty(kAudioObjectSystemObject, &address)) {
         UInt32 propertySize = sizeof(AudioDeviceID);

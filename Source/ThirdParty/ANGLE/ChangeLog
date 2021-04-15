@@ -1,3 +1,11 @@
+2021-04-15  Alex Christensen  <achristensen@webkit.org>
+
+        Add deprecation macros
+        https://bugs.webkit.org/show_bug.cgi?id=224624
+
+        * src/gpu_info_util/SystemInfo_macos.mm:
+        (angle::GetVendorIDFromMetalDeviceRegistryID):
+
 2021-04-12  Dean Jackson  <dino@apple.com>
 
         REGRESSION (Metal ANGLE): [Catalina] 6 consistent WebGL failures / timeouts
