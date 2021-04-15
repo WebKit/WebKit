@@ -1,3 +1,21 @@
+2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Make image extraction interactions work for elements inside links
+        https://bugs.webkit.org/show_bug.cgi?id=224517
+        <rdar://problem/76616431>
+
+        Reviewed by Devin Rousso.
+
+        * fast/images/image-extraction/click-link-with-image-overlay-expected.txt: Added.
+        * fast/images/image-extraction/click-link-with-image-overlay.html: Added.
+
+        Add a test that verifies that activating different parts of an image in a link fires click events.
+
+        * fast/images/image-extraction/ios/select-word-in-image-overlay-inside-link-expected.txt: Added.
+        * fast/images/image-extraction/ios/select-word-in-image-overlay-inside-link.html: Added.
+
+        Add a test that selects image overlay text for an image element inside a link.
+
 2021-04-14  Antti Koivisto  <antti@apple.com>
 
         RunIterator::traverseNext/PreviousOnLineIgnoringLineBreak should skip over WBRs

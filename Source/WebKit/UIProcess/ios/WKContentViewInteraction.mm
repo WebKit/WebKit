@@ -2730,7 +2730,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 
 #if ENABLE(IMAGE_EXTRACTION)
-    if (_elementPendingImageExtraction && _positionInformation.elementContext == _elementPendingImageExtraction)
+    if (_elementPendingImageExtraction && _positionInformation.imageElementContext == _elementPendingImageExtraction)
         return YES;
 #endif
 
@@ -2808,7 +2808,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    if (_elementPendingImageExtraction && _positionInformation.elementContext == _elementPendingImageExtraction)
+    if (_elementPendingImageExtraction && _positionInformation.imageElementContext == _elementPendingImageExtraction)
         return YES;
 #endif
 

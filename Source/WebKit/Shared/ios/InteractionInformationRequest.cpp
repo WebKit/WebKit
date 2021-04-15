@@ -88,8 +88,7 @@ bool InteractionInformationRequest::isValidForRequest(const InteractionInformati
     if (other.includeHasDoubleClickHandler && !includeHasDoubleClickHandler)
         return false;
 
-    // If `includeSnapshot` is set, then we will include data for images as well.
-    if (other.includeImageData && !includeImageData && !includeSnapshot)
+    if (other.includeImageData && !includeImageData)
         return false;
 
     if (other.linkIndicatorShouldHaveLegacyMargins != linkIndicatorShouldHaveLegacyMargins)

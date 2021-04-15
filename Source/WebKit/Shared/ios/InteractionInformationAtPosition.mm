@@ -88,6 +88,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << shouldNotUseIBeamInEditableContent;
     encoder << isImageOverlayText;
     encoder << elementContext;
+    encoder << imageElementContext;
 }
 
 bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, InteractionInformationAtPosition& result)
@@ -213,6 +214,9 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
 
     if (!decoder.decode(result.elementContext))
+        return false;
+
+    if (!decoder.decode(result.imageElementContext))
         return false;
 
     return true;

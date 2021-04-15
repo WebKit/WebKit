@@ -97,6 +97,7 @@ struct InteractionInformationAtPosition {
 #endif
 
     Optional<WebCore::ElementContext> elementContext;
+    Optional<WebCore::ElementContext> imageElementContext;
 
     // Copy compatible optional bits forward (for example, if we have a InteractionInformationAtPosition
     // with snapshots in it, and perform another request for the same point without requesting the snapshots,

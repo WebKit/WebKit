@@ -2694,6 +2694,8 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
 
     if (request.includeSnapshot || request.includeImageData)
         info.image = createShareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
+
+    info.imageElementContext = page.contextForElement(element);
 }
 
 static void boundsPositionInformation(RenderObject& renderer, InteractionInformationAtPosition& info)
@@ -2719,6 +2721,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     info.isElement = true;
     info.idAttribute = element.getIdAttribute();
+    info.isImageOverlayText = innerNonSharedNode && HTMLElement::isImageOverlayText(*innerNonSharedNode);
 
     info.title = element.attributeWithoutSynchronization(HTMLNames::titleAttr).string();
     if (linkElement && info.title.isEmpty())
@@ -2726,7 +2729,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     if (element.renderer())
         info.touchCalloutEnabled = element.renderer()->style().touchCalloutEnabled();
 
-    if (linkElement) {
+    if (linkElement && !info.isImageOverlayText) {
         info.isLink = true;
         info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
 
@@ -2746,9 +2749,8 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     if (auto* renderer = element.renderer()) {
         bool shouldCollectImagePositionInformation = renderer->isRenderImage();
-        if (shouldCollectImagePositionInformation && innerNonSharedNode && HTMLElement::isImageOverlayText(*innerNonSharedNode)) {
+        if (shouldCollectImagePositionInformation && info.isImageOverlayText) {
             shouldCollectImagePositionInformation = false;
-            info.isImageOverlayText = true;
             if (request.includeImageData) {
                 if (auto rendererAndImage = imageRendererAndImage(element)) {
                     auto& [renderImage, image] = *rendererAndImage;
@@ -2960,13 +2962,17 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     if (m_focusedElement)
         focusedElementPositionInformation(*this, *m_focusedElement, request, info);
 
+    auto hitTestNode = makeRefPtr(hitTestResult.innerNonSharedNode());
     if (is<Element>(nodeRespondingToClickEvents)) {
         auto& element = downcast<Element>(*nodeRespondingToClickEvents);
-        elementPositionInformation(*this, element, request, hitTestResult.innerNonSharedNode(), info);
+        elementPositionInformation(*this, element, request, hitTestNode.get(), info);
 
         if (info.isLink && !info.isImage && request.includeSnapshot)
             info.image = shareableBitmapSnapshotForNode(element);
     }
+
+    if (!info.isImage && request.includeImageData && is<HTMLImageElement>(hitTestNode))
+        imagePositionInformation(*this, downcast<HTMLImageElement>(*hitTestNode), request, info);
 
     if (!(info.isLink || info.isImage))
         selectionPositionInformation(*this, request, info);

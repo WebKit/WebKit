@@ -1,3 +1,54 @@
+2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Make image extraction interactions work for elements inside links
+        https://bugs.webkit.org/show_bug.cgi?id=224517
+        <rdar://problem/76616431>
+
+        Reviewed by Devin Rousso.
+
+        See comments below for more details.
+
+        Tests:  fast/images/image-extraction/click-link-with-image-overlay.html
+                fast/images/image-extraction/ios/select-word-in-image-overlay-inside-link.html
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Add `imageElementContext`, an optional element context that exists alongside `elementContext`. This is necessary
+        in the case where the user is interacting with an image element inside a link element because we need to know
+        about the inner hit-tested image element for the purposes of image extraction, but the clickable element we use
+        for the `elementContext` is the link element instead.
+
+        * Shared/ios/InteractionInformationRequest.cpp:
+        (WebKit::InteractionInformationRequest::isValidForRequest const):
+
+        Make a slight adjustment here - since `includeImageData` may require image bitmap data in cases where only the
+        `includeSnapshot` flag is set, it's incorrect to assume that setting `includeSnapshot` fulfills all the needs of
+        `includeImageData`.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+
+        Consult `imageElementContext` instead of `elementContext`.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::imagePositionInformation):
+
+        Set the position information's `imageElementContext`.
+
+        (WebKit::elementPositionInformation):
+        (WebKit::WebPage::positionInformation):
+
+        Make a couple of adjustments here: (1) avoid requesting link position information if the hit-tested node is text
+        inside of an image overlay. (2) If the `includeImageData` request flag is set and the hit-tested node is an
+        image element but `isImage` is not set, then additionally supply the image data using the
+        `imagePositionInformation` helper function. This ensures that in the case where we're requesting image data and
+        the user is interacting with an image element inside a link, we'll send decoded image data back to the UI
+        process.
+
 2021-04-14  Youenn Fablet  <youenn@apple.com>
 
         Update WKPageSet implementation according new MediaProducer::MutedState values
