@@ -1,3 +1,20 @@
+2021-04-15  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(Safari 14): iframe with blob url does not work with sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=222312
+        <rdar://problem/74927624>
+
+        Reviewed by Chris Dumez.
+
+        In https://trac.webkit.org/r275884, we correctly compute whether a blob is to be considered secure or not.
+        For that, we need to have the blob URL registered with its document origin.
+        Update PolicyChecker to properly register the temporoary blob URL with its document origin.
+
+        Test: http/tests/security/sandbox-iframe-and-blob.https.html
+
+        * loader/PolicyChecker.cpp:
+        (WebCore::FrameLoader::PolicyChecker::extendBlobURLLifetimeIfNecessary const):
+
 2021-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r272900): Nullptr crash in ComposedTreeIterator::traverseNextInShadowTree() via ShadowRoot::hostChildElementDidChange

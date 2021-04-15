@@ -1,3 +1,16 @@
+2021-04-15  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(Safari 14): iframe with blob url does not work with sandboxing
+        https://bugs.webkit.org/show_bug.cgi?id=222312
+        <rdar://problem/74927624>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/security/resources/sandbox-iframe-and-blob-frame.html: Added.
+        * http/tests/security/sandbox-iframe-and-blob.https-expected.txt: Added.
+        * http/tests/security/sandbox-iframe-and-blob.https.html: Added.
+        * platform/win/TestExpectations:
+
 2021-04-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Several tests are failing after async scrolling was activated in r275593.
