@@ -1,3 +1,22 @@
+2021-04-15  Sam Sneddon  <gsnedders@apple.com>
+
+        webkitpy classes need not define loads/dumps helpers for pickle
+        https://bugs.webkit.org/show_bug.cgi?id=224620
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        (TestFailure.loads): Deleted.
+        (TestFailure.dumps): Deleted.
+        * Scripts/webkitpy/layout_tests/models/test_failures_unittest.py:
+        (TestFailuresTest.assert_pickle_roundtrip):
+        (TestFailuresTest.test_pickle_roundtrip):
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.loads): Deleted.
+        (TestResult.dumps): Deleted.
+        * Scripts/webkitpy/layout_tests/models/test_results_unittest.py:
+        (TestResultsTest.test_pickle_roundtrip):
+
 2021-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKContentView should become focused without requiring -[WKWebView canBecomeFocused] to return YES

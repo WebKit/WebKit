@@ -27,13 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import sys
-
-if sys.version_info > (3, 0):
-    import pickle
-else:
-    import cPickle as pickle
-
 
 from webkitpy.layout_tests.models import test_expectations
 
@@ -94,11 +87,6 @@ def determine_result_type(failure_list):
 class TestFailure(object):
     """Abstract base class that defines the failure interface."""
 
-    @staticmethod
-    def loads(s):
-        """Creates a TestFailure object from the specified string."""
-        return pickle.loads(s)
-
     def message(self):
         """Returns a string describing the failure in more detail."""
         raise NotImplementedError
@@ -111,10 +99,6 @@ class TestFailure(object):
 
     def __hash__(self):
         return hash(self.__class__.__name__)
-
-    def dumps(self):
-        """Returns the string/JSON representation of a TestFailure."""
-        return pickle.dumps(self)
 
     def driver_needs_restart(self):
         """Returns True if we should kill DumpRenderTree/WebKitTestRunner before the next test."""
