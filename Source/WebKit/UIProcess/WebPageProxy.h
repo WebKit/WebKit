@@ -2320,6 +2320,7 @@ private:
 #if HAVE(CVDISPLAYLINK)
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
 #endif
+    void updateWheelEventActivityAfterProcessSwap();
 
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventTracking(const WebTouchEvent&);

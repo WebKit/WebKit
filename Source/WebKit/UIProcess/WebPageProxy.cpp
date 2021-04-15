@@ -983,6 +983,8 @@ void WebPageProxy::finishAttachingToWebProcess(ProcessLaunchReason reason)
     remoteInspectorInformationDidChange();
 #endif
 
+    updateWheelEventActivityAfterProcessSwap();
+
     pageClient().didRelaunchProcess();
     m_pageLoadState.didSwapWebProcesses();
     if (reason != ProcessLaunchReason::InitialProcess)
@@ -2760,6 +2762,16 @@ void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState state)
     process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
 }
 #endif
+
+void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
+{
+#if HAVE(CVDISPLAYLINK)
+    if (m_wheelEventActivityHysteresis.state() == PAL::HysteresisState::Started) {
+        bool wantsFullSpeedUpdates = true;
+        process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
+    }
+#endif
+}
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
