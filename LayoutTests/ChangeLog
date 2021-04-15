@@ -1,3 +1,12 @@
+2021-04-14  Amir Mark Jr  <amir_mark@apple.com>
+
+        REGRESSION: [ Mac WK2 ] fast/mediastream/audio-track-enabled.html is flaky failing
+        https://bugs.webkit.org/show_bug.cgi?id=221985
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Make image extraction interactions work for elements inside links
