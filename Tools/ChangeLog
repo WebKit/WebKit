@@ -1,55 +1,5 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
-        Cherry-pick r272195. rdar://problem/76375364
-
-    [GTK][WPE] Migrate WebKitTestServer to libsoup 2.48 API
-    https://bugs.webkit.org/show_bug.cgi?id=219160
-    <rdar://problem/71620310>
-    
-    Reviewed by Michael Catanzaro.
-    
-    Source/WTF:
-    
-    * wtf/Platform.h: Bump libsoup minimum required version to 2.54.
-    
-    Tools:
-    
-    * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
-    (serverCallback):
-    * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
-    (serverCallback):
-    * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
-    (serverCallback):
-    * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
-    (WebKitTestServer::WebKitTestServer):
-    (WebKitTestServer::run):
-    (WebKitTestServer::port const):
-    * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
-    
-    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272195 268f45cc-cd09-0410-ab3c-d52691b4dbfc
-
-    2021-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
-
-            [GTK][WPE] Migrate WebKitTestServer to libsoup 2.48 API
-            https://bugs.webkit.org/show_bug.cgi?id=219160
-            <rdar://problem/71620310>
-
-            Reviewed by Michael Catanzaro.
-
-            * TestWebKitAPI/Tests/WebKitGLib/TestAuthentication.cpp:
-            (serverCallback):
-            * TestWebKitAPI/Tests/WebKitGLib/TestCookieManager.cpp:
-            (serverCallback):
-            * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
-            (serverCallback):
-            * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
-            (WebKitTestServer::WebKitTestServer):
-            (WebKitTestServer::run):
-            (WebKitTestServer::port const):
-            * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
-
-2021-04-15  Russell Epstein  <repstein@apple.com>
-
         Cherry-pick r271794. rdar://problem/76375364
 
     Unreviewed, reverting r270074 and r270170.
