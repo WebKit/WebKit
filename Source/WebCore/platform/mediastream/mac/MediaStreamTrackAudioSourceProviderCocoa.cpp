@@ -55,7 +55,8 @@ void MediaStreamTrackAudioSourceProviderCocoa::hasNewClient(AudioSourceProviderC
 
     m_connected = shouldBeConnected;
     if (!client) {
-        m_captureSource->removeObserver(*this);
+        if (m_captureSource)
+            m_captureSource->removeObserver(*this);
         m_source->removeAudioSampleObserver(*this);
         return;
     }

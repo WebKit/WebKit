@@ -1,3 +1,15 @@
+2021-04-15  Ian Gilbert  <iang@apple.com>
+
+        Null pointer dereference on MediaStreamAudioSourceNode destructor
+        https://bugs.webkit.org/show_bug.cgi?id=224573
+
+        Reviewed by Eric Carlson.
+
+        Add regression test.
+
+        * webaudio/destroy-audio-source-node-with-no-track-crash-expected.txt: Added.
+        * webaudio/destroy-audio-source-node-with-no-track-crash.html: Added.
+
 2021-04-15  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in ReplaceSelectionCommand::mergeEndIfNeeded()

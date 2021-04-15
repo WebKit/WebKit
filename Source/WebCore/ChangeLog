@@ -1,3 +1,17 @@
+2021-04-15  Ian Gilbert  <iang@apple.com>
+
+        Null pointer dereference on MediaStreamAudioSourceNode destructor
+        https://bugs.webkit.org/show_bug.cgi?id=224573
+
+        Reviewed by Eric Carlson.
+
+        Add null pointer check in case the capture source no longer exists.
+
+        Test: webaudio/destroy-audio-source-node-with-no-track-crash.html
+
+        * platform/mediastream/mac/MediaStreamTrackAudioSourceProviderCocoa.cpp:
+        (WebCore::MediaStreamTrackAudioSourceProviderCocoa::hasNewClient):
+
 2021-04-15  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in ReplaceSelectionCommand::mergeEndIfNeeded()
