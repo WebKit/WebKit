@@ -34,18 +34,18 @@
 
 namespace WebCore {
 
-static ProtectionSpaceServerType protectionSpaceServerTypeFromURI(SoupURI* uri, bool isForProxy)
+static ProtectionSpaceServerType protectionSpaceServerTypeFromURL(const URL& url, bool isForProxy)
 {
-    if (uri->scheme == SOUP_URI_SCHEME_HTTPS)
+    if (url.protocolIs("https"))
         return isForProxy ? ProtectionSpaceProxyHTTPS : ProtectionSpaceServerHTTPS;
-    if (uri->scheme == SOUP_URI_SCHEME_HTTP)
+    if (url.protocolIs("http"))
         return isForProxy ? ProtectionSpaceProxyHTTP : ProtectionSpaceServerHTTP;
-    if (uri->scheme == SOUP_URI_SCHEME_FTP)
+    if (url.protocolIs("ftp"))
         return isForProxy ? ProtectionSpaceProxyFTP : ProtectionSpaceServerFTP;
     return isForProxy ? ProtectionSpaceProxyHTTP : ProtectionSpaceServerHTTP;
 }
 
-static ProtectionSpace protectionSpaceFromSoupAuthAndMessage(SoupAuth* soupAuth, SoupMessage* message)
+static ProtectionSpace protectionSpaceFromSoupAuthAndURL(SoupAuth* soupAuth, const URL& url)
 {
     const char* schemeName = soup_auth_get_scheme_name(soupAuth);
     ProtectionSpaceAuthenticationScheme scheme;
@@ -60,18 +60,17 @@ static ProtectionSpace protectionSpaceFromSoupAuthAndMessage(SoupAuth* soupAuth,
     else
         scheme = ProtectionSpaceAuthenticationSchemeUnknown;
 
-    SoupURI* soupURI = soup_message_get_uri(message);
-    return ProtectionSpace(String::fromUTF8(soup_uri_get_host(soupURI)), soup_uri_get_port(soupURI),
-        protectionSpaceServerTypeFromURI(soupURI, soup_auth_is_for_proxy(soupAuth)),
+    return ProtectionSpace(url.host().toString(), static_cast<int>(url.port().valueOr(0)),
+        protectionSpaceServerTypeFromURL(url, soup_auth_is_for_proxy(soupAuth)),
         String::fromUTF8(soup_auth_get_realm(soupAuth)), scheme);
 }
 
 AuthenticationChallenge::AuthenticationChallenge(SoupMessage* soupMessage, SoupAuth* soupAuth, bool retrying, AuthenticationClient* client)
-    : AuthenticationChallengeBase(protectionSpaceFromSoupAuthAndMessage(soupAuth, soupMessage),
-        Credential(), // proposedCredentials
-        retrying ? 1 : 0, // previousFailureCount
-        soupMessage, // failureResponse
-        ResourceError::authenticationError(soupMessage))
+    : AuthenticationChallengeBase(protectionSpaceFromSoupAuthAndURL(soupAuth, soupURIToURL(soup_message_get_uri(soupMessage)))
+        , Credential() // proposedCredentials
+        , retrying ? 1 : 0 // previousFailureCount
+        , soupMessage // failureResponse
+        , ResourceError::authenticationError(soupMessage))
     , m_soupMessage(soupMessage)
     , m_soupAuth(soupAuth)
     , m_authenticationClient(client)

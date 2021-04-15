@@ -1,5 +1,46 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272301. rdar://problem/76375364
+
+    [GTK][WPE] Reduce the use of SoupURI in preparation for libsoup3
+    https://bugs.webkit.org/show_bug.cgi?id=221251
+    
+    Reviewed by Adrian Perez de Castro.
+    
+    Source/WebCore:
+    
+    * platform/network/soup/AuthenticationChallengeSoup.cpp:
+    (WebCore::protectionSpaceServerTypeFromURL):
+    (WebCore::protectionSpaceFromSoupAuthAndURL):
+    (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+    (WebCore::protectionSpaceServerTypeFromURI): Deleted.
+    (WebCore::protectionSpaceFromSoupAuthAndMessage): Deleted.
+    
+    Source/WebKit:
+    
+    * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+    (webkit_uri_scheme_request_get_scheme):
+    (webkit_uri_scheme_request_get_path):
+    * UIProcess/API/glib/WebKitWebView.cpp:
+    (webkit_web_view_load_uri):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272301 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            [GTK][WPE] Reduce the use of SoupURI in preparation for libsoup3
+            https://bugs.webkit.org/show_bug.cgi?id=221251
+
+            Reviewed by Adrian Perez de Castro.
+
+            * UIProcess/API/glib/WebKitURISchemeRequest.cpp:
+            (webkit_uri_scheme_request_get_scheme):
+            (webkit_uri_scheme_request_get_path):
+            * UIProcess/API/glib/WebKitWebView.cpp:
+            (webkit_web_view_load_uri):
+
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r273848. rdar://problem/76375364
 
     Use adoptNS() right away after calling [obj copy] / [obj mutableCopy]
