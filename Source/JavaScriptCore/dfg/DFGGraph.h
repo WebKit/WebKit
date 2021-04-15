@@ -1067,6 +1067,11 @@ public:
     const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(unsigned index) const { return *m_unlinkedSwitchJumpTables[index]; }
     SimpleJumpTable& switchJumpTable(unsigned index) { return m_switchJumpTables[index]; }
 
+    void appendCatchEntrypoint(BytecodeIndex bytecodeIndex, MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
+    {
+        m_catchEntrypoints.append(CatchEntrypointData { machineCode, FixedVector<FlushFormat>(WTFMove(argumentFormats)), bytecodeIndex });
+    }
+
     StackCheck m_stackChecker;
     VM& m_vm;
     Plan& m_plan;
@@ -1161,6 +1166,7 @@ public:
     // This maps an entrypoint index to a particular op_catch bytecode offset. By convention,
     // it'll never have zero as a key because we use zero to mean the op_enter entrypoint.
     HashMap<unsigned, BytecodeIndex> m_entrypointIndexToCatchBytecodeIndex;
+    Vector<CatchEntrypointData> m_catchEntrypoints;
 
     HashSet<String> m_localStrings;
     HashMap<const StringImpl*, String> m_copiedStrings;

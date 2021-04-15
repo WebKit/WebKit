@@ -1164,10 +1164,10 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
         
         dfgCommon->recordedStatuses.markIfCheap(visitor);
         
-        for (StructureID structureID : dfgCommon->weakStructureReferences)
+        for (StructureID structureID : dfgCommon->m_weakStructureReferences)
             vm.getStructure(structureID)->markIfCheap(visitor);
 
-        for (auto& transition : dfgCommon->transitions) {
+        for (auto& transition : dfgCommon->m_transitions) {
             if (shouldMarkTransition(visitor, transition)) {
                 // If the following three things are live, then the target of the
                 // transition is also live:
@@ -1219,8 +1219,8 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, Visitor& visitor)
     // have proved liveness and so we scan our strong references. If at end of
     // GC we still have not proved liveness, then this code block is toast.
     bool allAreLiveSoFar = true;
-    for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
-        JSCell* reference = dfgCommon->weakReferences[i].get();
+    for (unsigned i = 0; i < dfgCommon->m_weakReferences.size(); ++i) {
+        JSCell* reference = dfgCommon->m_weakReferences[i].get();
         ASSERT(!jsDynamicCast<CodeBlock*>(vm, reference));
         if (!visitor.isMarked(reference)) {
             allAreLiveSoFar = false;
@@ -1228,7 +1228,7 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, Visitor& visitor)
         }
     }
     if (allAreLiveSoFar) {
-        for (StructureID structureID : dfgCommon->weakStructureReferences) {
+        for (StructureID structureID : dfgCommon->m_weakStructureReferences) {
             Structure* structure = vm.getStructure(structureID);
             if (!visitor.isMarked(structure)) {
                 allAreLiveSoFar = false;
@@ -1860,20 +1860,18 @@ void CodeBlock::stronglyVisitWeakReferences(const ConcurrentJSLocker&, Visitor& 
     
     DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
 
-    for (auto& transition : dfgCommon->transitions) {
+    for (auto& transition : dfgCommon->m_transitions) {
         if (!!transition.m_codeOrigin)
             visitor.append(transition.m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
         visitor.append(transition.m_from);
         visitor.append(transition.m_to);
     }
 
-    for (auto& weakReference : dfgCommon->weakReferences)
+    for (auto& weakReference : dfgCommon->m_weakReferences)
         visitor.append(weakReference);
 
-    for (StructureID structureID : dfgCommon->weakStructureReferences)
+    for (StructureID structureID : dfgCommon->m_weakStructureReferences)
         visitor.appendUnbarriered(visitor.vm().getStructure(structureID));
-
-    dfgCommon->livenessHasBeenProved = true;
 #endif    
 }
 
@@ -2235,7 +2233,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         if (DFG::shouldDumpDisassembly()) {
             dataLog(*this, " will be jettisoned because of the following dead references:\n");
             DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-            for (auto& transition : dfgCommon->transitions) {
+            for (auto& transition : dfgCommon->m_transitions) {
                 JSCell* origin = transition.m_codeOrigin.get();
                 JSCell* from = transition.m_from.get();
                 JSCell* to = transition.m_to.get();
@@ -2243,8 +2241,8 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
                     continue;
                 dataLog("    Transition under ", RawPointer(origin), ", ", RawPointer(from), " -> ", RawPointer(to), ".\n");
             }
-            for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
-                JSCell* weak = dfgCommon->weakReferences[i].get();
+            for (unsigned i = 0; i < dfgCommon->m_weakReferences.size(); ++i) {
+                JSCell* weak = dfgCommon->m_weakReferences[i].get();
                 if (vm.heap.isMarked(weak))
                     continue;
                 dataLog("    Weak reference ", RawPointer(weak), ".\n");
@@ -2864,7 +2862,7 @@ size_t CodeBlock::numberOfDFGIdentifiers() const
     if (!JITCode::isOptimizingJIT(jitType()))
         return 0;
     
-    return m_jitCode->dfgCommon()->dfgIdentifiers.size();
+    return m_jitCode->dfgCommon()->m_dfgIdentifiers.size();
 }
 
 const Identifier& CodeBlock::identifier(int index) const
@@ -2873,7 +2871,7 @@ const Identifier& CodeBlock::identifier(int index) const
     if (static_cast<unsigned>(index) < unlinkedIdentifiers)
         return m_unlinkedCode->identifier(index);
     ASSERT(JITCode::isOptimizingJIT(jitType()));
-    return m_jitCode->dfgCommon()->dfgIdentifiers[index - unlinkedIdentifiers];
+    return m_jitCode->dfgCommon()->m_dfgIdentifiers[index - unlinkedIdentifiers];
 }
 #endif // ENABLE(DFG_JIT)
 

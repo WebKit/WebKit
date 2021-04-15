@@ -862,8 +862,6 @@ public:
     unsigned m_capabilityLevelState : 2; // DFG::CapabilityLevel
 #endif
 
-    bool m_allTransitionsHaveBeenMarked : 1; // Initialized and used on every GC.
-
     bool m_didFailJITCompilation : 1;
     bool m_didFailFTLCompilation : 1;
     bool m_hasBeenCompiledWithFTL : 1;

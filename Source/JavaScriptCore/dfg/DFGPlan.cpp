@@ -145,6 +145,7 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     , m_inlineCallFrames(adoptRef(new InlineCallFrameSet()))
     , m_identifiers(m_codeBlock)
     , m_weakReferences(m_codeBlock)
+    , m_transitions(m_codeBlock)
     , m_stage(Preparing)
 {
     RELEASE_ASSERT(m_codeBlock->alternative()->jitCode());
@@ -636,9 +637,9 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
         if (validationEnabled()) {
             TrackedReferences trackedReferences;
 
-            for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->weakReferences)
+            for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->m_weakReferences)
                 trackedReferences.add(reference.get());
-            for (StructureID structureID : m_codeBlock->jitCode()->dfgCommon()->weakStructureReferences)
+            for (StructureID structureID : m_codeBlock->jitCode()->dfgCommon()->m_weakStructureReferences)
                 trackedReferences.add(m_vm->getStructure(structureID));
             for (WriteBarrier<Unknown>& constant : m_codeBlock->constants())
                 trackedReferences.add(constant.get());

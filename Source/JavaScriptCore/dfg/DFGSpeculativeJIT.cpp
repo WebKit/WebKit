@@ -2202,7 +2202,7 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
     }
 
     m_jit.jitCode()->finalizeOSREntrypoints();
-    m_jit.jitCode()->common.finalizeCatchEntrypoints();
+    m_jit.jitCode()->common.finalizeCatchEntrypoints(WTFMove(m_jit.graph().m_catchEntrypoints));
 
     ASSERT(osrEntryIndex == m_osrEntryHeads.size());
     

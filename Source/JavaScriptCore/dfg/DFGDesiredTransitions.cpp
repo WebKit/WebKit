@@ -35,22 +35,11 @@
 
 namespace JSC { namespace DFG {
 
-DesiredTransition::DesiredTransition(CodeBlock* codeBlock, CodeBlock* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
-    : m_codeBlock(codeBlock)
-    , m_codeOriginOwner(codeOriginOwner)
+DesiredTransition::DesiredTransition(CodeBlock* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
+    : m_codeOriginOwner(codeOriginOwner)
     , m_oldStructure(oldStructure)
     , m_newStructure(newStructure)
 {
-}
-
-void DesiredTransition::reallyAdd(VM& vm, CommonData* common)
-{
-    ConcurrentJSLocker locker(m_codeBlock->m_lock);
-    common->transitions.append(
-        WeakReferenceTransition(
-            vm, m_codeBlock,
-            m_codeOriginOwner,
-            m_oldStructure, m_newStructure));
 }
 
 template<typename Visitor>
@@ -64,7 +53,8 @@ void DesiredTransition::visitChildren(Visitor& visitor)
 template void DesiredTransition::visitChildren(AbstractSlotVisitor&);
 template void DesiredTransition::visitChildren(SlotVisitor&);
 
-DesiredTransitions::DesiredTransitions()
+DesiredTransitions::DesiredTransitions(CodeBlock* codeBlock)
+    : m_codeBlock(codeBlock)
 {
 }
 
@@ -72,15 +62,23 @@ DesiredTransitions::~DesiredTransitions()
 {
 }
 
-void DesiredTransitions::addLazily(CodeBlock* codeBlock, CodeBlock* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
+void DesiredTransitions::addLazily(CodeBlock* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
 {
-    m_transitions.append(DesiredTransition(codeBlock, codeOriginOwner, oldStructure, newStructure));
+    m_transitions.append(DesiredTransition(codeOriginOwner, oldStructure, newStructure));
 }
 
 void DesiredTransitions::reallyAdd(VM& vm, CommonData* common)
 {
-    for (unsigned i = 0; i < m_transitions.size(); i++)
-        m_transitions[i].reallyAdd(vm, common);
+    FixedVector<WeakReferenceTransition> transitions(m_transitions.size());
+    for (unsigned i = 0; i < m_transitions.size(); i++) {
+        auto& desiredTransition = m_transitions[i];
+        transitions[i] = WeakReferenceTransition(vm, m_codeBlock, desiredTransition.m_codeOriginOwner, desiredTransition.m_oldStructure, desiredTransition.m_newStructure);
+    }
+    if (!transitions.isEmpty()) {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        ASSERT(common->m_transitions.isEmpty());
+        common->m_transitions = WTFMove(transitions);
+    }
 }
 
 template<typename Visitor>

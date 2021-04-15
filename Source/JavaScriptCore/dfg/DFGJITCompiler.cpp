@@ -286,7 +286,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             exit.m_patchableJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(info.m_patchableJump);
         }
         if (info.m_replacementSource.isSet()) {
-            m_jitCode->common.jumpReplacements.append(JumpReplacement(
+            m_jitCode->common.m_jumpReplacements.append(JumpReplacement(
                 linkBuffer.locationOf<JSInternalPtrTag>(info.m_replacementSource),
                 linkBuffer.locationOf<OSRExitPtrTag>(info.m_replacementDestination)));
         }
@@ -536,7 +536,7 @@ void JITCompiler::noticeCatchEntrypoint(BasicBlock& basicBlock, JITCompiler::Lab
 {
     RELEASE_ASSERT(basicBlock.isCatchEntrypoint);
     RELEASE_ASSERT(basicBlock.intersectionOfCFAHasVisited); // An entrypoint is reachable by definition.
-    m_jitCode->common.appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.locationOf<ExceptionHandlerPtrTag>(blockHead), WTFMove(argumentFormats));
+    m_graph.appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.locationOf<ExceptionHandlerPtrTag>(blockHead), WTFMove(argumentFormats));
 }
 
 void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)

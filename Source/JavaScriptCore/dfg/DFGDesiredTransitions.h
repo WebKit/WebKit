@@ -39,16 +39,16 @@ class VM;
 namespace DFG {
 
 class CommonData;
+class DesiredTransitions;
 
 class DesiredTransition {
 public:
-    DesiredTransition(CodeBlock*, CodeBlock* codeOriginOwner, Structure*, Structure*);
+    friend class DesiredTransitions;
+    DesiredTransition(CodeBlock* codeOriginOwner, Structure*, Structure*);
 
-    void reallyAdd(VM&, CommonData*);
     template<typename Visitor> void visitChildren(Visitor&);
 
 private:
-    CodeBlock* m_codeBlock;
     CodeBlock* m_codeOriginOwner;
     Structure* m_oldStructure;
     Structure* m_newStructure;
@@ -56,14 +56,16 @@ private:
 
 class DesiredTransitions {
 public:
-    DesiredTransitions();
+    DesiredTransitions() = default;
+    DesiredTransitions(CodeBlock*);
     ~DesiredTransitions();
 
-    void addLazily(CodeBlock*, CodeBlock* codeOriginOwner, Structure*, Structure*);
+    void addLazily(CodeBlock* codeOriginOwner, Structure*, Structure*);
     void reallyAdd(VM&, CommonData*);
     template<typename Visitor> void visitChildren(Visitor&);
 
 private:
+    CodeBlock* m_codeBlock { nullptr };
     Vector<DesiredTransition> m_transitions;
 };
 

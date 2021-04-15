@@ -67,23 +67,29 @@ bool DesiredWeakReferences::contains(JSCell* cell)
 
 void DesiredWeakReferences::reallyAdd(VM& vm, CommonData* common)
 {
+    // We do not emit WriteBarrier here since (1) GC is deferred and (2) we emit write-barrier on CodeBlock when finishing DFG::Plan::reallyAdd.
     ASSERT(vm.heap.isDeferred());
+
+    Vector<StructureID> weakStructureReferences;
+    Vector<WriteBarrier<JSCell>> weakReferences;
     for (JSCell* target : m_references) {
-        if (Structure* structure = jsDynamicCast<Structure*>(vm, target)) {
-            ConcurrentJSLocker locker(m_codeBlock->m_lock);
-            // We do not emit WriteBarrier here since (1) GC is deferred and (2) we emit write-barrier on CodeBlock when finishing DFG::Plan::reallyAdd.
-            common->weakStructureReferences.append(structure->id());
-        } else {
+        if (Structure* structure = jsDynamicCast<Structure*>(vm, target))
+            weakStructureReferences.append(structure->id());
+        else {
             // There are weird relationships in how optimized CodeBlocks
             // point to other CodeBlocks. We don't want to have them be
             // part of the weak pointer set. For example, an optimized CodeBlock
             // having a weak pointer to itself will cause it to get collected.
             RELEASE_ASSERT(!jsDynamicCast<CodeBlock*>(vm, target));
-
-            ConcurrentJSLocker locker(m_codeBlock->m_lock);
-            common->weakReferences.append(
-                WriteBarrier<JSCell>(vm, m_codeBlock, target));
+            weakReferences.append(WriteBarrier<JSCell>(vm, m_codeBlock, target));
         }
+    }
+    if (!weakStructureReferences.isEmpty() || !weakReferences.isEmpty()) {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        ASSERT(common->m_weakStructureReferences.isEmpty());
+        ASSERT(common->m_weakReferences.isEmpty());
+        common->m_weakStructureReferences = WTFMove(weakStructureReferences);
+        common->m_weakReferences = WTFMove(weakReferences);
     }
 }
 

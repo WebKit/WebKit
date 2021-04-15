@@ -76,7 +76,7 @@ struct CatchEntrypointData {
     // We use this when doing OSR entry at catch. We prove the arguments
     // are of the expected type before entering at a catch block.
     MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode;
-    Vector<FlushFormat> argumentFormats;
+    FixedVector<FlushFormat> argumentFormats;
     BytecodeIndex bytecodeIndex;
 };
 
