@@ -4100,22 +4100,15 @@ class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
         return rc
 
-    def test_revert_patch_trigger_fast_cq_mode(self):
-        self.setupStep(ValidatePatch(verifyBugClosed=False))
-        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(title='REVERT OF r123456')
-        self.setProperty('patch_id', '425806')
-        self.expectOutcome(result=SUCCESS, state_string='Validated patch')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('fast_commit_queue'), True, 'fast_commit_queue is not set')
-        return rc
-
-    def test_fast_cq_patch_trigger_fast_cq_mode(self):
-        self.setupStep(ValidatePatch(verifyBugClosed=False))
-        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(title='[fast-cq] Patch')
-        self.setProperty('patch_id', '425806')
-        self.expectOutcome(result=SUCCESS, state_string='Validated patch')
-        rc = self.runStep()
-        self.assertEqual(self.getProperty('fast_commit_queue'), True, 'fast_commit_queue is not set')
+    def test_fast_cq_patches_trigger_fast_cq_mode(self):
+        fast_cq_patch_titles = ('REVERT OF r1234', 'revert of r1234', '[fast-cq]Patch', '[FAST-cq] patch', 'fast-cq-patch', 'FAST-CQ Patch')
+        for fast_cq_patch_title in fast_cq_patch_titles:
+            self.setupStep(ValidatePatch(verifyBugClosed=False))
+            ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(title=fast_cq_patch_title)
+            self.setProperty('patch_id', '425806')
+            self.expectOutcome(result=SUCCESS, state_string='Validated patch')
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('fast_commit_queue'), True, 'fast_commit_queue is not set, patch title: {}'.format(fast_cq_patch_title))
         return rc
 
 

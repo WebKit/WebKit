@@ -1,3 +1,15 @@
+2021-04-15  Aakash Jain  <aakash_jain@apple.com>
+
+        Allow fast-cq as a prefix for patch name for fast-cq mode on commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=224580
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (BugzillaMixin):
+        (BugzillaMixin._is_patch_obsolete):
+        * CISupport/ews-build/steps_unittest.py: Updated unit-test.
+
 2021-04-14  Devin Rousso  <drousso@apple.com>
 
         Promote `-[WKWebView _themeColor]` SPI to API

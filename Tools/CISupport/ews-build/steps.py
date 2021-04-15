@@ -528,9 +528,7 @@ class BugzillaMixin(object):
     addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
-    revert_preamble = 'revert of r'
-    fast_cq_preamble = '[fast-cq]'
-
+    fast_cq_preambles = ('revert of r', 'fast-cq', '[fast-cq]')
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
         try:
@@ -615,7 +613,7 @@ class BugzillaMixin(object):
         patch_author = patch_json.get('creator')
         self.setProperty('patch_author', patch_author)
         patch_title = patch_json.get('summary')
-        if patch_title.lower().startswith((self.revert_preamble, self.fast_cq_preamble)):
+        if patch_title.lower().startswith(self.fast_cq_preambles):
             self.setProperty('fast_commit_queue', True)
         if self.addURLs:
             self.addURL('Patch by: {}'.format(patch_author), '')
