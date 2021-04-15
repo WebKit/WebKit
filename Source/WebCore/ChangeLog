@@ -1,3 +1,37 @@
+2021-04-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy Ref/RefPtr in ReplaceSelectionCommand
+        https://bugs.webkit.org/show_bug.cgi?id=224591
+
+        Reviewed by Jiewen Tan.
+
+        Deployed Ref/RefPtr in ReplaceSelectionCommand.cpp per guidelines we outlined in
+        https://lists.webkit.org/pipermail/webkit-dev/2020-September/031386.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::positionAvoidingPrecedingNodes):
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplacementFragment::removeUnrenderedNodes):
+        (WebCore::ReplacementFragment::removeInterchangeNodes):
+        (WebCore::ReplaceSelectionCommand::shouldMerge):
+        (WebCore::fragmentNeedsColorTransformed): Protected the code accessing the render tree
+        with ScriptDisallowedScope::InMainThread.
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        (WebCore::ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder):
+        (WebCore::ReplaceSelectionCommand::moveNodeOutOfAncestor):
+        (WebCore::ReplaceSelectionCommand::positionAtEndOfInsertedContent const):
+        (WebCore::handleStyleSpansBeforeInsertion):
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans):
+        (WebCore::enclosingInline):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::shouldPerformSmartReplace const):
+        (WebCore::ReplaceSelectionCommand::addSpacesForSmartReplace):
+        (WebCore::ReplaceSelectionCommand::mergeTextNodesAroundPosition):
+        (WebCore::singleChildList):
+        (WebCore::deepestSingleChildList):
+        (WebCore::ReplaceSelectionCommand::insertAsListItems):
+        (WebCore::ReplaceSelectionCommand::performTrivialReplace):
+
 2021-04-14  Antti Koivisto  <antti@apple.com>
 
         Preloaded async scripts should use the same priority as the normally loaded ones
