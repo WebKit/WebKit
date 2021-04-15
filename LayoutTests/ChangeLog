@@ -1,5 +1,79 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272928. rdar://problem/76416505
+
+    EventHandler::updateSelectionForMouseDownDispatchingSelectStart should not use an orphaned selection
+    https://bugs.webkit.org/show_bug.cgi?id=221942
+    
+    Reviewed by Wenson Hsieh.
+    
+    Source/WebCore:
+    
+    In r272777, we re-introduced a nullptr check in DOMSelection::getRangeAt as we were getting crash reports
+    in this code but we weren't sure of the root cause. Since then we've identified that one of the root causes
+    is that EventHandler::updateSelectionForMouseDownDispatchingSelectStart doesn't check if VisibleSelection
+    is still in a good state after dispatching selectstart event. This results in FrameSelection's
+    setSelectionWithoutUpdatingAppearance getting called with a selection with end points already being orphaned.
+    
+    This patch fixes this bug in setSelectionWithoutUpdatingAppearance and also adds an additional check in
+    FrameSelection::setSelectionWithoutUpdatingAppearance itself to avoid using an orphaned selection. It also
+    introduces a number of release and debug assertions in a number of places to help catch similar bugs.
+    
+    Test: editing/selection/click-selection-with-selectstart-node-removal.html
+    
+    * dom/ContainerNode.cpp:
+    (WebCore::ContainerNode::removeAllChildrenWithScriptAssertion): Added a debug-only assertion.
+    (WebCore::ContainerNode::removeNodeWithScriptAssertion): Ditto.
+    * dom/Document.cpp:
+    (WebCore::Document::removedLastRef): Disallow script execution in this code entirely. Also release assert
+    that the selection had already been cleared by this point.
+    (WebCore::Document::willBeRemovedFromFrame): Disallow script execution once we've unloaded subframes.
+    * editing/FrameSelection.cpp:
+    (WebCore::FrameSelection::setSelectionWithoutUpdatingAppearance): Return early if the new selection's
+    end points had been orphaned, and disallow script execution between that and until we update the selection. 
+    * editing/VisibleSelection.cpp:
+    (WebCore::VisibleSelection::isOrphan const): Added.
+    * editing/VisibleSelection.h:
+    * page/DOMSelection.cpp:
+    (WebCore::DOMSelection::getRangeAt): Removed nullptr check added in r272777.
+    * page/EventHandler.cpp:
+    (WebCore::EventHandler::updateSelectionForMouseDownDispatchingSelectStart): Fixed what is now believed to be
+    the root cause of the bug 221786.
+    
+    LayoutTests:
+    
+    Added a regression test for the bug 221786 / r272777.
+    
+    Also updated a test imported from blink to expect rangeCount of 0 instead of 1
+    since we no longer update the selection when the target node has been removed
+    during selectstart.
+    
+    * editing/selection/click-selection-with-selectstart-node-removal-expected.txt: Added.
+    * editing/selection/click-selection-with-selectstart-node-removal.html: Added.
+    * imported/blink/editing/selection/selectstart-event-crash.html:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272928 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+            EventHandler::updateSelectionForMouseDownDispatchingSelectStart should not use an orphaned selection
+            https://bugs.webkit.org/show_bug.cgi?id=221942
+
+            Reviewed by Wenson Hsieh.
+
+            Added a regression test for the bug 221786 / r272777.
+
+            Also updated a test imported from blink to expect rangeCount of 0 instead of 1
+            since we no longer update the selection when the target node has been removed
+            during selectstart.
+
+            * editing/selection/click-selection-with-selectstart-node-removal-expected.txt: Added.
+            * editing/selection/click-selection-with-selectstart-node-removal.html: Added.
+            * imported/blink/editing/selection/selectstart-event-crash.html:
+
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272051. rdar://problem/76375364
 
     [SOUP] Use a GInputStream to set the request body in preparation for libsoup3

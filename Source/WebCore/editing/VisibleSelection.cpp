@@ -133,6 +133,17 @@ void VisibleSelection::setExtent(const VisiblePosition& visiblePosition)
     setExtent(visiblePosition.deepEquivalent());
 }
 
+bool VisibleSelection::isOrphan() const
+{
+    if (m_base.isOrphan() || m_extent.isOrphan() || m_start.isOrphan() || m_end.isOrphan())
+        return true;
+    if (m_anchor.isOrphan() && m_anchor.document()->settings().liveRangeSelectionEnabled())
+        return true;
+    if (m_focus.isOrphan() && m_focus.document()->settings().liveRangeSelectionEnabled())
+        return true;
+    return false;
+}
+
 Optional<SimpleRange> VisibleSelection::firstRange() const
 {
     if (isNoneOrOrphaned())

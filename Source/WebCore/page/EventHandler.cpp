@@ -461,6 +461,11 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
         return false;
     }
 
+    if (selection.isOrphan()) {
+        m_mouseDownMayStartSelect = false;
+        return false;
+    }
+
     if (selection.isRange())
         m_selectionInitiationState = ExtendedSelection;
     else {
