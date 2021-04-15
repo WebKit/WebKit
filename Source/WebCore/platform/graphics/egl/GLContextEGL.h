@@ -67,9 +67,7 @@ private:
     void swapInterval(int) override;
     bool isEGLContext() const override { return true; }
 
-#if ENABLE(WEBGL)
     PlatformGraphicsContextGL platformContext() override;
-#endif
 
     enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };
 

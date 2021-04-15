@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(ANGLE)
+#if USE(ANGLE)
 
 #ifndef EGL_EGLEXT_PROTOTYPES
 #define EGL_EGLEXT_PROTOTYPES 0

@@ -13,7 +13,7 @@ endif ()
 
 add_subdirectory(JavaScriptCore)
 
-if (ENABLE_WEBGL)
+if (ENABLE_WEBGL OR USE_ANGLE_EGL)
     add_subdirectory(ThirdParty/ANGLE)
 endif ()
 

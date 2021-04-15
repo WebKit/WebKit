@@ -49,9 +49,7 @@ private:
     void swapInterval(int) override;
     bool isEGLContext() const override { return false; }
 
-#if ENABLE(WEBGL)
     PlatformGraphicsContextGL platformContext() override;
-#endif
 
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, GLNativeWindowType);
     GLContextGLX(PlatformDisplay&, XUniqueGLXContext&&, XUniqueGLXPbuffer&&);

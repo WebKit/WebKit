@@ -28,7 +28,7 @@
 
 #include "GraphicsTypesGL.h"
 
-#if ENABLE(WEBGL) && (USE(OPENGL) || USE(OPENGL_ES))
+#if USE(OPENGL) || USE(OPENGL_ES)
 
 #include <wtf/Noncopyable.h>
 
@@ -57,4 +57,4 @@ private:
 
 using WebCore::TemporaryOpenGLSetting;
 
-#endif
+#endif // USE(OPENGL) || USE(OPENGL_ES)

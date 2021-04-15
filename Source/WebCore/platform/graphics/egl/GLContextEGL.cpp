@@ -492,12 +492,10 @@ void GLContextEGL::swapInterval(int interval)
     eglSwapInterval(m_display.eglDisplay(), interval);
 }
 
-#if ENABLE(WEBGL)
 PlatformGraphicsContextGL GLContextEGL::platformContext()
 {
     return m_context;
 }
-#endif
 
 } // namespace WebCore
 

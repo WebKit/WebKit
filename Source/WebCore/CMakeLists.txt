@@ -1725,6 +1725,18 @@ if (ENABLE_WEBGL)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gpu"
     )
+elseif (USE_ANGLE_EGL)
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        ${WEBCORE_DIR}/platform/graphics/angle
+        ${WEBCORE_DIR}/platform/graphics/opengl
+    )
+
+    list(APPEND WebCore_SOURCES
+        platform/graphics/opengl/TemporaryOpenGLSetting.cpp
+    )
+
+    list(APPEND WebCore_LIBRARIES ANGLEFramework)
+    list(APPEND WebCoreTestSupport_LIBRARIES ANGLEFramework)
 endif ()
 
 list(APPEND WebCore_IDL_FILES
