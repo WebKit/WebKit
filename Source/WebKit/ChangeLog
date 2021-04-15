@@ -1,3 +1,16 @@
+2021-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Move the implementation of -[WKWebView themeColor] into the main WKWebView category
+        https://bugs.webkit.org/show_bug.cgi?id=224628
+
+        Reviewed by Tim Horton.
+
+        Move the implementation of `-themeColor` out of the private category, and into the main category instead to
+        silence the warning.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView themeColor]):
+
 2021-04-15  Tim Horton  <timothy_horton@apple.com>
 
         Add a mechanism to dump the PlatformCALayer subtree of a GraphicsLayer, for testing

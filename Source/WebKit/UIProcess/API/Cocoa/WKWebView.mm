@@ -1657,6 +1657,14 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
 }
 
+- (CocoaColor *)themeColor
+{
+    auto themeColor = _page->themeColor();
+    if (!themeColor.isValid())
+        return nil;
+    return WebCore::platformColor(themeColor);
+}
+
 @end
 
 #pragma mark -
@@ -2980,14 +2988,6 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (void)_setCanUseCredentialStorage:(BOOL)canUseCredentialStorage
 {
     _page->setCanUseCredentialStorage(canUseCredentialStorage);
-}
-
-- (CocoaColor *)themeColor
-{
-    auto themeColor = _page->themeColor();
-    if (!themeColor.isValid())
-        return nil;
-    return WebCore::platformColor(themeColor);
 }
 
 - (CocoaColor *)_themeColor
