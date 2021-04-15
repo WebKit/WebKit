@@ -33,6 +33,7 @@
 #include "ContentSecurityPolicy.h"
 #include "CrossOriginAccessControl.h"
 #include "DOMTokenList.h"
+#include "DefaultResourceLoadPriority.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -323,7 +324,7 @@ void HTMLLinkElement::process()
         // Load stylesheets that are not needed for the rendering immediately with low priority.
         Optional<ResourceLoadPriority> priority;
         if (!isActive)
-            priority = ResourceLoadPriority::VeryLow;
+            priority = DefaultResourceLoadPriority::inactiveStyleSheet;
 
         if (document().settings().subresourceIntegrityEnabled())
             m_integrityMetadataForPendingSheetRequest = attributeWithoutSynchronization(HTMLNames::integrityAttr);

@@ -28,6 +28,7 @@
 
 #include "CachedResourceLoader.h"
 #include "CrossOriginAccessControl.h"
+#include "DefaultResourceLoadPriority.h"
 #include "Document.h"
 #include "ScriptElementCachedScriptFetcher.h"
 
@@ -65,9 +66,8 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     auto request = createPotentialAccessControlRequest(completeURL(document), WTFMove(options), document, crossOriginMode);
     request.setInitiator(m_initiator);
 
-    // FIXME: Put priorities for various cases to some central place where they are easy to see.
     if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_moduleScript == ModuleScript::No)
-        request.setPriority(ResourceLoadPriority::Low);
+        request.setPriority(DefaultResourceLoadPriority::asyncScript);
 
     return request;
 }

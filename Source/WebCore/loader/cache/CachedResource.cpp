@@ -31,6 +31,7 @@
 #include "CachedResourceLoader.h"
 #include "CookieJar.h"
 #include "CrossOriginAccessControl.h"
+#include "DefaultResourceLoadPriority.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Document.h"
@@ -74,50 +75,6 @@ namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CachedResource);
 
-ResourceLoadPriority CachedResource::defaultPriorityForResourceType(Type type)
-{
-    switch (type) {
-    case Type::MainResource:
-        return ResourceLoadPriority::VeryHigh;
-    case Type::CSSStyleSheet:
-    case Type::Script:
-        return ResourceLoadPriority::High;
-    case Type::SVGFontResource:
-    case Type::MediaResource:
-    case Type::FontResource:
-    case Type::RawResource:
-    case Type::Icon:
-        return ResourceLoadPriority::Medium;
-    case Type::ImageResource:
-        return ResourceLoadPriority::Low;
-#if ENABLE(XSLT)
-    case Type::XSLStyleSheet:
-        return ResourceLoadPriority::High;
-#endif
-    case Type::SVGDocumentResource:
-        return ResourceLoadPriority::Low;
-    case Type::Beacon:
-    case Type::Ping:
-        return ResourceLoadPriority::VeryLow;
-    case Type::LinkPrefetch:
-        return ResourceLoadPriority::VeryLow;
-#if ENABLE(VIDEO)
-    case Type::TextTrackResource:
-        return ResourceLoadPriority::Low;
-#endif
-#if ENABLE(MODEL_ELEMENT)
-    case Type::ModelResource:
-        return ResourceLoadPriority::Medium;
-#endif
-#if ENABLE(APPLICATION_MANIFEST)
-    case Type::ApplicationManifest:
-        return ResourceLoadPriority::Low;
-#endif
-    }
-    ASSERT_NOT_REACHED();
-    return ResourceLoadPriority::Low;
-}
-
 static Seconds deadDecodedDataDeletionIntervalForResourceType(CachedResource::Type type)
 {
     if (type == CachedResource::Type::Script)
@@ -141,7 +98,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, const
     , m_type(type)
     , m_preloadResult(PreloadResult::PreloadNotReferenced)
     , m_responseTainting(ResourceResponse::Tainting::Basic)
-    , m_loadPriority(defaultPriorityForResourceType(type))
+    , m_loadPriority(DefaultResourceLoadPriority::forResourceType(type))
     , m_status(Pending)
     , m_requestedFromNetworkingLayer(false)
     , m_inCache(false)
@@ -903,7 +860,7 @@ void CachedResource::setLoadPriority(const Optional<ResourceLoadPriority>& loadP
     if (loadPriority)
         m_loadPriority = loadPriority.value();
     else
-        m_loadPriority = defaultPriorityForResourceType(type());
+        m_loadPriority = DefaultResourceLoadPriority::forResourceType(type());
 }
 
 inline CachedResource::Callback::Callback(CachedResource& resource, CachedResourceClient& client)

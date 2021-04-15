@@ -287,7 +287,6 @@ public:
 #endif
 
     unsigned long identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
-    static ResourceLoadPriority defaultPriorityForResourceType(Type);
 
     void setOriginalRequest(std::unique_ptr<ResourceRequest>&& originalRequest) { m_originalRequest = WTFMove(originalRequest); }
     const std::unique_ptr<ResourceRequest>& originalRequest() const { return m_originalRequest; }
