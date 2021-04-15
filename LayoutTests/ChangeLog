@@ -1,3 +1,9 @@
+2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Skip accessibility test added in r275664.
+
+        * platform/glib/TestExpectations:
+
 2021-04-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Make image extraction interactions work for elements inside links

@@ -311,6 +311,9 @@ webkit.org/b/221645 accessibility/aria-sort-changed-notification.html [ Skip ]
 # Not supported
 accessibility/embedded-image-description.html [ Skip ]
 
+# Not supported. Skipped also in mac-wk1 and win ports.
+accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
