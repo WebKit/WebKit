@@ -1,3 +1,15 @@
+2021-04-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        Empty value is added in codePointsFromString in CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts
+        https://bugs.webkit.org/show_bug.cgi?id=223857
+
+        Reviewed by Darin Adler.
+
+        Use UnsignedWithZeroKeyHashTraits in codePointsFromString() to avoid it.
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::codePointsFromString):
+
 2021-04-15  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Cleanup the inline tree when moving subtrees
