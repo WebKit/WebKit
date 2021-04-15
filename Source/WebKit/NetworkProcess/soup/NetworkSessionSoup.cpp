@@ -123,13 +123,15 @@ static void webSocketMessageNetworkEventCallback(SoupMessage* soupMessage, GSock
 
 std::unique_ptr<WebSocketTask> NetworkSessionSoup::createWebSocketTask(NetworkSocketChannel& channel, const ResourceRequest& request, const String& protocol)
 {
-    GRefPtr<SoupMessage> soupMessage = request.createSoupMessage(blobRegistry());
-    if (!soupMessage)
+    GUniquePtr<SoupURI> soupURI = request.createSoupURI();
+    if (!soupURI)
         return nullptr;
 
+    GRefPtr<SoupMessage> soupMessage = adoptGRef(soup_message_new_from_uri(SOUP_METHOD_GET, soupURI.get()));
+    request.updateSoupMessage(soupMessage.get(), blobRegistry());
     if (request.url().protocolIs("wss"))
         g_signal_connect(soupMessage.get(), "network-event", G_CALLBACK(webSocketMessageNetworkEventCallback), this);
-    return makeUnique<WebSocketTask>(channel, request, soupSession(), soupMessage.get(), protocol);
+    return makeUnique<WebSocketTask>(channel, soupSession(), soupMessage.get(), protocol);
 }
 
 void NetworkSessionSoup::setIgnoreTLSErrors(bool ignoreTLSErrors)

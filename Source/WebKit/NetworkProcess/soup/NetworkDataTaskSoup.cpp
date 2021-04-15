@@ -121,13 +121,16 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
         return;
     }
 
-    restrictRequestReferrerToOriginIfNeeded(m_currentRequest);
-
-    m_soupMessage = m_currentRequest.createSoupMessage(m_session->blobRegistry());
-    if (!m_soupMessage) {
+    GUniquePtr<SoupURI> soupURI = m_currentRequest.createSoupURI();
+    if (!soupURI || !SOUP_URI_VALID_FOR_HTTP(soupURI.get())) {
         scheduleFailure(InvalidURLFailure);
         return;
     }
+
+    restrictRequestReferrerToOriginIfNeeded(m_currentRequest);
+
+    m_soupMessage = adoptGRef(soup_message_new_from_uri(SOUP_METHOD_GET, soupURI.get()));
+    m_currentRequest.updateSoupMessage(m_soupMessage.get(), m_session->blobRegistry());
 
     unsigned messageFlags = SOUP_MESSAGE_NO_REDIRECT;
     if (m_shouldContentSniff == ContentSniffingPolicy::DoNotSniffContent)
@@ -142,6 +145,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
 #endif
     }
     soup_message_set_flags(m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(m_soupMessage.get()) | messageFlags));
+    soup_message_set_priority(m_soupMessage.get(), toSoupMessagePriority(m_currentRequest.priority()));
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     bool shouldBlockCookies = wasBlockingCookies == WasBlockingCookies::Yes ? true : m_storedCredentialsPolicy == StoredCredentialsPolicy::EphemeralStateless;
@@ -370,7 +374,11 @@ void NetworkDataTaskSoup::sendRequestCallback(SoupSession* soupSession, GAsyncRe
 
 void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
 {
-    m_response = ResourceResponse(m_soupMessage.get(), m_sniffedContentType);
+    if (!m_sniffedContentType.isNull() && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
+        m_response.setSniffedContentType(m_sniffedContentType.data());
+    m_response.updateFromSoupMessage(m_soupMessage.get());
+    if (m_response.mimeType().isEmpty() && m_soupMessage->status_code != SOUP_STATUS_NOT_MODIFIED)
+        m_response.setMimeType(MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()));
 
     if (shouldStartHTTPRedirection()) {
         m_inputStream = WTFMove(inputStream);
@@ -892,11 +900,9 @@ void NetworkDataTaskSoup::didRequestNextPart(GRefPtr<GInputStream>&& inputStream
 {
     ASSERT(!m_inputStream);
     m_inputStream = WTFMove(inputStream);
-    auto* headers = soup_multipart_input_stream_get_headers(m_multipartInputStream.get());
-    String contentType = soup_message_headers_get_one(headers, "Content-Type");
-    m_response = ResourceResponse(m_firstRequest.url(), extractMIMETypeFromMediaType(contentType),
-        soup_message_headers_get_content_length(headers), extractCharsetFromMediaType(contentType));
-    m_response.updateFromSoupMessageHeaders(headers);
+    m_response = ResourceResponse();
+    m_response.setURL(m_firstRequest.url());
+    m_response.updateFromSoupMessageHeaders(soup_multipart_input_stream_get_headers(m_multipartInputStream.get()));
     dispatchDidReceiveResponse();
 }
 

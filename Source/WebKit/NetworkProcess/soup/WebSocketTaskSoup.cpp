@@ -38,9 +38,8 @@
 
 namespace WebKit {
 
-WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, SoupSession* session, SoupMessage* msg, const String& protocol)
+WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, SoupSession* session, SoupMessage* msg, const String& protocol)
     : m_channel(channel)
-    , m_request(request)
     , m_handshakeMessage(msg)
     , m_cancellable(adoptGRef(g_cancellable_new()))
     , m_delayFailTimer(RunLoop::main(), this, &WebSocketTask::delayFailTimerFired)
@@ -81,8 +80,9 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, const WebCore::Resou
         }, this);
 
     g_signal_connect(msg, "starting", G_CALLBACK(+[](SoupMessage* msg, WebSocketTask* task) {
-        task->m_request.updateFromSoupMessageHeaders(msg->request_headers);
-        task->m_channel.didSendHandshakeRequest(WTFMove(task->m_request));
+        WebCore::ResourceRequest request;
+        request.updateFromSoupMessage(msg);
+        task->m_channel.didSendHandshakeRequest(WTFMove(request));
     }), this);
 }
 
@@ -132,7 +132,9 @@ void WebSocketTask::didConnect(GRefPtr<SoupWebsocketConnection>&& connection)
 
     m_channel.didConnect(soup_websocket_connection_get_protocol(m_connection.get()), acceptedExtensions());
 
-    m_channel.didReceiveHandshakeResponse(m_handshakeMessage.get());
+    WebCore::ResourceResponse response;
+    response.updateFromSoupMessage(m_handshakeMessage.get());
+    m_channel.didReceiveHandshakeResponse(WTFMove(response));
     g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
     m_handshakeMessage = nullptr;
 }
@@ -170,7 +172,9 @@ void WebSocketTask::didFail(const String& errorMessage)
 
     m_receivedDidFail = true;
     if (m_handshakeMessage) {
-        m_channel.didReceiveHandshakeResponse(m_handshakeMessage.get());
+        WebCore::ResourceResponse response;
+        response.updateFromSoupMessage(m_handshakeMessage.get());
+        m_channel.didReceiveHandshakeResponse(WTFMove(response));
         g_signal_handlers_disconnect_by_data(m_handshakeMessage.get(), this);
         m_handshakeMessage = nullptr;
     }

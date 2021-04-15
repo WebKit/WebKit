@@ -29,7 +29,6 @@
 #include "PageIdentifier.h"
 #include "ResourceRequestBase.h"
 #include "URLSoup.h"
-#include <wtf/glib/GRefPtr.h>
 
 namespace WebCore {
 
@@ -58,8 +57,6 @@ public:
     {
     }
 
-    GRefPtr<SoupMessage> createSoupMessage(BlobRegistryImpl&) const;
-
     void updateFromDelegatePreservingOldProperties(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
 
     bool acceptEncoding() const { return m_acceptEncoding; }
@@ -67,6 +64,13 @@ public:
 
     void updateSoupMessageHeaders(SoupMessageHeaders*) const;
     void updateFromSoupMessageHeaders(SoupMessageHeaders*);
+    void updateSoupMessage(SoupMessage*, BlobRegistryImpl&) const;
+    void updateFromSoupMessage(SoupMessage*);
+
+    SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
+    void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
+
+    GUniquePtr<SoupURI> createSoupURI() const;
 
     template<class Encoder> void encodeWithPlatformData(Encoder&) const;
     template<class Decoder> WARN_UNUSED_RETURN bool decodeWithPlatformData(Decoder&);
@@ -74,7 +78,8 @@ public:
 private:
     friend class ResourceRequestBase;
 
-    GUniquePtr<SoupURI> createSoupURI() const;
+    bool m_acceptEncoding { true };
+    SoupMessageFlags m_soupFlags { static_cast<SoupMessageFlags>(0) };
 
     void updateSoupMessageMembers(SoupMessage*) const;
     void updateSoupMessageBody(SoupMessage*, BlobRegistryImpl&) const;
@@ -84,8 +89,6 @@ private:
     void doUpdateResourceHTTPBody() { }
 
     void doPlatformSetAsIsolatedCopy(const ResourceRequest&) { }
-
-    bool m_acceptEncoding { true };
 };
 
 template<class Encoder>
@@ -100,6 +103,7 @@ void ResourceRequest::encodeWithPlatformData(Encoder& encoder) const
     if (m_httpBody)
         encoder << m_httpBody->flattenToString();
 
+    encoder << static_cast<uint32_t>(m_soupFlags);
     encoder << static_cast<bool>(m_acceptEncoding);
 }
 
@@ -119,12 +123,36 @@ bool ResourceRequest::decodeWithPlatformData(Decoder& decoder)
         setHTTPBody(FormData::create(httpBody.utf8()));
     }
 
+    uint32_t soupMessageFlags;
+    if (!decoder.decode(soupMessageFlags))
+        return false;
+    m_soupFlags = static_cast<SoupMessageFlags>(soupMessageFlags);
+
     bool acceptEncoding;
     if (!decoder.decode(acceptEncoding))
         return false;
     m_acceptEncoding = acceptEncoding;
 
     return true;
+}
+
+inline SoupMessagePriority toSoupMessagePriority(ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return SOUP_MESSAGE_PRIORITY_VERY_LOW;
+    case ResourceLoadPriority::Low:
+        return SOUP_MESSAGE_PRIORITY_LOW;
+    case ResourceLoadPriority::Medium:
+        return SOUP_MESSAGE_PRIORITY_NORMAL;
+    case ResourceLoadPriority::High:
+        return SOUP_MESSAGE_PRIORITY_HIGH;
+    case ResourceLoadPriority::VeryHigh:
+        return SOUP_MESSAGE_PRIORITY_VERY_HIGH;
+    }
+
+    ASSERT_NOT_REACHED();
+    return SOUP_MESSAGE_PRIORITY_VERY_LOW;
 }
 
 } // namespace WebCore
