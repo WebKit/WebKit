@@ -130,7 +130,7 @@ public:
     }
 #endif
 
-private:
+protected:
     String m_persistentId;
     DeviceType m_type { DeviceType::Unknown };
     String m_label;
