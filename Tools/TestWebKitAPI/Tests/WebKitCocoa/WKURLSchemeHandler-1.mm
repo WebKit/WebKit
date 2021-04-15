@@ -224,6 +224,8 @@ static NSString *handledSchemes[] = {
     @"data",
     @"file",
     @"ftp",
+    @"http",
+    @"https",
     @"javascript",
     @"webkit-fake-url",
     @"ws",
@@ -382,7 +384,7 @@ enum class Command {
                 [(id<WKURLSchemeTaskPrivate>)task _didPerformRedirection:adoptNS([[NSURLResponse alloc] init]).get() newRequest:adoptNS([[NSURLRequest alloc] init]).get()];
                 break;
             case Command::APIRedirect:
-                [(id<WKURLSchemeTaskPrivate>)task willPerformRedirection:adoptNS([[NSURLResponse alloc] init]).get() newRequest:adoptNS([[NSURLRequest alloc] init]).get() completionHandler:^(NSURLRequest*) { }];
+                [(id<WKURLSchemeTaskPrivate>)task _willPerformRedirection:adoptNS([[NSURLResponse alloc] init]).get() newRequest:adoptNS([[NSURLRequest alloc] init]).get() completionHandler:^(NSURLRequest*) { }];
                 break;
             case Command::Response:
                 [task didReceiveResponse:adoptNS([[NSURLResponse alloc] init]).get()];
@@ -1441,42 +1443,15 @@ TEST(URLSchemeHandler, isSecureContext)
     EXPECT_WK_STREQ(@"secure", [lastScriptMessage body]);
 }
 
-@interface HTTPRedirectTest : NSObject <WKURLSchemeHandler> {
-}
-@end
-
-@implementation HTTPRedirectTest
-
-- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
-{
-    auto redirectResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:nil expectedContentLength:0 textEncodingName:nil]);
-    auto redirectRequest = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://bar.com/anothertest.html"]]);
-
-    [task willPerformRedirection:redirectResponse.get() newRequest:redirectRequest.get() completionHandler:^(NSURLRequest *proposedRequest) {
-        NSString *html = @"<script>window.webkit.messageHandlers.testHandler.postMessage('Document URL: ' + document.URL);</script>";
-        auto finalResponse = adoptNS([[NSURLResponse alloc] initWithURL:proposedRequest.URL MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]);
-
-        [task didReceiveResponse:finalResponse.get()];
-        [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
-        [task didFinish];
-    }];
-}
-
-- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)task
-{
-}
-
-@end
-
-TEST(URLSchemeHandler, HTTPWithRedirect)
+TEST(URLSchemeHandler, APIRedirect)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto schemeHandler = adoptNS([TestURLSchemeHandler new]);
     [schemeHandler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
         auto redirectResponse = adoptNS([[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:nil expectedContentLength:0 textEncodingName:nil]);
-        auto redirectRequest = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"https://bar.com/anothertest.html"]]);
+        auto redirectRequest = adoptNS([[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"redirectone://bar.com/anothertest.html"]]);
 
-        [task willPerformRedirection:redirectResponse.get() newRequest:redirectRequest.get() completionHandler:^(NSURLRequest *proposedRequest) {
+        [(id<WKURLSchemeTaskPrivate>)task _willPerformRedirection:redirectResponse.get() newRequest:redirectRequest.get() completionHandler:^(NSURLRequest *proposedRequest) {
             NSString *html = @"<script>window.webkit.messageHandlers.testHandler.postMessage('Document URL: ' + document.URL);</script>";
             auto finalResponse = adoptNS([[NSURLResponse alloc] initWithURL:proposedRequest.URL MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]);
 
@@ -1486,8 +1461,7 @@ TEST(URLSchemeHandler, HTTPWithRedirect)
         }];
     }];
 
-    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"http"];
-    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"https"];
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"redirectone"];
 
     auto messageHandler = adoptNS([[URLSchemeHandlerMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
@@ -1495,7 +1469,7 @@ TEST(URLSchemeHandler, HTTPWithRedirect)
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
 
     receivedScriptMessage = false;
-    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://foo.com/test.html"]]];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"redirectone://foo.com/test.html"]]];
     TestWebKitAPI::Util::run(&receivedScriptMessage);
-    EXPECT_WK_STREQ(@"Document URL: https://bar.com/anothertest.html", [lastScriptMessage body]);
+    EXPECT_WK_STREQ(@"Document URL: redirectone://bar.com/anothertest.html", [lastScriptMessage body]);
 }

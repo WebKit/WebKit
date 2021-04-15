@@ -1,3 +1,22 @@
+2021-04-15  Brady Eidson  <beidson@apple.com>
+
+        Move WKURLSchemeTask redirect API to SPI
+        https://bugs.webkit.org/show_bug.cgi?id=224581
+
+        Reviewed by Alex Christensen.
+
+        Need to work out some design kinks.
+
+        * UIProcess/API/Cocoa/WKURLSchemeTask.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (-[WKURLSchemeTaskImpl _willPerformRedirection:newRequest:completionHandler:]):
+        (-[WKURLSchemeTaskImpl willPerformRedirection:newRequest:completionHandler:]): Deleted.
+        * UIProcess/API/Cocoa/WKURLSchemeTaskPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration setURLSchemeHandler:forURLScheme:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setURLSchemeHandlerForScheme):
+
 2021-04-15  Simon Fraser  <simon.fraser@apple.com>
 
         UI process can assert in DisplayLink::decrementFullSpeedRequestClientCount()

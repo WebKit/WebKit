@@ -36,21 +36,6 @@ WK_API_AVAILABLE(macos(10.13), ios(11.0))
  */
 @property (nonatomic, readonly, copy) NSURLRequest *request;
 
-/*! @abstract Indicate the task was redirected.
- @param response The response causing a redirect to a new URL.
- @param newRequest The new proposed request to handle the redirection.
- @param completionHandler A completion handler called with the request you should use to commit to the redirection.
- @discussion When performing a load of a URL over a network, the server might decide a different URL should be loaded instead.
- A common example is an HTTP redirect.
- When this happens, you should notify WebKit by sending the servers response and a proposed new request to the WKURLSchemeTask.
- WebKit might decide that changes need to be make to the proposed request.
- This is communicated through the completionHandler which tells you the request you should make to commit to the redirection.
-
- An exception will be thrown if you make any other callbacks to the WKURLSchemeTask while this completionHandler is pending, other than didFailWithError:.
- An exception will be thrown if your app has been told to stop loading this task via the registered WKURLSchemeHandler object.
- */
-- (void)willPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest * _Nullable))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-
 /*! @abstract Set the current response object for the task.
  @param response The response to use.
  @discussion This method must be called at least once for each URL scheme handler task.
