@@ -1,5 +1,49 @@
 2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Emit specific baselines for WPE.
+
+        Several baselines that were common to GTK and WPE are no longer valid.
+        It's necessary to move the common baseline to GTK and emit new baselines for WPE.
+
+        * platform/gtk/css2.1/t100801-c544-valgn-03-d-agi-expected.txt: Copied from LayoutTests/platform/glib/css2.1/t100801-c544-valgn-03-d-agi-expected.txt.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/001-expected.txt: Copied from LayoutTests/platform/glib/fast/block/margin-collapse/block-inside-inline/001-expected.txt.
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/005-expected.txt: Copied from LayoutTests/platform/glib/fast/block/margin-collapse/block-inside-inline/005-expected.txt.
+        * platform/gtk/fast/css/child-style-can-override-visited-style-expected.txt: Copied from LayoutTests/platform/glib/fast/css/child-style-can-override-visited-style-expected.txt.
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-element-expected.txt: Copied from LayoutTests/platform/glib/fast/dom/HTMLProgressElement/progress-element-expected.txt.
+        * platform/gtk/fast/images/image-map-anchor-children-expected.txt: Copied from LayoutTests/platform/glib/fast/images/image-map-anchor-children-expected.txt.
+        * platform/gtk/fast/inline-block/002-expected.txt: Copied from LayoutTests/platform/glib/fast/inline-block/002-expected.txt.
+        * platform/gtk/fast/inline-block/003-expected.txt: Copied from LayoutTests/platform/glib/fast/inline-block/003-expected.txt.
+        * platform/gtk/fast/inline/002-expected.txt: Copied from LayoutTests/platform/glib/fast/inline/002-expected.txt.
+        * platform/gtk/fast/invalid/018-expected.txt: Copied from LayoutTests/platform/glib/fast/invalid/018-expected.txt.
+        * platform/gtk/fast/table/frame-and-rules-expected.txt: Copied from LayoutTests/platform/glib/fast/table/frame-and-rules-expected.txt.
+        * platform/gtk/fast/table/table-display-types-strict-expected.txt: Copied from LayoutTests/platform/glib/fast/table/table-display-types-strict-expected.txt.
+        * platform/gtk/fast/text/basic/012-expected.txt: Copied from LayoutTests/platform/glib/fast/text/basic/012-expected.txt.
+        * platform/gtk/svg/custom/invisible-text-after-scrolling-expected.txt: Copied from LayoutTests/platform/glib/svg/custom/invisible-text-after-scrolling-expected.txt.
+        * platform/gtk/svg/hixie/processing-model/003-expected.txt: Copied from LayoutTests/platform/glib/svg/hixie/processing-model/003-expected.txt.
+        * platform/gtk/svg/hixie/processing-model/004-expected.txt: Copied from LayoutTests/platform/glib/svg/hixie/processing-model/004-expected.txt.
+        * platform/gtk/tables/mozilla/bugs/bug14323-expected.txt: Copied from LayoutTests/platform/glib/tables/mozilla/bugs/bug14323-expected.txt.
+        * platform/gtk/tables/mozilla/bugs/bug2267-expected.txt: Copied from LayoutTests/platform/glib/tables/mozilla/bugs/bug2267-expected.txt.
+        * platform/wpe/css2.1/t100801-c544-valgn-03-d-agi-expected.txt: Renamed from LayoutTests/platform/glib/css2.1/t100801-c544-valgn-03-d-agi-expected.txt.
+        * platform/wpe/fast/block/margin-collapse/block-inside-inline/001-expected.txt: Renamed from LayoutTests/platform/glib/fast/block/margin-collapse/block-inside-inline/001-expected.txt.
+        * platform/wpe/fast/block/margin-collapse/block-inside-inline/005-expected.txt: Renamed from LayoutTests/platform/glib/fast/block/margin-collapse/block-inside-inline/005-expected.txt.
+        * platform/wpe/fast/css/child-style-can-override-visited-style-expected.txt: Renamed from LayoutTests/platform/glib/fast/css/child-style-can-override-visited-style-expected.txt.
+        * platform/wpe/fast/dom/HTMLProgressElement/progress-element-expected.txt: Renamed from LayoutTests/platform/glib/fast/dom/HTMLProgressElement/progress-element-expected.txt.
+        * platform/wpe/fast/images/image-map-anchor-children-expected.txt: Renamed from LayoutTests/platform/glib/fast/images/image-map-anchor-children-expected.txt.
+        * platform/wpe/fast/inline-block/002-expected.txt: Renamed from LayoutTests/platform/glib/fast/inline-block/002-expected.txt.
+        * platform/wpe/fast/inline-block/003-expected.txt: Renamed from LayoutTests/platform/glib/fast/inline-block/003-expected.txt.
+        * platform/wpe/fast/inline/002-expected.txt: Renamed from LayoutTests/platform/glib/fast/inline/002-expected.txt.
+        * platform/wpe/fast/invalid/018-expected.txt: Renamed from LayoutTests/platform/glib/fast/invalid/018-expected.txt.
+        * platform/wpe/fast/table/frame-and-rules-expected.txt: Renamed from LayoutTests/platform/glib/fast/table/frame-and-rules-expected.txt.
+        * platform/wpe/fast/table/table-display-types-strict-expected.txt: Renamed from LayoutTests/platform/glib/fast/table/table-display-types-strict-expected.txt.
+        * platform/wpe/fast/text/basic/012-expected.txt: Renamed from LayoutTests/platform/glib/fast/text/basic/012-expected.txt.
+        * platform/wpe/svg/custom/invisible-text-after-scrolling-expected.txt: Renamed from LayoutTests/platform/glib/svg/custom/invisible-text-after-scrolling-expected.txt.
+        * platform/wpe/svg/hixie/processing-model/003-expected.txt: Renamed from LayoutTests/platform/glib/svg/hixie/processing-model/003-expected.txt.
+        * platform/wpe/svg/hixie/processing-model/004-expected.txt: Renamed from LayoutTests/platform/glib/svg/hixie/processing-model/004-expected.txt.
+        * platform/wpe/tables/mozilla/bugs/bug14323-expected.txt: Renamed from LayoutTests/platform/glib/tables/mozilla/bugs/bug14323-expected.txt.
+        * platform/wpe/tables/mozilla/bugs/bug2267-expected.txt: Renamed from LayoutTests/platform/glib/tables/mozilla/bugs/bug2267-expected.txt.
+
+2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Update test expectations after r275515.
 
         Two tests are returning an image failure.  
