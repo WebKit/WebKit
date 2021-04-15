@@ -201,6 +201,7 @@
 #include "SymbolConstructor.h"
 #include "SymbolObject.h"
 #include "SymbolPrototype.h"
+#include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
 #include "WeakMapConstructor.h"
 #include "WeakMapPrototype.h"

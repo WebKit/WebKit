@@ -1103,6 +1103,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/VMEntryScope.h
     runtime/VMInlines.h
     runtime/VMTraps.h
+    runtime/VMTrapsInlines.h
     runtime/VarOffset.h
     runtime/Watchdog.h
     runtime/WeakGCHashTable.h

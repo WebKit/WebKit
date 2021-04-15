@@ -2015,6 +2015,7 @@
 		FEF5B4252628A8500016E776 /* JSMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4242628A8500016E776 /* JSMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF5B4272628ABD90016E776 /* JSWeakMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4262628ABD90016E776 /* JSWeakMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF5B4292628B5240016E776 /* JSSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4282628B5240016E776 /* JSSetInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEF5B42C2628CBC80016E776 /* VMTrapsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -5425,6 +5426,7 @@
 		FEF5B4242628A8500016E776 /* JSMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMapInlines.h; sourceTree = "<group>"; };
 		FEF5B4262628ABD90016E776 /* JSWeakMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakMapInlines.h; sourceTree = "<group>"; };
 		FEF5B4282628B5240016E776 /* JSSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSetInlines.h; sourceTree = "<group>"; };
+		FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTrapsInlines.h; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -7920,6 +7922,7 @@
 				FE90BB3A1B7CF64E006B3F03 /* VMInlines.h */,
 				FE6F56DC1E64E92000D17801 /* VMTraps.cpp */,
 				FE6F56DD1E64E92000D17801 /* VMTraps.h */,
+				FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */,
 				FED94F2B171E3E2300BE77A4 /* Watchdog.cpp */,
 				FED94F2C171E3E2300BE77A4 /* Watchdog.h */,
 				BCE2FAFE26091782000A510F /* WeakGCHashTable.h */,
@@ -9821,6 +9824,7 @@
 				2A83638A18D7D0FE0000EBCC /* FullGCActivityCallback.h in Headers */,
 				52EED7942492B870008F4C93 /* FunctionAllowlist.h in Headers */,
 				14AD910D1DCA92940014F9FE /* FunctionCodeBlock.h in Headers */,
+				FEF5B42C2628CBC80016E776 /* VMTrapsInlines.h in Headers */,
 				BC18C4040E16F5CD00B34460 /* FunctionConstructor.h in Headers */,
 				147341D81DC02F9900AA29BA /* FunctionExecutable.h in Headers */,
 				0FF0F1A016B72A1A005DF95B /* FunctionExecutableDump.h in Headers */,

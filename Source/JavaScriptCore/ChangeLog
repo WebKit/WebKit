@@ -1,5 +1,62 @@
 2021-04-15  Mark Lam  <mark.lam@apple.com>
 
+        Optimize the DeferTermination scope to be more efficient.
+        https://bugs.webkit.org/show_bug.cgi?id=224619
+
+        Reviewed by Saam Barati.
+
+        This can be beneficial since we may be using DeferTermination in more places in
+        the code.
+
+        1. Added a VMTrapsInlines.h to hold the inline functions.
+
+        2. Split deferTermination() and undoDeferTermination() into fast and slow functions.
+           The fast functions are inlineable.
+
+        3. Remove the locking of VMTraps::m_lock in these functions.  These functions only
+           modify the following:
+           a. VMTraps::m_deferTerminationCount
+           b. VMTraps::m_suspendedTerminationException
+           c. VMTraps::m_trapBits for setting the NeedTermination bit if needed.
+           d. VM::m_exception
+
+           Except for VMTraps::m_trapBits, all of these are only written to from the mutator
+           thread.  VMTraps::m_trapBits is always written to using Atomics.  There isn't
+           anything that needs to be guarded by VMTraps::m_lock.
+
+        4. Fix VMTraps::deferTermination() to only set m_suspendedTerminationException
+           and clear an existing TerminationException if it's being called from the
+           outermost DeferTermination (i.e. m_deferTerminationCount is 1 after incrementing).
+           These conditional operations are not done in VMTraps::deferTerminationSlow().
+
+           In practice, it wouldn't have mattered anyway because we would never throw a
+           TerminationException while a DeferTermination scope is in effect.  The
+           the vm.isTerminationException() in the original deferTermination() would
+           always have prevented the slow path operations from being executed anyway.
+
+           However, for the purpose of this patch, we want to avoid as much unnecessary
+           work as possible in the fast path.  Hence, it is good to skip the slow path
+           if deferTermination() isn't called from the outermost scope.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::deferTerminationSlow):
+        (JSC::VMTraps::undoDeferTerminationSlow):
+        (JSC::VMTraps::vm const): Deleted.
+        (JSC::VMTraps::deferTermination): Deleted.
+        (JSC::VMTraps::undoDeferTermination): Deleted.
+        * runtime/VMTraps.h:
+        * runtime/VMTrapsInlines.h: Added.
+        (JSC::VMTraps::vm const):
+        (JSC::VMTraps::deferTermination):
+        (JSC::VMTraps::undoDeferTermination):
+
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
         Refactor inline functions out of HashMapImpl.h into HashMapImplInlines.h.
         https://bugs.webkit.org/show_bug.cgi?id=224616
         rdar://76713709

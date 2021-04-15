@@ -69,6 +69,7 @@
 #include "TestRunnerUtils.h"
 #include "TypedArrayInlines.h"
 #include "VMInspector.h"
+#include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"

@@ -67,6 +67,7 @@
 #include "ThunkGenerators.h"
 #include "TypeProfilerLog.h"
 #include "VMInlines.h"
+#include "VMTrapsInlines.h"
 
 IGNORE_WARNINGS_BEGIN("frame-address")
 

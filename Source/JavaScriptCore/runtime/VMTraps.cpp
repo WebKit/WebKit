@@ -36,18 +36,13 @@
 #include "LLIntPCRanges.h"
 #include "MachineContext.h"
 #include "MacroAssemblerCodeRef.h"
-#include "VM.h"
+#include "VMTrapsInlines.h"
 #include "Watchdog.h"
 #include <wtf/ProcessID.h>
 #include <wtf/ThreadMessage.h>
 #include <wtf/threads/Signals.h>
 
 namespace JSC {
-
-ALWAYS_INLINE VM& VMTraps::vm() const
-{
-    return *bitwise_cast<VM*>(bitwise_cast<uintptr_t>(this) - OBJECT_OFFSETOF(VM, m_traps));
-}
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
 
@@ -415,32 +410,31 @@ auto VMTraps::takeTopPriorityTrap(VMTraps::BitField mask) -> Event
     return NoEvent;
 }
 
-void VMTraps::deferTermination(DeferAction)
+void VMTraps::deferTerminationSlow(DeferAction)
 {
-    auto locker = holdLock(*m_lock);
-    m_deferTerminationCount++;
-    ASSERT(m_deferTerminationCount < UINT_MAX);
+    ASSERT(m_deferTerminationCount == 1);
 
     VM& vm = this->vm();
     Exception* pendingException = vm.exception();
-    if (pendingException && vm.isTerminationException(pendingException)) {
+    ASSERT(pendingException);
+    if (vm.isTerminationException(pendingException)) {
+        ASSERT(vm.terminationInProgress());
         vm.clearException();
         m_suspendedTerminationException = true;
     }
 }
 
-void VMTraps::undoDeferTermination(DeferAction action)
+void VMTraps::undoDeferTerminationSlow(DeferAction deferAction)
 {
-    auto locker = holdLock(*m_lock);
-    ASSERT(m_deferTerminationCount > 0);
-    if (--m_deferTerminationCount == 0) {
-        VM& vm = this->vm();
-        if (m_suspendedTerminationException
-            || ((action == DeferAction::DeferUntilEndOfScope) && vm.terminationInProgress()))
-            vm.throwTerminationException();
-        else if ((action == DeferAction::DeferForAWhile) && vm.terminationInProgress())
-            setTrapBit(NeedTermination); // Let the next trap check handle it.
-    }
+    ASSERT(m_deferTerminationCount == 0);
+
+    VM& vm = this->vm();
+    ASSERT(vm.terminationInProgress());
+    if (m_suspendedTerminationException || (deferAction == DeferAction::DeferUntilEndOfScope)) {
+        vm.throwTerminationException();
+        m_suspendedTerminationException = false;
+    } else if (deferAction == DeferAction::DeferForAWhile)
+        setTrapBit(NeedTermination); // Let the next trap check handle it.
 }
 
 VMTraps::VMTraps()

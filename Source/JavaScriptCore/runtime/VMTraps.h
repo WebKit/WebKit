@@ -197,8 +197,8 @@ public:
     };
 
     bool isDeferringTermination() const { return m_deferTerminationCount; }
-    JS_EXPORT_PRIVATE void deferTermination(DeferAction);
-    JS_EXPORT_PRIVATE void undoDeferTermination(DeferAction);
+    void deferTermination(DeferAction);
+    void undoDeferTermination(DeferAction);
 
     void notifyGrabAllLocks()
     {
@@ -226,6 +226,8 @@ public:
 private:
     VM& vm() const;
 
+    JS_EXPORT_PRIVATE void deferTerminationSlow(DeferAction);
+    JS_EXPORT_PRIVATE void undoDeferTerminationSlow(DeferAction);
     Event takeTopPriorityTrap(BitField mask);
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
