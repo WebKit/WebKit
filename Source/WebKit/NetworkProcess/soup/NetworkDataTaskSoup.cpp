@@ -404,22 +404,15 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
         m_inputStream = WTFMove(inputStream);
 
     m_networkLoadMetrics.responseStart = MonotonicTime::now().secondsSinceEpoch() - m_networkLoadMetrics.fetchStart;
+
+    // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's NetworkLoadMetrics.
+    m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(m_networkLoadMetrics));
     dispatchDidReceiveResponse();
 }
 
 void NetworkDataTaskSoup::dispatchDidReceiveResponse()
 {
     ASSERT(!m_response.isNull());
-
-    Box<NetworkLoadMetrics> timing = Box<NetworkLoadMetrics>::create();
-    timing->responseStart = m_networkLoadMetrics.responseStart;
-    timing->domainLookupStart = m_networkLoadMetrics.domainLookupStart;
-    timing->domainLookupEnd = m_networkLoadMetrics.domainLookupEnd;
-    timing->connectStart = m_networkLoadMetrics.connectStart;
-    timing->secureConnectionStart = m_networkLoadMetrics.secureConnectionStart;
-    timing->connectEnd = m_networkLoadMetrics.connectEnd;
-    timing->requestStart = m_networkLoadMetrics.requestStart;
-    timing->responseStart = m_networkLoadMetrics.responseStart;
 
     didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed) {

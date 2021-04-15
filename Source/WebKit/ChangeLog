@@ -1,5 +1,19 @@
 2021-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Bring back the call to ResourceResponse::setDeprecatedNetworkLoadMetrics after r276008
+        https://bugs.webkit.org/show_bug.cgi?id=224608
+
+        Reviewed by Adrian Perez de Castro.
+
+        It turns out it's actually still used by the inspector. I don't want to revert r276008 because it included other
+        fixes, so it's just fixed in this patch.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::didSendRequest):
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+
+2021-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Add support for "nextHopProtocol" for Resource Timing
         https://bugs.webkit.org/show_bug.cgi?id=168543
 
