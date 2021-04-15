@@ -1,3 +1,31 @@
+2021-04-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r272900): Nullptr crash in ComposedTreeIterator::traverseNextInShadowTree() via ShadowRoot::hostChildElementDidChange
+        https://bugs.webkit.org/show_bug.cgi?id=222720
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch reverts r274064 to apply a different fix. Instead of null-checking the nodes returned by
+        SlotAssignment::assignedNodesForSlot(), assigned nodes are removed from the list when they are about to be
+        removed from the parent. That ensures we never return nullptr nodes nor nodes with a nullptr parent from the
+        assigned nodes vector.
+
+        * dom/ComposedTreeIterator.cpp:
+        (WebCore::ComposedTreeIterator::traverseNextInShadowTree):
+        (WebCore::ComposedTreeIterator::advanceInSlot):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeBetween):
+        * dom/Node.h:
+        (WebCore::Node::hasShadowRootContainingSlots const):
+        (WebCore::Node::setHasShadowRootContainingSlots):
+        * dom/ShadowRoot.h:
+        * dom/SlotAssignment.cpp:
+        (WebCore::SlotAssignment::addSlotElementByName):
+        (WebCore::SlotAssignment::removeSlotElementByName):
+        (WebCore::SlotAssignment::willRemoveAssignedNode):
+        * dom/SlotAssignment.h:
+        (WebCore::ShadowRoot::willRemoveAssignedNode):
+
 2021-04-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy Ref/RefPtr in ReplaceSelectionCommand

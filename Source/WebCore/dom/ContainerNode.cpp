@@ -630,6 +630,9 @@ void ContainerNode::removeBetween(Node* previousChild, Node* nextChild, Node& ol
 
     destroyRenderTreeIfNeeded(oldChild);
 
+    if (UNLIKELY(hasShadowRootContainingSlots()))
+        shadowRoot()->willRemoveAssignedNode(oldChild);
+
     if (nextChild) {
         nextChild->setPreviousSibling(previousChild);
         oldChild.setNextSibling(nullptr);
