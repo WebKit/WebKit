@@ -1,5 +1,23 @@
 2021-04-15  Youenn Fablet  <youenn@apple.com>
 
+        Update RTCScriptTransform constructor up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=224447
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/audio-script-transform.html:
+        * http/wpt/webrtc/context-transform.js:
+        (MockRTCRtpTransformer):
+        (MockRTCRtpTransformer.prototype.start):
+        (MockRTCRtpTransformer.prototype.process):
+        * http/wpt/webrtc/metadata-transform-worker.js:
+        * http/wpt/webrtc/script-transform.js:
+        * http/wpt/webrtc/video-script-transform.html:
+        * http/wpt/webrtc/webrtc-transform.html:
+        * http/wpt/webrtc/write-twice-transform.js:
+
+2021-04-15  Youenn Fablet  <youenn@apple.com>
+
         REGRESSION(Safari 14): iframe with blob url does not work with sandboxing
         https://bugs.webkit.org/show_bug.cgi?id=222312
         <rdar://problem/74927624>

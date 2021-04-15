@@ -1,6 +1,5 @@
 onrtctransform = (event) => {
     const transformer = event.transformer;
-    transformer.port.onmessage = (event) => transformer.port.postMessage(event.data);
 
     transformer.reader = transformer.readable.getReader();
     transformer.writer = transformer.writable.getWriter();

@@ -30,7 +30,5 @@
     Exposed=Window,
     JSGenerateToNativeObject,
 ] interface RTCRtpScriptTransform : EventTarget {
-    [CallWith=GlobalObject] constructor(Worker worker, any options);
-
-    readonly attribute MessagePort port;
+    [CallWith=GlobalObject] constructor(Worker worker, any options, optional sequence<object> transfer);
 };

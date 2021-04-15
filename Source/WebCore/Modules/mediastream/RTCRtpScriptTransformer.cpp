@@ -31,6 +31,7 @@
 #include "DedicatedWorkerGlobalScope.h"
 #include "JSRTCEncodedAudioFrame.h"
 #include "JSRTCEncodedVideoFrame.h"
+#include "MessageWithMessagePorts.h"
 #include "RTCRtpTransformableFrame.h"
 #include "ReadableStream.h"
 #include "ReadableStreamSource.h"
@@ -40,7 +41,7 @@
 
 namespace WebCore {
 
-ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(ScriptExecutionContext& context, Ref<SerializedScriptValue>&& options, Ref<MessagePort>&& port)
+ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(ScriptExecutionContext& context, MessageWithMessagePorts&& options)
 {
     if (!context.globalObject())
         return Exception { InvalidStateError };
@@ -51,16 +52,19 @@ ExceptionOr<Ref<RTCRtpScriptTransformer>> RTCRtpScriptTransformer::create(Script
     auto readable = ReadableStream::create(globalObject, readableSource.copyRef());
     if (readable.hasException())
         return readable.releaseException();
+    if (!options.message)
+        return Exception { InvalidStateError };
 
-    auto transformer = adoptRef(*new RTCRtpScriptTransformer(context, WTFMove(options), WTFMove(port), readable.releaseReturnValue(), WTFMove(readableSource)));
+    auto ports = MessagePort::entanglePorts(context, WTFMove(options.transferredPorts));
+    auto transformer = adoptRef(*new RTCRtpScriptTransformer(context, options.message.releaseNonNull(), WTFMove(ports), readable.releaseReturnValue(), WTFMove(readableSource)));
     transformer->suspendIfNeeded();
     return transformer;
 }
 
-RTCRtpScriptTransformer::RTCRtpScriptTransformer(ScriptExecutionContext& context, Ref<SerializedScriptValue>&& options, Ref<MessagePort>&& port, Ref<ReadableStream>&& readable, Ref<SimpleReadableStreamSource>&& readableSource)
+RTCRtpScriptTransformer::RTCRtpScriptTransformer(ScriptExecutionContext& context, Ref<SerializedScriptValue>&& options, Vector<RefPtr<MessagePort>>&& ports, Ref<ReadableStream>&& readable, Ref<SimpleReadableStreamSource>&& readableSource)
     : ActiveDOMObject(&context)
     , m_options(WTFMove(options))
-    , m_port(WTFMove(port))
+    , m_ports(WTFMove(ports))
     , m_readableSource(WTFMove(readableSource))
     , m_readable(WTFMove(readable))
 {
@@ -152,7 +156,7 @@ ExceptionOr<void> RTCRtpScriptTransformer::requestKeyFrame()
 
 JSC::JSValue RTCRtpScriptTransformer::options(JSC::JSGlobalObject& globalObject)
 {
-    return m_options->deserialize(globalObject, &globalObject);
+    return m_options->deserialize(globalObject, &globalObject, m_ports);
 }
 
 } // namespace WebCore

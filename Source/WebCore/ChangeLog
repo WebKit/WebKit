@@ -1,5 +1,37 @@
 2021-04-15  Youenn Fablet  <youenn@apple.com>
 
+        Update RTCScriptTransform constructor up to spec
+        https://bugs.webkit.org/show_bug.cgi?id=224447
+
+        Reviewed by Eric Carlson.
+
+        Remove built-in support for message ports in RTCRtpScriptTransform/RTCRtpScriptTransformer.
+        Instead pass a transfer object to RTCRtpScriptTransform constructor used jointly with options to enable the same behavior.
+        This aligns with the change made in https://github.com/w3c/webrtc-encoded-transform/pull/96.
+
+        Covered by updated tests.
+
+        * Modules/mediastream/RTCRtpScriptTransform.cpp:
+        (WebCore::RTCRtpScriptTransform::create):
+        (WebCore::RTCRtpScriptTransform::RTCRtpScriptTransform):
+        * Modules/mediastream/RTCRtpScriptTransform.h:
+        * Modules/mediastream/RTCRtpScriptTransform.idl:
+        * Modules/mediastream/RTCRtpScriptTransformer.cpp:
+        (WebCore::RTCRtpScriptTransformer::create):
+        (WebCore::RTCRtpScriptTransformer::RTCRtpScriptTransformer):
+        (WebCore::RTCRtpScriptTransformer::options):
+        * Modules/mediastream/RTCRtpScriptTransformer.h:
+        (WebCore::RTCRtpScriptTransformer::port): Deleted.
+        * Modules/mediastream/RTCRtpScriptTransformer.idl:
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::createRTCRtpScriptTransformer):
+        * workers/DedicatedWorkerGlobalScope.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::createRTCRtpScriptTransformer):
+        * workers/Worker.h:
+
+2021-04-15  Youenn Fablet  <youenn@apple.com>
+
         REGRESSION(Safari 14): iframe with blob url does not work with sandboxing
         https://bugs.webkit.org/show_bug.cgi?id=222312
         <rdar://problem/74927624>

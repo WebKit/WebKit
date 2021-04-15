@@ -29,9 +29,10 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include "MessagePort.h"
 #include "RTCRtpScriptTransformer.h"
 #include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -47,10 +48,8 @@ class RTCRtpScriptTransform final
     , public EventTargetWithInlineData {
     WTF_MAKE_ISO_ALLOCATED(RTCRtpScriptTransform);
 public:
-    static ExceptionOr<Ref<RTCRtpScriptTransform>> create(JSC::JSGlobalObject&, Worker&, JSC::JSValue);
+    static ExceptionOr<Ref<RTCRtpScriptTransform>> create(JSC::JSGlobalObject&, Worker&, JSC::JSValue, Vector<JSC::Strong<JSC::JSObject>>&&);
     ~RTCRtpScriptTransform();
-
-    MessagePort& port() { return m_port.get(); }
 
     void setTransformer(RTCRtpScriptTransformer&);
 
@@ -64,14 +63,14 @@ public:
     using ThreadSafeRefCounted::deref;
 
 private:
-    RTCRtpScriptTransform(ScriptExecutionContext&, Ref<Worker>&&, Ref<MessagePort>&&);
+    RTCRtpScriptTransform(ScriptExecutionContext&, Ref<Worker>&&);
 
     void initializeTransformer(RTCRtpTransformBackend&);
     bool setupTransformer(Ref<RTCRtpTransformBackend>&&);
     void clear(RTCRtpScriptTransformer::ClearCallback);
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const { return "RTCRtpScriptTransform"; }
+    const char* activeDOMObjectName() const final { return "RTCRtpScriptTransform"; }
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return RTCRtpScriptTransformEventTargetInterfaceType; }
@@ -80,7 +79,6 @@ private:
     void derefEventTarget() final { deref(); }
 
     Ref<Worker> m_worker;
-    Ref<MessagePort> m_port;
 
     bool m_isAttached { false };
     RefPtr<RTCRtpTransformBackend> m_backend;

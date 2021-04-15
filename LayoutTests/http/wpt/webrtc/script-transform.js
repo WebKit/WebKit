@@ -1,6 +1,6 @@
 onrtctransform = (event) => {
     const transformer = event.transformer;
-    transformer.port.onmessage = (event) => transformer.port.postMessage(event.data);
+    transformer.options.port.onmessage = (event) => transformer.options.port.postMessage(event.data);
 
     self.postMessage("started");
     transformer.reader = transformer.readable.getReader();

@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RTCRtpScriptTransform);
 
-ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlobalObject& state, Worker& worker, JSC::JSValue options)
+ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlobalObject& state, Worker& worker, JSC::JSValue options, Vector<JSC::Strong<JSC::JSObject>>&& transfer)
 {
     if (!worker.scriptExecutionContext())
         return Exception { InvalidStateError, "Worker frame is detached"_s };
@@ -51,26 +51,26 @@ ExceptionOr<Ref<RTCRtpScriptTransform>> RTCRtpScriptTransform::create(JSC::JSGlo
     if (!context)
         return Exception { InvalidStateError, "Invalid context"_s };
 
-    auto serializedOptions = SerializedScriptValue::create(state, options);
-    if (!serializedOptions)
-        return Exception { ExistingExceptionError };
+    Vector<RefPtr<MessagePort>> transferredPorts;
+    auto serializedOptions = SerializedScriptValue::create(state, options, WTFMove(transfer), transferredPorts);
+    if (serializedOptions.hasException())
+        return serializedOptions.releaseException();
 
-    auto messageChannel = MessageChannel::create(*worker.scriptExecutionContext());
-    auto transformMessagePort = messageChannel->port1();
-    auto transformerMessagePort = messageChannel->port2();
+    auto channels = MessagePort::disentanglePorts(WTFMove(transferredPorts));
+    if (channels.hasException())
+        return channels.releaseException();
 
-    auto transform = adoptRef(*new RTCRtpScriptTransform(*context, makeRef(worker), makeRef(*transformMessagePort)));
+    auto transform = adoptRef(*new RTCRtpScriptTransform(*context, makeRef(worker)));
     transform->suspendIfNeeded();
 
-    worker.createRTCRtpScriptTransformer(transform, serializedOptions.releaseNonNull(), transformerMessagePort->disentangle());
+    worker.createRTCRtpScriptTransformer(transform, { serializedOptions.releaseReturnValue(), channels.releaseReturnValue() });
 
     return transform;
 }
 
-RTCRtpScriptTransform::RTCRtpScriptTransform(ScriptExecutionContext& context, Ref<Worker>&& worker, Ref<MessagePort>&& port)
+RTCRtpScriptTransform::RTCRtpScriptTransform(ScriptExecutionContext& context, Ref<Worker>&& worker)
     : ActiveDOMObject(&context)
     , m_worker(WTFMove(worker))
-    , m_port(WTFMove(port))
 {
 }
 

@@ -34,6 +34,5 @@
     readonly attribute WritableStream writable;
     [CallWith=GlobalObject, CachedAttribute] readonly attribute any options;
 
-    readonly attribute MessagePort port;
     undefined requestKeyFrame();
 };

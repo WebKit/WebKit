@@ -77,7 +77,7 @@ public:
     void dispatchEvent(Event&) final;
 
 #if ENABLE(WEB_RTC)
-    void createRTCRtpScriptTransformer(RTCRtpScriptTransform&, Ref<SerializedScriptValue>&&, TransferredMessagePort&&);
+    void createRTCRtpScriptTransformer(RTCRtpScriptTransform&, MessageWithMessagePorts&&);
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
 #endif
 

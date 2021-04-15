@@ -24,7 +24,9 @@ promise_test(async (test) => {
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
 
-    const transform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
+    const channel = new MessageChannel;
+    const transform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', port: channel.port2}, [channel.port2]);
+    transform.port = channel.port1;
     const promise = new Promise(resolve => transform.port.onmessage = (event) => resolve(event.data));
     transform.port.postMessage("test");
     assert_equals(await promise, "test");
@@ -36,8 +38,14 @@ promise_test(async (test) => {
     assert_equals(data, "registered");
 
     const pc = new RTCPeerConnection();
-    const senderTransform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
-    const receiverTransform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
+
+    const senderChannel = new MessageChannel;
+    const receiverChannel = new MessageChannel;
+    const senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', port: senderChannel.port2}, [senderChannel.port2]);
+    const receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', port: receiverChannel.port2}, [receiverChannel.port2]);
+    senderTransform.port = senderChannel.port1;
+    receiverTransform.port = receiverChannel.port1;
+
     const sender1 = pc.addTransceiver('audio').sender;
     const sender2 = pc.addTransceiver('video').sender;
     const receiver1 = pc.getReceivers()[0];
@@ -61,9 +69,13 @@ promise_test(async (test) => {
     assert_equals(data, "registered");
     const localStream = await navigator.mediaDevices.getUserMedia({audio: true});
 
+    const senderChannel = new MessageChannel;
+    const receiverChannel = new MessageChannel;
     let sender, receiver;
-    const senderTransform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
-    const receiverTransform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
+    const senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', port: senderChannel.port2}, [senderChannel.port2]);
+    const receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', port: receiverChannel.port2}, [receiverChannel.port2]);
+    senderTransform.port = senderChannel.port1;
+    receiverTransform.port = receiverChannel.port1;
 
     const startedPromise = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
 
@@ -98,9 +110,13 @@ promise_test(async (test) => {
 
     const localStream = await navigator.mediaDevices.getUserMedia({video: true});
 
+    const senderChannel = new MessageChannel;
+    const receiverChannel = new MessageChannel;
     let sender, receiver;
-    const senderTransform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
-    const receiverTransform = new RTCRtpScriptTransform(worker, 'MockRTCRtpTransform');
+    const senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', port: senderChannel.port2}, [senderChannel.port2]);
+    const receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', port: receiverChannel.port2}, [receiverChannel.port2]);
+    senderTransform.port = senderChannel.port1;
+    receiverTransform.port = receiverChannel.port1;
 
     const startedPromise = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
 
