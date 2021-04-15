@@ -1,3 +1,25 @@
+2021-04-15  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Remove warnings caused by export g_config extern definition in WTFConfig.h
+        https://bugs.webkit.org/show_bug.cgi?id=224462
+
+        Reviewed by Don Olmstead.
+
+        While building PlayStation port, lots of warnings are displayed:
+
+        > WTF/Headers\wtf/WTFConfig.h:49:36: warning: redeclaration of 'WebConfig::g_config'
+        > should not add 'dllimport' attribute [-Wdll-attribute-on-redeclaration]
+        > extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
+        >                                    ^
+        > bmalloc/Headers\bmalloc/GigacageConfig.h:38:17: note: previous declaration is here
+        > extern "C" Slot g_config[];
+
+        This is because the two definitions are not same.
+        Becasue we can't solve the situation completely, we just ignore these warnings at
+        this morment.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
 2021-04-15  Philippe Normand  <pnormand@igalia.com>
 
         [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system
