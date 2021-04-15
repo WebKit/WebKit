@@ -1,5 +1,96 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272196. rdar://problem/76375364
+
+    [SOUP] Stop using SoupBuffer in preparation for libsoup3
+    https://bugs.webkit.org/show_bug.cgi?id=221206
+    
+    Reviewed by Sergio Villar Senin.
+    
+    Source/WebCore:
+    
+    Remove use of SoupBuffer from platform since it's now unused.
+    
+    * platform/SharedBuffer.cpp:
+    (WebCore::SharedBuffer::DataSegment::data const):
+    (WebCore::SharedBuffer::DataSegment::size const):
+    * platform/SharedBuffer.h:
+    * platform/Soup.cmake:
+    * platform/SourcesSoup.txt:
+    * platform/network/soup/GRefPtrSoup.cpp: Removed.
+    * platform/network/soup/GRefPtrSoup.h: Removed.
+    * platform/network/soup/GUniquePtrSoup.h:
+    * platform/network/soup/ResourceRequestSoup.cpp:
+    (WebCore::ResourceRequest::updateSoupMessageBody const):
+    * platform/soup/SharedBufferSoup.cpp: Removed.
+    
+    Source/WebKit:
+    
+    Use GBytes instead of SoupBuffer.
+    
+    * NetworkProcess/cache/NetworkCacheData.h:
+    (WebKit::NetworkCache::Data::bytes const):
+    * NetworkProcess/cache/NetworkCacheDataGLib.cpp: Renamed from Source/WebKit/NetworkProcess/cache/NetworkCacheDataSoup.cpp.
+    (WebKit::NetworkCache::Data::Data):
+    (WebKit::NetworkCache::Data::empty):
+    (WebKit::NetworkCache::Data::data const):
+    (WebKit::NetworkCache::Data::apply const):
+    (WebKit::NetworkCache::Data::subrange const):
+    (WebKit::NetworkCache::concatenate):
+    (WebKit::NetworkCache::Data::adoptMap):
+    (WebKit::NetworkCache::Data::tryCreateSharedMemory const):
+    * NetworkProcess/cache/NetworkCacheIOChannel.h:
+    * NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp: Renamed from Source/WebKit/NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp.
+    (WebKit::NetworkCache::runTaskInQueue):
+    (WebKit::NetworkCache::fillDataFromReadBuffer):
+    (WebKit::NetworkCache::inputStreamReadReadyCallback):
+    (WebKit::NetworkCache::IOChannel::read):
+    (WebKit::NetworkCache::IOChannel::readSyncInThread):
+    (WebKit::NetworkCache::outputStreamWriteReadyCallback):
+    (WebKit::NetworkCache::IOChannel::write):
+    * Shared/ShareableResource.cpp:
+    (WebKit::ShareableResource::wrapInSharedBuffer):
+    * SourcesGTK.txt:
+    * SourcesWPE.txt:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272196 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            [SOUP] Stop using SoupBuffer in preparation for libsoup3
+            https://bugs.webkit.org/show_bug.cgi?id=221206
+
+            Reviewed by Sergio Villar Senin.
+
+            Use GBytes instead of SoupBuffer.
+
+            * NetworkProcess/cache/NetworkCacheData.h:
+            (WebKit::NetworkCache::Data::bytes const):
+            * NetworkProcess/cache/NetworkCacheDataGLib.cpp: Renamed from Source/WebKit/NetworkProcess/cache/NetworkCacheDataSoup.cpp.
+            (WebKit::NetworkCache::Data::Data):
+            (WebKit::NetworkCache::Data::empty):
+            (WebKit::NetworkCache::Data::data const):
+            (WebKit::NetworkCache::Data::apply const):
+            (WebKit::NetworkCache::Data::subrange const):
+            (WebKit::NetworkCache::concatenate):
+            (WebKit::NetworkCache::Data::adoptMap):
+            (WebKit::NetworkCache::Data::tryCreateSharedMemory const):
+            * NetworkProcess/cache/NetworkCacheIOChannel.h:
+            * NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp: Renamed from Source/WebKit/NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp.
+            (WebKit::NetworkCache::runTaskInQueue):
+            (WebKit::NetworkCache::fillDataFromReadBuffer):
+            (WebKit::NetworkCache::inputStreamReadReadyCallback):
+            (WebKit::NetworkCache::IOChannel::read):
+            (WebKit::NetworkCache::IOChannel::readSyncInThread):
+            (WebKit::NetworkCache::outputStreamWriteReadyCallback):
+            (WebKit::NetworkCache::IOChannel::write):
+            * Shared/ShareableResource.cpp:
+            (WebKit::ShareableResource::wrapInSharedBuffer):
+            * SourcesGTK.txt:
+            * SourcesWPE.txt:
+
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r271879. rdar://problem/76375364
 
     [SOUP] Stop using SoupRequest API to load files in preparation for libsoup3

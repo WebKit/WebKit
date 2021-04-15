@@ -88,8 +88,11 @@ RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
     RetainPtr<CFAllocatorRef> deallocator = adoptCF(createShareableResourceDeallocator(this));
     RetainPtr<CFDataRef> cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(data()), static_cast<CFIndex>(size()), deallocator.get()));
     return SharedBuffer::create(cfData.get());
-#elif USE(SOUP)
-    return SharedBuffer::wrapSoupBuffer(soup_buffer_new_with_owner(data(), size(), this, [](void* data) { static_cast<ShareableResource*>(data)->deref(); }));
+#elif USE(GLIB)
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data(), size(), [](void* data) {
+        static_cast<ShareableResource*>(data)->deref();
+    }, this));
+    return SharedBuffer::create(bytes.get());
 #else
     ASSERT_NOT_REACHED();
     return nullptr;

@@ -32,8 +32,8 @@ NetworkProcess/Classifier/WebResourceLoadStatisticsStore.cpp
 
 NetworkProcess/Cookies/soup/WebCookieManagerSoup.cpp
 
-NetworkProcess/cache/NetworkCacheDataSoup.cpp
-NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp
+NetworkProcess/cache/NetworkCacheDataGLib.cpp
+NetworkProcess/cache/NetworkCacheIOChannelGLib.cpp
 
 NetworkProcess/glib/DNSCache.cpp
 NetworkProcess/glib/WebKitCachedResolver.cpp
