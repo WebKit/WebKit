@@ -129,6 +129,7 @@ public:
     void beep();
     void inspectInspector();
     bool isBeingInspected();
+    void setAllowsInspectingInspector(bool);
 
     bool supportsDiagnosticLogging();
 #if ENABLE(INSPECTOR_TELEMETRY)

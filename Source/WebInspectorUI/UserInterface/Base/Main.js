@@ -163,6 +163,7 @@ WI.loaded = function()
     WI.printStylesEnabled = false;
     WI.setZoomFactor(WI.settings.zoomFactor.value);
     InspectorFrontendHost.setForcedAppearance(WI.settings.frontendAppearance.value);
+    InspectorFrontendHost.setAllowsInspectingInspector(WI.settings.experimentalAllowInspectingInspector.value);
     WI.mouseCoords = {x: 0, y: 0};
     WI.modifierKeys = {altKey: false, metaKey: false, shiftKey: false};
     WI.visible = false;
@@ -234,6 +235,7 @@ WI.contentLoaded = function()
     WI.settings.showJavaScriptTypeInformation.addEventListener(WI.Setting.Event.Changed, WI._showJavaScriptTypeInformationSettingChanged, WI);
     WI.settings.enableControlFlowProfiler.addEventListener(WI.Setting.Event.Changed, WI._enableControlFlowProfilerSettingChanged, WI);
     WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, WI._resourceCachingDisabledSettingChanged, WI);
+    WI.settings.experimentalAllowInspectingInspector.addEventListener(WI.Setting.Event.Changed, WI._allowInspectingInspectorSettingChanged, WI);
 
     function setTabSize() {
         document.body.style.tabSize = WI.settings.tabSize.value;
@@ -2955,6 +2957,11 @@ WI._resourceCachingDisabledSettingChanged = function(event)
     for (let target of WI.targets)
         target.NetworkAgent.setResourceCachingDisabled(WI.settings.resourceCachingDisabled.value);
 };
+
+WI._allowInspectingInspectorSettingChanged = function(event)
+{
+    InspectorFrontendHost.setAllowsInspectingInspector(WI.settings.experimentalAllowInspectingInspector.value);
+}
 
 WI.measureElement = function(element)
 {

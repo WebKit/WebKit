@@ -1,3 +1,22 @@
+2021-04-13  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: add setting to allow inspecting Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=224082
+        <rdar://75695002>
+
+        Reviewed by Devin Rousso.
+
+        Add a property to check if inspecting inspector is allowed,
+        and to enable/disable upon loading the frontend or toggling the setting.
+
+        * en.lproj/Localizable.strings:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::inspectInspector):
+        (WebCore::InspectorFrontendHost::allowsInspectingInspector):
+        (WebCore::InspectorFrontendHost::setAllowsInspectingInspector):
+        * inspector/InspectorFrontendHost.h:
+        * inspector/InspectorFrontendHost.idl:
+
 2021-04-14  Sam Weinig  <weinig@apple.com>
 
         Use range-for loop in target contrast selection to simplify/improve code readability

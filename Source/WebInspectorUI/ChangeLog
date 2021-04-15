@@ -1,3 +1,19 @@
+2021-04-13  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: add setting to allow inspecting Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=224082
+        <rdar://75695002>
+
+        Reviewed by Devin Rousso.
+
+        Instead of telling curious users to set the WebKitDeveloperExtras default,
+        expose an experimental setting that does the same thing.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+
 2021-04-06  BJ Burg  <bburg@apple.com>
 
         Web Inspector: remove duplicate Box Model section from Layout panel in Elements Tab
