@@ -39,6 +39,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if USE(SOUP)
+#include "GUniquePtrSoup.h"
+#endif
+
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
 typedef struct _GBytes GBytes;
@@ -83,6 +87,11 @@ public:
     RetainPtr<CFDataRef> createCFData() const;
     static Ref<SharedBuffer> create(CFDataRef);
     void append(CFDataRef);
+#endif
+
+#if USE(SOUP)
+    GUniquePtr<SoupBuffer> createSoupBuffer(unsigned offset = 0, unsigned size = 0);
+    static Ref<SharedBuffer> wrapSoupBuffer(SoupBuffer*);
 #endif
 
 #if USE(GLIB)
@@ -131,6 +140,9 @@ public:
 #if USE(CF)
         static Ref<DataSegment> create(RetainPtr<CFDataRef>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #endif
+#if USE(SOUP)
+        static Ref<DataSegment> create(GUniquePtr<SoupBuffer>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
+#endif
 #if USE(GLIB)
         static Ref<DataSegment> create(GRefPtr<GBytes>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #endif
@@ -150,6 +162,10 @@ public:
         DataSegment(RetainPtr<CFDataRef>&& data)
             : m_immutableData(WTFMove(data)) { }
 #endif
+#if USE(SOUP)
+        DataSegment(GUniquePtr<SoupBuffer>&& data)
+            : m_immutableData(WTFMove(data)) { }
+#endif
 #if USE(GLIB)
         DataSegment(GRefPtr<GBytes>&& data)
             : m_immutableData(WTFMove(data)) { }
@@ -164,6 +180,9 @@ public:
         Variant<Vector<char>,
 #if USE(CF)
             RetainPtr<CFDataRef>,
+#endif
+#if USE(SOUP)
+            GUniquePtr<SoupBuffer>,
 #endif
 #if USE(GLIB)
             GRefPtr<GBytes>,
@@ -203,6 +222,9 @@ private:
     explicit SharedBuffer(FileSystem::MappedFileData&&);
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);
+#endif
+#if USE(SOUP)
+    explicit SharedBuffer(SoupBuffer*);
 #endif
 #if USE(GLIB)
     explicit SharedBuffer(GBytes*);
