@@ -31,12 +31,19 @@
 #import "MockLocalConnection.h"
 #import <wtf/RunLoop.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/MockLocalServiceAdditions.h>
+#else
+#define MOCK_LOCAL_SERVICE_ADDITIONS
+#endif
+
 namespace WebKit {
 
 MockLocalService::MockLocalService(Observer& observer, const WebCore::MockWebAuthenticationConfiguration& configuration)
     : LocalService(observer)
     , m_configuration(configuration)
 {
+MOCK_LOCAL_SERVICE_ADDITIONS
 }
 
 bool MockLocalService::platformStartDiscovery() const
