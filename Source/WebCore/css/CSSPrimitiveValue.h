@@ -159,6 +159,7 @@ public:
     Optional<bool> isZero() const;
     Optional<bool> isPositive() const;
     Optional<bool> isNegative() const;
+    bool isCenterPosition() const;
 
     template<typename T> inline T value(CSSUnitType type) const { return clampTo<T>(doubleValue(type)); }
     template<typename T> inline T value() const { return clampTo<T>(doubleValue()); }

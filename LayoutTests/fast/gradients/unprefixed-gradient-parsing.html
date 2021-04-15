@@ -94,16 +94,18 @@ shouldBe('testGradient("background-image: radial-gradient(white,, black)")', '"n
 shouldBe('testGradient("background-image: radial-gradient(ellipse 10px, white, 25%, 75%, black)")', '"none"');
 shouldBe('testGradient("background-image: radial-gradient(ellipse 10px 20px, white, black)")', '"radial-gradient(10px 20px, white, black)"');
 shouldBe('testGradient("background-image: radial-gradient(circle 10px, white, black)")', '"radial-gradient(10px, white, black)"');
-shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, black)")', '"radial-gradient(10px 10px at center center, white, black)"');
-shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, 50%, black)")', '"radial-gradient(10px 10px at center center, white, 50%, black)"');
-shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, 0%, black)")', '"radial-gradient(10px 10px at center center, white, 0%, black)"');
-shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, 100%, black)")', '"radial-gradient(10px 10px at center center, white, 100%, black)"');
+shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, black)")', '"radial-gradient(10px 10px, white, black)"');
+shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, 50%, black)")', '"radial-gradient(10px 10px, white, 50%, black)"');
+shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, 0%, black)")', '"radial-gradient(10px 10px, white, 0%, black)"');
+shouldBe('testGradient("background-image: radial-gradient(10px 10px at center, white, 100%, black)")', '"radial-gradient(10px 10px, white, 100%, black)"');
 
 var s = "radial-gradient(10px 10px at 50% 50%, ";
 for(var x = 0; x < 500; x++)
 	s += "white " + (x/500) + "%, " + ((2 * x + 1) / 1000) + "%, ";
 s += "black)";
-shouldBe('testGradient("background-image: ' + s + '")', '"' + s + '"');
+// Since we serialize to the shortest form, the default center position is removed from the computed value
+var computedStr = s.replace(" at 50% 50%", "");
+shouldBe('testGradient("background-image: ' + s + '")', '"' + computedStr + '"');
 
 debug('<p>repeating-radial-gradient</p>');
 shouldBe('testGradient("background-image: repeating-radial-gradient(white, black)")', '"repeating-radial-gradient(white, black)"');

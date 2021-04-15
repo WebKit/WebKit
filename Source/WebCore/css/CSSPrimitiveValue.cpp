@@ -853,6 +853,11 @@ Optional<bool> CSSPrimitiveValue::isNegative() const
     return m_value.num < 0;
 }
 
+bool CSSPrimitiveValue::isCenterPosition() const
+{
+    return valueID() == CSSValueCenter || doubleValue(CSSUnitType::CSS_PERCENTAGE) == 50;
+}
+
 Optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType requestedUnitType) const
 {
     if (!isValidCSSUnitTypeForDoubleConversion(primitiveUnitType()) || !isValidCSSUnitTypeForDoubleConversion(requestedUnitType))

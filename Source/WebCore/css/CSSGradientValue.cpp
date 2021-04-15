@@ -289,7 +289,7 @@ public:
                 Color blendedColor = blend(stops[index].color, stops[index + 1].color, interStopProportion);
 
                 // Clamp the positions to 1 and set the color.
-                for (size_t i = index + 1; i <= lastStopIndex; ++i) {
+                for (size_t i = index + 1; i < numStops; ++i) {
                     stops[i].offset = 1;
                     stops[i].color = blendedColor;
                 }
@@ -719,7 +719,7 @@ String CSSLinearGradientValue::customCSSText() const
         if (m_angle && m_angle->computeDegrees() != 180) {
             result.append(m_angle->cssText());
             wroteSomething = true;
-        } else if ((firstX() || firstY()) && !(!firstX() && firstY() && firstY()->valueID() == CSSValueBottom)) {
+        } else if (firstX() || (firstY() && firstY()->valueID() != CSSValueBottom)) {
             result.appendLiteral("to ");
             appendSpaceSeparatedOptionalCSSPtrText(result, firstX(), firstY());
             wroteSomething = true;
@@ -945,7 +945,7 @@ String CSSRadialGradientValue::customCSSText() const
             wroteSomething = true;
         }
 
-        if (firstX() || firstY()) {
+        if ((firstX() && !firstX()->isCenterPosition()) || (firstY() && !firstY()->isCenterPosition())) {
             if (wroteSomething)
                 result.append(' ');
             result.appendLiteral("at ");
@@ -1225,12 +1225,12 @@ String CSSConicGradientValue::customCSSText() const
 
     bool wroteSomething = false;
 
-    if (m_angle) {
+    if (m_angle && m_angle->computeDegrees() > 0) {
         result.append("from ", m_angle->cssText());
         wroteSomething = true;
     }
 
-    if (firstX() && firstY()) {
+    if ((firstX() && !firstX()->isCenterPosition()) || (firstY() && !firstY()->isCenterPosition())) {
         if (wroteSomething)
             result.append(' ');
         result.appendLiteral("at ");
