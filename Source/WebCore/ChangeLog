@@ -1,3 +1,84 @@
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r275687. rdar://problem/76192721
+
+    REGRESSION(r273541) WKWebView can't load NSURLRequest subclasses
+    https://bugs.webkit.org/show_bug.cgi?id=224338
+    Source/WebCore:
+    
+    <rdar://76192721>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-04-08
+    Reviewed by Brent Fulgham.
+    
+    We used to use SPI to extract the CFURLRequestRef, but now we just call encodeWithCoder and initWithCoder.
+    That's great for many reasons, but to stay binary compatible we have to continue to support NSURLRequest subclasses.
+    They fail in two possible ways:
+    
+    1. In ObjC, you can do wild and crazy things such as overriding encodeWithCoder and not calling [super encodeWithCoder:coder];
+    2. The process decoding the request (one of our auxiliary processes) almost certainly has not linked with the definition of the subclass.
+       This makes us receive an NSException like this when calling decodeObjectOfClasses:forKey:
+    
+       *** -[NSKeyedUnarchiver decodeObjectForKey:]: cannot decode object of class (TestURLRequest) for key (root) because no class named "TestURLRequest" was found;
+       the class needs to be defined in source code or linked in from a library (ensure the class is part of the correct target).
+       If the class was renamed, use setClassName:forClass: to add a class translation mapping to NSKeyedUnarchiver
+    
+    To solve this problem, when attempting to encode a request that is not an NSURLRequest or NSMutableURLRequest, use existing code in ResourceRequest to extract
+    the parts we use into an NSMutableURLRequest that we can successfully decode.
+    
+    * platform/network/cf/ResourceRequest.h:
+    * platform/network/cocoa/ResourceRequestCocoa.mm:
+    (WebCore::ResourceRequest::replacePlatformRequest):
+    
+    Source/WebKit:
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-04-08
+    Reviewed by Brent Fulgham.
+    
+    * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+    (IPC::ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData):
+    
+    Tools:
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-04-08
+    Reviewed by Brent Fulgham.
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm:
+    (respond):
+    * TestWebKitAPI/Tests/WebKitCocoa/LoadInvalidURLRequest.mm:
+    (-[TestURLRequest initWithURL:]):
+    (TestWebKitAPI::TEST):
+    * TestWebKitAPI/Tests/WebKitCocoa/TestURLSchemeHandler.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275687 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-08  Alex Christensen  <achristensen@webkit.org>
+
+            REGRESSION(r273541) WKWebView can't load NSURLRequest subclasses
+            https://bugs.webkit.org/show_bug.cgi?id=224338
+            <rdar://76192721>
+
+            Reviewed by Brent Fulgham.
+
+            We used to use SPI to extract the CFURLRequestRef, but now we just call encodeWithCoder and initWithCoder.
+            That's great for many reasons, but to stay binary compatible we have to continue to support NSURLRequest subclasses.
+            They fail in two possible ways:
+
+            1. In ObjC, you can do wild and crazy things such as overriding encodeWithCoder and not calling [super encodeWithCoder:coder];
+            2. The process decoding the request (one of our auxiliary processes) almost certainly has not linked with the definition of the subclass.
+               This makes us receive an NSException like this when calling decodeObjectOfClasses:forKey:
+
+               *** -[NSKeyedUnarchiver decodeObjectForKey:]: cannot decode object of class (TestURLRequest) for key (root) because no class named "TestURLRequest" was found;
+               the class needs to be defined in source code or linked in from a library (ensure the class is part of the correct target).
+               If the class was renamed, use setClassName:forClass: to add a class translation mapping to NSKeyedUnarchiver
+
+            To solve this problem, when attempting to encode a request that is not an NSURLRequest or NSMutableURLRequest, use existing code in ResourceRequest to extract
+            the parts we use into an NSMutableURLRequest that we can successfully decode.
+
+            * platform/network/cf/ResourceRequest.h:
+            * platform/network/cocoa/ResourceRequestCocoa.mm:
+            (WebCore::ResourceRequest::replacePlatformRequest):
+
 2021-04-09  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r275775. rdar://problem/76467684

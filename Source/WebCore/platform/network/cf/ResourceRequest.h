@@ -95,6 +95,8 @@ public:
 
     static bool resourcePrioritiesEnabled();
 
+    WEBCORE_EXPORT void replacePlatformRequest(HTTPBodyUpdatePolicy);
+
 private:
     friend class ResourceRequestBase;
 
