@@ -2404,7 +2404,8 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameOptimize, EncodedJSValue, (JSGlo
 
     if (baseValue.isObject()) {
         const Identifier fieldName = fieldNameValue.toPropertyKey(globalObject);
-        EXCEPTION_ASSERT(!scope.exception());
+        EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         ASSERT(fieldName.isSymbol());
 
         JSObject* base = jsCast<JSObject*>(baseValue.asCell());

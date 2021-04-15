@@ -1,3 +1,17 @@
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception check in operationGetPrivateNameOptimize().
+        https://bugs.webkit.org/show_bug.cgi?id=224592
+        rdar://76645873
+
+        Reviewed by Yusuke Suzuki.
+
+        Though the fieldNameValue.toPropertyKey() call in operationGetPrivateNameOptimize()
+        would not normally throw an exception, it still can throw a TerminationException
+        because it contains RETURN_IF_EXCEPTION checks.
+
+        * jit/JITOperations.cpp:
+
 2021-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Do not copy SimpleJumpTable

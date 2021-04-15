@@ -1,5 +1,15 @@
 2021-04-14  Mark Lam  <mark.lam@apple.com>
 
+        Add missing exception check in operationGetPrivateNameOptimize().
+        https://bugs.webkit.org/show_bug.cgi?id=224592
+        rdar://76645873
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/suppress-TerminationException-in-operationGetPrivateNameOptimize.js: Added.
+
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
         Defer TerminationExceptions when evaluating ASSERT in HashMapIml::addNormalized().
         https://bugs.webkit.org/show_bug.cgi?id=224565
         rdar://76645980
