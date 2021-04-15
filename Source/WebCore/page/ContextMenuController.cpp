@@ -847,18 +847,37 @@ void ContextMenuController::populate()
         return;
 #endif
 
-    if (!m_context.hitTestResult().isContentEditable()) {
-        auto selectedString = m_context.hitTestResult().selectedText();
-        m_context.setSelectedText(selectedString);
+    auto addSelectedTextActionsIfNeeded = [&] (const String& selectedText) {
+        if (selectedText.isEmpty())
+            return;
 
-        if (!selectedString.isEmpty()) {
-            if (auto view = makeRefPtr(frame->view())) {
-                auto selectionBoundsInContentCoordinates = enclosingIntRect(frame->selection().selectionBounds());
-                if (!selectionBoundsInContentCoordinates.isEmpty())
-                    m_context.setSelectionBounds(view->contentsToRootView(selectionBoundsInContentCoordinates));
-            }
+#if PLATFORM(COCOA)
+        ContextMenuItem lookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedText));
+        appendItem(lookUpInDictionaryItem, m_contextMenu.get());
+#endif
+
+#if HAVE(TRANSLATION_UI_SERVICES)
+        ContextMenuItem translateItem(ActionType, ContextMenuItemTagTranslate, contextMenuItemTagTranslate(selectedText));
+        appendItem(translateItem, m_contextMenu.get());
+#endif
+
+#if !PLATFORM(GTK)
+        appendItem(SearchWebItem, m_contextMenu.get());
+        appendItem(*separatorItem(), m_contextMenu.get());
+#endif
+    };
+
+    auto selectedText = m_context.hitTestResult().selectedText();
+    if (!selectedText.isEmpty()) {
+        m_context.setSelectedText(selectedText);
+        if (auto view = makeRefPtr(frame->view())) {
+            auto selectionBoundsInContentCoordinates = enclosingIntRect(frame->selection().selectionBounds());
+            if (!selectionBoundsInContentCoordinates.isEmpty())
+                m_context.setSelectionBounds(view->contentsToRootView(selectionBoundsInContentCoordinates));
         }
+    }
 
+    if (!m_context.hitTestResult().isContentEditable()) {
         FrameLoader& loader = frame->loader();
         URL linkURL = m_context.hitTestResult().absoluteLinkURL();
         if (!linkURL.isEmpty()) {
@@ -934,22 +953,7 @@ void ContextMenuController::populate()
                 appendItem(*separatorItem(), m_contextMenu.get());
 
             if (m_context.hitTestResult().isSelected()) {
-                if (!selectedString.isEmpty()) {
-#if PLATFORM(COCOA)
-                    ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
-
-                    appendItem(LookUpInDictionaryItem, m_contextMenu.get());
-#endif
-#if HAVE(TRANSLATION_UI_SERVICES)
-                    ContextMenuItem TranslateItem(ActionType, ContextMenuItemTagTranslate, contextMenuItemTagTranslate(selectedString));
-                    appendItem(TranslateItem, m_contextMenu.get());
-#endif
-
-#if !PLATFORM(GTK)
-                    appendItem(SearchWebItem, m_contextMenu.get());
-                    appendItem(*separatorItem(), m_contextMenu.get());
-#endif
-                }
+                addSelectedTextActionsIfNeeded(selectedText);
 
                 appendItem(CopyItem, m_contextMenu.get());
 #if PLATFORM(COCOA)
@@ -1081,19 +1085,8 @@ void ContextMenuController::populate()
             appendItem(*separatorItem(), m_contextMenu.get());
         }
 
-        String selectedText = m_context.hitTestResult().selectedText();
-        if (m_context.hitTestResult().isSelected() && !inPasswordField && !selectedText.isEmpty()) {
-#if PLATFORM(COCOA)
-            ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedText));
-
-            appendItem(LookUpInDictionaryItem, m_contextMenu.get());
-#endif
-
-#if !PLATFORM(GTK)
-            appendItem(SearchWebItem, m_contextMenu.get());
-            appendItem(*separatorItem(), m_contextMenu.get());
-#endif
-        }
+        if (m_context.hitTestResult().isSelected() && !inPasswordField)
+            addSelectedTextActionsIfNeeded(selectedText);
 
         appendItem(CutItem, m_contextMenu.get());
         appendItem(CopyItem, m_contextMenu.get());

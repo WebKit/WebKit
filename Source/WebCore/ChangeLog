@@ -1,3 +1,23 @@
+2021-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Support the Translate menu item in editable selected text
+        https://bugs.webkit.org/show_bug.cgi?id=224625
+        <rdar://problem/76723022>
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Adjust some logic in `ContextMenuController` to ensure that the "Translate" context menu item shows up for
+        selected text in both editable and non-editable fields. To do this, we pull code for appending the menu items
+        out into a separate lambda function, which we use in both cases. This also allows us to remove some duplicated
+        code between the editable and non-editable codepaths.
+
+        Test: fast/events/contextmenu-actions-in-selected-text.html
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+
+        Additionally, set `selectedText` and `selectionBounds` in both cases, as long as there is selected text.
+
 2021-04-15  Ian Gilbert  <iang@apple.com>
 
         Null pointer dereference on MediaStreamAudioSourceNode destructor
