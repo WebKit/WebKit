@@ -169,4 +169,7 @@ webkit.org/b/224121 css2.1/20110323/replaced-intrinsic-ratio-001.htm [ Pass Fail
 webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
 http/tests/navigation/page-cache-mediastream.html [ Pass Crash ]
 
-webkit.org/b/224566 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Pass Crash ]
+# webkit.org/b/224566 The following three tests are flaky crashing causing issues with EWS/commit queue.
+http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Pass Crash ]
+imported/w3c/web-platform-tests/webmessaging/with-ports/011.html [ Pass Crash ]
+webgl/1.0.3/conformance/glsl/matrices/glsl-mat3-construction.html [ Pass Crash ]
