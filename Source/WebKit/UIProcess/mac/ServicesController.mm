@@ -101,20 +101,19 @@ void ServicesController::refreshExistingServices(bool refreshImmediately)
             m_hasSelectionServices = hasServices;
         });
 
-        static NeverDestroyed<RetainPtr<NSAttributedString>> attributedStringWithRichContent;
-        static std::once_flag attributedStringWithRichContentOnceFlag;
-        std::call_once(attributedStringWithRichContentOnceFlag, [&] {
-            dispatch_sync(dispatch_get_main_queue(), [&] {
+        static NSAttributedString *attributedStringWithRichContent = [] {
+            NSMutableAttributedString *richString;
+            dispatch_sync(dispatch_get_main_queue(), [&richString] {
                 auto attachment = adoptNS([[NSTextAttachment alloc] init]);
                 auto cell = adoptNS([[NSTextAttachmentCell alloc] initImageCell:image]);
                 [attachment setAttachmentCell:cell.get()];
-                auto richString = adoptNS([[NSAttributedString attributedStringWithAttachment:attachment.get()] mutableCopy]);
+                richString = [[NSAttributedString attributedStringWithAttachment:attachment.get()] mutableCopy];
                 [richString appendAttributedString:attributedString];
-                attributedStringWithRichContent.get() = WTFMove(richString);
             });
-        });
+            return richString;
+        }();
 
-        hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ attributedStringWithRichContent.get().get() ], [this] (bool hasServices) {
+        hasCompatibleServicesForItems(serviceLookupGroup.get(), @[ attributedStringWithRichContent ], [this] (bool hasServices) {
             m_hasRichContentServices = hasServices;
         });
 

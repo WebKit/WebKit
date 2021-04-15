@@ -42,11 +42,7 @@
 @implementation WebApplicationCache
 
 #if PLATFORM(IOS_FAMILY)
-static RetainPtr<NSString>& overrideBundleIdentifier()
-{
-    static NeverDestroyed<RetainPtr<NSString>> overrideBundleIdentifier;
-    return overrideBundleIdentifier;
-}
+static NSString *overrideBundleIdentifier;
 
 // FIXME: This will be removed when WebKitInitializeApplicationCachePathIfNecessary()
 // is moved from WebView.mm to WebKitInitializeApplicationCacheIfNecessary() in this file.
@@ -59,8 +55,8 @@ static RetainPtr<NSString>& overrideBundleIdentifier()
 
     WebCore::SQLiteDatabaseTracker::setClient(&WebCore::WebSQLiteDatabaseTrackerClient::sharedWebSQLiteDatabaseTrackerClient());
 
-    ASSERT(!overrideBundleIdentifier());
-    overrideBundleIdentifier() = adoptNS([bundleIdentifier copy]);
+    ASSERT(!overrideBundleIdentifier);
+    overrideBundleIdentifier = [bundleIdentifier copy];
 
     initialized = YES;
 }
@@ -69,8 +65,8 @@ static RetainPtr<NSString>& overrideBundleIdentifier()
 static NSString *applicationCacheBundleIdentifier()
 {
 #if PLATFORM(IOS_FAMILY)
-    if (overrideBundleIdentifier())
-        return overrideBundleIdentifier().get();
+    if (overrideBundleIdentifier)
+        return overrideBundleIdentifier;
     if (WebCore::IOSApplication::isMobileSafari())
         return @"com.apple.WebAppCache";
 #endif

@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-static RetainPtr<NSString> createSystemMarketingVersion()
+static NSString *createSystemMarketingVersion()
 {
     // Can't use -[NSProcessInfo operatingSystemVersionString] because it has too much stuff we don't want.
     NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, YES) objectAtIndex:0];
@@ -37,13 +37,13 @@ static RetainPtr<NSString> createSystemMarketingVersion()
 #endif
     NSString *systemVersionPlistPath = [systemLibraryPath stringByAppendingPathComponent:@"CoreServices/SystemVersion.plist"];
     NSDictionary *systemVersionInfo = [NSDictionary dictionaryWithContentsOfFile:systemVersionPlistPath];
-    return adoptNS([[systemVersionInfo objectForKey:@"ProductVersion"] copy]);
+    return [[systemVersionInfo objectForKey:@"ProductVersion"] copy];
 }
 
 NSString *systemMarketingVersion()
 {
-    static NeverDestroyed<RetainPtr<NSString>> version = createSystemMarketingVersion();
-    return version.get().get();
+    static NSString *version = createSystemMarketingVersion();
+    return version;
 }
 
 }

@@ -534,13 +534,13 @@ static PlatformFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMut
 
 static NSParagraphStyle *defaultParagraphStyle()
 {
-    static auto defaultParagraphStyle = makeNeverDestroyed([] {
-        auto defaultParagraphStyle = adoptNS([[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy]);
+    static NSMutableParagraphStyle *defaultParagraphStyle = nil;
+    if (!defaultParagraphStyle) {
+        defaultParagraphStyle = [[PlatformNSParagraphStyle defaultParagraphStyle] mutableCopy];
         [defaultParagraphStyle setDefaultTabInterval:36];
         [defaultParagraphStyle setTabStops:@[]];
-        return defaultParagraphStyle;
-    }());
-    return defaultParagraphStyle.get().get();
+    }
+    return defaultParagraphStyle;
 }
 
 RefPtr<CSSValue> HTMLConverterCaches::computedStylePropertyForElement(Element& element, CSSPropertyID propertyId)

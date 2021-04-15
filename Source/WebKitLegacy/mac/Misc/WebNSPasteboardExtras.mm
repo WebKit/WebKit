@@ -83,15 +83,18 @@ static NSArray *_writableTypesForImageWithoutArchive (void)
     return types;
 }
 
+static inline NSArray *_createWritableTypesForImageWithArchive()
+{
+    NSMutableArray *types = [_writableTypesForImageWithoutArchive() mutableCopy];
+    [types addObject:legacyRTFDPasteboardType()];
+    [types addObject:WebArchivePboardType];
+    return types;
+}
+
 static NSArray *_writableTypesForImageWithArchive (void)
 {
-    static auto types = makeNeverDestroyed([] {
-        auto types = adoptNS([_writableTypesForImageWithoutArchive() mutableCopy]);
-        [types addObject:legacyRTFDPasteboardType()];
-        [types addObject:WebArchivePboardType];
-        return types;
-    }());
-    return types.get().get();
+    static NSArray *types = _createWritableTypesForImageWithArchive();
+    return types;
 }
 
 + (NSArray *)_web_writableTypesForImageIncludingArchive:(BOOL)hasArchive

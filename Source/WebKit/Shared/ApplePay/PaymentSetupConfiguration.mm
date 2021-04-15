@@ -84,16 +84,16 @@ void PaymentSetupConfiguration::encode(IPC::Encoder& encoder) const
 
 Optional<PaymentSetupConfiguration> PaymentSetupConfiguration::decode(IPC::Decoder& decoder)
 {
-    static NeverDestroyed<RetainPtr<NSArray>> allowedClasses;
+    static NSArray *allowedClasses;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         auto allowed = adoptNS([[NSMutableArray alloc] initWithCapacity:1]);
         if (auto pkPaymentSetupConfigurationClass = PAL::getPKPaymentSetupConfigurationClass())
             [allowed addObject:pkPaymentSetupConfigurationClass];
-        allowedClasses.get() = adoptNS([allowed copy]);
+        allowedClasses = [allowed copy];
     });
 
-    auto configuration = IPC::decode<PKPaymentSetupConfiguration>(decoder, allowedClasses.get().get());
+    auto configuration = IPC::decode<PKPaymentSetupConfiguration>(decoder, allowedClasses);
     if (!configuration)
         return WTF::nullopt;
 

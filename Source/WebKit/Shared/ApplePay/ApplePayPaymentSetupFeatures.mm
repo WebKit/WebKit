@@ -64,17 +64,17 @@ void PaymentSetupFeatures::encode(IPC::Encoder& encoder) const
 
 Optional<PaymentSetupFeatures> PaymentSetupFeatures::decode(IPC::Decoder& decoder)
 {
-    static NeverDestroyed<RetainPtr<NSArray>> allowedClasses;
+    static NSArray *allowedClasses;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         auto allowed = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
         [allowed addObject:[NSArray class]];
         if (auto pkPaymentSetupFeatureClass = PAL::getPKPaymentSetupFeatureClass())
             [allowed addObject:pkPaymentSetupFeatureClass];
-        allowedClasses.get() = adoptNS([allowed copy]);
+        allowedClasses = [allowed copy];
     });
 
-    auto platformFeatures = IPC::decode<NSArray<PKPaymentSetupFeature *>>(decoder, allowedClasses.get().get());
+    auto platformFeatures = IPC::decode<NSArray<PKPaymentSetupFeature *>>(decoder, allowedClasses);
     if (!platformFeatures)
         return WTF::nullopt;
 

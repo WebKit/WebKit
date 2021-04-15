@@ -410,16 +410,17 @@ CALayer *WebPageProxy::acceleratedCompositingRootLayer() const
 
 static NSString *temporaryPDFDirectoryPath()
 {
-    static auto temporaryPDFDirectoryPath = makeNeverDestroyed([] {
+    static NSString *temporaryPDFDirectoryPath;
+
+    if (!temporaryPDFDirectoryPath) {
         NSString *temporaryDirectoryTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"WebKitPDFs-XXXXXX"];
         CString templateRepresentation = [temporaryDirectoryTemplate fileSystemRepresentation];
 
         if (mkdtemp(templateRepresentation.mutableData()))
-            return adoptNS([[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy]);
-        return RetainPtr<id> { };
-    }());
+            temporaryPDFDirectoryPath = [[[NSFileManager defaultManager] stringWithFileSystemRepresentation:templateRepresentation.data() length:templateRepresentation.length()] copy];
+    }
 
-    return temporaryPDFDirectoryPath.get().get();
+    return temporaryPDFDirectoryPath;
 }
 
 static NSString *pathToPDFOnDisk(const String& suggestedFilename)

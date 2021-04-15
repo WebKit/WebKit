@@ -1647,15 +1647,13 @@ public:
         @{ WebKitDefaultTextEncodingNamePreferenceKey: defaultTextEncodingNameForSystemLanguage() }];
 }
 
-static RetainPtr<NSString>& classIBCreatorID()
-{
-    static NeverDestroyed<RetainPtr<NSString>> classIBCreatorID;
-    return classIBCreatorID;
-}
+static NSString *classIBCreatorID = nil;
 
 + (void)_setIBCreatorID:(NSString *)string
 {
-    classIBCreatorID() = adoptNS([string copy]);
+    NSString *old = classIBCreatorID;
+    classIBCreatorID = [string copy];
+    [old release];
 }
 
 - (BOOL)isDOMPasteAllowed
@@ -2948,7 +2946,7 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 + (NSString *)_IBCreatorID
 {
-    return classIBCreatorID().get();
+    return classIBCreatorID;
 }
 
 + (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key

@@ -100,16 +100,16 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 
 static NSString *systemDirectoryPath()
 {
-    static NeverDestroyed<RetainPtr<NSString>> path = adoptNS([^{
+    static NSString *path = [^{
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
         char *simulatorRoot = getenv("SIMULATOR_ROOT");
         return simulatorRoot ? [NSString stringWithFormat:@"%s/System/", simulatorRoot] : @"/System/";
 #else
         return @"/System/";
 #endif
-    }() copy]);
+    }() copy];
 
-    return path.get().get();
+    return path;
 }
 
 void ProcessLauncher::launchProcess()
