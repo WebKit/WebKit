@@ -1,3 +1,17 @@
+2021-04-15  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Cleanup the inline tree when moving subtrees
+        https://bugs.webkit.org/show_bug.cgi?id=224342
+        <rdar://76349279>
+
+        Reviewed by Antti Koivisto.
+
+        When an inline box is moved over to a different BFC (<span>), any inline level descendant (<span><img></span>) should be invalidated. The safest way to do this is
+        to destroy the inline tree (the "subtree moving" will eventually be replaced by "destroy followed by construct" activity).
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::move):
+
 2021-04-15  Youenn Fablet  <youenn@apple.com>
 
         Update RTCScriptTransform constructor up to spec
