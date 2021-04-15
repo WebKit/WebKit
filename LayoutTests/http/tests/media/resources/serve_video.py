@@ -17,9 +17,9 @@ https = os.environ.get('HTTPS', None)
 
 radio_url = ''
 if https is None:
-    radio_url += 'https://'
-else:
     radio_url += 'http://'
+else:
+    radio_url += 'https://'
 radio_url += '{}{}'.format(os.environ.get('HTTP_HOST', ''), os.environ.get('REQUEST_URI', ''))
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
@@ -29,11 +29,18 @@ media_directory = ''
 if name != '':
     media_directory = os.path.abspath(os.path.dirname(name))
 file_name = name
+file_size = os.path.getsize(file_name)
+
+file_in_db = False
+file_index_in_db = -1
+
+start = 0
+end = file_size - 1
 
 # Set Variables
 settings = {
     'chunkSize': int(query.get('chunkSize', [1024 * 256])[0]),
-    'databaseFile': 'metadata.db',
+    'databaseFile': 'metadata.json',
     'httpStatus': '500 Internal Server Error',
     'mediaDirectory': media_directory,
     'mimeType': query.get('type', [''])[0],
@@ -62,7 +69,6 @@ def answering():
         sys.stdout.flush()
         sys.exit(0)
 
-    file_size = os.path.getsize(file_name)
     last_modified = datetime.utcnow()
     sys.stdout.write(
         'Last-Modified: {} GMT\r\n'
@@ -71,9 +77,9 @@ def answering():
     )
 
     if settings['setIcyData'] == 'yes':
-        bit_rate = math.ceil(play_files[len(play_files) - 1]['mimeType'] / 1000)
+        bit_rate = math.ceil(play_files[file_index_in_db]['bitRate'] / 1000)
         if settings['mimeType'] == '':
-            settings['mimeType'] = play_files[len(play_files) - 1]['mimeType']
+            settings['mimeType'] = play_files[file_index_in_db]['mimeType']
 
         sys.stdout.write(
             'icy-notice1: <BR>This stream requires a shoutcast/icecast compatible player.<BR>\r\n'
@@ -89,8 +95,6 @@ def answering():
 
     if settings['supportRanges'] != 'no':
         sys.stdout.write('Accept-Ranges: bytes\r\n')
-    if settings['setContentLength'] != 'no':
-        sys.stdout.write('Content-Length: {}\r\n'.format(end - start + 1))
     if content_range is not None:
         sys.stdout.write('Content-Range: bytes {}-{}/{}\r\n'.format(start, end, file_size))
     sys.stdout.write('\r\n')
@@ -107,9 +111,10 @@ def answering():
             read_size = min(settings['chunkSize'], settings['stallOffset'] - offset)
             stall_now = True
 
-        buff = content[offset:read_size]
+        buff = content[offset:offset + read_size]
         read_length = len(buff)
 
+        sys.stdout.flush()
         sys.stdout.buffer.write(buff)
         sys.stdout.flush()
         offset += read_length
@@ -148,11 +153,11 @@ if settings['setIcyData'] == 'yes':
 
     play_files = {}
     with open(settings['databaseFile'], 'r') as file:
-        play_files = json.loads(file.read())
-    sys.stderr.write('\n{}\n'.format(play_files))
+        json_content = file.read()
+        play_files = json.loads(json_content)
 
-    file_in_db = False
     for play_file in play_files:
+        file_index_in_db += 1
         if file_name.split('/')[-1] == play_file['fileName']:
             file_in_db = True
             break
@@ -162,15 +167,12 @@ if settings['setIcyData'] == 'yes':
         answering()
 
 # We have everything that's needed to send the media file
-file_size = os.path.getsize(file_name)
 if settings['stallOffset'] > file_size:
     sys.stderr.write('The \'stallOffset\' offset parameter is greater than file size ({}).\n'.format(file_size))
     answering()
 
-start = 0
-end = file_size - 1
 content_range = None
-if settings['supportRanges'] != 'no' and os.environ.get('HTTP_RANGE', None) is not None:
+if settings['supportRanges'] != 'no' and 'HTTP_RANGE' in os.environ.keys():
     content_range = os.environ.get('HTTP_RANGE')
 if content_range is not None:
     rng = content_range[len('bytes='):].split('-')

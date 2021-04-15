@@ -1,3 +1,59 @@
+2021-04-15  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/media convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=224528
+        <rdar://problem/76627995>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/media/media-document-referer.html:
+        * http/tests/media/media-document.html:
+        * http/tests/media/media-play-stream-chunked-icy.html:
+        * http/tests/media/media-seeking-no-ranges-server.html:
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html:
+        * http/tests/media/modern-media-controls/pip-support/pip-support-live-broadcast.html:
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html:
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html:
+        * http/tests/media/modern-media-controls/status-support/status-support-live-broadcast.html:
+        * http/tests/media/modern-media-controls/time-control/1-to-10-hours.html:
+        * http/tests/media/modern-media-controls/time-control/10-hours-or-more.html:
+        * http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour.html:
+        * http/tests/media/modern-media-controls/time-control/less-than-10-minutes.html:
+        * http/tests/media/resources/create-id3-db.php:
+        * http/tests/media/resources/hls/generate-vod.php: Removed.
+        * http/tests/media/resources/hls/generate-vod.py: Added.
+        * http/tests/media/resources/hls/playlist-with-cookie.m3u8:
+        * http/tests/media/resources/hls/sub-playlist-with-cookie.php: Removed.
+        * http/tests/media/resources/hls/sub-playlist-with-cookie.py: Added.
+        * http/tests/media/resources/hls/test-live.php: Removed.
+        * http/tests/media/resources/hls/test-live.py: Added.
+        * http/tests/media/resources/load-video.php: Removed.
+        * http/tests/media/resources/load-video.py: Added.
+        * http/tests/media/resources/serve-video.php: Removed.
+        * http/tests/media/resources/serve_video.py:
+        (answering):
+        * http/tests/media/resources/video-auth.php: Removed.
+        * http/tests/media/resources/video-auth.py: Added.
+        * http/tests/media/resources/video-check-useragent.php: Removed.
+        * http/tests/media/resources/video-check-useragent.py: Added.
+        * http/tests/media/resources/video-cookie-check-cookie.php: Removed.
+        * http/tests/media/resources/video-cookie-check-cookie.py: Added.
+        * http/tests/media/resources/video-referer-check-referer.php: Removed.
+        * http/tests/media/resources/video-referer-check-referer.py: Added.
+        * http/tests/media/video-auth-expected.txt:
+        * http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials-expected.txt:
+        * http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html:
+        * http/tests/media/video-auth.html:
+        * http/tests/media/video-cookie.html:
+        * http/tests/media/video-no-content-length-stall.html:
+        * http/tests/media/video-play-stall.html:
+        * http/tests/media/video-play-waiting.html:
+        * http/tests/media/video-query-url.html:
+        * http/tests/media/video-referer.html:
+        * http/tests/media/video-useragent.html:
+        * media/content/metadata.db: Removed.
+        * media/content/metadata.json: Added.
+
 2021-04-15  Youenn Fablet  <youenn@apple.com>
 
         Make RTCEncodedVideoFrameMetadata.contributingSources undefined until properly supported

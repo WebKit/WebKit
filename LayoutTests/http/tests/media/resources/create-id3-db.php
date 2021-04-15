@@ -7,7 +7,7 @@
 
 
     // This script creates, overwriting if needed, the "metadata.db"
-    // file used by scripts such as "serve-video.php".
+    // file used by scripts such as "serve-video.py".
     //
     // For creating or updating an existing file you have to run the
     // http server used by the tests with:

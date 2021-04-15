@@ -14,7 +14,7 @@
                 frame.width = 0;
                 frame.height = 0;
                 frame.addEventListener('load', function () {
-                    video.src = 'http://127.0.0.1:8000/media/resources/load-video.php?name=' + movie + '&type=' + type;
+                    video.src = 'http://127.0.0.1:8000/media/resources/load-video.py?name=' + movie + '&type=' + type;
     
                     waitForEventAndFail('error');
                     waitForEventAndEnd('canplay');
