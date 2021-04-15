@@ -1,3 +1,16 @@
+2021-04-15  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r275921-r275922): [ wk2 ] http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=224566
+        <rdar://problem/76657007>
+
+        Reviewed by Tim Horton.
+
+        Unskip layout tests that should no longer be flaky.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update tests expected to fail but passing.

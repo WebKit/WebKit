@@ -1,3 +1,38 @@
+2021-04-15  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r275921-r275922): [ wk2 ] http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=224566
+        <rdar://problem/76657007>
+
+        Reviewed by Tim Horton.
+
+        r275921-r275922 changed the timing of when the WebProcess/RemoteRenderingBackendProxy sends the GPUConnectionToWebProcess::CreateRenderingBackend
+        IPC to the GPUProcess. This IPC used to get sent as soon as the RemoteRenderingBackendProxy was constructed. However, I delayed sending it until
+        the RemoteRenderingBackendProxy actually needs to create an ImageBuffer to avoid launching the GPUProcess prematurely.
+
+        Unfortunately, this exposed a pre-existing synchronization issue with regards to the RemoteRenderingBackend IPC. In particular, the
+        GPUConnectionToWebProcess::CreateRenderingBackend was getting sent asynchronously and processed by the GPUProcess on the main thread. This would
+        cause the creation of the RemoteRenderingBackend object on the GPUProcess side, which would then register itself as a WorkQueueMessageReceiver.
+        The issue is that the WebProcess was sending the RemoteRenderingBackend IPC so quickly after the CreateRenderingBackend IPC that when the IPC is
+        received (on the IPC thread), the RemoteRenderingBackend has not had a change to register itself as a WorkQueueMessageReceiver yet. As a result,
+        some of the early IPC was getting dispatched to the main thread and later IPC would get sent to the RemoteRenderingBackend WorkQueue. This was
+        causing RemoteRenderingBackend to get processed out of order.
+
+        To address the synchronization issue for now, I made the GPUConnectionToWebProcess::CreateRenderingBackend synchronous. This may not be the
+        best design long term but it is an easy and safe way to resolve this for now. It makes sure the WebProcess cannot send RemoteRenderingBackend
+        IPC until after the GPUProcess has created the RemoteRenderingBackend and the RemoteRenderingBackend object has registered itself as a
+        WorkQueueMessageReceiver. We probably want to follow-up when we come up with a better design. For now though, I have verified locally that this
+        fixes the out of order IPC messaging AND the flaky crashes on these canvas tests.
+
+        No new tests, unskipped existing tests that are no longer flaky.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::ensureGPUProcessConnection):
+
 2021-04-14  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Fix WK_EXPORT macro for declspec compilers
