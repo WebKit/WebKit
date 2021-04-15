@@ -1378,3 +1378,5 @@ webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
 http/tests/navigation/page-cache-mediastream.html [ Pass Crash ]
 
 webkit.org/b/221985 fast/mediastream/audio-track-enabled.html [ Pass Failure ]
+
+webkit.org/b/224612 webgl/1.0.3/conformance/glsl/functions/glsl-function-abs.html [ Pass Crash ]
