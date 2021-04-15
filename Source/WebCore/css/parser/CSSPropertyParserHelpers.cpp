@@ -1509,38 +1509,37 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range, const CSSP
     return color;
 }
 
-static Color selectFirstColorThatMeetsOrExceedsTargetContrast(const Color& originBackgroundColor, const Vector<Color>& colorsToCompareAgainst, double targetContrast)
+static Color selectFirstColorThatMeetsOrExceedsTargetContrast(const Color& originBackgroundColor, Vector<Color>&& colorsToCompareAgainst, double targetContrast)
 {
     auto originBackgroundColorLuminance = originBackgroundColor.luminance();
 
     for (auto& color : colorsToCompareAgainst) {
-        auto contrastRatio = WebCore::contrastRatio(originBackgroundColorLuminance, color.luminance());
-        if (contrastRatio >= targetContrast)
-            return color;
+        if (contrastRatio(originBackgroundColorLuminance, color.luminance()) >= targetContrast)
+            return WTFMove(color);
     }
-    
+
     // If there is a target contrast, and the end of the list is reached without meeting that target,
     // either white or black is returned, whichever has the higher contrast.
-    auto contrastRatioWithWhite = WebCore::contrastRatio(originBackgroundColorLuminance, 1.0f);
-    auto contrastRatioWithBlack = WebCore::contrastRatio(originBackgroundColorLuminance, 0.0f);
-    return contrastRatioWithWhite > contrastRatioWithBlack ? Color::white : Color::black;
+    auto contrastWithWhite = contrastRatio(originBackgroundColorLuminance, 1.0);
+    auto contrastWithBlack = contrastRatio(originBackgroundColorLuminance, 0.0);
+    return contrastWithWhite > contrastWithBlack ? Color::white : Color::black;
 }
 
-static Color selectFirstColorWithHighestContrast(const Color& originBackgroundColor, const Vector<Color>& colorsToCompareAgainst)
+static Color selectFirstColorWithHighestContrast(const Color& originBackgroundColor, Vector<Color>&& colorsToCompareAgainst)
 {
     auto originBackgroundColorLuminance = originBackgroundColor.luminance();
 
-    size_t indexOfColorWithHigestContrastRatio = 0;
-    float highestContrastRatioSoFar = 0;
-    for (size_t i = 0; i < colorsToCompareAgainst.size(); ++i) {
-        auto contrastRatio = WebCore::contrastRatio(originBackgroundColorLuminance, colorsToCompareAgainst[i].luminance());
-        if (contrastRatio > highestContrastRatioSoFar) {
-            highestContrastRatioSoFar = contrastRatio;
-            indexOfColorWithHigestContrastRatio = i;
+    auto* colorWithGreatestContrast = &colorsToCompareAgainst[0];
+    double greatestContrastSoFar = 0;
+    for (auto& color : colorsToCompareAgainst) {
+        auto contrast = contrastRatio(originBackgroundColorLuminance, color.luminance());
+        if (contrast > greatestContrastSoFar) {
+            greatestContrastSoFar = contrast;
+            colorWithGreatestContrast = &color;
         }
     }
 
-    return colorsToCompareAgainst[indexOfColorWithHigestContrastRatio];
+    return WTFMove(*colorWithGreatestContrast);
 }
 
 static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -1590,11 +1589,11 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
             return { };
         
         // When a target constast is specified, we select "the first color color to meet or exceed the target contrast."
-        return selectFirstColorThatMeetsOrExceedsTargetContrast(originBackgroundColor, colorsToCompareAgainst, *targetContrast);
+        return selectFirstColorThatMeetsOrExceedsTargetContrast(originBackgroundColor, WTFMove(colorsToCompareAgainst), *targetContrast);
     }
 
     // When a target constast is NOT specified, we select "the first color with the highest contrast to the single color."
-    return selectFirstColorWithHighestContrast(originBackgroundColor, colorsToCompareAgainst);
+    return selectFirstColorWithHighestContrast(originBackgroundColor, WTFMove(colorsToCompareAgainst));
 }
 
 enum class ColorMixColorSpace {

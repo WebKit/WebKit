@@ -109,27 +109,18 @@ Color Color::darkened() const
     return convertColor<SRGBA<uint8_t>>(SRGBA<float> { multiplier * r, multiplier * g, multiplier * b, a });
 }
 
-float Color::lightness() const
+double Color::lightness() const
 {
     // FIXME: Replace remaining uses with luminance.
     auto [r, g, b, a] = toSRGBALossy<float>();
     auto [min, max] = std::minmax({ r, g, b });
-    return 0.5f * (max + min);
+    return 0.5 * (max + min);
 }
 
-float Color::luminance() const
+double Color::luminance() const
 {
     return callOnUnderlyingType([&] (const auto& underlyingColor) {
         return WebCore::relativeLuminance(underlyingColor);
-    });
-}
-
-float Color::contrastRatio(const Color& colorA, const Color& colorB)
-{
-    return colorA.callOnUnderlyingType([&] (const auto& underlyingColorA) {
-        return colorB.callOnUnderlyingType([&] (const auto& underlyingColorB) {
-            return WebCore::contrastRatio(underlyingColorA, underlyingColorB);
-        });
     });
 }
 

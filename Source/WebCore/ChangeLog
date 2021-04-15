@@ -1,3 +1,54 @@
+2021-04-14  Sam Weinig  <weinig@apple.com>
+
+        Use range-for loop in target contrast selection to simplify/improve code readability
+        https://bugs.webkit.org/show_bug.cgi?id=224512
+
+        Reviewed by Darin Adler.
+
+        Address some additional post landing feedback from Darin.
+
+        - Use range-for loop in target contrast selection.
+        - Use double to represent luminance, lightness and contrast everywhere.
+          This avoid unnecessary conversions to and from float.
+        - Rename Color::contrastRatio(Color, Color) to just contrastRatio(Color, Color)
+          and move it ColorLuminance.h/cpp with the other contrastRatio overloads.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add ColorLuminance.cpp
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::selectFirstColorThatMeetsOrExceedsTargetContrast):
+        Convert colorsToCompareAgainst to an r-value since vector is never used after
+        calling this.
+
+        (WebCore::CSSPropertyParserHelpers::selectFirstColorWithHighestContrast):
+        Convert colorsToCompareAgainst to an r-value since vector is never used after
+        calling this. Also, switch to a range-for loop to aid readability.
+
+        (WebCore::CSSPropertyParserHelpers::parseColorContrastFunctionParameters):
+        Move colorsToCompareAgainst to the select functions.
+
+        * platform/graphics/Color.h:
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::lightness const):
+        (WebCore::Color::luminance const):
+        Use double to represent lightness and luminance.
+
+        (WebCore::Color::contrastRatio): Deleted.
+        Moved to ColorLuminance.h/cpp
+
+        * platform/graphics/ColorLuminance.cpp: Added.
+        (WebCore::contrastRatio):
+        * platform/graphics/ColorLuminance.h:
+        (WebCore::relativeLuminance):
+        (WebCore::contrastRatio):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::disabledTextColor const):
+        * rendering/TextPaintStyle.cpp:
+        (WebCore::textColorIsLegibleAgainstBackgroundColor):
+        Use double to represent luminance and constrast everywhere.
+
 2021-04-14  Antti Koivisto  <antti@apple.com>
 
         RunIterator::traverseNext/PreviousOnLineIgnoringLineBreak should skip over WBRs

@@ -106,9 +106,8 @@ public:
     uint8_t alphaByte() const { return isOutOfLine() ? convertFloatAlphaTo<uint8_t>(asOutOfLine().alpha()) : asInline().alpha; }
     float alphaAsFloat() const { return isOutOfLine() ? asOutOfLine().alpha() : convertByteAlphaTo<float>(asInline().alpha); }
 
-    WEBCORE_EXPORT float luminance() const;
-    WEBCORE_EXPORT float lightness() const; // FIXME: Replace remaining uses with luminance.
-    WEBCORE_EXPORT static float contrastRatio(const Color&, const Color&);
+    WEBCORE_EXPORT double luminance() const;
+    WEBCORE_EXPORT double lightness() const; // FIXME: Replace remaining uses with luminance.
 
     template<typename Functor> decltype(auto) callOnUnderlyingType(Functor&&) const;
 
