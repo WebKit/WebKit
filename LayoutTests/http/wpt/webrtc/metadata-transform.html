@@ -74,7 +74,6 @@ promise_test(async (test) => {
     assert_equals(senderTimestamp, receiverTimestamp, "timestamp");
     assert_true(!!senderMetadata.synchronizationSource, "ssrc");
     assert_equals(senderMetadata.synchronizationSource, receiverMetadata.synchronizationSource, "ssrc");
-    assert_array_equals(senderMetadata.contributingSources, receiverMetadata.contributingSources, "csrc");
     assert_equals(senderMetadata.height, receiverMetadata.height, "height");
     assert_equals(senderMetadata.width, receiverMetadata.width, "width");
     assert_equals(senderMetadata.spatialIndex, receiverMetadata.spatialIndex, "spatialIndex");

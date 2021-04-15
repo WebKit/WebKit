@@ -44,7 +44,6 @@ struct RTCEncodedVideoFrameMetadata {
     Optional<int32_t> spatialIndex;
     Optional<int32_t> temporalIndex;
     uint32_t synchronizationSource;
-    Vector<uint32_t> contributingSources;
 };
 
 class RTCRtpTransformableFrame : public RefCounted<RTCRtpTransformableFrame> {

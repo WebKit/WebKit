@@ -37,7 +37,8 @@ dictionary RTCEncodedVideoFrameMetadata {
     long spatialIndex;
     long temporalIndex;
     unsigned long synchronizationSource;
-    sequence<unsigned long> contributingSources;
+    // FIXME: http://webkit.org/b/224443
+    // sequence<unsigned long> contributingSources;
 };
 
 [

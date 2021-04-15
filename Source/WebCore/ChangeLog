@@ -1,3 +1,20 @@
+2021-04-15  Youenn Fablet  <youenn@apple.com>
+
+        Make RTCEncodedVideoFrameMetadata.contributingSources undefined until properly supported
+        https://bugs.webkit.org/show_bug.cgi?id=224540
+
+        Reviewed by Eric Carlson.
+
+        We are not yet ready to expose contributing sources for video.
+        It seems better to have the corresponding field be undefined instead of an empty array.
+
+        Covered by updated test.
+
+        * Modules/mediastream/RTCEncodedVideoFrame.idl:
+        * Modules/mediastream/RTCRtpTransformableFrame.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpTransformableFrame.cpp:
+        (WebCore::LibWebRTCRtpTransformableFrame::videoMetadata const):
+
 2021-04-15  Chris Lord  <clord@igalia.com>
 
         Make FontFace parsing worker-safe
