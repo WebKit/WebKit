@@ -84,6 +84,29 @@ describe("/api/measurement-set", function () {
                 }
             },
         }}];
+    
+    const reportWithRevisionIdentifier = [{
+        "buildTag": "124",
+        "buildTime": "2013-02-28T15:34:51Z",
+        "revisions": {
+            "WebKit": {
+                "revision": "144000",
+                "revisionIdentifier": "129103@main",
+                "timestamp": clusterTime(10.35645364537).toISOString(),
+            },
+        },
+        "builderName": "someBuilder",
+        "builderPassword": "somePassword",
+        "platform": "Mountain Lion",
+        "tests": {
+            "Suite": {
+                "tests": {
+                    "test1": {
+                        "metrics": {"Time": { "current": [11, 12, 13, 14, 15] }}
+                    }
+                }
+            },
+        }}];
 
     const reportWithNewRevision = [{
         "buildTag": "125",
@@ -435,7 +458,7 @@ describe("/api/measurement-set", function () {
                sum: 65,
                squareSum: 855,
                markedOutlier: false,
-               revisions: [[1, repositoryId, '144000', null, revisionTime]],
+               revisions: [[1, repositoryId, '144000', null, null, revisionTime]],
                commitTime: revisionTime,
                buildTime: revisionBuildTime,
                buildTag: '124' });
@@ -450,6 +473,41 @@ describe("/api/measurement-set", function () {
                 buildTime: buildTime,
                 buildTag: '123' });
         });
+    });
+
+    it("should include revision identifier", async () => {
+        const remote = TestServer.remoteAPI();
+        await addBuilderForReport(reportWithBuildTime[0]);
+        await remote.postJSON('/api/report/', reportWithBuildTime);
+        await remote.postJSON('/api/report/', reportWithRevisionIdentifier);
+        const result = await queryPlatformAndMetricWithRepository('Mountain Lion', 'Time', 'WebKit');
+        const repositoryId = result.repositoryId;
+        const response = await remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
+        const currentRows = response['configurations']['current'];
+        const buildTime = +(new Date(reportWithBuildTime[0]['buildTime']));
+        const revisionTime = +(new Date(reportWithRevision[0]['revisions']['WebKit']['timestamp']));
+        const revisionBuildTime = +(new Date(reportWithRevision[0]['buildTime']));
+        assert.strictEqual(currentRows.length, 2);
+        assert.deepStrictEqual(format(response['formatMap'], currentRows[0]), {
+            mean: 13,
+            iterationCount: 5,
+            sum: 65,
+            squareSum: 855,
+            markedOutlier: false,
+            revisions: [[1, repositoryId, '144000', '129103@main', null, revisionTime]],
+            commitTime: revisionTime,
+            buildTime: revisionBuildTime,
+            buildTag: '124' });
+        assert.deepStrictEqual(format(response['formatMap'], currentRows[1]), {
+             mean: 3,
+             iterationCount: 5,
+             sum: 15,
+             squareSum: 55,
+             markedOutlier: false,
+             revisions: [],
+             commitTime: buildTime,
+             buildTime: buildTime,
+             buildTag: '123' });
     });
 
     it("should keep 'carry_over' points up to date", async () => {
@@ -529,7 +587,7 @@ describe("/api/measurement-set", function () {
                sum: 15,
                squareSum: 55,
                markedOutlier: false,
-               revisions: [[3, 1, 'macOS 16C68', 1, 0]],
+               revisions: [[3, 1, 'macOS 16C68', null, 1, 0]],
                commitTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
                buildTime: +Date.UTC(2017, 0, 19, 15, 28, 1),
                buildTag: '1001' });
@@ -539,7 +597,7 @@ describe("/api/measurement-set", function () {
                 sum: 35,
                 squareSum: 255,
                 markedOutlier: false,
-                revisions: [[2, 1, 'macOS 16A323', 0, 0]],
+                revisions: [[2, 1, 'macOS 16A323', null, 0, 0]],
                 commitTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
                 buildTime: +Date.UTC(2017, 0, 19, 19, 46, 37),
                 buildTag: '1002' });
@@ -677,7 +735,7 @@ describe("/api/measurement-set", function () {
         response = await TestServer.remoteAPI().getJSONWithStatus('/api/measurement-set/?analysisTask=500');
         assert.strictEqual(response['status'], 'OK');
         assert.deepStrictEqual(response['measurements'], [[1, 4, 3, 12, 50, [
-                ['1', '9', '10.8.2 12C60', null, 0], ['2', '11', '141977', null, 1360140920900]],
+                ['1', '9', '10.8.2 12C60', null, null, 0], ['2', '11', '141977', null, null, 1360140920900]],
             1, 1362046323388, '123', 1, 1, 'current']]);
     });
 
@@ -722,7 +780,7 @@ describe("/api/measurement-set", function () {
         response = await TestServer.remoteAPI().getJSONWithStatus('/api/measurement-set/?analysisTask=500');
         assert.strictEqual(response['status'], 'OK');
         assert.deepStrictEqual(response['measurements'], [[1, 4, 3, 12, 50, [
-            ['1', '9', '10.8.2 12C60', null, expectedMacOSCommitTime], ['2', '11', '141977', null, expectedWebKitCommitTime]],
+            ['1', '9', '10.8.2 12C60', null, null, expectedMacOSCommitTime], ['2', '11', '141977', null, null, expectedWebKitCommitTime]],
             1, 1362046323388, '123', 1, 1, 'current']]);
     });
 
@@ -765,7 +823,7 @@ describe("/api/measurement-set", function () {
         const result = await queryPlatformAndMetric('Mountain Lion', 'FrameRate');
         const primaryCluster = await remote.getJSONWithStatus(`/api/measurement-set/?platform=${result.platformId}&metric=${result.metricId}`);
         assert.deepStrictEqual(primaryCluster.configurations.current, [[1, 4, 3, 12, 50, false, [
-            [1, 1, '10.8.2 12C60', null, expectedMacOSCommitTime], [2, 2, '141977', null, expectedWebKitCommitTime]],
+            [1, 1, '10.8.2 12C60', null, null, expectedMacOSCommitTime], [2, 2, '141977', null, null, expectedWebKitCommitTime]],
             expectedWebKitCommitTime, 1, 1362046323388, '123', 1]]);
     });
 });

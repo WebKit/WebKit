@@ -233,6 +233,35 @@ MockData = {
             db.insert('build_requests', {id: 707, status: statusList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 3, commit_set: 404}),
         ]);
     },
+    addTestGroupWithOwnedCommitsWithRevisionIdentifier(db, statusList)
+    {
+
+        if (!statusList)
+            statusList = ['pending', 'pending', 'pending', 'pending'];
+        return Promise.all([
+            this.addMockConfiguration(db),
+            this.addAnotherTriggerable(db),
+            db.insert('analysis_tasks', {id: 1080, platform: 65, metric: 300, name: 'some task with component test',
+                start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
+                end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
+            db.insert('repositories', {id: this.gitWebkitRepositoryId(), name: 'Git-WebKit'}),
+            db.insert('commits', {id: 193116, repository: this.gitWebkitRepositoryId(), revision: '2ceda45d3cd63cde58d0dbf5767714e03d902e43', revision_identifier: '193116@main', time: (new Date(1445945816878)).toISOString()}),
+            db.insert('commits', {id: 196336, repository: this.gitWebkitRepositoryId(), revision: '8e294365a452a89785d6536ca7f0fc8a95fa152d', revision_identifier: '196336@main', time: (new Date(1448225325650)).toISOString()}),
+            db.insert('analysis_test_groups', {id: 900, task: 1080, name: 'some test group with component test', initial_repetition_count: 4}),
+            db.insert('commit_sets', {id: 403}),
+            db.insert('commit_set_items', {set: 403, commit: 193116}),
+            db.insert('commit_set_items', {set: 403, commit: 87832}),
+            db.insert('commit_set_items', {set: 403, commit: 1797, commit_owner: 193116, requires_build: true}),
+            db.insert('commit_sets', {id: 404}),
+            db.insert('commit_set_items', {set: 404, commit: 87832}),
+            db.insert('commit_set_items', {set: 404, commit: 196336}),
+            db.insert('commit_set_items', {set: 404, commit: 2017, commit_owner: 196336, requires_build: true}),
+            db.insert('build_requests', {id: 704, status: statusList[0], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 0, commit_set: 403}),
+            db.insert('build_requests', {id: 705, status: statusList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 1, commit_set: 404}),
+            db.insert('build_requests', {id: 706, status: statusList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 2, commit_set: 403}),
+            db.insert('build_requests', {id: 707, status: statusList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 3, commit_set: 404}),
+        ]);
+    },
     addTwoMockTestGroupWithOwnedCommits(db)
     {
         return Promise.all([

@@ -116,6 +116,7 @@ class BuildRequestsFetcher {
         foreach ($commit_set_items as $row) {
             $repository_id = $resolve_ids ? $row['repository_name'] : $row['repository_id'];
             $revision = $row['commit_revision'];
+            $revision_identifier = $row['commit_revision_identifier'];
             $commit_time = $row['commit_time'];
 
             $root_file_id = $row['commitset_root_file'];
@@ -149,6 +150,7 @@ class BuildRequestsFetcher {
                 'repository' => $repository_id,
                 'commitOwner' => $row['commitset_commit_owner'],
                 'revision' => $revision,
+                'revisionIdentifier' => $revision_identifier,
                 'time' => Database::to_js_time($commit_time)));
 
             $this->commits_by_id[$commit_id] = TRUE;
@@ -171,6 +173,7 @@ class BuildRequestsFetcher {
                 'repository' => $resolve_ids ? $row['repository_name'] : $row['repository_id'],
                 'commitOwner' => NULL,
                 'revision' => $row['commit_revision'],
+                'revisionIdentifier' => $row['commit_revision_identifier'],
                 'time' => Database::to_js_time($row['commit_time'])));
             $this->commits_by_id[$commit_id] = TRUE;
         }
