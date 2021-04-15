@@ -1114,6 +1114,9 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.h
 webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
 
+webkit.org/b/newbug fast/text/line-break-between-text-nodes-latin1.html [ ImageOnlyFailure ]
+webkit.org/b/newbug imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

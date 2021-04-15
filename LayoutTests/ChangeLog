@@ -1,5 +1,16 @@
 2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Update test expectations after r275515.
+
+        Two tests are returning an image failure.  
+
+        html/dom/elements/the-innertext-idl-attribute/getter.html requires a new baseline.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/elements/the-innertext-idl-attribute/getter-expected.txt: Added.
+
+2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Skip accessibility test added in r275664.
 
         * platform/glib/TestExpectations:
