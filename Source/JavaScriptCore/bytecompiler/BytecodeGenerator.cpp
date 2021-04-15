@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -4036,14 +4036,14 @@ void BytecodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::S
 {
     switch (type) {
     case SwitchInfo::SwitchImmediate: {
-        size_t tableIndex = m_codeBlock->numberOfSwitchJumpTables();
-        m_codeBlock->addSwitchJumpTable();
+        size_t tableIndex = m_codeBlock->numberOfUnlinkedSwitchJumpTables();
+        m_codeBlock->addUnlinkedSwitchJumpTable();
         OpSwitchImm::emit(this, tableIndex, BoundLabel(), scrutineeRegister);
         break;
     }
     case SwitchInfo::SwitchCharacter: {
-        size_t tableIndex = m_codeBlock->numberOfSwitchJumpTables();
-        m_codeBlock->addSwitchJumpTable();
+        size_t tableIndex = m_codeBlock->numberOfUnlinkedSwitchJumpTables();
+        m_codeBlock->addUnlinkedSwitchJumpTable();
         OpSwitchChar::emit(this, tableIndex, BoundLabel(), scrutineeRegister);
         break;
     }
@@ -4091,9 +4091,9 @@ static void prepareJumpTableForSwitch(
     const Vector<Ref<Label>, 8>& labels, ExpressionNode** nodes, int32_t min, int32_t max,
     int32_t (*keyGetter)(ExpressionNode*, int32_t min, int32_t max))
 {
-    jumpTable.min = min;
-    jumpTable.branchOffsets = FixedVector<int32_t>(max - min + 1);
-    std::fill(jumpTable.branchOffsets.begin(), jumpTable.branchOffsets.end(), 0);
+    jumpTable.m_min = min;
+    jumpTable.m_branchOffsets = FixedVector<int32_t>(max - min + 1);
+    std::fill(jumpTable.m_branchOffsets.begin(), jumpTable.m_branchOffsets.end(), 0);
     for (uint32_t i = 0; i < clauseCount; ++i) {
         // We're emitting this after the clause labels should have been fixed, so 
         // the labels should not be "forward" references
@@ -4129,7 +4129,7 @@ void BytecodeGenerator::endSwitch(uint32_t clauseCount, const Vector<Ref<Label>,
             return BoundLabel();
         });
 
-        UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->switchJumpTable(bytecode.m_tableIndex);
+        UnlinkedSimpleJumpTable& jumpTable = m_codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex);
         prepareJumpTableForSwitch(
             jumpTable, switchInfo.bytecodeOffset, clauseCount, labels, nodes, min, max,
             switchInfo.switchType == SwitchInfo::SwitchImmediate

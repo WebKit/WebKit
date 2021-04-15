@@ -2789,7 +2789,7 @@ JSC_DEFINE_JIT_OPERATION(operationSetupVarargsFrame, CallFrame*, (JSGlobalObject
     return newCallFrame;
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobalObject* globalObject, EncodedJSValue encodedKey, size_t tableIndex))
+JSC_DEFINE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobalObject* globalObject, EncodedJSValue encodedKey, size_t tableIndex, int32_t min))
 {
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2799,15 +2799,16 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobal
     JSValue key = JSValue::decode(encodedKey);
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    SimpleJumpTable& jumpTable = codeBlock->switchJumpTable(tableIndex);
-    void* result = jumpTable.ctiDefault.executableAddress();
+    const SimpleJumpTable& linkedTable = codeBlock->switchJumpTable(tableIndex);
+    ASSERT(codeBlock->unlinkedSwitchJumpTable(tableIndex).m_min == min);
+    void* result = linkedTable.m_ctiDefault.executableAddress();
 
     if (key.isString()) {
         JSString* string = asString(key);
         if (string->length() == 1) {
             String value = string->value(globalObject);
             RETURN_IF_EXCEPTION(throwScope, nullptr);
-            result = jumpTable.ctiForValue(value[0]).executableAddress();
+            result = linkedTable.ctiForValue(min, value[0]).executableAddress();
         }
     }
 
@@ -2815,7 +2816,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchCharWithUnknownKeyType, char*, (JSGlobal
     return reinterpret_cast<char*>(result);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM* vmPointer, EncodedJSValue encodedKey, size_t tableIndex))
+JSC_DEFINE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM* vmPointer, EncodedJSValue encodedKey, size_t tableIndex, int32_t min))
 {
     VM& vm = *vmPointer;
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
@@ -2823,14 +2824,15 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchImmWithUnknownKeyType, char*, (VM* vmPoi
     JSValue key = JSValue::decode(encodedKey);
     CodeBlock* codeBlock = callFrame->codeBlock();
 
-    SimpleJumpTable& jumpTable = codeBlock->switchJumpTable(tableIndex);
+    const SimpleJumpTable& linkedTable = codeBlock->switchJumpTable(tableIndex);
+    ASSERT(codeBlock->unlinkedSwitchJumpTable(tableIndex).m_min == min);
     void* result;
     if (key.isInt32())
-        result = jumpTable.ctiForValue(key.asInt32()).executableAddress();
+        result = linkedTable.ctiForValue(min, key.asInt32()).executableAddress();
     else if (key.isDouble() && key.asDouble() == static_cast<int32_t>(key.asDouble()))
-        result = jumpTable.ctiForValue(static_cast<int32_t>(key.asDouble())).executableAddress();
+        result = linkedTable.ctiForValue(min, static_cast<int32_t>(key.asDouble())).executableAddress();
     else
-        result = jumpTable.ctiDefault.executableAddress();
+        result = linkedTable.m_ctiDefault.executableAddress();
     assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);
 }

@@ -1,3 +1,116 @@
+2021-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not copy SimpleJumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=224472
+
+        Reviewed by Mark Lam.
+
+        This patch avoids copying UnlinkedSimpleJumpTable to SimpleJumpTable by decoupling CTI addresses from jump offset in SimpleJumpTable.
+        SimpleJumpTable and UnlinkedSimpleJumpTable are almost identical. SimpleJumpTable adds JIT jump target for each branch.
+        We should use data from UnlinkedSimpleJumpTable and jump via SimpleJumpTable. Do not need to have copy of branches from UnlinkedSimpleJumpTable.
+
+        This way removes Vector<SimpleJumpTable> from CodeBlock::RareData. And this is moved to CodeBlock::JITData. And it only includes jump target addresses,
+        and branch offset information is kept in UnlinkedSimpleJumpTable side. We no longer need to carefully copy these vectors in CodeBlock including DFG / FTL ones.
+
+        In LLInt, we instead use UnlinkedSimpleJumpTable for jumping.
+
+        In Baseline, we first allocate enough FixedVector<SimpleJumpTable> and fill content via SimpleJumpTable::ensureCTITable() call when compiling corresponding
+        switch opcode. Finally we fill these data structures with actual code locations in JIT::link function.
+
+        In DFG, we first collect UnlinkedSimpleJumpTable without copying. This is OK since it is kept by UnlinkedCodeBlock, and UnlinkedCodeBlock is kept by baseline CodeBlocks that
+        are handled by this DFG compilation. We hold Vector<const UnlinkedSimpleJumpTable*> in DFG::Graph and we materialize Vector<SimpleJumpTable> in DFG::Graph.
+        During DFG compilation, we touch this DFG::Graph's jump tables, and JIT compiler generates code via these tables. And when linking, we move the content to CodeBlock.
+
+        In FTL, while we use UnlinkedSimpleJumpTable in FTL code generation, FTL do not use SimpleJumpTable and instead FTL uses Switch in B3.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables):
+        * bytecode/BytecodeDumper.h:
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::switchJumpTable):
+        (JSC::CodeBlock::numberOfUnlinkedSwitchJumpTables const):
+        (JSC::CodeBlock::unlinkedSwitchJumpTable):
+        (JSC::CodeBlock::numberOfSwitchJumpTables const): Deleted.
+        (JSC::CodeBlock::clearSwitchJumpTables): Deleted.
+        (JSC::CodeBlock::addSwitchJumpTableFromProfiledCodeBlock): Deleted.
+        * bytecode/JumpTable.cpp:
+        (JSC::SimpleJumpTable::offsetForValue): Deleted.
+        * bytecode/JumpTable.h:
+        (JSC::SimpleJumpTable::ensureCTITable):
+        (JSC::SimpleJumpTable::ctiForValue const):
+        (JSC::SimpleJumpTable::isEmpty const):
+        (): Deleted.
+        (JSC::SimpleJumpTable::cloneNonJITPart const): Deleted.
+        (JSC::SimpleJumpTable::ctiForValue): Deleted.
+        (JSC::SimpleJumpTable::clear): Deleted.
+        * bytecode/PreciseJumpTargetsInlines.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedSimpleJumpTable::offsetForValue const):
+        (JSC::UnlinkedSimpleJumpTable::add):
+        (JSC::UnlinkedCodeBlock::numberOfUnlinkedSwitchJumpTables const):
+        (JSC::UnlinkedCodeBlock::unlinkedSwitchJumpTable const):
+        (JSC::UnlinkedCodeBlock::unlinkedStringSwitchJumpTable const):
+        (JSC::UnlinkedCodeBlock::numberOfSwitchJumpTables const): Deleted.
+        (JSC::UnlinkedCodeBlock::switchJumpTable): Deleted.
+        (JSC::UnlinkedCodeBlock::unlinkedStringSwitchJumpTable): Deleted.
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::numberOfUnlinkedSwitchJumpTables const):
+        (JSC::UnlinkedCodeBlockGenerator::addUnlinkedSwitchJumpTable):
+        (JSC::UnlinkedCodeBlockGenerator::unlinkedSwitchJumpTable):
+        (JSC::UnlinkedCodeBlockGenerator::numberOfSwitchJumpTables const): Deleted.
+        (JSC::UnlinkedCodeBlockGenerator::addSwitchJumpTable): Deleted.
+        (JSC::UnlinkedCodeBlockGenerator::switchJumpTable): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::prepareJumpTableForSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        (JSC::DFG::SpeculativeJIT::emitSwitchString):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        (JSC::SwitchRecord::SwitchRecord):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedSimpleJumpTable::encode):
+        (JSC::CachedSimpleJumpTable::decode const):
+        (JSC::CachedCodeBlockRareData::encode):
+        (JSC::CachedCodeBlockRareData::decode const):
+
 2021-04-14  Alex Christensen  <achristensen@webkit.org>
 
         Keep UniqueRef<MathICGenerationState> instead of MathICGenerationState in HashTables

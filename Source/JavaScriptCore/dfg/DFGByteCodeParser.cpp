@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -6872,14 +6872,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
             data.kind = SwitchImm;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
             data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
-            SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
-            for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
-                if (!table.branchOffsets[i])
+            const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); ++i) {
+                if (!unlinkedTable.m_branchOffsets[i])
                     continue;
-                unsigned target = m_currentIndex.offset() + table.branchOffsets[i];
+                unsigned target = m_currentIndex.offset() + unlinkedTable.m_branchOffsets[i];
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
-                data.cases.append(SwitchCase::withBytecodeIndex(m_graph.freeze(jsNumber(static_cast<int32_t>(table.min + i))), target));
+                data.cases.append(SwitchCase::withBytecodeIndex(m_graph.freeze(jsNumber(static_cast<int32_t>(unlinkedTable.m_min + i))), target));
             }
             addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);
@@ -6892,15 +6892,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
             data.kind = SwitchChar;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
             data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
-            SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
-            for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
-                if (!table.branchOffsets[i])
+            const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); ++i) {
+                if (!unlinkedTable.m_branchOffsets[i])
                     continue;
-                unsigned target = m_currentIndex.offset() + table.branchOffsets[i];
+                unsigned target = m_currentIndex.offset() + unlinkedTable.m_branchOffsets[i];
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(
-                    SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(table.min + i), target));
+                    SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(unlinkedTable.m_min + i), target));
             }
             addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);
@@ -8526,16 +8526,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_inlineCallFrame->kind = kind;
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
-        m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
-
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i) {
             UniquedStringImpl* rep = codeBlock->identifier(i).impl();
             unsigned index = byteCodeParser->m_graph.identifiers().ensure(rep);
             m_identifierRemap[i] = index;
-        }
-        for (unsigned i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i) {
-            m_switchRemap[i] = byteCodeParser->m_codeBlock->numberOfSwitchJumpTables();
-            byteCodeParser->m_codeBlock->addSwitchJumpTableFromProfiledCodeBlock(codeBlock->switchJumpTable(i));
         }
     } else {
         // Machine code block case.
@@ -8547,11 +8541,15 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_inlineCallFrame = nullptr;
 
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
-        m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i)
             m_identifierRemap[i] = i;
-        for (size_t i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i)
-            m_switchRemap[i] = i;
+    }
+
+    m_switchRemap.resize(codeBlock->numberOfUnlinkedSwitchJumpTables());
+    byteCodeParser->m_graph.m_switchJumpTables.resize(byteCodeParser->m_graph.m_switchJumpTables.size() + codeBlock->numberOfUnlinkedSwitchJumpTables());
+    for (unsigned i = 0; i < codeBlock->numberOfUnlinkedSwitchJumpTables(); ++i) {
+        m_switchRemap[i] = byteCodeParser->m_graph.m_unlinkedSwitchJumpTables.size();
+        byteCodeParser->m_graph.m_unlinkedSwitchJumpTables.append(&codeBlock->unlinkedSwitchJumpTable(i));
     }
     
     m_argumentPositions.resize(argumentCountIncludingThisWithFixup);

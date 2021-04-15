@@ -994,12 +994,13 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
-    SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
-    jumpTable->ensureCTITable();
+    const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
+    SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
+    m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
+    linkedTable.ensureCTITable(unlinkedTable);
 
     emitLoad(scrutinee, regT1, regT0);
-    callOperation(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), JSValueRegs(regT1, regT0), tableIndex);
+    callOperation(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), JSValueRegs(regT1, regT0), tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, NoPtrTag);
 }
 
@@ -1011,12 +1012,13 @@ void JIT::emit_op_switch_char(const Instruction* currentInstruction)
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
-    SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
-    jumpTable->ensureCTITable();
+    const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
+    SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
+    m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
+    linkedTable.ensureCTITable(unlinkedTable);
 
     emitLoad(scrutinee, regT1, regT0);
-    callOperation(operationSwitchCharWithUnknownKeyType, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), tableIndex);
+    callOperation(operationSwitchCharWithUnknownKeyType, m_codeBlock->globalObject(), JSValueRegs(regT1, regT0), tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, NoPtrTag);
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,49 +52,27 @@ namespace JSC {
     };
 #endif
 
+#if ENABLE(JIT)
     struct SimpleJumpTable {
-        // FIXME: The two Vectors can be combined into one Vector<OffsetLocation>
-        FixedVector<int32_t> branchOffsets;
-        int32_t min { INT32_MIN };
-#if ENABLE(JIT)
-        Vector<CodeLocationLabel<JSSwitchPtrTag>> ctiOffsets;
-        CodeLocationLabel<JSSwitchPtrTag> ctiDefault;
-#endif
+        FixedVector<CodeLocationLabel<JSSwitchPtrTag>> m_ctiOffsets;
+        CodeLocationLabel<JSSwitchPtrTag> m_ctiDefault;
 
-#if ENABLE(DFG_JIT)
-        // JIT part can be later expanded without taking a lock while non-JIT part is stable after CodeBlock is finalized.
-        SimpleJumpTable cloneNonJITPart() const
+        void ensureCTITable(const UnlinkedSimpleJumpTable& unlinkedTable)
         {
-            SimpleJumpTable result;
-            result.branchOffsets = branchOffsets;
-            result.min = min;
-            return result;
+            if (!isEmpty())
+                return;
+            m_ctiOffsets = FixedVector<CodeLocationLabel<JSSwitchPtrTag>>(unlinkedTable.m_branchOffsets.size());
         }
-#endif
 
-        int32_t offsetForValue(int32_t value, int32_t defaultOffset);
-#if ENABLE(JIT)
-        void ensureCTITable()
+        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(int32_t min, int32_t value) const
         {
-            ASSERT(ctiOffsets.isEmpty() || ctiOffsets.size() == branchOffsets.size());
-            ctiOffsets.grow(branchOffsets.size());
+            if (value >= min && static_cast<uint32_t>(value - min) < m_ctiOffsets.size())
+                return m_ctiOffsets[value - min];
+            return m_ctiDefault;
         }
-        
-        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(int32_t value)
-        {
-            if (value >= min && static_cast<uint32_t>(value - min) < ctiOffsets.size())
-                return ctiOffsets[value - min];
-            return ctiDefault;
-        }
-#endif
 
-#if ENABLE(DFG_JIT)
-        void clear()
-        {
-            branchOffsets = FixedVector<int32_t>();
-            ctiOffsets.clear();
-        }
-#endif
+        bool isEmpty() const { return m_ctiOffsets.isEmpty(); }
     };
+#endif
 
 } // namespace JSC

@@ -894,35 +894,41 @@ void JIT::emit_op_get_parent_scope(const Instruction* currentInstruction)
 
 void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
 {
+    // FIXME: We should have a fast path.
+    // https://bugs.webkit.org/show_bug.cgi?id=224521
     auto bytecode = currentInstruction->as<OpSwitchImm>();
     size_t tableIndex = bytecode.m_tableIndex;
     unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
-    SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
-    jumpTable->ensureCTITable();
+    const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
+    SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
+    m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
+    linkedTable.ensureCTITable(unlinkedTable);
 
     emitGetVirtualRegister(scrutinee, regT0);
-    callOperation(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), regT0, tableIndex);
+    callOperation(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), regT0, tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
 void JIT::emit_op_switch_char(const Instruction* currentInstruction)
 {
+    // FIXME: We should have a fast path.
+    // https://bugs.webkit.org/show_bug.cgi?id=224521
     auto bytecode = currentInstruction->as<OpSwitchChar>();
     size_t tableIndex = bytecode.m_tableIndex;
     unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
-    SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
-    jumpTable->ensureCTITable();
+    const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
+    SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
+    m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
+    linkedTable.ensureCTITable(unlinkedTable);
 
     emitGetVirtualRegister(scrutinee, regT0);
-    callOperation(operationSwitchCharWithUnknownKeyType, TrustedImmPtr(m_codeBlock->globalObject()), regT0, tableIndex);
+    callOperation(operationSwitchCharWithUnknownKeyType, TrustedImmPtr(m_codeBlock->globalObject()), regT0, tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 

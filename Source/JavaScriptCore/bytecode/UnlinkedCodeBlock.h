@@ -95,14 +95,23 @@ struct UnlinkedStringJumpTable {
 };
 
 struct UnlinkedSimpleJumpTable {
-    FixedVector<int32_t> branchOffsets;
-    int32_t min;
+    FixedVector<int32_t> m_branchOffsets;
+    int32_t m_min;
 
-    int32_t offsetForValue(int32_t value, int32_t defaultOffset);
+    inline int32_t offsetForValue(int32_t value, int32_t defaultOffset) const
+    {
+        if (value >= m_min && static_cast<uint32_t>(value - m_min) < m_branchOffsets.size()) {
+            int32_t offset = m_branchOffsets[value - m_min];
+            if (offset)
+                return offset;
+        }
+        return defaultOffset;
+    }
+
     void add(int32_t key, int32_t offset)
     {
-        if (!branchOffsets[key])
-            branchOffsets[key] = offset;
+        if (!m_branchOffsets[key])
+            m_branchOffsets[key] = offset;
     }
 };
 
@@ -118,6 +127,8 @@ public:
     {
         RELEASE_ASSERT_NOT_REACHED();
     }
+
+    friend class LLIntOffsetsExtractor;
 
     enum { CallFunction, ApplyFunction };
 
@@ -196,11 +207,11 @@ public:
 
     // Jump Tables
 
-    size_t numberOfSwitchJumpTables() const { return m_rareData ? m_rareData->m_switchJumpTables.size() : 0; }
-    UnlinkedSimpleJumpTable& switchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_switchJumpTables[tableIndex]; }
+    size_t numberOfUnlinkedSwitchJumpTables() const { return m_rareData ? m_rareData->m_unlinkedSwitchJumpTables.size() : 0; }
+    const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(int tableIndex) const { ASSERT(m_rareData); return m_rareData->m_unlinkedSwitchJumpTables[tableIndex]; }
 
     size_t numberOfUnlinkedStringSwitchJumpTables() const { return m_rareData ? m_rareData->m_unlinkedStringSwitchJumpTables.size() : 0; }
-    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(int tableIndex) { ASSERT(m_rareData); return m_rareData->m_unlinkedStringSwitchJumpTables[tableIndex]; }
+    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(int tableIndex) const { ASSERT(m_rareData); return m_rareData->m_unlinkedStringSwitchJumpTables[tableIndex]; }
 
     UnlinkedFunctionExecutable* functionDecl(int index) { return m_functionDecls[index].get(); }
     size_t numberOfFunctionDecls() { return m_functionDecls.size(); }
@@ -410,7 +421,7 @@ public:
         FixedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
         // Jump Tables
-        FixedVector<UnlinkedSimpleJumpTable> m_switchJumpTables;
+        FixedVector<UnlinkedSimpleJumpTable> m_unlinkedSwitchJumpTables;
         FixedVector<UnlinkedStringJumpTable> m_unlinkedStringSwitchJumpTables;
 
         FixedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;

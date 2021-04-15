@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,15 +45,20 @@ void link(State& state)
     CodeBlock* codeBlock = graph.m_codeBlock;
     VM& vm = graph.m_vm;
     
-    // B3 will create its own jump tables as needed.
-    codeBlock->clearSwitchJumpTables();
-
     state.jitCode->common.requiredRegisterCountForExit = graph.requiredRegisterCountForExit();
     
     if (!graph.m_plan.inlineCallFrames()->isEmpty())
         state.jitCode->common.inlineCallFrames = graph.m_plan.inlineCallFrames();
 
     graph.registerFrozenValues();
+
+#if ASSERT_ENABLED
+    {
+        ConcurrentJSLocker locker(codeBlock->m_lock);
+        ASSERT(codeBlock->ensureJITData(locker).m_stringSwitchJumpTables.isEmpty());
+        ASSERT(codeBlock->ensureJITData(locker).m_switchJumpTables.isEmpty());
+    }
+#endif
 
     // Create the entrypoint. Note that we use this entrypoint totally differently
     // depending on whether we're doing OSR entry or not.

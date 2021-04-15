@@ -278,6 +278,7 @@ public:
         SentinelLinkedList<CallLinkInfo, PackedRawSentinelNode<CallLinkInfo>> m_incomingCalls;
         SentinelLinkedList<PolymorphicCallNode, PackedRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
         FixedVector<RareCaseProfile> m_rareCaseProfiles;
+        FixedVector<SimpleJumpTable> m_switchJumpTables;
         FixedVector<StringJumpTable> m_stringSwitchJumpTables;
         std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
         std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
@@ -613,21 +614,15 @@ public:
 
     // Jump Tables
 
-    size_t numberOfSwitchJumpTables() const { return m_rareData ? m_rareData->m_switchJumpTables.size() : 0; }
-    SimpleJumpTable& switchJumpTable(int tableIndex) { RELEASE_ASSERT(m_rareData); return m_rareData->m_switchJumpTables[tableIndex]; }
-    void clearSwitchJumpTables()
+#if ENABLE(JIT)
+    SimpleJumpTable& switchJumpTable(int tableIndex)
     {
-        if (!m_rareData)
-            return;
-        m_rareData->m_switchJumpTables.clear();
-    }
-#if ENABLE(DFG_JIT)
-    void addSwitchJumpTableFromProfiledCodeBlock(SimpleJumpTable& profiled)
-    {
-        createRareDataIfNecessary();
-        m_rareData->m_switchJumpTables.append(profiled.cloneNonJITPart());
+        RELEASE_ASSERT(m_jitData);
+        return m_jitData->m_switchJumpTables[tableIndex];
     }
 #endif
+    size_t numberOfUnlinkedSwitchJumpTables() const { return m_unlinkedCode->numberOfUnlinkedSwitchJumpTables(); }
+    const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(int tableIndex) { return m_unlinkedCode->unlinkedSwitchJumpTable(tableIndex); }
 
 #if ENABLE(JIT)
     StringJumpTable& stringSwitchJumpTable(int tableIndex)
@@ -886,9 +881,6 @@ public:
         WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(CodeBlockRareData);
     public:
         Vector<HandlerInfo> m_exceptionHandlers;
-
-        // Jump Tables
-        Vector<SimpleJumpTable> m_switchJumpTables;
 
         Vector<std::unique_ptr<ValueProfileAndVirtualRegisterBuffer>> m_catchProfiles;
 

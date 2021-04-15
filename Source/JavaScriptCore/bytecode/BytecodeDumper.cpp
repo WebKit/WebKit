@@ -174,18 +174,18 @@ void CodeBlockBytecodeDumper<Block>::dumpExceptionHandlers()
 template<class Block>
 void CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables()
 {
-    if (unsigned count = this->block()->numberOfSwitchJumpTables()) {
+    if (unsigned count = this->block()->numberOfUnlinkedSwitchJumpTables()) {
         this->m_out.printf("Switch Jump Tables:\n");
         unsigned i = 0;
         do {
             this->m_out.printf("  %1d = {\n", i);
-            const auto& switchJumpTable = this->block()->switchJumpTable(i);
+            const auto& switchJumpTable = this->block()->unlinkedSwitchJumpTable(i);
             int entry = 0;
-            auto end = switchJumpTable.branchOffsets.end();
-            for (auto iter = switchJumpTable.branchOffsets.begin(); iter != end; ++iter, ++entry) {
+            auto end = switchJumpTable.m_branchOffsets.end();
+            for (auto iter = switchJumpTable.m_branchOffsets.begin(); iter != end; ++iter, ++entry) {
                 if (!*iter)
                     continue;
-                this->m_out.printf("\t\t%4d => %04d\n", entry + switchJumpTable.min, *iter);
+                this->m_out.printf("\t\t%4d => %04d\n", entry + switchJumpTable.m_min, *iter);
             }
             this->m_out.printf("      }\n");
             ++i;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,28 +127,16 @@ namespace JSC {
 
         Type type;
 
-        union {
-            SimpleJumpTable* simpleJumpTable;
-            unsigned tableIndex;
-        } jumpTable;
-
         BytecodeIndex bytecodeIndex;
         unsigned defaultOffset;
-
-        SwitchRecord(SimpleJumpTable* jumpTable, BytecodeIndex bytecodeIndex, unsigned defaultOffset, Type type)
-            : type(type)
-            , bytecodeIndex(bytecodeIndex)
-            , defaultOffset(defaultOffset)
-        {
-            this->jumpTable.simpleJumpTable = jumpTable;
-        }
+        unsigned tableIndex;
 
         SwitchRecord(unsigned tableIndex, BytecodeIndex bytecodeIndex, unsigned defaultOffset, Type type)
             : type(type)
             , bytecodeIndex(bytecodeIndex)
             , defaultOffset(defaultOffset)
+            , tableIndex(tableIndex)
         {
-            this->jumpTable.tableIndex = tableIndex;
         }
     };
 

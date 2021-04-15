@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,42 +176,39 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     m_graph.registerFrozenValues();
 
-    if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables()) {
+    if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables() || !m_graph.m_switchJumpTables.isEmpty()) {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
-        m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+        if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables())
+            m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+        if (!m_graph.m_switchJumpTables.isEmpty())
+            m_codeBlock->ensureJITData(locker).m_switchJumpTables = WTFMove(m_graph.m_switchJumpTables);
     }
 
-    BitVector usedJumpTables;
     for (Bag<SwitchData>::iterator iter = m_graph.m_switchData.begin(); !!iter; ++iter) {
         SwitchData& data = **iter;
-        if (!data.didUseJumpTable)
+        if (!data.didUseJumpTable) {
+            ASSERT(data.kind == SwitchString || m_codeBlock->switchJumpTable(data.switchTableIndex).isEmpty());
             continue;
+        }
         
         if (data.kind == SwitchString)
             continue;
         
         RELEASE_ASSERT(data.kind == SwitchImm || data.kind == SwitchChar);
         
-        usedJumpTables.set(data.switchTableIndex);
-        SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
-        table.ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
-        table.ctiOffsets.grow(table.branchOffsets.size());
-        for (unsigned j = table.ctiOffsets.size(); j--;)
-            table.ctiOffsets[j] = table.ctiDefault;
+        const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+        SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(data.switchTableIndex);
+        linkedTable.m_ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
+        RELEASE_ASSERT(linkedTable.m_ctiOffsets.size() == unlinkedTable.m_branchOffsets.size());
+        for (unsigned j = linkedTable.m_ctiOffsets.size(); j--;)
+            linkedTable.m_ctiOffsets[j] = linkedTable.m_ctiDefault;
         for (unsigned j = data.cases.size(); j--;) {
             SwitchCase& myCase = data.cases[j];
-            table.ctiOffsets[myCase.value.switchLookupValue(data.kind) - table.min] =
+            linkedTable.m_ctiOffsets[myCase.value.switchLookupValue(data.kind) - unlinkedTable.m_min] =
                 linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index]);
         }
     }
     
-    for (unsigned i = m_codeBlock->numberOfSwitchJumpTables(); i--;) {
-        if (usedJumpTables.get(i))
-            continue;
-        
-        m_codeBlock->switchJumpTable(i).clear();
-    }
-
     // NOTE: we cannot clear string switch tables because (1) we're running concurrently
     // and we cannot deref StringImpl's and (2) it would be weird to deref those
     // StringImpl's since we refer to them.

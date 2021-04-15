@@ -1064,6 +1064,9 @@ public:
     Prefix& prefix() { return m_prefix; }
     void nextPhase() { m_prefix.phaseNumber++; }
 
+    const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(unsigned index) const { return *m_unlinkedSwitchJumpTables[index]; }
+    SimpleJumpTable& switchJumpTable(unsigned index) { return m_switchJumpTables[index]; }
+
     StackCheck m_stackChecker;
     VM& m_vm;
     Plan& m_plan;
@@ -1073,6 +1076,9 @@ public:
     Vector<RefPtr<BasicBlock>, 8> m_blocks;
     Vector<BasicBlock*, 1> m_roots;
     Vector<Edge, 16> m_varArgChildren;
+
+    Vector<const UnlinkedSimpleJumpTable*> m_unlinkedSwitchJumpTables; // UnlinkedSimpleJumpTable is kept by UnlinkedCodeBlocks retained by baseline CodeBlocks handled by DFG / FTL.
+    Vector<SimpleJumpTable> m_switchJumpTables;
 
     HashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
     Bag<FrozenValue> m_frozenValues;

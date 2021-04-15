@@ -714,6 +714,14 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         break;
     }
 
+    if (m_codeBlock->numberOfUnlinkedSwitchJumpTables() || m_codeBlock->numberOfUnlinkedStringSwitchJumpTables()) {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        if (m_codeBlock->numberOfUnlinkedSwitchJumpTables())
+            m_codeBlock->ensureJITData(locker).m_switchJumpTables = FixedVector<SimpleJumpTable>(m_codeBlock->numberOfUnlinkedSwitchJumpTables());
+        if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables())
+            m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+    }
+
     if (UNLIKELY(Options::dumpDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler())))
         m_disassembler = makeUnique<JITDisassembler>(m_codeBlock);
     if (UNLIKELY(m_vm->m_perBytecodeProfiler)) {
@@ -857,32 +865,28 @@ CompilationResult JIT::link()
     if (patchBuffer.didFailToAllocate())
         return CompilationFailed;
 
-    if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables()) {
-        ConcurrentJSLocker locker(m_codeBlock->m_lock);
-        m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_codeBlock->numberOfUnlinkedStringSwitchJumpTables());
-    }
-
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (auto& record : m_switches) {
         unsigned bytecodeOffset = record.bytecodeIndex.offset();
 
         if (record.type != SwitchRecord::String) {
             ASSERT(record.type == SwitchRecord::Immediate || record.type == SwitchRecord::Character); 
-            ASSERT(record.jumpTable.simpleJumpTable->branchOffsets.size() == record.jumpTable.simpleJumpTable->ctiOffsets.size());
 
-            auto* simpleJumpTable = record.jumpTable.simpleJumpTable;
-            simpleJumpTable->ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
+            unsigned tableIndex = record.tableIndex;
+            const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
+            SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
+            linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
 
-            for (unsigned j = 0; j < record.jumpTable.simpleJumpTable->branchOffsets.size(); ++j) {
-                unsigned offset = record.jumpTable.simpleJumpTable->branchOffsets[j];
-                simpleJumpTable->ctiOffsets[j] = offset
+            for (unsigned j = 0; j < unlinkedTable.m_branchOffsets.size(); ++j) {
+                unsigned offset = unlinkedTable.m_branchOffsets[j];
+                linkedTable.m_ctiOffsets[j] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
-                    : simpleJumpTable->ctiDefault;
+                    : linkedTable.m_ctiDefault;
             }
         } else {
             ASSERT(record.type == SwitchRecord::String);
 
-            unsigned tableIndex = record.jumpTable.tableIndex;
+            unsigned tableIndex = record.tableIndex;
             const UnlinkedStringJumpTable& unlinkedTable = m_codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
             StringJumpTable& linkedTable = m_codeBlock->stringSwitchJumpTable(tableIndex);
             linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);

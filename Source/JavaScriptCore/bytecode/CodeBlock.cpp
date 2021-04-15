@@ -323,9 +323,7 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
 
     if (other.m_rareData) {
         createRareDataIfNecessary();
-        
         m_rareData->m_exceptionHandlers = other.m_rareData->m_exceptionHandlers;
-        m_rareData->m_switchJumpTables = other.m_rareData->m_switchJumpTables;
     }
 }
 
@@ -417,7 +415,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         m_functionExprs[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), WTF::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
     }
 
-    if (unlinkedCodeBlock->numberOfExceptionHandlers() || unlinkedCodeBlock->numberOfSwitchJumpTables()) {
+    if (unlinkedCodeBlock->numberOfExceptionHandlers()) {
         createRareDataIfNecessary();
 
         if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
@@ -431,16 +429,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 #else
                 handler.initialize(unlinkedHandler);
 #endif
-            }
-        }
-
-        if (size_t count = unlinkedCodeBlock->numberOfSwitchJumpTables()) {
-            m_rareData->m_switchJumpTables.resizeToFit(count);
-            for (size_t i = 0; i < count; i++) {
-                UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->switchJumpTable(i);
-                SimpleJumpTable& destTable = m_rareData->m_switchJumpTables[i];
-                destTable.branchOffsets = sourceTable.branchOffsets;
-                destTable.min = sourceTable.min;
             }
         }
     }
@@ -2119,13 +2107,9 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
     if (shrinkMode == ShrinkMode::EarlyShrink)
         m_constantRegisters.shrinkToFit();
 #else
+    UNUSED_PARAM(shrinkMode);
     m_constantRegisters.shrinkToFit();
 #endif
-
-    if (shrinkMode == ShrinkMode::EarlyShrink) {
-        if (m_rareData)
-            m_rareData->m_switchJumpTables.shrinkToFit();
-    } // else don't shrink these, because we would have already pointed pointers into these tables.
 }
 
 #if ENABLE(JIT)
