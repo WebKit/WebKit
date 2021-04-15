@@ -1,5 +1,95 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r272641. rdar://problem/76375364
+
+    [SOUP] Simplify ResourceRequest and ResourceResponse
+    https://bugs.webkit.org/show_bug.cgi?id=221543
+    
+    Reviewed by Adrian Perez de Castro.
+    
+    Source/WebCore:
+    
+    There's unused code there and it can be refactored.
+    
+    - ResourceRequest:
+      - Remove unused member m_soupFlags.
+      - Remove updateSoupMessage() that is always called after a SoupMessage has been created and add
+        createSoupMessage() to return a new SoupMessage.
+      - Set the message priority in the createSoupMessage() too.
+      - Remove updateFromSoupMessage() that is curently used only by WebSockets to update the request headers after
+        the request is sent to include cookies and other headers set by libsoup. We can simply use
+        updateFromSoupMessageHeaders() for that case instead.
+    
+    - ResourceResponse:
+      - Remove unused member m_soupFlags.
+      - Remove updateFromSoupMessage() that is always used with a newly created ResourceResponse and use the
+        ResourceResponse constructor that receives a SoupMessage instead.
+      - Sniffed content type is now received as an optional parameter of the ResourceResponse constructor that
+        receives a SoupMessage, and used to set the MIME type and text encoding.
+      - Remove unused certificate info getters and the encode/decode methods that are no longer needed.
+    
+    * platform/network/soup/ResourceRequest.h:
+    (WebCore::ResourceRequest::encodeWithPlatformData const):
+    (WebCore::ResourceRequest::decodeWithPlatformData):
+    * platform/network/soup/ResourceRequestSoup.cpp:
+    (WebCore::toSoupMessagePriority):
+    (WebCore::ResourceRequest::createSoupMessage const):
+    * platform/network/soup/ResourceResponse.h:
+    (WebCore::ResourceResponse::ResourceResponse):
+    (WebCore::ResourceResponse::soupMessageCertificate const):
+    (WebCore::ResourceResponse::soupMessageTLSErrors const):
+    * platform/network/soup/ResourceResponseSoup.cpp:
+    (WebCore::ResourceResponse::ResourceResponse):
+    (WebCore::ResourceResponse::updateSoupMessageHeaders const):
+    (WebCore::ResourceResponse::updateFromSoupMessageHeaders):
+    
+    Source/WebKit:
+    
+    Use new ResourceRequest and ResourceResponse API.
+    
+    * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+    (WebKit::NetworkDataTaskSoup::createRequest): Use ResourceRequest::createSoupMessage().
+    (WebKit::NetworkDataTaskSoup::didSendRequest): Use ResourceResponse passing the SoupMessage and sniffed content type.
+    (WebKit::NetworkDataTaskSoup::didRequestNextPart): Create a ResourceResponse passing the url, content type,
+    expected length and text encoding. Then call ResourceResponse::updateFromSoupMessageHeaders() to set the headers.
+    * NetworkProcess/soup/NetworkSessionSoup.cpp:
+    (WebKit::NetworkSessionSoup::createWebSocketTask): Use ResourceRequest::createSoupMessage() and pass the
+    ResourceRequest to WebSocketTask constructor.
+    * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+    (WebKit::WebSocketTask::WebSocketTask): Save the ResourceRequest and then just call
+    ResourceRequest::updateFromSoupMessageHeaders() to update the headers after the response has been sent by libsoup.
+    (WebKit::WebSocketTask::didConnect): Use ResourceResponse constructor with the SoupMessage directly.
+    (WebKit::WebSocketTask::didFail): Ditto.
+    * NetworkProcess/soup/WebSocketTaskSoup.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@272641 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-02-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            [SOUP] Simplify ResourceRequest and ResourceResponse
+            https://bugs.webkit.org/show_bug.cgi?id=221543
+
+            Reviewed by Adrian Perez de Castro.
+
+            Use new ResourceRequest and ResourceResponse API.
+
+            * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+            (WebKit::NetworkDataTaskSoup::createRequest): Use ResourceRequest::createSoupMessage().
+            (WebKit::NetworkDataTaskSoup::didSendRequest): Use ResourceResponse passing the SoupMessage and sniffed content type.
+            (WebKit::NetworkDataTaskSoup::didRequestNextPart): Create a ResourceResponse passing the url, content type,
+            expected length and text encoding. Then call ResourceResponse::updateFromSoupMessageHeaders() to set the headers.
+            * NetworkProcess/soup/NetworkSessionSoup.cpp:
+            (WebKit::NetworkSessionSoup::createWebSocketTask): Use ResourceRequest::createSoupMessage() and pass the
+            ResourceRequest to WebSocketTask constructor.
+            * NetworkProcess/soup/WebSocketTaskSoup.cpp:
+            (WebKit::WebSocketTask::WebSocketTask): Save the ResourceRequest and then just call
+            ResourceRequest::updateFromSoupMessageHeaders() to update the headers after the response has been sent by libsoup.
+            (WebKit::WebSocketTask::didConnect): Use ResourceResponse constructor with the SoupMessage directly.
+            (WebKit::WebSocketTask::didFail): Ditto.
+            * NetworkProcess/soup/WebSocketTaskSoup.h:
+
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r272138. rdar://problem/76375364
 
     [SOUP] Add support for data URLs in the network process

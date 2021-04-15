@@ -34,13 +34,7 @@
 
 namespace WebCore {
 
-void ResourceResponse::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const
-{
-    for (const auto& header : httpHeaderFields())
-        soup_message_headers_append(soupHeaders, header.key.utf8().data(), header.value.utf8().data());
-}
-
-void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
+ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& sniffedContentType)
 {
     m_url = soupURIToURL(soup_message_get_uri(soupMessage));
 
@@ -55,40 +49,40 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
     m_httpStatusCode = soupMessage->status_code;
     setHTTPStatusText(soupMessage->reason_phrase);
 
-    m_soupFlags = soup_message_get_flags(soupMessage);
-
     GTlsCertificate* certificate = 0;
     soup_message_get_https_status(soupMessage, &certificate, &m_tlsErrors);
     m_certificate = certificate;
 
     updateFromSoupMessageHeaders(soupMessage->response_headers);
-}
-
-void ResourceResponse::updateFromSoupMessageHeaders(const SoupMessageHeaders* messageHeaders)
-{
-    SoupMessageHeaders* headers = const_cast<SoupMessageHeaders*>(messageHeaders);
-    SoupMessageHeadersIter headersIter;
-    const char* headerName;
-    const char* headerValue;
-
-    // updateFromSoupMessage could be called several times for the same ResourceResponse object,
-    // thus, we need to clear old header values and update m_httpHeaderFields from soupMessage headers.
-    m_httpHeaderFields.clear();
-
-    soup_message_headers_iter_init(&headersIter, headers);
-    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        addHTTPHeaderField(String(headerName), String(headerValue));
 
     String contentType;
-    const char* officialType = soup_message_headers_get_one(headers, "Content-Type");
-    if (!m_sniffedContentType.isEmpty() && m_sniffedContentType != officialType)
-        contentType = m_sniffedContentType;
+    const char* officialType = soup_message_headers_get_one(soupMessage->response_headers, "Content-Type");
+    if (!sniffedContentType.isNull() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED && sniffedContentType != officialType)
+        contentType = sniffedContentType.data();
     else
         contentType = officialType;
     setMimeType(extractMIMETypeFromMediaType(contentType));
+    if (m_mimeType.isEmpty() && m_httpStatusCode != SOUP_STATUS_NOT_MODIFIED)
+        setMimeType(MIMETypeRegistry::mimeTypeForPath(m_url.path().toString()));
     setTextEncodingName(extractCharsetFromMediaType(contentType));
 
-    setExpectedContentLength(soup_message_headers_get_content_length(headers));
+    setExpectedContentLength(soup_message_headers_get_content_length(soupMessage->response_headers));
+}
+
+void ResourceResponse::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const
+{
+    for (const auto& header : httpHeaderFields())
+        soup_message_headers_append(soupHeaders, header.key.utf8().data(), header.value.utf8().data());
+}
+
+void ResourceResponse::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHeaders)
+{
+    SoupMessageHeadersIter headersIter;
+    const char* headerName;
+    const char* headerValue;
+    soup_message_headers_iter_init(&headersIter, soupHeaders);
+    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
+        addHTTPHeaderField(String(headerName), String(headerValue));
 }
 
 CertificateInfo ResourceResponse::platformCertificateInfo() const
