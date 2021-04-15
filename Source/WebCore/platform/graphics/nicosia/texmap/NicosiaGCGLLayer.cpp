@@ -29,7 +29,7 @@
 #include "config.h"
 #include "NicosiaGCGLLayer.h"
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #if USE(COORDINATED_GRAPHICS)
 #include "TextureMapperGL.h"
@@ -119,4 +119,4 @@ void GCGLLayer::swapBuffersIfNeeded()
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER)

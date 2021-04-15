@@ -1,3 +1,15 @@
+2021-04-14  Don Olmstead  <don.olmstead@sony.com>
+
+        [Nicosia] NicosiaGCGLLayer is unneeded when ENABLE_WEBGL is OFF
+        https://bugs.webkit.org/show_bug.cgi?id=224557
+
+        Reviewed by Michael Catanzaro.
+
+        Add an ENABLE(WEBGL) guard around NicosiaGCGLLayer.
+
+        * platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp:
+        * platform/graphics/nicosia/texmap/NicosiaGCGLLayer.h:
+
 2021-04-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Avoid indirect load in ContainerNode::hasOneChild()
