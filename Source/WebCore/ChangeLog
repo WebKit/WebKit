@@ -1,3 +1,16 @@
+2021-04-15  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Move FocusRemovalEventsMode into FocusOptions
+        https://bugs.webkit.org/show_bug.cgi?id=224549
+        <rdar://problem/76695885>
+
+        Reviewed by Darin Adler.
+
+        Follow-up patch to use braces initializer for FocusOptions struct and simplify the code.
+
+        * dom/Document.cpp:
+        (WebCore::Document::adjustFocusedNodeOnNodeRemoval):
+
 2021-04-15  Alex Christensen  <achristensen@webkit.org>
 
         Add deprecation macros
