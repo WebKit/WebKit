@@ -43,29 +43,29 @@ constexpr CGFloat blueColorComponents[4] = { 0, 0, 1, 1 };
 TEST(HTMLMetaThemeColor, OnLoad)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    EXPECT_TRUE(![webView _themeColor]);
+    EXPECT_TRUE(![webView themeColor]);
 
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red'>"];
 
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
-    EXPECT_TRUE(CGColorEqualToColor([webView _themeColor].CGColor, redColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
 
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='not-theme-color' content='red'>"];
 
-    EXPECT_TRUE(![webView _themeColor]);
+    EXPECT_TRUE(![webView themeColor]);
 }
 
 TEST(HTMLMetaThemeColor, MultipleTags)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
-    EXPECT_TRUE(![webView _themeColor]);
+    EXPECT_TRUE(![webView themeColor]);
 
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red'><meta name='theme-color' content='blue'>"];
 
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto blueColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blueColorComponents));
-    EXPECT_TRUE(CGColorEqualToColor([webView _themeColor].CGColor, blueColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, blueColor.get()));
 }
 
 @interface WKWebViewThemeColorObserver : NSObject
@@ -87,7 +87,7 @@ TEST(HTMLMetaThemeColor, MultipleTags)
     _state = @"before-init";
 
     _webView = webView;
-    [_webView addObserver:self forKeyPath:@"_themeColor" options:NSKeyValueObservingOptionInitial context:nil];
+    [_webView addObserver:self forKeyPath:@"themeColor" options:NSKeyValueObservingOptionInitial context:nil];
 
     return self;
 }
@@ -138,36 +138,36 @@ TEST(HTMLMetaThemeColor, KVO)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     auto themeColorObserver = adoptNS([[WKWebViewThemeColorObserver alloc] initWithWebView:webView.get()]);
     EXPECT_NSSTRING_EQ("after-init", [themeColorObserver state]);
-    EXPECT_TRUE(![webView _themeColor]);
+    EXPECT_TRUE(![webView themeColor]);
 
     [themeColorObserver setState:@"before-load"];
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red'>"];
     EXPECT_NSSTRING_EQ("after-load", [themeColorObserver state]);
-    EXPECT_TRUE(CGColorEqualToColor([webView _themeColor].CGColor, redColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
 
     [themeColorObserver setState:@"before-content-change"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').setAttribute('content', 'blue')"];
     [webView waitForNextPresentationUpdate];
     EXPECT_NSSTRING_EQ("after-content-change", [themeColorObserver state]);
-    EXPECT_TRUE(CGColorEqualToColor([webView _themeColor].CGColor, blueColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, blueColor.get()));
 
     [themeColorObserver setState:@"before-name-change-not-theme-color"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').setAttribute('name', 'not-theme-color')"];
     [webView waitForNextPresentationUpdate];
     EXPECT_NSSTRING_EQ("after-name-change-not-theme-color", [themeColorObserver state]);
-    EXPECT_TRUE(![webView _themeColor]);
+    EXPECT_TRUE(![webView themeColor]);
 
     [themeColorObserver setState:@"before-name-change-theme-color"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').setAttribute('name', 'theme-color')"];
     [webView waitForNextPresentationUpdate];
     EXPECT_NSSTRING_EQ("after-name-change-theme-color", [themeColorObserver state]);
-    EXPECT_TRUE(CGColorEqualToColor([webView _themeColor].CGColor, blueColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, blueColor.get()));
 
     [themeColorObserver setState:@"before-node-removed"];
     [webView objectByEvaluatingJavaScript:@"document.querySelector('meta').remove()"];
     [webView waitForNextPresentationUpdate];
     EXPECT_NSSTRING_EQ("after-node-removed", [themeColorObserver state]);
-    EXPECT_TRUE(![webView _themeColor]);
+    EXPECT_TRUE(![webView themeColor]);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -195,25 +195,25 @@ TEST(HTMLMetaThemeColor, ExperimentalUseThemeColorForScrollAreaBackgroundColor)
     auto blueColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), blueColorComponents));
 
     auto webViewWithoutThemeColorForScrollAreaBackgroundColor = createWebView(UseThemeColorForScrollAreaBackgroundColor::No);
-    EXPECT_TRUE(![webViewWithoutThemeColorForScrollAreaBackgroundColor _themeColor]);
+    EXPECT_TRUE(![webViewWithoutThemeColorForScrollAreaBackgroundColor themeColor]);
 
     [webViewWithoutThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='background-color: blue'>"];
-    EXPECT_TRUE(![webViewWithoutThemeColorForScrollAreaBackgroundColor _themeColor]);
+    EXPECT_TRUE(![webViewWithoutThemeColorForScrollAreaBackgroundColor themeColor]);
     EXPECT_TRUE(CGColorEqualToColor([webViewWithoutThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor, blueColor.get()));
 
     [webViewWithoutThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red'><body style='background-color: blue'>"];
-    EXPECT_TRUE(CGColorEqualToColor([webViewWithoutThemeColorForScrollAreaBackgroundColor _themeColor].CGColor, redColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webViewWithoutThemeColorForScrollAreaBackgroundColor themeColor].CGColor, redColor.get()));
     EXPECT_TRUE(CGColorEqualToColor([webViewWithoutThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor, blueColor.get()));
 
     auto webViewWithThemeColorForScrollAreaBackgroundColor = createWebView(UseThemeColorForScrollAreaBackgroundColor::Yes);
-    EXPECT_TRUE(![webViewWithThemeColorForScrollAreaBackgroundColor _themeColor]);
+    EXPECT_TRUE(![webViewWithThemeColorForScrollAreaBackgroundColor themeColor]);
 
     [webViewWithThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='background-color: blue'>"];
-    EXPECT_TRUE(![webViewWithThemeColorForScrollAreaBackgroundColor _themeColor]);
+    EXPECT_TRUE(![webViewWithThemeColorForScrollAreaBackgroundColor themeColor]);
     EXPECT_TRUE(CGColorEqualToColor([webViewWithThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor, blueColor.get()));
 
     [webViewWithThemeColorForScrollAreaBackgroundColor synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<meta name='theme-color' content='red'><body style='background-color: blue'>"];
-    EXPECT_TRUE(CGColorEqualToColor([webViewWithThemeColorForScrollAreaBackgroundColor _themeColor].CGColor, redColor.get()));
+    EXPECT_TRUE(CGColorEqualToColor([webViewWithThemeColorForScrollAreaBackgroundColor themeColor].CGColor, redColor.get()));
     EXPECT_TRUE(CGColorEqualToColor([webViewWithThemeColorForScrollAreaBackgroundColor scrollView].backgroundColor.CGColor, redColor.get()));
 }
 

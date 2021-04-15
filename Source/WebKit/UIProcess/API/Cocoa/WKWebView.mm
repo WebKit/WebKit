@@ -2982,12 +2982,17 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     _page->setCanUseCredentialStorage(canUseCredentialStorage);
 }
 
-- (CocoaColor *)_themeColor
+- (CocoaColor *)themeColor
 {
     auto themeColor = _page->themeColor();
     if (!themeColor.isValid())
         return nil;
     return WebCore::platformColor(themeColor);
+}
+
+- (CocoaColor *)_themeColor
+{
+    return [self themeColor];
 }
 
 - (CocoaColor *)_pageExtendedBackgroundColor

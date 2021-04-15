@@ -46,11 +46,13 @@ PageClientImplCocoa::~PageClientImplCocoa() = default;
 
 void PageClientImplCocoa::themeColorWillChange()
 {
+    [m_webView willChangeValueForKey:@"themeColor"];
     [m_webView willChangeValueForKey:@"_themeColor"];
 }
 
 void PageClientImplCocoa::themeColorDidChange()
 {
+    [m_webView didChangeValueForKey:@"themeColor"];
     [m_webView didChangeValueForKey:@"_themeColor"];
 }
 

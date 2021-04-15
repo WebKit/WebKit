@@ -559,6 +559,23 @@ The uniform type identifier kUTTypeWebArchive can be used get the related pasteb
 */
 - (NSPrintOperation *)printOperationWithPrintInfo:(NSPrintInfo *)printInfo WK_API_AVAILABLE(macos(11.0));
 #endif
+
+/*! @abstract The theme color of the active page.
+ @discussion This is the CSS color parsed value of the `contents`
+ attribute of the first valid
+ @textblock
+    <meta name="theme-color" contents="...">
+ @/textblock
+ element in the current main document.
+ @link WKWebView @/link is key-value observing (KVO) compliant for this
+ property.
+ */
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly, nullable) UIColor *themeColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#else
+@property (nonatomic, readonly, nullable) NSColor *themeColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
+
 @end
 
 #if !TARGET_OS_IPHONE
