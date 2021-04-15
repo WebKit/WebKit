@@ -1,3 +1,51 @@
+2021-04-15  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r275924. rdar://problem/76707173
+
+    The watchdog should not fire when it's not active.
+    https://bugs.webkit.org/show_bug.cgi?id=224494
+    rdar://76581259
+    
+    Reviewed by Saam Barati and Yusuke Suzuki.
+    
+    The watchdog is only active when we have entered the VM.  If we haven't entered
+    the VM, we postpone starting the watchdog.  For example, see Watchdog::enteredVM()
+    and Watchdog::exitedVM().
+    
+    The underlying timer may still fire the NeedWatchdogCheck event after
+    Watchdog::stopTimer() is called.  So, we need to just ignore the event if the
+    watchdog isn't active.
+    
+    * runtime/VMTraps.cpp:
+    (JSC::VMTraps::handleTraps):
+    * runtime/Watchdog.h:
+    (JSC::Watchdog::isActive const):
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275924 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-13  Mark Lam  <mark.lam@apple.com>
+
+            The watchdog should not fire when it's not active.
+            https://bugs.webkit.org/show_bug.cgi?id=224494
+            rdar://76581259
+
+            Reviewed by Saam Barati and Yusuke Suzuki.
+
+            The watchdog is only active when we have entered the VM.  If we haven't entered
+            the VM, we postpone starting the watchdog.  For example, see Watchdog::enteredVM()
+            and Watchdog::exitedVM().
+
+            The underlying timer may still fire the NeedWatchdogCheck event after
+            Watchdog::stopTimer() is called.  So, we need to just ignore the event if the
+            watchdog isn't active.
+
+            * runtime/VMTraps.cpp:
+            (JSC::VMTraps::handleTraps):
+            * runtime/Watchdog.h:
+            (JSC::Watchdog::isActive const):
+
 2021-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] B3 reduce-double-to-float should reduce only when constant double is canonical one to reduced float value

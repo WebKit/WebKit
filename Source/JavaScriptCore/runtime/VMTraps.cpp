@@ -380,8 +380,7 @@ void VMTraps::handleTraps(VMTraps::BitField mask)
 
         case NeedWatchdogCheck:
             ASSERT(vm.watchdog());
-            ASSERT(vm.entryScope->globalObject());
-            if (LIKELY(!vm.watchdog()->shouldTerminate(vm.entryScope->globalObject())))
+            if (LIKELY(!vm.watchdog()->isActive() || !vm.watchdog()->shouldTerminate(vm.entryScope->globalObject())))
                 continue;
             vm.setTerminationInProgress(true);
             FALLTHROUGH;
