@@ -1,5 +1,40 @@
 2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK][WPE] Unreviewed test gardening. Add missing images after r275996.
+
+        * platform/gtk/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/001-expected.png:
+        * platform/gtk/fast/block/margin-collapse/block-inside-inline/005-expected.png:
+        * platform/gtk/fast/css/child-style-can-override-visited-style-expected.png:
+        * platform/gtk/fast/dom/HTMLProgressElement/progress-element-expected.png:
+        * platform/gtk/fast/images/image-map-anchor-children-expected.png:
+        * platform/gtk/fast/inline-block/003-expected.png:
+        * platform/gtk/fast/inline/002-expected.png:
+        * platform/gtk/fast/invalid/018-expected.png:
+        * platform/gtk/fast/table/frame-and-rules-expected.png:
+        * platform/gtk/fast/table/table-display-types-strict-expected.png:
+        * platform/gtk/fast/text/basic/012-expected.png:
+        * platform/gtk/svg/custom/invisible-text-after-scrolling-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug14323-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug2267-expected.png:
+        * platform/wpe/css2.1/t100801-c544-valgn-03-d-agi-expected.png: Added.
+        * platform/wpe/fast/block/margin-collapse/block-inside-inline/001-expected.png: Added.
+        * platform/wpe/fast/block/margin-collapse/block-inside-inline/005-expected.png: Added.
+        * platform/wpe/fast/css/child-style-can-override-visited-style-expected.png: Added.
+        * platform/wpe/fast/dom/HTMLProgressElement/progress-element-expected.png: Added.
+        * platform/wpe/fast/images/image-map-anchor-children-expected.png: Added.
+        * platform/wpe/fast/inline-block/003-expected.png: Added.
+        * platform/wpe/fast/inline/002-expected.png: Added.
+        * platform/wpe/fast/invalid/018-expected.png: Added.
+        * platform/wpe/fast/table/frame-and-rules-expected.png: Added.
+        * platform/wpe/fast/table/table-display-types-strict-expected.png: Added.
+        * platform/wpe/fast/text/basic/012-expected.png: Added.
+        * platform/wpe/svg/custom/invisible-text-after-scrolling-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug14323-expected.png: Added.
+        * platform/wpe/tables/mozilla/bugs/bug2267-expected.png: Added.
+
+2021-04-14  Diego Pino Garcia  <dpino@igalia.com>
+
         [WPE] Unreviewed test gardening. Update stale baselines.
 
         Also add missing .png images.
