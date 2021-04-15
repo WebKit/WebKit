@@ -52,6 +52,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -468,6 +469,21 @@ void PlatformCALayerCocoa::setSublayers(const PlatformCALayerList& list)
         return layer->m_layer;
     }).get()];
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+PlatformCALayerList PlatformCALayerCocoa::sublayersForLogging() const
+{
+    PlatformCALayerList sublayers;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    [[m_layer sublayers] enumerateObjectsUsingBlock:makeBlockPtr([&] (CALayer *layer, NSUInteger, BOOL *) {
+        auto platformCALayer = PlatformCALayer::platformCALayerForLayer(layer);
+        if (!platformCALayer)
+            return;
+        sublayers.append(platformCALayer);
+    }).get()];
+    END_BLOCK_OBJC_EXCEPTIONS
+
+    return sublayers;
 }
 
 void PlatformCALayerCocoa::removeAllSublayers()

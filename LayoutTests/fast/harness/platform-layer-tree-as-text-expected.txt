@@ -1,0 +1,15 @@
+(structural layer
+  (position 200.00 200.00)
+  (bounds 200.00 200.00)
+  (children
+    (backdrop layer
+      (position 0.00 0.00)
+      (bounds 200.00 200.00)
+    )
+    (platform layer
+      (position 100.00 100.00)
+      (bounds 200.00 200.00)
+    )
+  )
+)
+

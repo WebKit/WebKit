@@ -3931,18 +3931,61 @@ void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
     GraphicsLayer::getDebugBorderInfo(color, width);
 }
 
-static void dumpInnerLayer(TextStream& textStream, String label, PlatformCALayer* layer, LayerTreeAsTextBehavior behavior)
+const char* GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) const
+{
+    if (&layer == m_structuralLayer.get())
+        return "structural layer";
+    if (&layer == m_contentsClippingLayer.get())
+        return "contents clipping layer";
+    if (&layer == m_shapeMaskLayer.get())
+        return "shape mask layer";
+    if (&layer == m_backdropClippingLayer.get())
+        return "backdrop clipping layer";
+    if (&layer == m_contentsLayer.get())
+        return "contents layer";
+    if (&layer == m_contentsShapeMaskLayer.get())
+        return "contents shape mask layer";
+    if (&layer == m_backdropLayer.get())
+        return "backdrop layer";
+    return "platform layer";
+}
+
+void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, OptionSet<PlatformLayerTreeAsTextFlags> flags) const
 {
     if (!layer)
         return;
 
-    textStream << indent << "(" << label << " ";
-    if (behavior & LayerTreeAsTextDebug)
-        textStream << "id=" << layer->layerID() << " ";
-    textStream << layer->position().x() << ", " << layer->position().y() << " " << layer->bounds().width() << " x " << layer->bounds().height();
-    if (layer->isHidden())
-        textStream << " hidden";
-    textStream << ")\n";
+    ts << indent << "(" << purposeNameForInnerLayer(*layer) << "\n";
+
+    {
+        TextStream::IndentScope indentScope(ts);
+
+        if (flags.contains(PlatformLayerTreeAsTextFlags::Debug))
+            ts << indent << "(id " << layer->layerID() << ")\n";
+
+        ts << indent << "(position " << layer->position().x() << " " << layer->position().y() << ")\n";
+        ts << indent << "(bounds " << layer->bounds().width() << " " << layer->bounds().height() << ")\n";
+
+        if (layer->isHidden())
+            ts << indent << "(hidden)\n";
+
+        if (!flags.contains(PlatformLayerTreeAsTextFlags::IgnoreChildren)) {
+            auto sublayers = layer->sublayersForLogging();
+            if (sublayers.size()) {
+                ts << indent << "(children " << "\n";
+
+                {
+                    TextStream::IndentScope indentScope(ts);
+                    for (auto& child : sublayers)
+                        dumpInnerLayer(ts, child.get(), flags);
+                }
+
+                ts << indent << ")\n";
+            }
+        }
+    }
+
+    ts << indent << ")\n";
 }
 
 void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTreeAsTextBehavior behavior) const
@@ -3974,19 +4017,29 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTree
         textStream << indent << "(deep color 1)\n";
 
     if (behavior & LayerTreeAsTextIncludeContentLayers) {
-        dumpInnerLayer(textStream, "structural layer", m_structuralLayer.get(), behavior);
-        dumpInnerLayer(textStream, "contents clipping layer", m_contentsClippingLayer.get(), behavior);
-        dumpInnerLayer(textStream, "shape mask layer", m_shapeMaskLayer.get(), behavior);
-        dumpInnerLayer(textStream, "backdrop clipping layer", m_backdropClippingLayer.get(), behavior);
-        dumpInnerLayer(textStream, "contents layer", m_contentsLayer.get(), behavior);
-        dumpInnerLayer(textStream, "contents shape mask layer", m_contentsShapeMaskLayer.get(), behavior);
-        dumpInnerLayer(textStream, "backdrop layer", m_backdropLayer.get(), behavior);
+        OptionSet<PlatformLayerTreeAsTextFlags> platformFlags = { PlatformLayerTreeAsTextFlags::IgnoreChildren };
+        if (behavior & LayerTreeAsTextDebug)
+            platformFlags.add(PlatformLayerTreeAsTextFlags::Debug);
+        dumpInnerLayer(textStream, m_structuralLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_contentsClippingLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_shapeMaskLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_backdropClippingLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_contentsLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_contentsShapeMaskLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_backdropLayer.get(), platformFlags);
     }
 
     if (behavior & LayerTreeAsTextDebug) {
         if (m_usesDisplayListDrawing)
             textStream << indent << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
     }
+}
+
+String GraphicsLayerCA::platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags> flags) const
+{
+    TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
+    dumpInnerLayer(ts, primaryLayer(), flags);
+    return ts.release();
 }
 
 void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)

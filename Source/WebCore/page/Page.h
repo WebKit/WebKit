@@ -552,7 +552,7 @@ public:
     WEBCORE_EXPORT void isolatedUpdateRendering();
     WEBCORE_EXPORT void finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags>);
 
-    // Schedule a rerndering update that coordinates with display refresh.
+    // Schedule a rendering update that coordinates with display refresh.
     WEBCORE_EXPORT void scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps);
     // Trigger a rendering update in the current runloop. Only used for testing.
     void triggerRenderingUpdateForTesting();

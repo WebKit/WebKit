@@ -1,3 +1,17 @@
+2021-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Add a mechanism to dump the PlatformCALayer subtree of a GraphicsLayer, for testing
+        https://bugs.webkit.org/show_bug.cgi?id=224595
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+        Add a getter for the PlatformCALayer sublayers of PlatformCALayerRemote; see the note on PlatformCALayerCocoa.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::layerTreeAsText const):
+        Adopt the RenderLayerCompositor version of layerTreeAsText.
+
 2021-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         WKContentView should become focused without requiring -[WKWebView canBecomeFocused] to return YES

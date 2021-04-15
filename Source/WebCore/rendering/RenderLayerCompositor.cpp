@@ -2270,18 +2270,37 @@ void RenderLayerCompositor::rootLayerConfigurationChanged()
     }
 }
 
-String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
+void RenderLayerCompositor::updateCompositingForLayerTreeAsTextDump()
 {
-    LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " layerTreeAsText");
+    auto& frameView = m_renderView.frameView();
+    frameView.updateLayoutAndStyleIfNeededRecursive();
+    
+    updateEventRegions();
+
+    for (auto* child = frameView.frame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
+        if (auto* renderer = child->contentRenderer())
+            renderer->compositor().updateEventRegions();
+    }
+
     updateCompositingLayers(CompositingUpdateType::AfterLayout);
 
     if (!m_rootContentsLayer)
-        return String();
+        return;
 
     flushPendingLayerChanges(true);
     // We need to trigger an update because the flushPendingLayerChanges() will have pushed changes to platform layers,
     // which may cause painting to happen in the current runloop.
     page().triggerRenderingUpdateForTesting();
+}
+
+String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
+{
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " layerTreeAsText");
+
+    updateCompositingForLayerTreeAsTextDump();
+
+    if (!m_rootContentsLayer)
+        return String();
 
     LayerTreeAsTextBehavior layerTreeBehavior = LayerTreeAsTextBehaviorNormal;
     if (flags & LayerTreeFlagsIncludeDebugInfo)
@@ -2324,6 +2343,22 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         return m_renderView.frameView().trackedRepaintRectsAsText() + layerTreeText;
 
     return layerTreeText;
+}
+
+Optional<String> RenderLayerCompositor::platformLayerTreeAsText(Element& element, OptionSet<PlatformLayerTreeAsTextFlags> flags)
+{
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor " << this << " platformLayerTreeAsText");
+
+    updateCompositingForLayerTreeAsTextDump();
+    if (!element.renderer() || !element.renderer()->hasLayer())
+        return WTF::nullopt;
+
+    auto& layerModelObject = downcast<RenderLayerModelObject>(*element.renderer());
+    if (!layerModelObject.layer()->isComposited())
+        return WTF::nullopt;
+
+    auto* backing = layerModelObject.layer()->backing();
+    return backing->graphicsLayer()->platformLayerTreeAsText(flags);
 }
 
 static RenderView* frameContentsRenderView(RenderWidget& renderer)

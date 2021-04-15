@@ -1,3 +1,83 @@
+2021-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Add a mechanism to dump the PlatformCALayer subtree of a GraphicsLayer, for testing
+        https://bugs.webkit.org/show_bug.cgi?id=224595
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/harness/platform-layer-tree-as-text.html
+
+        Add internals.platformLayerTreeAsText(), which takes a (composited) Element
+        and returns the recursive PlatformCALayer tree under that element's backing
+        layer's primary layer.
+
+        This is intended to be used in a future patch in order to test a fix
+        that is only currently testable by observing the platform layer tree.
+        I've separated it from that patch in order to get the test rebaselining
+        out of the way in a behavior-neutral patch.
+
+        The motivation for a new method instead of a layerTreeAsText() flag
+        is this: if you make each GraphicsLayerCA dump its PlatformCALayers
+        (as a "show me the platform sublayers recursively" flag might do),
+        each GraphicsLayerCA also dumps its children's platform sublayers.
+        Thus the easiest way to get sane logging for testing is to target
+        the specific element you're interested in; thus, a new method.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::layerTreeAsText const): Deleted.
+        * page/Frame.h:
+        Move layerTreeAsText to RenderLayerCompositor, where it probably belongs.
+
+        * page/Page.h: Fix a typo.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::platformLayerTreeAsText const):
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::purposeNameForInnerLayer const):
+        When dumping a PlatformCALayer, look up its purpose by checking which
+        layer member it is, instead of having it passed in. This way, we can
+        look it up even when we've reached this layer by crawling down the
+        PlatformCALayer tree.
+
+        (WebCore::GraphicsLayerCA::dumpInnerLayer const):
+        Clean up the PlatformCALayer dumping; make it multi-line and more
+        consistent with GraphicsLayer's dumping (a future patch will add more properties).
+
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties const):
+        Use dumpInnerLayer when dumping PlatformCALayers from a GraphicsLayer dump,
+        but with a bit set to disable dumping children, to maintain the exising output
+        and avoid each layer also dumping its children's platform layers, as mentioned above.
+
+        (WebCore::GraphicsLayerCA::platformLayerTreeAsText const):
+        (WebCore::dumpInnerLayer): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        Add a getter for the set of sublayers of a PlatformCALayerCocoa that 
+        themselves have PlatformCALayers (thus the -forLogging; I didn't want
+        anybody to accidentally think that this gets *all* of the sublayers).
+
+        (WebCore::PlatformCALayerCocoa::sublayersForLogging):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingForLayerTreeAsTextDump):
+        Consolidate all of the pre-layer-tree-dumping setup work, so it can
+        be shared between layerTreeAsText and platformLayerTreeAsText.
+
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        (WebCore::RenderLayerCompositor::platformLayerTreeAsText):
+        * rendering/RenderLayerCompositor.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::layerTreeAsText const):
+        Adopt the RenderLayerCompositor version of layerTreeAsText.
+        Don't bother doing layout, RenderLayerCompositor does it.
+
+        (WebCore::toPlatformLayerTreeFlags):
+        (WebCore::Internals::platformLayerTreeAsText const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Support the Translate menu item in editable selected text

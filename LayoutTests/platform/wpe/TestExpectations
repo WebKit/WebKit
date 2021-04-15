@@ -334,6 +334,9 @@ fast/events/touch/touch-slider.html [ Skip ]
 webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Skip ]
 fast/events/touch/touch-input-element-change-documents.html [ Skip ]
 
+# platformLayerTreeAsText is only implemented for Cocoa ports.
+fast/harness/platform-layer-tree-as-text.html [ Skip ]
+
 # ENABLE_DRAG_SUPPORT is OFF in WPE.
 fast/events/5056619.html [ Skip ]
 fast/events/before-input-events-prevent-drag-and-drop.html [ Skip ]

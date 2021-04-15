@@ -10,19 +10,34 @@
         (GraphicsLayer
           (position 58.00 20.00)
           (bounds 200.00 120.00)
-          (contents clipping layer 0.00, 0.00 200.00 x 120.00)
-          (contents layer -20.00, 0.00 240.00 x 120.00)
+          (contents clipping layer
+            (position 0.00 0.00)
+            (bounds 200.00 120.00)
+          )
+          (contents layer
+            (position -20.00 0.00)
+            (bounds 240.00 120.00)
+          )
         )
         (GraphicsLayer
           (position 58.00 160.00)
           (bounds 200.00 120.00)
-          (contents layer 0.00, 10.00 200.00 x 100.00)
+          (contents layer
+            (position 0.00 10.00)
+            (bounds 200.00 100.00)
+          )
         )
         (GraphicsLayer
           (position 58.00 300.00)
           (bounds 200.00 120.00)
-          (contents clipping layer 0.00, 0.00 200.00 x 120.00)
-          (contents layer -44.00, -12.00 288.00 x 144.00)
+          (contents clipping layer
+            (position 0.00 0.00)
+            (bounds 200.00 120.00)
+          )
+          (contents layer
+            (position -44.00 -12.00)
+            (bounds 288.00 144.00)
+          )
         )
       )
     )

@@ -1,3 +1,43 @@
+2021-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Add a mechanism to dump the PlatformCALayer subtree of a GraphicsLayer, for testing
+        https://bugs.webkit.org/show_bug.cgi?id=224595
+
+        Reviewed by Simon Fraser.
+
+        * fast/harness/platform-layer-tree-as-text-expected.txt: Added.
+        * fast/harness/platform-layer-tree-as-text.html: Added.
+        Add a test for the basic output of platformLayerTreeAsText().
+
+        * compositing/video/video-object-position-expected.txt:
+        * compositing/visible-rect/mask-layer-coverage-expected.txt:
+        * css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute-expected.txt:
+        * css3/filters/backdrop/backdrop-filter-does-not-size-properly-border-and-padding-expected.txt:
+        * css3/filters/backdrop/backdrop-filter-with-cliprect-expected.txt:
+        * css3/filters/backdrop/backdrop-filter-with-mask-expected.txt:
+        * css3/filters/backdrop/backdrop-with-visibility-hidden-changing-expected.txt:
+        * css3/filters/backdrop/backdrop-with-visibility-hidden-expected.txt:
+        * css3/filters/backdrop/resource-use-add-more-layers-expected.txt:
+        * css3/filters/backdrop/resource-use-excessive-expected.txt:
+        * css3/filters/backdrop/resource-use-ok-expected.txt:
+        * css3/filters/backdrop/resource-use-remove-some-layers-expected.txt:
+        * fullscreen/full-screen-layer-dump-expected.txt:
+        * platform/ios/compositing/reflections/direct-image-object-fit-reflected-expected.txt:
+        * platform/ios/compositing/video/video-object-position-expected.txt:
+        * platform/ios/compositing/visible-rect/mask-layer-coverage-expected.txt:
+        * platform/ios/css3/filters/backdrop/backdrop-filter-does-not-size-properly-absolute-expected.txt:
+        * platform/ios/css3/filters/backdrop/backdrop-filter-with-cliprect-expected.txt:
+        * platform/ios/css3/filters/backdrop/backdrop-filter-with-mask-expected.txt:
+        * platform/mac/compositing/images/direct-image-object-fit-expected.txt:
+        * platform/mac/compositing/reflections/direct-image-object-fit-reflected-expected.txt:
+        * platform/mac/compositing/video/video-object-fit-expected.txt:
+        Rebaseline some tests to the new logging format.
+
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+        Skip the new test on non-Cocoa ports.
+
 2021-04-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Support the Translate menu item in editable selected text

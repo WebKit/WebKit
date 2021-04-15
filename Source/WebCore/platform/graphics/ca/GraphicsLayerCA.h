@@ -229,6 +229,8 @@ private:
 
     WEBCORE_EXPORT String displayListAsText(DisplayList::AsTextFlags) const override;
 
+    WEBCORE_EXPORT String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const override;
+
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool) override;
     WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const override;
 
@@ -306,6 +308,8 @@ private:
 
     WEBCORE_EXPORT void getDebugBorderInfo(Color&, float& width) const override;
     WEBCORE_EXPORT void dumpAdditionalProperties(WTF::TextStream&, LayerTreeAsTextBehavior) const override;
+    void dumpInnerLayer(WTF::TextStream&, PlatformCALayer*, OptionSet<PlatformLayerTreeAsTextFlags>) const;
+    const char *purposeNameForInnerLayer(PlatformCALayer&) const;
 
     void computePixelAlignment(float contentsScale, const FloatPoint& positionRelativeToBase,
         FloatPoint& position, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;

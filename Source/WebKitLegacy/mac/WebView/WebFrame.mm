@@ -95,6 +95,7 @@
 #import <WebCore/PrintContext.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderLayer.h>
+#import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderLayerScrollableArea.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
@@ -2175,7 +2176,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!coreFrame)
         return @"";
 
-    return coreFrame->layerTreeAsText();
+    return coreFrame->contentRenderer()->compositor().layerTreeAsText();
 }
 
 - (id)accessibilityRoot

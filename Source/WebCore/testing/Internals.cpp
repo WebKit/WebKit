@@ -2830,11 +2830,9 @@ static LayerTreeFlags toLayerTreeFlags(unsigned short flags)
 // instance instead.
 ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned short flags) const
 {
-    if (!document.frame())
+    if (!document.frame() || !document.frame()->contentRenderer())
         return Exception { InvalidAccessError };
-
-    document.updateLayoutIgnorePendingStylesheets();
-    return document.frame()->layerTreeAsText(toLayerTreeFlags(flags));
+    return document.frame()->contentRenderer()->compositor().layerTreeAsText(toLayerTreeFlags(flags));
 }
 
 ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
@@ -2854,6 +2852,29 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
 
     auto* backing = layerModelObject.layer()->backing();
     return backing->graphicsLayer()->primaryLayerID();
+}
+
+static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags(unsigned short flags)
+{
+    OptionSet<PlatformLayerTreeAsTextFlags> platformLayerTreeFlags = { };
+    if (flags & Internals::PLATFORM_LAYER_TREE_DEBUG)
+        platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::Debug);
+    if (flags & Internals::PLATFORM_LAYER_TREE_IGNORES_CHILDREN)
+        platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::IgnoreChildren);
+    return platformLayerTreeFlags;
+}
+
+ExceptionOr<String> Internals::platformLayerTreeAsText(Element& element, unsigned short flags) const
+{
+    Document& document = element.document();
+    if (!document.frame() || !document.frame()->contentRenderer())
+        return Exception { InvalidAccessError };
+
+    auto text = document.frame()->contentRenderer()->compositor().platformLayerTreeAsText(element, toPlatformLayerTreeFlags(flags));
+    if (!text)
+        return Exception { NotFoundError };
+
+    return String { text.value() };
 }
 
 ExceptionOr<String> Internals::repaintRectsAsText() const

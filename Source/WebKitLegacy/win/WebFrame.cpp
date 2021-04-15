@@ -93,6 +93,7 @@
 #include <WebCore/PluginData.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/PrintContext.h>
+#include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ResourceHandle.h>
@@ -1369,7 +1370,7 @@ HRESULT WebFrame::layerTreeAsText(_Deref_out_opt_ BSTR* result)
     if (!frame)
         return E_UNEXPECTED;
 
-    String text = frame->layerTreeAsText();
+    String text = frame->contentRenderer()->compositor().layerTreeAsText();
     *result = BString(text).release();
     return S_OK;
 }

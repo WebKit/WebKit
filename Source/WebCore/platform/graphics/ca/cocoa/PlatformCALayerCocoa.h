@@ -53,6 +53,7 @@ public:
     PlatformCALayer* superlayer() const override;
     void removeFromSuperlayer() override;
     void setSublayers(const PlatformCALayerList&) override;
+    PlatformCALayerList sublayersForLogging() const override;
     void removeAllSublayers() override;
     void appendSublayer(PlatformCALayer&) override;
     void insertSublayer(PlatformCALayer&, size_t index) override;

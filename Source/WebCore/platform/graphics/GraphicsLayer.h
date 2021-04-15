@@ -602,6 +602,8 @@ public:
     // For testing.
     virtual String displayListAsText(DisplayList::AsTextFlags) const { return String(); }
 
+    virtual String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const { return String(); }
+
     virtual void setIsTrackingDisplayListReplay(bool isTracking) { m_isTrackingDisplayListReplay = isTracking; }
     virtual bool isTrackingDisplayListReplay() const { return m_isTrackingDisplayListReplay; }
     virtual String replayDisplayListAsText(DisplayList::AsTextFlags) const { return String(); }

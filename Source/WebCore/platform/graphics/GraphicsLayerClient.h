@@ -87,6 +87,11 @@ enum LayerTreeAsTextBehaviorFlags {
 };
 typedef unsigned LayerTreeAsTextBehavior;
 
+enum class PlatformLayerTreeAsTextFlags : uint8_t {
+    Debug = 1 << 0,
+    IgnoreChildren = 1 << 1,
+};
+
 enum GraphicsLayerPaintFlags {
     GraphicsLayerPaintNormal                    = 0,
     GraphicsLayerPaintSnapshotting              = 1 << 0,
