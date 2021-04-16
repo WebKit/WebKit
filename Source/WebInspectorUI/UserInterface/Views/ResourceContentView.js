@@ -305,6 +305,9 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
     _populateCreateLocalResourceOverrideContextMenu(contextMenu, event)
     {
+        if (!this._createLocalResourceOverrideButtonNavigationItem.enabled)
+            return;
+
         contextMenu.appendItem(WI.UIString("Create Request Local Override"), () => {
             // Request overrides cannot be created from a file as files don't have network info.
             this._createAndShowLocalResourceOverride(WI.LocalResourceOverride.InterceptType.Request);
