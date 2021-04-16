@@ -1,5 +1,22 @@
 2021-04-16  Zalan Bujtas  <zalan@apple.com>
 
+        [RenderTreeBuilder] Do not try to collapse anonymous blocks when cleaning up the first-letter subtree
+        https://bugs.webkit.org/show_bug.cgi?id=224667
+        <rdar://76616098>
+
+        Reviewed by Antti Koivisto.
+
+        We construct a dedicated renderer for the first letter content and in some cases wrap it into an anonymous block.
+        This subtree needs to be destroyed when the associated RenderText is getting deleted. During this cleanup process
+        we may find the wrapper anonymous block redundant and initiate a sibling block collapsing. However this collapsing
+        may interfere with the initial delete (the associated RenderText) and lead to unexpected result.
+        Let's reserve the anonymous collapsing for the initial remove.
+
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::cleanupOnDestroy):
+
+2021-04-16  Zalan Bujtas  <zalan@apple.com>
+
         [IFC] Incorrect box height when scrollbar takes padding box space
         https://bugs.webkit.org/show_bug.cgi?id=224546
         <rdar://problem/76666402>
