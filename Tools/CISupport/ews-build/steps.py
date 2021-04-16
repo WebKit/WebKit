@@ -2270,6 +2270,10 @@ class RunWebKitTests(shell.Test):
         if self.results != SUCCESS and self.incorrectLayoutLines:
             status = ' '.join(self.incorrectLayoutLines)
             return {'step': status}
+        if self.results == SKIPPED:
+            if self.getProperty('fast_commit_queue'):
+                return {'step': 'Skipped layout-tests in fast-cq mode'}
+            return {'step': 'Skipped layout-tests'}
 
         return super(RunWebKitTests, self).getResultSummary()
 

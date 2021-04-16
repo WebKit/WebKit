@@ -1721,7 +1721,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
         self.setProperty('fast_commit_queue', True)
-        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped layout-tests in fast-cq mode')
         return self.runStep()
 
     def test_skip_for_mac_wk2_passed_patch_on_commit_queue(self):
@@ -1731,7 +1731,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
         self.setProperty('passed_mac_wk2', True)
-        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped layout-tests')
         return self.runStep()
 
     def test_parse_results_json_regression(self):
@@ -2260,7 +2260,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
         self.setProperty('fast_commit_queue', True)
-        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped layout-tests in fast-cq mode')
         return self.runStep()
 
 

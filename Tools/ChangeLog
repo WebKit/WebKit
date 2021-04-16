@@ -1,3 +1,14 @@
+2021-04-16  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Improve step description when layout-tests step is skipped
+        https://bugs.webkit.org/show_bug.cgi?id=224666
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (RunWebKitTests.getResultSummary):
+        * CISupport/ews-build/steps_unittest.py: Updated unit-tests.
+
 2021-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Avoid converting HTML chars in _W3CTestConverter
