@@ -108,7 +108,12 @@ NotificationClient::Permission WebNotificationManager::policyForOrigin(WebCore::
         return NotificationClient::Permission::Default;
 
     ASSERT(!origin->isUnique());
-    auto it = m_permissionsMap.find(origin->toRawString());
+
+    auto originString = origin->toRawString();
+    if (!decltype(m_permissionsMap)::isValidKey(originString))
+        return NotificationClient::Permission::Default;
+
+    auto it = m_permissionsMap.find(originString);
     if (it != m_permissionsMap.end())
         return it->value ? NotificationClient::Permission::Granted : NotificationClient::Permission::Denied;
 #else
