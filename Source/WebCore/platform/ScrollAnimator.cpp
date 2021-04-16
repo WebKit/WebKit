@@ -57,7 +57,7 @@ ScrollAnimator::ScrollAnimator(ScrollableArea& scrollableArea)
 #if ENABLE(CSS_SCROLL_SNAP) || ENABLE(RUBBER_BANDING)
     , m_scrollController(*this)
 #endif
-    , m_scrollAnimation(makeUnique<ScrollAnimationSmooth>(
+    , m_animationProgrammaticScroll(makeUnique<ScrollAnimationSmooth>(
         [this]() -> ScrollExtents {
             return { m_scrollableArea.minimumScrollPosition(), m_scrollableArea.maximumScrollPosition(), m_scrollableArea.visibleSize() };
         },
@@ -99,13 +99,6 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
     UNUSED_PARAM(behavior);
 #endif
 
-#if ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS_FAMILY)
-    if (m_scrollableArea.scrollAnimatorEnabled()) {
-        m_scrollAnimation->setCurrentPosition(m_currentPosition);
-        return m_scrollAnimation->scroll(orientation, granularity, step, multiplier);
-    }
-#endif
-
     return scrollToPositionWithoutAnimation(positionFromStep(orientation, step, multiplier));
 }
 
@@ -124,7 +117,6 @@ bool ScrollAnimator::scrollToPositionWithoutAnimation(const FloatPoint& position
     if (adjustedPosition == currentPosition && adjustedPosition == scrollableArea().scrollPosition() && !scrollableArea().scrollOriginChanged())
         return false;
 
-    m_scrollAnimation->setCurrentPosition(adjustedPosition);
     m_currentPosition = adjustedPosition;
     notifyPositionChanged(adjustedPosition - currentPosition);
     updateActiveScrollSnapIndexForOffset();
@@ -142,8 +134,8 @@ bool ScrollAnimator::scrollToPositionWithAnimation(const FloatPoint& newPosition
     if (!positionChanged && !scrollableArea().scrollOriginChanged())
         return false;
 
-    m_scrollAnimation->setCurrentPosition(m_currentPosition);
-    m_scrollAnimation->scroll(newPosition);
+    m_animationProgrammaticScroll->setCurrentPosition(m_currentPosition);
+    m_animationProgrammaticScroll->scroll(newPosition);
     scrollableArea().setScrollBehaviorStatus(ScrollBehaviorStatus::InNonNativeAnimation);
     return true;
 }
@@ -346,23 +338,23 @@ void ScrollAnimator::removeWheelEventTestCompletionDeferralForReason(WheelEventT
 void ScrollAnimator::cancelAnimations()
 {
 #if !USE(REQUEST_ANIMATION_FRAME_TIMER)
-    m_scrollAnimation->stop();
+    m_animationProgrammaticScroll->stop();
 #endif
 }
 
 void ScrollAnimator::willEndLiveResize()
 {
-    m_scrollAnimation->updateVisibleLengths();
+    m_animationProgrammaticScroll->updateVisibleLengths();
 }
 
 void ScrollAnimator::didAddVerticalScrollbar(Scrollbar*)
 {
-    m_scrollAnimation->updateVisibleLengths();
+    m_animationProgrammaticScroll->updateVisibleLengths();
 }
 
 void ScrollAnimator::didAddHorizontalScrollbar(Scrollbar*)
 {
-    m_scrollAnimation->updateVisibleLengths();
+    m_animationProgrammaticScroll->updateVisibleLengths();
 }
 
 FloatPoint ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(const FloatPoint& offset, ScrollSnapPointSelectionMethod method)
