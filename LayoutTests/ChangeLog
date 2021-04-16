@@ -1,3 +1,14 @@
+2021-04-16  Zalan Bujtas  <zalan@apple.com>
+
+        [IFC] Incorrect box height when scrollbar takes padding box space
+        https://bugs.webkit.org/show_bug.cgi?id=224546
+        <rdar://problem/76666402>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline-block/non-overlay-scrollbar-incorrect-padding-expected.txt: Added.
+        * fast/inline-block/non-overlay-scrollbar-incorrect-padding.html: Added.
+
 2021-04-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardenind. Gardened several flaky failures.

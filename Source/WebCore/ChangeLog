@@ -1,3 +1,20 @@
+2021-04-16  Zalan Bujtas  <zalan@apple.com>
+
+        [IFC] Incorrect box height when scrollbar takes padding box space
+        https://bugs.webkit.org/show_bug.cgi?id=224546
+        <rdar://problem/76666402>
+
+        Reviewed by Antti Koivisto.
+
+        This patch fixes the case when a non-overlay scrollbar can't be accomodated in the padding/content box area (e.g <div style="height: 10px; overflow: scroll">...)
+        In the legacy render tree the non-overlay scrollbar size is already taken into account when calling RenderBox::contentWidth/Height (paddingBoxHeight/Width), so
+        we just have to check how much space they actully take (currently maximum of 15px).
+
+        Test: fast/inline-block/non-overlay-scrollbar-incorrect-padding.html
+
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::updateLayoutBoxDimensions):
+
 2021-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy Ref/RefPtr in ApplyStyleCommand
