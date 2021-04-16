@@ -147,6 +147,15 @@ bool WebContextMenuClient::clientFloatRectForNode(Node& node, FloatRect& rect) c
     return true;
 }
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+
+void WebContextMenuClient::handleTranslation(const String& text, const IntRect& selectionBoundsInRootView, const IntPoint& locationInRootView)
+{
+    [m_webView _handleContextMenuTranslation:text selectionBounds:selectionBoundsInRootView menuLocation:locationInRootView];
+}
+
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
 
 void WebContextMenuClient::sharingServicePickerWillBeDestroyed(WebSharingServicePickerController &)

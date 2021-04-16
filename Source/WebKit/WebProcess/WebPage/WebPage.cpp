@@ -7528,6 +7528,15 @@ void WebPage::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completi
     completionHandler(mainFrame()->document()->loader()->lastNavigationWasAppBound());
 }
 
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+void WebPage::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const IntPoint& locationInView)
+{
+    send(Messages::WebPageProxy::HandleContextMenuTranslation(text, boundsInView, locationInView));
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_IF_ALLOWED

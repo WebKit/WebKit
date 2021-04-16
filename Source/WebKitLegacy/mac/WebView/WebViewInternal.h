@@ -157,6 +157,10 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (WebSelectionServiceController&)_selectionServiceController;
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+- (void)_handleContextMenuTranslation:(const String&)text selectionBounds:(const WebCore::IntRect&)boundsInView menuLocation:(const WebCore::IntPoint&)menuLocation;
+#endif
+
 - (void)_windowVisibilityChanged:(NSNotification *)notification;
 
 - (void)_closeWindow;

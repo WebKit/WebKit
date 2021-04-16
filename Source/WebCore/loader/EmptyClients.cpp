@@ -115,6 +115,10 @@ class EmptyContextMenuClient final : public ContextMenuClient {
     void searchWithSpotlight() final { }
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+    void handleTranslation(const String&, const IntRect&, const IntPoint&) final { }
+#endif
+
 #if PLATFORM(GTK)
     void insertEmoji(Frame&) final { }
 #endif

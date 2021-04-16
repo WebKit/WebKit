@@ -1,3 +1,23 @@
+2021-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Refactor some webpage translation code
+        https://bugs.webkit.org/show_bug.cgi?id=224680
+        Work towards <rdar://75641882>
+
+        Reviewed by Tim Horton.
+
+        See WebCore ChangeLog for more details.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::handleTranslation):
+        * WebView/WebView.mm:
+        (-[WebView _handleContextMenuTranslation:selectionBounds:menuLocation:]):
+
+        Add an empty stub with a `FIXME` for the time being.
+
+        * WebView/WebViewInternal.h:
+
 2021-04-16  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] WebContent process should not create AVOutputContext instances when media in GPU Process is enabled

@@ -45,6 +45,10 @@ public:
     virtual void speak(const String&) = 0;
     virtual void stopSpeaking() = 0;
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+    virtual void handleTranslation(const String&, const IntRect&, const IntPoint&) = 0;
+#endif
+
 #if PLATFORM(COCOA)
     virtual void searchWithSpotlight() = 0;
 #endif

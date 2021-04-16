@@ -9627,6 +9627,18 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     [[self _UIDelegateForwarder] webViewClose:self];
 }
 
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+- (void)_handleContextMenuTranslation:(const String&)text selectionBounds:(const WebCore::IntRect&)selectionBoundsInRootView menuLocation:(const WebCore::IntPoint&)locationInRootView
+{
+    // FIXME (224683): Not implemented yet.
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(selectionBoundsInRootView);
+    UNUSED_PARAM(locationInRootView);
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
 @end
 
 @implementation WebView (WebViewDeviceOrientation)

@@ -1904,8 +1904,9 @@ public:
     void resetImageExtractionPreview();
 #endif
 
-#if HAVE(TRANSLATION_UI_SERVICES)
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuTranslation() const;
+    void handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& locationInView);
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

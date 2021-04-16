@@ -56,6 +56,10 @@ private:
     void searchWithSpotlight() override;
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+    void handleTranslation(const String&, const WebCore::IntRect& selectionBoundsInRootView, const WebCore::IntPoint& locationInRootView) final;
+#endif
+
 #if PLATFORM(GTK)
     void insertEmoji(WebCore::Frame&) override;
 #endif

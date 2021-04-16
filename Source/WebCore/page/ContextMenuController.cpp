@@ -523,9 +523,17 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().applyDictationAlternative(title);
         break;
     case ContextMenuItemTagRevealImage:
-    case ContextMenuItemTagTranslate:
         // This should be handled at the client layer.
         ASSERT_NOT_REACHED();
+        break;
+    case ContextMenuItemTagTranslate:
+#if HAVE(TRANSLATION_UI_SERVICES)
+        if (auto view = makeRefPtr(frame->view())) {
+            auto selectionBounds = view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds()));
+            auto location = view->contentsToRootView(m_context.hitTestResult().roundedPointInInnerNodeFrame());
+            m_client.handleTranslation(m_context.hitTestResult().selectedText(), selectionBounds, location);
+        }
+#endif
         break;
     default:
         break;
@@ -868,14 +876,7 @@ void ContextMenuController::populate()
     };
 
     auto selectedText = m_context.hitTestResult().selectedText();
-    if (!selectedText.isEmpty()) {
-        m_context.setSelectedText(selectedText);
-        if (auto view = makeRefPtr(frame->view())) {
-            auto selectionBoundsInContentCoordinates = enclosingIntRect(frame->selection().selectionBounds());
-            if (!selectionBoundsInContentCoordinates.isEmpty())
-                m_context.setSelectionBounds(view->contentsToRootView(selectionBoundsInContentCoordinates));
-        }
-    }
+    m_context.setSelectedText(selectedText);
 
     if (!m_context.hitTestResult().isContentEditable()) {
         FrameLoader& loader = frame->loader();

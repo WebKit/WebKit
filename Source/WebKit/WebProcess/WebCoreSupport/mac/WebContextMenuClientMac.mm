@@ -94,6 +94,15 @@ void WebContextMenuClient::searchWithSpotlight()
     m_page->send(Messages::WebPageProxy::SearchWithSpotlight(selectedString));
 }
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+
+void WebContextMenuClient::handleTranslation(const String& text, const IntRect& bounds, const IntPoint& location)
+{
+    m_page->send(Messages::WebPageProxy::HandleContextMenuTranslation(text, bounds, location));
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES)
+
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)

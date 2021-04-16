@@ -1,3 +1,45 @@
+2021-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Refactor some webpage translation code
+        https://bugs.webkit.org/show_bug.cgi?id=224680
+        Work towards <rdar://75641882>
+
+        Reviewed by Tim Horton.
+
+        In preparation for fixing https://webkit.org/b/224683, refactor some codepaths for handling webpage translation
+        via the context menu on macOS, in WebKit2.
+
+        Currently, the context menu action for `ContextMenuItemTagTranslate` is fully handled in the client layer in
+        WebKit2, using state in `m_activeContextMenuContextData`. However, to make this action work in WebKitLegacy as
+        well, we need the ability to call back into the `ContextMenuController` to handle the action, since context menu
+        actions in WebKitLegacy only target the shared `WebMenuTarget` instance, which only knows about the context menu
+        controller rather than the `WebHTMLView` that vended the menu item.
+
+        Instead of adding logic in `WebMenuTarget` to dig the `WebHTMLView` corresponding to the focused frame out of
+        the context menu controller, it makes more sense to plumb this call through the (already-established)
+        `ContextMenuClient`. While this has the disadvantage of requiring an extra IPC hop on the WebKit2 case, it also
+        has the advantage that we can lazily compute the selection bounds and menu location in root view coordinates
+        only if the user has selected this menu action, which makes context menu data (slightly) cheaper to compute.
+
+        No change in behavior.
+
+        * loader/EmptyClients.cpp:
+        * page/ContextMenuClient.h:
+        * page/ContextMenuContext.h:
+        (WebCore::ContextMenuContext::setSelectionBounds): Deleted.
+        (WebCore::ContextMenuContext::selectionBounds const): Deleted.
+
+        Remove code for computing and setting selection bounds. This was only added in support of webpage translation;
+        instead of computing this up front, we can instead send this information only when the action is invoked.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+
+        Move logic for computing the selection bounds and menu location in root view coordinates out of `populate` and
+        into `contextMenuItemSelected`, only in the case where the action is `ContextMenuItemTagTranslate`.
+
+        (WebCore::ContextMenuController::populate):
+
 2021-04-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Allow using the platform authenticator on non-Touch ID Macs according to Internal requirements
