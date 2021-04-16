@@ -1,3 +1,80 @@
+2021-04-15  Dean Jackson  <dino@apple.com>
+
+        Rebaseline some WebGL tests that are only running on the dedicated WebGL bot.
+
+        * webgl/2.0.0/conformance/rendering/clipping-wide-points-expected.txt:
+        * webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/clipping-wide-points-expected.txt:
+        * webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type-expected.txt:
+        * webgl/2.0.0/conformance2/state/gl-object-get-calls-expected.txt:
+        * webgl/2.0.0/deqp/data/gles2/shaders/conversions-expected.txt:
+        * webgl/2.0.0/deqp/data/gles3/shaders/conversions-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fboinvalidate/sub-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fboinvalidate/whole-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fbomultisample.2_samples-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fbomultisample.4_samples-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fbomultisample.8_samples-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/array.int-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/array.uint-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/basic.int-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/basic.uint-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/fragmentoutput/random_02-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/internalformatquery-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/negativebufferapi-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/occlusionquery_strict-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/00-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/01-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/02-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/03-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/04-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/05-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/06-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/primitiverestart/07-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/readpixel-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/shadertexturefunction/texturegrad-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureformat/sized_depth_stencil-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_greater-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_greater_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_less-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_less_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_mipmap_linear_greater-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_mipmap_linear_greater_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_mipmap_linear_less-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_mipmap_linear_less_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_mipmap_nearest_greater-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_mipmap_nearest_greater_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_mipmap_nearest_less-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_linear_mipmap_nearest_less_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_greater-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_greater_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_less-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_less_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_mipmap_linear_greater-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_mipmap_linear_greater_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_mipmap_linear_less-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_mipmap_linear_less_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_mipmap_nearest_greater-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_mipmap_nearest_greater_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_mipmap_nearest_less-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/2d_nearest_mipmap_nearest_less_or_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_linear_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_linear_mipmap_linear_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_linear_mipmap_linear_not_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_linear_mipmap_nearest_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_linear_mipmap_nearest_not_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_linear_not_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_nearest_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_nearest_mipmap_linear_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_nearest_mipmap_linear_not_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_nearest_mipmap_nearest_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_nearest_mipmap_nearest_not_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/textureshadow/cube_nearest_not_equal-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/texstorage2d_format_depth_stencil-expected.txt:
+        * webgl/2.0.0/deqp/functional/gles3/texturespecification/texstorage3d_format_depth_stencil-expected.txt:
+        * webgl/conformance/extensions/webgl-multi-draw-expected.txt:
+
 2021-04-15  Robert Jenner  <jenner@apple.com>
 
         N[ macOS Wk2 ] imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html is a flakey text failure

@@ -1,4 +1,39 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fragmentoutput/random_00.html
-[ PASS ] All tests passed
+
+[ 1: FAIL ] fragment_outputs.random.0: Image comparison failed for some of 2 attachments
+[ 2: FAIL ] fragment_outputs.random.3: Image comparison failed for some of 3 attachments
+[ 3: FAIL ] fragment_outputs.random.6: Image comparison failed for some of 3 attachments
+[ 4: FAIL ] fragment_outputs.random.9: Image comparison failed for some of 4 attachments
+[ 5: FAIL ] fragment_outputs.random.12: Image comparison failed for some of 4 attachments
+[ 6: FAIL ] fragment_outputs.random.15: Image comparison failed for some of 3 attachments
+[ 7: FAIL ] fragment_outputs.random.18: Image comparison failed for some of 3 attachments
+[ 8: FAIL ] fragment_outputs.random.21: Image comparison failed for some of 2 attachments
+[ 9: FAIL ] fragment_outputs.random.24: Image comparison failed for some of 2 attachments
+[ 10: FAIL ] fragment_outputs.random.27: Image comparison failed for some of 4 attachments
+[ 11: FAIL ] fragment_outputs.random.30: Image comparison failed for some of 3 attachments
+[ 12: FAIL ] fragment_outputs.random.33: Image comparison failed for some of 2 attachments
+[ 13: FAIL ] fragment_outputs.random.36: Image comparison failed for some of 4 attachments
+[ 14: PASS ] fragment_outputs.random.39: Image comparison passed for 4 attachments
+[ 15: FAIL ] fragment_outputs.random.42: Image comparison failed for some of 4 attachments
+[ 16: FAIL ] fragment_outputs.random.45: Image comparison failed for some of 2 attachments
+[ 17: FAIL ] fragment_outputs.random.48: Image comparison failed for some of 4 attachments
+[ 18: FAIL ] fragment_outputs.random.51: Image comparison failed for some of 2 attachments
+[ 19: FAIL ] fragment_outputs.random.54: Image comparison failed for some of 4 attachments
+[ 20: FAIL ] fragment_outputs.random.60: Image comparison failed for some of 4 attachments
+[ 21: FAIL ] fragment_outputs.random.63: Image comparison failed for some of 2 attachments
+[ 22: FAIL ] fragment_outputs.random.66: Image comparison failed for some of 2 attachments
+[ 23: FAIL ] fragment_outputs.random.69: Image comparison failed for some of 3 attachments
+[ 24: FAIL ] fragment_outputs.random.72: Image comparison failed for some of 2 attachments
+[ 25: FAIL ] fragment_outputs.random.75: Image comparison failed for some of 2 attachments
+[ 26: FAIL ] fragment_outputs.random.78: Image comparison failed for some of 2 attachments
+[ 27: FAIL ] fragment_outputs.random.81: Image comparison failed for some of 4 attachments
+[ 28: FAIL ] fragment_outputs.random.84: Image comparison failed for some of 3 attachments
+[ 29: FAIL ] fragment_outputs.random.87: Image comparison failed for some of 3 attachments
+[ 30: FAIL ] fragment_outputs.random.90: Image comparison failed for some of 2 attachments
+[ 31: FAIL ] fragment_outputs.random.93: Image comparison failed for some of 4 attachments
+[ 32: FAIL ] fragment_outputs.random.96: Image comparison failed for some of 2 attachments
+[ 33: FAIL ] fragment_outputs.random.99: Image comparison failed for some of 3 attachments
+[ 34: PASS ] fragment_outputs.random.99: successfullyParsed is true
+[ FAIL ] 32 failures reported

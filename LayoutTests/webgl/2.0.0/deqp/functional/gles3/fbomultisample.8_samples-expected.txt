@@ -1,4 +1,27 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/fbomultisample.8_samples.html
-[ PASS ] All tests passed
+
+[ 1: PASS ] msaa.8_samples.rgba8:
+[ 2: PASS ] msaa.8_samples.srgb8_alpha8:
+[ 3: PASS ] msaa.8_samples.rgb10_a2:
+[ 4: PASS ] msaa.8_samples.rgba4:
+[ 5: PASS ] msaa.8_samples.rgb5_a1:
+[ 6: PASS ] msaa.8_samples.rgb8:
+[ 7: PASS ] msaa.8_samples.rgb565:
+[ 8: PASS ] msaa.8_samples.rg8:
+[ 9: PASS ] msaa.8_samples.r8:
+[ 10: PASS ] msaa.8_samples.rgba32f:
+[ 11: PASS ] msaa.8_samples.rgba16f:
+[ 12: PASS ] msaa.8_samples.rg32f:
+[ 13: PASS ] msaa.8_samples.rg16f:
+[ 14: PASS ] msaa.8_samples.r32f:
+[ 15: PASS ] msaa.8_samples.r16f:
+[ 16: FAIL ] msaa.8_samples.depth_component32f:
+[ 17: FAIL ] msaa.8_samples.depth_component24:
+[ 18: FAIL ] msaa.8_samples.depth_component16:
+[ 19: FAIL ] msaa.8_samples.depth32f_stencil8:
+[ 20: FAIL ] msaa.8_samples.depth24_stencil8:
+[ 21: PASS ] msaa.8_samples.stencil_index8:
+[ 22: PASS ] msaa.8_samples.stencil_index8: successfullyParsed is true
+[ FAIL ] 5 failures reported
