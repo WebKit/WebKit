@@ -3133,7 +3133,7 @@ class CleanGitRepo(steps.ShellSequence):
     logEnviron = False
     # This somewhat quirky sequence of steps seems to clear up all the broken
     # git situations we've gotten ourself into in the past.
-    command_list = [['git', 'clean', '-f'],  # Remove any left-over layout test results, added files, etc.
+    command_list = [['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
                     ['git', 'fetch', 'origin'],  # Avoid updating the working copy to a stale revision.
                     ['git', 'checkout', 'origin/main', '-f'],
                     ['git', 'branch', '-D', 'main'],

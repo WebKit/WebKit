@@ -3902,7 +3902,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['git', 'clean', '-f'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
@@ -3921,7 +3921,7 @@ class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'Commit-Queue')
 
         self.expectRemoteCommands(
-            ExpectShell(command=['git', 'clean', '-f'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
             + ExpectShell.log('stdio', stdout=''),
             ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=1200, logEnviron=False) + 128
             + ExpectShell.log('stdio', stdout='fatal: unable to access https://github.com/WebKit/WebKit.git/: Could not resolve host: github.com'),
