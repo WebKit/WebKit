@@ -1,3 +1,24 @@
+2021-04-16  Mark Lam  <mark.lam@apple.com>
+
+        More changes to support the TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=224681
+        rdar://76698113
+
+        Reviewed by Keith Miller.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        - ProgramExecutable::initializeGlobalProperties() can throw the TerminationException.
+          Add handling for that.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnIndexedProperty):
+        - JSObject::defineOwnIndexedProperty() has a blob of assertion code that it verifying
+          that getOwnPropertyDescriptor() should succeed without throwing any exceptions if
+          the fast path is allowed.  However, this is assertion is only true if there isn't
+          a termination being requested.  So, use the DeferTermination scope to allow this
+          assertion to be tested without the complication of a TerminationException.
+
 2021-04-16  Keith Miller  <keith_miller@apple.com>
 
         Before deleting a MarkedBlock we do not need to clear its m_directory pointer.
