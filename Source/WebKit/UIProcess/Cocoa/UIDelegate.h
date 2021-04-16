@@ -166,6 +166,10 @@ private:
         void didEnableInspectorBrowserDomain(WebPageProxy&) final;
         void didDisableInspectorBrowserDomain(WebPageProxy&) final;
 
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+        void startXRSession(WebPageProxy&, CompletionHandler<void(RetainPtr<id>)>&&) final;
+#endif
+
         WeakPtr<UIDelegate> m_uiDelegate;
     };
 
@@ -255,6 +259,9 @@ private:
 #endif
         bool webViewDidEnableInspectorBrowserDomain : 1;
         bool webViewDidDisableInspectorBrowserDomain : 1;
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+        bool webViewStartXRSessionWithCompletionHandler : 1;
+#endif
     } m_delegateMethods;
 };
 
