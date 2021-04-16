@@ -85,8 +85,6 @@ private:
     static void unprepareCallback(MTAudioProcessingTapRef);
     static void processCallback(MTAudioProcessingTapRef, CMItemCount, MTAudioProcessingTapFlags, AudioBufferList*, CMItemCount*, MTAudioProcessingTapFlags*);
 
-    void init(void* clientInfo, void** tapStorageOut);
-    void finalize();
     void prepare(CMItemCount maxFrames, const AudioStreamBasicDescription *processingFormat);
     void unprepare();
     void process(MTAudioProcessingTapRef, CMItemCount numberFrames, MTAudioProcessingTapFlags flagsIn, AudioBufferList *bufferListInOut, CMItemCount *numberFramesOut, MTAudioProcessingTapFlags *flagsOut);
