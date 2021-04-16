@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "HashMapImpl.h"
+#include "HashMapImplInlines.h"
 #include "JSObject.h"
 
 namespace JSC {
