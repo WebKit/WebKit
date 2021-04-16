@@ -1,3 +1,54 @@
+2021-04-16  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r276155. rdar://problem/76781047
+
+    Before deleting a MarkedBlock we do not need to clear its m_directory pointer.
+    https://bugs.webkit.org/show_bug.cgi?id=224677
+    
+    Reviewed by Yusuke Suzuki.
+    
+    Right now when we are about to free a MarkedBlock we clear the
+    m_directory pointer in the MarkedBlock's Handle. This has the
+    downside, however, of potentially paging in the footer from disk /
+    the compressor, which some data we have seen shows is happening.
+    This patch prevents this uncessary store to hopefully reduce the
+    number of pageins/decompressions caused by Safari web content.
+    
+    * heap/BlockDirectory.cpp:
+    (JSC::BlockDirectory::removeBlock):
+    (JSC::BlockDirectory::removeBlockForDeletion):
+    * heap/BlockDirectory.h:
+    * heap/MarkedBlock.cpp:
+    (JSC::MarkedBlock::Handle::~Handle):
+    * heap/MarkedSpace.cpp:
+    (JSC::MarkedSpace::freeBlock):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276155 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-16  Keith Miller  <keith_miller@apple.com>
+
+            Before deleting a MarkedBlock we do not need to clear its m_directory pointer.
+            https://bugs.webkit.org/show_bug.cgi?id=224677
+
+            Reviewed by Yusuke Suzuki.
+
+            Right now when we are about to free a MarkedBlock we clear the
+            m_directory pointer in the MarkedBlock's Handle. This has the
+            downside, however, of potentially paging in the footer from disk /
+            the compressor, which some data we have seen shows is happening.
+            This patch prevents this uncessary store to hopefully reduce the
+            number of pageins/decompressions caused by Safari web content.
+
+            * heap/BlockDirectory.cpp:
+            (JSC::BlockDirectory::removeBlock):
+            (JSC::BlockDirectory::removeBlockForDeletion):
+            * heap/BlockDirectory.h:
+            * heap/MarkedBlock.cpp:
+            (JSC::MarkedBlock::Handle::~Handle):
+            * heap/MarkedSpace.cpp:
+            (JSC::MarkedSpace::freeBlock):
+
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r275233. rdar://problem/76727522
