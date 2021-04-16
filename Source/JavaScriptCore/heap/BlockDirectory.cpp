@@ -140,7 +140,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
     setIsEmpty(NoLockingNecessary, index, true);
 }
 
-void BlockDirectory::removeBlock(MarkedBlock::Handle* block)
+void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock willDelete)
 {
     ASSERT(block->directory() == this);
     ASSERT(m_blocks[block->index()] == block);
@@ -155,8 +155,9 @@ void BlockDirectory::removeBlock(MarkedBlock::Handle* block)
         [&](auto vectorRef) {
             vectorRef[block->index()] = false;
         });
-    
-    block->didRemoveFromDirectory();
+
+    if (willDelete == WillDeleteBlock::No)
+        block->didRemoveFromDirectory();
 }
 
 void BlockDirectory::stopAllocating()

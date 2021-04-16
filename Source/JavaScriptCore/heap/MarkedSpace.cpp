@@ -375,7 +375,6 @@ bool MarkedSpace::isPagedOut(MonotonicTime deadline)
 
 void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
 {
-    block->directory()->removeBlock(block);
     m_capacity -= MarkedBlock::blockSize;
     m_blocks.remove(&block->block());
     delete block;

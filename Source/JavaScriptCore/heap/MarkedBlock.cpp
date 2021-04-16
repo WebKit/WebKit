@@ -76,7 +76,7 @@ MarkedBlock::Handle::~Handle()
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
-    removeFromDirectory();
+    m_directory->removeBlock(this, BlockDirectory::WillDeleteBlock::Yes);
     m_block->~MarkedBlock();
     m_alignedMemoryAllocator->freeAlignedMemory(m_block);
     heap.didFreeBlock(blockSize);
