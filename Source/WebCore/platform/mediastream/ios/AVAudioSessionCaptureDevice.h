@@ -39,8 +39,11 @@ public:
     static AVAudioSessionCaptureDevice create(AVAudioSessionPortDescription *deviceInput, AVAudioSessionPortDescription *defaultInput);
     virtual ~AVAudioSessionCaptureDevice() = default;
 
+    AVAudioSessionCaptureDevice isolatedCopy() &&;
+
 private:
     AVAudioSessionCaptureDevice(AVAudioSessionPortDescription *deviceInput, AVAudioSessionPortDescription *defaultInput);
+    AVAudioSessionCaptureDevice(const String& persistentId, DeviceType, const String& label, const String& groupId, bool isEnabled, bool isDefault, bool isMock);
 };
 
 } // namespace WebCore
