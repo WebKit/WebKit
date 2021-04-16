@@ -1,3 +1,15 @@
+2021-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 128 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224381
+
+        Reviewed by Yusuke Suzuki.
+
+        * inspector/agents/InspectorAnimationAgent.cpp:
+        (WebCore::InspectorAnimationAgent::willApplyKeyframeEffect):
+        (WebCore::InspectorAnimationAgent::stopTrackingDeclarativeAnimation):
+        * inspector/agents/InspectorAnimationAgent.h:
+
 2021-04-16  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse and add feature flag for @counter-style

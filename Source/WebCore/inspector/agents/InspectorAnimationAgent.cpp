@@ -378,10 +378,10 @@ void InspectorAnimationAgent::willApplyKeyframeEffect(Element& target, KeyframeE
     if (!is<DeclarativeAnimation>(animation))
         return;
 
-    auto ensureResult = m_trackedDeclarativeAnimationData.ensure(downcast<DeclarativeAnimation>(animation), [&] () -> TrackedDeclarativeAnimationData {
-        return { makeString("animation:"_s, IdentifiersFactory::createIdentifier()), computedTiming };
+    auto ensureResult = m_trackedDeclarativeAnimationData.ensure(downcast<DeclarativeAnimation>(animation), [&] () -> UniqueRef<TrackedDeclarativeAnimationData> {
+        return makeUniqueRef<TrackedDeclarativeAnimationData>(TrackedDeclarativeAnimationData { makeString("animation:"_s, IdentifiersFactory::createIdentifier()), computedTiming });
     });
-    auto& trackingData = ensureResult.iterator->value;
+    auto& trackingData = ensureResult.iterator->value.get();
 
     Optional<Protocol::Animation::AnimationState> animationAnimationState;
 
@@ -600,19 +600,17 @@ void InspectorAnimationAgent::reset()
 
 void InspectorAnimationAgent::stopTrackingDeclarativeAnimation(DeclarativeAnimation& animation)
 {
-    auto it = m_trackedDeclarativeAnimationData.find(&animation);
-    if (it == m_trackedDeclarativeAnimationData.end())
+    auto data = m_trackedDeclarativeAnimationData.take(&animation);
+    if (!data)
         return;
 
-    if (it->value.lastComputedTiming.phase != AnimationEffectPhase::After && it->value.lastComputedTiming.phase != AnimationEffectPhase::Idle) {
+    if (data->lastComputedTiming.phase != AnimationEffectPhase::After && data->lastComputedTiming.phase != AnimationEffectPhase::Idle) {
         auto event = Protocol::Animation::TrackingUpdate::create()
-            .setTrackingAnimationId(it->value.trackingAnimationId)
+            .setTrackingAnimationId(data->trackingAnimationId)
             .setAnimationState(Protocol::Animation::AnimationState::Canceled)
             .release();
         m_frontendDispatcher->trackingUpdate(m_environment.executionStopwatch().elapsedTime().seconds(), WTFMove(event));
     }
-
-    m_trackedDeclarativeAnimationData.remove(it);
 }
 
 } // namespace WebCore

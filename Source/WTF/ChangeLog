@@ -1,3 +1,13 @@
+2021-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 128 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224381
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
 2021-04-16  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse and add feature flag for @counter-style
