@@ -232,7 +232,6 @@ media/mediacapabilities/mediacapabilities-types.html [ Pass ]
 media/video-canvas-createPattern.html [ Pass ]
 media/video-canvas-drawing-output.html [ Pass ]
 media/video-controller-currentTime-rate.html [ Pass ]
-media/video-object-fit.html [ Pass ]
 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Pass ]
 webaudio/codec-tests/mp3/128kbps-44khz.html [ Pass ]
 
@@ -551,6 +550,7 @@ webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failur
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
 
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
+webkit.org/b/211995 fast/images/animated-image-mp4-crash.html [ Timeout Pass ]
 
 webkit.org/b/214038 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/track/track-element/track-cues-cuechange.html [ Missing Failure ]
 
@@ -979,7 +979,7 @@ webkit.org/b/221021 webanimations/combining-transform-animations-with-different-
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities-3.html [ Skip ]
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities.html [ Skip ]
 
-webkit.org/b/223655 webanimations/transform-transition-with-delay-on-forced-layer-with-transform.html [ ImageOnlyFailure ]
+webkit.org/b/223655 webanimations/transform-transition-with-delay-on-forced-layer-with-transform.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAnimations-related bugs
@@ -1315,6 +1315,10 @@ webkit.org/b/219247 imported/w3c/web-platform-tests/compat/webkit-box-clamp-bott
 webkit.org/b/216162 [ Debug ] imported/w3c/web-platform-tests/encoding/textdecoder-fatal-single-byte.any.worker.html [ Timeout ]
 
 webkit.org/b/206503 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.worker.html [ Pass Timeout Failure ]
+
+webkit.org/b/224668 imported/w3c/web-platform-tests/html/infrastructure/common-dom-interfaces/collections/htmlformcontrolscollection.html [ Failure Pass ]
+webkit.org/b/224668 imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/labelable-elements.html [ Failure Pass ]
+webkit.org/b/224668 imported/w3c/web-platform-tests/html/semantics/interfaces.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WPT-related bugs
@@ -2025,6 +2029,8 @@ webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-cor
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Crash Failure ]
 webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Crash Failure Pass ]
 webkit.org/b/220083 [ Debug ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Crash ]
+
+webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Failure Pass ]
 
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Pass Failure ]
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-av-framesize.html [ Pass Failure ]

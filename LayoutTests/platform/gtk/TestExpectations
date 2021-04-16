@@ -1122,7 +1122,7 @@ webkit.org/b/131546 media/track/track-in-band.html [ Failure ]
 webkit.org/b/177534 fast/attachment/attachment-respects-css-size.html [ Crash ImageOnlyFailure ]
 
 # See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
-webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure Timeout ]
+webkit.org/b/177536 media/video-object-fit.html [ ImageOnlyFailure Pass ]
 
 # Crashes only when GNOME icon theme is not installed
 webkit.org/b/186767 fast/hidpi/broken-image-icon-very-hidpi.html [ Crash Pass ]

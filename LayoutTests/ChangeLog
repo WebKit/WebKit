@@ -1,3 +1,10 @@
+2021-04-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardenind. Gardened several flaky failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Update :focus-visible tests from WPT
