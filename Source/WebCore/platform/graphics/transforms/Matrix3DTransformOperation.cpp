@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Matrix3DTransformOperation.h"
 
+#include "AnimationUtilities.h"
 #include <algorithm>
 #include <wtf/text/TextStream.h>
 
@@ -36,13 +37,13 @@ bool Matrix3DTransformOperation::operator==(const TransformOperation& other) con
     return isSameType(other) && m_matrix == downcast<Matrix3DTransformOperation>(other).m_matrix;
 }
 
-static Ref<TransformOperation> createOperation(TransformationMatrix& to, TransformationMatrix& from, double progress)
+static Ref<TransformOperation> createOperation(TransformationMatrix& to, TransformationMatrix& from, const BlendingContext& context)
 {
-    to.blend(from, progress);
+    to.blend(from, context.progress);
     return Matrix3DTransformOperation::create(to);
 }
 
-Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
         return *this;
@@ -57,8 +58,8 @@ Ref<TransformOperation> Matrix3DTransformOperation::blend(const TransformOperati
     apply(toT, size);
 
     if (blendToIdentity)
-        return createOperation(fromT, toT, progress);
-    return createOperation(toT, fromT, progress);
+        return createOperation(fromT, toT, context);
+    return createOperation(toT, fromT, context);
 }
 
 bool Matrix3DTransformOperation::isRepresentableIn2D() const

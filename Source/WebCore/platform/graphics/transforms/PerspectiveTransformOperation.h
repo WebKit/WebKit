@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+struct BlendingContext;
+
 class PerspectiveTransformOperation final : public TransformOperation {
 public:
     static Ref<PerspectiveTransformOperation> create(const Length& p)
@@ -59,7 +61,7 @@ private:
         return false;
     }
 
-    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) override;
 
     void dump(WTF::TextStream&) const final;
 

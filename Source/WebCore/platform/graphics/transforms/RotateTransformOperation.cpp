@@ -37,13 +37,13 @@ bool RotateTransformOperation::operator==(const TransformOperation& other) const
     return m_x == r.m_x && m_y == r.m_y && m_z == r.m_z && m_angle == r.m_angle;
 }
 
-Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
         return *this;
     
     if (blendToIdentity)
-        return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * progress, type());
+        return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * context.progress, type());
     
     const RotateTransformOperation* fromOp = downcast<RotateTransformOperation>(from);
     
@@ -55,7 +55,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         return RotateTransformOperation::create(fromOp ? fromOp->m_x : m_x, 
                                                 fromOp ? fromOp->m_y : m_y, 
                                                 fromOp ? fromOp->m_z : m_z, 
-                                                WebCore::blend(fromAngle, m_angle, progress), type());
+                                                WebCore::blend(fromAngle, m_angle, context), type());
     }
 
     const RotateTransformOperation* toOp = this;
@@ -74,7 +74,7 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         (toOp ? toOp->m_angle : 0));
     
     // Blend them
-    toT.blend(fromT, progress);
+    toT.blend(fromT, context.progress);
     
     // Extract the result as a quaternion
     TransformationMatrix::Decomposed4Type decomp;

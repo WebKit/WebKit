@@ -49,6 +49,7 @@ enum ValueRange {
     ValueRangeNonNegative
 };
 
+struct BlendingContext;
 class CalculationValue;
 
 struct Length {
@@ -137,8 +138,8 @@ private:
 };
 
 // Blend two lengths to produce a new length that is in between them. Used for animation.
-Length blend(const Length& from, const Length& to, double progress);
-Length blend(const Length& from, const Length& to, double progress, ValueRange);
+Length blend(const Length& from, const Length& to, const BlendingContext&);
+Length blend(const Length& from, const Length& to, const BlendingContext&, ValueRange);
 
 UniqueArray<Length> newCoordsArray(const String&, int& length);
 UniqueArray<Length> newLengthArray(const String&, int& length);

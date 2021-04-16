@@ -25,6 +25,7 @@
 #include "config.h"
 #include "Length.h"
 
+#include "AnimationUtilities.h"
 #include "CalculationValue.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
@@ -294,30 +295,30 @@ Length convertTo100PercentMinusLength(const Length& length)
     return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
 }
 
-static Length blendMixedTypes(const Length& from, const Length& to, double progress)
+static Length blendMixedTypes(const Length& from, const Length& to, const BlendingContext& context)
 {
-    if (!to.isCalculated() && !from.isPercent() && (progress == 1 || from.isZero()))
-        return blend(Length(0, to.type()), to, progress);
+    if (!to.isCalculated() && !from.isPercent() && (context.progress == 1 || from.isZero()))
+        return blend(Length(0, to.type()), to, context);
 
-    if (!from.isCalculated() && !to.isPercent() && (!progress || to.isZero()))
-        return blend(from, Length(0, from.type()), progress);
+    if (!from.isCalculated() && !to.isPercent() && (!context.progress || to.isZero()))
+        return blend(from, Length(0, from.type()), context);
 
-    auto blend = makeUnique<CalcExpressionBlendLength>(from, to, progress);
+    auto blend = makeUnique<CalcExpressionBlendLength>(from, to, context.progress);
     return Length(CalculationValue::create(WTFMove(blend), ValueRangeAll));
 }
 
-Length blend(const Length& from, const Length& to, double progress)
+Length blend(const Length& from, const Length& to, const BlendingContext& context)
 {
     if ((from.isAuto() || to.isAuto()) || (from.isUndefined() || to.isUndefined()))
-        return progress < 0.5 ? from : to;
+        return context.progress < 0.5 ? from : to;
 
     if (from.isCalculated() || to.isCalculated() || (from.type() != to.type()))
-        return blendMixedTypes(from, to, progress);
+        return blendMixedTypes(from, to, context);
 
-    if (!progress)
+    if (!context.progress)
         return from;
 
-    if (progress == 1)
+    if (context.progress == 1)
         return to;
 
     LengthType resultType = to.type();
@@ -327,17 +328,17 @@ Length blend(const Length& from, const Length& to, double progress)
     if (resultType == LengthType::Percent) {
         float fromPercent = from.isZero() ? 0 : from.percent();
         float toPercent = to.isZero() ? 0 : to.percent();
-        return Length(WebCore::blend(fromPercent, toPercent, progress), LengthType::Percent);
+        return Length(WebCore::blend(fromPercent, toPercent, context), LengthType::Percent);
     }
 
     float fromValue = from.isZero() ? 0 : from.value();
     float toValue = to.isZero() ? 0 : to.value();
-    return Length(WebCore::blend(fromValue, toValue, progress), resultType);
+    return Length(WebCore::blend(fromValue, toValue, context), resultType);
 }
 
-Length blend(const Length& from, const Length& to, double progress, ValueRange valueRange)
+Length blend(const Length& from, const Length& to, const BlendingContext& context, ValueRange valueRange)
 {
-    auto blended = blend(from, to, progress);
+    auto blended = blend(from, to, context);
     if (valueRange == ValueRangeNonNegative && blended.isNegative())
         return { 0, from.isZero () ? to.type() : from.type() };
     return blended;

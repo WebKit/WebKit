@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+struct BlendingContext;
+
 class SkewTransformOperation final : public TransformOperation {
 public:
     static Ref<SkewTransformOperation> create(double angleX, double angleY, OperationType type)
@@ -56,7 +58,7 @@ private:
         return false;
     }
 
-    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) override;
 
     void dump(WTF::TextStream&) const final;
     

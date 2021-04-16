@@ -22,6 +22,7 @@
 #include "config.h"
 #include "TransformOperations.h"
 
+#include "AnimationUtilities.h"
 #include "IdentityTransformOperation.h"
 #include "Matrix3DTransformOperation.h"
 #include <algorithm>
@@ -73,7 +74,7 @@ bool TransformOperations::affectedByTransformOrigin() const
     return false;
 }
 
-TransformOperations TransformOperations::blendByMatchingOperations(const TransformOperations& from, const double& progress) const
+TransformOperations TransformOperations::blendByMatchingOperations(const TransformOperations& from, const BlendingContext& context) const
 {
     TransformOperations result;
 
@@ -83,12 +84,12 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
     for (unsigned i = 0; i < size; i++) {
         RefPtr<TransformOperation> fromOperation = (i < fromSize) ? from.operations()[i].get() : nullptr;
         RefPtr<TransformOperation> toOperation = (i < toSize) ? operations()[i].get() : nullptr;
-        RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), progress) : (fromOperation ? RefPtr<TransformOperation>(fromOperation->blend(nullptr, progress, true)) : nullptr);
+        RefPtr<TransformOperation> blendedOperation = toOperation ? toOperation->blend(fromOperation.get(), context) : (fromOperation ? RefPtr<TransformOperation>(fromOperation->blend(nullptr, context, true)) : nullptr);
         if (blendedOperation)
             result.operations().append(blendedOperation);
         else {
             auto identityOperation = IdentityTransformOperation::create();
-            if (progress > 0.5)
+            if (context.progress > 0.5)
                 result.operations().append(toOperation ? toOperation : WTFMove(identityOperation));
             else
                 result.operations().append(fromOperation ? fromOperation : WTFMove(identityOperation));
@@ -98,7 +99,7 @@ TransformOperations TransformOperations::blendByMatchingOperations(const Transfo
     return result;
 }
 
-TransformOperations TransformOperations::blendByUsingMatrixInterpolation(const TransformOperations& from, double progress, const LayoutSize& size) const
+TransformOperations TransformOperations::blendByUsingMatrixInterpolation(const TransformOperations& from, const BlendingContext& context, const LayoutSize& size) const
 {
     TransformOperations result;
 
@@ -108,7 +109,7 @@ TransformOperations TransformOperations::blendByUsingMatrixInterpolation(const T
     from.apply(size, fromTransform);
     apply(size, toTransform);
 
-    toTransform.blend(fromTransform, progress);
+    toTransform.blend(fromTransform, context.progress);
 
     // Append the result
     result.operations().append(Matrix3DTransformOperation::create(toTransform));
@@ -116,15 +117,15 @@ TransformOperations TransformOperations::blendByUsingMatrixInterpolation(const T
     return result;
 }
 
-TransformOperations TransformOperations::blend(const TransformOperations& from, double progress, const LayoutSize& size) const
+TransformOperations TransformOperations::blend(const TransformOperations& from, const BlendingContext& context, const LayoutSize& size) const
 {
     if (from == *this)
         return *this;
 
     if (from.size() && from.operationsMatch(*this))
-        return blendByMatchingOperations(from, progress);
+        return blendByMatchingOperations(from, context);
 
-    return blendByUsingMatrixInterpolation(from, progress, size);
+    return blendByUsingMatrixInterpolation(from, context, size);
 }
 
 TextStream& operator<<(TextStream& ts, const TransformOperations& ops)

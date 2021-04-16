@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSGradientValue.h"
 
+#include "AnimationUtilities.h"
 #include "CSSCalculationValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
@@ -205,7 +206,7 @@ public:
 
                 float interStopProportion = -prevOffset / (nextOffset - prevOffset);
                 // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
-                Color blendedColor = blend(stops[firstZeroOrGreaterIndex - 1].color, stops[firstZeroOrGreaterIndex].color, interStopProportion);
+                Color blendedColor = blend(stops[firstZeroOrGreaterIndex - 1].color, stops[firstZeroOrGreaterIndex].color, { interStopProportion });
 
                 // Clamp the positions to 0 and set the color.
                 for (size_t i = 0; i < firstZeroOrGreaterIndex; ++i) {
@@ -256,7 +257,7 @@ public:
 
                 float interStopProportion = -previousOffset / (nextOffset - previousOffset);
                 // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
-                Color blendedColor = blend(stops[index - 1].color, stops[index].color, interStopProportion);
+                Color blendedColor = blend(stops[index - 1].color, stops[index].color, { interStopProportion });
 
                 // Clamp the positions to 0 and set the color.
                 for (size_t i = 0; i < index; ++i) {
@@ -286,7 +287,7 @@ public:
 
                 float interStopProportion = (1 - previousOffset) / (nextOffset - previousOffset);
                 // FIXME: when we interpolate gradients using premultiplied colors, this should do premultiplication.
-                Color blendedColor = blend(stops[index].color, stops[index + 1].color, interStopProportion);
+                Color blendedColor = blend(stops[index].color, stops[index + 1].color, { interStopProportion });
 
                 // Clamp the positions to 1 and set the color.
                 for (size_t i = index + 1; i < numStops; ++i) {
@@ -485,7 +486,7 @@ Gradient::ColorStopVector CSSGradientValue::computeStops(GradientAdapter& gradie
             float relativeOffset = (*newStops[y].offset - offset1) / (offset2 - offset1);
             float multiplier = std::pow(relativeOffset, std::log(.5f) / std::log(midpoint));
             // FIXME: Why not premultiply here?
-            newStops[y].color = blendWithoutPremultiply(color1, color2, multiplier);
+            newStops[y].color = blendWithoutPremultiply(color1, color2, { multiplier });
         }
 
         stops.remove(x);

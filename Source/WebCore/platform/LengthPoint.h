@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+struct BlendingContext;
+
 struct LengthPoint {
 public:
     LengthPoint()
@@ -63,9 +65,9 @@ private:
     Length m_y;
 };
 
-inline LengthPoint blend(const LengthPoint& from, const LengthPoint& to, double progress)
+inline LengthPoint blend(const LengthPoint& from, const LengthPoint& to, const BlendingContext& context)
 {
-    return LengthPoint(blend(from.x(), to.x(), progress), blend(from.y(), to.y(), progress));
+    return LengthPoint(blend(from.x(), to.x(), context), blend(from.y(), to.y(), context));
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const LengthPoint&);

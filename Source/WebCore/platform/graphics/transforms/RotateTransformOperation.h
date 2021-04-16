@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+struct BlendingContext;
+
 class RotateTransformOperation final : public TransformOperation {
 public:
     static Ref<RotateTransformOperation> create(double angle, OperationType type)
@@ -53,7 +55,7 @@ public:
 
     bool operator==(const TransformOperation&) const override;
 
-    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) final;
+    Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) final;
 
     bool isIdentity() const final { return !m_angle; }
 

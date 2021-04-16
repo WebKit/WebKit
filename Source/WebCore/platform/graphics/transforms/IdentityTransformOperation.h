@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+struct BlendingContext;
+
 class IdentityTransformOperation final : public TransformOperation {
 public:
     static Ref<IdentityTransformOperation> create()
@@ -54,7 +56,7 @@ private:
         return false;
     }
 
-    Ref<TransformOperation> blend(const TransformOperation*, double, bool = false) override
+    Ref<TransformOperation> blend(const TransformOperation*, const BlendingContext&, bool = false) override
     {
         return *this;
     }

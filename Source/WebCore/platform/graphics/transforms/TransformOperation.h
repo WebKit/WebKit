@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-// CSS Transforms (may become part of CSS3)
+struct BlendingContext;
 
 class TransformOperation : public RefCounted<TransformOperation> {
 public:
@@ -67,7 +67,7 @@ public:
     // Return true if the borderBoxSize was used in the computation, false otherwise.
     virtual bool apply(TransformationMatrix&, const FloatSize& borderBoxSize) const = 0;
 
-    virtual Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) = 0;
+    virtual Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) = 0;
 
     OperationType type() const { return m_type; }
     bool isSameType(const TransformOperation& other) const { return type() == other.type(); }

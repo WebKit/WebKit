@@ -35,18 +35,18 @@ bool SkewTransformOperation::operator==(const TransformOperation& other) const
     return m_angleX == s.m_angleX && m_angleY == s.m_angleY;
 }
 
-Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+Ref<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
     if (from && !from->isSameType(*this))
         return *this;
     
     if (blendToIdentity)
-        return SkewTransformOperation::create(WebCore::blend(m_angleX, 0.0, progress), WebCore::blend(m_angleY, 0.0, progress), type());
+        return SkewTransformOperation::create(WebCore::blend(m_angleX, 0.0, context), WebCore::blend(m_angleY, 0.0, context), type());
     
     const SkewTransformOperation* fromOp = downcast<SkewTransformOperation>(from);
     double fromAngleX = fromOp ? fromOp->m_angleX : 0;
     double fromAngleY = fromOp ? fromOp->m_angleY : 0;
-    return SkewTransformOperation::create(WebCore::blend(fromAngleX, m_angleX, progress), WebCore::blend(fromAngleY, m_angleY, progress), type());
+    return SkewTransformOperation::create(WebCore::blend(fromAngleX, m_angleX, context), WebCore::blend(fromAngleY, m_angleY, context), type());
 }
 
 void SkewTransformOperation::dump(TextStream& ts) const

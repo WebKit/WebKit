@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+struct BlendingContext;
+
 class MatrixTransformOperation final : public TransformOperation {
 public:
     static Ref<MatrixTransformOperation> create(double a, double b, double c, double d, double e, double f)
@@ -62,7 +64,7 @@ private:
         return false;
     }
 
-    Ref<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) override;
+    Ref<TransformOperation> blend(const TransformOperation* from, const BlendingContext&, bool blendToIdentity = false) override;
 
     void dump(WTF::TextStream&) const final;
 
