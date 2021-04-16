@@ -137,6 +137,36 @@ TEST(WebKit, ModalAlertsSPI)
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&done);
+    openedWebView = nil;
+}
+
+static WKPageRef checkFrameLoadStateAndCreateNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo)
+{
+    auto mainFrame = WKPageGetMainFrame(page);
+    ASSERT(mainFrame);
+    EXPECT_EQ(kWKFrameLoadStateCommitted, WKFrameGetFrameLoadState(mainFrame));
+    done = true;
+    return createNewPage(page, urlRequest, features, modifiers, mouseButton, clientInfo);
+}
+
+TEST(WebKit, CreateNewPageDelegateFrameLoadState)
+{
+    for (unsigned i = 0; i < 25; ++i) {
+        done = false;
+        auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+        PlatformWebView webView(context.get());
+
+        WKPageUIClientV5 uiClient;
+        memset(&uiClient, 0, sizeof(uiClient));
+        uiClient.base.version = 5;
+        uiClient.createNewPage = checkFrameLoadStateAndCreateNewPage;
+        WKPageSetPageUIClient(webView.page(), &uiClient.base);
+
+        auto htmlString = Util::toWK("<script>open('about:blank', '_blank')</script>");
+        WKPageLoadHTMLString(webView.page(), htmlString.get(), nullptr);
+        Util::run(&done);
+        openedWebView = nil;
+    }
 }
 
 } // namespace TestWebKitAPI

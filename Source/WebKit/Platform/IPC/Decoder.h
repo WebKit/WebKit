@@ -60,6 +60,7 @@ public:
     bool isSyncMessage() const { return messageIsSync(messageName()); }
     ShouldDispatchWhenWaitingForSyncReply shouldDispatchMessageWhenWaitingForSyncReply() const;
     bool shouldUseFullySynchronousModeForTesting() const;
+    bool shouldMaintainOrderingWithAsyncMessages() const;
 
 #if PLATFORM(MAC)
     void setImportanceAssertion(std::unique_ptr<ImportanceAssertion>);

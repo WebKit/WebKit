@@ -136,6 +136,11 @@ bool Decoder::shouldUseFullySynchronousModeForTesting() const
     return m_messageFlags.contains(MessageFlags::UseFullySynchronousModeForTesting);
 }
 
+bool Decoder::shouldMaintainOrderingWithAsyncMessages() const
+{
+    return m_messageFlags.contains(MessageFlags::MaintainOrderingWithAsyncMessages);
+}
+
 #if PLATFORM(MAC)
 void Decoder::setImportanceAssertion(std::unique_ptr<ImportanceAssertion> assertion)
 {

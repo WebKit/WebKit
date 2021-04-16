@@ -147,6 +147,12 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     {
         auto locker = holdLock(m_mutex);
         shouldDispatch = m_didScheduleDispatchMessagesWorkSet.add(&connection).isNewEntry;
+        ASSERT(connection.m_incomingMessagesMutex.isHeld());
+        if (message->shouldMaintainOrderingWithAsyncMessages()) {
+            // This sync message should maintain ordering with async messages so we need to process the pending async messages first.
+            while (!connection.m_incomingMessages.isEmpty())
+                m_messagesToDispatchWhileWaitingForSyncReply.append(ConnectionAndIncomingMessage { connection, connection.m_incomingMessages.takeFirst() });
+        }
         m_messagesToDispatchWhileWaitingForSyncReply.append(ConnectionAndIncomingMessage { connection, WTFMove(message) });
     }
 
@@ -613,6 +619,9 @@ std::unique_ptr<Decoder> Connection::sendSyncMessage(uint64_t syncRequestID, std
     OptionSet<SendOption> sendOptions = IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply;
     if (sendSyncOptions.contains(SendSyncOption::ForceDispatchWhenDestinationIsWaitingForUnboundedSyncReply))
         sendOptions = sendOptions | IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply;
+
+    if (sendSyncOptions.contains(IPC::SendSyncOption::MaintainOrderingWithAsyncMessages))
+        encoder->setShouldMaintainOrderingWithAsyncMessages();
 
     auto messageName = encoder->messageName();
     sendMessage(WTFMove(encoder), sendOptions);

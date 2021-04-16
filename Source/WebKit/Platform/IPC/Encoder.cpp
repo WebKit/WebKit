@@ -122,6 +122,11 @@ void Encoder::setFullySynchronousModeForTesting()
     messageFlags().add(MessageFlags::UseFullySynchronousModeForTesting);
 }
 
+void Encoder::setShouldMaintainOrderingWithAsyncMessages()
+{
+    messageFlags().add(MessageFlags::MaintainOrderingWithAsyncMessages);
+}
+
 void Encoder::wrapForTesting(std::unique_ptr<Encoder> original)
 {
     ASSERT(isSyncMessage());
