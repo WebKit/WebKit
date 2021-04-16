@@ -1382,3 +1382,5 @@ webkit.org/b/224612 webgl/1.0.3/conformance/glsl/functions/glsl-function-abs.htm
 webkit.org/b/224633 media/presentationmodechanged-fired-once.html [ Pass Timeout ]
 
 webkit.org/b/224690 compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/224696 [ arm64 ] http/wpt/webrtc/change-encoded-transform.html [ Pass Crash ]

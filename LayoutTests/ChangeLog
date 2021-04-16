@@ -1,5 +1,14 @@
 2021-04-16  Robert Jenner  <jenner@apple.com>
 
+        [ BigSur wk2 ARM64 ] http/wpt/webrtc/change-encoded-transform.html is a flakey crash
+        https://bugs.webkit.org/show_bug.cgi?id=224696
+
+        Unreviewed test gardneing.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass Crash while test is reviewed.
+
+2021-04-16  Robert Jenner  <jenner@apple.com>
+
         [ macOS wk2 ]compositing/video/video-border-radius-clipping.html is a flakey image failure
         https://bugs.webkit.org/show_bug.cgi?id=224690
 
