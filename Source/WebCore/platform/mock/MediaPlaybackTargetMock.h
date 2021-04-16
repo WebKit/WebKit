@@ -23,30 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#ifndef MediaPlaybackTargetMock_h
+#define MediaPlaybackTargetMock_h
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #include "MediaPlaybackTarget.h"
+#include "MediaPlaybackTargetContext.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class MediaPlaybackTargetMock : public MediaPlaybackTarget {
 public:
-    WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(const String&, MediaPlaybackTargetContext::MockState);
+    WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(const String&, MediaPlaybackTargetContext::State);
 
     virtual ~MediaPlaybackTargetMock();
 
-    TargetType targetType() const final { return MediaPlaybackTarget::TargetType::Mock; }
-    const MediaPlaybackTargetContext& targetContext() const final { return m_context; }
+    TargetType targetType() const final { return Mock; }
 
-    MediaPlaybackTargetContext::MockState state() const { return m_context.mockState(); }
+    const MediaPlaybackTargetContext& targetContext() const final;
+
+    bool hasActiveRoute() const final { return !m_name.isEmpty(); }
+    bool supportsRemoteVideoPlayback() const final { return !m_name.isEmpty(); }
+
+    String deviceName() const final { return m_name; }
+
+    MediaPlaybackTargetContext::State state() const;
 
 protected:
-    MediaPlaybackTargetMock(const String&, MediaPlaybackTargetContext::MockState);
+    MediaPlaybackTargetMock(const String&, MediaPlaybackTargetContext::State);
 
-    MediaPlaybackTargetContext m_context;
+    String m_name;
+    MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unknown };
+    mutable MediaPlaybackTargetContext m_context;
 };
 
 MediaPlaybackTargetMock* toMediaPlaybackTargetMock(MediaPlaybackTarget*);
@@ -55,3 +65,5 @@ const MediaPlaybackTargetMock* toMediaPlaybackTargetMock(const MediaPlaybackTarg
 }
 
 #endif // ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
+
+#endif

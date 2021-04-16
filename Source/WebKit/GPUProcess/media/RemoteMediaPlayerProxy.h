@@ -152,7 +152,7 @@ public:
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void setWirelessVideoPlaybackDisabled(bool);
     void setShouldPlayToPlaybackTarget(bool);
-    void setWirelessPlaybackTarget(WebCore::MediaPlaybackTargetContext&&);
+    void setWirelessPlaybackTarget(const WebCore::MediaPlaybackTargetContext&);
     void mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool) final;
 #endif
 

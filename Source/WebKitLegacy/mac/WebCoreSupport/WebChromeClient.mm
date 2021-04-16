@@ -1129,7 +1129,7 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     [m_webView _setMockMediaPlaybackTargetPickerEnabled:enabled];
 }
 
-void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::MockState state)
+void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::State state)
 {
     [m_webView _setMockMediaPlaybackTargetPickerName:name state:state];
 }

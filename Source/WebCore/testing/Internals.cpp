@@ -559,7 +559,7 @@ void Internals::resetToConsistentState(Page& page)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     page.setMockMediaPlaybackTargetPickerEnabled(true);
-    page.setMockMediaPlaybackTargetPickerState(emptyString(), MediaPlaybackTargetContext::MockState::Unknown);
+    page.setMockMediaPlaybackTargetPickerState(emptyString(), MediaPlaybackTargetContext::Unknown);
 #endif
 
 #if ENABLE(VIDEO)
@@ -4531,14 +4531,14 @@ ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(const String&
     Page* page = contextDocument()->frame()->page();
     ASSERT(page);
 
-    MediaPlaybackTargetContext::MockState state = MediaPlaybackTargetContext::MockState::Unknown;
+    MediaPlaybackTargetContext::State state = MediaPlaybackTargetContext::Unknown;
 
     if (equalLettersIgnoringASCIICase(deviceState, "deviceavailable"))
-        state = MediaPlaybackTargetContext::MockState::OutputDeviceAvailable;
+        state = MediaPlaybackTargetContext::OutputDeviceAvailable;
     else if (equalLettersIgnoringASCIICase(deviceState, "deviceunavailable"))
-        state = MediaPlaybackTargetContext::MockState::OutputDeviceUnavailable;
+        state = MediaPlaybackTargetContext::OutputDeviceUnavailable;
     else if (equalLettersIgnoringASCIICase(deviceState, "unknown"))
-        state = MediaPlaybackTargetContext::MockState::Unknown;
+        state = MediaPlaybackTargetContext::Unknown;
     else
         return Exception { InvalidAccessError };
 

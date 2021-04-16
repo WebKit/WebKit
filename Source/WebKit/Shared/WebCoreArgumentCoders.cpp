@@ -2457,17 +2457,17 @@ void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const M
     bool hasPlatformData = target.encodingRequiresPlatformData();
     encoder << hasPlatformData;
 
-    MediaPlaybackTargetContext::Type contextType = target.type();
-    encoder << contextType;
+    int32_t targetType = target.type();
+    encoder << targetType;
 
     if (target.encodingRequiresPlatformData()) {
         encodePlatformData(encoder, target);
         return;
     }
 
-    ASSERT(contextType == MediaPlaybackTargetContext::Type::Mock);
-    encoder << target.deviceName();
-    encoder << target.mockState();
+    ASSERT(targetType == MediaPlaybackTargetContext::MockType);
+    encoder << target.mockDeviceName();
+    encoder << static_cast<int32_t>(target.mockState());
 }
 
 bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPlaybackTargetContext& target)
@@ -2476,24 +2476,24 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPl
     if (!decoder.decode(hasPlatformData))
         return false;
 
-    MediaPlaybackTargetContext::Type contextType;
-    if (!decoder.decode(contextType))
+    int32_t targetType;
+    if (!decoder.decode(targetType))
         return false;
 
     if (hasPlatformData)
-        return decodePlatformData(decoder, contextType, target);
+        return decodePlatformData(decoder, target);
 
-    ASSERT(contextType == MediaPlaybackTargetContext::Type::Mock);
-    String deviceName;
-    if (!decoder.decode(deviceName))
+    ASSERT(targetType == MediaPlaybackTargetContext::MockType);
+
+    String mockDeviceName;
+    if (!decoder.decode(mockDeviceName))
         return false;
 
-    MediaPlaybackTargetContext::MockState mockState;
+    int32_t mockState;
     if (!decoder.decode(mockState))
         return false;
 
-    target = MediaPlaybackTargetContext(deviceName, mockState);
-
+    target = MediaPlaybackTargetContext(mockDeviceName, static_cast<MediaPlaybackTargetContext::State>(mockState));
     return true;
 }
 #endif

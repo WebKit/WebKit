@@ -33,7 +33,6 @@
 #include <WebCore/ImageData.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/InputMode.h>
-#include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/NativeImage.h>
 #include <WebCore/NetworkLoadMetrics.h>
@@ -194,6 +193,10 @@ struct PasteboardWebContent;
 
 #if ENABLE(CONTENT_FILTERING)
 class ContentFilterUnblockHandler;
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+class MediaPlaybackTargetContext;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -641,7 +644,7 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static void encode(Encoder&, const WebCore::MediaPlaybackTargetContext&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::MediaPlaybackTargetContext&);
     static void encodePlatformData(Encoder&, const WebCore::MediaPlaybackTargetContext&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::MediaPlaybackTargetContext::Type, WebCore::MediaPlaybackTargetContext&);
+    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::MediaPlaybackTargetContext&);
 };
 #endif
 
