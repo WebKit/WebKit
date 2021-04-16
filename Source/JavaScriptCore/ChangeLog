@@ -1,3 +1,16 @@
+2021-04-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276112.
+        https://bugs.webkit.org/show_bug.cgi?id=224646
+
+        .h files should not #include *Inlines.h files.
+
+        Reverted changeset:
+
+        "REGRESSION(r276039) [GTK] Build failures on Ubuntu 18.04"
+        https://bugs.webkit.org/show_bug.cgi?id=224644
+        https://trac.webkit.org/changeset/276112
+
 2021-04-15  Lauro Moura  <lmoura@igalia.com>
 
         REGRESSION(r276039) [GTK] Build failures on Ubuntu 18.04
