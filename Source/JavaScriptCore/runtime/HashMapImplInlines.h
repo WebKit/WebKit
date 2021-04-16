@@ -27,6 +27,7 @@
 
 #include "HashMapImpl.h"
 #include "JSCJSValueInlines.h"
+#include "VMTrapsInlines.h"
 
 namespace JSC {
 
