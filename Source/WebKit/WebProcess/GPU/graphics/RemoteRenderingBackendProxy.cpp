@@ -75,10 +75,7 @@ GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection.addClient(*this);
         gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), renderingBackendIdentifier().toUInt64(), *this);
-        // This message is synchronous to ensure that the RemoteRenderingBackend has been created and has registered itself as a WorkQueueMessageReceiver before we send it IPC.
-        // Without this synchronization, some IPC messages may get received by the GPUProcess before the RemoteRenderingBackend has registered itself as a WorkQueueMessageReceiver
-        // and IPC may get processed out of order.
-        gpuProcessConnection.connection().sendSync(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters), Messages::GPUConnectionToWebProcess::CreateRenderingBackend::Reply(), 0);
+        gpuProcessConnection.connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         m_gpuProcessConnection = makeWeakPtr(gpuProcessConnection);
     }
     return *m_gpuProcessConnection;

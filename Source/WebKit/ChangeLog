@@ -1,3 +1,91 @@
+2021-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Early IPC messages to a WorkQueueMessageReceiver may get processed out of order
+        https://bugs.webkit.org/show_bug.cgi?id=224623
+
+        Reviewed by Geoffrey Garen.
+
+        Bug 224566 exposed an issue where early IPC being sent to WorkQueueMessageReceiver might get received
+        out of order. The reason behind it is that the WorkQueueMessageReceiver registers itself on the main
+        thread while we receive the IPC on the IPC thread. When we receive the IPC on the IPC thread, we check
+        if there is a WorkQueueMessageReceiver for it and if there is, we dispatch the message straight to its
+        WorkQueue. However, if the WorkQueueMessageReceiver has not registered itself yet on the main thread,
+        we hop to the main thread first, before dispatching the IPC back to the receiver's WorkQueue. The
+        extra hop to the main thread means that 2 IPC messages to the WorkQueueMessageReceiver sent one after
+        the other may get dispatched on the WorkQueue in an inconsistent order, if the WorkQueueMessageReceiver
+        registers itself as a receiver in between the 2 IPC messages.
+
+        We actually were trying to deal with this issue in Connection::addWorkQueueMessageReceiver(). When
+        the WorkQueueMessageReceiver would register itself on the main thread, we would grab the incomingMessages
+        lock and check m_incomingMessages for messages that should be dispatched to the WorkQueue. Those are
+        async messages that should have been dispatched straight to the WorkQueue on the IPC thread but didn't
+        because the WorkQueueMessageReceiver has not registered itself yet.
+
+        However, this logic in Connection::addWorkQueueMessageReceiver() was insufficient because it only checked
+        m_incomingMessages. m_incomingMessages only contains async messages. Sync messages (and special async
+        messages with the IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply flag) are stored in
+        Connection::SyncMessageState::m_messagesToDispatchWhileWaitingForSyncReply. This is what was causing
+        Bug 224566 since RemoteRenderingBackendProxy's CreateImageBuffer IPC was async with the
+        DispatchMessageEvenWhenWaitingForSyncReply flag and its GetDataURLForImageBuffer was synchronous. The
+        ordering of these 2 IPC messages could get reversed and it would cause correctness issues and flaky
+        crashes.
+
+        To address the issue, I updated Connection::addWorkQueueMessageReceiver() to ask the
+        Connection::SyncMessageState to enqueue its matching messages to the WorkQueue. There was one issue
+        though because Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection()
+        was taking messages out of m_messagesToDispatchWhileWaitingForSyncReply and storing them in a local
+        container and then iterating over this container to dispatch the messages. The dispatching of one
+        of these messages could cause a WorkQueueMessageReceiver to register itself (call addWorkQueueMessageReceiver()).
+        When this would happen, addWorkQueueMessageReceiver() would try and enqueue matching messages in
+        m_messagesToDispatchWhileWaitingForSyncReply and would miss the messages in the local container
+        that dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection() is currently iterating on.
+        To address this issue, I introduced a new m_messagesBeingDispatched data member and used that to
+        store the messages being dispatched instead of the local container. As a result,
+        addWorkQueueMessageReceiver() can now enqueue the messages in m_messagesBeingDispatched first and
+        then enqueue the ones in m_messagesToDispatchWhileWaitingForSyncReply.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::ensureGPUProcessConnection):
+        Revert r276007 that was committed as a temporary workaround for this bug.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::enqueueMatchingMessages):
+        Add utility function to SyncMessageState to enqueue its matching messages in m_messagesBeingDispatched
+        and m_messagesToDispatchWhileWaitingForSyncReply to the provided MessageReceiveQueue. This is called
+        by Connection::addMessageReceiveQueue(). The logic is similar to the one in the
+        enqueueMatchingMessagesToMessageReceiveQueue() function but works on a Deque<ConnectionAndIncomingMessage>
+        instead of a Deque<std::unique_ptr<Decoder>>.
+
+        (IPC::Connection::SyncMessageState::dispatchMessages):
+        (IPC::Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection):
+        Use m_messagesBeingDispatched instead of a local container to store the messages we are about to
+        dispatch. This allows enqueueMatchingMessages() to check those messages to see if they should be
+        dispatched to a MessageReceiveQueue. We also need to make sure we don't iterate over
+        m_messagesBeingDispatched to call dispatch() on the messages. This is important because any message
+        dispatch may cause a WorkQueueMessageReceiver to register itself, which would call
+        enqueueMatchingMessages() and potentially extract matching messages from m_messagesBeingDispatched.
+        For this reason, we take messages from m_messagesBeingDispatched one by one, until the container
+        becomes empty.
+
+        (IPC::Connection::addMessageReceiveQueue):
+        (IPC::Connection::addWorkQueueMessageReceiver):
+        (IPC::Connection::addThreadMessageReceiver):
+        - This used to only check m_incomingMessages for matching messages that should be enqueued on the
+          MessageReceiveQueue in order to preserve IPC ordering. This was insufficient because it would fail
+          to consider sync IPC messages (or async IPC messages with the
+          IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply flag). Since those are stored in separate
+          containers in Connection::SyncMessageState, we now also call
+          Connection::SyncMessageState::enqueueMatchingMessages() to enqueue those messages and preserve their
+          ordering too. This fixes IPC ordering bug identified via Bug 224566.
+        - Avoid some code duplication by moving more logic to a shared enqueueMatchingMessagesToMessageReceiveQueue()
+          function. The function is no longer templated because I don't think it is worth increasing binary
+          size just to avoid the virtual enqueueMessage() function call on the MessageReceiverQueue. We do not
+          register message receivers very often and then only have a few early messages at most to enqueue.
+
 2021-04-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Show resource priority and remote IP in the inspector

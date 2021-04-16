@@ -329,6 +329,8 @@ private:
     void popPendingSyncRequestID(uint64_t syncRequestID);
     std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
+    void enqueueMatchingMessagesToMessageReceiveQueue(Locker<Lock>& incomingMessagesLocker, MessageReceiveQueue&, ReceiverName, uint64_t destinationID);
+
     // Called on the connection work queue.
     void processIncomingMessage(std::unique_ptr<Decoder>);
     void processIncomingSyncReply(std::unique_ptr<Decoder>);
