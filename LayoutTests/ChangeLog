@@ -1,5 +1,14 @@
 2021-04-16  Robert Jenner  <jenner@apple.com>
 
+        N[ BigSur Release wk2 ARM64 ] inspector/console/console-oom.html is a flakey crash
+        https://bugs.webkit.org/show_bug.cgi?id=224698
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating expectations to Pass Crash for BigSur Release arm64 only.
+
+2021-04-16  Robert Jenner  <jenner@apple.com>
+
         [ BigSur wk2 ARM64 ] http/wpt/webrtc/change-encoded-transform.html is a flakey crash
         https://bugs.webkit.org/show_bug.cgi?id=224696
 
