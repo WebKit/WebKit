@@ -1133,7 +1133,6 @@ fast/backgrounds/gradient-background-on-subpixel-position.html [ ImageOnlyFailur
 
 # Difference of less 0.03% between images.
 svg/as-image/svg-image-with-data-uri-from-canvas.html [ ImageOnlyFailure ]
-svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 
 # SVG
