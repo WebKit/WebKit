@@ -44,7 +44,9 @@ using BoxSideSet = OptionSet<BoxSideFlag>;
 template<typename T> class RectEdges {
 public:
     RectEdges() = default;
-    
+
+    RectEdges(const RectEdges&) = default;
+
     template<typename U>
     RectEdges(U&& top, U&& right, U&& bottom, U&& left)
         : m_sides({ { std::forward<T>(top), std::forward<T>(right), std::forward<T>(bottom), std::forward<T>(left) } })

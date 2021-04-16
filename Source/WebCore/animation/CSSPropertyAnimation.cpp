@@ -846,6 +846,13 @@ private:
     {
         if (m_flags.contains(Flags::UsesFillKeyword))
             destination->setBorderImageSliceFill((!progress || canInterpolate(from, to) ? from : to)->borderImage().fill());
+        if (!canInterpolate(from, to)) {
+            // It is important we have this non-interpolated shortcut because certain CSS properties
+            // represented as a LengthBox, such as border-image-slice, don't know how to deal with
+            // calculated Length values, see for instance valueForImageSliceSide(const Length&).
+            (destination->*m_setter)(progress ? LengthBox(value(to)) : LengthBox(value(from)));
+            return;
+        }
         auto valueRange = m_flags.contains(Flags::AllowsNegativeValues) ? ValueRangeAll : ValueRangeNonNegative;
         (destination->*m_setter)(blendFunc(client, value(from), value(to), progress, valueRange));
     }

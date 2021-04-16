@@ -296,11 +296,11 @@ Length convertTo100PercentMinusLength(const Length& length)
 
 static Length blendMixedTypes(const Length& from, const Length& to, double progress)
 {
-    if (!progress)
-        return from;
+    if (!to.isCalculated() && !from.isPercent() && (progress == 1 || from.isZero()))
+        return blend(Length(0, to.type()), to, progress);
 
-    if (progress == 1.0)
-        return to;
+    if (!from.isCalculated() && !to.isPercent() && (!progress || to.isZero()))
+        return blend(from, Length(0, from.type()), progress);
 
     auto blend = makeUnique<CalcExpressionBlendLength>(from, to, progress);
     return Length(CalculationValue::create(WTFMove(blend), ValueRangeAll));
@@ -308,23 +308,17 @@ static Length blendMixedTypes(const Length& from, const Length& to, double progr
 
 Length blend(const Length& from, const Length& to, double progress)
 {
+    if ((from.isAuto() || to.isAuto()) || (from.isUndefined() || to.isUndefined()))
+        return progress < 0.5 ? from : to;
+
+    if (from.isCalculated() || to.isCalculated() || (from.type() != to.type()))
+        return blendMixedTypes(from, to, progress);
+
     if (!progress)
         return from;
 
     if (progress == 1)
         return to;
-
-    if (from.isAuto() || to.isAuto())
-        return progress < 0.5 ? from : to;
-
-    if (from.isUndefined() || to.isUndefined())
-        return to;
-
-    if (from.isCalculated() || to.isCalculated())
-        return blendMixedTypes(from, to, progress);
-
-    if (!from.isZero() && !to.isZero() && from.type() != to.type())
-        return blendMixedTypes(from, to, progress);
 
     LengthType resultType = to.type();
     if (to.isZero())

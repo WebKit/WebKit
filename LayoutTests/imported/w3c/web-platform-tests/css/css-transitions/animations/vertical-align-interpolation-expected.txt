@@ -128,22 +128,22 @@ PASS Web Animations: property <vertical-align> from [0px] to [100px] at (0.6) sh
 PASS Web Animations: property <vertical-align> from [0px] to [100px] at (1) should be [100px]
 PASS Web Animations: property <vertical-align> from [0px] to [100px] at (1.5) should be [150px]
 PASS CSS Transitions: property <vertical-align> from [40px] to [40%] at (-0.5) should be [calc(60px - 20%)]
-FAIL CSS Transitions: property <vertical-align> from [40px] to [40%] at (0) should be [calc(40px + 0%)] assert_equals: expected "calc ( 0 % + 40px ) " but got "40px "
+PASS CSS Transitions: property <vertical-align> from [40px] to [40%] at (0) should be [calc(40px + 0%)]
 PASS CSS Transitions: property <vertical-align> from [40px] to [40%] at (0.3) should be [calc(28px + 12%)]
 PASS CSS Transitions: property <vertical-align> from [40px] to [40%] at (1) should be [40%]
 PASS CSS Transitions: property <vertical-align> from [40px] to [40%] at (1.5) should be [calc(-20px + 60%)]
 PASS CSS Transitions with transition: all: property <vertical-align> from [40px] to [40%] at (-0.5) should be [calc(60px - 20%)]
-FAIL CSS Transitions with transition: all: property <vertical-align> from [40px] to [40%] at (0) should be [calc(40px + 0%)] assert_equals: expected "calc ( 0 % + 40px ) " but got "40px "
+PASS CSS Transitions with transition: all: property <vertical-align> from [40px] to [40%] at (0) should be [calc(40px + 0%)]
 PASS CSS Transitions with transition: all: property <vertical-align> from [40px] to [40%] at (0.3) should be [calc(28px + 12%)]
 PASS CSS Transitions with transition: all: property <vertical-align> from [40px] to [40%] at (1) should be [40%]
 PASS CSS Transitions with transition: all: property <vertical-align> from [40px] to [40%] at (1.5) should be [calc(-20px + 60%)]
 PASS CSS Animations: property <vertical-align> from [40px] to [40%] at (-0.5) should be [calc(60px - 20%)]
-FAIL CSS Animations: property <vertical-align> from [40px] to [40%] at (0) should be [calc(40px + 0%)] assert_equals: expected "calc ( 0 % + 40px ) " but got "40px "
+PASS CSS Animations: property <vertical-align> from [40px] to [40%] at (0) should be [calc(40px + 0%)]
 PASS CSS Animations: property <vertical-align> from [40px] to [40%] at (0.3) should be [calc(28px + 12%)]
 PASS CSS Animations: property <vertical-align> from [40px] to [40%] at (1) should be [40%]
 PASS CSS Animations: property <vertical-align> from [40px] to [40%] at (1.5) should be [calc(-20px + 60%)]
 PASS Web Animations: property <vertical-align> from [40px] to [40%] at (-0.5) should be [calc(60px - 20%)]
-FAIL Web Animations: property <vertical-align> from [40px] to [40%] at (0) should be [calc(40px + 0%)] assert_equals: expected "calc ( 0 % + 40px ) " but got "40px "
+PASS Web Animations: property <vertical-align> from [40px] to [40%] at (0) should be [calc(40px + 0%)]
 PASS Web Animations: property <vertical-align> from [40px] to [40%] at (0.3) should be [calc(28px + 12%)]
 PASS Web Animations: property <vertical-align> from [40px] to [40%] at (1) should be [40%]
 PASS Web Animations: property <vertical-align> from [40px] to [40%] at (1.5) should be [calc(-20px + 60%)]

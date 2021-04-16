@@ -1,3 +1,35 @@
+2021-04-16  Antoine Quint  <graouts@webkit.org>
+
+        Blend using calc() when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=224670
+
+        Reviewed by Antti Koivisto.
+
+        We need to blend between lengths when their types are not the same. However, we would take
+        some shortcuts in the following cases and blend using just one value:
+
+        1. either the from or to value was a 0 value,
+        2. progress was 0 or 1.
+
+        Now we use the mixed types code path if the types are different or either the from or to
+        value is a calculated value. The single exception where we don't actually end up generating
+        a CalculationValue is when we know that one of the two values is 0 and not a percentage, in
+        which case we run a simple blend.
+
+        Due to this approach, we stopped returning the value as-is in some cases where progress was
+        0 or 1. To avoid regressions in this area, we made the LengthBoxPropertyWrapper clone the from
+        or to value in the discrete case, as some other areas of the code do not know how to deal with
+        calculated Length values, for instance valueForImageSliceSide(const Length&).
+
+        * animation/CSSPropertyAnimation.cpp:
+        * platform/Length.cpp:
+        (WebCore::blendMixedTypes):
+        (WebCore::blend):
+        * platform/LengthBox.h:
+        (WebCore::LengthBox::LengthBox):
+        * platform/RectEdges.h:
+        (WebCore::RectEdges::RectEdges):
+
 2021-04-16  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Do not try to collapse anonymous blocks when cleaning up the first-letter subtree
