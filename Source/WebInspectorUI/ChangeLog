@@ -1,5 +1,29 @@
 2021-04-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: REGRESSION(?): Graphics: dropping a recording leaves behind a drop zone view
+        https://bugs.webkit.org/show_bug.cgi?id=224648
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/GraphicsTabContentView.js:
+        (WI.GraphicsTabContentView.prototype.initialLayout):
+        It appears that it's possible for re-entrancy issues in the `WI.View` system since the
+        `_didInitialLayout` flag isn't set until _after_ `initialLayout` returns, meaning that if
+        the logic inside `initialLayout` triggers a synchronous `layout` then that second `layout`
+        won't know that it's already in the middle of an `initialLayout`. In this case, showing the
+        `WI.GraphicsOverviewContentView` causes the navigation sidebar to be shown, which forces a
+        synchronous `layout` from handling `WI.Sidebar.Event.WidthDidChange`. For now, there's no
+        "rush" to show the `WI.GraphicsOverviewContentView` so we delay it by one event loop turn.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype.dropZoneShouldAppearForDragEvent): Deleted.
+        (WI.CanvasContentView.prototype.dropZoneHandleDrop): Deleted.
+        There's no reason to have another `WI.DropZoneView` here since there's already one that
+        covers the entire tab.
+
+2021-04-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Uncaught Exception: null is not an object (evaluating 'this._listeners.get')
         https://bugs.webkit.org/show_bug.cgi?id=224651
 

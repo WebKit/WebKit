@@ -82,24 +82,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this.refreshPreview();
     }
 
-    // DropZoneView delegate
-
-    dropZoneShouldAppearForDragEvent(dropZone, event)
-    {
-        return event.dataTransfer.types.includes("Files");
-    }
-
-    dropZoneHandleDrop(dropZone, event)
-    {
-        let files = event.dataTransfer.files;
-        if (files.length !== 1) {
-            InspectorFrontendHost.beep();
-            return;
-        }
-
-        WI.FileUtilities.readJSON(files, (result) => WI.canvasManager.processJSON(result));
-    }
-
     // Protected
 
     initialLayout()
@@ -183,13 +165,6 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
         if (isCard)
             this._refreshPixelSize();
-
-        if (!isCard) {
-            let dropZoneView = new WI.DropZoneView(this);
-            dropZoneView.text = WI.UIString("Import Recording");
-            dropZoneView.targetElement = this.element;
-            this.addSubview(dropZoneView);
-        }
     }
 
     layout()
