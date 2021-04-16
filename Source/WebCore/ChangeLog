@@ -1,3 +1,13 @@
+2021-04-16  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant renderObject in BreakingContext::handleText
+        https://bugs.webkit.org/show_bug.cgi?id=224682
+
+        Reviewed by Darin Adler.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+
 2021-04-16  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation][OpenSSL] Remove warnings.
