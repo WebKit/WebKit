@@ -41,14 +41,23 @@
 #import <UIKit/UIFont.h>
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#import <WebCore/MediaPlaybackTargetContext.h>
+#import <objc/runtime.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
+#endif
+
 #if ENABLE(APPLE_PAY)
 #import "DataReference.h"
 #import <WebCore/PaymentAuthorizationStatus.h>
 #import <pal/cocoa/PassKitSoftLink.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#import <pal/cocoa/AVFoundationSoftLink.h>
 #endif
 
 namespace IPC {
@@ -605,5 +614,51 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
 
     return true;
 }
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const MediaPlaybackTargetContext& target)
+{
+    if (target.type() == MediaPlaybackTargetContext::Type::AVOutputContext) {
+        if ([PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+            encoder << target.outputContext();
+    } else if (target.type() == MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
+        encoder << target.serializedOutputContext();
+        encoder << target.hasActiveRoute();
+    } else
+        ASSERT_NOT_REACHED();
+}
+
+bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Decoder& decoder, MediaPlaybackTargetContext::Type contextType, MediaPlaybackTargetContext& target)
+{
+    ASSERT(contextType != MediaPlaybackTargetContext::Type::Mock);
+
+    if (contextType == MediaPlaybackTargetContext::Type::AVOutputContext) {
+        if (![PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
+            return false;
+
+        auto outputContext = IPC::decode<AVOutputContext>(decoder, PAL::getAVOutputContextClass());
+        if (!outputContext)
+            return false;
+
+        target = WebCore::MediaPlaybackTargetContext { WTFMove(*outputContext) };
+        return true;
+    }
+
+    if (contextType == MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
+        RetainPtr<NSData> serializedOutputContext;
+        if (!IPC::decode(decoder, serializedOutputContext) || !serializedOutputContext)
+            return false;
+
+        bool hasActiveRoute;
+        if (!decoder.decode(hasActiveRoute))
+            return false;
+
+        target = WebCore::MediaPlaybackTargetContext { WTFMove(serializedOutputContext), hasActiveRoute };
+        return true;
+    }
+
+    return false;
+}
+#endif
 
 } // namespace IPC

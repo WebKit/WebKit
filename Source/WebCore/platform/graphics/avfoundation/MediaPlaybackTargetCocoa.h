@@ -28,7 +28,6 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include "MediaPlaybackTarget.h"
-#include "MediaPlaybackTargetContext.h"
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
@@ -36,6 +35,7 @@ namespace WebCore {
 class MediaPlaybackTargetCocoa : public MediaPlaybackTarget {
 public:
     WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(AVOutputContext *);
+    WEBCORE_EXPORT static Ref<MediaPlaybackTarget> create(MediaPlaybackTargetContext&&);
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
     static Ref<MediaPlaybackTarget> create();
@@ -43,21 +43,14 @@ public:
 
     virtual ~MediaPlaybackTargetCocoa();
 
-    TargetType targetType() const final { return AVFoundation; }
-
-    const MediaPlaybackTargetContext& targetContext() const final;
-    bool hasActiveRoute() const final;
-    String deviceName() const final;
-    bool supportsRemoteVideoPlayback() const final;
-
-    AVOutputContext *outputContext() const { return m_outputContext.get(); }
+    TargetType targetType() const final { return TargetType::AVFoundation; }
+    const MediaPlaybackTargetContext& targetContext() const final { return m_context; }
 
 protected:
-    MediaPlaybackTargetCocoa(AVOutputContext *);
+    explicit MediaPlaybackTargetCocoa(AVOutputContext *);
+    explicit MediaPlaybackTargetCocoa(MediaPlaybackTargetContext&&);
 
-    RetainPtr<AVOutputContext> m_outputContext;
-    mutable MediaPlaybackTargetContext m_context;
-    String m_deviceName;
+    MediaPlaybackTargetContext m_context;
 };
 
 MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(MediaPlaybackTarget*);
