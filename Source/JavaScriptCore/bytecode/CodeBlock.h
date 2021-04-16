@@ -880,8 +880,6 @@ public:
     public:
         Vector<HandlerInfo> m_exceptionHandlers;
 
-        Vector<std::unique_ptr<ValueProfileAndVirtualRegisterBuffer>> m_catchProfiles;
-
         DirectEvalCodeCache m_directEvalCodeCache;
     };
 
@@ -983,7 +981,7 @@ private:
     {
         if (!m_rareData) {
             auto rareData = makeUnique<RareData>();
-            WTF::storeStoreFence(); // m_catchProfiles can be touched from compiler threads.
+            WTF::storeStoreFence();
             m_rareData = WTFMove(rareData);
         }
     }

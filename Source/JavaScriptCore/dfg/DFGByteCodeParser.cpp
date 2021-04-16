@@ -7030,7 +7030,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             Vector<std::pair<VirtualRegister, Node*>> localsToSet;
-            localsToSet.reserveInitialCapacity(buffer->m_size); // Note: This will reserve more than the number of locals we see below because the buffer includes arguments.
+            localsToSet.reserveInitialCapacity(buffer->size()); // Note: This will reserve more than the number of locals we see below because the buffer includes arguments.
 
             // We're not allowed to exit here since we would not properly recover values.
             // We first need to bootstrap the catch entrypoint state.

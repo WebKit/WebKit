@@ -1,3 +1,28 @@
+2021-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove CodeBlock::RareData::m_catchProfiles
+        https://bugs.webkit.org/show_bug.cgi?id=224593
+
+        Reviewed by Mark Lam.
+
+        We are having this Vector just because we would like to destroy them when destroying the owner Baseline / LLInt CodeBlock.
+        But we are setting a pointer in OpCatch's metadata in Baseline / LLInt.
+        So we should just iterate metadata for that and destroy them in the destructor. No need to keep them separately.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndex):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow):
+        (JSC::CodeBlock::updateAllValueProfilePredictionsAndCountLiveness):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::createRareDataIfNecessary):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileAndVirtualRegisterBuffer::ValueProfileAndVirtualRegisterBuffer): Deleted.
+        (JSC::ValueProfileAndVirtualRegisterBuffer::~ValueProfileAndVirtualRegisterBuffer): Deleted.
+        (JSC::ValueProfileAndVirtualRegisterBuffer::forEach): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2021-04-15  Mark Lam  <mark.lam@apple.com>
 
         Optimize the DeferTermination scope to be more efficient.

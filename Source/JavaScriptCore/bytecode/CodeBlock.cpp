@@ -805,6 +805,15 @@ CodeBlock::~CodeBlock()
         }
     }
 
+    if (JITCode::isBaselineCode(jitType())) {
+        if (m_metadata) {
+            m_metadata->forEach<OpCatch>([&](auto& metadata) {
+                if (metadata.m_buffer)
+                    ValueProfileAndVirtualRegisterBuffer::destroy(std::exchange(metadata.m_buffer, nullptr));
+            });
+        }
+    }
+
 #if ENABLE(DFG_JIT)
     // The JITCode (and its corresponding DFG::CommonData) may outlive the CodeBlock by
     // a short amount of time after the CodeBlock is destructed. For example, the
@@ -1979,25 +1988,12 @@ DisposableCallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteInd
 
 void CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
+    ASSERT(JITCode::isBaselineCode(jitType()));
     auto& instruction = instructions().at(bytecodeIndex);
     OpCatch op = instruction->as<OpCatch>();
     auto& metadata = op.metadata(this);
-    if (!!metadata.m_buffer) {
-#if ASSERT_ENABLED
-        ConcurrentJSLocker locker(m_lock);
-        bool found = false;
-        auto* rareData = m_rareData.get();
-        ASSERT(rareData);
-        for (auto& profile : rareData->m_catchProfiles) {
-            if (profile.get() == metadata.m_buffer) {
-                found = true;
-                break;
-            }
-        }
-        ASSERT(found);
-#endif // ASSERT_ENABLED
+    if (!!metadata.m_buffer)
         return;
-    }
 
     ensureCatchLivenessIsComputedForBytecodeIndexSlow(op, bytecodeIndex);
 }
@@ -2022,23 +2018,19 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow(const OpCatch&
     for (int i = 0; i < numParameters(); ++i)
         liveOperands.append(virtualRegisterForArgumentIncludingThis(i));
 
-    auto profiles = makeUnique<ValueProfileAndVirtualRegisterBuffer>(liveOperands.size());
-    RELEASE_ASSERT(profiles->m_size == liveOperands.size());
-    for (unsigned i = 0; i < profiles->m_size; ++i)
-        profiles->m_buffer.get()[i].m_operand = liveOperands[i];
+    auto* profiles = ValueProfileAndVirtualRegisterBuffer::create(liveOperands.size());
+    RELEASE_ASSERT(profiles->size() == liveOperands.size());
+    for (unsigned i = 0; i < profiles->size(); ++i)
+        profiles->data()[i].m_operand = liveOperands[i];
 
     createRareDataIfNecessary();
 
     // The compiler thread will read this pointer value and then proceed to dereference it
     // if it is not null. We need to make sure all above stores happen before this store so
     // the compiler thread reads fully initialized data.
-    WTF::storeStoreFence(); 
+    WTF::storeStoreFence();
 
-    op.metadata(this).m_buffer = profiles.get();
-    {
-        ConcurrentJSLocker locker(m_lock);
-        m_rareData->m_catchProfiles.append(WTFMove(profiles));
-    }
+    op.metadata(this).m_buffer = profiles;
 }
 
 void CodeBlock::removeExceptionHandlerForCallSite(DisposableCallSiteIndex callSiteIndex)
@@ -2897,14 +2889,16 @@ void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(unsigned& numbe
         profile.computeUpdatedPrediction(locker);
     });
 
-    if (auto* rareData = m_rareData.get()) {
-        for (auto& profileBucket : rareData->m_catchProfiles) {
-            profileBucket->forEach([&] (ValueProfileAndVirtualRegister& profile) {
-                profile.computeUpdatedPrediction(locker);
-            });
-        }
+    if (m_metadata) {
+        m_metadata->forEach<OpCatch>([&](auto& metadata) {
+            if (metadata.m_buffer) {
+                metadata.m_buffer->forEach([&](ValueProfileAndVirtualRegister& profile) {
+                    profile.computeUpdatedPrediction(locker);
+                });
+            }
+        });
     }
-    
+
 #if ENABLE(DFG_JIT)
     lazyOperandValueProfiles(locker).computeUpdatedPredictions(locker);
 #endif
