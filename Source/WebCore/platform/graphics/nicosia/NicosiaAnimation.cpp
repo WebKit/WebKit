@@ -28,7 +28,7 @@ using namespace WebCore;
 
 static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize&, bool blendToPassthrough = false)
 {
-    return toOp.blend(fromOp, { progress }, blendToPassthrough);
+    return toOp.blend(fromOp, progress, blendToPassthrough);
 }
 
 static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress, const FloatSize& boxSize)
@@ -138,7 +138,7 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     if (!to.size()) {
         TransformOperations blended(from);
         for (auto& operation : blended.operations())
-            operation->blend(nullptr, { progress }, true)->apply(matrix, boxSize);
+            operation->blend(nullptr, progress, true)->apply(matrix, boxSize);
         return matrix;
     }
 
@@ -146,14 +146,14 @@ static TransformationMatrix applyTransformAnimation(const TransformOperations& f
     if (!from.size()) {
         TransformOperations blended(to);
         for (auto& operation : blended.operations())
-            operation->blend(nullptr, { 1 - progress }, true)->apply(matrix, boxSize);
+            operation->blend(nullptr, 1 - progress, true)->apply(matrix, boxSize);
         return matrix;
     }
 
     // Normal animation with a matching operation list.
     TransformOperations blended(to);
     for (size_t i = 0; i < blended.operations().size(); ++i)
-        blended.operations()[i]->blend(from.at(i), { progress }, !from.at(i))->apply(matrix, boxSize);
+        blended.operations()[i]->blend(from.at(i), progress, !from.at(i))->apply(matrix, boxSize);
     return matrix;
 }
 

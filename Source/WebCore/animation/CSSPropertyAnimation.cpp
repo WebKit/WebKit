@@ -75,7 +75,7 @@ struct CSSPropertyBlendingContext : BlendingContext {
     const CSSPropertyBlendingClient* client { nullptr };
 
     CSSPropertyBlendingContext(double progress, bool isDiscrete, const CSSPropertyBlendingClient* client)
-        : BlendingContext { progress, isDiscrete }
+        : BlendingContext(progress, isDiscrete)
         , client(client)
     {
     }

@@ -1,5 +1,20 @@
 2021-04-16  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed GTK / WinCairo build fix after Antoine's r276141.
+
+        Just add the BlendingContext constructor this time because there are too many build failures.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyBlendingContext::CSSPropertyBlendingContext):
+        (WebCore::CSSPropertyBlendingContext::client): Deleted.
+        * platform/animation/AnimationUtilities.h:
+        (WebCore::BlendingContext::BlendingContext):
+        * platform/graphics/nicosia/NicosiaAnimation.cpp:
+        (Nicosia::blendFunc):
+        (Nicosia::applyTransformAnimation):
+
+2021-04-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix GTK's build after Antoine's r276141.
 
         * platform/graphics/nicosia/NicosiaAnimation.cpp:

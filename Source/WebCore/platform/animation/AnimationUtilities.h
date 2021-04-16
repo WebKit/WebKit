@@ -33,6 +33,12 @@ namespace WebCore {
 struct BlendingContext {
     double progress { 0 };
     bool isDiscrete { false };
+
+    BlendingContext(double progress = 0, bool isDiscrete = false)
+        : progress(progress)
+        , isDiscrete(isDiscrete)
+    {
+    }
 };
 
 inline int blend(int from, int to, const BlendingContext& context)
