@@ -1,5 +1,41 @@
 2021-04-16  Devin Rousso  <drousso@apple.com>
 
+        Web Inspector: Uncaught Exception: null is not an object (evaluating 'this._listeners.get')
+        https://bugs.webkit.org/show_bug.cgi?id=224651
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Base/Object.js:
+        (WI.Object.removeEventListener):
+        Add early-return checks just in case `_listeners` or `listenersForEventType` is falsy. While
+        ideally it would be the case that these would never be falsy, the logic of Web Inspector is
+        complex and far reaching, so better safe than sorry.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype._detach):
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.ondetach):
+        * UserInterface/Views/BootstrapScriptTreeElement.js:
+        (WI.BootstrapScriptTreeElement.prototype.ondetach):
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.ondetach):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.ondetach):
+        * UserInterface/Views/FrameTreeElement.js:
+        (WI.FrameTreeElement.prototype.ondetach):
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.js:
+        (WI.JavaScriptBreakpointTreeElement.prototype.ondetach):
+        * UserInterface/Views/LocalResourceOverrideTreeElement.js:
+        (WI.LocalResourceOverrideTreeElement.prototype.ondetach):
+        * UserInterface/Views/ShaderProgramTreeElement.js:
+        (WI.ShaderProgramTreeElement.prototype.ondetach):
+        * UserInterface/Views/WebSocketResourceTreeElement.js:
+        (WI.WebSocketResourceTreeElement.prototype.ondetach):
+        Add FIXME comments warning of this issue so that future changes can take it into account.
+        <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
+
+2021-04-16  Devin Rousso  <drousso@apple.com>
+
         Web Inspector: Sources: don't show the create local override contextmenu if the navigation item is disabled
         https://bugs.webkit.org/show_bug.cgi?id=224647
 

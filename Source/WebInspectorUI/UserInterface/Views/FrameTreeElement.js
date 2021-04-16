@@ -121,6 +121,8 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
 
     ondetach()
     {
+        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
+
         if (this.listItemElement) {
             WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
             WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._styleSheetRemoved, this);

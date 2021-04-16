@@ -60,6 +60,8 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
 
     ondetach()
     {
+        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
+
         // FIXME: add support for disabling/highlighting WebGPU shader pipelines.
         let contextType = this.representedObject.canvas.contextType;
         if (contextType === WI.Canvas.ContextType.WebGL || contextType === WI.Canvas.ContextType.WebGL2)

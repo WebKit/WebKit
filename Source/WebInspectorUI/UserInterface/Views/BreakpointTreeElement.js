@@ -111,6 +111,8 @@ WI.BreakpointTreeElement = class BreakpointTreeElement extends WI.GeneralTreeEle
 
     ondetach()
     {
+        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
+
         super.ondetach();
 
         this._breakpoint.removeEventListener(WI.Breakpoint.Event.DisabledStateDidChange, this.updateStatus, this);

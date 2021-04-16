@@ -290,6 +290,7 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     _detach()
     {
+        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
         if (this.ondetach)
             this.ondetach(this);
         if (this._listItemNode && this._listItemNode.parentNode)
