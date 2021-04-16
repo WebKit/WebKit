@@ -69,8 +69,8 @@ public:
 private:
     AudioSourceProviderAVFObjC(AVPlayerItem *);
 
-    void destroyMix();
-    void createMix();
+    void destroyMixIfNeeded();
+    void createMixIfNeeded();
 
     // AudioSourceProvider
     void provideInput(AudioBus*, size_t framesToProcess) override;
