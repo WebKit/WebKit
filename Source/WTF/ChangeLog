@@ -1,3 +1,13 @@
+2021-04-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Disable app-bound request API tests on specific OS versions
+        https://bugs.webkit.org/show_bug.cgi?id=223692
+        <rdar://problem/75787288>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-04-16  Alex Christensen  <achristensen@webkit.org>
 
         Disable ApplicationCache with linkedOnOrAfter check

@@ -1420,7 +1420,7 @@ TEST(InAppBrowserPrivacy, AboutBlankSubFrameMatchesTopFrameNonAppBound)
 
 #endif // ENABLE(APP_BOUND_DOMAINS)
 
-#if USE(APPLE_INTERNAL_SDK)
+#if USE(APPLE_INTERNAL_SDK) && ENABLE(APP_BOUND_REQUESTS)
 TEST(InAppBrowserPrivacy, AppBoundRequest)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
