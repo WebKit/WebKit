@@ -1,5 +1,70 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275845. rdar://problem/76727387
+
+    Modernize uses of ConsoleClient
+    https://bugs.webkit.org/show_bug.cgi?id=224398
+    
+    Reviewed by David Kilzer.
+    
+    ConsoleClient acts like a delegate, so its callers
+    should be using weak references to it.
+    
+    Source/JavaScriptCore:
+    
+    * inspector/JSGlobalObjectInspectorController.cpp:
+    (Inspector::JSGlobalObjectInspectorController::consoleClient const):
+    * inspector/JSGlobalObjectInspectorController.h:
+    * runtime/ConsoleClient.h:
+    * runtime/ConsoleObject.cpp:
+    (JSC::consoleLogWithLevel):
+    (JSC::JSC_DEFINE_HOST_FUNCTION):
+    * runtime/JSGlobalObject.cpp:
+    (JSC::JSGlobalObject::init):
+    (JSC::JSGlobalObject::setConsoleClient):
+    * runtime/JSGlobalObject.h:
+    (JSC::JSGlobalObject::consoleClient const):
+    (JSC::JSGlobalObject::setConsoleClient): Deleted.
+    
+    Source/WebCore:
+    
+    * bindings/js/ScriptCachedFrameData.cpp:
+    (WebCore::ScriptCachedFrameData::restore):
+    * bindings/js/ScriptController.cpp:
+    (WebCore::ScriptController::initScriptForWindowProxy):
+    * bindings/js/WindowProxy.cpp:
+    (WebCore::WindowProxy::setDOMWindow):
+    * workers/WorkerOrWorkletScriptController.cpp:
+    (WebCore::WorkerOrWorkletScriptController::initScriptWithSubclass):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275845 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-12  BJ Burg  <bburg@apple.com>
+
+            Modernize uses of ConsoleClient
+            https://bugs.webkit.org/show_bug.cgi?id=224398
+
+            Reviewed by David Kilzer.
+
+            ConsoleClient acts like a delegate, so its callers
+            should be using weak references to it.
+
+            * inspector/JSGlobalObjectInspectorController.cpp:
+            (Inspector::JSGlobalObjectInspectorController::consoleClient const):
+            * inspector/JSGlobalObjectInspectorController.h:
+            * runtime/ConsoleClient.h:
+            * runtime/ConsoleObject.cpp:
+            (JSC::consoleLogWithLevel):
+            (JSC::JSC_DEFINE_HOST_FUNCTION):
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::init):
+            (JSC::JSGlobalObject::setConsoleClient):
+            * runtime/JSGlobalObject.h:
+            (JSC::JSGlobalObject::consoleClient const):
+            (JSC::JSGlobalObject::setConsoleClient): Deleted.
+
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275212. rdar://problem/76727522
 
     Ensure that GlobalPropertyInfo is allocated on the stack.

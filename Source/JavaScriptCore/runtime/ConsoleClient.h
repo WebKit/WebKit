@@ -27,6 +27,7 @@
 
 #include "ConsoleTypes.h"
 #include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
 namespace Inspector {
 class ScriptArguments;
@@ -37,7 +38,7 @@ namespace JSC {
 class CallFrame;
 class JSGlobalObject;
 
-class ConsoleClient {
+class ConsoleClient : public CanMakeWeakPtr<ConsoleClient> {
 public:
     virtual ~ConsoleClient() { }
 
