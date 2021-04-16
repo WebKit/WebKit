@@ -4866,6 +4866,10 @@ imported/w3c/web-platform-tests/css/css-contain/quote-scoping-002.html [ ImageOn
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-004.html [ ImageOnlyFailure ]
 
+# Tests that fail because they assume a vertical scrollbar in `writing-mode: vertical-rl` elements will be on the right-hand side
+webkit.org/b/224357 imported/w3c/web-platform-tests/css/css-writing-modes/sizing-orthog-vrl-in-htb-013.xht [ ImageOnlyFailure ]
+webkit.org/b/224357 imported/w3c/web-platform-tests/css/cssom-view/cssom-getBoundingClientRect-vertical-rl.html [ ImageOnlyFailure ]
+
 # @counter-style ref tests that currently fail
 imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-006.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/armenian/css3-counter-styles-007.html [ ImageOnlyFailure ]

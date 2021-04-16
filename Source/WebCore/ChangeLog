@@ -1,3 +1,97 @@
+2021-04-16  Cameron McCormack  <heycam@apple.com>
+
+        Place vertical scrollbars at (inline/block)-end edge in all writing modes.
+        https://bugs.webkit.org/show_bug.cgi?id=224224
+
+        Reviewed by Simon Fraser.
+
+        Tests: fast/scrolling/v-rl-scrollbars-initial-position-dynamic.html
+               fast/scrolling/v-rl-scrollbars-initial-position.html
+               fast/scrolling/vertical-scrollbar-position.html
+
+        We currently only consider moving a vertical scrollbar to the left for
+        `writing-mode: horizontal-{tb,bt}; direction: rtl` containers. But
+        ideally we should always place the vertical scrollbar at the end edge
+        of the container (whether that's the inline-end edge, when using a
+        horizontal writing mode, or the block-end edge, when using a vertical
+        writing mode).
+
+        Some functions calling the existing shouldPlaceBlockDirectionScrollbarOnLeft
+        instead really care about whether the vertical scrollbar is on the
+        left, not whether the block direction scrollbar is on the left (since
+        for vertical writing modes, the block direction scrollbar is the
+        horizontal one on the bottom). So we rename this to
+        shouldPlaceVerticalScrollbarOnLeft, make it return true for
+        `writing-mode: vertical-rl`, and adjust callers that really do care
+        only about block direction scrollbars to additionally check their
+        writing mode.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::shouldPlaceVerticalScrollbarOnLeft const):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::documentScrollPositionRelativeToViewOrigin const):
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::scrollCornerRect const):
+        (WebCore::ScrollView::locationOfContents const):
+        * platform/ScrollableArea.h:
+        * platform/adwaita/ScrollbarThemeAdwaita.cpp:
+        (WebCore::ScrollbarThemeAdwaita::paint):
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::widgetTypeForScrollbar):
+        (WebCore::ScrollbarThemeGtk::paint):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::didCreateScrollerImp):
+        * platform/win/PopupMenuWin.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftOffsetForContent const):
+        (WebCore::RenderBlock::logicalRightOffsetForContent const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::determineLogicalLeftPositionForChild):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paddingBoxRect const):
+        (WebCore::RenderBox::contentBoxLocation const):
+        (WebCore::RenderBox::overflowClipRect const):
+        (WebCore::RenderBox::computePositionedLogicalWidth const):
+        (WebCore::RenderBox::flippedClientBoxRect const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::constrainingRectForStickyPosition const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible):
+        (WebCore::RenderLayer::resize):
+        (WebCore::RenderLayer::overflowControlsRects const):
+        (WebCore::RenderLayer::offsetFromResizeCorner const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::positionForClipLayer const):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::shouldPlaceVerticalScrollbarOnLeft const):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::shouldPlaceVerticalScrollbarOnLeft const):
+        (WebCore::RenderLayerScrollableArea::overflowControlsRects const):
+        (WebCore::RenderLayerScrollableArea::computeScrollOrigin):
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterLayout):
+        (WebCore::RenderLayerScrollableArea::drawPlatformResizerImage):
+        (WebCore::RenderLayerScrollableArea::hitTestResizerInFragments const):
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterStyleChange):
+        * rendering/RenderLayerScrollableArea.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::itemBoundingBoxRect):
+        (WebCore::RenderListBox::paintScrollbar):
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        (WebCore::RenderListBox::listIndexAtOffset):
+        (WebCore::RenderListBox::invalidateScrollbarRect):
+        (WebCore::RenderListBox::convertFromScrollbarToContainingView const):
+        (WebCore::RenderListBox::convertFromContainingViewToScrollbar const):
+        * rendering/RenderListBox.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::shouldPlaceVerticalScrollbarOnLeft const):
+        * rendering/style/RenderStyle.h:
+
 2021-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Refactor some webpage translation code

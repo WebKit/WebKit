@@ -256,7 +256,7 @@ private:
     WebCore::IntPoint convertFromScrollbarToContainingView(const WebCore::Scrollbar&, const WebCore::IntPoint& scrollbarPoint) const final;
     WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::Scrollbar&, const WebCore::IntPoint& parentPoint) const final;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return false; }
+    bool shouldPlaceVerticalScrollbarOnLeft() const final { return false; }
     String debugDescription() const final;
 
     // PDFPlugin functions.

@@ -2581,9 +2581,9 @@ float RenderStyle::outlineOffset() const
     return m_backgroundData->outline.offset();
 }
 
-bool RenderStyle::shouldPlaceBlockDirectionScrollbarOnLeft() const
+bool RenderStyle::shouldPlaceVerticalScrollbarOnLeft() const
 {
-    return !isLeftToRightDirection() && isHorizontalWritingMode();
+    return (!isLeftToRightDirection() && isHorizontalWritingMode()) || writingMode() == WritingMode::RightToLeft;
 }
 
 Vector<PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)

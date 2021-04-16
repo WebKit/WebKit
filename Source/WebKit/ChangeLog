@@ -1,3 +1,13 @@
+2021-04-16  Cameron McCormack  <heycam@apple.com>
+
+        Place vertical scrollbars at (inline/block)-end edge in all writing modes.
+        https://bugs.webkit.org/show_bug.cgi?id=224224
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+
 2021-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Refactor some webpage translation code

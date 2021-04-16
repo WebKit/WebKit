@@ -2430,9 +2430,10 @@ void RenderLayer::scrollRectToVisible(const LayoutRect& absoluteRect, bool insid
         // border edge. Make the rectangle relative to the scrollable area.
         localExposeRect.moveBy(-LayoutPoint(box->borderLeft(), box->borderTop()));
 
-        if (box->shouldPlaceBlockDirectionScrollbarOnLeft()) {
-            // For direction: rtl; writing-mode: horizontal-tb box, the scroll bar is on the left side. The visible rect
-            // starts from the right side of scroll bar. So the x of localExposeRect should start from the same position too.
+        if (box->shouldPlaceVerticalScrollbarOnLeft()) {
+            // For `direction: rtl; writing-mode: horizontal-{tb,bt}` and `writing-mode: vertical-rl`
+            // boxes, the scroll bar is on the left side. The visible rect starts from the right side
+            // of the scroll bar. So the x of localExposeRect should start from the same position too.
             localExposeRect.moveBy(LayoutPoint(-scrollableArea->verticalScrollbarWidth(), 0));
         }
         LayoutRect layerBounds(0_lu, 0_lu, box->clientWidth(), box->clientHeight());
@@ -2676,7 +2677,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
     element->setMinimumSizeForResizing(minimumSize);
     
     LayoutSize adjustedOldOffset = LayoutSize(oldOffset.width() / zoomFactor, oldOffset.height() / zoomFactor);
-    if (renderer->shouldPlaceBlockDirectionScrollbarOnLeft()) {
+    if (renderer->shouldPlaceVerticalScrollbarOnLeft()) {
         newOffset.setWidth(-newOffset.width());
         adjustedOldOffset.setWidth(-adjustedOldOffset.width());
     }
@@ -2733,7 +2734,7 @@ RenderLayer::OverflowControlRects RenderLayer::overflowControlsRects() const
     // Scrollbars sit inside the border box.
     auto overflowControlsPositioningRect = snappedIntRect(renderBox.paddingBoxRectIncludingScrollbar());
 
-    bool placeVerticalScrollbarOnTheLeft = renderBox.shouldPlaceBlockDirectionScrollbarOnLeft();
+    bool placeVerticalScrollbarOnTheLeft = renderBox.shouldPlaceVerticalScrollbarOnLeft();
     bool haveResizer = renderer().style().resize() != Resize::None;
 
     OverflowControlRects result;
@@ -2786,7 +2787,7 @@ String RenderLayer::debugDescription() const
 IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& localPoint) const
 {
     auto resizerRect = overflowControlsRects().resizer;
-    auto resizeCorner = renderer().shouldPlaceBlockDirectionScrollbarOnLeft() ? resizerRect.minXMaxYCorner() : resizerRect.maxXMaxYCorner();
+    auto resizeCorner = renderer().shouldPlaceVerticalScrollbarOnLeft() ? resizerRect.minXMaxYCorner() : resizerRect.maxXMaxYCorner();
     return localPoint - resizeCorner;
 }
 

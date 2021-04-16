@@ -829,7 +829,7 @@ public:
     bool hasIsolation() const { return false; }
 #endif
 
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
+    bool shouldPlaceVerticalScrollbarOnLeft() const;
 
 #if ENABLE(CSS_TRAILING_WORD)
     TrailingWord trailingWord() const { return TrailingWord::Auto; }

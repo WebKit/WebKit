@@ -5553,9 +5553,9 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
     return { *viewportSize.width, *viewportSize.height };
 }
 
-bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const
+bool FrameView::shouldPlaceVerticalScrollbarOnLeft() const
 {
-    return renderView() && renderView()->shouldPlaceBlockDirectionScrollbarOnLeft();
+    return renderView() && renderView()->shouldPlaceVerticalScrollbarOnLeft();
 }
 
 TextStream& operator<<(TextStream& ts, const FrameView& view)

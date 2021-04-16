@@ -342,7 +342,7 @@ public:
     virtual bool usesMockScrollAnimator() const { return false; }
     virtual void logMockScrollAnimatorMessage(const String&) const { };
 
-    virtual bool shouldPlaceBlockDirectionScrollbarOnLeft() const = 0;
+    virtual bool shouldPlaceVerticalScrollbarOnLeft() const = 0;
     
     virtual String debugDescription() const = 0;
 

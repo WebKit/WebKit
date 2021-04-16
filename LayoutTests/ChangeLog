@@ -1,3 +1,27 @@
+2021-04-16  Cameron McCormack  <heycam@apple.com>
+
+        Place vertical scrollbars at (inline/block)-end edge in all writing modes.
+        https://bugs.webkit.org/show_bug.cgi?id=224224
+
+        Reviewed by Simon Fraser.
+
+        iOS test failure expectations and skips are because we don't support
+        non-overlay scrollbars on the left on that platform.
+
+        * TestExpectations:
+        * css3/flexbox/child-overflow-expected.html:
+        * fast/repaint/vertical-overflow-parent-expected.txt:
+        * fast/repaint/vertical-overflow-same-expected.txt:
+        * fast/scrolling/v-rl-scrollbars-initial-position-dynamic-expected.html: Added.
+        * fast/scrolling/v-rl-scrollbars-initial-position-dynamic.html: Added.
+        * fast/scrolling/v-rl-scrollbars-initial-position-expected.html: Added.
+        * fast/scrolling/v-rl-scrollbars-initial-position.html: Added.
+        * fast/scrolling/vertical-scrollbar-position-expected.txt: Added.
+        * fast/scrolling/vertical-scrollbar-position.html: Added.
+        * platform/ios/TestExpectations:
+        * platform/ios/imported/w3c/web-platform-tests/css/css-scroll-snap/snap-inline-block-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/css/cssom-view/scrollLeftTop-expected.txt: Copied from LayoutTests/imported/w3c/web-platform-tests/css/cssom-view/scrollLeftTop-expected.txt.
+
 2021-04-16  Jiewen Tan  <jiewen_tan@apple.com>
 
         Allow using the platform authenticator on non-Touch ID Macs according to Internal requirements

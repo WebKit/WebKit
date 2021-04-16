@@ -1,3 +1,13 @@
+2021-04-16  Cameron McCormack  <heycam@apple.com>
+
+        Place vertical scrollbars at (inline/block)-end edge in all writing modes.
+        https://bugs.webkit.org/show_bug.cgi?id=224224
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/snap-inline-block-expected.txt:
+        * web-platform-tests/css/cssom-view/scrollLeftTop-expected.txt:
+
 2021-04-16  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse and add feature flag for @counter-style

@@ -104,7 +104,7 @@ private:
     IntSize contentsSize() const override;
     IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override { return false; }
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return false; }
+    bool shouldPlaceVerticalScrollbarOnLeft() const final { return false; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     void scrollTo(int offset);
