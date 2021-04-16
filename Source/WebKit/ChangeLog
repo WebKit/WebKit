@@ -1,3 +1,15 @@
+2021-04-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Show resource priority and remote IP in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=224660
+
+        Reviewed by Adrian Perez de Castro.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::toNetworkLoadPriority):
+        (WebKit::NetworkDataTaskSoup::didGetHeaders):
+        (WebKit::NetworkDataTaskSoup::networkEvent):
+
 2021-04-16  Youenn Fablet  <youenn@apple.com>
 
         Promote WKWebView device orientation permission delegate to API

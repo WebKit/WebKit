@@ -968,6 +968,22 @@ void NetworkDataTaskSoup::gotHeadersCallback(SoupMessage* soupMessage, NetworkDa
     task->didGetHeaders();
 }
 
+static WebCore::NetworkLoadPriority toNetworkLoadPriority(SoupMessagePriority priority)
+{
+    switch (priority) {
+    case SOUP_MESSAGE_PRIORITY_VERY_LOW:
+    case SOUP_MESSAGE_PRIORITY_LOW:
+        return WebCore::NetworkLoadPriority::Low;
+    case SOUP_MESSAGE_PRIORITY_NORMAL:
+        return WebCore::NetworkLoadPriority::Medium;
+    case SOUP_MESSAGE_PRIORITY_HIGH:
+    case SOUP_MESSAGE_PRIORITY_VERY_HIGH:
+        return WebCore::NetworkLoadPriority::High;
+    }
+
+    return WebCore::NetworkLoadPriority::Unknown;
+}
+
 void NetworkDataTaskSoup::didGetHeaders()
 {
     // We are a bit more conservative with the persistent credential storage than the session store,
@@ -993,6 +1009,8 @@ void NetworkDataTaskSoup::didGetHeaders()
         while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
             requestHeaders.set(String(headerName), String(headerValue));
         m_networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
+
+        m_networkLoadMetrics.priority = toNetworkLoadPriority(soup_message_get_priority(m_soupMessage.get()));
     }
 
     m_networkLoadMetrics.protocol = soup_message_get_http_version(m_soupMessage.get()) == SOUP_HTTP_1_0 ? "http/1.0" : "http/1.1";
@@ -1191,8 +1209,15 @@ void NetworkDataTaskSoup::networkEvent(GSocketClientEvent event, GIOStream* stre
         m_networkLoadMetrics.connectStart = deltaTime;
         break;
     case G_SOCKET_CLIENT_CONNECTED:
+        if (shouldCaptureExtraNetworkLoadMetrics() && G_IS_SOCKET_CONNECTION(stream)) {
+            GRefPtr<GSocketAddress> address = adoptGRef(g_socket_connection_get_remote_address(G_SOCKET_CONNECTION(stream), nullptr));
+            if (G_IS_INET_SOCKET_ADDRESS(address.get())) {
+                GUniquePtr<char> ipAddress(g_inet_address_to_string(g_inet_socket_address_get_address(G_INET_SOCKET_ADDRESS(address.get()))));
+                m_networkLoadMetrics.remoteAddress = makeString(ipAddress.get(), ':', g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address.get())));
+            }
+        }
         // Web Timing considers that connection time involves dns, proxy & TLS negotiation...
-        // so we better pick G_SOCKET_CLIENT_COMPLETE for connectEnd
+        // so we better pick G_SOCKET_CLIENT_COMPLETE for connectEnd.
         break;
     case G_SOCKET_CLIENT_PROXY_NEGOTIATING:
         break;
