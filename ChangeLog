@@ -1,3 +1,14 @@
+2021-04-16  Philippe Normand  <pnormand@igalia.com>
+
+        [CMake] UBSan build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=224536
+
+        Reviewed by Adrian Perez de Castro.
+
+        Synchronize UBSan compiler flags with the ones defined in ubsan.xcconfig.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2021-04-15  Don Olmstead  <don.olmstead@sony.com>
 
         ANGLE is only being built when WebGL is enabled

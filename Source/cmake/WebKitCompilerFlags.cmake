@@ -201,9 +201,10 @@ if (COMPILER_IS_GCC_OR_CLANG)
                 set(SANITIZER_LINK_FLAGS "-fsanitize=address ${SANITIZER_LINK_FLAGS}")
 
             elseif (${SANITIZER} MATCHES "undefined")
-                WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS("-fno-omit-frame-pointer -fno-optimize-sibling-calls")
-                # -fsanitize=vptr is incompatible with -fno-rtti
-                set(SANITIZER_COMPILER_FLAGS "-fsanitize=undefined -frtti ${SANITIZER_COMPILER_FLAGS}")
+                # Please keep these options synchronized with Tools/sanitizer/ubsan.xcconfig
+                WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS("-fno-omit-frame-pointer -fno-delete-null-pointer-checks -fno-optimize-sibling-calls")
+                # -fsanitize=vptr is disabled because incompatible with -fno-rtti
+                set(SANITIZER_COMPILER_FLAGS "-fsanitize=undefined -fno-sanitize=vptr ${SANITIZER_COMPILER_FLAGS}")
                 set(SANITIZER_LINK_FLAGS "-fsanitize=undefined ${SANITIZER_LINK_FLAGS}")
 
             elseif (${SANITIZER} MATCHES "thread" AND NOT MSVC)
