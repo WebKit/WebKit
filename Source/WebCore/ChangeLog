@@ -1,3 +1,17 @@
+2021-04-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        Assertion failure in SVGAnimationElement::currentValuesForValuesAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=222715
+
+        Reviewed by Ryosuke Niwa.
+
+        Replaced ASSERT_WITH_SECURITY_IMPLICATION by ASSERT. It was added by mistake as part of
+        r157341 long time ago. There is no security implication because just after the assert
+        there would be a division by 0 followed by a crash.
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::currentValuesForValuesAnimation):
+
 2021-04-15  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] WebContent process should not create AVOutputContext instances when media in GPU Process is enabled
