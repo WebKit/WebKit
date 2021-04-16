@@ -92,6 +92,8 @@ public:
     void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
 #endif
 
+    void tryExitIfUnusedAndUnderMemoryPressure();
+
 private:
     void lowMemoryHandler(Critical, Synchronous);
 
@@ -100,6 +102,9 @@ private:
     void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
     void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
     bool shouldTerminate() override;
+
+    void tryExitIfUnused();
+    bool canExitUnderMemoryPressure() const;
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

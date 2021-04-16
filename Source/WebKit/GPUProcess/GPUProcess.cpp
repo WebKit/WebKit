@@ -111,6 +111,7 @@ void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& conn
 {
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
+    tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void GPUProcess::connectionToWebProcessClosed(IPC::Connection& connection)
@@ -122,8 +123,40 @@ bool GPUProcess::shouldTerminate()
     return m_webProcessConnections.isEmpty();
 }
 
+bool GPUProcess::canExitUnderMemoryPressure() const
+{
+    ASSERT(isMainRunLoop());
+    for (auto& webProcessConnection : m_webProcessConnections.values()) {
+        if (!webProcessConnection->allowsExitUnderMemoryPressure())
+            return false;
+    }
+    return true;
+}
+
+void GPUProcess::tryExitIfUnusedAndUnderMemoryPressure()
+{
+    ASSERT(isMainRunLoop());
+    if (!MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return;
+
+    tryExitIfUnused();
+}
+
+void GPUProcess::tryExitIfUnused()
+{
+    ASSERT(isMainRunLoop());
+    if (!canExitUnderMemoryPressure())
+        return;
+
+    RELEASE_LOG(Process, "GPUProcess::tryExitIfUnused: GPUProcess is exiting because we are under memory pressure and the process is no longer useful.");
+    parentProcessConnection()->send(Messages::GPUProcessProxy::ProcessIsReadyToExit(), 0);
+}
+
 void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 {
+    RELEASE_LOG(Process, "GPUProcess::lowMemoryHandler: critical=%d, synchronous=%d", critical == Critical::Yes, synchronous == Synchronous::Yes);
+    tryExitIfUnused();
+
     WebCore::releaseGraphicsMemory(critical, synchronous);
 }
 

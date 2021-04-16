@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
 
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include <WebCore/AudioUtilities.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -173,6 +174,9 @@ void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinatio
     if (destination)
         destination->scheduleGracefulShutdownIfNeeded();
     completionHandler();
+
+    if (allowsExitUnderMemoryPressure())
+        m_gpuConnectionToWebProcess.gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
@@ -202,6 +206,11 @@ void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestin
         item->audioSamplesStorageChanged(ipcHandle, description, numberOfFrames);
 }
 #endif
+
+bool RemoteAudioDestinationManager::allowsExitUnderMemoryPressure() const
+{
+    return m_audioDestinations.isEmpty();
+}
 
 } // namespace WebKit
 

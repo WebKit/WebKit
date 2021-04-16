@@ -786,10 +786,10 @@ void WebProcessProxy::getGPUProcessConnection(GPUProcessConnectionParameters&& p
     m_processPool->getGPUProcessConnection(*this, WTFMove(parameters), WTFMove(reply));
 }
 
-void WebProcessProxy::gpuProcessCrashed()
+void WebProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 {
     for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
-        page->gpuProcessCrashed();
+        page->gpuProcessExited(reason);
 }
 #endif
 

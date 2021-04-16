@@ -34,6 +34,8 @@
 #import <WebKit/WKString.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <notify.h>
+#import <wtf/Function.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -489,4 +491,91 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+static void runMemoryPressureExitTest(Function<void(WKWebView *)>&& loadTestPageSynchronously)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    loadTestPageSynchronously(webView.get());
+
+    // A GPUProcess should get launched.
+    while (![configuration.get().processPool _gpuProcessIdentifier])
+        TestWebKitAPI::Util::sleep(0.1);
+    auto gpuProcessPID = [configuration.get().processPool _gpuProcessIdentifier];
+
+    // Simulate memory pressure (notifyutil -p org.WebKit.lowMemory).
+    notify_post("org.WebKit.lowMemory");
+
+    // Make sure the GPUProcess does not exit since it is still needed.
+    TestWebKitAPI::Util::sleep(0.5);
+    EXPECT_EQ(gpuProcessPID, [configuration.get().processPool _gpuProcessIdentifier]);
+
+    // Navigate to another page that no longer requires the GPUProcess.
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    // The GPUProcess should exit on memory pressure.
+    do {
+        // Simulate memory pressure (notifyutil -p org.WebKit.lowMemory).
+        notify_post("org.WebKit.lowMemory");
+        TestWebKitAPI::Util::sleep(0.1);
+    } while ([configuration.get().processPool _gpuProcessIdentifier]);
+
+    // The GPUProcess should not relaunch.
+    TestWebKitAPI::Util::sleep(0.5);
+    EXPECT_EQ(0, [configuration.get().processPool _gpuProcessIdentifier]);
+}
+
+TEST(GPUProcess, ExitsUnderMemoryPressureCanvasCase)
+{
+    runMemoryPressureExitTest([](WKWebView *webView) {
+        [webView synchronouslyLoadHTMLString:testCanvasPage];
+
+        __block bool done = false;
+        [webView evaluateJavaScript:@"context.fillStyle = '#00FF00'; context.fillRect(0, 0, 400, 400);" completionHandler:^(id result, NSError *error) {
+            EXPECT_TRUE(!error);
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        done = false;
+        [webView evaluateJavaScript:@"context.getImageData(0, 0, 400, 400).width" completionHandler:^(id result, NSError *error) {
+            EXPECT_TRUE(!error);
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    });
+}
+
+TEST(GPUProcess, ExitsUnderMemoryPressureVideoCase)
+{
+    runMemoryPressureExitTest([](WKWebView *webView) {
+        [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
+
+        __block bool done = false;
+        [webView evaluateJavaScript:@"document.getElementsByTagName('video')[0].play() && true" completionHandler:^(id result, NSError *error) {
+            EXPECT_TRUE(!error);
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    });
+}
+
+TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)
+{
+    runMemoryPressureExitTest([](WKWebView *webView) {
+        [webView synchronouslyLoadTestPageNamed:@"audio-context-playing"];
+
+        // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
+        __block bool done = false;
+        [webView evaluateJavaScript:@"startPlaying()" completionHandler:^(id result, NSError *error) {
+            EXPECT_TRUE(!error);
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+    });
 }

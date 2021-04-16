@@ -376,7 +376,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    void gpuProcessCrashed();
+    void gpuProcessExited(GPUProcessTerminationReason);
 #endif
 
     bool hasSleepDisabler() const;

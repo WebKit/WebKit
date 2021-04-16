@@ -30,6 +30,7 @@
 #include "AuxiliaryProcessProxy.h"
 #include "GPUProcessProxyMessagesReplies.h"
 #include "ProcessLauncher.h"
+#include "ProcessTerminationReason.h"
 #include "ProcessThrottler.h"
 #include "ProcessThrottlerClient.h"
 #include "WebPageProxyIdentifier.h"
@@ -101,7 +102,7 @@ private:
     void connectionWillOpen(IPC::Connection&) override;
     void processWillShutDown(IPC::Connection&) override;
 
-    void gpuProcessCrashed();
+    void gpuProcessExited(GPUProcessTerminationReason);
 
     // ProcessThrottlerClient
     ASCIILiteral clientName() const final { return "GPUProcess"_s; }
@@ -117,6 +118,7 @@ private:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) override;
 
     void terminateWebProcess(WebCore::ProcessIdentifier);
+    void processIsReadyToExit();
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);

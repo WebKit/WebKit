@@ -60,6 +60,8 @@ public:
 
     void close();
 
+    bool allowsExitUnderMemoryPressure() const;
+
 private:
     explicit RemoteAudioMediaStreamTrackRendererManager(GPUConnectionToWebProcess&);
     void startListeningForIPC();

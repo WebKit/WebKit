@@ -342,7 +342,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    virtual void gpuProcessCrashed() { }
+    virtual void gpuProcessDidExit() { }
 #endif
 
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;

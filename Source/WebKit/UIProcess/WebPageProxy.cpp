@@ -10397,13 +10397,13 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 #endif
 
 #if ENABLE(GPU_PROCESS)
-void WebPageProxy::gpuProcessCrashed()
+void WebPageProxy::gpuProcessExited(GPUProcessTerminationReason)
 {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     m_contextIDForVisibilityPropagationInGPUProcess = 0;
 #endif
 
-    pageClient().gpuProcessCrashed();
+    pageClient().gpuProcessDidExit();
 
 #if ENABLE(MEDIA_STREAM)
     bool shouldAllowAudioCapture = isCapturingAudio() && preferences().captureAudioInGPUProcessEnabled();

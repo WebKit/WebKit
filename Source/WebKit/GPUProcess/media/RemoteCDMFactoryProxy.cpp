@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
+#include "GPUProcess.h"
 #include "RemoteCDMConfiguration.h"
 #include "RemoteCDMInstanceProxy.h"
 #include "RemoteCDMInstanceSessionProxy.h"
@@ -142,6 +143,8 @@ void RemoteCDMFactoryProxy::removeInstance(const RemoteCDMInstanceIdentifier& id
 {
     ASSERT(m_instances.contains(identifier));
     m_instances.remove(identifier);
+    if (m_gpuConnectionToWebProcess && allowsExitUnderMemoryPressure())
+        m_gpuConnectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 RemoteCDMInstanceProxy* RemoteCDMFactoryProxy::getInstance(const RemoteCDMInstanceIdentifier& identifier)
@@ -159,6 +162,11 @@ void RemoteCDMFactoryProxy::removeSession(const RemoteCDMInstanceSessionIdentifi
 {
     ASSERT(m_sessions.contains(identifier));
     m_sessions.remove(identifier);
+}
+
+bool RemoteCDMFactoryProxy::allowsExitUnderMemoryPressure() const
+{
+    return m_instances.isEmpty();
 }
 
 }

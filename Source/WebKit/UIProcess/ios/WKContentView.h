@@ -98,7 +98,7 @@ enum class ViewStabilityFlag : uint8_t;
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)process;
 - (void)_processDidExit;
 #if ENABLE(GPU_PROCESS)
-- (void)_gpuProcessCrashed;
+- (void)_gpuProcessDidExit;
 #endif
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;

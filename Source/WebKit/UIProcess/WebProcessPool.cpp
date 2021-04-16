@@ -504,23 +504,27 @@ GPUProcessProxy& WebProcessPool::ensureGPUProcess()
     return *m_gpuProcess;
 }
 
-void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
+void WebProcessPool::gpuProcessExited(ProcessID identifier, GPUProcessTerminationReason reason)
 {
-    WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessCrashed: PID=%d", identifier);
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%u", identifier, static_cast<unsigned>(reason));
     m_gpuProcess = nullptr;
 
-    m_client.gpuProcessDidCrash(this, identifier);
+    if (reason == GPUProcessTerminationReason::Crash)
+        m_client.gpuProcessDidCrash(this, identifier);
+
     Vector<Ref<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes)
-        process->gpuProcessCrashed();
+        process->gpuProcessExited(reason);
 
-    if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
-        WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessCrashed: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
-        m_resetGPUProcessCrashCountTimer.stop();
-        m_recentGPUProcessCrashCount = 0;
-        terminateAllWebContentProcesses();
-    } else if (!m_resetGPUProcessCrashCountTimer.isActive())
-        m_resetGPUProcessCrashCountTimer.startOneShot(resetGPUProcessCrashCountDelay);
+    if (reason == GPUProcessTerminationReason::Crash) {
+        if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
+            WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessDidExit: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
+            m_resetGPUProcessCrashCountTimer.stop();
+            m_recentGPUProcessCrashCount = 0;
+            terminateAllWebContentProcesses();
+        } else if (!m_resetGPUProcessCrashCountTimer.isActive())
+            m_resetGPUProcessCrashCountTimer.startOneShot(resetGPUProcessCrashCountDelay);
+    }
 }
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, GPUProcessConnectionParameters&& parameters, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)

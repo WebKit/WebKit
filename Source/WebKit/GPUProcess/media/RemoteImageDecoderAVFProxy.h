@@ -50,6 +50,8 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
+    bool allowsExitUnderMemoryPressure() const;
+
 private:
     void createDecoder(const IPC::DataReference&, const String& mimeType, CompletionHandler<void(Optional<WebCore::ImageDecoderIdentifier>&&)>&&);
     void deleteDecoder(WebCore::ImageDecoderIdentifier);

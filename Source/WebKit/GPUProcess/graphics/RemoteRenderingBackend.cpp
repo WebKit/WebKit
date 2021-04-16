@@ -597,6 +597,11 @@ void RemoteRenderingBackend::updateRenderingResourceRequest()
         m_renderingResourcesRequest = { };
 }
 
+bool RemoteRenderingBackend::allowsExitUnderMemoryPressure() const
+{
+    return m_remoteResourceCache.imageBuffers().isEmpty() && m_remoteResourceCache.nativeImages().isEmpty();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

@@ -88,6 +88,11 @@ void RemoteAudioMediaStreamTrackRendererManager::releaseRenderer(AudioMediaStrea
     m_renderers.remove(identifier);
 }
 
+bool RemoteAudioMediaStreamTrackRendererManager::allowsExitUnderMemoryPressure() const
+{
+    return m_renderers.isEmpty();
+}
+
 }
 
 #endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)

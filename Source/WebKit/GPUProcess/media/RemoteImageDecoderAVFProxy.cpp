@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "RemoteImageDecoderAVFManagerMessages.h"
 #include "RemoteImageDecoderAVFProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -70,6 +71,8 @@ void RemoteImageDecoderAVFProxy::deleteDecoder(ImageDecoderIdentifier identifier
         return;
 
     m_imageDecoders.take(identifier);
+    if (m_connectionToWebProcess && allowsExitUnderMemoryPressure())
+        m_connectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteImageDecoderAVFProxy::encodedDataStatusChanged(ImageDecoderIdentifier identifier)
@@ -139,6 +142,11 @@ void RemoteImageDecoderAVFProxy::clearFrameBufferCache(ImageDecoderIdentifier id
     ASSERT(m_imageDecoders.contains(identifier));
     if (auto* imageDecoder = m_imageDecoders.get(identifier))
         imageDecoder->clearFrameBufferCache(std::min(index, imageDecoder->frameCount() - 1));
+}
+
+bool RemoteImageDecoderAVFProxy::allowsExitUnderMemoryPressure() const
+{
+    return m_imageDecoders.isEmpty();
 }
 
 }

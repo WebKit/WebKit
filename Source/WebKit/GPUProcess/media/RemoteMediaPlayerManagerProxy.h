@@ -65,6 +65,7 @@ public:
     bool didReceiveSyncPlayerMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     RefPtr<WebCore::MediaPlayer> mediaPlayer(const WebCore::MediaPlayerIdentifier&);
+    bool allowsExitUnderMemoryPressure() const;
 
 private:
     // IPC::MessageReceiver

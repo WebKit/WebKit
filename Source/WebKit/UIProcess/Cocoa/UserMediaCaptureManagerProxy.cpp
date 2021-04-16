@@ -368,6 +368,11 @@ void UserMediaCaptureManagerProxy::setOrientation(uint64_t orientation)
     m_orientationNotifier.orientationChanged(orientation);
 }
 
+bool UserMediaCaptureManagerProxy::hasSourceProxies() const
+{
+    return !m_proxies.isEmpty();
+}
+
 }
 
 #undef MESSAGE_CHECK

@@ -1237,7 +1237,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    void gpuProcessCrashed();
+    void gpuProcessExited(GPUProcessTerminationReason);
 #endif
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);

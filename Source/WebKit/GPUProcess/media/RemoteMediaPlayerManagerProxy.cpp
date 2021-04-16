@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "Logging.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
@@ -72,9 +73,13 @@ void RemoteMediaPlayerManagerProxy::createMediaPlayer(MediaPlayerIdentifier iden
 void RemoteMediaPlayerManagerProxy::deleteMediaPlayer(MediaPlayerIdentifier identifier)
 {
     ASSERT(RunLoop::isMain());
-    auto locker = holdLock(m_proxiesLock);
-    if (auto proxy = m_proxies.take(identifier))
-        proxy->invalidate();
+    {
+        auto locker = holdLock(m_proxiesLock);
+        if (auto proxy = m_proxies.take(identifier))
+            proxy->invalidate();
+    }
+    if (m_gpuConnectionToWebProcess && allowsExitUnderMemoryPressure())
+        m_gpuConnectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void RemoteMediaPlayerManagerProxy::getSupportedTypes(MediaPlayerEnums::MediaEngineIdentifier engineIdentifier, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
@@ -177,6 +182,11 @@ RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(const MediaPlayer
     if (results != m_proxies.end())
         return results->value->mediaPlayer();
     return nullptr;
+}
+
+bool RemoteMediaPlayerManagerProxy::allowsExitUnderMemoryPressure() const
+{
+    return m_proxies.isEmpty();
 }
 
 #if !RELEASE_LOG_DISABLED

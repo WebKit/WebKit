@@ -83,6 +83,8 @@ public:
 
     void populateGetImageDataSharedMemory(WebCore::ImageData*);
 
+    bool allowsExitUnderMemoryPressure() const;
+
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
 

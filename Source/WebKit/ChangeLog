@@ -1,5 +1,101 @@
 2021-04-16  Chris Dumez  <cdumez@apple.com>
 
+        Exit the GPUProcess when under memory pressure if it is not being used
+        https://bugs.webkit.org/show_bug.cgi?id=224556
+
+        Reviewed by Darin Adler.
+
+        Exit the GPUProcess when under memory pressure if it is not being used. This will
+        help us save memory, especially until we are able to enable "DOM Rendering in
+        GPUProcess".
+
+        Note that when the GPUProcess is ready to exit, it sends an IPC to the UIProcess
+        in order to get terminated, instead of terminating itself. The reason I do this is
+        so that the UIProcess can distinguish a GPUProcess crash from a normal idle exit.
+
+        A/B testing shows:
+        - 5-8% PLUM3 progression on iPhone
+        - 2.5-4% PLUM3 progression on iPad
+        - No PLT5 regression on either iPhone or iPad.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::allowsExitUnderMemoryPressure const):
+        (WebKit::GPUConnectionToWebProcess::releaseRenderingBackend):
+        (WebKit::GPUConnectionToWebProcess::releaseGraphicsContextGL):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        (WebKit::GPUConnectionToWebProcess::remoteMediaPlayerManagerProxy):
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::removeGPUConnectionToWebProcess):
+        (WebKit::GPUProcess::canExitUnderMemoryPressure const):
+        (WebKit::GPUProcess::tryExitIfUnusedAndUnderMemoryPressure):
+        (WebKit::GPUProcess::tryExitIfUnused):
+        (WebKit::GPUProcess::lowMemoryHandler):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::allowsExitUnderMemoryPressure const):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestinationManager::deleteAudioDestination):
+        (WebKit::RemoteAudioDestinationManager::allowsExitUnderMemoryPressure const):
+        * GPUProcess/media/RemoteAudioDestinationManager.h:
+        * GPUProcess/media/RemoteCDMFactoryProxy.cpp:
+        (WebKit::RemoteCDMFactoryProxy::removeInstance):
+        (WebKit::RemoteCDMFactoryProxy::allowsExitUnderMemoryPressure const):
+        * GPUProcess/media/RemoteCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.cpp:
+        (WebKit::RemoteImageDecoderAVFProxy::deleteDecoder):
+        (WebKit::RemoteImageDecoderAVFProxy::allowsExitUnderMemoryPressure const):
+        * GPUProcess/media/RemoteImageDecoderAVFProxy.h:
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.cpp:
+        (WebKit::RemoteLegacyCDMFactoryProxy::removeSession):
+        (WebKit::RemoteLegacyCDMFactoryProxy::allowsExitUnderMemoryPressure const):
+        * GPUProcess/media/RemoteLegacyCDMFactoryProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp:
+        (WebKit::RemoteMediaPlayerManagerProxy::deleteMediaPlayer):
+        (WebKit::RemoteMediaPlayerManagerProxy::allowsExitUnderMemoryPressure const):
+        * GPUProcess/media/RemoteMediaPlayerManagerProxy.h:
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.cpp:
+        (WebKit::RemoteAudioMediaStreamTrackRendererManager::allowsExitUnderMemoryPressure const):
+        * GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererManager.h:
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.cpp:
+        (WebKit::RemoteMediaRecorderManager::releaseRecorder):
+        (WebKit::RemoteMediaRecorderManager::allowsExitUnderMemoryPressure const):
+        * GPUProcess/webrtc/RemoteMediaRecorderManager.h:
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayerManager::allowsExitUnderMemoryPressure const):
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.h:
+        * Shared/ProcessTerminationReason.h:
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.cpp:
+        (WebKit::UserMediaCaptureManagerProxy::hasSourceProxies const):
+        * UIProcess/Cocoa/UserMediaCaptureManagerProxy.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::gpuProcessExited):
+        (WebKit::GPUProcessProxy::processIsReadyToExit):
+        (WebKit::GPUProcessProxy::didClose):
+        (WebKit::GPUProcessProxy::didFinishLaunching):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * UIProcess/GPU/GPUProcessProxy.messages.in:
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::gpuProcessDidExit):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::gpuProcessExited):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::gpuProcessExited):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::gpuProcessExited):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::gpuProcessDidExit):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _gpuProcessDidExit]):
+
+2021-04-16  Chris Dumez  <cdumez@apple.com>
+
         Early IPC messages to a WorkQueueMessageReceiver may get processed out of order
         https://bugs.webkit.org/show_bug.cgi?id=224623
 

@@ -285,19 +285,37 @@ void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, 
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-void GPUProcessProxy::gpuProcessCrashed()
+void GPUProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 {
+    auto protectedThis = makeRef(*this);
+
+    switch (reason) {
+    case GPUProcessTerminationReason::Crash:
+        RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=crash", this);
+        break;
+    case GPUProcessTerminationReason::IdleExit:
+        RELEASE_LOG(Process, "%p - GPUProcessProxy::gpuProcessExited: reason=idle-exit", this);
+        break;
+    }
+
     if (singleton() == this)
         singleton() = nullptr;
 
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->gpuProcessCrashed(processIdentifier());
+        processPool->gpuProcessExited(processIdentifier(), reason);
+}
+
+void GPUProcessProxy::processIsReadyToExit()
+{
+    RELEASE_LOG(Process, "%p - GPUProcessProxy::processIsReadyToExit:", this);
+    terminate();
+    gpuProcessExited(GPUProcessTerminationReason::IdleExit); // May cause |this| to get deleted.
 }
 
 void GPUProcessProxy::didClose(IPC::Connection&)
 {
-    // This will cause us to be deleted.
-    gpuProcessCrashed();
+    RELEASE_LOG_ERROR(Process, "%p - GPUProcessProxy::didClose:", this);
+    gpuProcessExited(GPUProcessTerminationReason::Crash); // May cause |this| to get deleted.
 }
 
 void GPUProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName)
@@ -319,7 +337,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
-        gpuProcessCrashed();
+        gpuProcessExited(GPUProcessTerminationReason::Crash);
         return;
     }
     
