@@ -1296,8 +1296,6 @@ webkit.org/b/222209 inspector/debugger/async-stack-trace-basic.html [ Pass Timeo
 
 webkit.org/b/222183 [ BigSur ] imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Pass Failure ]
 
-webkit.org/b/222332 [ Release ] compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/222365 inspector/dom/attributeModified.html [ Pass Timeout ]
 
 webkit.org/b/222371 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Pass Failure Crash ]
@@ -1382,3 +1380,5 @@ webkit.org/b/221985 fast/mediastream/audio-track-enabled.html [ Pass Failure ]
 webkit.org/b/224612 webgl/1.0.3/conformance/glsl/functions/glsl-function-abs.html [ Pass Crash ]
 
 webkit.org/b/224633 media/presentationmodechanged-fired-once.html [ Pass Timeout ]
+
+webkit.org/b/224690 compositing/video/video-border-radius-clipping.html [ Pass ImageOnlyFailure ]
