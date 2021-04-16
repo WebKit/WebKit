@@ -13,7 +13,7 @@
     var loadedUrl;
     function firstFetch() {
         // This should create a capped cache entry.
-        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
+        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.py",
             {
                 cache: "reload",
                 headers: {
@@ -32,7 +32,7 @@
 
     function secondFetch() {
         // This should not trigger a successful cache hit and instead create another capped cache entry.
-        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
+        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.py",
             {
                 cache: "force-cache",
                 headers: {
@@ -51,7 +51,7 @@
 
     function thirdFetch() {
         // This should not trigger a successful cache hit and instead create another capped cache entry.
-        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
+        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.py",
             {
                 cache: "force-cache",
             }
@@ -67,7 +67,7 @@
 
     function fourthFetch() {
         // This should not trigger a successful cache hit but clear capping.
-        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
+        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.py",
             {
                 cache: "force-cache",
             }
@@ -83,7 +83,7 @@
 
     function fifthFetch() {
         // This should trigger a regular, successful cache hit.
-        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.php",
+        fetch("http://localhost:8000/resourceLoadStatistics/resources/cached-permanent-redirect.py",
             {
                 headers: {
                     "X-WebKit": "1234",
