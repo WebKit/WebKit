@@ -30,6 +30,7 @@
 #include "CSSPropertyNames.h"
 #include "UndoStep.h"
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -103,7 +104,7 @@ private:
     EditAction m_editAction;
 };
 
-class CompositeEditCommand : public EditCommand {
+class CompositeEditCommand : public EditCommand, public CanMakeWeakPtr<CompositeEditCommand> {
 public:
     virtual ~CompositeEditCommand();
 
@@ -163,7 +164,7 @@ protected:
     void rebalanceWhitespaceAt(const Position&);
     void rebalanceWhitespaceOnTextSubstring(Text&, int startOffset, int endOffset);
     void prepareWhitespaceAtPositionForSplit(Position&);
-    bool canRebalance(const Position&) const;
+    RefPtr<Text> textNodeForRebalance(const Position&) const;
     bool shouldRebalanceLeadingWhitespaceFor(const String&) const;
     void removeNodeAttribute(Element&, const QualifiedName& attribute);
     void removeChildrenInRange(Node&, unsigned from, unsigned to);
@@ -220,12 +221,5 @@ private:
 
     RefPtr<EditCommandComposition> m_composition;
 };
-
-inline CompositeEditCommand* toCompositeEditCommand(EditCommand* command)
-{
-    ASSERT(command);
-    ASSERT_WITH_SECURITY_IMPLICATION(command->isCompositeEditCommand());
-    return static_cast<CompositeEditCommand*>(command);
-}
 
 } // namespace WebCore

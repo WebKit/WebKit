@@ -32,8 +32,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "Element.h"
-#include "HTMLInputElement.h"
-#include "HTMLTextAreaElement.h"
+#include "HTMLTextFormControlElement.h"
 #include "NodeTraversal.h"
 
 namespace WebCore {
@@ -123,18 +122,18 @@ String inputTypeNameForEditingAction(EditAction action)
 }
 
 EditCommand::EditCommand(Document& document, EditAction editingAction)
-    : m_document(document)
-    , m_editingAction(editingAction)
+    : m_document { document }
+    , m_startingSelection { m_document->selection().selection() }
+    , m_endingSelection { m_startingSelection }
+    , m_editingAction { editingAction }
 {
-    setStartingSelection(m_document->selection().selection());
-    setEndingSelection(m_startingSelection);
 }
 
 EditCommand::EditCommand(Document& document, const VisibleSelection& startingSelection, const VisibleSelection& endingSelection)
-    : m_document(document)
+    : m_document { document }
+    , m_startingSelection { startingSelection }
+    , m_endingSelection { endingSelection }
 {
-    setStartingSelection(startingSelection);
-    setEndingSelection(endingSelection);
 }
 
 EditCommand::~EditCommand() = default;
@@ -144,50 +143,42 @@ EditAction EditCommand::editingAction() const
     return m_editingAction;
 }
 
-static inline EditCommandComposition* compositionIfPossible(EditCommand* command)
+static RefPtr<EditCommandComposition> compositionIfPossible(EditCommand& command)
 {
-    if (!command->isCompositeEditCommand())
-        return 0;
-    return toCompositeEditCommand(command)->composition();
+    if (!command.isCompositeEditCommand())
+        return nullptr;
+    return static_cast<CompositeEditCommand&>(command).composition();
 }
 
 bool EditCommand::isEditingTextAreaOrTextInput() const
 {
-    auto* container = m_document->selection().selection().start().containerNode();
-    if (!container)
-        return false;
-
-    auto* ancestor = container->shadowHost();
-    if (!ancestor)
-        return false;
-
-    return is<HTMLTextAreaElement>(*ancestor) || (is<HTMLInputElement>(*ancestor) && downcast<HTMLInputElement>(*ancestor).isText());
+    return enclosingTextFormControl(m_document->selection().selection().start());
 }
 
-void EditCommand::setStartingSelection(const VisibleSelection& s)
+void EditCommand::setStartingSelection(const VisibleSelection& selection)
 {
-    for (EditCommand* cmd = this; ; cmd = cmd->m_parent) {
-        if (auto* composition = compositionIfPossible(cmd))
-            composition->setStartingSelection(s);
-        cmd->m_startingSelection = s;
-        if (!cmd->m_parent || cmd->m_parent->isFirstCommand(cmd))
+    for (auto command = makeRefPtr(this); ; command = command->m_parent.get()) {
+        if (auto composition = compositionIfPossible(*command))
+            composition->setStartingSelection(selection);
+        command->m_startingSelection = selection;
+        if (!command->m_parent || command->m_parent->isFirstCommand(command.get()))
             break;
     }
 }
 
-void EditCommand::setEndingSelection(const VisibleSelection &s)
+void EditCommand::setEndingSelection(const VisibleSelection& selection)
 {
-    for (EditCommand* cmd = this; cmd; cmd = cmd->m_parent) {
-        if (auto* composition = compositionIfPossible(cmd))
-            composition->setEndingSelection(s);
-        cmd->m_endingSelection = s;
+    for (auto command = makeRefPtr(this); command; command = command->m_parent.get()) {
+        if (auto composition = compositionIfPossible(*command))
+            composition->setEndingSelection(selection);
+        command->m_endingSelection = selection;
     }
 }
 
 void EditCommand::setParent(CompositeEditCommand* parent)
 {
     ASSERT((parent && !m_parent) || (!parent && m_parent));
-    m_parent = parent;
+    m_parent = makeWeakPtr(parent);
     if (parent) {
         m_startingSelection = parent->m_endingSelection;
         m_endingSelection = parent->m_endingSelection;
@@ -210,8 +201,8 @@ void EditCommand::postTextStateChangeNotification(AXTextEditType type, const Str
     auto* cache = document().existingAXObjectCache();
     if (!cache)
         return;
-    auto* node = highestEditableRoot(position.deepEquivalent(), HasEditableAXRole);
-    cache->postTextStateChangeNotification(node, type, text, position);
+    auto node = makeRefPtr(highestEditableRoot(position.deepEquivalent(), HasEditableAXRole));
+    cache->postTextStateChangeNotification(node.get(), type, text, position);
 }
 
 SimpleEditCommand::SimpleEditCommand(Document& document, EditAction editingAction)

@@ -1,3 +1,55 @@
+2021-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy Ref/RefPtr/WeakPtr in EditCommand and CompositeEditCommand
+        https://bugs.webkit.org/show_bug.cgi?id=224659
+
+        Reviewed by Antti Koivisto.
+
+        Deployed Ref/RefPtr/WeakPtr across CompositeEditCommand and EditCommand.
+
+        Also wrapped sections of code that access render tree with ScriptDisallowedScope.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::postTextStateChangeNotification):
+        (WebCore::CompositeEditCommand::ensureComposition):
+        (WebCore::CompositeEditCommand::isRemovableBlock): Let a raw pointer to the parent node here
+        since the only thing we do is to call hasOneChild on it.
+        (WebCore::CompositeEditCommand::insertNodeBefore):
+        (WebCore::CompositeEditCommand::insertNodeAfter):
+        (WebCore::CompositeEditCommand::insertNodeAt):
+        (WebCore::CompositeEditCommand::removeChildrenInRange):
+        (WebCore::CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAttributes):
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan):
+        (WebCore::CompositeEditCommand::textNodeForRebalance const): Renamed from canRebalance and
+        now returns the text node after downcasting so that rebalanceWhitespaceAt doesn't need to have
+        a lone downcast without a type check.
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceAt):
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring):
+        (WebCore::CompositeEditCommand::prepareWhitespaceAtPositionForSplit):
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        (WebCore::CompositeEditCommand::cloneParagraphUnderNewElement):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/CompositeEditCommand.h:
+        (WebCore::CompositeEditCommand): Now inherits from CanMakeWeakPtr.
+        (WebCore::toCompositeEditCommand): Deleted.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::EditCommand): Initialize m_startingSelection and m_endingSelection directly
+        since setStartingSelection and setEndingSelection now stores "this" pointer in RefPtr.
+        There is no behavior difference since m_parent and CompositeEditCommand::m_composition if applicable
+        are both nullptr at this point.
+        (WebCore::compositionIfPossible):
+        (WebCore::EditCommand::isEditingTextAreaOrTextInput const): Use enclosingTextFormControl instead
+        of duplicating the code here.
+        (WebCore::EditCommand::setStartingSelection):
+        (WebCore::EditCommand::setEndingSelection):
+        (WebCore::EditCommand::setParent):
+        (WebCore::EditCommand::postTextStateChangeNotification):
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::parent const):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::doApply):
+
 2021-04-16  Youenn Fablet  <youenn@apple.com>
 
         Remove a no longer necessary callOnMainThread in Worker::createRTCRtpScriptTransformer
