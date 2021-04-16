@@ -553,6 +553,7 @@ void ImageLoader::dispatchPendingErrorEvent()
     if (!m_pendingErrorEventCount)
         return;
     m_pendingErrorEventCount--;
+    errorEventSender().cancelEvent(*this);
     if (element().document().hasLivingRenderTree())
         element().dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
