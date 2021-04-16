@@ -1,5 +1,31 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275233. rdar://problem/76727522
+
+    Ensure that GlobalPropertyInfo is allocated on the stack.
+    https://bugs.webkit.org/show_bug.cgi?id=223911
+    
+    Unreviewed test gardening.
+    
+    Rebaseline builtins generator tests after r275212.
+    
+    * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275233 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Ensure that GlobalPropertyInfo is allocated on the stack.
+            https://bugs.webkit.org/show_bug.cgi?id=223911
+
+            Unreviewed test gardening.
+
+            Rebaseline builtins generator tests after r275212.
+
+            * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275845. rdar://problem/76727387
 
     Modernize uses of ConsoleClient
