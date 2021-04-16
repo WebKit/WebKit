@@ -976,12 +976,6 @@ void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, 
     m_impl->requestDOMPasteAccess(elementRect, originIdentifier, WTFMove(completion));
 }
 
-
-void PageClientImpl::makeViewBlank(bool makeBlank)
-{
-    m_impl->acceleratedCompositingRootLayer().opacity = makeBlank ? 0 : 1;
-}
-
 #if HAVE(APP_ACCENT_COLORS)
 WebCore::Color PageClientImpl::accentColor()
 {

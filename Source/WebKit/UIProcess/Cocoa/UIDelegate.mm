@@ -301,8 +301,6 @@ void UIDelegate::UIClient::runJavaScriptAlert(WebPageProxy& page, const WTF::Str
         return;
     }
 
-    page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
-
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:));
     [delegate webView:m_uiDelegate->m_webView.get().get() runJavaScriptAlertPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] {
         if (checker->completionHandlerHasBeenCalled())
@@ -328,8 +326,6 @@ void UIDelegate::UIClient::runJavaScriptConfirm(WebPageProxy& page, const WTF::S
         return;
     }
 
-    page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
-
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:));
     [delegate webView:m_uiDelegate->m_webView.get().get() runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
         if (checker->completionHandlerHasBeenCalled())
@@ -354,8 +350,6 @@ void UIDelegate::UIClient::runJavaScriptPrompt(WebPageProxy& page, const WTF::St
         completionHandler(String());
         return;
     }
-
-    page.makeViewBlankIfUnpaintedSinceLastLoadCommit();
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:));
     [delegate webView:m_uiDelegate->m_webView.get().get() runJavaScriptTextInputPanelWithPrompt:message defaultText:defaultValue initiatedByFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (NSString *result) mutable {
