@@ -1,5 +1,14 @@
 2021-04-16  Alex Christensen  <achristensen@webkit.org>
 
+        Disable ApplicationCache with linkedOnOrAfter check
+        https://bugs.webkit.org/show_bug.cgi?id=224629
+
+        Reviewed by Brady Eidson.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
+2021-04-16  Alex Christensen  <achristensen@webkit.org>
+
         Reduce maximum HashTable entry size to 128 bytes
         https://bugs.webkit.org/show_bug.cgi?id=224381
 

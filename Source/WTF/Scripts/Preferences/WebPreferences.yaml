@@ -1598,7 +1598,7 @@ OfflineWebApplicationCacheEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: true
+      default: WebKit::defaultOfflineWebApplicationCacheEnabled()
     WebCore:
       default: false
 

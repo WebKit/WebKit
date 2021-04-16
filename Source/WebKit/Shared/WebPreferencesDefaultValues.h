@@ -66,6 +66,7 @@ bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload();
 
 bool defaultAsyncFrameScrollingEnabled();
 bool defaultAsyncOverflowScrollingEnabled();
+bool defaultOfflineWebApplicationCacheEnabled();
 
 #if ENABLE(GPU_PROCESS)
 bool defaultUseGPUProcessForCanvasRenderingEnabled();

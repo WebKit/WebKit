@@ -1,3 +1,14 @@
+2021-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Disable ApplicationCache with linkedOnOrAfter check
+        https://bugs.webkit.org/show_bug.cgi?id=224629
+
+        Reviewed by Brady Eidson.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultOfflineWebApplicationCacheEnabled):
+        * Shared/WebPreferencesDefaultValues.h:
+
 2021-04-16  Ada Chan  <ada.chan@apple.com>
 
         Add WKUIDelegate SPI for starting XR session

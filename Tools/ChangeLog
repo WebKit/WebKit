@@ -1,3 +1,17 @@
+2021-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Disable ApplicationCache with linkedOnOrAfter check
+        https://bugs.webkit.org/show_bug.cgi?id=224629
+
+        Reviewed by Brady Eidson.
+
+        * TestWebKitAPI/Tests/WebKit/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+        * WebKitTestRunner/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+
 2021-04-16  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse and add feature flag for @counter-style

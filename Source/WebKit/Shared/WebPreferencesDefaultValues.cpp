@@ -129,6 +129,18 @@ bool defaultAsyncOverflowScrollingEnabled()
     return defaultAsyncFrameAndOverflowScrollingEnabled();
 }
 
+bool defaultOfflineWebApplicationCacheEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfter(WebCore::SDKVersion::FirstWithApplicationCacheDisabledByDefault);
+    return !newSDK;
+#else
+    // FIXME: Other platforms should consider turning this off.
+    // ApplicationCache is on its way to being removed from WebKit.
+    return true;
+#endif
+}
+
 #if ENABLE(GPU_PROCESS)
 
 bool defaultUseGPUProcessForCanvasRenderingEnabled()

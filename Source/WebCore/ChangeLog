@@ -1,3 +1,26 @@
+2021-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Disable ApplicationCache with linkedOnOrAfter check
+        https://bugs.webkit.org/show_bug.cgi?id=224629
+
+        Reviewed by Brady Eidson.
+
+        ApplicationCache has been deprecated for two years in WebKit with a message to developers since r227225.
+
+        Firefox removed support in https://bugzilla.mozilla.org/show_bug.cgi?id=1619673 which shipped with Firefox 84 on Dec 15, 2020.
+
+        Chrome removed support in https://bugs.chromium.org/p/chromium/issues/detail?id=582750 by default in Chrome 85 on August 25, 2020
+        but they have a reverse origin trial program running right now so that some origins have it working, but they are planning to remove
+        even that support October 2021.
+
+        We have kept it working for a reason related to rdar://38505756, specifically the 4th and 5th comment in that bug.
+        That reason is now passed.
+
+        This patch removes support for new apps but keeps it working for 3rd party apps linked with existing SDKs.  Once those apps update
+        to a new SDK, they will be unable to use ApplicationCache.  They will need to migrate to use fetch service workers instead.
+
+        * platform/cocoa/VersionChecks.h:
+
 2021-04-16  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r273733.
