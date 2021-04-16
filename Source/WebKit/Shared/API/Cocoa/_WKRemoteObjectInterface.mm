@@ -45,13 +45,10 @@ const char *_protocol_getMethodTypeEncoding(Protocol *p, SEL sel, BOOL isRequire
 
 struct MethodInfo {
     Vector<HashSet<CFTypeRef>> allowedArgumentClasses;
+    RetainPtr<NSInvocation> invocation;
 
-    struct ReplyInfo {
-        NSUInteger replyPosition;
-        CString replySignature;
-        Vector<HashSet<CFTypeRef>> allowedReplyClasses;
-    };
-    Optional<ReplyInfo> replyInfo;
+    Vector<HashSet<CFTypeRef>> allowedReplyClasses;
+    RetainPtr<NSInvocation> replyInvocation;
 };
 
 @implementation _WKRemoteObjectInterface {
@@ -82,10 +79,32 @@ static HashSet<CFTypeRef>& propertyListClasses()
     return propertyListClasses;
 }
 
+static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)
+{
+    // First look at required methods.
+    struct objc_method_description method = protocol_getMethodDescription(protocol, selector, YES, YES);
+    if (method.name)
+        return method.types;
+
+    // Then look at optional methods.
+    method = protocol_getMethodDescription(protocol, selector, NO, YES);
+    if (method.name)
+        return method.types;
+
+    return nullptr;
+}
+
 static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL selector, NSMethodSignature *methodSignature, bool forReplyBlock)
 {
-    Vector<HashSet<CFTypeRef>> allowedClasses;
+    if (forReplyBlock)
+        methodInfo.replyInvocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+    else {
+        const char* types = methodArgumentTypeEncodingForSelector(protocol, selector);
+        NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:types];
+        methodInfo.invocation = [NSInvocation invocationWithMethodSignature:signature];
+    }
 
+    auto& allowedClasses = forReplyBlock ? methodInfo.allowedReplyClasses : methodInfo.allowedArgumentClasses;
     NSUInteger firstArgument = forReplyBlock ? 1 : 2;
     NSUInteger argumentCount = methodSignature.numberOfArguments;
 
@@ -109,10 +128,6 @@ static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL sel
             NSMethodSignature *blockSignature = [methodSignature _signatureForBlockAtArgumentIndex:i];
             ASSERT(blockSignature._typeString);
 
-            methodInfo.replyInfo = MethodInfo::ReplyInfo();
-            methodInfo.replyInfo->replyPosition = i;
-            methodInfo.replyInfo->replySignature = blockSignature._typeString.UTF8String;
-
             initializeMethod(methodInfo, protocol, selector, blockSignature, true);
         }
 
@@ -130,11 +145,6 @@ static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL sel
 
         allowedClasses.append({ (__bridge CFTypeRef)objectClass });
     }
-
-    if (forReplyBlock)
-        methodInfo.replyInfo->allowedReplyClasses = WTFMove(allowedClasses);
-    else
-        methodInfo.allowedArgumentClasses = WTFMove(allowedClasses);
 }
 
 static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *protocol, bool requiredMethods)
@@ -245,8 +255,8 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
     for (auto& selectorAndMethod : _methods) {
         [result appendFormat:@" selector = %s\n  argument classes = %@\n", sel_getName(selectorAndMethod.key), descriptionForClasses(selectorAndMethod.value.allowedArgumentClasses)];
 
-        if (auto replyInfo = selectorAndMethod.value.replyInfo)
-            [result appendFormat:@"  reply block = (argument #%lu '%s') %@\n", static_cast<unsigned long>(replyInfo->replyPosition), replyInfo->replySignature.data(), descriptionForClasses(replyInfo->allowedReplyClasses)];
+        if (auto& replyInvocation = selectorAndMethod.value.replyInvocation)
+            [result appendFormat:@"  reply block = (argument '%@') %@\n", [replyInvocation methodSignature]._typeString, descriptionForClasses(selectorAndMethod.value.allowedReplyClasses)];
     }
 
     [result appendString:@">\n"];
@@ -261,13 +271,13 @@ static HashSet<CFTypeRef>& classesForSelectorArgument(_WKRemoteObjectInterface *
 
     MethodInfo& methodInfo = it->value;
     if (replyBlock) {
-        if (!methodInfo.replyInfo)
+        if (!methodInfo.replyInvocation)
             [NSException raise:NSInvalidArgumentException format:@"Selector \"%s\" does not have a reply block", sel_getName(selector)];
 
-        if (argumentIndex >= methodInfo.replyInfo->allowedReplyClasses.size())
+        if (argumentIndex >= methodInfo.allowedReplyClasses.size())
             [NSException raise:NSInvalidArgumentException format:@"Argument index %ld is out of range for reply block of selector \"%s\"", (unsigned long)argumentIndex, sel_getName(selector)];
 
-        return methodInfo.replyInfo->allowedReplyClasses[argumentIndex];
+        return methodInfo.allowedReplyClasses[argumentIndex];
     }
 
     if (argumentIndex >= methodInfo.allowedArgumentClasses.size())
@@ -305,44 +315,22 @@ static HashSet<CFTypeRef>& classesForSelectorArgument(_WKRemoteObjectInterface *
     [self setClasses:classes forSelector:selector argumentIndex:argumentIndex ofReply:NO];
 }
 
-static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL selector)
-{
-    // First look at required methods.
-    struct objc_method_description method = protocol_getMethodDescription(protocol, selector, YES, YES);
-    if (method.name)
-        return method.types;
-
-    // Then look at optional methods.
-    method = protocol_getMethodDescription(protocol, selector, NO, YES);
-    if (method.name)
-        return method.types;
-
-    return nullptr;
-}
-
-- (NSMethodSignature *)_methodSignatureForSelector:(SEL)selector
-{
-    if (!_methods.contains(selector))
-        return nil;
-
-    const char* types = methodArgumentTypeEncodingForSelector(_protocol, selector);
-    if (!types)
-        return nil;
-
-    return [NSMethodSignature signatureWithObjCTypes:types];
-}
-
-- (NSMethodSignature *)_methodSignatureForReplyBlockOfSelector:(SEL)selector
+- (NSInvocation *)_invocationForSelector:(SEL)selector
 {
     auto it = _methods.find(selector);
     if (it  == _methods.end())
         return nil;
 
-    auto& methodInfo = it->value;
-    if (!methodInfo.replyInfo)
+    return adoptNS([it->value.invocation copy]).autorelease();
+}
+
+- (NSInvocation *)_invocationForReplyBlockOfSelector:(SEL)selector
+{
+    auto it = _methods.find(selector);
+    if (it  == _methods.end())
         return nil;
 
-    return [NSMethodSignature signatureWithObjCTypes:methodInfo.replyInfo->replySignature.data()];
+    return adoptNS([it->value.replyInvocation copy]).autorelease();
 }
 
 - (const Vector<HashSet<CFTypeRef>>&)_allowedArgumentClassesForSelector:(SEL)selector
@@ -356,7 +344,7 @@ static const char* methodArgumentTypeEncodingForSelector(Protocol *protocol, SEL
 {
     ASSERT(_methods.contains(selector));
 
-    return _methods.find(selector)->value.replyInfo->allowedReplyClasses;
+    return _methods.find(selector)->value.allowedReplyClasses;
 }
 
 @end

@@ -917,16 +917,14 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
 static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
 {
     SEL selector = nullptr;
-    NSMethodSignature *localMethodSignature = nil;
-
+    NSInvocation* invocation = nil;
     BOOL isReplyBlock = [decoder decodeBoolForKey:isReplyBlockKey];
-
     if (isReplyBlock) {
         if (!decoder->_replyToSelector)
             [NSException raise:NSInvalidUnarchiveOperationException format:@"%@: Received unknown reply block", decoder];
 
-        localMethodSignature = [decoder->_interface _methodSignatureForReplyBlockOfSelector:decoder->_replyToSelector];
-        if (!localMethodSignature)
+        invocation = [decoder->_interface _invocationForReplyBlockOfSelector:decoder->_replyToSelector];
+        if (!invocation)
             [NSException raise:NSInvalidUnarchiveOperationException format:@"Reply block for selector \"%s\" is not defined in the local interface", sel_getName(decoder->_replyToSelector)];
     } else {
         NSString *selectorString = [decoder decodeObjectOfClass:[NSString class] forKey:selectorKey];
@@ -936,8 +934,8 @@ static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
         selector = NSSelectorFromString(selectorString);
         ASSERT(selector);
 
-        localMethodSignature = [decoder->_interface _methodSignatureForSelector:selector];
-        if (!localMethodSignature)
+        invocation = [decoder->_interface _invocationForSelector:selector];
+        if (!invocation)
             [NSException raise:NSInvalidUnarchiveOperationException format:@"Selector \"%@\" is not defined in the local interface", selectorString];
     }
 
@@ -946,10 +944,8 @@ static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Invocation had no type signature"];
 
     NSMethodSignature *remoteMethodSignature = [NSMethodSignature signatureWithObjCTypes:typeSignature.UTF8String];
-    if (![localMethodSignature isEqual:remoteMethodSignature])
+    if (![[invocation methodSignature] isEqual:remoteMethodSignature])
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Local and remote method signatures are not equal for method \"%s\"", selector ? sel_getName(selector) : "(no selector)"];
-
-    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:localMethodSignature];
 
     if (isReplyBlock) {
         const auto& allowedClasses = [decoder->_interface _allowedArgumentClassesForReplyBlockOfSelector:decoder->_replyToSelector];
