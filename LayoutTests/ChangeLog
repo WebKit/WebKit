@@ -1,3 +1,11 @@
+2021-04-15  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK][WPE] Unreviewed test gardening. Gardened tests expected to fail but passed.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-04-15  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/resourceLoadStatistics convert PHP to Python

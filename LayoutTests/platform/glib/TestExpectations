@@ -243,6 +243,15 @@ imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-center-ov
 imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2.html
 imported/w3c/web-platform-tests/css/css-sizing/range-percent-intrinsic-size-2a.html
 
+# Passing since r274620.
+imported/w3c/web-platform-tests/css/css-contain/contain-paint-008.html [ Pass ]
+
+# Passsing since r274721.
+imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.html [ Pass ]
+
+# The test is marked as Timeout for wk2. It has been flaky in GTK and WPE since added.
+webaudio/Panner/hrtf-database.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1043,7 +1052,7 @@ webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-draw
 
 webkit.org/b/191006 webrtc/simulcast-h264.html [ Failure ]
 
-webkit.org/b/193641 webrtc/video-setDirection.html [ Failure ]
+webkit.org/b/193641 webrtc/video-setDirection.html [ Failure Pass ]
 
 webkit.org/b/194611 http/wpt/webrtc/getUserMedia-processSwapping.html [ Failure ]
 
@@ -1181,9 +1190,6 @@ webkit.org/b/218370 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-m
 webkit.org/b/213709 imported/w3c/web-platform-tests/cors/credentials-flag.htm [ Pass ]
 
 webkit.org/b/214029 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/resize-during-playback.html [ Failure ]
-
-# Main baseline imported in r264117, but it is indeed failing (i.e. the textarea is scrolled)
-webkit.org/b/178583 imported/w3c/web-platform-tests/html/interaction/focus/processing-model/preventScroll-textarea.html [ Failure ]
 
 webkit.org/b/214125 imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional.html [ Failure ]
 webkit.org/b/214173 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-lazy.tentative.html [ Failure Pass ]
@@ -1668,7 +1674,6 @@ webkit.org/b/131347 fast/borders/hidpi-border-radius-with-subpixel-margin-not-re
 webkit.org/b/131347 fast/borders/hidpi-double-border-with-border-radius-always-produce-solid-line.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-outline-hairline-painting.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/borders/hidpi-simple-hairline-border-painting.html [ ImageOnlyFailure ]
-webkit.org/b/131347 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-inline-selection-leaves-gap.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-inline-text-decoration-with-subpixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/131347 fast/inline/hidpi-outline-auto-negative-offset-with-border-radius.html [ ImageOnlyFailure ]
@@ -2016,7 +2021,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seq
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
 webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Timeout Failure ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Crash Failure ]
-webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure Crash ]
+webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Crash Failure Pass ]
 webkit.org/b/220083 [ Debug ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Crash ]
 
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Pass Failure ]

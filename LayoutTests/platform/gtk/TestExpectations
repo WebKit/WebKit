@@ -36,11 +36,12 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement-2.html [ Pass ]
 fast/scrolling/rtl-scrollbars-alternate-body-dir-attr-does-not-update-scrollbar-placement.html [ Pass ]
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Pass ]
+fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Pass ]
 fast/scrolling/rtl-scrollbars-overflow-text-selection-scrolled.html  [ Pass ]
 fast/scrolling/rtl-scrollbars-position-absolute.html  [ Pass ]
 fast/scrolling/rtl-scrollbars-position-fixed.html [ Pass ]
-fast/scrolling/rtl-scrollbars-text-selection-scrolled.html [ Pass ]
 fast/scrolling/rtl-scrollbars-text-selection.html [ Pass ]
+fast/scrolling/rtl-scrollbars-text-selection-scrolled.html [ Pass ]
 
 webkit.org/b/155132 http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Pass ]
 
@@ -1095,8 +1096,9 @@ webkit.org/b/215799 imported/w3c/web-platform-tests/css/css-content/quotes-027.h
 webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
 
-webkit.org/b/newbug fast/text/line-break-between-text-nodes-latin1.html [ ImageOnlyFailure ]
-webkit.org/b/newbug imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.html [ ImageOnlyFailure ]
+# Failures since r275515.
+webkit.org/b/224590 fast/text/line-break-between-text-nodes-latin1.html [ ImageOnlyFailure ]
+webkit.org/b/224590 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
@@ -1710,8 +1712,6 @@ webkit.org/b/156077 inspector/heap/getRemoteObject.html [ Skip ]
 webkit.org/b/187273 media/picture-in-picture/picture-in-picture-interruption.html [ Timeout Crash ]
 
 webkit.org/b/188044 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec4.html [ Timeout ]
-
-webkit.org/b/193635 imported/w3c/web-platform-tests/resource-timing/resource_timing.worker.html [ Failure ]
 
 webkit.org/b/137311 media/video-fullscreen-only-playback.html [ Timeout Crash ]
 
