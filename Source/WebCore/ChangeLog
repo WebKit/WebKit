@@ -1,3 +1,14 @@
+2021-04-16  Youenn Fablet  <youenn@apple.com>
+
+        Remove a no longer necessary callOnMainThread in Worker::createRTCRtpScriptTransformer
+        https://bugs.webkit.org/show_bug.cgi?id=224539
+
+        Reviewed by Darin Adler.
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::createRTCRtpScriptTransformer):
+        ThreadSafeRefCounted already handles it with the DestructionThread::Main option.
+
 2021-04-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r276107.
