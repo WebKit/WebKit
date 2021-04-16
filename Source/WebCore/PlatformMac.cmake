@@ -342,8 +342,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/cv/ImageRotationSessionVT.mm
     platform/graphics/cv/PixelBufferConformerCV.cpp
 
-    platform/graphics/gpu/TilingData.cpp
-
     platform/graphics/mac/ColorMac.mm
     platform/graphics/mac/ComplexTextControllerCoreText.mm
     platform/graphics/mac/FloatPointMac.mm

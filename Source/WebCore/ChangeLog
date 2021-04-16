@@ -1,5 +1,20 @@
 2021-04-15  Don Olmstead  <don.olmstead@sony.com>
 
+        Remove TilingData class
+        https://bugs.webkit.org/show_bug.cgi?id=224643
+
+        Reviewed by Yusuke Suzuki.
+
+        It doesn't seem to be used anywhere and the code hasn't been touched in almost a decade.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/gpu/TilingData.cpp: Removed.
+        * platform/graphics/gpu/TilingData.h: Removed.
+
+2021-04-15  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] OpenGL libraries not linked when ANGLE isn't used
         https://bugs.webkit.org/show_bug.cgi?id=224642
 
