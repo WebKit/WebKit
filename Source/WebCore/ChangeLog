@@ -1,3 +1,37 @@
+2021-04-16  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation][OpenSSL] Remove warnings.
+        https://bugs.webkit.org/show_bug.cgi?id=224630
+
+        Reviewed by Don Olmstead.
+
+        There're two kinds of warnings in curl and openssl layer in our platform.
+
+        a) Unused param
+
+        b) '__WORDSIZE' is not defined. 
+        warning: '__WORDSIZE' is not defined, evaluates to 0 [-Wundef]
+        #if __WORDSIZE >= 64
+        ^
+
+        No new tests because it's only for compilation issue.
+
+        * crypto/algorithms/CryptoAlgorithmAES_GCM.cpp:
+        (WebCore::CryptoAlgorithmAES_GCM::encrypt):
+        (WebCore::CryptoAlgorithmAES_GCM::decrypt):
+        * crypto/openssl/CryptoKeyECOpenSSL.cpp:
+        (WebCore::CryptoKeyEC::platformGeneratePair):
+        (WebCore::CryptoKeyEC::platformImportRaw):
+        (WebCore::CryptoKeyEC::platformImportJWKPublic):
+        (WebCore::CryptoKeyEC::platformImportJWKPrivate):
+        (WebCore::CryptoKeyEC::platformImportSpki):
+        (WebCore::CryptoKeyEC::platformImportPkcs8):
+        * crypto/openssl/CryptoKeyRSAOpenSSL.cpp:
+        (WebCore::CryptoKeyRSA::create):
+        (WebCore::CryptoKeyRSA::generatePair):
+        (WebCore::CryptoKeyRSA::importSpki):
+        (WebCore::CryptoKeyRSA::importPkcs8):
+
 2021-04-16  Alex Christensen  <achristensen@webkit.org>
 
         Disable ApplicationCache with linkedOnOrAfter check
