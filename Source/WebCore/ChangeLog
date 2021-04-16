@@ -1,3 +1,10 @@
+2021-04-16  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after Antoine's r276141.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyBlendingContext::CSSPropertyBlendingContext):
+
 2021-04-16  Antoine Quint  <graouts@webkit.org>
 
         Refactor parameters to blending functions
