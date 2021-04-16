@@ -64,7 +64,8 @@
 ] enum UserVerification {
     "no",
     "yes",
-    "cancel"
+    "cancel",
+    "presence"
 };
 
 [

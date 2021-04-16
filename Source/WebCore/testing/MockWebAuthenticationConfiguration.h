@@ -64,7 +64,8 @@ struct MockWebAuthenticationConfiguration {
     enum class UserVerification : uint8_t {
         No,
         Yes,
-        Cancel
+        Cancel,
+        Presence
     };
 
     struct LocalConfiguration {
@@ -308,7 +309,8 @@ template<> struct EnumTraits<WebCore::MockWebAuthenticationConfiguration::UserVe
         WebCore::MockWebAuthenticationConfiguration::UserVerification,
         WebCore::MockWebAuthenticationConfiguration::UserVerification::No,
         WebCore::MockWebAuthenticationConfiguration::UserVerification::Yes,
-        WebCore::MockWebAuthenticationConfiguration::UserVerification::Cancel
+        WebCore::MockWebAuthenticationConfiguration::UserVerification::Cancel,
+        WebCore::MockWebAuthenticationConfiguration::UserVerification::Presence
     >;
 };
 

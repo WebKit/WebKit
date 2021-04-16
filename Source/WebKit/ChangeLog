@@ -1,3 +1,37 @@
+2021-04-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Allow using the platform authenticator on non-Touch ID Macs according to Internal requirements
+        https://bugs.webkit.org/show_bug.cgi?id=224639
+        <rdar://74698346>
+
+        Reviewed by Daniel Bates.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm:
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterDecidePolicy):
+        (WebKit::LocalAuthenticator::continueMakeCredentialAfterUserVerification):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterResponseSelected):
+        (WebKit::LocalAuthenticator::continueGetAssertionAfterUserVerification):
+        Don't set the UserVerification bit if UserVerification is not done.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.h:
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::verifyUser):
+        Only check UserPresence on non-Touch ID Macs.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalService.mm:
+        (WebKit::LocalService::isAvailable):
+        Make the platform authenticator available according to Internal requirements.
+
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.h:
+        * UIProcess/WebAuthentication/Mock/MockLocalConnection.mm:
+        (WebKit::MockLocalConnection::verifyUser):
+        Mock testing support.
+
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp:
+        (WebKit::getUserVerificationRequirement):
+        * UIProcess/WebAuthentication/WebAuthenticationRequestData.h:
+        Add a helper for extracting the UserVerification input.
+
 2021-04-16  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] WebContent process should not create AVOutputContext instances when media in GPU Process is enabled

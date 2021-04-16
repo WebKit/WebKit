@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/UserVerificationRequirement.h>
 #import <WebCore/WebAuthenticationConstants.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
@@ -60,7 +61,7 @@ LocalConnection::~LocalConnection()
     [m_context invalidate];
 }
 
-void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAccessControlRef accessControl, UserVerificationCallback&& completionHandler)
+void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAccessControlRef accessControl, UserVerificationRequirement uv, UserVerificationCallback&& completionHandler)
 {
     String title = genericTouchIDPromptTitle();
 #if PLATFORM(MAC)
@@ -84,7 +85,7 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
         [options setObject:@NO forKey:@(LAOptionFallbackVisible)];
     }
 
-    auto reply = makeBlockPtr([context = m_context, completionHandler = WTFMove(completionHandler)] (NSDictionary *, NSError *error) mutable {
+    auto reply = makeBlockPtr([context = m_context, completionHandler = WTFMove(completionHandler)] (NSDictionary *information, NSError *error) mutable {
         UserVerification verification = UserVerification::Yes;
         if (error) {
             LOG_ERROR("Couldn't authenticate with biometrics: %@", error);
@@ -92,6 +93,8 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
             if (error.code == LAErrorUserCancel)
                 verification = UserVerification::Cancel;
         }
+        if (information[@"UserPresence"])
+            verification = UserVerification::Presence;
 
         // This block can be executed in another thread.
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), verification, context = WTFMove(context)] () mutable {
@@ -101,9 +104,14 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
 
 #if USE(APPLE_INTERNAL_SDK)
     // Depending on certain internal requirements, accessControl might not require user verifications.
-    // Hence, here introduces a quirk to force the compatible mode to always require user verifications.
+    // Hence, here introduces a quirk to force the compatible mode to require user verifications if necessary.
     if (shouldUseAlternateAttributes()) {
-        [m_context evaluatePolicy:LAPolicyDeviceOwnerAuthentication options:options.get() reply:reply.get()];
+        if (uv == UserVerificationRequirement::Required || [m_context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil]) {
+            [m_context evaluatePolicy:LAPolicyDeviceOwnerAuthentication options:options.get() reply:reply.get()];
+            return;
+        }
+
+        reply(@{ @"UserPresence": @YES }, nullptr);
         return;
     }
 #endif

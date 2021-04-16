@@ -34,6 +34,12 @@
 #import "AppAttestInternalSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/LocalServiceAdditions.h>
+#else
+#define LOCAL_SERVICE_ADDITIONS
+#endif
+
 namespace WebKit {
 
 LocalService::LocalService(Observer& observer)
@@ -43,6 +49,8 @@ LocalService::LocalService(Observer& observer)
 
 bool LocalService::isAvailable()
 {
+LOCAL_SERVICE_ADDITIONS
+
     auto context = adoptNS([allocLAContextInstance() init]);
     NSError *error = nil;
     auto result = [context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error];

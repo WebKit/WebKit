@@ -1,3 +1,16 @@
+2021-04-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Allow using the platform authenticator on non-Touch ID Macs according to Internal requirements
+        https://bugs.webkit.org/show_bug.cgi?id=224639
+        <rdar://74698346>
+
+        Reviewed by Daniel Bates.
+
+        * http/wpt/webauthn/public-key-credential-create-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-create-success-local.https.html:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https-expected.txt:
+        * http/wpt/webauthn/public-key-credential-get-success-local.https.html:
+
 2021-04-16  Robert Jenner  <jenner@apple.com>
 
         [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing
