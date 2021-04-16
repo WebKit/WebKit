@@ -1,3 +1,12 @@
+2021-04-15  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION (r275926): [ BigSur X86_64] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html
+        https://bugs.webkit.org/show_bug.cgi?id=224631
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Test has been fixed for new platforms, and won't be for BigSur. Updating expectations for BigSur only. 
+
 2021-04-15  Tim Horton  <timothy_horton@apple.com>
 
         Add a mechanism to dump the PlatformCALayer subtree of a GraphicsLayer, for testing
