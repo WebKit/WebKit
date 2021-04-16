@@ -767,6 +767,8 @@ webkit.org/b/214442 imported/w3c/web-platform-tests/resource-timing/resource_con
 
 webkit.org/b/222756 http/tests/performance/paint-timing/performance-paint-timing-fcp-after-visually-non-empty-for-style.html [ Failure ]
 
+webkit.org/b/224657 imported/w3c/web-platform-tests/service-workers/service-worker/next-hop-protocol.https.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of ResourceTiming API bugs
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,3 +1,9 @@
+2021-04-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Reintroduce test failure imported/w3c/web-platform-tests/service-workers/service-worker/next-hop-protocol.https.html.
+
+        * platform/glib/TestExpectations:
+
 2021-04-15  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Unreviewed test gardening. Gardened tests expected to fail but passed.
