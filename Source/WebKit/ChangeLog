@@ -1,3 +1,50 @@
+2021-04-16  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] WebContent process should not create AVOutputContext instances when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224469
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/webkit/messages.py: Fix clean build failures on the WinCairo port.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::setWirelessPlaybackTarget):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+
+        * GPUProcess/media/ios/RemoteMediaSessionHelperProxy.cpp:
+        (WebKit::RemoteMediaSessionHelperProxy::activeVideoRouteDidChange):
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encode):
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData): Deleted.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::mediaRelatedIOKitClasses):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setMockMediaPlaybackTargetPickerState):
+        (WebKit::WebPageProxy::setPlaybackTarget):
+        (WebKit::temporaryMachServices): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * WebProcess/GPU/media/ios/RemoteMediaSessionHelper.cpp:
+        (WebKit::RemoteMediaSessionHelper::activeVideoRouteDidChange):
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setMockMediaPlaybackTargetPickerState):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::playbackTargetSelected const):
+
 2021-04-16  Alex Christensen  <achristensen@webkit.org>
 
         Disable ApplicationCache with linkedOnOrAfter check

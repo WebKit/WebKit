@@ -81,12 +81,11 @@ void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid)
 
 void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, MediaPlaybackTargetContext&& targetContext)
 {
-    if (targetContext.type() != MediaPlaybackTargetContext::AVOutputContextType) {
-        ASSERT_NOT_REACHED();
+    ASSERT(targetContext.type() != MediaPlaybackTargetContext::Type::AVOutputContext);
+    if (targetContext.type() == MediaPlaybackTargetContext::Type::AVOutputContext)
         return;
-    }
 
-    WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext()));
+    WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, WebCore::MediaPlaybackTargetCocoa::create(WTFMove(targetContext)));
 }
 
 }

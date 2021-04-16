@@ -27,24 +27,23 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
+#include "MediaPlaybackTargetContext.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class MediaPlaybackTargetContext;
-
 class MediaPlaybackTarget : public RefCounted<MediaPlaybackTarget> {
 public:
     virtual ~MediaPlaybackTarget() = default;
 
-    enum TargetType { AVFoundation, Mock };
+    enum class TargetType : uint8_t { AVFoundation, Mock };
     virtual TargetType targetType() const = 0;
-
     virtual const MediaPlaybackTargetContext& targetContext() const = 0;
-    virtual bool hasActiveRoute() const = 0;
-    virtual String deviceName() const = 0;
-    virtual bool supportsRemoteVideoPlayback() const = 0;
+
+    bool hasActiveRoute() const { return targetContext().hasActiveRoute(); }
+    String deviceName() const { return targetContext().deviceName(); }
+    bool supportsRemoteVideoPlayback() { return targetContext().supportsRemoteVideoPlayback(); }
 };
 
 }

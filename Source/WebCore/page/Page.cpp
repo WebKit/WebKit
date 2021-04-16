@@ -2952,7 +2952,7 @@ void Page::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     chrome().client().setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
-void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::State state)
+void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::MockState state)
 {
     chrome().client().setMockMediaPlaybackTargetPickerState(name, state);
 }

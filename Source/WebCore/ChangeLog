@@ -1,3 +1,92 @@
+2021-04-16  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] WebContent process should not create AVOutputContext instances when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224469
+
+        Reviewed by Eric Carlson.
+
+        This patch modifies `MediaPlaybackTargetContext` to provide interfaces to serialize/deserialize
+        `AVOutputContext` and modifies `MediaPlaybackTargetCocoa` to use `MediaPlaybackTargetContext` to
+        manage its `AVOutputContext` instead of keeping a pointer to the `AVOutputContext` object.
+        With these changes, a WebContent process can forward a serialized `AVOutputContext` object
+        to other processes (e.g., the GPU process) without deserializing it. Therefore, the WebContent
+        process does not need access to the CoreMedia routing service. So we can remove the fix (r275669)
+        for bug 224328.
+
+        Covered by existing tests.
+
+        * Modules/airplay/WebMediaSessionManager.cpp:
+        (WebCore::WebMediaSessionManager::setMockMediaPlaybackTargetPickerState):
+        * Modules/airplay/WebMediaSessionManager.h:
+
+        * Headers.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Modify the project file because `MediaPlaybackTargetContext` is used in Cocoa ports only.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::setMockMediaPlaybackTargetPickerState):
+        * page/Page.cpp:
+        (WebCore::Page::setMockMediaPlaybackTargetPickerState):
+        * page/Page.h:
+
+        * platform/graphics/MediaPlaybackTarget.h:
+        (WebCore::MediaPlaybackTarget::hasActiveRoute const):
+        (WebCore::MediaPlaybackTarget::deviceName const):
+        (WebCore::MediaPlaybackTarget::supportsRemoteVideoPlayback):
+        (): Deleted.
+        * platform/graphics/MediaPlaybackTargetContext.h: Removed.
+        * platform/graphics/avfoundation/MediaPlaybackTargetCocoa.h:
+        (WebCore::MediaPlaybackTargetCocoa::outputContext const): Deleted.
+        * platform/graphics/avfoundation/MediaPlaybackTargetCocoa.mm:
+        (WebCore::MediaPlaybackTargetCocoa::create):
+        (WebCore::MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa):
+        (WebCore::MediaPlaybackTargetCocoa::~MediaPlaybackTargetCocoa):
+        (WebCore::toMediaPlaybackTargetCocoa):
+        (WebCore::MediaPlaybackTargetCocoa::supportsRemoteVideoPlayback const): Deleted.
+        (WebCore::MediaPlaybackTargetCocoa::targetContext const): Deleted.
+        (WebCore::MediaPlaybackTargetCocoa::hasActiveRoute const): Deleted.
+        (WebCore::MediaPlaybackTargetCocoa::deviceName const): Deleted.
+        Don't directly use `AVOutputContext` in this class.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget):
+
+        * platform/graphics/cocoa/MediaPlaybackTargetContext.h: Added.
+        (WebCore::MediaPlaybackTargetContext::MediaPlaybackTargetContext):
+        (WebCore::MediaPlaybackTargetContext::type const):
+        (WebCore::MediaPlaybackTargetContext::mockState const):
+        (WebCore::MediaPlaybackTargetContext::outputContext const):
+        (WebCore::MediaPlaybackTargetContext::serializedOutputContext const):
+        (WebCore::MediaPlaybackTargetContext::encodingRequiresPlatformData const):
+        * platform/graphics/cocoa/MediaPlaybackTargetContext.mm: Added.
+        (WebCore::MediaPlaybackTargetContext::MediaPlaybackTargetContext):
+        (WebCore::MediaPlaybackTargetContext::deviceName const):
+        (WebCore::MediaPlaybackTargetContext::hasActiveRoute const):
+        (WebCore::MediaPlaybackTargetContext::supportsRemoteVideoPlayback const):
+        (WebCore::MediaPlaybackTargetContext::serializeOutputContext):
+        (WebCore::MediaPlaybackTargetContext::deserializeOutputContext):
+
+        * platform/mock/MediaPlaybackTargetMock.cpp:
+        (WebCore::MediaPlaybackTargetMock::create):
+        (WebCore::MediaPlaybackTargetMock::MediaPlaybackTargetMock):
+        (WebCore::toMediaPlaybackTargetMock):
+        (WebCore::MediaPlaybackTargetMock::targetContext const): Deleted.
+        * platform/mock/MediaPlaybackTargetMock.h:
+        (WebCore::MediaPlaybackTargetMock::state const):
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::externalOutputDeviceAvailable):
+        (WebCore::MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets):
+        (WebCore::MediaPlaybackTargetPickerMock::invalidatePlaybackTargets):
+        (WebCore::MediaPlaybackTargetPickerMock::setState):
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setMockMediaPlaybackTargetPickerState):
+
 2021-04-16  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant renderObject in BreakingContext::handleText

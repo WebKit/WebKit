@@ -352,6 +352,7 @@ def conditions_for_header(header):
         '"InputMethodState.h"': ["PLATFORM(GTK)", "PLATFORM(WPE)"],
         '"LayerHostingContext.h"': ["PLATFORM(COCOA)", ],
         '"GestureTypes.h"': ["PLATFORM(IOS_FAMILY)"],
+        '<WebCore/MediaPlaybackTargetContext.h>': ["ENABLE(WIRELESS_PLAYBACK_TARGET)"],
     }
     if not header in conditions:
         return None

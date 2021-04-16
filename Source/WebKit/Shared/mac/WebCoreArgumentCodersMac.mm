@@ -42,12 +42,6 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/cf/TypeCastsCF.h>
 
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-#import <WebCore/MediaPlaybackTargetContext.h>
-#import <objc/runtime.h>
-#import <pal/cocoa/AVFoundationSoftLink.h>
-#endif
-
 namespace IPC {
 
 void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
@@ -398,29 +392,6 @@ bool ArgumentCoder<WebCore::ContentFilterUnblockHandler>::decode(Decoder& decode
         return false;
 
     [unarchiver finishDecoding];
-    return true;
-}
-
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-
-void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const WebCore::MediaPlaybackTargetContext& target)
-{
-    if ([PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
-        encoder << target.avOutputContext();
-}
-
-bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Decoder& decoder, WebCore::MediaPlaybackTargetContext& target)
-{
-    if (![PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
-        return false;
-
-    auto context = IPC::decode<AVOutputContext>(decoder, PAL::getAVOutputContextClass());
-    if (!context)
-        return false;
-
-    target = WebCore::MediaPlaybackTargetContext { context->get() };
     return true;
 }
 

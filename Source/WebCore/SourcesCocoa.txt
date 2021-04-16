@@ -369,6 +369,7 @@ platform/graphics/cocoa/IOSurface.mm
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm
 platform/graphics/cocoa/IntRectCocoa.mm
 platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
+platform/graphics/cocoa/MediaPlaybackTargetContext.mm
 platform/graphics/cocoa/RemoteGraphicsContextGLProxyBaseCocoa.mm
 platform/graphics/cocoa/SourceBufferParser.cpp
 platform/graphics/cocoa/SourceBufferParserWebM.cpp

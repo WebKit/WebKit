@@ -48,7 +48,7 @@ public:
     void stopMonitoringPlaybackTargets() override;
     void invalidatePlaybackTargets() override;
 
-    void setState(const String&, MediaPlaybackTargetContext::State);
+    void setState(const String&, MediaPlaybackTargetContext::MockState);
     void dismissPopup();
 
 private:
@@ -57,7 +57,7 @@ private:
 
     String m_deviceName;
     GenericTaskQueue<Timer> m_taskQueue;
-    MediaPlaybackTargetContext::State m_state { MediaPlaybackTargetContext::Unknown };
+    MediaPlaybackTargetContext::MockState m_state { MediaPlaybackTargetContext::MockState::Unknown };
     bool m_showingMenu { false };
 };
 

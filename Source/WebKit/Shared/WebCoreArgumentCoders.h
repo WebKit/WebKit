@@ -54,6 +54,10 @@
 #include <WebCore/CurlProxySettings.h>
 #endif
 
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include <WebCore/MediaPlaybackTargetContext.h>
+#endif
+
 #if ENABLE(ENCRYPTED_MEDIA)
 #include <WebCore/CDMInstance.h>
 #include <WebCore/CDMInstanceSession.h>
@@ -193,10 +197,6 @@ struct PasteboardWebContent;
 
 #if ENABLE(CONTENT_FILTERING)
 class ContentFilterUnblockHandler;
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-class MediaPlaybackTargetContext;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -644,7 +644,7 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static void encode(Encoder&, const WebCore::MediaPlaybackTargetContext&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::MediaPlaybackTargetContext&);
     static void encodePlatformData(Encoder&, const WebCore::MediaPlaybackTargetContext&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::MediaPlaybackTargetContext&);
+    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::MediaPlaybackTargetContext::Type, WebCore::MediaPlaybackTargetContext&);
 };
 #endif
 

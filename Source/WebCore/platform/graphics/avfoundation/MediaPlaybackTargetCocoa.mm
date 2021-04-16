@@ -34,14 +34,23 @@
 
 namespace WebCore {
 
-Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create(AVOutputContext *context)
+Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create(AVOutputContext *outputContext)
 {
-    return adoptRef(*new MediaPlaybackTargetCocoa(context));
+    return adoptRef(*new MediaPlaybackTargetCocoa(outputContext));
 }
 
-MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(AVOutputContext *context)
-    : MediaPlaybackTarget()
-    , m_outputContext(context)
+Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create(MediaPlaybackTargetContext&& context)
+{
+    return adoptRef(*new MediaPlaybackTargetCocoa(WTFMove(context)));
+}
+
+MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(AVOutputContext *outputContext)
+    : m_context(outputContext)
+{
+}
+
+MediaPlaybackTargetCocoa::MediaPlaybackTargetCocoa(MediaPlaybackTargetContext&& context)
+    : m_context(WTFMove(context))
 {
 }
 
@@ -53,73 +62,8 @@ Ref<MediaPlaybackTarget> MediaPlaybackTargetCocoa::create()
 }
 #endif
 
-bool MediaPlaybackTargetCocoa::supportsRemoteVideoPlayback() const
-{
-    if (!m_outputContext)
-        return false;
-
-    if (![m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] || ![m_outputContext supportsMultipleOutputDevices] || ![m_outputContext respondsToSelector:@selector(outputDevices)]) {
-        if (auto *outputDevice = [m_outputContext outputDevice]) {
-            if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
-                return true;
-        }
-
-        return false;
-    }
-
-    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
-        if (outputDevice.deviceFeatures & AVOutputDeviceFeatureVideo)
-            return true;
-    }
-
-    return false;
-}
-
 MediaPlaybackTargetCocoa::~MediaPlaybackTargetCocoa()
 {
-}
-
-const MediaPlaybackTargetContext& MediaPlaybackTargetCocoa::targetContext() const
-{
-    m_context = MediaPlaybackTargetContext(m_outputContext.get());
-    return m_context;
-}
-
-bool MediaPlaybackTargetCocoa::hasActiveRoute() const
-{
-    if (!m_outputContext)
-        return false;
-
-    if ([m_outputContext respondsToSelector:@selector(supportsMultipleOutputDevices)] && [m_outputContext supportsMultipleOutputDevices] && [m_outputContext respondsToSelector:@selector(outputDevices)]) {
-        for (AVOutputDevice *outputDevice in [m_outputContext outputDevices]) {
-            if (outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio))
-                return true;
-        }
-
-        return false;
-    }
-
-    if ([m_outputContext respondsToSelector:@selector(outputDevice)]) {
-        if (auto *outputDevice = [m_outputContext outputDevice])
-            return outputDevice.deviceFeatures & (AVOutputDeviceFeatureVideo | AVOutputDeviceFeatureAudio);
-    }
-
-    return m_outputContext.get().deviceName;
-}
-
-String MediaPlaybackTargetCocoa::deviceName() const
-{
-    if (!m_outputContext)
-        return emptyString();
-
-    if (![m_outputContext supportsMultipleOutputDevices])
-        return [m_outputContext deviceName];
-
-    auto outputDeviceNames = adoptNS([[NSMutableArray alloc] init]);
-    for (AVOutputDevice *outputDevice in [m_outputContext outputDevices])
-        [outputDeviceNames addObject:[outputDevice deviceName]];
-
-    return [outputDeviceNames componentsJoinedByString:@" + "];
 }
 
 MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(MediaPlaybackTarget* rep)
@@ -129,7 +73,7 @@ MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(MediaPlaybackTarget* rep)
 
 const MediaPlaybackTargetCocoa* toMediaPlaybackTargetCocoa(const MediaPlaybackTarget* rep)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(rep->targetType() == MediaPlaybackTarget::AVFoundation);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(rep->targetType() == MediaPlaybackTarget::TargetType::AVFoundation);
     return static_cast<const MediaPlaybackTargetCocoa*>(rep);
 }
 

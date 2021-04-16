@@ -1269,7 +1269,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MIMETypeCache.h
     platform/graphics/MediaPlaybackTarget.h
     platform/graphics/MediaPlaybackTargetClient.h
-    platform/graphics/MediaPlaybackTargetContext.h
     platform/graphics/MediaPlaybackTargetPicker.h
     platform/graphics/MediaPlayer.h
     platform/graphics/MediaPlayerEnums.h
