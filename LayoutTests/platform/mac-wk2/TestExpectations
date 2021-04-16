@@ -1300,7 +1300,7 @@ webkit.org/b/222332 [ Release ] compositing/video/video-border-radius-clipping.h
 
 webkit.org/b/222365 inspector/dom/attributeModified.html [ Pass Timeout ]
 
-webkit.org/b/222371 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Pass Failure ]
+webkit.org/b/222371 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Pass Failure Crash ]
 
 # webkit.org/b/222277
 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Skip ]
