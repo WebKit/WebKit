@@ -1,3 +1,137 @@
+2021-04-16  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse and add feature flag for @counter-style
+        https://bugs.webkit.org/show_bug.cgi?id=223150
+
+        Reviewed by Darin Adler.
+
+        Parse @counter-style (without implementing descriptor parsing) behind
+        a new feature flag, CSSCounterStyleAtRulesEnabled.  A separate feature
+        flag for @counter-style <image> symbol values has also been added, as
+        image symbols have extra complexities that we won't want to hold the
+        entire feature back on.
+        https://www.w3.org/TR/css-counter-styles-3
+
+        The CSSCounterStyleRule IDL interface is also added and implemented,
+        and similarly feature flagged.
+        https://www.w3.org/TR/css-counter-styles-3/#apis
+
+        Test: webexposed/counter-style-is-not-exposed.html and existing WPTs.
+
+        * CMakeLists.txt:
+        Add CSSCounterStyleRule.idl.
+
+        * DerivedSources-input.xcfilelist:
+        Add CSSCounterStyleRule.idl.
+
+        * DerivedSources-output.xcfilelist:
+        Add JSCSSCounterStyleRule.h and JSCSSCounterStyleRule.cpp.
+
+        * DerivedSources.make:
+        Add CSSCounterStyleRule.idl.
+
+        * Sources.txt:
+        Add CSSCounterStyleRule.cpp and JSCSSCounterStyleRule.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Add CounterStyle.h, CounterStyle.cpp, and CounterStyle.idl.
+
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        Support CSSCounterStyleRule.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+        Add macro(CSSCounterStyleRule) to generate counter-style built-in
+        names.
+
+        * css/CSSCounterStyleRule.cpp: Added.
+        (WebCore::StyleRuleCounterStyle::StyleRuleCounterStyle):
+        (WebCore::StyleRuleCounterStyle::create):
+        (WebCore::StyleRuleCounterStyle::mutableProperties):
+        (WebCore::CSSCounterStyleRule::CSSCounterStyleRule):
+        (WebCore::CSSCounterStyleRule::reattach):
+        (WebCore::CSSCounterStyleRule::cssText const):
+
+        * css/CSSCounterStyleRule.h: Added.
+        (isType): Add specialized rule.isCounterStyleRule() implementation.
+
+        * css/CSSCounterStyleRule.idl: Added.
+        * css/CSSRule.cpp: Add new StyleRuleType::CounterStyle COMPILE_ASSERT.
+        * css/CSSRule.h:
+        Add COUNTER_STYLE_RULE constant.  Also add comment `// WebIDL enum` to
+        disable enum_casing lint, since these values are named to match IDL
+        attributes.
+        * css/CSSRule.idl: Add COUNTER_STYLE_RULE constant behind flag.
+
+        * css/StyleRule.cpp: 
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy const):
+        (WebCore::StyleRuleBase::createCSSOMWrapper const):
+        Handle newly added StyleRuleType::CounterStyle.
+
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::isCounterStyleRule const): Added.
+
+        * css/StyleRuleType.h: Add StyleRuleType::CounterStyle
+
+        * css/StyleSheetContents.cpp:
+        (WebCore::traverseRulesInVector):
+        (WebCore::StyleSheetContents::traverseSubresources const):
+        If @counter-style image symbols flag is enabled, do traverse
+        subresources.
+
+        * css/parser/CSSAtRuleID.cpp:
+        If the @counter-style feature flag is enabled, return newly added
+        CSSAtRuleCounterStyle ID.
+
+        (WebCore::cssAtRuleID):
+        * css/parser/CSSAtRuleID.h:
+        Add CSSAtRuleCounterStyle ID.
+
+        * css/parser/CSSParserContext.cpp:
+        (WebCore::operator==):
+        * css/parser/CSSParserContext.h:
+        (WebCore::CSSParserContextHash::hash):
+        Add cssCounterStyleAtRulesEnabled and
+        cssCounterStyleAtRuleImageSymbolsEnabled flags.
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        Refactor to use new CSSPropertyParserHelpers::isPredefinedCounterStyle
+        method.
+
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::computeNewAllowedRules):
+        (WebCore::CSSParserImpl::consumeAtRule):
+        (WebCore::CSSParserImpl::consumeCounterStyleRule): Added.
+        (WebCore::CSSParserImpl::consumeDeclarationList):
+        (WebCore::CSSParserImpl::consumeDeclaration):
+        * css/parser/CSSParserImpl.h:
+        Handle new @counter-style rule.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseValue): Handle
+        StyleRuleType::CounterStyle.
+        (WebCore::consumeCounterContent):
+        Refactor to use new CSSPropertyParserHelpers::isPredefinedCounterStyle
+        method.
+        (WebCore::CSSPropertyParser::parseCounterStyleDescriptor):
+        Add placeholder for future @counter-style descriptor parsing work.
+
+        * css/parser/CSSPropertyParser.h:
+        Add parseCounterStyleDescriptor method
+
+        * css/parser/CSSPropertyParserHelpers.h:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeCustomIdent):
+        Add new flag that allows consumed custom ident values to be lowercased
+        on-parse.  This is necessary for some <counter-style-name> values.
+        (WebCore::CSSPropertyParserHelpers::isPredefinedCounterStyle): Added.
+        (WebCore::CSSPropertyParserHelpers::consumeCounterStyleName):
+        (WebCore::CSSPropertyParserHelpers::consumeCounterStyleNameInPrelude):
+        Parse @counter-style names, both in-prelude names and non-prelude
+        names (e.g. as part of the `extends` descriptor).
+
 2021-04-16  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed GTK / WinCairo build fix after Antoine's r276141.

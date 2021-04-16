@@ -45,6 +45,7 @@ class CSSParserObserver;
 class CSSParserObserverWrapper;
 class CSSSelectorList;
 class CSSTokenizer;
+class StyleRuleCounterStyle;
 class StyleRuleKeyframe;
 class StyleRule;
 class StyleRuleBase;
@@ -79,6 +80,7 @@ public:
         RegularRules,
         KeyframeRules,
         ApplyRules, // For @apply inside style rules
+        CounterStyleRules,
         NoRules, // For parsing at-rules inside declaration lists
     };
 
@@ -132,6 +134,7 @@ private:
     RefPtr<StyleRuleFontFace> consumeFontFaceRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleKeyframes> consumeKeyframesRule(bool webkitPrefixed, CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRulePage> consumePageRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRuleCounterStyle> consumeCounterStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     
     // FIXME-NEWPARSER: Support "apply"
     // void consumeApplyRule(CSSParserTokenRange prelude);

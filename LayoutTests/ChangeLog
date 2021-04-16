@@ -1,3 +1,16 @@
+2021-04-16  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse and add feature flag for @counter-style
+        https://bugs.webkit.org/show_bug.cgi?id=223150
+
+        Reviewed by Darin Adler.
+
+        Add tests ensuring @counter-style is not exposed when feature flag is
+        disabled.
+
+        * webexposed/counter-style-is-not-exposed-expected.txt: Added.
+        * webexposed/counter-style-is-not-exposed.html: Added.
+
 2021-04-16  Zalan Bujtas  <zalan@apple.com>
 
         [IFC] Incorrect box height when scrollbar takes padding box space

@@ -73,6 +73,8 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , colorMixEnabled { document.settings().cssColorMixEnabled() }
     , constantPropertiesEnabled { document.settings().constantPropertiesEnabled() }
     , containmentEnabled { document.settings().cssContainmentEnabled() }
+    , counterStyleAtRulesEnabled { document.settings().cssCounterStyleAtRulesEnabled() }
+    , counterStyleAtRuleImageSymbolsEnabled { document.settings().cssCounterStyleAtRuleImageSymbolsEnabled() }
     , cssColor4 { document.settings().cssColor4() }
     , deferredCSSParserEnabled { document.settings().deferredCSSParserEnabled() }
     , individualTransformPropertiesEnabled { document.settings().cssIndividualTransformPropertiesEnabled() }
@@ -113,6 +115,8 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled
         && a.containmentEnabled == b.containmentEnabled
+        && a.counterStyleAtRulesEnabled == b.counterStyleAtRulesEnabled
+        && a.counterStyleAtRuleImageSymbolsEnabled == b.counterStyleAtRuleImageSymbolsEnabled
         && a.cssColor4 == b.cssColor4
         && a.deferredCSSParserEnabled == b.deferredCSSParserEnabled
         && a.individualTransformPropertiesEnabled == b.individualTransformPropertiesEnabled

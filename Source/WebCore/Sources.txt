@@ -723,6 +723,7 @@ css/CSSCanvasValue.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSConditionRule.cpp
 css/CSSContentDistributionValue.cpp
+css/CSSCounterStyleRule.cpp
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
 css/CSSCustomIdentValue.cpp
@@ -2835,6 +2836,7 @@ JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
 JSCSSAnimation.cpp
 JSCSSConditionRule.cpp
+JSCSSCounterStyleRule.cpp
 JSCSSFontFaceRule.cpp
 JSCSSGroupingRule.cpp
 JSCSSImportRule.cpp

@@ -1,7 +1,7 @@
 
-FAIL @counter-style 'additive-symbols: 1 "X"' is valid assert_equals: expected (undefined) undefined but got (string) "1 \"X\""
-FAIL @counter-style 'additive-symbols: "X" 1' is valid assert_equals: expected (undefined) undefined but got (string) "1 \"X\""
-FAIL @counter-style 'additive-symbols: 5 "V", 1 "I"' is valid assert_equals: expected (undefined) undefined but got (string) "5 \"V\", 1 \"I\""
+FAIL @counter-style 'additive-symbols: 1 "X"' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'additive-symbols: "X" 1' is valid assert_not_equals: got disallowed value -1
+FAIL @counter-style 'additive-symbols: 5 "V", 1 "I"' is valid assert_not_equals: got disallowed value -1
 PASS @counter-style 'additive-symbols: ' is invalid
 PASS @counter-style 'additive-symbols: -1 "X"' is invalid
 PASS @counter-style 'additive-symbols: 1 "I", 5 "V"' is invalid

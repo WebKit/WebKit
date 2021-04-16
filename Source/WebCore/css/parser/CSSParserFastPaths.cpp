@@ -35,6 +35,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "HTMLParserIdioms.h"
@@ -661,7 +662,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyListStyleType:
         // See section CSS_PROP_LIST_STYLE_TYPE of file CSSValueKeywords.in
         // for the list of supported list-style-types.
-        return (valueID >= CSSValueDisc && valueID <= CSSValueKatakanaIroha) || valueID == CSSValueNone;
+        return CSSPropertyParserHelpers::isPredefinedCounterStyle(valueID) || valueID == CSSValueNone;
     case CSSPropertyMaskType:
         return valueID == CSSValueLuminance || valueID == CSSValueAlpha;
     case CSSPropertyMathStyle:

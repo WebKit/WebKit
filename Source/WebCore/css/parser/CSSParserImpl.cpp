@@ -31,6 +31,7 @@
 #include "CSSParserImpl.h"
 
 #include "CSSAtRuleID.h"
+#include "CSSCounterStyleRule.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSDeferredParser.h"
 #include "CSSKeyframeRule.h"
@@ -337,7 +338,7 @@ void CSSParserImpl::parseStyleSheetForInspector(const String& string, const CSSP
 
 static CSSParserImpl::AllowedRulesType computeNewAllowedRules(CSSParserImpl::AllowedRulesType allowedRules, StyleRuleBase* rule)
 {
-    if (!rule || allowedRules == CSSParserImpl::KeyframeRules || allowedRules == CSSParserImpl::NoRules)
+    if (!rule || allowedRules == CSSParserImpl::KeyframeRules || allowedRules == CSSParserImpl::CounterStyleRules || allowedRules == CSSParserImpl::NoRules)
         return allowedRules;
     ASSERT(allowedRules <= CSSParserImpl::RegularRules);
     if (rule->isCharsetRule() || rule->isImportRule())
@@ -448,6 +449,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumeKeyframesRule(false, prelude, block);
     case CSSAtRulePage:
         return consumePageRule(prelude, block);
+    case CSSAtRuleCounterStyle:
+        return consumeCounterStyleRule(prelude, block);
     default:
         return nullptr; // Parse error, unrecognised at-rule with block
     }
@@ -652,6 +655,27 @@ RefPtr<StyleRulePage> CSSParserImpl::consumePageRule(CSSParserTokenRange prelude
     return StyleRulePage::create(createStyleProperties(m_parsedProperties, m_context.mode), WTFMove(selectorList));
 }
 
+RefPtr<StyleRuleCounterStyle> CSSParserImpl::consumeCounterStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
+{
+    if (!m_context.counterStyleAtRulesEnabled)
+        return nullptr;
+
+    auto rangeCopy = prelude; // For inspector callbacks
+    auto name = CSSPropertyParserHelpers::consumeCounterStyleNameInPrelude(rangeCopy);
+    if (name.isNull())
+        return nullptr;
+
+    if (m_observerWrapper) {
+        m_observerWrapper->observer().startRuleHeader(StyleRuleType::CounterStyle, m_observerWrapper->startOffset(rangeCopy));
+        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(prelude));
+        m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
+        m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
+    }
+
+    consumeDeclarationList(block, StyleRuleType::CounterStyle);
+    return StyleRuleCounterStyle::create(name, createStyleProperties(m_parsedProperties, m_context.mode));
+}
+
 // FIXME-NEWPARSER: Support "apply"
 /*void CSSParserImpl::consumeApplyRule(CSSParserTokenRange prelude)
 {
@@ -728,7 +752,7 @@ void CSSParserImpl::consumeDeclarationList(CSSParserTokenRange range, StyleRuleT
 {
     ASSERT(m_parsedProperties.isEmpty());
 
-    bool useObserver = m_observerWrapper && (ruleType == StyleRuleType::Style || ruleType == StyleRuleType::Keyframe);
+    bool useObserver = m_observerWrapper && (ruleType == StyleRuleType::Style || ruleType == StyleRuleType::Keyframe || ruleType == StyleRuleType::CounterStyle);
     if (useObserver) {
         m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(range));
         m_observerWrapper->skipCommentsBefore(range, true);
@@ -810,7 +834,7 @@ void CSSParserImpl::consumeDeclaration(CSSParserTokenRange range, StyleRuleType 
         consumeCustomPropertyValue(range.makeSubRange(&range.peek(), declarationValueEnd), variableName, important);
     }
 
-    if (important && (ruleType == StyleRuleType::FontFace || ruleType == StyleRuleType::Keyframe))
+    if (important && (ruleType == StyleRuleType::FontFace || ruleType == StyleRuleType::Keyframe || ruleType == StyleRuleType::CounterStyle))
         return;
 
     if (propertyID != CSSPropertyInvalid)

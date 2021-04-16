@@ -670,11 +670,12 @@ RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange& range, CSSValue
 // FIXME-NEWPARSER: Eventually we'd like this to use CSSCustomIdentValue, but we need
 // to do other plumbing work first (like changing Pair to CSSValuePair and make it not
 // use only primitive values).
-RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range)
+RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool shouldLowercase)
 {
     if (range.peek().type() != IdentToken || isCSSWideKeyword(range.peek().id()))
         return nullptr;
-    return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().value().toString(), CSSUnitType::CSS_STRING);
+    auto identifier = range.consumeIncludingWhitespace().value();
+    return CSSValuePool::singleton().createValue(shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString(), CSSUnitType::CSS_STRING);
 }
 
 RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange& range)
@@ -2928,6 +2929,43 @@ RefPtr<CSSValue> consumeImage(CSSParserTokenRange& range, const CSSParserContext
     }
 
     return nullptr;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#predefined-counters
+bool isPredefinedCounterStyle(CSSValueID valueID)
+{
+    return valueID >= CSSValueDisc && valueID <= CSSValueKatakanaIroha;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#typedef-counter-style-name
+RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange& range)
+{
+    // <counter-style-name> is a <custom-ident> that is not an ASCII case-insensitive match for "none".
+    auto valueID = range.peek().id();
+    if (valueID == CSSValueNone)
+        return nullptr;
+    // If the value is an ASCII case-insensitive match for any of the predefined counter styles, lowercase it.
+    if (auto name = consumeCustomIdent(range, isPredefinedCounterStyle(valueID)))
+        return name;
+    return nullptr;
+}
+
+// https://www.w3.org/TR/css-counter-styles-3/#typedef-counter-style-name
+AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude)
+{
+    auto nameToken = prelude.consumeIncludingWhitespace();
+    if (!prelude.atEnd())
+        return AtomString();
+    // Ensure this token is a valid <custom-ident>.
+    if (nameToken.type() != IdentToken || isCSSWideKeyword(nameToken.id()))
+        return AtomString();
+    // In the context of the prelude of an @counter-style rule, a <counter-style-name> must not be an ASCII
+    // case-insensitive match for "decimal" or "disc". No <counter-style-name>, prelude or not, may be an ASCII
+    // case-insensitive match for "none".
+    if (identMatches<CSSValueDecimal, CSSValueDisc, CSSValueNone>(nameToken.id()))
+        return AtomString();
+    auto name = nameToken.value();
+    return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercase() : name.toString();
 }
 
 Optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange& range)

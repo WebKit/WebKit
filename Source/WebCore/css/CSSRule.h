@@ -36,6 +36,7 @@ class CSSRule : public RefCounted<CSSRule> {
 public:
     virtual ~CSSRule() = default;
 
+    // WebIDL enum
     enum Type {
         UNKNOWN_RULE,
         STYLE_RULE,
@@ -48,7 +49,8 @@ public:
         KEYFRAME_RULE,
         MARGIN_RULE,
         NAMESPACE_RULE,
-        SUPPORTS_RULE = 12,
+        COUNTER_STYLE_RULE,
+        SUPPORTS_RULE
     };
 
     enum DeprecatedType {

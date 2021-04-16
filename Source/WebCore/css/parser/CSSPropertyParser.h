@@ -56,6 +56,8 @@ public:
     static RefPtr<CSSCustomPropertyValue> parseTypedCustomPropertyValue(const String& name, const String& syntax, const CSSParserTokenRange&, const Style::BuilderState&, const CSSParserContext&);
     static void collectParsedCustomPropertyValueDependencies(const String& syntax, bool isRoot, HashSet<CSSPropertyID>& dependencies, const CSSParserTokenRange&, const CSSParserContext&);
 
+    static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, CSSParserTokenRange&, const CSSParserContext&);
+
 private:
     CSSPropertyParser(const CSSParserTokenRange&, const CSSParserContext&, Vector<CSSProperty, 256>*, bool consumeWhitespace = true);
 
@@ -71,6 +73,7 @@ private:
 
     bool parseViewportDescriptor(CSSPropertyID propId, bool important);
     bool parseFontFaceDescriptor(CSSPropertyID);
+    bool parseCounterStyleDescriptor(CSSPropertyID, const CSSParserContext&);
 
     void addProperty(CSSPropertyID, CSSPropertyID, Ref<CSSValue>&&, bool important, bool implicit = false);
     void addExpandedPropertyForValue(CSSPropertyID propId, Ref<CSSValue>&&, bool);

@@ -234,6 +234,8 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
 
     if (ruleType == StyleRuleType::FontFace)
         parseSuccess = parser.parseFontFaceDescriptor(propertyID);
+    else if (ruleType == StyleRuleType::CounterStyle)
+        parseSuccess = parser.parseCounterStyleDescriptor(propertyID, context);
     else
         parseSuccess = parser.parseValueStart(propertyID, important);
 
@@ -2242,7 +2244,7 @@ static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, bool cou
     RefPtr<CSSPrimitiveValue> listStyle;
     if (consumeCommaIncludingWhitespace(args)) {
         CSSValueID id = args.peek().id();
-        if ((id != CSSValueNone && (id < CSSValueDisc || id > CSSValueKatakanaIroha)))
+        if ((id != CSSValueNone && !isPredefinedCounterStyle(id)))
             return nullptr;
         listStyle = consumeIdent(args);
     } else
@@ -4432,6 +4434,27 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
     }
 
     return nullptr;
+}
+
+RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID propId, CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (!context.counterStyleAtRulesEnabled)
+        return nullptr;
+    // FIXME: Implement this function when we can parse @counter-style descriptors.
+    UNUSED_PARAM(propId);
+    UNUSED_PARAM(range);
+    UNUSED_PARAM(context);
+    return nullptr;
+}
+
+bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID propId, const CSSParserContext& context)
+{
+    auto parsedValue = parseCounterStyleDescriptor(propId, m_range, context);
+    if (!parsedValue || !m_range.atEnd())
+        return false;
+
+    addProperty(propId, CSSPropertyInvalid, *parsedValue, false);
+    return true;
 }
 
 bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)

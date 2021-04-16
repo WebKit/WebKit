@@ -56,6 +56,8 @@ CSSAtRuleID cssAtRuleID(StringView name)
         return CSSAtRuleWebkitKeyframes;
     if (equalIgnoringASCIICase(name, "apply"))
         return CSSAtRuleApply;
+    if (equalIgnoringASCIICase(name, "counter-style"))
+        return CSSAtRuleCounterStyle;
     return CSSAtRuleInvalid;
 }
 

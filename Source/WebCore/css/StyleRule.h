@@ -47,6 +47,7 @@ public:
     StyleRuleType type() const { return static_cast<StyleRuleType>(m_type); }
     
     bool isCharsetRule() const { return type() == StyleRuleType::Charset; }
+    bool isCounterStyleRule() const { return type() == StyleRuleType::CounterStyle; }
     bool isFontFaceRule() const { return type() == StyleRuleType::FontFace; }
     bool isKeyframesRule() const { return type() == StyleRuleType::Keyframes; }
     bool isKeyframeRule() const { return type() == StyleRuleType::Keyframe; }

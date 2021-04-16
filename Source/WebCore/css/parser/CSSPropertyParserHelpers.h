@@ -106,7 +106,7 @@ template<CSSValueID... allowedIdents> Optional<CSSValueID> consumeIdentRaw(CSSPa
 template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange&);
 template<CSSValueID... allowedIdents> RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange&, CSSValuePool&);
 
-RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange&, bool shouldLowercase = false);
 RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange&);
 StringView consumeUrlAsStringView(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeUrl(CSSParserTokenRange&);
@@ -164,6 +164,10 @@ struct FontRaw {
     Optional<LineHeightRaw> lineHeight;
     Vector<FontFamilyRaw> family;
 };
+
+bool isPredefinedCounterStyle(CSSValueID);
+RefPtr<CSSPrimitiveValue> consumeCounterStyleName(CSSParserTokenRange&);
+AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange&);
 
 Optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange&);
 Optional<CSSValueID> consumeFontWeightKeywordValueRaw(CSSParserTokenRange&);

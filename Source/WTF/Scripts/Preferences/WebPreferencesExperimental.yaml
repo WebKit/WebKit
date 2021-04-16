@@ -160,6 +160,30 @@ CSSContainmentEnabled:
     WebCore:
       default: false
 
+CSSCounterStyleAtRuleImageSymbolsEnabled:
+  type: bool
+  humanReadableName: "CSS @counter-style <image> symbols"
+  humanReadableDescription: "Enable support for <image> symbols in CSS @counter-style rules"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+CSSCounterStyleAtRulesEnabled:
+  type: bool
+  humanReadableName: "CSS @counter-style"
+  humanReadableDescription: "Enable support for CSS @counter-style rules"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
   humanReadableName: "CSS Custom Properties and Values API"

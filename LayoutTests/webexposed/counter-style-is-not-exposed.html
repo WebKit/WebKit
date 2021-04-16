@@ -1,0 +1,18 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ CSSCounterStyleAtRulesEnabled=false ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+    @counter-style foo {
+        system: cyclic;
+        prefix: "(";
+        suffix: ")";
+        symbols: A B C D E;
+    }
+</style>
+<script>
+    test(function() {
+        const cssRules = document.styleSheets[0].cssRules
+        assert_equals(cssRules.length, 0, '@counter-style should not be exposed with the runtime feature flag disabled.')
+        assert_equals(window.CSSRule.COUNTER_STYLE_RULE, undefined, 'COUNTER_STYLE_RULE constant should not be exposed with the runtime feature flag disabled.');
+    }, '@counter-style is not exposed')
+</script>
