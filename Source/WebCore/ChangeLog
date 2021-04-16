@@ -1,5 +1,13 @@
 2021-04-16  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix GTK's build after Antoine's r276141.
+
+        * platform/graphics/nicosia/NicosiaAnimation.cpp:
+        (Nicosia::blendFunc):
+        (Nicosia::applyTransformAnimation):
+
+2021-04-16  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed build fix after Antoine's r276141.
 
         * animation/CSSPropertyAnimation.cpp:
