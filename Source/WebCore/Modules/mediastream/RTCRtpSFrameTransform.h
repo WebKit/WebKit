@@ -59,6 +59,7 @@ public:
     void initializeBackendForSender(RTCRtpTransformBackend&);
     void willClearBackend(RTCRtpTransformBackend&);
 
+    WEBCORE_EXPORT void setCounterForTesting(uint64_t);
     WEBCORE_EXPORT uint64_t counterForTesting() const;
     WEBCORE_EXPORT uint64_t keyIdForTesting() const;
 

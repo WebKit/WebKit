@@ -1576,6 +1576,12 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
 #endif
 }
 
+void Internals::setSFrameCounter(RTCRtpSFrameTransform& transform, const String& counter)
+{
+    if (auto value = StringView(counter).toUInt64Strict())
+        transform.setCounterForTesting(*value);
+}
+
 uint64_t Internals::sframeCounter(const RTCRtpSFrameTransform& transform)
 {
     return transform.counterForTesting();

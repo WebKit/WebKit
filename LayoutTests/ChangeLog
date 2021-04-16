@@ -1,5 +1,68 @@
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r275656. rdar://problem/76727574
+
+    Update SFrame implementation to latest version
+    https://bugs.webkit.org/show_bug.cgi?id=224276
+    
+    Reviewed by Eric Carlson.
+    
+    Source/WebCore:
+    
+    Update implementation according to latest draft at https://github.com/eomara/sframe/blob/master/draft-omara-sframe.md.
+    In particular, we derive keys with new algorithm and the generation of the signature by including header and data length as well as nonce.
+    
+    Test: webrtc/sframe-test-vectors.html
+    
+    * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+    (WebCore::RTCRtpSFrameTransform::setCounterForTesting):
+    * Modules/mediastream/RTCRtpSFrameTransform.h:
+    * Modules/mediastream/RTCRtpSFrameTransformer.cpp:
+    (WebCore::computeIV):
+    (WebCore::RTCRtpSFrameTransformer::updateEncryptionKey):
+    (WebCore::RTCRtpSFrameTransformer::decryptFrame):
+    (WebCore::RTCRtpSFrameTransformer::encryptFrame):
+    (WebCore::RTCRtpSFrameTransformer::computeEncryptedDataSignature):
+    * Modules/mediastream/RTCRtpSFrameTransformer.h:
+    * Modules/mediastream/RTCRtpSFrameTransformerCocoa.cpp:
+    (WebCore::RTCRtpSFrameTransformer::computeSaltKey):
+    (WebCore::createBaseSFrameKey):
+    (WebCore::RTCRtpSFrameTransformer::computeAuthenticationKey):
+    (WebCore::RTCRtpSFrameTransformer::computeEncryptionKey):
+    (WebCore::encodeBigEndian):
+    (WebCore::RTCRtpSFrameTransformer::computeEncryptedDataSignature):
+    * testing/Internals.cpp:
+    (WebCore::Internals::setSFrameCounter):
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    Tools:
+    
+    Update tests according new way of deriving keys and generating the signature.
+    
+    * TestWebKitAPI/Tests/WebCore/RTCRtpSFrameTransformerTests.cpp:
+    (TestWebKitAPI::TEST):
+    
+    LayoutTests:
+    
+    * webrtc/sframe-test-vectors-expected.txt: Added.
+    * webrtc/sframe-test-vectors.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275656 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-08  Youenn Fablet  <youenn@apple.com>
+
+            Update SFrame implementation to latest version
+            https://bugs.webkit.org/show_bug.cgi?id=224276
+
+            Reviewed by Eric Carlson.
+
+            * webrtc/sframe-test-vectors-expected.txt: Added.
+            * webrtc/sframe-test-vectors.html: Added.
+
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r275277. rdar://problem/76375504
 
     Animated pseudo element style resolved against wrong parent style

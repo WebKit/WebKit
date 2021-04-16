@@ -72,7 +72,7 @@ private:
 
     ExceptionOr<Vector<uint8_t>> encryptData(const uint8_t*, size_t, const Vector<uint8_t>& iv, const Vector<uint8_t>& key);
     ExceptionOr<Vector<uint8_t>> decryptData(const uint8_t*, size_t, const Vector<uint8_t>& iv, const Vector<uint8_t>& key);
-    Vector<uint8_t> computeEncryptedDataSignature(const uint8_t*, size_t, const Vector<uint8_t>& key);
+    Vector<uint8_t> computeEncryptedDataSignature(const Vector<uint8_t>& nonce, const uint8_t* header, size_t headerSize, const uint8_t* data, size_t dataSize, const Vector<uint8_t>& key);
     void updateAuthenticationSize();
 
     Lock m_keyLock;
