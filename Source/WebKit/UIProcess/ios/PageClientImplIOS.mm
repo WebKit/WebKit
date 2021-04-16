@@ -475,6 +475,11 @@ void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& lay
 {
 }
 
+void PageClientImpl::makeViewBlank(bool makeBlank)
+{
+    [m_contentView layer].opacity = makeBlank ? 0 : 1;
+}
+
 void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(Variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
     if (auto webView = m_webView.get())
