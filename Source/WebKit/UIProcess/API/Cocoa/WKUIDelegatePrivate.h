@@ -216,13 +216,6 @@ struct UIEdgeInsets;
 - (void)_webView:(WKWebView *)webView didDismissFocusedElementViewController:(UIViewController *)controller WK_API_AVAILABLE(ios(12.0));
 - (BOOL)_webView:(WKWebView *)webView gestureRecognizerCouldPinch:(UIGestureRecognizer *)gestureRecognizer WK_API_AVAILABLE(ios(13.0));
 
-/*! @abstract Allows your app to determine whether or not the given security origin should have access to the device's orientation and motion.
- @param securityOrigin The security origin which requested access to the device's orientation and motion.
- @param frame The frame that initiated the request.
- @param decisionHandler The decision handler to call once the app has made its decision.
- */
-- (void)_webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
 - (BOOL)_webViewCanBecomeFocused:(WKWebView *)webView WK_API_AVAILABLE(ios(WK_IOS_TBA));
 
 #else // !TARGET_OS_IPHONE

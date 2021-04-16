@@ -1,3 +1,23 @@
+2021-04-16  Youenn Fablet  <youenn@apple.com>
+
+        Promote WKWebView device orientation permission delegate to API
+        https://bugs.webkit.org/show_bug.cgi?id=223919
+
+        Reviewed by Alex Christensen.
+
+        Move corresponding SPI to API.
+        Introduce WK_API_UNAVAILABLE to make that API not available in certain OSes.
+
+        Covered by existing tests.
+
+        * Scripts/postprocess-header-rule:
+        * Shared/API/Cocoa/WKFoundation.h:
+        * UIProcess/API/Cocoa/WKUIDelegate.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess):
+
 2021-04-15  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r276107.

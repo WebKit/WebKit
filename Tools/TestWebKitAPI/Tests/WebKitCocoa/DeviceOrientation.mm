@@ -76,7 +76,7 @@ Function<bool()> _decisionHandler;
     return self;
 }
 
-- (void)_webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
+- (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
 {
     decisionHandler(_decisionHandler() ? WKPermissionDecisionGrant : WKPermissionDecisionDeny);
     askedClientForPermission = true;
@@ -386,7 +386,7 @@ Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
     _validationHandler = WTFMove(validationHandler);
 }
 
-- (void)_webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
+- (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
     if (_validationHandler)
         _validationHandler(origin, frame);
 
