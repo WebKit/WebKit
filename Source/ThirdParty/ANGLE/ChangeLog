@@ -1,5 +1,18 @@
 2021-04-15  Alex Christensen  <achristensen@webkit.org>
 
+        Use kIOMainPortDefault where available
+        https://bugs.webkit.org/show_bug.cgi?id=224632
+
+        Reviewed by Alexey Proskuryakov.
+
+        In ANGLE we don't include WTF headers, so we can't use the HAVE macro like we do elsewhere in WebKit,
+        but this is pretty close.
+
+        * src/gpu_info_util/SystemInfo_macos.mm:
+        (angle::GetVendorIDFromMetalDeviceRegistryID):
+
+2021-04-15  Alex Christensen  <achristensen@webkit.org>
+
         Add deprecation macros
         https://bugs.webkit.org/show_bug.cgi?id=224624
 
