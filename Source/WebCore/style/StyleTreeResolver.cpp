@@ -221,7 +221,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
         m_document.setHasNodesWithNonFinalStyle();
     }
 
-    auto update = createAnimatedElementUpdate(WTFMove(newStyle), styleable, parent().change);
+    auto update = createAnimatedElementUpdate(WTFMove(newStyle), styleable, parent().change, parent().style, parentBoxStyle());
     auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
     if (&element == m_document.documentElement()) {
@@ -277,8 +277,11 @@ Optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const
         return { };
     if (!elementUpdate.style->hasPseudoStyle(pseudoId))
         return { };
-
-    auto pseudoStyle = scope().resolver.pseudoStyleForElement(element, { pseudoId }, *elementUpdate.style, parentBoxStyleForPseudo(elementUpdate), &scope().selectorFilter);
+    
+    auto& parentStyle = *elementUpdate.style;
+    auto* parentBoxStyle = parentBoxStyleForPseudo(elementUpdate);
+    
+    auto pseudoStyle = scope().resolver.pseudoStyleForElement(element, { pseudoId }, parentStyle, parentBoxStyle, &scope().selectorFilter);
     if (!pseudoStyle)
         return { };
 
@@ -286,7 +289,7 @@ Optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const
     if (!pseudoElementRendererIsNeeded(pseudoStyle.get()) && !hasAnimations)
         return { };
 
-    return createAnimatedElementUpdate(WTFMove(pseudoStyle), { element, pseudoId }, elementUpdate.change);
+    return createAnimatedElementUpdate(WTFMove(pseudoStyle), { element, pseudoId }, elementUpdate.change, parentStyle, parentBoxStyle);
 }
 
 const RenderStyle* TreeResolver::parentBoxStyle() const
@@ -315,9 +318,10 @@ const RenderStyle* TreeResolver::parentBoxStyleForPseudo(const ElementUpdate& el
     }
 }
 
-ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, const Styleable& styleable, Change parentChange)
+ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, const Styleable& styleable, Change parentChange, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle)
 {
     auto& element = styleable.element;
+    auto& document = element.document();
     auto* oldStyle = element.renderOrDisplayContentsStyle(styleable.pseudoId);
 
     OptionSet<AnimationImpact> animationImpact;
@@ -325,18 +329,18 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     // First, we need to make sure that any new CSS animation occuring on this element has a matching WebAnimation
     // on the document timeline. Note that we get timeline() on the Document here because we need a timeline created
     // in case no Web Animations have been created through the JS API.
-    if (element.document().backForwardCacheState() == Document::NotInBackForwardCache && !element.document().renderView()->printing()) {
+    if (document.backForwardCacheState() == Document::NotInBackForwardCache && !document.renderView()->printing()) {
         if (oldStyle && (oldStyle->hasTransitions() || newStyle->hasTransitions()))
-            m_document.timeline().updateCSSTransitionsForStyleable(styleable, *oldStyle, *newStyle);
+            document.timeline().updateCSSTransitionsForStyleable(styleable, *oldStyle, *newStyle);
 
         // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
         // to use CSS Animations as defined in the previous style change event. As such, we update CSS Animations after CSS Transitions
         // such that when CSS Transitions are updated the CSS Animations data is the same as during the previous style change event.
         if ((oldStyle && oldStyle->hasAnimations()) || newStyle->hasAnimations()) {
             // FIXME: Remove this hack and pass the parent style via updateCSSAnimationsForStyleable.
-            scope().resolver.setParentElementStyleForKeyframes(&parent().style);
+            scope().resolver.setParentElementStyleForKeyframes(&parentStyle);
 
-            m_document.timeline().updateCSSAnimationsForStyleable(styleable, oldStyle, *newStyle);
+            document.timeline().updateCSSAnimationsForStyleable(styleable, oldStyle, *newStyle);
 
             scope().resolver.setParentElementStyleForKeyframes(nullptr);
         }
@@ -353,7 +357,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
         animationImpact = styleable.applyKeyframeEffects(*animatedStyle, *previousLastStyleChangeEventStyle);
         newStyle = WTFMove(animatedStyle);
 
-        Adjuster adjuster(m_document, parent().style, parentBoxStyle(), styleable.pseudoId == PseudoId::None ? &element : nullptr);
+        Adjuster adjuster(document, parentStyle, parentBoxStyle, styleable.pseudoId == PseudoId::None ? &element : nullptr);
         adjuster.adjustAnimatedStyle(*newStyle, animationImpact);
     } else
         styleable.setLastStyleChangeEventStyle(nullptr);
