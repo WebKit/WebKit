@@ -1,3 +1,20 @@
+2021-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Avoid converting HTML chars in _W3CTestConverter
+        https://bugs.webkit.org/show_bug.cgi?id=224658
+
+        Reviewed by Adrian Perez de Castro.
+
+        There has been a change in Python HTMLParser in version 3.5 that makes convert_charrefs to be True by default:
+        https://docs.python.org/3/library/html.parser.html
+
+        This is causing that we're modifying the tests that have HTML characters, which is something
+        we shouldn't change and was not happening in previous Python 3 versions, or Python 2.
+
+        * Scripts/webkitpy/w3c/test_converter.py:
+        (_W3CTestConverter.__init__): Set convert_charrefs to False.
+        * Scripts/webkitpy/w3c/test_converter_unittest.py: Update test to include HTML chars and check that they're not modified.
+
 2021-04-16  Youenn Fablet  <youenn@apple.com>
 
         Promote WKWebView device orientation permission delegate to API
