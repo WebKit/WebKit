@@ -1170,11 +1170,6 @@ void NetworkConnectionToWebProcess::setCORSDisablingPatterns(WebCore::PageIdenti
     networkProcess().setCORSDisablingPatterns(pageIdentifier, WTFMove(patterns));
 }
 
-void NetworkConnectionToWebProcess::addIDBConnection()
-{
-    m_networkProcess->webIDBServer(m_sessionID).addConnection(m_connection.get(), m_webProcessIdentifier);
-}
-
 } // namespace WebKit
 
 #undef NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION

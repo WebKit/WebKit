@@ -101,6 +101,4 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if PLATFORM(MAC)
     UpdateActivePages(String name, Vector<String> activePagesOrigins, audit_token_t auditToken)
 #endif
-
-    AddIDBConnection()
 }
