@@ -1,3 +1,13 @@
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
+        HashMapImpl::rehash() should use a version of jsMapHash that cannot throw.
+        https://bugs.webkit.org/show_bug.cgi?id=224610
+        rdar://76698910
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/suppress-TerminationException-in-HashMapImpl-rehash.js: Added.
+
 2021-04-14  Mark Lam  <mark.lam@apple.com>
 
         Add missing exception check in operationGetPrivateNameOptimize().

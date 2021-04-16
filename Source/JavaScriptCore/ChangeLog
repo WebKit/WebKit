@@ -1,3 +1,28 @@
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
+        HashMapImpl::rehash() should use a version of jsMapHash that cannot throw.
+        https://bugs.webkit.org/show_bug.cgi?id=224610
+        rdar://76698910
+
+        Reviewed by Yusuke Suzuki.
+
+        For context, HashMapImpl::rehash()'s rehash operation relies on jsMapHash().
+        jsMapHash() can be interrupted by a TerminationException, and as a result, may
+        not return the string hash we are expecting.  This in turn can lead to the
+        rehash operation hashing with wrong keys.
+
+        However, all the keys should have already been hashed.  Hence, rehash() should
+        never see an exception thrown there.  We can avoid this complication with the
+        TerminationException by simply calling an alternate version of jsMapHash() that
+        is guaranteed to never throw e.g. a jsMapHashForAlreadyHashedValue() function.
+
+        * runtime/ExceptionHelpers.h:
+        * runtime/HashMapImplInlines.h:
+        (JSC::jsMapHashImpl):
+        (JSC::jsMapHash):
+        (JSC::jsMapHashForAlreadyHashedValue):
+        (JSC::HashMapImpl<HashMapBucketType>::rehash):
+
 2021-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove CodeBlock::RareData::m_catchProfiles

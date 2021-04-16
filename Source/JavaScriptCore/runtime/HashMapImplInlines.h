@@ -84,14 +84,18 @@ ALWAYS_INLINE uint32_t jsMapHash(JSBigInt* bigInt)
     return bigInt->hash();
 }
 
-ALWAYS_INLINE uint32_t jsMapHash(JSGlobalObject* globalObject, VM& vm, JSValue value)
+template<ExceptionExpectation expection>
+ALWAYS_INLINE uint32_t jsMapHashImpl(JSGlobalObject* globalObject, VM& vm, JSValue value)
 {
     ASSERT_WITH_MESSAGE(normalizeMapKey(value) == value, "We expect normalized values flowing into this function.");
 
     if (value.isString()) {
         auto scope = DECLARE_THROW_SCOPE(vm);
         const String& wtfString = asString(value)->value(globalObject);
-        RETURN_IF_EXCEPTION(scope, UINT_MAX);
+        if constexpr (expection == ExceptionExpectation::CanThrow)
+            RETURN_IF_EXCEPTION(scope, UINT_MAX);
+        else
+            EXCEPTION_ASSERT(!scope.exception());
         return wtfString.impl()->hash();
     }
 
@@ -99,6 +103,16 @@ ALWAYS_INLINE uint32_t jsMapHash(JSGlobalObject* globalObject, VM& vm, JSValue v
         return jsMapHash(value.asHeapBigInt());
 
     return wangsInt64Hash(JSValue::encode(value));
+}
+
+ALWAYS_INLINE uint32_t jsMapHash(JSGlobalObject* globalObject, VM& vm, JSValue value)
+{
+    return jsMapHashImpl<ExceptionExpectation::CanThrow>(globalObject, vm, value);
+}
+
+ALWAYS_INLINE uint32_t jsMapHashForAlreadyHashedValue(JSGlobalObject* globalObject, VM& vm, JSValue value)
+{
+    return jsMapHashImpl<ExceptionExpectation::ShouldNotThrow>(globalObject, vm, value);
 }
 
 ALWAYS_INLINE Optional<uint32_t> concurrentJSMapHash(JSValue key)
@@ -416,7 +430,7 @@ void HashMapImpl<HashMapBucketType>::rehash(JSGlobalObject* globalObject)
     RELEASE_ASSERT(!(m_capacity & (m_capacity - 1)));
     HashMapBucketType** buffer = this->buffer();
     while (iter != end) {
-        uint32_t index = jsMapHash(globalObject, vm, iter->key()) & mask;
+        uint32_t index = jsMapHashForAlreadyHashedValue(globalObject, vm, iter->key()) & mask;
         EXCEPTION_ASSERT_WITH_MESSAGE(!scope.exception(), "All keys should already be hashed before, so this should not throw because it won't resolve ropes.");
         {
             HashMapBucketType* bucket = buffer[index];
