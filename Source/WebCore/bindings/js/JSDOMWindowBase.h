@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reseved.
+ *  Copyright (C) 2003-2021 Apple Inc. All rights reseved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -93,6 +93,7 @@ public:
 protected:
     JSDOMWindowBase(JSC::VM&, JSC::Structure*, RefPtr<DOMWindow>&&, JSWindowProxy*);
     void finishCreation(JSC::VM&, JSWindowProxy*);
+    void initStaticGlobals(JSC::VM&);
 
     Ref<JSC::WatchpointSet> m_windowCloseWatchpoints;
 

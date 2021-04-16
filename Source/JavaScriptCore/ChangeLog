@@ -1,3 +1,72 @@
+2021-04-15  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r275212. rdar://problem/76727522
+
+    Ensure that GlobalPropertyInfo is allocated on the stack.
+    https://bugs.webkit.org/show_bug.cgi?id=223911
+    rdar://75865742
+    
+    Reviewed by Yusuke Suzuki.
+    
+    Source/JavaScriptCore:
+    
+    We rely on GlobalPropertyInfo being allocated on the stack to allow its JSValue
+    value to be scanned by the GC.  Unfortunately, an ASAN compilation would choose
+    to allocate the GlobalPropertyInfo on a side buffer instead of directly on the
+    stack.  This prevents the GC from doing the needed scan.
+    
+    We'll fix this by suppressing ASAN on the functions that allocated GlobalPropertyInfo
+    arrays.  Also added an ASSERT in the GlobalPropertyInfo constructor to assert that
+    it is allocated on the stack.
+    
+    * Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py:
+    (BuiltinsInternalsWrapperImplementationGenerator.generate_initialize_method):
+    * runtime/JSGlobalObject.cpp:
+    (JSC::JSGlobalObject::initStaticGlobals):
+    (JSC::JSGlobalObject::init):
+    (JSC::JSGlobalObject::exposeDollarVM):
+    * runtime/JSGlobalObject.h:
+    (JSC::JSGlobalObject::GlobalPropertyInfo::GlobalPropertyInfo):
+    
+    Source/WebCore:
+    
+    * bindings/js/JSDOMGlobalObject.cpp:
+    (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+    * bindings/js/JSDOMWindowBase.cpp:
+    (WebCore::JSDOMWindowBase::finishCreation):
+    (WebCore::JSDOMWindowBase::initStaticGlobals):
+    * bindings/js/JSDOMWindowBase.h:
+    
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275212 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+            Ensure that GlobalPropertyInfo is allocated on the stack.
+            https://bugs.webkit.org/show_bug.cgi?id=223911
+            rdar://75865742
+
+            Reviewed by Yusuke Suzuki.
+
+            We rely on GlobalPropertyInfo being allocated on the stack to allow its JSValue
+            value to be scanned by the GC.  Unfortunately, an ASAN compilation would choose
+            to allocate the GlobalPropertyInfo on a side buffer instead of directly on the
+            stack.  This prevents the GC from doing the needed scan.
+
+            We'll fix this by suppressing ASAN on the functions that allocated GlobalPropertyInfo
+            arrays.  Also added an ASSERT in the GlobalPropertyInfo constructor to assert that
+            it is allocated on the stack.
+
+            * Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py:
+            (BuiltinsInternalsWrapperImplementationGenerator.generate_initialize_method):
+            * runtime/JSGlobalObject.cpp:
+            (JSC::JSGlobalObject::initStaticGlobals):
+            (JSC::JSGlobalObject::init):
+            (JSC::JSGlobalObject::exposeDollarVM):
+            * runtime/JSGlobalObject.h:
+            (JSC::JSGlobalObject::GlobalPropertyInfo::GlobalPropertyInfo):
+
 2021-04-08  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r274325. rdar://problem/76416354

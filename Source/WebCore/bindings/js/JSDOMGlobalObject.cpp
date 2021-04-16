@@ -163,7 +163,7 @@ JSC_DEFINE_HOST_FUNCTION(whenSignalAborted, (JSGlobalObject* globalObject, CallF
     return JSValue::encode(result ? JSValue(JSC::JSValue::JSTrue) : JSValue(JSC::JSValue::JSFalse));
 }
 
-void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
+SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
 {
     m_builtinInternalFunctions.initialize(*this);
 
