@@ -166,8 +166,8 @@ void AVAudioSessionCaptureDeviceManager::refreshAudioCaptureDevices()
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
     dispatch_sync(m_dispatchQueue, makeBlockPtr([&] {
         newAudioDevices = retrieveAudioSessionCaptureDevices();
-    });
-    setAudioCaptureDevices(WTFMove(newAudioDevices).isolatedCopy());
+    }).get());
+    setAudioCaptureDevices(WTFMove(newAudioDevices));
 }
 
 void AVAudioSessionCaptureDeviceManager::getCaptureDevices(CompletionHandler<void(Vector<CaptureDevice>&&)>&& completion)
@@ -182,7 +182,7 @@ void AVAudioSessionCaptureDeviceManager::getCaptureDevices(CompletionHandler<voi
 
     dispatch_async(m_dispatchQueue, makeBlockPtr([this, completion = WTFMove(completion)] () mutable {
         auto newAudioDevices = retrieveAudioSessionCaptureDevices();
-        callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([this, completion = WTFMove(completion), newAudioDevices = WTFMove(newAudioDevices).isolatedCopy()] () mutable {
+        callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([this, completion = WTFMove(completion), newAudioDevices = WTFMove(newAudioDevices)] () mutable {
             setAudioCaptureDevices(WTFMove(newAudioDevices));
             completion(copyToVector(*m_devices));
         }).get());
