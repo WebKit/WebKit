@@ -1,4 +1,4 @@
-This test checks that :focus-visible always matches on <input> elements which take text input, regardless of focus mechanism.
+This test checks that :focus-visible always matches on  elements which take text input, regardless of focus mechanism.
 If the user-agent does not claim to support the :focus-visible pseudo-class then SKIP this test.
 Click each form element below to focus it.
 If the element has a red background, then the test result is FAILURE. If the element has a green outline, then the test result is SUCCESS.

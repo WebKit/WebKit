@@ -2290,3 +2290,17 @@ webkit.org/b/224297 media/modern-media-controls/seek-forward-support/seek-forwar
 webkit.org/b/224396 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Pass Timeout ]
 
 webkit.org/b/224631 [ BigSur ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-001.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-002.tentative.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-003.tentative.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-004.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-005.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-006.tentative.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-007.tentative.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-012.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-013.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-014.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-015.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-016.tentative.html [ Failure ]
+webkit.org/b/224598 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-017.tentative.html [ Failure ]

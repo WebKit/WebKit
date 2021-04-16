@@ -5,5 +5,5 @@ If the element has a red background, then the test result is FAILURE. If the ele
 
 Focus me
 
-PASS Focus should always match :focus-visible on content editable divs
+FAIL Focus should always match :focus-visible on content editable divs undefined is not an object (evaluating 'actions_promise.then')
 

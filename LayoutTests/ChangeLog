@@ -1,3 +1,15 @@
+2021-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224601
+
+        Reviewed by Darin Adler.
+
+        Mark failures. They'll be gone once bug #224598 is fixed.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-04-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Reintroduce test failure imported/w3c/web-platform-tests/service-workers/service-worker/next-hop-protocol.https.html.

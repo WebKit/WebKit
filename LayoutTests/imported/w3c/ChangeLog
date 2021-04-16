@@ -1,3 +1,72 @@
+2021-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224601
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/selectors/focus-visible-001.html:
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-002.html:
+        * web-platform-tests/css/selectors/focus-visible-003-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-003.html:
+        * web-platform-tests/css/selectors/focus-visible-004-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-004.html:
+        * web-platform-tests/css/selectors/focus-visible-005.html:
+        * web-platform-tests/css/selectors/focus-visible-006-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-006.html:
+        * web-platform-tests/css/selectors/focus-visible-008.html:
+        * web-platform-tests/css/selectors/focus-visible-009.html:
+        * web-platform-tests/css/selectors/focus-visible-010.html:
+        * web-platform-tests/css/selectors/focus-visible-011.html:
+        * web-platform-tests/css/selectors/focus-visible-012.html:
+        * web-platform-tests/css/selectors/focus-visible-013.html:
+        * web-platform-tests/css/selectors/focus-visible-014.html:
+        * web-platform-tests/css/selectors/focus-visible-015.html:
+        * web-platform-tests/css/selectors/focus-visible-016.html:
+        * web-platform-tests/css/selectors/focus-visible-017.html:
+        * web-platform-tests/css/selectors/focus-visible-018.html:
+        * web-platform-tests/css/selectors/focus-visible-019.html:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-001-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-001.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-002.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-002.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-003.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-003.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-004-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-004.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-005-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-006.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-006.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-007.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-007.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-008-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-008.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-009-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-009.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-010-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-010.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-011-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-011.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-012-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-012.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-013-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-013.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-014-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-014.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-015-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-015.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-016.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-016.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-017.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-017.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-018-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-018.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-019-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-019.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
 2021-04-15  Antoine Quint  <graouts@webkit.org>
 
         calc() should not contain 0 values other than percentages
