@@ -1,3 +1,22 @@
+2021-04-17  Zalan Bujtas  <zalan@apple.com>
+
+        [Cleanup] inlineLogicalWidth should take const RenderObject&
+        https://bugs.webkit.org/show_bug.cgi?id=224700
+
+        Reviewed by Antti Koivisto.
+
+        1. inlineLogicalWidth takes const RenderObject& now.
+        2. Both previousInFlowSibling and shouldAddBorderPaddingMargin moved to inlineLogicalWidth
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::inlineLogicalWidth):
+        (WebCore::BreakingContext::handleOutOfFlowPositioned):
+        (WebCore::BreakingContext::handleEmptyInline):
+        (WebCore::BreakingContext::handleReplaced):
+        (WebCore::BreakingContext::handleText):
+        (WebCore::shouldAddBorderPaddingMargin): Deleted.
+        (WebCore::previousInFlowSibling): Deleted.
+
 2021-04-17  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK LTS build fix after r276197

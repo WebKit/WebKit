@@ -317,40 +317,38 @@ inline LayoutUnit borderPaddingMarginEnd(const RenderInline& child)
     return child.marginEnd() + child.paddingEnd() + child.borderEnd();
 }
 
-inline bool shouldAddBorderPaddingMargin(RenderObject* child)
+inline LayoutUnit inlineLogicalWidth(const RenderObject& renderer, bool checkStartEdge = true, bool checkEndEdge = true)
 {
-    if (!child)
-        return true;
-    // When deciding whether we're at the edge of an inline, adjacent collapsed whitespace is the same as no sibling at all.
-    if (is<RenderText>(*child) && !downcast<RenderText>(*child).text().length())
-        return true;
+    auto previousInFlowSibling = [] (const auto& renderer) {
+        auto* previousSibling = renderer.previousSibling();
+        for (; previousSibling && previousSibling->isOutOfFlowPositioned(); previousSibling = previousSibling->previousSibling()) { }
+        return previousSibling;
+    };
+
+    auto shouldAddBorderPaddingMargin = [] (const auto& renderer) {
+        // When deciding whether we're at the edge of an inline, adjacent collapsed whitespace is the same as no sibling at all.
+        if (is<RenderText>(renderer) && !downcast<RenderText>(renderer).text().length())
+            return true;
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
-    if (is<RenderLineBreak>(*child) && child->parent()->style().boxDecorationBreak() == BoxDecorationBreak::Clone)
-        return true;
+        if (is<RenderLineBreak>(renderer) && renderer.parent()->style().boxDecorationBreak() == BoxDecorationBreak::Clone)
+            return true;
 #endif
-    return false;
-}
+        return false;
+    };
 
-inline RenderObject* previousInFlowSibling(RenderObject* child)
-{
-    do {
-        child = child->previousSibling();
-    } while (child && child->isOutOfFlowPositioned());
-    return child;
-}
-
-inline LayoutUnit inlineLogicalWidth(RenderObject* child, bool checkStartEdge = true, bool checkEndEdge = true)
-{
     unsigned lineDepth = 1;
-    LayoutUnit extraWidth;
-    RenderElement* parent = child->parent();
+    auto extraWidth = LayoutUnit { };
+    auto* parent = renderer.parent();
+    auto* child = &renderer;
     while (is<RenderInline>(*parent) && lineDepth++ < cMaxLineDepth) {
         const auto& parentAsRenderInline = downcast<RenderInline>(*parent);
         if (!isEmptyInline(parentAsRenderInline)) {
-            checkStartEdge = checkStartEdge && shouldAddBorderPaddingMargin(previousInFlowSibling(child));
+            auto* previousSibling = previousInFlowSibling(*child);
+            checkStartEdge = checkStartEdge && (!previousSibling || shouldAddBorderPaddingMargin(*previousSibling));
             if (checkStartEdge)
                 extraWidth += borderPaddingMarginStart(parentAsRenderInline);
-            checkEndEdge = checkEndEdge && shouldAddBorderPaddingMargin(child->nextSibling());
+            auto* nextSibling = child->nextSibling();
+            checkEndEdge = checkEndEdge && (!nextSibling || shouldAddBorderPaddingMargin(*nextSibling));
             if (checkEndEdge)
                 extraWidth += borderPaddingMarginEnd(parentAsRenderInline);
             if (!checkStartEdge && !checkEndEdge)
@@ -358,6 +356,7 @@ inline LayoutUnit inlineLogicalWidth(RenderObject* child, bool checkStartEdge = 
         }
         child = parent;
         parent = child->parent();
+        ASSERT(parent);
     }
     return extraWidth;
 }
@@ -383,7 +382,7 @@ inline void BreakingContext::handleOutOfFlowPositioned(Vector<RenderBox*>& posit
     } else
         positionedObjects.append(&box);
 
-    m_width.addUncommittedWidth(inlineLogicalWidth(&box));
+    m_width.addUncommittedWidth(inlineLogicalWidth(box));
     // Reset prior line break context characters.
     m_renderTextInfo.lineBreakIterator.resetPriorContext();
 }
@@ -458,7 +457,7 @@ inline void BreakingContext::handleEmptyInline()
             m_trailingObjects.appendBoxIfNeeded(flowBox);
     }
     
-    float inlineWidth = inlineLogicalWidth(m_current.renderer()) + borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox);
+    float inlineWidth = inlineLogicalWidth(*m_current.renderer()) + borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox);
     m_width.addUncommittedWidth(inlineWidth);
     if (m_hangsAtEnd && inlineWidth)
         m_hangsAtEnd = false;
@@ -492,7 +491,7 @@ inline void BreakingContext::handleReplaced()
 
     // Optimize for a common case. If we can't find whitespace after the list
     // item, then this is all moot.
-    LayoutUnit replacedLogicalWidth = m_block.logicalWidthForChild(replacedBox) + m_block.marginStartForChild(replacedBox) + m_block.marginEndForChild(replacedBox) + inlineLogicalWidth(&replacedBox);
+    LayoutUnit replacedLogicalWidth = m_block.logicalWidthForChild(replacedBox) + m_block.marginStartForChild(replacedBox) + m_block.marginEndForChild(replacedBox) + inlineLogicalWidth(replacedBox);
     if (is<RenderListMarker>(replacedBox)) {
         if (m_blockStyle.collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(m_block, &replacedBox, m_lineWhitespaceCollapsingState)) {
             // Like with inline flows, we start ignoring spaces to make sure that any
@@ -703,7 +702,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     float lastSpaceWordSpacing = 0;
     float wordSpacingForWordMeasurement = 0;
 
-    float wrapWidthOffset = m_width.uncommittedWidth() + inlineLogicalWidth(m_current.renderer(), !m_appliedStartWidth, true);
+    float wrapWidthOffset = m_width.uncommittedWidth() + inlineLogicalWidth(*m_current.renderer(), !m_appliedStartWidth, true);
     float wrapW = wrapWidthOffset;
     float charWidth = 0;
     bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == NBSPMode::Space;
@@ -759,12 +758,12 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             canBreakMidWord = breakAll;
         }
 
-        if (canHangPunctuationAtStart && m_width.isFirstLine() && !m_width.committedWidth() && !wrapW && !inlineLogicalWidth(m_current.renderer(), true, false)) {
+        if (canHangPunctuationAtStart && m_width.isFirstLine() && !m_width.committedWidth() && !wrapW && !inlineLogicalWidth(*m_current.renderer(), true, false)) {
             m_width.addUncommittedWidth(-renderer.hangablePunctuationStartWidth(m_current.offset()));
             canHangPunctuationAtStart = false;
         }
         
-        if (canHangPunctuationAtEnd && !m_nextObject && (int)m_current.offset() == endPunctuationIndex && !inlineLogicalWidth(m_current.renderer(), false, true)) {
+        if (canHangPunctuationAtEnd && !m_nextObject && (int)m_current.offset() == endPunctuationIndex && !inlineLogicalWidth(*m_current.renderer(), false, true)) {
             m_width.addUncommittedWidth(-renderer.hangablePunctuationEndWidth(endPunctuationIndex));
             canHangPunctuationAtEnd = false;
         }
@@ -797,7 +796,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             // We need to see if a measurement that excludes the stop would fit. If so, then we should hang
             // the stop/comma at the end. First measure including the comma.
             m_hangsAtEnd = false;
-            float inlineStartWidth = !m_appliedStartWidth ? inlineLogicalWidth(m_current.renderer(), true, false) : 0_lu;
+            float inlineStartWidth = !m_appliedStartWidth ? inlineLogicalWidth(*m_current.renderer(), true, false) : 0_lu;
             float widthIncludingComma = computeAdditionalBetweenWordsWidth(renderer, textLayout, c, wordTrailingSpace, fallbackFonts, wordMeasurements, font, isFixedPitch, lastSpace, lastSpaceWordSpacing, wordSpacingForWordMeasurement, m_current.offset() + 1) + inlineStartWidth;
             m_width.addUncommittedWidth(widthIncludingComma);
             if (!m_width.fitsOnLine()) {
@@ -837,7 +836,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 m_width.setTrailingWhitespaceWidth(additionalTempWidth);
 
             if (!m_appliedStartWidth) {
-                float inlineStartWidth = inlineLogicalWidth(m_current.renderer(), true, false);
+                float inlineStartWidth = inlineLogicalWidth(*m_current.renderer(), true, false);
                 m_width.addUncommittedWidth(inlineStartWidth);
                 m_appliedStartWidth = true;
                 if (m_hangsAtEnd && inlineStartWidth)
@@ -1050,7 +1049,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     wordMeasurement.width = m_ignoringSpaces ? 0 : additionalTempWidth + wordSpacingForWordMeasurement;
     additionalTempWidth += lastSpaceWordSpacing;
 
-    float inlineLogicalTempWidth = inlineLogicalWidth(m_current.renderer(), !m_appliedStartWidth, m_includeEndWidth);
+    float inlineLogicalTempWidth = inlineLogicalWidth(*m_current.renderer(), !m_appliedStartWidth, m_includeEndWidth);
     m_width.addUncommittedWidth(additionalTempWidth + inlineLogicalTempWidth);
     if (m_hangsAtEnd && inlineLogicalTempWidth)
         m_hangsAtEnd = false;
