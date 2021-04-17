@@ -1,3 +1,17 @@
+2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().
+        https://bugs.webkit.org/show_bug.cgi?id=197725
+
+        Reviewed by Darin Adler.
+
+        CSSStyleSheet.rules has been changed to alias CSSStyleSheet.cssRulesForBindings.  Now,
+        to access just the CSSRuleList, CSSStyleSheet.cssRules must be called.
+
+        * DOM/DOMCSSStyleSheet.mm:
+        (-[DOMCSSStyleSheet rules]):
+        Update this function to call IMPL->cssRules instead of IMPL->rules.
+
 2021-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy Ref/RefPtr in Editor

@@ -20,6 +20,7 @@
 
 #pragma once
 
+#include "CSSRuleList.h"
 #include "ExceptionOr.h"
 #include "StyleSheet.h"
 #include <memory>
@@ -33,7 +34,6 @@ namespace WebCore {
 class CSSImportRule;
 class CSSParser;
 class CSSRule;
-class CSSRuleList;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class Document;
@@ -62,14 +62,13 @@ public:
     bool disabled() const final { return m_isDisabled; }
     void setDisabled(bool) final;
 
-    ExceptionOr<Ref<CSSRuleList>> cssRulesForBindings();
-    ExceptionOr<Ref<CSSRuleList>> rulesForBindings();
-
     WEBCORE_EXPORT RefPtr<CSSRuleList> cssRules();
+    ExceptionOr<Ref<CSSRuleList>> cssRulesForBindings();
+    ExceptionOr<Ref<CSSRuleList>> rules() { return this->cssRulesForBindings(); }
+
     WEBCORE_EXPORT ExceptionOr<unsigned> insertRule(const String& rule, unsigned index);
     WEBCORE_EXPORT ExceptionOr<void> deleteRule(unsigned index);
     
-    WEBCORE_EXPORT RefPtr<CSSRuleList> rules();
     WEBCORE_EXPORT ExceptionOr<int> addRule(const String& selector, const String& style, Optional<unsigned> index);
     ExceptionOr<void> removeRule(unsigned index) { return deleteRule(index); }
     

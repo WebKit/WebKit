@@ -1,5 +1,29 @@
 2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
 
+        Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().
+        https://bugs.webkit.org/show_bug.cgi?id=197725
+
+        Reviewed by Darin Adler.
+
+        To match other browsers (Blink and Gecko) and pass a WPT, CSSStyleSheet.rules now aliases
+        CSSStyleSheet.cssRulesForBindings.  CSSStyleSheet.rulesForBindings is deleted.
+
+        Tested by
+        imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet.html.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::rulesForBindings): Deleted.
+        (WebCore::CSSStyleSheet::rules): Deleted.
+
+        * css/CSSStyleSheet.h:
+        Change `rules()` to be an inlined alias for `cssRulesForBindings()`.
+
+        * css/CSSStyleSheet.idl:
+        Remove [ImplementedAs=rulesForBindings], as this function has been
+        deleted.
+
+2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
         Media queries with max-width greater than 999999999px evaluate to false
         https://bugs.webkit.org/show_bug.cgi?id=224097
 

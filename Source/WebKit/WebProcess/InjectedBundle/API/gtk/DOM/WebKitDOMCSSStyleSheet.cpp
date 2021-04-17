@@ -212,7 +212,7 @@ WebKitDOMCSSRuleList* webkit_dom_css_style_sheet_get_rules(WebKitDOMCSSStyleShee
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_CSS_STYLE_SHEET(self), 0);
     WebCore::CSSStyleSheet* item = WebKit::core(self);
-    RefPtr<WebCore::CSSRuleList> gobjectResult = WTF::getPtr(item->rules());
+    RefPtr<WebCore::CSSRuleList> gobjectResult = WTF::getPtr(item->cssRules());
     return WebKit::kit(gobjectResult.get());
 }
 

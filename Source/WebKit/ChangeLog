@@ -1,3 +1,19 @@
+2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().
+        https://bugs.webkit.org/show_bug.cgi?id=197725
+
+        Reviewed by Darin Adler.
+
+        CSSStyleSheet.rules has been changed to alias CSSStyleSheet.cssRulesForBindings.  Now,
+        to access just the CSSRuleList, CSSStyleSheet.cssRules must be called.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMCSSStyleSheet.cpp:
+        (webkit_dom_css_style_sheet_get_rules):
+        Use CSSStyleSheet.cssRules instead of CSSStyleSheet.rules (deleted
+        with this patch) to get access to the CSSRuleList of this
+        stylesheet.
+
 2021-04-17  Sam Weinig  <weinig@apple.com>
 
         Move RuntimeEnabledFeatures to Settings (Part 1)

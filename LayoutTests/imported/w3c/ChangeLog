@@ -1,3 +1,15 @@
+2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().
+        https://bugs.webkit.org/show_bug.cgi?id=197725
+
+        Reviewed by Darin Adler.
+
+        To match other browsers and the below WPT, CSSStyleSheet.rules now aliases
+        CSSStyleSheet.cssRulesForBindings, meaning we pass two more tests.
+
+        * web-platform-tests/css/cssom/CSSStyleSheet-expected.txt:
+
 2021-04-17  Tim Nguyen  <ntim@apple.com>
 
         Don't omit conic gradient starting angle when serializing when starting angle is under 0
