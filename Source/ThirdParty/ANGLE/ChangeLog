@@ -1,3 +1,17 @@
+2021-04-16  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal-ANGLE: Shared memory texture tests failing in iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222685
+
+        Reviewed by Dean Jackson.
+
+        Simulator-only path drives filling textures via Blit encoders instead of mapped memory.
+        This workaround fixes dropped texture writes when using replaceRegion
+
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::InitializeTextureContents):
+
 2021-04-15  Alex Christensen  <achristensen@webkit.org>
 
         Use kIOMainPortDefault where available
