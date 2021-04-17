@@ -384,7 +384,7 @@ void WebPage::fontAtSelection(CompletionHandler<void(const FontInfo&, double, bo
         return;
     }
 
-    auto* font = frame.editor().fontForSelection(selectionHasMultipleFonts);
+    auto font = frame.editor().fontForSelection(selectionHasMultipleFonts);
     if (!font) {
         completionHandler({ }, 0, false);
         return;

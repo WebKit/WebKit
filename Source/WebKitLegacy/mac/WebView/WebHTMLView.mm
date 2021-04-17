@@ -5741,8 +5741,8 @@ static BOOL writingDirectionKeyBindingsEnabled()
     NSFont *font = nil;
     RetainPtr<NSDictionary> attributes;
     if (auto* coreFrame = core([self _frame])) {
-        if (const WebCore::Font* fd = coreFrame->editor().fontForSelection(multipleFonts))
-            font = (NSFont *)fd->platformData().registeredFont();
+        if (auto coreFont = coreFrame->editor().fontForSelection(multipleFonts))
+            font = (NSFont *)coreFont->platformData().registeredFont();
         attributes = coreFrame->editor().fontAttributesAtSelectionStart().createDictionary();
     }
 

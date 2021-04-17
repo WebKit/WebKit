@@ -1193,7 +1193,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     }
 
     const VisibleSelection& selection = frame->selection().selection();
-    const Editor& editor = frame->editor();
+    auto& editor = frame->editor();
 
     result.transactionID = m_lastEditorStateTransactionID.increment();
     result.selectionIsNone = selection.isNone();

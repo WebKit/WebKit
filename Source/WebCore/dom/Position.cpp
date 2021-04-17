@@ -197,6 +197,16 @@ Text* Position::containerText() const
     return nullptr;
 }
 
+Element* Position::containerOrParentElement() const
+{
+    auto* container = containerNode();
+    if (!container)
+        return nullptr;
+    if (is<Element>(container))
+        return downcast<Element>(container);
+    return container->parentElement();
+}
+
 int Position::computeOffsetInContainerNode() const
 {
     if (!m_anchorNode)
