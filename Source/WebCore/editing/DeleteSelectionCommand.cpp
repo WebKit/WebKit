@@ -865,11 +865,11 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
 // This method removes div elements with no attributes that have only one child or no children at all.
 void DeleteSelectionCommand::removeRedundantBlocks()
 {
-    Node* node = m_endingPosition.containerNode();
-    Node* rootNode = node->rootEditableElement();
+    auto node = makeRefPtr(m_endingPosition.containerNode());
+    auto rootNode = makeRefPtr(node->rootEditableElement());
    
-    while (node != rootNode) {
-        if (isRemovableBlock(node)) {
+    while (node && node != rootNode) {
+        if (isRemovableBlock(node.get())) {
             if (node == m_endingPosition.anchorNode())
                 updatePositionForNodeRemovalPreservingChildren(m_endingPosition, *node);
             
