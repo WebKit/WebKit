@@ -1,3 +1,20 @@
+2021-04-16  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Use WebKit macro to detect 64bit in RenderLayerBacking.h
+        https://bugs.webkit.org/show_bug.cgi?id=224707
+
+        Reviewed by Yusuke Suzuki.
+
+        There's no definition of __WORDSIZE in some environment. Also there's WebKit macro for that.
+
+        > warning: '__WORDSIZE' is not defined, evaluates to 0 [-Wundef]
+        > #if __WORDSIZE == 64 && PLATFORM(COCOA)
+        >     ^
+
+        No test because it's compiler behavior.
+
+        * rendering/RenderLayerBacking.h:
+
 2021-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy Ref/RefPtr in Editor
