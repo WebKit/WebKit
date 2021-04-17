@@ -1,3 +1,38 @@
+2021-04-16  Brent Fulgham  <bfulgham@apple.com>
+
+        Perform port blocking earlier in the load
+        https://bugs.webkit.org/show_bug.cgi?id=224525
+        <rdar://problem/75440591>
+
+        Reviewed by Darin Adler.
+
+        WebKit blocks loads to URLs with any of the prohibited ports defined in
+        the engine. This blocking happens late in the load process, allowing
+        connections to be made (and observed). Instead, we should stop the load
+        early, at the same time we perform other checks.
+
+        Test: http/tests/security/form-blocked-port.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::isSafeToLoadURL): Add a check for prohibited ports,
+        and block (with relevant logging) if a load to a denied port is attempted.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::willSendRequest): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequest): Ditto.
+        (WebCore::FrameLoader::reportBlockedLoadFailed): Ditto.
+        * loader/FrameLoader.h:
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage): Ditto.
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init): Ditto.
+        * loader/SubframeLoader.cpp:
+        (WebCore::FrameLoader::SubframeLoader::pluginIsLoadable): Ditto.
+        (WebCore::FrameLoader::SubframeLoader::loadSubframe): Ditto.
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest): Ditto.
+        (WebCore::CachedResourceLoader::canRequestAfterRedirection const): Ditto.
+
 2021-04-16  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Use WebKit macro to detect 64bit in RenderLayerBacking.h

@@ -17,7 +17,7 @@ PASS internals.isPreloaded('../resources/dummy   .xml'); is true
 PASS internals.isPreloaded('../resources/dummy.xml'); is false
 PASS internals.isPreloaded('../resources/dumm'); is false
 PASS internals.isPreloaded('http://localhost:8000/preload/resources/square.png'); is false
-PASS internals.isPreloaded('http://localhost:53/preload/resources/dummy.js'); is true
+PASS internals.isPreloaded('http://localhost:53/preload/resources/dummy.js'); is false
 PASS internals.isPreloaded('#foobar'); is false
 PASS internals.isPreloaded('../resources/Ahem.ttf'); is false
 PASS internals.isPreloaded('../resources/dummy.js?invalid'); is false

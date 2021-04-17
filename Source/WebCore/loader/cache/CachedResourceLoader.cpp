@@ -897,6 +897,13 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Not allowed to request resource"_s, ResourceError::Type::AccessControl });
     }
 
+    if (!portAllowed(url)) {
+        if (forPreload == ForPreload::No)
+            FrameLoader::reportBlockedLoadFailed(frame, url);
+        RELEASE_LOG_IF_ALLOWED_WITH_FRAME("CachedResourceLoader::requestResource URL has a blocked port", frame);
+        return makeUnexpected(frame.loader().blockedError(request.resourceRequest()));
+    }
+
     request.updateReferrerPolicy(document() ? document()->referrerPolicy() : ReferrerPolicy::NoReferrerWhenDowngrade);
 
     if (InspectorInstrumentation::willIntercept(&frame, request.resourceRequest()))
