@@ -68,11 +68,9 @@ Color CSSPropertyParserWorkerSafe::parseColor(const String& string)
     return CSSPropertyParserHelpers::consumeColorWorkerSafe(range, CSSParserContext(HTMLStandardMode));
 }
 
-static CSSParserContext parserContext(ScriptExecutionContext& context)
+static CSSParserMode parserMode(ScriptExecutionContext& context)
 {
-    if (!is<Document>(context))
-        return HTMLStandardMode;
-    return downcast<Document>(context).inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode;
+    return (is<Document>(context) && downcast<Document>(context).inQuirksMode()) ? HTMLQuirksMode : HTMLStandardMode;
 }
 
 RefPtr<CSSValueList> CSSPropertyParserWorkerSafe::parseFontFaceSrc(const String& string, const CSSParserContext& context)
@@ -91,16 +89,17 @@ RefPtr<CSSValueList> CSSPropertyParserWorkerSafe::parseFontFaceSrc(const String&
 
 RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceStyle(const String& string, ScriptExecutionContext& context)
 {
-    CSSParserImpl parser(parserContext(context), string);
+    CSSParserContext parserContext(parserMode(context));
+    CSSParserImpl parser(parserContext, string);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
     range.consumeWhitespace();
     if (range.atEnd())
         return nullptr;
     auto parsedValue =
 #if ENABLE(VARIATION_FONTS)
-        CSSPropertyParserHelpersWorkerSafe::consumeFontStyleRange(range, parser.context().mode, context.cssValuePool());
+        CSSPropertyParserHelpersWorkerSafe::consumeFontStyleRange(range, parserContext.mode, context.cssValuePool());
 #else
-        CSSPropertyParserHelpersWorkerSafe::consumeFontStyle(range, parser.context().mode, context.cssValuePool());
+        CSSPropertyParserHelpersWorkerSafe::consumeFontStyle(range, parserContext.mode, context.cssValuePool());
 #endif
     if (!parsedValue || !range.atEnd())
         return nullptr;
@@ -110,7 +109,8 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceStyle(const String& s
 
 RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceWeight(const String& string, ScriptExecutionContext& context)
 {
-    CSSParserImpl parser(parserContext(context), string);
+    CSSParserContext parserContext(parserMode(context));
+    CSSParserImpl parser(parserContext, string);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
     range.consumeWhitespace();
     if (range.atEnd())
@@ -129,7 +129,8 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceWeight(const String& 
 
 RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceStretch(const String& string, ScriptExecutionContext& context)
 {
-    CSSParserImpl parser(parserContext(context), string);
+    CSSParserContext parserContext(parserMode(context));
+    CSSParserImpl parser(parserContext, string);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
     range.consumeWhitespace();
     if (range.atEnd())
@@ -148,7 +149,8 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceStretch(const String&
 
 RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceUnicodeRange(const String& string, ScriptExecutionContext& context)
 {
-    CSSParserImpl parser(parserContext(context), string);
+    CSSParserContext parserContext(parserMode(context));
+    CSSParserImpl parser(parserContext, string);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
     range.consumeWhitespace();
     if (range.atEnd())
@@ -162,7 +164,8 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceUnicodeRange(const St
 
 RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceFeatureSettings(const String& string, ScriptExecutionContext& context)
 {
-    CSSParserImpl parser(parserContext(context), string);
+    CSSParserContext parserContext(parserMode(context));
+    CSSParserImpl parser(parserContext, string);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
     range.consumeWhitespace();
     if (range.atEnd())
@@ -176,7 +179,8 @@ RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceFeatureSettings(const
 
 RefPtr<CSSValue> CSSPropertyParserWorkerSafe::parseFontFaceDisplay(const String& string, ScriptExecutionContext& context)
 {
-    CSSParserImpl parser(parserContext(context), string);
+    CSSParserContext parserContext(parserMode(context));
+    CSSParserImpl parser(parserContext, string);
     CSSParserTokenRange range = parser.tokenizer()->tokenRange();
     range.consumeWhitespace();
     if (range.atEnd())

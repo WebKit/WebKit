@@ -1,3 +1,16 @@
+2021-04-17  Chris Lord  <clord@igalia.com>
+
+        Create local copy of CSSParserContext in CSSPropertyParserWorkerSafe
+        https://bugs.webkit.org/show_bug.cgi?id=224675
+
+        Reviewed by Darin Adler.
+
+        Make sure to hold a copy of the CSSParserContext in
+        CSSPropertyParserWorkerSafe functions as CSSParserImpl only takes a
+        reference.
+
+        * css/parser/CSSParserWorkerSafe.cpp:
+
 2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().
