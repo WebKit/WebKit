@@ -1,3 +1,16 @@
+2021-04-16  Darin Adler  <darin@apple.com>
+
+        font-size with viewport units in calc() doesn't change when viewport resizes
+        https://bugs.webkit.org/show_bug.cgi?id=224614
+
+        Reviewed by Zalan Bujtas.
+
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-resize-expected.txt:
+        * css3/viewport-percentage-lengths/viewport-percentage-lengths-resize.html:
+        Added tests that involve calc, and broke rules up into multiple elements so that side
+        effects from one style won't give us false negatives. This now has a subtest that was
+        failing without the fix in this patch.
+
 2021-04-16  Ian Gilbert  <iang@apple.com>
 
         Nullptr deref in CompositeEditCommand::isRemovableBlock in DeleteSelectionCommand::removeRedundantBlocks

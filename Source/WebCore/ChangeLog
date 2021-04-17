@@ -1,3 +1,35 @@
+2021-04-16  Darin Adler  <darin@apple.com>
+
+        font-size with viewport units in calc() doesn't change when viewport resizes
+        https://bugs.webkit.org/show_bug.cgi?id=224614
+
+        Reviewed by Zalan Bujtas.
+
+        * css/CSSToLengthConversionData.cpp:
+        (WebCore::CSSToLengthConversionData::zoom const): Updated since m_zoom is now optional.
+        We use effectiveZoom when m_zoom is not specified, which is the same semantic that was
+        implemented before with a separate boolean.
+        (WebCore::CSSToLengthConversionData::viewportWidthFactor const): When calling the
+        setHasViewportUnits function as a side effect, use m_viewportDependencyDetectionStyle,
+        rather than always using m_style. This lets us handle the font-size case correctly.
+        Also removed the explicit computingFontSize check for the same reason.
+        (WebCore::CSSToLengthConversionData::viewportHeightFactor const): Ditto.
+        (WebCore::CSSToLengthConversionData::viewportMinFactor const): Ditto.
+        (WebCore::CSSToLengthConversionData::viewportMaxFactor const): Ditto.
+
+        * css/CSSToLengthConversionData.h: Added a new member, m_viewportDependencyDetectionStyle,
+        which defaults to the same value as m_style. Also changed m_zoom to use Optional instead
+        of a separate boolean and an ignored "must be 1.0" value. Initialized data members in
+        the modern way, allowing us to use the default constructor.
+
+        * style/StyleBuilderCustom.h:
+        (WebCore::Style::BuilderCustom::applyValueFontSize): Pass in the builder's style as the
+        viewportDependencyDetectionStyle. This does the same thing that the existing code to
+        call setHasViewportUnits did directly, but does it even for more complex cases involving
+        calc(). Also made the isLength and isCalculatedPercentageWithLength cases more similar
+        to each other and left a FIXME behind about taking that a bit further, but doing that
+        probably requires creating some more test cases.
+
 2021-04-16  Ian Gilbert  <iang@apple.com>
 
         Nullptr deref in CompositeEditCommand::isRemovableBlock in DeleteSelectionCommand::removeRedundantBlocks
