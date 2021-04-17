@@ -65,8 +65,6 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     attribute ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue;
 
     // RuntimeEnabledFeatures.
-    undefined setWebGL2Enabled(boolean enabled);
-    undefined setWebGPUEnabled(boolean enabled);
     undefined setFetchAPIKeepAliveEnabled(boolean enabled);
     undefined setCustomPasteboardDataEnabled(boolean enabled);
 

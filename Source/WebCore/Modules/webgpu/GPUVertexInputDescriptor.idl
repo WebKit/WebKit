@@ -35,7 +35,7 @@ typedef unsigned long u32;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary GPUVertexInputDescriptor {
     GPUIndexFormat indexFormat = "uint32";
     required sequence<GPUVertexBufferDescriptor?> vertexBuffers;

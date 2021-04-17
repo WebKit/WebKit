@@ -6067,13 +6067,11 @@ bool Internals::destroySleepDisabler(unsigned identifier)
 
 ExceptionOr<RefPtr<WebXRTest>> Internals::xrTest()
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+    auto* document = contextDocument();
+    if (!document || !document->domWindow() || !document->settings().webXREnabled())
         return Exception { InvalidAccessError };
 
     if (!m_xrTest) {
-        if (!contextDocument() || !contextDocument()->domWindow())
-            return Exception { InvalidAccessError };
-
         auto* navigator = contextDocument()->domWindow()->optionalNavigator();
         if (!navigator)
             return Exception { InvalidAccessError };

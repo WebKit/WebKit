@@ -25,7 +25,7 @@
 
 // https://immersive-web.github.io/webxr/#xrrigidtransform
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
 ] dictionary FakeXRRigidTransformInit {
     // must have three elements

@@ -33,7 +33,7 @@ dictionary RTCPeerConnectionIceErrorEventInit : EventInit {
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
+    EnabledBySetting=PeerConnection,
     Exposed=Window
 ] interface RTCPeerConnectionIceErrorEvent : Event {
     constructor(DOMString type, RTCPeerConnectionIceErrorEventInit eventInitDict);

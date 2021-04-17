@@ -25,7 +25,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
+    EnabledBySetting=PeerConnection,
     JSGenerateToJSObject,
 ] dictionary RTCRtpRtxParameters {
     unsigned long ssrc;

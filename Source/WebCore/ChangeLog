@@ -1,3 +1,193 @@
+2021-04-17  Sam Weinig  <weinig@apple.com>
+
+        Move RuntimeEnabledFeatures to Settings (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=224440
+
+        Reviewed by Alex Christensen.
+
+        Move a few RuntimeEnabledFeatures to Settings to consolidate settings
+        in one object and removes the need for additional boilerplate. This 
+        is now possible as Settings are now accessible in workers.
+
+        Moves PeerConnectionEnabled, WebGLUsingMetal, WebGL2Enabled, WebGPUEnabled
+        and MaskWebGLStringsEnabled.
+
+        * Modules/mediastream/RTCAnswerOptions.idl:
+        * Modules/mediastream/RTCCertificate.idl:
+        * Modules/mediastream/RTCConfiguration.idl:
+        * Modules/mediastream/RTCDTMFSender.idl:
+        * Modules/mediastream/RTCDTMFToneChangeEvent.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/mediastream/RTCDataChannelEvent.idl:
+        * Modules/mediastream/RTCIceCandidate.idl:
+        * Modules/mediastream/RTCIceCandidateInit.idl:
+        * Modules/mediastream/RTCIceConnectionState.idl:
+        * Modules/mediastream/RTCIceGatheringState.idl:
+        * Modules/mediastream/RTCIceServer.idl:
+        * Modules/mediastream/RTCIceTransport.idl:
+        * Modules/mediastream/RTCIceTransportState.idl:
+        * Modules/mediastream/RTCOfferAnswerOptions.idl:
+        * Modules/mediastream/RTCOfferOptions.idl:
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * Modules/mediastream/RTCPeerConnectionIceErrorEvent.idl:
+        * Modules/mediastream/RTCPeerConnectionIceEvent.idl:
+        * Modules/mediastream/RTCPeerConnectionState.idl:
+        * Modules/mediastream/RTCPriorityType.idl:
+        * Modules/mediastream/RTCRtcpParameters.idl:
+        * Modules/mediastream/RTCRtpCapabilities.idl:
+        * Modules/mediastream/RTCRtpCodecCapability.idl:
+        * Modules/mediastream/RTCRtpCodecParameters.idl:
+        * Modules/mediastream/RTCRtpCodingParameters.idl:
+        * Modules/mediastream/RTCRtpContributingSource.idl:
+        * Modules/mediastream/RTCRtpDecodingParameters.idl:
+        * Modules/mediastream/RTCRtpEncodingParameters.idl:
+        * Modules/mediastream/RTCRtpFecParameters.idl:
+        * Modules/mediastream/RTCRtpHeaderExtensionParameters.idl:
+        * Modules/mediastream/RTCRtpParameters.idl:
+        * Modules/mediastream/RTCRtpReceiver.idl:
+        * Modules/mediastream/RTCRtpRtxParameters.idl:
+        * Modules/mediastream/RTCRtpSendParameters.idl:
+        * Modules/mediastream/RTCRtpSender.idl:
+        * Modules/mediastream/RTCRtpSynchronizationSource.idl:
+        * Modules/mediastream/RTCRtpTransceiver.idl:
+        * Modules/mediastream/RTCRtpTransceiverDirection.idl:
+        * Modules/mediastream/RTCSdpType.idl:
+        * Modules/mediastream/RTCSessionDescription.idl:
+        * Modules/mediastream/RTCSignalingState.idl:
+        * Modules/mediastream/RTCStatsReport.idl:
+        * Modules/mediastream/RTCTrackEvent.idl:
+        * Modules/webgpu/GPUBindGroupLayoutBinding.idl:
+        * Modules/webgpu/GPUBindGroupLayoutDescriptor.idl:
+        * Modules/webgpu/GPUBlendDescriptor.idl:
+        * Modules/webgpu/GPUBufferDescriptor.idl:
+        * Modules/webgpu/GPUBufferUsage.idl:
+        * Modules/webgpu/GPUCanvasContext.idl:
+        * Modules/webgpu/GPUColor.idl:
+        * Modules/webgpu/GPUColorStateDescriptor.idl:
+        * Modules/webgpu/GPUColorWrite.idl:
+        * Modules/webgpu/GPUCompareFunction.idl:
+        * Modules/webgpu/GPUDepthStencilStateDescriptor.idl:
+        * Modules/webgpu/GPUErrorFilter.idl:
+        * Modules/webgpu/GPUExtent3D.idl:
+        * Modules/webgpu/GPULoadOp.idl:
+        * Modules/webgpu/GPUOrigin3D.idl:
+        * Modules/webgpu/GPUOutOfMemoryError.idl:
+        * Modules/webgpu/GPURequestAdapterOptions.idl:
+        * Modules/webgpu/GPUSamplerDescriptor.idl:
+        * Modules/webgpu/GPUShaderStage.idl:
+        * Modules/webgpu/GPUStoreOp.idl:
+        * Modules/webgpu/GPUTextureDescriptor.idl:
+        * Modules/webgpu/GPUTextureFormat.idl:
+        * Modules/webgpu/GPUTextureUsage.idl:
+        * Modules/webgpu/GPUUncapturedErrorEvent.idl:
+        * Modules/webgpu/GPUValidationError.idl:
+        * Modules/webgpu/GPUVertexAttributeDescriptor.idl:
+        * Modules/webgpu/GPUVertexBufferDescriptor.idl:
+        * Modules/webgpu/GPUVertexInputDescriptor.idl:
+        * Modules/webgpu/Navigator+GPU.idl:
+        * Modules/webgpu/NavigatorGPU.cpp:
+        * Modules/webgpu/WebGPU.idl:
+        * Modules/webgpu/WebGPUAdapter.idl:
+        * Modules/webgpu/WebGPUBindGroup.idl:
+        * Modules/webgpu/WebGPUBindGroupBinding.idl:
+        * Modules/webgpu/WebGPUBindGroupDescriptor.idl:
+        * Modules/webgpu/WebGPUBindGroupLayout.idl:
+        * Modules/webgpu/WebGPUBuffer.idl:
+        * Modules/webgpu/WebGPUBufferBinding.idl:
+        * Modules/webgpu/WebGPUCommandBuffer.idl:
+        * Modules/webgpu/WebGPUCommandEncoder.idl:
+        * Modules/webgpu/WebGPUComputePassEncoder.idl:
+        * Modules/webgpu/WebGPUComputePipeline.idl:
+        * Modules/webgpu/WebGPUComputePipelineDescriptor.idl:
+        * Modules/webgpu/WebGPUDevice.idl:
+        * Modules/webgpu/WebGPUDeviceErrorScopes.idl:
+        * Modules/webgpu/WebGPUDeviceEventHandler.idl:
+        * Modules/webgpu/WebGPUPipelineDescriptorBase.idl:
+        * Modules/webgpu/WebGPUPipelineLayout.idl:
+        * Modules/webgpu/WebGPUPipelineLayoutDescriptor.idl:
+        * Modules/webgpu/WebGPUProgrammablePassEncoder.idl:
+        * Modules/webgpu/WebGPUProgrammableStageDescriptor.idl:
+        * Modules/webgpu/WebGPUQueue.idl:
+        * Modules/webgpu/WebGPURenderPassDescriptor.idl:
+        * Modules/webgpu/WebGPURenderPassEncoder.idl:
+        * Modules/webgpu/WebGPURenderPipeline.idl:
+        * Modules/webgpu/WebGPURenderPipelineDescriptor.idl:
+        * Modules/webgpu/WebGPUSampler.idl:
+        * Modules/webgpu/WebGPUShaderModule.idl:
+        * Modules/webgpu/WebGPUShaderModuleDescriptor.idl:
+        * Modules/webgpu/WebGPUSwapChain.idl:
+        * Modules/webgpu/WebGPUTexture.idl:
+        * Modules/webgpu/WebGPUTextureView.idl:
+        * Modules/webgpu/WorkerNavigator+GPU.idl:
+        * Modules/webgpu/WorkerNavigatorGPU.cpp:
+        * Modules/webxr/Navigator+WebXR.idl:
+        * Modules/webxr/WebXRBoundedReferenceSpace.idl:
+        * Modules/webxr/WebXRFrame.idl:
+        * Modules/webxr/WebXRInputSource.idl:
+        * Modules/webxr/WebXRInputSourceArray.idl:
+        * Modules/webxr/WebXRLayer.idl:
+        * Modules/webxr/WebXRPose.idl:
+        * Modules/webxr/WebXRReferenceSpace.idl:
+        * Modules/webxr/WebXRRenderState.idl:
+        * Modules/webxr/WebXRRigidTransform.idl:
+        * Modules/webxr/WebXRSession.idl:
+        * Modules/webxr/WebXRSpace.idl:
+        * Modules/webxr/WebXRSystem.cpp:
+        * Modules/webxr/WebXRSystem.idl:
+        * Modules/webxr/WebXRView.idl:
+        * Modules/webxr/WebXRViewerPose.idl:
+        * Modules/webxr/WebXRViewport.idl:
+        * Modules/webxr/WebXRWebGLLayer.idl:
+        * Modules/webxr/XREnvironmentBlendMode.idl:
+        * Modules/webxr/XREye.idl:
+        * Modules/webxr/XRHandedness.idl:
+        * Modules/webxr/XRInputSourceEvent.idl:
+        * Modules/webxr/XRInputSourcesChangeEvent.idl:
+        * Modules/webxr/XRInteractionMode.idl:
+        * Modules/webxr/XRReferenceSpaceEvent.idl:
+        * Modules/webxr/XRReferenceSpaceType.idl:
+        * Modules/webxr/XRRenderStateInit.idl:
+        * Modules/webxr/XRSessionEvent.idl:
+        * Modules/webxr/XRSessionInit.idl:
+        * Modules/webxr/XRSessionMode.idl:
+        * Modules/webxr/XRTargetRayMode.idl:
+        * Modules/webxr/XRVisibilityState.idl:
+        * Modules/webxr/XRWebGLLayerInit.idl:
+        * html/HTMLCanvasElement.cpp:
+        * html/canvas/WebGL2RenderingContext.cpp:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        * html/canvas/WebGLTransformFeedback.idl:
+        * html/canvas/WebGLVertexArrayObject.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::peerConnectionEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setPeerConnectionEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setWebGLUsingMetal): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webGLUsingMetal const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setWebGL2Enabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webGL2Enabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setWebGPUEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::webGPUEnabled const): Deleted.
+        (WebCore::RuntimeEnabledFeatures::setMaskWebGLStringsEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::maskWebGLStringsEnabled const): Deleted.
+        * testing/FakeXRBoundsPoint.idl:
+        * testing/FakeXRButtonStateInit.idl:
+        * testing/FakeXRInputSourceInit.idl:
+        * testing/FakeXRRigidTransformInit.idl:
+        * testing/FakeXRViewInit.idl:
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setWebGL2Enabled): Deleted.
+        (WebCore::InternalSettings::setWebGPUEnabled): Deleted.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+        * testing/Internals.cpp:
+        * testing/WebFakeXRDevice.idl:
+        * testing/WebFakeXRInputController.idl:
+        * testing/WebXRTest.idl:
+        * testing/XRSimulateUserActivationFunction.idl:
+
 2021-04-17  Tim Nguyen  <ntim@apple.com>
 
         Don't omit conic gradient starting angle when serializing when starting angle is under 0

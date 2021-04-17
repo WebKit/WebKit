@@ -59,7 +59,7 @@ RemoteWebInspectorUI::RemoteWebInspectorUI(WebPage& page)
     : m_page(page)
     , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*page.corePage()))
 {
-    WebInspectorUI::enableFrontendFeatures();
+    WebInspectorUI::enableFrontendFeatures(page);
 }
 
 RemoteWebInspectorUI::~RemoteWebInspectorUI() = default;

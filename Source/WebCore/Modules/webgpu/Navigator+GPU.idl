@@ -26,7 +26,7 @@
 // https://gpuweb.github.io/gpuweb/#navigator-gpu
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementedBy=NavigatorGPU
 ] partial interface Navigator {
     [SameObject] readonly attribute WebGPU gpu;

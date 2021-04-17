@@ -43,7 +43,7 @@ typedef unsigned long u32;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary GPUSamplerDescriptor {
     GPUAddressMode addressModeU = "clampToEdge";
     GPUAddressMode addressModeV = "clampToEdge";

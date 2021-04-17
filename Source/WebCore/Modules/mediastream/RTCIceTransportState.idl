@@ -25,7 +25,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection
+    EnabledBySetting=PeerConnection
 ] enum RTCIceTransportState {
     "new",
     "checking",

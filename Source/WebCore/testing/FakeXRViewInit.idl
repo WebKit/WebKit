@@ -26,7 +26,7 @@
 // This represents the native resolution of the device, but may not reflect the viewport exposed to the page.
 // https://immersive-web.github.io/webxr/#xrviewport
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
 ] dictionary FakeXRDeviceResolution {
     required long width;
@@ -35,7 +35,7 @@
 
 // A set of 4 angles which describe the view from a center point, units are degrees.
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
 ] dictionary FakeXRFieldOfViewInit {
     required float upDegrees;
@@ -46,7 +46,7 @@
 
 // https://immersive-web.github.io/webxr/#xrview
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
 ] dictionary FakeXRViewInit {
     required XREye eye;

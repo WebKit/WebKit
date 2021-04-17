@@ -29,7 +29,7 @@ typedef unsigned long u32;
 [
     Conditional=WEBGPU,
     DoNotCheckConstants,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementationLacksVTable,
     Exposed=Window
 ] interface GPUTextureUsage {

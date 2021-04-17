@@ -38,7 +38,7 @@ typedef [EnforceRange] unsigned long GPUTextureUsageFlags;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary GPUTextureDescriptor {
     required GPUExtent3D size;
     GPUIntegerCoordinate mipLevelCount = 1;

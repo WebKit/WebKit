@@ -62,9 +62,6 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
     , m_fontLoadTimingOverride(settings.fontLoadTimingOverride())
     , m_frameFlattening(settings.frameFlattening())
-#if ENABLE(WEBGL2)
-    , m_webGL2Enabled(RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
-#endif
     , m_fetchAPIKeepAliveAPIEnabled(RuntimeEnabledFeatures::sharedFeatures().fetchAPIKeepAliveEnabled())
     , m_customPasteboardDataEnabled(RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())
     , m_originalMockScrollbarsEnabled(DeprecatedGlobalSettings::mockScrollbarsEnabled())
@@ -122,9 +119,6 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setFontLoadTimingOverride(m_fontLoadTimingOverride);
     settings.setFrameFlattening(m_frameFlattening);
 
-#if ENABLE(WEBGL2)
-    RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(m_webGL2Enabled);
-#endif
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIKeepAliveEnabled(m_fetchAPIKeepAliveAPIEnabled);
     RuntimeEnabledFeatures::sharedFeatures().setCustomPasteboardDataEnabled(m_customPasteboardDataEnabled);
 
@@ -425,30 +419,6 @@ InternalSettings::ForcedAccessibilityValue InternalSettings::forcedSupportsHighD
 void InternalSettings::setForcedSupportsHighDynamicRangeValue(InternalSettings::ForcedAccessibilityValue value)
 {
     settings().setForcedSupportsHighDynamicRangeValue(value);
-}
-
-ExceptionOr<void> InternalSettings::setWebGL2Enabled(bool enabled)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-#if ENABLE(WEBGL2)
-    RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-    return { };
-}
-
-ExceptionOr<void> InternalSettings::setWebGPUEnabled(bool enabled)
-{
-    if (!m_page)
-        return Exception { InvalidAccessError };
-#if ENABLE(WEBGPU)
-    RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(enabled);
-#else
-    UNUSED_PARAM(enabled);
-#endif
-    return { };
 }
 
 ExceptionOr<void> InternalSettings::setFetchAPIKeepAliveEnabled(bool enabled)

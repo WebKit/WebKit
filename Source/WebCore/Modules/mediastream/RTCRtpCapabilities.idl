@@ -24,7 +24,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
+    EnabledBySetting=PeerConnection,
     JSGenerateToJSObject
 ] dictionary RTCRtpHeaderExtensionCapability {
     DOMString uri;
@@ -32,7 +32,7 @@
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
+    EnabledBySetting=PeerConnection,
     JSGenerateToJSObject
 ] dictionary RTCRtpCapabilities {
     required sequence<RTCRtpCodecCapability> codecs;

@@ -1,3 +1,20 @@
+2021-04-17  Sam Weinig  <weinig@apple.com>
+
+        Move RuntimeEnabledFeatures to Settings (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=224440
+
+        Reviewed by Alex Christensen.
+
+        Move a few RuntimeEnabledFeatures to Settings to consolidate settings
+        in one object and removes the need for additional boilerplate. This 
+        is now possible as Settings are now accessible in workers.
+
+        Moves PeerConnectionEnabled, WebGLUsingMetal, WebGL2Enabled, WebGPUEnabled
+        and MaskWebGLStringsEnabled.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-04-16  Kate Cheney  <katherine_cheney@apple.com>
 
         Disable app-bound request API tests on specific OS versions

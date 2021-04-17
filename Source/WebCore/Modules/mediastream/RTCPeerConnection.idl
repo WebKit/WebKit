@@ -35,7 +35,7 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection
+    EnabledBySetting=PeerConnection
 ] dictionary RTCDataChannelInit {
     boolean ordered = true;
     unsigned short maxPacketLifeTime;
@@ -47,8 +47,8 @@ typedef RTCRtpTransceiverDirection RtpTransceiverDirection;
 };
 
 [
-Conditional=WEB_RTC,
-EnabledAtRuntime=PeerConnection
+    Conditional=WEB_RTC,
+    EnabledBySetting=PeerConnection
 ] dictionary RTCCertificateParameters {
     DOMString name;
     DOMString hash;
@@ -62,7 +62,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
+    EnabledBySetting=PeerConnection,
     ImplementedAs=RTCRtpTransceiverInit
 ] dictionary RTCRtpTransceiverInit {
     RtpTransceiverDirection direction = "sendrecv";
@@ -73,7 +73,7 @@ typedef (object or DOMString) AlgorithmIdentifier;
 [
     ActiveDOMObject,
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
+    EnabledBySetting=PeerConnection,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=Window
 ] interface RTCPeerConnection : EventTarget {

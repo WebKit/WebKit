@@ -28,7 +28,7 @@ typedef RTCIceGatheringState IceGatheringState;
 
 [
     Conditional=WEB_RTC,
-    EnabledAtRuntime=PeerConnection,
+    EnabledBySetting=PeerConnection,
     Exposed=Window
 ] interface RTCIceTransport {
     // FIXME 169662: missing readonly attribute RTCIceRole role;

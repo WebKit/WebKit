@@ -29,7 +29,6 @@
 #if ENABLE(WEBGPU)
 
 #include "Navigator.h"
-#include "RuntimeEnabledFeatures.h"
 #include "WebGPU.h"
 
 namespace WebCore {
@@ -52,13 +51,16 @@ const char* NavigatorGPU::supplementName()
 
 const WebGPU* NavigatorGPU::gpu(Navigator& navigator)
 {
+    auto scriptExecutionContext = navigator.scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return nullptr;
+
+    ASSERT(scriptExecutionContext->settingsValues().webGPUEnabled);
     return NavigatorGPU::from(&navigator)->gpu();
 }
 
 const WebGPU* NavigatorGPU::gpu() const
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled());
-
     if (!m_gpu)
         m_gpu = WebGPU::create();
     return m_gpu.get();

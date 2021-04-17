@@ -1,3 +1,24 @@
+2021-04-17  Sam Weinig  <weinig@apple.com>
+
+        Move RuntimeEnabledFeatures to Settings (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=224440
+
+        Reviewed by Alex Christensen.
+
+        Move a few RuntimeEnabledFeatures to Settings to consolidate settings
+        in one object and removes the need for additional boilerplate. This 
+        is now possible as Settings are now accessible in workers.
+
+        Moves PeerConnectionEnabled, WebGLUsingMetal, WebGL2Enabled, WebGPUEnabled
+        and MaskWebGLStringsEnabled.
+
+        * WebProcess/Inspector/RemoteWebInspectorUI.cpp:
+        (WebKit::RemoteWebInspectorUI::RemoteWebInspectorUI):
+        * WebProcess/Inspector/WebInspectorUI.cpp:
+        (WebKit::WebInspectorUI::enableFrontendFeatures):
+        (WebKit::WebInspectorUI::WebInspectorUI):
+        * WebProcess/Inspector/WebInspectorUI.h:
+
 2021-04-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy Ref/RefPtr in Editor

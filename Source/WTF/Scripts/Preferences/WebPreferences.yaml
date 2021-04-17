@@ -1669,13 +1669,14 @@ PasswordEchoEnabled:
 
 PeerConnectionEnabled:
   type: bool
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
       default: WebCore::LibWebRTCProvider::webRTCAvailable()
+    WebCore:
+      default: true
 
 PictographFontFamily:
   type: String

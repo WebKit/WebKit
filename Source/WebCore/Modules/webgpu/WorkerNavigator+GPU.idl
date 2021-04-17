@@ -27,7 +27,7 @@
 // FIXME: The spec says this should only be exposed to DedicatedWorkers.
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementedBy=WorkerNavigatorGPU
 ] partial interface WorkerNavigator {
     [SameObject] readonly attribute WebGPU gpu;

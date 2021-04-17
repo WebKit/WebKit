@@ -53,12 +53,13 @@ Ref<WebInspectorUI> WebInspectorUI::create(WebPage& page)
     return adoptRef(*new WebInspectorUI(page));
 }
 
-void WebInspectorUI::enableFrontendFeatures()
+void WebInspectorUI::enableFrontendFeatures(WebPage& page)
 {
+    // FIXME: These should be enabled in the UIProcess by the preferences for the inspector page's WKWebView.
     RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(true);
     RuntimeEnabledFeatures::sharedFeatures().setImageBitmapEnabled(true);
 #if ENABLE(WEBGL2)
-    RuntimeEnabledFeatures::sharedFeatures().setWebGL2Enabled(true);
+    page.corePage()->settings().setWebGL2Enabled(true);
 #endif
 }
 
@@ -67,7 +68,7 @@ WebInspectorUI::WebInspectorUI(WebPage& page)
     , m_frontendAPIDispatcher(InspectorFrontendAPIDispatcher::create(*page.corePage()))
     , m_debuggableInfo(DebuggableInfoData::empty())
 {
-    WebInspectorUI::enableFrontendFeatures();
+    WebInspectorUI::enableFrontendFeatures(page);
 }
 
 WebInspectorUI::~WebInspectorUI() = default;

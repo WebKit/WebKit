@@ -28,7 +28,7 @@
 
 #if ENABLE(WEBGPU)
 
-#include "RuntimeEnabledFeatures.h"
+#include "ScriptExecutionContext.h"
 #include "WebGPU.h"
 #include "WorkerNavigator.h"
 
@@ -52,13 +52,16 @@ const char* WorkerNavigatorGPU::supplementName()
 
 const WebGPU* WorkerNavigatorGPU::gpu(WorkerNavigator& navigator)
 {
+    auto scriptExecutionContext = navigator.scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return nullptr;
+
+    ASSERT(scriptExecutionContext->settingsValues().webGPUEnabled);
     return WorkerNavigatorGPU::from(&navigator)->gpu();
 }
 
 const WebGPU* WorkerNavigatorGPU::gpu() const
 {
-    ASSERT(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled());
-
     if (!m_gpu)
         m_gpu = WebGPU::create();
     return m_gpu.get();

@@ -26,7 +26,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementationLacksVTable,
     InterfaceName=GPUCommandBuffer,
     Exposed=Window

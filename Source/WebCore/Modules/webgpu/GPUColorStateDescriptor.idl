@@ -28,7 +28,7 @@ typedef unsigned long GPUColorWriteFlags;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary GPUColorStateDescriptor {
     required GPUTextureFormat format;
 

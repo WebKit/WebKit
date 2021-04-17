@@ -54,7 +54,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary GPUBlendDescriptor {
     GPUBlendFactor srcFactor = "one";
     GPUBlendFactor dstFactor = "zero";

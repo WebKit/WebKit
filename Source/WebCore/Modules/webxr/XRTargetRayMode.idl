@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
     ExportMacro=WEBCORE_EXPORT
 ] enum XRTargetRayMode {

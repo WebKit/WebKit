@@ -468,8 +468,10 @@ void WebXRSystem::stop()
 
 void WebXRSystem::registerSimulatedXRDeviceForTesting(PlatformXR::Device& device)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+    auto scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext || !scriptExecutionContext->settingsValues().webXREnabled)
         return;
+
     m_testingDevices++;
     if (device.supports(XRSessionMode::ImmersiveVr) || device.supports(XRSessionMode::ImmersiveAr)) {
         m_immersiveDevices.add(device);
@@ -481,8 +483,10 @@ void WebXRSystem::registerSimulatedXRDeviceForTesting(PlatformXR::Device& device
 
 void WebXRSystem::unregisterSimulatedXRDeviceForTesting(PlatformXR::Device& device)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+    auto scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext || !scriptExecutionContext->settingsValues().webXREnabled)
         return;
+
     ASSERT(m_testingDevices);
     bool removed = m_immersiveDevices.remove(device);
     ASSERT_UNUSED(removed, removed || m_inlineXRDevice == &device);
