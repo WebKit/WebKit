@@ -1,3 +1,14 @@
+2021-04-16  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Pass credential name to the WebAuthn UI during registration
+        https://bugs.webkit.org/show_bug.cgi?id=224697
+        <rdar://75803352>
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/_WKWebAuthenticationPanel.mm:
+        (TestWebKitAPI::TEST):
+
 2021-04-16  Kate Cheney  <katherine_cheney@apple.com>
 
         Disable app-bound request API tests on specific OS versions

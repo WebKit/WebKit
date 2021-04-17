@@ -55,7 +55,7 @@ public:
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
     using CredentialRequestHandler = Function<void(ASCAppleIDCredential *, NSError *)>;
 
-    AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType);
+    AuthenticatorPresenterCoordinator(const AuthenticatorManager&, const String& rpId, const TransportSet&, WebCore::ClientDataType, const String& username);
     ~AuthenticatorPresenterCoordinator();
 
     void updatePresenter(WebAuthenticationStatus);

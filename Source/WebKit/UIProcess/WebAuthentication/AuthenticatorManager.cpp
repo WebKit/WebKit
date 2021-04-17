@@ -153,6 +153,13 @@ static String getRpId(const Variant<PublicKeyCredentialCreationOptions, PublicKe
     return WTF::get<PublicKeyCredentialRequestOptions>(options).rpId;
 }
 
+static String getUserName(const Variant<PublicKeyCredentialCreationOptions, PublicKeyCredentialRequestOptions>& options)
+{
+    if (WTF::holds_alternative<PublicKeyCredentialCreationOptions>(options))
+        return WTF::get<PublicKeyCredentialCreationOptions>(options).user.name;
+    return emptyString();
+}
+
 } // namespace
 
 const size_t AuthenticatorManager::maxTransportNumber = 3;
@@ -452,7 +459,7 @@ void AuthenticatorManager::runPanel()
         return;
     }
 
-    m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options));
+    m_pendingRequestData.panel = API::WebAuthenticationPanel::create(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
     auto& panel = *m_pendingRequestData.panel;
     page->uiClient().runWebAuthenticationPanel(*page, panel, *frame, FrameInfoData { m_pendingRequestData.frameInfo }, [transports = WTFMove(transports), weakPanel = makeWeakPtr(panel), weakThis = makeWeakPtr(*this), this] (WebAuthenticationPanelResult result) {
         // The panel address is used to determine if the current pending request is still the same.
@@ -480,7 +487,7 @@ void AuthenticatorManager::runPresenter()
         return;
 
     auto& options = m_pendingRequestData.options;
-    m_presenter = makeUnique<AuthenticatorPresenterCoordinator>(*this, getRpId(options), transports, getClientDataType(options));
+    m_presenter = makeUnique<AuthenticatorPresenterCoordinator>(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
 }
 
 void AuthenticatorManager::invokePendingCompletionHandler(Respond&& respond)

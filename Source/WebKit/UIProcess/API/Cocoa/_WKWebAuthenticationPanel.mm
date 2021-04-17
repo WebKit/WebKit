@@ -180,6 +180,12 @@ static _WKWebAuthenticationType wkWebAuthenticationType(WebCore::ClientDataType 
 {
     return wkWebAuthenticationType(_panel->clientDataType());
 }
+
+- (NSString *)userName
+{
+    return _panel->userName();
+}
+
 #else // ENABLE(WEB_AUTHN)
 - (id <_WKWebAuthenticationPanelDelegate>)delegate
 {

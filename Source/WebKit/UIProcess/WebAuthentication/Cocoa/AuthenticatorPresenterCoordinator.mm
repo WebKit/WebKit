@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type)
+AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const AuthenticatorManager& manager, const String& rpId, const TransportSet& transports, ClientDataType type, const String& username)
     : m_manager(makeWeakPtr(manager))
 {
 #if HAVE(ASC_AUTH_UI)
@@ -46,12 +46,16 @@ AuthenticatorPresenterCoordinator::AuthenticatorPresenterCoordinator(const Authe
         [m_context setServiceName:rpId];
 
     switch (type) {
-    case ClientDataType::Create:
+    case ClientDataType::Create: {
+        auto options = adoptNS([allocASCPublicKeyCredentialCreationOptionsInstance() init]);
+        [options setUserName:username];
+
         if (transports.contains(AuthenticatorTransport::Internal))
-            [m_context addLoginChoice:adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initRegistrationChoice]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCPlatformPublicKeyCredentialLoginChoiceInstance() initRegistrationChoiceWithOptions:options.get()]).get()];
         if (transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc))
-            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initRegistrationChoice]).get()];
+            [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initRegistrationChoiceWithOptions:options.get()]).get()];
         break;
+    }
     case ClientDataType::Get:
         if ((transports.contains(AuthenticatorTransport::Usb) || transports.contains(AuthenticatorTransport::Nfc)) && !transports.contains(AuthenticatorTransport::Internal))
             [m_context addLoginChoice:adoptNS([allocASCSecurityKeyPublicKeyCredentialLoginChoiceInstance() initAssertionPlaceholderChoice]).get()];
