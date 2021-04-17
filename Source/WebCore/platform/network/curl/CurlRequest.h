@@ -135,8 +135,8 @@ private:
 
     // For setup 
     void appendAcceptLanguageHeader(HTTPHeaderMap&);
-    void setupPOST(ResourceRequest&);
-    void setupPUT(ResourceRequest&);
+    void setupPOST();
+    void setupPUT();
     void setupSendData(bool forPutMethod);
 
     // Processing for DidReceiveResponse

@@ -95,11 +95,12 @@ CookieJarDB& NetworkStorageSession::cookieDatabase() const
     return m_cookieDatabase;
 }
 
-void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
+void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier>, Optional<PageIdentifier> pageID, ShouldAskITP, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
 {
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     Optional<Seconds> cappedLifetime = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
 #else
+    UNUSED_PARAM(pageID);
     Optional<Seconds> cappedLifetime = WTF::nullopt;
 #endif
     cookieDatabase().setCookie(firstParty, url, value, CookieJarDB::Source::Script, cappedLifetime);

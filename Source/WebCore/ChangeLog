@@ -1,3 +1,28 @@
+2021-04-17  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [Curl] Remove warnings on curl layer.
+        https://bugs.webkit.org/show_bug.cgi?id=224721
+
+        Reviewed by Darin Adler.
+
+        Remove unused parameters to prevent warnings. For CurlRequest, it passes
+        member variable to private method which is meaningless so that it was
+        removed.
+
+        Covered by existing test files.
+
+        * platform/network/curl/CookieJarDB.cpp:
+        (WebCore::CookieJarDB::createPrepareStatement):
+        * platform/network/curl/CurlFormDataStream.cpp:
+        (WebCore::CurlFormDataStream::read):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+        (WebCore::CurlRequest::setupPUT):
+        (WebCore::CurlRequest::setupPOST):
+        * platform/network/curl/CurlRequest.h:
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        (WebCore::NetworkStorageSession::setCookiesFromDOM const):
+
 2021-04-17  Chris Lord  <clord@igalia.com>
 
         Create local copy of CSSParserContext in CSSPropertyParserWorkerSafe
