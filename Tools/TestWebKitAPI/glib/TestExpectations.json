@@ -199,9 +199,6 @@
             "WebKit.TerminateTwice": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/121970"}}
             },
-            "WebKit.WKPreferencesDefaults": {
-                "expected": {"wpe": {"status": ["FAIL"]}}
-            },
             "WebKit.HitTestResultNodeHandle": {
                 "expected": {"wpe": {"status": ["TIMEOUT"]}}
             },

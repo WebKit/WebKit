@@ -1,3 +1,19 @@
+2021-04-16  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r276164) [GTK] WKPreferencesDefaults API test is failing
+        https://bugs.webkit.org/show_bug.cgi?id=224710
+
+        Reviewed by Alex Christensen.
+
+        As of r276164, Mac/iOS disabled application cache by default but other
+        ports are still enabling it.
+
+        * TestWebKitAPI/Tests/WebKit/WKPreferences.cpp:
+        (TestWebKitAPI::TEST): Add missing WPE guard and test against expected
+        port value instead of enforcing a single value for every port.
+        * TestWebKitAPI/glib/TestExpectations.json: Remove WPE expected
+        failure.
+
 2021-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         Perform port blocking earlier in the load
