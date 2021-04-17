@@ -678,8 +678,8 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     if (m_autoWrap && !RenderStyle::autoWrap(m_lastWS) && m_ignoringSpaces)
         commitLineBreakAtCurrentWidth(renderer);
 
-    if (renderer.style().hasTextCombine() && is<RenderCombineText>(*m_current.renderer())) {
-        auto& combineRenderer = downcast<RenderCombineText>(*m_current.renderer());
+    if (renderer.style().hasTextCombine() && is<RenderCombineText>(renderer)) {
+        auto& combineRenderer = downcast<RenderCombineText>(renderer);
         combineRenderer.combineTextIfNeeded();
         // The length of the renderer's text may have changed. Increment stale iterator positions
         if (iteratorIsBeyondEndOfRenderCombineText(m_lineBreak, combineRenderer)) {
@@ -702,7 +702,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     float lastSpaceWordSpacing = 0;
     float wordSpacingForWordMeasurement = 0;
 
-    float wrapWidthOffset = m_width.uncommittedWidth() + inlineLogicalWidth(*m_current.renderer(), !m_appliedStartWidth, true);
+    float wrapWidthOffset = m_width.uncommittedWidth() + inlineLogicalWidth(renderer, !m_appliedStartWidth, true);
     float wrapW = wrapWidthOffset;
     float charWidth = 0;
     bool breakNBSP = m_autoWrap && m_currentStyle->nbspMode() == NBSPMode::Space;
@@ -745,6 +745,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     TextLayout* textLayout = m_renderTextInfo.layout.get();
     WordTrailingSpace wordTrailingSpace(style, !textLayout);
     for (; m_current.offset() < renderer.text().length(); m_current.fastIncrementInTextNode()) {
+        ASSERT(&renderer == m_current.renderer());
         bool previousCharacterIsSpace = m_currentCharacterIsSpace;
         bool previousCharacterIsWS = m_currentCharacterIsWS;
         UChar c = m_current.current();
@@ -758,12 +759,12 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             canBreakMidWord = breakAll;
         }
 
-        if (canHangPunctuationAtStart && m_width.isFirstLine() && !m_width.committedWidth() && !wrapW && !inlineLogicalWidth(*m_current.renderer(), true, false)) {
+        if (canHangPunctuationAtStart && m_width.isFirstLine() && !m_width.committedWidth() && !wrapW && !inlineLogicalWidth(renderer, true, false)) {
             m_width.addUncommittedWidth(-renderer.hangablePunctuationStartWidth(m_current.offset()));
             canHangPunctuationAtStart = false;
         }
         
-        if (canHangPunctuationAtEnd && !m_nextObject && (int)m_current.offset() == endPunctuationIndex && !inlineLogicalWidth(*m_current.renderer(), false, true)) {
+        if (canHangPunctuationAtEnd && !m_nextObject && (int)m_current.offset() == endPunctuationIndex && !inlineLogicalWidth(renderer, false, true)) {
             m_width.addUncommittedWidth(-renderer.hangablePunctuationEndWidth(endPunctuationIndex));
             canHangPunctuationAtEnd = false;
         }
@@ -796,7 +797,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
             // We need to see if a measurement that excludes the stop would fit. If so, then we should hang
             // the stop/comma at the end. First measure including the comma.
             m_hangsAtEnd = false;
-            float inlineStartWidth = !m_appliedStartWidth ? inlineLogicalWidth(*m_current.renderer(), true, false) : 0_lu;
+            float inlineStartWidth = !m_appliedStartWidth ? inlineLogicalWidth(renderer, true, false) : 0_lu;
             float widthIncludingComma = computeAdditionalBetweenWordsWidth(renderer, textLayout, c, wordTrailingSpace, fallbackFonts, wordMeasurements, font, isFixedPitch, lastSpace, lastSpaceWordSpacing, wordSpacingForWordMeasurement, m_current.offset() + 1) + inlineStartWidth;
             m_width.addUncommittedWidth(widthIncludingComma);
             if (!m_width.fitsOnLine()) {
@@ -818,7 +819,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     m_ignoringSpaces = false;
                     wordSpacingForWordMeasurement = 0;
                     lastSpace = m_current.offset(); // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                    m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.offset()));
+                    m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(0, &renderer, m_current.offset()));
                     stoppedIgnoringSpaces = true;
                 } else {
                     // Just keep ignoring these spaces.
@@ -836,7 +837,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 m_width.setTrailingWhitespaceWidth(additionalTempWidth);
 
             if (!m_appliedStartWidth) {
-                float inlineStartWidth = inlineLogicalWidth(*m_current.renderer(), true, false);
+                float inlineStartWidth = inlineLogicalWidth(renderer, true, false);
                 m_width.addUncommittedWidth(inlineStartWidth);
                 m_appliedStartWidth = true;
                 if (m_hangsAtEnd && inlineStartWidth)
@@ -897,7 +898,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                         } else if (m_current.nextBreakablePosition() && m_current.nextBreakablePosition().value() <= m_current.offset()) {
                             // We might just be right after the soft-hyphen
                             lastBreakingPosition = m_current.nextBreakablePosition().value();
-                            rendererAtBreakingPosition = m_current.renderer();
+                            rendererAtBreakingPosition = &renderer;
                         }
                         if (lastBreakingPosition) {
                             Optional<UChar> characterBeforeBreakingPosition;
@@ -996,7 +997,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                 lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
                 wordSpacingForWordMeasurement = (applyWordSpacing && wordMeasurements.last().width) ? wordSpacing : 0;
                 lastSpace = m_current.offset(); // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(nullptr, m_current.renderer(), m_current.offset()));
+                m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(nullptr, &renderer, m_current.offset()));
             }
             if (m_hangsAtEnd && !renderer.isHangableStopOrComma(c))
                 m_hangsAtEnd = false;
@@ -1009,7 +1010,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         }
 
         if (m_currentCharacterIsSpace && !previousCharacterIsSpace) {
-            m_startOfIgnoredSpaces.setRenderer(m_current.renderer());
+            m_startOfIgnoredSpaces.setRenderer(&renderer);
             m_startOfIgnoredSpaces.setOffset(m_current.offset());
             // Spaces after right-aligned text and before a line-break get collapsed away completely so that the trailing
             // space doesn't seem to push the text out from the right-hand edge.
@@ -1028,7 +1029,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
         }
 
         if (m_collapseWhiteSpace && m_currentCharacterIsSpace && !m_ignoringSpaces)
-            m_trailingObjects.setTrailingWhitespace(downcast<RenderText>(m_current.renderer()));
+            m_trailingObjects.setTrailingWhitespace(renderer);
         else if (!m_currentStyle->collapseWhiteSpace() || !m_currentCharacterIsSpace)
             m_trailingObjects.clear();
 
@@ -1049,7 +1050,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     wordMeasurement.width = m_ignoringSpaces ? 0 : additionalTempWidth + wordSpacingForWordMeasurement;
     additionalTempWidth += lastSpaceWordSpacing;
 
-    float inlineLogicalTempWidth = inlineLogicalWidth(*m_current.renderer(), !m_appliedStartWidth, m_includeEndWidth);
+    float inlineLogicalTempWidth = inlineLogicalWidth(renderer, !m_appliedStartWidth, m_includeEndWidth);
     m_width.addUncommittedWidth(additionalTempWidth + inlineLogicalTempWidth);
     if (m_hangsAtEnd && inlineLogicalTempWidth)
         m_hangsAtEnd = false;

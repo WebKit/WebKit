@@ -47,10 +47,9 @@ public:
         : m_whitespace(0)
     { }
 
-    void setTrailingWhitespace(RenderText* whitespace)
+    void setTrailingWhitespace(RenderText& whitespace)
     {
-        ASSERT(whitespace);
-        m_whitespace = whitespace;
+        m_whitespace = &whitespace;
     }
 
     void clear()

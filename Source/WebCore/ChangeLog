@@ -1,5 +1,19 @@
 2021-04-17  Zalan Bujtas  <zalan@apple.com>
 
+        [Cleanup] BreakingContext::handleText should consistently use the cached renderer
+        https://bugs.webkit.org/show_bug.cgi?id=224711
+
+        Reviewed by Antti Koivisto.
+
+        Since this function is not supposed to increment the renderer, let's replace m_current.renderer() with "renderer".
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+        * rendering/line/TrailingObjects.h:
+        (WebCore::TrailingObjects::setTrailingWhitespace):
+
+2021-04-17  Zalan Bujtas  <zalan@apple.com>
+
         [Cleanup] inlineLogicalWidth should take const RenderObject&
         https://bugs.webkit.org/show_bug.cgi?id=224700
 
