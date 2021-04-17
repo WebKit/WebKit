@@ -1,3 +1,16 @@
+2021-04-16  Chris Dumez  <cdumez@apple.com>
+
+        [GPUProcess] Crash under RemoteAudioDestination::render()
+        https://bugs.webkit.org/show_bug.cgi?id=224688
+        <rdar://76643365>
+
+        Reviewed by Eric Carlson.
+
+        Add layout test that can flakily reproduce the issue.
+
+        * webaudio/AudioContext/audiocontext-destruction-crash-expected.txt: Added.
+        * webaudio/AudioContext/audiocontext-destruction-crash.html: Added.
+
 2021-04-16  Darin Adler  <darin@apple.com>
 
         font-size with viewport units in calc() doesn't change when viewport resizes

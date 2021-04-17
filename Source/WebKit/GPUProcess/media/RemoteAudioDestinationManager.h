@@ -71,7 +71,7 @@ private:
     void audioSamplesStorageChanged(RemoteAudioDestinationIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
 #endif
 
-    HashMap<RemoteAudioDestinationIdentifier, Ref<RemoteAudioDestination>> m_audioDestinations;
+    HashMap<RemoteAudioDestinationIdentifier, UniqueRef<RemoteAudioDestination>> m_audioDestinations;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 };
 

@@ -1,5 +1,57 @@
 2021-04-16  Chris Dumez  <cdumez@apple.com>
 
+        [GPUProcess] Crash under RemoteAudioDestination::render()
+        https://bugs.webkit.org/show_bug.cgi?id=224688
+        <rdar://76643365>
+
+        Reviewed by Eric Carlson.
+
+        When the connection between the GPUProcess and the WebProcess was severed,
+        GPUConnectionToWebProcess::didClose() would get called and end up destroying
+        the RemoteAudioDestination object on the main thread. The issue is that the
+        RemoteAudioDestination may be playing at the time and we would end up
+        destroying the RemoteAudioDestination object without stopping rendering
+        first. As a result, we would crash on the background thread in the
+        RemoteAudioDestination::render() function, trying to use the m_ringBuffer
+        data member that got destroyed on the main thread.
+
+        To address this, I updated the RemoteAudioDestination destructor so that it
+        stops rendering if necessary. AudioOutputUnitStop() is synchronous so this
+        ensures render() is done running on the background thread (and won't be
+        called again) before proceeding with the destruction of the data members.
+
+        Test: webaudio/AudioContext/audiocontext-destruction-crash.html
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        Updated the class to stop subclassing ThreadSafeRefCounted. This class does
+        not need RefCounting at all. I updated the call site to use UniqueRef<>.
+
+        (WebKit::RemoteAudioDestination::create): Deleted.
+        Drop this factory function and made the constructor public now that we no longer
+        subclass ThreadSafeRefCounted and use makeUniqueRef<>() at the call site.
+
+        (WebKit::RemoteAudioDestination::scheduleGracefulShutdownIfNeeded): Deleted.
+        Stop this function now that the destructor takes care of shutting down gracefully.
+
+        (WebKit::RemoteAudioDestination::RemoteAudioDestination):
+        Made the constructor public.
+
+        (WebKit::RemoteAudioDestination::render):
+        - Stop checking m_protectThisDuringGracefulShutdown on the background thread. This data
+          member is not needed since stop() is synchronous. It was also not thread-safe since
+          m_protectThisDuringGracefulShutdown was set on the main thread and we are on the
+          audio thread here.
+        - Similarly, drop the check for m_isPlaying. m_isPlaying is not atomic so the check
+          was not thread safe. Even if m_isPlaying was atomic, m_isPlaying get set to true
+          *after* calling m_audioOutputUnitAdaptor.start() so render() may early return
+          even though we were playing. Also, this check is not needed since we set
+          m_isPlaying to false after calling m_audioOutputUnitAdaptor.stop() and the stop()
+          call is synchronous and should not return until the audio thread stopped rendering.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.h:
+
+2021-04-16  Chris Dumez  <cdumez@apple.com>
+
         The RemoteRemoteCommandListener destructor should never (re-)launch the GPUProcess
         https://bugs.webkit.org/show_bug.cgi?id=224701
 
