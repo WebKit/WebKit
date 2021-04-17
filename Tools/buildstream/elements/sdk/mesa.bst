@@ -106,6 +106,10 @@ sources:
 - kind: git_tag
   url: gitlab_freedesktop_org:mesa/mesa.git
   track: '20.3'
-  ref: mesa-20.3.2-1-g6d2e76d2425901dec7bb21da62b5f0f2b81f1e8a
+  ref: mesa-20.3.5-1-g42a4d76fccfee52ec5ca24db7a8df661a0e8e66b
+  exclude:
+  - '*.0'
 - kind: patch
   path: patches/mesa/mesa_libdrm_deps.patch
+- kind: patch
+  path: patches/mesa/0001-i915-Prevent-invalid-framebuffer-usage.patch

@@ -1,3 +1,15 @@
+2021-04-17  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r275755): [GStreamer] Crashes on surfaceless i915 platforms
+        https://bugs.webkit.org/show_bug.cgi?id=224416
+
+        Reviewed by Adrian Perez de Castro.
+
+        Vendor potential fix for https://gitlab.freedesktop.org/mesa/mesa/-/issues/778.
+
+        * elements/sdk/mesa.bst:
+        * patches/mesa/0001-i915-Prevent-invalid-framebuffer-usage.patch: Added.
+
 2021-04-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, update libsoup 2.99.3 ref
