@@ -1,3 +1,59 @@
+2021-04-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][MediaStream] fast/mediastream/play-newly-added-audio-track.html is failing since added in r260380
+        https://bugs.webkit.org/show_bug.cgi?id=210840
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The test was failing mainly because our mediastreamsrc GStreamer element wasn't creating the
+        corresponding AudioTrackPrivateMediaStream object. The media player should propagate its
+        volume/mute/is-playing states to the source element. And also until now our mediastreamsrc
+        element was handling at most one audio track and at most one audio track, but it turns out
+        multiple audio tracks can be added actually. So I refactored the element internals
+        accordingly. The InternalSource is now directly observing the corresponding
+        RealtimeMediaSource, which simplified some code. Observing is also now suspended/resumed
+        depending on the element state.
+
+        We don't implement a GStreamer AudioMediaStreamTrackRenderer class yet, because actual
+        rendering is still performed from the WebProcess, so early returns were added in
+        AudioTrackPrivateMediaStream to handle this case.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::configureMediaStreamAudioTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::setVolume):
+        (WebCore::MediaPlayerPrivateGStreamer::setMuted):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/mediastream/AudioTrackPrivateMediaStream.cpp:
+        (WebCore::AudioTrackPrivateMediaStream::createRenderer):
+        (WebCore::AudioTrackPrivateMediaStream::setLogger):
+        (WebCore::AudioTrackPrivateMediaStream::clear):
+        (WebCore::AudioTrackPrivateMediaStream::setVolume):
+        (WebCore::AudioTrackPrivateMediaStream::setAudioOutputDevice):
+        (WebCore::AudioTrackPrivateMediaStream::volume const):
+        (WebCore::AudioTrackPrivateMediaStream::audioSamplesAvailable):
+        (WebCore::AudioTrackPrivateMediaStream::startRenderer):
+        (WebCore::AudioTrackPrivateMediaStream::stopRenderer):
+        (WebCore::AudioTrackPrivateMediaStream::createNewRenderer):
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp:
+        (mediaStreamTrackPrivateGetTags):
+        (WebKitMediaStreamObserver::didRemoveTrack):
+        (webkitMediaStreamSrcConstructed):
+        (webkitMediaStreamSrcDispose):
+        (webkitMediaStreamSrcChangeState):
+        (webkitMediaStreamSrcPostStreamCollection):
+        (webkitMediaStreamSrcAddPad):
+        (ProbeData::ProbeData):
+        (webkitMediaStreamSrcPadProbeCb):
+        (webkitMediaStreamSrcAddTrack):
+        (webkitMediaStreamSrcSetStream):
+        (webkitMediaStreamSrcTrackEnded):
+        (InternalSource::trackEnded):
+        (webkitMediaStreamSrcConfigureAudioTracks):
+        * platform/mediastream/gstreamer/GStreamerMediaStreamSource.h:
+
 2021-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         Perform port blocking earlier in the load

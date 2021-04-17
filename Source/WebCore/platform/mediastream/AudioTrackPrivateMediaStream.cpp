@@ -51,6 +51,8 @@ AudioTrackPrivateMediaStream::~AudioTrackPrivateMediaStream()
 std::unique_ptr<AudioMediaStreamTrackRenderer> AudioTrackPrivateMediaStream::createRenderer(AudioTrackPrivateMediaStream& stream)
 {
     auto renderer = AudioMediaStreamTrackRenderer::create();
+    if (!renderer)
+        return nullptr;
     renderer->setCrashCallback([stream = makeWeakPtr(stream)] {
         if (stream)
             stream->createNewRenderer();
@@ -62,7 +64,8 @@ std::unique_ptr<AudioMediaStreamTrackRenderer> AudioTrackPrivateMediaStream::cre
 void AudioTrackPrivateMediaStream::setLogger(const Logger& logger, const void* identifier)
 {
     TrackPrivateBase::setLogger(logger, identifier);
-    m_renderer->setLogger(logger, identifier);
+    if (m_renderer)
+        m_renderer->setLogger(logger, identifier);
 }
 #endif
 
@@ -77,7 +80,8 @@ void AudioTrackPrivateMediaStream::clear()
         m_audioSource->removeAudioSampleObserver(*this);
 
     streamTrack().removeObserver(*this);
-    m_renderer->clear();
+    if (m_renderer)
+        m_renderer->clear();
 }
 
 void AudioTrackPrivateMediaStream::play()
@@ -103,24 +107,29 @@ void AudioTrackPrivateMediaStream::setMuted(bool muted)
 
 void AudioTrackPrivateMediaStream::setVolume(float volume)
 {
-    m_renderer->setVolume(volume);
+    if (m_renderer)
+        m_renderer->setVolume(volume);
     updateRenderer();
 }
 
 void AudioTrackPrivateMediaStream::setAudioOutputDevice(const String& deviceId)
 {
-    m_renderer->setAudioOutputDevice(deviceId);
+    if (m_renderer)
+        m_renderer->setAudioOutputDevice(deviceId);
 }
 
 float AudioTrackPrivateMediaStream::volume() const
 {
-    return m_renderer->volume();
+    if (m_renderer)
+        return m_renderer->volume();
+    return 1;
 }
 
 // May get called on a background thread.
 void AudioTrackPrivateMediaStream::audioSamplesAvailable(const MediaTime& sampleTime, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t sampleCount)
 {
-    m_renderer->pushSamples(sampleTime, audioData, description, sampleCount);
+    if (m_renderer)
+        m_renderer->pushSamples(sampleTime, audioData, description, sampleCount);
 }
 
 void AudioTrackPrivateMediaStream::trackMutedChanged(MediaStreamTrackPrivate&)
@@ -154,7 +163,8 @@ void AudioTrackPrivateMediaStream::startRenderer()
         return;
 
     m_isPlaying = true;
-    m_renderer->start();
+    if (m_renderer)
+        m_renderer->start();
     m_audioSource->addAudioSampleObserver(*this);
 }
 
@@ -166,7 +176,8 @@ void AudioTrackPrivateMediaStream::stopRenderer()
 
     m_isPlaying = false;
     m_audioSource->removeAudioSampleObserver(*this);
-    m_renderer->stop();
+    if (m_renderer)
+        m_renderer->stop();
 }
 
 void AudioTrackPrivateMediaStream::createNewRenderer()
@@ -176,7 +187,8 @@ void AudioTrackPrivateMediaStream::createNewRenderer()
 
     float volume = this->volume();
     m_renderer = createRenderer(*this);
-    m_renderer->setVolume(volume);
+    if (m_renderer)
+        m_renderer->setVolume(volume);
 
     if (isPlaying)
         startRenderer();

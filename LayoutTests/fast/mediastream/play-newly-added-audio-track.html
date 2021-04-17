@@ -11,11 +11,14 @@ promise_test(async () => {
 
     await video.play();
 
+    video.srcObject.ontrackadded = () => {
+        if (window.internals)
+            assert_true(internals.shouldAudioTrackPlay(video.audioTracks[0]));
+    };
+
     let stream2 = await navigator.mediaDevices.getUserMedia({ audio : true });
     video.srcObject.addTrack(stream2.getAudioTracks()[0]);
-
-    if (window.internals)
-        assert_true(internals.shouldAudioTrackPlay(video.audioTracks[0]));
+    await new Promise(resolve => setTimeout(resolve, 50));
 }, "Add an audio track while playing video");
 
 promise_test(async () => {
@@ -24,10 +27,13 @@ promise_test(async () => {
 
     await video.play();
 
+    video.srcObject.ontrackadded = () => {
+        if (window.internals)
+            assert_true(internals.shouldAudioTrackPlay(video.audioTracks[1]));
+    };
+
     video.srcObject.addTrack(stream.getAudioTracks()[0]);
     await new Promise(resolve => setTimeout(resolve, 50));
-    if (window.internals)
-        assert_true(internals.shouldAudioTrackPlay(video.audioTracks[1]));
 }, "Add an audio track while playing audio");
         </script>
     </head>

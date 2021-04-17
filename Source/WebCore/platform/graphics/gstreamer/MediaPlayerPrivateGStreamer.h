@@ -458,6 +458,8 @@ private:
     bool waitForCDMAttachment();
 #endif
 
+    void configureMediaStreamAudioTracks();
+
     Atomic<bool> m_isPlayerShuttingDown;
     GRefPtr<GstElement> m_textSink;
     GstStructure* m_mediaLocations { nullptr };

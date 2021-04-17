@@ -1,3 +1,16 @@
+2021-04-17  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][MediaStream] fast/mediastream/play-newly-added-audio-track.html is failing since added in r260380
+        https://bugs.webkit.org/show_bug.cgi?id=210840
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Remove flakyness from test and unflag it on GTK.
+
+        * fast/mediastream/play-newly-added-audio-track.html: addTrack might have asynchronous
+        effects, so it's better to rely on the trackadded event when testing its result.
+        * platform/gtk/TestExpectations:
+
 2021-04-16  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update focus-visible tests baselines after r276127.
