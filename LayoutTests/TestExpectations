@@ -1252,7 +1252,6 @@ webkit.org/b/209735 imported/w3c/web-platform-tests/css/selectors/root-siblings.
 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-005.html [ Skip ]
 
-imported/w3c/web-platform-tests/css/mediaqueries/min-width-001.xht [ ImageOnlyFailure ]
 webkit.org/b/156684 imported/w3c/web-platform-tests/css/mediaqueries/relative-units-001.html [ ImageOnlyFailure ]
 webkit.org/b/156684 imported/w3c/web-platform-tests/css/mediaqueries/mq-calc-005.html [ ImageOnlyFailure ]
 

@@ -482,24 +482,24 @@ static bool gridEvaluate(CSSValue* value, const CSSToLengthConversionData&, Fram
     return zeroEvaluate(value, op);
 }
 
-static bool computeLength(CSSValue* value, bool strict, const CSSToLengthConversionData& conversionData, int& result)
+static Optional<double> computeLength(CSSValue* value, bool strict, const CSSToLengthConversionData& conversionData)
 {
     if (!is<CSSPrimitiveValue>(value))
-        return false;
+        return WTF::nullopt;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-
     if (primitiveValue.isNumber()) {
-        result = primitiveValue.intValue();
-        return !strict || !result;
+        double value = primitiveValue.doubleValue();
+        // The only unitless number value allowed in strict mode is zero.
+        if (strict && value)
+            return WTF::nullopt;
+        return value;
     }
 
-    if (primitiveValue.isLength()) {
-        result = primitiveValue.computeLength<int>(conversionData);
-        return true;
-    }
+    if (primitiveValue.isLength())
+        return primitiveValue.computeLength<double>(conversionData);
 
-    return false;
+    return WTF::nullopt;
 }
 
 static bool deviceHeightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
@@ -508,14 +508,13 @@ static bool deviceHeightEvaluate(CSSValue* value, const CSSToLengthConversionDat
     // assume if we have a device, assume non-zero
     if (!value)
         return true;
-    int length;
-    auto height = frame.mainFrame().screenSize().height();
-    if (!computeLength(value, !frame.document()->inQuirksMode(), conversionData, length))
+    auto length = computeLength(value, !frame.document()->inQuirksMode(), conversionData);
+    if (!length)
         return false;
 
-    LOG_WITH_STREAM(MediaQueries, stream << "  deviceHeightEvaluate: query " << op << " height " << length << ", actual height " << height << " result: " << compareValue(height, length, op));
-
-    return compareValue(height, length, op);
+    auto height = frame.mainFrame().screenSize().height();
+    LOG_WITH_STREAM(MediaQueries, stream << "  deviceHeightEvaluate: query " << op << " height " << *length << ", actual height " << height << " result: " << compareValue(height, *length, op));
+    return compareValue(height, *length, op);
 }
 
 static bool deviceWidthEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
@@ -524,14 +523,13 @@ static bool deviceWidthEvaluate(CSSValue* value, const CSSToLengthConversionData
     // assume if we have a device, assume non-zero
     if (!value)
         return true;
-    int length;
-    auto width = frame.mainFrame().screenSize().width();
-    if (!computeLength(value, !frame.document()->inQuirksMode(), conversionData, length))
+    auto length = computeLength(value, !frame.document()->inQuirksMode(), conversionData);
+    if (!length)
         return false;
 
-    LOG_WITH_STREAM(MediaQueries, stream << "  deviceWidthEvaluate: query " << op << " width " << length << ", actual width " << width << " result: " << compareValue(width, length, op));
-
-    return compareValue(width, length, op);
+    auto width = frame.mainFrame().screenSize().width();
+    LOG_WITH_STREAM(MediaQueries, stream << "  deviceWidthEvaluate: query " << op << " width " << *length << ", actual width " << width << " result: " << compareValue(width, *length, op));
+    return compareValue(width, *length, op);
 }
 
 static bool heightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
@@ -542,16 +540,16 @@ static bool heightEvaluate(CSSValue* value, const CSSToLengthConversionData& con
     int height = view->layoutHeight();
     if (!value)
         return height;
+
+    auto length = computeLength(value, !frame.document()->inQuirksMode(), conversionData);
+    if (!length)
+        return false;
+
     if (auto* renderView = frame.document()->renderView())
         height = adjustForAbsoluteZoom(height, *renderView);
 
-    int length;
-    if (!computeLength(value, !frame.document()->inQuirksMode(), conversionData, length))
-        return false;
-
-    LOG_WITH_STREAM(MediaQueries, stream << "  heightEvaluate: query " << op << " height " << length << ", actual height " << height << " result: " << compareValue(height, length, op));
-
-    return compareValue(height, length, op);
+    LOG_WITH_STREAM(MediaQueries, stream << "  heightEvaluate: query " << op << " height " << *length << ", actual height " << height << " result: " << compareValue(height, *length, op));
+    return compareValue(height, *length, op);
 }
 
 static bool widthEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
@@ -562,16 +560,16 @@ static bool widthEvaluate(CSSValue* value, const CSSToLengthConversionData& conv
     int width = view->layoutWidth();
     if (!value)
         return width;
+
+    auto length = computeLength(value, !frame.document()->inQuirksMode(), conversionData);
+    if (!length)
+        return false;
+
     if (auto* renderView = frame.document()->renderView())
         width = adjustForAbsoluteZoom(width, *renderView);
 
-    int length;
-    if (!computeLength(value, !frame.document()->inQuirksMode(), conversionData, length))
-        return false;
-
-    LOG_WITH_STREAM(MediaQueries, stream << "  widthEvaluate: query " << op << " width " << length << ", actual width " << width << " result: " << compareValue(width, length, op));
-
-    return compareValue(width, length, op);
+    LOG_WITH_STREAM(MediaQueries, stream << "  widthEvaluate: query " << op << " width " << *length << ", actual width " << width << " result: " << compareValue(width, *length, op));
+    return compareValue(width, *length, op);
 }
 
 static bool minColorEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix)

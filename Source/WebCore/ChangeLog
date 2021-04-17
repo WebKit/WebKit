@@ -1,3 +1,29 @@
+2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Media queries with max-width greater than 999999999px evaluate to false
+        https://bugs.webkit.org/show_bug.cgi?id=224097
+
+        Reviewed by Darin Adler.
+
+        We now evaluate <length> values in media queries with double
+        precision instead of int precision to match other browsers and pass a WPT.
+
+        See similar method in Chromium:
+        https://github.com/chromium/chromium/blob/09a0b960b27f6e08fbe67ad97e6c4fb55ada383f/third_party/blink/renderer/core/css/media_query_evaluator.cc#L436
+
+        Test: fast/media/media-query-lengths-evaluate-with-double-precision.html
+        and WPT imported/w3c/web-platform-tests/css/mediaqueries/min-width-001.xht
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::computeLength):
+        Return Optional<double> rather than int& out-value.
+
+        (WebCore::deviceHeightEvaluate):
+        (WebCore::deviceWidthEvaluate):
+        (WebCore::heightEvaluate):
+        (WebCore::widthEvaluate):
+        Evaluate `length` values as doubles instead of ints.
+
 2021-04-17  Zalan Bujtas  <zalan@apple.com>
 
         [Cleanup] Remove redundant BreakingContext::m_currentStyle
