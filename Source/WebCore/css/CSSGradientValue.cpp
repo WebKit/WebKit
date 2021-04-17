@@ -1226,7 +1226,7 @@ String CSSConicGradientValue::customCSSText() const
 
     bool wroteSomething = false;
 
-    if (m_angle && m_angle->computeDegrees() > 0) {
+    if (m_angle && m_angle->computeDegrees()) {
         result.append("from ", m_angle->cssText());
         wroteSomething = true;
     }

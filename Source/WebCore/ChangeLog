@@ -1,3 +1,17 @@
+2021-04-17  Tim Nguyen  <ntim@apple.com>
+
+        Don't omit conic gradient starting angle when serializing when starting angle is under 0
+        https://bugs.webkit.org/show_bug.cgi?id=224719
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated pre-existing test to cover this case.
+
+        Test: LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub.html
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSConicGradientValue::customCSSText const):
+
 2021-04-17  Zalan Bujtas  <zalan@apple.com>
 
         [Cleanup] Modernize TrailingObjects
