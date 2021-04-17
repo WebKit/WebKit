@@ -1656,8 +1656,10 @@ FloatSize MediaPlayerPrivateGStreamer::naturalSize() const
 
 void MediaPlayerPrivateGStreamer::configureMediaStreamAudioTracks()
 {
+#if ENABLE(MEDIA_STREAM)
     if (WEBKIT_IS_MEDIA_STREAM_SRC(m_source.get()))
         webkitMediaStreamSrcConfigureAudioTracks(WEBKIT_MEDIA_STREAM_SRC(m_source.get()), volume(), isMuted(), !m_isPaused);
+#endif
 }
 
 void MediaPlayerPrivateGStreamer::setVolume(float volume)
