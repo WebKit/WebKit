@@ -189,7 +189,11 @@ void RemoteAudioDestinationManager::audioSamplesStorageChanged(RemoteAudioDestin
 
 bool RemoteAudioDestinationManager::allowsExitUnderMemoryPressure() const
 {
-    return m_audioDestinations.isEmpty();
+    for (auto& audioDestination : m_audioDestinations.values()) {
+        if (audioDestination->isPlaying())
+            return false;
+    }
+    return true;
 }
 
 } // namespace WebKit

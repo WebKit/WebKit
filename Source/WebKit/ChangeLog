@@ -1,5 +1,32 @@
 2021-04-16  Chris Dumez  <cdumez@apple.com>
 
+        RemoteAudioDestinationProxy should not launch / relaunch the GPUProcess unless it is actually rendering
+        https://bugs.webkit.org/show_bug.cgi?id=224691
+
+        Reviewed by Geoffrey Garen.
+
+        RemoteAudioDestinationProxy was initiating a connection to the GPUProcess in its constructor and
+        re-initiating the connection right away upon GPUProcess crash. This goes against our recent efforts
+        to run the GPUProcess only when it is actually needed. The RemoteAudioDestinationProxy really only
+        needs the GPUProcess when it is actually rendering / playing.
+
+        * GPUProcess/media/RemoteAudioDestinationManager.cpp:
+        (WebKit::RemoteAudioDestinationManager::allowsExitUnderMemoryPressure const):
+        Allow the GPUProcess to exit when under memory pressure even if it has AudioDestinations, as long
+        as they are not playing.
+
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp:
+        (WebKit::RemoteAudioDestinationProxy::RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::ensureGPUProcessConnection):
+        (WebKit::RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy):
+        (WebKit::RemoteAudioDestinationProxy::startRendering):
+        (WebKit::RemoteAudioDestinationProxy::stopRendering):
+        (WebKit::RemoteAudioDestinationProxy::storageChanged):
+        (WebKit::RemoteAudioDestinationProxy::gpuProcessConnectionDidClose):
+        * WebProcess/GPU/media/RemoteAudioDestinationProxy.h:
+
+2021-04-16  Chris Dumez  <cdumez@apple.com>
+
         [GPUProcess] Crash under RemoteAudioDestination::render()
         https://bugs.webkit.org/show_bug.cgi?id=224688
         <rdar://76643365>

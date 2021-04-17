@@ -579,3 +579,52 @@ TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)
         TestWebKitAPI::Util::run(&done);
     });
 }
+
+TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioNonRenderingAudioContext)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"audio-context-playing"];
+
+    // evaluateJavaScript gives us the user gesture we need to reliably start audio playback on all platforms.
+    __block bool done = false;
+    [webView evaluateJavaScript:@"startPlaying()" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // A GPUProcess should get launched.
+    while (![configuration.get().processPool _gpuProcessIdentifier])
+        TestWebKitAPI::Util::sleep(0.1);
+    auto gpuProcessPID = [configuration.get().processPool _gpuProcessIdentifier];
+
+    // Simulate memory pressure (notifyutil -p org.WebKit.lowMemory).
+    notify_post("org.WebKit.lowMemory");
+
+    // Make sure the GPUProcess does not exit since it is still needed.
+    TestWebKitAPI::Util::sleep(0.5);
+    EXPECT_EQ(gpuProcessPID, [configuration.get().processPool _gpuProcessIdentifier]);
+
+    // Suspend audio rendering.
+    [webView evaluateJavaScript:@"context.suspend() && true" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+
+    // The GPUProcess should exit on memory pressure.
+    do {
+        // Simulate memory pressure (notifyutil -p org.WebKit.lowMemory).
+        notify_post("org.WebKit.lowMemory");
+        TestWebKitAPI::Util::sleep(0.1);
+    } while ([configuration.get().processPool _gpuProcessIdentifier]);
+
+    // The GPUProcess should not relaunch.
+    TestWebKitAPI::Util::sleep(0.5);
+    EXPECT_EQ(0, [configuration.get().processPool _gpuProcessIdentifier]);
+}
