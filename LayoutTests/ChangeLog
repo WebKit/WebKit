@@ -1,3 +1,11 @@
+2021-04-16  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update focus-visible tests baselines after r276127.
+
+        * platform/glib/imported/w3c/web-platform-tests/css/selectors/focus-visible-002-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/css/selectors/focus-visible-003-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/css/selectors/focus-visible-003-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/selectors/focus-visible-004-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/css/selectors/focus-visible-004-expected.txt.
+
 2021-04-16  Brent Fulgham  <bfulgham@apple.com>
 
         Perform port blocking earlier in the load

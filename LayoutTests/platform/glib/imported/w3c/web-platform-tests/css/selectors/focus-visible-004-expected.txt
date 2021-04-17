@@ -24,5 +24,5 @@ PASS Focus element INPUT#el-6 via mouse should NOT match :focus-visible as it do
 PASS Focus element INPUT#el-7 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
 PASS Focus element INPUT#el-8 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
 PASS Focus element INPUT#el-10 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
-FAIL Focus element INPUT#el-11 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none" assert_equals: backgroundColor for INPUT#el-11 should be lime expected "rgb(0, 255, 0)" but got "rgb(255, 255, 255)"
+PASS Focus element INPUT#el-11 via mouse should NOT match :focus-visible as it does NOT support keyboard input - not affected by "appearance: none"
 
