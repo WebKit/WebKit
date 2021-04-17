@@ -1,3 +1,22 @@
+2021-04-17  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [clang 11] Remove warning when converting WebCore::maxValueForCssLength from int to float
+        https://bugs.webkit.org/show_bug.cgi?id=224714
+
+        Reviewed by Chris Dumez.
+
+        On clang 11, the conversion from const int WebCore::maxValueForCssLength (= 33554429) to
+        float generates conversion warning: 
+        > warning: implicit conversion from 'const int' to 'float' changes value from 33554429 to 33554428
+
+        Changing the target type from float to double works for this. Length constructor accept double
+        so that there's no drawback with this change.
+
+        No test because it's compiler behavior.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertWordSpacing):
+
 2021-04-17  Sam Weinig  <weinig@apple.com>
 
         Move RuntimeEnabledFeatures to Settings (Part 1)

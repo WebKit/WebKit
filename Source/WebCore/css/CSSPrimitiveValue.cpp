@@ -542,7 +542,7 @@ template<> unsigned CSSPrimitiveValue::computeLength(const CSSToLengthConversion
 
 template<> Length CSSPrimitiveValue::computeLength(const CSSToLengthConversionData& conversionData) const
 {
-    return Length(clampTo<float>(computeLengthDouble(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
+    return Length(clampTo<double>(computeLengthDouble(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
 }
 
 template<> short CSSPrimitiveValue::computeLength(const CSSToLengthConversionData& conversionData) const

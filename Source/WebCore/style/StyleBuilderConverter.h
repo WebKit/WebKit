@@ -1212,7 +1212,7 @@ inline Optional<Length> BuilderConverter::convertWordSpacing(BuilderState& build
     else if (primitiveValue.isLength())
         wordSpacing = primitiveValue.computeLength<Length>(csstoLengthConversionDataWithTextZoomFactor(builderState));
     else if (primitiveValue.isPercentage())
-        wordSpacing = Length(clampTo<float>(primitiveValue.doubleValue(), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
+        wordSpacing = Length(clampTo<double>(primitiveValue.doubleValue(), minValueForCssLength, maxValueForCssLength), LengthType::Percent);
     else if (primitiveValue.isNumber())
         wordSpacing = Length(primitiveValue.doubleValue(), LengthType::Fixed);
 
