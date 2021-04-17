@@ -1,3 +1,31 @@
+2021-04-17  Chris Dumez  <cdumez@apple.com>
+
+        RemoteImageDecoderAVFManager should never re-launch the GPUProcess on destruction
+        https://bugs.webkit.org/show_bug.cgi?id=224723
+
+        Reviewed by Darin Adler.
+
+        RemoteImageDecoderAVFManager was calling ensureGPUProcessConnection() it is destructor,
+        just to remove itself as an IPC message receiver. This means it could unnecessarily
+        relaunch the GPUProcess. This patch addresses that.
+
+        This patch also makes it so that RemoteImageDecoderAVFManager registers itself as a
+        client of the GPUProcessConnection, so that it gets notified when the connection gets
+        severed. Right now, I only do very basic crash handling but this paves the way to do
+        better in the future. I did fix a bug where the RemoteImageDecoderAVFManager would
+        not re-register itself as a message receiver after a GPUProcess re-launch.
+
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::RemoteImageDecoderAVF):
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.cpp:
+        (WebKit::RemoteImageDecoderAVFManager::createImageDecoder):
+        (WebKit::RemoteImageDecoderAVFManager::deleteRemoteImageDecoder):
+        (WebKit::RemoteImageDecoderAVFManager::~RemoteImageDecoderAVFManager):
+        (WebKit::RemoteImageDecoderAVFManager::gpuProcessConnectionDidClose):
+        (WebKit::RemoteImageDecoderAVFManager::ensureGPUProcessConnection):
+        (WebKit::RemoteImageDecoderAVFManager::gpuProcessConnection const): Deleted.
+        * WebProcess/GPU/media/RemoteImageDecoderAVFManager.h:
+
 2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().
