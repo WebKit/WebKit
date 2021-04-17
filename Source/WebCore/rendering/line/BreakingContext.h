@@ -980,7 +980,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     // spaces. Create a transition to terminate the run
                     // before the second space.
                     m_lineWhitespaceCollapsingState.startIgnoringSpaces(m_startOfIgnoredSpaces);
-                    m_trailingObjects.updateWhitespaceCollapsingTransitionsForTrailingBoxes(m_lineWhitespaceCollapsingState, InlineIterator(), TrailingObjects::DoNotCollapseFirstSpace);
+                    m_trailingObjects.updateWhitespaceCollapsingTransitionsForTrailingBoxes(m_lineWhitespaceCollapsingState, InlineIterator(), TrailingObjects::CollapseFirstSpace::No);
                 }
             }
             // Measuring the width of complex text character-by-character, rather than measuring it all together,
@@ -1185,7 +1185,7 @@ inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()
     }
 }
 
-inline TrailingObjects::CollapseFirstSpaceOrNot checkWhitespaceCollapsingTransitions(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const InlineIterator& lBreak)
+inline TrailingObjects::CollapseFirstSpace checkWhitespaceCollapsingTransitions(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const InlineIterator& lBreak)
 {
     // Check to see if our last transition is a start point beyond the line break. If so,
     // shave it off the list, and shave off a trailing space if the previous end point doesn't
@@ -1202,11 +1202,11 @@ inline TrailingObjects::CollapseFirstSpaceOrNot checkWhitespaceCollapsingTransit
             lineWhitespaceCollapsingState.decrementNumTransitions();
             if (endpoint.renderer()->style().collapseWhiteSpace() && endpoint.renderer()->isText()) {
                 lineWhitespaceCollapsingState.decrementTransitionAt(lineWhitespaceCollapsingState.numTransitions() - 1);
-                return TrailingObjects::DoNotCollapseFirstSpace;
+                return TrailingObjects::CollapseFirstSpace::No;
             }
         }
     }
-    return TrailingObjects::CollapseFirstSpace;
+    return TrailingObjects::CollapseFirstSpace::Yes;
 }
 
 inline InlineIterator BreakingContext::handleEndOfLine()
@@ -1240,8 +1240,7 @@ inline InlineIterator BreakingContext::handleEndOfLine()
     }
 
     // Sanity check our whitespace collapsing transitions.
-    TrailingObjects::CollapseFirstSpaceOrNot collapsed = checkWhitespaceCollapsingTransitions(m_lineWhitespaceCollapsingState, m_lineBreak);
-
+    auto collapsed = checkWhitespaceCollapsingTransitions(m_lineWhitespaceCollapsingState, m_lineBreak);
     m_trailingObjects.updateWhitespaceCollapsingTransitionsForTrailingBoxes(m_lineWhitespaceCollapsingState, m_lineBreak, collapsed);
 
     // We might have made lineBreak an iterator that points past the end

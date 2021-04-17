@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-void TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const InlineIterator& lBreak, CollapseFirstSpaceOrNot collapseFirstSpace)
+void TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState& lineWhitespaceCollapsingState, const InlineIterator& lBreak, CollapseFirstSpace collapseFirstSpace)
 {
     if (!m_whitespace)
         return;
@@ -41,7 +41,7 @@ void TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes(Line
         int trailingSpaceTransition = lineWhitespaceCollapsingState.numTransitions() - 1;
         for ( ; trailingSpaceTransition > 0 && lineWhitespaceCollapsingState.transitions()[trailingSpaceTransition].renderer() != m_whitespace; --trailingSpaceTransition) { }
         ASSERT(trailingSpaceTransition >= 0);
-        if (collapseFirstSpace == CollapseFirstSpace)
+        if (collapseFirstSpace == CollapseFirstSpace::Yes)
             lineWhitespaceCollapsingState.decrementTransitionAt(trailingSpaceTransition);
 
         // Now make sure every single trailingPositionedBox following the trailingSpaceTransition properly stops and starts
@@ -59,7 +59,7 @@ void TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes(Line
         }
     } else if (!lBreak.renderer()) {
         ASSERT(m_whitespace->isText());
-        ASSERT(collapseFirstSpace == CollapseFirstSpace);
+        ASSERT(collapseFirstSpace == CollapseFirstSpace::Yes);
         // Add a new end transition that stops right at the very end.
         unsigned length = m_whitespace->text().length();
         unsigned pos = length >= 2 ? length - 2 : UINT_MAX;

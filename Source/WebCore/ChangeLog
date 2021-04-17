@@ -1,5 +1,25 @@
 2021-04-17  Zalan Bujtas  <zalan@apple.com>
 
+        [Cleanup] Modernize TrailingObjects
+        https://bugs.webkit.org/show_bug.cgi?id=224712
+
+        Reviewed by Antti Koivisto.
+
+        Remove redundant c'tor and start using enum class.
+
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleText):
+        (WebCore::checkWhitespaceCollapsingTransitions):
+        (WebCore::BreakingContext::handleEndOfLine):
+        * rendering/line/TrailingObjects.cpp:
+        (WebCore::TrailingObjects::updateWhitespaceCollapsingTransitionsForTrailingBoxes):
+        * rendering/line/TrailingObjects.h:
+        (WebCore::TrailingObjects::setTrailingWhitespace):
+        (WebCore::TrailingObjects::clear):
+        (WebCore::TrailingObjects::TrailingObjects): Deleted.
+
+2021-04-17  Zalan Bujtas  <zalan@apple.com>
+
         [Cleanup] BreakingContext::handleText should consistently use the cached renderer
         https://bugs.webkit.org/show_bug.cgi?id=224711
 
