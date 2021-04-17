@@ -56,13 +56,15 @@ RemoteRemoteCommandListener::RemoteRemoteCommandListener(RemoteCommandListenerCl
 
 RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
 {
-    auto& connection = m_process.ensureGPUProcessConnection();
-    connection.messageReceiverMap().removeMessageReceiver(*this);
-    connection.connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteCommandListener(m_identifier), 0);
+    if (auto* gpuProcessConnection = m_process.existingGPUProcessConnection()) {
+        gpuProcessConnection->messageReceiverMap().removeMessageReceiver(*this);
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteCommandListener(m_identifier), 0);
+    }
 }
 
 void RemoteRemoteCommandListener::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
+    // FIXME: Should this relaunch the GPUProcess and re-create the RemoteCommandListener?
 }
 
 void RemoteRemoteCommandListener::didReceiveRemoteControlCommand(WebCore::PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
