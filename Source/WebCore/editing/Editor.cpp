@@ -4120,10 +4120,7 @@ PromisedAttachmentInfo Editor::promisedAttachmentInfo(Element& element)
     getPasteboardTypesAndDataForAttachment(element, additionalTypes, additionalData);
 #endif
 
-    if (auto file = makeRefPtr(attachment->file()))
-        return { file->url(), platformContentTypeForBlobType(file->type()), file->name(), { }, WTFMove(additionalTypes), WTFMove(additionalData) };
-
-    return { { }, { }, { }, attachment->uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
+    return { attachment->uniqueIdentifier(), WTFMove(additionalTypes), WTFMove(additionalData) };
 }
 
 void Editor::registerAttachmentIdentifier(const String& identifier, const String& contentType, const String& preferredFileName, Ref<SharedBuffer>&& data)

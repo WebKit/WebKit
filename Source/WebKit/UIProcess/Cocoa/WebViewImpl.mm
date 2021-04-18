@@ -885,14 +885,12 @@ static const NSUInteger orderedListSegment = 2;
 
 @interface WKPromisedAttachmentContext : NSObject {
 @private
-    RetainPtr<NSURL> _blobURL;
     RetainPtr<NSString> _fileName;
     RetainPtr<NSString> _attachmentIdentifier;
 }
 
-- (instancetype)initWithIdentifier:(NSString *)identifier blobURL:(NSURL *)url fileName:(NSString *)fileName;
+- (instancetype)initWithIdentifier:(NSString *)identifier fileName:(NSString *)fileName;
 
-@property (nonatomic, readonly) NSURL *blobURL;
 @property (nonatomic, readonly) NSString *fileName;
 @property (nonatomic, readonly) NSString *attachmentIdentifier;
 
@@ -900,20 +898,14 @@ static const NSUInteger orderedListSegment = 2;
 
 @implementation WKPromisedAttachmentContext
 
-- (instancetype)initWithIdentifier:(NSString *)identifier blobURL:(NSURL *)blobURL fileName:(NSString *)fileName
+- (instancetype)initWithIdentifier:(NSString *)identifier fileName:(NSString *)fileName
 {
     if (!(self = [super init]))
         return nil;
 
-    _blobURL = blobURL;
     _fileName = fileName;
     _attachmentIdentifier = identifier;
     return self;
-}
-
-- (NSURL *)blobURL
-{
-    return _blobURL.get();
 }
 
 - (NSString *)fileName
@@ -4234,12 +4226,6 @@ void WebViewImpl::writeToURLForFilePromiseProvider(NSFilePromiseProvider *provid
         return;
     }
 
-    URL blobURL { info.blobURL };
-    if (blobURL.isEmpty()) {
-        completionHandler(webKitUnknownError());
-        return;
-    }
-
     completionHandler(webKitUnknownError());
 }
 
@@ -4285,20 +4271,21 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
     ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (auto& info = item.promisedAttachmentInfo) {
-        NSString *utiType = info.contentType;
-        NSString *fileName = info.fileName;
-        if (auto attachment = m_page->attachmentForIdentifier(info.attachmentIdentifier)) {
-            utiType = attachment->utiType();
-            fileName = attachment->fileName();
+        auto attachment = m_page->attachmentForIdentifier(info.attachmentIdentifier);
+        if (!attachment) {
+            m_page->dragCancelled();
+            return;
         }
 
+        NSString *utiType = attachment->utiType();
         if (!utiType.length) {
             m_page->dragCancelled();
             return;
         }
 
+        NSString *fileName = attachment->fileName();
         auto provider = adoptNS([[NSFilePromiseProvider alloc] initWithFileType:utiType delegate:(id <NSFilePromiseProviderDelegate>)m_view.getAutoreleased()]);
-        auto context = adoptNS([[WKPromisedAttachmentContext alloc] initWithIdentifier:info.attachmentIdentifier blobURL:info.blobURL fileName:fileName]);
+        auto context = adoptNS([[WKPromisedAttachmentContext alloc] initWithIdentifier:info.attachmentIdentifier fileName:fileName]);
         [provider setUserInfo:context.get()];
         auto draggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:provider.get()]);
         [draggingItem setDraggingFrame:NSMakeRect(clientDragLocation.x(), clientDragLocation.y() - size.height(), size.width(), size.height()) contents:dragNSImage.get()];

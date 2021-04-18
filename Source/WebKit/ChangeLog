@@ -1,3 +1,33 @@
+2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove PromisedAttachmentInfo::blobURL and adjacent code
+        https://bugs.webkit.org/show_bug.cgi?id=224720
+
+        Reviewed by Ryosuke Niwa.
+
+        The `blobURL` member of `PromisedAttachmentInfo` was originally introduced to facilitate drag and drop support
+        for attachment elements in WebKit2, by writing blob URL data to temporary file paths on behalf of
+        `NSFilePromiseProvider` when starting a drag on attachment elements backed by blobs. However, this was
+        superceded by use of `NSFileWrapper` and the `_WKAttachment` SPI instead, such that we only support dragging
+        attachment elements if they correspond to API `Attachment` objects in the UI process. This means we can remove
+        this `blobURL`, along with the file name and content type members of the struct (which were only added to
+        support the ability to drag blob-backed attachments).
+
+        Code that utilized this member was originally introduced in <https://trac.webkit.org/r235202>, and was
+        subsequently removed in <https://trac.webkit.org/r240687>.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PromisedAttachmentInfo>::encode):
+        (IPC::ArgumentCoder<PromisedAttachmentInfo>::decode):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (-[WKPromisedAttachmentContext initWithIdentifier:fileName:]):
+        (WebKit::WebViewImpl::writeToURLForFilePromiseProvider):
+        (WebKit::WebViewImpl::startDrag):
+        (-[WKPromisedAttachmentContext initWithIdentifier:blobURL:fileName:]): Deleted.
+        (-[WKPromisedAttachmentContext blobURL]): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _prepareToDragPromisedAttachment:]):
+
 2021-04-17  Chris Dumez  <cdumez@apple.com>
 
         Use WebProcess::existingGPUProcessConnection() whenever possible

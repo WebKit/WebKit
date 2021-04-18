@@ -2882,9 +2882,6 @@ Optional<MediaSelectionOption> ArgumentCoder<MediaSelectionOption>::decode(Decod
 
 void ArgumentCoder<PromisedAttachmentInfo>::encode(Encoder& encoder, const PromisedAttachmentInfo& info)
 {
-    encoder << info.blobURL;
-    encoder << info.contentType;
-    encoder << info.fileName;
 #if ENABLE(ATTACHMENT_ELEMENT)
     encoder << info.attachmentIdentifier;
 #endif
@@ -2893,15 +2890,6 @@ void ArgumentCoder<PromisedAttachmentInfo>::encode(Encoder& encoder, const Promi
 
 bool ArgumentCoder<PromisedAttachmentInfo>::decode(Decoder& decoder, PromisedAttachmentInfo& info)
 {
-    if (!decoder.decode(info.blobURL))
-        return false;
-
-    if (!decoder.decode(info.contentType))
-        return false;
-
-    if (!decoder.decode(info.fileName))
-        return false;
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (!decoder.decode(info.attachmentIdentifier))
         return false;

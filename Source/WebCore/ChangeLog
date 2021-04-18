@@ -1,3 +1,17 @@
+2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove PromisedAttachmentInfo::blobURL and adjacent code
+        https://bugs.webkit.org/show_bug.cgi?id=224720
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove this member of `PromisedAttachmentInfo`. See WebKit ChangeLog for more details.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::promisedAttachmentInfo):
+        * platform/PromisedAttachmentInfo.h:
+        (WebCore::PromisedAttachmentInfo::operator bool const):
+
 2021-04-17  Tim Nguyen  <ntim@apple.com>
 
         Add support for inline-{start/end} values to float & clear properties

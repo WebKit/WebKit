@@ -8149,10 +8149,10 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     auto numberOfAdditionalTypes = info.additionalTypes.size();
     ASSERT(numberOfAdditionalTypes == info.additionalData.size());
 
-    RELEASE_LOG(DragAndDrop, "Drag session: %p preparing to drag blob: %s with attachment identifier: %s", session.get(), info.blobURL.string().utf8().data(), info.attachmentIdentifier.utf8().data());
+    RELEASE_LOG(DragAndDrop, "Drag session: %p preparing to drag with attachment identifier: %s", session.get(), info.attachmentIdentifier.utf8().data());
 
-    NSString *utiType = info.contentType;
-    NSString *fileName = info.fileName;
+    NSString *utiType = nil;
+    NSString *fileName = nil;
     if (auto attachment = _page->attachmentForIdentifier(info.attachmentIdentifier)) {
         utiType = attachment->utiType();
         fileName = attachment->fileName();

@@ -33,10 +33,6 @@ namespace WebCore {
 class SharedBuffer;
 
 struct PromisedAttachmentInfo {
-    URL blobURL;
-    String contentType;
-    String fileName;
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     String attachmentIdentifier;
 #endif
@@ -50,8 +46,7 @@ struct PromisedAttachmentInfo {
         if (!attachmentIdentifier.isEmpty())
             return true;
 #endif
-
-        return !contentType.isEmpty() && !blobURL.isEmpty();
+        return false;
     }
 };
 
