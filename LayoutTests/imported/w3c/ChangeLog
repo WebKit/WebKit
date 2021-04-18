@@ -1,3 +1,28 @@
+2021-04-17  Tim Nguyen  <ntim@apple.com>
+
+        Add support for inline-{start/end} values to float & clear properties
+        https://bugs.webkit.org/show_bug.cgi?id=218087
+
+        Reviewed by Antti Koivisto & Zalan Bujtas.
+
+        Imported reftests from: https://github.com/web-platform-tests/wpt/commit/47e7176242e2ca4ca68d6cfe032619ccf44d55a6
+        Enabled: imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear.html
+
+        * web-platform-tests/css/css-box/parsing/clear-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/clear-valid-expected.txt:
+        * web-platform-tests/css/css-box/parsing/float-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/float-valid-expected.txt:
+        * web-platform-tests/css/css-logical/logical-values-float-clear-1-expected.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-1.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-2-expected.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-2.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-3-expected.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-3.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-4-expected.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-4.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-expected.txt:
+        * web-platform-tests/css/css-logical/w3c-import.log:
+
 2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().

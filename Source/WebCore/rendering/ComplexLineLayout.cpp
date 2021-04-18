@@ -1359,8 +1359,8 @@ void ComplexLineLayout::layoutRunsAndFloats(LineLayoutState& layoutState, bool h
             if (!lastObject->isBR())
                 lastObject = &lastRootBox()->firstLeafDescendant()->renderer();
             if (lastObject->isBR()) {
-                Clear clear = lastObject->style().clear();
-                if (clear != Clear::None)
+                auto clear = RenderStyle::usedClear(*lastObject);
+                if (clear != UsedClear::None)
                     m_flow.clearFloats(clear);
             }
         }
@@ -1504,7 +1504,7 @@ void ComplexLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState,
 
         if (!layoutState.lineInfo().isEmpty()) {
             layoutState.lineInfo().setFirstLine(false);
-            m_flow.clearFloats(lineBreaker.clear());
+            m_flow.clearFloats(lineBreaker.usedClear());
         }
 
         if (m_flow.floatingObjects() && lastRootBox()) {

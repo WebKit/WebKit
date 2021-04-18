@@ -1,3 +1,68 @@
+2021-04-17  Tim Nguyen  <ntim@apple.com>
+
+        Add support for inline-{start/end} values to float & clear properties
+        https://bugs.webkit.org/show_bug.cgi?id=218087
+
+        Reviewed by Antti Koivisto & Zalan Bujtas.
+
+        Imported reftests from: https://github.com/web-platform-tests/wpt/commit/47e7176242e2ca4ca68d6cfe032619ccf44d55a6
+        Enabled: imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear.html
+
+        Tests: imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-1.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-2.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-3.html
+               imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-4.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator Clear const):
+        (WebCore::CSSPrimitiveValue::operator Float const):
+        * css/CSSValueKeywords.in:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        * display/css/DisplayStyle.cpp:
+        (WebCore::Display::Style::Style):
+        * layout/integration/LayoutIntegrationBoxTree.cpp:
+        (WebCore::LayoutIntegration::BoxTree::buildTree):
+        * layout/layouttree/LayoutBox.cpp:
+        (WebCore::Layout::Box::isFloatingPositioned const):
+        * layout/layouttree/LayoutTreeBuilder.cpp:
+        (WebCore::Layout::TreeBuilder::createLayoutBox):
+        (WebCore::Layout::TreeBuilder::buildTableStructure):
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::ComplexLineLayout::layoutRunsAndFloats):
+        (WebCore::ComplexLineLayout::layoutRunsAndFloatsInRange):
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObject::FloatingObject):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::marginOffsetForSelfCollapsingBlock):
+        (WebCore::RenderBlockFlow::marginBeforeEstimateForChild const):
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        (WebCore::RenderBlockFlow::positionNewFloats):
+        (WebCore::RenderBlockFlow::clearFloats):
+        (WebCore::RenderBlockFlow::getClearDelta):
+        (WebCore::RenderBlockFlow::computeInlinePreferredLogicalWidths const):
+        * rendering/RenderBlockFlow.h:
+        * rendering/line/BreakingContext.h:
+        (WebCore::BreakingContext::handleBR):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::reset):
+        * rendering/line/LineBreaker.h:
+        (WebCore::LineBreaker::usedClear):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::usedClear):
+        (WebCore::RenderStyle::usedFloat):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::isFloating const):
+        (WebCore::RenderStyle::initialFloating):
+        * rendering/style/RenderStyleConstants.cpp:
+        (WebCore::operator<<):
+        * rendering/style/RenderStyleConstants.h:
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+
 2021-04-17  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [Curl] Remove warnings on curl layer.

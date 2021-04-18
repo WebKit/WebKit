@@ -256,7 +256,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             if (m_document.inQuirksMode()) {
                 if (m_element->hasTagName(tdTag)) {
                     style.setEffectiveDisplay(DisplayType::TableCell);
-                    style.setFloating(Float::No);
+                    style.setFloating(Float::None);
                 } else if (is<HTMLTableElement>(*m_element))
                     style.setEffectiveDisplay(style.isDisplayInlineType() ? DisplayType::InlineTable : DisplayType::Table);
             }
@@ -287,7 +287,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             // Ruby text does not support float or position. This might change with evolution of the specification.
             if (m_element->hasTagName(rtTag)) {
                 style.setPosition(PositionType::Static);
-                style.setFloating(Float::No);
+                style.setFloating(Float::None);
             }
 
             // User agents are expected to have a rule in their user agent stylesheet that matches th elements that have a parent
@@ -334,7 +334,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         // https://www.w3.org/TR/css-display/#transformations
         // "A parent with a grid or flex display value blockifies the box’s display type."
         if (m_parentBoxStyle.isDisplayFlexibleOrGridBox()) {
-            style.setFloating(Float::No);
+            style.setFloating(Float::None);
             style.setEffectiveDisplay(equivalentBlockDisplay(style, m_document));
         }
     }

@@ -163,7 +163,7 @@ bool Box::isFloatingPositioned() const
     // FIXME: Rendering code caches values like this. (style="position: absolute; float: left")
     if (isOutOfFlowPositioned())
         return false;
-    return m_style.floating() != Float::No;
+    return m_style.floating() != Float::None;
 }
 
 bool Box::isLeftFloatingPositioned() const

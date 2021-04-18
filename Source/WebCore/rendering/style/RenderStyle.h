@@ -198,7 +198,7 @@ public:
 
     void setColumnStylesFromPaginationMode(const Pagination::Mode&);
     
-    bool isFloating() const { return static_cast<Float>(m_nonInheritedFlags.floating) != Float::No; }
+    bool isFloating() const { return static_cast<Float>(m_nonInheritedFlags.floating) != Float::None; }
     bool hasMargin() const { return !m_surroundData->margin.isZero(); }
     bool hasBorder() const { return m_surroundData->border.hasBorder(); }
     bool hasBorderFill() const { return m_surroundData->border.hasFill(); }
@@ -260,6 +260,7 @@ public:
     bool hasInFlowPosition() const { return position() == PositionType::Relative || position() == PositionType::Sticky; }
     bool hasViewportConstrainedPosition() const { return position() == PositionType::Fixed || position() == PositionType::Sticky; }
     Float floating() const { return static_cast<Float>(m_nonInheritedFlags.floating); }
+    static UsedFloat usedFloat(const RenderObject&);
 
     const Length& width() const { return m_boxData->width(); }
     const Length& height() const { return m_boxData->height(); }
@@ -348,6 +349,7 @@ public:
     EUnicodeBidi unicodeBidi() const { return static_cast<EUnicodeBidi>(m_nonInheritedFlags.unicodeBidi); }
 
     Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
+    static UsedClear usedClear(const RenderObject&);
     TableLayoutType tableLayout() const { return static_cast<TableLayoutType>(m_nonInheritedFlags.tableLayout); }
 
     WEBCORE_EXPORT const FontCascade& fontCascade() const;
@@ -1532,7 +1534,7 @@ public:
     static EUnicodeBidi initialUnicodeBidi() { return UBNormal; }
     static PositionType initialPosition() { return PositionType::Static; }
     static VerticalAlign initialVerticalAlign() { return VerticalAlign::Baseline; }
-    static Float initialFloating() { return Float::No; }
+    static Float initialFloating() { return Float::None; }
     static BreakBetween initialBreakBetween() { return BreakBetween::Auto; }
     static BreakInside initialBreakInside() { return BreakInside::Auto; }
     static OptionSet<HangingPunctuation> initialHangingPunctuation() { return OptionSet<HangingPunctuation> { }; }
@@ -1869,10 +1871,10 @@ private:
         unsigned overflowX : 3; // Overflow
         unsigned overflowY : 3; // Overflow
         unsigned verticalAlign : 4; // VerticalAlign
-        unsigned clear : 2; // Clear
+        unsigned clear : 3; // Clear
         unsigned position : 3; // PositionType
         unsigned unicodeBidi : 3; // EUnicodeBidi
-        unsigned floating : 2; // Float
+        unsigned floating : 3; // Float
         unsigned tableLayout : 1; // TableLayoutType
 
         unsigned hasExplicitlySetBorderRadius : 1;

@@ -36,6 +36,7 @@
 #include "InlineTextBoxStyle.h"
 #include "Pagination.h"
 #include "QuotesData.h"
+#include "RenderBlock.h"
 #include "RenderObject.h"
 #include "RenderTheme.h"
 #include "ScaleTransformOperation.h"
@@ -2664,4 +2665,43 @@ Color RenderStyle::computedStrokeColor() const
     return visitedDependentColor(effectiveStrokeColorProperty());
 }
 
+UsedClear RenderStyle::usedClear(const RenderObject& renderer)
+{
+    auto computedValue = renderer.style().clear();
+    switch (computedValue) {
+    case Clear::None:
+        return UsedClear::None;
+    case Clear::Left:
+        return UsedClear::Left;
+    case Clear::Right:
+        return UsedClear::Right;
+    case Clear::Both:
+        return UsedClear::Both;
+    case Clear::InlineStart:
+    case Clear::InlineEnd:
+        auto containingBlockDirection = renderer.containingBlock()->style().direction();
+        if (containingBlockDirection == TextDirection::RTL)
+            return computedValue == Clear::InlineStart ? UsedClear::Right : UsedClear::Left;
+        return computedValue == Clear::InlineStart ? UsedClear::Left : UsedClear::Right;
+    }
+}
+
+UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
+{
+    auto computedValue = renderer.style().floating();
+    switch (computedValue) {
+    case Float::None:
+        return UsedFloat::None;
+    case Float::Left:
+        return UsedFloat::Left;
+    case Float::Right:
+        return UsedFloat::Right;
+    case Float::InlineStart:
+    case Float::InlineEnd:
+        auto containingBlockDirection = renderer.containingBlock()->style().direction();
+        if (containingBlockDirection == TextDirection::RTL)
+            return computedValue == Float::InlineStart ? UsedFloat::Right : UsedFloat::Left;
+        return computedValue == Float::InlineStart ? UsedFloat::Left : UsedFloat::Right;
+    }
+}
 } // namespace WebCore

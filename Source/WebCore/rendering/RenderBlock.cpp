@@ -2342,11 +2342,12 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         const RenderStyle& childStyle = child->style();
         if (child->isFloating() || (is<RenderBox>(*child) && downcast<RenderBox>(*child).avoidsFloats())) {
             LayoutUnit floatTotalWidth = floatLeftWidth + floatRightWidth;
-            if (childStyle.clear() == Clear::Left || childStyle.clear() == Clear::Both) {
+            auto childUsedClear = RenderStyle::usedClear(*child);
+            if (childUsedClear == UsedClear::Left || childUsedClear == UsedClear::Both) {
                 maxLogicalWidth = std::max(floatTotalWidth, maxLogicalWidth);
                 floatLeftWidth = 0;
             }
-            if (childStyle.clear() == Clear::Right || childStyle.clear() == Clear::Both) {
+            if (childUsedClear == UsedClear::Right || childUsedClear == UsedClear::Both) {
                 maxLogicalWidth = std::max(floatTotalWidth, maxLogicalWidth);
                 floatRightWidth = 0;
             }
@@ -2371,7 +2372,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
 
         LayoutUnit w = childMinPreferredLogicalWidth + margin;
         minLogicalWidth = std::max(w, minLogicalWidth);
-        
+
         // IE ignores tables for calculation of nowrap. Makes some sense.
         if (nowrap && !child->isTable())
             maxLogicalWidth = std::max(w, maxLogicalWidth);
@@ -2395,15 +2396,15 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
                 maxLogicalWidth = std::max(floatLeftWidth + floatRightWidth, maxLogicalWidth);
             floatLeftWidth = floatRightWidth = 0;
         }
-        
+
         if (child->isFloating()) {
-            if (childStyle.floating() == Float::Left)
+            if (RenderStyle::usedFloat(*child) == UsedFloat::Left)
                 floatLeftWidth += w;
             else
                 floatRightWidth += w;
         } else
             maxLogicalWidth = std::max(w, maxLogicalWidth);
-        
+
         child = child->nextSibling();
     }
 

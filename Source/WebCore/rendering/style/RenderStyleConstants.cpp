@@ -280,7 +280,20 @@ TextStream& operator<<(TextStream& ts, Clear clear)
     case Clear::None: ts << "none"; break;
     case Clear::Left: ts << "left"; break;
     case Clear::Right: ts << "right"; break;
+    case Clear::InlineStart : ts << "inline-start"; break;
+    case Clear::InlineEnd : ts << "inline-end"; break;
     case Clear::Both: ts << "both"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, UsedClear clear)
+{
+    switch (clear) {
+    case UsedClear::None: ts << "none"; break;
+    case UsedClear::Left: ts << "left"; break;
+    case UsedClear::Right: ts << "right"; break;
+    case UsedClear::Both: ts << "both"; break;
     }
     return ts;
 }
@@ -546,9 +559,21 @@ TextStream& operator<<(TextStream& ts, FlexWrap flexWrap)
 TextStream& operator<<(TextStream& ts, Float floating)
 {
     switch (floating) {
-    case Float::No: ts << "none"; break;
+    case Float::None: ts << "none"; break;
     case Float::Left: ts << "left"; break;
     case Float::Right: ts << "right"; break;
+    case Float::InlineStart: ts << "inline-start"; break;
+    case Float::InlineEnd: ts << "inline-end"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, UsedFloat floating)
+{
+    switch (floating) {
+    case UsedFloat::None: ts << "none"; break;
+    case UsedFloat::Left: ts << "left"; break;
+    case UsedFloat::Right: ts << "right"; break;
     }
     return ts;
 }

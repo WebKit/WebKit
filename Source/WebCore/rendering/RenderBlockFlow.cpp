@@ -875,7 +875,7 @@ LayoutUnit RenderBlockFlow::marginOffsetForSelfCollapsingBlock()
 {
     ASSERT(isSelfCollapsingBlock());
     RenderBlockFlow* parentBlock = downcast<RenderBlockFlow>(parent());
-    if (parentBlock && style().clear() != Clear::None && parentBlock->getClearDelta(*this, logicalHeight()))
+    if (parentBlock && RenderStyle::usedClear(*this) != UsedClear::None && parentBlock->getClearDelta(*this, logicalHeight()))
         return marginValuesForChild(*this).positiveMarginBefore();
     return 0_lu;
 }
@@ -1311,7 +1311,7 @@ void RenderBlockFlow::marginBeforeEstimateForChild(RenderBox& child, LayoutUnit&
     }
     
     // Give up if there is clearance on the box, since it probably won't collapse into us.
-    if (!grandchildBox || grandchildBox->style().clear() != Clear::None)
+    if (!grandchildBox || RenderStyle::usedClear(*grandchildBox) != UsedClear::None)
         return;
 
     // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
@@ -2441,8 +2441,8 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
             setLogicalHeight(logicalHeight() + letterClearance);
         }
     }
-    
-    if (childBox.style().floating() == Float::Left) {
+
+    if (RenderStyle::usedFloat(childBox) == UsedFloat::Left) {
         LayoutUnit heightRemainingLeft = 1_lu;
         LayoutUnit heightRemainingRight = 1_lu;
         floatLogicalLeft = logicalLeftOffsetForPositioningFloat(logicalTopOffset, logicalLeftOffset, false, &heightRemainingLeft);
@@ -2476,7 +2476,7 @@ void RenderBlockFlow::computeLogicalLocationForFloat(FloatingObject& floatingObj
         // fast/block/float/clamped-right-float.html.
         floatLogicalLeft -= logicalWidthForFloat(floatingObject);
     }
-    
+
     LayoutUnit childLogicalLeftMargin = style().isLeftToRightDirection() ? marginStartForChild(childBox) : marginEndForChild(childBox);
     LayoutUnit childBeforeMargin = marginBeforeForChild(childBox);
     
@@ -2566,10 +2566,10 @@ bool RenderBlockFlow::positionNewFloats()
             continue;
 
         LayoutRect oldRect = childBox.frameRect();
-
-        if (childBox.style().clear() == Clear::Left || childBox.style().clear() == Clear::Both)
+        auto childBoxUsedClear = RenderStyle::usedClear(childBox);
+        if (childBoxUsedClear == UsedClear::Left || childBoxUsedClear == UsedClear::Both)
             logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatLeft), logicalTop);
-        if (childBox.style().clear() == Clear::Right || childBox.style().clear() == Clear::Both)
+        if (childBoxUsedClear == UsedClear::Right || childBoxUsedClear == UsedClear::Both)
             logicalTop = std::max(lowestFloatLogicalBottom(FloatingObject::FloatRight), logicalTop);
 
         computeLogicalLocationForFloat(floatingObject, logicalTop);
@@ -2624,22 +2624,22 @@ bool RenderBlockFlow::positionNewFloats()
     return true;
 }
 
-void RenderBlockFlow::clearFloats(Clear clear)
+void RenderBlockFlow::clearFloats(UsedClear usedClear)
 {
     positionNewFloats();
     // set y position
     LayoutUnit newY;
-    switch (clear) {
-    case Clear::Left:
+    switch (usedClear) {
+    case UsedClear::Left:
         newY = lowestFloatLogicalBottom(FloatingObject::FloatLeft);
         break;
-    case Clear::Right:
+    case UsedClear::Right:
         newY = lowestFloatLogicalBottom(FloatingObject::FloatRight);
         break;
-    case Clear::Both:
+    case UsedClear::Both:
         newY = lowestFloatLogicalBottom();
         break;
-    case Clear::None:
+    case UsedClear::None:
         break;
     }
     // FIXME: The float search tree has floored float box position (see FloatingObjects::intervalForFloatingObject).
@@ -2892,18 +2892,19 @@ LayoutUnit RenderBlockFlow::getClearDelta(RenderBox& child, LayoutUnit logicalTo
         return 0;
     
     // At least one float is present. We need to perform the clearance computation.
-    bool clearSet = child.style().clear() != Clear::None;
+    UsedClear usedClear = RenderStyle::usedClear(child);
+    bool clearSet = usedClear != UsedClear::None;
     LayoutUnit logicalBottom;
-    switch (child.style().clear()) {
-    case Clear::None:
+    switch (usedClear) {
+    case UsedClear::None:
         break;
-    case Clear::Left:
+    case UsedClear::Left:
         logicalBottom = lowestFloatLogicalBottom(FloatingObject::FloatLeft);
         break;
-    case Clear::Right:
+    case UsedClear::Right:
         logicalBottom = lowestFloatLogicalBottom(FloatingObject::FloatRight);
         break;
-    case Clear::Both:
+    case UsedClear::Both:
         logicalBottom = lowestFloatLogicalBottom();
         break;
     }
@@ -4229,7 +4230,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
         // (that's exactly to what we try to contribute here) unless the computed value is fixed.
         textIndent = minimumValueForLength(styleToUse.textIndent(), containingBlock->style().logicalWidth().value());
     }
-    RenderObject* prevFloat = 0;
+    RenderObject* previousFloat = 0;
     bool isPrevChildInlineFlow = false;
     bool shouldBreakLineAfterText = false;
     bool canHangPunctuationAtStart = styleToUse.hangingPunctuation().contains(HangingPunctuation::First);
@@ -4321,14 +4322,17 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
                 childMin += childMinPreferredLogicalWidth.ceilToFloat();
                 childMax += childMaxPreferredLogicalWidth.ceilToFloat();
 
-                bool clearPreviousFloat;
+                bool clearPreviousFloat = false;
                 if (child->isFloating()) {
-                    clearPreviousFloat = (prevFloat
-                        && ((prevFloat->style().floating() == Float::Left && (childStyle.clear() == Clear::Left || childStyle.clear() == Clear::Both))
-                            || (prevFloat->style().floating() == Float::Right && (childStyle.clear() == Clear::Right || childStyle.clear() == Clear::Both))));
-                    prevFloat = child;
-                } else
-                    clearPreviousFloat = false;
+                    auto childClearValue = RenderStyle::usedClear(*child);
+                    if (previousFloat) {
+                        auto previousFloatValue = RenderStyle::usedFloat(*previousFloat);
+                        clearPreviousFloat =
+                            (previousFloatValue == UsedFloat::Left && (childClearValue == UsedClear::Left || childClearValue == UsedClear::Both))
+                            || (previousFloatValue == UsedFloat::Right && (childClearValue == UsedClear::Right || childClearValue == UsedClear::Both));
+                    }
+                    previousFloat = child;
+                }
 
                 bool canBreakReplacedElement = !child->isImage() || allowImagesToBreak;
                 if (((canBreakReplacedElement && (autoWrap || oldAutoWrap) && (!isPrevChildInlineFlow || shouldBreakLineAfterText)) || clearPreviousFloat)) {

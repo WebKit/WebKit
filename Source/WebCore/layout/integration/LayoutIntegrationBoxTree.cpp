@@ -72,7 +72,7 @@ void BoxTree::buildTree()
         auto style = RenderStyle::clone(childRenderer.style());
         if (childRenderer.isLineBreak()) {
             style.setDisplay(DisplayType::Inline);
-            style.setFloating(Float::No);
+            style.setFloating(Float::None);
             style.setPosition(PositionType::Static);
             return makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(style));
         }

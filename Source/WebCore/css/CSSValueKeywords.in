@@ -348,6 +348,14 @@ justify
 inter-word
 distribute
 //
+// CSS_PROP_CLEAR:
+// CSS_PROP_FLOAT:
+// none
+// left
+// right
+inline-start
+inline-end
+//
 // CSS_PROP_LIST_STYLE_POSITION:
 //
 outside

@@ -140,7 +140,7 @@ public:
 
     void increment();
 
-    void handleBR(Clear&);
+    void handleBR(UsedClear&);
     void handleOutOfFlowPositioned(Vector<RenderBox*>& positionedObjects);
     void handleFloat();
     void handleEmptyInline();
@@ -267,7 +267,7 @@ inline void BreakingContext::increment()
     m_atStart = false;
 }
 
-inline void BreakingContext::handleBR(Clear& clear)
+inline void BreakingContext::handleBR(UsedClear& usedClear)
 {
     if (fitsOnLineOrHangsAtEnd()) {
         auto& br = *m_current.renderer();
@@ -287,7 +287,7 @@ inline void BreakingContext::handleBR(Clear& clear)
         // A <br> with clearance always needs a linebox in case the lines below it get dirtied later and
         // need to check for floats to clear - so if we're ignoring spaces, stop ignoring them and add a
         // run for this object.
-        if (m_ignoringSpaces && br.style().clear() != Clear::None)
+        if (m_ignoringSpaces && RenderStyle::usedClear(br) != UsedClear::None)
             m_lineWhitespaceCollapsingState.ensureLineBoxInsideIgnoredSpaces(br);
         // If we were preceded by collapsing space and are in a right-aligned container we need to ensure the space gets
         // collapsed away so that it doesn't push the text out from the container's right-hand edge.
@@ -296,7 +296,7 @@ inline void BreakingContext::handleBR(Clear& clear)
             m_lineWhitespaceCollapsingState.stopIgnoringSpaces(InlineIterator(0, m_current.renderer(), m_current.offset()));
 
         if (!m_lineInfo.isEmpty())
-            clear = br.style().clear();
+            usedClear = RenderStyle::usedClear(br);
     }
     m_atEnd = true;
 }

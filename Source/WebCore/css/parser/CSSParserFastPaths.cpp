@@ -619,8 +619,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueDynamic || valueID == CSSValueStatic;
     case CSSPropertyCaptionSide: // top | bottom | left | right
         return valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueTop || valueID == CSSValueBottom;
-    case CSSPropertyClear: // none | left | right | both
-        return valueID == CSSValueNone || valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueBoth;
+    case CSSPropertyClear: // none | inline-start | inline-end | left | right | both
+        return valueID == CSSValueNone || valueID == CSSValueInlineStart || valueID == CSSValueInlineEnd || valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueBoth;
     case CSSPropertyClipRule:
     case CSSPropertyFillRule:
         return valueID == CSSValueNonzero || valueID == CSSValueEvenodd;
@@ -647,8 +647,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
             || (valueID >= CSSValueCentral && valueID <= CSSValueMathematical);
     case CSSPropertyEmptyCells: // show | hide
         return valueID == CSSValueShow || valueID == CSSValueHide;
-    case CSSPropertyFloat: // left | right | none
-        return valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueNone;
+    case CSSPropertyFloat: // inline-start | inline-end | left | right | none
+        return valueID == CSSValueInlineStart || valueID == CSSValueInlineEnd || valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueNone;
     case CSSPropertyImageOrientation: // from-image | none
         return valueID == CSSValueFromImage || valueID == CSSValueNone;
     case CSSPropertyImageRendering: // auto | optimizeContrast | pixelated | optimizeSpeed | crispEdges | optimizeQuality | webkit-crispEdges
