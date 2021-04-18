@@ -1,3 +1,32 @@
+2021-04-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use binary-search in LocaleToScriptMapping
+        https://bugs.webkit.org/show_bug.cgi?id=224727
+
+        Reviewed by Darin Adler.
+
+        This patch removes HashMaps in LocaleToScriptMapping, and binary-search onto the constant data arrays.
+        These maps are not frequently used. Keys of the maps can be encoded into uint32_t or uint64_t so that
+        comparison becomes super cheap and we can initialize this array at compile-time.
+
+        We introduce ScriptName(uint32_t) and LocaleName(uint64_t) instead of String. And ues it and generate
+        sorted constant data array for mappings. We use binary-search to look entry up. Since # of entries are
+        not huge (~200), comparisons are extremely cheap (uint32_t / uint64_t comparison), and this is not a
+        hot code, we can just use binary-search here and eliminate HashMaps' memory allocation.
+
+        * platform/text/LocaleToScriptMapping.cpp:
+        (WebCore::PackedASCIILowerCodes::PackedASCIILowerCodes):
+        (WebCore::PackedASCIILowerCodes::parse):
+        (WebCore::PackedASCIILowerCodes::operator==):
+        (WebCore::PackedASCIILowerCodes::operator!=):
+        (WebCore::PackedASCIILowerCodes::operator<):
+        (WebCore::PackedASCIILowerCodes::operator<=):
+        (WebCore::PackedASCIILowerCodes::operator>):
+        (WebCore::PackedASCIILowerCodes::operator>=):
+        (WebCore::PackedASCIILowerCodes::value const):
+        (WebCore::scriptNameToCode):
+        (WebCore::localeToScriptCodeForFontSelection):
+
 2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Add some support for webpage translation in WebKitLegacy
