@@ -1,3 +1,15 @@
+2021-04-18  Cathie Chen  <cathiechen@igalia.com>
+
+        The implicit aspect-ratio from width and height attributes with float value is not accurate enough
+        https://bugs.webkit.org/show_bug.cgi?id=224664
+
+        Reviewed by Darin Adler.
+
+        The aspect ratio test case with width "0.8" and height "0.2" in img-aspect-ratio.html has passed. This patch doesn't change the behavior of
+        the original aspect ratio test case(`assert_ratio(images[5], 133/106)`) which is related to bug 206161.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+
 2021-04-17  Tim Nguyen  <ntim@apple.com>
 
         Add support for inline-{start/end} values to float & clear properties

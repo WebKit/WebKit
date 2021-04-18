@@ -502,10 +502,11 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
         if (!is<RenderImage>(*this) || !downcast<RenderImage>(*this).cachedImage())
             return;
 
-        intrinsicSize.setWidth(parseValidHTMLFloatingPointNumber(node->getAttribute(HTMLNames::widthAttr)).valueOr(0));
-        intrinsicSize.setHeight(parseValidHTMLFloatingPointNumber(node->getAttribute(HTMLNames::heightAttr)).valueOr(0));
-        if (intrinsicSize.isEmpty())
-            return;
+        double attributeWidth = parseValidHTMLFloatingPointNumber(node->getAttribute(HTMLNames::widthAttr)).valueOr(0);
+        double attributeHeight = parseValidHTMLFloatingPointNumber(node->getAttribute(HTMLNames::heightAttr)).valueOr(0);
+        if (attributeWidth > 0 && attributeHeight > 0)
+            intrinsicRatio = attributeWidth / attributeHeight;
+        return;
     }
 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();
@@ -672,14 +673,9 @@ void RenderReplaced::computePreferredLogicalWidths()
 
     // We cannot resolve any percent logical width here as the available logical
     // width may not be set on our containing block.
-    if (style().logicalWidth().isPercentOrCalculated()) {
-        double intrinsicRatio = 0;
-        FloatSize constrainedSize;
-        // For images with explicit width/height this updates the instrinsic size as a side effect.
-        computeAspectRatioInformationForRenderBox(embeddedContentBox(), constrainedSize, intrinsicRatio);
-
+    if (style().logicalWidth().isPercentOrCalculated())
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-    } else
+    else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
 
     const RenderStyle& styleToUse = style();
