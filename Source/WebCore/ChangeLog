@@ -1,3 +1,20 @@
+2021-04-18  Sam Weinig  <weinig@apple.com>
+
+        GraphicsLayer::distributeOpacity, GraphicsLayer::setOpacityInternal and GraphicsLayer::accumulatedOpacity are never used
+        https://bugs.webkit.org/show_bug.cgi?id=224732
+
+        Reviewed by Darin Adler.
+
+        Remove dead code.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::accumulatedOpacity const): Deleted.
+        (WebCore::GraphicsLayer::distributeOpacity): Deleted.
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setOpacityInternal): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2021-04-18  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of the rotate CSS property

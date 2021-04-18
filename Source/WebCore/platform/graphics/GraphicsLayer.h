@@ -563,9 +563,6 @@ public:
     virtual float zPosition() const { return m_zPosition; }
     WEBCORE_EXPORT virtual void setZPosition(float);
 
-    WEBCORE_EXPORT virtual void distributeOpacity(float);
-    WEBCORE_EXPORT virtual float accumulatedOpacity() const;
-
     virtual FloatSize pixelAlignmentOffset() const { return FloatSize(); }
     
     virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
@@ -661,8 +658,6 @@ protected:
     static int validateTransformOperations(const KeyframeValueList&, bool& hasBigRotation);
 
     virtual bool shouldRepaintOnSizeChange() const { return drawsContent(); }
-
-    virtual void setOpacityInternal(float) { }
 
     // The layer being replicated.
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }

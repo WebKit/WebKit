@@ -657,30 +657,6 @@ void GraphicsLayer::setZPosition(float position)
     m_zPosition = position;
 }
 
-float GraphicsLayer::accumulatedOpacity() const
-{
-    if (!preserves3D())
-        return 1;
-        
-    return m_opacity * (parent() ? parent()->accumulatedOpacity() : 1);
-}
-
-void GraphicsLayer::distributeOpacity(float accumulatedOpacity)
-{
-    // If this is a transform layer we need to distribute our opacity to all our children
-    
-    // Incoming accumulatedOpacity is the contribution from our parent(s). We mutiply this by our own
-    // opacity to get the total contribution
-    accumulatedOpacity *= m_opacity;
-    
-    setOpacityInternal(accumulatedOpacity);
-    
-    if (preserves3D()) {
-        for (auto& layer : children())
-            layer->distributeOpacity(accumulatedOpacity);
-    }
-}
-
 static inline const FilterOperations& filterOperationsAt(const KeyframeValueList& valueList, size_t index)
 {
     return static_cast<const FilterAnimationValue&>(valueList.at(index)).value();

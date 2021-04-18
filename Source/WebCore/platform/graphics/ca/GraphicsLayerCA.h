@@ -188,9 +188,6 @@ public:
 
     WEBCORE_EXPORT Vector<std::pair<String, double>> acceleratedAnimationsForTesting() const final;
 
-protected:
-    WEBCORE_EXPORT void setOpacityInternal(float) override;
-    
 private:
     bool isGraphicsLayerCA() const override { return true; }
 

@@ -4379,27 +4379,6 @@ Ref<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, CloneLe
     return newLayer;
 }
 
-void GraphicsLayerCA::setOpacityInternal(float accumulatedOpacity)
-{
-    LayerMap* layerCloneMap = nullptr;
-    
-    if (preserves3D()) {
-        m_layer->setOpacity(accumulatedOpacity);
-        layerCloneMap = m_layerClones ? &m_layerClones->primaryLayerClones : nullptr;
-    } else {
-        primaryLayer()->setOpacity(accumulatedOpacity);
-        layerCloneMap = primaryLayerClones();
-    }
-
-    if (layerCloneMap) {
-        for (auto& clone : *layerCloneMap) {
-            if (m_replicaLayer && isReplicatedRootClone(clone.key))
-                continue;
-            clone.value->setOpacity(m_opacity);
-        }
-    }
-}
-
 void GraphicsLayerCA::updateOpacityOnLayer()
 {
     primaryLayer()->setOpacity(m_opacity);
