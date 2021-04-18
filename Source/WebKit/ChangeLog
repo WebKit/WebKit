@@ -1,5 +1,24 @@
 2021-04-17  Chris Dumez  <cdumez@apple.com>
 
+        Use WebProcess::existingGPUProcessConnection() whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=224725
+
+        Reviewed by Darin Adler.
+
+        Use WebProcess::existingGPUProcessConnection() whenever possible, instead of WebProcess::ensureGPUProcessConnection().
+        This avoids relaunching the GPUProcess if it has already exited.
+
+        * WebProcess/GPU/media/RemoteAudioHardwareListener.cpp:
+        (WebKit::RemoteAudioHardwareListener::~RemoteAudioHardwareListener):
+        * WebProcess/GPU/webrtc/AudioMediaStreamTrackRenderer.cpp:
+        (WebKit::AudioMediaStreamTrackRenderer::~AudioMediaStreamTrackRenderer):
+        * WebProcess/cocoa/RemoteRealtimeAudioSource.cpp:
+        (WebKit::RemoteRealtimeAudioSource::~RemoteRealtimeAudioSource):
+        * WebProcess/cocoa/RemoteRealtimeVideoSource.cpp:
+        (WebKit::RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource):
+
+2021-04-17  Chris Dumez  <cdumez@apple.com>
+
         LibWebRTCCodecs eagerly launches the GPUProcess and always relaunches it on exit
         https://bugs.webkit.org/show_bug.cgi?id=224704
 

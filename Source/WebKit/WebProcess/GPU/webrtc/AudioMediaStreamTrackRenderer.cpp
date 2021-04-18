@@ -53,7 +53,8 @@ AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Ref<IPC::Connection
 
 AudioMediaStreamTrackRenderer::~AudioMediaStreamTrackRenderer()
 {
-    WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
+    if (auto* connection = WebProcess::singleton().existingGPUProcessConnection())
+        connection->removeClient(*this);
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRendererManager::ReleaseRenderer { m_identifier }, 0);
 }
 
