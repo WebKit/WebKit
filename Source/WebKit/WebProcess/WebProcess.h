@@ -621,7 +621,7 @@ private:
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    std::unique_ptr<LibWebRTCCodecs> m_libWebRTCCodecs;
+    RefPtr<LibWebRTCCodecs> m_libWebRTCCodecs;
 #endif
 #endif
 

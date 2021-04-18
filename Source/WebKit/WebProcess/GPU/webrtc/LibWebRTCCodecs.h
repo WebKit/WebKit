@@ -62,12 +62,7 @@ namespace WebKit {
 class LibWebRTCCodecs : public IPC::Connection::ThreadMessageReceiverRefCounted, public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<LibWebRTCCodecs> create()
-    {
-        auto instance = std::unique_ptr<LibWebRTCCodecs>(new LibWebRTCCodecs);
-        instance->startListeningForIPC();
-        return instance;
-    }
+    static Ref<LibWebRTCCodecs> create();
     ~LibWebRTCCodecs();
 
     static void setCallbacks(bool useGPUProcess);
@@ -125,7 +120,9 @@ public:
 
 private:
     LibWebRTCCodecs();
-    void startListeningForIPC();
+    void ensureGPUProcessConnectionAndDispatchToThread(Function<void()>&&);
+    void ensureGPUProcessConnectionOnMainThread(Locker<Lock>&);
+    void gpuProcessConnectionMayNoLongerBeNeeded();
 
     void failedDecoding(RTCDecoderIdentifier);
     void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, WebCore::RemoteVideoSample&&);
@@ -143,6 +140,8 @@ private:
     HashSet<RTCDecoderIdentifier> m_decodingErrors;
 
     HashMap<RTCEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders;
+
+    std::atomic<bool> m_needsGPUProcessConnection;
 
     Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection;

@@ -1,5 +1,82 @@
 2021-04-17  Chris Dumez  <cdumez@apple.com>
 
+        LibWebRTCCodecs eagerly launches the GPUProcess and always relaunches it on exit
+        https://bugs.webkit.org/show_bug.cgi?id=224704
+
+        Reviewed by Darin Adler.
+
+        LibWebRTCCodecs eagerly launches the GPUProcess and always relaunches it on exit. The GPUProcess
+        should only be (re-)launched when needed. In the case of the LibWebRTCCodecs, it seems it only
+        needs a GPUProcess connection if it has m_decoders / m_encoders are non-empty.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp:
+        (WebKit::LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThread):
+        Renamed startListeningForIPC() to ensureGPUProcessConnectionOnMainThread(). Only do the
+        connection initialization if m_connection is not null.
+
+        (WebKit::LibWebRTCCodecs::ensureGPUProcessConnectionAndDispatchToThread):
+        Version of dispatchToThread() which makes sure that the GPUProcessConnection is initialized
+        before dispatching. It is used when constructing a decoder / encoder. It sets the
+        m_needsGPUProcessConnection flag to true to indicate someone needed the connection
+        (and that we should re-initiate it in case it is severed). If the connection is already
+        initialized, then it does a simple dispatchToThread(). If the connection is not initialized
+        yet, then we have to hop to the main thread (if not already on it) to initialize the
+        GPUProcessConnection.
+
+        (WebKit::LibWebRTCCodecs::gpuProcessConnectionMayNoLongerBeNeeded):
+        Function that gets called on the background thread every time a encoder / decoder is
+        removed. Its purpose is to set m_needsGPUProcessConnection back to false once we no
+        longer have any encoder / decoder, so that gpuProcessConnectionDidClose() does not
+        attempt to relaunch the GPUProcess if it goes away.
+
+        LibWebRTCCodecs::setCallbacks():
+        Check if VP9Support is enabled via PlatformMediaSessionManager instead of from the
+        GPUProcessConnection. This avoids eagerly launching the GPUProcess. The
+        GPUProcessConnection constructor gets its VPx support information from
+        PlatformMediaSessionManager anyway. The WebPage constructor is where the VPx support
+        information comes from and it updates the VPx flags on the PlatformMediaSessionManager.
+        The WebPage constructor only updates the VPx flags on the GPUProcessConnection if this
+        connection already exists to avoid eagerly launching the GPUProcess.
+
+        (WebKit::LibWebRTCCodecs::createDecoder):
+        - Call ensureGPUProcessConnectionAndDispatchToThread() instead of dispatchToThread()
+          to make sure we have a GPUProcessConnection before creating the decoder.
+        - Add a missing locker for m_connectionLock on the background thread since it is using
+          m_connection (pre-existing bug).
+
+        (WebKit::LibWebRTCCodecs::releaseDecoder):
+        Call gpuProcessConnectionMayNoLongerBeNeeded() to reset the m_needsGPUProcessConnection
+        flag to false if necessary.
+
+        (WebKit::LibWebRTCCodecs::createEncoder):
+        - Call ensureGPUProcessConnectionAndDispatchToThread() instead of dispatchToThread()
+          to make sure we have a GPUProcessConnection before creating the encoder.
+
+        (WebKit::LibWebRTCCodecs::releaseEncoder):
+        Call gpuProcessConnectionMayNoLongerBeNeeded() to reset the m_needsGPUProcessConnection
+        flag to false if necessary.
+
+        (WebKit::LibWebRTCCodecs::gpuProcessConnectionDidClose):
+        - Clear m_connection when the GPUProcess connection is severed (note that this does not
+          necessarily indicate a crash since the GPUProcess exits when idle and under memory
+          pressure).
+        - Only re-initiate the GPUProcess connection if m_needsGPUProcessConnection is true,
+          meaning that we have encoders/decoders. I use this flag instead of checking m_encoders
+          & m_decoders since those containers are modified on the background thread and this
+          function is called on the main thread.
+
+        * WebProcess/GPU/webrtc/LibWebRTCCodecs.h:
+        (WebKit::LibWebRTCCodecs::create):
+        - Stop calling startListeningForIPC() on construction as we don't want to launch the GPUProcess
+        until an encoder / decoder is created.
+        - Fix a pre-existing issue where the class subclasses ThreadSafeRefCounted (via
+          ThreadMessageReceiverRefCounted) and yet was using std::unique_ptr<> instead of
+          RefPtr<>.
+
+        * WebProcess/WebProcess.h:
+
+2021-04-17  Chris Dumez  <cdumez@apple.com>
+
         RemoteImageDecoderAVFManager should never re-launch the GPUProcess on destruction
         https://bugs.webkit.org/show_bug.cgi?id=224723
 
