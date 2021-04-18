@@ -1104,7 +1104,7 @@ bool Graph::watchGlobalProperty(JSGlobalObject* globalObject, unsigned identifie
         if (!watchpoint->isStillValid())
             return false;
     }
-    globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
+    watchpoints().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
     return true;
 }
 

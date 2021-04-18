@@ -39,6 +39,12 @@ AdaptiveInferredPropertyValueWatchpoint::AdaptiveInferredPropertyValueWatchpoint
 {
 }
 
+void AdaptiveInferredPropertyValueWatchpoint::initialize(const ObjectPropertyCondition& key, CodeBlock* codeBlock)
+{
+    Base::initialize(key);
+    m_codeBlock = codeBlock;
+}
+
 void AdaptiveInferredPropertyValueWatchpoint::handleFire(VM&, const FireDetail& detail)
 {
     if (DFG::shouldDumpDisassembly())

@@ -100,7 +100,6 @@ public:
     DesiredIdentifiers& identifiers() { return m_identifiers; }
     DesiredWeakReferences& weakReferences() { return m_weakReferences; }
     DesiredTransitions& transitions() { return m_transitions; }
-    DesiredGlobalProperties& globalProperties() { return m_globalProperties; }
     RecordedStatuses& recordedStatuses() { return m_recordedStatuses; }
 
     bool willTryToTierUp() const { return m_willTryToTierUp; }
@@ -156,7 +155,6 @@ private:
     DesiredIdentifiers m_identifiers;
     DesiredWeakReferences m_weakReferences;
     DesiredTransitions m_transitions;
-    DesiredGlobalProperties m_globalProperties;
     RecordedStatuses m_recordedStatuses;
 
     HashMap<BytecodeIndex, FixedVector<BytecodeIndex>> m_tierUpInLoopHierarchy;

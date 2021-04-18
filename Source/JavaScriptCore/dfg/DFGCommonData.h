@@ -113,9 +113,9 @@ public:
     FixedVector<WriteBarrier<JSCell>> m_weakReferences;
     FixedVector<StructureID> m_weakStructureReferences;
     FixedVector<CatchEntrypointData> m_catchEntrypoints;
-    Bag<CodeBlockJettisoningWatchpoint> watchpoints;
-    Bag<AdaptiveStructureWatchpoint> adaptiveStructureWatchpoints;
-    Bag<AdaptiveInferredPropertyValueWatchpoint> adaptiveInferredPropertyValueWatchpoints;
+    FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
+    FixedVector<AdaptiveStructureWatchpoint> m_adaptiveStructureWatchpoints;
+    FixedVector<AdaptiveInferredPropertyValueWatchpoint> m_adaptiveInferredPropertyValueWatchpoints;
     RecordedStatuses recordedStatuses;
     Vector<JumpReplacement> m_jumpReplacements;
     

@@ -148,8 +148,8 @@ void CommonData::validateReferences(const TrackedReferences& trackedReferences)
         }
     }
     
-    for (AdaptiveStructureWatchpoint* watchpoint : adaptiveStructureWatchpoints)
-        watchpoint->key().validateReferences(trackedReferences);
+    for (auto& watchpoint : m_adaptiveStructureWatchpoints)
+        watchpoint.key().validateReferences(trackedReferences);
 }
 
 void CommonData::finalizeCatchEntrypoints(Vector<CatchEntrypointData>&& catchEntrypoints)
@@ -167,9 +167,9 @@ void CommonData::finalizeCatchEntrypoints(Vector<CatchEntrypointData>&& catchEnt
 
 void CommonData::clearWatchpoints()
 {
-    watchpoints.clear();
-    adaptiveStructureWatchpoints.clear();
-    adaptiveInferredPropertyValueWatchpoints.clear();
+    m_watchpoints = FixedVector<CodeBlockJettisoningWatchpoint>();
+    m_adaptiveStructureWatchpoints = FixedVector<AdaptiveStructureWatchpoint>();
+    m_adaptiveInferredPropertyValueWatchpoints = FixedVector<AdaptiveInferredPropertyValueWatchpoint>();
 }
 
 } } // namespace JSC::DFG

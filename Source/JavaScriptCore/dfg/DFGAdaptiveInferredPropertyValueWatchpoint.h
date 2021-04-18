@@ -35,13 +35,16 @@ class AdaptiveInferredPropertyValueWatchpoint final : public AdaptiveInferredPro
 public:
     typedef AdaptiveInferredPropertyValueWatchpointBase Base;
     AdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, CodeBlock*);
+    AdaptiveInferredPropertyValueWatchpoint() = default;
+
+    void initialize(const ObjectPropertyCondition&, CodeBlock*);
 
 private:
     bool isValid() const final;
 
     void handleFire(VM&, const FireDetail&) final;
 
-    CodeBlock* m_codeBlock;
+    CodeBlock* m_codeBlock { nullptr };
 };
 
 } } // namespace JSC::DFG

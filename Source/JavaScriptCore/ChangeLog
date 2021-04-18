@@ -1,5 +1,69 @@
 2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        [JSC] Do not use Bag<> for DFG / FTL watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=224715
+
+        Reviewed by Darin Adler.
+
+        While Bag<> is useful since its allocated memory will not be moved,
+        this is really memory-inefficient data structure. Each entry gets a
+        tail pointer (so adding 8 bytes) and we allocate each entry separately.
+
+        In DFG and FTL, we are using Bag<> for watchpoints. But this is not necessary actually: thanks to
+        concurrent compilers, our watchpoint registration is batched at the end of compilation. This means
+        that we have a way to know how many watchpoints we should register at that point.
+
+        In this patch, we introduce WatchpointCollector. In DesiredGlobalProperties, we run reallyAdd twice
+        with WatchpointCollector. First time, we just count # of watchpoints. Then we allocate FixedVector<XXXWatchpoint>
+        and install them. Since we do not (cannot) grow this fixed vector, watchpoint's address will not be changed as required.
+
+        We also move DesiredGlobalProperties under DesiredWatchpoints since this basically registers watchpoints.
+
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::AdaptiveInferredPropertyValueWatchpointBase):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::initialize):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h:
+        * bytecode/CodeBlockJettisoningWatchpoint.h:
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::AdaptiveInferredPropertyValueWatchpoint):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::initialize):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h:
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint):
+        (JSC::DFG::AdaptiveStructureWatchpoint::initialize):
+        * dfg/DFGAdaptiveStructureWatchpoint.h:
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::validateReferences):
+        (JSC::DFG::CommonData::clearWatchpoints):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGDesiredGlobalProperties.cpp:
+        (JSC::DFG::DesiredGlobalProperties::reallyAdd):
+        * dfg/DFGDesiredGlobalProperties.h:
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        (JSC::DFG::SymbolTableAdaptor::add):
+        (JSC::DFG::FunctionExecutableAdaptor::add):
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::add):
+        (JSC::DFG::DesiredWatchpoints::addLazily):
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        (JSC::DFG::DesiredWatchpoints::areStillValidOnMainThread):
+        (JSC::DFG::WatchpointCollector::finalize):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::SetPointerAdaptor::add):
+        (JSC::DFG::GenericDesiredWatchpoints::reallyAdd):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::watchGlobalProperty):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::isStillValidOnMainThread):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::transitions):
+        (JSC::DFG::Plan::globalProperties): Deleted.
+
+2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Make more DFG/FTL data FixedVector/Vector
         https://bugs.webkit.org/show_bug.cgi?id=224713
 

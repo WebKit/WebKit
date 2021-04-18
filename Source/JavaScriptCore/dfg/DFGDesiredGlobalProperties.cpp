@@ -54,18 +54,19 @@ bool DesiredGlobalProperties::isStillValidOnMainThread(VM& vm, DesiredIdentifier
     return isStillValid;
 }
 
-void DesiredGlobalProperties::reallyAdd(CodeBlock* codeBlock, DesiredIdentifiers& identifiers, CommonData& common)
+void DesiredGlobalProperties::reallyAdd(CodeBlock* codeBlock, DesiredIdentifiers& identifiers, WatchpointCollector& collector)
 {
     for (const auto& property : m_set) {
-        auto* uid = identifiers.at(property.identifierNumber());
-        auto& watchpointSet = property.globalObject()->ensureReferencedPropertyWatchpointSet(uid);
-        ASSERT(watchpointSet.isStillValid());
-        CodeBlockJettisoningWatchpoint* watchpoint = nullptr;
-        {
-            ConcurrentJSLocker locker(codeBlock->m_lock);
-            watchpoint = common.watchpoints.add(codeBlock);
-        }
-        watchpointSet.add(WTFMove(watchpoint));
+        collector.addWatchpoint([&](CodeBlockJettisoningWatchpoint& watchpoint) {
+            {
+                ConcurrentJSLocker locker(codeBlock->m_lock);
+                watchpoint.initialize(codeBlock);
+            }
+            auto* uid = identifiers.at(property.identifierNumber());
+            auto& watchpointSet = property.globalObject()->ensureReferencedPropertyWatchpointSet(uid);
+            ASSERT(watchpointSet.isStillValid());
+            watchpointSet.add(&watchpoint);
+        });
     }
 }
 
