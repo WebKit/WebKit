@@ -46,19 +46,32 @@ Ref<TransformOperation> RotateTransformOperation::blend(const TransformOperation
         return RotateTransformOperation::create(m_x, m_y, m_z, m_angle - m_angle * context.progress, type());
     
     const RotateTransformOperation* fromOp = downcast<RotateTransformOperation>(from);
-    
-    // Optimize for single axis rotation
-    if (!fromOp || (fromOp->m_x == 0 && fromOp->m_y == 0 && fromOp->m_z == 1) || 
-                   (fromOp->m_x == 0 && fromOp->m_y == 1 && fromOp->m_z == 0) || 
-                   (fromOp->m_x == 1 && fromOp->m_y == 0 && fromOp->m_z == 0)) {
-        double fromAngle = fromOp ? fromOp->m_angle : 0;
-        return RotateTransformOperation::create(fromOp ? fromOp->m_x : m_x, 
-                                                fromOp ? fromOp->m_y : m_y, 
-                                                fromOp ? fromOp->m_z : m_z, 
-                                                WebCore::blend(fromAngle, m_angle, context), type());
-    }
-
     const RotateTransformOperation* toOp = this;
+
+    // Interpolation of primitives and derived transform functions
+    //
+    // https://drafts.csswg.org/css-transforms-2/#interpolation-of-transform-functions
+    //
+    // For interpolations with the primitive rotate3d(), the direction vectors of the transform functions get
+    // normalized first. If the normalized vectors are not equal and both rotation angles are non-zero the transform
+    // functions get converted into 4x4 matrices first and interpolated as defined in section Interpolation of Matrices
+    // afterwards. Otherwise the rotation angle gets interpolated numerically and the rotation vector of the non-zero
+    // angle is used or (0, 0, 1) if both angles are zero.
+
+    auto normalizedVector = [](const RotateTransformOperation& op) -> FloatPoint3D {
+        FloatPoint3D vector { static_cast<float>(op.m_x), static_cast<float>(op.m_y), static_cast<float>(op.m_z) };
+        vector.normalize();
+        return vector;
+    };
+
+    double fromAngle = fromOp ? fromOp->m_angle : 0.0;
+    double toAngle = toOp->m_angle;
+    auto fromNormalizedVector = fromOp ? normalizedVector(*fromOp) : FloatPoint3D(0, 0, 1);
+    auto toNormalizedVector = normalizedVector(*toOp);
+    if (!fromAngle || !toAngle || fromNormalizedVector == toNormalizedVector) {
+        auto vector = (!fromAngle && toAngle) ? toNormalizedVector : fromNormalizedVector;
+        return RotateTransformOperation::create(vector.x(), vector.y(), vector.z(), WebCore::blend(fromAngle, toAngle, context), type());
+    }
 
     // Create the 2 rotation matrices
     TransformationMatrix fromT;

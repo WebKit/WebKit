@@ -1,3 +1,16 @@
+2021-04-18  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of the rotate CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=224730
+
+        Reviewed by Dean Jackson.
+
+        Implement the CSS Transforms spec about animating the rotateZ() function
+        for the simplified case where only the angle is interpolated.
+
+        * platform/graphics/transforms/RotateTransformOperation.cpp:
+        (WebCore::RotateTransformOperation::blend):
+
 2021-04-18  Youenn Fablet  <youenn@apple.com>
 
         Blob URLs should use for their owner origin for CSP checks

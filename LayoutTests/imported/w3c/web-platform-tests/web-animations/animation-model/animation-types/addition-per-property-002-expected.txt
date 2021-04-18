@@ -168,7 +168,7 @@ PASS transform-style: "flat" onto "preserve-3d"
 PASS rotate (type: rotateList) has testAddition function
 FAIL rotate without rotation axes assert_equals: The value should be -45deg at 0ms expected "-45deg" but got "-90deg"
 FAIL rotate with underlying transform assert_equals: The value should be y 45deg at 0ms expected "y 45deg" but got "0 1 0 90deg"
-FAIL rotate with different rotation axes assert_approx_equals: expected 0.57735 0.57735 0.57735 135deg but got 0 1 0 135deg: The value should be 0.57735 0.57735 0.57735 135deg at 500ms but got 0 1 0 135deg expected 0.57735 +/- 0.0001 but got 0
+PASS rotate with different rotation axes
 PASS translate (type: translateList) has testAddition function
 FAIL translate assert_equals: The value should be -100px at 0ms expected "-100px" but got "-200px"
 FAIL translate with underlying transform assert_equals: The value should be -100px at 0ms expected "-100px" but got "-200px"

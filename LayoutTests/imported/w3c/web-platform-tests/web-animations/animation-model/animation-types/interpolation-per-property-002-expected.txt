@@ -192,7 +192,7 @@ FAIL transform: extend shorter list (from) assert_approx_equals: expected matrix
 FAIL transform: extend shorter list (to) assert_approx_equals: expected matrix(-1, 0, 0, -1, -50, 0) but got matrix(1, 0, 0, 1, 50, 0): The value should be matrix(-1, 0, 0, -1, -50, 0) at 500ms but got matrix(1, 0, 0, 1, 50, 0) expected -1 +/- 0.0001 but got 1
 PASS transform: mismatch order of translate and rotate
 PASS transform: matrix
-FAIL transform: rotate3d assert_approx_equals: expected matrix3d(0.853553, 0.146447, -0.5, 0, 0.146447, 0.853553, 0.5, 0, 0.5, -0.5, 0.707107, 0, 0, 0, 0, 1) but got matrix3d(0.866025, 0.288675, -0.408248, 0, 0, 0.816497, 0.57735, 0, 0.5, -0.5, 0.707107, 0, 0, 0, 0, 1): The value should be matrix3d(0.853553, 0.146447, -0.5, 0, 0.146447, 0.853553, 0.5, 0, 0.5, -0.5, 0.707107, 0, 0, 0, 0, 1) at 500ms but got matrix3d(0.866025, 0.288675, -0.408248, 0, 0, 0.816497, 0.57735, 0, 0.5, -0.5, 0.707107, 0, 0, 0, 0, 1) expected 0.853553 +/- 0.0001 but got 0.866025
+PASS transform: rotate3d
 PASS transform: matrix3d
 PASS transform: mismatched 3D transforms
 PASS transform: rotateY
@@ -212,7 +212,7 @@ PASS rotate (type: rotateList) has testInterpolation function
 PASS rotate without rotation axes
 FAIL rotate with rotation axes assert_equals: The value should be y 45deg at 500ms expected "y 45deg" but got "0 1 0 45deg"
 FAIL rotate with rotation axes and range over 360 degrees assert_equals: The value should be y 180deg at 250ms expected "y 180deg" but got "0 1 0 180deg"
-FAIL rotate with different rotation axes assert_approx_equals: expected 0 0.707107 0.707107 45deg but got 0 1 0 45deg: The value should be 0 0.707107 0.707107 45deg at 500ms but got 0 1 0 45deg expected 0.707107 +/- 0.0001 but got 1
+PASS rotate with different rotation axes
 PASS translate (type: translateList) has testInterpolation function
 PASS translate with two unspecified values
 PASS translate with one unspecified value

@@ -1,3 +1,19 @@
+2021-04-18  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of the rotate CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=224730
+
+        Reviewed by Dean Jackson.
+
+        Mark 123 WPT progressions.
+
+        * web-platform-tests/css/css-transforms/animation/rotate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2021-04-18  Cathie Chen  <cathiechen@igalia.com>
 
         The implicit aspect-ratio from width and height attributes with float value is not accurate enough
