@@ -1,3 +1,36 @@
+2021-04-17  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Unhandled IPC messages should use correct format with the decoder.destinationID() ASSERT message
+        https://bugs.webkit.org/show_bug.cgi?id=224335
+
+        Reviewed by Antti Koivisto.
+
+        Use PRIu64 instead of llu in the ASSERT messages for printing unhandled message destination.
+        uint64_t is printf'ed with PRIu64.
+
+        * Scripts/webkit/messages.py:
+        (generate_message_handler):
+        * Scripts/webkit/tests/TestWithIfMessageMessageReceiver.cpp:
+        (WebKit::TestWithIfMessage::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithImageDataMessageReceiver.cpp:
+        (WebKit::TestWithImageData::didReceiveMessage):
+        (WebKit::TestWithImageData::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithLegacyReceiverMessageReceiver.cpp:
+        (WebKit::TestWithLegacyReceiver::didReceiveTestWithLegacyReceiverMessage):
+        (WebKit::TestWithLegacyReceiver::didReceiveSyncTestWithLegacyReceiverMessage):
+        * Scripts/webkit/tests/TestWithSemaphoreMessageReceiver.cpp:
+        (WebKit::TestWithSemaphore::didReceiveMessage):
+        (WebKit::TestWithSemaphore::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithStreamBufferMessageReceiver.cpp:
+        (WebKit::TestWithStreamBuffer::didReceiveMessage):
+        * Scripts/webkit/tests/TestWithStreamMessageReceiver.cpp:
+        (WebKit::TestWithStream::didReceiveStreamMessage):
+        * Scripts/webkit/tests/TestWithSuperclassMessageReceiver.cpp:
+        (WebKit::TestWithSuperclass::didReceiveSyncMessage):
+        * Scripts/webkit/tests/TestWithoutAttributesMessageReceiver.cpp:
+        (WebKit::TestWithoutAttributes::didReceiveMessage):
+        (WebKit::TestWithoutAttributes::didReceiveSyncMessage):
+
 2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Add some support for webpage translation in WebKitLegacy

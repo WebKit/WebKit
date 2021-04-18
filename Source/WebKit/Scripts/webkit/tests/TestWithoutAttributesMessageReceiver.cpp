@@ -131,7 +131,7 @@ void TestWithoutAttributes::didReceiveMessage(IPC::Connection& connection, IPC::
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %llu", description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
 }
 
 bool TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
@@ -154,7 +154,7 @@ bool TestWithoutAttributes::didReceiveSyncMessage(IPC::Connection& connection, I
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(replyEncoder);
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %llu", description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
     return false;
 }
 

@@ -56,7 +56,7 @@ void TestWithStream::didReceiveStreamMessage(IPC::StreamServerConnectionBase& co
 #endif
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(connection);
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %llu", description(decoder.messageName()), decoder.destinationID());
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, description(decoder.messageName()), decoder.destinationID());
 }
 
 } // namespace WebKit
