@@ -40,14 +40,14 @@ struct OSRExit;
 // This is an object that stores some interesting data about an OSR exit. It's expected that you will
 // scrape this data from this object by the time compilation finishes.
 struct OSRExitHandle : public ThreadSafeRefCounted<OSRExitHandle> {
-    OSRExitHandle(unsigned index, OSRExit& exit)
-        : index(index)
-        , exit(exit)
+    OSRExitHandle(unsigned index, JITCode* jitCode)
+        : m_index(index)
+        , m_jitCode(jitCode)
     {
     }
 
-    unsigned index;
-    OSRExit& exit;
+    unsigned m_index;
+    JITCode* m_jitCode;
 
     // This is the label at which the OSR exit jump lives. This will get populated once the OSR exit
     // emits its jump. This happens immediately when you call OSRExit::appendOSRExit(). It happens at

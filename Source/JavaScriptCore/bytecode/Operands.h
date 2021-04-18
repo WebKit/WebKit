@@ -138,6 +138,8 @@ enum OperandsLikeTag { OperandsLike };
 template<typename T, typename StorageArg = std::conditional_t<std::is_same_v<T, bool>, FastBitVector, Vector<T, 0, UnsafeVectorOverflow>>>
 class Operands {
 public:
+    template<typename, typename> friend class Operands;
+
     using Storage = StorageArg;
     using RefType = std::conditional_t<std::is_same_v<T, bool>, FastBitReference, T&>;
     using ConstRefType = std::conditional_t<std::is_same_v<T, bool>, bool, const T&>;
@@ -168,6 +170,14 @@ public:
         , m_numLocals(other.numberOfLocals())
     {
         m_values.fill(initialValue);
+    }
+
+    template<typename U>
+    explicit Operands(const Operands<T, U>& other)
+        : m_values(other.m_values)
+        , m_numArguments(other.m_numArguments)
+        , m_numLocals(other.m_numLocals)
+    {
     }
 
     size_t numberOfArguments() const { return m_numArguments; }

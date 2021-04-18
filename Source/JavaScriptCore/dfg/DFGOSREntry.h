@@ -56,11 +56,11 @@ struct OSREntryReshuffling {
 struct OSREntryData {
     BytecodeIndex m_bytecodeIndex;
     CodeLocationLabel<OSREntryPtrTag> m_machineCode;
-    Operands<AbstractValue> m_expectedValues;
+    FixedOperands<AbstractValue> m_expectedValues;
     // Use bitvectors here because they tend to only require one word.
     BitVector m_localsForcedDouble;
     BitVector m_localsForcedAnyInt;
-    Vector<OSREntryReshuffling> m_reshufflings;
+    FixedVector<OSREntryReshuffling> m_reshufflings;
     BitVector m_machineStackUsed;
     
     void dumpInContext(PrintStream&, DumpContext*) const;

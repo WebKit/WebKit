@@ -59,9 +59,6 @@ JITCode* JITCode::dfg()
 void JITCode::shrinkToFit(const ConcurrentJSLocker&)
 {
     common.shrinkToFit();
-    osrEntry.shrinkToFit();
-    osrExit.shrinkToFit();
-    speculationRecovery.shrinkToFit();
     minifiedDFG.prepareAndShrink();
     variableEventStream.shrinkToFit();
 }
@@ -86,7 +83,7 @@ void JITCode::reconstruct(CallFrame* callFrame, CodeBlock* codeBlock, CodeOrigin
 
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock* codeBlock, CallSiteIndex callSiteIndex)
 {
-    for (OSRExit& exit : osrExit) {
+    for (OSRExit& exit : m_osrExit) {
         if (exit.isExceptionHandler() && exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
             Operands<ValueRecovery> valueRecoveries;
             reconstruct(codeBlock, exit.m_codeOrigin, exit.m_streamIndex, valueRecoveries);
@@ -219,7 +216,7 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
 {
     common.validateReferences(trackedReferences);
     
-    for (OSREntryData& entry : osrEntry) {
+    for (OSREntryData& entry : m_osrEntry) {
         for (unsigned i = entry.m_expectedValues.size(); i--;)
             entry.m_expectedValues[i].validateReferences(trackedReferences);
     }
@@ -229,7 +226,7 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
 
 Optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
 {
-    for (OSRExit& exit : osrExit) {
+    for (OSRExit& exit : m_osrExit) {
         if (ExecutableMemoryHandle* handle = exit.m_code.executableMemory()) {
             if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr())
                 return Optional<CodeOrigin>(exit.m_codeOriginForExitProfile);
@@ -239,7 +236,7 @@ Optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
     return WTF::nullopt;
 }
 
-void JITCode::finalizeOSREntrypoints()
+void JITCode::finalizeOSREntrypoints(Vector<OSREntryData>&& osrEntry)
 {
     auto comparator = [] (const auto& a, const auto& b) {
         return a.m_bytecodeIndex < b.m_bytecodeIndex;
@@ -253,6 +250,7 @@ void JITCode::finalizeOSREntrypoints()
     };
     verifyIsSorted(osrEntry);
 #endif
+    m_osrEntry = WTFMove(osrEntry);
 }
 
 } } // namespace JSC::DFG

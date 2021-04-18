@@ -138,7 +138,7 @@ DFG::CommonData* JITCode::dfgCommon()
 void JITCode::shrinkToFit(const ConcurrentJSLocker&)
 {
     common.shrinkToFit();
-    osrExit.shrinkToFit();
+    m_osrExit.shrinkToFit();
     osrExitDescriptors.shrinkToFit();
     lazySlowPaths.shrinkToFit();
 }
@@ -147,13 +147,13 @@ void JITCode::validateReferences(const TrackedReferences& trackedReferences)
 {
     common.validateReferences(trackedReferences);
     
-    for (OSRExit& exit : osrExit)
+    for (OSRExit& exit : m_osrExit)
         exit.m_descriptor->validateReferences(trackedReferences);
 }
 
 RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex callSiteIndex)
 {
-    for (OSRExit& exit : osrExit) {
+    for (OSRExit& exit : m_osrExit) {
         if (exit.m_exceptionHandlerCallSiteIndex.bits() == callSiteIndex.bits()) {
             RELEASE_ASSERT(exit.isExceptionHandler());
             RELEASE_ASSERT(exit.isGenericUnwindHandler());
@@ -165,7 +165,7 @@ RegisterSet JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBloc
 
 Optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
 {
-    for (OSRExit& exit : osrExit) {
+    for (OSRExit& exit : m_osrExit) {
         if (ExecutableMemoryHandle* handle = exit.m_code.executableMemory()) {
             if (handle->start().untaggedPtr() <= pc && pc < handle->end().untaggedPtr())
                 return Optional<CodeOrigin>(exit.m_codeOriginForExitProfile);

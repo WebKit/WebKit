@@ -66,9 +66,9 @@ JITCompiler::~JITCompiler()
 
 void JITCompiler::linkOSRExits()
 {
-    ASSERT(m_jitCode->osrExit.size() == m_exitCompilationInfo.size());
+    ASSERT(m_osrExit.size() == m_exitCompilationInfo.size());
     if (UNLIKELY(m_graph.compilation())) {
-        for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
+        for (unsigned i = 0; i < m_osrExit.size(); ++i) {
             OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
             Vector<Label> labels;
             if (!info.m_failureJumps.empty()) {
@@ -80,7 +80,7 @@ void JITCompiler::linkOSRExits()
         }
     }
     
-    for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
+    for (unsigned i = 0; i < m_osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         JumpList& failureJumps = info.m_failureJumps;
         if (!failureJumps.empty())
@@ -278,11 +278,11 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     MacroAssemblerCodeRef<JITThunkPtrTag> osrExitThunk = vm().getCTIStub(osrExitGenerationThunkGenerator);
     auto target = CodeLocationLabel<JITThunkPtrTag>(osrExitThunk.code());
-    for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
+    for (unsigned i = 0; i < m_osrExit.size(); ++i) {
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         if (!Options::useProbeOSRExit()) {
             linkBuffer.link(info.m_patchableJump.m_jump, target);
-            OSRExit& exit = m_jitCode->osrExit[i];
+            OSRExit& exit = m_osrExit[i];
             exit.m_patchableJumpLocation = linkBuffer.locationOf<JSInternalPtrTag>(info.m_patchableJump);
         }
         if (info.m_replacementSource.isSet()) {
@@ -293,7 +293,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     }
     
     if (UNLIKELY(m_graph.compilation())) {
-        ASSERT(m_exitSiteLabels.size() == m_jitCode->osrExit.size());
+        ASSERT(m_exitSiteLabels.size() == m_osrExit.size());
         for (unsigned i = 0; i < m_exitSiteLabels.size(); ++i) {
             Vector<Label>& labels = m_exitSiteLabels[i];
             Vector<MacroAssemblerCodePtr<JSInternalPtrTag>> addresses;
@@ -305,6 +305,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         ASSERT(!m_exitSiteLabels.size());
 
     m_jitCode->common.compilation = m_graph.compilation();
+    m_jitCode->m_osrExit = WTFMove(m_osrExit);
+    m_jitCode->m_speculationRecovery = WTFMove(m_speculationRecovery);
     
     // Link new DFG exception handlers and remove baseline JIT handlers.
     m_codeBlock->clearExceptionHandlers();
@@ -547,32 +549,35 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
     if (!basicBlock.intersectionOfCFAHasVisited)
         return;
 
-    OSREntryData* entry = m_jitCode->appendOSREntryData(basicBlock.bytecodeBegin, linkBuffer.locationOf<OSREntryPtrTag>(blockHead));
+    OSREntryData entry;
+    entry.m_bytecodeIndex = basicBlock.bytecodeBegin;
+    entry.m_machineCode = linkBuffer.locationOf<OSREntryPtrTag>(blockHead);
 
-    entry->m_expectedValues = basicBlock.intersectionOfPastValuesAtHead;
-        
+    FixedOperands<AbstractValue> expectedValues(basicBlock.intersectionOfPastValuesAtHead);
+    Vector<OSREntryReshuffling> reshufflings;
+
     // Fix the expected values: in our protocol, a dead variable will have an expected
     // value of (None, []). But the old JIT may stash some values there. So we really
     // need (Top, TOP).
     for (size_t argument = 0; argument < basicBlock.variablesAtHead.numberOfArguments(); ++argument) {
         Node* node = basicBlock.variablesAtHead.argument(argument);
         if (!node || !node->shouldGenerate())
-            entry->m_expectedValues.argument(argument).makeBytecodeTop();
+            expectedValues.argument(argument).makeBytecodeTop();
     }
     for (size_t local = 0; local < basicBlock.variablesAtHead.numberOfLocals(); ++local) {
         Node* node = basicBlock.variablesAtHead.local(local);
         if (!node || !node->shouldGenerate())
-            entry->m_expectedValues.local(local).makeBytecodeTop();
+            expectedValues.local(local).makeBytecodeTop();
         else {
             VariableAccessData* variable = node->variableAccessData();
-            entry->m_machineStackUsed.set(variable->machineLocal().toLocal());
+            entry.m_machineStackUsed.set(variable->machineLocal().toLocal());
                 
             switch (variable->flushFormat()) {
             case FlushedDouble:
-                entry->m_localsForcedDouble.set(local);
+                entry.m_localsForcedDouble.set(local);
                 break;
             case FlushedInt52:
-                entry->m_localsForcedAnyInt.set(local);
+                entry.m_localsForcedAnyInt.set(local);
                 break;
             default:
                 break;
@@ -580,14 +585,16 @@ void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label bloc
 
             ASSERT(!variable->operand().isTmp());
             if (variable->operand().virtualRegister() != variable->machineLocal()) {
-                entry->m_reshufflings.append(
+                reshufflings.append(
                     OSREntryReshuffling(
                         variable->operand().virtualRegister().offset(), variable->machineLocal().offset()));
             }
         }
     }
         
-    entry->m_reshufflings.shrinkToFit();
+    entry.m_expectedValues = WTFMove(expectedValues);
+    entry.m_reshufflings = WTFMove(reshufflings);
+    m_osrEntry.append(WTFMove(entry));
 }
 
 void JITCompiler::appendExceptionHandlingOSRExit(ExitKind kind, unsigned eventStreamIndex, CodeOrigin opCatchOrigin, HandlerInfo* exceptionHandler, CallSiteIndex callSite, MacroAssembler::JumpList jumpsToFail)
@@ -596,7 +603,7 @@ void JITCompiler::appendExceptionHandlingOSRExit(ExitKind kind, unsigned eventSt
     exit.m_codeOrigin = opCatchOrigin;
     exit.m_exceptionHandlerCallSiteIndex = callSite;
     OSRExitCompilationInfo& exitInfo = appendExitInfo(jumpsToFail);
-    jitCode()->appendOSRExit(exit);
+    m_osrExit.append(WTFMove(exit));
     m_exceptionHandlerOSRExitCallSites.append(ExceptionHandlingOSRExitInfo { exitInfo, *exceptionHandler, callSite });
 }
 

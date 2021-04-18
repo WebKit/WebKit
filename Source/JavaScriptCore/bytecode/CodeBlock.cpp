@@ -2973,21 +2973,19 @@ void CodeBlock::tallyFrequentExitSites()
     switch (jitType()) {
     case JITType::DFGJIT: {
         DFG::JITCode* jitCode = m_jitCode->dfg();
-        for (auto& exit : jitCode->osrExit)
+        for (auto& exit : jitCode->m_osrExit)
             exit.considerAddingAsFrequentExitSite(profiledBlock);
         break;
     }
 
 #if ENABLE(FTL_JIT)
     case JITType::FTLJIT: {
-        // There is no easy way to avoid duplicating this code since the FTL::JITCode::osrExit
+        // There is no easy way to avoid duplicating this code since the FTL::JITCode::m_osrExit
         // vector contains a totally different type, that just so happens to behave like
-        // DFG::JITCode::osrExit.
+        // DFG::JITCode::m_osrExit.
         FTL::JITCode* jitCode = m_jitCode->ftl();
-        for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
-            FTL::OSRExit& exit = jitCode->osrExit[i];
+        for (auto& exit : jitCode->m_osrExit)
             exit.considerAddingAsFrequentExitSite(profiledBlock);
-        }
         break;
     }
 #endif

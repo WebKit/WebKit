@@ -1,3 +1,63 @@
+2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make more DFG/FTL data FixedVector/Vector
+        https://bugs.webkit.org/show_bug.cgi?id=224713
+
+        Reviewed by Darin Adler.
+
+        1. DFG::JITCode::m_osrEntry / DFG::JITCode::m_osrExit / DFG::JITCode::m_speculationRecovery are changed to FixedVector.
+           They are added at compiling time, and after that, these vectors are not modified. So when finalizing, we can easily make it FixedVector.
+           We also change OSREntry::{m_reshufflings,m_expectedValues} to FixedVector and FixedOperands.
+        2. FTL::JITCode::m_osrExit is changed from SegmentedVector to Vector. We are still using Vector since it also involves osrExitDescriptor.
+           But later, we should merge m_osrExit to osrExitDescriptor. Vector is still better than SegmentedVector since it wastes several entries
+           per segment. SegmentedVector was used to use a direct pointer of OSRExit (this is not possible in Vector since this pointer can be invalidated
+           after growing), but usage of that is fairly limited so that we can just replace them with m_index + osrExit vector.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/Operands.h:
+        (JSC::Operands::Operands):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::shrinkToFit):
+        (JSC::DFG::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::DFG::JITCode::validateReferences):
+        (JSC::DFG::JITCode::findPC):
+        (JSC::DFG::JITCode::finalizeOSREntrypoints):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        (JSC::DFG::JITCompiler::appendExceptionHandlingOSRExit):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendOSRExit):
+        (JSC::DFG::JITCompiler::appendSpeculationRecovery):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::shrinkToFit):
+        (JSC::FTL::JITCode::validateReferences):
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::FTL::JITCode::findPC):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLOSRExitHandle.cpp:
+        (JSC::FTL::OSRExitHandle::emitExitThunk):
+        * ftl/FTLOSRExitHandle.h:
+        (JSC::FTL::OSRExitHandle::OSRExitHandle):
+        * ftl/FTLPatchpointExceptionHandle.cpp:
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreationForUnwind):
+
 2021-04-17  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, suppress warnings
