@@ -1,3 +1,40 @@
+2021-04-18  Youenn Fablet  <youenn@apple.com>
+
+        Blob URLs should use for their owner origin for CSP checks
+        https://bugs.webkit.org/show_bug.cgi?id=224535
+        <rdar://76458106>
+
+        Reviewed by Alex Christensen.
+
+        Before the patch, we were checking blob origin directly with ancestors.
+        As per https://w3c.github.io/webappsec-csp/#match-url-to-source-expression step 4.1,
+        we need to get the URL origin, which by spec is the origin of the blob creator.
+        We only do this for navigation loads as script loads should be kept the current way, as a cross-site scripting protection,
+        and to remain compatible with other browsers.
+
+        Make some refactoring to add helper routines to get origin and secure context state of blob URLs in BlobURL.
+        Make use of it in MixedContentChecker as a refactoring.
+        Make use of the helper routine in ContentSecurityPolicySource::matches to fix the bug.
+
+        Test: http/tests/security/frame-src-and-blob-download.https.html
+
+        * fileapi/BlobURL.cpp:
+        (WebCore::blobOwner):
+        (WebCore::BlobURL::getOriginURL):
+        (WebCore::BlobURL::isSecureBlobURL):
+        * fileapi/BlobURL.h:
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::isBlobURLContainsNullOrigin):
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::isMixedContent):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::isSecure):
+        * page/csp/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::urlMatchesSelf const):
+        * page/csp/ContentSecurityPolicy.h:
+        * page/csp/ContentSecurityPolicySourceList.cpp:
+        (WebCore::ContentSecurityPolicySourceList::matches const):
+
 2021-04-18  Cathie Chen  <cathiechen@igalia.com>
 
         The implicit aspect-ratio from width and height attributes with float value is not accurate enough

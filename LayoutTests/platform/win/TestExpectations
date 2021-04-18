@@ -224,6 +224,7 @@ http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Skip ]
 webkit.org/b/29287 http/tests/local/fileapi/ [ Skip ]
 webkit.org/b/29287 http/tests/local/blob/send-hybrid-blob.html [ Skip ]
 webkit.org/b/29287 http/tests/local/formdata/ [ Skip ]
+http/tests/security/frame-src-and-blob-download.https.html [ Skip ]
 
 # Software keyboard is not supported.
 fast/events/autoscroll-with-software-keyboard.html [ Skip ]

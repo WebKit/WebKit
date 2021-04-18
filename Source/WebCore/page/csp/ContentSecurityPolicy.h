@@ -138,7 +138,7 @@ public:
     void reportDirectiveAsSourceExpression(const String& directiveName, const String& sourceExpression) const;
     void reportInvalidPathCharacter(const String& directiveName, const String& value, const char) const;
     void reportInvalidSourceExpression(const String& directiveName, const String& source) const;
-    bool urlMatchesSelf(const URL&) const;
+    bool urlMatchesSelf(const URL&, bool forFrameSrc) const;
     bool allowContentSecurityPolicySourceStarToMatchAnyProtocol() const;
 
     // Used by ContentSecurityPolicyDirectiveList
