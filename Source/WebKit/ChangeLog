@@ -1,3 +1,35 @@
+2021-04-18  Chris Dumez  <cdumez@apple.com>
+
+        Update LibWebRTCCodecsProxy to use a Lock
+        https://bugs.webkit.org/show_bug.cgi?id=224728
+
+        Reviewed by Darin Adler.
+
+        Update LibWebRTCCodecsProxy to use a Lock, instead of a std::atomic<bool> that
+        has to be kept up to date. I think this simplifies the code a bit. Adding / Removing
+        encoder / decoder is not very hot code as far as I know and there will very rarely
+        be contention since allowsExitUnderMemoryPressure() is only called on memory pressure.
+
+        m_encoder / m_decoder are still always modified from the background thread. However, we
+        now check from the main thread if they are empty by locking.
+
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::close):
+        (WebKit::LibWebRTCCodecsProxy::createH264Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createH265Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createVP9Decoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseDecoder):
+        (WebKit::LibWebRTCCodecsProxy::decodeFrame):
+        (WebKit::LibWebRTCCodecsProxy::setFrameSize):
+        (WebKit::LibWebRTCCodecsProxy::createEncoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseEncoder):
+        (WebKit::LibWebRTCCodecsProxy::initializeEncoder):
+        (WebKit::LibWebRTCCodecsProxy::encodeFrame):
+        (WebKit::LibWebRTCCodecsProxy::setEncodeRates):
+        (WebKit::LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure const):
+        (WebKit::LibWebRTCCodecsProxy::updateHasEncodersOrDecoders): Deleted.
+
 2021-04-17  Chris Dumez  <cdumez@apple.com>
 
         GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() should check if libWebRTCCodecsProxy is used

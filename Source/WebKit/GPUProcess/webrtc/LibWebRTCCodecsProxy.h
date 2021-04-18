@@ -82,14 +82,13 @@ private:
     void encodeFrame(RTCEncoderIdentifier, WebCore::RemoteVideoSample&&, uint32_t timeStamp, bool shouldEncodeAsKeyFrame);
     void setEncodeRates(RTCEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
 
-    void updateHasEncodersOrDecoders();
-
     CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+
+    mutable Lock m_lock;
     HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders;
     HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders;
-    std::atomic<bool> m_hasEncodersOrDecoders;
 
     Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
