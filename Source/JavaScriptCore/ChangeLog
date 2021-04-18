@@ -1,3 +1,13 @@
+2021-04-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, suppress warnings
+        https://bugs.webkit.org/show_bug.cgi?id=224616
+
+        * runtime/HashMapImpl.h:
+        * runtime/HashMapImplInlines.h:
+        (JSC::areKeysEqual):
+        (JSC::wangsInt64Hash):
+
 2021-04-16  Mark Lam  <mark.lam@apple.com>
 
         More changes to support the TerminationException.

@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-ALWAYS_INLINE static bool areKeysEqual(JSGlobalObject* globalObject, JSValue a, JSValue b)
+ALWAYS_INLINE bool areKeysEqual(JSGlobalObject* globalObject, JSValue a, JSValue b)
 {
     // We want +0 and -0 to be compared to true here. sameValue() itself doesn't
     // guarantee that, however, we normalize all keys before comparing and storing
@@ -67,7 +67,7 @@ ALWAYS_INLINE JSValue normalizeMapKey(JSValue key)
     return key;
 }
 
-static ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key)
+ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key)
 {
     key += ~(key << 32);
     key ^= (key >> 22);

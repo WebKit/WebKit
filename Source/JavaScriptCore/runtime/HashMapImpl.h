@@ -230,12 +230,12 @@ public:
     }
 };
 
-ALWAYS_INLINE static bool areKeysEqual(JSGlobalObject*, JSValue, JSValue);
+ALWAYS_INLINE bool areKeysEqual(JSGlobalObject*, JSValue, JSValue);
 
 // Note that normalization is inlined in DFG's NormalizeMapKey.
 // Keep in sync with the implementation of DFG and FTL normalization.
 ALWAYS_INLINE JSValue normalizeMapKey(JSValue key);
-static ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key);
+ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key);
 ALWAYS_INLINE uint32_t jsMapHash(JSBigInt*);
 ALWAYS_INLINE uint32_t jsMapHash(JSGlobalObject*, VM&, JSValue);
 ALWAYS_INLINE uint32_t shouldShrink(uint32_t capacity, uint32_t keyCount);
