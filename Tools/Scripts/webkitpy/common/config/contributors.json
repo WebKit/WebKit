@@ -190,6 +190,18 @@
          "akiss"
       ]
    },
+   "Alan Bujtas" : {
+      "emails" : [
+         "zalan@apple.com",
+         "zbujtas@gmail.com",
+         "zalan.bujtas@nokia.com"
+      ],
+      "expertise" : "Layout and Rendering, subpixel positioning, frame flattening",
+      "nicks" : [
+         "zalan"
+      ],
+      "status" : "reviewer"
+   },
    "Alan Coon" : {
       "emails" : [
          "alancoon@apple.com"
@@ -6013,18 +6025,6 @@
       "nicks" : [
          "zackr"
       ]
-   },
-   "Zalan Bujtas" : {
-      "emails" : [
-         "zalan@apple.com",
-         "zbujtas@gmail.com",
-         "zalan.bujtas@nokia.com"
-      ],
-      "expertise" : "Layout and Rendering, subpixel positioning, frame flattening",
-      "nicks" : [
-         "zalan"
-      ],
-      "status" : "reviewer"
    },
    "Zeev Lieber" : {
       "emails" : [
