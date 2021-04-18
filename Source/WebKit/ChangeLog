@@ -1,5 +1,24 @@
 2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [macOS] Add some support for webpage translation in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=224683
+        <rdar://problem/75641882>
+
+        Reviewed by Darin Adler.
+
+        Remove some more compile-time guards, now that the WebCore enum is not conditional on `ENABLE(APP_HIGHLIGHT)`.
+        See WebCore/ChangeLog for more information.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+
+2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Remove PromisedAttachmentInfo::blobURL and adjacent code
         https://bugs.webkit.org/show_bug.cgi?id=224720
 

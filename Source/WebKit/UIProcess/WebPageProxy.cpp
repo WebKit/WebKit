@@ -6725,15 +6725,17 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         TextChecker::toggleSpellingUIIsShowing();
         return;
 
-#if ENABLE(APP_HIGHLIGHTS)
     case ContextMenuItemTagAddHighlightToNewGroup:
+#if ENABLE(APP_HIGHLIGHTS)
         createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes, HighlightRequestOriginatedInApp::No);
+#endif
         return;
 
     case ContextMenuItemTagAddHighlightToCurrentGroup:
+#if ENABLE(APP_HIGHLIGHTS)
         createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No, HighlightRequestOriginatedInApp::No);
-        return;
 #endif
+        return;
 
     case ContextMenuItemTagLearnSpelling:
     case ContextMenuItemTagIgnoreSpelling:

@@ -440,14 +440,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagTextDirectionRightToLeft:
         frame->editor().command("MakeTextWritingDirectionRightToLeft").execute();
         break;
-#if ENABLE(APP_HIGHLIGHTS)
     case ContextMenuItemTagAddHighlightToCurrentGroup:
         // FIXME: Add Highlight Logic
         break;
     case ContextMenuItemTagAddHighlightToNewGroup:
         // FIXME: Add Highlight Logic
         break;
-#endif
 #if PLATFORM(COCOA)
     case ContextMenuItemTagSearchInSpotlight:
         m_client.searchWithSpotlight();
@@ -1314,14 +1312,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagCheckSpellingWhileTyping:
             shouldCheck = frame->editor().isContinuousSpellCheckingEnabled();
             break;
-#if ENABLE(APP_HIGHLIGHTS)
         case ContextMenuItemTagAddHighlightToCurrentGroup:
             shouldEnable = frame->selection().isRange();
             break;
         case ContextMenuItemTagAddHighlightToNewGroup:
             shouldEnable = frame->selection().isRange();
             break;
-#endif
 #if PLATFORM(COCOA)
         case ContextMenuItemTagSubstitutionsMenu:
         case ContextMenuItemTagTransformationsMenu:

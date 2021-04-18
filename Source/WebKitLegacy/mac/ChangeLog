@@ -1,3 +1,42 @@
+2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add some support for webpage translation in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=224683
+        <rdar://problem/75641882>
+
+        Reviewed by Darin Adler.
+
+        Add support for the webpage translation context menu item in WebKitLegacy. See below for more details.
+
+        * WebView/WebHTMLView.mm:
+        (toAction):
+        (toTag):
+
+        Introduce the `WebMenuItemTagTranslate` enum value, and use it as the tag value when creating an `NSMenuItem`
+        for the Translate action.
+
+        (createMenuItem):
+        * WebView/WebUIDelegatePrivate.h:
+
+        Unfortunately, in order to support a particular internal client of WebKitLegacy, we need to expose
+        `WebMenuItemTagTranslate` as an enum value in this existing enumeration of context menu item tags. This is
+        because the client's implementation of `-webView:contextMenuItemsForElement:defaultMenuItems:` rejects context
+        menu items by default, unless the item tag is within the set of item tags that they support.
+
+        This client will need to add the enum value of `WebMenuItemTagTranslate` into their allow-list.
+
+        * WebView/WebView.mm:
+        (+[WebView _canHandleContextMenuTranslation]):
+
+        Softlink against and check with `TranslationUIServices` to see if we should be showing the Translate menu item.
+
+        (-[WebView _handleContextMenuTranslation:selectionBounds:menuLocation:]):
+
+        Handle the menu action by creating and presenting a new `LTUITranslationViewController` using the given
+        information.
+
+        * WebView/WebViewInternal.h:
+
 2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().

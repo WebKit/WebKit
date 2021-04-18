@@ -250,6 +250,7 @@
 #import <wtf/HashTraits.h>
 #import <wtf/Language.h>
 #import <wtf/MainThread.h>
+#import <wtf/MathExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RefCountedLeakCounter.h>
@@ -347,6 +348,13 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/PlaybackSessionModelMediaElement.h>
+#endif
+
+#if HAVE(TRANSLATION_UI_SERVICES)
+#import <TranslationUIServices/LTUITranslationViewController.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
+SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -9629,12 +9637,40 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
++ (BOOL)_canHandleContextMenuTranslation
+{
+    return TranslationUIServicesLibrary() && [getLTUITranslationViewControllerClass() isAvailable];
+}
+
 - (void)_handleContextMenuTranslation:(const String&)text selectionBounds:(const WebCore::IntRect&)selectionBoundsInRootView menuLocation:(const WebCore::IntPoint&)locationInRootView
 {
-    // FIXME (224683): Not implemented yet.
-    UNUSED_PARAM(text);
-    UNUSED_PARAM(selectionBoundsInRootView);
-    UNUSED_PARAM(locationInRootView);
+    if (!WebView._canHandleContextMenuTranslation) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto translationViewController = adoptNS([allocLTUITranslationViewControllerInstance() init]);
+    [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:text]).get()];
+
+    auto convertedSelectionBounds = [self _convertRectFromRootView:selectionBoundsInRootView];
+    auto convertedMenuLocation = [self _convertPointFromRootView:locationInRootView];
+
+    auto popover = adoptNS([[NSPopover alloc] init]);
+    [popover setBehavior:NSPopoverBehaviorTransient];
+    [popover setAppearance:self.effectiveAppearance];
+    [popover setAnimates:YES];
+    [popover setContentViewController:translationViewController.get()];
+    [popover setContentSize:[translationViewController preferredContentSize]];
+
+    NSRectEdge preferredEdge;
+    auto aim = convertedMenuLocation.x;
+    auto highlight = NSMidX(convertedSelectionBounds);
+    if (WTF::areEssentiallyEqual<CGFloat>(aim, highlight))
+        preferredEdge = self.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft ? NSRectEdgeMinX : NSRectEdgeMaxX;
+    else
+        preferredEdge = aim > highlight ? NSRectEdgeMaxX : NSRectEdgeMinX;
+
+    [popover showRelativeToRect:convertedSelectionBounds ofView:self preferredEdge:preferredEdge];
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

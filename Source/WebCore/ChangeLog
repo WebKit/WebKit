@@ -1,5 +1,24 @@
 2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [macOS] Add some support for webpage translation in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=224683
+        <rdar://problem/75641882>
+
+        Reviewed by Darin Adler.
+
+        Remove compile-time guards around `ContextMenuItemTagAddHighlightToCurrentGroup` and
+        `ContextMenuItemTagAddHighlightToNewGroup`, so that we can keep these internal WebCore context menu tags in sync
+        with the SPI-exposed enum values in `WebUIDelegatePrivate.h`. See WebKitLegacy ChangeLog for more details.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded const):
+        * platform/ContextMenuItem.cpp:
+        (WebCore::isValidContextMenuAction):
+        * platform/ContextMenuItem.h:
+
+2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Remove PromisedAttachmentInfo::blobURL and adjacent code
         https://bugs.webkit.org/show_bug.cgi?id=224720
 

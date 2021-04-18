@@ -426,6 +426,8 @@ static Optional<WebCore::ContextMenuAction> toAction(NSInteger tag)
         return ContextMenuItemTagMediaMute;
     case WebMenuItemTagDictationAlternative:
         return ContextMenuItemTagDictationAlternative;
+    case WebMenuItemTagTranslate:
+        return ContextMenuItemTagTranslate;
     }
     return WTF::nullopt;
 }
@@ -605,17 +607,16 @@ static Optional<NSInteger> toTag(WebCore::ContextMenuAction action)
         return WebMenuItemTagDictationAlternative;
     case ContextMenuItemTagToggleVideoFullscreen:
         return WebMenuItemTagToggleVideoFullscreen;
-#if ENABLE(APP_HIGHLIGHTS)
     case ContextMenuItemTagAddHighlightToCurrentGroup:
     case ContextMenuItemTagAddHighlightToNewGroup:
         return WTF::nullopt;
-#endif
     case ContextMenuItemTagShareMenu:
         return WebMenuItemTagShareMenu;
     case ContextMenuItemTagToggleVideoEnhancedFullscreen:
         return WebMenuItemTagToggleVideoEnhancedFullscreen;
-    case ContextMenuItemTagRevealImage:
     case ContextMenuItemTagTranslate:
+        return WebMenuItemTagTranslate;
+    case ContextMenuItemTagRevealImage:
         return WTF::nullopt;
 
     case ContextMenuItemBaseCustomTag ... ContextMenuItemLastCustomTag:
@@ -3632,6 +3633,11 @@ static RetainPtr<NSMutableArray> createMenuItems(const WebCore::HitTestResult& h
 
 static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTestResult, const WebCore::ContextMenuItem& item)
 {
+#if HAVE(TRANSLATION_UI_SERVICES)
+    if (item.action() == WebCore::ContextMenuItemTagTranslate && !WebView._canHandleContextMenuTranslation)
+        return nil;
+#endif
+
     if (item.action() == WebCore::ContextMenuItemTagShareMenu)
         return createShareMenuItem(hitTestResult);
 

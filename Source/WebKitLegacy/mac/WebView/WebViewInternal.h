@@ -158,6 +158,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+@property (class, nonatomic, readonly) BOOL _canHandleContextMenuTranslation;
 - (void)_handleContextMenuTranslation:(const String&)text selectionBounds:(const WebCore::IntRect&)boundsInView menuLocation:(const WebCore::IntPoint&)menuLocation;
 #endif
 
