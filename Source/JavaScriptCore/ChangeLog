@@ -1,5 +1,12 @@
 2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
+        Unreviewed, build fix
+        https://bugs.webkit.org/show_bug.cgi?id=224715
+
+        * dfg/DFGDesiredWatchpoints.h:
+
+2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
         [JSC] Do not use Bag<> for DFG / FTL watchpoints
         https://bugs.webkit.org/show_bug.cgi?id=224715
 

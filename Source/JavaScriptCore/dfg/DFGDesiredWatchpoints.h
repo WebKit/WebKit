@@ -46,6 +46,8 @@ enum class WatchpointRegistrationMode : uint8_t { Collect, Add };
 class WatchpointCollector final {
     WTF_MAKE_NONCOPYABLE(WatchpointCollector);
 public:
+    WatchpointCollector() = default;
+
     void materialize()
     {
         m_watchpoints = FixedVector<CodeBlockJettisoningWatchpoint>(m_watchpointCount);
