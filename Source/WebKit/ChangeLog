@@ -1,3 +1,29 @@
+2021-04-17  Chris Dumez  <cdumez@apple.com>
+
+        GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() should check if libWebRTCCodecsProxy is used
+        https://bugs.webkit.org/show_bug.cgi?id=224709
+
+        Reviewed by Darin Adler.
+
+        If the libWebRTCCodecsProxy has either encoders or decoders then the GPUProcess should not
+        exit under memory pressure, since it is not idle.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::allowsExitUnderMemoryPressure const):
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.h:
+        * GPUProcess/webrtc/LibWebRTCCodecsProxy.mm:
+        (WebKit::LibWebRTCCodecsProxy::createH264Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createH265Decoder):
+        (WebKit::LibWebRTCCodecsProxy::createVP9Decoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseDecoder):
+        (WebKit::LibWebRTCCodecsProxy::createEncoder):
+        (WebKit::LibWebRTCCodecsProxy::releaseEncoder):
+        (WebKit::LibWebRTCCodecsProxy::updateHasEncodersOrDecoders):
+        (WebKit::LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure const):
+        Use a std::atomic<bool> to determine if the LibWebRTCCodecsProxy has encoders/decoders since
+        allowsExitUnderMemoryPressure() gets called on the main thread but m_encoders / m_decoders
+        get updated on a background thread.
+
 2021-04-17  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Unhandled IPC messages should use correct format with the decoder.destinationID() ASSERT message

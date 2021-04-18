@@ -1,3 +1,17 @@
+2021-04-17  Chris Dumez  <cdumez@apple.com>
+
+        GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() should check if libWebRTCCodecsProxy is used
+        https://bugs.webkit.org/show_bug.cgi?id=224709
+
+        Reviewed by Darin Adler.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (runMemoryPressureExitTest):
+        (waitUntilCaptureState):
+        (TEST):
+
 2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove PromisedAttachmentInfo::blobURL and adjacent code

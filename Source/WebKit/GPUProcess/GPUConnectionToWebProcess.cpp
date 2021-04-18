@@ -307,6 +307,10 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
     if (m_legacyCdmFactoryProxy && !m_legacyCdmFactoryProxy->allowsExitUnderMemoryPressure())
         return false;
 #endif
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    if (!m_libWebRTCCodecsProxy->allowsExitUnderMemoryPressure())
+        return false;
+#endif
     return true;
 }
 

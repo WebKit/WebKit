@@ -28,11 +28,13 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "UserMediaCaptureUIDelegate.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <notify.h>
 #import <wtf/Function.h>
@@ -493,13 +495,18 @@ TEST(GPUProcess, CanvasBasicCrashHandling)
     TestWebKitAPI::Util::run(&done);
 }
 
-static void runMemoryPressureExitTest(Function<void(WKWebView *)>&& loadTestPageSynchronously)
+static void runMemoryPressureExitTest(Function<void(WKWebView *)>&& loadTestPageSynchronously, Function<void(WKWebViewConfiguration *)>&& updateConfiguration = [](WKWebViewConfiguration *) { })
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureAudioInGPUProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("WebRTCPlatformCodecsInGPUProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("CaptureAudioInUIProcessEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+    updateConfiguration(configuration.get());
 
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
     loadTestPageSynchronously(webView.get());
@@ -564,6 +571,42 @@ TEST(GPUProcess, ExitsUnderMemoryPressureVideoCase)
         TestWebKitAPI::Util::run(&done);
     });
 }
+
+#if ENABLE(MEDIA_STREAM)
+static bool waitUntilCaptureState(WKWebView *webView, _WKMediaCaptureStateDeprecated expectedState)
+{
+    NSTimeInterval end = [[NSDate date] timeIntervalSinceReferenceDate] + 10;
+    do {
+        if ([webView _mediaCaptureState] == expectedState)
+            return true;
+
+        TestWebKitAPI::Util::spinRunLoop(1);
+
+        if ([[NSDate date] timeIntervalSinceReferenceDate] > end)
+            break;
+    } while (true);
+
+    return false;
+}
+
+TEST(GPUProcess, ExitsUnderMemoryPressureWebRTCCase)
+{
+    runMemoryPressureExitTest([](WKWebView *webView) {
+        auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+        webView.UIDelegate = delegate.get();
+
+        [webView loadTestPageNamed:@"getUserMedia"];
+        EXPECT_TRUE(waitUntilCaptureState(webView, _WKMediaCaptureStateDeprecatedActiveCamera));
+        [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo(true)"];
+        [webView stringByEvaluatingJavaScript:@"createConnection()"];
+    }, [](WKWebViewConfiguration* configuration) {
+        auto preferences = configuration.preferences;
+        preferences._mediaCaptureRequiresSecureConnection = NO;
+        configuration._mediaCaptureEnabled = YES;
+        preferences._mockCaptureDevicesEnabled = YES;
+    });
+}
+#endif // ENABLE(MEDIA_STREAM)
 
 TEST(GPUProcess, ExitsUnderMemoryPressureWebAudioCase)
 {

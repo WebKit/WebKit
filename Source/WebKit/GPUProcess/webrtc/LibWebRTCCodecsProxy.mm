@@ -78,6 +78,7 @@ void LibWebRTCCodecsProxy::createH264Decoder(RTCDecoderIdentifier identifier)
         if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
             connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
     }).get()));
+    updateHasEncodersOrDecoders();
 }
 
 void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier)
@@ -87,6 +88,7 @@ void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier)
         if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
             connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
     }).get()));
+    updateHasEncodersOrDecoders();
 }
 
 void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier)
@@ -96,13 +98,16 @@ void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier)
         if (auto sample = WebCore::RemoteVideoSample::create(pixelBuffer, MediaTime(timeStampNs, 1)))
             connection->send(Messages::LibWebRTCCodecs::CompletedDecoding { identifier, timeStamp, *sample }, 0);
     }).get()));
+    updateHasEncodersOrDecoders();
 }
 
 void LibWebRTCCodecsProxy::releaseDecoder(RTCDecoderIdentifier identifier)
 {
     ASSERT(m_decoders.contains(identifier));
-    if (auto decoder = m_decoders.take(identifier))
+    if (auto decoder = m_decoders.take(identifier)) {
         webrtc::releaseLocalDecoder(decoder);
+        updateHasEncodersOrDecoders();
+    }
 }
 
 void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t timeStamp, const IPC::DataReference& data)
@@ -139,13 +144,16 @@ void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const 
     }).get());
     webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);
     m_encoders.add(identifier, encoder);
+    updateHasEncodersOrDecoders();
 }
 
 void LibWebRTCCodecsProxy::releaseEncoder(RTCEncoderIdentifier identifier)
 {
     ASSERT(m_encoders.contains(identifier));
-    if (auto encoder = m_encoders.take(identifier))
+    if (auto encoder = m_encoders.take(identifier)) {
         webrtc::releaseLocalEncoder(encoder);
+        updateHasEncodersOrDecoders();
+    }
 }
 
 void LibWebRTCCodecsProxy::initializeEncoder(RTCEncoderIdentifier identifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate)
@@ -197,6 +205,16 @@ void LibWebRTCCodecsProxy::setEncodeRates(RTCEncoderIdentifier identifier, uint3
         return;
 
     webrtc::setLocalEncoderRates(encoder, bitRate, frameRate);
+}
+
+void LibWebRTCCodecsProxy::updateHasEncodersOrDecoders()
+{
+    m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
+}
+
+bool LibWebRTCCodecsProxy::allowsExitUnderMemoryPressure() const
+{
+    return !m_hasEncodersOrDecoders;
 }
 
 }
