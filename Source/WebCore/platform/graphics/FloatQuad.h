@@ -76,9 +76,10 @@ public:
     void setP3(const FloatPoint& p) { m_p3 = p; }
     void setP4(const FloatPoint& p) { m_p4 = p; }
 
-    // isEmpty tests that the bounding box is empty. This will not identify
-    // "slanted" empty quads.
-    bool isEmpty() const { return boundingBox().isEmpty(); }
+    WEBCORE_EXPORT bool isEmpty() const;
+
+    // This method will not identify "slanted" empty quads.
+    bool boundingBoxIsEmpty() const { return boundingBox().isEmpty(); }
 
     // Tests whether this quad can be losslessly represented by a FloatRect,
     // that is, if two edges are parallel to the x-axis and the other two
@@ -214,7 +215,7 @@ inline bool operator!=(const FloatQuad& a, const FloatQuad& b)
     return !(a == b);
 }
 
-WTF::TextStream& operator<<(WTF::TextStream&, const FloatQuad&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatQuad&);
 
 Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>&);
 WEBCORE_EXPORT FloatRect unitedBoundingBoxes(const Vector<FloatQuad>&);

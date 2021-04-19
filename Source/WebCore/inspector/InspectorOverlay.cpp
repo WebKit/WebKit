@@ -286,16 +286,16 @@ static void drawFragmentHighlight(GraphicsContext& context, Node& node, const In
     if (size >= 4)
         contentQuad = highlight.quads[3];
 
-    if (!marginQuad.isEmpty() && marginQuad != borderQuad && highlight.marginColor.isVisible())
+    if (!marginQuad.boundingBoxIsEmpty() && marginQuad != borderQuad && highlight.marginColor.isVisible())
         drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlight.marginColor, bounds);
 
-    if (!borderQuad.isEmpty() && borderQuad != paddingQuad && highlight.borderColor.isVisible())
+    if (!borderQuad.boundingBoxIsEmpty() && borderQuad != paddingQuad && highlight.borderColor.isVisible())
         drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, highlight.borderColor, bounds);
 
-    if (!paddingQuad.isEmpty() && paddingQuad != contentQuad && highlight.paddingColor.isVisible())
+    if (!paddingQuad.boundingBoxIsEmpty() && paddingQuad != contentQuad && highlight.paddingColor.isVisible())
         drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, highlight.paddingColor, bounds);
 
-    if (!contentQuad.isEmpty() && (highlight.contentColor.isVisible() || highlight.contentOutlineColor.isVisible()))
+    if (!contentQuad.boundingBoxIsEmpty() && (highlight.contentColor.isVisible() || highlight.contentOutlineColor.isVisible()))
         drawOutlinedQuad(context, contentQuad, highlight.contentColor, highlight.contentOutlineColor, bounds);
 }
 

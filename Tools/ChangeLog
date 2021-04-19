@@ -1,3 +1,16 @@
+2021-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename FloatQuad::isEmpty() to boundingBoxIsEmpty() and reimplement isEmpty()
+        https://bugs.webkit.org/show_bug.cgi?id=224769
+
+        Reviewed by Tim Horton.
+
+        Add an API test to exercise the new `FloatQuad::isEmpty()` method.
+
+        * TestWebKitAPI/Tests/WebCore/FloatQuadTests.cpp:
+        (TestWebKitAPI::checkIsEmpty):
+        (TestWebKitAPI::TEST):
+
 2021-04-19  Tim Horton  <timothy_horton@apple.com>
 
         Fix the macCatalyst TestWebKitAPI build

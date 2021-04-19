@@ -27,6 +27,7 @@
 
 #include <WebCore/FloatQuad.h>
 #include <WebCore/GeometryUtilities.h>
+#include <wtf/text/TextStream.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -107,6 +108,62 @@ TEST(FloatQuad, RotatedBoundingRectWithMinimumAngle)
         FloatPoint(30, -10.1),
         FloatPoint(10, -10)
     }, 0.01));
+}
+
+static void checkIsEmpty(bool expectation, FloatQuad&& quad)
+{
+    EXPECT_TRUE(expectation == quad.isEmpty());
+    if (expectation == quad.isEmpty())
+        return;
+
+    TextStream stream;
+    stream << quad;
+    WTFLogAlways("Expected quad: %s to be %s", stream.release().utf8().data(), expectation ? "empty" : "non-empty");
+}
+
+TEST(FloatQuad, IsEmpty)
+{
+    checkIsEmpty(true, { // Line segment.
+        FloatPoint(0, 0),
+        FloatPoint(0, 0),
+        FloatPoint(0, 3),
+        FloatPoint(0, 3),
+    });
+
+    checkIsEmpty(false, { // Triangle.
+        FloatPoint(0, 1),
+        FloatPoint(0, 0),
+        FloatPoint(3, 3),
+        FloatPoint(3, 3),
+    });
+
+    checkIsEmpty(false, { // Another triangle.
+        FloatPoint(0, 0),
+        FloatPoint(0, 0),
+        FloatPoint(3, 3),
+        FloatPoint(0, 3),
+    });
+
+    checkIsEmpty(true, { // Single point.
+        FloatPoint(100, 100),
+        FloatPoint(100, 100),
+        FloatPoint(100, 100),
+        FloatPoint(100, 100),
+    });
+
+    checkIsEmpty(true, { // Two line segments.
+        FloatPoint(0, 0),
+        FloatPoint(100, 100),
+        FloatPoint(0, 0),
+        FloatPoint(50, -100),
+    });
+
+    checkIsEmpty(true, { // 4 distinct but colinear points.
+        FloatPoint(-1, -1),
+        FloatPoint(0, 0),
+        FloatPoint(1, 1),
+        FloatPoint(3, 3),
+    });
 }
 
 } // namespace TestWebKitAPI

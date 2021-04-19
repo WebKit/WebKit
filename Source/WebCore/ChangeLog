@@ -1,3 +1,26 @@
+2021-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename FloatQuad::isEmpty() to boundingBoxIsEmpty() and reimplement isEmpty()
+        https://bugs.webkit.org/show_bug.cgi?id=224769
+
+        Reviewed by Tim Horton.
+
+        The existing `isEmpty()` method on `FloatQuad` only checks that the bounding box of the quad is empty (as
+        indicated by the comment above the method declaration). This means `isEmpty()` returns `false` in cases where
+        the quad consists of one or more non-rectilinear line segments, even though the quad contains no area.
+
+        To address this, we rename the existing `isEmpty()` helper to `boundingBoxIsEmpty()` and reintroduce an
+        `isEmpty()` method that accounts for quads which are equivalent to non-rectilinear line segments.
+
+        No change in behavior.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::drawFragmentHighlight):
+        * platform/graphics/FloatQuad.cpp:
+        * platform/graphics/FloatQuad.h:
+        (WebCore::FloatQuad::isEmpty const): Deleted.
+        (WebCore::FloatQuad::boundingBoxIsEmpty const):
+
 2021-04-19  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Grid overlay column line label placement copy/paste error

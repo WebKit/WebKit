@@ -228,6 +228,49 @@ bool FloatQuad::isCounterclockwise() const
     return determinant(m_p2 - m_p1, m_p3 - m_p2) < 0;
 }
 
+bool FloatQuad::isEmpty() const
+{
+    if (areEssentiallyEqual(m_p1, m_p3) || areEssentiallyEqual(m_p2, m_p4)) {
+        // If either diagonal is zero length, then the "quad" either consists of 1 or 2 line segments, or it's just a point.
+        return true;
+    }
+
+    if (areEssentiallyEqual(m_p1, m_p2) && areEssentiallyEqual(m_p3, m_p4)) {
+        // If both top points and both bottom points are equal, then the "quad" is just a single line segment.
+        return true;
+    }
+
+    if (areEssentiallyEqual(m_p1, m_p4) && areEssentiallyEqual(m_p2, m_p3)) {
+        // If both left points and both right points are equal, then the "quad" is just a single line segment.
+        return true;
+    }
+
+    // Fall back to checking whether the 4 points of the quad are colinear (in other words, check whether the three
+    // vectors from one point to each of the other points are capable of forming a 2D basis).
+    auto b1 = m_p1 - m_p2;
+    auto b2 = m_p1 - m_p3;
+    auto b3 = m_p1 - m_p4;
+
+    if (!b1.isZero())
+        b1 = b1 / b1.diagonalLength();
+
+    if (!b2.isZero())
+        b2 = b2 / b2.diagonalLength();
+
+    if (!b3.isZero())
+        b3 = b3 / b3.diagonalLength();
+
+    auto areNormalizedVectorsLinearlyIndependent = [](const FloatSize& u, const FloatSize& v) {
+        if (u.isZero() || v.isZero())
+            return false;
+
+        auto dotProduct = u.width() * v.width() + u.height() * v.height();
+        return !WTF::areEssentiallyEqual<float>(dotProduct, 1) && !WTF::areEssentiallyEqual<float>(dotProduct, -1);
+    };
+
+    return !areNormalizedVectorsLinearlyIndependent(b1, b2) && !areNormalizedVectorsLinearlyIndependent(b2, b3) && !areNormalizedVectorsLinearlyIndependent(b1, b3);
+}
+
 Vector<FloatRect> boundingBoxes(const Vector<FloatQuad>& quads)
 {
     Vector<FloatRect> boxes;
