@@ -1,5 +1,20 @@
 2021-04-19  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] The layout containment box establishes an absolute positioning containing block and a fixed positioning containing block
+        https://bugs.webkit.org/show_bug.cgi?id=224754
+
+        Reviewed by Antti Koivisto.
+
+        https://www.w3.org/TR/css-contain-2/#containment-layout.
+
+        "The layout containment box establishes an absolute positioning containing block and a fixed positioning containing block."
+
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isContainingBlockForFixedPosition const):
+        (WebCore::Layout::Box::isContainingBlockForOutOfFlowPosition const):
+
+2021-04-19  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Layout containment box establishes an independent formatting context
         https://bugs.webkit.org/show_bug.cgi?id=224753
 

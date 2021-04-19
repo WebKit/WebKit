@@ -228,12 +228,12 @@ inline bool Box::isContainingBlockForInFlow() const
 
 inline bool Box::isContainingBlockForFixedPosition() const
 {
-    return isInitialContainingBlock() || style().hasTransform();
+    return isInitialContainingBlock() || isLayoutContainmentBox() || style().hasTransform();
 }
 
 inline bool Box::isContainingBlockForOutOfFlowPosition() const
 {
-    return isInitialContainingBlock() || isPositioned() || style().hasTransform();
+    return isInitialContainingBlock() || isPositioned() || isLayoutContainmentBox() || style().hasTransform();
 }
 
 }
