@@ -797,6 +797,8 @@ webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star-with-AllowContentSecurityPolicySourceStarToMatchAnyProtocol-enabled.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/224626 http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.py [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Security-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2051,6 +2053,10 @@ webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-b
 webkit.org/b/224114 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html [ Failure Pass ]
 webkit.org/b/224115 imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately-before-installed.https.html [ Failure Pass ]
 webkit.org/b/224116 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Failure Pass ]
+
+webkit.org/b/224737 fast/overflow/line-clamp-crash.html [ Failure Pass ]
+
+webkit.org/b/224738 imported/w3c/web-platform-tests/css/css-transforms/animation/rotate-composition.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 
