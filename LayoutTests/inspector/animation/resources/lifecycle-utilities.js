@@ -40,7 +40,7 @@ function destroyAnimations() {
 
 TestPage.registerInitializer(() => {
     function jsonKeyframeFilter(key, value) {
-        if (key === "easing" && value instanceof WI.CubicBezier)
+        if ((key === "easing" || key === "timingFunction") && (value instanceof WI.CubicBezier || value instanceof WI.StepsFunction || value instanceof WI.Spring))
             return value.toString();
         return value;
     }

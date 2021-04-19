@@ -581,3 +581,80 @@ WI.Spring = class Spring
         return t;
     }
 };
+
+WI.StepsFunction = class StepsFunction
+{
+    constructor(type, count)
+    {
+        console.assert(Object.values(WI.StepsFunction.Type).includes(type), type);
+        console.assert(count > 0, count);
+
+        this._type = type;
+        this._count = count;
+    }
+
+    // Static
+
+    static fromString(text)
+    {
+        if (!text?.length)
+            return null;
+
+        let trimmedText = text.toLowerCase().replace(/\s/g, "");
+        if (!trimmedText.length)
+            return null;
+
+        let keywordValue = WI.StepsFunction.keywordValues[trimmedText];
+        if (keywordValue)
+            return new WI.StepsFunction(...keywordValue);
+
+        let matches = trimmedText.match(/^steps\((\d+)(?:,([a-z-]+))?\)$/);
+        if (!matches)
+            return null;
+
+        let type = matches[2] || WI.StepsFunction.Type.JumpEnd;
+        if (Object.values(WI.StepsFunction).includes(type))
+            return null;
+
+        let count = Number(matches[1]);
+        if (isNaN(count) || count <= 0)
+            return null;
+
+        return new WI.StepsFunction(type, count);
+    }
+
+    // Public
+
+    get type() { return this._type; }
+    get count() { return this._count; }
+
+    copy()
+    {
+        return new WI.StepsFunction(this._type, this._count);
+    }
+
+    toString()
+    {
+        if (this._type === WI.StepsFunction.Type.JumpStart && this._count === 1)
+            return "step-start";
+
+        if (this._type === WI.StepsFunction.Type.JumpEnd && this._count === 1)
+            return "step-end";
+
+        return `steps(${this._count}, ${this._type})`;
+    }
+};
+
+WI.StepsFunction.Type = {
+    JumpStart: "jump-start",
+    JumpEnd: "jump-end",
+    JumpNone: "jump-none",
+    JumpBoth: "jump-both",
+    Start: "start",
+    End: "end",
+};
+
+WI.StepsFunction.keywordValues = {
+    "step-start": [WI.StepsFunction.Type.JumpStart, 1],
+    "step-end": [WI.StepsFunction.Type.JumpEnd, 1],
+};
