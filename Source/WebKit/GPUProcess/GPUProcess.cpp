@@ -78,6 +78,7 @@ using namespace WebCore;
 GPUProcess::GPUProcess(AuxiliaryProcessInitializationParameters&& parameters)
 {
     initialize(WTFMove(parameters));
+    RELEASE_LOG(Process, "%p - GPUProcess::GPUProcess:", this);
 }
 
 GPUProcess::~GPUProcess()
@@ -86,6 +87,7 @@ GPUProcess::~GPUProcess()
 
 void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
 {
+    RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
     auto ipcConnection = createIPCConnectionPair();
     if (!ipcConnection) {
         completionHandler({ });
@@ -109,6 +111,7 @@ void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, P
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)
 {
+    RELEASE_LOG(Process, "%p - GPUProcess::removeGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
     tryExitIfUnusedAndUnderMemoryPressure();
@@ -162,6 +165,7 @@ void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 
 void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 {
+    RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();
     AtomString::init();
 
