@@ -1,3 +1,16 @@
+2021-04-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Script focus and :focus-visible
+        https://bugs.webkit.org/show_bug.cgi?id=224598
+
+        Reviewed by Darin Adler.
+
+        Update expectations for tests, most of them are passing on Mac. On iOS a bunch timeout so they're skipped, as other :focus-visible tests.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/imported/w3c/web-platform-tests/css/selectors/focus-visible-009-expected.txt: Removed as test passes now.
+        * platform/mac/TestExpectations:
+
 2021-04-19  Darin Adler  <darin@apple.com>
 
         Nullptr crash in CSSCalcValue::category() via HTMLConverterCaches::floatPropertyValueForNode

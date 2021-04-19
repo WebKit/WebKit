@@ -48,6 +48,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FocusController.h"
+#include "FocusOptions.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
@@ -2722,7 +2723,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 
     // If focus shift is blocked, we eat the event.
     auto* page = m_frame.page();
-    if (page && !page->focusController().setFocusedElement(element.get(), m_frame))
+    if (page && !page->focusController().setFocusedElement(element.get(), m_frame, { { }, { }, { }, FocusTrigger::Click, { } }))
         return false;
 
     if (element && m_mouseDownDelegatedFocus)

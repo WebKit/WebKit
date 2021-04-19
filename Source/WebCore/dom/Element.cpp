@@ -3078,11 +3078,16 @@ void Element::focus(const FocusOptions& options)
         if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document->topDocument().securityOrigin().isSameOriginDomain(document->securityOrigin()))
             return;
 
+        if (!document->wasLastFocusByClick())
+            newTarget->setHasFocusVisible(true);
+
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), options))
+        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), options)) {
+            newTarget->setHasFocusVisible(false);
             return;
+        }
     }
 
     newTarget->findTargetAndUpdateFocusAppearance(options.selectionRestorationMode, options.preventScroll ? SelectionRevealMode::DoNotReveal : SelectionRevealMode::Reveal);

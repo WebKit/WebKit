@@ -5,5 +5,5 @@ If the element that says "Focused" has a red background then the test result is 
 Focused
 
 PASS ":focus-visible" should be a valid selector
-FAIL Script focus after blur after mouse click does match :focus-visible assert_equals: outlineColor for DIV#target should be green expected "rgb(0, 128, 0)" but got "rgba(46, 52, 54, 0.59)"
+PASS Script focus after blur after mouse click does match :focus-visible
 

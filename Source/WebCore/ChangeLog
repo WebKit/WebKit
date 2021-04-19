@@ -1,3 +1,33 @@
+2021-04-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Script focus and :focus-visible
+        https://bugs.webkit.org/show_bug.cgi?id=224598
+
+        Reviewed by Darin Adler.
+
+        Implement :focus-visible behavior when a script moves focus.
+        An element will match :focus-visible when a script move focus if the last focused element was not focused via mouse click.
+
+        This patch makes WebKit behaves like Chromium and Firefox and pass all the related tests.
+
+        There's an ongoing discussion about 6 tests that are marked as ".tentative" in the following issue:
+        https://github.com/web-platform-tests/wpt/issues/28505
+
+        Test: web-platform-tests/css/selectors/focus-visible-script-focus-*
+
+        * dom/Document.cpp:
+        (WebCore::Document::adjustFocusedNodeOnNodeRemoval): Just update FocusOptions initializer.
+        (WebCore::Document::setFocusedElement): Store if the last element has been focused by mouse click or not.
+        * dom/Document.h: New member m_latestFocusTrigger.
+        (WebCore::Document::wasLastFocusByClick const): Method to check status of m_latestFocusTrigger.
+        * dom/Element.cpp:
+        (WebCore::Element::focus): When there's a script focus, this checks if the last element was focused
+        by mouse click in order to make it match :focus-visible.
+        * dom/FocusOptions.h: Add FocusTrigger enum to know if an element has been focused via mouse click or not.
+        This refers to the "focus trigger" concept on the HTML spec (see https://html.spec.whatwg.org/multipage/interaction.html).
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchMouseEvent): Pass FocusTrigger:Click in setFocusedElement() call.
+
 2021-04-19  Darin Adler  <darin@apple.com>
 
         Nullptr crash in CSSCalcValue::category() via HTMLConverterCaches::floatPropertyValueForNode
