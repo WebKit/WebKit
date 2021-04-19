@@ -1039,6 +1039,10 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     if (containerType == applicationOctetStream())
         return SupportsType::IsNotSupported;
 
+    auto lowercaseType = containerType.convertToASCIILowercase();
+    if (!lowercaseType.startsWith("video/") && !lowercaseType.startsWith("audio/") && !lowercaseType.startsWith("application/"))
+        return SupportsType::IsNotSupported;
+
     const MediaPlayerFactory* engine = bestMediaEngineForSupportParameters(parameters);
     if (!engine)
         return SupportsType::IsNotSupported;
