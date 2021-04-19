@@ -117,6 +117,7 @@ public:
     bool isInlineBlockBox() const;
     bool isInlineTableBox() const;
     bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }
+    bool isLayoutContainmentBox() const;
 
     bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }
     bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }
@@ -130,10 +131,12 @@ public:
     bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
     bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
     bool isTableCell() const { return style().display() == DisplayType::TableCell; }
+    bool isInternalTableBox() const;
     bool isFlexBox() const { return style().display() == DisplayType::Flex; }
     bool isFlexItem() const;
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
+    bool isInternalRubyBox() const { return false; }
 
     const ContainerBox& parent() const { return *m_parent; }
     const Box* nextSibling() const { return m_nextSibling; }
