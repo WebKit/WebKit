@@ -1,3 +1,21 @@
+2021-04-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(?): Network: Request (Object Tree) is sometimes empty
+        https://bugs.webkit.org/show_bug.cgi?id=224768
+        <rdar://problem/76783636>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/LocalJSONContentView.js:
+        (WI.LocalJSONContentView.prototype.renderRemoteObject):
+        If the `WI.RemoteObject` is simple enough to be rendered inline, `WI.ObjectTreeView` won't
+        show a `WI.TreeOutline` by default. We have to tell it to use a `WI.TreeOutline` by passing
+        `forceExpanding = true` into the constructor.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView.prototype.showOnlyJSON):
+        Add some `console.assert` to help prevent this from happening again.
+
 2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
