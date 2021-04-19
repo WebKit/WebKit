@@ -1,3 +1,26 @@
+2021-04-19  Darin Adler  <darin@apple.com>
+
+        Nullptr crash in CSSCalcValue::category() via HTMLConverterCaches::floatPropertyValueForNode
+        https://bugs.webkit.org/show_bug.cgi?id=221392
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcOperationNode::createCalcExpression const): Pass in a destination category
+        when creating a CalcExpressionOperation.
+        (WebCore::createCSS): Pass the destination category from the CalcExpressionOperation when
+        creating a CSSCalcOperationNode.
+
+        * css/CSSCalculationValue.h: Moved the CalculationCategory enumeration from here to
+        CalculationValue.h.
+
+        * platform/CalculationValue.cpp:
+        (WebCore::operator==): Include destination category when comparing.
+
+        * platform/CalculationValue.h: Moved CalculationCategory here. Added a destination
+        category constructor argument, data members, and getter function to the
+        CalcExpressionOperation class.
+
 2021-04-19  Antti Koivisto  <antti@apple.com>
 
         CSSValuePool should be non-copyable

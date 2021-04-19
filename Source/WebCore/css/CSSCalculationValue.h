@@ -44,22 +44,6 @@ class CSSParserTokenRange;
 class CSSToLengthConversionData;
 class RenderStyle;
 
-// FIXME: Unify with CSSPrimitiveValue::UnitCategory.
-enum class CalculationCategory : uint8_t {
-    Number = 0,
-    Length,
-    Percent,
-    PercentNumber,
-    PercentLength,
-    Angle,
-    Time,
-    Frequency,
-    // TODO:
-    // Flex,
-    // Resolution
-    Other
-};
-
 class CSSCalcExpressionNode : public RefCounted<CSSCalcExpressionNode> {
 public:
     enum Type {
