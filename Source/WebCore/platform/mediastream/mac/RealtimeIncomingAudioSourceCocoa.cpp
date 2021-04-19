@@ -53,11 +53,6 @@ Ref<RealtimeIncomingAudioSourceCocoa> RealtimeIncomingAudioSourceCocoa::create(r
     return adoptRef(*new RealtimeIncomingAudioSourceCocoa(WTFMove(audioTrack), WTFMove(audioTrackId)));
 }
 
-RealtimeIncomingAudioSourceCocoa::RealtimeIncomingAudioSourceCocoa(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
-    : RealtimeIncomingAudioSource(WTFMove(audioTrack), WTFMove(audioTrackId))
-{
-}
-
 static inline AudioStreamBasicDescription streamDescription(size_t sampleRate, size_t channelCount)
 {
     AudioStreamBasicDescription streamFormat;
@@ -65,8 +60,20 @@ static inline AudioStreamBasicDescription streamDescription(size_t sampleRate, s
     return streamFormat;
 }
 
+RealtimeIncomingAudioSourceCocoa::RealtimeIncomingAudioSourceCocoa(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
+    : RealtimeIncomingAudioSource(WTFMove(audioTrack), WTFMove(audioTrackId))
+    , m_sampleRate(LibWebRTCAudioFormat::sampleRate)
+    , m_numberOfChannels(1)
+    , m_streamDescription(streamDescription(m_sampleRate, m_numberOfChannels))
+    , m_audioBufferList(makeUnique<WebAudioBufferList>(m_streamDescription))
+{
+}
+
 void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames)
 {
+    if (sampleRate != m_sampleRate)
+        return;
+
 #if !RELEASE_LOG_DISABLED
     if (!(++m_chunksReceived % 200)) {
         callOnMainThread([identifier = LOGIDENTIFIER, this, protectedThis = makeRef(*this), chunksReceived = m_chunksReceived] {
@@ -75,7 +82,7 @@ void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPer
     }
 #endif
 
-    if (!m_audioBufferList || m_sampleRate != sampleRate || m_numberOfChannels != numberOfChannels) {
+    if (!m_audioBufferList || m_numberOfChannels != numberOfChannels) {
         callOnMainThread([identifier = LOGIDENTIFIER, this, protectedThis = makeRef(*this), sampleRate, numberOfChannels] {
             ALWAYS_LOG_IF(loggerPtr(), identifier, "new audio buffer list for sampleRate ", sampleRate, " and ", numberOfChannels, " channel(s)");
         });
