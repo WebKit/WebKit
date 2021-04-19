@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(AVIF)
+
 #include "AVIFImageDecoder.h"
 
 #include "AVIFImageReader.h"
@@ -127,3 +130,5 @@ void AVIFImageDecoder::decode(size_t frameIndex, bool allDataReceived)
 }
 
 }
+
+#endif // USE(AVIF)

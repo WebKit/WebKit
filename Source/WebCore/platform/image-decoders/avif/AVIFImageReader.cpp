@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(AVIF)
+
 #include "AVIFImageReader.h"
 
 #include "AVIFImageDecoder.h"
@@ -129,3 +132,5 @@ double AVIFImageReader::repetitionCount() const
 }
 
 }
+
+#endif // USE(AVIF)

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(AVIF)
+
 #include <avif/avif.h>
 #include <memory>
 
@@ -45,3 +47,5 @@ template<> struct AVIFPtrDeleter<avifDecoder> {
 };
 
 } // namespace WebCore
+
+#endif // USE(AVIF)
