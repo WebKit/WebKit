@@ -52,6 +52,7 @@ WK_AUTHKIT_LDFLAGS_MACOS_SINCE_1015 = -framework AuthKit;
 
 WK_PDFKIT_LDFLAGS = $(WK_PDFKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_PDFKIT_LDFLAGS_macosx = -framework PDFKit;
+WK_PDFKIT_LDFLAGS_maccatalyst = -framework PDFKit;
 WK_PDFKIT_LDFLAGS_iphoneos = -framework PDFKit;
 WK_PDFKIT_LDFLAGS_iphonesimulator = -framework PDFKit;
 
