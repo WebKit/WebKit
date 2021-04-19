@@ -71,8 +71,7 @@ int32_t LibWebRTCAudioModule::StopPlayout()
 
 // libwebrtc uses 10ms frames.
 const unsigned frameLengthMs = 1000 * LibWebRTCAudioFormat::chunkSampleCount / LibWebRTCAudioFormat::sampleRate;
-const unsigned pollSamples = 5;
-const unsigned pollInterval = 5 * frameLengthMs;
+const unsigned pollInterval = LibWebRTCAudioModule::PollSamplesCount * frameLengthMs;
 const unsigned channels = 2;
 
 void LibWebRTCAudioModule::pollAudioData()
@@ -101,7 +100,7 @@ void LibWebRTCAudioModule::pollFromSource()
     if (!m_audioTransport)
         return;
 
-    for (unsigned i = 0; i < pollSamples; i++) {
+    for (unsigned i = 0; i < PollSamplesCount; i++) {
         int64_t elapsedTime = -1;
         int64_t ntpTime = -1;
         char data[LibWebRTCAudioFormat::sampleByteSize * channels * LibWebRTCAudioFormat::chunkSampleCount];

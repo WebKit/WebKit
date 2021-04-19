@@ -1,3 +1,44 @@
+2021-04-19  Youenn Fablet  <youenn@apple.com>
+
+        Reduce crackling at start of playing a live audio track
+        https://bugs.webkit.org/show_bug.cgi?id=218898
+        <rdar://problem/71625010>
+
+        Reviewed by Eric Carlson.
+
+        We often hear crackles at the beginning of playing a MediaStreamTrack.
+        This is due to starting at a point where there is not enough data, so we start rendering and quickly run short of data.
+        Our heuristic to start was not good since we were not accounting to LibWebRTC audio module which sends audio samples by batch of 5 samples.
+        So we would have needed to at least have 6 samples to be sure to not run out of data.
+
+        What this patch does:
+        - Add an extra parameter to AudioSampleDataSource so that we do not start until we have at least been pushed a given number of sample count.
+        - Change LibWebRTAudioModule to send audio samples by batch of 3 (hence 30 ms) instead of 5
+        - Set this new parameter to 2 for local tracks and 4 for remote tracks
+        - Add a new boolean to AudioSampleDataSource to know whether we start the track for the first time or not. If we start it, use the new parameter to buffer enough data.
+          Otherwise, use current heuristic.
+
+        We also reduce the AudioSampleDataSource buffer to 0.5 seconds instead of 2 seconds, since 2 seconds is too much for real time audio.
+
+        Manually tested.
+
+        * platform/audio/cocoa/AudioSampleDataSource.h:
+        * platform/audio/cocoa/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::create):
+        (WebCore::AudioSampleDataSource::AudioSampleDataSource):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp:
+        (WebCore::LibWebRTCAudioModule::pollFromSource):
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::pollSamplesCount):
+        (WebCore::AudioMediaStreamTrackRendererCocoa::pushSamples):
+        * platform/mediastream/mac/MediaStreamTrackAudioSourceProviderCocoa.cpp:
+        (WebCore::MediaStreamTrackAudioSourceProviderCocoa::MediaStreamTrackAudioSourceProviderCocoa):
+        * platform/mediastream/mac/WebAudioSourceProviderCocoa.h:
+        * platform/mediastream/mac/WebAudioSourceProviderCocoa.mm:
+        (WebCore::WebAudioSourceProviderCocoa::prepare):
+
 2021-04-19  Imanol Fernandez  <ifernandez@igalia.com>
 
         Enable GL_ANGLE_instanced_arrays WebGL extension in WPE
