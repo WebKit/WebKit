@@ -1,3 +1,18 @@
+2021-04-19  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Silence various -Wreturn-type warnings
+        https://bugs.webkit.org/show_bug.cgi?id=224756
+
+        Reviewed by Don Olmstead.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::mixColorComponents):
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::expectedSizeForLayoutLabel):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::usedClear):
+        (WebCore::RenderStyle::usedFloat):
+
 2021-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, fix the build after r276181

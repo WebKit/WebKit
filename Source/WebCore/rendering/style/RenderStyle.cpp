@@ -2684,6 +2684,8 @@ UsedClear RenderStyle::usedClear(const RenderObject& renderer)
             return computedValue == Clear::InlineStart ? UsedClear::Right : UsedClear::Left;
         return computedValue == Clear::InlineStart ? UsedClear::Left : UsedClear::Right;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
@@ -2703,5 +2705,7 @@ UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
             return computedValue == Float::InlineStart ? UsedFloat::Right : UsedFloat::Left;
         return computedValue == Float::InlineStart ? UsedFloat::Left : UsedFloat::Right;
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 } // namespace WebCore

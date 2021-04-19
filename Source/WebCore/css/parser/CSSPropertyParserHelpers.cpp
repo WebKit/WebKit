@@ -1803,6 +1803,8 @@ static Color mixColorComponents(ColorMixColorSpace colorSpace, const ColorMixCom
     case ColorMixColorSpace::Srgb:
         return mixColorComponentsInColorSpace<SRGBA<float>>(mixPercentages, mixComponents1.color, mixComponents2.color);
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 static Color parseColorMixFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)

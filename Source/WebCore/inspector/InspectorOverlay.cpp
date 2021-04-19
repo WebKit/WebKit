@@ -1363,6 +1363,8 @@ static FloatSize expectedSizeForLayoutLabel(String label, InspectorOverlay::Labe
     case InspectorOverlay::LabelArrowDirection::None:
         return { textWidth + (layoutLabelPadding * 2), textHeight + (layoutLabelPadding * 2) };
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, FloatPoint point, InspectorOverlay::LabelArrowDirection arrowDirection, InspectorOverlay::LabelArrowEdgePosition arrowEdgePosition, Color backgroundColor, float maximumWidth)
