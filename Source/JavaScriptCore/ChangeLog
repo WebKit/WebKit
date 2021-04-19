@@ -1,3 +1,13 @@
+2021-04-19  Mark Lam  <mark.lam@apple.com>
+
+        Build fix for Debug -O3 after r276162.
+        https://bugs.webkit.org/show_bug.cgi?id=224681
+        rdar://76698113
+
+        Not reviewed.
+
+        * runtime/JSObject.cpp:
+
 2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards

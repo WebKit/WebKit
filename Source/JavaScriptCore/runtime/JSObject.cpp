@@ -42,6 +42,7 @@
 #include "ProxyObject.h"
 #include "TypeError.h"
 #include "VMInlines.h"
+#include "VMTrapsInlines.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
