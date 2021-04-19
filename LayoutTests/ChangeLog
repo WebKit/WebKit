@@ -1,3 +1,11 @@
+2021-04-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/http/tests/xmlhttprequest/redirect-cross-origin-post-expected.txt: Added.
+        * platform/wincairo-wk1/http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt: Added.
+        * platform/wincairo/TestExpectations:
+
 2021-04-18  Youenn Fablet  <youenn@apple.com>
 
         Blob URLs should use for their owner origin for CSP checks

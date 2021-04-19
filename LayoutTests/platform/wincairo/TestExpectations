@@ -439,6 +439,11 @@ webgl/2.0.0/conformance/textures/video [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_video [ Skip ]
 webgl/2.0.0/conformance2/textures/video [ Skip ]
 
+# platformLayerTreeAsText is only implemented for Cocoa ports.
+fast/harness/platform-layer-tree-as-text.html [ Skip ]
+
+webkit.org/b/223788 js/dom/missing-exception-check-in-convertNumbers.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # These areas are not implemented well on WinCairo
 #//////////////////////////////////////////////////////////////////////////////////////////
@@ -1007,7 +1012,6 @@ http/tests/cookies/cookie-with-multiple-level-path.html [ Pass Failure ]
 http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure ]
 http/tests/cookies/http-get-cookie-set-in-js.html [ Pass Failure ]
 http/tests/cookies/multiple-cookies.html [ Pass Failure ]
-http/tests/cookies/multiple-redirect-and-set-cookie.py [ Pass Failure ]
 http/tests/cookies/only-accept-first-party-cookies.html [ Pass ]
 http/tests/cookies/private-cookie-storage.html [ Skip ]
 http/tests/cookies/same-site [ Skip ]
@@ -1376,6 +1380,8 @@ webkit.org/b/151759 fast/dom/Window/property-access-on-cached-window-after-frame
 webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
 
 fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
+
+webkit.org/b/224735 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Skip ] # Crash
 
 ################################################################################
 ##############################   End DOM Issues   ##############################
@@ -2040,11 +2046,13 @@ webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
 webgl/2.0.0/conformance/textures/misc/texture-mips.html [ Failure Pass ]
 webgl/2.0.0/conformance/textures/misc/texture-upload-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/buffers/buffer-copying-contents.html [ Failure ]
+webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders.html [ Failure ]
 webgl/2.0.0/conformance2/glsl3/tricky-loop-conditions.html [ Failure ]
 webgl/2.0.0/conformance2/query/occlusion-query.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/blitframebuffer-stencil-only.html [ Pass Failure ]
 webgl/2.0.0/conformance2/rendering/element-index-uint.html [ Failure ]
+webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Failure ]
 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow Failure ]
 webgl/2.0.0/conformance2/textures/misc/tex-image-with-bad-args-from-dom-elements.html [ Skip ] # Timeout
 webgl/2.0.0/conformance2/transform_feedback/transform_feedback.html [ Skip ] # Timeout and flaky
