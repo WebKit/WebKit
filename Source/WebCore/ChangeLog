@@ -1,3 +1,20 @@
+2021-04-19  Felipe Erias  <felipeerias@igalia.com>
+
+        [css-flexbox] Table layout disregards overriding height
+        https://bugs.webkit.org/show_bug.cgi?id=224665
+
+        Reviewed by Sergio Villar Senin.
+
+        Update table layout to take into account the overriding height set by the element's parent.
+        This was causing several WPT tests to fail.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        During layout, set the computed height so that it is at least as large as the overriding height
+        provided by the element's parent (if any) minus the height that will be taken up by captions.
+        This additional height will be distributed among the table's sections so its total height matches
+        the overriding value.
+
 2021-04-19  Martin Robinson  <mrobinson@webkit.org>
 
         [css-scroll-snap] Properly support fractional scroll steps in WebCore::ScrollAnimator::scroll

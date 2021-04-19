@@ -506,6 +506,13 @@ void RenderTable::layout()
         if (logicalHeightLength.isIntrinsic() || (logicalHeightLength.isSpecified() && logicalHeightLength.isPositive()))
             computedLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalHeightLength);
 
+        if (hasOverridingLogicalHeight()) {
+            LayoutUnit captionLogicalHeight;
+            for (auto& caption : m_captions)
+                captionLogicalHeight += caption->logicalHeight() + caption->marginBefore() + caption->marginAfter();
+            computedLogicalHeight = std::max(computedLogicalHeight, overridingLogicalHeight() - captionLogicalHeight);
+        }
+
         Length logicalMaxHeightLength = style().logicalMaxHeight();
         if (logicalMaxHeightLength.isIntrinsic() || (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative())) {
             LayoutUnit computedMaxLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMaxHeightLength);

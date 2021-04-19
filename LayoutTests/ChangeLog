@@ -1,3 +1,12 @@
+2021-04-19  Felipe Erias  <felipeerias@igalia.com>
+
+        [css-flexbox] Table layout disregards overriding height
+        https://bugs.webkit.org/show_bug.cgi?id=224665
+
+        Reviewed by Sergio Villar Senin.
+
+        * TestExpectations: Removed four WPT tests that now pass.
+
 2021-04-19  Philippe Normand  <pnormand@igalia.com>
 
         [WPE][GTK] Enable AVIF decoder as experimental feature and unskip tests
