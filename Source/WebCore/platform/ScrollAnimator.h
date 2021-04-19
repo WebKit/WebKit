@@ -173,7 +173,10 @@ public:
 protected:
     virtual void notifyPositionChanged(const FloatSize& delta);
     void updateActiveScrollSnapIndexForOffset();
-    FloatPoint positionFromStep(ScrollbarOrientation, float step, float multiplier);
+
+    FloatPoint offsetFromPosition(const FloatPoint& position);
+    FloatPoint positionFromOffset(const FloatPoint& offset);
+    FloatSize deltaFromStep(ScrollbarOrientation, float step, float multiplier);
 
     ScrollableArea& m_scrollableArea;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;

@@ -761,7 +761,7 @@ bool ScrollAnimatorMac::scroll(ScrollbarOrientation orientation, ScrollGranulari
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier, behavior);
 
     bool shouldAnimate = scrollAnimationEnabledForSystem() && m_scrollableArea.scrollAnimatorEnabled() && granularity != ScrollByPixel;
-    FloatPoint newPosition = positionFromStep(orientation, step, multiplier);
+    FloatPoint newPosition = this->currentPosition() + deltaFromStep(orientation, step, multiplier);
     newPosition = newPosition.constrainedBetween(scrollableArea().minimumScrollPosition(), scrollableArea().maximumScrollPosition());
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollAnimatorMac::scroll from " << currentPosition() << " to " << newPosition);
