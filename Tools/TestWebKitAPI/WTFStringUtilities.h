@@ -30,9 +30,12 @@
 
 #pragma once
 
+#ifdef WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING
+#error "WTFStringUtilities.h must be included before <wtf/StringConcatenate.h>"
+#else
 #define WTF_STRINGTYPEADAPTER_COPIED_WTF_STRING() (++wtfStringCopyCount)
-
 extern int wtfStringCopyCount;
+#endif
 
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
