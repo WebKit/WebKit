@@ -1,3 +1,14 @@
+2021-04-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineCandidate.inlineContent should be ignored when reverting
+        https://bugs.webkit.org/show_bug.cgi?id=224771
+        <rdar://76760857>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/inline/crash-when-revert-has-trailing-line-break-expected.txt: Added.
+        * fast/inline/crash-when-revert-has-trailing-line-break.html: Added.
+
 2021-04-19  Amir Mark Jr  <amir_mark@apple.com>
 
         [ wk2 ] http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.py is a constant text failure

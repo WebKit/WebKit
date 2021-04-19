@@ -1,3 +1,20 @@
+2021-04-19  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] LineCandidate.inlineContent should be ignored when reverting
+        https://bugs.webkit.org/show_bug.cgi?id=224771
+        <rdar://76760857>
+
+        Reviewed by Antti Koivisto.
+
+        LineCandidate.inlineContent is a set of candidate runs for the line and when the line breaker says "please revert" (move back to an earlier position on the line)
+        these runs should all be ignored as they did not make it to the line.
+        (inlineContentIsFullyCommitted flag got confused when the number of candidate runs matched the number of runs we managed to put on the line as part of the revert. It did not take the "revert" bit into account.) 
+
+        Test: fast/inline/crash-when-revert-has-trailing-line-break.html
+
+        * layout/inlineformatting/InlineLineBuilder.cpp:
+        (WebCore::Layout::LineBuilder::placeInlineContent):
+
 2021-04-19  Chris Dumez  <cdumez@apple.com>
 
         SVG Images launch the GPUProcess unnecessarily
