@@ -1,3 +1,9 @@
+2021-04-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE Minibrowser build warning fix.
+
+        * MiniBrowser/wpe/main.cpp: No need to use typedef for this struct declaration.
+
 2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
