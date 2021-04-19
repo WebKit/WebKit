@@ -1,3 +1,62 @@
+2021-04-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE gardening
+
+        Share more media tests baselines between the GTK and WPE ports.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-remove-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-remove-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-expected.txt: Renamed from LayoutTests/platform/gtk/imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-expected.txt.
+        * platform/glib/media/W3C/video/canPlayType/canPlayType_codecs_order_1-expected.txt: Renamed from LayoutTests/platform/gtk/media/W3C/video/canPlayType/canPlayType_codecs_order_1-expected.txt.
+        * platform/glib/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1-expected.txt: Renamed from LayoutTests/platform/gtk/media/W3C/video/canPlayType/canPlayType_supported_but_no_codecs_parameter_1-expected.txt.
+        * platform/glib/media/W3C/video/canPlayType/canPlayType_two_implies_one_1-expected.txt: Renamed from LayoutTests/platform/gtk/media/W3C/video/canPlayType/canPlayType_two_implies_one_1-expected.txt.
+        * platform/glib/media/W3C/video/canPlayType/canPlayType_two_implies_one_2-expected.txt: Renamed from LayoutTests/platform/gtk/media/W3C/video/canPlayType/canPlayType_two_implies_one_2-expected.txt.
+        * platform/glib/media/audio-controls-rendering-expected.png: Renamed from LayoutTests/platform/gtk/media/audio-controls-rendering-expected.png.
+        * platform/glib/media/audio-repaint-expected.png: Renamed from LayoutTests/platform/gtk/media/audio-repaint-expected.png.
+        * platform/glib/media/context-menu-actions-expected.txt: Renamed from LayoutTests/platform/gtk/media/context-menu-actions-expected.txt.
+        * platform/glib/media/controls-after-reload-expected.png: Renamed from LayoutTests/platform/gtk/media/controls-after-reload-expected.png.
+        * platform/glib/media/controls-layout-direction-expected.png: Renamed from LayoutTests/platform/gtk/media/controls-layout-direction-expected.png.
+        * platform/glib/media/controls-strict-expected.png: Renamed from LayoutTests/platform/gtk/media/controls-strict-expected.png.
+        * platform/glib/media/controls-styling-expected.png: Renamed from LayoutTests/platform/gtk/media/controls-styling-expected.png.
+        * platform/glib/media/controls-styling-strict-expected.png: Renamed from LayoutTests/platform/gtk/media/controls-styling-strict-expected.png.
+        * platform/glib/media/controls-without-preload-expected.png: Renamed from LayoutTests/platform/gtk/media/controls-without-preload-expected.png.
+        * platform/glib/media/media-can-play-ogg-expected.txt: Renamed from LayoutTests/platform/gtk/media/media-can-play-ogg-expected.txt.
+        * platform/glib/media/media-controls-clone-expected.png: Renamed from LayoutTests/platform/gtk/media/media-controls-clone-expected.png.
+        * platform/glib/media/media-document-audio-repaint-expected.png: Renamed from LayoutTests/platform/gtk/media/media-document-audio-repaint-expected.png.
+        * platform/glib/media/media-fullscreen-inline-expected.txt: Renamed from LayoutTests/platform/gtk/media/media-fullscreen-inline-expected.txt.
+        * platform/glib/media/media-fullscreen-not-in-document-expected.txt: Renamed from LayoutTests/platform/gtk/media/media-fullscreen-not-in-document-expected.txt.
+        * platform/glib/media/media-source/media-source-resize-expected.txt: Renamed from LayoutTests/platform/gtk/media/media-source/media-source-resize-expected.txt.
+        * platform/glib/media/video-canvas-alpha-expected.png: Renamed from LayoutTests/platform/gtk/media/video-canvas-alpha-expected.png.
+        * platform/glib/media/video-controls-rendering-expected.png: Renamed from LayoutTests/platform/gtk/media/video-controls-rendering-expected.png.
+        * platform/glib/media/video-display-toggle-expected.png: Renamed from LayoutTests/platform/gtk/media/video-display-toggle-expected.png.
+        * platform/glib/media/video-empty-source-expected.png: Renamed from LayoutTests/platform/gtk/media/video-empty-source-expected.png.
+        * platform/glib/media/video-no-audio-expected.png: Renamed from LayoutTests/platform/gtk/media/video-no-audio-expected.png.
+        * platform/glib/media/video-playing-and-pause-expected.png: Renamed from LayoutTests/platform/gtk/media/video-playing-and-pause-expected.png.
+        * platform/glib/media/video-playing-and-pause-expected.txt: Renamed from LayoutTests/platform/gtk/media/video-playing-and-pause-expected.txt.
+        * platform/glib/media/video-volume-slider-expected.png: Renamed from LayoutTests/platform/gtk/media/video-volume-slider-expected.png.
+        * platform/glib/media/video-zoom-controls-expected.png: Renamed from LayoutTests/platform/gtk/media/video-zoom-controls-expected.png.
+        * platform/glib/media/video-zoom-expected.png: Renamed from LayoutTests/platform/gtk/media/video-zoom-expected.png.
+        * platform/glib/media/video-zoom-expected.txt: Renamed from LayoutTests/platform/gtk/media/video-zoom-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/wpe/media/video-aspect-ratio-expected.txt: Added.
+        * platform/wpe/media/video-canvas-createPattern-expected.png: Added.
+        * platform/wpe/media/video-colorspace-yuv420-expected.png: Added.
+        * platform/wpe/media/video-colorspace-yuv420-expected.txt: Added.
+        * platform/wpe/media/video-colorspace-yuv422-expected.png: Added.
+        * platform/wpe/media/video-colorspace-yuv422-expected.txt: Added.
+        * platform/wpe/media/video-frame-accurate-seek-expected.png: Added.
+        * platform/wpe/media/video-frame-accurate-seek-expected.txt: Added.
+        * platform/wpe/media/video-layer-crash-expected.txt: Added.
+        * platform/wpe/media/video-transformed-expected.txt: Added.
+
 2021-04-19  Youenn Fablet  <youenn@apple.com>
 
         Migrate some WebRTC encoded transform tests to WPT

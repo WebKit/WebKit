@@ -200,9 +200,6 @@ webkit.org/b/213829 css3/calc/background-position-parsing.html [ ImageOnlyFailur
 webkit.org/b/215502 fast/flexbox/image-percent-max-height.html [ Failure Pass ImageOnlyFailure ]
 webkit.org/b/223414 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-textarea-vert-001.xhtml [ ImageOnlyFailure ]
 
-# GStreamer
-webkit.org/b/210840 fast/mediastream/play-newly-added-audio-track.html  [ Failure Timeout ]
-
 # Hyphenation
 webkit.org/b/221377 [ Debug ] fast/text/hyphenation-unknown-locale.html [ Skip ]
 
@@ -302,27 +299,6 @@ webkit.org/b/215299 [ Release ] imported/w3c/web-platform-tests/css/css-logical/
 #////////////////////////////////////////////////////////////////////////////////////////
 # 2. EXPECTED FAILURES
 #////////////////////////////////////////////////////////////////////////////////////////
-
-# The MediaStream implementation is still not completed
-webkit.org/b/79203 fast/mediastream/mock-media-source-webaudio.html [ Pass Timeout ]
-webkit.org/b/79203 fast/mediastream/MediaStream-video-element-track-stop.html [ Timeout Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-icecandidate-event.html [ Pass Timeout ]
-# Crash is webkit.org/b/184292
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-ice.html [ Failure Timeout ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-answer.html [ Pass Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer-bundlePolicy-bundle-only.html [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-inspect-offer.html [ Pass Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/MediaStream-video-element.html [ Failure Pass Timeout ]
-webkit.org/b/79203 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Failure Pass ]
-
-# Crash is bug #176801
-webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ Timeout ImageOnlyFailure ]
-
-# MediaRecorder is not currently implemented
-http/wpt/mediarecorder [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-record [ Skip ]
 
 # These are Mac specific for now.
 fast/url/user-visible [ Skip ]
@@ -619,8 +595,6 @@ webkit.org/b/212349 fast/canvas/webgl/readPixels-float.html [ Failure ]
 
 webkit.org/b/212351 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
 
-webkit.org/b/213202 fast/mediastream/getUserMedia-grant-persistency3.html [ Failure ]
-
 webkit.org/b/213235 imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-1.html [ Failure Pass ]
 webkit.org/b/213235 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/async_005.htm [ Failure Pass ]
 
@@ -729,7 +703,6 @@ webkit.org/b/213131 editing/ [ Skip ]
 webkit.org/b/213131 inspector/ [ Skip ]
 # This one below programatically opens the inspector.
 webkit.org/b/213131 http/tests/xmlhttprequest/access-control-repeated-failed-preflight-crash.html [ Skip ]
-webkit.org/b/213131 media/ [ Skip ]
 
 Bug(WPE) fast/autoresize [ Skip ]
 webkit.org/b/213131 fast/files [ Skip ]
@@ -743,15 +716,9 @@ Bug(WPE) fast/text/woff2.html [ Pass ]
 http/tests/download [ Skip ]
 http/tests/inspector [ Skip ]
 http/tests/local [ Skip ]
-http/tests/media [ Skip ]
 http/tests/navigation/ping-attribute/ [ Skip ]
 http/tests/pointer-lock [ Skip ]
 http/tests/security [ Skip ]
-
-Bug(WPE) imported/w3c/web-platform-tests/mediacapture-fromelement [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/media-source [ Skip ]
-Bug(WPE) imported/w3c/web-platform-tests/webrtc [ Skip ]
 
 Bug(WPE) fast/dom/DeviceMotion [ Skip ]
 Bug(WPE) fast/dom/DeviceOrientation [ Skip ]
@@ -845,8 +812,6 @@ webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/basic/conditional-
 webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-default.html [ Failure Pass ]
 webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-force-cache.html [ Failure Pass ]
 webkit.org/b/208937 imported/w3c/web-platform-tests/fetch/api/request/request-cache-reload.html [ Failure Pass ]
-
-webkit.org/b/209130 fast/mediastream/change-tracks-media-stream-being-played.html [ Pass Crash Timeout ]
 
 # Since r249622
 webkit.org/b/206639 http/tests/contentextensions/block-cookies-basic.html [ Failure Pass ]
@@ -1260,8 +1225,6 @@ Bug(WPE) css3/zoom-coords.xhtml [ Failure ]
 # ENABLE_CSS_COMPOSITING
 transitions/svg-text-shadow-transition.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/168373 media/media-source/only-bcp47-language-tags-accepted-as-valid.html [ Timeout ]
-
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
 
 webkit.org/b/178577 http/tests/dom/document-attributes-null-handling.html [ Failure ]
@@ -1365,8 +1328,6 @@ webkit.org/b/188980 fast/css/vertical-align-block-elements.html [ ImageOnlyFailu
 webkit.org/b/79203 fast/mediastream/screencapture-user-gesture.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/get-display-media-muted.html [ Skip ]
 webkit.org/b/79203 fast/mediastream/constraint-intrinsic-size.html [ Skip ]
-
-webkit.org/b/198113 fast/mediastream/media-stream-page-muted.html [ Timeout Pass ]
 
 webkit.org/b/192891 fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
 
@@ -1497,6 +1458,10 @@ webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-images/image-orienta
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
+
+Bug(WPE) media/crash-closing-page-with-media-as-plugin-fallback.html [ Timeout ]
+Bug(WPE) media/media-playback-page-visibility.html [ Timeout ]
+Bug(WPE) media/video-canvas-createPattern.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSORTED Expectations. When in doubt, put it here.
