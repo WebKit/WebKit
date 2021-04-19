@@ -134,8 +134,7 @@ bool Box::establishesFlexFormattingContext() const
 
 bool Box::establishesIndependentFormattingContext() const
 {
-    // FIXME: This is where we would check for 'contain' property.
-    return isAbsolutelyPositioned() || isFlexItem();
+    return isLayoutContainmentBox() || isAbsolutelyPositioned() || isFlexItem();
 }
 
 bool Box::isRelativelyPositioned() const
