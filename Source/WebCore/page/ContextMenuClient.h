@@ -32,6 +32,8 @@
 namespace WebCore {
 
 class Frame;
+class IntPoint;
+class IntRect;
 
 class ContextMenuClient {
 public:

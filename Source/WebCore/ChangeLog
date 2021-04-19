@@ -1,3 +1,12 @@
+2021-04-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, fix the build after r276181
+        <rdar://problem/76832595>
+
+        Add a couple of missing forward declarations for `IntRect` and `IntPoint`.
+
+        * page/ContextMenuClient.h:
+
 2021-04-19  Youenn Fablet  <youenn@apple.com>
 
         Add assertions to check for no memory allocation in AudioMediaStreamTrackRendererUnit rendering thread
