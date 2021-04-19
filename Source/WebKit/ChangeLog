@@ -1,5 +1,32 @@
 2021-04-19  Chris Dumez  <cdumez@apple.com>
 
+        MotionMark's Canvas-Arcs subtest is broken if the GPUProcess is not yet running
+        https://bugs.webkit.org/show_bug.cgi?id=224778
+
+        Reviewed by Simon Fraser.
+
+        I recently made changes so that the GPUProcess is only launched when it is needed. This means
+        that until MotionMark's Canvas-Arcs subtest, the GPUProcess is usually not yet running. As a
+        result, RemoteRenderingBackendProxy::createImageBuffer() ends up launching the GPUProcess
+        and sending the GPUConnectionToWebProcess::CreateRenderingBackend and
+        RemoteRenderingBackend::CreateImageBuffer IPC right away. We seem to have a synchronization
+        issue because when this happens, the rendering for the Canvas-Arcs subtest is visibly broken
+        and its score is very low (< 6, instead of > 600).
+
+        Making the GPUConnectionToWebProcess::CreateRenderingBackend synchronous again (I made it
+        async recently) seems to address the synchronization issue and restores correct behavior on
+        MotionMark. I am therefore making this IPC synchronous again in this patch to get benchmark
+        coverage again while I investigate the root cause offline.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::createRenderingBackend):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/GPUConnectionToWebProcess.messages.in:
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::ensureGPUProcessConnection):
+
+2021-04-19  Chris Dumez  <cdumez@apple.com>
+
         Fix races in LibWebRTCCodecs introduced in r276214
         https://bugs.webkit.org/show_bug.cgi?id=224758
 

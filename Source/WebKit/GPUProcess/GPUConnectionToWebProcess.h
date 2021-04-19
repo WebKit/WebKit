@@ -163,7 +163,7 @@ private:
     RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
 
-    void createRenderingBackend(RemoteRenderingBackendCreationParameters&&);
+    void createRenderingBackend(RemoteRenderingBackendCreationParameters&&, CompletionHandler<void()>&&);
     void releaseRenderingBackend(RenderingBackendIdentifier);
 
 #if ENABLE(WEBGL)
