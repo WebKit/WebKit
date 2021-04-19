@@ -24,7 +24,7 @@ function getCircleImageData()
     return grabFrameData(450, 100, 150, 100);
 }
 
-async function checkVideoIsUpdated(shouldBeUpdated, count, referenceData)
+async function checkVideoIsUpdated(test, shouldBeUpdated, count, referenceData)
 {
     if (count === undefined)
         count = 0;
@@ -34,13 +34,13 @@ async function checkVideoIsUpdated(shouldBeUpdated, count, referenceData)
     if (referenceData === undefined)
         referenceData = getCircleImageData();
 
-    await waitFor(200);
+    await waitFor(test, 200);
     const newData = getCircleImageData();
 
     if (shouldBeUpdated === (JSON.stringify(referenceData) !== JSON.stringify(newData)))
         return;
 
-    await checkVideoIsUpdated(shouldBeUpdated, ++count, newData);
+    await checkVideoIsUpdated(test, shouldBeUpdated, ++count, newData);
 }
 
 promise_test(async (test) => {
@@ -54,7 +54,7 @@ promise_test(async (test) => {
 
     let sender, receiver;
     const stream = await new Promise((resolve, reject) => {
-        createConnections((firstConnection) => {
+        createConnections(test, (firstConnection) => {
             pc1 = firstConnection;
             sender = firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
             sender.transform = senderTransform;
@@ -75,15 +75,15 @@ promise_test(async (test) => {
                 }).join('\r\n');
             }
         });
-        setTimeout(() => reject("Test timed out"), 5000);
+        test.step_timeout(() => reject("Test timed out"), 5000);
     });
 
     video.srcObject = stream;
     video.play();
 
     // We set the receiver transform here so that the decoder probably tried to decode sframe content.
-    setTimeout(() => receiver.transform = receiverTransform, 50);
-    await checkVideoIsUpdated(true);
+    test.step_timeout(() => receiver.transform = receiverTransform, 50);
+    await checkVideoIsUpdated(test, true);
 }, "video exchange with late receiver transform");
         </script>
     </body>

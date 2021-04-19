@@ -16,6 +16,7 @@ imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy [ Skip ]
 
 # Skip WebRTC for now in WK1
 imported/w3c/web-platform-tests/webrtc [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform [ Skip ]
 webrtc [ Skip ]
 
 # Not supported on WK1

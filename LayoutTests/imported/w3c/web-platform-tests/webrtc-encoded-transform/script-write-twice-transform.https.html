@@ -20,7 +20,7 @@ async function waitForMessage(worker, data)
 }
 
 promise_test(async (test) => {
-    worker = new Worker('write-twice-transform.js');
+    worker = new Worker('script-write-twice-transform-worker.js');
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
 
@@ -33,7 +33,7 @@ promise_test(async (test) => {
     const startedPromise = new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
 
     const stream = await new Promise((resolve, reject) => {
-        createConnections((firstConnection) => {
+        createConnections(test, (firstConnection) => {
             pc1 = firstConnection;
             sender = firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
             sender.transform = senderTransform;
@@ -45,7 +45,7 @@ promise_test(async (test) => {
                 resolve(trackEvent.streams[0]);
             };
         });
-        setTimeout(() => reject("Test timed out"), 5000);
+        test.step_timeout(() => reject("Test timed out"), 5000);
     });
 
     assert_equals(await startedPromise, "started");

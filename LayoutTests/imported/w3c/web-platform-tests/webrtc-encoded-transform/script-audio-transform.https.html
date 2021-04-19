@@ -9,12 +9,12 @@
         <video id="video" autoplay playsInline></video>
         <script src="routines.js"></script>
         <script>
-function waitForMessage(port, data)
+function waitForMessage(test, port, data)
 {
     let gotMessage;
     const promise = new Promise((resolve, reject) => {
         gotMessage = resolve;
-        setTimeout(() => { reject("did not get " + data) }, 5000);
+        test.step_timeout(() => { reject("did not get " + data) }, 5000);
     });
     port.onmessage = event => {
        if (event.data === data)
@@ -23,10 +23,8 @@ function waitForMessage(port, data)
     return promise;
 }
 
-let senderTransform, receiverTransform;
-let stream;
 promise_test(async (test) => {
-    worker = new Worker("context-transform.js");
+    worker = new Worker("script-audio-transform-worker.js");
     const data = await new Promise(resolve => worker.onmessage = (event) => resolve(event.data));
     assert_equals(data, "registered");
 
@@ -34,17 +32,16 @@ promise_test(async (test) => {
 
     const senderChannel = new MessageChannel;
     const receiverChannel = new MessageChannel;
-    let sender, receiver;
-    senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'audio', side:'sender', port:senderChannel.port2}, [senderChannel.port2]);
-    receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'audio', side:'receiver', port:receiverChannel.port2}, [receiverChannel.port2]);
+    const senderTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'audio', side:'sender', port:senderChannel.port2}, [senderChannel.port2]);
+    const receiverTransform = new RTCRtpScriptTransform(worker, {name:'MockRTCRtpTransform', mediaType:'audio', side:'receiver', port:receiverChannel.port2}, [receiverChannel.port2]);
     senderTransform.port = senderChannel.port1;
     receiverTransform.port = receiverChannel.port1;
 
-    promise1 = waitForMessage(senderTransform.port, "started audio sender");
-    promise2 = waitForMessage(receiverTransform.port, "started audio receiver");
+    promise1 = waitForMessage(test, senderTransform.port, "started audio sender");
+    promise2 = waitForMessage(test, receiverTransform.port, "started audio receiver");
 
-    stream = await new Promise((resolve, reject) => {
-        createConnections((firstConnection) => {
+    const stream = await new Promise((resolve, reject) => {
+        createConnections(test, (firstConnection) => {
             sender = firstConnection.addTrack(localStream.getAudioTracks()[0], localStream);
             sender.transform = senderTransform;
         }, (secondConnection) => {
@@ -54,17 +51,15 @@ promise_test(async (test) => {
                 resolve(trackEvent.streams[0]);
             };
         });
-        setTimeout(() => reject("Test timed out"), 5000);
+        test.step_timeout(() => reject("Test timed out"), 5000);
     });
 
     await promise1;
     await promise2;
-}, "setup and check context");
 
-promise_test((test) => {
     video.srcObject = stream;
     return video.play();
-}, "audio is playing");
+});
         </script>
     </body>
 </html>

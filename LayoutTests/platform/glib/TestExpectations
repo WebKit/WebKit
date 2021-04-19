@@ -1579,8 +1579,8 @@ webkit.org/b/136224 fast/speechsynthesis [ Skip ]
 webkit.org/b/136224 fast/speechrecognition [ Skip ]
 
 # No plans to support Sframes for a while
-http/wpt/webrtc/sframe-transform.html [ Skip ]
-http/wpt/webrtc/sframe-transform-in-worker.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Skip ]
 webrtc/audio-sframe.html [ Skip ]
 webrtc/sframe-test-vectors.html [ Skip ]
 webrtc/sframe-transform-buffer-source.html [ Skip ]
@@ -2045,7 +2045,7 @@ webkit.org/b/223965 http/tests/contentextensions/block-everything-unless-domain-
 webkit.org/b/223965 http/tests/contentextensions/hide-on-csp-report.py [ Crash ]
 webkit.org/b/223965 http/tests/contentextensions/main-resource-redirect-blocked.py [ Crash ]
 
-webkit.org/b/224068 http/wpt/webrtc/webrtc-late-transform.html [ Failure ]
+webkit.org/b/224068 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-late-transform.https.html [ Failure ]
 
 webkit.org/b/224071 webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Timeout ]
 
