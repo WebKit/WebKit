@@ -1,3 +1,12 @@
+2021-04-19  Amir Mark Jr  <amir_mark@apple.com>
+
+        [ wk2 ] http/tests/security/contentSecurityPolicy/report-only-connect-src-xmlhttprequest-redirect-to-blocked.py is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=224626
+
+        Unreviewed test gardening
+
+        * platform/wk2/TestExpectations: Updating expectations as a fix is being worked on.
+
 2021-04-19  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Script focus and :focus-visible
