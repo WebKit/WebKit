@@ -203,6 +203,8 @@ public:
     bool isRenderInline() const;
     bool isRenderLayerModelObject() const;
 
+    inline bool isAtomicInlineLevelBox() const;
+
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }
 
@@ -1175,6 +1177,11 @@ inline RenderObject* RenderObject::nextInFlowSibling() const
     return nextSibling;
 }
 
+bool RenderObject::isAtomicInlineLevelBox() const
+{
+    return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplaced());
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
 
 #if ENABLE(TREE_DEBUGGING)
@@ -1182,6 +1189,8 @@ void printRenderTreeForLiveDocuments();
 void printLayerTreeForLiveDocuments();
 void printGraphicsLayerTreeForLiveDocuments();
 #endif
+
+bool shouldApplyLayoutContainment(const RenderObject&);
 
 } // namespace WebCore
 

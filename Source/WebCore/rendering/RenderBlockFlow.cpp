@@ -3112,6 +3112,9 @@ Optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
     if (isWritingModeRoot() && !isRubyRun() && !isGridItem())
         return WTF::nullopt;
 
+    if (shouldApplyLayoutContainment(*this))
+        return WTF::nullopt;
+
     if (!childrenInline())
         return RenderBlock::firstLineBaseline();
 
@@ -3133,6 +3136,9 @@ Optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode line
 {
     if (isWritingModeRoot() && !isRubyRun())
         return WTF::nullopt;
+
+    if (shouldApplyLayoutContainment(*this))
+        return RenderBlock::inlineBlockBaseline(lineDirection);
 
     if (style().display() == DisplayType::InlineBlock) {
         // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or if its 'overflow'

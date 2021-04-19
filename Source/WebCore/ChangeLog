@@ -1,3 +1,60 @@
+2021-04-18  Rob Buis  <rbuis@igalia.com>
+
+        Support contain: layout
+        https://bugs.webkit.org/show_bug.cgi?id=223569
+
+        Reviewed by Darin Adler.
+
+        This patch implements layout containment as specified[1].
+        It adds shouldApplyLayoutContainment to check whether the
+        element applies for layout containment. Is so, then:
+        - an independent formatting context is established.
+        - any overflow is treated as ink overflow.
+        - an absolute positioning and fixed positioning
+        containing block is established.
+        - a stacking context is created.
+        - for baseline handling, the box is treated as having no
+        baseline. For grid/flexible box containers/items, this needs
+        a baseline synthesized from the border edges [2], for buttons it
+        requires a baseline synthesized from the margin edges [2, 3].
+
+        [1] https://drafts.csswg.org/css-contain-2/#layout-containment
+        [2] https://drafts.csswg.org/css-align-3/#synthesize-baseline
+        [3] https://www.w3.org/TR/CSS2/visudet.html#propdef-vertical-align
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::firstLineBaseline const):
+        (WebCore::RenderBlock::inlineBlockBaseline const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::firstLineBaseline const):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::createsNewFormattingContext const):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation const):
+        * rendering/RenderBox.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::baselinePosition const):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::canContainFixedPositionObjects const):
+        (WebCore::RenderElement::canContainAbsolutelyPositionedObjects const):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::firstLineBaseline const):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::firstLineBaseline const):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::baselinePosition const):
+        * rendering/RenderObject.cpp:
+        (WebCore::objectIsRelayoutBoundary):
+        (WebCore::shouldApplyLayoutContainment):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isAtomicInlineLevelBox const):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::firstLineBaseline const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::containsLayout const):
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::Adjuster::adjust const):
+
 2021-04-18  Sam Weinig  <weinig@apple.com>
 
         GraphicsLayer::distributeOpacity, GraphicsLayer::setOpacityInternal and GraphicsLayer::accumulatedOpacity are never used

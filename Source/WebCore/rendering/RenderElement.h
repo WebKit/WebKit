@@ -429,6 +429,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
     return isRenderView()
         || (hasTransform() && isRenderBlock())
         || isSVGForeignObject()
+        || shouldApplyLayoutContainment(*this)
         || isOutOfFlowRenderFragmentedFlow();
 }
 
@@ -437,6 +438,7 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
     return style().position() != PositionType::Static
         || (isRenderBlock() && hasTransformRelatedProperty())
         || isSVGForeignObject()
+        || shouldApplyLayoutContainment(*this)
         || isRenderView();
 }
 

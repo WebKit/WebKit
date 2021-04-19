@@ -275,7 +275,10 @@ RenderBox::LogicalExtentComputedValues RenderListBox::computeLogicalHeight(Layou
 
 LayoutUnit RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
 {
-    return RenderBox::baselinePosition(baselineType, firstLine, lineDirection, linePositionMode) - baselineAdjustment;
+    auto baseline = RenderBox::baselinePosition(baselineType, firstLine, lineDirection, linePositionMode);
+    if (!shouldApplyLayoutContainment(*this))
+        baseline -= baselineAdjustment;
+    return baseline;
 }
 
 LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffset, int index)

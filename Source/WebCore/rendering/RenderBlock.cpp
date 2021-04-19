@@ -2575,6 +2575,9 @@ LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, Layou
 
 Optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 {
+    if (shouldApplyLayoutContainment(*this))
+        return WTF::nullopt;
+
     if (isWritingModeRoot() && !isRubyRun())
         return Optional<LayoutUnit>();
 
@@ -2590,6 +2593,9 @@ Optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 
 Optional<LayoutUnit> RenderBlock::inlineBlockBaseline(LineDirectionMode lineDirection) const
 {
+    if (shouldApplyLayoutContainment(*this))
+        return synthesizedBaselineFromBorderBox(*this, lineDirection) + (lineDirection == HorizontalLine ? marginBottom() : marginLeft());
+
     if (isWritingModeRoot() && !isRubyRun())
         return Optional<LayoutUnit>();
 

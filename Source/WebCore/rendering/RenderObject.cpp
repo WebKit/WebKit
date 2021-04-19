@@ -502,6 +502,9 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (object->isTextControl())
         return true;
 
+    if (shouldApplyLayoutContainment(*object))
+        return true;
+
     if (object->isSVGRoot())
         return true;
 
@@ -2440,3 +2443,8 @@ void showRenderTree(const WebCore::RenderObject* object)
 }
 
 #endif
+
+bool WebCore::shouldApplyLayoutContainment(const WebCore::RenderObject& renderer)
+{
+    return renderer.style().containsLayout() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isRenderBlockFlow());
+}

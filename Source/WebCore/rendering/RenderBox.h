@@ -54,7 +54,7 @@ public:
     {
         return isDocumentElementRenderer() || isPositioned() || createsGroup() || hasOverflowClip()
             || hasTransformRelatedProperty() || hasHiddenBackface() || hasReflection() || style().specifiesColumns()
-            || !style().hasAutoUsedZIndex() || hasRunningAcceleratedAnimations();
+            || style().containsLayout() || !style().hasAutoUsedZIndex() || hasRunningAcceleratedAnimations();
     }
 
     bool requiresLayerWithScrollableArea() const;
