@@ -1,3 +1,17 @@
+2021-04-19  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Enable GL_ANGLE_instanced_arrays WebGL extension in WPE
+        https://bugs.webkit.org/show_bug.cgi?id=224438
+
+        Reviewed by Darin Adler.
+
+        Tested by WebGL WPT.
+
+        * html/canvas/ANGLEInstancedArrays.cpp:
+        (WebCore::ANGLEInstancedArrays::supported):
+        * platform/graphics/opengl/ExtensionsGLOpenGLES.cpp:
+        (WebCore::ExtensionsGLOpenGLES::supportsExtension):
+
 2021-04-19  Felipe Erias  <felipeerias@igalia.com>
 
         [css-flexbox] Table layout disregards overriding height
