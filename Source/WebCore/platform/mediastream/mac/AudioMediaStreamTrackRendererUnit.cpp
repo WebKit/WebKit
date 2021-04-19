@@ -34,6 +34,7 @@
 #include "Logging.h"
 
 #include <pal/spi/cocoa/AudioToolboxSPI.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Lock.h>
 
 #if PLATFORM(COCOA)
@@ -203,7 +204,7 @@ void AudioMediaStreamTrackRendererUnit::createAudioUnitIfNeeded()
     }
 #endif
 
-    AURenderCallbackStruct callback = { inputProc, nullptr };
+    AURenderCallbackStruct callback = { renderingCallback, this };
     error = AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));
     if (error) {
         RELEASE_LOG_ERROR(WebRTC, "AudioMediaStreamTrackRendererUnit::createAudioUnit unable to set vpio unit speaker proc, error = %d", error);
@@ -237,6 +238,9 @@ void AudioMediaStreamTrackRendererUnit::createAudioUnitIfNeeded()
 
 OSStatus AudioMediaStreamTrackRendererUnit::render(UInt32 sampleCount, AudioBufferList& ioData, UInt32 /*inBusNumber*/, const AudioTimeStamp& timeStamp, AudioUnitRenderActionFlags& actionFlags)
 {
+    // For performance reasons, we forbid heap allocations while doing rendering on the audio thread.
+    ForbidMallocUseForCurrentThreadScope forbidMallocUse;
+
     ASSERT(!isMainThread());
     if (m_shouldUpdateRenderSources) {
         auto locker = tryHoldLock(m_sourcesLock);
@@ -263,9 +267,9 @@ OSStatus AudioMediaStreamTrackRendererUnit::render(UInt32 sampleCount, AudioBuff
     return 0;
 }
 
-OSStatus AudioMediaStreamTrackRendererUnit::inputProc(void*, AudioUnitRenderActionFlags* actionFlags, const AudioTimeStamp* timeStamp, UInt32 inBusNumber, UInt32 sampleCount, AudioBufferList* ioData)
+OSStatus AudioMediaStreamTrackRendererUnit::renderingCallback(void* processor, AudioUnitRenderActionFlags* actionFlags, const AudioTimeStamp* timeStamp, UInt32 inBusNumber, UInt32 sampleCount, AudioBufferList* ioData)
 {
-    return AudioMediaStreamTrackRendererUnit::singleton().render(sampleCount, *ioData, inBusNumber, *timeStamp, *actionFlags);
+    return static_cast<AudioMediaStreamTrackRendererUnit*>(processor)->render(sampleCount, *ioData, inBusNumber, *timeStamp, *actionFlags);
 }
 
 } // namespace WebCore

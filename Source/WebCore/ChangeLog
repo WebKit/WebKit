@@ -1,3 +1,22 @@
+2021-04-19  Youenn Fablet  <youenn@apple.com>
+
+        Add assertions to check for no memory allocation in AudioMediaStreamTrackRendererUnit rendering thread
+        https://bugs.webkit.org/show_bug.cgi?id=224674
+
+        Reviewed by Eric Carlson.
+
+        Add ForbidMallocUseForCurrentThreadScope in audio rendering code path to prevent memory allocation.
+        Rename inputProc to renderingCallback.
+        Remove use of AudioMediaStreamTrackRendererUnit::singleton and instead use the pointer given to renderingCallback.
+        This is safe as AudioMediaStreamTrackRendererUnit destructor stops the audio unit.
+
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.cpp:
+        (WebCore::AudioMediaStreamTrackRendererUnit::createAudioUnitIfNeeded):
+        (WebCore::AudioMediaStreamTrackRendererUnit::render):
+        (WebCore::AudioMediaStreamTrackRendererUnit::renderingCallback):
+        (WebCore::AudioMediaStreamTrackRendererUnit::inputProc): Deleted.
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererUnit.h:
+
 2021-04-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement Box::isLayoutContainmentBox
