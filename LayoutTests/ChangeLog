@@ -2,6 +2,12 @@
 
         Unreviewed, GLIB gardening
 
+        * platform/glib/TestExpectations: Flag a few more media tests to skip or as flaky crash.
+
+2021-04-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GLIB gardening
+
         * platform/glib/TestExpectations: Flag imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html as flaky crash.
 
 2021-04-19  Philippe Normand  <pnormand@igalia.com>

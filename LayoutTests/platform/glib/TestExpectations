@@ -1740,6 +1740,8 @@ webkit.org/b/136224 fast/speechrecognition [ Skip ]
 # No plans to support Sframes for a while
 imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-keys.https.html [ Skip ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-buffer-source.html [ Skip ]
 webrtc/audio-sframe.html [ Skip ]
 webrtc/sframe-test-vectors.html [ Skip ]
 webrtc/sframe-transform-buffer-source.html [ Skip ]
@@ -2344,6 +2346,7 @@ webkit.org/b/191886 fast/mediastream/apply-constraints-advanced.html [ Pass Cras
 webkit.org/b/187760 fast/mediastream/get-user-media-on-loadedmetadata.html [ Pass Failure ]
 
 webkit.org/b/213506 webrtc/audio-video-element-playing.html [ Crash Pass ]
+webkit.org/b/213506 webrtc/remove-track.html [ Crash Pass ]
 
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
 
