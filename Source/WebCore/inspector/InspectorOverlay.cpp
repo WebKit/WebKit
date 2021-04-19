@@ -1768,7 +1768,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             gridHighlightOverlay.gaps.append({ previousColumnEndLine.start(), columnStartLine.start(), columnStartLine.end(), previousColumnEndLine.end() });
             FloatLine lineBetweenColumnTops = { columnStartLine.start(), previousColumnEndLine.start() };
             FloatLine lineBetweenColumnBottoms = { columnStartLine.end(), previousColumnEndLine.end() };
-            gapLabelLine = { lineBetweenColumnTops.pointAtRelativeDistance(0.5), lineBetweenColumnTops.pointAtRelativeDistance(0.5) };
+            gapLabelLine = { lineBetweenColumnTops.pointAtRelativeDistance(0.5), lineBetweenColumnBottoms.pointAtRelativeDistance(0.5) };
         }
 
         if (i < columnWidths.size() && i < columnPositions.size()) {

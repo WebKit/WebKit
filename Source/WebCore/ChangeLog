@@ -1,3 +1,19 @@
+2021-04-19  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Grid overlay column line label placement copy/paste error
+        https://bugs.webkit.org/show_bug.cgi?id=224777
+
+        Reviewed by Devin Rousso.
+
+        In grid overlays, a typo meant for all column line labels after the initial line, only the start of the line was
+        used for placement, where it is more accurate to use the start and end points to match the behavior of the first
+        line. This had no visual impact because subsequent lines do not currently have their labels adjusted further into
+        the grid, only flipped into the grid but still referencing the same point. This patch corrects the value of
+        `gapLabelLine` to always be a line on which the label can be placed, instead of a single point.
+
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::InspectorOverlay::buildGridOverlay):
+
 2021-04-19  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] LineCandidate.inlineContent should be ignored when reverting
