@@ -1,3 +1,32 @@
+2021-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Selected image overlay text should never be visible
+        https://bugs.webkit.org/show_bug.cgi?id=224734
+        <rdar://problem/76806399>
+
+        Reviewed by Darin Adler.
+
+        Make a slight adjustment to the UA stylesheet to ensure that image overlay text is never visible. See below for
+        more details.
+
+        Test: fast/images/image-extraction/image-overlay-with-selection-styles.html
+
+        * html/shadow/imageOverlay.css:
+        (div.image-overlay-text::selection):
+
+        Enforce selected text styles for image overlay text.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::selectionPseudoStyle const):
+
+        Make an additional adjustment when computing selection pseudo styles for UA shadow root content. Currently, for
+        elements inside a UA shadow root, we always immediately ascend to the shadow host; this means that `::selection`
+        pseudo selectors currently don't work in UA stylesheets, since they're skipped when resolving styles, upon
+        painting selected text.
+
+        To fix this, we can let the element's own pseudo styles take precedence over the shadow host's renderer in the
+        case where we have a selection pseudo style. While we're here, also replace a few raw pointers with `RefPtr`.
+
 2021-04-18  Rob Buis  <rbuis@igalia.com>
 
         Support contain: layout

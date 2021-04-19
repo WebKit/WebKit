@@ -38,3 +38,8 @@ div.image-overlay-text {
     position: absolute;
     overflow: hidden;
 }
+
+div.image-overlay-text::selection {
+    color: transparent;
+    background-color: highlight;
+}

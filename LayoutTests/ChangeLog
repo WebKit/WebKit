@@ -1,3 +1,16 @@
+2021-04-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Selected image overlay text should never be visible
+        https://bugs.webkit.org/show_bug.cgi?id=224734
+        <rdar://problem/76806399>
+
+        Reviewed by Darin Adler.
+
+        Add a new layout test.
+
+        * fast/images/image-extraction/image-overlay-with-selection-styles-expected.html: Added.
+        * fast/images/image-extraction/image-overlay-with-selection-styles.html: Added.
+
 2021-04-18  Rob Buis  <rbuis@igalia.com>
 
         Support contain: layout
