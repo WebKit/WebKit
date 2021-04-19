@@ -30,6 +30,8 @@ import steps
 
 
 class TestCase(unittest.TestCase):
+    maxDiff = None
+
     def assertBuildSteps(self, actual_steps, expected_steps):
         assert all([isinstance(step, _BuildStepFactory) for step in actual_steps])
         assert all([isinstance(step, _BuildStepFactory) for step in expected_steps])

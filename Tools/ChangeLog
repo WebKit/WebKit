@@ -1,3 +1,13 @@
+2021-04-19  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Enabled detailed error log when unit-tests fails
+        https://bugs.webkit.org/show_bug.cgi?id=224789
+
+        Unreviewed minor unit-test fix.
+
+        * CISupport/ews-build/factories_unittest.py:
+        (TestCase): Set maxDiff to None.
+
 2021-04-19  BJ Burg  <bburg@apple.com>
 
         Can't use Web Inspector on web views made by TestWebKitAPI
