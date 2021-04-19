@@ -1,3 +1,44 @@
+2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
+        https://bugs.webkit.org/show_bug.cgi?id=221614
+        <rdar://problem/74396781>
+
+        Reviewed by David Kilzer.
+
+        Implement rudimentary support for clang thread safety analysis.
+        The added macros can be used to declare which member variables or
+        global variables are locked by which mutexes. The compiler will
+        check statically that the mutexes are held correctly. The checking
+        is intra procedural, not global.
+
+        * Configurations/Base.xcconfig:
+            Add -Wthread-safety to compile flags.
+
+        * wtf/CheckedLock.h: Added.
+        Add CheckedLock, a Lock variant that is amenable to static
+        analysis.
+        Add a Locker specialization for CheckedLock that is amenable to
+        static analysis.
+
+        Locker<CheckedLock> is a std::scoped_lock. The scoped_lock cannot be aliased,
+        since it appears that (Apple's) libcxx is not compiled with thread safety
+        analysis support enabled by default.
+
+        New types are needed due Locker move constructor and conditional locking.
+        The Locker has default usage pattern of:
+          auto locker = holdLock(m_lock);
+        This forces dynamism that removes the possibility of simple statical
+        analysis that thread safety analysis capabilities "mutex" and "scoped_lock"
+        currently implement. Most likely large fraction of call sites is due to historical
+        lack of CTAD and as such can be converted to less general form.
+        Once the pattern is not used by default, CheckedLock can be deleted
+        and the move dynamism bits of Locker can be moved to some more specific type
+        ("UncheckedLocker").
+
+        * wtf/ThreadSafetyAnalysis.h: Added.
+        Add macro wrappers around clang "mutex" and "scoped_lock" capability attributes.
+
 2021-04-17  Sam Weinig  <weinig@apple.com>
 
         Move RuntimeEnabledFeatures to Settings (Part 1)

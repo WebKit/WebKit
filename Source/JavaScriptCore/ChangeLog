@@ -1,3 +1,15 @@
+2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
+        https://bugs.webkit.org/show_bug.cgi?id=221614
+        <rdar://problem/74396781>
+
+        Reviewed by David Kilzer.
+
+        Add -Wthread-safety to compile flags.
+
+        * Configurations/Base.xcconfig:
+
 2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Unreviewed, build fix
