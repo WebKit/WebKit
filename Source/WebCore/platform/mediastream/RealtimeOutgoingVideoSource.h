@@ -141,7 +141,7 @@ private:
     Timer m_blackFrameTimer;
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_blackFrame;
 
-    mutable RecursiveLock m_sinksLock;
+    mutable Lock m_sinksLock;
     HashSet<rtc::VideoSinkInterface<webrtc::VideoFrame>*> m_sinks;
     bool m_areSinksAskingToApplyRotation { false };
 

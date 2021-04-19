@@ -1,5 +1,19 @@
 2021-04-19  Youenn Fablet  <youenn@apple.com>
 
+        Move from RecursiveLock to Lock in RealtimeMediaSource
+        https://bugs.webkit.org/show_bug.cgi?id=224671
+
+        Reviewed by Eric Carlson.
+
+        RecursiveLock is more expensive as it allocates memory and not useful here.
+        Covered by existing tests.
+
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mediastream/RealtimeOutgoingAudioSource.h:
+        * platform/mediastream/RealtimeOutgoingVideoSource.h:
+
+2021-04-19  Youenn Fablet  <youenn@apple.com>
+
         Reduce crackling at start of playing a live audio track
         https://bugs.webkit.org/show_bug.cgi?id=218898
         <rdar://problem/71625010>
