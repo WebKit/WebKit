@@ -1,3 +1,18 @@
+2021-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224601
+        <rdar://problem/76827947>
+
+        Reviewed by Darin Adler.
+
+        Fix expectations that were broken due to a mistake in the previous commit.
+        The tests had some extra changes due to webkit.org/224658, the tests were modified but not the expectations.
+
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-003-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-004-expected.txt:
+
 2021-04-18  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of the rotate CSS property
