@@ -145,6 +145,8 @@ private:
 
     Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection;
+    Vector<Function<void()>> m_tasksToDispatchAfterEstablishingConnection;
+
     Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
     std::unique_ptr<WebCore::PixelBufferConformerCV> m_pixelBufferConformer;
