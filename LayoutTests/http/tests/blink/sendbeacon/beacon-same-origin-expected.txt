@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Sending beacon with type: [object String]
-PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
+PASS navigator.sendBeacon("resources/save-beacon.py?name=same-origin", payload); is true
 PASS Beacon sent successfully
 PASS Content-Type: text/plain;charset=UTF-8
 PASS Origin: http://127.0.0.1:8000
@@ -14,7 +14,7 @@ PASS Length: 10
 PASS Body: SameOrigin
 PASS
 Sending beacon with type: [object Uint32Array]
-PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
+PASS navigator.sendBeacon("resources/save-beacon.py?name=same-origin", payload); is true
 PASS Beacon sent successfully
 PASS Content-Type: application/x-www-form-urlencoded
 PASS Origin: http://127.0.0.1:8000
@@ -24,7 +24,7 @@ PASS Length: 40
 PASS Body: QAAAAEEAAABCAAAAQwAAAEQAAABFAAAARgAAAEcAAABIAAAASQAAAA==
 PASS
 Sending beacon with type: [object Blob]
-PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
+PASS navigator.sendBeacon("resources/save-beacon.py?name=same-origin", payload); is true
 PASS Beacon sent successfully
 PASS Content-Type: text/plain;from-beacon=true
 PASS Origin: http://127.0.0.1:8000
@@ -34,7 +34,7 @@ PASS Length: 11
 PASS Body: hello world
 PASS
 Sending beacon with type: [object FormData]
-PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
+PASS navigator.sendBeacon("resources/save-beacon.py?name=same-origin", payload); is true
 PASS Beacon sent successfully
 PASS Content-Type: multipart/form-data;
 PASS Origin: http://127.0.0.1:8000
@@ -44,7 +44,7 @@ PASS Length: 9
 PASS Body: key=value
 PASS
 Sending beacon with type: [object URLSearchParams]
-PASS navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload); is true
+PASS navigator.sendBeacon("resources/save-beacon.py?name=same-origin", payload); is true
 PASS Beacon sent successfully
 PASS Content-Type: application/x-www-form-urlencoded;charset=UTF-8
 PASS Origin: http://127.0.0.1:8000

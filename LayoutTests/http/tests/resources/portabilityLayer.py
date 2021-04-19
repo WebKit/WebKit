@@ -24,6 +24,9 @@ import cgi
 import os
 from urllib.parse import parse_qs
 
+query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
+post_data = {}
+
 
 def get_cookies():
     cookies = {}
@@ -38,20 +41,24 @@ def get_cookies():
     return cookies
 
 
-def get_request():
-    request = {}
+def get_post_data():
     request_method = os.environ.get('REQUEST_METHOD', '')
     if request_method == 'POST':
         form = cgi.FieldStorage()
         for key in form.keys():
-            request.update({key: form.getvalue(key)})
-    else:
-        query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
-        for key in query.keys():
-            request.update({key: query[key][0]})
+            if key not in query.keys():
+                post_data.update({key: form.getvalue(key)})
 
+    return post_data
+
+
+def get_request():
+    request = {}
+    for key in query.keys():
+        request.update({key: query[key][0]})
+
+    # request.update(get_post_data())
     request.update(get_cookies())
-
     return request
 
 

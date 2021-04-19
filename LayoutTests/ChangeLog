@@ -1,3 +1,32 @@
+2021-04-19  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/blink convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=224702
+        <rdar://problem/76783504>
+
+        Reviewed by Darin Adler.
+
+        * http/tests/blink/sendbeacon/beacon-cookie-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cookie.html:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cross-origin.html:
+        * http/tests/blink/sendbeacon/beacon-cross-origin.https-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cross-origin.https.html:
+        * http/tests/blink/sendbeacon/beacon-same-origin-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-same-origin.html:
+        * http/tests/blink/sendbeacon/resources/check-beacon.php: Removed.
+        * http/tests/blink/sendbeacon/resources/check-beacon.py: Added.
+        (extensive_strip):
+        * http/tests/blink/sendbeacon/resources/save-beacon.php: Removed.
+        * http/tests/blink/sendbeacon/resources/save-beacon.py: Added.
+        (prettify):
+        (decode_multipart):
+        * http/tests/resources/portabilityLayer.py:
+        (get_post_data):
+        (get_request):
+        * platform/ios/http/tests/blink/sendbeacon/beacon-same-origin-expected.txt:
+        * platform/mac/http/tests/blink/sendbeacon/beacon-same-origin-expected.txt:
+
 2021-04-19  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GLIB gardening
