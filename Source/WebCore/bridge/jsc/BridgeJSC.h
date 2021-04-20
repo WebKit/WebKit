@@ -24,12 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BridgeJSC_h
-#define BridgeJSC_h
+#pragma once
 
 #include "Bridge.h"
 #include <JavaScriptCore/JSString.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -137,5 +135,3 @@ const char* signatureForParameters(const ArgList&);
 } // namespace Bindings
 
 } // namespace JSC
-
-#endif

@@ -29,7 +29,6 @@
 
 #include "NetworkCacheStorage.h"
 #include <WebCore/ResourceRequest.h>
-#include <wtf/HashMap.h>
 #include <wtf/URL.h>
 
 namespace WebKit {

@@ -1,3 +1,20 @@
+2021-04-19  Darin Adler  <darin@apple.com>
+
+        Refactor sorted array mapping machinery in LocaleToScriptMapping.cpp for reuse elsewhere
+        https://bugs.webkit.org/show_bug.cgi?id=224733
+
+        Reviewed by Yusuke Suzuki.
+
+        * WTF.xcodeproj/project.pbxproj: Added SortedArrayMap.h.
+        * wtf/CMakeLists.txt: Ditto.
+
+        * wtf/SortedArrayMap.h: Added. Builds on the idiom in LocalToScriptMapping, and to be
+        generic uses std::pair instead of custom structures. Includes the ComparableASCIILiteral
+        structure for maps that are keyed by case-sensitive ASCII strings.
+
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearchImpl): Use auto in one place to make this a bit more generic.
+
 2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards

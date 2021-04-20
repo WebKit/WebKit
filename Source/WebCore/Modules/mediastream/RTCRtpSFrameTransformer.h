@@ -29,7 +29,6 @@
 
 #include "ExceptionOr.h"
 #include "RTCRtpTransformBackend.h"
-#include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

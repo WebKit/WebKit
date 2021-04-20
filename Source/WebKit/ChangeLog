@@ -1,3 +1,17 @@
+2021-04-19  Darin Adler  <darin@apple.com>
+
+        Refactor sorted array mapping machinery in LocaleToScriptMapping.cpp for reuse elsewhere
+        https://bugs.webkit.org/show_bug.cgi?id=224733
+
+        Reviewed by Yusuke Suzuki.
+
+        * NetworkProcess/PrivateClickMeasurementManager.h: Removed unused include of HashMap.h.
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h: Ditto.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::createSelectorExceptionMap): Deleted.
+        (WebKit::commandNameForSelectorName): Use SortedArrayMap instead of HashMap.
+
 2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL GPU Process implementation should use thread safety annotations

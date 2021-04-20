@@ -28,7 +28,6 @@
 #if ENABLE(CONTENT_EXTENSIONS)
 
 #include "ContentExtensionsDebugging.h"
-#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -29,7 +29,6 @@
 #include "IDBConnectionToServerDelegate.h"
 #include "IDBResourceIdentifier.h"
 #include <wtf/Function.h>
-#include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

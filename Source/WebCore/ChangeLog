@@ -1,3 +1,32 @@
+2021-04-19  Darin Adler  <darin@apple.com>
+
+        Refactor sorted array mapping machinery in LocaleToScriptMapping.cpp for reuse elsewhere
+        https://bugs.webkit.org/show_bug.cgi?id=224733
+
+        Reviewed by Yusuke Suzuki.
+
+        * Modules/indexeddb/client/IDBConnectionToServer.h: Removed unneeded includes.
+        * Modules/mediastream/RTCRtpSFrameTransformer.h: Ditto.
+        * Modules/mediastream/libwebrtc/LibWebRTCPeerConnectionBackend.h: Ditto.
+        * Modules/webauthn/AuthenticatorCoordinatorClient.h: Ditto.
+        * Modules/websockets/WebSocketChannel.cpp: Ditto.
+        * Modules/websockets/WebSocketDeflater.cpp: Ditto.
+        * bindings/IDLTypes.h: Ditto.
+        * bridge/jsc/BridgeJSC.h: Ditto.
+        * contentextensions/DFANode.h: Ditto.
+        * contentextensions/NFAToDFA.cpp: Ditto.
+        * contentextensions/Term.h: Ditto.
+        * css/typedom/StylePropertyMap.h: Ditto.
+        * css/typedom/StylePropertyMapReadOnly.cpp: Ditto.
+        * cssjit/SelectorCompiler.cpp: Ditto.
+
+        * platform/text/LocaleToScriptMapping.cpp:
+        (WebCore::scriptNameToCode): Refactor to use SortedArrayMap. Also changed to take StringView.
+        (WebCore::localeToScriptCodeForFontSelection): Ditto. Cut down on memory allocation by using
+        StringView instead of String while looping through substrings.
+
+        * platform/text/LocaleToScriptMapping.h: Changed scriptNameToCode to take StringView.
+
 2021-04-20  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Implement Box::isSizeContainmentBox()

@@ -95,6 +95,7 @@
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/SetForScope.h>
+#import <wtf/SortedArrayMap.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import <WebCore/MediaPlaybackTargetCocoa.h>
@@ -207,32 +208,22 @@ bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) con
                 && (path.endsWithIgnoringASCIICase(".pdf") || path.endsWithIgnoringASCIICase(".ps"))));
 }
 
-typedef HashMap<String, String> SelectorNameMap;
-
-// Map selectors into Editor command names.
-// This is not needed for any selectors that have the same name as the Editor command.
-static const SelectorNameMap* createSelectorExceptionMap()
-{
-    SelectorNameMap* map = new HashMap<String, String>;
-
-    map->add("insertNewlineIgnoringFieldEditor:", "InsertNewline");
-    map->add("insertParagraphSeparator:", "InsertNewline");
-    map->add("insertTabIgnoringFieldEditor:", "InsertTab");
-    map->add("pageDown:", "MovePageDown");
-    map->add("pageDownAndModifySelection:", "MovePageDownAndModifySelection");
-    map->add("pageUp:", "MovePageUp");
-    map->add("pageUpAndModifySelection:", "MovePageUpAndModifySelection");
-
-    return map;
-}
-
 static String commandNameForSelectorName(const String& selectorName)
 {
-    // Check the exception map first.
-    static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
-    SelectorNameMap::const_iterator it = exceptionMap->find(selectorName);
-    if (it != exceptionMap->end())
-        return it->value;
+    // Map selectors into Editor command names.
+    // This is not needed for any selectors that have the same name as the Editor command.
+    static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> selectorExceptions[] = {
+        { "insertNewlineIgnoringFieldEditor:", "InsertNewline"_s },
+        { "insertParagraphSeparator:", "InsertNewline"_s },
+        { "insertTabIgnoringFieldEditor:", "InsertTab"_s },
+        { "pageDown:", "MovePageDown"_s },
+        { "pageDownAndModifySelection:", "MovePageDownAndModifySelection"_s },
+        { "pageUp:", "MovePageUp"_s },
+        { "pageUpAndModifySelection:", "MovePageUpAndModifySelection"_s },
+    };
+    static constexpr SortedArrayMap map { selectorExceptions };
+    if (auto commandName = map.tryGet(selectorName))
+        return *commandName;
 
     // Remove the trailing colon.
     // No need to capitalize the command name since Editor command names are not case sensitive.

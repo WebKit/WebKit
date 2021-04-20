@@ -489,6 +489,7 @@
 		83F2BADE1CF9524E003E99C3 /* Function.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Function.h; sourceTree = "<group>"; };
 		83FBA93119DF459700F30ADB /* TypeCasts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCasts.h; sourceTree = "<group>"; };
 		86F46F5F1A2840EE00CCBF22 /* RefCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCounter.h; sourceTree = "<group>"; };
+		93156C8D262C982200EAE27B /* SortedArrayMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SortedArrayMap.h; sourceTree = "<group>"; };
 		93241657243BC2E50032FAAE /* VectorCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VectorCocoa.h; sourceTree = "<group>"; };
 		933D63191FCB6AB90032ECD6 /* StringHasher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHasher.h; sourceTree = "<group>"; };
 		9384B73E20DEA284005B73B2 /* CFXPCBridgeSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CFXPCBridgeSPI.h; sourceTree = "<group>"; };
@@ -1247,6 +1248,7 @@
 				0FA6F39220CC73A200A03DCD /* SmallPtrSet.cpp */,
 				7936D6A91C99F8AE000D1AED /* SmallPtrSet.h */,
 				A30D412D1F0DE13F00B71954 /* SoftLinking.h */,
+				93156C8D262C982200EAE27B /* SortedArrayMap.h */,
 				79038E05224B05A7004C0738 /* SpanningTree.h */,
 				A8A4730D151A825B004123FF /* Spectrum.h */,
 				A8A4730E151A825B004123FF /* StackBounds.cpp */,

@@ -29,7 +29,6 @@
 
 #include "ExceptionData.h"
 #include <wtf/CompletionHandler.h>
-#include <wtf/HashMap.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

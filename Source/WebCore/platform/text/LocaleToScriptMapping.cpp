@@ -32,12 +32,13 @@
 #include "config.h"
 #include "LocaleToScriptMapping.h"
 
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringHash.h>
+#include <wtf/Optional.h>
+#include <wtf/SortedArrayMap.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+// FIXME: Consider moving alongside ComparableASCIILiteral and giving an even better name.
 template<typename StorageInteger>
 class PackedASCIILowerCodes {
 public:
@@ -112,19 +113,14 @@ private:
     StorageInteger m_value { 0 };
 };
 
-using ScriptName = PackedASCIILowerCodes<uint32_t>;
-struct ScriptNameCode {
-    ScriptName name;
-    UScriptCode code;
-};
-
-UScriptCode scriptNameToCode(const String& scriptName)
+UScriptCode scriptNameToCode(StringView scriptName)
 {
     // This generally maps an ISO 15924 script code to its UScriptCode, but certain families of script codes are
     // treated as a single script for assigning a per-script font in Settings. For example, "hira" is mapped to
     // USCRIPT_KATAKANA_OR_HIRAGANA instead of USCRIPT_HIRAGANA, since we want all Japanese scripts to be rendered
     // using the same font setting.
-    static constexpr ScriptNameCode scriptNameCodeList[] = {
+    using ScriptName = PackedASCIILowerCodes<uint32_t>;
+    static constexpr std::pair<ScriptName, UScriptCode> scriptNameCodeList[] = {
         { "arab", USCRIPT_ARABIC },
         { "armn", USCRIPT_ARMENIAN },
         { "bali", USCRIPT_BALINESE },
@@ -232,38 +228,16 @@ UScriptCode scriptNameToCode(const String& scriptName)
         { "zyyy", USCRIPT_COMMON },
         { "zzzz", USCRIPT_UNKNOWN },
     };
-
     static_assert(ScriptName("arab").value() == 0x61726162U);
     static_assert(ScriptName("zzzz").value() == 0x7a7a7a7aU);
-
-    ASSERT(
-        std::is_sorted(std::begin(scriptNameCodeList), std::end(scriptNameCodeList),
-            [](const ScriptNameCode& a, const ScriptNameCode& b) {
-                return a.name < b.name;
-            }));
-
-    auto name = ScriptName::parse(scriptName);
-    if (!name)
-        return USCRIPT_INVALID_CODE;
-
-    auto* element = tryBinarySearch<ScriptNameCode>(scriptNameCodeList, std::size(scriptNameCodeList), name.value(),
-        [](const ScriptNameCode* scriptNameCode) {
-            return scriptNameCode->name;
-        });
-    if (element)
-        return element->code;
-    return USCRIPT_INVALID_CODE;
+    static constexpr SortedArrayMap map { scriptNameCodeList };
+    return map.get(scriptName, USCRIPT_INVALID_CODE);
 }
-
-using LocaleName = PackedASCIILowerCodes<uint64_t>;
-struct LocaleScript {
-    LocaleName locale;
-    UScriptCode script;
-};
 
 UScriptCode localeToScriptCodeForFontSelection(const String& locale)
 {
-    static constexpr LocaleScript localeScriptList[] = {
+    using LocaleName = PackedASCIILowerCodes<uint64_t>;
+    static constexpr std::pair<LocaleName, UScriptCode> localeScriptList[] = {
         { "aa", USCRIPT_LATIN },
         { "ab", USCRIPT_CYRILLIC },
         { "ady", USCRIPT_CYRILLIC },
@@ -463,35 +437,14 @@ UScriptCode localeToScriptCodeForFontSelection(const String& locale)
         { "zh_tw", USCRIPT_TRADITIONAL_HAN },
         { "zu", USCRIPT_LATIN },
     };
-
     static_assert(LocaleName("aa").value() == 0x6161000000000000ULL);
     static_assert(LocaleName("zh_tw").value() == 0x7a685f7477000000ULL);
-
-    ASSERT(
-        std::is_sorted(std::begin(localeScriptList), std::end(localeScriptList),
-            [](const LocaleScript& a, const LocaleScript& b) {
-                return a.locale < b.locale;
-            }));
-
-    auto tryFindScriptCode = [&] (const String& string) -> Optional<UScriptCode> {
-        auto localeName = LocaleName::parse(string);
-        if (!localeName)
-            return WTF::nullopt;
-
-        auto* element = tryBinarySearch<LocaleScript>(localeScriptList, std::size(localeScriptList), localeName.value(),
-            [](const LocaleScript* localeScript) {
-                return localeScript->locale;
-            });
-        if (element)
-            return element->script;
-        return WTF::nullopt;
-    };
-
-    String canonicalLocale = locale;
-    canonicalLocale.replace('-', '_');
-    while (!canonicalLocale.isEmpty()) {
-        if (auto scriptCode = tryFindScriptCode(canonicalLocale))
-            return scriptCode.value();
+    static constexpr SortedArrayMap map { localeScriptList };
+    String canonicalLocaleString = locale;
+    canonicalLocaleString.replace('-', '_');
+    for (StringView canonicalLocale = canonicalLocaleString; !canonicalLocale.isEmpty(); ) {
+        if (auto scriptCode = map.tryGet(canonicalLocale))
+            return *scriptCode;
         auto underscorePosition = canonicalLocale.reverseFind('_');
         if (underscorePosition == notFound)
             break;

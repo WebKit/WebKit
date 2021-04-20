@@ -34,7 +34,6 @@
 #include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/HashMap.h>
 #include <wtf/JSONValues.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
