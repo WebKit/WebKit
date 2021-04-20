@@ -28,10 +28,10 @@
 #include "IPCSemaphore.h"
 #include "StreamServerConnection.h"
 #include <atomic>
+#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashSet.h>
-#include <wtf/Lock.h>
 #include <wtf/Threading.h>
 
 namespace IPC {
@@ -60,9 +60,9 @@ private:
 
     std::atomic<bool> m_shouldQuit { false };
 
-    Lock m_lock;
-    Deque<Function<void()>> m_functions;
-    HashSet<Ref<StreamServerConnectionBase>> m_connections;
+    CheckedLock m_lock;
+    Deque<Function<void()>> m_functions WTF_GUARDED_BY_LOCK(m_lock);
+    HashSet<Ref<StreamServerConnectionBase>> m_connections WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 }

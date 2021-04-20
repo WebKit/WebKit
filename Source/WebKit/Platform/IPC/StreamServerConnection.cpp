@@ -53,7 +53,7 @@ void StreamServerConnectionBase::stopReceivingMessagesImpl(ReceiverName receiver
 void StreamServerConnectionBase::enqueueMessage(Connection&, std::unique_ptr<Decoder>&& message)
 {
     {
-        auto locker = holdLock(m_outOfStreamMessagesLock);
+        Locker locker { m_outOfStreamMessagesLock };
         m_outOfStreamMessages.append(WTFMove(message));
     }
     m_workQueue.wakeUp();

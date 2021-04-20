@@ -1,5 +1,33 @@
 2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
+        WebGL GPU Process implementation should use thread safety annotations
+        https://bugs.webkit.org/show_bug.cgi?id=224752
+
+        Reviewed by Kenneth Russell.
+
+        Make WebGL GPU process implementation use thread safety analysis.
+
+        Mark up the guarded variables in IPC Stream implementation using
+        clang thread safety analysis annotations.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::paintImageDataToImageBuffer):
+        * Platform/IPC/StreamConnectionWorkQueue.cpp:
+        (IPC::StreamConnectionWorkQueue::dispatch):
+        (IPC::StreamConnectionWorkQueue::addStreamConnection):
+        (IPC::StreamConnectionWorkQueue::removeStreamConnection):
+        (IPC::StreamConnectionWorkQueue::processStreams):
+        * Platform/IPC/StreamConnectionWorkQueue.h:
+        * Platform/IPC/StreamServerConnection.cpp:
+        (IPC::StreamServerConnectionBase::enqueueMessage):
+        * Platform/IPC/StreamServerConnection.h:
+        (IPC::StreamServerConnection<Receiver>::startReceivingMessages):
+        (IPC::StreamServerConnection<Receiver>::stopReceivingMessages):
+        (IPC::StreamServerConnection<Receiver>::dispatchStreamMessages):
+        (IPC::StreamServerConnection<Receiver>::dispatchOutOfStreamMessage):
+
+2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
         REGRESSION(r224516): Remote WebGL Context is not create due to RemoteRenderingBackend not being created
         https://bugs.webkit.org/show_bug.cgi?id=224751
 
