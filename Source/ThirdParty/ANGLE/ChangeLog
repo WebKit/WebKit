@@ -1,3 +1,12 @@
+2021-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        MacCatalyst ANGLE is linked with @loader_path/../../../libANGLE-shared.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=224602
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+
 2021-04-19  Alex Christensen  <achristensen@webkit.org>
 
         Build ANGLE dylib into WK_OVERRIDE_FRAMEWORKS_DIR in builds that use it
