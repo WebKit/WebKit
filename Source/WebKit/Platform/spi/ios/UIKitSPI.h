@@ -618,12 +618,6 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
     _UIBackdropMaskViewAll = _UIBackdropMaskViewGrayscaleTint | _UIBackdropMaskViewColorTint | _UIBackdropMaskViewFilters,
 };
 
-#if PLATFORM(MACCATALYST)
-typedef NS_ENUM(NSUInteger, UIFocusRingType) {
-    UIFocusRingTypeNone = 1,
-};
-#endif
-
 @interface UIView ()
 + (BOOL)_isInAnimationBlock;
 - (CGSize)size;
@@ -639,9 +633,6 @@ typedef NS_ENUM(NSUInteger, UIFocusRingType) {
 - (void)_removeAllAnimations:(BOOL)includeSubviews;
 - (UIColor *)_inheritedInteractionTintColor;
 - (NSString *)recursiveDescription;
-#if PLATFORM(MACCATALYST)
-@property (nonatomic, getter=_focusRingType, setter=_setFocusRingType:) UIFocusRingType focusRingType;
-#endif
 @end
 
 @protocol UISelectionInteractionAssistant
@@ -1437,6 +1428,14 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @interface UIColorPickerViewController ()
 @property (nonatomic, copy, setter=_setSuggestedColors:) NSArray<UIColor *> *_suggestedColors;
 @end
+
+#if HAVE(UI_FOCUS_EFFECT)
+@class UIFocusEffect;
+
+@interface UIView (Staging_75759822)
+@property (nonatomic, readwrite, copy) UIFocusEffect *focusEffect;
+@end
+#endif
 
 WTF_EXTERN_C_BEGIN
 

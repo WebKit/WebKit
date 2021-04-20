@@ -1,3 +1,17 @@
+2021-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mac Catalyst] Adopt UIView API to avoid showing focus rings around WKContentView
+        https://bugs.webkit.org/show_bug.cgi?id=224819
+
+        Reviewed by Tim Horton.
+
+        Replace our usage of the deprecated `-[UIView _setFocusRingType:]` method with API on `UIView` that achieves
+        the same effect.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView _commonInitializationWithProcessPool:configuration:]):
+
 2021-04-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix use-after-move introduced in r275407

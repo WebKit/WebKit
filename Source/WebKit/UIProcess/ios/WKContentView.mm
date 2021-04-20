@@ -207,10 +207,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     self.layer.hitTestsAsOpaque = YES;
 
-#if PLATFORM(MACCATALYST)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [self _setFocusRingType:UIFocusRingTypeNone];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+#if HAVE(UI_FOCUS_EFFECT)
+    if ([self respondsToSelector:@selector(setFocusEffect:)])
+        self.focusEffect = nil;
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
