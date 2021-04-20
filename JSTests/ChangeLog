@@ -1,3 +1,16 @@
+2021-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Limit memory allocation size of JSTests/stress/early-return-from-builtin.js
+        https://bugs.webkit.org/show_bug.cgi?id=224803
+        <rdar://problem/75597901>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add limit to JSTests/stress/early-return-from-builtin.js to avoid infinite allocation.
+
+        * stress/early-return-from-builtin.js:
+        (let.iter.Symbol.iterator):
+
 2021-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Rebaseline test results for new ICU
