@@ -1,3 +1,16 @@
+2021-04-20  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Platform Key registration does not prompt for user password when in biometric lockout
+        https://bugs.webkit.org/show_bug.cgi?id=224828
+        <rdar://76907840>
+
+        Reviewed by Brent Fulgham.
+
+        Covered by manul tests.
+
+        * UIProcess/WebAuthentication/Cocoa/LocalConnection.mm:
+        (WebKit::LocalConnection::verifyUser):
+
 2021-04-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers

@@ -106,7 +106,12 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
     // Depending on certain internal requirements, accessControl might not require user verifications.
     // Hence, here introduces a quirk to force the compatible mode to require user verifications if necessary.
     if (shouldUseAlternateAttributes()) {
-        if (uv == UserVerificationRequirement::Required || [m_context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:nil]) {
+        NSError *error = nil;
+        auto canEvaluatePolicy = [m_context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error];
+        if (error.code == LAErrorBiometryLockout)
+            canEvaluatePolicy = true;
+
+        if (uv == UserVerificationRequirement::Required || canEvaluatePolicy) {
             [m_context evaluatePolicy:LAPolicyDeviceOwnerAuthentication options:options.get() reply:reply.get()];
             return;
         }
