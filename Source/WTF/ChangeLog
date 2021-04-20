@@ -1,3 +1,14 @@
+2021-04-20  Keith Miller  <keith_miller@apple.com>
+
+        FullGCActivityCallback should use the percentage of pages uncompressed in RAM to determine deferral.
+        https://bugs.webkit.org/show_bug.cgi?id=224817
+
+        Reviewed by Filip Pizlo.
+
+        Add a noexcept flavor of FunctionTraits. On Linux mincore (and probably other syscalls) are marked noexcept so the existing overloads don't work.
+
+        * wtf/FunctionTraits.h:
+
 2021-04-20  Chris Dumez  <cdumez@apple.com>
 
         Make sure we don't exit the GPUProcess too frequently while under memory pressure

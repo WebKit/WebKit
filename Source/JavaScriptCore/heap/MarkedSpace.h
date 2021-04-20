@@ -148,7 +148,7 @@ public:
     size_t size();
     size_t capacity();
 
-    bool isPagedOut(MonotonicTime deadline);
+    bool isPagedOut();
     
     HeapVersion markingVersion() const { return m_markingVersion; }
     HeapVersion newlyAllocatedVersion() const { return m_newlyAllocatedVersion; }

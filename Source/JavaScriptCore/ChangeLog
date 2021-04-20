@@ -1,3 +1,42 @@
+2021-04-20  Keith Miller  <keith_miller@apple.com>
+
+        FullGCActivityCallback should use the percentage of pages uncompressed in RAM to determine deferral.
+        https://bugs.webkit.org/show_bug.cgi?id=224817
+
+        Reviewed by Filip Pizlo.
+
+        Right now we try to determine if too many pages are paged out by
+        dereferencing them and bailing out of the GC if we go over a
+        deadline. While this works if the only goal is to avoid causing
+        extensive thrashing on spinny disks (HDD), it doesn't prevent
+        thrashing when access to disk is fast (e.g. SSD). This is because
+        on fast disks the proportional time to load the memory from disk
+        is much lower. Additionally, on SSDs in particular we don't want
+        to load the pages into RAM then bail as that will force a
+        different page onto disk, increasing wear.
+
+        This patch switches to asking the OS if each MarkedBlock is paged
+        out. Then if we are over a threshold we wait until we would have
+        GC'd anyway. This patch uses the (maxVMGrowthFactor - 1) as the
+        percentage of "slow" pages (paged out or compressed) needed to
+        defer the GC. The idea behind that threshold is that if we add
+        that many pages then the same number of pages would be forced
+        out of RAM for us to do a GC anyway (in the limit).
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::updatePercentageOfPagedOutPages):
+        (JSC::BlockDirectory::isPagedOut): Deleted.
+        * heap/BlockDirectory.h:
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        * heap/Heap.cpp:
+        (JSC::Heap::isPagedOut):
+        * heap/Heap.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::isPagedOut):
+        * heap/MarkedSpace.h:
+        * runtime/OptionsList.h:
+
 2021-04-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers

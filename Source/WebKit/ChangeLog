@@ -1,3 +1,14 @@
+2021-04-20  Keith Miller  <keith_miller@apple.com>
+
+        FullGCActivityCallback should use the percentage of pages uncompressed in RAM to determine deferral.
+        https://bugs.webkit.org/show_bug.cgi?id=224817
+
+        Reviewed by Filip Pizlo.
+
+        Add mincore to the acceptable syscall list.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-04-20  Jiewen Tan  <jiewen_tan@apple.com>
 
         Platform Key registration does not prompt for user password when in biometric lockout
