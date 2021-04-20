@@ -1,3 +1,14 @@
+2021-04-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r275523): [iOS] Opaque system fill colors are incorrect in dark mode
+        https://bugs.webkit.org/show_bug.cgi?id=224800
+        <rdar://problem/76878335>
+
+        Reviewed by Darin Adler.
+
+        * fast/css/ios/system-color-for-css-value-expected.txt:
+        * fast/css/ios/system-color-for-css-value.html:
+
 2021-04-20  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WPE] Update expectations for 2 :focus-visible tests

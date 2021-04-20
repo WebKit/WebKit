@@ -1270,7 +1270,7 @@ bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
 struct CSSValueSystemColorInformation {
     CSSValueID cssValueID;
     SEL selector;
-    bool blendOverWhite { false };
+    bool makeOpaque { false };
     float opacity { 1.0f };
 };
 
@@ -1328,7 +1328,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
     return cssValueSystemColorInformationList;
 }
 
-static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation)
+static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance)
 {
     if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), systemColorInformation.selector)) {
         Color systemColor = { color.CGColor, Color::Flags::Semantic };
@@ -1336,8 +1336,8 @@ static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSV
         if (systemColorInformation.opacity < 1.0f)
             systemColor = systemColor.colorWithAlphaMultipliedBy(systemColorInformation.opacity);
 
-        if (systemColorInformation.blendOverWhite)
-            return blendSourceOver(Color::white, systemColor);
+        if (systemColorInformation.makeOpaque)
+            return blendSourceOver(useDarkAppearance ? Color::black : Color::white, systemColor);
 
         return systemColor;
     }
@@ -1351,7 +1351,7 @@ static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool use
 
     for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
         if (cssValueSystemColorInformation.cssValueID == cssValueID)
-            return systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation);
+            return systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance);
     }
 
     return WTF::nullopt;
@@ -1372,7 +1372,7 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
             for (bool useElevatedUserInterfaceLevel : { false, true }) {
                 LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
                 for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
-                    if (auto color = systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation))
+                    if (auto color = systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance))
                         map.add(CSSValueKey { cssValueSystemColorInformation.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTFMove(*color));
                 }
             }
