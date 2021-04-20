@@ -1,3 +1,63 @@
+2021-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Rebaseline test results for new ICU
+        https://bugs.webkit.org/show_bug.cgi?id=224792
+
+        Reviewed by Mark Lam.
+
+        This patch updates some intl- tests' expectation since it is changed because of ICU CLDR data change.
+
+        * stress/intl-datetimeformat-formatrange-relevant-extensions-ja.js:
+        (shouldBeOneOfThem):
+        (vm.icuVersion):
+        * stress/intl-datetimeformat-formatrange-relevant-extensions.js:
+        (shouldBeOneOfThem):
+        * stress/intl-datetimeformat-formatrange-should-not-handle-gregorian-change-date.js:
+        (shouldBe):
+        (vm.icuHeaderVersion):
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions-ja.js:
+        (normalize):
+        (shouldBe):
+        (compareParts):
+        (shouldBeOneOfParts):
+        (shouldBeParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt5.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.vm.icuVersion):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt7.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt9.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt11.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt13.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeParts.fmt13.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt14.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt15.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt16.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt1.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt2.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt3.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt4.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt5.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt6.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt7.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt8.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt9.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt10.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt11.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt12.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt13.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt14.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt15.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt16.formatRangeToParts): Deleted.
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions.js:
+        (normalize):
+        (shouldBe):
+        (compareParts):
+        (shouldBeOneOfParts):
+        (shouldBeParts):
+        * stress/intl-datetimeformat-formatrangetoparts-should-not-handle-gregorian-change-date.js:
+        (shouldBe):
+        * stress/intl-datetimeformat.js:
+        (shouldBeOneOfThem):
+
 2021-04-16  Guillaume Emont  <guijemont@igalia.com>
 
         [JSC] Unskip stress/intl-parse-unicode-subtags.js on arm

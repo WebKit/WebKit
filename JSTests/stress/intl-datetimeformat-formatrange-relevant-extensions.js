@@ -9,6 +9,17 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
 
+function shouldBeOneOfThem(actual, expectedArray) {
+    // Tolerate different space characters used by different ICU versions.
+    // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
+    // regular old U+0020. Let's ignore these differences.
+    if (typeof actual === 'string')
+        actual = actual.replaceAll(' ', ' ');
+
+    if (!expectedArray.some((value) => value === actual))
+        throw new Error('bad value: ' + actual + ' expected values: ' + expectedArray);
+}
+
 function shouldThrow(func, errorMessage) {
     var errorThrown = false;
     var error = null;
@@ -133,7 +144,7 @@ function test() {
     });
     shouldBe(fmt7.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt7.format(date8), `1/11/07, 0:00 AM`);
-    shouldBe(fmt7.formatRange(date1, date2), `1/10/07, 10:00 AM – 11:00 AM`);
+    shouldBeOneOfThem(fmt7.formatRange(date1, date2), [ `1/10/07, 10:00 AM – 11:00 AM`, `1/10/07, 10:00 – 11:00 AM` ]);
     shouldBe(fmt7.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
     if ($vm.icuVersion() > 66)
         shouldBe(fmt7.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);
@@ -209,7 +220,7 @@ function test() {
     });
     shouldBe(fmt11.format(date1), `1/10/07, 10:00 AM`);
     shouldBe(fmt11.format(date8), `1/11/07, 00:00 AM`);
-    shouldBe(fmt11.formatRange(date1, date2), `1/10/07, 10:00 AM – 11:00 AM`);
+    shouldBeOneOfThem(fmt11.formatRange(date1, date2), [ `1/10/07, 10:00 AM – 11:00 AM`, `1/10/07, 10:00 – 11:00 AM` ]);
     shouldBe(fmt11.formatRange(date1, date3), `1/10/07, 10:00 AM – 1/20/07, 10:00 AM`);
     if ($vm.icuVersion() > 66)
         shouldBe(fmt11.formatRange(date1, date5), `1/10/07, 10:00 AM – 0:00 PM`);

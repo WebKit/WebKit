@@ -1,8 +1,14 @@
 // Copyright 2019 the V8 project authors. All rights reserved.
-// Copyright 2020 Apple Inc. All rights reserved.
+// Copyright 2020-2021 Apple Inc. All rights reserved.
 // Use of this source code is governed by a BSD-style license.
 
 function shouldBe(actual, expected) {
+    // Tolerate different space characters used by different ICU versions.
+    // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
+    // regular old U+0020. Let's ignore these differences.
+    if (typeof actual === 'string')
+        actual = actual.replaceAll(' ', ' ');
+
     if (actual !== expected)
         throw new Error('bad value: ' + actual);
 }
