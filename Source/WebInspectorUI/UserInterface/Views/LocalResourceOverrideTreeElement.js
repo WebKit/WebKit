@@ -56,8 +56,6 @@ WI.LocalResourceOverrideTreeElement = class LocalResourceOverrideTreeElement ext
 
     ondetach()
     {
-        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
-
         this._localResourceOverride.removeEventListener(WI.LocalResourceOverride.Event.DisabledChanged, this._handleLocalResourceOverrideDisabledChanged, this);
 
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._handleFrameMainResourceDidChange, this);

@@ -59,8 +59,6 @@ WI.JavaScriptBreakpointTreeElement = class JavaScriptBreakpointTreeElement exten
 
     ondetach()
     {
-        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
-
         if (!this.breakpoint.special)
             this.breakpoint.removeEventListener(WI.JavaScriptBreakpoint.Event.LocationDidChange, this._breakpointLocationDidChange, this);
         this.breakpoint.removeEventListener(WI.JavaScriptBreakpoint.Event.ResolvedStateDidChange, this.updateStatus, this);

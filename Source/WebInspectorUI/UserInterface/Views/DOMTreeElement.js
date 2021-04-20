@@ -455,8 +455,6 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
 
     ondetach()
     {
-        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
-
         if (this.representedObject.layoutContextType === WI.DOMNode.LayoutContextType.Grid) {
             WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayShown, this._updateGridBadgeStatus, this);
             WI.overlayManager.removeEventListener(WI.OverlayManager.Event.GridOverlayHidden, this._updateGridBadgeStatus, this);

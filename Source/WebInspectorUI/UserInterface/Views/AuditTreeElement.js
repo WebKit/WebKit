@@ -97,8 +97,6 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
 
     ondetach()
     {
-        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
-
         if (this.representedObject instanceof WI.AuditTestBase) {
             this.representedObject.removeEventListener(WI.AuditTestBase.Event.DisabledChanged, this._handleTestDisabledChanged, this);
             this.representedObject.removeEventListener(WI.AuditTestBase.Event.ResultChanged, this._handleTestResultChanged, this);

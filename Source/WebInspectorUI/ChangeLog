@@ -1,3 +1,17 @@
+2021-04-20  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called
+        https://bugs.webkit.org/show_bug.cgi?id=224652
+        <rdar://problem/76746385>
+
+        Reviewed by Devin Rousso.
+
+        Ensure `TreeElement.ondetach()` cannot be called if the conditions
+        for previously calling `TreeElement.onattach()` have not been met.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype._detach):
+
 2021-04-19  Patrick Angle  <pangle@apple.com>
 
         REGRESSION (r268691 && r270134): Web Inspector: Clicking on go-to arrow in Computed panel no longer works

@@ -38,11 +38,9 @@ WI.WebSocketResourceTreeElement = class WebSocketResourceTreeElement extends WI.
 
     ondetach()
     {
-        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
+        this.resource.removeEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateConnectionStatus, this);
 
         super.ondetach();
-
-        this.resource.removeEventListener(WI.WebSocketResource.Event.ReadyStateChanged, this._updateConnectionStatus, this);
     }
 
     populateContextMenu(contextMenu, event)

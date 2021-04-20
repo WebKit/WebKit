@@ -52,8 +52,6 @@ WI.BootstrapScriptTreeElement = class BootstrapScriptTreeElement extends WI.Scri
 
     ondetach()
     {
-        // FIXME: <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
-
         WI.NetworkManager.removeEventListener(WI.NetworkManager.Event.BootstrapScriptEnabledChanged, this._handleNetworkManagerBootstrapScriptEnabledChanged, this);
 
         super.ondetach();
