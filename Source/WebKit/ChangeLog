@@ -1,3 +1,78 @@
+2021-04-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Update date/time picker appearance
+        https://bugs.webkit.org/show_bug.cgi?id=224794
+        <rdar://problem/76785859>
+
+        Reviewed by Wenson Hsieh.
+
+        Date/time pickers should have a system material background and should
+        avoid obscuring the associated element when possible.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Add new SPI declarations to support date/time picker modifications.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (createTargetedPreview):
+        (createFallbackTargetedPreview):
+        (-[WKContentView _createTargetedContextMenuHintPreviewForFocusedElement]):
+
+        Set the UITargetedPreview background color to clearColor when
+        presenting a date/time picker, so that the presented picker has a
+        visible material effect. Without this change, the picker would have a
+        solid white or black background.
+
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePickerViewController initWithDelegate:]):
+        (-[WKDateTimePickerViewController viewDidLoad]):
+
+        Add a system material background to the date picker using
+        UIVisualEffectView.
+
+        (-[WKDateTimePickerViewController datePickerChanged:]):
+        (-[WKDateTimePickerViewController resetButtonPressed:]):
+        (-[WKDateTimePickerViewController doneButtonPressed:]):
+        (-[WKDateTimePickerViewController datePickerInsets]):
+        (-[WKDateTimePickerViewController preferredDatePickerSize]):
+        (-[WKDateTimePickerViewController preferredContentSize]):
+        (-[WKDateTimePickerViewController date]):
+        (-[WKDateTimePickerViewController setDate:]):
+        (-[WKDateTimePickerViewController setDatePickerMode:]):
+        (-[WKDateTimePickerViewController timeZone]):
+        (-[WKDateTimePickerViewController setTimeZone:]):
+        (-[WKDateTimePickerViewController calendar]):
+        (-[WKDateTimePicker initWithView:datePickerMode:]):
+        (-[WKDateTimePicker _preferredEdgeInsetsForDateTimePicker]):
+
+        Attempt to present the date picker in a way that does not obscure the
+        element.
+
+        (-[WKDateTimePicker _contextMenuInteraction:styleForMenuWithConfiguration:]):
+        (-[WKDateTimePicker contextMenuInteraction:configurationForMenuAtLocation:]):
+        (-[WKDateTimePicker dateTimePickerViewControllerDidChangeDate:]):
+        (-[WKDateTimePicker dateTimePickerViewControllerDidPressResetButton:]):
+        (-[WKDateTimePicker dateTimePickerViewControllerDidPressDoneButton:]):
+        (-[WKDateTimePicker shouldForceGregorianCalendar]):
+        (-[WKDateTimePicker dealloc]):
+        (-[WKDateTimePicker _timeZoneOffsetFromGMT:]):
+        (-[WKDateTimePicker _sanitizeInputValueForFormatter:]):
+        (-[WKDateTimePicker dateFormatterForPicker]):
+        (-[WKDateTimePicker _dateChangedSetAsNumber]):
+        (-[WKDateTimePicker _dateChangedSetAsString]):
+        (-[WKDateTimePicker setDateTimePickerToInitialValue]):
+        (-[WKDateTimePicker controlView]):
+
+        Updated this method to return nil, matching other form controls that
+        do not present a keyboard input view (example: <select>).
+
+        (-[WKDateTimePicker controlBeginEditing]):
+        (-[WKDateTimePicker controlEndEditing]):
+        (-[WKDateTimePicker calendarType]):
+        (-[WKDateTimePicker hour]):
+        (-[WKDateTimePicker minute]):
+        (-[WKDateTimePicker setHour:minute:]):
+
 2021-04-20  Keith Miller  <keith_miller@apple.com>
 
         FullGCActivityCallback should use the percentage of pages uncompressed in RAM to determine deferral.

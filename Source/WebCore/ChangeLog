@@ -1,3 +1,24 @@
+2021-04-20  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Update date/time picker appearance
+        https://bugs.webkit.org/show_bug.cgi?id=224794
+        <rdar://problem/76785859>
+
+        Reviewed by Wenson Hsieh.
+
+        * en.lproj/Localizable.strings:
+
+        Remove now unused string.
+
+        * platform/LocalizedStrings.cpp:
+        * platform/LocalizedStrings.h:
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::formControlDoneButtonTitle):
+
+        Moved definition out of PLATFORM(WATCHOS) in LocalizedStrings.cpp and
+        into LocalizedStringsCocoa, so that the "Done" string can be used by
+        PLATFORM(IOS_FAMILY).
+
 2021-04-20  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         editing/execCommand/insert-image-in-composed-list.html is crashing

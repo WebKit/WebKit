@@ -215,6 +215,7 @@ typedef NS_ENUM(NSInteger, UIDatePickerStyle) {
 #if HAVE(UIDATEPICKER_STYLE)
 @property (nonatomic, readwrite, assign) UIDatePickerStyle preferredDatePickerStyle;
 #endif
+- (UIEdgeInsets)_appliedInsetsToEdgeOfContent;
 @end
 
 @interface UIDevice ()
@@ -1197,6 +1198,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
     _UIContextMenuLayoutActionsOnly = 1,
+    _UIContextMenuLayoutPreviewOnly = 2,
     _UIContextMenuLayoutCompactMenu = 3,
     _UIContextMenuLayoutAutomatic = 100,
 };
@@ -1205,6 +1207,8 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic) _UIContextMenuLayout preferredLayout;
 @property (nonatomic) UIEdgeInsets preferredEdgeInsets;
 @property (nonatomic) BOOL hasInteractivePreview;
+@property (nonatomic) BOOL prefersCenteredPreviewWhenActionsAreAbsent;
+@property (nonatomic) BOOL ignoresDefaultSizingRules;
 @property (nonatomic, strong) NSArray *preferredBackgroundEffects;
 + (instancetype)defaultStyle;
 @end
@@ -1487,6 +1491,7 @@ extern NSString * const UIPreviewDataAttachmentListIsContentManaged;
 #endif
 
 UIEdgeInsets UIEdgeInsetsAdd(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
+UIEdgeInsets UIEdgeInsetsSubtract(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
 
 extern NSString *const UIBacklightLevelChangedNotification;
 

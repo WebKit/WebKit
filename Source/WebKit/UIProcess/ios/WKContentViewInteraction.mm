@@ -8354,7 +8354,7 @@ static RetainPtr<UITargetedPreview> createTargetedPreview(UIImage *image, UIView
     return adoptNS([[UITargetedPreview alloc] initWithView:imageView.get() parameters:parameters.get() target:target.get()]);
 }
 
-static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootView, UIView *containerView, const WebCore::FloatRect& frameInRootViewCoordinates)
+static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootView, UIView *containerView, const WebCore::FloatRect& frameInRootViewCoordinates, UIColor *backgroundColor)
 {
     if (!containerView.window)
         return nil;
@@ -8363,6 +8363,9 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         return nil;
 
     auto parameters = adoptNS([[UIPreviewParameters alloc] init]);
+    if (backgroundColor)
+        [parameters setBackgroundColor:backgroundColor];
+
     UIView *snapshotView = [rootView resizableSnapshotViewFromRect:frameInRootViewCoordinates afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
 
     CGRect frameInContainerViewCoordinates = [rootView convertRect:frameInRootViewCoordinates toView:containerView];
@@ -8380,7 +8383,19 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement
 {
-    RetainPtr<UITargetedPreview> targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect);
+    auto backgroundColor = [&]() -> UIColor * {
+        switch (_focusedElementInformation.elementType) {
+        case WebKit::InputType::Date:
+        case WebKit::InputType::Month:
+        case WebKit::InputType::DateTimeLocal:
+        case WebKit::InputType::Time:
+            return UIColor.clearColor;
+        default:
+            return nil;
+        }
+    }();
+
+    auto targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect, backgroundColor);
 
     [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
 
@@ -8403,7 +8418,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     }
 
     if (!targetedPreview)
-        targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds);
+        targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, nil);
 
     [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_positionInformation.containerScrollingNodeID];
 
