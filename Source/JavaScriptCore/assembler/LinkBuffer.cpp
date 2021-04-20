@@ -138,6 +138,7 @@ static std::once_flag flag;
 }
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BranchCompactionLinkBuffer);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BranchCompactionLinkBuffer);
 
 class BranchCompactionLinkBuffer {
     WTF_MAKE_NONCOPYABLE(BranchCompactionLinkBuffer);
