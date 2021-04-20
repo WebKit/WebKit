@@ -2630,11 +2630,11 @@ sub GenerateDictionaryImplementationContent
         my @sortedMembers = sort { $a->name cmp $b->name } @{$dictionary->members};
         foreach my $member (@sortedMembers) {
             $member->default("undefined") if $member->type->name eq "any" and !defined($member->default); # Use undefined as default value for member of type 'any' unless specified otherwise.
+            my $conditional = $member->extendedAttributes->{Conditional};
 
             my $type = $member->type;
-            AddToImplIncludesForIDLType($type);
+            AddToImplIncludesForIDLType($type, $conditional);
 
-            my $conditional = $member->extendedAttributes->{Conditional};
             if ($conditional) {
                 my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
                 $result .= "#if ${conditionalString}\n";

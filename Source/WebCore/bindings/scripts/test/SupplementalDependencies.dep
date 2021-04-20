@@ -82,6 +82,9 @@ WebDOMTestDerivedDictionary.h:
 JSTestDerivedDictionary2.h: 
 DOMTestDerivedDictionary2.h: 
 WebDOMTestDerivedDictionary2.h: 
+JSTestDictionary.h: 
+DOMTestDictionary.h: 
+WebDOMTestDictionary.h: 
 JSTestDictionaryWithOnlyConditionalMembers.h: 
 DOMTestDictionaryWithOnlyConditionalMembers.h: 
 WebDOMTestDictionaryWithOnlyConditionalMembers.h: 
