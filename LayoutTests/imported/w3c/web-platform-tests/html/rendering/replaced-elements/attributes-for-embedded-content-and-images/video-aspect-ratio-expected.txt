@@ -1,4 +1,14 @@
 
 
-PASS Video width and height attributes are not used to infer aspect-ratio
+FAIL Video width and height attributes are not used to infer aspect-ratio assert_approx_equals: expected 2.5 +/- 0.001 but got 2
+FAIL video with {"width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
+FAIL video with {"width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
+PASS video with {"width":"0","height":"1"}
+PASS video with {"width":"1","height":"0"}
+PASS video with {"width":"0","height":"0"}
+PASS video with {"width":null,"height":null}
+PASS video with {"width":"10","height":null}
+PASS video with {"width":null,"height":"20"}
+PASS video with {"width":"xx","height":"20"}
+PASS video with {"width":"10%","height":"20"}
 

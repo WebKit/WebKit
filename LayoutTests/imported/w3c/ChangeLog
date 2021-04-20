@@ -1,3 +1,28 @@
+2021-04-20  Cathie Chen  <cathiechen@igalia.com>
+
+        Update html/rendering/replaced-elements/attributes-for-embedded-content-and-images/ tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224748
+
+        Reviewed by Rob Buis.
+
+        Update the tests for "mapping attribute width and height as the implicit aspect ratio" which are based on the latest agreement
+        from WPT commit 19445e7b39.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/number-placeholder-right-aligned-expected.html: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/number-placeholder-right-aligned.html: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio-expected.txt: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio.html: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/resources/aspect-ratio.js: Added.
+        (test_computed_style_aspect_ratio):
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/resources/w3c-import.log: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/w3c-import.log:
+
 2021-04-20  Tim Nguyen  <ntim@apple.com>
 
         Implement CSS display property 2-value syntax

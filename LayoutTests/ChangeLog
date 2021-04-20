@@ -1,3 +1,14 @@
+2021-04-20  Cathie Chen  <cathiechen@igalia.com>
+
+        Update html/rendering/replaced-elements/attributes-for-embedded-content-and-images/ tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224748
+
+        Reviewed by Rob Buis.
+
+        picture-aspect-ratio.html is flaky.
+
+        * TestExpectations:
+
 2021-04-20  Tim Nguyen  <ntim@apple.com>
 
         Implement CSS display property 2-value syntax

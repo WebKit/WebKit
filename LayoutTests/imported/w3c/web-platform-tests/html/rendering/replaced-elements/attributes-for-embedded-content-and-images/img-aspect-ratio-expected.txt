@@ -1,4 +1,34 @@
 
 
-FAIL Image width and height attributes are used to infer aspect-ratio assert_approx_equals: expected 1.2547169811320755 +/- 0.001 but got 1.25
+FAIL Image width and height attributes are used to infer aspect-ratio assert_approx_equals: aspect-ratio should override intrinsic size of images that don't have any src. expected 0.8 +/- 0.001 but got Infinity
+FAIL img with {"width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
+FAIL input with {"type":"image","width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
+PASS input with {"type":"submit","width":"10","height":"20"}
+FAIL img with {"width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
+FAIL input with {"type":"image","width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
+PASS input with {"type":"submit","width":"0","height":"1"}
+FAIL img with {"width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
+FAIL input with {"type":"image","width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
+PASS input with {"type":"submit","width":"1","height":"0"}
+FAIL img with {"width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
+FAIL input with {"type":"image","width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
+PASS input with {"type":"submit","width":"0","height":"0"}
+FAIL img with {"width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
+FAIL input with {"type":"image","width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
+PASS input with {"type":"submit","width":"0.5","height":"1.5"}
+PASS img with {"width":null,"height":null}
+PASS input with {"type":"image","width":null,"height":null}
+PASS input with {"type":"submit","width":null,"height":null}
+PASS img with {"width":"10","height":null}
+PASS input with {"type":"image","width":"10","height":null}
+PASS input with {"type":"submit","width":"10","height":null}
+PASS img with {"width":null,"height":"20"}
+PASS input with {"type":"image","width":null,"height":"20"}
+PASS input with {"type":"submit","width":null,"height":"20"}
+PASS img with {"width":"xx","height":"20"}
+PASS input with {"type":"image","width":"xx","height":"20"}
+PASS input with {"type":"submit","width":"xx","height":"20"}
+PASS img with {"width":"10%","height":"20"}
+PASS input with {"type":"image","width":"10%","height":"20"}
+PASS input with {"type":"submit","width":"10%","height":"20"}
 
