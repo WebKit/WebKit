@@ -250,6 +250,7 @@ imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.h
 
 # The test is marked as Timeout for wk2. It has been flaky in GTK and WPE since added.
 webaudio/Panner/hrtf-database.html [ Timeout Pass ]
+webaudio/Panner/panner-loop.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
@@ -374,6 +375,7 @@ webkit.org/b/169916 css3/blending/blend-mode-layers.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/blend-mode-reflection.html [ Missing Failure ]
 webkit.org/b/169916 css3/blending/blend-mode-simple-composited.html [ Missing Failure ]
 webkit.org/b/169916 imported/blink/css3/blending/mix-blend-mode-with-squashing-layer.html [ ImageOnlyFailure ]
+webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Compositing tests
@@ -2350,6 +2352,9 @@ webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-add
 
 webkit.org/b/224791 fast/cookies/cookie-averse-document.html [ Crash ]
 webkit.org/b/224791 fast/cookies/local-file-can-set-cookies.html [ Crash Pass ]
+webkit.org/b/224791 imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.html [ Failure Pass ]
+webkit.org/b/224791 imported/w3c/web-platform-tests/mimesniff/mime-types/parsing.any.html [ Timeout Pass ]
+webkit.org/b/224791 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noreferrer.html [ Timeout Pass ]
 
 # End: Common failures between GTK and WPE.
 

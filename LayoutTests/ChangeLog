@@ -1,5 +1,11 @@
 2021-04-19  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Gardened flaky failures after r224791.
+
+        * platform/glib/TestExpectations:
+
+2021-04-19  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Update baselines and test expectations after r224791.
 
         * platform/glib/TestExpectations:
