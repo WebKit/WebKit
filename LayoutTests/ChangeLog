@@ -1,5 +1,14 @@
 2021-04-20  Diego Pino Garcia  <dpino@igalia.com>
 
+        [WPE] Unreviewed test gardening. Update baselines and test expectations of recent failures.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/canvas/webgl/index-validation-with-subsequent-draws-expected.txt: Removed.
+        * platform/wpe/fast/encoding/utf-16-little-endian-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/resource-timing/resource_timing.worker-expected.txt: Removed.
+
+2021-04-20  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK][WPE] Unreviewed test gardening. Emit new port baselines after r276193.
 
         * platform/gtk/TestExpectations:

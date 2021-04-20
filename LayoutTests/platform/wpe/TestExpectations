@@ -1463,6 +1463,10 @@ Bug(WPE) media/crash-closing-page-with-media-as-plugin-fallback.html [ Timeout ]
 Bug(WPE) media/media-playback-page-visibility.html [ Timeout ]
 Bug(WPE) media/video-canvas-createPattern.html [ Failure ]
 
+# Failing after r273812.
+webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Failure ]
+webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-004.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSORTED Expectations. When in doubt, put it here.
 #////////////////////////////////////////////////////////////////////////////////////////
