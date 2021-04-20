@@ -1,3 +1,18 @@
+2021-04-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers
+        https://bugs.webkit.org/show_bug.cgi?id=224821
+
+        Reviewed by Michael Catanzaro.
+
+        Create CMake variables JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR and
+        JavaScriptCoreGLib_DERIVED_SOURCES_DIR to represent where the JavaScriptCore GLib headers
+        and derived sources will reside. The names and locations set then follow along with the
+        conventions used for the other frameworks.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE] Switch to libsoup3 by default

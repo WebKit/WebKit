@@ -1,5 +1,5 @@
-file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib)
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc)
+file(MAKE_DIRECTORY ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR})
+file(MAKE_DIRECTORY ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc)
 
 list(APPEND JavaScriptCore_SOURCES
     API/glib/JSAPIWrapperGlobalObject.cpp
@@ -17,18 +17,17 @@ list(APPEND JavaScriptCore_SOURCES
 )
 
 list(APPEND JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
-    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc"
     "${JAVASCRIPTCORE_DIR}/API/glib"
+    "${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc"
+    "${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}"
 )
 
 list(APPEND JavaScriptCore_INTERFACE_INCLUDE_DIRECTORIES
-    "${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}"
+    "${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}"
+    "${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}"
 )
 
 set(JavaScriptCore_INSTALLED_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc/JSCVersion.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCAutocleanups.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCClass.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCContext.h
@@ -39,19 +38,21 @@ set(JavaScriptCore_INSTALLED_HEADERS
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCVirtualMachine.h
     ${JAVASCRIPTCORE_DIR}/API/glib/JSCWeakValue.h
     ${JAVASCRIPTCORE_DIR}/API/glib/jsc.h
+
+    ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVersion.h
 )
 
-configure_file(API/glib/JSCVersion.h.in ${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}/jsc/JSCVersion.h)
+configure_file(API/glib/JSCVersion.h.in ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}/jsc/JSCVersion.h)
 
 # These symbolic link allows includes like #include <jsc/jsc.h> which simulates installed headers.
 add_custom_command(
-    OUTPUT ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib/jsc
+    OUTPUT ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}/jsc
     DEPENDS ${JAVASCRIPTCORE_DIR}/API/glib
-    COMMAND ln -n -s -f ${JAVASCRIPTCORE_DIR}/API/glib ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib/jsc
+    COMMAND ln -n -s -f ${JAVASCRIPTCORE_DIR}/API/glib ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}/jsc
     VERBATIM
 )
 add_custom_target(JSC-fake-api-headers
-    DEPENDS ${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib/jsc
+    DEPENDS ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}/jsc
 )
 set(JavaScriptCore_EXTRA_DEPENDENCIES
     JSC-fake-api-headers

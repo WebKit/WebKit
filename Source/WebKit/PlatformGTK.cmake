@@ -698,11 +698,11 @@ if (ENABLE_INTROSPECTION)
             -I${CMAKE_SOURCE_DIR}/Source
             -I${WEBKIT_DIR}
             -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
-            -I${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}
-            -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
             -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
             -I${FORWARDING_HEADERS_WEBKIT2GTK_VERSIONED_DIR}
             -I${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
+            -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
+            -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
             ${WebKit2GTK_INSTALLED_HEADERS}
             ${WEBKIT_DIR}/Shared/API/glib/*.cpp
             ${WEBKIT_DIR}/UIProcess/API/glib/*.cpp
@@ -745,12 +745,12 @@ if (ENABLE_INTROSPECTION)
             -I${CMAKE_SOURCE_DIR}/Source
             -I${WEBKIT_DIR}
             -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
-            -I${DERIVED_SOURCES_JAVASCRIPTCORE_GLIB_DIR}
-            -I${FORWARDING_HEADERS_DIR}/JavaScriptCore/glib
             -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
             -I${FORWARDING_HEADERS_WEBKIT2GTK_VERSIONED_DIR}
             -I${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}
             -I${JavaScriptCore_FRAMEWORK_HEADERS_DIR}
+            -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
+            -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
             -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk
             ${WebKitDOM_INSTALLED_HEADERS}
             ${WebKit2WebExtension_INSTALLED_HEADERS}

@@ -1,3 +1,15 @@
+2021-04-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers
+        https://bugs.webkit.org/show_bug.cgi?id=224821
+
+        Reviewed by Michael Catanzaro.
+
+        Use JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR and JavaScriptCoreGLib_DERIVED_SOURCES_DIR
+        for GLib JSC headers instead of FORWARDING_HEADERS_DIR and DERIVED_SOURCES_DIR.
+
+        * PlatformGTK.cmake:
+
 2021-04-20  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Add additional logging to help identify SSO dialog dismissals

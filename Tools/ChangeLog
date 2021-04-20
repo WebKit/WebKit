@@ -1,3 +1,17 @@
+2021-04-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers
+        https://bugs.webkit.org/show_bug.cgi?id=224821
+
+        Reviewed by Michael Catanzaro.
+
+        Use JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR and JavaScriptCoreGLib_DERIVED_SOURCES_DIR
+        for GLib JSC headers instead of FORWARDING_HEADERS_DIR and DERIVED_SOURCES_DIR.
+
+        * MiniBrowser/wpe/CMakeLists.txt:
+        * TestWebKitAPI/glib/CMakeLists.txt:
+        * TestWebKitAPI/glib/PlatformWPE.cmake:
+
 2021-04-20  Aakash Jain  <aakash_jain@apple.com>
 
         Switch commit-queue back to git.webkit.org
