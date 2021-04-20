@@ -1,3 +1,19 @@
+2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        gtest.a exports symbols, causing link-time warning: direct access in function ... means the weak symbol cannot be overridden at runtime. This was likely caused by different translation units being compiled with different visibility settings.
+        https://bugs.webkit.org/show_bug.cgi?id=224812
+
+        Reviewed by Alexey Proskuryakov.
+
+        Compile and use gtest as a static library that does not export any symbols.
+        Fixes link-time warnings about mismatch of symbol visibility. The error occurs when
+        gtest.a is compiled exporting symbols with default visibility, but the clients use the library
+        and hide the symbols via ld flags.
+
+        * TestWebKitAPI/Configurations/TestWTF.xcconfig:
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        Compile the gtest clients with GTEST_API_=
+
 2021-04-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers

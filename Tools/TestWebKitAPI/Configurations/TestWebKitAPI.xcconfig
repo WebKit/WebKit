@@ -27,6 +27,8 @@ PRODUCT_NAME = TestWebKitAPI;
 PRODUCT_BUNDLE_IDENTIFIER = com.apple.WebKit.TestWebKitAPI;
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=
+
 WK_PRIVATE_FRAMEWORKS_DIR = $(WK_PRIVATE_FRAMEWORKS_DIR_$(USE_INTERNAL_SDK));
 WK_PRIVATE_FRAMEWORKS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);
 WK_PRIVATE_FRAMEWORKS_DIR_[sdk=iphone*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
@@ -40,8 +42,6 @@ WK_PRIVATE_FRAMEWORKS_DIR_iphone_ = $(PROJECT_DIR)/../../WebKitLibraries/WebKitP
 FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(WK_COCOA_TOUCH));
 FRAMEWORK_SEARCH_PATHS_ = $(inherited) $(WK_PRIVATE_FRAMEWORKS_DIR) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 FRAMEWORK_SEARCH_PATHS_cocoatouch = $(inherited) $(WK_PRIVATE_FRAMEWORKS_DIR);
-
-UNEXPORTED_SYMBOL_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZN7testing4Test16TearDownTestCaseEv -Wl,-unexported_symbol -Wl,__ZN7testing4Test13SetUpTestCaseEv
 
 WK_AUTHKIT_LDFLAGS = $(WK_AUTHKIT_LDFLAGS_$(WK_PLATFORM_NAME));
 WK_AUTHKIT_LDFLAGS_iphoneos = $(WK_AUTHKIT_LDFLAGS$(WK_IOS_13));
@@ -78,7 +78,7 @@ WK_OPENGL_LDFLAGS_appletvos = $(WK_OPENGL_LDFLAGS_iphoneos);
 WK_OPENGL_LDFLAGS_appletvsimulator = $(WK_OPENGL_LDFLAGS_iphonesimulator);
 WK_OPENGL_LDFLAGS_macosx = -framework OpenGL;
 
-OTHER_LDFLAGS = $(inherited) $(UNEXPORTED_SYMBOL_LDFLAGS) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) -framework Network $(WK_SYSTEM_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
+OTHER_LDFLAGS = $(inherited) -lgtest -force_load $(BUILT_PRODUCTS_DIR)/libTestWebKitAPI.a -framework JavaScriptCore -framework WebKit -lWebCoreTestSupport $(WK_AUTHKIT_LDFLAGS) -framework Network $(WK_SYSTEM_LDFLAGS) $(WK_PDFKIT_LDFLAGS) $(WK_HID_LDFLAGS) $(WK_OPENGL_LDFLAGS) $(OTHER_LDFLAGS_PLATFORM_$(WK_COCOA_TOUCH));
 OTHER_LDFLAGS_PLATFORM_ = -framework Cocoa -framework Carbon;
 
 // FIXME: This should not be built on iOS. Instead we should create and use a TestWebKitAPI application.

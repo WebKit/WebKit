@@ -17,4 +17,6 @@ STRIP_STYLE = debugging
 // Let the user install by specifying the $DSTROOT with xcodebuild
 SKIP_INSTALL = NO
 
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=
+
 OTHER_LDFLAGS = ;
