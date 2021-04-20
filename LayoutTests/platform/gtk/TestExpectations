@@ -1508,9 +1508,6 @@ webkit.org/b/219979 gamepad/gamepad-polling-access.html [ Timeout Pass ]
 # 7. TESTS WITH ARCHITECTURE-SPECIFIC RESULTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# Fail on 32-bit release builders
-webkit.org/b/80210 security/block-test.html [ Failure ]
-
 # Fails on 32-bit release and 64-bit debug builders
 webkit.org/b/83560 fast/events/drop-with-file-paths.html [ Failure ]
 
