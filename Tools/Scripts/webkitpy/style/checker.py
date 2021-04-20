@@ -162,6 +162,12 @@ _PATH_RULES_SPECIFIER = [
     ["-readability/parameter_name"]),
 
     ([
+     # The WPE QT wrapper lib is not part of Webkit and therefore don't need to statically
+     # link the WTF framework. Instead it uses the standard alloc mechanism.
+     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'qt')],
+     ["-runtime/wtf_make_unique"]),
+
+    ([
       # The GTK+ and WPE APIs use upper case, underscore separated, words in
       # certain types of enums (e.g. signals, properties).
       os.path.join('Source', 'JavaScriptCore', 'API', 'glib'),

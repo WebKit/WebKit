@@ -1,3 +1,34 @@
+2021-04-20  Marco Felsch  <m.felsch@pengutronix.de>
+
+        [WPE][Qt] Fix build failure after r270690
+        https://bugs.webkit.org/show_bug.cgi?id=223070
+
+        Reviewed by Philippe Normand.
+
+        WPE fails to build with `-DENABLE_WPE_QT_API=ON` after adapting the
+        visibility for linked frameworks done by r270690.
+
+        The reason for that is that the visibility is now more strict and we
+        have to add the WTF dependecy or drop the WTF fast-allocate mechanism.
+
+        Adding the WTF dependency is a bit odd since this would staticly link
+        the WTF lib into a small wrapper lib. Also this lib has nothing to do
+        with Webkit at all. It is just a QT adaption library.
+
+        No new tests, it can be build again.
+
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (WPEQtView::notifyLoadChangedCallback):
+        (WPEQtView::notifyLoadFailedCallback):
+        (WPEQtView::runJavaScript):
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.cpp:
+        (WPEQtViewBackend::create):
+        * UIProcess/API/wpe/qt/WPEQtViewBackend.h:
+        * UIProcess/API/wpe/qt/WPEQtViewLoadRequest.h:
+
+        Drop WTF usage and use system allocator since the lib has nothing to do
+        with Webkit at all.
+
 2021-04-20  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Remove UNUSED warnings based on the configuration.
