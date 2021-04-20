@@ -1,3 +1,18 @@
+2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        AudioSourceProviderAVFObjC uses atomic variables but also locks with mutex
+        https://bugs.webkit.org/show_bug.cgi?id=224543
+
+        Reviewed by Darin Adler.
+
+        Remove the use of std::atomic, the variables are already protected by the
+        mutex.
+
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h:
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::provideInput):
+        (WebCore::AudioSourceProviderAVFObjC::process):
+
 2021-04-20  Martin Robinson  <mrobinson@webkit.org>
 
         Re-land: Eliminate ScrollAnimatorGeneric::m_smoothAnimation

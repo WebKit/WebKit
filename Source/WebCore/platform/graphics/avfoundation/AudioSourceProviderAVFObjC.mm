@@ -110,8 +110,7 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
 
     uint64_t startFrame = 0;
     uint64_t endFrame = 0;
-    uint64_t seekTo = m_seekTo.exchange(NoSeek);
-    uint64_t writeAheadCount = m_writeAheadCount.load();
+    uint64_t seekTo = std::exchange(m_seekTo, NoSeek);
     if (seekTo != NoSeek)
         m_readCount = seekTo;
 
@@ -120,7 +119,7 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
     if (!m_readCount || m_readCount == seekTo) {
         // We have not started rendering yet. If there aren't enough frames in the buffer, then output
         // silence until there is.
-        if (endFrame <= m_readCount + writeAheadCount + framesToProcess) {
+        if (endFrame <= m_readCount + m_writeAheadCount + framesToProcess) {
             bus->zero();
             return;
         }
@@ -376,7 +375,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
         // Only check the write-ahead time when playback begins.
         m_paused = false;
         MediaTime earlyBy = rangeStart - currentTime;
-        m_writeAheadCount.store(m_tapDescription->mSampleRate * earlyBy.toDouble());
+        m_writeAheadCount = m_tapDescription->mSampleRate * earlyBy.toDouble();
     }
 
     uint64_t startFrame = 0;
@@ -386,7 +385,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     // Check to see if the underlying media has seeked, which would require us to "flush"
     // our outstanding buffers.
     if (rangeStart != m_endTimeAtLastProcess)
-        m_seekTo.store(endFrame);
+        m_seekTo = endFrame;
 
     m_startTimeAtLastProcess = rangeStart;
     m_endTimeAtLastProcess = rangeStart + rangeDuration;
@@ -394,7 +393,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     // StartOfStream indicates a discontinuity, such as when an AVPlayerItem is re-added
     // to an AVPlayer, so "flush" outstanding buffers.
     if (flagsOut && *flagsOut & kMTAudioProcessingTapFlag_StartOfStream)
-        m_seekTo.store(endFrame);
+        m_seekTo = endFrame;
 
     m_ringBuffer->store(bufferListInOut, itemCount, endFrame);
 

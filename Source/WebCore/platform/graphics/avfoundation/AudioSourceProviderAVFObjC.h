@@ -28,7 +28,6 @@
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
 #include "AudioSourceProvider.h"
-#include <atomic>
 #include <wtf/MediaTime.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -101,10 +100,10 @@ private:
 
     MediaTime m_startTimeAtLastProcess;
     MediaTime m_endTimeAtLastProcess;
-    std::atomic<uint64_t> m_writeAheadCount { 0 };
+    uint64_t m_writeAheadCount { 0 };
     uint64_t m_readCount { 0 };
     enum { NoSeek = std::numeric_limits<uint64_t>::max() };
-    std::atomic<uint64_t> m_seekTo { NoSeek };
+    uint64_t m_seekTo { NoSeek };
     bool m_paused { true };
     AudioSourceProviderClient* m_client { nullptr };
     WeakPtrFactory<AudioSourceProviderAVFObjC> m_weakFactory;
