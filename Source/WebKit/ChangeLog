@@ -1,3 +1,25 @@
+2021-04-19  Jer Noble  <jer.noble@apple.com>
+
+        [iOS] Media playback continues after backgrounding hosting application
+        https://bugs.webkit.org/show_bug.cgi?id=224776
+        <rdar://75707807>
+
+        Reviewed by Eric Carlson.
+
+        Tested by existing API test: WKWebViewPausePlayingAudioTests.OutOfWindow
+
+        When the MediaSessionHelperIOS was moved into the GPU process, no object remains listening for the
+        UIApplication{Will,Did}Enter{Foreground,Background}Notification rebroadcasted by WebPageIOS.
+
+        Rather than just rebroadcast the UIKit notification to all listeners within the WebContent process,
+        which may or may not be listening, just tell the current PlatformMediaSessionManager directly.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationWillResignActive):
+        (WebKit::WebPage::applicationDidEnterBackground):
+        (WebKit::WebPage::applicationWillEnterForeground):
+        (WebKit::WebPage::applicationDidBecomeActive):
+
 2021-04-19  Chris Dumez  <cdumez@apple.com>
 
         MotionMark's Canvas-Arcs subtest is broken if the GPUProcess is not yet running

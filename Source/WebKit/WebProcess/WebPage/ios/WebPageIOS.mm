@@ -117,6 +117,7 @@
 #import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PointerCaptureController.h>
 #import <WebCore/PointerCharacteristics.h>
@@ -3745,6 +3746,11 @@ void WebPage::updateViewportSizeForCSSViewportUnits()
 void WebPage::applicationWillResignActive()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillResignActiveNotification object:nil];
+
+    // FIXME(224775): Move to WebProcess
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationWillBecomeInactive();
+
     if (m_page)
         m_page->applicationWillResignActive();
 }
@@ -3755,6 +3761,10 @@ void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
 
     m_isSuspendedUnderLock = isSuspendedUnderLock;
     freezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
+
+    // FIXME(224775): Move to WebProcess
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationDidEnterBackground(isSuspendedUnderLock);
 
     if (m_page)
         m_page->applicationDidEnterBackground();
@@ -3774,6 +3784,10 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
 
+    // FIXME(224775): Move to WebProcess
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationWillEnterForeground(isSuspendedUnderLock);
+
     if (m_page)
         m_page->applicationWillEnterForeground();
 }
@@ -3781,6 +3795,11 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
 void WebPage::applicationDidBecomeActive()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidBecomeActiveNotification object:nil];
+
+    // FIXME(224775): Move to WebProcess
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationDidBecomeActive();
+
     if (m_page)
         m_page->applicationDidBecomeActive();
 }
