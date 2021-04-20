@@ -75,9 +75,7 @@ GPUProcessConnection& RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         auto& gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection.addClient(*this);
         gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), renderingBackendIdentifier().toUInt64(), *this);
-        // FIXME: This message shouldn't need to be synchronous (https://bugs.webkit.org/show_bug.cgi?id=224781).
-        // However, we seem to get in a bad state when this message is asynchronous and the GPUProcess has just launched.
-        gpuProcessConnection.connection().sendSync(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters), Messages::GPUConnectionToWebProcess::CreateRenderingBackend::Reply(), 0);
+        gpuProcessConnection.connection().send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         m_gpuProcessConnection = makeWeakPtr(gpuProcessConnection);
     }
     return *m_gpuProcessConnection;

@@ -409,13 +409,12 @@ RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
 }
 #endif
 
-void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& creationParameters, CompletionHandler<void()>&& completionHandler)
+void GPUConnectionToWebProcess::createRenderingBackend(RemoteRenderingBackendCreationParameters&& creationParameters)
 {
     auto addResult = m_remoteRenderingBackendMap.ensure(creationParameters.identifier, [&]() {
         return IPC::ScopedActiveMessageReceiveQueue { RemoteRenderingBackend::create(*this, WTFMove(creationParameters)) };
     });
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-    completionHandler();
 }
 
 void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifier renderingBackendIdentifier)
