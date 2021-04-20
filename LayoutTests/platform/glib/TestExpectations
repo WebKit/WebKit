@@ -2051,8 +2051,6 @@ webkit.org/b/191497 http/tests/inspector/network/getSerializedCertificate.html [
 webkit.org/b/191497 http/tests/inspector/network/resource-security-certificate.html [ Skip ]
 webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
 webkit.org/b/192407 http/tests/inspector/network/resource-security-connection.html [ Skip ]
-webkit.org/b/192883 fast/cookies/cookie-averse-document.html [ Failure ]
-webkit.org/b/192883 fast/cookies/local-file-can-set-cookies.html [ Failure ]
 webkit.org/b/192888 fast/mediastream/resize-trim.html [ Failure ]
 webkit.org/b/192900 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.htm [ Failure ]
 webkit.org/b/192903 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
@@ -2349,6 +2347,9 @@ webkit.org/b/213506 webrtc/audio-video-element-playing.html [ Crash Pass ]
 webkit.org/b/213506 webrtc/remove-track.html [ Crash Pass ]
 
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
+
+webkit.org/b/224791 fast/cookies/cookie-averse-document.html [ Crash ]
+webkit.org/b/224791 fast/cookies/local-file-can-set-cookies.html [ Crash Pass ]
 
 # End: Common failures between GTK and WPE.
 

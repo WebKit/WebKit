@@ -1,3 +1,12 @@
+2021-04-19  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update baselines and test expectations after r224791.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/http/tests/xmlhttprequest/simple-cross-origin-denied-events-post-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/xhr/send-entity-body-none-expected.txt:
+        * platform/glib/security/block-test-no-port-expected.txt:
+
 2021-04-19  Youenn Fablet  <youenn@apple.com>
 
         [mac-wk2] LayoutTest fast/mediastream/getUserMedia-webaudio.html is a flaky timeout
