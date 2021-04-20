@@ -29,7 +29,9 @@
 #if USE(CG)
 
 #include "ColorSpaceCG.h"
+#include <mutex>
 #include <wtf/Assertions.h>
+#include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TinyLRUCache.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
@@ -126,19 +128,34 @@ CGColorRef cachedCGColor(const Color& color)
     if (auto srgb = color.tryGetAsSRGBABytes()) {
         switch (PackedColor::RGBA { *srgb }.value) {
         case PackedColor::RGBA { Color::transparentBlack }.value: {
-            static NeverDestroyed<RetainPtr<CGColorRef>> transparentCGColor = createCGColor(color);
+            static LazyNeverDestroyed<RetainPtr<CGColorRef>> transparentCGColor;
+            static std::once_flag onceFlag;
+            std::call_once(onceFlag, [] {
+                transparentCGColor.construct(createCGColor(Color::transparentBlack));
+            });
             return transparentCGColor.get().get();
         }
         case PackedColor::RGBA { Color::black }.value: {
-            static NeverDestroyed<RetainPtr<CGColorRef>> blackCGColor = createCGColor(color);
+            static LazyNeverDestroyed<RetainPtr<CGColorRef>> blackCGColor;
+            static std::once_flag onceFlag;
+            std::call_once(onceFlag, [] {
+                blackCGColor.construct(createCGColor(Color::black));
+            });
             return blackCGColor.get().get();
         }
         case PackedColor::RGBA { Color::white }.value: {
-            static NeverDestroyed<RetainPtr<CGColorRef>> whiteCGColor = createCGColor(color);
+            static LazyNeverDestroyed<RetainPtr<CGColorRef>> whiteCGColor;
+            static std::once_flag onceFlag;
+            std::call_once(onceFlag, [] {
+                whiteCGColor.construct(createCGColor(Color::white));
+            });
             return whiteCGColor.get().get();
         }
         }
     }
+
+    static Lock cachedColorLock;
+    auto holder = holdLock(cachedColorLock);
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<CGColorRef>, 32>> cache;
     return cache.get().get(color).get();

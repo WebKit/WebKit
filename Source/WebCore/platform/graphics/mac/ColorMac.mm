@@ -30,6 +30,7 @@
 
 #import "LocalCurrentGraphicsContext.h"
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/Lock.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/TinyLRUCache.h>
@@ -116,19 +117,34 @@ NSColor *nsColor(const Color& color)
     if (auto srgb = color.tryGetAsSRGBABytes()) {
         switch (PackedColor::RGBA { *srgb }.value) {
         case PackedColor::RGBA { Color::transparentBlack }.value: {
-            static NeverDestroyed<RetainPtr<NSColor>> clearColor = [NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0];
+            static LazyNeverDestroyed<RetainPtr<NSColor>> clearColor;
+            static std::once_flag onceFlag;
+            std::call_once(onceFlag, [] {
+                clearColor.construct([NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:0]);
+            });
             return clearColor.get().get();
         }
         case PackedColor::RGBA { Color::black }.value: {
-            static NeverDestroyed<RetainPtr<NSColor>> blackColor = [NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1];
+            static LazyNeverDestroyed<RetainPtr<NSColor>> blackColor;
+            static std::once_flag onceFlag;
+            std::call_once(onceFlag, [] {
+                blackColor.construct([NSColor colorWithSRGBRed:0 green:0 blue:0 alpha:1]);
+            });
             return blackColor.get().get();
         }
         case PackedColor::RGBA { Color::white }.value: {
-            static NeverDestroyed<RetainPtr<NSColor>> whiteColor = [NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1];
+            static LazyNeverDestroyed<RetainPtr<NSColor>> whiteColor;
+            static std::once_flag onceFlag;
+            std::call_once(onceFlag, [] {
+                whiteColor.construct([NSColor colorWithSRGBRed:1 green:1 blue:1 alpha:1]);
+            });
             return whiteColor.get().get();
         }
         }
     }
+
+    static Lock cachedColorLock;
+    auto holder = holdLock(cachedColorLock);
 
     static NeverDestroyed<TinyLRUCache<Color, RetainPtr<NSColor>, 32>> cache;
     return cache.get().get(color).get();
