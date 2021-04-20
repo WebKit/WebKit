@@ -1,5 +1,22 @@
 2021-04-20  Marco Felsch  <m.felsch@pengutronix.de>
 
+        [WPE] QML WPEView dynamic loading fails
+        https://bugs.webkit.org/show_bug.cgi?id=224814
+
+        Reviewed by Philippe Normand.
+
+        The scene graph can be initialized when we receive window handle change
+        notification and so we will not receive a scenegraph initialization
+        notification. In such case we need to initzialize it ourself.
+
+        No new tests. Testing can be done if the WPEView is moved to a
+        QML component which gets loaded later on demand.
+
+        * UIProcess/API/wpe/qt/WPEQtView.cpp:
+        (WPEQtView::configureWindow):
+
+2021-04-20  Marco Felsch  <m.felsch@pengutronix.de>
+
         [WPE][Qt] Fix build failure after r270690
         https://bugs.webkit.org/show_bug.cgi?id=223070
 
