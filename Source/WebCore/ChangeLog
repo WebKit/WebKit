@@ -1,3 +1,47 @@
+2021-04-20  Martin Robinson  <mrobinson@webkit.org>
+
+        Re-land: Eliminate ScrollAnimatorGeneric::m_smoothAnimation
+        https://bugs.webkit.org/show_bug.cgi?id=222588
+
+        Reviewed by Žan Doberšek.
+
+        No new tests. This change should not change behavior.
+
+        Eliminate the extra ScrollAnimationSmooth in ScrollAnimatorGeneric. The base
+        class already knows how to do scroll animations for programmatic scrolls,
+        so we can reuse that animation for doing ScrollAnimator::scroll(...). This
+        makes the code easier to understand and should simplify managing interactions
+        between the different animations in the future.
+
+        Changes since first version: Now only update the current position of the animation
+        if it is not active. This is the behavior that was used in ScrollAnimatorGeneric
+        and is the correct behavior when using ScrollAnimationSmooth.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator): Renamed m_animationProgrammaticScroll
+        to m_scrollAnimation. The more generic name reflects the fact that it is also
+        used for doing scrolling from UI interaction now.
+        (WebCore::ScrollAnimator::scroll): Use the ScrollAnimationSmooth member to do
+        animated scrolls when necessary.
+        (WebCore::ScrollAnimator::scrollToPositionWithoutAnimation): Make sure the animation
+        is up to date with the current position when scrolling without it. This is
+        how ScrollAnimatorGeneric treated its ScrollAnimationSmooth.
+        (WebCore::ScrollAnimator::scrollToPositionWithAnimation): Rename member.
+        (WebCore::ScrollAnimator::cancelAnimations): Ditto.
+        (WebCore::ScrollAnimator::willEndLiveResize): Ditto.
+        (WebCore::ScrollAnimator::didAddVerticalScrollbar): Ditto.
+        (WebCore::ScrollAnimator::didAddHorizontalScrollbar): Ditto.
+        * platform/ScrollAnimator.h: Ditto.
+        * platform/generic/ScrollAnimatorGeneric.cpp:
+        (WebCore::ScrollAnimatorGeneric::ScrollAnimatorGeneric): Eliminate ScrollAnimationSmooth.
+        (WebCore::ScrollAnimatorGeneric::scrollToPositionWithoutAnimation): Ditto.
+        (WebCore::ScrollAnimatorGeneric::didAddVerticalScrollbar): Ditto.
+        (WebCore::ScrollAnimatorGeneric::didAddHorizontalScrollbar): Ditto.
+        (WebCore::ScrollAnimatorGeneric::ensureSmoothScrollingAnimation): Deleted.
+        (WebCore::ScrollAnimatorGeneric::scroll): Deleted.
+        (WebCore::ScrollAnimatorGeneric::willEndLiveResize): Deleted.
+        * platform/generic/ScrollAnimatorGeneric.h:
+
 2021-04-20  Chris Lord  <clord@igalia.com>
 
         Don't use the full CSS parser for CSSFontFaceSet
