@@ -1,3 +1,17 @@
+2021-04-20  Tim Nguyen  <ntim@apple.com>
+
+        Implement CSS display property 2-value syntax
+        https://bugs.webkit.org/show_bug.cgi?id=224574
+
+        Reviewed by Darin Adler.
+
+        Except for list-item which doesn't have layout support for different variants.
+        Also fix a WPT to expect the most backwards-compatible form for `display: flow` computed value.
+
+        Test: web-platform-tests/css/css-display/parsing/display-valid.html
+
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style-expected.txt:
+
 2021-04-20  Diego Pino Garcia  <dpino@igalia.com>
 
         [WPE] Unreviewed test gardening. Update baselines and test expectations of recent failures.

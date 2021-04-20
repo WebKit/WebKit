@@ -473,6 +473,7 @@ contents
 grid
 inline-grid
 flow-root
+flow
 //none
 //
 // CSS_PROP_CURSOR:

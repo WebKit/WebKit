@@ -380,6 +380,103 @@ bool CSSPropertyParser::consumePerspectiveOrigin(bool important)
 }
 
 // Methods for consuming non-shorthand properties starts here.
+static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
+{
+    // Parse single keyword values
+    auto singleKeyword = consumeIdent<
+        // <display-box>
+        CSSValueContents,
+        CSSValueNone,
+        // <display-internal>
+        CSSValueTableCaption,
+        CSSValueTableCell,
+        CSSValueTableColumnGroup,
+        CSSValueTableColumn,
+        CSSValueTableHeaderGroup,
+        CSSValueTableFooterGroup,
+        CSSValueTableRow,
+        CSSValueTableRowGroup,
+        // <display-legacy>
+        CSSValueInlineBlock,
+        CSSValueInlineFlex,
+        CSSValueInlineGrid,
+        CSSValueInlineTable,
+        // Prefixed values
+        CSSValueWebkitInlineBox,
+        CSSValueWebkitBox,
+        CSSValueWebkitInlineFlex,
+        CSSValueWebkitFlex,
+        // No layout support for the full <display-listitem> syntax, so treat it as <display-legacy>
+        CSSValueListItem
+    >(range);
+
+    if (singleKeyword)
+        return singleKeyword;
+
+    // Empty value, stop parsing
+    if (range.atEnd())
+        return nullptr;
+
+    // Parse [ <display-outside> || <display-inside> ]
+    Optional<CSSValueID> parsedDisplayOutside;
+    Optional<CSSValueID> parsedDisplayInside;
+    while (!range.atEnd()) {
+        auto nextValueID = range.peek().id();
+        switch (nextValueID) {
+        // <display-outside>
+        case CSSValueBlock:
+        case CSSValueInline:
+            if (parsedDisplayOutside)
+                return nullptr;
+            parsedDisplayOutside = nextValueID;
+            break;
+        // <display-inside>
+        case CSSValueFlex:
+        case CSSValueFlow:
+        case CSSValueFlowRoot:
+        case CSSValueGrid:
+        case CSSValueTable:
+            if (parsedDisplayInside)
+                return nullptr;
+            parsedDisplayInside = nextValueID;
+            break;
+        default:
+            return nullptr;
+        }
+        consumeIdent(range);
+    }
+
+    // Set defaults when one of the two values are unspecified
+    CSSValueID displayOutside = parsedDisplayOutside.valueOr(CSSValueBlock);
+    CSSValueID displayInside = parsedDisplayInside.valueOr(CSSValueFlow);
+
+    auto selectShortValue = [&]() -> CSSValueID {
+        if (displayOutside == CSSValueBlock) {
+            // Alias display: flow to display: block
+            return displayInside == CSSValueFlow ? CSSValueBlock : displayInside;
+        }
+
+        // Convert `display: inline <display-inside>` to the equivalent short value
+        switch (displayInside) {
+        case CSSValueFlex:
+            return CSSValueInlineFlex;
+        case CSSValueFlow:
+            return CSSValueInline;
+        case CSSValueFlowRoot:
+            return CSSValueInlineBlock;
+        case CSSValueGrid:
+            return CSSValueInlineGrid;
+        case CSSValueTable:
+            return CSSValueInlineTable;
+        default:
+            ASSERT_NOT_REACHED();
+            return CSSValueInline;
+        }
+    };
+
+    return CSSValuePool::singleton().createValue(selectShortValue());
+}
+
 static RefPtr<CSSValue> consumeWillChange(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueAuto)
@@ -3884,6 +3981,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
             return nullptr;
     }
     switch (property) {
+    case CSSPropertyDisplay:
+        return consumeDisplay(m_range);
     case CSSPropertyWillChange:
         return consumeWillChange(m_range);
     case CSSPropertyPage:

@@ -631,13 +631,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueOptimizeQuality;
     case CSSPropertyDirection: // ltr | rtl
         return valueID == CSSValueLtr || valueID == CSSValueRtl;
-    case CSSPropertyDisplay:
-        // inline | block | list-item | inline-block | table |
-        // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
-        // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none
-        // flex | inline-flex | -webkit-flex | -webkit-inline-flex | grid | inline-grid
-        return (valueID >= CSSValueInline && valueID <= CSSValueContents) || valueID == CSSValueNone
-            || valueID == CSSValueGrid || valueID == CSSValueInlineGrid || valueID == CSSValueFlowRoot;
     case CSSPropertyDominantBaseline:
         // auto | use-script | no-change | reset-size | ideographic |
         // alphabetic | hanging | mathematical | central | middle |
@@ -929,7 +922,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitColumnProgression:
     case CSSPropertyColumnRuleStyle:
     case CSSPropertyDirection:
-    case CSSPropertyDisplay:
     case CSSPropertyEmptyCells:
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:
