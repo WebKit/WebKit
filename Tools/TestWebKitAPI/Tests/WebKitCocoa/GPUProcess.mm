@@ -115,7 +115,7 @@ TEST(GPUProcess, RelaunchOnCrash)
     EXPECT_TRUE([webView _isPlayingAudio]);
 }
 
-TEST(GPUProcess, DISABLED_WebProcessTerminationAfterTooManyGPUProcessCrashes)
+TEST(GPUProcess, WebProcessTerminationAfterTooManyGPUProcessCrashes)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));

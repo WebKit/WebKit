@@ -79,8 +79,8 @@ private:
     void stopRenderingThread();
     void renderQuantum();
 
-    RemoteAudioDestinationIdentifier destinationID();
-    GPUProcessConnection& ensureGPUProcessConnection();
+    IPC::Connection* connection();
+    IPC::Connection* existingConnection();
 
     // GPUProcessConnection::Client.
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
