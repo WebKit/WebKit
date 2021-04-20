@@ -31,7 +31,7 @@
           (coverage rect -8.00, -8.00 800.00 x 600.00)
           (intersects coverage rect 1)
           (contentsScale 2.00)
-          (contents layer
+          (contents layer (background color)
             (position 0.00 0.00)
             (bounds 44.00 42.00)
           )

@@ -425,6 +425,7 @@ public:
         // Values need to be kept in sync with Internals.idl.
         PLATFORM_LAYER_TREE_DEBUG = 1,
         PLATFORM_LAYER_TREE_IGNORES_CHILDREN = 2,
+        PLATFORM_LAYER_TREE_INCLUDE_OPACITY = 4,
     };
     ExceptionOr<String> platformLayerTreeAsText(Element&, unsigned short flags) const;
 

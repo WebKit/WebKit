@@ -13,7 +13,7 @@
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
-          (contents layer
+          (contents layer (media)
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
@@ -27,7 +27,7 @@
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
-          (contents layer
+          (contents layer (media)
             (position 22.00 12.00)
             (bounds 120.00 200.00)
           )
@@ -37,7 +37,7 @@
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
-          (contents layer
+          (contents layer (media)
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
@@ -51,7 +51,7 @@
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
-          (contents layer
+          (contents layer (media)
             (position -8.00 -8.00)
             (bounds 120.00 200.00)
           )
@@ -61,7 +61,7 @@
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
-          (contents layer
+          (contents layer (media)
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
@@ -71,7 +71,7 @@
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
-          (contents layer
+          (contents layer (media)
             (position 2.00 57.00)
             (bounds 120.00 90.00)
           )
@@ -85,7 +85,7 @@
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
-          (contents layer
+          (contents layer (media)
             (position 22.00 12.00)
             (bounds 120.00 90.00)
           )
@@ -95,7 +95,7 @@
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
-          (contents layer
+          (contents layer (media)
             (position 2.00 30.00)
             (bounds 120.00 90.00)
           )
@@ -109,7 +109,7 @@
             (position 2.00 2.00)
             (bounds 120.00 200.00)
           )
-          (contents layer
+          (contents layer (media)
             (position -8.00 102.00)
             (bounds 120.00 90.00)
           )
@@ -119,7 +119,7 @@
           (bounds 124.00 204.00)
           (contentsOpaque 1)
           (drawsContent 1)
-          (contents layer
+          (contents layer (media)
             (position 2.00 101.00)
             (bounds 120.00 90.00)
           )

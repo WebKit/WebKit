@@ -1,0 +1,13 @@
+ (platform layer
+  (position 158.00 83.00)
+  (bounds 300.00 150.00)
+  (opacity 0.50)
+  (children
+    (contents layer (model)
+      (position 0.00 0.00)
+      (bounds 300.00 150.00)
+      (opacity 0.50)
+    )
+  )
+)
+

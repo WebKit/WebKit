@@ -1,5 +1,12 @@
 <!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
 <html>
+<head>
+    <style>
+        model {
+            opacity: 0.5;
+        }
+    </style>
+</head>
 <body>
 <model id="model">
     <source src="resources/heart.usdz">
@@ -18,7 +25,7 @@
 
     model.ready.then(value => {
         if (window.testRunner)
-            layers.innerText = window.internals.layerTreeAsText(document);
+            layers.innerText = window.internals.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_OPACITY);
         model.remove();
     }, reason => {
         layers.textContent = `Failed. Model did not load: ${reason}`;

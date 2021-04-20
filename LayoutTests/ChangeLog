@@ -1,3 +1,30 @@
+2021-04-20  Sam Weinig  <weinig@apple.com>
+
+        Separated models don't get opacity set on them at all
+        https://bugs.webkit.org/show_bug.cgi?id=224763
+
+        Reviewed by Tim Horton.
+
+        Add new test which use the macOS/iOS only platformLayerTreeAsText
+        internals function to show that opacity is getting set on the content
+        layer. 
+
+        * model-element/model-element-graphics-layers-opacity-expected.txt: Added.
+        * model-element/model-element-graphics-layers-opacity.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * platform/win/TestExpectations:
+
+        * compositing/video/video-object-position-expected.txt:
+        * compositing/visible-rect/mask-layer-coverage-expected.txt:
+        * fullscreen/full-screen-layer-dump-expected.txt:
+        * platform/ios/compositing/video/video-object-position-expected.txt:
+        * platform/ios/compositing/visible-rect/mask-layer-coverage-expected.txt:
+        * platform/mac/compositing/images/direct-image-object-fit-expected.txt:
+        * platform/mac/compositing/reflections/direct-image-object-fit-reflected-expected.txt:
+        * platform/mac/compositing/video/video-object-fit-expected.txt:
+        Update results for update content layer type dumping.
+
 2021-04-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Preconnect tasks and preflight checks do not correctly mark app-bound context string

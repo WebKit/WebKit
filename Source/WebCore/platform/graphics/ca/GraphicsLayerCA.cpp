@@ -1242,6 +1242,8 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
 
     if (contentsLayerChanged)
         noteSublayersChanged();
+
+    noteLayerPropertyChanged(OpacityChanged);
 }
 #endif
 
@@ -3941,8 +3943,24 @@ const char* GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) co
         return "shape mask layer";
     if (&layer == m_backdropClippingLayer.get())
         return "backdrop clipping layer";
-    if (&layer == m_contentsLayer.get())
-        return "contents layer";
+    if (&layer == m_contentsLayer.get()) {
+        switch (m_contentsLayerPurpose) {
+        case ContentsLayerPurpose::None:
+            return "contents layer (none)";
+        case ContentsLayerPurpose::Image:
+            return "contents layer (image)";
+        case ContentsLayerPurpose::Media:
+            return "contents layer (media)";
+        case ContentsLayerPurpose::Canvas:
+            return "contents layer (canvas)";
+        case ContentsLayerPurpose::BackgroundColor:
+            return "contents layer (background color)";
+        case ContentsLayerPurpose::Plugin:
+            return "contents layer (plugin)";
+        case ContentsLayerPurpose::Model:
+            return "contents layer (model)";
+        }
+    }
     if (&layer == m_contentsShapeMaskLayer.get())
         return "contents shape mask layer";
     if (&layer == m_backdropLayer.get())
@@ -3965,6 +3983,9 @@ void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, Opt
 
         ts << indent << "(position " << layer->position().x() << " " << layer->position().y() << ")\n";
         ts << indent << "(bounds " << layer->bounds().width() << " " << layer->bounds().height() << ")\n";
+        
+        if (flags.contains(PlatformLayerTreeAsTextFlags::IncludeOpacity))
+            ts << indent << "(opacity " << layer->opacity() << ")\n";
 
         if (layer->isHidden())
             ts << indent << "(hidden)\n";
@@ -4391,6 +4412,11 @@ void GraphicsLayerCA::updateOpacityOnLayer()
             clone.value->setOpacity(m_opacity);
         }
     }
+
+#if ENABLE(MODEL_ELEMENT)
+    if (m_contentsLayer && m_contentsLayerPurpose == ContentsLayerPurpose::Model)
+        m_contentsLayer->setOpacity(m_opacity);
+#endif
 }
 
 void GraphicsLayerCA::deviceOrPageScaleFactorChanged()

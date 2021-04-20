@@ -1,3 +1,33 @@
+2021-04-20  Sam Weinig  <weinig@apple.com>
+
+        Separated models don't get opacity set on them at all
+        https://bugs.webkit.org/show_bug.cgi?id=224763
+
+        Reviewed by Tim Horton.
+
+        Test: model-element/model-element-graphics-layers-opacity.html
+
+        This certainly won't be the way things land once separated/optimized
+        layer semantics are better understood, but for now, it is useful to
+        explicitly propogate the opacity of the owing layer to the content
+        layer if the content layer is a model layer. In the future, we may want
+        to do this for any separated child (and conversely, only to the content
+        layer if it is separated), but this will allow us to play a bit futher
+        in our experimentation.
+
+        Also adds support for dumping the opacity of a content layer to make
+        this testable.
+
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToModel):
+        (WebCore::GraphicsLayerCA::purposeNameForInnerLayer const):
+        (WebCore::GraphicsLayerCA::dumpInnerLayer const):
+        * testing/Internals.cpp:
+        (WebCore::toPlatformLayerTreeFlags):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-04-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Preconnect tasks and preflight checks do not correctly mark app-bound context string

@@ -24,7 +24,7 @@
             (position 0.00 0.00)
             (bounds 200.00 120.00)
           )
-          (contents layer
+          (contents layer (image)
             (position -20.00 0.00)
             (bounds 240.00 120.00)
           )
@@ -42,7 +42,7 @@
             (position 372.00 88.00)
             (bounds 200.00 120.00)
           )
-          (contents layer
+          (contents layer (image)
             (position 0.00 10.00)
             (bounds 200.00 100.00)
           )
@@ -64,7 +64,7 @@
             (position 0.00 0.00)
             (bounds 200.00 120.00)
           )
-          (contents layer
+          (contents layer (image)
             (position -44.00 -12.00)
             (bounds 288.00 144.00)
           )
