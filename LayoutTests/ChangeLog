@@ -1,3 +1,19 @@
+2021-04-19  Antti Koivisto  <antti@apple.com>
+
+        Render tree updates for Text node content mutations should happen during rendering update
+        https://bugs.webkit.org/show_bug.cgi?id=222406
+        <rdar://problem/74822830>
+
+        Reviewed by Simon Fraser.
+
+        These are progressions.
+
+        * fast/text/splitText-dirty-lines-expected.txt:
+        * fast/text/text-combine-surroundContents-crash-expected.txt:
+        * imported/blink/fast/css/first-letter-range-insert-expected.txt:
+
+        Here we were actually drawing text that didn't exist in DOM anymore.
+
 2021-04-19  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Gardened flaky failures after r224791.

@@ -49,7 +49,7 @@ class Resolver;
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TreeResolverScope);
 class TreeResolver {
 public:
-    TreeResolver(Document&);
+    TreeResolver(Document&, std::unique_ptr<Update> = { });
     ~TreeResolver();
 
     std::unique_ptr<Update> resolve();

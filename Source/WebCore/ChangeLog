@@ -1,3 +1,79 @@
+2021-04-19  Antti Koivisto  <antti@apple.com>
+
+        Render tree updates for Text node content mutations should happen during rendering update
+        https://bugs.webkit.org/show_bug.cgi?id=222406
+        <rdar://problem/74822830>
+
+        Reviewed by Simon Fraser.
+
+        Calls to Text.insertData and similar should not mutate render tree synchronously.
+        Instead render tree should be updated during the next rendering update along with
+        any style changes.
+
+        These updates already go via RenderTreeUpdater. We just need to save the information
+        about which nodes need updating so the next rendering update can pick them up.
+
+        This seems to help with some performance benchmarks.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::setDataAndUpdate):
+
+        Move in-tree check to the updateRendererAfterContentChange and make it use isConnected().
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        (WebCore::Document::resolveStyle):
+
+        Include the text update when updating the render tree.
+
+        (WebCore::Document::updateTextRenderer):
+
+        Create a text update that will get flushed during the next rendering update.
+
+        (WebCore::Document::needsStyleRecalc const):
+
+        We need to recalc if there are pending text updates.
+
+        * dom/Document.h:
+        * dom/Text.cpp:
+        (WebCore::Text::splitText):
+
+        Use updateRendererAfterContentChange instead of poking render tree directly.
+
+        (WebCore::Text::updateRendererAfterContentChange):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::TreeResolver):
+        (WebCore::Style::TreeResolver::resolve):
+        * style/StyleTreeResolver.h:
+        (WebCore::Style::TreeResolver::TreeResolver):
+        * style/StyleUpdate.cpp:
+        (WebCore::Style::Update::addText):
+
+        Merge text updates.
+
+        (WebCore::Style::Update::addPossibleRoot):
+        * style/StyleUpdate.h:
+        (WebCore::Style::Update::roots const):
+        (WebCore::Style::Update:: const): Deleted.
+
+        Refcount the nodes since this now has longer lifetime.
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::deleteInsignificantText):
+
+        Ensure we leave deleteInsignificantText with updated render tree. Clients expect that.
+        Do layout (instead of just style update) for consistency, deleteInsignificantText does one anyway in beginning.
+
+        * editing/markup.cpp:
+        (WebCore::replaceChildrenWithFragment):
+
+        Pending text update may ref the node so this refcount assert is not correct.
+
+        * style/StyleUpdate.cpp:
+        (WebCore::Style::Update::addText):
+
 2021-04-19  Said Abou-Hallawa  <said@apple.com>
 
         cachedCGColor() and nsColor() are not thread-safe
