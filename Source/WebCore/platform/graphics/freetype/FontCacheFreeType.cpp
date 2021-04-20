@@ -246,6 +246,8 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 #ifdef FC_COLOR
         if (preferColoredFont == PreferColoredFont::Yes)
             FcPatternAddBool(pattern.get(), FC_COLOR, FcTrue);
+#else
+        UNUSED_VARIABLE(preferColoredFont);
 #endif
         if (!configurePatternForFontDescription(pattern.get(), description))
             return nullptr;

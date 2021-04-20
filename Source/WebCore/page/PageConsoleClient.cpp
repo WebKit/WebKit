@@ -289,6 +289,8 @@ static Optional<String> snapshotCanvas(HTMLCanvasElement& canvasElement, CanvasR
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(canvasRenderingContext))
         downcast<WebGLRenderingContextBase>(canvasRenderingContext).setPreventBufferClearForInspector(true);
+#else
+    UNUSED_PARAM(canvasRenderingContext);
 #endif
 
     auto result = canvasElement.toDataURL("image/png"_s);

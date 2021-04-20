@@ -536,7 +536,9 @@ void ResourceLoadStatisticsStore::debugLogDomainsInBatches(const char* action, c
     Vector<RegistrableDomain> batch;
     batch.reserveInitialCapacity(maxNumberOfDomainsInOneLogStatement);
     auto batchNumber = 1;
+#if !RELEASE_LOG_DISABLED
     unsigned numberOfBatches = std::ceil(domains.size() / static_cast<float>(maxNumberOfDomainsInOneLogStatement));
+#endif
 
     for (auto& domain : domains) {
         if (batch.size() == maxNumberOfDomainsInOneLogStatement) {

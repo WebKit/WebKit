@@ -1,3 +1,28 @@
+2021-04-20  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Remove UNUSED warnings based on the configuration.
+        https://bugs.webkit.org/show_bug.cgi?id=224787
+
+        Reviewed by Darin Adler.
+
+        Added UNUSED_VARIABLE or its variant to suppress warnings based on the configuration.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp:
+        (WebKit::ResourceLoadStatisticsStore::debugLogDomainsInBatches):
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::prepareToSuspend):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestStorageSpace):
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::scheduleLoadFromNetworkProcess):
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::installServiceWorker):
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp:
+        (WebKit::pageIDFromWebFrame):
+        (WebKit::frameIDFromWebFrame):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::prepareToSuspend):
+
 2021-04-20  Chris Dumez  <cdumez@apple.com>
 
         Make sure we don't exit the GPUProcess too frequently while under memory pressure
