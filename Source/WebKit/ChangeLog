@@ -1,5 +1,25 @@
 2021-04-20  Chris Dumez  <cdumez@apple.com>
 
+        Make sure we don't exit the GPUProcess too frequently while under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=224798
+
+        Reviewed by Darin Adler.
+
+        We've recently started to exit the GPUProcess if idle and under memory pressure, in order
+        to save memory. This is great but we wouldn't want to repeatedly exit and relaunch the
+        GPUProcess while under memory pressure either. To address this, I am adding a condition to
+        GPUProcess::canExitUnderMemoryPressure() to make sure we don't exit the GPUProcess if it's
+        been running for less than 5 seconds.
+
+        To avoid generating flakiness in our benchmarks and API tests, I am disabling this condition
+        if the memory pressure is simulated (via `notifyutil -p org.WebKit.lowMemory`).
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::canExitUnderMemoryPressure const):
+        * GPUProcess/GPUProcess.h:
+
+2021-04-20  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, reverting r276271.
 
         It did not fix the Canvas-Arcs subtest on the bots

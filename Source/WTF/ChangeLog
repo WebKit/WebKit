@@ -1,3 +1,16 @@
+2021-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we don't exit the GPUProcess too frequently while under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=224798
+
+        Reviewed by Darin Adler.
+
+        Add member function to the MemoryPressureHandler to indicate if we're currently simulating memory
+        pressure or not.
+
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::isSimulatingMemoryPressure const):
+
 2021-04-19  Darin Adler  <darin@apple.com>
 
         Refactor sorted array mapping machinery in LocaleToScriptMapping.cpp for reuse elsewhere

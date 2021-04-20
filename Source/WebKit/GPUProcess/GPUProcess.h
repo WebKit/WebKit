@@ -33,6 +33,7 @@
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
@@ -149,6 +150,7 @@ private:
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
+    MonotonicTime m_creationTime { MonotonicTime::now() };
 
 #if ENABLE(MEDIA_STREAM)
     struct MediaCaptureAccess {

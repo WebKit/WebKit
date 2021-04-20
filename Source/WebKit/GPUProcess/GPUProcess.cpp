@@ -129,6 +129,12 @@ bool GPUProcess::shouldTerminate()
 bool GPUProcess::canExitUnderMemoryPressure() const
 {
     ASSERT(isMainRunLoop());
+    // To avoid exiting the GPUProcess too aggressively while under memory pressure, we don't exit if we've been running
+    // for less than 5 seconds. In case of simulated memory pressure, we ignore this rule to avoid generating flakiness
+    // in our benchmarks and tests.
+    if ((MonotonicTime::now() - m_creationTime) < 5_s && !MemoryPressureHandler::singleton().isSimulatingMemoryPressure())
+        return false;
+
     for (auto& webProcessConnection : m_webProcessConnections.values()) {
         if (!webProcessConnection->allowsExitUnderMemoryPressure())
             return false;
