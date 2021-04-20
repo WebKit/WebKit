@@ -866,6 +866,8 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
 void DeleteSelectionCommand::removeRedundantBlocks()
 {
     auto node = makeRefPtr(m_endingPosition.containerNode());
+    if (!node)
+        return;
     auto rootNode = makeRefPtr(node->rootEditableElement());
    
     while (node && node != rootNode) {

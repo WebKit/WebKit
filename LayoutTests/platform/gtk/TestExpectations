@@ -1012,8 +1012,6 @@ webkit.org/b/207605 [ Debug ] http/tests/workers/service/postmessage-after-termi
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
-webkit.org/b/223960 editing/execCommand/insert-image-in-composed-list.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
