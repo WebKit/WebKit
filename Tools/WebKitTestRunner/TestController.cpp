@@ -1075,6 +1075,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
         updateLiveDocumentsAfterTest();
 #if PLATFORM(COCOA)
         clearApplicationBundleIdentifierTestingOverride();
+        clearAppBoundNavigationData();
 #endif
         clearBundleIdentifierInNetworkProcess();
     }
@@ -2671,6 +2672,10 @@ void TestController::removeAllSessionCredentials()
 }
 
 void TestController::appBoundRequestContextDataForDomain(WKStringRef)
+{
+}
+
+void TestController::clearAppBoundNavigationData()
 {
 }
 

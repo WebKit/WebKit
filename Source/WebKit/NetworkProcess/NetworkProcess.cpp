@@ -1378,6 +1378,7 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
     NetworkLoadParameters parameters;
     parameters.request = ResourceRequest { url };
     parameters.request.setIsAppBound(lastNavigationWasAppBound == LastNavigationWasAppBound::Yes);
+    parameters.request.setFirstPartyForCookies(url);
     parameters.webPageProxyID = webPageProxyID;
     parameters.webPageID = webPageID;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;

@@ -399,6 +399,19 @@ void TestController::appBoundRequestContextDataForDomain(WKStringRef domain)
     }];
 }
 
+void TestController::clearAppBoundNavigationData()
+{
+    auto* parentView = mainWebView();
+    if (!parentView)
+        return;
+
+    __block bool doneClearing = false;
+    [m_mainWebView->platformView() _clearAppBoundNavigationData:^{
+        doneClearing = true;
+    }];
+    platformRunUntil(doneClearing, noTimeout);
+}
+
 void TestController::injectUserScript(WKStringRef script)
 {
     auto userScript = adoptNS([[WKUserScript alloc] initWithSource: toWTFString(script) injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO]);

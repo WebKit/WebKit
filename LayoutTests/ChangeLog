@@ -1,3 +1,25 @@
+2021-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preconnect tasks and preflight checks do not correctly mark app-bound context string
+        https://bugs.webkit.org/show_bug.cgi?id=224779
+        <rdar://problem/76738879>
+
+        Reviewed by Brent Fulgham.
+
+        Layout test coverage.
+
+        * http/tests/in-app-browser-privacy/context-string-for-subframe.html:
+        Drive by fix to create the subframe with JS so we can add a dummy
+        parameter to avoid caching and causing flakiness. Found this while
+        testing for flakiness in new tests.
+
+        * http/tests/in-app-browser-privacy/context-string-preconnect-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/context-string-preconnect.html: Added.
+        * http/tests/in-app-browser-privacy/context-string-preflight-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/context-string-preflight.html: Added.
+        Test an unsuccessful preflight request so a real request doesn't
+        override the stored context data for testing purposes. 
+
 2021-04-20  Cameron McCormack  <heycam@apple.com>
 
         Add test for line breaking around inline-blocks.

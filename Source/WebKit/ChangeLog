@@ -1,3 +1,29 @@
+2021-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preconnect tasks and preflight checks do not correctly mark app-bound context string
+        https://bugs.webkit.org/show_bug.cgi?id=224779
+        <rdar://problem/76738879>
+
+        Reviewed by Brent Fulgham.
+
+        We are using request.firstPartyForCookies() to set the app-bound request
+        context as of https://bugs.webkit.org/show_bug.cgi?id=224311. Some
+        cases like preconnect tasks and CORS preflight requests don't set this
+        value because it is not needed for cookie purposes. Since we are now
+        using it for app-bound requests, and the context is needed for all
+        network connections, even those that don't send bytes, we should set
+        the firstPartyForCookies for these cases.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::preconnectTo):
+        This is the code path for preconnecting to the main resource load, so
+        we can use the given URL as the first party.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::preconnectTo):
+        This is the code path for sub resources. We should use the document
+        firstPartyForCookies value.
+
 2021-04-20  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Update date/time picker appearance

@@ -1,3 +1,18 @@
+2021-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preconnect tasks and preflight checks do not correctly mark app-bound context string
+        https://bugs.webkit.org/show_bug.cgi?id=224779
+        <rdar://problem/76738879>
+
+        Reviewed by Brent Fulgham.
+
+        Tests: http/tests/in-app-browser-privacy/context-string-preconnect.html
+               http/tests/in-app-browser-privacy/context-string-preflight.html
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::createAccessControlPreflightRequest):
+        CORS preflight case.
+
 2021-04-20  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Update date/time picker appearance

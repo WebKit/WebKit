@@ -1,3 +1,20 @@
+2021-04-20  Kate Cheney  <katherine_cheney@apple.com>
+
+        Preconnect tasks and preflight checks do not correctly mark app-bound context string
+        https://bugs.webkit.org/show_bug.cgi?id=224779
+        <rdar://problem/76738879>
+
+        Reviewed by Brent Fulgham.
+
+        We should clear data between tests to avoid flakiness or failures.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::clearAppBoundNavigationData):
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::clearAppBoundNavigationData):
+
 2021-04-20  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Remove warnings for unused parameter.

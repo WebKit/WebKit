@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("Tests that preconnect tasks get marked with the proper context string.");
+jsTestIsAsync = true;
+
+var preconnectLinkDomain = "localhost";
+var contextHost = "127.0.0.1";
+
+function askForContextStringForPreconnect() {
+    testRunner.appBoundRequestContextDataForDomain(preconnectLinkDomain, function (contextData) {
+        if (contextData == null) {
+            askForContextStringForPreconnect();
+            return;
+        }
+
+        if (contextData == contextHost)
+            testPassed("Context string for preconnect correctly captured.");
+        else
+            testFailed("Context string for preconnect NOT correctly captured.");
+
+        finishJSTest();
+    });
+}
+
+internals.setConsoleMessageListener(function() {
+    askForContextStringForPreconnect();
+});
+
+const testLink = document.createElement("link");
+testLink.rel = "preconnect";
+testLink.href = "http://localhost:8000";
+document.head.appendChild(testLink);
+</script>
+</body>
+</html>

@@ -1787,6 +1787,8 @@ http/tests/in-app-browser-privacy/ [ Pass ]
 
 # Some In-App Browser Privacy tests rely on functions in WebKitAdditions.
 http/tests/in-app-browser-privacy/context-string-for-subframe.html [ Skip ]
+http/tests/in-app-browser-privacy/context-string-preconnect.html [ Skip ]
+http/tests/in-app-browser-privacy/context-string-preflight.html [ Skip ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 

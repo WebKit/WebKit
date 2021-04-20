@@ -88,6 +88,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     preflightRequest.setHTTPMethod("OPTIONS");
     preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestMethod, request.httpMethod());
     preflightRequest.setPriority(request.priority());
+    preflightRequest.setFirstPartyForCookies(request.firstPartyForCookies());
     if (!referrer.isNull())
         preflightRequest.setHTTPReferrer(referrer);
 
