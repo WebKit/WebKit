@@ -1,3 +1,13 @@
+2021-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        Fix use-after-move introduced in r275407
+        https://bugs.webkit.org/show_bug.cgi?id=224045
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+
 2021-04-20  Marco Felsch  <m.felsch@pengutronix.de>
 
         [WPE] QML WPEView dynamic loading fails

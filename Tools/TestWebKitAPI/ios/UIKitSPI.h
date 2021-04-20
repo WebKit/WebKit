@@ -308,4 +308,11 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)_share:(id)sender;
 @end
 
+@interface UIWebGeolocationPolicyDecider : NSObject
+@end
+
+@interface UIWebGeolocationPolicyDecider ()
++ (instancetype)sharedPolicyDecider;
+@end
+
 #endif // PLATFORM(IOS_FAMILY)

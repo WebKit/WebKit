@@ -197,7 +197,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
         return;
     }
 
-    auto policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTFMove(request.completionHandler)]);
+    auto policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTFMove(decisionHandler)]);
     WebKit::decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin::create(request.url).get(), request.url, policyListener.get(), request.view.get());
 }
 
