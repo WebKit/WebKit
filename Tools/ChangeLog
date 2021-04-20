@@ -1,3 +1,18 @@
+2021-04-20  Aakash Jain  <aakash_jain@apple.com>
+
+        Switch commit-queue back to git.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=224762
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/factories.py:
+        (CommitQueueFactory.__init__): Use git.webkit.org for Commit-Queue.
+        * CISupport/ews-build/factories_unittest.py:
+        (TestCommitQueueFactory.test_commit_queue_factory): Updated unit-tests.
+        * CISupport/ews-build/steps.py:
+        (CheckOutSource.__init__):
+        (PushCommitToWebKitRepo.evaluateCommand):
+
 2021-04-20  Alex Christensen  <achristensen@webkit.org>
 
         Fix use-after-move introduced in r275407

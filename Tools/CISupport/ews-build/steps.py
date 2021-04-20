@@ -109,9 +109,8 @@ class CheckOutSource(git.Git):
     CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
     haltOnFailure = False
 
-    def __init__(self, **kwargs):
-        self.repourl = 'https://github.com/WebKit/WebKit.git'
-        super(CheckOutSource, self).__init__(repourl=self.repourl,
+    def __init__(self, repourl='https://github.com/WebKit/WebKit.git', **kwargs):
+        super(CheckOutSource, self).__init__(repourl=repourl,
                                                 retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
                                                 timeout=2 * 60 * 60,
                                                 alwaysUseLatest=True,
@@ -222,6 +221,8 @@ class ShowIdentifier(shell.ShellCommand):
         match = re.search(self.identifier_re, log_text, re.MULTILINE)
         if match:
             identifier = match.group(1)
+            if identifier:
+                identifier = identifier.replace('master', 'main')
             self.setProperty('identifier', identifier)
             ews_revision = self.getProperty('ews_revision')
             if ews_revision:
@@ -3139,9 +3140,9 @@ class CleanGitRepo(steps.ShellSequence):
     # git situations we've gotten ourself into in the past.
     command_list = [['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
                     ['git', 'fetch', 'origin'],  # Avoid updating the working copy to a stale revision.
-                    ['git', 'checkout', 'origin/main', '-f'],
-                    ['git', 'branch', '-D', 'main'],
-                    ['git', 'checkout', 'origin/main', '-b', 'main']]
+                    ['git', 'checkout', 'origin/master', '-f'],
+                    ['git', 'branch', '-D', 'master'],
+                    ['git', 'checkout', 'origin/master', '-b', 'master']]
 
     def run(self):
         self.commands = []
@@ -3322,7 +3323,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
                 self.setProperty('retry_count', retry_count + 1)
-                self.build.addStepsAfterCurrentStep([GitResetHard(), CheckOutSource(), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
+                self.build.addStepsAfterCurrentStep([GitResetHard(), CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
                 return rc
 
             self.setProperty('bugzilla_comment_text', self.comment_text_for_bug())
