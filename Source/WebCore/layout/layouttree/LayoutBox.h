@@ -118,6 +118,7 @@ public:
     bool isInlineTableBox() const;
     bool isInitialContainingBlock() const { return baseTypeFlags().contains(InitialContainingBlockFlag); }
     bool isLayoutContainmentBox() const;
+    bool isSizeContainmentBox() const;
 
     bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }
     bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }

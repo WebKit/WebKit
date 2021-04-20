@@ -369,6 +369,23 @@ bool Box::isLayoutContainmentBox() const
     return m_style.contain().contains(Containment::Layout) && supportsLayoutContainment();
 }
 
+bool Box::isSizeContainmentBox() const
+{
+    auto supportsSizeContainment = [&] {
+        // If the element does not generate a principal box (as is the case with display: contents or display: none),
+        // or its inner display type is table, or its principal box is an internal table box, or an internal ruby box,
+        // or a non-atomic inline-level box, size containment has no effect.
+        if (isInternalTableBox() || isTableBox())
+            return false;
+        if (isInternalRubyBox())
+            return false;
+        if (isInlineLevelBox())
+            return isAtomicInlineLevelBox();
+        return true;
+    };
+    return m_style.contain().contains(Containment::Size) && supportsSizeContainment();
+}
+
 bool Box::isInternalTableBox() const
 {
     // table-row-group, table-header-group, table-footer-group, table-row, table-cell, table-column-group, table-column
