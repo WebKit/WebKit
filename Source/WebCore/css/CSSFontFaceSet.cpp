@@ -32,6 +32,8 @@
 #include "CSSFontStyleValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParserWorkerSafe.h"
 #include "CSSSegmentedFontFace.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -306,28 +308,45 @@ CSSFontFace& CSSFontFaceSet::operator[](size_t i)
     return m_faces[i];
 }
 
-static ExceptionOr<FontSelectionRequest> computeFontSelectionRequest(MutableStyleProperties& style)
+static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers::FontRaw& font)
 {
-    RefPtr<CSSValue> weightValue = style.getPropertyCSSValue(CSSPropertyFontWeight).get();
-    if (!weightValue || weightValue->isInitialValue())
-        weightValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
+    auto weightSelectionValue = font.weight
+        ? WTF::switchOn(*font.weight, [&] (CSSValueID keyword) {
+            switch (keyword) {
+            case CSSValueNormal:
+                return normalWeightValue();
+            case CSSValueBold:
+            case CSSValueBolder:
+                return boldWeightValue();
+            case CSSValueLighter:
+                return lightWeightValue();
+            default:
+                ASSERT_NOT_REACHED();
+                return normalWeightValue();
+            }
+        }, [&] (double weight) {
+            return FontSelectionValue::clampFloat(weight);
+        }) : normalWeightValue();
 
-    RefPtr<CSSValue> stretchValue = style.getPropertyCSSValue(CSSPropertyFontStretch).get();
-    if (!stretchValue || stretchValue->isInitialValue())
-        stretchValue = CSSValuePool::singleton().createIdentifierValue(CSSValueNormal).ptr();
+    // Because this is a FontRaw, we know we should be able to dereference stretchSelectionValue as
+    // consumeFontStretchKeywordValueRaw only returns results valid to pass to fontStretchValue.
+    auto stretchSelectionValue = fontStretchValue(font.stretch.valueOr(CSSValueNormal));
+    ASSERT(stretchSelectionValue);
 
-    RefPtr<CSSValue> styleValue = style.getPropertyCSSValue(CSSPropertyFontStyle).get();
-    if (!styleValue || styleValue->isInitialValue())
-        styleValue = CSSFontStyleValue::create(CSSValuePool::singleton().createIdentifierValue(CSSValueNormal));
+    auto styleKeyword = font.style ? font.style->style : CSSValueNormal;
+    auto styleSelectionValue = [&] () -> Optional<FontSelectionValue> {
+        if (styleKeyword == CSSValueNormal)
+            return WTF::nullopt;
+        if (styleKeyword == CSSValueItalic)
+            return italicValue();
+        ASSERT(font.style && styleKeyword == CSSValueOblique);
+        float degrees = 0;
+        if (font.style->angle)
+            degrees = static_cast<float>(CSSPrimitiveValue::computeDegrees(font.style->angle->type, font.style->angle->value));
+        return FontSelectionValue(degrees);
+    }();
 
-    if (weightValue->isGlobalKeyword() || stretchValue->isGlobalKeyword() || styleValue->isGlobalKeyword())
-        return Exception { SyntaxError };
-
-    auto weightSelectionValue = Style::BuilderConverter::convertFontWeightFromValue(*weightValue);
-    auto stretchSelectionValue = Style::BuilderConverter::convertFontStretchFromValue(*stretchValue);
-    auto styleSelectionValue = Style::BuilderConverter::convertFontStyleFromValue(*styleValue);
-
-    return {{ weightSelectionValue, stretchSelectionValue, styleSelectionValue }};
+    return { weightSelectionValue, *stretchSelectionValue, styleSelectionValue };
 }
 
 using CodePointsMap = HashSet<UChar32, DefaultHash<UChar32>, WTF::UnsignedWithZeroKeyHashTraits<UChar32>>;
@@ -347,34 +366,33 @@ static CodePointsMap codePointsFromString(StringView stringView)
     return result;
 }
 
-ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts(const String& font, const String& string)
+ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts(const String& fontShorthand, const String& string)
 {
-    auto style = MutableStyleProperties::create();
-    auto parseResult = CSSParser::parseValue(style, CSSPropertyFont, font, true, HTMLStandardMode);
-    if (parseResult == CSSParser::ParseResult::Error)
+    auto font = CSSPropertyParserWorkerSafe::parseFont(fontShorthand, HTMLStandardMode);
+    if (!font)
         return Exception { SyntaxError };
-
-    auto requestOrException = computeFontSelectionRequest(style.get());
-    if (requestOrException.hasException())
-        return requestOrException.releaseException();
-    auto request = requestOrException.releaseReturnValue();
-
-    auto family = style->getPropertyCSSValue(CSSPropertyFontFamily);
-    if (!is<CSSValueList>(family))
-        return Exception { SyntaxError };
-    CSSValueList& familyList = downcast<CSSValueList>(*family);
 
     HashSet<AtomString> uniqueFamilies;
     Vector<AtomString> familyOrder;
-    for (auto& family : familyList) {
-        auto& primitive = downcast<CSSPrimitiveValue>(family.get());
-        if (!primitive.isFontFamily())
-            continue;
-        if (uniqueFamilies.add(primitive.fontFamily().familyName).isNewEntry)
-            familyOrder.append(primitive.fontFamily().familyName);
+    for (auto& familyRaw : font->family) {
+        AtomString familyAtom;
+        WTF::switchOn(familyRaw, [&] (CSSValueID ident) {
+            if (ident != CSSValueWebkitBody)
+                familyAtom = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident));
+            else {
+                ASSERT(m_owningFontSelector && m_owningFontSelector->scriptExecutionContext());
+                familyAtom = m_owningFontSelector->scriptExecutionContext()->settingsValues().fontGenericFamilies.standardFontFamily();
+            }
+        }, [&] (const String& familyString) {
+            familyAtom = familyString;
+        });
+
+        if (!familyAtom.isEmpty() && uniqueFamilies.add(familyAtom).isNewEntry)
+            familyOrder.append(familyAtom);
     }
 
     HashSet<CSSFontFace*> resultConstituents;
+    auto request = computeFontSelectionRequest(*font);
     for (auto codePoint : codePointsFromString(string)) {
         bool found = false;
         for (auto& family : familyOrder) {

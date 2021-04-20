@@ -1,3 +1,22 @@
+2021-04-20  Chris Lord  <clord@igalia.com>
+
+        Don't use the full CSS parser for CSSFontFaceSet
+        https://bugs.webkit.org/show_bug.cgi?id=224749
+
+        Reviewed by Darin Adler.
+
+        Replace use of the full CSS parser in CSSFontFaceSet with
+        CSSPropertyParserWorkerSafe::parseFont to parse font shorthands. This
+        makes CSSFontFaceSet safe to use in a Worker (required for
+        OffscreenCanvas) and ought also to be faster, at the cost of a slight
+        increase in lines of code.
+
+        No new tests, covered by existing tests.
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::computeFontSelectionRequest):
+        (WebCore::CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts):
+
 2021-04-20  Tim Nguyen  <ntim@apple.com>
 
         Implement CSS display property 2-value syntax
