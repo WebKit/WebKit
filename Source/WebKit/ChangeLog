@@ -1,3 +1,17 @@
+2021-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Add additional logging to help identify SSO dialog dismissals
+        https://bugs.webkit.org/show_bug.cgi?id=224703
+        <rdar://problem/76783787>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add logging around the SSO sheet life cycle to help identify edge cases..."
+
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        (WebKit::SOAuthorizationSession::presentViewController):
+        (WebKit::SOAuthorizationSession::dismissViewController):
+
 2021-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mac Catalyst] Adopt UIView API to avoid showing focus rings around WKContentView

@@ -265,6 +265,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
     m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:m_sheetWindow.get() queue:nil usingBlock:[weakThis = makeWeakPtr(*this)] (NSNotification *) {
         if (!weakThis)
             return;
+        RELEASE_LOG(AppSSO, "presentViewController: Received NSWindowWillCloseNotification. Dismissing the view controller.");
         weakThis->dismissViewController();
     }];
 
@@ -273,6 +274,8 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
         uiCallback(NO, adoptNS([[NSError alloc] initWithDomain:SOErrorDomain code:kSOErrorAuthorizationPresentationFailed userInfo:nil]).get());
         return;
     }
+
+    RELEASE_LOG_IF_ALLOWED("presentViewController: Calling beginSheet on %p for sheet %p.", presentingWindow, m_sheetWindow.get());
     [presentingWindow beginSheet:m_sheetWindow.get() completionHandler:nil];
 #elif PLATFORM(IOS)
     UIViewController *presentingViewController = m_page->uiClient().presentingViewController();
@@ -300,9 +303,13 @@ void SOAuthorizationSession::dismissViewController()
     if (m_page && m_page->platformWindow()) {
         auto *presentingWindow = m_page->platformWindow();
         if (presentingWindow.miniaturized) {
-            if (m_presentingWindowDidDeminiaturizeObserver)
+            RELEASE_LOG_IF_ALLOWED("dismissViewController: Page's window is miniaturized. Waiting to dismiss until active.");
+            if (m_presentingWindowDidDeminiaturizeObserver) {
+                RELEASE_LOG_IF_ALLOWED("dismissViewController: [Miniaturized] Already has a deminiaturized observer (%p). Hidden observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
                 return;
+            }
             m_presentingWindowDidDeminiaturizeObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidDeminiaturizeNotification object:presentingWindow queue:nil usingBlock:[protectedThis = makeRefPtr(this), this] (NSNotification *) {
+                RELEASE_LOG_IF_ALLOWED("dismissViewController: Window has deminiaturized. Completing the dismissal.");
                 dismissViewController();
                 [[NSNotificationCenter defaultCenter] removeObserver:m_presentingWindowDidDeminiaturizeObserver.get()];
                 m_presentingWindowDidDeminiaturizeObserver = nullptr;
@@ -312,9 +319,13 @@ void SOAuthorizationSession::dismissViewController()
     }
 
     if (NSApp.hidden) {
-        if (m_applicationDidUnhideObserver)
+        RELEASE_LOG_IF_ALLOWED("dismissViewController: Application is hidden. Waiting to dismiss until active.");
+        if (m_applicationDidUnhideObserver) {
+            RELEASE_LOG_IF_ALLOWED("dismissViewController: [Hidden] Already has an Unhide observer (%p). Deminiaturized observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
             return;
+        }
         m_applicationDidUnhideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidUnhideNotification object:NSApp queue:nil usingBlock:[protectedThis = makeRefPtr(this), this] (NSNotification *) {
+            RELEASE_LOG_IF_ALLOWED("dismissViewController: Application is no longer hidden. Completing the dismissal.");
             dismissViewController();
             [[NSNotificationCenter defaultCenter] removeObserver:m_applicationDidUnhideObserver.get()];
             m_applicationDidUnhideObserver = nullptr;
@@ -325,8 +336,11 @@ void SOAuthorizationSession::dismissViewController()
     [[NSNotificationCenter defaultCenter] removeObserver:m_sheetWindowWillCloseObserver.get()];
     m_sheetWindowWillCloseObserver = nullptr;
 
-    [[m_sheetWindow sheetParent] endSheet:m_sheetWindow.get()];
+    auto *presentingWindow = m_sheetWindow.get().sheetParent;
+    RELEASE_LOG_IF_ALLOWED("dismissViewController: Calling endSheet on %p for sheet %p.", presentingWindow, m_sheetWindow.get());
+    [presentingWindow endSheet:m_sheetWindow.get()];
     m_sheetWindow = nullptr;
+    RELEASE_LOG_IF_ALLOWED("dismissViewController: Finished call with deminiaturized observer (%p) and Hidden observer (%p)", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
 #elif PLATFORM(IOS)
     [[m_viewController presentingViewController] dismissViewControllerAnimated:YES completion:nil];
 #endif
