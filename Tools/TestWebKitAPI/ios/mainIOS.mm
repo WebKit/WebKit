@@ -25,7 +25,7 @@
 
 #import "config.h"
 #import "TestsController.h"
-
+#import "UIKitMacHelperSPI.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <wtf/RetainPtr.h>
 
@@ -33,6 +33,10 @@ int main(int argc, char** argv)
 {
     bool passed = false;
     @autoreleasepool {
+#if PLATFORM(MACCATALYST)
+        UINSApplicationInstantiate();
+#endif
+
         [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"TestWebKitAPI"];
 
         // Set up user defaults.

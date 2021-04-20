@@ -1,3 +1,22 @@
+2021-04-20  Tim Horton  <timothy_horton@apple.com>
+
+        MacCatalyst tests crash on NSInternalInconsistencyException, reason: NSApplication has not been created yet
+        https://bugs.webkit.org/show_bug.cgi?id=224606
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        Link UIKitMacHelper in macCatalyst builds.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/ios/UIKitMacHelperSPI.h: Added.
+        * TestWebKitAPI/ios/mainIOS.mm:
+        (main):
+        Call UINSApplicationInstantiate to keep the tests limping along until we create an actual UIApp.
+
+        * TestWebKitAPI/Configurations/TestWTF.xcconfig:
+        Also, fix the TestWTF configuration to not link Cocoa in macCatalyst builds.
+
 2021-04-20  Kate Cheney  <katherine_cheney@apple.com>
 
         Preconnect tasks and preflight checks do not correctly mark app-bound context string
