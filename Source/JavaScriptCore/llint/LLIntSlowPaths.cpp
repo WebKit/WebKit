@@ -723,15 +723,16 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
     unsigned bytecodeOffset = codeBlock->bytecodeOffset(pc);
     PropertyOffset offset = invalidOffset;
     CodeBlock::StructureWatchpointMap& watchpointMap = codeBlock->llintGetByIdWatchpointMap();
-    Vector<LLIntPrototypeLoadAdaptiveStructureWatchpoint> watchpoints;
-    watchpoints.reserveInitialCapacity(conditions.size());
+    FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint> watchpoints(conditions.size());
+    unsigned index = 0;
     for (ObjectPropertyCondition condition : conditions) {
+        auto& watchpoint = watchpoints[index++];
         if (!condition.isWatchable())
             return;
         if (condition.condition().kind() == PropertyCondition::Presence)
             offset = condition.condition().offset();
-        watchpoints.uncheckedConstructAndAppend(codeBlock, condition, bytecodeOffset);
-        watchpoints.last().install(vm);
+        watchpoint.initialize(codeBlock, condition, bytecodeOffset);
+        watchpoint.install(vm);
     }
 
     ASSERT((offset == invalidOffset) == slot.isUnset());

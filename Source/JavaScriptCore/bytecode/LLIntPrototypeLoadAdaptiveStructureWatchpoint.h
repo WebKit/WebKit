@@ -36,6 +36,9 @@ namespace JSC {
 class LLIntPrototypeLoadAdaptiveStructureWatchpoint final : public Watchpoint {
 public:
     LLIntPrototypeLoadAdaptiveStructureWatchpoint(CodeBlock*, const ObjectPropertyCondition&, unsigned bytecodeOffset);
+    LLIntPrototypeLoadAdaptiveStructureWatchpoint();
+
+    void initialize(CodeBlock*, const ObjectPropertyCondition&, unsigned bytecodeOffset);
 
     void install(VM&);
 

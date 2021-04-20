@@ -1,3 +1,20 @@
+2021-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector for LLIntPrototypeLoadAdaptiveStructureWatchpoint vector
+        https://bugs.webkit.org/show_bug.cgi?id=224729
+
+        Reviewed by Darin Adler.
+
+        Replace Vector<LLIntPrototypeLoadAdaptiveStructureWatchpoint> with FixedVector.
+
+        * bytecode/CodeBlock.h:
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::initialize):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+
 2021-04-19  Mark Lam  <mark.lam@apple.com>
 
         Build fix for Debug -O3 after r276162.
