@@ -1,3 +1,21 @@
+2021-04-19  Patrick Angle  <pangle@apple.com>
+
+        REGRESSION (r268691 && r270134): Web Inspector: Clicking on go-to arrow in Computed panel no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=224774
+
+        Reviewed by Devin Rousso.
+
+        The Styles panel will not always be part of the same sidebar as the Computed panel as of r268691, so we should
+        look for the Styles panel in WI.detailsSidebar, which will report all of the panels it manages across multiple
+        sidebars. Additionally, as of r270134, there is no longer a private `_visible` property for
+        `WI.StyleDetailsPanel`, so it can not be used by `WI.SpreadsheetRulesStyleDetailsPanel`. Instead, visibility
+        should be determined by checking if the panel is attached and not pending layout.
+
+        * UserInterface/Views/ComputedStyleDetailsSidebarPanel.js:
+        (WI.ComputedStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.scrollToSectionAndHighlightProperty):
+
 2021-04-19  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Graphics: add support for `steps()`/`spring()` CSS timing functions

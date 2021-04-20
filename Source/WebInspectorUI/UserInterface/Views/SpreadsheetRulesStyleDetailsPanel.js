@@ -68,7 +68,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
     scrollToSectionAndHighlightProperty(property)
     {
-        if (!this._visible) {
+        if (!this.isAttached || this.layoutPending) {
             this._propertyToSelectAndHighlight = property;
             return;
         }
