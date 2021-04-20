@@ -1,3 +1,16 @@
+2021-04-20  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WPE] Update expectations for 2 :focus-visible tests
+        https://bugs.webkit.org/show_bug.cgi?id=224808
+
+        Unreviewed test gardening.
+
+        The failures on these tests are related to the lack of support for <input type="color"> in WPE.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/imported/w3c/web-platform-tests/css/selectors/focus-visible-003-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/css/selectors/focus-visible-004-expected.txt: Added.
+
 2021-04-20  Cathie Chen  <cathiechen@igalia.com>
 
         Update html/rendering/replaced-elements/attributes-for-embedded-content-and-images/ tests from WPT
