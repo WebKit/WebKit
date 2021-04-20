@@ -1,3 +1,23 @@
+2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        REGRESSION(r224516): Remote WebGL Context is not create due to RemoteRenderingBackend not being created
+        https://bugs.webkit.org/show_bug.cgi?id=224751
+
+        Reviewed by Chris Dumez.
+
+        Fix WebGL GPU process after r275922.
+
+        RemoteRenderingBackend must be created so that RemoteGraphicsContextGL
+        can take a reference of it.
+
+        Fixes layout test failures when run with --gpu-process.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::ensureBackendCreated):
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createGraphicsContextGL const):
+
 2021-04-19  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r276189): GPUProcess.WebProcessTerminationAfterTooManyGPUProcessCrashes is crashing

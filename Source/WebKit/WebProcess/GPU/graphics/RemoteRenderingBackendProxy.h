@@ -110,6 +110,8 @@ public:
 
     RenderingBackendIdentifier renderingBackendIdentifier() const;
 
+    RenderingBackendIdentifier ensureBackendCreated();
+
 private:
     explicit RemoteRenderingBackendProxy(WebPage&);
 

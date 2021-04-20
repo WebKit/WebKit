@@ -420,6 +420,12 @@ RenderingBackendIdentifier RemoteRenderingBackendProxy::renderingBackendIdentifi
     return m_parameters.identifier;
 }
 
+RenderingBackendIdentifier RemoteRenderingBackendProxy::ensureBackendCreated()
+{
+    ensureGPUProcessConnection();
+    return renderingBackendIdentifier();
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

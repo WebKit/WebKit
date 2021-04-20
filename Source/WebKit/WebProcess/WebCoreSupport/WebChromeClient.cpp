@@ -939,7 +939,7 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
         return nullptr;
     UNUSED_VARIABLE(hostWindowDisplayID);
 #if PLATFORM(COCOA) || PLATFORM(WIN)
-    return RemoteGraphicsContextGLProxy::create(attributes, m_page.ensureRemoteRenderingBackendProxy().renderingBackendIdentifier());
+    return RemoteGraphicsContextGLProxy::create(attributes, m_page.ensureRemoteRenderingBackendProxy().ensureBackendCreated());
 #else
     return nullptr;
 #endif
