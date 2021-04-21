@@ -1,3 +1,15 @@
+2021-04-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Fix build break after r276363
+        https://bugs.webkit.org/show_bug.cgi?id=224881
+
+        Unreviewed, build fix.
+
+        Fix build break after r276363
+        WebGL GPUP crashes when preparing for display due to off-thread WeakPtr access (IOSURFACE_SET_OWNERSHIP_IDENTITY)
+
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+
 2021-04-21  Kate Cheney  <katherine_cheney@apple.com>
 
         Followup change to bug 224779 based on post-land review comment.

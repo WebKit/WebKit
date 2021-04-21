@@ -47,7 +47,7 @@ public:
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
 private:
     WebCore::GraphicsContextGLIOSurfaceSwapChain m_swapChain;
-#if HAVE(TASK_IDENTITY_TOKEN)
+#if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
     task_id_token_t m_webProcessIdentityToken;
 #endif
 };
