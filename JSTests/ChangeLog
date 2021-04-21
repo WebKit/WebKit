@@ -1,3 +1,13 @@
+2021-04-21  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Unskip some tests for ARMv7 and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=224813
+
+        Unreviewed test gardening.
+
+        * stress/has-own-property-name-cache-symbols-and-strings.js:
+        * stress/incremental-marking-should-not-dead-lock-in-new-property-transition.js:
+
 2021-04-20  Paulo Matos  <pmatos@igalia.com>
 
         Unskip couple of tests for armv7l and mips
