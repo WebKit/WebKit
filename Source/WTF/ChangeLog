@@ -1,3 +1,13 @@
+2021-04-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Lots of spurious -Wnonnull warnings with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=224452
+
+        Reviewed by Darin Adler.
+
+        * wtf/RefPtr.h:
+        (WTF::DefaultRefDerefTraits::derefIfNotNull):
+
 2021-04-20  Keith Miller  <keith_miller@apple.com>
 
         FullGCActivityCallback should use the percentage of pages uncompressed in RAM to determine deferral.

@@ -277,7 +277,9 @@ inline StyleRuleBase::StyleRuleBase(const StyleRuleBase& o)
 inline void StyleRuleBase::deref() const
 {
     if (derefBase())
+IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_BEGIN
         const_cast<StyleRuleBase&>(*this).destroy();
+IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_END
 }
 
 inline void StyleRule::wrapperAdoptSelectorList(CSSSelectorList&& selectors)
