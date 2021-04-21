@@ -38,7 +38,7 @@ namespace WebKit {
 
 class ProcessThrottler;
 
-class AuxiliaryProcessProxy : ProcessLauncher::Client, public IPC::Connection::Client {
+class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, private ProcessLauncher::Client, public IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
 
 protected:

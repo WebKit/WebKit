@@ -158,6 +158,15 @@ bool AuxiliaryProcessProxy::wasTerminated() const
 
 bool AuxiliaryProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
+    // FIXME: We should turn this into a RELEASE_ASSERT().
+    ASSERT(isMainRunLoop());
+    if (!isMainRunLoop()) {
+        callOnMainRunLoop([protectedThis = makeRef(*this), encoder = WTFMove(encoder), sendOptions, asyncReplyInfo = WTFMove(asyncReplyInfo), shouldStartProcessThrottlerActivity]() mutable {
+            protectedThis->sendMessage(WTFMove(encoder), sendOptions, WTFMove(asyncReplyInfo), shouldStartProcessThrottlerActivity);
+        });
+        return true;
+    }
+
     if (asyncReplyInfo && canSendMessage() && shouldStartProcessThrottlerActivity == ShouldStartProcessThrottlerActivity::Yes) {
         auto completionHandler = std::exchange(asyncReplyInfo->first, nullptr);
         asyncReplyInfo->first = [activity = throttler().backgroundActivity(ASCIILiteral::null()), completionHandler = WTFMove(completionHandler)](IPC::Decoder* decoder) mutable {
@@ -224,6 +233,7 @@ bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC
 void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier connectionIdentifier)
 {
     ASSERT(!m_connection);
+    ASSERT(isMainRunLoop());
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier))
         return;
@@ -236,11 +246,9 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     for (auto&& pendingMessage : std::exchange(m_pendingMessages, { })) {
         if (!shouldSendPendingMessage(pendingMessage))
             continue;
-        auto encoder = WTFMove(pendingMessage.encoder);
-        auto sendOptions = pendingMessage.sendOptions;
         if (pendingMessage.asyncReplyInfo)
             IPC::addAsyncReplyHandler(*connection(), pendingMessage.asyncReplyInfo->second, WTFMove(pendingMessage.asyncReplyInfo->first));
-        m_connection->sendMessage(WTFMove(encoder), sendOptions);
+        m_connection->sendMessage(WTFMove(pendingMessage.encoder), pendingMessage.sendOptions);
     }
 }
 

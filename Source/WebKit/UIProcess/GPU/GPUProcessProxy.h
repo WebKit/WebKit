@@ -47,7 +47,7 @@ class WebProcessProxy;
 class WebsiteDataStore;
 struct GPUProcessCreationParameters;
 
-class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<GPUProcessProxy>, public RefCounted<GPUProcessProxy> {
+class GPUProcessProxy final : public AuxiliaryProcessProxy, private ProcessThrottlerClient, public CanMakeWeakPtr<GPUProcessProxy> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(GPUProcessProxy);
     friend LazyNeverDestroyed<GPUProcessProxy>;

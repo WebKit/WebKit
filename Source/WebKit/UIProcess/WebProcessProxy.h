@@ -119,7 +119,7 @@ using WebProcessWithAudibleMediaCounter = RefCounter<WebProcessWithAudibleMediaC
 using WebProcessWithAudibleMediaToken = WebProcessWithAudibleMediaCounter::Token;
 enum class CheckBackForwardList : bool { No, Yes };
 
-class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, public ThreadSafeRefCounted<WebProcessProxy>, public CanMakeWeakPtr<WebProcessProxy>, private ProcessThrottlerClient {
+class WebProcessProxy : public AuxiliaryProcessProxy, public ResponsivenessTimer::Client, public CanMakeWeakPtr<WebProcessProxy>, private ProcessThrottlerClient {
 public:
     typedef HashMap<WebCore::FrameIdentifier, RefPtr<WebFrameProxy>> WebFrameProxyMap;
     typedef HashMap<WebPageProxyIdentifier, WebPageProxy*> WebPageProxyMap;

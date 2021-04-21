@@ -1,3 +1,83 @@
+2021-04-21  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r275805. rdar://problem/76963040
+
+    Crash under WebProcessProxy::shouldSendPendingMessage()
+    https://bugs.webkit.org/show_bug.cgi?id=224377
+    <rdar://75329251>
+    
+    Reviewed by David Kilzer.
+    
+    We are crashing with a null-dereference of pendingMessage.encoder inside WebProcessProxy::shouldSendPendingMessage().
+    However, pendingMessage.encoder is a UniqueRef<> and thus cannot be null. Also, we know that the WebProcessProxy
+    is alive because WebProcessProxy::didFinishLaunching() has a protector.
+    
+    One thing that I believe could theoretically happen and would not be safe though is AuxiliaryProcessProxy::sendMessage()
+    being called on a non-main thread. Sending IPC off the main thread is safe in general and something we commonly do with
+    an IPC::Connection. To make this safe, IPC::Connection uses a Lock to protect its vector of messages. However, sending
+    IPC via an AuxiliaryProcessProxy is currently not thread safe as it relies on the process state (which gets updated on
+    the main thread) and access to the m_pendingMessages is not synchronized.
+    
+    As a speculative fix, I have added logic in AuxiliaryProcessProxy::sendMessage() to dispatch to the main thread if
+    we're not already on it. I have also used WTF::DestructionThread::MainRunLoop to make sure all AuxiliaryProcessProxy
+    objects get destroyed on the main thread.
+    
+    In a follow-up, I am planning to add a release assertion in AuxiliaryProcessProxy::sendMessage() to make sure we're
+    on a main thread. We'll then be able to drop the "dispatching the main thread" logic. For now though, I think we
+    should start with the "dispatch to main thread" logic, so that we have a patch that we can cherry-pick to a branch.
+    
+    * UIProcess/AuxiliaryProcessProxy.cpp:
+    (WebKit::AuxiliaryProcessProxy::sendMessage):
+    (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+    (WebKit::AuxiliaryProcessProxy::replyToPendingMessages):
+    * UIProcess/AuxiliaryProcessProxy.h:
+    * UIProcess/GPU/GPUProcessProxy.h:
+    * UIProcess/Network/NetworkProcessProxy.h:
+    * UIProcess/Plugins/PluginProcessProxy.h:
+    * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+    (WebKit::WebAuthnProcessProxy::singleton):
+    * UIProcess/WebProcessProxy.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275805 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-10  Chris Dumez  <cdumez@apple.com>
+
+            Crash under WebProcessProxy::shouldSendPendingMessage()
+            https://bugs.webkit.org/show_bug.cgi?id=224377
+            <rdar://75329251>
+
+            Reviewed by David Kilzer.
+
+            We are crashing with a null-dereference of pendingMessage.encoder inside WebProcessProxy::shouldSendPendingMessage().
+            However, pendingMessage.encoder is a UniqueRef<> and thus cannot be null. Also, we know that the WebProcessProxy
+            is alive because WebProcessProxy::didFinishLaunching() has a protector.
+
+            One thing that I believe could theoretically happen and would not be safe though is AuxiliaryProcessProxy::sendMessage()
+            being called on a non-main thread. Sending IPC off the main thread is safe in general and something we commonly do with
+            an IPC::Connection. To make this safe, IPC::Connection uses a Lock to protect its vector of messages. However, sending
+            IPC via an AuxiliaryProcessProxy is currently not thread safe as it relies on the process state (which gets updated on
+            the main thread) and access to the m_pendingMessages is not synchronized.
+
+            As a speculative fix, I have added logic in AuxiliaryProcessProxy::sendMessage() to dispatch to the main thread if
+            we're not already on it. I have also used WTF::DestructionThread::MainRunLoop to make sure all AuxiliaryProcessProxy
+            objects get destroyed on the main thread.
+
+            In a follow-up, I am planning to add a release assertion in AuxiliaryProcessProxy::sendMessage() to make sure we're
+            on a main thread. We'll then be able to drop the "dispatching the main thread" logic. For now though, I think we
+            should start with the "dispatch to main thread" logic, so that we have a patch that we can cherry-pick to a branch.
+
+            * UIProcess/AuxiliaryProcessProxy.cpp:
+            (WebKit::AuxiliaryProcessProxy::sendMessage):
+            (WebKit::AuxiliaryProcessProxy::didFinishLaunching):
+            (WebKit::AuxiliaryProcessProxy::replyToPendingMessages):
+            * UIProcess/AuxiliaryProcessProxy.h:
+            * UIProcess/GPU/GPUProcessProxy.h:
+            * UIProcess/Network/NetworkProcessProxy.h:
+            * UIProcess/Plugins/PluginProcessProxy.h:
+            * UIProcess/WebAuthentication/WebAuthnProcessProxy.cpp:
+            (WebKit::WebAuthnProcessProxy::singleton):
+            * UIProcess/WebProcessProxy.h:
+
 2021-04-21  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r275487. rdar://problem/76962948
