@@ -1,3 +1,13 @@
+2021-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Prevent GPU and WebContent processes from attempting to connect to the AppSSO service 
+        https://bugs.webkit.org/show_bug.cgi?id=224834
+        <rdar://problem/72157514>
+
+        Reviewed by Jiewen Tan.
+
+        * pal/spi/cf/CFNetworkSPI.h: Add declaration for 'skipAppSSO' version of NSURLProtocol method.
+
 2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards

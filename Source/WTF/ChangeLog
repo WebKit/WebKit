@@ -1,3 +1,13 @@
+2021-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Prevent GPU and WebContent processes from attempting to connect to the AppSSO service 
+        https://bugs.webkit.org/show_bug.cgi?id=224834
+        <rdar://problem/72157514>
+
+        Reviewed by Jiewen Tan.
+
+        * wtf/PlatformHave.h:
+
 2021-04-20  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Enable MediaSession and MediaSessionCoordinator experimental features

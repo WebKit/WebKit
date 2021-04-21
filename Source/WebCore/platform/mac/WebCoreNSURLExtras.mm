@@ -42,7 +42,11 @@ namespace WebCore {
 NSURL *URLByCanonicalizingURL(NSURL *URL)
 {
     RetainPtr<NSURLRequest> request = adoptNS([[NSURLRequest alloc] initWithURL:URL]);
+#if HAVE(NSURLPROTOCOL_WITH_SKIPAPPSSO)
+    Class concreteClass = [NSURLProtocol _protocolClassForRequest:request.get() skipAppSSO:YES];
+#else
     Class concreteClass = [NSURLProtocol _protocolClassForRequest:request.get()];
+#endif
     if (!concreteClass) {
         return URL;
     }
