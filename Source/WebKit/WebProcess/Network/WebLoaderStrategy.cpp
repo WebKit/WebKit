@@ -768,9 +768,6 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
 void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
     if (auto* document = webPage.mainFrame()->document()) {
-        if (!document)
-            return;
-
         request.setFirstPartyForCookies(document->firstPartyForCookies());
         if (auto* loader = document->loader())
             request.setIsAppBound(loader->lastNavigationWasAppBound());

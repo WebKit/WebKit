@@ -1,3 +1,16 @@
+2021-04-21  Kate Cheney  <katherine_cheney@apple.com>
+
+        Followup change to bug 224779 based on post-land review comment.
+        https://bugs.webkit.org/show_bug.cgi?id=224779
+        <rdar://problem/76738879>
+
+        Reviewed by Chris Dumez.
+
+        Remove unnecessary document check.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::preconnectTo):
+
 2021-04-21  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add OpenGLES2 targets
