@@ -1,3 +1,19 @@
+2021-04-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Handle os.getenv returning None
+        https://bugs.webkit.org/show_bug.cgi?id=224869
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVNRepository.has_authorization_for_realm): This entirely replaces reading
+        $HOME with a call to os.path.expanduser. Notably, the stdlib function both
+        handles cases on Unix-like OSes when $HOME is undefined and on Windows (where
+        $HOME is undefined by default) correctly constructs the path.
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive.kill_all): Handle $USER being undefined by just attempting to kill
+        all processes regardless of owner.
+
 2021-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Enhance scrolling-related trace points
