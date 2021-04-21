@@ -2533,11 +2533,10 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
     transform.scale(glyphScale);
     glyphPath.transform(transform);
 
-    auto styleColorOptions = box.styleColorOptions();
     if (isEnabled(box))
-        context.setFillColor(systemColor(CSSValueAppleSystemBlue, styleColorOptions));
+        context.setFillColor(style.color());
     else
-        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions));
+        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions()));
 
     context.fillPath(glyphPath);
 }

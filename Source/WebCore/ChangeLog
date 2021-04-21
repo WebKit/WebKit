@@ -1,3 +1,22 @@
+2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] <select> decorations should match the text color
+        https://bugs.webkit.org/show_bug.cgi?id=224831
+        <rdar://problem/76918959>
+
+        Reviewed by Darin Adler.
+
+        Currently, <select> decorations always have a system blue color, even
+        if a different text color is specified. To improve stylability, the
+        color of the decoration should match the color of the text.
+
+        Test: fast/forms/ios/form-control-refresh/select/decoration-color.html
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh):
+
+        Use the color property of the style when painting the decoration.
+
 2021-04-21  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         URL::URL(HashTableDeletedValueType) triggers -Wuninitialized warnings with GCC 11

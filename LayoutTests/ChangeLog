@@ -1,3 +1,18 @@
+2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] <select> decorations should match the text color
+        https://bugs.webkit.org/show_bug.cgi?id=224831
+        <rdar://problem/76918959>
+
+        Reviewed by Darin Adler.
+
+        An empty <select> element contains nothing apart from the decoration
+        (chevron). Added a test to verify that specifying a different text
+        color changes the color of the decoration.
+
+        * fast/forms/ios/form-control-refresh/select/decoration-color-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/select/decoration-color.html: Added.
+
 2021-04-21  Zalan Bujtas  <zalan@apple.com>
 
         REGRESSION(r256107): Text moves around when selecting at https://www.tokyo-sports.co.jp/entame/news/2834187/
