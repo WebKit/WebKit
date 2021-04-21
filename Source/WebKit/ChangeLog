@@ -1,5 +1,16 @@
 2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
 
+        [iOS] Fix internal builds after r276325
+        https://bugs.webkit.org/show_bug.cgi?id=224896
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+        (-[WKDateTimePickerViewController datePickerInsets]):
+        (-[WKDateTimePicker _contextMenuInteraction:styleForMenuWithConfiguration:]):
+
+2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
+
         [iOS][FCR] Update font for group headers in the <select multiple> picker
         https://bugs.webkit.org/show_bug.cgi?id=224823
         <rdar://problem/76785841>

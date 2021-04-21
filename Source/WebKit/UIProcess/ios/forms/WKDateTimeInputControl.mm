@@ -175,9 +175,13 @@ static const CGFloat kDateTimePickerTimeControlHeight = 172;
 
 - (UIEdgeInsets)datePickerInsets
 {
+#if HAVE(UIDATEPICKER_INSETS)
     UIEdgeInsets expectedInsets = UIEdgeInsetsMake(kDateTimePickerViewMargin, kDateTimePickerViewMargin, kDateTimePickerViewMargin, kDateTimePickerViewMargin);
     UIEdgeInsets appliedInsets = [_datePicker _appliedInsetsToEdgeOfContent];
     return UIEdgeInsetsSubtract(expectedInsets, appliedInsets, UIRectEdgeAll);
+#else
+    return UIEdgeInsetsZero;
+#endif
 }
 
 - (CGSize)preferredDatePickerSize
@@ -395,9 +399,11 @@ static const CGFloat kDateTimePickerControlMargin = 6;
     style.hasInteractivePreview = YES;
     style.preferredBackgroundEffects = @[ [UIVisualEffect emptyEffect] ];
     style.preferredLayout = _UIContextMenuLayoutPreviewOnly;
+#if HAVE(UICONTEXTMENU_STYLE_CUSTOM_PRESENTATION)
     style.prefersCenteredPreviewWhenActionsAreAbsent = NO;
     style.ignoresDefaultSizingRules = YES;
     style.preferredEdgeInsets = [self _preferredEdgeInsetsForDateTimePicker];
+#endif
     return style;
 }
 
