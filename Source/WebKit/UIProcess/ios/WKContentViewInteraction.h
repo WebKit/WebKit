@@ -110,7 +110,6 @@ class WebPageProxy;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
 @class WKDataListSuggestionsControl;
-@class WKDateTimeInputControl;
 @class WKFocusedFormControlView;
 @class WKFormInputSession;
 @class WKFormSelectControl;
@@ -119,6 +118,10 @@ class WebPageProxy;
 @class WKInspectorNodeSearchGestureRecognizer;
 @class WKTextRange;
 @class _WKTextInputContext;
+
+#if !PLATFORM(WATCHOS)
+@class WKDateTimeInputControl;
+#endif
 
 @class UIPointerInteraction;
 @class UITargetedPreview;
@@ -747,7 +750,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
+#if !PLATFORM(WATCHOS)
 @property (nonatomic, readonly) WKDateTimeInputControl *dateTimeInputControl;
+#endif
 @property (nonatomic, readonly) WKFormSelectControl *selectControl;
 #if ENABLE(DRAG_SUPPORT)
 @property (nonatomic, readonly, getter=isAnimatingDragCancel) BOOL animatingDragCancel;

@@ -9642,12 +9642,14 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     action();
 }
 
+#if !PLATFORM(WATCHOS)
 - (WKDateTimeInputControl *)dateTimeInputControl
 {
     if ([_inputPeripheral isKindOfClass:WKDateTimeInputControl.class])
         return (WKDateTimeInputControl *)_inputPeripheral.get();
     return nil;
 }
+#endif
 
 - (WKFormSelectControl *)selectControl
 {
@@ -9775,15 +9777,19 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (double)timePickerValueHour
 {
+#if !PLATFORM(WATCHOS)
     if ([_inputPeripheral isKindOfClass:[WKDateTimeInputControl class]])
         return [(WKDateTimeInputControl *)_inputPeripheral.get() timePickerValueHour];
+#endif
     return -1;
 }
 
 - (double)timePickerValueMinute
 {
+#if !PLATFORM(WATCHOS)
     if ([_inputPeripheral isKindOfClass:[WKDateTimeInputControl class]])
         return [(WKDateTimeInputControl *)_inputPeripheral.get() timePickerValueMinute];
+#endif
     return -1;
 }
 

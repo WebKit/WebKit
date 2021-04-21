@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKDateTimeInputControl.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
 
 #import "UserInterfaceIdiom.h"
 #import "WKContentView.h"
@@ -686,4 +686,4 @@ static const CGFloat kDateTimePickerControlMargin = 6;
 
 @end
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
