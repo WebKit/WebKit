@@ -1782,8 +1782,8 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
         // top of the page.
         // FIXME: We are still honoring gigantic margins, which does leave open the possibility of blank pages caused by this heuristic. It remains to be seen whether or not
         // this will be a real-world issue. For now we don't try to deal with this problem.
-        logicalOffset = intMaxForLayoutUnit;
-        logicalBottom = intMinForLayoutUnit;
+        logicalOffset = static_cast<float>(intMaxForLayoutUnit);
+        logicalBottom = static_cast<float>(intMinForLayoutUnit);
         lineBox->computeReplacedAndTextLineTopAndBottom(logicalOffset, logicalBottom);
         lineHeight = logicalBottom - logicalOffset;
         if (logicalOffset == intMaxForLayoutUnit || lineHeight > pageLogicalHeight) {
