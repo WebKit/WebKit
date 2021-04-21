@@ -61,6 +61,7 @@ public:
     void enqueueSlotChangeEvent(const AtomString&, ShadowRoot&);
 
     const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
+    void willRemoveAssignedNode(const Node&);
 
     virtual void hostChildElementDidChange(const Element&, ShadowRoot&);
 
@@ -104,6 +105,7 @@ private:
     bool m_willBeRemovingAllChildren { false };
     unsigned m_slotMutationVersion { 0 };
     unsigned m_slotResolutionVersion { 0 };
+    unsigned m_slotElementCount { 0 };
 };
 
 inline void ShadowRoot::resolveSlotsBeforeNodeInsertionOrRemoval()
@@ -143,6 +145,12 @@ inline void ShadowRoot::hostChildElementDidChangeSlotAttribute(Element& element,
     m_slotAssignment->didChangeSlot(oldValue, *this);
     m_slotAssignment->didChangeSlot(newValue, *this);
     RenderTreeUpdater::tearDownRenderers(element);
+}
+
+inline void ShadowRoot::willRemoveAssignedNode(const Node& node)
+{
+    if (m_slotAssignment)
+        m_slotAssignment->willRemoveAssignedNode(node);
 }
 
 } // namespace WebCore

@@ -226,6 +226,9 @@ public:
     bool hasSyntheticAttrChildNodes() const { return hasNodeFlag(NodeFlag::HasSyntheticAttrChildNodes); }
     void setHasSyntheticAttrChildNodes(bool flag) { setNodeFlag(NodeFlag::HasSyntheticAttrChildNodes, flag); }
 
+    bool hasShadowRootContainingSlots() const { return hasNodeFlag(NodeFlag::HasShadowRootContainingSlots); }
+    void setHasShadowRootContainingSlots(bool flag) { setNodeFlag(NodeFlag::HasShadowRootContainingSlots, flag); }
+
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
     ShadowRoot* containingShadowRoot() const;
@@ -558,7 +561,9 @@ protected:
 #endif
         IsComputedStyleInvalidFlag = 1 << 26,
 
-        // Bits 27-31 are free.
+        HasShadowRootContainingSlots = 1 << 27,
+
+        // Bits 28-31 are free.
     };
 
     enum class TabIndexState : uint8_t {
