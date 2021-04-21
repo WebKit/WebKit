@@ -1,3 +1,16 @@
+2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Update datalist dropdown indicator
+        https://bugs.webkit.org/show_bug.cgi?id=224844
+        <rdar://problem/76785950>
+
+        Reviewed by Wenson Hsieh.
+
+        * css/html.css:
+        (input::-webkit-list-button):
+
+        Updated to use a "small" sized SF symbol.
+
 2021-04-21  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse @counter-style descriptors
