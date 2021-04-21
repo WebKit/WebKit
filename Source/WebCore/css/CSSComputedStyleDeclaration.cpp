@@ -4003,6 +4003,18 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             ASSERT_NOT_REACHED();
             break;
 
+        // These are intentionally unimplemented because they are actually descriptors for @counter-style.
+        case CSSPropertySystem:
+        case CSSPropertyNegative:
+        case CSSPropertyPrefix:
+        case CSSPropertySuffix:
+        case CSSPropertyRange:
+        case CSSPropertyPad:
+        case CSSPropertyFallback:
+        case CSSPropertySymbols:
+        case CSSPropertyAdditiveSymbols:
+            break;
+
         /* Unimplemented @font-face properties */
         case CSSPropertySrc:
         case CSSPropertyUnicodeRange:

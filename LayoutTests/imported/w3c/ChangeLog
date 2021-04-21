@@ -1,3 +1,46 @@
+2021-04-21  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse @counter-style descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=224718
+
+        Reviewed by Darin Adler.
+
+        Parsing for all @counter-style descriptors is implemented with this
+        patch, so mark more tests passing.
+
+        You'll notice that some @counter-style descriptors implemented in this
+        patch did not gain any passing tests (e.g. `pad`, `negative`).  In all
+        of these cases, the expected results contain a <string> value, and we
+        fail only because we incorrectly don't serialize these <string> values
+        with quotes.  I have manually confirmed in all cases that these values
+        are properly parsed, so it's just the serialization that's incorrect.
+
+        These <string> values serialize without quotes because WebKit's representation
+        of custom identifiers is not a separate type, but instead overloaded onto the
+        CSS_STRING type.  This means that during serialization time, WebKit must guess
+        whether it is actually serializing a string (and include quotes if so), or if
+        it's serializing a custom ident (leaving off quotes if so).
+
+        Relevant code snippet:
+
+        https://github.com/WebKit/WebKit/blob/36caeec07975bd5f47db8ac6b749c2787230a461/Source/WebCore/css/CSSMarkup.cpp#L153#L161
+
+        Relevant changelog snippet from David Hyatt, 2016-12-07:
+
+        > We also overload CSS_STRING primitive value type and have it act as both a string
+        > and a custom identifier. This is lame, since the parser should have made two different
+        > types of objects instead, but since our parser doesn't do that yet, I added a serializeAsStringOrCustomIdent
+        > that preserves our old behavior of "quote the string only if needed." In this case what
+        > that really meant was "Try to guess that we were originally a custom ident and leave off
+        > quotes if so." This function will go away once we properly create CSSStringValues and
+        > CSSCustomIdentValues instead of turning the latter into strings.
+
+        * web-platform-tests/css/css-counter-styles/counter-style-fallback-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-range-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-speak-as-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-system-syntax-expected.txt:
+
 2021-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         will-change: transform should affect nested position:fixed
