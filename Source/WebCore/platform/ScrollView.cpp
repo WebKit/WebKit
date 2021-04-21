@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollView.h"
 
+#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "HostWindow.h"
@@ -982,6 +983,30 @@ FloatRect ScrollView::rootViewToContents(const FloatRect& rootViewRect) const
 FloatRect ScrollView::contentsToRootView(const FloatRect& contentsRect) const
 {
     return convertToRootView(contentsToView(contentsRect));
+}
+
+FloatQuad ScrollView::rootViewToContents(const FloatQuad& quad) const
+{
+    // FIXME: This could be optimized by adding and adopting a version of rootViewToContents() that
+    // maps multiple FloatPoints to content coordinates at the same time.
+    auto result = quad;
+    result.setP1(rootViewToContents(result.p1()));
+    result.setP2(rootViewToContents(result.p2()));
+    result.setP3(rootViewToContents(result.p3()));
+    result.setP4(rootViewToContents(result.p4()));
+    return result;
+}
+
+FloatQuad ScrollView::contentsToRootView(const FloatQuad& quad) const
+{
+    // FIXME: This could be optimized by adding and adopting a version of contentsToRootView() that
+    // maps multiple FloatPoints to root view coordinates at the same time.
+    auto result = quad;
+    result.setP1(contentsToRootView(result.p1()));
+    result.setP2(contentsToRootView(result.p2()));
+    result.setP3(contentsToRootView(result.p3()));
+    result.setP4(contentsToRootView(result.p4()));
+    return result;
 }
 
 IntPoint ScrollView::rootViewToTotalContents(const IntPoint& rootViewPoint) const

@@ -58,6 +58,7 @@ OBJC_CLASS WAKView;
 namespace WebCore {
 
 class EventRegionContext;
+class FloatQuad;
 class HostWindow;
 class LegacyTileCache;
 class Scrollbar;
@@ -299,6 +300,8 @@ public:
     WEBCORE_EXPORT IntRect contentsToRootView(const IntRect&) const;
     WEBCORE_EXPORT FloatRect rootViewToContents(const FloatRect&) const;
     WEBCORE_EXPORT FloatRect contentsToRootView(const FloatRect&) const;
+    WEBCORE_EXPORT FloatQuad rootViewToContents(const FloatQuad&) const;
+    WEBCORE_EXPORT FloatQuad contentsToRootView(const FloatQuad&) const;
 
     IntPoint viewToContents(const IntPoint&) const;
     IntPoint contentsToView(const IntPoint&) const;

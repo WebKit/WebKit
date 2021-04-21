@@ -1,3 +1,20 @@
+2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce helper methods to map FloatQuads to and from content and root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=224883
+
+        Reviewed by Tim Horton.
+
+        Use the new helper methods.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::convertContentToRootView):
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+
+        Note that we previously rounded absolute quads to the nearest integer when mapping through root view
+        coordinates. From <https://bugs.webkit.org/show_bug.cgi?id=128277#c2>, this seemed unintentional to begin with,
+        and we should be able to use the `FloatPoint` conversion methods instead.
+
 2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Fix internal builds after r276325

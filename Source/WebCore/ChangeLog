@@ -1,3 +1,24 @@
+2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Introduce helper methods to map FloatQuads to and from content and root view coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=224883
+
+        Reviewed by Tim Horton.
+
+        Add new helper methods to transform FloatQuads from content coordinates to root view coordinates, and vice
+        versa; use these methods in several places throughout WebKit to avoid code duplication.
+
+        No change in behavior.
+
+        * inspector/agents/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::localToPageQuad): Deleted.
+        * inspector/agents/InspectorTimelineAgent.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::rootViewToContents const):
+        (WebCore::ScrollView::contentsToRootView const):
+        * platform/ScrollView.h:
+
 2021-04-21  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in StyledMarkupAccumulator::traverseNodesForSerialization()

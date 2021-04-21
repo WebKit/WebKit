@@ -260,14 +260,8 @@ bool WebPage::platformNeedsLayoutForEditorState(const Frame& frame) const
 
 static void convertContentToRootView(const FrameView& view, Vector<SelectionGeometry>& geometries)
 {
-    for (auto& geometry : geometries) {
-        auto convertedQuad = geometry.quad();
-        convertedQuad.setP1(view.contentsToRootView(convertedQuad.p1()));
-        convertedQuad.setP2(view.contentsToRootView(convertedQuad.p2()));
-        convertedQuad.setP3(view.contentsToRootView(convertedQuad.p3()));
-        convertedQuad.setP4(view.contentsToRootView(convertedQuad.p4()));
-        geometry.setQuad(convertedQuad);
-    }
+    for (auto& geometry : geometries)
+        geometry.setQuad(view.contentsToRootView(geometry.quad()));
 }
 
 void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
@@ -1078,13 +1072,8 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
         Color highlightColor = renderer->style().tapHighlightColor();
         if (!node->document().frame()->isMainFrame()) {
             FrameView* view = node->document().frame()->view();
-            for (size_t i = 0; i < quads.size(); ++i) {
-                FloatQuad& currentQuad = quads[i];
-                currentQuad.setP1(view->contentsToRootView(roundedIntPoint(currentQuad.p1())));
-                currentQuad.setP2(view->contentsToRootView(roundedIntPoint(currentQuad.p2())));
-                currentQuad.setP3(view->contentsToRootView(roundedIntPoint(currentQuad.p3())));
-                currentQuad.setP4(view->contentsToRootView(roundedIntPoint(currentQuad.p4())));
-            }
+            for (size_t i = 0; i < quads.size(); ++i)
+                quads[i] = view->contentsToRootView(quads[i]);
         }
 
         RoundedRect::Radii borderRadii;
