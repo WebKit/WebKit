@@ -108,7 +108,8 @@ public:
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
 
-    static Ref<NetworkProcessProxy> defaultNetworkProcess();
+    static Ref<NetworkProcessProxy> ensureDefaultNetworkProcess();
+    static RefPtr<NetworkProcessProxy>& defaultNetworkProcess();
     static Ref<NetworkProcessProxy> create() { return adoptRef(*new NetworkProcessProxy); }
     ~NetworkProcessProxy();
 

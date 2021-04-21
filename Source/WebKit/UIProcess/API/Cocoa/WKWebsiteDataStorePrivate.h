@@ -97,6 +97,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 - (pid_t)_networkProcessIdentifier WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 + (void)_makeNextNetworkProcessLaunchFailForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (BOOL)_networkProcessExists WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (BOOL)_defaultNetworkProcessExists WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

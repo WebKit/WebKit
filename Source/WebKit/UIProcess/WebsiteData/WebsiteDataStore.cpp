@@ -200,7 +200,7 @@ static Ref<NetworkProcessProxy> networkProcessForSession(PAL::SessionID sessionI
     return NetworkProcessProxy::create();
 #else
     UNUSED_PARAM(sessionID);
-    return NetworkProcessProxy::defaultNetworkProcess();
+    return NetworkProcessProxy::ensureDefaultNetworkProcess();
 #endif
 }
 

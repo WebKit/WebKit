@@ -29,6 +29,7 @@
 #import "APIString.h"
 #import "AuthenticationChallengeDispositionCocoa.h"
 #import "CompletionHandlerCallChecker.h"
+#import "NetworkProcessProxy.h"
 #import "ShouldGrandfatherStatistics.h"
 #import "WKHTTPCookieStoreInternal.h"
 #import "WKNSArray.h"
@@ -703,6 +704,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 - (BOOL)_networkProcessExists
 {
     return !!_websiteDataStore->networkProcessIfExists();
+}
+
++ (BOOL)_defaultNetworkProcessExists
+{
+    return !!WebKit::NetworkProcessProxy::defaultNetworkProcess();
 }
 
 @end
