@@ -1,5 +1,5 @@
 # This file was generated with the command:
-# "./gni-to-cmake.py" "src/libANGLE/renderer/d3d/BUILD.gn" "D3D.cmake" "src/libANGLE/renderer/d3d/"
+# "./gni-to-cmake.py" "src/libANGLE/renderer/d3d/BUILD.gn" "D3D.cmake" "--prepend" "src/libANGLE/renderer/d3d/"
 
 # Copyright 2020 The ANGLE Project Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be

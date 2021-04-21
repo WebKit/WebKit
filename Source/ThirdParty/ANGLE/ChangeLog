@@ -1,5 +1,23 @@
 2021-04-21  Don Olmstead  <don.olmstead@sony.com>
 
+        [Python 3] Update gni-to-cmake.py
+        https://bugs.webkit.org/show_bug.cgi?id=224880
+
+        Reviewed by Kenneth Russell.
+
+        Update gni-to-cmake.py to run on Python 3. Added ArgumentParser support to be able to run
+        the script on Windows since the script assumed it would be called through a UNIX style
+        shell.
+
+        Ran the .gni files through the converter to verify output. It appears that the
+        Compiler.cmake file wasn't generated in the last update to ANGLE so it has many changes.
+
+        * Compiler.cmake:
+        * D3D.cmake:
+        * gni-to-cmake.py:
+
+2021-04-21  Don Olmstead  <don.olmstead@sony.com>
+
         [CMake] Add OpenGLES2 targets
         https://bugs.webkit.org/show_bug.cgi?id=224786
 
