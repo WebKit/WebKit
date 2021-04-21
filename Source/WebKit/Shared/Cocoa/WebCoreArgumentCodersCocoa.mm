@@ -360,7 +360,7 @@ Optional<Vector<RefPtr<ApplePayError>>> ArgumentCoder<Vector<RefPtr<ApplePayErro
     if (!decoder.decode(size))
         return WTF::nullopt;
 
-    Vector<RefPtr<ApplePayError>> errors(size);
+    Vector<RefPtr<ApplePayError>> errors;
     for (uint64_t i = 0; i < size; ++i) {
         Optional<bool> isValid;
         decoder >> isValid;

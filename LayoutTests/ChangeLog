@@ -1,3 +1,15 @@
+2021-04-20  Ian Gilbert  <iang@apple.com>
+
+        Crash due to VectorBuffer pre-allocation failure
+        https://bugs.webkit.org/show_bug.cgi?id=224840
+
+        Reviewed by Sam Weinig.
+
+        Added a regression test.
+
+        * ipc/large-vector-allocate-failure-crash-expected.txt: Added.
+        * ipc/large-vector-allocate-failure-crash.html: Added.
+
 2021-04-20  Robert Jenner  <jenner@apple.com>
 
         [ BigSur wk2 Debug arm64 ] http/wpt/preload/change-link-rel-attribute.html is a flakey crash

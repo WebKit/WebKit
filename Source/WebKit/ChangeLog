@@ -1,3 +1,18 @@
+2021-04-20  Ian Gilbert  <iang@apple.com>
+
+        Crash due to VectorBuffer pre-allocation failure
+        https://bugs.webkit.org/show_bug.cgi?id=224840
+
+        Reviewed by Sam Weinig.
+
+        Vector decoder could attempt to allocate a large buffer and on failure would crash.
+        Changed decode to avoid allocating a Vector based on the decoded size.
+
+        Test: ipc/large-vector-allocate-failure-crash.html
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<Vector<RefPtr<ApplePayError>>>::decode):
+
 2021-04-20  Chris Dumez  <cdumez@apple.com>
 
         If an idle GPUProcess doesn't exit under memory pressure because it just launched, check again later
