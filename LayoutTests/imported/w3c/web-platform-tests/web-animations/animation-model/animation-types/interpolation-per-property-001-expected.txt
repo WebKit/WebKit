@@ -12,6 +12,10 @@ PASS align-self (type: discrete) has testInterpolation function
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with linear easing
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with effect easing
 PASS align-self uses discrete animation when animating between "flex-start" and "flex-end" with keyframe easing
+PASS background-attachment (type: discrete) has testInterpolation function
+PASS background-attachment uses discrete animation when animating between "fixed" and "local" with linear easing
+PASS background-attachment uses discrete animation when animating between "fixed" and "local" with effect easing
+PASS background-attachment uses discrete animation when animating between "fixed" and "local" with keyframe easing
 PASS background-color (type: color) has testInterpolation function
 PASS background-color supports animating as color of rgb()
 PASS background-color supports animating as color of #RGB
@@ -19,10 +23,18 @@ PASS background-color supports animating as color of hsl()
 PASS background-color supports animating as color of #RGBa
 PASS background-color supports animating as color of rgba()
 PASS background-color supports animating as color of hsla()
+PASS background-clip (type: discrete) has testInterpolation function
+PASS background-clip uses discrete animation when animating between "padding-box" and "content-box" with linear easing
+PASS background-clip uses discrete animation when animating between "padding-box" and "content-box" with effect easing
+PASS background-clip uses discrete animation when animating between "padding-box" and "content-box" with keyframe easing
 PASS background-image (type: discrete) has testInterpolation function
 FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing assert_equals: The value should be url("http://localhost/test-1") at 499ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
 FAIL background-image uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with keyframe easing assert_equals: The value should be url("http://localhost/test-1") at 940ms expected "url(\"http://localhost/test-1\")" but got "url(\"http://localhost/test-2\")"
+PASS background-origin (type: discrete) has testInterpolation function
+PASS background-origin uses discrete animation when animating between "padding-box" and "content-box" with linear easing
+PASS background-origin uses discrete animation when animating between "padding-box" and "content-box" with effect easing
+PASS background-origin uses discrete animation when animating between "padding-box" and "content-box" with keyframe easing
 PASS border-bottom-color (type: color) has testInterpolation function
 PASS border-bottom-color supports animating as color of rgb()
 PASS border-bottom-color supports animating as color of #RGB

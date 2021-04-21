@@ -890,7 +890,12 @@ public:
     void setBackgroundYPosition(Length&& length) { SET_NESTED_VAR(m_backgroundData, background, m_yPosition, WTFMove(length)); }
     void setBackgroundSize(FillSizeType b) { SET_NESTED_VAR(m_backgroundData, background, m_sizeType, static_cast<unsigned>(b)); }
     void setBackgroundSizeLength(LengthSize&& size) { SET_NESTED_VAR(m_backgroundData, background, m_sizeLength, WTFMove(size)); }
-    
+    void setBackgroundAttachment(FillAttachment attachment) { SET_NESTED_VAR(m_backgroundData, background, m_attachment, static_cast<unsigned>(attachment)); SET_NESTED_VAR(m_backgroundData, background, m_attachmentSet, true); }
+    void setBackgroundClip(FillBox fillBox) { SET_NESTED_VAR(m_backgroundData, background, m_clip, static_cast<unsigned>(fillBox)); SET_NESTED_VAR(m_backgroundData, background, m_clipSet, true); }
+    void setBackgroundOrigin(FillBox fillBox) { SET_NESTED_VAR(m_backgroundData, background, m_origin, static_cast<unsigned>(fillBox)); SET_NESTED_VAR(m_backgroundData, background, m_originSet, true); }
+    void setBackgroundRepeatX(FillRepeat fillRepeat) { SET_NESTED_VAR(m_backgroundData, background, m_repeatX, static_cast<unsigned>(fillRepeat)); SET_NESTED_VAR(m_backgroundData, background, m_repeatXSet, true); }
+    void setBackgroundRepeatY(FillRepeat fillRepeat) { SET_NESTED_VAR(m_backgroundData, background, m_repeatY, static_cast<unsigned>(fillRepeat)); SET_NESTED_VAR(m_backgroundData, background, m_repeatYSet, true); }
+
     void setBorderImage(const NinePieceImage& b) { SET_VAR(m_surroundData, border.m_image, b); }
     void setBorderImageSource(RefPtr<StyleImage>&&);
     void setBorderImageSliceFill(bool);
