@@ -27,7 +27,7 @@ import os
 import re
 
 from buildbot.scheduler import AnyBranchScheduler, Triggerable, Nightly
-from buildbot.schedulers.forcesched import FixedParameter, ForceScheduler, StringParameter, BooleanParameter
+from buildbot.schedulers.forcesched import BooleanParameter, CodebaseParameter, FixedParameter, ForceScheduler, StringParameter
 from buildbot.schedulers.filter import ChangeFilter
 from buildbot.process import buildstep, factory, properties
 from buildbot.util import identifiers as buildbot_identifiers
@@ -76,7 +76,13 @@ def loadBuilderConfig(c, is_test_mode_enabled=False, master_prefix_path='./'):
     builderNames = [str(builder['name']) for builder in config['builders']]
     reason = StringParameter(name='reason', default='', size=40)
     properties = [BooleanParameter(name='is_clean', label='Force Clean build')]
-    forceScheduler = ForceScheduler(name='force', builderNames=builderNames, reason=reason, properties=properties)
+    # Disable default enabled input fields: revision, repository, project and branch
+    codebases = [CodebaseParameter("",
+                 revision=FixedParameter(name="revision", default=""),
+                 repository=FixedParameter(name="repository", default=""),
+                 project=FixedParameter(name="project", default=""),
+                 branch=FixedParameter(name="branch", default=""))]
+    forceScheduler = ForceScheduler(name='force', builderNames=builderNames, reason=reason, codebases=codebases, properties=properties)
     c['schedulers'].append(forceScheduler)
 
     c['builders'] = []

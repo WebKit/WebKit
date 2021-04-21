@@ -1,3 +1,12 @@
+2021-04-21  Aakash Jain  <aakash_jain@apple.com>
+
+        [build.webkit.org] Disable unused parameters in force build dialog box
+        https://bugs.webkit.org/show_bug.cgi?id=224544
+
+        Unreviewed minor infrastructure fix.
+
+        * CISupport/build-webkit-org/loadConfig.py:
+
 2021-04-21  Don Olmstead  <don.olmstead@sony.com>
 
         [Python 3] Update gni-to-cmake.py
