@@ -1,3 +1,39 @@
+2021-04-21  Lauro Moura  <lmoura@igalia.com>
+
+        [WPE] Allow defining custom repo and branch for Cog checkout
+        https://bugs.webkit.org/show_bug.cgi?id=224739
+
+        Reviewed by Philippe Normand.
+
+        Use cmake args "-DWPE_COG_REPO=<repo>" and "-DWPE_COG_TAG=<tag>" to
+        build different cog versions without having to edit the cmake files.
+
+        There might be the need to wipe the checked-out dir from time to time,
+        as only CMake 3.18 introduced different checkout strategies. Previous
+        cmakes try to rebase the previously checked out branch which might
+        lead to conflicts.
+
+        This commit also allows selecting between Cog and MiniBrowser with the
+        WPE_BROWSER envvar.
+
+        * PlatformWPE.cmake:
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.cog_path):
+        (WPEPort):
+        (WPEPort.browser_name):
+        (WPEPort.run_minibrowser):
+        * Scripts/webkitpy/port/wpe_unittest.py:
+        (WPEPortTest.test_default_upload_configuration):
+        (WPEPortTest):
+        (WPEPortTest.test_browser_name_default):
+        (WPEPortTest.test_browser_name_with_cog_built):
+        (WPEPortTest.test_browser_name_override_minibrowser_with_cog_built):
+        (WPEPortTest.test_browser_name_override_cog_without_cog_built):
+        (WPEPortTest.test_browser_name_override_unknown):
+        * Scripts/webkitpy/webdriver_tests/webdriver_driver_wpe.py:
+        (WebDriverWPE.browser_name): Make it cog-aware.
+        (WebDriverWPE.browser_path): Ditto.
+
 2021-04-21  Tim Horton  <timothy_horton@apple.com>
 
         Long-pressing a data detectors link causes the link to be followed

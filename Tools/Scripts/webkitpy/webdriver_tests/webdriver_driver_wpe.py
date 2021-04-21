@@ -32,9 +32,11 @@ class WebDriverWPE(WebDriver):
         return self._port._build_path('bin', 'WPEWebDriver')
 
     def browser_name(self):
-        return 'MiniBrowser'
+        return self._port.browser_name()
 
     def browser_path(self):
+        if self._port.browser_name() == "cog":
+            return self._port.cog_path()
         return self._port._build_path('bin', 'MiniBrowser')
 
     def browser_args(self):

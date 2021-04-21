@@ -149,19 +149,46 @@ class WPEPort(Port):
         configuration['platform'] = 'WPE'
         return configuration
 
+    def cog_path(self):
+        return self._build_path('Tools', 'cog-prefix', 'src', 'cog-build', 'cog')
+
+    def browser_name(self):
+        """Returns the lower case name of the browser to be used (Cog or MiniBrowser)
+
+        Users can select between both with the environment variable WPE_BROWSER
+        """
+        browser = os.environ.get("WPE_BROWSER", "").lower()
+        if browser in ("cog", "minibrowser"):
+            return browser
+
+        if browser:
+            print("Unknown browser {}. Defaulting to Cog and MiniBrowser selection".format(browser))
+
+        if self._filesystem.isfile(self.cog_path()):
+            return "cog"
+        return "minibrowser"
+
     def run_minibrowser(self, args):
         env = None
-        cog = self._build_path('Tools', 'cog-prefix', 'src', 'cog-build', 'cog')
-        if self._filesystem.isfile(cog):
-            miniBrowser = cog
-            env = os.environ.copy()
-            env.update({'WEBKIT_EXEC_PATH': self._build_path('bin'),
-                        'WEBKIT_INJECTED_BUNDLE_PATH': self._build_path('lib')})
-            has_platform_arg = any((a == "-P" or a.startswith("--platform=") for a in args))
-            if not has_platform_arg:
-                args.insert(0, "--platform=gtk4")
-        else:
-            print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
+        browser_name = self.browser_name()
+        miniBrowser = None
+
+        if browser_name == "cog":
+            miniBrowser = self.cog_path()
+            if not self._filesystem.isfile(miniBrowser):
+                print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
+                miniBrowser = None
+            else:
+                print("Using Cog as MiniBrowser")
+                env = os.environ.copy()
+                env.update({'WEBKIT_EXEC_PATH': self._build_path('bin'),
+                            'WEBKIT_INJECTED_BUNDLE_PATH': self._build_path('lib')})
+                has_platform_arg = any((a == "-P" or a.startswith("--platform=") for a in args))
+                if not has_platform_arg:
+                    args.insert(0, "--platform=gtk4")
+
+        if not miniBrowser:
+            print("Using default MiniBrowser")
             miniBrowser = self._build_path('bin', 'MiniBrowser')
             if not self._filesystem.isfile(miniBrowser):
                 print("%s not found... Did you run build-webkit?" % miniBrowser)
