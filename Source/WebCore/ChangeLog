@@ -1,3 +1,94 @@
+2021-04-20  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Rename WebCore::SelectionRect to WebCore::SelectionGeometry
+        https://bugs.webkit.org/show_bug.cgi?id=224820
+
+        Reviewed by Megan Gardner.
+
+        To prepare for rendering non-rectilinear selection quads on iOS using UIKit, rename `WebCore::SelectionRect` to
+        `WebCore::SelectionGeometry`. In a subsequent patch, this class will be backed by a `FloatQuad` instead of an
+        `IntRect`, and will additionally contain a flag indicating whether it should render using the bounding rect of
+        the quad (and should additionally be coalesced with surrounding selection rects), or if it should render the
+        selection quad without coalescing.
+
+        No change in behavior.
+
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper textRectsFromMarkers:withText:]):
+        * page/DragController.cpp:
+        * page/TextIndicator.cpp:
+        (WebCore::initializeIndicator):
+        * platform/ios/SelectionGeometry.cpp: Renamed from Source/WebCore/platform/ios/SelectionRect.cpp.
+        (WebCore::SelectionGeometry::SelectionGeometry):
+        (WebCore::SelectionGeometry::setLogicalLeft):
+        (WebCore::SelectionGeometry::setLogicalWidth):
+        (WebCore::SelectionGeometry::setLogicalTop):
+        (WebCore::SelectionGeometry::setLogicalHeight):
+        (WebCore::operator<<):
+        * platform/ios/SelectionGeometry.h: Renamed from Source/WebCore/platform/ios/SelectionRect.h.
+        (WebCore::SelectionGeometry::rect const):
+        (WebCore::SelectionGeometry::logicalLeft const):
+        (WebCore::SelectionGeometry::logicalWidth const):
+        (WebCore::SelectionGeometry::logicalTop const):
+        (WebCore::SelectionGeometry::logicalHeight const):
+        (WebCore::SelectionGeometry::direction const):
+        (WebCore::SelectionGeometry::minX const):
+        (WebCore::SelectionGeometry::maxX const):
+        (WebCore::SelectionGeometry::maxY const):
+        (WebCore::SelectionGeometry::lineNumber const):
+        (WebCore::SelectionGeometry::isLineBreak const):
+        (WebCore::SelectionGeometry::isFirstOnLine const):
+        (WebCore::SelectionGeometry::isLastOnLine const):
+        (WebCore::SelectionGeometry::containsStart const):
+        (WebCore::SelectionGeometry::containsEnd const):
+        (WebCore::SelectionGeometry::isHorizontal const):
+        (WebCore::SelectionGeometry::isInFixedPosition const):
+        (WebCore::SelectionGeometry::isRubyText const):
+        (WebCore::SelectionGeometry::pageNumber const):
+        (WebCore::SelectionGeometry::setRect):
+        (WebCore::SelectionGeometry::setDirection):
+        (WebCore::SelectionGeometry::setMinX):
+        (WebCore::SelectionGeometry::setMaxX):
+        (WebCore::SelectionGeometry::setMaxY):
+        (WebCore::SelectionGeometry::setLineNumber):
+        (WebCore::SelectionGeometry::setIsLineBreak):
+        (WebCore::SelectionGeometry::setIsFirstOnLine):
+        (WebCore::SelectionGeometry::setIsLastOnLine):
+        (WebCore::SelectionGeometry::setContainsStart):
+        (WebCore::SelectionGeometry::setContainsEnd):
+        (WebCore::SelectionGeometry::setIsHorizontal):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::collectSelectionGeometries):
+        (WebCore::RenderImage::collectSelectionRects): Deleted.
+        * rendering/RenderImage.h:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionGeometries):
+        (WebCore::RenderLineBreak::collectSelectionRects): Deleted.
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::collectSelectionGeometries):
+        (WebCore::adjustLineHeightOfSelectionGeometries):
+        (WebCore::coalesceSelectionGeometries):
+        (WebCore::RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines):
+        (WebCore::RenderObject::collectSelectionGeometriesInternal):
+        (WebCore::RenderObject::collectSelectionRects): Deleted.
+        (WebCore::adjustLineHeightOfSelectionRects): Deleted.
+        (WebCore::coalesceSelectionRects): Deleted.
+        (WebCore::RenderObject::collectSelectionRectsWithoutUnionInteriorLines): Deleted.
+        (WebCore::RenderObject::collectSelectionRectsInternal): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderSelectionInfo.cpp:
+        (WebCore::RenderSelectionInfo::RenderSelectionInfo):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionGeometries):
+        (WebCore::RenderText::collectSelectionGeometriesForLineBoxes):
+        (WebCore::RenderText::selectionRectForRepaint):
+        (WebCore::RenderText::collectSelectionRects): Deleted.
+        (WebCore::RenderText::collectSelectionRectsForLineBoxes): Deleted.
+        * rendering/RenderText.h:
+
 2021-04-20  Sam Weinig  <weinig@apple.com>
 
         Separated models don't get opacity set on them at all

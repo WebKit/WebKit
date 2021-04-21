@@ -34,7 +34,7 @@
 #include <WebCore/ElementContext.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/ScrollTypes.h>
-#include <WebCore/SelectionRect.h>
+#include <WebCore/SelectionGeometry.h>
 #include <WebCore/TextIndicator.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>

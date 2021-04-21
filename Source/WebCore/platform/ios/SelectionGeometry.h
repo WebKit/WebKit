@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SelectionRect_h
-#define SelectionRect_h
+#pragma once
 
 #include "IntRect.h"
 #include "WritingMode.h"
@@ -32,15 +31,15 @@
 
 namespace WebCore {
 
-class SelectionRect {
+class SelectionGeometry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT explicit SelectionRect(const IntRect&, bool isHorizontal, int columnNumber);
+    WEBCORE_EXPORT explicit SelectionGeometry(const IntRect&, bool isHorizontal, int columnNumber);
 
     // FIXME: We should move some of these arguments to an auxillary struct.
-    SelectionRect(const IntRect&, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, bool, int);
-    WEBCORE_EXPORT SelectionRect();
-    ~SelectionRect() = default;
+    SelectionGeometry(const IntRect&, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, bool, int);
+    SelectionGeometry() = default;
+    ~SelectionGeometry() = default;
 
     IntRect rect() const { return m_rect; }
 
@@ -66,37 +65,10 @@ public:
 
     void setRect(const IntRect& rect) { m_rect = rect; }
 
-    void setLogicalLeft(int left)
-    {
-        if (m_isHorizontal)
-            m_rect.setX(left);
-        else
-            m_rect.setY(left);
-    }
-
-    void setLogicalWidth(int width)
-    {
-        if (m_isHorizontal)
-            m_rect.setWidth(width);
-        else
-            m_rect.setHeight(width);
-    }
-
-    void setLogicalTop(int top)
-    {
-        if (m_isHorizontal)
-            m_rect.setY(top);
-        else
-            m_rect.setX(top);
-    }
-
-    void setLogicalHeight(int height)
-    {
-        if (m_isHorizontal)
-            m_rect.setHeight(height);
-        else
-            m_rect.setWidth(height);
-    }
+    void setLogicalLeft(int);
+    void setLogicalWidth(int);
+    void setLogicalTop(int);
+    void setLogicalHeight(int);
 
     void setDirection(TextDirection direction) { m_direction = direction; }
     void setMinX(int minX) { m_minX = minX; }
@@ -112,24 +84,22 @@ public:
 
 private:
     IntRect m_rect;
-    TextDirection m_direction;
-    int m_minX;
-    int m_maxX;
-    int m_maxY;
-    int m_lineNumber;
-    bool m_isLineBreak;
-    bool m_isFirstOnLine;
-    bool m_isLastOnLine;
-    bool m_containsStart;
-    bool m_containsEnd;
-    bool m_isHorizontal;
-    bool m_isInFixedPosition;
-    bool m_isRubyText;
-    int m_pageNumber;
+    TextDirection m_direction { TextDirection::LTR };
+    int m_minX { 0 };
+    int m_maxX { 0 };
+    int m_maxY { 0 };
+    int m_lineNumber { 0 };
+    bool m_isLineBreak { false };
+    bool m_isFirstOnLine { false };
+    bool m_isLastOnLine { false };
+    bool m_containsStart { false };
+    bool m_containsEnd { false };
+    bool m_isHorizontal { true };
+    bool m_isInFixedPosition { false };
+    bool m_isRubyText { false };
+    int m_pageNumber { 0 };
 };
 
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SelectionRect);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SelectionGeometry);
 
 } // namespace WebCore
-
-#endif // SelectionRect_h

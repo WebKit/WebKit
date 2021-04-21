@@ -178,7 +178,7 @@ struct KeypressCommand;
 
 #if PLATFORM(IOS_FAMILY)
 class FloatQuad;
-class SelectionRect;
+class SelectionGeometry;
 struct PasteboardImage;
 struct PasteboardWebContent;
 #endif
@@ -476,9 +476,9 @@ template<> struct ArgumentCoder<CGAffineTransform> {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-template<> struct ArgumentCoder<WebCore::SelectionRect> {
-    static void encode(Encoder&, const WebCore::SelectionRect&);
-    static Optional<WebCore::SelectionRect> decode(Decoder&);
+template<> struct ArgumentCoder<WebCore::SelectionGeometry> {
+    static void encode(Encoder&, const WebCore::SelectionGeometry&);
+    static Optional<WebCore::SelectionGeometry> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::InspectorOverlay::Highlight> {

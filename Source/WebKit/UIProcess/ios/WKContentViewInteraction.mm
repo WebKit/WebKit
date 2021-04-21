@@ -226,7 +226,7 @@ WKSelectionDrawingInfo::WKSelectionDrawingInfo(const EditorState& editorState)
     type = SelectionType::Range;
     auto& postLayoutData = editorState.postLayoutData();
     caretRect = postLayoutData.caretRectAtEnd;
-    selectionRects = postLayoutData.selectionRects;
+    selectionGeometries = postLayoutData.selectionGeometries;
     selectionClipRect = postLayoutData.selectionClipRect;
 }
 
@@ -239,11 +239,11 @@ inline bool operator==(const WKSelectionDrawingInfo& a, const WKSelectionDrawing
         if (a.caretRect != b.caretRect)
             return false;
 
-        if (a.selectionRects.size() != b.selectionRects.size())
+        if (a.selectionGeometries.size() != b.selectionGeometries.size())
             return false;
 
-        for (unsigned i = 0; i < a.selectionRects.size(); ++i) {
-            if (a.selectionRects[i].rect() != b.selectionRects[i].rect())
+        for (unsigned i = 0; i < a.selectionGeometries.size(); ++i) {
+            if (a.selectionGeometries[i].rect() != b.selectionGeometries[i].rect())
                 return false;
         }
     }
@@ -275,7 +275,7 @@ TextStream& operator<<(TextStream& stream, const WKSelectionDrawingInfo& info)
     TextStream::GroupScope group(stream);
     stream.dumpProperty("type", info.type);
     stream.dumpProperty("caret rect", info.caretRect);
-    stream.dumpProperty("selection rects", info.selectionRects);
+    stream.dumpProperty("selection geometries", info.selectionGeometries);
     stream.dumpProperty("selection clip rect", info.selectionClipRect);
     return stream;
 }
@@ -695,7 +695,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 @interface WKContentView (WKInteractionPrivate)
 - (void)accessibilitySpeakSelectionSetContent:(NSString *)string;
-- (NSArray *)webSelectionRectsForSelectionRects:(const Vector<WebCore::SelectionRect>&)selectionRects;
+- (NSArray *)webSelectionRectsForSelectionGeometries:(const Vector<WebCore::SelectionGeometry>&)selectionRects;
 - (void)_accessibilityDidGetSelectionRects:(NSArray *)selectionRects withGranularity:(UITextGranularity)granularity atOffset:(NSInteger)offset;
 @end
 
@@ -2538,7 +2538,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 - (BOOL)_pointIsInsideSelectionRect:(CGPoint)point outBoundingRect:(WebCore::FloatRect *)outBoundingRect
 {
     BOOL pointIsInSelectionRect = NO;
-    for (auto& rectInfo : _lastSelectionDrawingInfo.selectionRects) {
+    for (auto& rectInfo : _lastSelectionDrawingInfo.selectionGeometries) {
         auto rect = rectInfo.rect();
         if (rect.isEmpty())
             continue;
@@ -2552,7 +2552,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 
 - (BOOL)_shouldToggleSelectionCommandsAfterTapAt:(CGPoint)point
 {
-    if (_lastSelectionDrawingInfo.selectionRects.isEmpty())
+    if (_lastSelectionDrawingInfo.selectionGeometries.isEmpty())
         return NO;
 
     WebCore::FloatRect selectionBoundingRect;
@@ -2828,22 +2828,22 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return YES;
 }
 
-- (NSArray *)webSelectionRectsForSelectionRects:(const Vector<WebCore::SelectionRect>&)selectionRects
+- (NSArray *)webSelectionRectsForSelectionGeometries:(const Vector<WebCore::SelectionGeometry>&)selectionGeometries
 {
-    if (selectionRects.isEmpty())
+    if (selectionGeometries.isEmpty())
         return nil;
 
-    return createNSArray(selectionRects, [] (auto& coreRect) {
+    return createNSArray(selectionGeometries, [] (auto& geometry) {
         auto webRect = [WebSelectionRect selectionRect];
-        webRect.rect = coreRect.rect();
-        webRect.writingDirection = coreRect.direction() == WebCore::TextDirection::LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
-        webRect.isLineBreak = coreRect.isLineBreak();
-        webRect.isFirstOnLine = coreRect.isFirstOnLine();
-        webRect.isLastOnLine = coreRect.isLastOnLine();
-        webRect.containsStart = coreRect.containsStart();
-        webRect.containsEnd = coreRect.containsEnd();
-        webRect.isInFixedPosition = coreRect.isInFixedPosition();
-        webRect.isHorizontal = coreRect.isHorizontal();
+        webRect.rect = geometry.rect();
+        webRect.writingDirection = geometry.direction() == WebCore::TextDirection::LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
+        webRect.isLineBreak = geometry.isLineBreak();
+        webRect.isFirstOnLine = geometry.isFirstOnLine();
+        webRect.isLastOnLine = geometry.isLastOnLine();
+        webRect.containsStart = geometry.containsStart();
+        webRect.containsEnd = geometry.containsEnd();
+        webRect.isInFixedPosition = geometry.isInFixedPosition();
+        webRect.isHorizontal = geometry.isHorizontal();
         return webRect;
     }).autorelease();
 }
@@ -2852,8 +2852,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
 {
     if (_page->editorState().isMissingPostLayoutData || _page->editorState().selectionIsNone)
         return nil;
-    const auto& selectionRects = _page->editorState().postLayoutData().selectionRects;
-    return [self webSelectionRectsForSelectionRects:selectionRects];
+    const auto& selectionGeometries = _page->editorState().postLayoutData().selectionGeometries;
+    return [self webSelectionRectsForSelectionGeometries:selectionGeometries];
 }
 
 - (void)_highlightLongPressRecognized:(UILongPressGestureRecognizer *)gestureRecognizer
@@ -3274,8 +3274,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         auto& editorState = view->_page->editorState();
         auto& postLayoutData = editorState.postLayoutData();
         CGRect presentationRect;
-        if (editorState.selectionIsRange && !postLayoutData.selectionRects.isEmpty())
-            presentationRect = postLayoutData.selectionRects[0].rect();
+        if (editorState.selectionIsRange && !postLayoutData.selectionGeometries.isEmpty())
+            presentationRect = postLayoutData.selectionGeometries[0].rect();
         else
             presentationRect = postLayoutData.caretRectAtStart;
         
@@ -3294,11 +3294,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         if (!view->_textInteractionAssistant || !string || view->_page->editorState().isMissingPostLayoutData)
             return;
 
-        auto& selectionRects = view->_page->editorState().postLayoutData().selectionRects;
-        if (selectionRects.isEmpty())
+        auto& selectionGeometries = view->_page->editorState().postLayoutData().selectionGeometries;
+        if (selectionGeometries.isEmpty())
             return;
 
-        [view->_textInteractionAssistant showShareSheetFor:string fromRect:selectionRects.first().rect()];
+        [view->_textInteractionAssistant showShareSheetFor:string fromRect:selectionGeometries.first().rect()];
     });
 }
 
@@ -3315,18 +3315,18 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         if (strongSelf->_page->editorState().isMissingPostLayoutData)
             return;
 
-        auto& selectionRects = strongSelf->_page->editorState().postLayoutData().selectionRects;
-        if (selectionRects.isEmpty())
+        auto& selectionGeometries = strongSelf->_page->editorState().postLayoutData().selectionGeometries;
+        if (selectionGeometries.isEmpty())
             return;
 
         if ([strongSelf->_textInteractionAssistant respondsToSelector:@selector(translate:fromRect:)])
-            [strongSelf->_textInteractionAssistant translate:string fromRect:selectionRects.first().rect()];
+            [strongSelf->_textInteractionAssistant translate:string fromRect:selectionGeometries.first().rect()];
     });
 }
 
 - (void)_addShortcutForWebView:(id)sender
 {
-    [_textInteractionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionRects[0].rect()];
+    [_textInteractionAssistant showTextServiceFor:[self selectedText] fromRect:_page->editorState().postLayoutData().selectionGeometries[0].rect()];
 }
 
 - (NSString *)selectedText
@@ -3885,7 +3885,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_showDictionary:(NSString *)text
 {
-    CGRect presentationRect = _page->editorState().postLayoutData().selectionRects[0].rect();
+    CGRect presentationRect = _page->editorState().postLayoutData().selectionGeometries[0].rect();
     if (_textInteractionAssistant)
         [_textInteractionAssistant showDictionaryFor:text fromRect:presentationRect];
 }
@@ -3920,9 +3920,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity
 {
-    _page->requestRectsForGranularityWithSelectionOffset(toWKTextGranularity(granularity), offset, [view = retainPtr(self), offset, granularity](const Vector<WebCore::SelectionRect>& selectionRects) {
+    _page->requestRectsForGranularityWithSelectionOffset(toWKTextGranularity(granularity), offset, [view = retainPtr(self), offset, granularity](const Vector<WebCore::SelectionGeometry>& selectionGeometries) {
         if ([view respondsToSelector:@selector(_accessibilityDidGetSelectionRects:withGranularity:atOffset:)])
-            [view _accessibilityDidGetSelectionRects:[view webSelectionRectsForSelectionRects:selectionRects] withGranularity:granularity atOffset:offset];
+            [view _accessibilityDidGetSelectionRects:[view webSelectionRectsForSelectionGeometries:selectionGeometries] withGranularity:granularity atOffset:offset];
     });
 }
 
@@ -3931,15 +3931,15 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     [self _accessibilityRetrieveRectsAtSelectionOffset:offset withText:text completionHandler:nil];
 }
 
-- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(const Vector<WebCore::SelectionRect>& rects))completionHandler
+- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(const Vector<WebCore::SelectionGeometry>& geometries))completionHandler
 {
     RetainPtr<WKContentView> view = self;
-    _page->requestRectsAtSelectionOffsetWithText(offset, text, [view, offset, capturedCompletionHandler = makeBlockPtr(completionHandler)](const Vector<WebCore::SelectionRect>& selectionRects) {
+    _page->requestRectsAtSelectionOffsetWithText(offset, text, [view, offset, capturedCompletionHandler = makeBlockPtr(completionHandler)](const Vector<WebCore::SelectionGeometry>& selectionGeometries) {
         if (capturedCompletionHandler)
-            capturedCompletionHandler(selectionRects);
+            capturedCompletionHandler(selectionGeometries);
 
         if ([view respondsToSelector:@selector(_accessibilityDidGetSelectionRects:withGranularity:atOffset:)])
-            [view _accessibilityDidGetSelectionRects:[view webSelectionRectsForSelectionRects:selectionRects] withGranularity:UITextGranularityWord atOffset:offset];
+            [view _accessibilityDidGetSelectionRects:[view webSelectionRectsForSelectionGeometries:selectionGeometries] withGranularity:UITextGranularityWord atOffset:offset];
     });
 }
 
@@ -4796,10 +4796,10 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
 }
 
-static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore::SelectionRect>& rects)
+static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore::SelectionGeometry>& rects)
 {
     return createNSArray(rects, [] (auto& rect) {
-        return adoptNS([[WKTextSelectionRect alloc] initWithSelectionRect:rect]);
+        return adoptNS([[WKTextSelectionRect alloc] initWithSelectionGeometry:rect]);
     }).autorelease();
 }
 
@@ -4852,7 +4852,7 @@ static NSArray<WKTextSelectionRect *> *wkTextSelectionRects(const Vector<WebCore
 
     auto caretStartRect = [self _scaledCaretRectForSelectionStart:_page->editorState().postLayoutData().caretRectAtStart];
     auto caretEndRect = [self _scaledCaretRectForSelectionEnd:_page->editorState().postLayoutData().caretRectAtEnd];
-    auto selectionRects = wkTextSelectionRects(_page->editorState().postLayoutData().selectionRects);
+    auto selectionRects = wkTextSelectionRects(_page->editorState().postLayoutData().selectionGeometries);
     auto selectedTextLength = editorState.postLayoutData().selectedTextLength;
     _cachedSelectedTextRange = [WKTextRange textRangeWithState:!hasSelection isRange:isRange isEditable:isContentEditable startRect:caretStartRect endRect:caretEndRect selectionRects:selectionRects selectedTextLength:selectedTextLength];
     return _cachedSelectedTextRange.get();

@@ -103,7 +103,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/FloatQuad.h>
-#include <WebCore/SelectionRect.h>
+#include <WebCore/SelectionGeometry.h>
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -1302,78 +1302,78 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
 
 #if PLATFORM(IOS_FAMILY)
 
-void ArgumentCoder<SelectionRect>::encode(Encoder& encoder, const SelectionRect& selectionRect)
+void ArgumentCoder<SelectionGeometry>::encode(Encoder& encoder, const SelectionGeometry& selectionGeometry)
 {
-    encoder << selectionRect.rect();
-    encoder << static_cast<uint32_t>(selectionRect.direction());
-    encoder << selectionRect.minX();
-    encoder << selectionRect.maxX();
-    encoder << selectionRect.maxY();
-    encoder << selectionRect.lineNumber();
-    encoder << selectionRect.isLineBreak();
-    encoder << selectionRect.isFirstOnLine();
-    encoder << selectionRect.isLastOnLine();
-    encoder << selectionRect.containsStart();
-    encoder << selectionRect.containsEnd();
-    encoder << selectionRect.isHorizontal();
+    encoder << selectionGeometry.rect();
+    encoder << static_cast<uint32_t>(selectionGeometry.direction());
+    encoder << selectionGeometry.minX();
+    encoder << selectionGeometry.maxX();
+    encoder << selectionGeometry.maxY();
+    encoder << selectionGeometry.lineNumber();
+    encoder << selectionGeometry.isLineBreak();
+    encoder << selectionGeometry.isFirstOnLine();
+    encoder << selectionGeometry.isLastOnLine();
+    encoder << selectionGeometry.containsStart();
+    encoder << selectionGeometry.containsEnd();
+    encoder << selectionGeometry.isHorizontal();
 }
 
-Optional<SelectionRect> ArgumentCoder<SelectionRect>::decode(Decoder& decoder)
+Optional<SelectionGeometry> ArgumentCoder<SelectionGeometry>::decode(Decoder& decoder)
 {
-    SelectionRect selectionRect;
+    SelectionGeometry selectionGeometry;
     IntRect rect;
     if (!decoder.decode(rect))
         return WTF::nullopt;
-    selectionRect.setRect(rect);
+    selectionGeometry.setRect(rect);
 
     uint32_t direction;
     if (!decoder.decode(direction))
         return WTF::nullopt;
-    selectionRect.setDirection((TextDirection)direction);
+    selectionGeometry.setDirection((TextDirection)direction);
 
     int intValue;
     if (!decoder.decode(intValue))
         return WTF::nullopt;
-    selectionRect.setMinX(intValue);
+    selectionGeometry.setMinX(intValue);
 
     if (!decoder.decode(intValue))
         return WTF::nullopt;
-    selectionRect.setMaxX(intValue);
+    selectionGeometry.setMaxX(intValue);
 
     if (!decoder.decode(intValue))
         return WTF::nullopt;
-    selectionRect.setMaxY(intValue);
+    selectionGeometry.setMaxY(intValue);
 
     if (!decoder.decode(intValue))
         return WTF::nullopt;
-    selectionRect.setLineNumber(intValue);
+    selectionGeometry.setLineNumber(intValue);
 
     bool boolValue;
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setIsLineBreak(boolValue);
+    selectionGeometry.setIsLineBreak(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setIsFirstOnLine(boolValue);
+    selectionGeometry.setIsFirstOnLine(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setIsLastOnLine(boolValue);
+    selectionGeometry.setIsLastOnLine(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setContainsStart(boolValue);
+    selectionGeometry.setContainsStart(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setContainsEnd(boolValue);
+    selectionGeometry.setContainsEnd(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setIsHorizontal(boolValue);
+    selectionGeometry.setIsHorizontal(boolValue);
 
-    return selectionRect;
+    return selectionGeometry;
 }
 
 #endif

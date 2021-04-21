@@ -97,7 +97,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "SelectionRect.h"
+#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {

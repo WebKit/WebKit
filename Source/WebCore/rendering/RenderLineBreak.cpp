@@ -39,7 +39,7 @@
 #include <wtf/IsoMallocInlines.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "SelectionRect.h"
+#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
@@ -178,7 +178,7 @@ void RenderLineBreak::updateFromStyle()
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, unsigned)
+void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rects, unsigned, unsigned)
 {
     auto run = LayoutIntegration::runFor(*this);
 
@@ -232,7 +232,7 @@ void RenderLineBreak::collectSelectionRects(Vector<SelectionRect>& rects, unsign
         }
     }
 
-    rects.append(SelectionRect(absRect, run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absRect.x())));
+    rects.append(SelectionGeometry(absRect, run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, false, false, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absRect.x())));
 }
 #endif
 

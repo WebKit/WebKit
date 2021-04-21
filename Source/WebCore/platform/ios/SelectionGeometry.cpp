@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,35 +24,22 @@
  */
 
 #include "config.h"
-#include "SelectionRect.h"
+#include "SelectionGeometry.h"
 
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-SelectionRect::SelectionRect(const IntRect& rect, bool isHorizontal, int pageNumber)
+SelectionGeometry::SelectionGeometry(const IntRect& rect, bool isHorizontal, int pageNumber)
     : m_rect(rect)
     , m_direction(TextDirection::LTR)
-    , m_minX(0)
-    , m_maxX(0)
-    , m_maxY(0)
-    , m_lineNumber(0)
-    , m_isLineBreak(false)
-    , m_isFirstOnLine(false)
-    , m_isLastOnLine(false)
-    , m_containsStart(false)
-    , m_containsEnd(false)
     , m_isHorizontal(isHorizontal)
-    , m_isInFixedPosition(false)
-    , m_isRubyText(false)
     , m_pageNumber(pageNumber)
 {
 }
 
 // FIXME: We should move some of these arguments to an auxillary struct.
-SelectionRect::SelectionRect(const IntRect& rect, TextDirection direction, int minX, int maxX, int maxY,
-    int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd,
-    bool isHorizontal, bool isInFixedPosition, bool isRubyText, int pageNumber)
+SelectionGeometry::SelectionGeometry(const IntRect& rect, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal, bool isInFixedPosition, bool isRubyText, int pageNumber)
     : m_rect(rect)
     , m_direction(direction)
     , m_minX(minX)
@@ -71,28 +58,42 @@ SelectionRect::SelectionRect(const IntRect& rect, TextDirection direction, int m
 {
 }
 
-SelectionRect::SelectionRect()
-    : m_direction(TextDirection::LTR)
-    , m_minX(0)
-    , m_maxX(0)
-    , m_maxY(0)
-    , m_lineNumber(0)
-    , m_isLineBreak(false)
-    , m_isFirstOnLine(false)
-    , m_isLastOnLine(false)
-    , m_containsStart(false)
-    , m_containsEnd(false)
-    , m_isHorizontal(true)
-    , m_isInFixedPosition(false)
-    , m_isRubyText(false)
-    , m_pageNumber(0)
+void SelectionGeometry::setLogicalLeft(int left)
 {
+    if (m_isHorizontal)
+        m_rect.setX(left);
+    else
+        m_rect.setY(left);
 }
 
-TextStream& operator<<(TextStream& stream, SelectionRect rect)
+void SelectionGeometry::setLogicalWidth(int width)
+{
+    if (m_isHorizontal)
+        m_rect.setWidth(width);
+    else
+        m_rect.setHeight(width);
+}
+
+void SelectionGeometry::setLogicalTop(int top)
+{
+    if (m_isHorizontal)
+        m_rect.setY(top);
+    else
+        m_rect.setX(top);
+}
+
+void SelectionGeometry::setLogicalHeight(int height)
+{
+    if (m_isHorizontal)
+        m_rect.setHeight(height);
+    else
+        m_rect.setWidth(height);
+}
+
+TextStream& operator<<(TextStream& stream, SelectionGeometry rect)
 {
     TextStream::GroupScope group(stream);
-    stream << "selection rect";
+    stream << "selection geometry";
 
     stream.dumpProperty("rect", rect.rect());
     stream.dumpProperty("direction", isLeftToRightDirection(rect.direction()) ? "ltr" : "rtl");

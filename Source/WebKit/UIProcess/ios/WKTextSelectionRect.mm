@@ -28,36 +28,36 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <WebCore/SelectionRect.h>
+#import <WebCore/SelectionGeometry.h>
 
 @implementation WKTextSelectionRect {
-    WebCore::SelectionRect _selectionRect;
+    WebCore::SelectionGeometry _selectionGeometry;
 }
 
 - (instancetype)initWithCGRect:(CGRect)rect
 {
-    WebCore::SelectionRect selectionRect;
-    selectionRect.setRect(WebCore::enclosingIntRect(rect));
-    return [self initWithSelectionRect:WTFMove(selectionRect)];
+    WebCore::SelectionGeometry selectionGeometry;
+    selectionGeometry.setRect(WebCore::enclosingIntRect(rect));
+    return [self initWithSelectionGeometry:WTFMove(selectionGeometry)];
 }
 
-- (instancetype)initWithSelectionRect:(const WebCore::SelectionRect&)selectionRect
+- (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionRect
 {
     if (!(self = [super init]))
         return nil;
-    _selectionRect = selectionRect;
+    _selectionGeometry = selectionRect;
     return self;
 }
 
 - (CGRect)rect
 {
-    return _selectionRect.rect();
+    return _selectionGeometry.rect();
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (UITextWritingDirection)writingDirection
 {
-    return _selectionRect.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
+    return _selectionGeometry.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -68,17 +68,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)containsStart
 {
-    return _selectionRect.containsStart();
+    return _selectionGeometry.containsStart();
 }
 
 - (BOOL)containsEnd
 {
-    return _selectionRect.containsEnd();
+    return _selectionGeometry.containsEnd();
 }
 
 - (BOOL)isVertical
 {
-    return !_selectionRect.isHorizontal();
+    return !_selectionGeometry.isHorizontal();
 }
 
 @end

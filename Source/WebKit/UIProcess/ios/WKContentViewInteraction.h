@@ -209,7 +209,7 @@ struct WKSelectionDrawingInfo {
     explicit WKSelectionDrawingInfo(const EditorState&);
     SelectionType type;
     WebCore::IntRect caretRect;
-    Vector<WebCore::SelectionRect> selectionRects;
+    Vector<WebCore::SelectionGeometry> selectionGeometries;
     WebCore::IntRect selectionClipRect;
 };
 
@@ -613,7 +613,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (NSArray<NSValue *> *)_uiTextSelectionRects;
 - (void)accessibilityRetrieveSpeakSelectionContent;
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;
-- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(const Vector<WebCore::SelectionRect>& rects))completionHandler;
+- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(const Vector<WebCore::SelectionGeometry>& rects))completionHandler;
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text;
 - (void)_accessibilityStoreSelection;
 - (void)_accessibilityClearSelection;

@@ -28,13 +28,13 @@
 #import <UIKit/UIKit.h>
 
 namespace WebCore {
-class SelectionRect;
+class SelectionGeometry;
 }
 
 @interface WKTextSelectionRect : UITextSelectionRect
 
 - (instancetype)initWithCGRect:(CGRect)rect;
-- (instancetype)initWithSelectionRect:(const WebCore::SelectionRect&)selectionRect;
+- (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionRect;
 
 @end
 

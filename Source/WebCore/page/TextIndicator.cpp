@@ -48,7 +48,7 @@
 #include "TextPaintStyle.h"
 
 #if PLATFORM(IOS_FAMILY)
-#include "SelectionRect.h"
+#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
@@ -303,8 +303,8 @@ static bool initializeIndicator(TextIndicatorData& data, Frame& frame, const Sim
         data.options.add(TextIndicatorOption::PaintAllContent);
 #if PLATFORM(IOS_FAMILY)
     else if (data.options.contains(TextIndicatorOption::UseSelectionRectForSizing)) {
-        textRects = RenderObject::collectSelectionRects(range).map([&](auto& rect) -> FloatRect {
-            return rect.rect();
+        textRects = RenderObject::collectSelectionGeometries(range).map([&](auto& geometry) -> FloatRect {
+            return geometry.rect();
         });
     }
 #endif

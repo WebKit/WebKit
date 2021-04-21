@@ -751,7 +751,7 @@ def headers_for_type(type):
         'WebCore::ViewportAttributes': ['<WebCore/ViewportArguments.h>'],
         'WebCore::WebGLLoadPolicy': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::WillContinueLoading': ['<WebCore/FrameLoaderTypes.h>'],
-        'WebCore::SelectionRect': ['"EditorState.h"'],
+        'WebCore::SelectionGeometry': ['"EditorState.h"'],
         'WebKit::ActivityStateChangeID': ['"DrawingAreaInfo.h"'],
         'WebKit::AppBoundNavigationTestingData': ['"NavigatingToAppBoundDomain.h"'],
         'WebKit::AllowOverwrite': ['"DownloadID.h"'],

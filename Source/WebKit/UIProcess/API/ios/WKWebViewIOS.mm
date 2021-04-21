@@ -3222,7 +3222,7 @@ static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary
 
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(NSArray<NSValue *> *rects))completionHandler
 {
-    [_contentView _accessibilityRetrieveRectsAtSelectionOffset:offset withText:text completionHandler:[capturedCompletionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::SelectionRect>& selectionRects) {
+    [_contentView _accessibilityRetrieveRectsAtSelectionOffset:offset withText:text completionHandler:[capturedCompletionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::SelectionGeometry>& selectionRects) {
         if (!capturedCompletionHandler)
             return;
         capturedCompletionHandler(createNSArray(selectionRects, [] (auto& rect) {

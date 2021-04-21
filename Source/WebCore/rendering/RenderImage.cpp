@@ -63,7 +63,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include "LogicalSelectionOffsetCaches.h"
-#include "SelectionRect.h"
+#include "SelectionGeometry.h"
 #endif
 
 #if USE(CG)
@@ -80,12 +80,12 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderImage);
 // during selection creation yet anyway.
 // FIXME: We can't tell whether or not we contain the start or end of the selected Range using only the offsets
 // of the start and end, we need to know the whole Position.
-void RenderImage::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, unsigned)
+void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometries, unsigned, unsigned)
 {
     RenderBlock* containingBlock = this->containingBlock();
 
     IntRect imageRect;
-    // FIXME: It doesn't make sense to package line bounds into SelectionRects. We should find
+    // FIXME: It doesn't make sense to package line bounds into SelectionGeometry. We should find
     // the right and left extent of the selection once for the entire selected Range, perhaps
     // using the Range's common ancestor.
     IntRect lineExtentRect;
@@ -128,9 +128,9 @@ void RenderImage::collectSelectionRects(Vector<SelectionRect>& rects, unsigned, 
     if (!containingBlock->isHorizontalWritingMode())
         lineExtentBounds = lineExtentBounds.transposedRect();
 
-    // FIXME: We should consider either making SelectionRect a struct or better organize its optional fields into
+    // FIXME: We should consider either making SelectionGeometry a struct or better organize its optional fields into
     // an auxiliary struct to simplify its initialization.
-    rects.append(SelectionRect(absoluteBounds, containingBlock->style().direction(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containingBlock->style().isHorizontalWritingMode(), isFixed, false /* ruby text */, view().pageNumberForBlockProgressionOffset(absoluteBounds.x())));
+    geometries.append(SelectionGeometry(absoluteBounds, containingBlock->style().direction(), lineExtentBounds.x(), lineExtentBounds.maxX(), lineExtentBounds.maxY(), 0, false /* line break */, isFirstOnLine, isLastOnLine, false /* contains start */, false /* contains end */, containingBlock->style().isHorizontalWritingMode(), isFixed, false /* ruby text */, view().pageNumberForBlockProgressionOffset(absoluteBounds.x())));
 }
 #endif
 

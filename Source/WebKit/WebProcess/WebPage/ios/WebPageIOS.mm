@@ -258,7 +258,7 @@ bool WebPage::platformNeedsLayoutForEditorState(const Frame& frame) const
     return needsLayout;
 }
 
-static void convertContentToRootViewSelectionRects(const FrameView& view, Vector<SelectionRect>& rects)
+static void convertContentToRootView(const FrameView& view, Vector<SelectionGeometry>& rects)
 {
     for (auto& rect : rects)
         rect.setRect(view.contentsToRootView(rect.rect()));
@@ -276,8 +276,8 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     if (frame.editor().hasComposition()) {
         if (auto compositionRange = frame.editor().compositionRange()) {
-            postLayoutData.markedTextRects = RenderObject::collectSelectionRects(*compositionRange);
-            convertContentToRootViewSelectionRects(view, postLayoutData.markedTextRects);
+            postLayoutData.markedTextRects = RenderObject::collectSelectionGeometries(*compositionRange);
+            convertContentToRootView(view, postLayoutData.markedTextRects);
 
             postLayoutData.markedText = plainTextForContext(*compositionRange);
             VisibleSelection compositionSelection(*compositionRange);
@@ -310,8 +310,8 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         selectedRange = selection.toNormalizedRange();
         String selectedText;
         if (selectedRange) {
-            postLayoutData.selectionRects = RenderObject::collectSelectionRects(*selectedRange);
-            convertContentToRootViewSelectionRects(view, postLayoutData.selectionRects);
+            postLayoutData.selectionGeometries = RenderObject::collectSelectionGeometries(*selectedRange);
+            convertContentToRootView(view, postLayoutData.selectionGeometries);
             selectedText = plainTextForDisplay(*selectedRange);
             postLayoutData.selectedTextLength = selectedText.length();
             const int maxSelectedTextLength = 200;
@@ -1963,7 +1963,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
     reply(WTFMove(rectsToAvoidInRootViewCoordinates));
 }
 
-void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& completionHandler)
+void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -1976,9 +1976,9 @@ void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity
         return;
     }
 
-    auto selectionRects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
-    convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
-    completionHandler(selectionRects);
+    auto selectionGeometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
+    convertContentToRootView(*frame.view(), selectionGeometries);
+    completionHandler(selectionGeometries);
 }
 
 void WebPage::storeSelectionForAccessibility(bool shouldStore)
@@ -2003,7 +2003,7 @@ static Optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosition&
     return findClosestPlainText(range, matchText, { }, characterCount({ range.start, *boundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
 }
 
-void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& completionHandler)
+void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     auto& selection = m_storedSelectionForAccessibility.isNone() ? frame.selection().selection() : m_storedSelectionForAccessibility;
@@ -2022,9 +2022,9 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
         }
     }
 
-    auto selectionRects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
-    convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
-    completionHandler(selectionRects);
+    auto selectionGeometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
+    convertContentToRootView(*frame.view(), selectionGeometries);
+    completionHandler(selectionGeometries);
 }
 
 VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame, const IntPoint& point, bool isInteractingWithFocusedElement)
@@ -2341,11 +2341,13 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
         textForRange = plainTextForContext(range);
     }
 
-    Vector<SelectionRect> selectionRects;
+    Vector<SelectionGeometry> selectionGeometries;
     if (textForRange == textForAutocorrection)
-        selectionRects = RenderObject::collectSelectionRects(*range);
+        selectionGeometries = RenderObject::collectSelectionGeometries(*range);
 
-    auto rootViewSelectionRects = selectionRects.map([&](const auto& selectionRect) -> FloatRect { return frame.view()->contentsToRootView(selectionRect.rect()); });
+    auto rootViewSelectionRects = selectionGeometries.map([&](const auto& selectionGeometry) -> FloatRect {
+        return frame.view()->contentsToRootView(selectionGeometry.rect());
+    });
 
     bool multipleFonts = false;
     CTFontRef font = nil;

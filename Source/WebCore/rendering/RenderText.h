@@ -75,7 +75,7 @@ public:
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const final;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
 #if PLATFORM(IOS_FAMILY)
-    void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) final;
+    void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max()) final;
 #endif
 
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const final;
@@ -126,7 +126,7 @@ public:
 
     bool canBeSelectionLeaf() const override { return true; }
 
-    LayoutRect collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>&);
+    LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>&);
 
     LayoutUnit marginLeft() const { return minimumValueForLength(style().marginLeft(), 0); }
     LayoutUnit marginRight() const { return minimumValueForLength(style().marginRight(), 0); }
@@ -215,7 +215,7 @@ private:
 
     void secureText(UChar mask);
 
-    LayoutRect collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>*);
+    LayoutRect collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>*);
     bool computeCanUseSimplifiedTextMeasuring() const;
 
     void node() const = delete;

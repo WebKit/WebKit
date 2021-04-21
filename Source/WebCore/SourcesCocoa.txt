@@ -453,7 +453,7 @@ platform/ios/QuickLook.mm
 platform/ios/ScrollAnimatorIOS.mm
 platform/ios/ScrollViewIOS.mm
 platform/ios/ScrollbarThemeIOS.mm
-platform/ios/SelectionRect.cpp
+platform/ios/SelectionGeometry.cpp
 platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm
 platform/ios/TileControllerMemoryHandlerIOS.cpp
