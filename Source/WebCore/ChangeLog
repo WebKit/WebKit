@@ -1,5 +1,22 @@
 2021-04-21  Zalan Bujtas  <zalan@apple.com>
 
+        [LFC] Take "contain: size" into account when computing the preferred logical width
+        https://bugs.webkit.org/show_bug.cgi?id=224850
+
+        Reviewed by Antti Koivisto.
+
+        The intrinsic sizes of the size containment box are determined as if the element had no content,
+        following the same logic as when sizing as if empty.
+
+        * layout/blockformatting/BlockFormattingContextGeometry.cpp:
+        (WebCore::Layout::BlockFormattingContext::Geometry::intrinsicWidthConstraints):
+        * layout/inlineformatting/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::computeIntrinsicWidthForFormattingRoot):
+        * layout/tableformatting/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+
+2021-04-21  Zalan Bujtas  <zalan@apple.com>
+
         REGRESSION(r256107): Text moves around when selecting at https://www.tokyo-sports.co.jp/entame/news/2834187/
         https://bugs.webkit.org/show_bug.cgi?id=224839
         <rdar://74958484>

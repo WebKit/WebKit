@@ -361,6 +361,12 @@ FormattingContext::IntrinsicWidthConstraints BlockFormattingContext::Geometry::i
         if (!is<ContainerBox>(layoutBox) || !downcast<ContainerBox>(layoutBox).hasInFlowOrFloatingChild())
             return { };
 
+        if (layoutBox.isSizeContainmentBox()) {
+            // The intrinsic sizes of the size containment box are determined as if the element had no content,
+            // following the same logic as when sizing as if empty.
+            return { };
+        }
+
         if (layoutBox.establishesFormattingContext()) {
             auto intrinsicWidthConstraints = LayoutContext::createFormattingContext(downcast<ContainerBox>(layoutBox), layoutState())->computedIntrinsicWidthConstraints();
             if (logicalWidth.isMinContent())

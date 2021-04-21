@@ -305,6 +305,7 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 
 FormattingContext::IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstraints()
 {
+    ASSERT(!root().isSizeContainmentBox());
     // Tables have a slighty different concept of shrink to fit. It's really only different with non-auto "width" values, where
     // a generic shrink-to fit block level box like a float box would be just sized to the computed value of "width", tables
     // can actually be streched way over.

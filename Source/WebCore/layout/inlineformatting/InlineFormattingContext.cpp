@@ -318,8 +318,13 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
     auto constraints = IntrinsicWidthConstraints { };
     if (auto fixedWidth = geometry().fixedValue(formattingRoot.style().logicalWidth()))
         constraints = { *fixedWidth, *fixedWidth };
-    else if (is<ContainerBox>(formattingRoot) && downcast<ContainerBox>(formattingRoot).hasInFlowOrFloatingChild())
-        constraints = LayoutContext::createFormattingContext(downcast<ContainerBox>(formattingRoot), layoutState())->computedIntrinsicWidthConstraints();
+    else {
+        auto hasInflowOrFloatingContent = is<ContainerBox>(formattingRoot) && downcast<ContainerBox>(formattingRoot).hasInFlowOrFloatingChild();
+        // The intrinsic sizes of the size containment box are determined as if the element had no content.
+        auto shouldIgnoreChildContent = formattingRoot.isSizeContainmentBox();
+        if (hasInflowOrFloatingContent && !shouldIgnoreChildContent)
+            constraints = LayoutContext::createFormattingContext(downcast<ContainerBox>(formattingRoot), layoutState())->computedIntrinsicWidthConstraints();
+    }
     constraints = geometry().constrainByMinMaxWidth(formattingRoot, constraints);
     constraints.expand(geometryForBox(formattingRoot).horizontalMarginBorderAndPadding());
     formattingState().setIntrinsicWidthConstraintsForBox(formattingRoot, constraints);
