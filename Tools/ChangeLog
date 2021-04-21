@@ -1,3 +1,26 @@
+2021-04-21  Sam Sneddon  <gsnedders@apple.com>
+
+        Always pass --no-abbrev-commit to git-log/show
+        https://bugs.webkit.org/show_bug.cgi?id=224879
+
+        Reviewed by Jonathan Bedard.
+
+        Currently some of the SCM tests fail with git's log.abbrevCommit; we should
+        avoid any risk of the tests failing or functionality being broken by always
+        asking for the unabbreviated commit.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.local_commits):
+        (Git.exists):
+        (Git._changes_files_for_commit):
+        (Git.revisions_changing_file):
+        (Git._most_recent_log_matching):
+        (Git._most_recent_log_for_revision):
+        (Git.git_commit_from_svn_revision):
+        (Git.contents_at_revision):
+        (Git.show_head):
+        (Git.committer_email_for_revision):
+
 2021-04-21  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse @counter-style descriptors
