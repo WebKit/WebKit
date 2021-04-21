@@ -1,3 +1,22 @@
+2021-04-21  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Refactor the implementation of MediaSource::buffered()
+        https://bugs.webkit.org/show_bug.cgi?id=224848
+
+        Reviewed by Eric Carlson.
+
+        Add an IPC message `BufferedChanged` to forward the buffered ranges of
+        `MediaSource` from a WebContent process to the GPU process.
+
+        * GPUProcess/media/RemoteMediaSourceProxy.cpp:
+        (WebKit::RemoteMediaSourceProxy::buffered const):
+        (WebKit::RemoteMediaSourceProxy::bufferedChanged):
+        * GPUProcess/media/RemoteMediaSourceProxy.h:
+        * GPUProcess/media/RemoteMediaSourceProxy.messages.in:
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::bufferedChanged):
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.h:
+
 2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
 
         Fix the watchOS build after r276325

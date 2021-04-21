@@ -1,3 +1,43 @@
+2021-04-21  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Refactor the implementation of MediaSource::buffered()
+        https://bugs.webkit.org/show_bug.cgi?id=224848
+
+        Reviewed by Eric Carlson.
+
+        This patch is a preparation to run `MockMediaPlayerMediaSource` in the GPU Process.
+
+        In the current implementation, `MediaSource::m_buffered` is updated by the caller
+        of `MediaSource::buffered()`. As a result, when an object from the GPU process
+        wants to get the value of `m_buffered`, it may need to use a synchronous IPC
+        message (from the GPU process to a WebContent process), which is bad.
+        Therefore, there is an `ASSERT_NOT_REACHED()` in `RemoteMediaSourceProxy::buffered()`.
+        However, `MockMediaPlayerMediaSource` needs to use it for testing purposes.
+
+        This patch adds a function `sourceBufferDidChangeBufferedDirty()` to
+        `MediaSource`, so that `SourceBuffer` can notify the `MediaSource` object to
+        refresh its `m_buffered` and notify `MediaSourcePrivate` regarding the new value.
+        When "Media in GPU process" is enabled, `MediaSourcePrivateRemote` will forward
+        the new value to the GPU process, so that we can avoid the synchronous IPC
+        message from the GPU process to the WebContent process, and meet the requirement
+        of `MockMediaPlayerMediaSource`.
+
+        There is no behavior change when "Media in GPU Process" is disabled.
+
+        Covered by existing tests.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::MediaSource):
+        (WebCore::MediaSource::buffered const):
+        (WebCore::MediaSource::sourceBufferDidChangeBufferedDirty):
+        (WebCore::MediaSource::regenerateActiveSourceBuffers):
+        (WebCore::MediaSource::updateBufferedIfNeeded):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::sourceBufferPrivateBufferedDirtyChanged):
+        * platform/graphics/MediaSourcePrivate.h:
+        (WebCore::MediaSourcePrivate::bufferedChanged):
+
 2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] <select> decorations should match the text color

@@ -111,6 +111,7 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
 {
     m_sourceBuffers = SourceBufferList::create(scriptExecutionContext());
     m_activeSourceBuffers = SourceBufferList::create(scriptExecutionContext());
+    m_buffered = makeUnique<PlatformTimeRanges>();
 }
 
 MediaSource::~MediaSource()
@@ -175,50 +176,6 @@ MediaTime MediaSource::currentTime() const
 
 std::unique_ptr<PlatformTimeRanges> MediaSource::buffered() const
 {
-    if (m_buffered && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
-        return makeUnique<PlatformTimeRanges>(*m_buffered);
-
-    m_buffered = makeUnique<PlatformTimeRanges>();
-    for (auto& sourceBuffer : *m_activeSourceBuffers)
-        sourceBuffer->setBufferedDirty(false);
-
-    // Implements MediaSource algorithm for HTMLMediaElement.buffered.
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#htmlmediaelement-extensions
-    Vector<PlatformTimeRanges> activeRanges = this->activeRanges();
-
-    // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
-    if (activeRanges.isEmpty())
-        return makeUnique<PlatformTimeRanges>(*m_buffered);
-
-    // 2. Let active ranges be the ranges returned by buffered for each SourceBuffer object in activeSourceBuffers.
-    // 3. Let highest end time be the largest range end time in the active ranges.
-    MediaTime highestEndTime = MediaTime::zeroTime();
-    for (auto& ranges : activeRanges) {
-        unsigned length = ranges.length();
-        if (length)
-            highestEndTime = std::max(highestEndTime, ranges.end(length - 1));
-    }
-
-    // Return an empty range if all ranges are empty.
-    if (!highestEndTime)
-        return makeUnique<PlatformTimeRanges>(*m_buffered);
-
-    // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
-    m_buffered->add(MediaTime::zeroTime(), highestEndTime);
-
-    // 5. For each SourceBuffer object in activeSourceBuffers run the following steps:
-    bool ended = readyState() == ReadyState::Ended;
-    for (auto& sourceRanges : activeRanges) {
-        // 5.1 Let source ranges equal the ranges returned by the buffered attribute on the current SourceBuffer.
-        // 5.2 If readyState is "ended", then set the end time on the last range in source ranges to highest end time.
-        if (ended && sourceRanges.length())
-            sourceRanges.add(sourceRanges.start(sourceRanges.length() - 1), highestEndTime);
-
-        // 5.3 Let new intersection ranges equal the intersection between the intersection ranges and the source ranges.
-        // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
-        m_buffered->intersectWith(sourceRanges);
-    }
-
     return makeUnique<PlatformTimeRanges>(*m_buffered);
 }
 
@@ -1009,6 +966,11 @@ void MediaSource::sourceBufferDidChangeActiveState(SourceBuffer&, bool)
     regenerateActiveSourceBuffers();
 }
 
+void MediaSource::sourceBufferDidChangeBufferedDirty(SourceBuffer&, bool)
+{
+    updateBufferedIfNeeded();
+}
+
 bool MediaSource::attachToElement(HTMLMediaElement& element)
 {
     if (m_mediaElement)
@@ -1146,6 +1108,57 @@ void MediaSource::regenerateActiveSourceBuffers()
     m_activeSourceBuffers->swap(newList);
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->setBufferedDirty(true);
+
+    updateBufferedIfNeeded();
+}
+
+void MediaSource::updateBufferedIfNeeded()
+{
+    if (m_buffered && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
+        return;
+
+    m_buffered = makeUnique<PlatformTimeRanges>();
+    for (auto& sourceBuffer : *m_activeSourceBuffers)
+        sourceBuffer->setBufferedDirty(false);
+
+    // Implements MediaSource algorithm for HTMLMediaElement.buffered.
+    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#htmlmediaelement-extensions
+    Vector<PlatformTimeRanges> activeRanges = this->activeRanges();
+
+    // 1. If activeSourceBuffers.length equals 0 then return an empty TimeRanges object and abort these steps.
+    if (activeRanges.isEmpty())
+        return;
+
+    // 2. Let active ranges be the ranges returned by buffered for each SourceBuffer object in activeSourceBuffers.
+    // 3. Let highest end time be the largest range end time in the active ranges.
+    MediaTime highestEndTime = MediaTime::zeroTime();
+    for (auto& ranges : activeRanges) {
+        unsigned length = ranges.length();
+        if (length)
+            highestEndTime = std::max(highestEndTime, ranges.end(length - 1));
+    }
+
+    // Return an empty range if all ranges are empty.
+    if (!highestEndTime)
+        return;
+
+    // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
+    m_buffered->add(MediaTime::zeroTime(), highestEndTime);
+
+    // 5. For each SourceBuffer object in activeSourceBuffers run the following steps:
+    bool ended = readyState() == ReadyState::Ended;
+    for (auto& sourceRanges : activeRanges) {
+        // 5.1 Let source ranges equal the ranges returned by the buffered attribute on the current SourceBuffer.
+        // 5.2 If readyState is "ended", then set the end time on the last range in source ranges to highest end time.
+        if (ended && sourceRanges.length())
+            sourceRanges.add(sourceRanges.start(sourceRanges.length() - 1), highestEndTime);
+
+        // 5.3 Let new intersection ranges equal the intersection between the intersection ranges and the source ranges.
+        // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
+        m_buffered->intersectWith(sourceRanges);
+    }
+
+    m_private->bufferedChanged(*m_buffered);
 }
 
 #if !RELEASE_LOG_DISABLED

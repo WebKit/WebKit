@@ -1288,6 +1288,8 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
 void SourceBuffer::sourceBufferPrivateBufferedDirtyChanged(bool flag)
 {
     m_bufferedDirty = flag;
+    if (!isRemoved())
+        m_source->sourceBufferDidChangeBufferedDirty(*this, flag);
 }
 
 bool SourceBuffer::isBufferedDirty() const

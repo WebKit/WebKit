@@ -74,6 +74,7 @@ public:
     bool isClosed() const;
     bool isEnded() const;
     void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
+    void sourceBufferDidChangeBufferedDirty(SourceBuffer&, bool);
 
     enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(Optional<EndOfStreamError>);
@@ -158,6 +159,7 @@ private:
     bool hasFutureTime();
 
     void regenerateActiveSourceBuffers();
+    void updateBufferedIfNeeded();
 
     void completeSeek();
 
@@ -166,7 +168,7 @@ private:
     RefPtr<MediaSourcePrivate> m_private;
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
-    mutable std::unique_ptr<PlatformTimeRanges> m_buffered;
+    std::unique_ptr<PlatformTimeRanges> m_buffered;
     std::unique_ptr<PlatformTimeRanges> m_liveSeekable;
     WeakPtr<HTMLMediaElement> m_mediaElement;
     MediaTime m_duration;
