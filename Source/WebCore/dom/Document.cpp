@@ -29,6 +29,7 @@
 #include "Document.h"
 
 #include "AXObjectCache.h"
+#include "ApplicationManifest.h"
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
@@ -3853,18 +3854,22 @@ void Document::updateViewportArguments()
     }
 }
 
-void Document::processThemeColor(const String& themeColorString)
+void Document::processMetaElementThemeColor(const String& themeColorString)
 {
-    auto themeColor = CSSParser::parseColor(themeColorString);
-    if (themeColor == m_themeColor)
+    auto oldThemeColor = themeColor();
+    m_metaElementThemeColor = CSSParser::parseColor(themeColorString);
+    if (themeColor() == oldThemeColor)
         return;
 
-    m_themeColor = WTFMove(themeColor);
+    themeColorChanged();
+}
 
+void Document::themeColorChanged()
+{
     scheduleRenderingUpdate({ });
 
     if (auto* page = this->page())
-        page->chrome().client().themeColorChanged(m_themeColor);
+        page->chrome().client().themeColorChanged();
 
 #if ENABLE(RUBBER_BANDING)
     if (auto* view = renderView()) {
@@ -3977,6 +3982,20 @@ void Document::processReferrerPolicy(const String& policy, ReferrerPolicySource 
     }
     setReferrerPolicy(referrerPolicy.value());
 }
+
+#if ENABLE(APPLICATION_MANIFEST)
+
+void Document::processApplicationManifest(const ApplicationManifest& applicationManifest)
+{
+    auto oldThemeColor = themeColor();
+    m_applicationManifestThemeColor = applicationManifest.themeColor;
+    if (themeColor() == oldThemeColor)
+        return;
+
+    themeColorChanged();
+}
+
+#endif // ENABLE(APPLICATION_MANIFEST)
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const LayoutPoint& documentPoint, const PlatformMouseEvent& event)
 {

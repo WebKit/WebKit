@@ -127,6 +127,13 @@ public:
         testScope(rawJSON, String(), expectedValue);
     }
 
+    void testThemeColor(const String& rawJSON, const Color& expectedValue)
+    {
+        auto manifest = parseTopLevelProperty("theme_color", rawJSON);
+        auto value = manifest.themeColor;
+        EXPECT_EQ(expectedValue, value);
+    }
+
 };
 
 static void assertManifestHasDefaultValues(const URL& manifestURL, const URL& documentURL, const ApplicationManifest& manifest)
@@ -287,6 +294,26 @@ TEST_F(ApplicationManifestParserTest, Scope)
 
     // It's fine if the document URL or manifest URL aren't within the application scope - only the start URL needs to be.
     testScope("\"https://example.com/other\"", String("https://example.com/other/start-url"), "https://example.com/other");
+}
+
+TEST_F(ApplicationManifestParserTest, ThemeColor)
+{
+    testThemeColor("123", Color());
+    testThemeColor("null", Color());
+    testThemeColor("true", Color());
+    testThemeColor("{ }", Color());
+    testThemeColor("[ ]", Color());
+    testThemeColor("\"\"", Color());
+    testThemeColor("\"garbage string\"", Color());
+
+    testThemeColor("\"red\"", Color::red);
+    testThemeColor("\"#f00\"", Color::red);
+    testThemeColor("\"#ff0000\"", Color::red);
+    testThemeColor("\"#ff0000ff\"", Color::red);
+    testThemeColor("\"rgb(255, 0, 0)\"", Color::red);
+    testThemeColor("\"rgba(255, 0, 0, 1)\"", Color::red);
+    testThemeColor("\"hsl(0, 100%, 50%)\"", Color::red);
+    testThemeColor("\"hsla(0, 100%, 50%, 1)\"", Color::red);
 }
 
 TEST_F(ApplicationManifestParserTest, Whitespace)

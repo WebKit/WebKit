@@ -1,3 +1,25 @@
+2021-04-20  Devin Rousso  <drousso@apple.com>
+
+        Parse `theme_color` in web application manifests and pass it along to `-[WKWebView themeColor]`
+        https://bugs.webkit.org/show_bug.cgi?id=224796
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+        (ApplicationManifestParserTest::testThemeColor): Added.
+        (TEST_F.ApplicationManifestParserTest.ThemeColor): Added.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplicationManifest.mm:
+        (TEST.ApplicationManifestBasic):
+        (TEST.ApplicationManifestCoding):
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKWebViewThemeColor.mm: Renamed from Tools/TestWebKitAPI/Tests/WebKitCocoa/HTMLMetaThemeColor.mm.
+        (TEST.WKWebViewThemeColor.ApplicationManifest):
+        (TEST.WKWebViewThemeColor.MetaElementOverridesApplicationManifest):
+        Rename this file now that it also deals with web application manifest (in addition to `<meta name="theme-color">`).
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2021-04-20  Tim Horton  <timothy_horton@apple.com>
 
         MacCatalyst tests crash on NSInternalInconsistencyException, reason: NSApplication has not been created yet

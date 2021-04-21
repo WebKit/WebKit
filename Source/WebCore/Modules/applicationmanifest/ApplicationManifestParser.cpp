@@ -28,14 +28,17 @@
 
 #if ENABLE(APPLICATION_MANIFEST)
 
+#include "CSSParser.h"
+#include "Color.h"
+#include "Document.h"
 #include "SecurityOrigin.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 
 namespace WebCore {
 
-ApplicationManifest ApplicationManifestParser::parse(ScriptExecutionContext& scriptExecutionContext, const String& source, const URL& manifestURL, const URL& documentURL)
+ApplicationManifest ApplicationManifestParser::parse(Document& document, const String& source, const URL& manifestURL, const URL& documentURL)
 {
-    ApplicationManifestParser parser { &scriptExecutionContext };
+    ApplicationManifestParser parser { &document };
     return parser.parseManifest(source, manifestURL, documentURL);
 }
 
@@ -45,8 +48,8 @@ ApplicationManifest ApplicationManifestParser::parse(const String& source, const
     return parser.parseManifest(source, manifestURL, documentURL);
 }
 
-ApplicationManifestParser::ApplicationManifestParser(RefPtr<ScriptExecutionContext> consoleContext)
-    : m_consoleContext(consoleContext)
+ApplicationManifestParser::ApplicationManifestParser(RefPtr<Document> document)
+    : m_document(document)
 {
 }
 
@@ -74,6 +77,10 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
     parsedManifest.description = parseDescription(*manifest);
     parsedManifest.shortName = parseShortName(*manifest);
     parsedManifest.scope = parseScope(*manifest, documentURL, parsedManifest.startURL);
+    parsedManifest.themeColor = parseColor(*manifest, "theme_color"_s);
+
+    if (m_document)
+        m_document->processApplicationManifest(parsedManifest);
 
     return parsedManifest;
 }
@@ -90,8 +97,8 @@ void ApplicationManifestParser::logManifestPropertyInvalidURL(const String& prop
 
 void ApplicationManifestParser::logDeveloperWarning(const String& message)
 {
-    if (m_consoleContext)
-        m_consoleContext->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(JSC::MessageSource::Other, JSC::MessageType::Log, JSC::MessageLevel::Warning, makeString("Parsing application manifest "_s, m_manifestURL.string(), ": "_s, message)));
+    if (m_document)
+        m_document->addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(JSC::MessageSource::Other, JSC::MessageType::Log, JSC::MessageLevel::Warning, makeString("Parsing application manifest "_s, m_manifestURL.string(), ": "_s, message)));
 }
 
 URL ApplicationManifestParser::parseStartURL(const JSON::Object& manifest, const URL& documentURL)
@@ -227,6 +234,11 @@ URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const UR
     }
 
     return scopeURL;
+}
+
+Color ApplicationManifestParser::parseColor(const JSON::Object& manifest, const String& propertyName)
+{
+    return CSSParser::parseColor(parseGenericString(manifest, propertyName));
 }
 
 String ApplicationManifestParser::parseGenericString(const JSON::Object& manifest, const String& propertyName)

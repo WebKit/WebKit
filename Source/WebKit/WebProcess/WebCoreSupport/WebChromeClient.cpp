@@ -1154,12 +1154,12 @@ Color WebChromeClient::underlayColor() const
     return m_page.underlayColor();
 }
 
-void WebChromeClient::themeColorChanged(Color /* themeColor */) const
+void WebChromeClient::themeColorChanged() const
 {
     m_page.themeColorChanged();
 }
 
-void WebChromeClient::pageExtendedBackgroundColorDidChange(Color /* backgroundColor */) const
+void WebChromeClient::pageExtendedBackgroundColorDidChange() const
 {
     m_page.pageExtendedBackgroundColorDidChange();
 }

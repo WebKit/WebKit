@@ -57,7 +57,7 @@ void HTMLMetaElement::attributeChanged(const QualifiedName& name, const AtomStri
     HTMLElement::attributeChanged(name, oldValue, newValue, reason);
 
     if (name == nameAttr && equalLettersIgnoringASCIICase(oldValue, "theme-color") && !equalLettersIgnoringASCIICase(newValue, "theme-color"))
-        document().processThemeColor(emptyString());
+        document().processMetaElementThemeColor(emptyString());
 }
 
 void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -90,7 +90,7 @@ void HTMLMetaElement::removedFromAncestor(RemovalType removalType, ContainerNode
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (!isConnected() && equalLettersIgnoringASCIICase(name(), "theme-color"))
-        oldParentOfRemovedTree.document().processThemeColor(emptyString());
+        oldParentOfRemovedTree.document().processMetaElementThemeColor(emptyString());
 }
 
 void HTMLMetaElement::process()
@@ -112,7 +112,7 @@ void HTMLMetaElement::process()
         document().processColorScheme(contentValue);
 #endif
     else if (equalLettersIgnoringASCIICase(name(), "theme-color"))
-        document().processThemeColor(contentValue);
+        document().processMetaElementThemeColor(contentValue);
 #if PLATFORM(IOS_FAMILY)
     else if (equalLettersIgnoringASCIICase(name(), "format-detection"))
         document().processFormatDetection(contentValue);

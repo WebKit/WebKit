@@ -30,6 +30,7 @@
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKApplicationManifest.h>
 #import <WebKit/_WKInternalDebugFeature.h>
 #import <wtf/RetainPtr.h>
 
@@ -40,7 +41,7 @@
 constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
 constexpr CGFloat blueColorComponents[4] = { 0, 0, 1, 1 };
 
-TEST(HTMLMetaThemeColor, OnLoad)
+TEST(WKWebViewThemeColor, MetaElementOnLoad)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     EXPECT_TRUE(![webView themeColor]);
@@ -56,7 +57,7 @@ TEST(HTMLMetaThemeColor, OnLoad)
     EXPECT_TRUE(![webView themeColor]);
 }
 
-TEST(HTMLMetaThemeColor, MultipleTags)
+TEST(WKWebViewThemeColor, MultipleMetaElements)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     EXPECT_TRUE(![webView themeColor]);
@@ -129,7 +130,7 @@ TEST(HTMLMetaThemeColor, MultipleTags)
 
 @end
 
-TEST(HTMLMetaThemeColor, KVO)
+TEST(WKWebViewThemeColor, KVO)
 {
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
@@ -170,6 +171,46 @@ TEST(HTMLMetaThemeColor, KVO)
     EXPECT_TRUE(![webView themeColor]);
 }
 
+#if ENABLE(APPLICATION_MANIFEST)
+
+TEST(WKWebViewThemeColor, ApplicationManifest)
+{
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    NSDictionary *manifestObject = @{ @"name": @"Test", @"theme_color": @"red" };
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:[NSString stringWithFormat:@"<link rel='manifest' href='data:application/manifest+json;charset=utf-8;base64,%@'>", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
+
+    static bool didGetApplicationManifest = false;
+    [webView _getApplicationManifestWithCompletionHandler:[&] (_WKApplicationManifest *manifest) {
+        EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+
+        didGetApplicationManifest = true;
+    }];
+    TestWebKitAPI::Util::run(&didGetApplicationManifest);
+
+    [webView waitForNextPresentationUpdate];
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+}
+
+TEST(WKWebViewThemeColor, MetaElementOverridesApplicationManifest)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    EXPECT_TRUE(![webView themeColor]);
+
+    NSDictionary *manifestObject = @{ @"name": @"Test", @"theme_color": @"blue" };
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:[NSString stringWithFormat:@"<link rel='manifest' href='data:application/manifest+json;charset=utf-8;base64,%@'><meta name='theme-color' content='red'>", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]]];
+
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    EXPECT_TRUE(CGColorEqualToColor([webView themeColor].CGColor, redColor.get()));
+}
+
+#endif // ENABLE(APPLICATION_MANIFEST)
+
 #if PLATFORM(IOS_FAMILY)
 
 // There's no API/SPI to get the background color of the scroll area on macOS.
@@ -188,7 +229,7 @@ static RetainPtr<TestWKWebView> createWebView(UseThemeColorForScrollAreaBackgrou
     return adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 }
 
-TEST(HTMLMetaThemeColor, ExperimentalUseThemeColorForScrollAreaBackgroundColor)
+TEST(WKWebViewThemeColor, ExperimentalUseThemeColorForScrollAreaBackgroundColor)
 {
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));

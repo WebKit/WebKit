@@ -26,6 +26,12 @@
 #import <Foundation/Foundation.h>
 #import <WebKit/WKFoundation.h>
 
+#if TARGET_OS_IPHONE
+@class UIColor;
+#else
+@class NSColor;
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, _WKApplicationManifestDisplayMode) {
@@ -44,6 +50,12 @@ WK_CLASS_AVAILABLE(macos(10.13.4), ios(11.3))
 @property (nonatomic, readonly, nullable, copy) NSURL *scope;
 @property (nonatomic, readonly, copy) NSURL *startURL;
 @property (nonatomic, readonly) _WKApplicationManifestDisplayMode displayMode;
+
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly, nullable, copy) UIColor *themeColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+#else
+@property (nonatomic, readonly, nullable, copy) NSColor *themeColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
+#endif
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(nullable NSURL *)manifestURL documentURL:(nullable NSURL *)documentURL;
 

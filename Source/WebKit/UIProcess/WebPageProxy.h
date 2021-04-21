@@ -654,7 +654,7 @@ public:
     float topContentInset() const { return m_topContentInset; }
     void setTopContentInset(float);
 
-    // Corresponds to the web content's `<meta name="theme-color" content="...">`.
+    // Corresponds to the web content's `<meta name="theme-color">` or application manifest's `"theme_color"`.
     WebCore::Color themeColor() const { return m_themeColor; }
 
     WebCore::Color underlayColor() const { return m_underlayColor; }

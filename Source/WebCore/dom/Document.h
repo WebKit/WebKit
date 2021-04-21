@@ -234,6 +234,7 @@ class XPathExpression;
 class XPathNSResolver;
 class XPathResult;
 
+struct ApplicationManifest;
 struct BoundaryPoint;
 struct HighlightRangeData;
 struct IntersectionObserverData;
@@ -740,7 +741,7 @@ public:
     Seconds timeSinceDocumentCreation() const { return MonotonicTime::now() - m_documentCreationTime; };
 #endif
 
-    const Color& themeColor() const { return m_themeColor; }
+    const Color& themeColor() const { return m_metaElementThemeColor.isValid() ? m_metaElementThemeColor : m_applicationManifestThemeColor; }
 
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
@@ -909,10 +910,14 @@ public:
     void processDisabledAdaptations(const String& adaptations);
     void updateViewportArguments();
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
-    void processThemeColor(const String& themeColor);
+    void processMetaElementThemeColor(const String& themeColor);
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
+#endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    void processApplicationManifest(const ApplicationManifest&);
 #endif
 
     // Returns the owning element in the parent document.
@@ -1670,6 +1675,8 @@ private:
     void updateTitle(const StringWithDirection&);
     void updateBaseURL();
 
+    void themeColorChanged();
+
     void invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
 
@@ -1790,7 +1797,9 @@ private:
 
     std::unique_ptr<FormController> m_formController;
 
-    Color m_themeColor;
+    Color m_metaElementThemeColor;
+    Color m_applicationManifestThemeColor;
+
     Color m_textColor { Color::black };
     Color m_linkColor;
     Color m_visitedLinkColor;
