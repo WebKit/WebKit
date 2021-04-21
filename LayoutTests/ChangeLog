@@ -1,3 +1,16 @@
+2021-04-21  Robert Jenner  <jenner@apple.com>
+
+        Mass removing prior test expectations that don't need to be set anymore
+        https://bugs.webkit.org/show_bug.cgi?id=224898
+
+        Unreviewed test gardening.
+
+        Remove test expectations that no longer needed to be set.
+
+        * TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Text selection in image overlays should not be limited to rectilinear quads
