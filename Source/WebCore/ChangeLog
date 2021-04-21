@@ -1,3 +1,18 @@
+2021-04-21  Rob Buis  <rbuis@igalia.com>
+
+        RenderGeometryMap should know about individual transform properties
+        https://bugs.webkit.org/show_bug.cgi?id=224856
+
+        Reviewed by Simon Fraser.
+
+        RenderGeometryMap should know about individual transform properties.
+
+        Test: fast/transforms/textarea-individual-transform-properties-crash.html
+
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToContainer const):
+        (WebCore::canMapBetweenRenderersViaLayers):
+
 2021-04-21  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add OpenGLES2 targets
