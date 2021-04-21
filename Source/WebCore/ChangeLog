@@ -1,3 +1,25 @@
+2021-04-21  Youenn Fablet  <youenn@apple.com>
+
+        [ BigSur wk2 ARM64 ] http/wpt/webrtc/change-encoded-transform.html is a flakey crash
+        https://bugs.webkit.org/show_bug.cgi?id=224696
+        <rdar://problem/76780020>
+
+        Reviewed by Eric Carlson.
+
+        Sometimes the video sender delegate will be recreated on the fly.
+        In that case, it might receive a frame from the old delegate before processing an existing frame.
+        This makes the encoder queue being null.
+        To prevent this we update backends to only register once.
+
+        Covered by tests no longer crashing.
+
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.cpp:
+        (WebCore::LibWebRTCRtpReceiverTransformBackend::setTransformableFrameCallback):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpReceiverTransformBackend.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.cpp:
+        (WebCore::LibWebRTCRtpSenderTransformBackend::setTransformableFrameCallback):
+        * Modules/mediastream/libwebrtc/LibWebRTCRtpSenderTransformBackend.h:
+
 2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Avoid triggering image extraction for animated images

@@ -1,3 +1,16 @@
+2021-04-21  Youenn Fablet  <youenn@apple.com>
+
+        [ BigSur wk2 ARM64 ] http/wpt/webrtc/change-encoded-transform.html is a flakey crash
+        https://bugs.webkit.org/show_bug.cgi?id=224696
+        <rdar://problem/76780020>
+
+        Reviewed by Eric Carlson.
+
+        On stream recreation, the new delegate may have to process a transformed frame before receiving one from the encoder.
+        Check for encoder_queue to not be null in that case.
+
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.cc:
+
 2021-04-15  Philippe Normand  <pnormand@igalia.com>
 
         [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system

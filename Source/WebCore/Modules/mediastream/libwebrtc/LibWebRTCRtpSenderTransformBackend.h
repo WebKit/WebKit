@@ -58,6 +58,7 @@ private:
     void setTransformableFrameCallback(Callback&&) final;
     void requestKeyFrame() final;
 
+    bool m_isRegistered { false };
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_rtcSender;
 };
 
