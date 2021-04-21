@@ -258,10 +258,16 @@ bool WebPage::platformNeedsLayoutForEditorState(const Frame& frame) const
     return needsLayout;
 }
 
-static void convertContentToRootView(const FrameView& view, Vector<SelectionGeometry>& rects)
+static void convertContentToRootView(const FrameView& view, Vector<SelectionGeometry>& geometries)
 {
-    for (auto& rect : rects)
-        rect.setRect(view.contentsToRootView(rect.rect()));
+    for (auto& geometry : geometries) {
+        auto convertedQuad = geometry.quad();
+        convertedQuad.setP1(view.contentsToRootView(convertedQuad.p1()));
+        convertedQuad.setP2(view.contentsToRootView(convertedQuad.p2()));
+        convertedQuad.setP3(view.contentsToRootView(convertedQuad.p3()));
+        convertedQuad.setP4(view.contentsToRootView(convertedQuad.p4()));
+        geometry.setQuad(convertedQuad);
+    }
 }
 
 void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const

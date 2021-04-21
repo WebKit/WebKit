@@ -1,3 +1,87 @@
+2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Text selection in image overlays should not be limited to rectilinear quads
+        https://bugs.webkit.org/show_bug.cgi?id=224837
+        <rdar://76829981>
+
+        Reviewed by Tim Horton.
+
+        Refactor the iOS-specific `WebCore::SelectionGeometry` such that it is backed by a `FloatQuad` instead of an
+        `IntRect`, and additionally support a flag to indicate that the selection geometry should render as individual
+        quads, instead of allowing adjacent rects to be coalesced based on each rects' enclosing bounds.
+
+        See comments below for more information.
+
+        Test: fast/images/image-extraction/ios/selection-rects-in-image-overlay.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::selectionRenderingBehavior):
+        * html/HTMLElement.h:
+        * platform/ios/SelectionGeometry.cpp:
+        (WebCore::SelectionGeometry::SelectionGeometry):
+
+        Change these constructors to take `FloatQuad` instead of an enclosing bounding box of a quad. Refer to call
+        sites below.
+
+        (WebCore::SelectionGeometry::setLogicalLeft):
+        (WebCore::SelectionGeometry::setLogicalWidth):
+        (WebCore::SelectionGeometry::setLogicalTop):
+        (WebCore::SelectionGeometry::setLogicalHeight):
+
+        Adjust these four setters so that they automatically inflate the selection quad to the quad's enclosing bounds
+        before changing any of the dimensions of the rect. Note that in practice, these methods are only used by code
+        that attempts to coalesce adjacent selection geometries, in which case we shouldn't be rendering non-rectilinear
+        quads anyways.
+
+        (WebCore::SelectionGeometry::rect const):
+
+        This method now computes the enclosing bounding rect of the selection quad. Since this can be called many times
+        for a single selection geometry, we cache the enclosing bounds in `m_cachedEnclosingRect` to avoid repeated
+        bounding box computation.
+
+        (WebCore::SelectionGeometry::setQuad):
+
+        Set the selection quad, and invalidate the enclosing bounding rect.
+
+        (WebCore::SelectionGeometry::setRect):
+
+        Since we're already setting the quad from an `IntRect`, we can go ahead and set the cached enclosing rect at the
+        same time to avoid computing it again in the future.
+
+        (WebCore::operator<<):
+        * platform/ios/SelectionGeometry.h:
+
+        Add a few new members to `SelectionGeometry`. Instead of maintaining an `IntRect`, store a `FloatRect` in
+        `m_quad`. Additionally, add a new enum describing how the `SelectionGeometry` should behave. This enum only has
+        two values: `CoalesceBoundingRects`, indicating that adjacent selection geometries should be coalesced based on
+        the enclosing bounding rects of their quads, and `UseIndividualQuads`, indicating that each quad should be
+        rendered individually.
+
+        (WebCore::SelectionGeometry::quad const):
+        (WebCore::SelectionGeometry::logicalLeft const):
+        (WebCore::SelectionGeometry::logicalWidth const):
+        (WebCore::SelectionGeometry::logicalTop const):
+        (WebCore::SelectionGeometry::logicalHeight const):
+        (WebCore::SelectionGeometry::behavior const):
+        (WebCore::SelectionGeometry::setBehavior):
+        (WebCore::SelectionGeometry::rect const): Deleted.
+        (WebCore::SelectionGeometry::setRect): Deleted.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::collectSelectionGeometries):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::collectSelectionGeometries):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::collectSelectionGeometries):
+        (WebCore::adjustLineHeightOfSelectionGeometries):
+
+        When collecting selection geometry from renderers, avoid coalescing selection geometry when the
+        `SelectionGeometry` has `SelectionRenderingBehavior::UseIndividualQuads`.
+
+        (WebCore::coalesceSelectionGeometries):
+        (WebCore::RenderObject::collectSelectionGeometriesInternal):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionGeometries):
+
 2021-04-21  Tyler Wilcock  <twilco.o@protonmail.com>
 
         CSSComputedStyleDeclaration.cpp should use C++ style comments

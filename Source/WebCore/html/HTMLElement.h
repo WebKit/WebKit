@@ -43,6 +43,10 @@ struct ImageExtractionResult;
 
 enum class EnterKeyHint : uint8_t;
 
+#if PLATFORM(IOS_FAMILY)
+enum class SelectionRenderingBehavior : uint8_t;
+#endif
+
 class HTMLElement : public StyledElement {
     WTF_MAKE_ISO_ALLOCATED(HTMLElement);
 public:
@@ -138,6 +142,10 @@ public:
 
 #if ENABLE(IMAGE_EXTRACTION)
     WEBCORE_EXPORT void updateWithImageExtractionResult(ImageExtractionResult&&);
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    static SelectionRenderingBehavior selectionRenderingBehavior(const Node*);
 #endif
 
 protected:

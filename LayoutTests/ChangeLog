@@ -1,3 +1,16 @@
+2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Text selection in image overlays should not be limited to rectilinear quads
+        https://bugs.webkit.org/show_bug.cgi?id=224837
+        <rdar://76829981>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to exercise the new selection rendering behavior.
+
+        * fast/images/image-extraction/ios/selection-rects-in-image-overlay-expected.txt: Added.
+        * fast/images/image-extraction/ios/selection-rects-in-image-overlay.html: Added.
+
 2021-04-21  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse @counter-style descriptors

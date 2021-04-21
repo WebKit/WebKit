@@ -82,6 +82,10 @@
 #include "ImageExtractionResult.h"
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+#include "SelectionGeometry.h"
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLElement);
@@ -1371,6 +1375,15 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
+
+#if PLATFORM(IOS_FAMILY)
+
+SelectionRenderingBehavior HTMLElement::selectionRenderingBehavior(const Node* node)
+{
+    return isImageOverlayText(node) ? SelectionRenderingBehavior::UseIndividualQuads : SelectionRenderingBehavior::CoalesceBoundingRects;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebCore
 

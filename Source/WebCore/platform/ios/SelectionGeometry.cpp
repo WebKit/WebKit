@@ -26,21 +26,23 @@
 #include "config.h"
 #include "SelectionGeometry.h"
 
+#include "FloatQuad.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-SelectionGeometry::SelectionGeometry(const IntRect& rect, bool isHorizontal, int pageNumber)
-    : m_rect(rect)
-    , m_direction(TextDirection::LTR)
+SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, bool isHorizontal, int pageNumber)
+    : m_quad(quad)
+    , m_behavior(behavior)
     , m_isHorizontal(isHorizontal)
     , m_pageNumber(pageNumber)
 {
 }
 
 // FIXME: We should move some of these arguments to an auxillary struct.
-SelectionGeometry::SelectionGeometry(const IntRect& rect, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal, bool isInFixedPosition, bool isRubyText, int pageNumber)
-    : m_rect(rect)
+SelectionGeometry::SelectionGeometry(const FloatQuad& quad, SelectionRenderingBehavior behavior, TextDirection direction, int minX, int maxX, int maxY, int lineNumber, bool isLineBreak, bool isFirstOnLine, bool isLastOnLine, bool containsStart, bool containsEnd, bool isHorizontal, bool isInFixedPosition, bool isRubyText, int pageNumber)
+    : m_quad(quad)
+    , m_behavior(behavior)
     , m_direction(direction)
     , m_minX(minX)
     , m_maxX(maxX)
@@ -60,34 +62,61 @@ SelectionGeometry::SelectionGeometry(const IntRect& rect, TextDirection directio
 
 void SelectionGeometry::setLogicalLeft(int left)
 {
+    auto rect = this->rect();
     if (m_isHorizontal)
-        m_rect.setX(left);
+        rect.setX(left);
     else
-        m_rect.setY(left);
+        rect.setY(left);
+    setRect(rect);
 }
 
 void SelectionGeometry::setLogicalWidth(int width)
 {
+    auto rect = this->rect();
     if (m_isHorizontal)
-        m_rect.setWidth(width);
+        rect.setWidth(width);
     else
-        m_rect.setHeight(width);
+        rect.setHeight(width);
+    setRect(rect);
 }
 
 void SelectionGeometry::setLogicalTop(int top)
 {
+    auto rect = this->rect();
     if (m_isHorizontal)
-        m_rect.setY(top);
+        rect.setY(top);
     else
-        m_rect.setX(top);
+        rect.setX(top);
+    setRect(rect);
 }
 
 void SelectionGeometry::setLogicalHeight(int height)
 {
+    auto rect = this->rect();
     if (m_isHorizontal)
-        m_rect.setHeight(height);
+        rect.setHeight(height);
     else
-        m_rect.setWidth(height);
+        rect.setWidth(height);
+    setRect(rect);
+}
+
+IntRect SelectionGeometry::rect() const
+{
+    if (!m_cachedEnclosingRect)
+        m_cachedEnclosingRect = m_quad.enclosingBoundingBox();
+    return *m_cachedEnclosingRect;
+}
+
+void SelectionGeometry::setQuad(const FloatQuad& quad)
+{
+    m_quad = quad;
+    m_cachedEnclosingRect.reset();
+}
+
+void SelectionGeometry::setRect(const IntRect& rect)
+{
+    m_quad = FloatQuad { rect };
+    m_cachedEnclosingRect = rect;
 }
 
 TextStream& operator<<(TextStream& stream, SelectionGeometry rect)
@@ -95,7 +124,7 @@ TextStream& operator<<(TextStream& stream, SelectionGeometry rect)
     TextStream::GroupScope group(stream);
     stream << "selection geometry";
 
-    stream.dumpProperty("rect", rect.rect());
+    stream.dumpProperty("quad", rect.quad());
     stream.dumpProperty("direction", isLeftToRightDirection(rect.direction()) ? "ltr" : "rtl");
 
     stream.dumpProperty("min-x", rect.minX());
@@ -124,6 +153,9 @@ TextStream& operator<<(TextStream& stream, SelectionGeometry rect)
 
     if (rect.isRubyText())
         stream.dumpProperty("is ruby text", true);
+
+    if (rect.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+        stream.dumpProperty("using individual quads", true);
 
     stream.dumpProperty("page number", rect.pageNumber());
     return stream;

@@ -1,3 +1,41 @@
+2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Text selection in image overlays should not be limited to rectilinear quads
+        https://bugs.webkit.org/show_bug.cgi?id=224837
+        <rdar://76829981>
+
+        Reviewed by Tim Horton.
+
+        See WebCore ChangeLog for more details.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<SelectionGeometry>::encode):
+        (IPC::ArgumentCoder<SelectionGeometry>::decode):
+
+        Encode the `SelectionGeometry` by serializing a `FloatQuad` instead of an enclosing rect.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (WebKit::operator==):
+        (-[WKContentView selectedTextRange]):
+        (-[WKContentView markedTextRange]):
+        * UIProcess/ios/WKTextSelectionRect.h:
+        * UIProcess/ios/WKTextSelectionRect.mm:
+        (-[WKTextSelectionRectCustomHandleInfo initWithFloatQuad:]):
+        (-[WKTextSelectionRectCustomHandleInfo bottomLeft]):
+        (-[WKTextSelectionRectCustomHandleInfo topLeft]):
+        (-[WKTextSelectionRectCustomHandleInfo bottomRight]):
+        (-[WKTextSelectionRectCustomHandleInfo topRight]):
+        (-[WKTextSelectionRect initWithCGRect:]):
+        (-[WKTextSelectionRect initWithSelectionGeometry:scaleFactor:]):
+        (-[WKTextSelectionRect _path]):
+        (-[WKTextSelectionRect _customHandleInfo]):
+
+        Implement SPI methods on `UITextSelectionRect` to render text selection UI using quads instead of rects.
+
+        (-[WKTextSelectionRect initWithSelectionGeometry:]): Deleted.
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::convertContentToRootView):
+
 2021-04-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid April 2021 edition

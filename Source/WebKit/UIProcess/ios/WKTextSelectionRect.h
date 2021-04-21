@@ -34,7 +34,7 @@ class SelectionGeometry;
 @interface WKTextSelectionRect : UITextSelectionRect
 
 - (instancetype)initWithCGRect:(CGRect)rect;
-- (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionRect;
+- (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionGeometry scaleFactor:(CGFloat)scaleFactor;
 
 @end
 

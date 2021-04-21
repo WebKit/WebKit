@@ -1304,7 +1304,8 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
 
 void ArgumentCoder<SelectionGeometry>::encode(Encoder& encoder, const SelectionGeometry& selectionGeometry)
 {
-    encoder << selectionGeometry.rect();
+    encoder << selectionGeometry.quad();
+    encoder << selectionGeometry.behavior();
     encoder << static_cast<uint32_t>(selectionGeometry.direction());
     encoder << selectionGeometry.minX();
     encoder << selectionGeometry.maxX();
@@ -1321,10 +1322,16 @@ void ArgumentCoder<SelectionGeometry>::encode(Encoder& encoder, const SelectionG
 Optional<SelectionGeometry> ArgumentCoder<SelectionGeometry>::decode(Decoder& decoder)
 {
     SelectionGeometry selectionGeometry;
-    IntRect rect;
-    if (!decoder.decode(rect))
+    FloatQuad quad;
+    if (!decoder.decode(quad))
         return WTF::nullopt;
-    selectionGeometry.setRect(rect);
+    selectionGeometry.setQuad(quad);
+
+    Optional<SelectionRenderingBehavior> behavior;
+    decoder >> behavior;
+    if (!behavior)
+        return WTF::nullopt;
+    selectionGeometry.setBehavior(*behavior);
 
     uint32_t direction;
     if (!decoder.decode(direction))

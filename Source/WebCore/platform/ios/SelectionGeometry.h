@@ -25,28 +25,39 @@
 
 #pragma once
 
+#include "FloatQuad.h"
 #include "IntRect.h"
 #include "WritingMode.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
+
+enum class SelectionRenderingBehavior : uint8_t {
+    CoalesceBoundingRects,
+    UseIndividualQuads,
+};
 
 class SelectionGeometry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT explicit SelectionGeometry(const IntRect&, bool isHorizontal, int columnNumber);
+    WEBCORE_EXPORT explicit SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, bool isHorizontal, int columnNumber);
 
     // FIXME: We should move some of these arguments to an auxillary struct.
-    SelectionGeometry(const IntRect&, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, bool, int);
+    SelectionGeometry(const FloatQuad&, SelectionRenderingBehavior, TextDirection, int, int, int, int, bool, bool, bool, bool, bool, bool, bool, bool, int);
     SelectionGeometry() = default;
     ~SelectionGeometry() = default;
 
-    IntRect rect() const { return m_rect; }
+    FloatQuad quad() const { return m_quad; }
+    WEBCORE_EXPORT void setQuad(const FloatQuad&);
 
-    int logicalLeft() const { return m_isHorizontal ? m_rect.x() : m_rect.y(); }
-    int logicalWidth() const { return m_isHorizontal ? m_rect.width() : m_rect.height(); }
-    int logicalTop() const { return m_isHorizontal ? m_rect.y() : m_rect.x(); }
-    int logicalHeight() const { return m_isHorizontal ? m_rect.height() : m_rect.width(); }
+    WEBCORE_EXPORT IntRect rect() const;
+    WEBCORE_EXPORT void setRect(const IntRect&);
+
+    int logicalLeft() const { return m_isHorizontal ? rect().x() : rect().y(); }
+    int logicalWidth() const { return m_isHorizontal ? rect().width() : rect().height(); }
+    int logicalTop() const { return m_isHorizontal ? rect().y() : rect().x(); }
+    int logicalHeight() const { return m_isHorizontal ? rect().height() : rect().width(); }
 
     TextDirection direction() const { return m_direction; }
     int minX() const { return m_minX; }
@@ -62,8 +73,7 @@ public:
     bool isInFixedPosition() const { return m_isInFixedPosition; }
     bool isRubyText() const { return m_isRubyText; }
     int pageNumber() const { return m_pageNumber; }
-
-    void setRect(const IntRect& rect) { m_rect = rect; }
+    SelectionRenderingBehavior behavior() const { return m_behavior; }
 
     void setLogicalLeft(int);
     void setLogicalWidth(int);
@@ -81,9 +91,11 @@ public:
     void setContainsStart(bool containsStart) { m_containsStart = containsStart; }
     void setContainsEnd(bool containsEnd) { m_containsEnd = containsEnd; }
     void setIsHorizontal(bool isHorizontal) { m_isHorizontal = isHorizontal; }
+    void setBehavior(SelectionRenderingBehavior behavior) { m_behavior = behavior; }
 
 private:
-    IntRect m_rect;
+    FloatQuad m_quad;
+    SelectionRenderingBehavior m_behavior { SelectionRenderingBehavior::CoalesceBoundingRects };
     TextDirection m_direction { TextDirection::LTR };
     int m_minX { 0 };
     int m_maxX { 0 };
@@ -98,8 +110,22 @@ private:
     bool m_isInFixedPosition { false };
     bool m_isRubyText { false };
     int m_pageNumber { 0 };
+
+    mutable Optional<IntRect> m_cachedEnclosingRect;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SelectionGeometry);
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::SelectionRenderingBehavior> {
+    using values = EnumValues<
+        WebCore::SelectionRenderingBehavior,
+        WebCore::SelectionRenderingBehavior::CoalesceBoundingRects,
+        WebCore::SelectionRenderingBehavior::UseIndividualQuads
+    >;
+};
+
+} // namespace WTF

@@ -737,9 +737,8 @@ void RenderObject::collectSelectionGeometries(Vector<SelectionGeometry>& geometr
             child->absoluteQuads(quads);
     }
 
-    unsigned numberOfQuads = quads.size();
-    for (unsigned i = 0; i < numberOfQuads; ++i)
-        geometries.append(SelectionGeometry(quads[i].enclosingBoundingBox(), isHorizontalWritingMode(), view().pageNumberForBlockProgressionOffset(quads[i].enclosingBoundingBox().x())));
+    for (auto& quad : quads)
+        geometries.append(SelectionGeometry(quad, HTMLElement::selectionRenderingBehavior(node()), isHorizontalWritingMode(), view().pageNumberForBlockProgressionOffset(quad.enclosingBoundingBox().x())));
 }
 #endif
 
@@ -2124,6 +2123,8 @@ static inline void adjustLineHeightOfSelectionGeometries(Vector<SelectionGeometr
         --i;
         if (geometries[i].lineNumber())
             break;
+        if (geometries[i].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+            continue;
         geometries[i].setLineNumber(lineNumber);
         geometries[i].setLogicalTop(lineTop);
         geometries[i].setLogicalHeight(lineHeight);
@@ -2132,7 +2133,7 @@ static inline void adjustLineHeightOfSelectionGeometries(Vector<SelectionGeometr
 
 static SelectionGeometry coalesceSelectionGeometries(const SelectionGeometry& original, const SelectionGeometry& previous)
 {
-    SelectionGeometry result(unionRect(previous.rect(), original.rect()), original.isHorizontal(), original.pageNumber());
+    SelectionGeometry result({ unionRect(previous.rect(), original.rect()) }, SelectionRenderingBehavior::CoalesceBoundingRects, original.isHorizontal(), original.pageNumber());
     result.setDirection(original.containsStart() || original.containsEnd() ? original.direction() : previous.direction());
     result.setContainsStart(previous.containsStart() || original.containsStart());
     result.setContainsEnd(previous.containsEnd() || original.containsEnd());
@@ -2272,6 +2273,8 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     for (size_t j = 1; j < numberOfGeometries; ++j) {
         if (geometries[j].lineNumber() != geometries[j - 1].lineNumber())
             continue;
+        if (geometries[j].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+            continue;
         auto& previousRect = geometries[j - 1];
         bool previousRectMayNotReachRightEdge = (previousRect.direction() == TextDirection::LTR && previousRect.containsEnd()) || (previousRect.direction() == TextDirection::RTL && previousRect.containsStart());
         if (previousRectMayNotReachRightEdge)
@@ -2287,6 +2290,8 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
     for (size_t i = 0; i < numberOfGeometries; ++i) {
         auto& selectionGeometry = geometries[i];
         if (!selectionGeometry.isLineBreak() && selectionGeometry.lineNumber() >= maxLineNumber)
+            continue;
+        if (selectionGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
             continue;
         if (selectionGeometry.direction() == TextDirection::RTL && selectionGeometry.isFirstOnLine()) {
             selectionGeometry.setLogicalWidth(selectionGeometry.logicalWidth() + selectionGeometry.logicalLeft() - selectionGeometry.minX());
@@ -2309,6 +2314,15 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
     IntRect interiorUnionRect;
     for (size_t i = 0; i < numberOfGeometries; ++i) {
         auto& currentGeometry = result.geometries[i];
+        if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads) {
+            // FIXME: We still probably want some way to coalesce quads, probably by projecting them onto rotated bounding rects
+            // and then checking whether the rotated bounding rects are overlapping and share the same rotation angle. Until then,
+            // we simply append all non-empty quads.
+            if (!currentGeometry.quad().isEmpty())
+                coalescedGeometries.append(currentGeometry);
+            continue;
+        }
+
         if (currentGeometry.lineNumber() == 1) {
             ASSERT(interiorUnionRect.isEmpty());
             if (!coalescedGeometries.isEmpty()) {
@@ -2333,13 +2347,13 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
                 // For iBooks, the interior lines may cross multiple horizontal pages.
                 interiorUnionRect.unite(currentGeometry.rect());
             } else {
-                coalescedGeometries.append(SelectionGeometry(interiorUnionRect, currentGeometry.isHorizontal(), currentGeometry.pageNumber()));
+                coalescedGeometries.append(SelectionGeometry({ interiorUnionRect }, SelectionRenderingBehavior::CoalesceBoundingRects, currentGeometry.isHorizontal(), currentGeometry.pageNumber()));
                 interiorUnionRect = currentGeometry.rect();
             }
         } else {
             // Processing last line.
             if (!interiorUnionRect.isEmpty()) {
-                coalescedGeometries.append(SelectionGeometry(interiorUnionRect, currentGeometry.isHorizontal(), currentGeometry.pageNumber()));
+                coalescedGeometries.append(SelectionGeometry({ interiorUnionRect }, SelectionRenderingBehavior::CoalesceBoundingRects, currentGeometry.isHorizontal(), currentGeometry.pageNumber()));
                 interiorUnionRect = IntRect();
             }
 
