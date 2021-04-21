@@ -1,3 +1,26 @@
+2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Update font for group headers in the <select multiple> picker
+        https://bugs.webkit.org/show_bug.cgi?id=224823
+        <rdar://problem/76785841>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPickerTableViewController tableView:heightForHeaderInSection:]):
+
+        The new font's size can varying depending on the user's Dynamic Type
+        setting. Consequently, the height of the header must now be computed
+        dynamically.
+
+        (-[WKSelectPickerTableViewController tableView:viewForHeaderInSection:]):
+        (-[WKSelectPickerTableViewController groupHeaderFont]):
+
+        Use a font with text style UIFontTextStyleTitle3 and a semibold weight,
+        matching other system grouped headers. The font is not saved as an
+        instance variable so that an up-to-date lineHeight can be obtained in
+        "tableView:heightForHeightInSection:".
+
 2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Text selection in image overlays should not be limited to rectilinear quads
