@@ -1,3 +1,19 @@
+2021-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [BigSur Wk1] media/video-ended-event-negative-playback.html is flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=221106
+        <rdar://problem/73724911>
+
+        Reviewed by Jer Noble.
+        
+        Seeking to 0.5 and playing backwards to the beginning of the file may take longer
+        than 2500ms, so increase the timeout to 5000ms and don't start the failure timer
+        until playback begins.
+
+        * media/video-ended-event-negative-playback-expected.txt:
+        * media/video-ended-event-negative-playback.html:
+        * platform/mac-wk1/TestExpectations:
+
 2021-04-20  Robert Jenner  <jenner@apple.com>
 
         [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html is a flakey timeout

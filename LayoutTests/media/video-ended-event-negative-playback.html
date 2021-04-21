@@ -12,10 +12,10 @@
                     {
                         video.currentTime = 0.5;
                         video.playbackRate = -1;
-                        video.play();
-                        failTestIn(2500);
                     });
                 }
+                waitForEventOnce('seeked',  () => { video.play(); });
+                waitForEventOnce('playing', () => { failTestIn(5000); });
         </script>
     </head>
     <body onload="start()">
