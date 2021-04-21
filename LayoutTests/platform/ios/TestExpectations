@@ -3413,3 +3413,5 @@ webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOn
 webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
+
+fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
