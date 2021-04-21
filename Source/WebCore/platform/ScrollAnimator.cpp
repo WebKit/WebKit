@@ -81,13 +81,14 @@ ScrollAnimator::~ScrollAnimator()
 #endif
 }
 
-bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, ScrollBehavior behavior)
+bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier, OptionSet<ScrollBehavior> behavior)
 {
     auto delta = deltaFromStep(orientation, step, multiplier);
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (behavior == ScrollBehavior::DoDirectionalSnapping) {
+    if (behavior.contains(ScrollBehavior::DoDirectionalSnapping)) {
+        behavior.remove(ScrollBehavior::DoDirectionalSnapping);
         if (!m_scrollController.usesScrollSnap())
-            return scroll(orientation, granularity, step, multiplier);
+            return scroll(orientation, granularity, step, multiplier, behavior);
 
         auto currentOffset = offsetFromPosition(currentPosition());
         auto newOffset = currentOffset + delta;
@@ -98,8 +99,8 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
         auto newDelta = newOffset - currentOffset;
 
         if (orientation == HorizontalScrollbar)
-            return scroll(HorizontalScrollbar, granularity, newDelta.width(), 1.0);
-        return scroll(VerticalScrollbar, granularity, newDelta.height(), 1.0);
+            return scroll(HorizontalScrollbar, granularity, newDelta.width(), 1.0, behavior);
+        return scroll(VerticalScrollbar, granularity, newDelta.height(), 1.0, behavior);
     }
 #else
     UNUSED_PARAM(granularity);
@@ -107,7 +108,7 @@ bool ScrollAnimator::scroll(ScrollbarOrientation orientation, ScrollGranularity 
 #endif
 
 #if ENABLE(SMOOTH_SCROLLING) && !PLATFORM(IOS_FAMILY)
-    if (m_scrollableArea.scrollAnimatorEnabled()) {
+    if (m_scrollableArea.scrollAnimatorEnabled() && !behavior.contains(ScrollBehavior::NeverAnimate)) {
         if (!m_scrollAnimation->isActive())
             m_scrollAnimation->setCurrentPosition(m_currentPosition);
         return m_scrollAnimation->scroll(orientation, granularity, step, multiplier);
@@ -177,13 +178,6 @@ FloatSize ScrollAnimator::deltaFromStep(ScrollbarOrientation orientation, float 
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-#if PLATFORM(MAC)
-bool ScrollAnimator::processWheelEventForScrollSnap(const PlatformWheelEvent& wheelEvent)
-{
-    return m_scrollController.processWheelEventForScrollSnap(wheelEvent);
-}
-#endif
-
 bool ScrollAnimator::activeScrollSnapIndexDidChange() const
 {
     return m_scrollController.activeScrollSnapIndexDidChange();
@@ -197,10 +191,11 @@ unsigned ScrollAnimator::activeScrollSnapIndexForAxis(ScrollEventAxis axis) cons
 
 bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 {
-#if ENABLE(CSS_SCROLL_SNAP) && PLATFORM(MAC)
-    if (m_scrollController.processWheelEventForScrollSnap(e))
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (processWheelEventForScrollSnap(e))
         return false;
 #endif
+
 #if PLATFORM(COCOA)
     // Events in the PlatformWheelEventPhase::MayBegin phase have no deltas, and therefore never passes through the scroll handling logic below.
     // This causes us to return with an 'unhandled' return state, even though this event was successfully processed.
@@ -221,7 +216,6 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 
     bool handled = false;
 
-    ScrollGranularity granularity = ScrollByPixel;
     IntSize maxForwardScrollDelta = m_scrollableArea.maximumScrollPosition() - m_scrollableArea.scrollPosition();
     IntSize maxBackwardScrollDelta = m_scrollableArea.scrollPosition() - m_scrollableArea.minimumScrollPosition();
     if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)
@@ -230,6 +224,10 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
         || (deltaY > 0 && maxBackwardScrollDelta.height() > 0)) {
         handled = true;
 
+        OptionSet<ScrollBehavior> behavior(ScrollBehavior::DoDirectionalSnapping);
+        if (e.hasPreciseScrollingDeltas())
+            behavior.add(ScrollBehavior::NeverAnimate);
+
         if (deltaY) {
             if (e.granularity() == ScrollByPageWheelEvent) {
                 bool negative = deltaY < 0;
@@ -237,10 +235,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                 if (negative)
                     deltaY = -deltaY;
             }
-            if (e.hasPreciseScrollingDeltas())
-                scrollToPositionWithoutAnimation(currentPosition() + deltaFromStep(VerticalScrollbar, verticalScrollbar->pixelStep(), -deltaY));
-            else
-                scroll(VerticalScrollbar, granularity, verticalScrollbar->pixelStep(), -deltaY);
+            scroll(VerticalScrollbar, ScrollByPixel, verticalScrollbar->pixelStep(), -deltaY, behavior);
         }
 
         if (deltaX) {
@@ -250,10 +245,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
                 if (negative)
                     deltaX = -deltaX;
             }
-            if (e.hasPreciseScrollingDeltas())
-                scrollToPositionWithoutAnimation(currentPosition() + deltaFromStep(HorizontalScrollbar, horizontalScrollbar->pixelStep(), -deltaX));
-            else
-                scroll(HorizontalScrollbar, granularity, horizontalScrollbar->pixelStep(), -deltaX);
+            scroll(HorizontalScrollbar, ScrollByPixel, horizontalScrollbar->pixelStep(), -deltaX, behavior);
         }
     }
     return handled;

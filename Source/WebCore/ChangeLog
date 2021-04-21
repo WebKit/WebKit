@@ -1,3 +1,30 @@
+2021-04-21  Martin Robinson  <mrobinson@webkit.org>
+
+        Add basic (non-momentum) wheel event handling for scroll snap
+        https://bugs.webkit.org/show_bug.cgi?id=222594
+
+        Reviewed by Darin Adler.
+
+        Test: css3/scroll-snap/scroll-snap-wheel-event.html
+
+        Enable scroll snapping for basic wheel events on GTK+ and WPE. The Mac port
+        has special wheel handling due to momentum scrolling. Other scroll-snap-enabled
+        ports can just use a basic version.
+
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::scroll): Accept a bitmask of options now. This
+        will allow using this method when handling wheel events that do not animate.
+        (WebCore::ScrollAnimator::handleWheelEvent): Trigger ::scroll with
+        scroll snapping enabled and pass the appropriate option to disable animations.
+        (WebCore::ScrollAnimator::processWheelEventForScrollSnap): Deleted.
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::ScrollAnimator::processWheelEventForScrollSnap): Made
+        this a method that can be overridden by subclasses.
+        * platform/mac/ScrollAnimatorMac.h: Added processWheelEventForScrollSnap.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::scroll): Pay attention to the NeverAnimate bitmask now.
+        (WebCore::ScrollAnimatorMac::processWheelEventForScrollSnap): Added.
+
 2021-04-21  Youenn Fablet  <youenn@apple.com>
 
         Use BlobURL::getOriginURL in more places
