@@ -1,3 +1,19 @@
+2021-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Enhance scrolling-related trace points
+        https://bugs.webkit.org/show_bug.cgi?id=224852
+
+        Reviewed by Tim Horton.
+
+        Add a new trace point in EventDispatcher::displayWasRefreshed() so we can tell when the
+        WebProcess receives displayDidRefresh IPC (this can sometimes be delayed by other work that
+        might share the same dispatch thread).
+
+        We repurpose the existing DisplayRefreshDispatchingToMainThread which is the WK1 equivalent.
+
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::displayWasRefreshed):
+
 2021-04-21  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, WPE Cog build fix after r276316

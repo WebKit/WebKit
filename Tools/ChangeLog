@@ -1,3 +1,14 @@
+2021-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Enhance scrolling-related trace points
+        https://bugs.webkit.org/show_bug.cgi?id=224852
+
+        Reviewed by Tim Horton.
+
+        Update trace point descriptions.
+
+        * Tracing/SystemTracePoints.plist:
+
 2021-04-21  Lauro Moura  <lmoura@igalia.com>
 
         [WPE] Allow defining custom repo and branch for Cog checkout

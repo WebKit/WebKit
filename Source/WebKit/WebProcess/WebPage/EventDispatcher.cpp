@@ -291,6 +291,8 @@ void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID 
 #if HAVE(CVDISPLAYLINK)
 void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool sendToMainThread)
 {
+    tracePoint(DisplayRefreshDispatchingToMainThread, displayID, sendToMainThread);
+
     ASSERT(!RunLoop::isMain());
     notifyScrollingTreesDisplayWasRefreshed(displayID);
 

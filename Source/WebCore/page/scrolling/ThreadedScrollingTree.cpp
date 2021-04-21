@@ -366,7 +366,7 @@ void ThreadedScrollingTree::delayedRenderingUpdateDetectionTimerFired()
 
 void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 {
-    TraceScope tracingScope(ScrollingThreadDisplayDidRefreshStart, ScrollingThreadDisplayDidRefreshEnd);
+    TraceScope tracingScope(ScrollingThreadDisplayDidRefreshStart, ScrollingThreadDisplayDidRefreshEnd, displayID());
     ASSERT(ScrollingThread::isCurrentThread());
 
     LockHolder treeLocker(m_treeMutex);
@@ -390,13 +390,16 @@ void ThreadedScrollingTree::displayDidRefreshOnScrollingThread()
 
 void ThreadedScrollingTree::displayDidRefresh(PlatformDisplayID displayID)
 {
+    bool hasProcessedWheelEventsRecently = this->hasProcessedWheelEventsRecently();
+
     // We're on the EventDispatcher thread or in the ThreadedCompositor thread here.
+    tracePoint(ScrollingTreeDisplayDidRefresh, displayID, hasProcessedWheelEventsRecently);
 
     if (displayID != this->displayID())
         return;
 
 #if !PLATFORM(WPE) && !PLATFORM(GTK)
-    if (!hasProcessedWheelEventsRecently())
+    if (!hasProcessedWheelEventsRecently)
         return;
 #endif
 

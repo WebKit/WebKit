@@ -94,6 +94,7 @@ enum TracePointCode {
     ScrollingThreadRenderUpdateSyncEnd,
     ScrollingThreadDisplayDidRefreshStart,
     ScrollingThreadDisplayDidRefreshEnd,
+    ScrollingTreeDisplayDidRefresh,
 
     WebKitRange = 10000,
     WebHTMLViewPaintStart,

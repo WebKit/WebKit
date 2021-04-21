@@ -1,3 +1,14 @@
+2021-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Enhance scrolling-related trace points
+        https://bugs.webkit.org/show_bug.cgi?id=224852
+
+        Reviewed by Tim Horton.
+        
+        One new trace point, and some argument descriptors.
+
+        * wtf/SystemTracing.h:
+
 2021-04-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Prevent GPU and WebContent processes from attempting to connect to the AppSSO service 

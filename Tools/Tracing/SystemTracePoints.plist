@@ -215,6 +215,13 @@
                  <string>47</string>
                  <key>Code</key>
                  <string>5025</string>
+                 <key>ArgNames</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Display ID</string>
+                     <key>Arg2</key>
+                     <string>Send to main thread</string>
+                 </dict>
              </dict>
              <dict>
                  <key>Name</key>
@@ -360,6 +367,28 @@
                  <string>5042</string>
                  <key>CodeEnd</key>
                  <string>5043</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Display ID</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Display Refresh Dispatch to scrolling thread</string>
+                 <key>Type</key>
+                 <string>Impulse</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>Code</key>
+                 <string>5044</string>
+                 <key>ArgNames</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Display ID</string>
+                     <key>Arg2</key>
+                     <string>Recent Events?</string>
+                 </dict>
              </dict>
              <dict>
                  <key>Name</key>

@@ -1,3 +1,18 @@
+2021-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Enhance scrolling-related trace points
+        https://bugs.webkit.org/show_bug.cgi?id=224852
+
+        Reviewed by Tim Horton.
+
+        Add a new trace point when the "display did refresh" ping gets to ThreadedScrollingTree on
+        the EventDispatcher thread, and add some metadata to the existing displayDidRefresh trace
+        scope.
+
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::displayDidRefreshOnScrollingThread):
+        (WebCore::ThreadedScrollingTree::displayDidRefresh):
+
 2021-04-21  Youenn Fablet  <youenn@apple.com>
 
         AudioMediaStreamTrackRendererUnit should not have its data zeroed if one track has not enough data
