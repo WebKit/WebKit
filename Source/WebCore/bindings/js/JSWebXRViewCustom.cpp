@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR)
 #include "JSWebXRView.h"
 
+#include "JSDOMConvertBufferSource.h"
 #include "WebXRView.h"
 
 namespace WebCore {

@@ -32,6 +32,7 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include "WebURLSchemeHandlerProxy.h"
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ResourceError.h>

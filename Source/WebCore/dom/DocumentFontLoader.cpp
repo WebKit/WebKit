@@ -28,9 +28,13 @@
 #include "config.h"
 #include "DocumentFontLoader.h"
 
+#include "CSSFontSelector.h"
 #include "CachedFont.h"
+#include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
+#include "Frame.h"
+#include "FrameLoader.h"
 
 namespace WebCore {
 

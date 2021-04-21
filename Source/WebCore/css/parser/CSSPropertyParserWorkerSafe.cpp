@@ -32,14 +32,18 @@
 #include "config.h"
 #include "CSSPropertyParserWorkerSafe.h"
 
+#include "CSSFontFaceSrcValue.h"
+#include "CSSFontFeatureValue.h"
 #include "CSSFontStyleValue.h"
 #include "CSSParserFastPaths.h"
 #include "CSSParserImpl.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPropertyParser.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
+#include "CSSUnicodeRangeValue.h"
+#include "Document.h"
 #include "ScriptExecutionContext.h"
+#include "StyleSheetContents.h"
 
 #if ENABLE(VARIATION_FONTS)
 #include "CSSFontStyleRangeValue.h"
@@ -47,7 +51,7 @@
 
 namespace WebCore {
 
-Optional<FontRaw> CSSPropertyParserWorkerSafe::parseFont(const String& string, CSSParserMode mode)
+Optional<CSSPropertyParserHelpers::FontRaw> CSSPropertyParserWorkerSafe::parseFont(const String& string, CSSParserMode mode)
 {
     CSSTokenizer tokenizer(string);
     CSSParserTokenRange range(tokenizer.tokenRange());
@@ -228,7 +232,7 @@ static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)
         return CSSFontFaceSrcValue::createLocal(arg.value().toString());
     }
     if (args.peek().type() == IdentToken) {
-        String familyName = concatenateFamilyName(args);
+        String familyName = CSSPropertyParserHelpers::concatenateFamilyName(args);
         if (!args.atEnd())
             return nullptr;
         return CSSFontFaceSrcValue::createLocal(familyName);
@@ -284,9 +288,9 @@ RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range,
         return CSSFontStyleRangeValue::create(keyword.releaseNonNull());
 
     // FIXME: This should probably not allow the unitless zero.
-    if (auto firstAngle = CSSPropertyParserHelpers::consumeAngleWorkerSafe(range, cssParserMode, pool, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)) {
+    if (auto firstAngle = CSSPropertyParserHelpers::consumeAngleWorkerSafe(range, cssParserMode, pool, CSSPropertyParserHelpers::UnitlessQuirk::Forbid, CSSPropertyParserHelpers::UnitlessZeroQuirk::Allow)) {
         auto firstAngleInDegrees = firstAngle->doubleValue(CSSUnitType::CSS_DEG);
-        if (!isFontStyleAngleInRange(firstAngleInDegrees))
+        if (!CSSPropertyParserHelpers::isFontStyleAngleInRange(firstAngleInDegrees))
             return nullptr;
         if (range.atEnd()) {
             auto result = CSSValueList::createSpaceSeparated();
@@ -295,11 +299,11 @@ RefPtr<CSSFontStyleRangeValue> consumeFontStyleRange(CSSParserTokenRange& range,
         }
 
         // FIXME: This should probably not allow the unitless zero.
-        auto secondAngle = CSSPropertyParserHelpers::consumeAngleWorkerSafe(range, cssParserMode, pool, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
+        auto secondAngle = CSSPropertyParserHelpers::consumeAngleWorkerSafe(range, cssParserMode, pool, CSSPropertyParserHelpers::UnitlessQuirk::Forbid, CSSPropertyParserHelpers::UnitlessZeroQuirk::Allow);
         if (!secondAngle)
             return nullptr;
         auto secondAngleInDegrees = secondAngle->doubleValue(CSSUnitType::CSS_DEG);
-        if (!isFontStyleAngleInRange(secondAngleInDegrees) || firstAngleInDegrees > secondAngleInDegrees)
+        if (!CSSPropertyParserHelpers::isFontStyleAngleInRange(secondAngleInDegrees) || firstAngleInDegrees > secondAngleInDegrees)
             return nullptr;
         auto result = CSSValueList::createSpaceSeparated();
         result->append(firstAngle.releaseNonNull());

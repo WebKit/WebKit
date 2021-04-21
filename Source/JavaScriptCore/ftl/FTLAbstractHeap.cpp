@@ -31,6 +31,7 @@
 #include "FTLAbbreviatedTypes.h"
 #include "FTLOutput.h"
 #include "FTLTypedPointer.h"
+#include "JSCJSValueInlines.h"
 #include "Options.h"
 
 namespace JSC { namespace FTL {

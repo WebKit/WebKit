@@ -45,7 +45,6 @@
 #include "JSCInlines.h"
 #include "JSImmutableButterfly.h"
 #include "JSTemplateObjectDescriptor.h"
-#include "LinkTimeConstant.h"
 #include "Options.h"
 #include "PrivateFieldPutKind.h"
 #include "StrongInlines.h"
@@ -2704,19 +2703,6 @@ RegisterID* BytecodeGenerator::emitGetPrototypeOf(RegisterID* dst, RegisterID* v
 {
     OpGetPrototypeOf::emit(this, dst, value);
     return dst;
-}
-
-template<InvalidPrototypeMode mode>
-RegisterID* BytecodeGenerator::emitDirectSetPrototypeOf(RegisterID* base, RegisterID* prototype, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
-{
-    RefPtr<RegisterID> setPrototypeDirect = moveLinkTimeConstant(nullptr, mode == InvalidPrototypeMode::Throw ? LinkTimeConstant::setPrototypeDirectOrThrow : LinkTimeConstant::setPrototypeDirect);
-
-    CallArguments args(*this, nullptr, 1);
-    move(args.thisRegister(), base);
-    move(args.argumentRegister(0), prototype);
-
-    emitCall(newTemporary(), setPrototypeDirect.get(), NoExpectedFunction, args, divot, divotStart, divotEnd, DebuggableCall::No);
-    return base;
 }
 
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)

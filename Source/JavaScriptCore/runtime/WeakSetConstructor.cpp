@@ -29,6 +29,7 @@
 #include "IteratorOperations.h"
 #include "JSCInlines.h"
 #include "JSWeakSet.h"
+#include "WeakMapImplInlines.h"
 #include "WeakSetPrototype.h"
 
 namespace JSC {

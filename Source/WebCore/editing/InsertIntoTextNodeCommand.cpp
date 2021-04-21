@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InsertIntoTextNodeCommand.h"
 
+#include "CompositeEditCommand.h"
 #include "Document.h"
 #include "Editor.h"
 #include "EditorClient.h"

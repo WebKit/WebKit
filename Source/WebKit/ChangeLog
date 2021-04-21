@@ -1,3 +1,19 @@
+2021-04-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid April 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=222652
+        <rdar://problem/75262285>
+
+        Unreviewed non-unified build fixes.
+
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp: Add missing
+        NetworkProcessConnection.h include.
+        (WebKit::RTCDataChannelRemoteManager::connectToRemoteSource): Sprinkle missing WebCore::
+        namespace prefixes.
+        (WebKit::RTCDataChannelRemoteManager::postTaskToHandler): Ditto.
+        (WebKit::RTCDataChannelRemoteManager::sourceFromIdentifier): Ditto.
+        * WebProcess/WebPage/WebURLSchemeTaskProxy.cpp: Add missing WebProcess.h include.
+
 2021-04-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Fix build break after r276363

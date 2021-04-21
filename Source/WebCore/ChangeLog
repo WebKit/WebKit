@@ -1,3 +1,47 @@
+2021-04-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid April 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=222652
+        <rdar://problem/75262285>
+
+        Unreviewed non-unified build fixes.
+
+        No new tests needed.
+
+        * bindings/js/JSWebXRRigidTransformCustom.cpp: Add missing JSDOMConvertBufferSource.h
+        include.
+        * bindings/js/JSWebXRSpaceCustom.cpp: Add missing JSWebXRReferenceSpace.h include.
+        * bindings/js/JSWebXRViewCustom.cpp: Add missing JSDOMConvertBufferSource.h include.
+        * bindings/js/WorkerModuleScriptLoader.cpp: Add missing ServiceWorkerGlobalScope.h
+        include.
+        * css/CSSFontFaceSrcValue.cpp: Add missing CachedFontLoadRequest.h include.
+        * css/parser/CSSPropertyParserWorkerSafe.cpp: Add missing includes for
+        CSSFontFaceSrcValue.h, CSSFontFeatureValue.h, CSSUnicodeRangeValue.h, Document.h, and
+        StyleSheetContents.h; remove (now unneeded) CSSPropertyParserHelpers.h include.
+        (WebCore::CSSPropertyParserWorkerSafe::parseFont): Sprinkle usage of functions with
+        missing WebCore:: namespace prefixes.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontFaceSrcLocal): Ditto.
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStyleRange): Ditto.
+        * css/parser/CSSPropertyParserWorkerSafe.h: Add missing CSSPropertyParserHelpers.h
+        include.
+        * dom/DocumentFontLoader.cpp: Add missing includes CSSFontSelector.h,
+        CachedResourceLoader.h, Frame.h, and FrameLoader.h
+        * editing/AppendNodeCommand.cpp: Add missing CompositeEditCommand.h include.
+        * editing/DeleteFromTextNodeCommand.cpp: Ditto.
+        * editing/InsertIntoTextNodeCommand.cpp: Ditto.
+        * editing/InsertNodeBeforeCommand.cpp: Ditto.
+        * editing/MergeIdenticalElementsCommand.h: Ditto, and remove unneeded EditCommand.h
+        include.
+        * editing/RemoveNodeCommand.cpp: Add missing CompositeEditCommand.h include.
+        * editing/SetNodeAttributeCommand.cpp: Ditto.
+        * editing/SetSelectionCommand.cpp: Ditto.
+        * editing/SplitElementCommand.cpp: Ditto.
+        * editing/SplitTextNodeCommand.cpp: Ditto.
+        * loader/cache/CachedFontLoadRequest.h: Add missing FontSelectionAlgorithm.h include.
+        * platform/graphics/FontTaggedSettings.h: Add missing wtf/Hasher.h include.
+        * platform/text/BidiContext.cpp: Add missing <mutex> and wtf/NeverDestroyed.h includes.
+        * workers/WorkerGlobalScopeProxy.h: Forward-declare WebCore::ScriptBuffer.
+
 2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Update datalist dropdown indicator

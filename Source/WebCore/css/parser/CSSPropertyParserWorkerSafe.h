@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSParserContext.h"
+#include "CSSPropertyParserHelpers.h"
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

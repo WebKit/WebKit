@@ -28,6 +28,7 @@
 
 #include <array>
 #include <wtf/HashTraits.h>
+#include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 
 namespace WTF {

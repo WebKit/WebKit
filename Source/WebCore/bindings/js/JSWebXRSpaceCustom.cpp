@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR)
 #include "JSWebXRSpace.h"
 
+#include "JSWebXRReferenceSpace.h"
 #include "WebXRReferenceSpace.h"
 
 namespace WebCore {

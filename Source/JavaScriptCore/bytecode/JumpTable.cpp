@@ -30,8 +30,6 @@
 #include "config.h"
 #include "JumpTable.h"
 
-#include <wtf/text/StringHash.h>
-
 namespace JSC {
 
 } // namespace JSC

@@ -31,8 +31,10 @@
 
 #include "CodeLocation.h"
 #include "UnlinkedCodeBlock.h"
+#include <wtf/FixedVector.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {

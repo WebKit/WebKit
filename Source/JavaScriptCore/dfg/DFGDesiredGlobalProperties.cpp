@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "DFGCommonData.h"
 #include "DFGDesiredIdentifiers.h"
+#include "DFGDesiredWatchpoints.h"
 #include "JSGlobalObject.h"
 
 namespace JSC { namespace DFG {

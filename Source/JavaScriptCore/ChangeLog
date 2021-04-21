@@ -1,3 +1,33 @@
+2021-04-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid April 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=222652
+        <rdar://problem/75262285>
+
+        Unreviewed non-unified build fixes.
+
+        * bytecode/JumpTable.cpp: Remove inclusion of wtf/text/StringHash.h
+        * bytecode/JumpTable.h: Add missing inclusions of wtf/FixedVector.h and
+        wtf/text/StringHash.h
+        * bytecode/SpeculatedType.cpp: Add missing includes JSCJSValueInlines.h and
+        JSCellInlines.h
+        * bytecompiler/BytecodeGenerator.cpp: Move template method to header, remove now uneeded
+        LinkTimeConstant.h include.
+        * bytecompiler/BytecodeGenerator.h: Add include for LinkTimeConstant.h
+        (JSC::BytecodeGenerator::emitDirectSetPrototypeOf): Template method moved here from
+        BytecodeGenerator.cpp to avoid compile errors due to usage of missing template body
+        definition.
+        * dfg/DFGDesiredGlobalProperties.cpp: Add missing DFGDesiredWatchpoints.h include.
+        * ftl/FTLAbstractHeap.cpp: Add missing JSCJSValueInlines.h include.
+        * runtime/JSCustomGetterFunction.cpp: Add missing IdentifierInlines.h include.
+        * runtime/JSCustomSetterFunction.cpp: Ditto.
+        * runtime/SetPrototype.cpp: Add missing HashMapImplInlines.h include.
+        * runtime/VMTraps.cpp: Add missing VMEntryScope.h include.
+        * runtime/WeakSetConstructor.cpp: Add missing WeakMapImplInlines.h include.
+        * runtime/WeakSetPrototype.cpp: Add missing includes for HashMapImplInlines.h and
+        WeakMapImplInlines.h
+        * wasm/js/JSWebAssemblyTable.cpp: Add missing ObjectConstructor.h include.
+
 2021-04-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Static asserts in WasmAirIRGenerator.cpp and WasmB3IRGenerator.cpp trigger -Wnonnull warnings with GCC 11

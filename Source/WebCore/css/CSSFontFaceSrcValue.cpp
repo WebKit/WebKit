@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CachedFont.h"
+#include "CachedFontLoadRequest.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"

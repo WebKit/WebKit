@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InsertNodeBeforeCommand.h"
 
+#include "CompositeEditCommand.h"
 #include "Document.h"
 #include "Editing.h"
 #include "RenderElement.h"

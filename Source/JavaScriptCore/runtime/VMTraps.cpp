@@ -36,6 +36,7 @@
 #include "LLIntPCRanges.h"
 #include "MachineContext.h"
 #include "MacroAssemblerCodeRef.h"
+#include "VMEntryScope.h"
 #include "VMTrapsInlines.h"
 #include "Watchdog.h"
 #include <wtf/ProcessID.h>

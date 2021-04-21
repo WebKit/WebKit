@@ -29,6 +29,7 @@
 #include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
 #include "FontLoadRequest.h"
+#include "FontSelectionAlgorithm.h"
 
 namespace WebCore {
 

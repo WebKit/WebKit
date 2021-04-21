@@ -34,6 +34,8 @@
 #include "JSArray.h"
 #include "JSBigInt.h"
 #include "JSBoundFunction.h"
+#include "JSCJSValueInlines.h"
+#include "JSCellInlines.h"
 #include "JSDataView.h"
 #include "JSFunction.h"
 #include "JSMap.h"

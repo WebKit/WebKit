@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SplitTextNodeCommand.h"
 
+#include "CompositeEditCommand.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"
 #include "Text.h"
