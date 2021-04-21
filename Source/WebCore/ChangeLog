@@ -1,3 +1,19 @@
+2021-04-20  Ian Gilbert  <iang@apple.com>
+
+        Crash in CompositeEditCommand::insertNodeAt
+        https://bugs.webkit.org/show_bug.cgi?id=224504
+
+        Reviewed by Ryosuke Niwa.
+
+        CompositeEditCommand::cleanupAfterDeletion will remove text nodes that only
+        have a newline. Added check inside FormatBlockCommand::formatRange to avoid
+        a null pointer dereference on a removed node. 
+
+        Test: editing/execCommand/format-block-remove-text-node-crash.html
+
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::formatRange):
+
 2021-04-20  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [clang] Remove implicit cast related warnings.

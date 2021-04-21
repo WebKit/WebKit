@@ -95,7 +95,8 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
 
     moveParagraphWithClones(start, end, blockNode.get(), outerBlock.get());
 
-    if (wasEndOfParagraph && !isEndOfParagraph(lastParagraphInBlockNode) && !isStartOfParagraph(lastParagraphInBlockNode))
+    if (wasEndOfParagraph && lastParagraphInBlockNode.anchorNode()->isConnected()
+        && !isEndOfParagraph(lastParagraphInBlockNode) && !isStartOfParagraph(lastParagraphInBlockNode))
         insertBlockPlaceholder(lastParagraphInBlockNode);
 }
     
