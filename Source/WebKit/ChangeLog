@@ -1,3 +1,9 @@
+2021-04-21  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE Cog build fix after r276316
+
+        * wpe/wpe-webkit-uninstalled.pc.in: Adjust paths once again.
+
 2021-04-21  Tim Horton  <timothy_horton@apple.com>
 
         Long-pressing a data detectors link causes the link to be followed
