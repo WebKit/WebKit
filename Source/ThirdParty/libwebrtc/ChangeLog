@@ -1,3 +1,17 @@
+2021-04-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebRTC should be compiled with thread-safe statics
+        https://bugs.webkit.org/show_bug.cgi?id=224863
+
+        Reviewed by Youenn Fablet.
+
+        Compile libwebrtc with normal thread-safe c++ local statics.
+        No known threading failures. Based on ad-hoc risk vs benefit
+        evaluation of today and after future merges, it appears
+        better to err in the side of caution.
+
+        * Configurations/Base.xcconfig:
+
 2021-04-21  Youenn Fablet  <youenn@apple.com>
 
         [ BigSur wk2 ARM64 ] http/wpt/webrtc/change-encoded-transform.html is a flakey crash
