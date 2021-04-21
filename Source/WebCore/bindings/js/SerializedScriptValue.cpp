@@ -40,6 +40,7 @@
 #include "JSCryptoKey.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSDOMException.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMMatrix.h"
 #include "JSDOMPoint.h"
@@ -191,6 +192,7 @@ enum SerializationTag {
 #if ENABLE(WEB_RTC)
     RTCDataChannelTransferTag = 50,
 #endif
+    DOMExceptionTag = 51,
     ErrorTag = 255
 };
 
@@ -381,6 +383,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | OffscreenCanvasTransferTag <value:uint32_t>
  *    | WasmMemoryTag <value:uint32_t>
  *    | RTCDataChannelTransferTag <processIdentifier:uint64_t><rtcDataChannelIdentifier:uint64_t><label:String>
+ *    | DOMExceptionTag <message:String> <name:String>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -1123,6 +1126,18 @@ private:
     }
 #endif
 
+    void dumpDOMException(JSObject* obj, SerializationReturnCode& code)
+    {
+        if (auto* exception = JSDOMException::toWrapped(m_lexicalGlobalObject->vm(), obj)) {
+            write(DOMExceptionTag);
+            write(exception->message());
+            write(exception->name());
+            return;
+        }
+
+        code = SerializationReturnCode::DataCloneError;
+    }
+
     bool dumpIfTerminal(JSValue value, SerializationReturnCode& code)
     {
         if (!value.isCell()) {
@@ -1383,6 +1398,11 @@ private:
                 return true;
             }
 #endif
+            if (obj->inherits(vm, JSDOMException::info())) {
+                dumpDOMException(obj, code);
+                return true;
+            }
+
             return false;
         }
         // Any other types are expected to serialize as null.
@@ -3148,6 +3168,18 @@ private:
         return getJSValue(bitmap);
     }
 
+    JSValue readDOMException()
+    {
+        CachedStringRef message;
+        if (!readStringData(message))
+            return JSValue();
+        CachedStringRef name;
+        if (!readStringData(name))
+            return JSValue();
+        auto exception = DOMException::create(message->string(), name->string());
+        return getJSValue(exception);
+    }
+
     JSValue readBigInt()
     {
         uint8_t sign = 0;
@@ -3582,6 +3614,9 @@ private:
         case RTCDataChannelTransferTag:
             return readRTCDataChannel();
 #endif
+        case DOMExceptionTag:
+            return readDOMException();
+
         default:
             m_ptr--; // Push the tag back
             return JSValue();

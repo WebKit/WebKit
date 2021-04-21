@@ -1,3 +1,16 @@
+2021-04-21  Chris Lord  <clord@igalia.com>
+
+        DOMException should be Serializable
+        https://bugs.webkit.org/show_bug.cgi?id=224865
+
+        Reviewed by Chris Dumez.
+
+        Implement serialization of DOMException objects.
+
+        No new tests, rebaselined existing tests.
+
+        * bindings/js/SerializedScriptValue.cpp:
+
 2021-04-21  Rob Buis  <rbuis@igalia.com>
 
         RenderGeometryMap should know about individual transform properties

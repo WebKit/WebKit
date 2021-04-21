@@ -38,6 +38,6 @@ FAIL URIError objects from other realms are treated as URIError The object can n
 FAIL Cloning a modified Error The object can not be cloned.
 FAIL Error.message: getter is ignored when cloning The object can not be cloned.
 FAIL Error.message: undefined property is stringified The object can not be cloned.
-FAIL DOMException objects can be cloned The object can not be cloned.
-FAIL DOMException objects created by the UA can be cloned The object can not be cloned.
+PASS DOMException objects can be cloned
+PASS DOMException objects created by the UA can be cloned
 

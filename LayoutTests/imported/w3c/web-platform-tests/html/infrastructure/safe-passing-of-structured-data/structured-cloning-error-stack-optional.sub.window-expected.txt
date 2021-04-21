@@ -3,6 +3,8 @@ Blocked access to external URL http://www1.127.0.0.1:8800/html/infrastructure/sa
 Blocked access to external URL http://www1.127.0.0.1:8800/html/infrastructure/safe-passing-of-structured-data/resources/echo-iframe.html
 Blocked access to external URL http://www1.127.0.0.1:8800/html/infrastructure/safe-passing-of-structured-data/resources/echo-iframe.html
 
+Harness Error (TIMEOUT), message = null
+
 FAIL page-created Error (worker) The object can not be cloned.
 FAIL page-created Error (cross-site iframe) The object can not be cloned.
 PASS page-created DOMException (worker)
@@ -11,6 +13,6 @@ FAIL JS-engine-created TypeError (worker) The object can not be cloned.
 FAIL JS-engine-created TypeError (cross-site iframe) The object can not be cloned.
 FAIL web API-created TypeError (worker) The object can not be cloned.
 FAIL web API-created TypeError (cross-site iframe) The object can not be cloned.
-FAIL web API-created DOMException (worker) The object can not be cloned.
-FAIL web API-created DOMException (cross-site iframe) The object can not be cloned.
+FAIL web API-created DOMException (worker) assert_equals: expected (string) "createElement@[native code]\n@http://localhost:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:33:27\n@http://localhost:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:41:31\n@http://localhost:8800/resources/testharness.js:2044:30\nasync_test@http://localhost:8800/resources/testharness.js:609:38\nstackTests@http://localhost:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:40:13\nglobal code@http://localhost:8800/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window.js:31:11" but got (undefined) undefined
+TIMEOUT web API-created DOMException (cross-site iframe) Test timed out
 

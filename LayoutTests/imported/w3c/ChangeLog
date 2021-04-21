@@ -1,3 +1,15 @@
+2021-04-21  Chris Lord  <clord@igalia.com>
+
+        DOMException should be Serializable
+        https://bugs.webkit.org/show_bug.cgi?id=224865
+
+        Reviewed by Chris Dumez.
+
+        DOMException is now serializable, rebaseline related tests.
+
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window-expected.txt:
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structuredclone_0-expected.txt:
+
 2021-04-21  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] last-baseline shouldn't affect baseline alignment

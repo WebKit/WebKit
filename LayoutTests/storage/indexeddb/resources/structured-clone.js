@@ -42,7 +42,8 @@ function startTests()
         testMap,
         testSet,
         testGeometryTypes,
-        testCryptoKey
+        testCryptoKey,
+        testDOMExceptionObject
     ];
 
     function nextTest() {
@@ -613,6 +614,31 @@ function testCryptoKey(callback)
     });
 }
 
+function testDOMExceptionObject(callback)
+{
+    debug("Testing DOMException objects");
+    function testDOMException(string, callback) {
+        debug("Testing: " + string);
+        var value = eval("value = (" + string + ")");
+        test_data = value;
+        testValue(test_data, function(result) {
+            self.result = result;
+            shouldBeEqualToString("typeof result", "object");
+            shouldBe("Object.prototype.toString.call(result)", "Object.prototype.toString.call(test_data)");
+            shouldBeTrue("test_data !== result");
+            shouldBe("result.toString()", "test_data.toString()");
+            callback();
+        });
+    }
+
+    forEachWithCallback(testDOMException, [
+        "new DOMException()",
+        "new DOMException(\"message\")",
+        "new DOMException(\"message\", \"name\")",
+        "new DOMException(\"\", \"\")"
+    ], callback);
+}
+
 function testBadTypes()
 {
     debug("Test types that can't be cloned:");
@@ -627,8 +653,6 @@ function testBadTypes()
     evalAndExpectException("store.put(new Error, 'key')", "DOMException.DATA_CLONE_ERR");
     debug("Testing Function");
     evalAndExpectException("store.put(new Function, 'key')", "DOMException.DATA_CLONE_ERR");
-    debug("Testing DOMException");
-    evalAndExpectException("store.put(new DOMException, 'key')", "DOMException.DATA_CLONE_ERR");
 
     debug("Testing other host object types");
     evalAndExpectException("store.put(self, 'key')", "DOMException.DATA_CLONE_ERR");
