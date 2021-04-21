@@ -7318,7 +7318,7 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
     }
 
     auto& renderImage = downcast<RenderImage>(*renderer);
-    auto bitmap = createShareableBitmap(renderImage);
+    auto bitmap = createShareableBitmap(renderImage, WTF::nullopt, AllowAnimatedImages::No);
     if (!bitmap) {
         if (completion)
             completion({ });

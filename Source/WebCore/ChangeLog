@@ -1,3 +1,16 @@
+2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Avoid triggering image extraction for animated images
+        https://bugs.webkit.org/show_bug.cgi?id=224851
+
+        Reviewed by Megan Gardner.
+
+        Avoid adding the "Reveal Image" context menu item for animated images. Testing is currently blocked on
+        webkit.org/b/224641.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+
 2021-04-21  Megan Gardner  <megan_gardner@apple.com>
 
         Support scrolling to a selected AppHighlight
