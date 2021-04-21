@@ -1,3 +1,23 @@
+2021-04-21  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: context().isInitialized() ./Modules/webaudio/OfflineAudioDestinationNode.cpp(142)
+        https://bugs.webkit.org/show_bug.cgi?id=224876
+        <rdar://76896256>
+
+        Reviewed by Eric Carlson.
+
+        In OfflineAudioDestinationNode::uninitialize(), we were synchronizing with the
+        render thread to make sure that OfflineAudioDestinationNode::offlineRender() was
+        done running before proceeding with uninitialization. However, when an audio
+        worklet is used, m_renderThread is null and no synchronization with the AudioWorklet
+        thread would happen. This patch adds the missing synchronization with the AudioWorklet
+        thread when present.
+
+        Test: webaudio/OfflineAudioContext/offlineaudiocontext-uninitialized-crash.html
+
+        * Modules/webaudio/OfflineAudioDestinationNode.cpp:
+        (WebCore::OfflineAudioDestinationNode::uninitialize):
+
 2021-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         will-change: transform should affect nested position:fixed

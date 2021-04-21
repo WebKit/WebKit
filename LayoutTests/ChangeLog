@@ -1,3 +1,16 @@
+2021-04-21  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: context().isInitialized() ./Modules/webaudio/OfflineAudioDestinationNode.cpp(142)
+        https://bugs.webkit.org/show_bug.cgi?id=224876
+        <rdar://76896256>
+
+        Reviewed by Eric Carlson.
+
+        Add layout test coverage.
+
+        * webaudio/OfflineAudioContext/offlineaudiocontext-uninitialized-crash-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-uninitialized-crash.html: Added.
+
 2021-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         will-change: transform should affect nested position:fixed

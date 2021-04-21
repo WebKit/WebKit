@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/threads/BinarySemaphore.h>
  
 namespace WebCore {
 
@@ -76,9 +77,18 @@ void OfflineAudioDestinationNode::uninitialize()
     if (!isInitialized())
         return;
 
-    if (m_renderThread) {
-        m_renderThread->waitForCompletion();
-        m_renderThread = nullptr;
+    if (m_startedRendering) {
+        if (m_renderThread) {
+            m_renderThread->waitForCompletion();
+            m_renderThread = nullptr;
+        }
+        if (auto* workletProxy = context().audioWorklet().proxy()) {
+            BinarySemaphore semaphore;
+            workletProxy->postTaskForModeToWorkletGlobalScope([&semaphore](ScriptExecutionContext&) mutable {
+                semaphore.signal();
+            }, WorkerRunLoop::defaultMode());
+            semaphore.wait();
+        }
     }
 
     AudioNode::uninitialize();
