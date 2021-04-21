@@ -118,9 +118,16 @@ private:
     Vector<BaselineGroup> m_sharedGroups;
 };
 
+enum AllowedBaseLine {FirstLine, LastLine, BothLines};
+
 static inline bool isBaselinePosition(ItemPosition position)
 {
     return position == ItemPosition::Baseline || position == ItemPosition::LastBaseline;
+}
+
+static inline bool isFirstBaselinePosition(ItemPosition position)
+{
+    return position == ItemPosition::Baseline;
 }
 
 // This is the class that implements the Baseline Alignment logic, using internally the BaselineContext and
