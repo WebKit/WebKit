@@ -1,3 +1,18 @@
+2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Adjust border radius for large buttons and <select>
+        https://bugs.webkit.org/show_bug.cgi?id=224825
+        <rdar://problem/76912116>
+
+        Reviewed by Wenson Hsieh.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::adjustRoundBorderRadius):
+
+        Larger UIKit buttons do not have a pill-shaped appearance. Match their
+        appearance for buttons and <select> elements that are natively styled
+        (ones that do not set "-webkit-appearance: none").
+
 2021-04-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid April 2021 edition

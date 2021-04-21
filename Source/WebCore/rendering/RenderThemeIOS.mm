@@ -63,6 +63,8 @@
 #import "PathUtilities.h"
 #import "PlatformLocale.h"
 #import "RenderAttachment.h"
+#import "RenderButton.h"
+#import "RenderMenuList.h"
 #import "RenderMeter.h"
 #import "RenderObject.h"
 #import "RenderProgress.h"
@@ -554,6 +556,10 @@ void RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const Pai
     paintTextFieldDecorations(box, paintInfo, rect);
 }
 
+// These values are taken from the UIKit button system.
+constexpr auto largeButtonSize = 45;
+constexpr auto largeButtonBorderRadiusRatio = 0.35f / 2;
+
 const int MenuListMinHeight = 15;
 
 const float MenuListBaseHeight = 20;
@@ -602,6 +608,12 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 {
     if (!canAdjustBorderRadiusForAppearance(style.appearance(), box) || style.backgroundLayers().hasImage())
         return;
+
+    if ((is<RenderButton>(box) || is<RenderMenuList>(box)) && box.height() >= largeButtonSize) {
+        auto largeButtonBorderRadius = std::min(box.width(), box.height()) * largeButtonBorderRadiusRatio;
+        style.setBorderRadius({ { largeButtonBorderRadius, LengthType::Fixed }, { largeButtonBorderRadius, LengthType::Fixed } });
+        return;
+    }
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
     style.setBorderRadius({ { std::min(box.width(), box.height()) / 2, LengthType::Fixed }, { box.height() / 2, LengthType::Fixed } });
