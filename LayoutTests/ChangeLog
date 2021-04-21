@@ -1,3 +1,15 @@
+2021-04-21  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in StyledMarkupAccumulator::traverseNodesForSerialization()
+        https://bugs.webkit.org/show_bug.cgi?id=224836
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test for the crash fixed here. Thanks to Tuomas Karkkainen for its first version.
+
+        * editing/execCommand/selectAll-copy-crash-expected.txt: Added.
+        * editing/execCommand/selectAll-copy-crash.html: Added.
+
 2021-04-21  Robert Jenner  <jenner@apple.com>
 
         Mass removing prior test expectations that don't need to be set anymore
