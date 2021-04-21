@@ -316,8 +316,6 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     static WebEvent *currentEvent();
-
-    void invalidateClick();
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -353,6 +351,9 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     Element* draggingElement() const;
 #endif
+
+    WEBCORE_EXPORT void invalidateClick();
+
 private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();
@@ -407,10 +408,6 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     bool dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent&);
-#endif
-
-#if !PLATFORM(IOS_FAMILY)
-    void invalidateClick();
 #endif
 
     Node* nodeUnderMouse() const;

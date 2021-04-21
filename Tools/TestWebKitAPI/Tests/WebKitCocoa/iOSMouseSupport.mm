@@ -234,6 +234,76 @@ TEST(iOSMouseSupport, MouseTimestampTimebase)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(iOSMouseSupport, EndedTouchesTriggerClick)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<script>"
+    "window.wasClicked = false;"
+    "document.documentElement.addEventListener('click', function (e) {"
+    "    window.wasClicked = true;"
+    "});"
+    "</script>"];
+
+    auto contentView = [webView wkContentView];
+    auto gesture = mouseGesture(contentView);
+
+    auto touch = adoptNS([[WKTestingTouch alloc] init]);
+    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
+
+    auto hoverEvent = adoptNS([[NSClassFromString(@"UIHoverEvent") alloc] init]);
+    auto event = adoptNS([[WKTestingEvent alloc] init]);
+
+    [gesture _hoverEntered:touchSet.get() withEvent:hoverEvent.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+    [touch setTapCount:1];
+    [event _setButtonMask:UIEventButtonMaskPrimary];
+    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+
+    [webView waitForPendingMouseEvents];
+
+    bool wasClicked = [[webView objectByEvaluatingJavaScript:@"window.wasClicked"] boolValue];
+    EXPECT_TRUE(wasClicked);
+}
+
+TEST(iOSMouseSupport, CancelledTouchesDoNotTriggerClick)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<script>"
+    "window.wasClicked = false;"
+    "document.documentElement.addEventListener('click', function (e) {"
+    "    window.wasClicked = true;"
+    "});"
+    "</script>"];
+
+    auto contentView = [webView wkContentView];
+    auto gesture = mouseGesture(contentView);
+
+    auto touch = adoptNS([[WKTestingTouch alloc] init]);
+    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
+
+    auto hoverEvent = adoptNS([[NSClassFromString(@"UIHoverEvent") alloc] init]);
+    auto event = adoptNS([[WKTestingEvent alloc] init]);
+
+    [gesture _hoverEntered:touchSet.get() withEvent:hoverEvent.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+    [touch setTapCount:1];
+    [event _setButtonMask:UIEventButtonMaskPrimary];
+    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+    [gesture touchesCancelled:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+
+    [webView waitForPendingMouseEvents];
+
+    bool wasClicked = [[webView objectByEvaluatingJavaScript:@"window.wasClicked"] boolValue];
+    EXPECT_FALSE(wasClicked);
+}
+
 #if ENABLE(IOS_TOUCH_EVENTS)
 
 TEST(iOSMouseSupport, WebsiteMouseEventPolicies)

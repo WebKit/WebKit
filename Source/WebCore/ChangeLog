@@ -1,3 +1,15 @@
+2021-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        Long-pressing a data detectors link causes the link to be followed
+        https://bugs.webkit.org/show_bug.cgi?id=224847
+        <rdar://problem/72889738>
+
+        Reviewed by Wenson Hsieh.
+
+        New API tests: iOSMouseSupport.{EndedTouchesTriggerClick,CancelledTouchesDoNotTriggerClick}
+
+        * page/EventHandler.h:
+
 2021-04-21  Youenn Fablet  <youenn@apple.com>
 
         [ BigSur wk2 ARM64 ] http/wpt/webrtc/change-encoded-transform.html is a flakey crash

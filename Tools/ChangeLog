@@ -1,3 +1,15 @@
+2021-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        Long-pressing a data detectors link causes the link to be followed
+        https://bugs.webkit.org/show_bug.cgi?id=224847
+        <rdar://problem/72889738>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/iOSMouseSupport.mm:
+        (TEST):
+        Add tests ensuring that we get a click event for completed touches, and not for cancelled touches.
+
 2021-04-21  Megan Gardner  <megan_gardner@apple.com>
 
         Support scrolling to a selected AppHighlight

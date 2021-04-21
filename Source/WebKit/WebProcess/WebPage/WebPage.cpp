@@ -2903,6 +2903,8 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
             return handled;
         }
         case PlatformEvent::MouseReleased:
+            if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
+                frame.eventHandler().invalidateClick();
             return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
 
         case PlatformEvent::MouseMoved:

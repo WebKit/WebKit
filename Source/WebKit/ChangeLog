@@ -1,3 +1,50 @@
+2021-04-21  Tim Horton  <timothy_horton@apple.com>
+
+        Long-pressing a data detectors link causes the link to be followed
+        https://bugs.webkit.org/show_bug.cgi?id=224847
+        <rdar://problem/72889738>
+
+        Reviewed by Wenson Hsieh.
+
+        On iOS, it is possible for a gesture to be externally cancelled (in this case,
+        when a data detectors context menu is presented by long pressing a link).
+        This is reported to WKMouseGestureRecognizer as "touches cancelled".
+        Currently, WKMouseGestureRecognizer just runs with that as a normal
+        "mouse button release" event, which then causes the link that you're long
+        pressing to also be followed.
+
+        * Shared/NativeWebMouseEvent.h:
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        (WebKit::WebMouseEvent::encode const):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/WebMouseEvent.h:
+        (WebKit::WebMouseEvent::gestureCancelled const):
+        * Shared/ios/NativeWebMouseEventIOS.mm:
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * UIProcess/ios/WKMouseGestureRecognizer.mm:
+        (-[WKMouseGestureRecognizer createMouseEventWithType:wasCancelled:]):
+        (-[WKMouseGestureRecognizer touchesBegan:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesMoved:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesEnded:withEvent:]):
+        (-[WKMouseGestureRecognizer touchesCancelled:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverEntered:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverMoved:withEvent:]):
+        (-[WKMouseGestureRecognizer _hoverExited:withEvent:]):
+        (-[WKMouseGestureRecognizer createMouseEventWithType:]): Deleted.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::handleMouseEvent):
+        Add a bit to WebKit::WebMouseEvent indicating that the gesture it is a part of
+        was cancelled. This will only be set on the mouse release event dispatched from
+        touchesCancelled from WKMouseGestureRecognizer, and will cause WebCore to
+        avoid dispatching the click event, as you would on macOS if you e.g.
+        moved the mouse too far from its origin during the press.
+
+        Plumb the bit all the way from WKMouseGestureRecognizer, through the
+        NativeWebMouseEvent constructor, to WebMouseEvent, and then check it
+        and call invalidateClick() immediately before handing WebCore the
+        mouse release event, to avoid the click event.
+
 2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Avoid triggering image extraction for animated images

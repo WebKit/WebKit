@@ -26,7 +26,7 @@
 
 #pragma once
 
-// FIXME: We should probably move to makeing the WebCore/PlatformFooEvents trivial classes so that
+// FIXME: We should probably move to making the WebCore/PlatformFooEvents trivial classes so that
 // we can use them as the event type.
 
 #include "WebEvent.h"
@@ -35,6 +35,8 @@
 #include <WebCore/PointerID.h>
 
 namespace WebKit {
+
+enum class GestureWasCancelled : bool { No, Yes };
 
 class WebMouseEvent : public WebEvent {
 public:
@@ -50,9 +52,9 @@ public:
     WebMouseEvent();
 
 #if PLATFORM(MAC)
-    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force, SyntheticClickType = NoTap, int eventNumber = -1, int menuType = 0);
+    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force, SyntheticClickType = NoTap, int eventNumber = -1, int menuType = 0, GestureWasCancelled = GestureWasCancelled::No);
 #else
-    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force = 0, SyntheticClickType = NoTap, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::mousePointerEventType());
+    WebMouseEvent(Type, Button, unsigned short buttons, const WebCore::IntPoint& positionInView, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, OptionSet<Modifier>, WallTime timestamp, double force = 0, SyntheticClickType = NoTap, WebCore::PointerID = WebCore::mousePointerID, const String& pointerType = WebCore::mousePointerEventType(), GestureWasCancelled = GestureWasCancelled::No);
 #endif
 
     Button button() const { return static_cast<Button>(m_button); }
@@ -71,6 +73,7 @@ public:
     SyntheticClickType syntheticClickType() const { return static_cast<SyntheticClickType>(m_syntheticClickType); }
     WebCore::PointerID pointerId() const { return m_pointerId; }
     const String& pointerType() const { return m_pointerType; }
+    GestureWasCancelled gestureWasCancelled() const { return m_gestureWasCancelled; }
 
     void encode(IPC::Encoder&) const;
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebMouseEvent&);
@@ -94,6 +97,7 @@ private:
     uint32_t m_syntheticClickType { NoTap };
     WebCore::PointerID m_pointerId { WebCore::mousePointerID };
     String m_pointerType { WebCore::mousePointerEventType() };
+    GestureWasCancelled m_gestureWasCancelled { GestureWasCancelled::No };
 };
 
 } // namespace WebKit
