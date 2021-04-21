@@ -1,3 +1,25 @@
+2021-04-21  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        URL::URL(HashTableDeletedValueType) triggers -Wuninitialized warnings with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=224755
+
+        Reviewed by Chris Dumez
+
+        My first thought here was to just always fully-initialize the URL object when used as a
+        HashTableDeletedValue, but Alex is concerned it might have a performance impact. Instead,
+        Chris suggested we could use the SecurityOriginData rather than URL to track whether we are
+        a HashTableDeletedValue. This seems good because it avoids any size increase in
+        ServiceWorkerRegistrationKey. Additionally, let's follow Darin's advice to construct the
+        ServiceWorkerRegistrationKey using placement new rather than via assignment to the
+        uninitialized storage.
+
+        There should be no behavior change. (Although we were copying uninitialized data before, it
+        was never read. Hopefully.)
+
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        (WTF::HashTraits<WebCore::ServiceWorkerRegistrationKey>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::ServiceWorkerRegistrationKey>::isDeletedValue):
+
 2021-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Enhance scrolling-related trace points
