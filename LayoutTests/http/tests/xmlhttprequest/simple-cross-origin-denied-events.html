@@ -31,9 +31,9 @@
         xhr.onloadstart = function() { log("onloadstart") }
         xhr.onprogress = function() { log("onprogress") }
         xhr.onerror = function() { log("onerror"); setTimeout(doneMissing, 100); }
-        xhr.open("GET", "http://localhost:7/", true); // A port that will likely refuse the connection.
+        xhr.open("GET", "http://localhost:8/", true); // A port that will likely refuse the connection.
         xhr.send();
-    }
+     }
 
     function doneMissing()
     {

@@ -1973,6 +1973,15 @@ bool HTMLMediaElement::isSafeToLoadURL(const URL& url, InvalidURLAction actionIf
         return false;
     }
 
+    if (!portAllowed(url)) {
+        if (actionIfInvalid == Complain) {
+            if (frame)
+                FrameLoader::reportBlockedLoadFailed(*frame, url);
+            ERROR_LOG(LOGIDENTIFIER, url , " was rejected because the port is not allowed");
+        }
+        return false;
+    }
+
     if (!isAllowedToLoadMediaURL(*this, url, isInUserAgentShadowTree())) {
         ERROR_LOG(LOGIDENTIFIER, url, " was rejected by Content Security Policy");
         return false;

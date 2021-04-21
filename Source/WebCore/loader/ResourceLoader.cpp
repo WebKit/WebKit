@@ -143,6 +143,13 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
         return completionHandler(false);
     }
 
+    if (!portAllowed(clientRequest.url())) {
+        RELEASE_LOG_IF_ALLOWED("init: Cancelling load to a blocked port.");
+        FrameLoader::reportBlockedLoadFailed(*m_frame, clientRequest.url());
+        releaseResources();
+        return completionHandler(false);
+    }
+
     // The various plug-in implementations call directly to ResourceLoader::load() instead of piping requests
     // through FrameLoader. As a result, they miss the FrameLoader::addExtraFieldsToRequest() step which sets
     // up the 1st party for cookies URL and Same-Site info. Until plug-in implementations can be reigned in

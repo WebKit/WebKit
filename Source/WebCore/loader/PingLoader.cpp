@@ -90,6 +90,11 @@ void PingLoader::loadImage(Frame& frame, const URL& url)
         return;
     }
 
+    if (!portAllowed(url)) {
+        FrameLoader::reportBlockedLoadFailed(frame, url);
+        return;
+    }
+
     ResourceRequest request(url);
 #if ENABLE(CONTENT_EXTENSIONS)
     if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::Image))

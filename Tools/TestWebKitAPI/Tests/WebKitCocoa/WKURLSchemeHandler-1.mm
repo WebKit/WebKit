@@ -1247,14 +1247,14 @@ TEST(URLSchemeHandler, LoadsSubresources)
     switch (++_requestCount) {
     case 1:
         check(task, "frame://host1/main", true, "", "", "", 0);
-        respond(task, "<iframe src='//host2:123/iframe'></iframe>");
+        respond(task, "<iframe src='//host2:1234/iframe'></iframe>");
         return;
     case 2:
-        check(task, "frame://host2:123/iframe", false, "", "frame", "host1", 0);
+        check(task, "frame://host2:1234/iframe", false, "", "frame", "host1", 0);
         respond(task, "<script>fetch('subresource')</script>");
         return;
     case 3:
-        check(task, "frame://host2:123/subresource", false, "frame://host2:123/iframe", "frame", "host2", 123);
+        check(task, "frame://host2:1234/subresource", false, "frame://host2:1234/iframe", "frame", "host2", 1234);
         respond(task, "done!");
         return;
     }

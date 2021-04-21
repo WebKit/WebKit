@@ -1226,10 +1226,17 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
 
     ASSERT(m_frame.document());
     if (!request.requesterSecurityOrigin().canDisplay(url)) {
+        FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "loadFrameRequest: canceling - Not allowed to load local resource");
         reportLocalLoadFailed(&m_frame, url.stringCenterEllipsizedToLength());
         return;
     }
 
+    if (!portAllowed(url)) {
+        FRAMELOADER_RELEASE_LOG_IF_ALLOWED(ResourceLoading, "loadFrameRequest: canceling - port not allowed");
+        reportBlockedLoadFailed(m_frame, url);
+        return;
+    }
+    
     String argsReferrer = request.resourceRequest().httpReferrer();
     if (argsReferrer.isEmpty())
         argsReferrer = outgoingReferrer();
@@ -1642,6 +1649,13 @@ void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
 const ResourceRequest& FrameLoader::initialRequest() const
 {
     return activeDocumentLoader()->originalRequest();
+}
+
+void FrameLoader::reportBlockedLoadFailed(Frame& frame, const URL& url)
+{
+    ASSERT(!url.isEmpty());
+    auto message = makeString("Not allowed to use restricted network port ", url.port().value(), ": ", url.stringCenterEllipsizedToLength());
+    frame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
 }
 
 bool FrameLoader::willLoadMediaElementURL(URL& url, Node& initiatorNode)
