@@ -663,11 +663,11 @@ MediaSessionCoordinatorEnabled:
   condition: ENABLE(MEDIA_SESSION_COORDINATOR)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 MediaSessionEnabled:
   type: bool
@@ -676,11 +676,11 @@ MediaSessionEnabled:
   condition: ENABLE(MEDIA_SESSION)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 MediaSessionPlaylistEnabled:
   type: bool

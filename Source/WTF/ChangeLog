@@ -1,3 +1,14 @@
+2021-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Enable MediaSession and MediaSessionCoordinator experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=224822
+        <rdar://problem/76908014>
+
+        Reviewed by Jer Noble.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Change the defaults for
+        MediaSessionCoordinatorEnabled and MediaSessionEnabled to true.
+
 2021-04-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Lots of spurious -Wnonnull warnings with GCC 11
