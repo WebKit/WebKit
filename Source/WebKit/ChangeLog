@@ -1,3 +1,27 @@
+2021-04-20  Chris Dumez  <cdumez@apple.com>
+
+        If an idle GPUProcess doesn't exit under memory pressure because it just launched, check again later
+        https://bugs.webkit.org/show_bug.cgi?id=224829
+
+        Reviewed by Darin Adler.
+
+        In r276305, I made it so that the GPUProcess does not exit under memory pressure when idle
+        if it launched less than 5 seconds ago. This gives the WebProcess time to schedule work with
+        the GPUProcess after launching it and makes sure we don't repeatedly / frequently exit &
+        relaunch the GPUProcess.
+
+        In this patch, I am tweaking the policy so that if we could have exited but didn't because
+        the GPUProcess was too young (less than 5 seconds old), then I schedule a timer for this
+        5 second deadline to check again if the GPUProcess could exit (meaning that it is unused).
+        When the timer fires, the process doesn't have to be under memory pressure still in order
+        to exit, it just needs to be idle. I figured the fact that we were under memory pressure
+        less than 5 seconds ago should be enough incentive to exit if idle.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::GPUProcess):
+        (WebKit::GPUProcess::canExitUnderMemoryPressure const):
+        * GPUProcess/GPUProcess.h:
+
 2021-04-20  Devin Rousso  <drousso@apple.com>
 
         Parse `theme_color` in web application manifests and pass it along to `-[WKWebView themeColor]`
