@@ -1,3 +1,14 @@
+2021-04-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Import one more :focus-visible WPT test
+        https://bugs.webkit.org/show_bug.cgi?id=224827
+
+        Reviewed by Rob Buis.
+
+        * web-platform-tests/css/selectors/focus-visible-020-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-020.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
 2021-04-20  Cathie Chen  <cathiechen@igalia.com>
 
         Update html/rendering/replaced-elements/attributes-for-embedded-content-and-images/ tests from WPT
