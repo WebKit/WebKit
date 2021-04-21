@@ -1,3 +1,39 @@
+2021-04-21  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r274064. rdar://problem/76962988
+
+    REGRESSION(r272900): Nullptr crash in ComposedTreeIterator::traverseNextInShadowTree() via ShadowRoot::hostChildElementDidChange
+    https://bugs.webkit.org/show_bug.cgi?id=222720
+    
+    Patch by Carlos Garcia Campos <cgarcia@igalia.com> on 2021-03-08
+    Reviewed by Ryosuke Niwa.
+    
+    Source/WebCore:
+    
+    The list of assigned nodes contains weak pointers, we should check the node hasn't been destroyed.
+    
+    Test: fast/html/details-set-inner-text-crash.html
+    
+    * dom/ComposedTreeIterator.cpp:
+    (WebCore::ComposedTreeIterator::traverseNextInShadowTree):
+    
+    LayoutTests:
+    
+    * fast/html/details-set-inner-text-crash-expected.txt: Added.
+    * fast/html/details-set-inner-text-crash.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274064 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+            REGRESSION(r272900): Nullptr crash in ComposedTreeIterator::traverseNextInShadowTree() via ShadowRoot::hostChildElementDidChange
+            https://bugs.webkit.org/show_bug.cgi?id=222720
+
+            Reviewed by Ryosuke Niwa.
+
+            * fast/html/details-set-inner-text-crash-expected.txt: Added.
+            * fast/html/details-set-inner-text-crash.html: Added.
+
 2021-04-15  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r275656. rdar://problem/76727574
