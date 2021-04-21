@@ -1,3 +1,148 @@
+2021-04-21  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r276266. rdar://problem/76962930
+
+    [bmalloc] Enable Adaptive Scavenger for Mac
+    https://bugs.webkit.org/show_bug.cgi?id=224706
+    
+    Reviewed by Filip Pizlo.
+    
+    Enabled the adaptive scavenger code paths for macOS.
+    The original reason that the partial scavenging paths were kept for macOS was due
+    to regression on power tests.  To alleviate the power regression, this patch splits
+    out the adaptive scavenger parameters with macOS specific values.
+    
+    The parameters are:
+      The multiplier used to compute the next scavenging wait time based on the 
+        time needed for the prior scavenging.
+      Minimum wait time between scavenging.
+      Maximum wait time between scavenging.
+    
+    The values in the current code are:
+      Wait time Multiplier: 150
+      Minimum wait time: 100ms
+      Maximum wait time: 10,000ms (10 seconds)
+    
+    The proposed values for macOS, determined using empirical testing.
+      Wait time Multiplier: 300
+      Minimum wait time: 750ms
+      Maximum wait time: 20,000ms (20 seconds)
+            
+    When tested on various mac variants, this change:
+     * Provides a 3-5% reduction in memory use on RAMification.
+     * It is neutral on JetStream2.
+     * It is neutral to a slight regression on Speedometer2, but there is some
+       variability in those results.
+    
+    Since macOS was the only platform still using the partial scavenging code path,
+    the partial scavenging code paths were deleted.
+    
+    * bmalloc/BPlatform.h:
+    * bmalloc/Heap.cpp:
+    (bmalloc::Heap::scavenge):
+    (bmalloc::Heap::allocateSmallChunk):
+    (bmalloc::Heap::allocateSmallPage):
+    (bmalloc::Heap::allocateLarge):
+    (bmalloc::Heap::scavengeToHighWatermark): Deleted.
+    * bmalloc/Heap.h:
+    * bmalloc/IsoDirectory.h:
+    * bmalloc/IsoDirectoryInlines.h:
+    (bmalloc::passedNumPages>::takeFirstEligible):
+    (bmalloc::passedNumPages>::scavenge):
+    (bmalloc::passedNumPages>::scavengeToHighWatermark): Deleted.
+    * bmalloc/IsoHeapImpl.h:
+    * bmalloc/IsoHeapImplInlines.h:
+    (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark): Deleted.
+    * bmalloc/LargeMap.cpp:
+    (bmalloc::LargeMap::add):
+    * bmalloc/LargeRange.h:
+    (bmalloc::LargeRange::LargeRange):
+    (bmalloc::LargeRange::setUsedSinceLastScavenge):
+    (bmalloc::merge):
+    (): Deleted.
+    * bmalloc/Scavenger.cpp:
+    (bmalloc::Scavenger::Scavenger):
+    (bmalloc::Scavenger::scavenge):
+    (bmalloc::Scavenger::threadRunLoop):
+    (bmalloc::Scavenger::timeSinceLastPartialScavenge): Deleted.
+    (bmalloc::Scavenger::partialScavenge): Deleted.
+    * bmalloc/Scavenger.h:
+    * bmalloc/SmallPage.h:
+    (bmalloc::SmallPage::setUsedSinceLastScavenge):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276266 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-19  Michael Saboff  <msaboff@apple.com>
+
+            [bmalloc] Enable Adaptive Scavenger for Mac
+            https://bugs.webkit.org/show_bug.cgi?id=224706
+
+            Reviewed by Filip Pizlo.
+
+            Enabled the adaptive scavenger code paths for macOS.
+            The original reason that the partial scavenging paths were kept for macOS was due
+            to regression on power tests.  To alleviate the power regression, this patch splits
+            out the adaptive scavenger parameters with macOS specific values.
+
+            The parameters are:
+              The multiplier used to compute the next scavenging wait time based on the
+                time needed for the prior scavenging.
+              Minimum wait time between scavenging.
+              Maximum wait time between scavenging.
+
+            The values in the current code are:
+              Wait time Multiplier: 150
+              Minimum wait time: 100ms
+              Maximum wait time: 10,000ms (10 seconds)
+
+            The proposed values for macOS, determined using empirical testing.
+              Wait time Multiplier: 300
+              Minimum wait time: 750ms
+              Maximum wait time: 20,000ms (20 seconds)
+
+            When tested on various mac variants, this change:
+             * Provides a 3-5% reduction in memory use on RAMification.
+             * It is neutral on JetStream2.
+             * It is neutral to a slight regression on Speedometer2, but there is some
+               variability in those results.
+
+            Since macOS was the only platform still using the partial scavenging code path,
+            the partial scavenging code paths were deleted.
+
+            * bmalloc/BPlatform.h:
+            * bmalloc/Heap.cpp:
+            (bmalloc::Heap::scavenge):
+            (bmalloc::Heap::allocateSmallChunk):
+            (bmalloc::Heap::allocateSmallPage):
+            (bmalloc::Heap::allocateLarge):
+            (bmalloc::Heap::scavengeToHighWatermark): Deleted.
+            * bmalloc/Heap.h:
+            * bmalloc/IsoDirectory.h:
+            * bmalloc/IsoDirectoryInlines.h:
+            (bmalloc::passedNumPages>::takeFirstEligible):
+            (bmalloc::passedNumPages>::scavenge):
+            (bmalloc::passedNumPages>::scavengeToHighWatermark): Deleted.
+            * bmalloc/IsoHeapImpl.h:
+            * bmalloc/IsoHeapImplInlines.h:
+            (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark): Deleted.
+            * bmalloc/LargeMap.cpp:
+            (bmalloc::LargeMap::add):
+            * bmalloc/LargeRange.h:
+            (bmalloc::LargeRange::LargeRange):
+            (bmalloc::LargeRange::setUsedSinceLastScavenge):
+            (bmalloc::merge):
+            (): Deleted.
+            * bmalloc/Scavenger.cpp:
+            (bmalloc::Scavenger::Scavenger):
+            (bmalloc::Scavenger::scavenge):
+            (bmalloc::Scavenger::threadRunLoop):
+            (bmalloc::Scavenger::timeSinceLastPartialScavenge): Deleted.
+            (bmalloc::Scavenger::partialScavenge): Deleted.
+            * bmalloc/Scavenger.h:
+            * bmalloc/SmallPage.h:
+            (bmalloc::SmallPage::setUsedSinceLastScavenge):
+
 2020-12-07  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Remove WEBKIT_WRAP_SOURCELIST
