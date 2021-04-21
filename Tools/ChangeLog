@@ -1,3 +1,15 @@
+2021-04-21  Chris Dumez  <cdumez@apple.com>
+
+        GPUProcess launches unnecessarily when loading the amazon front page
+        https://bugs.webkit.org/show_bug.cgi?id=224843
+
+        Reviewed by Eric Carlson.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2021-04-21  Sam Sneddon  <gsnedders@apple.com>
 
         Always pass --no-abbrev-commit to git-log/show

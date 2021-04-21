@@ -490,7 +490,7 @@ public:
     RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
 
     MediaPlayer::Preload preloadValue() const { return m_preload; }
-    MediaElementSession& mediaSession() const { return *m_mediaSession; }
+    WEBCORE_EXPORT MediaElementSession& mediaSession() const;
 
     void pageScaleFactorChanged();
     void userInterfaceLayoutDirectionChanged();
@@ -578,7 +578,6 @@ public:
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
-    virtual void finishInitialization();
     virtual ~HTMLMediaElement();
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
@@ -891,6 +890,8 @@ private:
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);
 
+    void initializeMediaSession();
+
     void updateCaptionContainer();
     void ensureMediaControlsShadowRoot();
 
@@ -1105,6 +1106,8 @@ private:
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
+    bool m_shouldAudioPlaybackRequireUserGesture : 1;
+    bool m_shouldVideoPlaybackRequireUserGesture : 1;
 
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
 

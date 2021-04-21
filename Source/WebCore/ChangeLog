@@ -1,3 +1,101 @@
+2021-04-21  Chris Dumez  <cdumez@apple.com>
+
+        GPUProcess launches unnecessarily when loading the amazon front page
+        https://bugs.webkit.org/show_bug.cgi?id=224843
+
+        Reviewed by Eric Carlson.
+
+        Amazon.com was going media-related feature detection like so:
+        ```
+        !!h.createElement("audio").canPlayType
+        !!h.createElement("video").canPlayType
+        ```
+
+        Constructing an HTMLAudioElement / HTMLVideoElement would initialize a MediaSession
+        object, which would launch the GPUProcess. Running such code should really not require
+        launching the GPUProcess though.
+
+        To address this, I made the MediaSession initialization lazy. Instead of doing it when
+        constructing an HTMLMediaElement, we now do it as soon as we actually need a MediaSession
+        in the mediaSession() getter. This will at the very least happen in prepareForLoad() after
+        setting the 'src' attribute. However, in cases where the HTMLMediaElement is not used for
+        anyway meaningful (e.g no 'src' attribute is ever set), then we avoid launching the
+        GPUProcess.
+
+        I have verified on an iPad that visiting the amazon.com front page and searching for
+        something no longer launches the GPUProcess after this change. This changes also seems to
+        be a ~3.6% PLUM progression on iPhone and potentially higher on iPad.
+
+        * html/HTMLAudioElement.cpp:
+        (WebCore::HTMLAudioElement::create):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::initializeMediaSession):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::registerWithDocument):
+        (WebCore::HTMLMediaElement::unregisterWithDocument):
+        (WebCore::HTMLMediaElement::prepareForDocumentSuspension):
+        (WebCore::HTMLMediaElement::resumeFromDocumentSuspension):
+        (WebCore::HTMLMediaElement::parseAttribute):
+        (WebCore::HTMLMediaElement::didFinishInsertingNode):
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::selectMediaResource):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::mediaLoadingFailed):
+        (WebCore::HTMLMediaElement::setReadyState):
+        (WebCore::HTMLMediaElement::seekWithTolerance):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::playInternal):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::setMuted):
+        (WebCore::HTMLMediaElement::beginScrubbing):
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddAudioTrack):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        (WebCore::HTMLMediaElement::mediaPlayerTimeChanged):
+        (WebCore::HTMLMediaElement::addBehaviorRestrictionsOnEndIfNecessary):
+        (WebCore::HTMLMediaElement::seekToPlaybackPositionEndedTimerFired):
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged):
+        (WebCore::HTMLMediaElement::pausedForUserInteraction const):
+        (WebCore::HTMLMediaElement::updatePlayState):
+        (WebCore::HTMLMediaElement::checkForAudioAndVideo):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::stopWithoutDestroyingMediaPlayer):
+        (WebCore::HTMLMediaElement::stop):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::visibilityStateChanged):
+        (WebCore::HTMLMediaElement::webkitShowPlaybackTargetPicker):
+        (WebCore::HTMLMediaElement::wirelessRoutesAvailableDidChange):
+        (WebCore::HTMLMediaElement::setIsPlayingToWirelessTarget):
+        (WebCore::HTMLMediaElement::addEventListener):
+        (WebCore::HTMLMediaElement::removeEventListener):
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        (WebCore::HTMLMediaElement::remoteHasAvailabilityCallbacksChanged):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+        (WebCore::HTMLMediaElement::shouldForceControlsDisplay const):
+        (WebCore::HTMLMediaElement::configureMediaControls):
+        (WebCore::HTMLMediaElement::createMediaPlayer):
+        (WebCore::HTMLMediaElement::mediaPlayerIsFullscreenPermitted const):
+        (WebCore::HTMLMediaElement::removeBehaviorRestrictionsAfterFirstUserGesture):
+        (WebCore::HTMLMediaElement::updateRateChangeRestrictions):
+        (WebCore::HTMLMediaElement::maximumSourceBufferSize const):
+        (WebCore::HTMLMediaElement::updateMediaState):
+        (WebCore::HTMLMediaElement::mediaState const):
+        (WebCore::HTMLMediaElement::purgeBufferedDataIfPossible):
+        (WebCore::HTMLMediaElement::allowsMediaDocumentInlinePlaybackChanged):
+        (WebCore::HTMLMediaElement::isVisibleInViewportChanged):
+        (WebCore::HTMLMediaElement::updateShouldAutoplay):
+        (WebCore::HTMLMediaElement::updateShouldPlay):
+        (WebCore::HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired):
+        (WebCore::HTMLMediaElement::setInActiveDocument):
+        (WebCore::HTMLMediaElement::mediaSession const):
+        * html/HTMLMediaElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::create):
+
 2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Text selection in image overlays should not be limited to rectilinear quads

@@ -249,6 +249,39 @@ TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessarySVG)
     EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
 }
 
+TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessaryMediaFeatureDetection)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"!!document.createElement('audio').canPlayType" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        EXPECT_TRUE([result boolValue]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView evaluateJavaScript:@"!!document.createElement('video').canPlayType" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        EXPECT_TRUE([result boolValue]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    // This should not have launched a GPUProcess.
+    EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
+}
+
 TEST(GPUProcess, CrashWhilePlayingVideo)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
