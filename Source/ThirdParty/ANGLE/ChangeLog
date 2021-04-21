@@ -1,3 +1,16 @@
+2021-04-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add OpenGLES2 targets
+        https://bugs.webkit.org/show_bug.cgi?id=224786
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add an ALIAS target mapping ANGLE's GLESv2 target to OpenGL::GLES if the target is not
+        already present. This is the case for Windows which uses ANGLE as its sole OpenGL ES
+        implementation.
+
+        * CMakeLists.txt:
+
 2021-04-20  Alex Christensen  <achristensen@webkit.org>
 
         MacCatalyst ANGLE is linked with @loader_path/../../../libANGLE-shared.dylib

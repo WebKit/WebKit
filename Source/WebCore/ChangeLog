@@ -1,3 +1,14 @@
+2021-04-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add OpenGLES2 targets
+        https://bugs.webkit.org/show_bug.cgi?id=224786
+
+        Reviewed by Adrian Perez de Castro.
+
+        Use the OpenGL::GLES target.
+
+        * CMakeLists.txt:
+
 2021-04-21  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Refactor the implementation of MediaSource::buffered()

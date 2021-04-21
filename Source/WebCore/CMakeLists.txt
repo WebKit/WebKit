@@ -1489,13 +1489,7 @@ else ()
         )
         add_definitions(${OPENGL_DEFINITIONS})
     elseif (USE_OPENGL_ES)
-        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${OPENGLES2_INCLUDE_DIRS}
-        )
-        list(APPEND WebCore_LIBRARIES
-            ${OPENGLES2_LIBRARIES}
-        )
-        add_definitions(${OPENGLES2_DEFINITIONS})
+        list(APPEND WebCore_LIBRARIES OpenGL::GLES)
     endif ()
 
     if (USE_EGL)

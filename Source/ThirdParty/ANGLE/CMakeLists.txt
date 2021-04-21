@@ -156,6 +156,14 @@ if (USE_ANGLE_EGL)
 
     target_link_libraries(ANGLEFramework INTERFACE EGL GLESv2)
     target_compile_definitions(ANGLEFramework INTERFACE ${gl_prototypes})
+
+    if (NOT TARGET OpenGL::GLES)
+        add_library(GLESv2Framework INTERFACE)
+        target_link_libraries(GLESv2Framework INTERFACE GLESv2)
+        target_include_directories(GLESv2Framework INTERFACE ${ANGLE_FRAMEWORK_HEADERS_DIR})
+
+        add_library(OpenGL::GLES ALIAS GLESv2Framework)
+    endif ()
 else ()
     add_library(ANGLE STATIC ${ANGLE_SOURCES})
     target_include_directories(ANGLE PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})

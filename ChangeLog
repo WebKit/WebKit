@@ -1,3 +1,21 @@
+2021-04-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add OpenGLES2 targets
+        https://bugs.webkit.org/show_bug.cgi?id=224786
+
+        Reviewed by Adrian Perez de Castro.
+
+        Modernize the FindOpenGLES2.cmake module. Add an OpenGL::GLES target. Also add an
+        OpenGLES2_API_VERSION value so HAVE_OPENGL_ES_3 can be determined.
+
+        For WPE add a find_package for OpenGL ES so the target is present.
+
+        For GTK set HAVE_OPENGL_ES_3 if OpenGLES2_API_VERSION supports it.
+
+        * Source/cmake/FindOpenGLES2.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-04-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers

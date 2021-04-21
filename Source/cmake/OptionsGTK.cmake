@@ -335,6 +335,10 @@ if (USE_OPENGL_OR_ES)
         SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES TRUE)
         SET_AND_EXPOSE_TO_BUILD(USE_OPENGL FALSE)
 
+        if (OpenGLES2_API_VERSION VERSION_GREATER_EQUAL 3.0)
+            SET_AND_EXPOSE_TO_BUILD(HAVE_OPENGL_ES_3 ON)
+        endif ()
+
         if (NOT EGL_FOUND)
             message(FATAL_ERROR "EGL is needed for ENABLE_GLES2.")
         endif ()

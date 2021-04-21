@@ -326,13 +326,7 @@ else ()
         )
         add_definitions(${OPENGL_DEFINITIONS})
     elseif (USE_OPENGL_ES)
-        list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-            ${OPENGLES2_INCLUDE_DIRS}
-        )
-        list(APPEND WebKit_PRIVATE_LIBRARIES
-            ${OPENGLES2_LIBRARIES}
-        )
-        add_definitions(${OPENGLES2_DEFINITIONS})
+        list(APPEND WebKit_PRIVATE_LIBRARIES OpenGL::GLES)
     endif ()
 
     if (USE_EGL)
