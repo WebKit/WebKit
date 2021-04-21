@@ -1,3 +1,19 @@
+2021-04-21  Youenn Fablet  <youenn@apple.com>
+
+        AudioMediaStreamTrackRendererUnit should not have its data zeroed if one track has not enough data
+        https://bugs.webkit.org/show_bug.cgi?id=224673
+
+        Reviewed by Eric Carlson.
+
+        AudioMediaStreamTrackRendererUnit may get data from multiple tracks.
+        If one track has not enough data, AudioSampleDataSource will zero the buffer while it should leave it unchanged.
+        If all tracks do not have enough data, AudioMediaStreamTrackRendererUnit will have silent output as the first track will actually zero the buffer.
+
+        Manually tested.
+
+        * platform/audio/cocoa/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+
 2021-04-21  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Take "contain: size" into account when computing the preferred logical width

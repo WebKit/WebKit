@@ -209,12 +209,14 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
 
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount()) {
-        AudioSampleBufferList::zeroABL(buffer, byteCount);
+        if (mode != AudioSampleDataSource::Mix)
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
 
     if (m_muted || m_inputSampleOffset == MediaTime::invalidTime()) {
-        AudioSampleBufferList::zeroABL(buffer, byteCount);
+        if (mode != AudioSampleDataSource::Mix)
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
 
@@ -231,12 +233,14 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
                 m_endFrameWhenNotEnoughData = 0;
             } else {
                 // We wait for one chunk of value before starting to play.
-                AudioSampleBufferList::zeroABL(buffer, byteCount);
+                if (mode != AudioSampleDataSource::Mix)
+                    AudioSampleBufferList::zeroABL(buffer, byteCount);
                 return false;
             }
         } else {
             if (buffered < sampleCount * 2 || (m_endFrameWhenNotEnoughData && m_endFrameWhenNotEnoughData == endFrame)) {
-                AudioSampleBufferList::zeroABL(buffer, byteCount);
+                if (mode != AudioSampleDataSource::Mix)
+                    AudioSampleBufferList::zeroABL(buffer, byteCount);
                 return false;
             }
 
@@ -261,7 +265,8 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
             // We are too close from endFrame, let's wait for more data to be pushed.
             m_outputSampleOffset -= sampleCount;
         }
-        AudioSampleBufferList::zeroABL(buffer, byteCount);
+        if (mode != AudioSampleDataSource::Mix)
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
 
