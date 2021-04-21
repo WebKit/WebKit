@@ -1,3 +1,15 @@
+2021-04-21  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        CSSComputedStyleDeclaration.cpp should use C++ style comments
+        https://bugs.webkit.org/show_bug.cgi?id=224875
+
+        Reviewed by Darin Adler.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle):
+        Use // instead of /* */ for comments, as this is suggested WebKit
+        coding style.
+
 2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Adjust border radius for large buttons and <select>
