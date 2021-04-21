@@ -1,3 +1,31 @@
+2021-04-21  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r274504. rdar://problem/76962959
+
+    The WebContent process crashes when launching Safari
+    https://bugs.webkit.org/show_bug.cgi?id=223264
+    <rdar://75482851>
+    
+    Reviewed by Brent Fulgham.
+    
+    The WebContent process crashes when launching Safari on older OSes, because of unavailable sandbox features.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274504 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-16  Per Arne Vollan  <pvollan@apple.com>
+
+            The WebContent process crashes when launching Safari
+            https://bugs.webkit.org/show_bug.cgi?id=223264
+            <rdar://75482851>
+
+            Reviewed by Brent Fulgham.
+
+            The WebContent process crashes when launching Safari on older OSes, because of unavailable sandbox features.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-04-16  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r275485. rdar://problem/76412930
