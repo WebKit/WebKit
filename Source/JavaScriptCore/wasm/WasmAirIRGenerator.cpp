@@ -944,7 +944,7 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
 
     if (restoreCachedStackLimit == RestoreCachedStackLimit::Yes) {
         // The Instance caches the stack limit, but also knows where its canonical location is.
-        static_assert(sizeof(decltype(static_cast<Instance*>(nullptr)->cachedStackLimit())) == sizeof(uint64_t), "");
+        static_assert(sizeof(std::declval<Instance*>()->cachedStackLimit()) == sizeof(uint64_t), "codegen relies on this size");
 
         RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfPointerToActualStackLimit(), B3::Width64));
         RELEASE_ASSERT(Arg::isValidAddrForm(Instance::offsetOfCachedStackLimit(), B3::Width64));
@@ -1263,7 +1263,7 @@ auto AirIRGenerator::addGrowMemory(ExpressionType delta, ExpressionType& result)
 
 auto AirIRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 {
-    static_assert(sizeof(decltype(static_cast<Memory*>(nullptr)->size())) == sizeof(uint64_t), "codegen relies on this size");
+    static_assert(sizeof(std::declval<Memory*>()->size()) == sizeof(uint64_t), "codegen relies on this size");
 
     auto temp1 = g64();
     auto temp2 = g64();

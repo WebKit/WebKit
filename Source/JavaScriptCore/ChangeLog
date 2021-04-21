@@ -1,5 +1,21 @@
 2021-04-20  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        Static asserts in WasmAirIRGenerator.cpp and WasmB3IRGenerator.cpp trigger -Wnonnull warnings with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=224826
+
+        Reviewed by Yusuke Suzuki.
+
+        Rewrite these static asserts to avoid warnings when built with GCC 11. Credit to Jonathan
+        Wakely for providing this mind-bending solution.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCurrentMemory):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addCurrentMemory):
+
+2021-04-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         -Warray-bounds warning in AirAllocateRegistersByGraphColoring.cpp with GCC 11
         https://bugs.webkit.org/show_bug.cgi?id=224782
 
