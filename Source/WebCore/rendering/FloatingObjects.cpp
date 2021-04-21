@@ -116,7 +116,12 @@ LayoutSize FloatingObject::translationOffsetToAncestor() const
 
 TextStream& operator<<(TextStream& stream, const FloatingObject& object)
 {
-    return stream << &object << " renderer " << &object.renderer() << " " << object.frameRect() << " paintsFloat " << object.paintsFloat() << " shouldPaint " << object.shouldPaint();
+    stream << &object << " renderer " << &object.renderer();
+    if (object.isPlaced())
+        stream << " " << object.frameRect();
+    else
+        stream << " (not placed yet)";
+    return stream << " paintsFloat " << object.paintsFloat() << " shouldPaint " << object.shouldPaint();
 }
 
 #endif

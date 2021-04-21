@@ -1,3 +1,15 @@
+2021-04-21  Zalan Bujtas  <zalan@apple.com>
+
+        Enable mid-layout render tree dump with floating boxes
+        https://bugs.webkit.org/show_bug.cgi?id=224878
+
+        Reviewed by Simon Fraser.
+
+        Floating box geometry dump requires the box to be placed first (see assert(isPlaced()) in FloatingObject::frameRect()).
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::operator<<):
+
 2021-04-21  Chris Lord  <clord@igalia.com>
 
         DOMException should be Serializable
