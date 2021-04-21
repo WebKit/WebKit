@@ -1,3 +1,18 @@
+2021-04-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Enable CSS Scroll Snap by default
+        https://bugs.webkit.org/show_bug.cgi?id=224867
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsFTW.cmake: Remove redundant line enabling scroll snap.
+        * Source/cmake/OptionsGTK.cmake: Ditto.
+        * Source/cmake/OptionsMac.cmake: Ditto.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+        * Source/cmake/OptionsWin.cmake: Explicitly disable scroll snap for AppleWin port
+        until it can be approved by maintainers.
+        * Source/cmake/WebKitFeatures.cmake: Enable scroll snap by default.
+
 2021-04-21  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Add OpenGLES2 targets

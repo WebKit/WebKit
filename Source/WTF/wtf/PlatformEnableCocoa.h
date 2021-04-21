@@ -140,10 +140,6 @@
 #define ENABLE_CSS_PAINTING_API 1
 #endif
 
-#if !defined(ENABLE_CSS_SCROLL_SNAP)
-#define ENABLE_CSS_SCROLL_SNAP 1
-#endif
-
 #if !defined(ENABLE_CSS_SELECTORS_LEVEL4)
 #define ENABLE_CSS_SELECTORS_LEVEL4 1
 #endif

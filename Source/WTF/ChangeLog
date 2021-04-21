@@ -1,3 +1,13 @@
+2021-04-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Enable CSS Scroll Snap by default
+        https://bugs.webkit.org/show_bug.cgi?id=224867
+
+        Reviewed by Don Olmstead.
+
+        * wtf/PlatformEnable.h: Move the preprocessor enabling of scroll snap here.
+        * wtf/PlatformEnableCocoa.h: Move it from here.
+
 2021-04-21  Simon Fraser  <simon.fraser@apple.com>
 
         Enhance scrolling-related trace points
