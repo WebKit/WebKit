@@ -1,3 +1,16 @@
+2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Connection::m_mainThread is unused
+        https://bugs.webkit.org/show_bug.cgi?id=224806
+
+        Reviewed by Darin Adler.
+
+        Remove unused Connection::m_mainThread.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        * Platform/IPC/Connection.h:
+
 2021-04-20  Ian Gilbert  <iang@apple.com>
 
         Crash due to VectorBuffer pre-allocation failure

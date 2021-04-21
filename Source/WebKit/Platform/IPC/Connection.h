@@ -433,10 +433,6 @@ private:
     bool m_ignoreInvalidMessageForTesting { false };
 #endif
 
-#if HAVE(QOS_CLASSES)
-    pthread_t m_mainThread { 0 };
-#endif
-
 #if USE(UNIX_DOMAIN_SOCKETS)
     // Called on the connection queue.
     void readyReadHandler();

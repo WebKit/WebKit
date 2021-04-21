@@ -304,11 +304,6 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
     allConnections().add(m_uniqueID, this);
 
     platformInitialize(identifier);
-
-#if HAVE(QOS_CLASSES)
-    ASSERT(pthread_main_np());
-    m_mainThread = pthread_self();
-#endif
 }
 
 Connection::~Connection()
