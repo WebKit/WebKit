@@ -1,3 +1,16 @@
+2021-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        will-change: transform should affect nested position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=167600
+
+        Reviewed by Alan Bujtas.
+
+        "will-change transform" should make an element a container for position:fixed,
+        just as a transform does.
+
+        * fast/css/will-change/will-change-transform-contains-fixed-expected.html: Added.
+        * fast/css/will-change/will-change-transform-contains-fixed.html: Added.
+
 2021-04-21  Chris Lord  <clord@igalia.com>
 
         DOMException should be Serializable

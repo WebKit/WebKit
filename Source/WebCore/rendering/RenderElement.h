@@ -428,6 +428,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
 {
     return isRenderView()
         || (hasTransform() && isRenderBlock())
+        || (style().willChange() && style().willChange()->containsProperty(CSSPropertyTransform))
         || isSVGForeignObject()
         || shouldApplyLayoutContainment(*this)
         || isOutOfFlowRenderFragmentedFlow();
