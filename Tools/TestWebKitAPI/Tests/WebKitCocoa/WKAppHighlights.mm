@@ -43,14 +43,14 @@
 #endif
 
 @interface AppHighlightDelegate : NSObject <_WKAppHighlightDelegate>
-@property (nonatomic, copy) void (^storeAppHighlightCallback)(WKWebView *, _WKAppHighlight *, BOOL);
+@property (nonatomic, copy) void (^storeAppHighlightCallback)(WKWebView *, _WKAppHighlight *, BOOL, BOOL);
 @end
 
 @implementation AppHighlightDelegate
-- (void)_webView:(WKWebView *)webView storeAppHighlight:(_WKAppHighlight *)highlight inNewGroup:(BOOL)inNewGroup
+- (void)_webView:(WKWebView *)webView storeAppHighlight:(_WKAppHighlight *)highlight inNewGroup:(BOOL)inNewGroup requestOriginatedInApp:(BOOL)requestOriginatedInApp
 {
     if (_storeAppHighlightCallback)
-        _storeAppHighlightCallback(webView, highlight, inNewGroup);
+        _storeAppHighlightCallback(webView, highlight, inNewGroup, requestOriginatedInApp);
 }
 @end
 
@@ -66,7 +66,7 @@ TEST(AppHighlights, AppHighlightCreateAndRestore)
     [webViewCreate synchronouslyLoadHTMLString:@"Test"];
     [webViewCreate stringByEvaluatingJavaScript:@"document.execCommand('SelectAll')"];
     __block bool finished = NO;
-    [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup) {
+    [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup, BOOL requestOriginatedInApp) {
         EXPECT_EQ(delegateWebView, webViewCreate.get());
         EXPECT_NOT_NULL(highlight);
         EXPECT_WK_STREQ(highlight.text, @"Test");
@@ -85,6 +85,36 @@ TEST(AppHighlights, AppHighlightCreateAndRestore)
     TestWebKitAPI::Util::run(&finished);
 }
 
+TEST(AppHighlights, AppHighlightCreateAndRestoreAndScroll)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto delegate = adoptNS([[AppHighlightDelegate alloc] init]);
+    auto webViewCreate = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    auto webViewRestore = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration]);
+    [webViewCreate _setAppHighlightDelegate:delegate.get()];
+    [webViewCreate synchronouslyLoadHTMLString:@"<div style='height: 1000px'></div>Test"];
+    [webViewCreate stringByEvaluatingJavaScript:@"document.execCommand('SelectAll')"];
+    __block bool finished = NO;
+    [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup, BOOL requestOriginatedInApp) {
+        EXPECT_EQ(delegateWebView, webViewCreate.get());
+        EXPECT_NOT_NULL(highlight);
+        EXPECT_WK_STREQ(highlight.text, @"Test");
+        EXPECT_NOT_NULL(highlight.highlight);
+        
+        [webViewRestore synchronouslyLoadHTMLString:@"<div style='height: 1000px'></div>Test"];
+        [webViewRestore _restoreAndScrollToAppHighlight:highlight.highlight];
+        
+        TestWebKitAPI::Util::waitForConditionWithLogging([&] () -> bool {
+            return [webViewRestore stringByEvaluatingJavaScript:@"internals.numberOfAppHighlights()"].intValue == 1;
+        }, 2, @"Expected Highlights to be populated.");
+        EXPECT_NE(0, [[webViewRestore objectByEvaluatingJavaScript:@"pageYOffset"] floatValue]);
+        
+        finished = YES;
+    }];
+    [webViewCreate _addAppHighlight];
+    TestWebKitAPI::Util::run(&finished);
+}
+
 TEST(AppHighlights, AppHighlightRestoreFailure)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
@@ -95,7 +125,7 @@ TEST(AppHighlights, AppHighlightRestoreFailure)
     [webViewCreate synchronouslyLoadHTMLString:@"Test"];
     [webViewCreate stringByEvaluatingJavaScript:@"document.execCommand('SelectAll')"];
     __block bool finished = NO;
-    [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup) {
+    [delegate setStoreAppHighlightCallback:^(WKWebView *delegateWebView, _WKAppHighlight *highlight, BOOL inNewGroup, BOOL requestOriginatedInApp) {
         EXPECT_EQ(delegateWebView, webViewCreate.get());
         EXPECT_NOT_NULL(highlight);
         EXPECT_WK_STREQ(highlight.text, @"Test");

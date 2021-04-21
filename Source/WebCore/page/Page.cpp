@@ -1620,9 +1620,10 @@ void Page::doAfterUpdateRendering()
     forEachDocument([] (Document& document) {
         document.updateHighlightPositions();
     });
-#if ENABLE(APP_HIGHLIGHT)
+#if ENABLE(APP_HIGHLIGHTS)
     forEachDocument([] (Document& document) {
-        if (!auto appHighlightStorage = document.appHighlightStorageIfExists())
+        auto appHighlightStorage = document.appHighlightStorageIfExists();
+        if (!appHighlightStorage)
             return;
         
         if (appHighlightStorage->hasUnrestoredHighlights() && MonotonicTime::now() - appHighlightStorage->lastRangeSearchTime() > 1_s) {

@@ -1886,7 +1886,7 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
     void storeAppHighlight(const WebCore::AppHighlight&);
-    void restoreAppHighlights(const Vector<Ref<WebKit::SharedMemory>>& highlights);
+    void restoreAppHighlightsAndScrollToIndex(const Vector<Ref<WebKit::SharedMemory>>& highlights, const Optional<unsigned> index);
 #endif
 
 #if ENABLE(MEDIA_STREAM)

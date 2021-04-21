@@ -1,3 +1,24 @@
+2021-04-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Support scrolling to a selected AppHighlight
+        https://bugs.webkit.org/show_bug.cgi?id=224773
+
+        Reviewed by Tim Horton.
+
+        Test: AppHighlights::AppHighlightCreateAndRestoreAndScroll
+
+        * Modules/highlight/AppHighlightStorage.cpp:
+        (WebCore::AppHighlightStorage::restoreAndScrollToAppHighlight):
+        (WebCore::AppHighlightStorage::attemptToRestoreHighlightAndScroll):
+        (WebCore::AppHighlightStorage::restoreUnrestoredAppHighlights):
+        (WebCore::AppHighlightStorage::restoreAppHighlight): Deleted.
+        * Modules/highlight/AppHighlightStorage.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::TemporarySelectionChange::setSelection):
+        * page/Page.cpp:
+        (WebCore::Page::doAfterUpdateRendering):
+
 2021-04-20  Ian Gilbert  <iang@apple.com>
 
         Crash in CompositeEditCommand::insertNodeAt

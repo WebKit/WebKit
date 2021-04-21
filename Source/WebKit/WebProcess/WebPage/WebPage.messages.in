@@ -628,7 +628,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
 #if ENABLE(APP_HIGHLIGHTS)
     CreateAppHighlightInSelectedRange(enum:bool WebCore::CreateNewGroupForHighlight createNewGroup, enum:bool WebCore::HighlightRequestOriginatedInApp requestOrigin)
-    RestoreAppHighlights(Vector<WebKit::SharedMemory::IPCHandle> memoryHandles)
+    RestoreAppHighlightsAndScrollToIndex(Vector<WebKit::SharedMemory::IPCHandle> memoryHandles, Optional<unsigned> index)
 #endif
 
     DispatchWheelEventWithoutScrolling(WebKit::WebWheelEvent event) -> (bool handled) Async

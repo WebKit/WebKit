@@ -1,3 +1,25 @@
+2021-04-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Support scrolling to a selected AppHighlight
+        https://bugs.webkit.org/show_bug.cgi?id=224773
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (restoreHighlight):
+        (-[WKWebView _restoreAppHighlights:]):
+        (-[WKWebView _restoreAndScrollToAppHighlight:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::restoreAppHighlightsAndScrollToIndex):
+        (WebKit::WebPageProxy::restoreAppHighlights): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::restoreAppHighlightsAndScrollToIndex):
+        (WebKit::WebPage::restoreAppHighlights): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-04-20  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Connection::m_mainThread is unused

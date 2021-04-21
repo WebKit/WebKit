@@ -2153,21 +2153,40 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     [self setAllMediaPlaybackSuspended:NO completionHandler:nil];
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, NSData *highlight)
+{
+    auto sharedMemory = WebKit::SharedMemory::allocate(highlight.length);
+    if (sharedMemory) {
+        [highlight getBytes:sharedMemory->data() length:highlight.length];
+        buffers.append(*sharedMemory);
+    }
+}
+#endif
+
 - (void)_restoreAppHighlights:(NSArray<NSData *> *)highlights
 {
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<Ref<WebKit::SharedMemory>> buffers;
 
-    for (NSData *highlight in highlights) {
-        auto sharedMemory = WebKit::SharedMemory::allocate(highlight.length);
-        if (sharedMemory) {
-            [highlight getBytes:sharedMemory->data() length:highlight.length];
-            buffers.append(*sharedMemory);
-        }
-    }
-    _page->restoreAppHighlights(buffers);
+    for (NSData *highlight in highlights)
+        convertAndAddHighlight(buffers, highlight);
+    
+    _page->restoreAppHighlightsAndScrollToIndex(buffers, WTF::nullopt);
 #else
     UNUSED_PARAM(highlights);
+#endif
+}
+
+- (void)_restoreAndScrollToAppHighlight:(NSData *)highlight
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    Vector<Ref<WebKit::SharedMemory>> buffers;
+    
+    convertAndAddHighlight(buffers, highlight);
+    _page->restoreAppHighlightsAndScrollToIndex(buffers, 0);
+#else
+    UNUSED_PARAM(highlight);
 #endif
 }
 
