@@ -1,3 +1,52 @@
+2021-04-22  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r275899. rdar://problem/76986496
+
+    Revert r275172
+    https://bugs.webkit.org/show_bug.cgi?id=224499
+    <rdar://76396241>
+    
+    Patch by Alex Christensen <achristensen@webkit.org> on 2021-04-13
+    Reviewed by Tim Horton.
+    
+    Source/WebKit:
+    
+    It turns out that terminate_with_reason uses a different syscall than xpc_connection_kill in its implementation,
+    and the former is not allowed by Messages's sandbox yet.  Revert for Messages until they add it.
+    
+    * Platform/IPC/cocoa/ConnectionCocoa.mm:
+    (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+    (IPC::Connection::kill):
+    * Platform/spi/Cocoa/ReasonSPI.h:
+    * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+    (WebKit::ProcessLauncher::platformInvalidate):
+    (WebKit::terminateWithReason):
+    
+    Source/WTF:
+    
+    * wtf/spi/darwin/XPCSPI.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275899 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+            Revert r275172
+            https://bugs.webkit.org/show_bug.cgi?id=224499
+            <rdar://76396241>
+
+            Reviewed by Tim Horton.
+
+            It turns out that terminate_with_reason uses a different syscall than xpc_connection_kill in its implementation,
+            and the former is not allowed by Messages's sandbox yet.  Revert for Messages until they add it.
+
+            * Platform/IPC/cocoa/ConnectionCocoa.mm:
+            (IPC::ConnectionTerminationWatchdog::watchdogTimerFired):
+            (IPC::Connection::kill):
+            * Platform/spi/Cocoa/ReasonSPI.h:
+            * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+            (WebKit::ProcessLauncher::platformInvalidate):
+            (WebKit::terminateWithReason):
+
 2021-04-21  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r276347. rdar://problem/76986456

@@ -60,4 +60,6 @@ enum class ReasonCode : uint64_t {
     ConnectionKilled,
 };
 
+void terminateWithReason(xpc_connection_t, ReasonCode, const char* reason);
+
 }
