@@ -1,3 +1,14 @@
+2021-04-22  Aakash Jain  <aakash_jain@apple.com>
+
+        Services EWS should run for webkitscmpy and webkitcorepy changes
+        https://bugs.webkit.org/show_bug.cgi?id=223941
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/steps.py:
+        (CheckPatchRelevance):
+        * CISupport/ews-build/steps_unittest.py: Added unit-test.
+
 2021-04-22  Sam Sneddon  <gsnedders@apple.com>
 
         Add an xfail marker for webkitpy's tests; get SCM passing

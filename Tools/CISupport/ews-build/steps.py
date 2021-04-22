@@ -387,6 +387,8 @@ class CheckPatchRelevance(AnalyzePatch):
         'Tools/CISupport/ews-build',
         'Tools/CISupport/Shared',
         'Tools/Scripts/libraries/resultsdbpy',
+        'Tools/Scripts/libraries/webkitcorepy',
+        'Tools/Scripts/libraries/webkitscmpy',
     ]
 
     jsc_paths = [
