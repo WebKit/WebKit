@@ -1,5 +1,18 @@
 2021-04-22  Chris Dumez  <cdumez@apple.com>
 
+        NowPlayingInfoForGPUManager::clearNowPlayingInfoPrivate() sometimes launches the GPUProcess on page close
+        https://bugs.webkit.org/show_bug.cgi?id=224939
+
+        Reviewed by Simon Fraser.
+
+        Make sure NowPlayingInfoForGPUManager::clearNowPlayingInfoPrivate() never launches the GPUProcess. The GPU
+        process already takes care of clearing now playing info on exit.
+
+        * WebProcess/GPU/media/WebMediaStrategy.cpp:
+        (WebKit::WebMediaStrategy::createNowPlayingManager const):
+
+2021-04-22  Chris Dumez  <cdumez@apple.com>
+
         Call RemoteMediaEngineConfigurationFactory::registerFactory() in WebProcess::setUseGPUProcessForMedia()
         https://bugs.webkit.org/show_bug.cgi?id=224937
 
