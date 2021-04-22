@@ -1,3 +1,14 @@
+2021-04-22  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [SOUP] Null pointer dereference in ResourceLoader::didReceiveAuthenticationChallenge
+        https://bugs.webkit.org/show_bug.cgi?id=224838
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add a RELEASE_ASSERT_NOT_REACHED() to avoid this warning.
+
+        * platform/network/soup/AuthenticationChallenge.h:
+
 2021-04-22  Patrick Griffis  <pgriffis@igalia.com>
 
         [SOUP] Show more connection information in the inspector

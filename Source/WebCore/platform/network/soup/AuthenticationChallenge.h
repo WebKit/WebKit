@@ -45,7 +45,7 @@ public:
     }
 
     AuthenticationChallenge(SoupMessage*, SoupAuth*, bool retrying);
-    AuthenticationClient* authenticationClient() const { return nullptr; }
+    AuthenticationClient* authenticationClient() const { RELEASE_ASSERT_NOT_REACHED(); }
 #if USE(SOUP2)
     SoupMessage* soupMessage() const { return m_soupMessage.get(); }
 #endif
