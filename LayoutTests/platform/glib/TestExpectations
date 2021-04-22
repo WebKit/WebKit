@@ -2349,8 +2349,6 @@ webkit.org/b/213506 webrtc/remove-track.html [ Crash Pass ]
 
 webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
 
-webkit.org/b/224791 fast/cookies/cookie-averse-document.html [ Crash ]
-webkit.org/b/224791 fast/cookies/local-file-can-set-cookies.html [ Crash Pass ]
 webkit.org/b/224791 imported/w3c/web-platform-tests/fetch/nosniff/parsing-nosniff.window.html [ Failure Pass ]
 webkit.org/b/224791 imported/w3c/web-platform-tests/mimesniff/mime-types/parsing.any.html [ Timeout Pass ]
 webkit.org/b/224791 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-noreferrer.html [ Timeout Pass ]

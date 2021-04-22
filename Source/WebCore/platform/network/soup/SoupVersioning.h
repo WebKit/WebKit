@@ -105,7 +105,7 @@ soup_server_message_get_uri(SoupMessage* message)
 }
 
 static inline GTlsCertificate*
-soup_message_get_tls_certificate(SoupMessage* message)
+soup_message_get_tls_peer_certificate(SoupMessage* message)
 {
     g_return_val_if_fail(SOUP_IS_MESSAGE(message), nullptr);
     GTlsCertificate* certificate = nullptr;
@@ -114,7 +114,7 @@ soup_message_get_tls_certificate(SoupMessage* message)
 }
 
 static inline GTlsCertificateFlags
-soup_message_get_tls_certificate_errors(SoupMessage* message)
+soup_message_get_tls_peer_certificate_errors(SoupMessage* message)
 {
     g_return_val_if_fail(SOUP_IS_MESSAGE(message), static_cast<GTlsCertificateFlags>(0));
     GTlsCertificateFlags flags = static_cast<GTlsCertificateFlags>(0);
