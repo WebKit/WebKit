@@ -1014,6 +1014,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/DataListSuggestionsClient.h
     platform/DataOwnerType.h
     platform/DateComponents.h
+    platform/DateTimeChooser.h
+    platform/DateTimeChooserClient.h
+    platform/DateTimeChooserParameters.h
     platform/Decimal.h
     platform/DeferrableTask.h
     platform/DocumentIdentifier.h

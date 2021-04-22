@@ -335,12 +335,9 @@ webkit.org/b/98927 fast/dom/DeviceOrientation [ Skip ]
 fast/history/page-cache-notification-showing.html
 fast/history/page-cache-notification-suspendable.html
 
-# ENABLE_INPUT_TYPE_* are not enabled.
-webkit.org/b/98936 fast/forms/date [ Skip ]
-webkit.org/b/98936 fast/forms/datetimelocal [ Skip ]
-webkit.org/b/98936 fast/forms/month [ Skip ]
-webkit.org/b/98936 fast/forms/time [ Skip ]
-webkit.org/b/98936 fast/forms/week [ Skip ]
+# UI pickers are not implemented for date and time inputs.
+webkit.org/b/224924 fast/forms/date/date-show-hide-picker.html [ Skip ]
+webkit.org/b/224924 fast/forms/datetimelocal/datetimelocal-show-hide-picker.html [ Skip ]
 
 # Requires WebP support.
 webkit.org/b/98939 fast/canvas/canvas-toDataURL-webp.html [ Skip ]

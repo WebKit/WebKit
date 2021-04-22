@@ -1,3 +1,18 @@
+2021-04-22  Martin Robinson  <mrobinson@webkit.org>
+
+        [GTK] Turn on editable <input type=date> and <input type=time> fields
+        https://bugs.webkit.org/show_bug.cgi?id=224921
+
+        Reviewed by Carlos Garcia Campos.
+
+        Turn on editable date and time inputs for GTK.
+
+        No new tests. This is covered by enabling existing <input type=date>
+        and <input type=time> tests.
+
+        * Headers.cmake: Add headers to the list.
+        * loader/EmptyClients.cpp: Add missing header include.
+
 2021-04-22  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] WPT Tests css/css-grid/grid-items/grid-item-percentage-sizes-*.html fail

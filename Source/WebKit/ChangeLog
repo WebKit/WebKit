@@ -1,3 +1,26 @@
+2021-04-22  Martin Robinson  <mrobinson@webkit.org>
+
+        [GTK] Turn on editable <input type=date> and <input type=time> fields
+        https://bugs.webkit.org/show_bug.cgi?id=224921
+
+        Reviewed by Carlos Garcia Campos.
+
+        Turn on editable date and time inputs for GTK.
+
+        * SourcesGTK.txt: Add source file.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDateTimePicker): Added.
+        * UIProcess/API/gtk/PageClientImpl.h: Added method declaration.
+        * UIProcess/gtk/WebDateTimePickerGtk.cpp: Added. Stub for date/time picker which
+        doesn't have any user interface. This will allow clients to use the editable shadow
+        DOM date/time input editable fields.
+        (WebKit::WebDateTimePickerGtk::create):
+        (WebKit::WebDateTimePickerGtk::~WebDateTimePickerGtk):
+        (WebKit::WebDateTimePickerGtk::WebDateTimePickerGtk):
+        (WebKit::WebDateTimePickerGtk::endPicker):
+        (WebKit::WebDateTimePickerGtk::showDateTimePicker):
+        * UIProcess/gtk/WebDateTimePickerGtk.h: Added.
+
 2021-04-22  Aditya Keerthi  <akeerthi@apple.com>
 
         Fix the tvOS build after r276325
