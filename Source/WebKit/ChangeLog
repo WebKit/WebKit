@@ -1,3 +1,29 @@
+2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] The Look Up text service popover should avoid covering selected text
+        https://bugs.webkit.org/show_bug.cgi?id=224915
+        rdar://75891746
+
+        Reviewed by Megan Gardner.
+
+        Adjust the presentation rect when showing the Look Up text service popup using the callout bar on iOS so that
+        we use the entire bounds of the selection. Currently, we only use the first selection rect (top to bottom) as
+        the presentation rect, which may cause the popup to obscure selected text.
+
+        This seems to have been derived from iOS legacy web view behavior that dating back to rdar://7475904; while the
+        exact reasoning for this is effectively lost to time, it's likely due to how there used to only be a single
+        block selection rect in non-editable content in iOS 5 anyways, so taking only the first selection rect would not
+        be incorrect. However, we now use character granularity selection everywhere in WebKit2, so this logic is no
+        longer sensible.
+
+        Test: TextServicesTests.LookUpPresentationRect
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _lookupForWebView:]):
+        (-[WKContentView _translateForWebView:]):
+
+        Make a similar adjustment here, since this presentation rect is intended to match that of the Look Up popover.
+
 2021-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Re-block access to SYS_setattrlist

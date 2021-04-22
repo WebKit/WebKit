@@ -3284,7 +3284,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         auto& postLayoutData = editorState.postLayoutData();
         CGRect presentationRect;
         if (editorState.selectionIsRange && !postLayoutData.selectionGeometries.isEmpty())
-            presentationRect = postLayoutData.selectionGeometries[0].rect();
+            presentationRect = view->_page->selectionBoundingRectInRootViewCoordinates();
         else
             presentationRect = postLayoutData.caretRectAtStart;
         
@@ -3324,12 +3324,11 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
         if (strongSelf->_page->editorState().isMissingPostLayoutData)
             return;
 
-        auto& selectionGeometries = strongSelf->_page->editorState().postLayoutData().selectionGeometries;
-        if (selectionGeometries.isEmpty())
+        if (strongSelf->_page->editorState().postLayoutData().selectionGeometries.isEmpty())
             return;
 
         if ([strongSelf->_textInteractionAssistant respondsToSelector:@selector(translate:fromRect:)])
-            [strongSelf->_textInteractionAssistant translate:string fromRect:selectionGeometries.first().rect()];
+            [strongSelf->_textInteractionAssistant translate:string fromRect:strongSelf->_page->selectionBoundingRectInRootViewCoordinates()];
     });
 }
 

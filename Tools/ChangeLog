@@ -1,3 +1,19 @@
+2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] The Look Up text service popover should avoid covering selected text
+        https://bugs.webkit.org/show_bug.cgi?id=224915
+        rdar://75891746
+
+        Reviewed by Megan Gardner.
+
+        Add a new API test to exercise the change.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/TextServicesTests.mm: Added.
+        (TestWebKitAPI::handleLookup):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/UIKitSPI.h: Add SPI declarations for UIWKTextInteractionAssistant.
+
 2021-04-22  Aakash Jain  <aakash_jain@apple.com>
 
         Services EWS should run for webkitscmpy and webkitcorepy changes

@@ -249,6 +249,13 @@ IGNORE_WARNINGS_END
 - (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;
 @end
 
+@interface UITextInteractionAssistant : NSObject <UIResponderStandardEditActions>
+@end
+
+@interface UIWKTextInteractionAssistant : UITextInteractionAssistant
+- (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
+@end
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #define UIWKDocumentRequestMarkedTextRects (1 << 5)
