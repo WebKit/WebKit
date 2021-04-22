@@ -1,3 +1,122 @@
+2021-04-22  Chris Lord  <clord@igalia.com>
+
+        Implement FontFace in Workers for OffscreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=224178
+        <rdar://problem/76529024>
+
+        Reviewed by Darin Adler.
+
+        To comply with spec and complete the OffscreenCanvas implementation,
+        FontFace needs to be made available on WorkerGlobalScope. This patch
+        makes it available and fixes crashes using it due to accessing
+        main-thread only singletons.
+
+        No new tests, rebaselined existing tests.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+          Add new files WorkerFontLoadRequest.cpp, WorkerFontLoadRequest.h
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::fontCacheFallingBackToSingleton):
+        (WebCore::CSSFontFace::font):
+        * css/CSSFontFace.h:
+          Use the ScriptExecutionContext's FontCache if possible when loading fonts.
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered):
+        (WebCore::CSSFontFaceSet::matchingFacesExcludingPreinstalledFonts):
+          Use the correct CSSValuePool and FontCache in
+          ensureLocalFontFacesForFamilyRegistered. Also clarify a vaguely-named
+          variable.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+          Use FontLoadRequest::isPending instead of making assumptions about the
+          request state on construction.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::create):
+        (WebCore::FontFace::display const):
+        * css/FontFace.h:
+        * css/FontFace.idl:
+          Construct with a ScriptExecutionContext instead of a Document and
+          make available for Workers.
+
+        * css/FontFaceSet.idl:
+          Expose to Workers.
+
+        * loader/FontLoadRequest.h:
+        (WebCore::FontLoadRequest::isWorkerFontLoadRequest const):
+          Add isPending function and new type WorkerFontLoadRequest.
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::createCustomFontData):
+          Use convertWOFFToSfntIfNecessary().
+
+        * loader/cache/CachedFontLoadRequest.h:
+          Implement FontLoadRequest::isPending.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::create):
+        (WebCore::Font::Font):
+        (WebCore::Font::systemFallbackFontForCharacter const):
+        * platform/graphics/Font.h:
+          Add an optional FontCache parameter for use with vertical font data
+          retrieval and add a FontCache parameter to
+          systemFallbackFontForCharacter instead of using the singleton.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::fontForPlatformData):
+          Pass FontCache parameter when creating fonts.
+
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::fontCacheFallingBackToSingleton):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::update const):
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::fontForCombiningCharacterSequence const):
+          Rename fontCacheFallbackToSingleton -> fontCacheFallingBackToSingleton
+
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::FontCascadeFonts::realizeFallbackRangesAt):
+        (WebCore::FontCascadeFonts::glyphDataForSystemFallback):
+          Use familyNamesData instead of familyNames and pass the FontCache
+          parameter when calling glyphDataForSystemFallback to make this safe
+          to use in a Worker.
+
+        * platform/graphics/FontTaggedSettings.h:
+          Add missing wtf/Hasher.h include.
+
+        * platform/graphics/WOFFFileFormat.cpp:
+        (WebCore::convertWOFFToSfntIfNecessary):
+        * platform/graphics/WOFFFileFormat.h:
+          Add utility function to convert WOFF fonts on non-Cocoa platforms.
+
+        * workers/WorkerFontLoadRequest.cpp: Added.
+        (WebCore::WorkerFontLoadRequest::WorkerFontLoadRequest):
+        (WebCore::WorkerFontLoadRequest::load):
+        (WebCore::WorkerFontLoadRequest::ensureCustomFontData):
+        (WebCore::WorkerFontLoadRequest::createFont):
+        (WebCore::WorkerFontLoadRequest::setClient):
+        (WebCore::WorkerFontLoadRequest::didReceiveResponse):
+        (WebCore::WorkerFontLoadRequest::didReceiveData):
+        (WebCore::WorkerFontLoadRequest::didFinishLoading):
+        (WebCore::WorkerFontLoadRequest::didFail):
+        * workers/WorkerFontLoadRequest.h: Added.
+          Implement FontLoadRequest for Workers.
+
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::fonts):
+        (WebCore::WorkerGlobalScope::fontLoadRequest):
+        (WebCore::WorkerGlobalScope::beginLoadingFontSoon):
+        * workers/WorkerGlobalScope.h:
+          Implement ScriptExecutionContext font-loading related functions.
+
+        * workers/WorkerGlobalScope.idl:
+          Include FontFaceSource.
+
 2021-04-22  Martin Robinson  <mrobinson@webkit.org>
 
         [GTK] Turn on editable <input type=date> and <input type=time> fields

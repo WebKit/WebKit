@@ -51,6 +51,7 @@ class CSSFontSelector;
 class CSSValuePool;
 class ContentSecurityPolicyResponseHeaders;
 class Crypto;
+class FontFaceSet;
 class Performance;
 class ScheduledAction;
 class WorkerLocation;
@@ -124,6 +125,9 @@ public:
     CSSValuePool& cssValuePool() final;
     CSSFontSelector* cssFontSelector() final;
     FontCache& fontCache() final;
+    Ref<FontFaceSet> fonts();
+    std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
+    void beginLoadingFontSoon(FontLoadRequest&) final;
 
     ReferrerPolicy referrerPolicy() const final;
 

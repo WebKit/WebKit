@@ -1,3 +1,47 @@
+2021-04-22  Chris Lord  <clord@igalia.com>
+
+        Implement FontFace in Workers for OffscreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=224178
+        <rdar://problem/76529024>
+
+        Reviewed by Darin Adler.
+
+        FontFace is now available for Workers, rebaseline related tests.
+
+        * web-platform-tests/css/css-font-loading/fontfaceset-load-css-wide-keywords-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.center.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.ltr.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.rtl.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.left.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.right.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.ltr.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.rtl.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.alphabetic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.bottom.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.hanging.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.ideographic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.middle.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.top.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fill.maxWidth.bound.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fill.maxWidth.fontface.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fontface.notinpage.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fontface.repeat.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fontface.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.basic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.end.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.nonspace.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.other.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.space.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.start.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.advances.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.baselines.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.emHeights.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fontBoundingBox.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.basic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.empty.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.space.worker-expected.txt:
+
 2021-04-22  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement WebXR Input Sources

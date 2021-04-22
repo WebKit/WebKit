@@ -51,6 +51,7 @@ public:
 
 private:
     const URL& url() const final { return m_font->url(); }
+    bool isPending() const final { return m_font->status() == CachedResource::Status::Pending; }
     bool isLoading() const final { return m_font->isLoading(); }
     bool errorOccurred() const final { return m_font->errorOccurred(); }
 

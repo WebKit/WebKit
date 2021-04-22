@@ -34,6 +34,7 @@
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
 #include "FontCache.h"
+#include "FontFaceSet.h"
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
@@ -45,6 +46,7 @@
 #include "SecurityOriginPolicy.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
+#include "WorkerFontLoadRequest.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerLocation.h"
 #include "WorkerMessagingProxy.h"
@@ -519,6 +521,23 @@ FontCache& WorkerGlobalScope::fontCache()
     if (!m_fontCache)
         m_fontCache = FontCache::create();
     return *m_fontCache;
+}
+
+Ref<FontFaceSet> WorkerGlobalScope::fonts()
+{
+    ASSERT(cssFontSelector());
+    return cssFontSelector()->fontFaceSet();
+}
+
+std::unique_ptr<FontLoadRequest> WorkerGlobalScope::fontLoadRequest(String& url, bool, bool, LoadedFromOpaqueSource loadedFromOpaqueSource)
+{
+    return makeUnique<WorkerFontLoadRequest>(completeURL(url), loadedFromOpaqueSource);
+}
+
+void WorkerGlobalScope::beginLoadingFontSoon(FontLoadRequest& request)
+{
+    ASSERT(is<WorkerFontLoadRequest>(request));
+    downcast<WorkerFontLoadRequest>(request).load(*this);
 }
 
 ReferrerPolicy WorkerGlobalScope::referrerPolicy() const

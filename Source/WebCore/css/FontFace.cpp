@@ -62,14 +62,15 @@ void FontFace::setErrorState()
     m_backing->setErrorState();
 }
 
-Ref<FontFace> FontFace::create(Document& document, const String& family, Source&& source, const Descriptors& descriptors)
+Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& family, Source&& source, const Descriptors& descriptors)
 {
-    auto result = adoptRef(*new FontFace(document.fontSelector()));
+    ASSERT(context.cssFontSelector());
+    auto result = adoptRef(*new FontFace(*context.cssFontSelector()));
     result->suspendIfNeeded();
 
     bool dataRequiresAsynchronousLoading = true;
 
-    auto setFamilyResult = result->setFamily(document, family);
+    auto setFamilyResult = result->setFamily(context, family);
     if (setFamilyResult.hasException()) {
         result->setErrorState();
         return result;
@@ -77,10 +78,10 @@ Ref<FontFace> FontFace::create(Document& document, const String& family, Source&
 
     auto sourceConversionResult = WTF::switchOn(source,
         [&] (String& string) -> ExceptionOr<void> {
-            auto value = CSSPropertyParserWorkerSafe::parseFontFaceSrc(string, CSSParserContext(document));
+            auto value = CSSPropertyParserWorkerSafe::parseFontFaceSrc(string, is<Document>(context) ? CSSParserContext(downcast<Document>(context)) : HTMLStandardMode);
             if (!value)
                 return Exception { SyntaxError };
-            CSSFontFace::appendSources(result->backing(), *value, &document, false);
+            CSSFontFace::appendSources(result->backing(), *value, &context, false);
             return { };
         },
         [&] (RefPtr<ArrayBufferView>& arrayBufferView) -> ExceptionOr<void> {
@@ -101,32 +102,32 @@ Ref<FontFace> FontFace::create(Document& document, const String& family, Source&
     }
 
     // These ternaries match the default strings inside the FontFaceDescriptors dictionary inside FontFace.idl.
-    auto setStyleResult = result->setStyle(document, descriptors.style.isEmpty() ? "normal"_s : descriptors.style);
+    auto setStyleResult = result->setStyle(context, descriptors.style.isEmpty() ? "normal"_s : descriptors.style);
     if (setStyleResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setWeightResult = result->setWeight(document, descriptors.weight.isEmpty() ? "normal"_s : descriptors.weight);
+    auto setWeightResult = result->setWeight(context, descriptors.weight.isEmpty() ? "normal"_s : descriptors.weight);
     if (setWeightResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setStretchResult = result->setStretch(document, descriptors.stretch.isEmpty() ? "normal"_s : descriptors.stretch);
+    auto setStretchResult = result->setStretch(context, descriptors.stretch.isEmpty() ? "normal"_s : descriptors.stretch);
     if (setStretchResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setUnicodeRangeResult = result->setUnicodeRange(document, descriptors.unicodeRange.isEmpty() ? "U+0-10FFFF"_s : descriptors.unicodeRange);
+    auto setUnicodeRangeResult = result->setUnicodeRange(context, descriptors.unicodeRange.isEmpty() ? "U+0-10FFFF"_s : descriptors.unicodeRange);
     if (setUnicodeRangeResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setFeatureSettingsResult = result->setFeatureSettings(document, descriptors.featureSettings.isEmpty() ? "normal"_s : descriptors.featureSettings);
+    auto setFeatureSettingsResult = result->setFeatureSettings(context, descriptors.featureSettings.isEmpty() ? "normal"_s : descriptors.featureSettings);
     if (setFeatureSettingsResult.hasException()) {
         result->setErrorState();
         return result;
     }
-    auto setDisplayResult = result->setDisplay(document, descriptors.display.isEmpty() ? "auto"_s : descriptors.display);
+    auto setDisplayResult = result->setDisplay(context, descriptors.display.isEmpty() ? "auto"_s : descriptors.display);
     if (setDisplayResult.hasException()) {
         result->setErrorState();
         return result;
@@ -399,13 +400,13 @@ String FontFace::featureSettings() const
     return list->cssText();
 }
 
-String FontFace::display() const
+String FontFace::display(ScriptExecutionContext& context) const
 {
     m_backing->updateStyleIfNeeded();
     const auto& loadingBehaviorWrapped = m_backing->loadingBehavior();
     if (!loadingBehaviorWrapped.hasValue())
         return "auto"_s;
-    return CSSValuePool::singleton().createValue(loadingBehaviorWrapped.value())->cssText();
+    return context.cssValuePool().createValue(loadingBehaviorWrapped.value())->cssText();
 }
 
 auto FontFace::status() const -> LoadStatus

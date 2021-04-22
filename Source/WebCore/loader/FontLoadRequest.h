@@ -35,9 +35,6 @@ class FontDescription;
 class FontLoadRequest;
 struct FontSelectionSpecifiedCapabilities;
 
-template <typename T> class FontTaggedSettings;
-using FontFeatureSettings = FontTaggedSettings<int>;
-
 class FontLoadRequestClient {
 public:
     virtual ~FontLoadRequestClient() = default;
@@ -49,6 +46,7 @@ public:
     virtual ~FontLoadRequest() = default;
 
     virtual const URL& url() const = 0;
+    virtual bool isPending() const = 0;
     virtual bool isLoading() const = 0;
     virtual bool errorOccurred() const = 0;
 
@@ -58,6 +56,7 @@ public:
     virtual void setClient(FontLoadRequestClient*) = 0;
 
     virtual bool isCachedFontLoadRequest() const { return false; }
+    virtual bool isWorkerFontLoadRequest() const { return false; }
 };
 
 } // namespace WebCore

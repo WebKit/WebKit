@@ -112,7 +112,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
     AllowUserInstalledFonts allowUserInstalledFonts = AllowUserInstalledFonts::Yes;
     if (m_owningFontSelector->scriptExecutionContext())
         allowUserInstalledFonts = m_owningFontSelector->scriptExecutionContext()->settingsValues().shouldAllowUserInstalledFonts ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No;
-    Vector<FontSelectionCapabilities> capabilities = FontCache::singleton().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
+    Vector<FontSelectionCapabilities> capabilities = m_owningFontSelector->scriptExecutionContext()->fontCache().getFontSelectionCapabilitiesInFamily(familyName, allowUserInstalledFonts);
     if (capabilities.isEmpty())
         return;
 
@@ -121,7 +121,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
         Ref<CSSFontFace> face = CSSFontFace::create(m_owningFontSelector.get(), nullptr, nullptr, true);
         
         Ref<CSSValueList> familyList = CSSValueList::createCommaSeparated();
-        familyList->append(CSSValuePool::singleton().createFontFamilyValue(familyName));
+        familyList->append(m_owningFontSelector->scriptExecutionContext()->cssValuePool().createFontFamilyValue(familyName));
         face->setFamilies(familyList.get());
         face->setFontSelectionCapabilities(item);
         face->adoptSource(makeUnique<CSSFontFaceSource>(face.get(), familyName));
@@ -376,9 +376,9 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
     Vector<AtomString> familyOrder;
     for (auto& familyRaw : font->family) {
         AtomString familyAtom;
-        WTF::switchOn(familyRaw, [&] (CSSValueID ident) {
-            if (ident != CSSValueWebkitBody)
-                familyAtom = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident));
+        WTF::switchOn(familyRaw, [&] (CSSValueID familyKeyword) {
+            if (familyKeyword != CSSValueWebkitBody)
+                familyAtom = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(familyKeyword));
             else {
                 ASSERT(m_owningFontSelector && m_owningFontSelector->scriptExecutionContext());
                 familyAtom = m_owningFontSelector->scriptExecutionContext()->settingsValues().fontGenericFamilies.standardFontFamily();

@@ -58,16 +58,26 @@ const float emphasisMarkFontSizeMultiplier = 0.5f;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 
-Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic)
+Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, Optional<RenderingResourceIdentifier> identifier)
+{
+    return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier, nullptr));
+}
+
+Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, FontCache* fontCacheForVerticalData, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, Optional<RenderingResourceIdentifier> identifier)
+{
+    return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier, fontCacheForVerticalData));
+}
+
+Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, float fontSize, bool syntheticBold, bool syntheticItalic, FontCache* fontCacheForVerticalData)
 {
     bool wrapping;
     auto customFontData = CachedFont::createCustomFontData(fontFaceData.get(), { }, wrapping);
     FontDescription description;
     description.setComputedSize(fontSize);
-    return Font::create(CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { }, { }), origin);
+    return Font::create(CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { }, { }), origin, fontCacheForVerticalData);
 }
 
-Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, Optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, Optional<RenderingResourceIdentifier> renderingResourceIdentifier, FontCache* fontCacheForVerticalData)
     : m_platformData(platformData)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_origin(origin)
@@ -88,9 +98,11 @@ Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial int
     platformCharWidthInit();
 #if ENABLE(OPENTYPE_VERTICAL)
     if (platformData.orientation() == FontOrientation::Vertical && orientationFallback == OrientationFallback::No) {
-        m_verticalData = FontCache::singleton().verticalData(platformData);
+        m_verticalData = fontCacheForVerticalData ? fontCacheForVerticalData->verticalData(platformData) : FontCache::singleton().verticalData(platformData);
         m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
+#else
+    UNUSED_PARAM(fontCacheForVerticalData);
 #endif
 }
 
@@ -568,13 +580,13 @@ static SystemFallbackCache& systemFallbackCache()
     return map.get();
 }
 
-RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, IsForPlatformFont isForPlatformFont) const
+RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, IsForPlatformFont isForPlatformFont, FontCache& fontCache) const
 {
     auto fontAddResult = systemFallbackCache().add(this, CharacterFallbackMap());
 
     if (!character) {
         UChar codeUnit = 0;
-        return FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
+        return fontCache.systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
     }
 
     auto key = CharacterFallbackMapKey { description.computedLocale(), character, isForPlatformFont != IsForPlatformFont::No };
@@ -589,7 +601,7 @@ RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontD
             codeUnits[1] = U16_TRAIL(character);
             codeUnitsLength = 2;
         }
-        auto font = FontCache::singleton().systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
+        auto font = fontCache.systemFallbackForCharacters(description, this, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
         if (font)
             font->m_isUsedInSystemFallbackCache = true;
         return font;

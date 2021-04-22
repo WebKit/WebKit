@@ -280,7 +280,7 @@ Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 #endif
 
     auto addResult = m_fontDataCaches->data.ensure(platformData, [&] {
-        return Font::create(platformData);
+        return Font::create(platformData, Font::Origin::Local, this);
     });
 
     ASSERT(addResult.iterator->value->platformData() == platformData);

@@ -81,7 +81,7 @@ CSSFontFaceSource::CSSFontFaceSource(CSSFontFace& owner, const String& familyNam
     // This may synchronously call fontLoaded().
     m_fontRequest->setClient(this);
 
-    if (status() == Status::Pending && !m_fontRequest->isLoading()) {
+    if (status() == Status::Pending && !m_fontRequest->isPending()) {
         setStatus(Status::Loading);
         if (!shouldIgnoreFontLoadCompletions()) {
             if (m_fontRequest->errorOccurred())

@@ -170,7 +170,7 @@ void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 {
-    FontCache::fontCacheFallbackToSingleton(fontSelector).updateFontCascade(*this, WTFMove(fontSelector));
+    FontCache::fontCacheFallingBackToSingleton(fontSelector).updateFontCascade(*this, WTFMove(fontSelector));
 }
 
 GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const

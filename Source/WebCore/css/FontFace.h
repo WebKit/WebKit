@@ -54,7 +54,7 @@ public:
     };
     
     using Source = Variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
-    static Ref<FontFace> create(Document&, const String& family, Source&&, const Descriptors&);
+    static Ref<FontFace> create(ScriptExecutionContext&, const String& family, Source&&, const Descriptors&);
     static Ref<FontFace> create(ScriptExecutionContext*, CSSFontFace&);
     virtual ~FontFace();
 
@@ -72,7 +72,7 @@ public:
     String stretch() const;
     String unicodeRange() const;
     String featureSettings() const;
-    String display() const;
+    String display(ScriptExecutionContext&) const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;

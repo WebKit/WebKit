@@ -57,6 +57,7 @@ interface IDWriteGdiInterop;
 
 namespace WebCore {
 
+class FontCache;
 class GlyphPage;
 class FontDescription;
 class SharedBuffer;
@@ -92,12 +93,11 @@ public:
         Yes,
         No
     };
-    static Ref<Font> create(const FontPlatformData& platformData, Origin origin = Origin::Local, Interstitial interstitial = Interstitial::No,
-        Visibility visibility = Visibility::Visible, OrientationFallback orientationFallback = OrientationFallback::No, Optional<RenderingResourceIdentifier> identifier = WTF::nullopt)
-    {
-        return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier));
-    }
-    WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic);
+    WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, Interstitial = Interstitial::No,
+        Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, Optional<RenderingResourceIdentifier> = WTF::nullopt);
+    static Ref<Font> create(const FontPlatformData&, Origin, FontCache* fontCacheForVerticalData, Interstitial = Interstitial::No,
+        Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, Optional<RenderingResourceIdentifier> = WTF::nullopt);
+    WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic, FontCache* = nullptr);
 
     WEBCORE_EXPORT ~Font();
 
@@ -189,7 +189,7 @@ public:
     bool supportsCodePoint(UChar32) const;
     bool platformSupportsCodePoint(UChar32, Optional<UChar32> variation = WTF::nullopt) const;
 
-    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, IsForPlatformFont) const;
+    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, IsForPlatformFont, FontCache&) const;
 
     const GlyphPage* glyphPage(unsigned pageNumber) const;
 
@@ -232,7 +232,7 @@ public:
 #endif
 
 private:
-    WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback, Optional<RenderingResourceIdentifier>);
+    WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback, Optional<RenderingResourceIdentifier>, FontCache*);
 
     void platformInit();
     void platformGlyphInit();
