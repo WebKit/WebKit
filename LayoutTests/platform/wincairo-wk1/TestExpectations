@@ -175,8 +175,7 @@ webkit.org/b/140869 [ Release ] accessibility/aria-combobox.html [ Failure ]
 webkit.org/b/140869 [ Debug ] accessibility/aria-combobox.html [ Skip ]
 
 # Attempt to add a text element that claims NOT to be an accessibility element:
-webkit.org/b/140870 [ Release ] accessibility/canvas-fallback-content.html [ Failure ]
-webkit.org/b/140870 [ Debug ] accessibility/canvas-fallback-content.html [ Skip ]
+webkit.org/b/140870 accessibility/canvas-fallback-content.html [ Skip ]
 webkit.org/b/140870 [ Release ] accessibility/canvas-accessibilitynodeobject.html [ Failure ]
 webkit.org/b/140870 [ Debug ] accessibility/canvas-accessibilitynodeobject.html [ Skip ]
 
@@ -437,5 +436,3 @@ storage/domstorage/localstorage/blocked-file-access.html [ Failure ]
 storage/indexeddb/storage-limit.html [ Failure ]
 storage/indexeddb/request-size-estimate.html [ Failure ]
 storage/indexeddb/storage-limit-with-indices.html [ Failure ]
-
-accessibility/canvas-fallback-content.html [ Timeout ]

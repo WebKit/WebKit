@@ -1698,6 +1698,7 @@ transforms [ Skip ]
 traversal [ Skip ]
 userscripts [ Skip ]
 webanimations [ Skip ]
+webexposed [ Skip ]
 webgl/2.0.0/conformance/textures/image_bitmap_from_image_bitmap [ Skip ]
 webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
 workers/bomb.html [ Skip ]
@@ -1722,27 +1723,27 @@ workers/bomb.html [ Skip ]
 [ Debug ] storage/indexeddb/database-odd-names.html [ Failure Pass ]
 [ Debug ] storage/indexeddb/primary-key-unique-to-objectstore.html [ Timeout Pass ]
 [ Debug ] webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
-[ Debug ] webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
-[ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slow ]
-[ Debug ] webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Slow ]
-[ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Slow ]
-[ Debug ] webgl/1.0.3/conformance/textures/texture-size-limit.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
+[ Debug ] webgl/1.0.3/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Skip ] # Slow
+[ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
+[ Debug ] webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
+[ Debug ] webgl/1.0.3/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
+[ Debug ] webgl/1.0.3/conformance/textures/texture-size-limit.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
-[ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-ivec4.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-vec4.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/const-variable-initialization.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/rendering/many-draw-calls.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Slow ]
-[ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Slow ]
+[ Debug ] webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/glsl/misc/const-variable-initialization.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/rendering/many-draw-calls.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/rendering/multisample-corruption.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/state/gl-object-get-calls.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance/textures/misc/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ] # Slow
+[ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
 [ Release ] webgl/1.0.3/conformance/canvas/drawingbuffer-test.html [ Failure ]
 [ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Failure ]
 accessibility/canvas-fallback-content.html [ Timeout ]
@@ -2012,11 +2013,11 @@ http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Failure ]
 http/tests/xmlhttprequest/resetting-timeout-to-zero.html [ Failure ]
 http/tests/xmlhttprequest/timeout-greater-than-default-network-timeout.html [ Failure ]
 http/tests/xmlhttprequest/xml-encoding.html [ Failure ]
-js/dfg-convert-this-dom-window.html [ Slow ]
-js/dfg-dead-variable-on-exit.html [ Slow ]
-js/dfg-double-vote-fuzz.html [ Slow ]
-js/dfg-int52-spill-trickier.html [ Slow ]
-js/dfg-int52-spill.html [ Slow ]
+js/dfg-convert-this-dom-window.html [ Skip ] # Slow
+js/dfg-dead-variable-on-exit.html [ Skip ] # Slow
+js/dfg-double-vote-fuzz.html [ Skip ] # Slow
+js/dfg-int52-spill-trickier.html [ Skip ] # Slow
+js/dfg-int52-spill.html [ Skip ] # Slow
 js/dom/create-lots-of-workers.html [ Timeout ]
 js/dom/modules/module-fetch-failure-not-cached.html [ Failure ]
 js/dom/webassembly-memory-normal-fail.html [ Failure ]

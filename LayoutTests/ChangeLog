@@ -1,3 +1,10 @@
+2021-04-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-04-21  Zalan Bujtas  <zalan@apple.com>
 
         Ignore column spanner property for the inner part of a text control.
