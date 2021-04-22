@@ -1,3 +1,20 @@
+2021-04-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [iOS] Web processes recreated after crashing are not created with the right contentSizeCategory
+        https://bugs.webkit.org/show_bug.cgi?id=224916
+
+        Reviewed by Tim Horton.
+
+        The constructor of WKWebView sets the contentSizeCategory for the first page.
+        But if the web process crashes, the new one won't have it set.
+
+        This patch simply adds the contentSizeCategory to the WebProcessCreationParameters.
+
+        Tests: TextStyleFontSize.Startup
+               TextStyleFontSize.AfterCrash
+
+        * rendering/RenderThemeCocoa.h:
+
 2021-04-22  Alejandro G. Castro  <alex@igalia.com>
 
         REGRESSION(r275790) [GTK][WPE] Scrolling rendering fails after the second page

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class RenderThemeCocoa : public RenderTheme {
 public:
-    static RenderThemeCocoa& singleton();
+    WEBCORE_EXPORT static RenderThemeCocoa& singleton();
 
     virtual CFStringRef contentSizeCategory() const = 0;
 
