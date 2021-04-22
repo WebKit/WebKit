@@ -1,3 +1,28 @@
+2021-04-22  Alejandro G. Castro  <alex@igalia.com>
+
+        REGRESSION(r275790) [GTK][WPE] Scrolling rendering fails after the second page
+        https://bugs.webkit.org/show_bug.cgi?id=224824
+
+        Reviewed by Simon Fraser.
+
+        We are making the implementation more similar to the Apple
+        scrolling coordinator. Now we reimplement willStartRenderingUpdate
+        to be able to synchronize the state there. That way we can avoid
+        the timer and just schedule a rendering update when we want to
+        commit the tree state.
+
+        Test: Fixes the timeout of the overflow-scrollable-after-back.html,
+        added in the regression.
+
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp:
+        (WebCore::ScrollingCoordinatorNicosia::ScrollingCoordinatorNicosia):
+        (WebCore::ScrollingCoordinatorNicosia::pageDestroyed):
+        (WebCore::ScrollingCoordinatorNicosia::commitTreeStateIfNeeded):
+        (WebCore::ScrollingCoordinatorNicosia::scheduleTreeStateCommit):
+        (WebCore::ScrollingCoordinatorNicosia::willStartRenderingUpdate):
+        (WebCore::ScrollingCoordinatorNicosia::commitTreeState): Deleted.
+        * page/scrolling/nicosia/ScrollingCoordinatorNicosia.h:
+
 2021-04-22  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         GraphicsContextGLOpenGLCocoa should check that ANGLE is loaded in WK1 releaseCurrentContext

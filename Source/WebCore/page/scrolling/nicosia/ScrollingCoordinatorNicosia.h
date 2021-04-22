@@ -50,9 +50,7 @@ public:
 private:
     void scheduleTreeStateCommit() override;
 
-    void commitTreeState();
-
-    RunLoop::Timer<ScrollingCoordinatorNicosia> m_scrollingStateTreeCommitterTimer;
+    void willStartRenderingUpdate() final;
 };
 
 } // namespace WebCore
