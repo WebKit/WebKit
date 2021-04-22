@@ -1,3 +1,15 @@
+2021-04-22  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE build fix after r276390
+
+        Fix namespacing issues in nullptr_t invocations.
+
+        * src/compiler/translator/tree_util/IntermRebuild.cpp:
+        (sh::TIntermRebuild::BaseResult::BaseResult):
+        (sh::PreResult::PreResult):
+        (sh::PostResult::PostResult):
+        * src/compiler/translator/tree_util/IntermRebuild.h:
+
 2021-04-21  Don Olmstead  <don.olmstead@sony.com>
 
         [Python 3] Update gni-to-cmake.py
