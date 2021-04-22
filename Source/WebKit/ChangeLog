@@ -1,3 +1,9 @@
+2021-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        Add some new messages.in files to the Mac CMake build
+
+        * PlatformMac.cmake:
+
 2021-04-22  Per Arne  <pvollan@apple.com>
 
         [iOS] Update sandbox message filter syntax
