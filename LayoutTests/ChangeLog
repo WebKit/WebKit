@@ -1,3 +1,14 @@
+2021-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Multi-column spanners are not part of the enclosing multi-column renderer's subtree
+        https://bugs.webkit.org/show_bug.cgi?id=224914
+        <rdar://76846946>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/spanner-inserted-to-multiple-multicolumns-expected.txt: Added.
+        * fast/multicol/spanner-inserted-to-multiple-multicolumns.html: Added.
+
 2021-04-22  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r271644.

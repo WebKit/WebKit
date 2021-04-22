@@ -1,3 +1,38 @@
+2021-04-22  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Multi-column spanners are not part of the enclosing multi-column renderer's subtree
+        https://bugs.webkit.org/show_bug.cgi?id=224914
+        <rdar://76846946>
+
+        Reviewed by Simon Fraser.
+
+        This patch handles the case when the newly inserted renderer is a column spanner and checking enclosingFragmentedFlow()
+        on the spanner's new parent returns the incorrect enclosing multi-column renderer.
+        This can result in having the spanner in multiple multi-column flows.
+
+        (Note that the spanners are directly attached to the RenderBlockFlow that establishes the multi-column context, while non-spanner
+        renderers are part of the RenderMultiColumnFlow subtree. e.g
+
+          RenderBlockFlow <- spanner's parent.
+            RenderMultiColumnFlow
+              Non-spanner renderer
+            spanner renderer
+
+          calling enclosingFragmentedFlow() on a spanner's parent (RenderBlockFlow) returns the parent multi-column flow -and
+          not the one it establishes. e.g.
+
+          RenderMultiColumnFlow <- parent multi-column flow -in case of nested columns.
+            RenderBlockFlow <- spanner's parent.
+              RenderMultiColumnFlow
+                Non-spanner renderer
+              spanner renderer
+        )
+
+        Test: fast/multicol/spanner-inserted-to-multiple-multicolumns.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock):
+
 2021-04-22  Dean Jackson  <dino@apple.com>
 
         [WebXR] Optional button test is incorrect

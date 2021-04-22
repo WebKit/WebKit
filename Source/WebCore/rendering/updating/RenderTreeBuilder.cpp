@@ -738,9 +738,21 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
                 // We need to re-run the grid items placement if it had gained a new item.
                 downcast<RenderGrid>(*newParent).dirtyGrid();
             }
-            if (auto* newEnclosingFragmentedFlow = newParent->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(newEnclosingFragmentedFlow) && currentEnclosingFragment != newEnclosingFragmentedFlow) {
+
+            auto newMultiColumnForChildRenderer = [&]() -> RenderMultiColumnFlow* {
+                // Update the state when the child has moved from one multi-column flow to another.
+                auto* newEnclosingFragmentedFlow = newParent->enclosingFragmentedFlow();
+                if (newParent->isMultiColumnBlockFlow()) {
+                    // This child is a spanner so it is not in the subtree of the multicolumn renderer. It is parented directly under the block flow so
+                    // enclosingFragmentedFlow() returns the parent enclosing flow.
+                    ASSERT(is<RenderBox>(child) && downcast<RenderBlockFlow>(*newParent).multiColumnFlow()->spannerMap().contains(&downcast<RenderBox>(child)));
+                    newEnclosingFragmentedFlow = downcast<RenderBlockFlow>(*newParent).multiColumnFlow();
+                }
+                return newEnclosingFragmentedFlow != currentEnclosingFragment && is<RenderMultiColumnFlow>(newEnclosingFragmentedFlow) ? downcast<RenderMultiColumnFlow>(newEnclosingFragmentedFlow) : nullptr;
+            };
+            if (auto* newEnclosingMultiColumn = newMultiColumnForChildRenderer()) {
                 // Let the fragmented flow know that it has a new in-flow descendant.
-                multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*newEnclosingFragmentedFlow), child);
+                multiColumnBuilder().multiColumnDescendantInserted(*newEnclosingMultiColumn, child);
                 child.initializeFragmentedFlowStateOnInsertion();
             }
         }
