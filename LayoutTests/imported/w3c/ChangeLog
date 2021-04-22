@@ -1,3 +1,24 @@
+2021-04-22  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR Input Sources
+        https://bugs.webkit.org/show_bug.cgi?id=223257
+
+        Reviewed by Youenn Fablet.
+
+        Update WebXR Input Source test expectations.
+
+        * web-platform-tests/webxr/events_input_source_recreation.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_input_sources_change.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_session_select.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_session_select_subframe.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_session_squeeze.https-expected.txt: Added.
+        * web-platform-tests/webxr/getInputPose_handedness.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrInputSource_add_remove.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrInputSource_profiles.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrInputSource_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https-expected.txt: Added.
+
 2021-04-21  Tim Nguyen  <ntim@apple.com>
 
         Import css/css-will-change tests from WPT

@@ -1,3 +1,14 @@
+2021-04-22  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR Input Sources
+        https://bugs.webkit.org/show_bug.cgi?id=223257
+
+        Reviewed by Youenn Fablet.
+
+        Enable WPE Gamepad when WebXR is enabled.
+
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add support for preconnect

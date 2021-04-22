@@ -80,6 +80,7 @@ public:
     void setSupportsShutdownNotification(bool supportsShutdownNotification) { m_supportsShutdownNotification = supportsShutdownNotification; }
     void simulateShutdownCompleted();
     void scheduleOnNextFrame(Function<void()>&&);
+    void addInputConnection(Ref<WebFakeXRInputController>&& input) { m_inputConnections.append(WTFMove(input)); };
 private:
     WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final;
     void initializeTrackingAndRendering(PlatformXR::SessionMode) final;
@@ -101,6 +102,7 @@ private:
     RefPtr<WebCore::GraphicsContextGL> m_gl;
     HashMap<PlatformXR::LayerHandle, PlatformGLObject> m_layers;
     uint32_t m_layerIndex { 0 };
+    Vector<Ref<WebFakeXRInputController>> m_inputConnections;
 };
 
 class WebFakeXRDevice final : public RefCounted<WebFakeXRDevice> {
@@ -116,18 +118,19 @@ public:
     void setFloorOrigin(FakeXRRigidTransformInit);
     void clearFloorOrigin() { m_device.setFloorOrigin(WTF::nullopt); }
     void simulateResetPose();
-    Ref<WebFakeXRInputController> simulateInputSourceConnection(FakeXRInputSourceInit);
+    Ref<WebFakeXRInputController> simulateInputSourceConnection(const FakeXRInputSourceInit&);
     static ExceptionOr<Ref<FakeXRView>> parseView(const FakeXRViewInit&);
     SimulatedXRDevice& simulatedXRDevice() { return m_device; }
     void setSupportsShutdownNotification();
     void simulateShutdown();
 
+    static ExceptionOr<PlatformXR::Device::FrameData::Pose> parseRigidTransform(const FakeXRRigidTransformInit&);
+
 private:
     WebFakeXRDevice();
 
-    static ExceptionOr<PlatformXR::Device::FrameData::Pose> parseRigidTransform(const FakeXRRigidTransformInit&);
-
     SimulatedXRDevice m_device;
+    PlatformXR::InputSourceHandle mInputSourceHandleIndex { 0 };
 };
 
 } // namespace WebCore

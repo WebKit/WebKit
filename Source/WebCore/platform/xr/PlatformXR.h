@@ -56,15 +56,23 @@ enum class Eye {
 using LayerHandle = int;
 
 #if ENABLE(WEBXR)
+using InputSourceHandle = int;
 
-class TrackingAndRenderingClient : public CanMakeWeakPtr<TrackingAndRenderingClient> {
-public:
-    virtual ~TrackingAndRenderingClient() = default;
-
-    virtual void sessionDidEnd() = 0;
-    // FIXME: handle frame update
-    // FIXME: handle visibility changes
+// https://immersive-web.github.io/webxr/#enumdef-xrhandedness
+enum class XRHandedness {
+    None,
+    Left,
+    Right,
 };
+
+// https://immersive-web.github.io/webxr/#enumdef-xrtargetraymode
+enum class XRTargetRayMode {
+    Gaze,
+    TrackedPointer,
+    Screen,
+};
+
+class TrackingAndRenderingClient;
 
 class Device : public ThreadSafeRefCounted<Device>, public CanMakeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -163,6 +171,28 @@ public:
             template<class Decoder> static Optional<LayerData> decode(Decoder&);
         };
 
+        struct InputSourceButton {
+            bool touched { false };
+            bool pressed { false };
+            float pressedValue { 0 };
+        };
+
+        struct InputSourcePose {
+            Pose pose;
+            bool isPositionEmulated { false };
+        };
+
+        struct InputSource {
+            InputSourceHandle handle { 0 };
+            XRHandedness handeness { XRHandedness::None };
+            XRTargetRayMode targetRayMode { XRTargetRayMode::Gaze };
+            Vector<String> profiles;
+            InputSourcePose pointerOrigin;
+            Optional<InputSourcePose> gripOrigin;
+            Vector<InputSourceButton> buttons;
+            Vector<float> axes;
+        };
+
         bool isTrackingValid { false };
         bool isPositionValid { false };
         bool isPositionEmulated { false };
@@ -173,6 +203,7 @@ public:
         StageParameters stageParameters;
         Vector<View> views;
         HashMap<LayerHandle, LayerData> layers;
+        Vector<InputSource> inputSources;
 
         template<class Encoder> void encode(Encoder&) const;
         template<class Decoder> static Optional<FrameData> decode(Decoder&);
@@ -212,6 +243,19 @@ protected:
     bool m_supportsOrientationTracking { false };
     bool m_supportsViewportScaling { false };
     WeakPtr<TrackingAndRenderingClient> m_trackingAndRenderingClient;
+};
+
+class TrackingAndRenderingClient : public CanMakeWeakPtr<TrackingAndRenderingClient> {
+public:
+    virtual ~TrackingAndRenderingClient() = default;
+
+    // This event is used to ensure that initial inputsourceschange events occur after the initial session is resolved.
+    // WebxR apps can wait for the input source events before calling requestAnimationFrame.
+    // Per-frame input source updates are handled via session.requestAnimationFrame which calls Device::requestFrame.
+    virtual void sessionDidInitializeInputSources(Vector<Device::FrameData::InputSource>&&) = 0;
+    virtual void sessionDidEnd() = 0;
+    // FIXME: handle frame update
+    // FIXME: handle visibility changes
 };
 
 class Instance {

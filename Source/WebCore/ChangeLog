@@ -1,3 +1,118 @@
+2021-04-22  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR Input Sources
+        https://bugs.webkit.org/show_bug.cgi?id=223257
+
+        Reviewed by Youenn Fablet.
+
+        This patch implements the platform data definition and the DOM bits required to support WebXR Input Sources, the input mechanism used in WebXR.
+        Example XR input sources include, but are not limited to, handheld controllers, optically tracked hands, and gaze-based input methods.
+
+        More info about the API in:
+        - https://immersive-web.github.io/webxr/#input
+        - https://immersive-web.github.io/webxr-gamepads-module/#webxr-device-api-integration
+
+        Tested by WebXR WPT.
+
+        * Modules/gamepad/Gamepad.h: Add setConnected method.
+
+        * Modules/webxr/WebXRGamepad.cpp: Bridge between WebXRInputSource and Gamepad
+        (WebCore::WebXRGamepad::WebXRGamepad):
+        * Modules/webxr/WebXRGamepad.h:
+
+        * Modules/webxr/WebXRInputSpace.cpp: Instance of WebXRSpace used for WebXRInputSource spaces.
+        (WebCore::WebXRInputSpace::create):
+        (WebCore::WebXRInputSpace::WebXRInputSpace):
+        (WebCore::WebXRInputSpace::nativeOrigin const):
+        * Modules/webxr/WebXRInputSpace.h:
+
+        * Modules/webxr/WebXRFrame.cpp:
+        (WebCore::WebXRFrame::populatePose): set emulatedPosition based on the spaces.
+
+        * Modules/webxr/WebXRInputSource.cpp: Complete WebXRInputSource implementation.
+        (WebCore::WebXRInputSpace::create):
+        (WebCore::WebXRInputSpace::WebXRInputSpace):
+        (WebCore::WebXRInputSpace::nativeOrigin const):
+        (WebCore::WebXRInputSource::create):
+        (WebCore::WebXRInputSource::WebXRInputSource):
+        (WebCore::WebXRInputSource::update):
+        (WebCore::WebXRInputSource::requiresInputSourceChange):
+        (WebCore::WebXRInputSource::disconnect):
+        (WebCore::WebXRInputSource::pollEvents):
+        (WebCore::WebXRInputSource::createEvent):
+        * Modules/webxr/WebXRInputSource.h:
+        (WebCore::WebXRInputSource::handle const):
+        (WebCore::WebXRInputSource::handedness const):
+        (WebCore::WebXRInputSource::targetRayMode const):
+        (WebCore::WebXRInputSource::targetRaySpace const):
+        (WebCore::WebXRInputSource::gripSpace const):
+        (WebCore::WebXRInputSource::profiles const):
+        (WebCore::WebXRInputSource::gamepad const):
+
+        * Modules/webxr/WebXRInputSource.idl: Add gamepad attribute.
+
+        * Modules/webxr/WebXRInputSourceArray.cpp: Implement input source updates and event dispatching.
+        (WebCore::WebXRInputSourceArray::create):
+        (WebCore::WebXRInputSourceArray::WebXRInputSourceArray):
+        (WebCore::WebXRInputSourceArray::length const):
+        (WebCore::WebXRInputSourceArray::item const):
+        (WebCore::WebXRInputSourceArray::clear):
+        (WebCore::WebXRInputSourceArray::update):
+        (WebCore::WebXRInputSourceArray::handleRemovedInputSources):
+        (WebCore::WebXRInputSourceArray::handleAddedOrUpdatedInputSources):
+        * Modules/webxr/WebXRInputSourceArray.h:
+
+        * Modules/webxr/WebXRSession.cpp:
+        (WebCore::WebXRSession::WebXRSession): Set tracking delegate before initializing tracking and rendering.
+        (WebCore::WebXRSession::isPositionEmulated const): Add helper method.
+        (WebCore::WebXRSession::shutdown): Clear WebXRInputSourceArray instance.
+        (WebCore::WebXRSession::sessionDidInitializeInputSources): Dispatch initial InputSource discovery event.
+        (WebCore::WebXRSession::onFrame): Update WebXRInputSourceArray instance.
+        * Modules/webxr/WebXRSession.h:
+
+        * Modules/webxr/WebXRSpace.cpp: Add virtual class isPositionEmulated to be used in WebXRFrame.
+        (WebCore::WebXRSpace::isPositionEmulated const):
+        * Modules/webxr/WebXRSpace.h:
+
+        * Modules/webxr/WebXRSystem.cpp:
+        (WebCore::WebXRSystem::requestSession): update FIXME comment.
+
+        * Modules/webxr/XRHandedness.h: Reuse PlatformXR enum.
+
+        * Modules/webxr/XRInputSourceEvent.cpp:
+        (WebCore::XRInputSourceEvent::XRInputSourceEvent):
+        (WebCore::XRInputSourceEvent::setFrameActive):
+        * Modules/webxr/XRInputSourceEvent.h:
+
+        * Modules/webxr/XRInputSourcesChangeEvent.h:
+
+        * Modules/webxr/XRTargetRayMode.h: Reuse PlatformXR enum.
+
+        * platform/gamepad/GamepadConstants.cpp:
+        (WebCore::xrStandardGamepadMappingString): Add xr-standard gamepad mapping name.
+        * platform/gamepad/GamepadConstants.h:
+
+        * platform/xr/PlatformXR.h: Add Input Source frame data.
+
+        * testing/WebFakeXRDevice.cpp: Implement required changes to run and pass WebXR Input Source tests.
+        (WebCore::SimulatedXRDevice::initializeTrackingAndRendering):
+        (WebCore::SimulatedXRDevice::frameTimerFired):
+        (WebCore::WebFakeXRDevice::simulateResetPose):
+        (WebCore::WebFakeXRDevice::simulateInputSourceConnection):
+        * testing/WebFakeXRDevice.h:
+        * testing/WebFakeXRInputController.cpp:
+        (WebCore::WebFakeXRInputController::create):
+        (WebCore::WebFakeXRInputController::WebFakeXRInputController):
+        (WebCore::WebFakeXRInputController::setGripOrigin):
+        (WebCore::WebFakeXRInputController::setPointerOrigin):
+        (WebCore::WebFakeXRInputController::disconnect):
+        (WebCore::WebFakeXRInputController::reconnect):
+        (WebCore::WebFakeXRInputController::setSupportedButtons):
+        (WebCore::WebFakeXRInputController::updateButtonState):
+        (WebCore::WebFakeXRInputController::getFrameData):
+        (WebCore::WebFakeXRInputController::getButtonOrPlaceholder const):
+        * testing/WebFakeXRInputController.h:
+
 2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.4

@@ -1,0 +1,3 @@
+
+PASS Transient input sources fire events in the right order
+

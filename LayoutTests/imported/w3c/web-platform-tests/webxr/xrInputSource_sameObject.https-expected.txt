@@ -1,0 +1,3 @@
+
+PASS XRInputSource attributes meet [SameObject] requirement
+

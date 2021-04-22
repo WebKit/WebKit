@@ -35,5 +35,8 @@
     readonly attribute XRTargetRayMode targetRayMode ;
     [SameObject] readonly attribute WebXRSpace targetRaySpace;
     [SameObject] readonly attribute WebXRSpace? gripSpace ;
-    [SameObject] readonly attribute FrozenArray<DOMString> profiles;
+    [CachedAttribute, SameObject] readonly attribute FrozenArray<DOMString> profiles;
+
+    // https://immersive-web.github.io/webxr-gamepads-module/#xrinputsource-interface
+    [Conditional=GAMEPAD, SameObject] readonly attribute Gamepad? gamepad;
 };

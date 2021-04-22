@@ -27,13 +27,11 @@
 
 #if ENABLE(WEBXR)
 
+#include "PlatformXR.h"
+
 namespace WebCore {
 
-enum class XRTargetRayMode {
-    Gaze,
-    TrackedPointer,
-    Screen,
-};
+using XRTargetRayMode = PlatformXR::XRTargetRayMode;
 
 } // namespace WebCore
 

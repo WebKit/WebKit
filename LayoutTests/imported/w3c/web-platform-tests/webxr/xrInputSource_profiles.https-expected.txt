@@ -1,0 +1,3 @@
+
+PASS WebXR InputSource's profiles list can be set
+

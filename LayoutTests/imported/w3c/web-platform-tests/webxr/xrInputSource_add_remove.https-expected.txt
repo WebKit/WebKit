@@ -1,0 +1,3 @@
+
+PASS XRInputSources can be properly added and removed from the session
+

@@ -52,7 +52,7 @@ Ref<WebXRSession> WebXRSession::create(Document& document, WebXRSystem& system, 
 
 WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMode mode, PlatformXR::Device& device, FeatureList&& requestedFeatures)
     : ActiveDOMObject(&document)
-    , m_inputSources(WebXRInputSourceArray::create())
+    , m_inputSources(WebXRInputSourceArray::create(*this))
     , m_xrSystem(system)
     , m_mode(mode)
     , m_device(makeWeakPtr(device))
@@ -62,8 +62,8 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     , m_timeOrigin(MonotonicTime::now())
     , m_views(device.views(mode))
 {
-    m_device->initializeTrackingAndRendering(mode);
     m_device->setTrackingAndRenderingClient(makeWeakPtr(*this));
+    m_device->initializeTrackingAndRendering(mode);
 
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
@@ -315,6 +315,11 @@ bool WebXRSession::supportsViewportScaling() const
     return m_mode == XRSessionMode::ImmersiveVr && m_device->supportsViewportScaling();
 }
 
+bool WebXRSession::isPositionEmulated() const
+{
+    return m_frameData.isPositionEmulated || !m_frameData.isPositionValid;
+}
+
 // https://immersive-web.github.io/webxr/#shut-down-the-session
 void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
 {
@@ -337,6 +342,8 @@ void WebXRSession::shutdown(InitiatedBySystem initiatedBySystem)
     // 3. If the active immersive session is equal to session, set the active immersive session to null.
     // 4. Remove session from the list of inline sessions.
     m_xrSystem.sessionEnded(*this);
+
+    m_inputSources->clear();
 
     if (initiatedBySystem == InitiatedBySystem::Yes) {
         // If we get here, the session termination was triggered by the system rather than
@@ -409,6 +416,26 @@ const char* WebXRSession::activeDOMObjectName() const
 
 void WebXRSession::stop()
 {
+}
+
+void WebXRSession::sessionDidInitializeInputSources(Vector<PlatformXR::Device::FrameData::InputSource>&& inputSources)
+{
+    // https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession
+    // 5.4.11 Queue a task to perform the following steps: NOTE: These steps ensure that initial inputsourceschange
+    // events occur after the initial session is resolved.
+    queueTaskKeepingObjectAlive(*this, TaskSource::WebXR, [this, inputSources = WTFMove(inputSources)]() mutable {
+        //  1. Set session's promise resolved flag to true.
+        m_inputInitialized = true;
+        //  2. Let sources be any existing input sources attached to session.
+        //  3. If sources is non-empty, perform the following steps:
+        if (!inputSources.isEmpty()) {
+            auto timestamp = (MonotonicTime::now() - m_timeOrigin).milliseconds();
+            //  3.1. Set session's list of active XR input sources to sources.
+            //  3.2. Fire an XRInputSourcesChangeEvent named inputsourceschange on session with added set to sources.
+            //  Note: 3.1 and 3.2 steps are handled inside the update() call.
+            m_inputSources->update(timestamp, inputSources);
+        }
+    });
 }
 
 void WebXRSession::sessionDidEnd()
@@ -527,6 +554,9 @@ void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
             frame->setActive(true);
 
             // 6.4.Apply frame updates for frame.
+            if (m_inputInitialized)
+                m_inputSources->update(now, frameData.inputSources);
+
             frame->setFrameData(WTFMove(frameData));
 
             // 6.5.For each entry in session’s list of currently running animation frame callbacks, in order:

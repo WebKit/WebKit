@@ -41,6 +41,6 @@
     constructor(DOMString type, XRInputSourcesChangeEventInit eventInitDict);
 
     [SameObject] readonly attribute WebXRSession session;
-    [SameObject] readonly attribute FrozenArray<WebXRInputSource> added;
-    [SameObject] readonly attribute FrozenArray<WebXRInputSource> removed;
+    [CachedAttribute, SameObject] readonly attribute FrozenArray<WebXRInputSource> added;
+    [CachedAttribute, SameObject] readonly attribute FrozenArray<WebXRInputSource> removed;
 };

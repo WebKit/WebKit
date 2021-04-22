@@ -43,6 +43,15 @@ const WTF::String& standardGamepadMappingString()
     return standardGamepadMapping;
 }
 
+#if ENABLE(WEBXR)
+// https://immersive-web.github.io/webxr-gamepads-module/#dom-gamepadmappingtype-xr-standard
+const WTF::String& xrStandardGamepadMappingString()
+{
+    static NeverDestroyed<String> xrStandardGamepadMapping = "xr-standard";
+    return xrStandardGamepadMapping;
+}
+#endif
+
 
 } // namespace WebCore
 

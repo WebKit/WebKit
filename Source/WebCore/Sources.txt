@@ -426,8 +426,10 @@ Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 Modules/webxr/NavigatorWebXR.cpp @no-unify
 Modules/webxr/WebXRBoundedReferenceSpace.cpp @no-unify
 Modules/webxr/WebXRFrame.cpp @no-unify
+Modules/webxr/WebXRGamepad.cpp @no-unify
 Modules/webxr/WebXRInputSource.cpp @no-unify
 Modules/webxr/WebXRInputSourceArray.cpp @no-unify
+Modules/webxr/WebXRInputSpace.cpp @no-unify
 Modules/webxr/WebXRLayer.cpp @no-unify
 Modules/webxr/WebXRPose.cpp @no-unify
 Modules/webxr/WebXRReferenceSpace.cpp @no-unify
