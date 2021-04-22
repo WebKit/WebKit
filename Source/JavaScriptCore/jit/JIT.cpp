@@ -95,7 +95,7 @@ void JIT::emitEnterOptimizationCheck()
 
     copyCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(vm().topEntryFrame);
 
-    callOperationNoExceptionCheck(operationOptimize, &vm(), m_bytecodeIndex.asBits());
+    callOperation(operationOptimize, &vm(), m_bytecodeIndex.asBits());
     skipOptimize.append(branchTestPtr(Zero, returnValueGPR));
     farJump(returnValueGPR, GPRInfo::callFrameRegister);
     skipOptimize.link(this);

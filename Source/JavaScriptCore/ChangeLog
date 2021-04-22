@@ -1,3 +1,17 @@
+2021-04-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276456.
+        https://bugs.webkit.org/show_bug.cgi?id=224952
+
+        Windows specific crash
+
+        Reverted changeset:
+
+        "[JSC} Remove exception checks from non-throwing function
+        calls in Baseline JIT"
+        https://bugs.webkit.org/show_bug.cgi?id=224920
+        https://trac.webkit.org/changeset/276456
+
 2021-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC} Remove exception checks from non-throwing function calls in Baseline JIT
