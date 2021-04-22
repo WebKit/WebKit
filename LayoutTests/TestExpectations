@@ -2066,6 +2066,7 @@ webkit.org/b/104442 imported/w3c/web-platform-tests/css/css-masking/clip-path/cl
 # Imported w3c tests require fuzzy image comparison
 webkit.org/b/149828 imported/w3c/web-platform-tests/density-size-correction/density-corrected-image-svg-aspect-ratio.html [ ImageOnlyFailure ]
 webkit.org/b/149828 imported/w3c/web-platform-tests/density-size-correction/density-corrected-size-bg.html [ ImageOnlyFailure ]
+webkit.org/b/149828 imported/w3c/web-platform-tests/css/css-will-change/will-change-transform-zero-size-child-overflow-visible.html [ Pass ImageOnlyFailure ]
 
 # A support file for a test
 imported/w3c/web-platform-tests/css/css-masking/clip-path/svg-clipPath.svg [ Skip ]
@@ -4938,6 +4939,20 @@ imported/w3c/web-platform-tests/css/css-counter-styles/upper-armenian/css3-count
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-023.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
+
+# CSS will-change failures
+webkit.org/b/167868 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-001.html [ ImageOnlyFailure ]
+webkit.org/b/167868 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-002.html [ ImageOnlyFailure ]
+webkit.org/b/167868 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-003.html [ ImageOnlyFailure ]
+webkit.org/b/167868 imported/w3c/web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html [ ImageOnlyFailure ]
+webkit.org/b/167868 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-001.html [ ImageOnlyFailure ]
+webkit.org/b/167868 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html [ ImageOnlyFailure ]
+webkit.org/b/167868 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html [ ImageOnlyFailure ]
+webkit.org/b/167868 imported/w3c/web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html [ ImageOnlyFailure ]
+webkit.org/b/224902 [ Debug ] imported/w3c/web-platform-tests/css/css-will-change/parsing/will-change-invalid.html [ Skip ]
+
+# Needs -webkit-backdrop-filter to be unprefixed
+webkit.org/b/224899 imported/w3c/web-platform-tests/css/css-will-change/will-change-stacking-context-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/223170 [ Debug ] fast/multicol/widow-relayout-with-border-fit.html [ Skip ]
 webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.html [ Skip ]

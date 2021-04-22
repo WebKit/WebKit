@@ -130,6 +130,7 @@
     "web-platform-tests/css/css-transitions": "import", 
     "web-platform-tests/css/css-ui": "import", 
     "web-platform-tests/css/css-variables": "import", 
+    "web-platform-tests/css/css-will-change": "import", 
     "web-platform-tests/css/css-writing-modes": "import", 
     "web-platform-tests/css/cssom": "import", 
     "web-platform-tests/css/cssom-view/": "import", 

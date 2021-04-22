@@ -1,3 +1,59 @@
+2021-04-21  Tim Nguyen  <ntim@apple.com>
+
+        Import css/css-will-change tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224870
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-will-change/META.yml: Added.
+        * web-platform-tests/css/css-will-change/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/inheritance.html: Added.
+        * web-platform-tests/css/css-will-change/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-computed-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-computed.html: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-invalid.html: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-valid-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-valid.html: Added.
+        * web-platform-tests/css/css-will-change/w3c-import.log: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-001-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-001.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-002-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-002.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-003-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-003.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-001-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-001.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-003-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-003.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-006-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-006.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-inherit-dynamic-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/will-change-inherit-dynamic.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-001-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-001.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-002-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-002.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-003-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-003.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-add-content-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-add-content.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-image-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-image.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-zero-size-child-overflow-visible-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-zero-size-child-overflow-visible.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-will-change-1-expected.xht: Added.
+        * web-platform-tests/css/css-will-change/will-change-will-change-1.html: Added.
+
 2021-04-21  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r276380 and r276386.
