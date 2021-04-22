@@ -322,5 +322,21 @@
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/222091"}}
             }
         }
+    },
+    "TestSSL": {
+        "subtests": {
+            "/webkit/WebKitWebView/load-failed-with-tls-errors": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/224955"}}
+            },
+            "/webkit/WebKitWebView/tls-errors-policy": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/224955"}}
+            },
+            "/webkit/WebKitWebView/tls-http-auth": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/224955"}}
+            },
+            "/webkit/WebKitWebView/tls-errors-redirect-to-http": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/224955"}}
+            }
+        }
     }
 }
