@@ -1174,7 +1174,7 @@ webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Pass Failur
 
 webkit.org/b/208287 http/tests/eventsource/eventsource-page-cache-connected.html [ Timeout Pass ]
 
-webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Failure Timeout Pass ]
+webkit.org/b/212818 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Failure Pass ]
 
 webkit.org/b/215912 http/tests/websocket/tests/hybi/handshake-fail-by-no-cr.html [ Failure ]
 
@@ -1442,7 +1442,6 @@ webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.html
 
 # LEGACY_ENCRYPTED_MEDIA is deprecated
 webkit.org/b/189345 http/tests/media/clearkey/collect-webkit-media-session.html [ Skip ]
-fast/events/webkit-media-key-events-constructor.html [ Skip ]
 
 media/encrypted-media [ Pass ]
 media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-multikey.html [ Skip ]

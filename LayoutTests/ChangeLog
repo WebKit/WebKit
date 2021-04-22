@@ -1,3 +1,24 @@
+2021-04-21  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK][WPE] Unreviewed test gardening. Remove redundant baselines.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fast/canvas/webgl/webgl-compressed-texture-astc-expected.txt: Removed.
+        * platform/glib/http/tests/loading/oauth-expected.txt: Renamed from LayoutTests/platform/gtk/http/tests/loading/oauth-expected.txt.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-before-br-001-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt: Removed.
+        * platform/wpe/TestExpectations:
+        * platform/wpe/http/tests/loading/oauth-expected.txt: Removed.
+        * platform/wpe/http/tests/websocket/tests/hybi/send-object-tostring-check-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-length-computed-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/css/css-values/minmax-length-percent-computed-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https-expected.txt: Removed.
+
 2021-04-21  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Refactor SourceBuffer::enqueuedSamplesForTrackID() for testing purposes
