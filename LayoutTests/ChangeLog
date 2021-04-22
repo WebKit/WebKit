@@ -1,3 +1,16 @@
+2021-04-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r276393.
+
+        This expectation is needed so that the test will pass on bots
+
+        Reverted changeset:
+
+        "Mass removing prior test expectations that don't need to be
+        set anymore"
+        https://bugs.webkit.org/show_bug.cgi?id=224898
+        https://commits.webkit.org/r276393
+
 2021-04-22  Martin Robinson  <mrobinson@webkit.org>
 
         [GTK] Turn on editable <input type=date> and <input type=time> fields
