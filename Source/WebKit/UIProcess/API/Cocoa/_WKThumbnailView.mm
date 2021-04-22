@@ -36,6 +36,7 @@
 #import "WebPageProxy.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/NakedPtr.h>
+#import <wtf/SystemTracing.h>
 
 // FIXME: Make it possible to leave a snapshot of the content presented in the WKView while the thumbnail is live.
 // FIXME: Don't make new speculative tiles while thumbnailed.
@@ -122,6 +123,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
 
+    tracePoint(TakeSnapshotStart);
     _waitingForSnapshot = YES;
 
     RetainPtr<_WKThumbnailView> thumbnailView = self;
@@ -144,6 +146,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](const WebKit::ShareableBitmap::Handle& imageHandle) {
         auto bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
+        tracePoint(TakeSnapshotEnd, !!cgImage);
         [thumbnailView _didTakeSnapshot:cgImage.get()];
     });
 }

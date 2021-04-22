@@ -1,3 +1,26 @@
+2021-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Add trace points for WKWebView snapshotting
+        https://bugs.webkit.org/show_bug.cgi?id=224943
+
+        Reviewed by Tim Horton.
+
+        Add new trace points to make snapshotting-related issues easier to diagnose. In the UI
+        process we start/end a trace scope when requested to snapshot, and before calling the
+        client's completion handler.
+
+        Trace CARenderServer snapshots which happen in the UI process, and in the web process, trace
+        the start and end of the snapshot painting.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView takeSnapshotWithConfiguration:completionHandler:]):
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        (-[_WKThumbnailView requestSnapshot]):
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _snapshotRect:intoImageOfWidth:completionHandler:]):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::paintSnapshotAtSize):
+
 2021-04-22  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed. Guard doesPageNeedTCCD in platform COCOA after r274213

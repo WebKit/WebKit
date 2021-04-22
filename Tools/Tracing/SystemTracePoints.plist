@@ -512,6 +512,52 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Paint snapshot</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12019</string>
+                 <key>CodeEnd</key>
+                 <string>12020</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Options</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Render server snapshot</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12021</string>
+                 <key>CodeEnd</key>
+                 <string>12022</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Take snapshot</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12023</string>
+                 <key>CodeEnd</key>
+                 <string>12024</string>
+                 <key>ArgNamesEnd</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Succeeded</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Commit RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>

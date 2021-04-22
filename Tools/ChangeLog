@@ -1,3 +1,14 @@
+2021-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Add trace points for WKWebView snapshotting
+        https://bugs.webkit.org/show_bug.cgi?id=224943
+
+        Reviewed by Tim Horton.
+
+        New snapshot descriptions.
+
+        * Tracing/SystemTracePoints.plist:
+
 2021-04-22  Tim Nguyen  <ntim@apple.com>
 
         Add "Tim Nguyen" to contributors.json.

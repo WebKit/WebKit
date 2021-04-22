@@ -119,6 +119,12 @@ enum TracePointCode {
     FlushRemoteImageBufferEnd,
     CreateInjectedBundleStart,
     CreateInjectedBundleEnd,
+    PaintSnapshotStart,
+    PaintSnapshotEnd,
+    RenderServerSnapshotStart,
+    RenderServerSnapshotEnd,
+    TakeSnapshotStart,
+    TakeSnapshotEnd,
 
     UIProcessRange = 14000,
     CommitLayerTreeStart,
