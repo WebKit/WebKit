@@ -1,5 +1,17 @@
 2021-04-22  Sam Sneddon  <gsnedders@apple.com>
 
+        server_process_unittest.py's MockFile should all be bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224877
+
+        Reviewed by Jonathan Bedard.
+
+        This fixes the test when run under pytest on Python 3.
+
+        * Scripts/webkitpy/port/server_process_unittest.py:
+        (MockFile.read):
+
+2021-04-22  Sam Sneddon  <gsnedders@apple.com>
+
         Fix potential flakiness when running webkitpy tests
         https://bugs.webkit.org/show_bug.cgi?id=224887
 
