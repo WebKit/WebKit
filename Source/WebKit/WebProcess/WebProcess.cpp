@@ -1971,11 +1971,12 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
     m_useGPUProcessForMedia = useGPUProcessForMedia;
 
 #if ENABLE(ENCRYPTED_MEDIA)
-    if (!useGPUProcessForMedia) {
-        auto& cdmFactories = CDMFactory::registeredFactories();
-        cdmFactories.clear();
+    auto& cdmFactories = CDMFactory::registeredFactories();
+    cdmFactories.clear();
+    if (useGPUProcessForMedia)
+        cdmFactory().registerFactory(cdmFactories);
+    else
         CDMFactory::platformRegisterFactories(cdmFactories);
-    }
 #endif
 
 #if USE(AUDIO_SESSION)
@@ -2077,6 +2078,14 @@ RemoteLegacyCDMFactory& WebProcess::legacyCDMFactory()
     return *supplement<RemoteLegacyCDMFactory>();
 }
 #endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
+RemoteCDMFactory& WebProcess::cdmFactory()
+{
+    return *supplement<RemoteCDMFactory>();
+}
+#endif
+
 
 } // namespace WebKit
 

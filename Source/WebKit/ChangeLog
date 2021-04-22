@@ -1,3 +1,29 @@
+2021-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Call RemoteCDMFactory::registerFactory() in WebProcess::setUseGPUProcessForMedia()
+        https://bugs.webkit.org/show_bug.cgi?id=224907
+
+        Reviewed by Eric Carlson.
+
+        Call RemoteCDMFactory::registerFactory() in WebProcess::setUseGPUProcessForMedia() like we
+        did before r275887, instead of doing it in the GPUProcessConnection constructor. This is
+        safer as it makes sure the CDMFactory gets registered even if the GPUProcess has not launched
+        yet. This is also more consistent with what we do for LegacyCDM since Bug 224905.
+
+        The MediaKeys API still seems functional after r275887 (unlike the LegacyCDM one) so it does
+        not seem it caused obvious breakage. That said, it is still safer to restore pre-r275887
+        behavior. There is also no drawback to restoring the previous behavior since I made sure the
+        GPUProcess does not get launched eagerly.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::GPUProcessConnection):
+        (WebKit::GPUProcessConnection::dispatchMessage):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForMedia):
+        (WebKit::WebProcess::cdmFactory):
+        * WebProcess/WebProcess.h:
+
 2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add support for preconnect

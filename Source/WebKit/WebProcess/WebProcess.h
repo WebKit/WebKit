@@ -118,6 +118,7 @@ class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
 class ProcessAssertion;
+class RemoteCDMFactory;
 class RemoteLegacyCDMFactory;
 struct ServiceWorkerInitializationData;
 class StorageAreaMap;
@@ -244,7 +245,9 @@ public:
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RemoteLegacyCDMFactory& legacyCDMFactory();
 #endif
-
+#if ENABLE(ENCRYPTED_MEDIA)
+    RemoteCDMFactory& cdmFactory();
+#endif
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(WEB_AUTHN)

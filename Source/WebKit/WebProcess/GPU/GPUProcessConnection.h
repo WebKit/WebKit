@@ -40,7 +40,6 @@
 namespace WebKit {
 
 class RemoteAudioSourceProviderManager;
-class RemoteCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
 class RemoteMediaPlayerManager;
 class WebPage;
@@ -70,10 +69,6 @@ public:
 
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RemoteAudioSourceProviderManager& audioSourceProviderManager();
-#endif
-
-#if ENABLE(ENCRYPTED_MEDIA)
-    RemoteCDMFactory& cdmFactory();
 #endif
 
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();

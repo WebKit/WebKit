@@ -101,11 +101,6 @@ GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectio
     addLanguageChangeObserver(this, languagesChanged);
 
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::MediaPainting)) {
-#if ENABLE(ENCRYPTED_MEDIA)
-        auto& cdmFactories = CDMFactory::registeredFactories();
-        cdmFactories.clear();
-        cdmFactory().registerFactory(cdmFactories);
-#endif
         mediaEngineConfigurationFactory().registerFactory();
 #if ENABLE(VP9)
         enableVP9Decoders(PlatformMediaSessionManager::shouldEnableVP8Decoder(), PlatformMediaSessionManager::shouldEnableVP9Decoder(), PlatformMediaSessionManager::shouldEnableVP9SWDecoder());
@@ -160,13 +155,6 @@ RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManag
 }
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-RemoteCDMFactory& GPUProcessConnection::cdmFactory()
-{
-    return *WebProcess::singleton().supplement<RemoteCDMFactory>();
-}
-#endif
-
 RemoteMediaEngineConfigurationFactory& GPUProcessConnection::mediaEngineConfigurationFactory()
 {
     return *WebProcess::singleton().supplement<RemoteMediaEngineConfigurationFactory>();
@@ -194,7 +182,7 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
-        WebProcess::singleton().supplement<RemoteCDMFactory>()->didReceiveSessionMessage(connection, decoder);
+        WebProcess::singleton().cdmFactory().didReceiveSessionMessage(connection, decoder);
         return true;
     }
 #endif
