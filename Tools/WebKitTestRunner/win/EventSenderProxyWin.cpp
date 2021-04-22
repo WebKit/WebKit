@@ -40,7 +40,7 @@ LRESULT EventSenderProxy::dispatchMessage(UINT message, WPARAM wParam, LPARAM lP
     msg.message = message;
     msg.wParam = wParam;
     msg.lParam = lParam;
-    msg.time = GetTickCount() + static_cast<DWORD>(m_time);
+    msg.time = GetTickCount();
     msg.pt = positionInPoint();
 
     TranslateMessage(&msg);
@@ -49,7 +49,6 @@ LRESULT EventSenderProxy::dispatchMessage(UINT message, WPARAM wParam, LPARAM lP
 
 EventSenderProxy::EventSenderProxy(TestController* testController)
     : m_testController(testController)
-    , m_time(0)
     , m_leftMouseButtonDown(false)
     , m_clickCount(0)
     , m_clickTime(0)
@@ -152,7 +151,7 @@ void EventSenderProxy::continuousMouseScrollBy(int, int, bool)
 
 void EventSenderProxy::leapForward(int milliseconds)
 {
-    m_time += milliseconds / 1000.0;
+    Sleep(milliseconds);
 }
 
 static unsigned makeKeyDataForScanCode(int virtualKeyCode)
