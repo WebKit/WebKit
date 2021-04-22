@@ -1,3 +1,12 @@
+2021-04-22  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION (Metal ANGLE): webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html is constantly timing out. 
+        https://bugs.webkit.org/show_bug.cgi?id=224257
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test that's timing out constantly to slow to see if it improves.
+
 2021-04-22  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Multi-column spanners are not part of the enclosing multi-column renderer's subtree
