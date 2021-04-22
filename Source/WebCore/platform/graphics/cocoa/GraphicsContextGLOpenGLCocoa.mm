@@ -467,6 +467,9 @@ void GraphicsContextGLOpenGL::clearCurrentContext()
 #if PLATFORM(IOS_FAMILY)
 bool GraphicsContextGLOpenGL::releaseCurrentContext(ReleaseBehavior releaseBehavior)
 {
+    if (!isANGLEAvailable())
+        return true;
+
     // At the moment this function is relevant only when web thread lock owns the GraphicsContextGLOpenGL current context.
     ASSERT(!isCurrentContextPredictable());
 
