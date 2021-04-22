@@ -108,7 +108,7 @@ private:
     // Message handlers.
     void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&);
 #endif
-#if ENABLE(SHAREABLE_RESOURCE)
+#if ENABLE(WEB_RTC)
     void connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler, CompletionHandler<void(Optional<bool>)>&&);
 #endif
 

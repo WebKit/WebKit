@@ -1,3 +1,14 @@
+2021-04-22  Alex Christensen  <achristensen@webkit.org>
+
+        Fix ENABLE macro around NetworkProcessConnection::connectToRTCDataChannelRemoteSource declaration
+        https://bugs.webkit.org/show_bug.cgi?id=224938
+
+        Reviewed by Chris Dumez.
+
+        This matches the macro around the definition.
+
+        * WebProcess/Network/NetworkProcessConnection.h:
+
 2021-04-22  BJ Burg  <bburg@apple.com>
 
         v2: REGRESSION(r266890): [Cocoa] Fix API::InspectorClient leak
