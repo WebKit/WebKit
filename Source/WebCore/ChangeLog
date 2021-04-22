@@ -1,3 +1,22 @@
+2021-04-22  Antoine Quint  <graouts@webkit.org>
+
+        Add discrete animation support for border-image-repeat
+        https://bugs.webkit.org/show_bug.cgi?id=224923
+
+        Reviewed by Antti Koivisto.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::operator<<):
+        * rendering/style/NinePieceImage.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setBorderImageHorizontalRule):
+        (WebCore::RenderStyle::setBorderImageVerticalRule):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::borderImageHorizontalRule const):
+        (WebCore::RenderStyle::borderImageVerticalRule const):
+
 2021-04-22  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Multi-column spanners are not part of the enclosing multi-column renderer's subtree

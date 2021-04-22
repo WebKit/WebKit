@@ -620,7 +620,6 @@ public:
         return (style.*m_getter)();
     }
 
-private:
     bool equals(const RenderStyle& a, const RenderStyle& b) const override
     {
         if (&a == &b)
@@ -635,6 +634,7 @@ private:
     }
 #endif
 
+private:
     T (RenderStyle::*m_getter)() const;
 };
 
@@ -684,16 +684,52 @@ public:
     {
     }
 
-private:
-    bool canInterpolate(const RenderStyle&, const RenderStyle&) const final { return false; }
-
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
         ASSERT(!context.progress || context.progress == 1.0);
         (destination.*this->m_setter)(this->value(context.progress ? to : from));
     }
 
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&) const final { return false; }
+
     void (RenderStyle::*m_setter)(T);
+};
+
+class BorderImageRepeatWrapper final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BorderImageRepeatWrapper()
+        : AnimationPropertyWrapperBase(CSSPropertyBorderImageRepeat)
+        , m_horizontalWrapper(DiscretePropertyWrapper<NinePieceImageRule>(CSSPropertyBorderImageRepeat, &RenderStyle::borderImageHorizontalRule, &RenderStyle::setBorderImageHorizontalRule))
+        , m_verticalWrapper(DiscretePropertyWrapper<NinePieceImageRule>(CSSPropertyBorderImageRepeat, &RenderStyle::borderImageVerticalRule, &RenderStyle::setBorderImageVerticalRule))
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&) const final { return false; }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    {
+        return m_horizontalWrapper.equals(a, b) && m_verticalWrapper.equals(a, b);
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        m_horizontalWrapper.blend(destination, from, to, context);
+        m_verticalWrapper.blend(destination, from, to, context);
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    {
+        m_horizontalWrapper.logBlend(from, to, destination, progress);
+        m_verticalWrapper.logBlend(from, to, destination, progress);
+    }
+#endif
+
+    DiscretePropertyWrapper<NinePieceImageRule> m_horizontalWrapper;
+    DiscretePropertyWrapper<NinePieceImageRule> m_verticalWrapper;
 };
 
 template <typename T>
@@ -2322,7 +2358,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new TabSizePropertyWrapper,
 
         // FIXME: The following properties are currently not animatable but should be:
-        // background-blend-mode, border-image-repeat, clip-rule, color-interpolation,
+        // background-blend-mode, clip-rule, color-interpolation,
         // color-interpolation-filters, counter-increment, counter-reset, dominant-baseline,
         // fill-rule, font-family, font-feature-settings, font-kerning, font-language-override,
         // font-synthesis, font-variant-alternates, font-variant-caps, font-variant-east-asian,
@@ -2342,6 +2378,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<FillRepeat>(CSSPropertyBackgroundRepeatY, &RenderStyle::backgroundRepeatY, &RenderStyle::setBackgroundRepeatY),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderBottomStyle, &RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle),
         new DiscretePropertyWrapper<BorderCollapse>(CSSPropertyBorderCollapse, &RenderStyle::borderCollapse, &RenderStyle::setBorderCollapse),
+        new BorderImageRepeatWrapper,
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderLeftStyle, &RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderRightStyle, &RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderTopStyle, &RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle),

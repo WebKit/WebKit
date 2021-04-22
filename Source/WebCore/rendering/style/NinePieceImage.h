@@ -215,5 +215,6 @@ private:
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const NinePieceImage&);
+WTF::TextStream& operator<<(WTF::TextStream&, NinePieceImageRule);
 
 } // namespace WebCore

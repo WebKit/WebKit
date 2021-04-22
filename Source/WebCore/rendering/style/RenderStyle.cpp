@@ -2349,6 +2349,20 @@ void RenderStyle::setBorderImageOutset(LengthBox&& outset)
     m_surroundData.access().border.m_image.setOutset(WTFMove(outset));
 }
 
+void RenderStyle::setBorderImageHorizontalRule(NinePieceImageRule rule)
+{
+    if (m_surroundData->border.m_image.horizontalRule() == rule)
+        return;
+    m_surroundData.access().border.m_image.setHorizontalRule(rule);
+}
+
+void RenderStyle::setBorderImageVerticalRule(NinePieceImageRule rule)
+{
+    if (m_surroundData->border.m_image.verticalRule() == rule)
+        return;
+    m_surroundData.access().border.m_image.setVerticalRule(rule);
+}
+
 void RenderStyle::setColumnStylesFromPaginationMode(const Pagination::Mode& paginationMode)
 {
     if (paginationMode == Pagination::Unpaginated)

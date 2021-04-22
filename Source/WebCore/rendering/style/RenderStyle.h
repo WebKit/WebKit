@@ -292,6 +292,8 @@ public:
     const LengthBox& borderImageSlices() const { return m_surroundData->border.image().imageSlices(); }
     const LengthBox& borderImageWidth() const { return m_surroundData->border.image().borderSlices(); }
     const LengthBox& borderImageOutset() const { return m_surroundData->border.image().outset(); }
+    NinePieceImageRule borderImageHorizontalRule() const { return m_surroundData->border.image().horizontalRule(); }
+    NinePieceImageRule borderImageVerticalRule() const { return m_surroundData->border.image().verticalRule(); }
 
     const LengthSize& borderTopLeftRadius() const { return m_surroundData->border.topLeftRadius(); }
     const LengthSize& borderTopRightRadius() const { return m_surroundData->border.topRightRadius(); }
@@ -902,6 +904,8 @@ public:
     void setBorderImageSlices(LengthBox&&);
     void setBorderImageWidth(LengthBox&&);
     void setBorderImageOutset(LengthBox&&);
+    void setBorderImageHorizontalRule(NinePieceImageRule);
+    void setBorderImageVerticalRule(NinePieceImageRule);
 
     void setBorderTopLeftRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_topLeftRadius, WTFMove(size)); }
     void setBorderTopRightRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_topRightRadius, WTFMove(size)); }

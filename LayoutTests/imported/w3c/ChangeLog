@@ -1,3 +1,16 @@
+2021-04-22  Antoine Quint  <graouts@webkit.org>
+
+        Add discrete animation support for border-image-repeat
+        https://bugs.webkit.org/show_bug.cgi?id=224923
+
+        Reviewed by Antti Koivisto.
+
+        Mark 10 WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
 2021-04-22  Chris Lord  <clord@igalia.com>
 
         Implement FontFace in Workers for OffscreenCanvas

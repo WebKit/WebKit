@@ -290,4 +290,15 @@ TextStream& operator<<(TextStream& ts, const NinePieceImage& image)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, NinePieceImageRule rule)
+{
+    switch (rule) {
+    case NinePieceImageRule::Stretch: ts << "stretch"; break;
+    case NinePieceImageRule::Round: ts << "round"; break;
+    case NinePieceImageRule::Space: ts << "space"; break;
+    case NinePieceImageRule::Repeat: ts << "repeat"; break;
+    }
+    return ts;
+}
+
 }
