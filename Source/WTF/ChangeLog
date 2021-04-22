@@ -1,3 +1,15 @@
+2021-04-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix the tvOS build after r276325
+        https://bugs.webkit.org/show_bug.cgi?id=224929
+        <rdar://problem/77003408>
+
+        Reviewed by Wenson Hsieh.
+
+        Fix the tvOS build after r276325
+
+        * wtf/PlatformHave.h:
+
 2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Fix internal builds after r276325

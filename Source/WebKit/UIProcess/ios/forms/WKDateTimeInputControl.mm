@@ -90,32 +90,42 @@ static const CGFloat kDateTimePickerTimeControlHeight = 172;
     [super viewDidLoad];
 
     CGSize contentSize = self.preferredContentSize;
+    CGRect contentFrame = CGRectMake(0, 0, contentSize.width, contentSize.height);
 
+    UIView *contentView = nil;
+#if HAVE(UIBLUREFFECT_STYLE_SYSTEM_MATERIAL)
     auto backgroundView = adoptNS([[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleSystemMaterial]]);
-    [backgroundView setFrame:CGRectMake(0, 0, contentSize.width, contentSize.height)];
+    [backgroundView setFrame:contentFrame];
     [self.view addSubview:backgroundView.get()];
+    contentView = [backgroundView contentView];
+#else
+    auto backgroundView = adoptNS([[UIView alloc] initWithFrame:contentFrame]);
+    [backgroundView setBackgroundColor:UIColor.systemBackgroundColor];
+    [self.view addSubview:backgroundView.get()];
+    contentView = backgroundView.get();
+#endif
 
-    [[backgroundView contentView] addSubview:_datePicker.get()];
+    [contentView addSubview:_datePicker.get()];
 
     CGSize datePickerSize = self.preferredDatePickerSize;
     UIEdgeInsets datePickerInsets = [self datePickerInsets];
 
     [NSLayoutConstraint activateConstraints:@[
-        [[_datePicker topAnchor] constraintEqualToAnchor:[backgroundView contentView].topAnchor constant:datePickerInsets.top],
-        [[_datePicker leadingAnchor] constraintEqualToAnchor:[backgroundView contentView].leadingAnchor constant:datePickerInsets.left],
+        [[_datePicker topAnchor] constraintEqualToAnchor:contentView.topAnchor constant:datePickerInsets.top],
+        [[_datePicker leadingAnchor] constraintEqualToAnchor:contentView.leadingAnchor constant:datePickerInsets.left],
         [[_datePicker widthAnchor] constraintEqualToConstant:datePickerSize.width],
         [[_datePicker heightAnchor] constraintEqualToConstant:datePickerSize.height],
     ]];
 
     auto toolbarView = adoptNS([[UIView alloc] init]);
     [toolbarView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [[backgroundView contentView] addSubview:toolbarView.get()];
+    [contentView addSubview:toolbarView.get()];
 
     [NSLayoutConstraint activateConstraints:@[
-        [[toolbarView bottomAnchor] constraintEqualToAnchor:[backgroundView contentView].bottomAnchor],
-        [[toolbarView leadingAnchor] constraintEqualToAnchor:[backgroundView contentView].leadingAnchor],
+        [[toolbarView bottomAnchor] constraintEqualToAnchor:contentView.bottomAnchor],
+        [[toolbarView leadingAnchor] constraintEqualToAnchor:contentView.leadingAnchor],
         [[toolbarView heightAnchor] constraintEqualToConstant:kDateTimePickerToolbarHeight],
-        [[toolbarView widthAnchor] constraintEqualToAnchor:[backgroundView contentView].widthAnchor],
+        [[toolbarView widthAnchor] constraintEqualToAnchor:contentView.widthAnchor],
     ]];
 
     auto separatorView = adoptNS([[UIView alloc] init]);

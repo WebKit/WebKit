@@ -200,6 +200,10 @@ WTF_EXTERN_C_END
 - (BOOL)_appAdoptsUISceneLifecycle;
 @end
 
+@interface UIColor ()
++ (UIColor *)systemBackgroundColor;
+@end
+
 typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
     UIDatePickerModeYearAndMonth = 4269,
 };

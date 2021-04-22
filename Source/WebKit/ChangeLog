@@ -1,3 +1,21 @@
+2021-04-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix the tvOS build after r276325
+        https://bugs.webkit.org/show_bug.cgi?id=224929
+        <rdar://problem/77003408>
+
+        Reviewed by Wenson Hsieh.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/forms/WKDateTimeInputControl.mm:
+
+        [UIColor systemBackgroundColor] is SPI on tvOS.
+
+        (-[WKDateTimePickerViewController viewDidLoad]):
+
+        UIBlurEffectStyleSystemMaterial is not available on tvOS. Instead, use
+        a UIView with a system background color as the background view.
+
 2021-04-20  BJ Burg  <bburg@apple.com>
 
         v2: Web Inspector: exempt API::SharedJSContext from remote inspection and automatic inspection
