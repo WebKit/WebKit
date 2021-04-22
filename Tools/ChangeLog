@@ -1,3 +1,25 @@
+2021-04-22  Sam Sneddon  <gsnedders@apple.com>
+
+        Fix potential flakiness when running webkitpy tests
+        https://bugs.webkit.org/show_bug.cgi?id=224887
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ExecutiveTest.serial_test_run_in_parallel): Increase the delay to ensure it's
+        much greater than the VM spawn time, as the current time is a bit marginal when
+        the system is under load and we're using the spawn multiprocessing start method
+        * Scripts/webkitpy/test/main.py:
+        (Tester.run): Allow argv to be passed through for testing
+        * Scripts/webkitpy/test/main_unittest.py:
+        (TesterTest.test_no_tests_found): Explicitly pass argv to avoid using sys.argv
+        * Scripts/webkitpy/w3c/test_parser_unittest.py:
+        (TestParserTest.test_analyze_pixel_test_all_true): Reset options after test
+        (TestParserTest.test_analyze_pixel_test_all_false): Reset options after test
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py:
+        (SimulatedDeviceTest.reset_simulated_device_manager): _device_identifier_to_name
+        is a dict, and should remain one
+
 2021-04-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [iOS] Web processes recreated after crashing are not created with the right contentSizeCategory

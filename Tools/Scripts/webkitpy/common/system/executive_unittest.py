@@ -246,7 +246,7 @@ class ExecutiveTest(unittest.TestCase):
         import multiprocessing
 
         NUM_PROCESSES = 4
-        DELAY_SECS = 0.25
+        DELAY_SECS = 1.0  # make sure this is much greater than the VM spawn time
         cmd_line = [sys.executable, '-c', 'import time; time.sleep(%f); print("hello")' % DELAY_SECS]
         cwd = os.getcwd()
         commands = [tuple([cmd_line, cwd])] * NUM_PROCESSES
