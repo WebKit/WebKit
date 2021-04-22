@@ -1,3 +1,18 @@
+2021-04-22  Patrick Griffis  <pgriffis@igalia.com>
+
+        [SOUP] Show more connection information in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=224873
+
+        Show the h2 protocol as well as the connection identifier
+        in the inspector.
+
+        Reviewed by Adrian Perez de Castro.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::gotHeadersCallback):
+        (WebKit::soupHTTPVersionToString):
+        (WebKit::NetworkDataTaskSoup::didGetHeaders):
+
 2021-04-22  Chris Dumez  <cdumez@apple.com>
 
         NowPlayingInfoForGPUManager::clearNowPlayingInfoPrivate() sometimes launches the GPUProcess on page close

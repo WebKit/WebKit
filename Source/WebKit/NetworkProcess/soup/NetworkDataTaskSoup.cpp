@@ -1019,6 +1019,22 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(SoupMessagePriority pr
     return WebCore::NetworkLoadPriority::Unknown;
 }
 
+static AtomString soupHTTPVersionToString(SoupHTTPVersion version)
+{
+    switch (version) {
+    case SOUP_HTTP_1_0:
+        return AtomString("http/1.0", AtomString::ConstructFromLiteral);
+    case SOUP_HTTP_1_1:
+        return AtomString("http/1.1", AtomString::ConstructFromLiteral);
+#if SOUP_CHECK_VERSION(2, 99, 3)
+    case SOUP_HTTP_2_0:
+        return AtomString("h2", AtomString::ConstructFromLiteral);
+#endif
+    }
+
+    return { };
+}
+
 void NetworkDataTaskSoup::didGetHeaders()
 {
     // We are a bit more conservative with the persistent credential storage than the session store,
@@ -1046,9 +1062,12 @@ void NetworkDataTaskSoup::didGetHeaders()
         m_networkLoadMetrics.requestHeaders = WTFMove(requestHeaders);
 
         m_networkLoadMetrics.priority = toNetworkLoadPriority(soup_message_get_priority(m_soupMessage.get()));
+#if SOUP_CHECK_VERSION(2, 99, 4)
+        m_networkLoadMetrics.connectionIdentifier = String::number(soup_message_get_connection_id(m_soupMessage.get()));
+#endif
     }
 
-    m_networkLoadMetrics.protocol = soup_message_get_http_version(m_soupMessage.get()) == SOUP_HTTP_1_0 ? "http/1.0" : "http/1.1";
+    m_networkLoadMetrics.protocol = soupHTTPVersionToString(soup_message_get_http_version(m_soupMessage.get()));
 }
 
 #if USE(SOUP2)

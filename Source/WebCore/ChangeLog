@@ -1,3 +1,15 @@
+2021-04-22  Patrick Griffis  <pgriffis@igalia.com>
+
+        [SOUP] Show more connection information in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=224873
+
+        Handle SOUP_HTTP_2_0.
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+
 2021-04-22  Antoine Quint  <graouts@webkit.org>
 
         Add discrete animation support for border-image-repeat
