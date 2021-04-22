@@ -683,7 +683,7 @@ public:
     WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
     using BufferedSamplesPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
     void bufferedSamplesForTrackId(SourceBuffer&, const AtomString&, BufferedSamplesPromise&&);
-    Vector<String> enqueuedSamplesForTrackID(SourceBuffer&, const AtomString&);
+    void enqueuedSamplesForTrackID(SourceBuffer&, const AtomString&, BufferedSamplesPromise&&);
     double minimumUpcomingPresentationTimeForTrackID(SourceBuffer&, const AtomString&);
     void setShouldGenerateTimestamps(SourceBuffer&, bool);
     void setMaximumQueueDepthForTrackID(SourceBuffer&, const AtomString&, size_t);

@@ -218,6 +218,11 @@ void SourceBufferPrivate::bufferedSamplesForTrackId(const AtomString& trackId, C
     completionHandler(WTFMove(sampleDescriptions));
 }
 
+void SourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    completionHandler({ });
+}
+
 MediaTime SourceBufferPrivate::fastSeekTimeForMediaTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold)
 {
     if (!m_client)

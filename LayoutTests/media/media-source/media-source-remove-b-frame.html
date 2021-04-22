@@ -42,7 +42,8 @@
 
         run('sourceBuffer.appendBuffer(ibpSampleRun())');
         await waitFor(sourceBuffer, 'updateend');
-        internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        let enqueuedSamples = await internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples.forEach(consoleWrite);
 
         run('sourceBuffer.remove(1, 2)');
         await waitFor(sourceBuffer, 'updateend');
@@ -58,7 +59,8 @@
         bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         bufferedSamples.forEach(consoleWrite);
         consoleWrite("Enqueued:");
-        internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        enqueuedSamples = await internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples.forEach(consoleWrite);
 
         endTest();
     });

@@ -59,9 +59,9 @@
         run('sourceBuffer.appendBuffer(samples)');
     }
 
-    function seeked()
+    async function seeked()
     {
-        enqueuedSamples = internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples = await internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
         testExpected("enqueuedSamples.length", 1);
         enqueuedSamples.forEach(consoleWrite);
         endTest();

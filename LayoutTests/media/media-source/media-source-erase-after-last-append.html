@@ -47,7 +47,8 @@
             run('source.endOfStream()');
 
             // Samples with PTS >= 5 should have been deleted and not reach playback.
-            internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+            const enqueuedSamples = await internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+            enqueuedSamples.forEach(consoleWrite);
             endTest();
         });
     </script>

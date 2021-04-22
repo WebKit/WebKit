@@ -715,7 +715,7 @@ enum TreeType {
 
     [Conditional=MEDIA_SOURCE] undefined initializeMockMediaSource();
     [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> bufferedSamplesForTrackId(SourceBuffer buffer, DOMString trackId);
-    [Conditional=MEDIA_SOURCE] sequence<DOMString> enqueuedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
+    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> enqueuedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] undefined setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
     [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, DOMString trackID, unsigned long maxQueueDepth);

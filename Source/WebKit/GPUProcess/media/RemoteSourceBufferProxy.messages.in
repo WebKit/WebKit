@@ -54,6 +54,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SeekToTime(MediaTime mediaTime)
     UpdateTrackIds(Vector<std::pair<WebKit::TrackPrivateRemoteIdentifier, WebKit::TrackPrivateRemoteIdentifier>> identifierPairs)
     BufferedSamplesForTrackId(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples) Async
+    EnqueuedSamplesForTrackID(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (Vector<String> samples) Async
 }
 
 #endif

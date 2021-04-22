@@ -244,9 +244,9 @@ bool MockSourceBufferPrivate::isActive() const
     return m_isActive;
 }
 
-Vector<String> MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&)
+void MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    return m_enqueuedSamples;
+    completionHandler(copyToVector(m_enqueuedSamples));
 }
 
 MediaTime MockSourceBufferPrivate::minimumUpcomingPresentationTimeForTrackID(const AtomString&)
