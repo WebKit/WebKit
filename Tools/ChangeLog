@@ -1,3 +1,16 @@
+2021-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r275887) open.spotify.com says Safari is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=224905
+        <rdar://76982108>
+
+        Reviewed by Eric Carlson.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2021-04-21  Aakash Jain  <aakash_jain@apple.com>
 
         [build.webkit.org] Disable unused parameters in force build dialog box

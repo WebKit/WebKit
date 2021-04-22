@@ -1993,7 +1993,9 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    if (!useGPUProcessForMedia)
+    if (useGPUProcessForMedia)
+        legacyCDMFactory().registerFactory();
+    else
         LegacyCDM::resetFactories();
 #endif
 
@@ -2066,6 +2068,13 @@ SpeechRecognitionRealtimeMediaSourceManager& WebProcess::ensureSpeechRecognition
         m_speechRecognitionRealtimeMediaSourceManager = makeUnique<SpeechRecognitionRealtimeMediaSourceManager>(makeRef(*parentProcessConnection()));
 
     return *m_speechRecognitionRealtimeMediaSourceManager;
+}
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+RemoteLegacyCDMFactory& WebProcess::legacyCDMFactory()
+{
+    return *supplement<RemoteLegacyCDMFactory>();
 }
 #endif
 

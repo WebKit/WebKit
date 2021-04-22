@@ -40,7 +40,6 @@
 #include "RemoteAudioSourceProviderManager.h"
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMProxy.h"
-#include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteRemoteCommandListenerMessages.h"
@@ -107,9 +106,6 @@ GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectio
         cdmFactories.clear();
         cdmFactory().registerFactory(cdmFactories);
 #endif
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-        legacyCDMFactory().registerFactory();
-#endif
         mediaEngineConfigurationFactory().registerFactory();
 #if ENABLE(VP9)
         enableVP9Decoders(PlatformMediaSessionManager::shouldEnableVP8Decoder(), PlatformMediaSessionManager::shouldEnableVP9Decoder(), PlatformMediaSessionManager::shouldEnableVP9SWDecoder());
@@ -168,13 +164,6 @@ RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManag
 RemoteCDMFactory& GPUProcessConnection::cdmFactory()
 {
     return *WebProcess::singleton().supplement<RemoteCDMFactory>();
-}
-#endif
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-RemoteLegacyCDMFactory& GPUProcessConnection::legacyCDMFactory()
-{
-    return *WebProcess::singleton().supplement<RemoteLegacyCDMFactory>();
 }
 #endif
 

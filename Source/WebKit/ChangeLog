@@ -1,3 +1,31 @@
+2021-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r275887) open.spotify.com says Safari is not supported
+        https://bugs.webkit.org/show_bug.cgi?id=224905
+        <rdar://76982108>
+
+        Reviewed by Eric Carlson.
+
+        Move legacyCDMFactory() getter from GPUProcessConnection to WebProcess so that
+        we can query it without having to launch the GPUProcess. This means we can
+        call legacyCDMFactory().registerFactory() inside of WebProcess::setUseGPUProcessForMedia()
+        (like before r275887) instead of doing it in the GPUProcessConnection constructor.
+
+        As a result, calls to WebKitMediaKeys.isTypeSupported() return accurate results
+        even if the GPUProcess is not launched yet. Calling WebKitMediaKeys.isTypeSupported() ends
+        up launching the GPU Process, as is expected.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::GPUProcessConnection):
+        (WebKit::GPUProcessConnection::legacyCDMFactory): Deleted.
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::setCDM):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForMedia):
+        (WebKit::WebProcess::legacyCDMFactory):
+        * WebProcess/WebProcess.h:
+
 2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce helper methods to map FloatQuads to and from content and root view coordinates

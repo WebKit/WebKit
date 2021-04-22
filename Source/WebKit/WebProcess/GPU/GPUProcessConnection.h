@@ -43,7 +43,6 @@ class RemoteAudioSourceProviderManager;
 class RemoteCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
 class RemoteMediaPlayerManager;
-class RemoteLegacyCDMFactory;
 class WebPage;
 struct OverrideScreenDataForTesting;
 struct WebPageCreationParameters;
@@ -75,10 +74,6 @@ public:
 
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactory& cdmFactory();
-#endif
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    RemoteLegacyCDMFactory& legacyCDMFactory();
 #endif
 
     RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();

@@ -118,6 +118,7 @@ class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
 class ProcessAssertion;
+class RemoteLegacyCDMFactory;
 struct ServiceWorkerInitializationData;
 class StorageAreaMap;
 class UserData;
@@ -239,6 +240,9 @@ public:
 
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     LibWebRTCCodecs& libWebRTCCodecs();
+#endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    RemoteLegacyCDMFactory& legacyCDMFactory();
 #endif
 
 #endif // ENABLE(GPU_PROCESS)

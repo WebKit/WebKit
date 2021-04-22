@@ -282,6 +282,32 @@ TEST(GPUProcess, OnlyLaunchesGPUProcessWhenNecessaryMediaFeatureDetection)
     EXPECT_EQ([configuration.get().processPool _gpuProcessIdentifier], 0);
 }
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+TEST(GPUProcess, LegacyCDM)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForMediaEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("CaptureVideoInGPUProcessEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], true, WKStringCreateWithUTF8CString("UseGPUProcessForCanvasRenderingEnabled"));
+    WKPreferencesSetBoolValueForKeyForTesting((__bridge WKPreferencesRef)[configuration preferences], false, WKStringCreateWithUTF8CString("UseGPUProcessForDOMRenderingEnabled"));
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    __block bool done = false;
+    [webView evaluateJavaScript:@"WebKitMediaKeys.isTypeSupported('com.apple.fps.1_0')" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        EXPECT_TRUE([result boolValue]);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    // This should not have launched a GPUProcess.
+    while (![configuration.get().processPool _gpuProcessIdentifier])
+        TestWebKitAPI::Util::spinRunLoop(1);
+}
+#endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
+
 TEST(GPUProcess, CrashWhilePlayingVideo)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
