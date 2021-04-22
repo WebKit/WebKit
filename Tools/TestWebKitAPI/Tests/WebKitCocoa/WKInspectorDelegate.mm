@@ -221,7 +221,7 @@ TEST(WKInspectorDelegate, ShowURLExternally)
     [[webView _inspector] show];
     TestWebKitAPI::Util::run(&didAttachLocalInspectorCalled);
 
-    urlToOpen = adoptNS([NSURL URLWithString:@"https://www.webkit.org/"]);
+    urlToOpen = [NSURL URLWithString:@"https://www.webkit.org/"];
 
     // Check the case where the load is intercepted by the navigation delegate.
     [[webView _inspector] _openURLExternallyForTesting:urlToOpen.get() useFrontendAPI:NO];

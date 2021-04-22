@@ -1,3 +1,16 @@
+2021-04-22  BJ Burg  <bburg@apple.com>
+
+        v2: REGRESSION(r266890): [Cocoa] Fix API::InspectorClient leak
+        https://bugs.webkit.org/show_bug.cgi?id=223899
+        <rdar://problem/75249282>
+
+        Reviewed by Devin Rousso.
+
+        Address post-review feedback.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (TEST):
+
 2021-04-22  Sam Sneddon  <gsnedders@apple.com>
 
         Ensure all non-local AutoInstalled libraries specify version
