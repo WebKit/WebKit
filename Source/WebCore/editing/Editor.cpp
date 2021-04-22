@@ -261,6 +261,8 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection)
     auto options = FrameSelection::defaultSetSelectionOptions();
     if (m_options & TemporarySelectionOption::DoNotSetFocus)
         options.add(FrameSelection::DoNotSetFocus);
+    if (m_options & TemporarySelectionOption::RevealSelection)
+        options.add(FrameSelection::RevealSelection);
     m_document->selection().setSelection(selection, options);
 }
 

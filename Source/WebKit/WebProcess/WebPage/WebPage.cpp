@@ -7479,15 +7479,18 @@ bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighli
     return true;
 }
 
-void WebPage::restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&& memoryHandles)
+void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IPCHandle>&& memoryHandles, const Optional<unsigned> index)
 {
     auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
 
+    unsigned i = 0;
     for (const auto& ipcHandle : memoryHandles) {
         auto sharedMemory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
         if (!sharedMemory)
             continue;
-        document->appHighlightStorage().restoreAppHighlight(SharedBuffer::create(static_cast<const char*>(sharedMemory->data()), sharedMemory->size()));
+
+        document->appHighlightStorage().restoreAndScrollToAppHighlight(SharedBuffer::create(static_cast<const char*>(sharedMemory->data()), sharedMemory->size()), i == index ? ScrollToHighlight::Yes : ScrollToHighlight::No);
+        i++;
     }
 }
 #endif
