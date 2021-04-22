@@ -260,10 +260,13 @@ void UserMediaPermissionRequestManagerProxy::grantRequest(UserMediaPermissionReq
 }
 
 #if ENABLE(MEDIA_STREAM)
+
+#if PLATFORM(COCOA)
 static bool doesPageNeedTCCD(const WebPageProxy& page)
 {
     return (!page.preferences().captureAudioInGPUProcessEnabled() && !page.preferences().captureAudioInUIProcessEnabled()) || !page.preferences().captureVideoInGPUProcessEnabled();
 }
+#endif
 
 void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPermissionRequestProxy& request)
 {

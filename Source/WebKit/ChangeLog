@@ -1,3 +1,12 @@
+2021-04-22  Lauro Moura  <lmoura@igalia.com>
+
+        Unreviewed. Guard doesPageNeedTCCD in platform COCOA after r274213
+        https://bugs.webkit.org/show_bug.cgi?id=224951
+
+        Silence -Wunused-function in non-cocoa platforms.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+
 2021-04-22  Patrick Griffis  <pgriffis@igalia.com>
 
         [SOUP] Show more connection information in the inspector
