@@ -1185,6 +1185,7 @@ private:
         // direct, caller).
         Vector<unsigned> m_identifierRemap;
         Vector<unsigned> m_switchRemap;
+        Vector<unsigned> m_stringSwitchRemap;
         
         // These are blocks whose terminal is a Jump, Branch or Switch, and whose target has not yet been linked.
         // Their terminal instead refers to a bytecode index, and the right BB can be found in m_blockLinkingTargets.
@@ -6911,10 +6912,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpSwitchString>();
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchString;
-            data.switchTableIndex = bytecode.m_tableIndex;
+            data.switchTableIndex = m_inlineStackTop->m_stringSwitchRemap[bytecode.m_tableIndex];
             data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
-            const UnlinkedStringJumpTable& table = m_codeBlock->unlinkedStringSwitchJumpTable(data.switchTableIndex);
-            for (const auto& entry : table.m_offsetTable) {
+            const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data.switchTableIndex);
+            for (const auto& entry : unlinkedTable.m_offsetTable) {
                 unsigned target = m_currentIndex.offset() + entry.value.m_branchOffset;
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
@@ -8550,6 +8551,13 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     for (unsigned i = 0; i < codeBlock->numberOfUnlinkedSwitchJumpTables(); ++i) {
         m_switchRemap[i] = byteCodeParser->m_graph.m_unlinkedSwitchJumpTables.size();
         byteCodeParser->m_graph.m_unlinkedSwitchJumpTables.append(&codeBlock->unlinkedSwitchJumpTable(i));
+    }
+
+    m_stringSwitchRemap.resize(codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+    byteCodeParser->m_graph.m_stringSwitchJumpTables.resize(byteCodeParser->m_graph.m_stringSwitchJumpTables.size() + codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+    for (unsigned i = 0; i < codeBlock->numberOfUnlinkedStringSwitchJumpTables(); ++i) {
+        m_stringSwitchRemap[i] = byteCodeParser->m_graph.m_unlinkedStringSwitchJumpTables.size();
+        byteCodeParser->m_graph.m_unlinkedStringSwitchJumpTables.append(&codeBlock->unlinkedStringSwitchJumpTable(i));
     }
     
     m_argumentPositions.resize(argumentCountIncludingThisWithFixup);

@@ -868,36 +868,36 @@ CompilationResult JIT::link()
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (auto& record : m_switches) {
         unsigned bytecodeOffset = record.bytecodeIndex.offset();
+        unsigned tableIndex = record.tableIndex;
 
-        if (record.type != SwitchRecord::String) {
-            ASSERT(record.type == SwitchRecord::Immediate || record.type == SwitchRecord::Character); 
-
-            unsigned tableIndex = record.tableIndex;
+        switch (record.type) {
+        case SwitchRecord::Immediate:
+        case SwitchRecord::Character: {
             const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
             SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
             linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
-
             for (unsigned j = 0; j < unlinkedTable.m_branchOffsets.size(); ++j) {
                 unsigned offset = unlinkedTable.m_branchOffsets[j];
                 linkedTable.m_ctiOffsets[j] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
                     : linkedTable.m_ctiDefault;
             }
-        } else {
-            ASSERT(record.type == SwitchRecord::String);
+            break;
+        }
 
-            unsigned tableIndex = record.tableIndex;
+        case SwitchRecord::String: {
             const UnlinkedStringJumpTable& unlinkedTable = m_codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
             StringJumpTable& linkedTable = m_codeBlock->stringSwitchJumpTable(tableIndex);
-            linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
-            linkedTable.m_ctiOffsets = FixedVector<CodeLocationLabel<JSSwitchPtrTag>>(unlinkedTable.m_offsetTable.size());
-
+            auto ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
             for (auto& location : unlinkedTable.m_offsetTable.values()) {
                 unsigned offset = location.m_branchOffset;
                 linkedTable.m_ctiOffsets[location.m_indexInTable] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
-                    : linkedTable.m_ctiDefault;
+                    : ctiDefault;
             }
+            linkedTable.m_ctiOffsets[unlinkedTable.m_offsetTable.size()] = ctiDefault;
+            break;
+        }
         }
     }
 

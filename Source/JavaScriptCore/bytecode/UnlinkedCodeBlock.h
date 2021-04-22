@@ -92,6 +92,13 @@ struct UnlinkedStringJumpTable {
         return loc->value.m_branchOffset;
     }
 
+    inline unsigned indexForValue(StringImpl* value, unsigned defaultIndex) const
+    {
+        auto loc = m_offsetTable.find(value);
+        if (loc == m_offsetTable.end())
+            return defaultIndex;
+        return loc->value.m_indexInTable;
+    }
 };
 
 struct UnlinkedSimpleJumpTable {

@@ -42,19 +42,27 @@ namespace JSC {
 #if ENABLE(JIT)
     struct StringJumpTable {
         FixedVector<CodeLocationLabel<JSSwitchPtrTag>> m_ctiOffsets;
-        CodeLocationLabel<JSSwitchPtrTag> m_ctiDefault; // FIXME: it should not be necessary to store this.
+
+        void ensureCTITable(const UnlinkedStringJumpTable& unlinkedTable)
+        {
+            if (!isEmpty())
+                return;
+            m_ctiOffsets = FixedVector<CodeLocationLabel<JSSwitchPtrTag>>(unlinkedTable.m_offsetTable.size() + 1);
+        }
 
         inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(const UnlinkedStringJumpTable& unlinkedTable, StringImpl* value) const
         {
             auto loc = unlinkedTable.m_offsetTable.find(value);
             if (loc == unlinkedTable.m_offsetTable.end())
-                return m_ctiDefault;
+                return m_ctiOffsets[unlinkedTable.m_offsetTable.size()];
             return m_ctiOffsets[loc->value.m_indexInTable];
         }
-    };
-#endif
 
-#if ENABLE(JIT)
+        CodeLocationLabel<JSSwitchPtrTag> ctiDefault() const { return m_ctiOffsets.last(); }
+
+        bool isEmpty() const { return m_ctiOffsets.isEmpty(); }
+    };
+
     struct SimpleJumpTable {
         FixedVector<CodeLocationLabel<JSSwitchPtrTag>> m_ctiOffsets;
         CodeLocationLabel<JSSwitchPtrTag> m_ctiDefault;

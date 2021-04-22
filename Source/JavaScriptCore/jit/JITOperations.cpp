@@ -2859,7 +2859,7 @@ JSC_DEFINE_JIT_OPERATION(operationSwitchStringWithUnknownKeyType, char*, (JSGlob
         const UnlinkedStringJumpTable& unlinkedTable = codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
         result = linkedTable.ctiForValue(unlinkedTable, value).executableAddress();
     } else
-        result = linkedTable.m_ctiDefault.executableAddress();
+        result = linkedTable.ctiDefault().executableAddress();
 
     assertIsTaggedWith<JSSwitchPtrTag>(result);
     return reinterpret_cast<char*>(result);

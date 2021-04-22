@@ -176,62 +176,62 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
     
     m_graph.registerFrozenValues();
 
-    if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables() || !m_graph.m_switchJumpTables.isEmpty()) {
+    if (!m_graph.m_stringSwitchJumpTables.isEmpty() || !m_graph.m_switchJumpTables.isEmpty()) {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
-        if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables())
-            m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+        if (!m_graph.m_stringSwitchJumpTables.isEmpty())
+            m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = WTFMove(m_graph.m_stringSwitchJumpTables);
         if (!m_graph.m_switchJumpTables.isEmpty())
             m_codeBlock->ensureJITData(locker).m_switchJumpTables = WTFMove(m_graph.m_switchJumpTables);
     }
 
     for (Bag<SwitchData>::iterator iter = m_graph.m_switchData.begin(); !!iter; ++iter) {
         SwitchData& data = **iter;
-        if (!data.didUseJumpTable) {
-            ASSERT(data.kind == SwitchString || m_codeBlock->switchJumpTable(data.switchTableIndex).isEmpty());
-            continue;
-        }
-        
-        if (data.kind == SwitchString)
-            continue;
-        
-        RELEASE_ASSERT(data.kind == SwitchImm || data.kind == SwitchChar);
-        
-        const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
-        SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(data.switchTableIndex);
-        linkedTable.m_ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
-        RELEASE_ASSERT(linkedTable.m_ctiOffsets.size() == unlinkedTable.m_branchOffsets.size());
-        for (unsigned j = linkedTable.m_ctiOffsets.size(); j--;)
-            linkedTable.m_ctiOffsets[j] = linkedTable.m_ctiDefault;
-        for (unsigned j = data.cases.size(); j--;) {
-            SwitchCase& myCase = data.cases[j];
-            linkedTable.m_ctiOffsets[myCase.value.switchLookupValue(data.kind) - unlinkedTable.m_min] =
-                linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index]);
-        }
-    }
-    
-    // NOTE: we cannot clear string switch tables because (1) we're running concurrently
-    // and we cannot deref StringImpl's and (2) it would be weird to deref those
-    // StringImpl's since we refer to them.
-    for (Bag<SwitchData>::iterator switchDataIter = m_graph.m_switchData.begin(); !!switchDataIter; ++switchDataIter) {
-        SwitchData& data = **switchDataIter;
-        if (!data.didUseJumpTable)
-            continue;
-        
-        if (data.kind != SwitchString)
-            continue;
-        
-        const UnlinkedStringJumpTable& unlinkedTable = m_codeBlock->unlinkedStringSwitchJumpTable(data.switchTableIndex);
-        StringJumpTable& linkedTable = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
-        linkedTable.m_ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
-        linkedTable.m_ctiOffsets = FixedVector<CodeLocationLabel<JSSwitchPtrTag>>(unlinkedTable.m_offsetTable.size());
+        switch (data.kind) {
+        case SwitchChar:
+        case SwitchImm: {
+            if (!data.didUseJumpTable) {
+                ASSERT(m_codeBlock->switchJumpTable(data.switchTableIndex).isEmpty());
+                continue;
+            }
 
-        for (auto& entry : linkedTable.m_ctiOffsets)
-            entry = linkedTable.m_ctiDefault;
-        for (unsigned j = data.cases.size(); j--;) {
-            SwitchCase& myCase = data.cases[j];
-            auto iter = unlinkedTable.m_offsetTable.find(myCase.value.stringImpl());
-            RELEASE_ASSERT(iter != unlinkedTable.m_offsetTable.end());
-            linkedTable.m_ctiOffsets[iter->value.m_indexInTable] = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index]);
+            const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(data.switchTableIndex);
+            linkedTable.m_ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
+            RELEASE_ASSERT(linkedTable.m_ctiOffsets.size() == unlinkedTable.m_branchOffsets.size());
+            for (unsigned j = linkedTable.m_ctiOffsets.size(); j--;)
+                linkedTable.m_ctiOffsets[j] = linkedTable.m_ctiDefault;
+            for (unsigned j = data.cases.size(); j--;) {
+                SwitchCase& myCase = data.cases[j];
+                linkedTable.m_ctiOffsets[myCase.value.switchLookupValue(data.kind) - unlinkedTable.m_min] =
+                    linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index]);
+            }
+            break;
+        }
+
+        case SwitchString: {
+            if (!data.didUseJumpTable) {
+                ASSERT(m_codeBlock->stringSwitchJumpTable(data.switchTableIndex).isEmpty());
+                continue;
+            }
+
+            const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data.switchTableIndex);
+            StringJumpTable& linkedTable = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
+            auto ctiDefault = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[data.fallThrough.block->index]);
+            RELEASE_ASSERT(linkedTable.m_ctiOffsets.size() == unlinkedTable.m_offsetTable.size() + 1);
+            for (auto& entry : linkedTable.m_ctiOffsets)
+                entry = ctiDefault;
+            for (unsigned j = data.cases.size(); j--;) {
+                SwitchCase& myCase = data.cases[j];
+                auto iter = unlinkedTable.m_offsetTable.find(myCase.value.stringImpl());
+                RELEASE_ASSERT(iter != unlinkedTable.m_offsetTable.end());
+                linkedTable.m_ctiOffsets[iter->value.m_indexInTable] = linkBuffer.locationOf<JSSwitchPtrTag>(m_blockHeads[myCase.target.block->index]);
+            }
+            break;
+        }
+
+        case SwitchCell:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         }
     }
 

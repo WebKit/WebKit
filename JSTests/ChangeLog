@@ -1,3 +1,18 @@
+2021-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG / FTL should inline switch_string
+        https://bugs.webkit.org/show_bug.cgi?id=224578
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/switch-inlining.js: Added.
+        (inner):
+        (outer):
+        * stress/switch-inlining-nested.js: Added.
+        (shouldBe):
+        (inner):
+        (outer):
+
 2021-04-21  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] Unskip some tests for ARMv7 and MIPS

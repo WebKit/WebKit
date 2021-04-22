@@ -11782,7 +11782,11 @@ void SpeculativeJIT::emitBinarySwitchStringRecurse(
 void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRReg string)
 {
     data->didUseJumpTable = true;
-    
+
+    const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data->switchTableIndex);
+    StringJumpTable& linkedTable = m_jit.graph().stringSwitchJumpTable(data->switchTableIndex);
+    linkedTable.ensureCTITable(unlinkedTable);
+
     bool canDoBinarySwitch = true;
     unsigned totalLength = 0;
     
@@ -11801,8 +11805,7 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
 
     if (!canDoBinarySwitch || totalLength > Options::maximumBinaryStringSwitchTotalLength()) {
         flushRegisters();
-        callOperation(
-            operationSwitchString, string, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), static_cast<size_t>(data->switchTableIndex), string);
+        callOperation(operationSwitchString, string, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), static_cast<size_t>(data->switchTableIndex), &unlinkedTable, string);
         m_jit.exceptionCheck();
         m_jit.farJump(string, JSSwitchPtrTag);
         return;
@@ -11839,7 +11842,7 @@ void SpeculativeJIT::emitSwitchStringOnString(Node* node, SwitchData* data, GPRR
     
     slowCases.link(&m_jit);
     silentSpillAllRegisters(string);
-    callOperation(operationSwitchString, string, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), static_cast<size_t>(data->switchTableIndex), string);
+    callOperation(operationSwitchString, string, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), static_cast<size_t>(data->switchTableIndex), &unlinkedTable, string);
     silentFillAllRegisters();
     m_jit.exceptionCheck();
     m_jit.farJump(string, JSSwitchPtrTag);

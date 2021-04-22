@@ -1066,6 +1066,9 @@ public:
     const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(unsigned index) const { return *m_unlinkedSwitchJumpTables[index]; }
     SimpleJumpTable& switchJumpTable(unsigned index) { return m_switchJumpTables[index]; }
 
+    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(unsigned index) const { return *m_unlinkedStringSwitchJumpTables[index]; }
+    StringJumpTable& stringSwitchJumpTable(unsigned index) { return m_stringSwitchJumpTables[index]; }
+
     void appendCatchEntrypoint(BytecodeIndex bytecodeIndex, MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
     {
         m_catchEntrypoints.append(CatchEntrypointData { machineCode, FixedVector<FlushFormat>(WTFMove(argumentFormats)), bytecodeIndex });
@@ -1081,8 +1084,11 @@ public:
     Vector<BasicBlock*, 1> m_roots;
     Vector<Edge, 16> m_varArgChildren;
 
-    Vector<const UnlinkedSimpleJumpTable*> m_unlinkedSwitchJumpTables; // UnlinkedSimpleJumpTable is kept by UnlinkedCodeBlocks retained by baseline CodeBlocks handled by DFG / FTL.
+    // UnlinkedSimpleJumpTable/UnlinkedStringJumpTable are kept by UnlinkedCodeBlocks retained by baseline CodeBlocks handled by DFG / FTL.
+    Vector<const UnlinkedSimpleJumpTable*> m_unlinkedSwitchJumpTables;
     Vector<SimpleJumpTable> m_switchJumpTables;
+    Vector<const UnlinkedStringJumpTable*> m_unlinkedStringSwitchJumpTables;
+    Vector<StringJumpTable> m_stringSwitchJumpTables;
 
     HashMap<EncodedJSValue, FrozenValue*, EncodedJSValueHash, EncodedJSValueHashTraits> m_frozenValueMap;
     Bag<FrozenValue> m_frozenValues;

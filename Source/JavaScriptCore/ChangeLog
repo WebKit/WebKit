@@ -1,3 +1,62 @@
+2021-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG / FTL should inline switch_string
+        https://bugs.webkit.org/show_bug.cgi?id=224578
+
+        Reviewed by Mark Lam.
+
+        Because of r275840 change, we no longer copy StringJumpTable when compiling DFG / FTL code.
+        Instead we are using a pointer to UnlinkedStringTable stored in UnlinkedCodeBlock.
+        This allows DFG / FTL to inline CodeBlock which includes op_switch_string. We were previously not able
+        to do that because we cannot copy StringImpl in DFG / FTL concurrent compiler thread.
+
+        1. We handle StringJumpTable / UnlinkedStringJumpTable in the same way as SimpleJumpTable / UnlinkedSimpleJumpTable.
+        2. We put m_ctiDefault of StringJumpTable in the last element of m_ctiOffsets vector of StringJumpTable to make
+           sizeof(StringJumpTable) small.
+        3. We use m_indexInTable instead of m_branchOffset in FTL switch generation to make switch table dense.
+
+        The microbenchmark shows 30% improvement because of unlocking inlining feature.
+
+                                        ToT                     Patched
+
+            switch-inlining       27.1238+-0.2708     ^     20.2630+-0.1477        ^ definitely 1.3386x faster
+
+            <geometric>           27.1238+-0.2708     ^     20.2630+-0.1477        ^ definitely 1.3386x faster
+
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::ensureCTITable):
+        (JSC::StringJumpTable::ctiForValue const):
+        (JSC::StringJumpTable::ctiDefault const):
+        (JSC::StringJumpTable::isEmpty const):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedStringJumpTable::indexForValue const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringSlow):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLOperations.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+
 2021-04-21  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, mid April 2021 edition
