@@ -113,7 +113,7 @@ void WebXRInputSourceArray::handleRemovedInputSources(const InputSourceList& inp
     // 3. For each XR input source that is no longer available:
     //  3.1 Let inputSource be the XRInputSource in session's list of active XR input sources associated with the XR input source.
     //  3.2 Add inputSource to removed.
-    m_inputSources.removeAllMatching([this, &inputSources, &removed, &inputEvents](auto& source) {
+    m_inputSources.removeAllMatching([&inputSources, &removed, &inputEvents](auto& source) {
         if (!WTF::anyOf(inputSources, [&source](auto& item) { return item.handle == source->handle(); })) {
             removed.append(source.copyRef());
             source->disconnect();
