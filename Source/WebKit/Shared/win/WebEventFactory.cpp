@@ -80,7 +80,7 @@ static inline int clickCount(WebEvent::Type type, WebMouseEvent::Button button, 
 
     bool cancelPreviousClick = (std::abs(lastClickPosition.x - position.x) > (::GetSystemMetrics(SM_CXDOUBLECLK) / 2))
         || (std::abs(lastClickPosition.y - position.y) > (::GetSystemMetrics(SM_CYDOUBLECLK) / 2))
-        || ((timeStampSeconds - gLastClickTime) * 1000.0 > ::GetDoubleClickTime());
+        || ((timeStampSeconds - gLastClickTime) * 1000.0 > getDoubleClickTime());
 
     if (type == WebEvent::MouseDown) {
         if (!cancelPreviousClick && (button == lastClickButton))

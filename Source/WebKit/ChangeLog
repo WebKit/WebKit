@@ -1,3 +1,14 @@
+2021-04-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] GetDoubleClickTime() returns 0 in the non-interactive window station on Windows 10 version 2004
+        https://bugs.webkit.org/show_bug.cgi?id=224793
+
+        Reviewed by Don Olmstead.
+
+        * Shared/win/WebEventFactory.cpp:
+        (WebKit::clickCount): Use WebCore::getDoubleClickTime instead of
+        GetDoubleClickTime API.
+
 2021-04-21  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Refactor SourceBuffer::enqueuedSamplesForTrackID() for testing purposes

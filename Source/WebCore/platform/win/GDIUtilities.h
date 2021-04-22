@@ -53,6 +53,13 @@ inline unsigned short buttonsForEvent(WPARAM wparam)
     return buttons;
 }
 
+inline LONG getDoubleClickTime()
+{
+    // GetDoubleClickTime() returns 0 in the non-interactive window station on Windows 10 version 2004
+    LONG doubleClickTime = GetDoubleClickTime();
+    return doubleClickTime ? doubleClickTime : 500;
+}
+
 } // namespace WebCore
 
 #endif // GDIUtilties_h

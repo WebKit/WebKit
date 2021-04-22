@@ -1863,9 +1863,9 @@ bool WebView::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Always start capturing events when the mouse goes down in our HWND.
         ::SetCapture(m_viewWindow);
 
-        if (((messageTime - globalPrevMouseDownTime) < (LONG)::GetDoubleClickTime()) && 
-            insideThreshold &&
-            mouseEvent.button() == globalPrevButton)
+        if ((messageTime - globalPrevMouseDownTime) < getDoubleClickTime()
+            && insideThreshold
+            && mouseEvent.button() == globalPrevButton)
             globalClickCount++;
         else
             // Reset the click count.
