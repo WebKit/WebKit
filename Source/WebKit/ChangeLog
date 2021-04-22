@@ -1,3 +1,23 @@
+2021-04-21  John Wilander  <wilander@apple.com>
+
+        PCM: Remove PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable overrides in testing
+        https://bugs.webkit.org/show_bug.cgi?id=224885
+        <rdar://problem/76973184>
+
+        Reviewed by Brent Fulgham.
+
+        We had a temporary override to PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable
+        in WebKit::PrivateClickMeasurementManager::getTokenPublicKey() and
+        WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken().
+
+        This patch removes those overrides since the network load hang has been resolved.
+
+        No new tests. Existing tests cover this code.
+
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+
 2021-04-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r275887) open.spotify.com says Safari is not supported
