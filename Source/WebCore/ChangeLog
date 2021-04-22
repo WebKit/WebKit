@@ -1,3 +1,22 @@
+2021-04-21  Chris Dumez  <cdumez@apple.com>
+
+        Crash under RegistrationDatabase::openSQLiteDatabase()
+        https://bugs.webkit.org/show_bug.cgi?id=224895
+        <rdar://64574013>
+
+        Reviewed by Geoffrey Garen.
+
+        This was a thread-safety issue. The static string in recordsTableSchema() was being used
+        from several threads without synchronization. The reason is that there can be several
+        RegistrationDatabase that co-exist (one per SWServer, meaning one per sessionID) and each
+        RegistrationDatabase was using its own WorkQueue.
+
+        To address the issue, all RegistrationDatabase objects now share the same WorkQueue.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::registrationDatabaseWorkQueue):
+        (WebCore::RegistrationDatabase::RegistrationDatabase):
+
 2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Introduce helper methods to map FloatQuads to and from content and root view coordinates
