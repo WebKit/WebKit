@@ -29,6 +29,7 @@
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
+#include "RenderTextControl.h"
 #include "RenderTreeBuilder.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderView.h"
@@ -100,6 +101,8 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
         if (is<RenderView>(*ancestor))
             return false;
         if (ancestor->isLegend())
+            return false;
+        if (is<RenderTextControl>(*ancestor))
             return false;
         if (is<RenderFragmentedFlow>(*ancestor)) {
             // Don't allow any intervening non-multicol fragmentation contexts. The spec doesn't say
