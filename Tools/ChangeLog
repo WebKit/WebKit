@@ -1,5 +1,38 @@
 2021-04-22  Sam Sneddon  <gsnedders@apple.com>
 
+        Add an xfail marker for webkitpy's tests; get SCM passing
+        https://bugs.webkit.org/show_bug.cgi?id=224886
+
+        Reviewed by Jonathan Bedard.
+
+        Also:
+
+        Delete the old, unused skip_if decorator.
+
+        Fix our runner to detect unexpected-success and report them as failures.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (GitSVNTest.test_rebase_in_progress):
+        (GitTestWithMock.test_create_patch):
+        * Scripts/webkitpy/test/markers.py:
+        (xfail):
+        (xfail.decorator):
+        * Scripts/webkitpy/test/runner.py:
+        (Runner.handle):
+        (_Worker.handle):
+        (TestResult):
+        (TestResult.__init__):
+        (TestResult.addSuccess):
+        * Scripts/webkitpy/test/runner_unittest.py:
+        (FakeTestCase):
+        (FakeTestCase.__init__):
+        (FakeTestCase.id):
+        (FakeModuleSuite.run):
+        * Scripts/webkitpy/test/skip.py: Removed.
+        * Scripts/webkitpy/test/skip_unittest.py: Removed.
+
+2021-04-22  Sam Sneddon  <gsnedders@apple.com>
+
         server_process_unittest.py's MockFile should all be bytes
         https://bugs.webkit.org/show_bug.cgi?id=224877
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2010 Apple Inc. All rights reserved.
+# Copyright (C) 2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,33 +20,35 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-
-_log = logging.getLogger(__name__)
+import unittest
 
 
-def skip_if(klass, condition, message=None, logger=None):
-    """Makes all test_* methods in a given class no-ops if the given condition
-    is False. Backported from Python 3.1+'s unittest.skipIf decorator."""
-    if not logger:
-        logger = _log
-    if not condition:
-        return klass
-    for name in dir(klass):
-        attr = getattr(klass, name)
-        if not callable(attr):
-            continue
-        if not name.startswith('test_'):
-            continue
-        setattr(klass, name, _skipped_method(attr, message, logger))
-    klass._printed_skipped_message = False
-    return klass
+def xfail(*args, **kwargs):
+    """a pytest.mark.xfail-like wrapper for unittest.expectedFailure
 
+    c.f. pytest.mark.xfail(condition, ..., *, reason=..., run=True, raises=None, strict=[from config])
 
-def _skipped_method(method, message, logger):
-    def _skip(self, *args):
-        if self._printed_skipped_message:
-            return
-        self._printed_skipped_message = True
-        logger.info('Skipping %s.%s: %s' % (method.__module__, type(self).__name__, message))
-    return _skip
+    Note that this doesn't support raises or strict"""
+
+    # shortcut if we're being called as a decorator ourselves
+    if len(args) == 1 and callable(args[0]) and not kwargs:
+        return unittest.expectedFailure(args[0])
+
+    def decorator(func):
+        conditions = args
+        reason = kwargs.get(reason, None)
+        run = kwargs.get(run, True)
+        if "raises" in kwargs:
+            raise TypeError("xfail(raises=...) is not supported")
+        if "strict" in kwargs:
+            raise TypeError("strict is not supported")
+
+        if not run:
+            return unittest.skip(reason)(func)
+
+        if all(conditions):
+            return unittest.expectedFailure(func)
+        else:
+            return func
+
+    return decorator
