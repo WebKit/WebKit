@@ -1,3 +1,12 @@
+2021-04-21  Robert Jenner  <jenner@apple.com>
+
+        [ iOS, EWS ] scrollingcoordinator/ios/fixed-inside-sticky-no-stacking-context-2.html is a constant Image Failure
+        https://bugs.webkit.org/show_bug.cgi?id=224910
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updating expectation to Failure to speed up EWS while test is reviewed.
+
 2021-04-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK][WPE] Unreviewed test gardening. Remove redundant baselines.
