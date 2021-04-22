@@ -2000,7 +2000,9 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
         LegacyCDM::resetFactories();
 #endif
 
-    if (!useGPUProcessForMedia)
+    if (useGPUProcessForMedia)
+        mediaEngineConfigurationFactory().registerFactory();
+    else
         MediaEngineConfigurationFactory::resetFactories();
 
     if (useGPUProcessForMedia)
@@ -2086,6 +2088,12 @@ RemoteCDMFactory& WebProcess::cdmFactory()
 }
 #endif
 
+#if ENABLE(GPU_PROCESS)
+RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFactory()
+{
+    return *supplement<RemoteMediaEngineConfigurationFactory>();
+}
+#endif
 
 } // namespace WebKit
 

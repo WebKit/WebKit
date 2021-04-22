@@ -120,6 +120,7 @@ class ObjCObjectGraph;
 class ProcessAssertion;
 class RemoteCDMFactory;
 class RemoteLegacyCDMFactory;
+class RemoteMediaEngineConfigurationFactory;
 struct ServiceWorkerInitializationData;
 class StorageAreaMap;
 class UserData;
@@ -248,6 +249,7 @@ public:
 #if ENABLE(ENCRYPTED_MEDIA)
     RemoteCDMFactory& cdmFactory();
 #endif
+    RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(WEB_AUTHN)

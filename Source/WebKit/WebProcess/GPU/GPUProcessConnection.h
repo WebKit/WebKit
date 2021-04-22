@@ -40,7 +40,6 @@
 namespace WebKit {
 
 class RemoteAudioSourceProviderManager;
-class RemoteMediaEngineConfigurationFactory;
 class RemoteMediaPlayerManager;
 class WebPage;
 struct OverrideScreenDataForTesting;
@@ -70,8 +69,6 @@ public:
 #if PLATFORM(COCOA) && ENABLE(WEB_AUDIO)
     RemoteAudioSourceProviderManager& audioSourceProviderManager();
 #endif
-
-    RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 
     void updateMediaConfiguration();
 

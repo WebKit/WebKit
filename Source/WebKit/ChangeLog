@@ -1,3 +1,25 @@
+2021-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Call RemoteMediaEngineConfigurationFactory::registerFactory() in WebProcess::setUseGPUProcessForMedia()
+        https://bugs.webkit.org/show_bug.cgi?id=224937
+
+        Reviewed by Eric Carlson.
+
+        Call RemoteMediaEngineConfigurationFactory::registerFactory() in WebProcess::setUseGPUProcessForMedia(),
+        like we used to do, instead of doing it in the GPUProcessConnection constructor. It is safer to
+        register the factory before we have a GPUProcessConnection and we wouldn't want things to behave
+        differently depending on whether or not the GPUProcess is already launched. I made sure that this does
+        not eagerly launch the GPUProcess.
+
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::GPUProcessConnection):
+        (WebKit::GPUProcessConnection::mediaEngineConfigurationFactory): Deleted.
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setUseGPUProcessForMedia):
+        (WebKit::WebProcess::mediaEngineConfigurationFactory):
+        * WebProcess/WebProcess.h:
+
 2021-04-22  Alex Christensen  <achristensen@webkit.org>
 
         Fix ENABLE macro around NetworkProcessConnection::connectToRTCDataChannelRemoteSource declaration

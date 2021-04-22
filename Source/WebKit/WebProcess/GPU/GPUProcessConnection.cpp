@@ -101,7 +101,6 @@ GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectio
     addLanguageChangeObserver(this, languagesChanged);
 
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::MediaPainting)) {
-        mediaEngineConfigurationFactory().registerFactory();
 #if ENABLE(VP9)
         enableVP9Decoders(PlatformMediaSessionManager::shouldEnableVP8Decoder(), PlatformMediaSessionManager::shouldEnableVP9Decoder(), PlatformMediaSessionManager::shouldEnableVP9SWDecoder());
 #endif
@@ -154,11 +153,6 @@ RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManag
     return *m_audioSourceProviderManager;
 }
 #endif
-
-RemoteMediaEngineConfigurationFactory& GPUProcessConnection::mediaEngineConfigurationFactory()
-{
-    return *WebProcess::singleton().supplement<RemoteMediaEngineConfigurationFactory>();
-}
 
 bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
