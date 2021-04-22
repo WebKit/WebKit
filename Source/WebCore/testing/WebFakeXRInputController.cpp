@@ -157,7 +157,7 @@ WebFakeXRInputController::ButtonOrPlaceholder WebFakeXRInputController::getButto
         // Add a placeholder if needed
         // Devices that lack one of the optional inputs listed in the tables above MUST preserve their place in the
         // buttons or axes array, reporting a placeholder button or placeholder axis, respectively.
-        if (buttonType != ButtonType::OptionalButton || buttonType != ButtonType::OptionalThumbstick) {
+        if (buttonType != ButtonType::OptionalButton && buttonType != ButtonType::OptionalThumbstick) {
             auto priority = std::find(XR_STANDARD_BUTTONS.begin(), XR_STANDARD_BUTTONS.end(), buttonType);
             ASSERT(priority != XR_STANDARD_BUTTONS.end());
 

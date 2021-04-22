@@ -1,5 +1,18 @@
 2021-04-22  Dean Jackson  <dino@apple.com>
 
+        [WebXR] Optional button test is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=224945
+
+        Reviewed by Tim Horton.
+
+        Fix a conditional test that was always true.
+
+        * testing/WebFakeXRInputController.cpp:
+        (WebCore::WebFakeXRInputController::getButtonOrPlaceholder const):
+        (A != B || A != C) -> (A != B && A != C)
+
+2021-04-22  Dean Jackson  <dino@apple.com>
+
         [WebXR] Closure is capturing this unnecessarily
         https://bugs.webkit.org/show_bug.cgi?id=224946
 
