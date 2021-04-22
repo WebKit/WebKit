@@ -213,7 +213,8 @@ if (COMPILER_IS_GCC_OR_CLANG)
                                       -Wno-extra
                                       -Wno-suggest-attribute=format
                                       -Wno-undef
-                                      -Wno-unused-parameter)
+                                      -Wno-unused-parameter
+                                      -Wno-return-type)
 endif ()
 
 target_link_libraries(ANGLEFramework INTERFACE ANGLE)
