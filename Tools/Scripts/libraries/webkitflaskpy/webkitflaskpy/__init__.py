@@ -45,11 +45,11 @@ except ImportError:
 
 version = Version(0, 1, 1)
 
-AutoInstall.register(Package('click'), Version(7, 1, 2))
-AutoInstall.register(Package('flask'), Version(1, 1, 2))
-AutoInstall.register(Package('itsdangerous'), Version(2, 0, 0))
-AutoInstall.register(Package('jinja2'), Version(3, 0, 0))
-AutoInstall.register(Package('markupsafe'), Version(2, 0, 0))
-AutoInstall.register(Package('werkzeug'), Version(1, 0, 1))
+AutoInstall.register(Package('click', Version(7, 1, 2)))
+AutoInstall.register(Package('flask', Version(1, 1, 2)))
+AutoInstall.register(Package('itsdangerous', Version(1, 1, 0)))
+AutoInstall.register(Package('jinja2', Version(2, 11, 3)))
+AutoInstall.register(Package('markupsafe', Version(1, 1, 1)))
+AutoInstall.register(Package('werkzeug', Version(1, 0, 1)))
 
 name = 'webkitflaskpy'

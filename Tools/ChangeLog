@@ -1,3 +1,35 @@
+2021-04-22  Sam Sneddon  <gsnedders@apple.com>
+
+        Ensure all non-local AutoInstalled libraries specify version
+        https://bugs.webkit.org/show_bug.cgi?id=224872
+
+        Reviewed by Jonathan Bedard.
+
+        Currently on Python 3 running test-webkitpy fails due to us attempting to
+        install flask 2.0.0rc1, recently released. We shouldn't, however, be installing
+        the latest possible version of flask, but rather specifying one. We do actually
+        attempt to specify one in webkitflaskpy, but we pass the Version object to the
+        wrong place.
+
+        Now actually specifying the versions, we need to change some of them to the
+        latest version which supports Python 2 to be able to install them to run
+        test-webkitpy-python2.
+
+        To ensure we don't repeat this, this makes AutoInstall.register raise if you try
+        to register a non-local package without specifying a version.
+
+        Additionally, require AutoInstall.register's package argument be a Package by
+        passing moving the lookup to AutoInstall.install and requiring it to be
+        successful.
+
+        Finally, while I'm touching this, make registering 'autoinstalled' an outright
+        failure, and make installing a local package fail if it cannot be found.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (AutoInstall.register):
+        (AutoInstall.install):
+        * Scripts/libraries/webkitflaskpy/webkitflaskpy/__init__.py:
+
 2021-04-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] The Look Up text service popover should avoid covering selected text
