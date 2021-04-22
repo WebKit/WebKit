@@ -1,5 +1,23 @@
 2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] Add support for preconnect
+        https://bugs.webkit.org/show_bug.cgi?id=177934
+
+        Reviewed by Sergio Villar Senin.
+
+        Use new libsoup API to implement preconnect support.
+
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::NetworkDataTaskSoup):
+        (WebKit::NetworkDataTaskSoup::createRequest):
+        (WebKit::NetworkDataTaskSoup::resume):
+        (WebKit::NetworkDataTaskSoup::preconnectCallback):
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+
+2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Build error: Couldn't find include 'Soup-2.4.gir'
         https://bugs.webkit.org/show_bug.cgi?id=224926
 

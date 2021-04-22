@@ -2001,10 +2001,6 @@ webkit.org/b/176648 svg/transforms/transformed-text-fill-gradient.html [ ImageOn
 webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 webkit.org/b/177533 webrtc/video-interruption.html
-webkit.org/b/177934 fast/dom/HTMLLinkElement/preconnect-support.html [ Failure ]
-webkit.org/b/177934 http/tests/preconnect/link-header-rel-preconnect-http.html [ Failure ]
-webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-http.html [ Timeout ]
-webkit.org/b/177934 http/tests/preconnect/link-rel-preconnect-https.html [ Timeout ]
 webkit.org/b/177936 fast/text/all-small-caps-whitespace.html [ ImageOnlyFailure ]
 webkit.org/b/177936 fast/text/regional-indicator-symobls.html [ Failure ]
 webkit.org/b/177936 fast/text/selection-in-initial-advance-region.html [ Failure ]

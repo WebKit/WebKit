@@ -53,11 +53,12 @@ using namespace WebCore;
 
 static const size_t gDefaultReadBufferSize = 8192;
 
-NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, FrameIdentifier frameID, PageIdentifier pageID, StoredCredentialsPolicy storedCredentialsPolicy, ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, bool dataTaskIsForMainFrameNavigation)
+NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, FrameIdentifier frameID, PageIdentifier pageID, StoredCredentialsPolicy storedCredentialsPolicy, ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly, bool dataTaskIsForMainFrameNavigation)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect, dataTaskIsForMainFrameNavigation)
     , m_frameID(frameID)
     , m_pageID(pageID)
     , m_shouldContentSniff(shouldContentSniff)
+    , m_shouldPreconnectOnly(shouldPreconnectOnly)
     , m_timeoutSource(RunLoop::main(), this, &NetworkDataTaskSoup::timeoutFired)
 {
     m_session->registerNetworkDataTask(*this);
@@ -127,6 +128,13 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
     m_soupMessage = m_currentRequest.createSoupMessage(m_session->blobRegistry());
     if (!m_soupMessage) {
         scheduleFailure(InvalidURLFailure);
+        return;
+    }
+
+    if (m_shouldPreconnectOnly == PreconnectOnly::Yes) {
+#if !USE(SOUP2)
+        g_signal_connect(m_soupMessage.get(), "accept-certificate", G_CALLBACK(acceptCertificateCallback), this);
+#endif
         return;
     }
 
@@ -244,11 +252,20 @@ void NetworkDataTaskSoup::resume()
     RefPtr<NetworkDataTaskSoup> protectedThis(this);
     if (m_soupMessage && !m_cancellable) {
         m_cancellable = adoptGRef(g_cancellable_new());
-        // We need to protect cancellable here, because soup_session_send_async uses it after emitting SoupSession::request-queued, and we
-        // might cancel the operation in a feature callback emitted on request-queued, for example hsts-enforced.
-        GRefPtr<GCancellable> protectCancellable(m_cancellable);
-        soup_session_send_async(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), m_soupMessage.get(), RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),
-            reinterpret_cast<GAsyncReadyCallback>(sendRequestCallback), new SendRequestData({ m_soupMessage, WTFMove(protectedThis) }));
+        if (m_shouldPreconnectOnly == PreconnectOnly::Yes) {
+#if !USE(SOUP2)
+            soup_session_preconnect_async(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), m_soupMessage.get(), RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),
+                reinterpret_cast<GAsyncReadyCallback>(preconnectCallback), protectedThis.leakRef());
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        } else {
+            // We need to protect cancellable here, because soup_session_send_async uses it after emitting SoupSession::request-queued, and we
+            // might cancel the operation in a feature callback emitted on request-queued, for example hsts-enforced.
+            GRefPtr<GCancellable> protectCancellable(m_cancellable);
+            soup_session_send_async(static_cast<NetworkSessionSoup&>(*m_session).soupSession(), m_soupMessage.get(), RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(),
+                reinterpret_cast<GAsyncReadyCallback>(sendRequestCallback), new SendRequestData({ m_soupMessage, WTFMove(protectedThis) }));
+        }
         return;
     }
 
@@ -442,6 +459,24 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
         }
     });
 }
+
+#if !USE(SOUP2)
+void NetworkDataTaskSoup::preconnectCallback(SoupSession* session, GAsyncResult* result, NetworkDataTaskSoup* task)
+{
+    RefPtr<NetworkDataTaskSoup> protectedThis = adoptRef(task);
+    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+        task->clearRequest();
+        return;
+    }
+
+    ResourceError resourceError;
+    GUniqueOutPtr<GError> error;
+    if (!soup_session_preconnect_finish(session, result, &error.outPtr()))
+        resourceError = ResourceError::genericGError(task->m_currentRequest.url(), error.get());
+    task->clearRequest();
+    task->dispatchDidCompleteWithError(resourceError);
+}
+#endif
 
 void NetworkDataTaskSoup::dispatchDidCompleteWithError(const ResourceError& error)
 {

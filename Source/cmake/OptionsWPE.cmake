@@ -128,6 +128,7 @@ else ()
     set(WPE_API_VERSION 1.1)
     # No API changes in 1.1, so keep using the same API documentation.
     set(WPE_API_DOC_VERSION 1.0)
+    set(ENABLE_SERVER_PRECONNECT ON)
 endif ()
 find_package(LibSoup ${SOUP_MINIMUM_VERSION} REQUIRED)
 

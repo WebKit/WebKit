@@ -205,6 +205,7 @@ if (USE_SOUP2)
 else ()
     set(SOUP_MINIMUM_VERSION 2.99.4)
     set(SOUP_API_VERSION 3.0)
+    set(ENABLE_SERVER_PRECONNECT ON)
 endif ()
 find_package(LibSoup ${SOUP_MINIMUM_VERSION} REQUIRED)
 
