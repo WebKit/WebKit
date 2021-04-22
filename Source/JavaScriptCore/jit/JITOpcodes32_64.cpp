@@ -1000,7 +1000,16 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
     linkedTable.ensureCTITable(unlinkedTable);
 
     emitLoad(scrutinee, regT1, regT0);
-    callOperation(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), JSValueRegs(regT1, regT0), tableIndex, unlinkedTable.m_min);
+    auto notInt32 = branchIfNotInt32(regT1);
+    sub32(Imm32(unlinkedTable.m_min), regT0);
+
+    addJump(branch32(AboveOrEqual, regT0, Imm32(linkedTable.m_ctiOffsets.size())), defaultOffset);
+    move(TrustedImmPtr(linkedTable.m_ctiOffsets.data()), regT1);
+    loadPtr(BaseIndex(regT1, regT0, ScalePtr), regT1);
+    farJump(regT1, NoPtrTag);
+
+    notInt32.link(this);
+    callOperationNoExceptionCheck(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), JSValueRegs(regT1, regT0), tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, NoPtrTag);
 }
 

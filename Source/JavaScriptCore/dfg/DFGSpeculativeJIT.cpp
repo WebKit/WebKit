@@ -11511,10 +11511,14 @@ void SpeculativeJIT::emitSwitchIntJump(
     addBranch(
         m_jit.branch32(JITCompiler::AboveOrEqual, value, Imm32(linkedTable.m_ctiOffsets.size())),
         data->fallThrough.block);
-    m_jit.move(TrustedImmPtr(linkedTable.m_ctiOffsets.begin()), scratch);
+    m_jit.move(TrustedImmPtr(linkedTable.m_ctiOffsets.data()), scratch);
+
+#if USE(JSVALUE64)
+    m_jit.farJump(JITCompiler::BaseIndex(scratch, value, JITCompiler::ScalePtr), JSSwitchPtrTag);
+#else
     m_jit.loadPtr(JITCompiler::BaseIndex(scratch, value, JITCompiler::ScalePtr), scratch);
-    
     m_jit.farJump(scratch, JSSwitchPtrTag);
+#endif
     data->didUseJumpTable = true;
 }
 

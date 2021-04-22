@@ -894,8 +894,6 @@ void JIT::emit_op_get_parent_scope(const Instruction* currentInstruction)
 
 void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
 {
-    // FIXME: We should have a fast path.
-    // https://bugs.webkit.org/show_bug.cgi?id=224521
     auto bytecode = currentInstruction->as<OpSwitchImm>();
     size_t tableIndex = bytecode.m_tableIndex;
     unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
@@ -908,7 +906,15 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
     linkedTable.ensureCTITable(unlinkedTable);
 
     emitGetVirtualRegister(scrutinee, regT0);
-    callOperation(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), regT0, tableIndex, unlinkedTable.m_min);
+    auto notInt32 = branchIfNotInt32(regT0);
+    sub32(Imm32(unlinkedTable.m_min), regT0);
+
+    addJump(branch32(AboveOrEqual, regT0, Imm32(linkedTable.m_ctiOffsets.size())), defaultOffset);
+    move(TrustedImmPtr(linkedTable.m_ctiOffsets.data()), regT1);
+    farJump(BaseIndex(regT1, regT0, ScalePtr), JSSwitchPtrTag);
+
+    notInt32.link(this);
+    callOperationNoExceptionCheck(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), regT0, tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 

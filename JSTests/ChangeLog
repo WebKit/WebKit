@@ -1,3 +1,14 @@
+2021-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Baseline should have fast path for switch_imm
+        https://bugs.webkit.org/show_bug.cgi?id=224521
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/switch-imm-baseline.js: Added.
+        (shouldBe):
+        (test):
+
 2021-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] DFG / FTL should inline switch_string
