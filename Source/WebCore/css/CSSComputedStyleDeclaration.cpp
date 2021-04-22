@@ -3906,7 +3906,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
 #endif
 
-        // Individual properties not part of the spec
+        /* Individual properties not part of the spec */
         case CSSPropertyBackgroundRepeatX:
         case CSSPropertyBackgroundRepeatY:
             break;
@@ -3947,13 +3947,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyQuotes:
             return valueForQuotes(style.quotes());
 
-        // Unimplemented CSS 3 properties (including CSS3 shorthand properties)
+        /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */
         case CSSPropertyAll:
         case CSSPropertyAnimation:
         case CSSPropertyWebkitTextEmphasis:
             break;
 
-        // Directional properties are resolved by resolveDirectionAwareProperty() before the switch.
+        /* Directional properties are resolved by resolveDirectionAwareProperty() before the switch. */
         case CSSPropertyBorderBlockEnd:
         case CSSPropertyBorderBlockEndColor:
         case CSSPropertyBorderBlockEndStyle:
@@ -4003,30 +4003,18 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             ASSERT_NOT_REACHED();
             break;
 
-        // These are intentionally unimplemented because they are actually descriptors for @counter-style.
-        case CSSPropertySystem:
-        case CSSPropertyNegative:
-        case CSSPropertyPrefix:
-        case CSSPropertySuffix:
-        case CSSPropertyRange:
-        case CSSPropertyPad:
-        case CSSPropertyFallback:
-        case CSSPropertySymbols:
-        case CSSPropertyAdditiveSymbols:
-            break;
-
-        // Unimplemented @font-face properties
+        /* Unimplemented @font-face properties */
         case CSSPropertySrc:
         case CSSPropertyUnicodeRange:
         case CSSPropertyFontDisplay:
             break;
 
-        // Other unimplemented properties
+        /* Other unimplemented properties */
         case CSSPropertyPage: // for @page
         case CSSPropertySize: // for @page
             break;
 
-        // Unimplemented -webkit- properties
+        /* Unimplemented -webkit- properties */
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitMarginCollapse:
         case CSSPropertyWebkitMarqueeDirection:

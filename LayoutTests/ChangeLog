@@ -1,3 +1,22 @@
+2021-04-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276380 and r276386.
+        https://bugs.webkit.org/show_bug.cgi?id=224912
+
+        Caused WPT css/css-counter-styles/cssom test crashes on macOS
+        WK1 with ASan
+
+        Reverted changesets:
+
+        "[css-counter-styles] Parse @counter-style descriptors"
+        https://bugs.webkit.org/show_bug.cgi?id=224718
+        https://trac.webkit.org/changeset/276380
+
+        "CSSComputedStyleDeclaration.cpp should use C++ style
+        comments"
+        https://bugs.webkit.org/show_bug.cgi?id=224875
+        https://trac.webkit.org/changeset/276386
+
 2021-04-21  Robert Jenner  <jenner@apple.com>
 
         Mass removing prior test expectations that don't need to be set anymore
