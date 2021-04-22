@@ -5541,6 +5541,15 @@
       ],
       "status" : "reviewer"
    },
+   "Tim Nguyen" : {
+      "emails" : [
+         "ntim@apple.com",
+         "ntim.bugs@gmail.com"
+      ],
+      "nicks" : [
+         "ntim"
+      ]
+   },
    "Tim Omernick" : {
       "emails" : [
          "timo@apple.com"
