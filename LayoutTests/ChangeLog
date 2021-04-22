@@ -1,3 +1,15 @@
+2021-04-21  Amir Mark Jr  <amir_mark@apple.com>
+
+        Mass removal of prior test expectations that do not need to be set anymore.
+        https://bugs.webkit.org/show_bug.cgi?id=224901
+
+        Unreviewed test gardening.
+
+        Two more tests removed from test expectations.
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2021-04-21  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update test expectations after r276393.
