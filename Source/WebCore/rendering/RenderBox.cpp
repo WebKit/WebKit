@@ -3121,10 +3121,13 @@ Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& hei
     if (updateDescendants == UpdatePercentageHeightDescendants::Yes)
         cb->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
 
-    if (isHorizontal != cb->isHorizontalWritingMode())
-        availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();
-    else if (hasOverridingContainingBlockContentLogicalHeight())
+    bool isOrthogonal = isHorizontal != cb->isHorizontalWritingMode();
+    if (hasOverridingContainingBlockContentLogicalWidth() && isOrthogonal)
+        availableHeight = overridingContainingBlockContentLogicalWidth();
+    else if (hasOverridingContainingBlockContentLogicalHeight() && !isOrthogonal)
         availableHeight = overridingContainingBlockContentLogicalHeight();
+    else if (isOrthogonal)
+        availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();
     else if (is<RenderTableCell>(*cb)) {
         if (!skippedAutoHeightContainingBlock) {
             // Table cells violate what the CSS spec says to do with heights. Basically we

@@ -1,3 +1,22 @@
+2021-04-22  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] WPT Tests css/css-grid/grid-items/grid-item-percentage-sizes-*.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=209650
+
+        Reviewed by Sergio Villar Senin.
+
+        We need to check child's writing mode in order to pick the correct dimension to resolve
+        percentage height against. Overriding containing block size should also be chosen in favour
+        of special code for orthogonal writing mode.
+ 
+        This change is an import of Chromium CL at
+        https://chromium-review.googlesource.com/c/chromium/src/+/1348055.
+ 
+        Three tests that failed are now passing.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePercentageLogicalHeight const):
+
 2021-04-22  Imanol Fernandez  <ifernandez@igalia.com>
 
         Implement WebXR Input Sources
