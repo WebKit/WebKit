@@ -1028,7 +1028,7 @@ namespace WebKit {
 static bool sessionsCreated = false;
 #endif
 
-static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID& session)
+static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID& session, bool isFullWebBrowser)
 {
 #if HAVE(LOGGING_PRIVACY_LEVEL)
     auto loggingPrivacyLevel = nw_context_privacy_level_sensitive;
@@ -1038,7 +1038,8 @@ static NSURLSessionConfiguration *configurationForSessionID(const PAL::SessionID
     if (session.isEphemeral()) {
         configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
 #if HAVE(LOGGING_PRIVACY_LEVEL) && defined(NW_CONTEXT_HAS_PRIVACY_LEVEL_SILENT)
-        loggingPrivacyLevel = nw_context_privacy_level_silent;
+        if (isFullWebBrowser)
+            loggingPrivacyLevel = nw_context_privacy_level_silent;
 #endif
     } else
         configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -1183,7 +1184,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     sessionsCreated = true;
 #endif
 
-    NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID);
+    NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID, isParentProcessAFullWebBrowser(networkProcess));
 
 #if HAVE(HSTS_STORAGE)
     if (!!parameters.hstsStorageDirectory && !m_sessionID.isEphemeral()) {

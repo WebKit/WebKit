@@ -1,3 +1,22 @@
+2021-04-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        Set proper network logging level for full web browsers
+        https://bugs.webkit.org/show_bug.cgi?id=224982
+        <rdar://problem/76903650>
+
+        Reviewed by Brent Fulgham.
+
+        Full web browsers have different low-level network logging requirements
+        for ephemeral sessions.
+
+        No new tests. There's no automated way to test if network level logs
+        show up. I tested that logging is correct for web browser and non web
+        browser apps manually.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::configurationForSessionID):
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+
 2021-04-23  Chris Dumez  <cdumez@apple.com>
 
         Disable GPUProcess on shipping iOS
