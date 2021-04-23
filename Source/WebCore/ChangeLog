@@ -1,3 +1,18 @@
+2021-04-23  Don Olmstead  <don.olmstead@sony.com>
+
+        Add additional guards around USE_ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=225001
+
+        Reviewed by Fujii Hironori.
+
+        When USE(ANGLE) initializeOpenGLShims isn't used or available.
+
+        When USE(ANGLE) the ANGLE shader compiler isn't needed.
+
+        * platform/graphics/GLContext.cpp:
+        (WebCore::initializeOpenGLShimsIfNeeded):
+        * platform/graphics/texmap/GraphicsContextGLTextureMapper.cpp:
+
 2021-04-23  Cathie Chen  <cathiechen@igalia.com>
 
         Not computing image aspect ratios from width and height attributes for lazy loaded images
