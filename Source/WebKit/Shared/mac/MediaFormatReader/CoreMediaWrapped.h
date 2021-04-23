@@ -142,12 +142,23 @@ constexpr CMBaseClass CoreMediaWrapped<Wrapped>::wrapperClass()
 template<typename Wrapped>
 const typename CoreMediaWrapped<Wrapped>::WrapperVTable& CoreMediaWrapped<Wrapped>::vTable()
 {
-    static constexpr CMBaseClass baseClass = wrapperClass<sizeof(Wrapped)>();
-    static constexpr WrapperClass derivedClass = Wrapped::wrapperClass();
+    // CMBaseClass contains 64-bit pointers that aren't 8-byte aligned. To suppress the linker
+    // warning about this, we prepend 4 bytes of padding when building.
+#if CPU(X86_64)
+    constexpr size_t padSize = 4;
+#else
+    constexpr size_t padSize = 0;
+#endif
+
+#pragma pack(push, 4)
+    static constexpr struct { uint8_t pad[padSize]; CMBaseClass baseClass; } baseClass { { }, wrapperClass<sizeof(Wrapped)>() };
+    static constexpr struct { uint8_t pad[padSize]; WrapperClass derivedClass; } derivedClass { { }, Wrapped::wrapperClass() };
+#pragma pack(pop)
+
 IGNORE_WARNINGS_BEGIN("missing-field-initializers")
     static constexpr WrapperVTable vTable {
-        { nullptr, &baseClass },
-        &derivedClass,
+        { nullptr, &baseClass.baseClass },
+        &derivedClass.derivedClass,
     };
 IGNORE_WARNINGS_END
     return vTable;

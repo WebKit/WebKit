@@ -1,3 +1,19 @@
+2021-04-22  Jer Noble  <jer.noble@apple.com>
+
+        [Mac] CMBaseClass object pointers can become unaligned on x86
+        https://bugs.webkit.org/show_bug.cgi?id=224950
+        <rdar://77020922>
+
+        Reviewed by Eric Carlson.
+
+        CMBaseClass has a 4-byte version member before its 8-byte pointers on x86. Deal with this
+        the same way we do with other pointer-bearing, static, CM-type objects: enforce a 4-byte
+        packing, and prepend the struct with another 4-byte object in order to force the pointers
+        into 8-byte alignment.
+
+        * Shared/mac/MediaFormatReader/CoreMediaWrapped.h:
+        (WebKit::CoreMediaWrapped<Wrapped>::vTable):
+
 2021-04-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Followup to r276397
