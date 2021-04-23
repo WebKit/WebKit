@@ -1,3 +1,38 @@
+2021-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove virtual function calls in GraphicsLayer destructors
+        https://bugs.webkit.org/show_bug.cgi?id=180232
+
+        Reviewed by Adrian Perez de Castro.
+
+        I notice that ~CoordinatedGraphicsLayer makes a virtual function call to
+        GraphicsLayer::willBeDestroyed, which makes a virtual function call to
+        CoordinatedGraphicsLayer::removeFromParent. I think that the functions are being called as
+        intended, because ~CoordinatedGraphicsLayer has not yet been fully destroyed. However, I'm
+        reminded of Effective C++ item #9: Never call virtual functions during construction or
+        destruction ("because such calls will never go to a more derived class than that of the
+        currently executing constructor or destructor"). This code is almost certain to break if
+        anyone tries in the future to subclass any of the existing subclasses of GraphicsLayer, so
+        let's refactor it a bit. This doesn't fix anything, but my hope is that it will make the
+        code a bit harder to break, and not the opposite.
+
+        The main risk here is that some reordering of operations is necessary. The derived class
+        portion of removeFromParent must now be executed before willBeDestroyed. It can't happen
+        after, because parent would already be unset by that point. It's hard to be certain that
+        this won't break anything, but I think it should be fine.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::willBeDestroyed):
+        (WebCore::GraphicsLayer::removeFromParentInternal):
+        (WebCore::GraphicsLayer::removeFromParent):
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::~GraphicsLayerCA):
+        (WebCore::GraphicsLayerCA::willBeDestroyed): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer):
+
 2021-04-23  Darin Adler  <darin@apple.com>
 
         Remove decoder memory allocations based on untrusted data (sizes) in the stream; related changes

@@ -451,12 +451,6 @@ GraphicsLayerCA::~GraphicsLayerCA()
     if (UNLIKELY(isTrackingDisplayListReplay()))
         layerDisplayListMap().remove(this);
 
-    // Do cleanup while we can still safely call methods on the derived class.
-    willBeDestroyed();
-}
-
-void GraphicsLayerCA::willBeDestroyed()
-{
     // We release our references to the PlatformCALayers here, but do not actively unparent them,
     // since that will cause a commit and break our batched commit model. The layers will
     // get released when the rootmost modified GraphicsLayerCA rebuilds its child layers.
@@ -488,7 +482,10 @@ void GraphicsLayerCA::willBeDestroyed()
 
     removeCloneLayers();
 
-    GraphicsLayer::willBeDestroyed();
+    if (m_parent)
+        downcast<GraphicsLayerCA>(*m_parent).noteSublayersChanged();
+
+    willBeDestroyed();
 }
 
 void GraphicsLayerCA::setName(const String& name)

@@ -191,8 +191,6 @@ public:
 private:
     bool isGraphicsLayerCA() const override { return true; }
 
-    WEBCORE_EXPORT void willBeDestroyed() override;
-
     // PlatformCALayerClient overrides
     void platformCALayerLayoutSublayersOfLayer(PlatformCALayer*) override { }
     bool platformCALayerRespondsToLayoutChanges() const override { return false; }

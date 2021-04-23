@@ -638,7 +638,7 @@ protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
 
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
-    WEBCORE_EXPORT virtual void willBeDestroyed();
+    WEBCORE_EXPORT void willBeDestroyed();
     bool beingDestroyed() const { return m_beingDestroyed; }
 
     // This method is used by platform GraphicsLayer classes to clear the filters
@@ -658,6 +658,8 @@ protected:
     static int validateTransformOperations(const KeyframeValueList&, bool& hasBigRotation);
 
     virtual bool shouldRepaintOnSizeChange() const { return drawsContent(); }
+
+    void removeFromParentInternal();
 
     // The layer being replicated.
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }

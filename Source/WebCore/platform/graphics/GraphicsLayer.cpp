@@ -200,7 +200,7 @@ void GraphicsLayer::willBeDestroyed()
     }
 
     removeAllChildren();
-    removeFromParent();
+    removeFromParentInternal();
 }
 
 void GraphicsLayer::clearClient()
@@ -335,7 +335,7 @@ void GraphicsLayer::removeAllChildren()
     }
 }
 
-void GraphicsLayer::removeFromParent()
+void GraphicsLayer::removeFromParentInternal()
 {
     if (m_parent) {
         GraphicsLayer* parent = m_parent;
@@ -371,6 +371,13 @@ void GraphicsLayer::setChildrenTransform(const TransformationMatrix& matrix)
         *m_childrenTransform = matrix;
     else
         m_childrenTransform = makeUnique<TransformationMatrix>(matrix);
+}
+
+void GraphicsLayer::removeFromParent()
+{
+    // removeFromParentInternal is nonvirtual, for use in willBeDestroyed,
+    // which is called from destructors.
+    removeFromParentInternal();
 }
 
 void GraphicsLayer::setMaskLayer(RefPtr<GraphicsLayer>&& layer)

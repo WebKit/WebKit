@@ -167,6 +167,8 @@ CoordinatedGraphicsLayer::~CoordinatedGraphicsLayer()
     ASSERT(!m_nicosia.backingStore);
     if (m_animatedBackingStoreHost)
         m_animatedBackingStoreHost->layerWillBeDestroyed();
+    if (CoordinatedGraphicsLayer* parentLayer = downcast<CoordinatedGraphicsLayer>(parent()))
+        parentLayer->didChangeChildren();
     willBeDestroyed();
 }
 
