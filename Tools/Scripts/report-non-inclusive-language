@@ -43,7 +43,7 @@ nonInclusiveTerms = [
 
 IGNORE_DIRECTORIES = ['.svn', '.git', 'autoinstalled']
 IGNORE_FILES_STARTING_WITH = ('ChangeLog')
-IGNORE_FILES_ENDING_WITH = ('.log', '.order', '.pyc', '.swp', '.xcuserstate')
+IGNORE_FILES_ENDING_WITH = ('.log', '.order', '.pyc', '.swp', '.xcuserstate', '.db', '.db-shm', '.db-wal')
 IGNORE_FILE_NAMES = ['report-non-inclusive-language']
 
 parser = argparse.ArgumentParser(description='Report counts and locations of non-inclusive terms.')

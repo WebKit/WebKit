@@ -1,3 +1,12 @@
+2021-04-23  Aakash Jain  <aakash_jain@apple.com>
+
+        Make report-non-inclusive-language ignore .db files
+        https://bugs.webkit.org/show_bug.cgi?id=224979
+
+        Reviewed by Darin Adler.
+
+        * Scripts/report-non-inclusive-language:
+
 2021-04-23  Youenn Fablet  <youenn@apple.com>
 
         Fix KVO for camera/microphone capture state WKWebView API
