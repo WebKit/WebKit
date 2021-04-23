@@ -501,6 +501,10 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (void)controlBeginEditing
 {
+    // Don't show the menu if the element is entirely offscreen.
+    if (!CGRectIntersectsRect(_view.focusedElementInformation.interactionRect, _view.bounds))
+        return;
+
     [_view startRelinquishingFirstResponderToFocusedElement];
 
 #if USE(UICONTEXTMENU)
