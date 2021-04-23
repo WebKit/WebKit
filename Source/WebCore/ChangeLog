@@ -1,3 +1,18 @@
+2021-04-22  Sergio Villar Senin  <svillar@igalia.com>
+
+        Do not set synchronous scrolling for layers without relevant scrolling scopes
+        https://bugs.webkit.org/show_bug.cgi?id=221383
+
+        Reviewed by Simon Fraser.
+
+        Fixed backgrounds could force the layer compositor to set synchronous scrolling because they're slow
+        to repaint. However that cannot be done if the layer's boxScrollingScope hasn't been previously updated
+        in RenderLayer::updateLayerPosition.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateSynchronousScrollingNodes): Do not call
+        setSynchronousScrollingReasons() if there is no scrollingScope.
+
 2021-04-23  Philippe Normand  <pnormand@igalia.com>
 
         [LibWebRTC][WPE][GTK] Enable vp9 and NO_MAIN_THREAD_WRAPPING
