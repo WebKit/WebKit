@@ -1055,10 +1055,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     _layerTreeTransactionIdAtLastInteractionStart = { };
 
-#if USE(UICONTEXTMENU)
-    [self _removeContextMenuViewIfPossible];
-#endif // USE(UICONTEXTMENU)
-
 #if ENABLE(DRAG_SUPPORT)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];
     [self teardownDragAndDropInteractions];
@@ -1113,8 +1109,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _tearDownImageExtraction];
 #endif
 
-    [std::exchange(_targetedPreviewViewsContainerView, nil) removeFromSuperview];
-
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
 
@@ -1123,11 +1117,6 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _cancelPendingKeyEventHandler];
 
     _cachedSelectedTextRange = nil;
-}
-
-- (void)cleanUpRelatedViews
-{
-    [std::exchange(_targetedPreviewViewsContainerView, nil) removeFromSuperview];
 }
 
 - (void)_cancelPendingKeyEventHandler
@@ -2057,8 +2046,6 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_didScroll
 {
-    [self _updateTargetedPreviewViewsContainerViewFrameIfNeeded];
-
     [self _cancelLongPressGestureRecognizer];
     [self _cancelInteraction];
 }
@@ -7617,25 +7604,12 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 #endif // HAVE(PASTEBOARD_DATA_OWNER)
 
-- (UIView *)textEffectsWindow
-{
-    return [UITextEffectsWindow sharedTextEffectsWindowForWindowScene:self.window.windowScene];
-}
-
 - (RetainPtr<UIView>)_createPreviewContainerWithLayerName:(NSString *)layerName
 {
-    if (!_targetedPreviewViewsContainerView) {
-        _targetedPreviewViewsContainerView = adoptNS([[UIView alloc] init]);
-        [_targetedPreviewViewsContainerView layer].name = @"Preview Views Container";
-        [_targetedPreviewViewsContainerView layer].anchorPoint = CGPointZero;
-        [self _updateTargetedPreviewViewsContainerViewFrameIfNeeded];
-        [self.textEffectsWindow addSubview:_targetedPreviewViewsContainerView.get()];
-    }
-
     auto container = adoptNS([[UIView alloc] init]);
     [container layer].anchorPoint = CGPointZero;
     [container layer].name = layerName;
-    [_targetedPreviewViewsContainerView addSubview:container.get()];
+    [_interactionViewsContainerView addSubview:container.get()];
     return container;
 }
 
@@ -7643,8 +7617,6 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 {
     if (!_dropPreviewContainerView)
         _dropPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drop Preview Container"];
-
-    [_targetedPreviewViewsContainerView setHidden:NO];
 
     ASSERT([_dropPreviewContainerView superview]);
     [_dropPreviewContainerView setHidden:NO];
@@ -7656,8 +7628,6 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (!_dragPreviewContainerView)
         _dragPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drag Preview Container"];
 
-    [_targetedPreviewViewsContainerView setHidden:NO];
-
     ASSERT([_dragPreviewContainerView superview]);
     [_dragPreviewContainerView setHidden:NO];
     return _dragPreviewContainerView.get();
@@ -7668,8 +7638,6 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (!_contextMenuHintContainerView)
         _contextMenuHintContainerView = [self _createPreviewContainerWithLayerName:@"Context Menu Hint Preview Container"];
 
-    [_targetedPreviewViewsContainerView setHidden:NO];
-
     ASSERT([_contextMenuHintContainerView superview]);
     [_contextMenuHintContainerView setHidden:NO];
     return _contextMenuHintContainerView.get();
@@ -7677,45 +7645,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 - (void)_hideTargetedPreviewContainerViews
 {
-    [_targetedPreviewViewsContainerView setHidden:YES];
     [_dropPreviewContainerView setHidden:YES];
     [_dragPreviewContainerView setHidden:YES];
     [_contextMenuHintContainerView setHidden:YES];
-}
-
-- (void)_updateTargetedPreviewViewsContainerViewFrameIfNeeded
-{
-    if (!_targetedPreviewViewsContainerView || [_targetedPreviewViewsContainerView isHidden])
-        return;
-
-    auto scrollView = _scrollViewForTargetedPreview.get() ?: retainPtr(self._scroller);
-
-    CGRect frame = [_targetedPreviewViewsContainerView frame];
-    frame.origin = [scrollView convertPoint:CGPointZero toView:[_targetedPreviewViewsContainerView superview]];
-    [_targetedPreviewViewsContainerView setFrame:frame];
-}
-
-- (void)_removeTargetedPreviewViewsContainerViewIfPossible
-{
-    if (!_targetedPreviewViewsContainerView || [_targetedPreviewViewsContainerView subviews].count)
-        return;
-
-    [std::exchange(_targetedPreviewViewsContainerView, nil) removeFromSuperview];
-    _scrollViewForTargetedPreview = nil;
-}
-
-- (void)_updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
-{
-    if (scrollingNodeID) {
-        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy()) {
-            if (UIScrollView *scrollViewForScrollingNode = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID)) {
-                _scrollViewForTargetedPreview = scrollViewForScrollingNode;
-                return;
-            }
-        }
-    }
-
-    _scrollViewForTargetedPreview = self.webView.scrollView;
 }
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
@@ -8037,7 +7969,6 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
     [self _restoreCalloutBarIfNeeded];
 
     [std::exchange(_dragPreviewContainerView, nil) removeFromSuperview];
-    [self _removeTargetedPreviewViewsContainerViewIfPossible];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [_editDropCaretView remove];
     _editDropCaretView = nil;
@@ -8291,6 +8222,11 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     [[_textInteractionAssistant forcePressGesture] _wk_cancel];
 }
 
+- (UIView *)textEffectsWindow
+{
+    return [UITextEffectsWindow sharedTextEffectsWindowForWindowScene:self.window.windowScene];
+}
+
 - (NSDictionary *)_autofillContext
 {
     if (!self._hasFocusedElement)
@@ -8389,6 +8325,19 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
 }
 
+- (void)overridePositionTrackingViewForTargetedPreviewIfNecessary:(UITargetedPreview *)targetedPreview containerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
+{
+    if (!scrollingNodeID)
+        return;
+
+    UIScrollView *positionTrackingView = self.webView.scrollView;
+    if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
+        positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID);
+
+    if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
+        [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
+}
+
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement
 {
     auto backgroundColor = [&]() -> UIColor * {
@@ -8405,7 +8354,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
     auto targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect, backgroundColor);
 
-    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
+    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
@@ -8428,7 +8377,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (!targetedPreview)
         targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, nil);
 
-    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_positionInformation.containerScrollingNodeID];
+    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_positionInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
@@ -8459,7 +8408,6 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         return;
     
     [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
-    [self _removeTargetedPreviewViewsContainerViewIfPossible];
 }
 
 #endif // USE(UICONTEXTMENU)
@@ -8957,7 +8905,6 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 - (void)dropInteraction:(UIDropInteraction *)interaction concludeDrop:(id <UIDropSession>)session
 {
     [std::exchange(_dropPreviewContainerView, nil) removeFromSuperview];
-    [self _removeTargetedPreviewViewsContainerViewIfPossible];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
     _dragDropInteractionState.clearAllDelayedItemPreviewProviders();

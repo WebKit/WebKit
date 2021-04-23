@@ -301,8 +301,6 @@ enum class ProceedWithImageExtraction : bool {
     RetainPtr<UIWebFormAccessory> _formAccessoryView;
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
-    RetainPtr<UIView> _targetedPreviewViewsContainerView;
-    WeakObjCPtr<UIScrollView> _scrollViewForTargetedPreview;
     RetainPtr<UIView> _contextMenuHintContainerView;
     RetainPtr<UIView> _dragPreviewContainerView;
     RetainPtr<UIView> _dropPreviewContainerView;
@@ -534,7 +532,6 @@ enum class ProceedWithImageExtraction : bool {
 
 - (void)setUpInteraction;
 - (void)cleanUpInteraction;
-- (void)cleanUpRelatedViews;
 
 - (void)scrollViewWillStartPanOrPinchGesture;
 
