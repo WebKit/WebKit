@@ -99,13 +99,16 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
         return nullptr;
 
     ASSERT(&document == scriptExecutionContext());
-    auto& lexicalGlobalObject = *document.globalObject();
-    auto element = constructCustomElementSynchronously(document, vm, lexicalGlobalObject, m_constructor.get(), localName);
+    auto* lexicalGlobalObject = document.globalObject();
+    ASSERT(lexicalGlobalObject);
+    if (!lexicalGlobalObject)
+        return nullptr;
+    auto element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, m_constructor.get(), localName);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
         auto* exception = scope.exception();
         scope.clearException();
-        reportException(&lexicalGlobalObject, exception);
+        reportException(lexicalGlobalObject, exception);
         return nullptr;
     }
 

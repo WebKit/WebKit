@@ -1,3 +1,18 @@
+2021-04-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash in constructCustomElementSynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=224992
+        <rdar://66988026>
+
+        Reviewed by Tadeu Zagallo.
+
+        Exit early when the global object is nullptr although this shouldn't happen.
+
+        No new tests since we have no reproductions.
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::tryToConstructCustomElement): Added a null check.
+
 2021-04-23  Don Olmstead  <don.olmstead@sony.com>
 
         Add additional guards around USE_ANGLE
