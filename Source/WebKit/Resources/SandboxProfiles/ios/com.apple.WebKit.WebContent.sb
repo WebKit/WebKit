@@ -1461,8 +1461,8 @@
 (when (defined? 'mach-bootstrap)
     (allow mach-bootstrap
         (apply-message-filter
-            (deny mach-message-send (with telemetry))
-            (allow mach-message-send (message-number
+            (deny xpc-message-send (with telemetry))
+            (allow xpc-message-send (message-number
                 206
                 207
                 711

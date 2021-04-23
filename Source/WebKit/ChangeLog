@@ -1,3 +1,16 @@
+2021-04-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276451.
+        https://bugs.webkit.org/show_bug.cgi?id=224999
+
+        Broke perf testing
+
+        Reverted changeset:
+
+        "[iOS] Update sandbox message filter syntax"
+        https://bugs.webkit.org/show_bug.cgi?id=223384
+        https://trac.webkit.org/changeset/276451
+
 2021-04-23  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] GPU Process sandbox lacks IOMobileFramebufferUserClient method filter
