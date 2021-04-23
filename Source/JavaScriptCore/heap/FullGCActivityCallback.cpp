@@ -30,10 +30,6 @@
 
 namespace JSC {
 
-#if !PLATFORM(IOS_FAMILY)
-const constexpr Seconds pagingTimeOut { 100_ms }; // Time in seconds to allow opportunistic timer to iterate over all blocks to see if the Heap is paged out.
-#endif
-
 FullGCActivityCallback::FullGCActivityCallback(Heap* heap)
     : GCActivityCallback(heap)
 {
@@ -44,11 +40,11 @@ void FullGCActivityCallback::doCollection(VM& vm)
     Heap& heap = vm.heap;
     m_didGCRecently = false;
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(IOS_FAMILY) || PLATFORM(MACCATALYST)
     MonotonicTime startTime = MonotonicTime::now();
-    if (heap.isPagedOut(startTime + pagingTimeOut)) {
+    if (heap.isPagedOut()) {
         cancel();
-        heap.increaseLastFullGCLength(pagingTimeOut);
+        heap.increaseLastFullGCLength(MonotonicTime::now() - startTime);
         return;
     }
 #endif

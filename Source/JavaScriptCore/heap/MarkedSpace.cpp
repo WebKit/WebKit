@@ -27,6 +27,7 @@
 #include "MarkedBlockInlines.h"
 #include "MarkedSpaceInlines.h"
 #include <wtf/ListDump.h>
+#include <wtf/SimpleStats.h>
 
 namespace JSC {
 
@@ -354,19 +355,19 @@ void MarkedSpace::resumeAllocating()
     // Nothing to do for PreciseAllocations.
 }
 
-bool MarkedSpace::isPagedOut(MonotonicTime deadline)
+bool MarkedSpace::isPagedOut()
 {
-    bool result = false;
+    SimpleStats pagedOutPagesStats;
+
     forEachDirectory(
         [&] (BlockDirectory& directory) -> IterationStatus {
-            if (directory.isPagedOut(deadline)) {
-                result = true;
-                return IterationStatus::Done;
-            }
+            directory.updatePercentageOfPagedOutPages(pagedOutPagesStats);
             return IterationStatus::Continue;
         });
     // FIXME: Consider taking PreciseAllocations into account here.
-    return result;
+    double maxHeapGrowthFactor = VM::isInMiniMode() ? Options::miniVMHeapGrowthFactor() : Options::largeHeapGrowthFactor();
+    double bailoutPercentage = Options::customFullGCCallbackBailThreshold() == -1.0 ? maxHeapGrowthFactor - 1 : Options::customFullGCCallbackBailThreshold();
+    return pagedOutPagesStats.mean() > pagedOutPagesStats.count() * bailoutPercentage;
 }
 
 void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
