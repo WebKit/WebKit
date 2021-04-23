@@ -6,11 +6,11 @@
 <body>
 <script src="referrer-policy-header-test.js"></script>
 <script>
-description("Tests support for Referrer-Policy HTTP header.");
+description("Tests support for Referrer-Policy HTTP header (multipart).");
 jsTestIsAsync = true;
 
 if (window.testRunner)
-    testRunner.setStatisticsShouldDowngradeReferrer(false, () => { runTests(false /* multipart */); });
+    testRunner.setStatisticsShouldDowngradeReferrer(false, () => { runTests(true /* multipart */); });
 </script>
 </body>
 </html>

@@ -1,3 +1,26 @@
+2021-04-23  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/security/referrer-policy-header.html is slow
+        https://bugs.webkit.org/show_bug.cgi?id=224998
+
+        Reviewed by Geoffrey Garen.
+
+        The test is a flaky timeout on the bots because it is slow. On my machine, it takes 17 seconds to run
+        it with a debug build. To speed things up, I am now running the subtests in parallel instead of
+        sequentially. I also split the test in 2 (regular response vs multipart response). Each tests now takes
+        about ~5 seconds to run on my machine.
+
+        * http/tests/security/referrer-policy-header-expected.txt:
+        * http/tests/security/referrer-policy-header-multipart-expected.txt: Added.
+        * http/tests/security/referrer-policy-header-multipart.html: Added.
+        * http/tests/security/referrer-policy-header-test.js: Copied from LayoutTests/http/tests/security/referrer-policy-header.html.
+        (printResults):
+        (onmessage):
+        (runTests):
+        * http/tests/security/referrer-policy-header.html:
+        * http/tests/security/resources/postReferrer.py:
+        * http/tests/security/resources/serve-referrer-policy-and-test.py:
+
 2021-04-23  Ryan Haddad  <ryanhaddad@apple.com>
 
         imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html is a flakey crash and failure
