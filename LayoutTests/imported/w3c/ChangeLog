@@ -1,3 +1,22 @@
+2021-04-23  Cathie Chen  <cathiechen@igalia.com>
+
+        Import the update to "mapping attribute width and height to aspect ratio" tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224911
+
+        Reviewed by Rob Buis.
+
+        Import the update to "mapping attribute width and height to aspect ratio" tests from WPT commit 0ae0bb7cab. Split up the test cases, to make sure
+        each image has its own test case and won't affect testing other images.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/resources/aspect-ratio.js:
+        (test_computed_style_aspect_ratio):
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+
 2021-04-22  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse @counter-style descriptors

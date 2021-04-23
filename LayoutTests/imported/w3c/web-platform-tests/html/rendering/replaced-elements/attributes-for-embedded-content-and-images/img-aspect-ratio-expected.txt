@@ -1,34 +1,43 @@
 
 
-FAIL Image width and height attributes are used to infer aspect-ratio assert_approx_equals: aspect-ratio should override intrinsic size of images that don't have any src. expected 0.8 +/- 0.001 but got Infinity
-FAIL img with {"width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
-FAIL input with {"type":"image","width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
-PASS input with {"type":"submit","width":"10","height":"20"}
-FAIL img with {"width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
-FAIL input with {"type":"image","width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
-PASS input with {"type":"submit","width":"0","height":"1"}
-FAIL img with {"width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
-FAIL input with {"type":"image","width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
-PASS input with {"type":"submit","width":"1","height":"0"}
-FAIL img with {"width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
-FAIL input with {"type":"image","width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
-PASS input with {"type":"submit","width":"0","height":"0"}
-FAIL img with {"width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
-FAIL input with {"type":"image","width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
-PASS input with {"type":"submit","width":"0.5","height":"1.5"}
-PASS img with {"width":null,"height":null}
-PASS input with {"type":"image","width":null,"height":null}
-PASS input with {"type":"submit","width":null,"height":null}
-PASS img with {"width":"10","height":null}
-PASS input with {"type":"image","width":"10","height":null}
-PASS input with {"type":"submit","width":"10","height":null}
-PASS img with {"width":null,"height":"20"}
-PASS input with {"type":"image","width":null,"height":"20"}
-PASS input with {"type":"submit","width":null,"height":"20"}
-PASS img with {"width":"xx","height":"20"}
-PASS input with {"type":"image","width":"xx","height":"20"}
-PASS input with {"type":"submit","width":"xx","height":"20"}
-PASS img with {"width":"10%","height":"20"}
-PASS input with {"type":"image","width":"10%","height":"20"}
-PASS input with {"type":"submit","width":"10%","height":"20"}
+PASS Image width and height attributes are used to infer aspect-ratio
+PASS Create, append and test immediately: <img> with attributes width=250, height=100
+PASS Create, append and test immediately: <img> with attributes width=0.8, height=0.2
+PASS Create, append and test immediately: <img> with attributes width=50% height=25%
+FAIL Computed style test: img with {"width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
+FAIL Computed style test: input with {"type":"image","width":"10","height":"20"} assert_equals: expected "auto 10 / 20" but got "auto"
+PASS Computed style test: input with {"type":"submit","width":"10","height":"20"}
+FAIL Computed style test: img with {"width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
+FAIL Computed style test: input with {"type":"image","width":"0","height":"1"} assert_equals: expected "auto 0 / 1" but got "auto"
+PASS Computed style test: input with {"type":"submit","width":"0","height":"1"}
+FAIL Computed style test: img with {"width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
+FAIL Computed style test: input with {"type":"image","width":"1","height":"0"} assert_equals: expected "auto 1 / 0" but got "auto"
+PASS Computed style test: input with {"type":"submit","width":"1","height":"0"}
+FAIL Computed style test: img with {"width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
+FAIL Computed style test: input with {"type":"image","width":"0","height":"0"} assert_equals: expected "auto 0 / 0" but got "auto"
+PASS Computed style test: input with {"type":"submit","width":"0","height":"0"}
+FAIL Computed style test: img with {"width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
+FAIL Computed style test: input with {"type":"image","width":"0.5","height":"1.5"} assert_equals: expected "auto 0.5 / 1.5" but got "auto"
+PASS Computed style test: input with {"type":"submit","width":"0.5","height":"1.5"}
+PASS Computed style test: img with {"width":null,"height":null}
+PASS Computed style test: input with {"type":"image","width":null,"height":null}
+PASS Computed style test: input with {"type":"submit","width":null,"height":null}
+PASS Computed style test: img with {"width":"10","height":null}
+PASS Computed style test: input with {"type":"image","width":"10","height":null}
+PASS Computed style test: input with {"type":"submit","width":"10","height":null}
+PASS Computed style test: img with {"width":null,"height":"20"}
+PASS Computed style test: input with {"type":"image","width":null,"height":"20"}
+PASS Computed style test: input with {"type":"submit","width":null,"height":"20"}
+PASS Computed style test: img with {"width":"xx","height":"20"}
+PASS Computed style test: input with {"type":"image","width":"xx","height":"20"}
+PASS Computed style test: input with {"type":"submit","width":"xx","height":"20"}
+PASS Computed style test: img with {"width":"10%","height":"20"}
+PASS Computed style test: input with {"type":"image","width":"10%","height":"20"}
+PASS Computed style test: input with {"type":"submit","width":"10%","height":"20"}
+PASS Loaded images test: <img> without width height attributes
+PASS Loaded images test: <img> with width and height attributes, but conflicting to the original aspect ratio
+FAIL Loaded images test: <img> with width, height and empty src attributes assert_approx_equals: aspect-ratio should override intrinsic size of images that don't have any src. expected 0.8 +/- 0.001 but got Infinity
+FAIL Loaded images test: Error image with width and height attributes assert_approx_equals: aspect-ratio should affect the size of error images. expected 0.8 +/- 0.001 but got 1
+PASS Loaded images test: Error image with width, height and alt attributes
+FAIL Loaded images test: <img> with width and height attributes, but not equal to the original aspect ratio assert_approx_equals: The original aspect ratio of blue.png expected 1.2547169811320755 +/- 0.001 but got 1.25
 
