@@ -1669,6 +1669,11 @@ MediaPlayerIdentifier MediaPlayer::identifier() const
     return m_private->identifier();
 }
 
+String MediaPlayer::elementId() const
+{
+    return client().mediaPlayerElementId();
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()
 {

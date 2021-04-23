@@ -712,6 +712,9 @@ bool HTMLMediaElement::isInteractiveContent() const
 
 void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
+    if (name == idAttr)
+        m_id = value;
+
     if (name == srcAttr) {
         // https://html.spec.whatwg.org/multipage/embedded-content.html#location-of-the-media-resource
         // Location of the Media Resource

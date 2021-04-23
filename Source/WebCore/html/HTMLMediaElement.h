@@ -725,6 +725,8 @@ private:
     String mediaPlayerSourceApplicationIdentifier() const override { return sourceApplicationIdentifier(); }
     Vector<String> mediaPlayerPreferredAudioCharacteristics() const override;
 
+    String mediaPlayerElementId() const override { return m_id; }
+
 #if PLATFORM(IOS_FAMILY)
     String mediaPlayerNetworkInterfaceName() const override;
     void mediaPlayerGetRawCookies(const URL&, MediaPlayerClient::GetRawCookiesCallback&&) const final;
@@ -1199,6 +1201,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     String m_audioOutputHashedDeviceId;
 #endif
+    String m_id;
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

@@ -280,7 +280,6 @@ protected:
 
     void setStreamVolumeElement(GstStreamVolume*);
 
-    void setPipeline(GstElement*);
     GstElement* pipeline() const { return m_pipeline.get(); }
 
     void repaint();
@@ -411,7 +410,7 @@ private:
     virtual void updateStates();
     virtual void asyncStateChangeDone();
 
-    void createGSTPlayBin(const URL&, const String& pipelineName);
+    void createGSTPlayBin(const URL&);
 
     bool loadNextLocation();
     void mediaLocationChanged(GstMessage*);
@@ -443,7 +442,6 @@ private:
     static void downloadBufferFileCreatedCallback(MediaPlayerPrivateGStreamer*);
 
     void setPlaybinURL(const URL& urlString);
-    void loadFull(const String& url, const String& pipelineName);
 
     void updateTracks(const GRefPtr<GstStreamCollection>&);
     void videoSinkCapsChanged(GstPad*);
