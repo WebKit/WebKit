@@ -1,3 +1,17 @@
+2021-04-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remove useless 'network-outbound' rule from non-networking file rule
+        https://bugs.webkit.org/show_bug.cgi?id=224940
+        <rdar://problem/66583476>
+
+        Reviewed by Per Arne Vollan.
+
+        No new tests. No effect on behavior.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+
 2021-04-22  BJ Burg  <bburg@apple.com>
 
         [Cocoa] re-enable test case WKInspectorDelegate.InspectorConfiguration

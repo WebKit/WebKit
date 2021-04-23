@@ -610,7 +610,7 @@
 (allow mach-lookup (with report) (with telemetry)
        (global-name "com.apple.system.logger"))
 
-(allow file-read-metadata network-outbound
+(allow file-read-metadata
        (literal "/private/var/run/syslog"))
 
 (allow mach-lookup
