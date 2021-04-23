@@ -1072,8 +1072,8 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
         Color highlightColor = renderer->style().tapHighlightColor();
         if (!node->document().frame()->isMainFrame()) {
             FrameView* view = node->document().frame()->view();
-            for (size_t i = 0; i < quads.size(); ++i)
-                quads[i] = view->contentsToRootView(quads[i]);
+            for (auto& quad : quads)
+                quad = view->contentsToRootView(quad);
         }
 
         RoundedRect::Radii borderRadii;

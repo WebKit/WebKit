@@ -1,3 +1,16 @@
+2021-04-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Followup to r276397
+        https://bugs.webkit.org/show_bug.cgi?id=224883
+
+        Reviewed by Darin Adler.
+
+        Use a range-based for loop when mapping FloatQuads in `sendTapHighlightForNodeIfNecessary`.
+        No change in behavior.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::sendTapHighlightForNodeIfNecessary):
+
 2021-04-22  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove useless 'network-outbound' rule from non-networking file rule
