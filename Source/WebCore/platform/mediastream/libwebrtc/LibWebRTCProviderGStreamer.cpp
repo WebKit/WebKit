@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 
+#include "RuntimeEnabledFeatures.h"
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -44,12 +45,12 @@ bool LibWebRTCProvider::webRTCAvailable()
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProviderGStreamer::createDecoderFactory()
 {
-    return makeUnique<GStreamerVideoDecoderFactory>();
+    return makeUnique<GStreamerVideoDecoderFactory>(isSupportingVP9Profile0(), isSupportingVP9Profile2());
 }
 
 std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProviderGStreamer::createEncoderFactory()
 {
-    return makeUnique<GStreamerVideoEncoderFactory>();
+    return makeUnique<GStreamerVideoEncoderFactory>(isSupportingVP9Profile0(), isSupportingVP9Profile2());
 }
 
 } // namespace WebCore

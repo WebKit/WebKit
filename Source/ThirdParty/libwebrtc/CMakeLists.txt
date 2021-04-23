@@ -538,6 +538,10 @@ set(webrtc_SOURCES
     Source/webrtc/common_video/h264/pps_parser.cc
     Source/webrtc/common_video/h264/sps_parser.cc
     Source/webrtc/common_video/h264/sps_vui_rewriter.cc
+    Source/webrtc/common_video/h265/h265_common.cc
+    Source/webrtc/common_video/h265/h265_pps_parser.cc
+    Source/webrtc/common_video/h265/h265_sps_parser.cc
+    Source/webrtc/common_video/h265/h265_vps_parser.cc
     Source/webrtc/common_video/incoming_video_stream.cc
     Source/webrtc/common_video/libyuv/webrtc_libyuv.cc
     Source/webrtc/common_video/video_frame_buffer.cc
@@ -1042,8 +1046,9 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers_checker.cc
     Source/webrtc/modules/video_coding/codecs/vp9/svc_config.cc
     Source/webrtc/modules/video_coding/codecs/vp9/svc_rate_allocator.cc
-    Source/webrtc/modules/video_coding/codecs/vp9/vp9_impl.cc
+    Source/webrtc/modules/video_coding/codecs/vp9/vp9.cc
     Source/webrtc/modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.cc
+    Source/webrtc/modules/video_coding/codecs/vp9/vp9_impl.cc
     Source/webrtc/modules/video_coding/codec_timer.cc
     Source/webrtc/modules/video_coding/decoder_database.cc
     Source/webrtc/modules/video_coding/decoding_state.cc
@@ -1057,6 +1062,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/generic_decoder.cc
     Source/webrtc/modules/video_coding/h264_sprop_parameter_sets.cc
     Source/webrtc/modules/video_coding/h264_sps_pps_tracker.cc
+    Source/webrtc/modules/video_coding/h265_vps_sps_pps_tracker.cc
     Source/webrtc/modules/video_coding/histogram.cc
     Source/webrtc/modules/video_coding/include/video_codec_interface.cc
     Source/webrtc/modules/video_coding/inter_frame_delay.cc
@@ -1608,19 +1614,25 @@ set_target_properties(webrtc PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(webrtc PROPERTIES C_VISIBILITY_PRESET hidden)
 
 target_compile_definitions(webrtc PRIVATE
-  OPENSSL_NO_ASM
   DYNAMIC_ANNOTATIONS_ENABLED=1
   EXPAT_RELATIVE_PATH
+  HAVE_CONFIG_H
   HAVE_LRINT
   HAVE_LRINTF
   HAVE_NETINET_IN_H
   HAVE_SCTP
+  HAVE_STDINT_H
+  HAVE_STDLIB_H
+  HAVE_UINT64_T
   HAVE_WEBRTC_VIDEO
   HAVE_WEBRTC_VOICE
   JSON_USE_EXCEPTION=0
   NON_WINDOWS_DEFINE
+  NO_MAIN_THREAD_WRAPPING
+  OPENSSL_NO_ASM
   OPUS_BUILD
   OPUS_EXPORT=
+  RTC_ENABLE_VP9
   VAR_ARRAYS
   WEBRTC_APM_DEBUG_DUMP=0
   WEBRTC_CODEC_G711
@@ -1639,19 +1651,16 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_USE_BUILTIN_ISAC_FIX=1
   WEBRTC_USE_BUILTIN_ISAC_FLOAT=0
   WTF_USE_DYNAMIC_ANNOTATIONS=1
-  RTC_DISABLE_VP9
   _GNU_SOURCE
 )
 
 if (APPLE)
     target_compile_definitions(webrtc PRIVATE
-        RTC_ENABLE_VP9
         WEBRTC_ARCH_LITTLE_ENDIAN
         WEBRTC_MAC
     )
 else ()
     target_compile_definitions(webrtc PRIVATE
-        DISABLE_H265
         SCTP_PROCESS_LEVEL_LOCKS
         SCTP_SIMPLE_ALLOCATOR
         SCTP_USE_OPENSSL_SHA1

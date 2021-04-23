@@ -1,3 +1,14 @@
+2021-04-23  Philippe Normand  <pnormand@igalia.com>
+
+        [LibWebRTC][WPE][GTK] Enable vp9 and NO_MAIN_THREAD_WRAPPING
+        https://bugs.webkit.org/show_bug.cgi?id=222795
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * CMakeLists.txt: Enable NO_MAIN_THREAD_WRAPPING as in the XCode build and harmonize options
+        between Apple and non-Apple ports.
+        * Source/webrtc/common_video/h265/h265_pps_parser.h:
+
 2021-04-21  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebRTC should be compiled with thread-safe statics

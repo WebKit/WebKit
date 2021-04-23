@@ -1120,8 +1120,6 @@ webkit.org/b/222585 [ Debug ] webrtc/video-h264.html [ Crash ]
 webkit.org/b/210272 webrtc/datachannel/multiple-connections.html [ Timeout Pass ]
 webkit.org/b/212809 [ Release ] webrtc/datachannel/gather-candidates-networkprocess-crash.html [ Timeout Pass ]
 
-webkit.org/b/213780 webrtc/vp9.html [ Failure ]
-
 webkit.org/b/215005 webkit.org/b/218787 webrtc/h264-baseline.html [ Crash Timeout ]
 # h264-high.html is marked as slow in the root expectation
 webkit.org/b/215007 [ Release ] webrtc/h264-high.html [ Timeout ]
@@ -1138,7 +1136,7 @@ webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Sl
 
 webkit.org/b/216763 webrtc/captureCanvas-webrtc-software-h264-high.html [ Crash Failure ]
 
-webkit.org/b/218221 webrtc/vp9-profile2.html [ Failure ]
+webkit.org/b/218221 webrtc/vp9-profile2.html [ Timeout Failure ]
 
 # Release timing out.
 webkit.org/b/219825 [ Release ] webrtc/sframe-keys.html [ Skip ]
@@ -2027,22 +2025,18 @@ webkit.org/b/186086 fast/text/font-collection.html [ ImageOnlyFailure ]
 webkit.org/b/186100 css3/color-filters/color-filter-color-property-list-item.html [ ImageOnlyFailure ]
 webkit.org/b/186100 fast/hidpi/filters-turbulence.html [ ImageOnlyFailure ]
 webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html [ Failure ]
-webkit.org/b/187064 webrtc/audio-peer-connection-g722.html
-webkit.org/b/187064 webrtc/captureCanvas-webrtc.html
-webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
+
 webkit.org/b/187064 webrtc/libwebrtc/descriptionGetters.html
-webkit.org/b/187064 webrtc/peer-connection-track-end.html
+webkit.org/b/187064 webrtc/datachannel/mdns-ice-candidates.html
 webkit.org/b/187064 webrtc/video-addTrack.html
-webkit.org/b/187064 webrtc/video-addTransceiver.html
 webkit.org/b/187064 webrtc/video-disabled-black.html
-webkit.org/b/187064 webrtc/video.html
-webkit.org/b/187064 webrtc/video-mute.html
 webkit.org/b/187064 webrtc/video-remote-mute.html
 webkit.org/b/187064 webrtc/video-replace-muted-track.html
-webkit.org/b/187064 webrtc/video-replace-track.html
 webkit.org/b/187064 webrtc/video-rotation.html
-webkit.org/b/187064 webrtc/video-unmute.html
 webkit.org/b/187064 webrtc/video-with-data-channel.html
+webkit.org/b/187064 webrtc/video-replace-track.html [ Failure Pass ]
+webkit.org/b/187064 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Failure Pass ]
+
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
 webkit.org/b/190707 css-custom-properties-api/length2.html [ Failure ]

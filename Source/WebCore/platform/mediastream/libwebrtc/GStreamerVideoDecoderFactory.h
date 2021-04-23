@@ -24,20 +24,21 @@
 
 #include "LibWebRTCMacros.h"
 #include "api/video_codecs/video_decoder_factory.h"
-#include <gst/gst.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
 class GStreamerVideoDecoderFactory : public webrtc::VideoDecoderFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GStreamerVideoDecoderFactory();
-    static bool newSource(String trackId, GstElement *source);
+    GStreamerVideoDecoderFactory(bool isSupportingVP9Profile0, bool isSupportingVP9Profile2);
 
 private:
     std::unique_ptr<webrtc::VideoDecoder> CreateVideoDecoder(const webrtc::SdpVideoFormat&) final;
     std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const final;
+
+    bool m_isSupportingVP9Profile0;
+    bool m_isSupportingVP9Profile2;
 };
 }
 

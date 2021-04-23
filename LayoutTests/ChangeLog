@@ -1,3 +1,17 @@
+2021-04-23  Philippe Normand  <pnormand@igalia.com>
+
+        [LibWebRTC][WPE][GTK] Enable vp9 and NO_MAIN_THREAD_WRAPPING
+        https://bugs.webkit.org/show_bug.cgi?id=222795
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update GLIB baselines for webrtc tests.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-onnegotiationneeded-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/webrtc/RTCRtpTransceiver-setCodecPreferences-expected.txt: Added.
+
 2021-04-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update baseline after r276448.

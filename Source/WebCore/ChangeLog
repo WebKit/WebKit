@@ -1,3 +1,35 @@
+2021-04-23  Philippe Normand  <pnormand@igalia.com>
+
+        [LibWebRTC][WPE][GTK] Enable vp9 and NO_MAIN_THREAD_WRAPPING
+        https://bugs.webkit.org/show_bug.cgi?id=222795
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add VP9 encoding and decoding support in the WPE/GTK LibWebRTC backend. The underlying
+        encoding support is based on LibWebRTC's internal VP9 support. The GStreamer VPx encoders
+        lack simulcast and high profile support, so can't really be used anyway. The
+        GStreamerVP8Encoder was removed for this reason as well.
+
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.cpp:
+        (WebCore::VP9Decoder::VP9Decoder):
+        (WebCore::VP9Decoder::Create):
+        (WebCore::GStreamerVideoDecoderFactory::CreateVideoDecoder):
+        (WebCore::GStreamerVideoDecoderFactory::GStreamerVideoDecoderFactory):
+        (WebCore::GStreamerVideoDecoderFactory::GetSupportedFormats const):
+        * platform/mediastream/libwebrtc/GStreamerVideoDecoderFactory.h:
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoder.cpp:
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.cpp:
+        (WebCore::GStreamerVideoEncoder::makeElement):
+        (WebCore::GStreamerVideoEncoder::createEncoder):
+        (WebCore::GStreamerVideoEncoder::SetRestrictionCaps):
+        (WebCore::GStreamerVideoEncoderFactory::CreateVideoEncoder):
+        (WebCore::GStreamerVideoEncoderFactory::GStreamerVideoEncoderFactory):
+        (WebCore::GStreamerVideoEncoderFactory::GetSupportedFormats const):
+        * platform/mediastream/libwebrtc/GStreamerVideoEncoderFactory.h:
+        * platform/mediastream/libwebrtc/LibWebRTCProviderGStreamer.cpp:
+        (WebCore::LibWebRTCProviderGStreamer::createDecoderFactory):
+        (WebCore::LibWebRTCProviderGStreamer::createEncoderFactory):
+
 2021-04-22  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse @counter-style descriptors
