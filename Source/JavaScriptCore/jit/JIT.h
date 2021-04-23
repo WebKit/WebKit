@@ -824,31 +824,17 @@ namespace JSC {
         }
 
 #if OS(WINDOWS) && CPU(X86_64)
+        template<typename Type> static constexpr bool is64BitType = sizeof(Type) <= 8;
+        template<> static constexpr bool is64BitType<void> = true;
+
         template<typename OperationType, typename... Args>
-        std::enable_if_t<std::is_same<typename FunctionTraits<OperationType>::ResultType, SlowPathReturnType>::value, MacroAssembler::Call>
-        callOperation(OperationType operation, Args... args)
+        MacroAssembler::Call callOperation(OperationType operation, Args... args)
         {
             setupArguments<OperationType>(args...);
+            // x64 Windows cannot use standard call when the return type is larger than 64 bits.
+            if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>)
+                return appendCallWithExceptionCheck(operation);
             return appendCallWithExceptionCheckAndSlowPathReturnType(operation);
-        }
-
-        template<typename Type>
-        struct is64BitType {
-            static constexpr bool value = sizeof(Type) <= 8;
-        };
-
-        template<>
-        struct is64BitType<void> {
-            static constexpr bool value = true;
-        };
-
-        template<typename OperationType, typename... Args>
-        std::enable_if_t<!std::is_same<typename FunctionTraits<OperationType>::ResultType, SlowPathReturnType>::value, MacroAssembler::Call>
-        callOperation(OperationType operation, Args... args)
-        {
-            static_assert(is64BitType<typename FunctionTraits<OperationType>::ResultType>::value, "Win64 cannot use standard call when return type is larger than 64 bits.");
-            setupArguments<OperationType>(args...);
-            return appendCallWithExceptionCheck(operation);
         }
 #else // OS(WINDOWS) && CPU(X86_64)
         template<typename OperationType, typename... Args>
@@ -876,6 +862,18 @@ namespace JSC {
             return result;
         }
 
+#if OS(WINDOWS) && CPU(X86_64)
+        template<typename OperationType, typename... Args>
+        MacroAssembler::Call callOperationNoExceptionCheck(OperationType operation, Args... args)
+        {
+            setupArguments<OperationType>(args...);
+            updateTopCallFrame();
+            // x64 Windows cannot use standard call when the return type is larger than 64 bits.
+            if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>)
+                return appendCall(operation);
+            return appendCallWithSlowPathReturnType(operation);
+        }
+#else
         template<typename OperationType, typename... Args>
         MacroAssembler::Call callOperationNoExceptionCheck(OperationType operation, Args... args)
         {
@@ -883,6 +881,7 @@ namespace JSC {
             updateTopCallFrame();
             return appendCall(operation);
         }
+#endif // OS(WINDOWS) && CPU(X86_64)
 
         template<typename OperationType, typename... Args>
         MacroAssembler::Call callOperationWithCallFrameRollbackOnException(OperationType operation, Args... args)
