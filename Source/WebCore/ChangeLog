@@ -1,3 +1,26 @@
+2021-04-22  Jean-Yves Avenard  <jya@apple.com>
+
+        Fix color gamut in WebRTC when using VPx software decoder.
+        https://bugs.webkit.org/show_bug.cgi?id=220972
+        <rdar://problem/73616455>
+
+        Reviewed by Youenn Fablet.
+
+        By default, and how libwebrtc is configuring its encoders and decoder, video range levels are used
+        (16-235). Video range was assumed to use full range instead (0-255), causing blacks to look grey and
+        whites to appear washed-out.
+        It is theoretically possible, when using VP9 that full-range level are used. While the information
+        related to video levels is available at the VP9 codec level; only the color space information is
+        being made available in libwebrtc's public image data structure, color range isn't.
+        For now we can assume the default is sufficient, and a follow-up change will be submitted to libwebrtc
+        later on.
+
+        In memory of Dr. Alex. May he rest in peace.
+        Test: webrtc/video-vp8-videorange.html
+
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::pixelBufferPool):
+
 2021-04-22  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [SOUP] Null pointer dereference in ResourceLoader::didReceiveAuthenticationChallenge

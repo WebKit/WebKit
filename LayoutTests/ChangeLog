@@ -1,3 +1,14 @@
+2021-04-22  Jean-Yves Avenard  <jya@apple.com>
+
+        Fix color gamut in WebRTC when using VPx software decoder.
+        https://bugs.webkit.org/show_bug.cgi?id=220972
+        <rdar://problem/73616455>
+
+        Reviewed by Youenn Fablet.
+
+        * webrtc/video-vp8-videorange-expected.txt: Added.
+        * webrtc/video-vp8-videorange.html: Added.
+
 2021-04-22  Robert Jenner  <jenner@apple.com>
 
         REGRESSION (Metal ANGLE): webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html is constantly timing out. 
