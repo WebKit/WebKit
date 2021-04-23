@@ -96,7 +96,7 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (allow (with telemetry) (with message "IOMobileFramebufferUserClient")
+                (allow
                     iokit-external-method)
             )
         )

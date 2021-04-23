@@ -1,3 +1,20 @@
+2021-04-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] GPU Process sandbox lacks IOMobileFramebufferUserClient method filter
+        https://bugs.webkit.org/show_bug.cgi?id=224956
+        <rdar://problem/68227590>
+
+        Reviewed by Per Arne Vollan.
+
+        This patch updates the GPU process sandbox to match the method filter used in the WebContent process
+        so that we will retain consistent protections when activating the GPU Process. These are the same rules
+        governing access to this resource when the GPU process is disabled, so should not create a change in behavior.
+
+        We also remove unneeded telemetry to reduce messaging burden and avoid performance issues.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-04-23  BJ Burg  <bburg@apple.com>
 
         Web Inspector: [Cocoa] WKInspectorResourceURLSchemeHandler needs to serialize cleanup actions

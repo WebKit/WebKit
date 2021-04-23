@@ -87,7 +87,17 @@
 
 (define-once (framebuffer-access)
     (allow iokit-open
-           (iokit-user-client-class "IOMobileFramebufferUserClient"))
+           (iokit-user-client-class "IOMobileFramebufferUserClient")
+           (when (defined? 'iokit-external-method)
+               (apply-message-filter
+                   (deny (with telemetry)
+                       iokit-async-external-method
+                       iokit-external-trap)
+                   (allow
+                       iokit-external-method)
+               )
+           )
+    )
     (mobile-preferences-read "com.apple.iokit.IOMobileGraphicsFamily"))
 
 (define-once (asset-access . options)
