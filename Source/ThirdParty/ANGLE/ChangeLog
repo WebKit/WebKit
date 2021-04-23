@@ -1,3 +1,16 @@
+2021-04-23  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r276190.
+
+        broke a test internally.
+
+        Reverted changeset:
+
+        "Metal-ANGLE: Shared memory texture tests failing in iOS
+        Simulator"
+        https://bugs.webkit.org/show_bug.cgi?id=222685
+        https://commits.webkit.org/r276190
+
 2021-04-22  Lauro Moura  <lmoura@igalia.com>
 
         [CMake][ANGLE] Silence -Wreturn-type for gcc and clang
