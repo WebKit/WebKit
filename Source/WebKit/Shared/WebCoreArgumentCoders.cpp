@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2908,28 +2908,17 @@ bool ArgumentCoder<PromisedAttachmentInfo>::decode(Decoder& decoder, PromisedAtt
     return true;
 }
 
-void ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::encode(Encoder& encoder, const Vector<RefPtr<SecurityOrigin>>& origins)
+void ArgumentCoder<RefPtr<SecurityOrigin>>::encode(Encoder& encoder, const RefPtr<SecurityOrigin>& origin)
 {
-    encoder << static_cast<uint64_t>(origins.size());
-    for (auto& origin : origins)
-        encoder << *origin;
+    encoder << *origin;
 }
     
-bool ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::decode(Decoder& decoder, Vector<RefPtr<SecurityOrigin>>& origins)
+Optional<RefPtr<SecurityOrigin>> ArgumentCoder<RefPtr<SecurityOrigin>>::decode(Decoder& decoder)
 {
-    uint64_t dataSize;
-    if (!decoder.decode(dataSize))
-        return false;
-
-    for (uint64_t i = 0; i < dataSize; ++i) {
-        auto decodedOriginRefPtr = SecurityOrigin::decode(decoder);
-        if (!decodedOriginRefPtr)
-            return false;
-        origins.append(decodedOriginRefPtr.releaseNonNull());
-    }
-    origins.shrinkToFit();
-
-    return true;
+    auto origin = SecurityOrigin::decode(decoder);
+    if (!origin)
+        return WTF::nullopt;
+    return origin;
 }
 
 void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttributes& attributes)
@@ -3149,38 +3138,6 @@ Optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMInstan
 
     return makeOptional<WebCore::CDMInstanceSession::Message>({ type, buffer.releaseNonNull() });
 }
-
-void ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::KeyStatusVector& keyStatuses)
-{
-    encoder << static_cast<uint64_t>(keyStatuses.size());
-    for (auto& keyStatus : keyStatuses) {
-        RefPtr<SharedBuffer> key = keyStatus.first.copyRef();
-        encoder << key << keyStatus.second;
-    }
-}
-
-Optional<WebCore::CDMInstanceSession::KeyStatusVector> ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::decode(Decoder& decoder)
-{
-    uint64_t dataSize;
-    if (!decoder.decode(dataSize))
-        return WTF::nullopt;
-
-    WebCore::CDMInstanceSession::KeyStatusVector keyStatuses;
-    keyStatuses.reserveInitialCapacity(dataSize);
-
-    for (uint64_t i = 0; i < dataSize; ++i) {
-        RefPtr<SharedBuffer> key;
-        if (!decoder.decode(key) || !key)
-            return WTF::nullopt;
-
-        WebCore::CDMInstanceSessionClient::KeyStatus status;
-        if (!decoder.decode(status))
-            return WTF::nullopt;
-
-        keyStatuses.uncheckedAppend({ key.releaseNonNull(), status });
-    }
-    return keyStatuses;
-}
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
 template<typename Encoder>
@@ -3246,7 +3203,7 @@ Optional<RefPtr<WebCore::ImageData>> ArgumentCoder<RefPtr<WebCore::ImageData>>::
         return WTF::nullopt;
 
     if (!isEngaged)
-        return RefPtr<WebCore::ImageData>();
+        return { nullptr };
 
     auto result = ArgumentCoder<Ref<WebCore::ImageData>>::decode(decoder);
     if (!result)

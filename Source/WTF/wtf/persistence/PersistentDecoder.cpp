@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,15 +47,24 @@ bool Decoder::bufferIsLargeEnoughToContain(size_t size) const
     return size <= static_cast<size_t>(m_bufferEnd - m_bufferPosition);
 }
 
-bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
+const uint8_t* Decoder::bufferPointerForDirectRead(size_t size)
 {
     if (!bufferIsLargeEnoughToContain(size))
-        return false;
+        return nullptr;
 
-    memcpy(data, m_bufferPosition, size);
+    auto data = m_bufferPosition;
     m_bufferPosition += size;
 
     Encoder::updateChecksumForData(m_sha1, data, size);
+    return data;
+}
+
+bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
+{
+    auto buffer = bufferPointerForDirectRead(size);
+    if (!buffer)
+        return false;
+    memcpy(data, buffer, size);
     return true;
 }
 

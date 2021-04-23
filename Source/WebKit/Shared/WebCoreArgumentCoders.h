@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -704,9 +704,9 @@ template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::Merchant
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
 };
 
-template<> struct ArgumentCoder<Vector<RefPtr<WebCore::ApplePayError>>> {
-    static void encode(Encoder&, const Vector<RefPtr<WebCore::ApplePayError>>&);
-    static Optional<Vector<RefPtr<WebCore::ApplePayError>>> decode(Decoder&);
+template<> struct ArgumentCoder<RefPtr<WebCore::ApplePayError>> {
+    static void encode(Encoder&, const RefPtr<WebCore::ApplePayError>&);
+    static Optional<RefPtr<WebCore::ApplePayError>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentSessionError> {
@@ -761,9 +761,9 @@ template<> struct ArgumentCoder<WebCore::PromisedAttachmentInfo> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PromisedAttachmentInfo&);
 };
 
-template<> struct ArgumentCoder<Vector<RefPtr<WebCore::SecurityOrigin>>> {
-    static void encode(Encoder&, const Vector<RefPtr<WebCore::SecurityOrigin>>&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, Vector<RefPtr<WebCore::SecurityOrigin>>&);
+template<> struct ArgumentCoder<RefPtr<WebCore::SecurityOrigin>> {
+    static void encode(Encoder&, const RefPtr<WebCore::SecurityOrigin>&);
+    static Optional<RefPtr<WebCore::SecurityOrigin>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::FontAttributes> {
@@ -810,11 +810,6 @@ template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
 template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {
     static void encode(Encoder&, const WebCore::CDMInstanceSession::Message&);
     static Optional<WebCore::CDMInstanceSession::Message> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector> {
-    static void encode(Encoder&, const WebCore::CDMInstanceSession::KeyStatusVector&);
-    static Optional<WebCore::CDMInstanceSession::KeyStatusVector> decode(Decoder&);
 };
 #endif
 

@@ -1,3 +1,40 @@
+2021-04-23  Darin Adler  <darin@apple.com>
+
+        Remove decoder memory allocations based on untrusted data (sizes) in the stream; related changes
+        https://bugs.webkit.org/show_bug.cgi?id=224984
+
+        Reviewed by Sam Weinig.
+
+        * Platform/IPC/ArgumentCoders.h: Remove the calls to
+        HashMap::reserveInitialCapacity and HashSet::reserveInitialCapacity, based
+        on number read in from the decoder. This means there will be more wasted
+        memory in these HashMap and HashSet objects, so we have to test to make
+        sure this does not create a performance problem. But without this check,
+        we are trying to allocate memory based on an unstrusted size.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<RefPtr<ApplePayError>>::encode): Removed the coder
+        for a Vector of these RefPtr, replaced it with a coder for an individual one,
+        allowing the Vector ArgumentCoder template to handle vector size and construction.
+        One benefit is that this adds in a shrinkToFit and prevents us from making any
+        separate mistake about pre-sizing the Vector here since we use shared code.
+        (IPC::ArgumentCoder<RefPtr<ApplePayError>>::decode): Ditto.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<RefPtr<SecurityOrigin>>::encode): Ditto.
+        (IPC::ArgumentCoder<RefPtr<SecurityOrigin>>::decode): Ditto.
+        (IPC::ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::encode):
+        (IPC::ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::decode):
+        Removed unnecessary specialization for the KeyStatusVector. There is already
+        an ArgumentCoder for Vector, for std::pair, for Ref<SharedBuffer>, and for
+        enumerations like CDMKeyStatus, so there's no need to have a specialized
+        coder for this. This function that we are removing had a call to
+        reserveInitialCapacity, but the Vector ArgumentCoder template does not.
+
+        * Shared/WebCoreArgumentCoders.h: Replaced the
+        ArgumentCoder<Vector<RefPtr<WebCore::ApplePayError>>> specialization with
+        ArgumentCoder<RefPtr<WebCore::ApplePayError>>. Removed the
+        ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector> specialization.
+
 2021-04-23  Kate Cheney  <katherine_cheney@apple.com>
 
         Set proper network logging level for full web browsers

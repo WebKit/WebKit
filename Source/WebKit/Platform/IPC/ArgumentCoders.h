@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -514,7 +514,6 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             return WTF::nullopt;
 
         HashMapType hashMap;
-        hashMap.reserveInitialCapacity(hashMapSize);
         for (uint32_t i = 0; i < hashMapSize; ++i) {
             Optional<KeyArg> key;
             decoder >> key;
@@ -580,7 +579,6 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename Hash
             return WTF::nullopt;
 
         HashSetType hashSet;
-        hashSet.reserveInitialCapacity(hashSetSize);
         for (uint64_t i = 0; i < hashSetSize; ++i) {
             Optional<KeyArg> key;
             decoder >> key;

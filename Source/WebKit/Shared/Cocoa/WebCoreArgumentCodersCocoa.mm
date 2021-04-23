@@ -344,38 +344,28 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::decode(
     return true;
 }
 
-void ArgumentCoder<Vector<RefPtr<ApplePayError>>>::encode(Encoder& encoder, const Vector<RefPtr<ApplePayError>>& errors)
+void ArgumentCoder<RefPtr<ApplePayError>>::encode(Encoder& encoder, const RefPtr<ApplePayError>& error)
 {
-    encoder << static_cast<uint64_t>(errors.size());
-    for (auto& error : errors) {
-        encoder << !!error;
-        if (error)
-            encoder << *error;
-    }
+    encoder << !!error;
+    if (error)
+        encoder << *error;
 }
 
-Optional<Vector<RefPtr<ApplePayError>>> ArgumentCoder<Vector<RefPtr<ApplePayError>>>::decode(Decoder& decoder)
+Optional<RefPtr<ApplePayError>> ArgumentCoder<RefPtr<ApplePayError>>::decode(Decoder& decoder)
 {
-    uint64_t size;
-    if (!decoder.decode(size))
+    Optional<bool> isValid;
+    decoder >> isValid;
+    if (!isValid)
         return WTF::nullopt;
 
-    Vector<RefPtr<ApplePayError>> errors;
-    for (uint64_t i = 0; i < size; ++i) {
-        Optional<bool> isValid;
-        decoder >> isValid;
-        if (!isValid)
-            return WTF::nullopt;
+    RefPtr<ApplePayError> error;
+    if (!*isValid)
+        return { nullptr };
 
-        RefPtr<ApplePayError> error;
-        if (*isValid) {
-            error = ApplePayError::decode(decoder);
-            if (!error)
-                return WTF::nullopt;
-        }
-        errors.append(WTFMove(error));
-    }
-    return errors;
+    error = ApplePayError::decode(decoder);
+    if (!error)
+        return WTF::nullopt;
+    return error;
 }
 
 void ArgumentCoder<WebCore::PaymentSessionError>::encode(Encoder& encoder, const WebCore::PaymentSessionError& error)

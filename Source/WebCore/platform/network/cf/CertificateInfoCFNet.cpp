@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -205,17 +205,15 @@ static Optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)
 {
     Optional<uint64_t> size;
     decoder >> size;
-    if (!size)
-        return WTF::nullopt;
 
     if (UNLIKELY(!isInBounds<size_t>(*size)))
         return WTF::nullopt;
-    
-    Vector<uint8_t> vector(static_cast<size_t>(*size));
-    if (!decoder.decodeFixedLengthData(vector.data(), vector.size()))
+
+    auto pointer = decoder.bufferPointerForDirectRead(static_cast<size_t>(*size));
+    if (!pointer)
         return WTF::nullopt;
 
-    return adoptCF(CFDataCreate(nullptr, vector.data(), vector.size()));
+    return adoptCF(CFDataCreate(nullptr, pointer, *size));
 }
 
 #if HAVE(SEC_TRUST_SERIALIZATION)

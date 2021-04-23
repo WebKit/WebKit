@@ -1,3 +1,16 @@
+2021-04-23  Darin Adler  <darin@apple.com>
+
+        Remove decoder memory allocations based on untrusted data (sizes) in the stream; related changes
+        https://bugs.webkit.org/show_bug.cgi?id=224984
+
+        Reviewed by Sam Weinig.
+
+        * platform/network/cf/CertificateInfoCFNet.cpp:
+        (WTF::Persistence::decodeCFData): Removed unneeded check for zero size. Removed code that
+        locally allocates a vector before bufferIsLargeEnoughToContain is called. Instead use
+        bufferPointerForDirectRead, which makes does the buffer size check, and pass the pointer
+        directly to CFDataCreate.
+
 2021-04-23  Chris Dumez  <cdumez@apple.com>
 
         Improve our constructDeletedValue() template specializations
