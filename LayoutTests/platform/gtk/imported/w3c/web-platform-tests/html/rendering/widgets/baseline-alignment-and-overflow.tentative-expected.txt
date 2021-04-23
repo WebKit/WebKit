@@ -35,36 +35,36 @@ FAIL <input type="password" value="x" style="overflow: scroll; appearance: auto;
 PASS <input type="password" value="x" style="overflow: visible; appearance: none;">
 PASS <input type="password" value="x" style="overflow: hidden; appearance: none;">
 FAIL <input type="password" value="x" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
-FAIL <input type="date" value="2020-01-01" style="overflow: visible; appearance: auto;"> assert_equals: input type should be supported expected "date" but got "text"
-FAIL <input type="date" value="2020-01-01" style="overflow: hidden; appearance: auto;"> assert_equals: input type should be supported expected "date" but got "text"
-FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: auto;"> assert_equals: input type should be supported expected "date" but got "text"
-FAIL <input type="date" value="2020-01-01" style="overflow: visible; appearance: none;"> assert_equals: input type should be supported expected "date" but got "text"
-FAIL <input type="date" value="2020-01-01" style="overflow: hidden; appearance: none;"> assert_equals: input type should be supported expected "date" but got "text"
-FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: none;"> assert_equals: input type should be supported expected "date" but got "text"
-FAIL <input type="month" value="2020-01" style="overflow: visible; appearance: auto;"> assert_equals: input type should be supported expected "month" but got "text"
-FAIL <input type="month" value="2020-01" style="overflow: hidden; appearance: auto;"> assert_equals: input type should be supported expected "month" but got "text"
-FAIL <input type="month" value="2020-01" style="overflow: scroll; appearance: auto;"> assert_equals: input type should be supported expected "month" but got "text"
-FAIL <input type="month" value="2020-01" style="overflow: visible; appearance: none;"> assert_equals: input type should be supported expected "month" but got "text"
-FAIL <input type="month" value="2020-01" style="overflow: hidden; appearance: none;"> assert_equals: input type should be supported expected "month" but got "text"
-FAIL <input type="month" value="2020-01" style="overflow: scroll; appearance: none;"> assert_equals: input type should be supported expected "month" but got "text"
-FAIL <input type="week" value="2020-W01" style="overflow: visible; appearance: auto;"> assert_equals: input type should be supported expected "week" but got "text"
-FAIL <input type="week" value="2020-W01" style="overflow: hidden; appearance: auto;"> assert_equals: input type should be supported expected "week" but got "text"
-FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: auto;"> assert_equals: input type should be supported expected "week" but got "text"
-FAIL <input type="week" value="2020-W01" style="overflow: visible; appearance: none;"> assert_equals: input type should be supported expected "week" but got "text"
-FAIL <input type="week" value="2020-W01" style="overflow: hidden; appearance: none;"> assert_equals: input type should be supported expected "week" but got "text"
-FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: none;"> assert_equals: input type should be supported expected "week" but got "text"
-FAIL <input type="time" value="00:00" style="overflow: visible; appearance: auto;"> assert_equals: input type should be supported expected "time" but got "text"
-FAIL <input type="time" value="00:00" style="overflow: hidden; appearance: auto;"> assert_equals: input type should be supported expected "time" but got "text"
-FAIL <input type="time" value="00:00" style="overflow: scroll; appearance: auto;"> assert_equals: input type should be supported expected "time" but got "text"
-FAIL <input type="time" value="00:00" style="overflow: visible; appearance: none;"> assert_equals: input type should be supported expected "time" but got "text"
-FAIL <input type="time" value="00:00" style="overflow: hidden; appearance: none;"> assert_equals: input type should be supported expected "time" but got "text"
-FAIL <input type="time" value="00:00" style="overflow: scroll; appearance: none;"> assert_equals: input type should be supported expected "time" but got "text"
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: auto;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: auto;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: auto;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: none;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: none;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
-FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: none;"> assert_equals: input type should be supported expected "datetime-local" but got "text"
+FAIL <input type="date" value="2020-01-01" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="date" value="2020-01-01" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="date" value="2020-01-01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="date" value="2020-01-01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="date" value="2020-01-01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="month" value="2020-01" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="month" value="2020-01" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="month" value="2020-01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="month" value="2020-01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="month" value="2020-01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="month" value="2020-01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="week" value="2020-W01" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 26
+FAIL <input type="week" value="2020-W01" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 26
+FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="week" value="2020-W01" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 26
+FAIL <input type="week" value="2020-W01" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 26
+FAIL <input type="week" value="2020-W01" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="time" value="00:00" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="time" value="00:00" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="time" value="00:00" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="time" value="00:00" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="time" value="00:00" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="time" value="00:00" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: visible; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: hidden; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 28
+FAIL <input type="datetime-local" value="2020-01-01T00:00" style="overflow: scroll; appearance: none;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
 PASS <input type="number" value="0" style="overflow: visible; appearance: auto;">
 PASS <input type="number" value="0" style="overflow: hidden; appearance: auto;">
 FAIL <input type="number" value="0" style="overflow: scroll; appearance: auto;"> assert_approx_equals: <span>.offsetTop expected 34 +/- 3 but got 71
