@@ -1,3 +1,19 @@
+2021-04-23  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Improve HashTableDeletedValue of ServiceWorkerRegistrationKey
+        https://bugs.webkit.org/show_bug.cgi?id=224975
+
+        Reviewed by Chris Dumez.
+
+        We construct only the SecurityOriginData, no need to construct a full
+        ServiceWorkerRegistrationKey or URL. No behavior changes.
+
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        (WTF::HashTraits<WebCore::ServiceWorkerRegistrationKey>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::ServiceWorkerRegistrationKey>::isDeletedValue):
+        (WebCore::ServiceWorkerRegistrationKey::isHashTableDeletedValue const): Deleted.
+        (WebCore::ServiceWorkerRegistrationKey::ServiceWorkerRegistrationKey): Deleted.
+
 2021-04-23  Youenn Fablet  <youenn@apple.com>
 
         Handle rotation correctly in WebRTC GPUProcess rendering pipeline

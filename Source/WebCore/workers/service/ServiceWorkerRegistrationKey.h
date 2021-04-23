@@ -35,7 +35,6 @@ namespace WebCore {
 class ServiceWorkerRegistrationKey {
 public:
     ServiceWorkerRegistrationKey() = default;
-    explicit ServiceWorkerRegistrationKey(WTF::HashTableDeletedValueType);
     WEBCORE_EXPORT ServiceWorkerRegistrationKey(SecurityOriginData&& topOrigin, URL&& scope);
 
     static ServiceWorkerRegistrationKey emptyKey();
@@ -66,17 +65,12 @@ public:
     String loggingString() const;
 #endif
 
-    bool isHashTableDeletedValue() const { return m_topOrigin.isHashTableDeletedValue(); }
-
 private:
+    friend struct HashTraits<ServiceWorkerRegistrationKey>;
+
     SecurityOriginData m_topOrigin;
     URL m_scope;
 };
-
-inline ServiceWorkerRegistrationKey::ServiceWorkerRegistrationKey(WTF::HashTableDeletedValueType)
-    : m_topOrigin(WTF::HashTableDeletedValue)
-{
-}
 
 template<class Encoder>
 void ServiceWorkerRegistrationKey::encode(Encoder& encoder) const
@@ -114,8 +108,8 @@ struct ServiceWorkerRegistrationKeyHash {
 template<> struct HashTraits<WebCore::ServiceWorkerRegistrationKey> : GenericHashTraits<WebCore::ServiceWorkerRegistrationKey> {
     static WebCore::ServiceWorkerRegistrationKey emptyValue() { return WebCore::ServiceWorkerRegistrationKey::emptyKey(); }
 
-    static void constructDeletedValue(WebCore::ServiceWorkerRegistrationKey& slot) { new (NotNull, &slot) WebCore::ServiceWorkerRegistrationKey(HashTableDeletedValue); }
-    static bool isDeletedValue(const WebCore::ServiceWorkerRegistrationKey& slot) { return slot.isHashTableDeletedValue(); }
+    static void constructDeletedValue(WebCore::ServiceWorkerRegistrationKey& slot) { new (NotNull, &slot.m_topOrigin) WebCore::SecurityOriginData(HashTableDeletedValue); }
+    static bool isDeletedValue(const WebCore::ServiceWorkerRegistrationKey& slot) { return slot.m_topOrigin.isHashTableDeletedValue(); }
 };
 
 template<> struct DefaultHash<WebCore::ServiceWorkerRegistrationKey> : ServiceWorkerRegistrationKeyHash { };
