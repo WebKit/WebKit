@@ -976,6 +976,8 @@ webkit.org/b/219614 inspector/model/font-calculate-properties.html [ Failure ]
 webkit.org/b/224590 fast/text/line-break-between-text-nodes-latin1.html [ ImageOnlyFailure ]
 webkit.org/b/224590 imported/w3c/web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.html [ ImageOnlyFailure ]
 
+webkit.org/b/224967 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #
@@ -1354,6 +1356,8 @@ webkit.org/b/224524 editing/selection/toString-1.html [ Failure Pass ]
 webkit.org/b/224524 editing/selection/user-select-all-selection.html [ Failure Pass ]
 webkit.org/b/224524 editing/selection/user-select-all-with-shift.html [ Failure Pass ]
 webkit.org/b/224524 editing/selection/user-select-all-with-single-click.html [ Failure Pass ]
+
+webkit.org/b/224966 imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

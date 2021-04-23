@@ -1,5 +1,11 @@
 2021-04-22  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Update test expectations.
+
+        * platform/gtk/TestExpectations:
+
+2021-04-22  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Update baselines after r276448.
 
         r276448 turned on editable <input type=date> and <input type=time>,
