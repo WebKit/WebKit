@@ -1364,7 +1364,7 @@ webkit.org/b/224135 media/modern-media-controls/macos-fullscreen-media-controls/
 
 webkit.org/b/224294 [ Debug ] inspector/indexeddb/requestDatabaseNames.html [ Pass Failure ]
 
-webkit.org/b/224463 [ Debug arm64 ] webrtc/disable-encryption.html [ Pass Timeout ]
+webkit.org/b/224463 [ BigSur arm64 ] webrtc/disable-encryption.html [ Pass Timeout ]
 
 # webkit.org/b/224558 The following two page-cache tests are flakey crasing:
 webrtc/peerconnection-new-candidate-page-cache.html [ Pass Crash ]
@@ -1383,3 +1383,5 @@ webkit.org/b/224698 [ BigSur Release arm64 ] inspector/console/console-oom.html 
 webkit.org/b/224845 [ BigSur Debug arm64 ] http/wpt/preload/change-link-rel-attribute.html [ Pass Crash ]
 
 webkit.org/b/224257 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Slow ]
+
+webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ] 
