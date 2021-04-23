@@ -1,3 +1,18 @@
+2021-04-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Sometimes appHighlights are not painted when created.
+        https://bugs.webkit.org/show_bug.cgi?id=224904
+
+        Reviewed by Antti Koivisto.
+
+        In order for highlights to be painted correctly, we need to not use the new line layout code,
+        so we need to opt out when we are repainting due to a highlight being added or removed.
+
+        Test: http/wpt/css/css-highlight-api/highlight-text-dynamic.html
+
+        * Modules/highlight/Highlight.cpp:
+        (WebCore::repaintRange):
+
 2021-04-22  Jean-Yves Avenard  <jya@apple.com>
 
         Fix color gamut in WebRTC when using VPx software decoder.

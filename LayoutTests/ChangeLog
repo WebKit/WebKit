@@ -1,3 +1,13 @@
+2021-04-22  Megan Gardner  <megan_gardner@apple.com>
+
+        Sometimes appHighlights are not painted when created.
+        https://bugs.webkit.org/show_bug.cgi?id=224904
+
+        Reviewed by Antti Koivisto.
+
+        * http/wpt/css/css-highlight-api/highlight-text-dynamic-expected-mismatch.html: Added.
+        * http/wpt/css/css-highlight-api/highlight-text-dynamic.html: Added.
+
 2021-04-22  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update test expectations.
