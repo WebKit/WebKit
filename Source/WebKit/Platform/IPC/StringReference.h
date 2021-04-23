@@ -73,6 +73,8 @@ public:
     };
 
 private:
+    friend struct HashTraits<IPC::StringReference>;
+
     const char* m_data;
     size_t m_size;
 };
@@ -101,7 +103,7 @@ template<> struct DefaultHash<IPC::StringReference> : IPC::StringReference::Hash
 
 template<> struct HashTraits<IPC::StringReference> : GenericHashTraits<IPC::StringReference> {
     static const bool emptyValueIsZero = 0;
-    static void constructDeletedValue(IPC::StringReference& stringReference) { stringReference = IPC::StringReference(0, std::numeric_limits<size_t>::max()); }
+    static void constructDeletedValue(IPC::StringReference& stringReference) { stringReference.m_size = std::numeric_limits<size_t>::max(); }
     static bool isDeletedValue(const IPC::StringReference& stringReference) { return stringReference.size() == std::numeric_limits<size_t>::max(); }
 };
 

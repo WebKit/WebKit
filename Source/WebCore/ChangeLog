@@ -1,3 +1,73 @@
+2021-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Improve our constructDeletedValue() template specializations
+        https://bugs.webkit.org/show_bug.cgi?id=224889
+
+        Reviewed by Darin Adler.
+
+        Improve our constructDeletedValue() template specializations and make them more consistent:
+        - Use placement-new instead of object assignment since we don't want/need to destroy the
+          existing object (since it is uninitialized).
+        - Do as little initialization as possible for performance reasons.
+
+        * Modules/indexeddb/IDBKeyData.cpp:
+        (WebCore::IDBKeyData::deletedValue): Deleted.
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyDataHashTraits::constructDeletedValue):
+        (WebCore::IDBKeyDataHashTraits::isDeletedValue):
+        (WebCore::IDBKeyData::isDeletedValue const): Deleted.
+        * Modules/indexeddb/shared/IDBResourceIdentifier.cpp:
+        (WebCore::IDBResourceIdentifier::deletedValue): Deleted.
+        (WebCore::IDBResourceIdentifier::isHashTableDeletedValue const): Deleted.
+        * Modules/indexeddb/shared/IDBResourceIdentifier.h:
+        (WebCore::IDBResourceIdentifierHashTraits::constructDeletedValue):
+        (WebCore::IDBResourceIdentifierHashTraits::isDeletedValue):
+        * dom/MessagePortIdentifier.h:
+        (WTF::HashTraits<WebCore::MessagePortIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::MessagePortIdentifier>::isDeletedValue):
+        * history/BackForwardItemIdentifier.h:
+        (WTF::HashTraits<WebCore::BackForwardItemIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::BackForwardItemIdentifier>::isDeletedValue):
+        * layout/LayoutUnits.h:
+        (WTF::HashTraits<WebCore::Layout::SlotPosition>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::Layout::SlotPosition>::isDeletedValue):
+        * loader/PrivateClickMeasurement.h:
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::matches const):
+        (WTF::HashTraits<WebCore::PrivateClickMeasurement::SourceSite>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::PrivateClickMeasurement::SourceSite>::isDeletedValue):
+        (WTF::HashTraits<WebCore::PrivateClickMeasurement::AttributionDestinationSite>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::PrivateClickMeasurement::AttributionDestinationSite>::isDeletedValue):
+        (WebCore::PrivateClickMeasurement::SourceSite::isHashTableDeletedValue const): Deleted.
+        (WebCore::PrivateClickMeasurement::SourceSite::deletedValue): Deleted.
+        (WebCore::PrivateClickMeasurement::SourceSite::constructDeletedValue): Deleted.
+        (WebCore::PrivateClickMeasurement::SourceSite::deleteValue): Deleted.
+        (WebCore::PrivateClickMeasurement::SourceSite::isDeletedValue const): Deleted.
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::isHashTableDeletedValue const): Deleted.
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::deletedValue): Deleted.
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::constructDeletedValue): Deleted.
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::deleteValue): Deleted.
+        (WebCore::PrivateClickMeasurement::AttributionDestinationSite::isDeletedValue const): Deleted.
+        * page/ClientOrigin.h:
+        (WTF::HashTraits<WebCore::ClientOrigin>::constructDeletedValue):
+        * page/GlobalWindowIdentifier.h:
+        (WTF::HashTraits<WebCore::GlobalWindowIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::GlobalWindowIdentifier>::isDeletedValue):
+        * platform/Cookie.h:
+        (WTF::HashTraits<WebCore::Cookie>::constructDeletedValue):
+        (WebCore::Cookie::Cookie): Deleted.
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKeyHashTraits::constructDeletedValue):
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCascadeCacheKeyHashTraits::constructDeletedValue):
+        * platform/graphics/IntPointHash.h:
+        (WTF::HashTraits<WebCore::IntPoint>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::IntPoint>::isDeletedValue):
+        * rendering/CSSValueKey.h:
+        (WTF::HashTraits<WebCore::CSSValueKey>::constructDeletedValue):
+        * workers/service/ServiceWorkerClientIdentifier.h:
+        (WTF::HashTraits<WebCore::ServiceWorkerClientIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::ServiceWorkerClientIdentifier>::isDeletedValue):
+
 2021-04-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer][EME] cbcs fixes

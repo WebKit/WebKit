@@ -49,9 +49,6 @@ public:
     IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&, const IDBRequest&);
     explicit IDBResourceIdentifier(const IDBServer::IDBConnectionToClient&);
 
-    static IDBResourceIdentifier deletedValue();
-    WEBCORE_EXPORT bool isHashTableDeletedValue() const;
-
     static IDBResourceIdentifier emptyValue();
     bool isEmpty() const
     {
@@ -84,6 +81,8 @@ public:
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBResourceIdentifier&);
 
 private:
+    friend struct IDBResourceIdentifierHashTraits;
+
     IDBResourceIdentifier(IDBConnectionIdentifier, uint64_t resourceIdentifier);
     IDBConnectionIdentifier m_idbConnectionIdentifier;
     uint64_t m_resourceNumber { 0 };
@@ -111,12 +110,12 @@ struct IDBResourceIdentifierHashTraits : WTF::CustomHashTraits<IDBResourceIdenti
 
     static void constructDeletedValue(IDBResourceIdentifier& identifier)
     {
-        identifier = IDBResourceIdentifier::deletedValue();
+        new (NotNull, &identifier.m_idbConnectionIdentifier) IDBConnectionIdentifier(WTF::HashTableDeletedValue);
     }
 
     static bool isDeletedValue(const IDBResourceIdentifier& identifier)
     {
-        return identifier.isHashTableDeletedValue();
+        return identifier.m_idbConnectionIdentifier.isHashTableDeletedValue();
     }
 };
 

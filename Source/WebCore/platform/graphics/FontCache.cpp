@@ -99,7 +99,7 @@ struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPla
     static constexpr bool emptyValueIsZero = false;
     static void constructDeletedValue(FontPlatformDataCacheKey& slot)
     {
-        new (NotNull, &slot) FontPlatformDataCacheKey { FontDescriptionKey { WTF::HashTableDeletedValue }, { }, { }, { } };
+        new (NotNull, &slot.descriptionKey) FontDescriptionKey(WTF::HashTableDeletedValue);
     }
     static bool isDeletedValue(const FontPlatformDataCacheKey& key)
     {

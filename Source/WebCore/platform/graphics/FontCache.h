@@ -207,7 +207,7 @@ struct FontCascadeCacheKeyHash {
 
 struct FontCascadeCacheKeyHashTraits : HashTraits<FontCascadeCacheKey> {
     static FontCascadeCacheKey emptyValue() { return { }; }
-    static void constructDeletedValue(FontCascadeCacheKey& slot) { new (NotNull, &slot) FontCascadeCacheKey { FontDescriptionKey { WTF::HashTableDeletedValue }, { }, { }, { } }; }
+    static void constructDeletedValue(FontCascadeCacheKey& slot) { new (NotNull, &slot.fontDescriptionKey) FontDescriptionKey(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const FontCascadeCacheKey& key) { return key.fontDescriptionKey.isHashTableDeletedValue(); }
 };
 

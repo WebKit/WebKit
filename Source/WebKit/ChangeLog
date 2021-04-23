@@ -1,3 +1,24 @@
+2021-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Improve our constructDeletedValue() template specializations
+        https://bugs.webkit.org/show_bug.cgi?id=224889
+
+        Reviewed by Darin Adler.
+
+        Improve our constructDeletedValue() template specializations and make them more consistent:
+        - Use placement-new instead of object assignment since we don't want/need to destroy the
+          existing object (since it is uninitialized).
+        - Do as little initialization as possible for performance reasons.
+
+        * NetworkProcess/cache/NetworkCache.h:
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::NetworkCache::GlobalFrameID>::isDeletedValue):
+        * Platform/IPC/StringReference.h:
+        (WTF::HashTraits<IPC::StringReference>::constructDeletedValue):
+        * Shared/CallbackID.h:
+        (WTF::HashTraits<WebKit::CallbackID>::constructDeletedValue):
+        (WTF::HashTraits<WebKit::CallbackID>::isDeletedValue):
+
 2021-04-23  Youenn Fablet  <youenn@apple.com>
 
         Handle rotation correctly in WebRTC GPUProcess rendering pipeline

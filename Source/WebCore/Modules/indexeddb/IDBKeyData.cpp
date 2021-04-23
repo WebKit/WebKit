@@ -420,14 +420,6 @@ void IDBKeyData::setNumberValue(double value)
     m_isNull = false;
 }
 
-IDBKeyData IDBKeyData::deletedValue()
-{
-    IDBKeyData result;
-    result.m_isNull = false;
-    result.m_isDeletedValue = true;
-    return result;
-}
-
 bool IDBKeyData::isValid() const
 {
     if (m_type == IndexedDB::KeyType::Invalid)

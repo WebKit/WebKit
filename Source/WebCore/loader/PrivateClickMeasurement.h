@@ -84,11 +84,6 @@ public:
         {
         }
 
-        explicit SourceSite(WTF::HashTableDeletedValueType)
-            : registrableDomain(WTF::HashTableDeletedValue)
-        {
-        }
-
         bool operator==(const SourceSite& other) const
         {
             return registrableDomain == other.registrableDomain;
@@ -97,32 +92,6 @@ public:
         bool matches(const URL& url) const
         {
             return registrableDomain.matches(url);
-        }
-
-        bool isHashTableDeletedValue() const
-        {
-            return registrableDomain.isHashTableDeletedValue();
-        }
-
-        static SourceSite deletedValue()
-        {
-            return SourceSite { WTF::HashTableDeletedValue };
-        }
-
-        static void constructDeletedValue(SourceSite& sourceSite)
-        {
-            new (&sourceSite) SourceSite;
-            sourceSite = SourceSite::deletedValue();
-        }
-
-        void deleteValue()
-        {
-            registrableDomain = RegistrableDomain { WTF::HashTableDeletedValue };
-        }
-
-        bool isDeletedValue() const
-        {
-            return isHashTableDeletedValue();
         }
 
         RegistrableDomain registrableDomain;
@@ -149,11 +118,6 @@ public:
         {
         }
 
-        explicit AttributionDestinationSite(WTF::HashTableDeletedValueType)
-            : registrableDomain { WTF::HashTableDeletedValue }
-        {
-        }
-
         explicit AttributionDestinationSite(RegistrableDomain&& domain)
             : registrableDomain { WTFMove(domain) }
         {
@@ -167,32 +131,6 @@ public:
         bool matches(const URL& url) const
         {
             return registrableDomain == RegistrableDomain { url };
-        }
-        
-        bool isHashTableDeletedValue() const
-        {
-            return registrableDomain.isHashTableDeletedValue();
-        }
-
-        static AttributionDestinationSite deletedValue()
-        {
-            return AttributionDestinationSite { WTF::HashTableDeletedValue };
-        }
-
-        static void constructDeletedValue(AttributionDestinationSite& destinationSite)
-        {
-            new (&destinationSite) AttributionDestinationSite;
-            destinationSite = AttributionDestinationSite::deletedValue();
-        }
-
-        void deleteValue()
-        {
-            registrableDomain = RegistrableDomain { WTF::HashTableDeletedValue };
-        }
-
-        bool isDeletedValue() const
-        {
-            return isHashTableDeletedValue();
         }
 
         RegistrableDomain registrableDomain;
@@ -584,14 +522,14 @@ template<typename T> struct DefaultHash;
 template<> struct DefaultHash<WebCore::PrivateClickMeasurement::SourceSite> : WebCore::PrivateClickMeasurement::SourceSiteHash { };
 template<> struct HashTraits<WebCore::PrivateClickMeasurement::SourceSite> : GenericHashTraits<WebCore::PrivateClickMeasurement::SourceSite> {
     static WebCore::PrivateClickMeasurement::SourceSite emptyValue() { return { }; }
-    static void constructDeletedValue(WebCore::PrivateClickMeasurement::SourceSite& slot) { WebCore::PrivateClickMeasurement::SourceSite::constructDeletedValue(slot); }
-    static bool isDeletedValue(const WebCore::PrivateClickMeasurement::SourceSite& slot) { return slot.isDeletedValue(); }
+    static void constructDeletedValue(WebCore::PrivateClickMeasurement::SourceSite& slot) { new (NotNull, &slot.registrableDomain) WebCore::RegistrableDomain(WTF::HashTableDeletedValue); }
+    static bool isDeletedValue(const WebCore::PrivateClickMeasurement::SourceSite& slot) { return slot.registrableDomain.isHashTableDeletedValue(); }
 };
 
 template<> struct DefaultHash<WebCore::PrivateClickMeasurement::AttributionDestinationSite> : WebCore::PrivateClickMeasurement::AttributionDestinationSiteHash { };
 template<> struct HashTraits<WebCore::PrivateClickMeasurement::AttributionDestinationSite> : GenericHashTraits<WebCore::PrivateClickMeasurement::AttributionDestinationSite> {
     static WebCore::PrivateClickMeasurement::AttributionDestinationSite emptyValue() { return { }; }
-    static void constructDeletedValue(WebCore::PrivateClickMeasurement::AttributionDestinationSite& slot) { WebCore::PrivateClickMeasurement::AttributionDestinationSite::constructDeletedValue(slot); }
-    static bool isDeletedValue(const WebCore::PrivateClickMeasurement::AttributionDestinationSite& slot) { return slot.isDeletedValue(); }
+    static void constructDeletedValue(WebCore::PrivateClickMeasurement::AttributionDestinationSite& slot) { new (NotNull, &slot.registrableDomain) WebCore::RegistrableDomain(WTF::HashTableDeletedValue); }
+    static bool isDeletedValue(const WebCore::PrivateClickMeasurement::AttributionDestinationSite& slot) { return slot.registrableDomain.isHashTableDeletedValue(); }
 };
 }

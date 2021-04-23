@@ -1,3 +1,13 @@
+2021-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Improve our constructDeletedValue() template specializations
+        https://bugs.webkit.org/show_bug.cgi?id=224889
+
+        Reviewed by Darin Adler.
+
+        * pal/SessionID.h:
+        (WTF::HashTraits<PAL::SessionID>::constructDeletedValue):
+
 2021-04-20  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Prevent GPU and WebContent processes from attempting to connect to the AppSSO service 

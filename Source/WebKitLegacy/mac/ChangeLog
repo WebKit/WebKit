@@ -1,3 +1,24 @@
+2021-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Improve our constructDeletedValue() template specializations
+        https://bugs.webkit.org/show_bug.cgi?id=224889
+
+        Reviewed by Darin Adler.
+
+        Improve our constructDeletedValue() template specializations and make them more consistent:
+        - Use placement-new instead of object assignment since we don't want/need to destroy the
+          existing object (since it is uninitialized).
+        - Do as little initialization as possible for performance reasons.
+
+        * History/BinaryPropertyList.cpp:
+        (IntegerArray::integers const):
+        (IntegerArray::size const):
+        (IntegerArrayHashTraits::constructDeletedValue):
+        (IntegerArrayHashTraits::isDeletedValue):
+        (IntegerArray::markDeleted): Deleted.
+        (IntegerArray::isDeletedValue const): Deleted.
+        (IntegerArray::deletedValueSize): Deleted.
+
 2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
