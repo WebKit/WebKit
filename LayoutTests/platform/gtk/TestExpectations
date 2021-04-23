@@ -1120,8 +1120,6 @@ webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/177527 [ Release ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/179356 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure ]
-
 webkit.org/b/178784 [ Release ] inspector/console/webcore-logging.html [ Pass Crash ]
 
 webkit.org/b/179948 [ Release ] fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
