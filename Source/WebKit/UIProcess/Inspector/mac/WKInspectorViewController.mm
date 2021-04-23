@@ -114,8 +114,13 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 - (WKWebViewConfiguration *)webViewConfiguration
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<WKInspectorResourceURLSchemeHandler> inspectorSchemeHandler = adoptNS([[WKInspectorResourceURLSchemeHandler alloc] init]);
-    [configuration setURLSchemeHandler:inspectorSchemeHandler.autorelease() forURLScheme:WKInspectorResourceScheme];
+    RetainPtr<WKInspectorResourceURLSchemeHandler> inspectorSchemeHandler = adoptNS([WKInspectorResourceURLSchemeHandler new]);
+    RetainPtr<NSMutableSet<NSString *>> allowedURLSchemes = adoptNS([[NSMutableSet alloc] initWithObjects:WKInspectorResourceScheme, nil]);
+    for (auto& pair : _configuration->_configuration->urlSchemeHandlers())
+        [allowedURLSchemes addObject:pair.second];
+
+    [inspectorSchemeHandler setAllowedURLSchemesForCSP:allowedURLSchemes.get()];
+    [configuration setURLSchemeHandler:inspectorSchemeHandler.get() forURLScheme:WKInspectorResourceScheme];
 
     WKPreferences *preferences = configuration.get().preferences;
     preferences._allowFileAccessFromFileURLs = YES;

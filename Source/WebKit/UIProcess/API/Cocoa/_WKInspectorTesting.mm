@@ -38,12 +38,22 @@ static NSString *JavaScriptSnippetToOpenURLExternally(NSURL *url)
     return [NSString stringWithFormat:@"InspectorFrontendHost.openURLExternally(\"%@\")", url.absoluteString];
 }
 
+static NSString *JavaScriptSnippetToFetchURL(NSURL *url)
+{
+    return [NSString stringWithFormat:@"fetch(\"%@\")", url.absoluteString];
+}
+
 @implementation _WKInspector (WKTesting)
 
 - (WKWebView *)inspectorWebView
 {
     auto page = _inspector->inspectorPage();
     return page ? page->cocoaView().autorelease() : nil;
+}
+
+- (void)_fetchURLForTesting:(NSURL *)url
+{
+    _inspector->evaluateInFrontendForTesting(JavaScriptSnippetToFetchURL(url));
 }
 
 - (void)_openURLExternallyForTesting:(NSURL *)url useFrontendAPI:(BOOL)useFrontendAPI

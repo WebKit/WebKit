@@ -30,6 +30,8 @@
 
 #import "Logging.h"
 #import "WKURLSchemeTask.h"
+#import "WebInspectorUIProxy.h"
+#import "WebURLSchemeHandlerCocoa.h"
 #import <WebCore/MIMETypeRegistry.h>
 #import <wtf/Assertions.h>
 
@@ -37,6 +39,27 @@
     RetainPtr<NSMapTable<id <WKURLSchemeTask>, NSOperation *>> _fileLoadOperations;
     RetainPtr<NSBundle> _cachedBundle;
     RetainPtr<NSOperationQueue> _operationQueue;
+    
+    RetainPtr<NSSet<NSString *>> _allowedURLSchemesForCSP;
+    RetainPtr<NSSet<NSURL *>> _mainResourceURLsForCSP;
+}
+
+- (NSSet<NSString *> *)allowedURLSchemesForCSP
+{
+    return _allowedURLSchemesForCSP.get();
+}
+
+- (void)setAllowedURLSchemesForCSP:(NSSet<NSString *> *)allowedURLSchemes
+{
+    _allowedURLSchemesForCSP = adoptNS([allowedURLSchemes copy]);
+}
+
+- (NSSet<NSURL *> *)mainResourceURLsForCSP
+{
+    if (!_mainResourceURLsForCSP)
+        _mainResourceURLsForCSP = adoptNS([[NSSet alloc] initWithObjects:[NSURL URLWithString:WebKit::WebInspectorUIProxy::inspectorPageURL()], [NSURL URLWithString:WebKit::WebInspectorUIProxy::inspectorTestPageURL()], nil]);
+
+    return _mainResourceURLsForCSP.get();
 }
 
 // MARK - WKURLSchemeHandler Protocol
@@ -89,12 +112,19 @@
         if (!mimeType)
             mimeType = @"application/octet-stream";
 
-        RetainPtr<NSHTTPURLResponse> urlResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:urlSchemeTask.request.URL statusCode:200 HTTPVersion:nil headerFields:@{
+        RetainPtr<NSMutableDictionary> headerFields = adoptNS(@{
             @"Access-Control-Allow-Origin": @"*",
             @"Content-Length": [NSString stringWithFormat:@"%zu", (size_t)fileData.length],
             @"Content-Type": mimeType,
-        }]);
+        }.mutableCopy);
 
+        // Allow fetches for resources that use a registered custom URL scheme.
+        if (_allowedURLSchemesForCSP && [self.mainResourceURLsForCSP containsObject:requestURL]) {
+            NSString *stringForCSPPolicy = [NSString stringWithFormat:@"connect-src * %@:", [_allowedURLSchemesForCSP.get().allObjects componentsJoinedByString:@": "]];
+            [headerFields setObject:stringForCSPPolicy forKey:@"Content-Security-Policy"];
+        }
+
+        RetainPtr<NSHTTPURLResponse> urlResponse = adoptNS([[NSHTTPURLResponse alloc] initWithURL:urlSchemeTask.request.URL statusCode:200 HTTPVersion:nil headerFields:headerFields.get()]);
         [urlSchemeTask didReceiveResponse:urlResponse.get()];
         [urlSchemeTask didReceiveData:fileData];
         [urlSchemeTask didFinish];

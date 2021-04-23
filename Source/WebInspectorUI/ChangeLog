@@ -1,3 +1,19 @@
+2021-04-22  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] re-enable test case WKInspectorDelegate.InspectorConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=224577
+        <rdar://70505272>
+
+        Reviewed by Devin Rousso.
+
+        Adjust the CSP directive list in the <meta> tag to allow for customization
+        by WebKit ports. 
+
+        * UserInterface/Main.html:
+        - Remove `default-src 'self'` so as not to block custom scheme loads.
+        - Remove `connect-src * ws:` so as not to block custom scheme loads.
+        - Add `object-src 'none'` as we have no reason to allow <object>, <embed>, or <applet>.
+
 2021-04-20  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called

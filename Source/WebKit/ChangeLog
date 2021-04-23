@@ -1,3 +1,53 @@
+2021-04-22  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] re-enable test case WKInspectorDelegate.InspectorConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=224577
+        <rdar://70505272>
+
+        Reviewed by Devin Rousso.
+
+        For the purposes of testing, we want to be able to issue a fetch() that will
+        hit a custom URL scheme handler registered with _WKInspectorConfiguration.
+        This is not allowed by the existing <meta> tag CSP directive list because 'connect-src *'
+        does not allow connecting to arbitrary schemes, just arbitrary domains.
+
+        To fix this, relax the 'connect-src' directive in Main.html and apply
+        a dynamically-computed CSP directive using the 'Content-Security-Policy' HTTP
+        response header. This is only sent for main resources (Main.html and Test.html)
+        using the newly added inspector-resource: URL scheme handler.
+
+        The dynamically computed directive explicitly allows 'self' and any other registered
+        custom URL scheme handlers. WebKit ports which have not migrated away from file:///
+        will only apply the weaker 'connect-src' directive from the <meta> tag after this change.
+
+        Progresses an existing API test: WKInspectorDelegate.InspectorConfiguration.
+
+        * UIProcess/API/Cocoa/_WKInspectorDelegate.h:
+        * UIProcess/API/APIInspectorClient.h:
+        (API::InspectorClient::frontendLoaded):
+        * UIProcess/API/Cocoa/_WKInspectorPrivateForTesting.h:
+        * UIProcess/API/Cocoa/_WKInspector.mm:
+        * UIProcess/API/Cocoa/_WKInspectorTesting.mm:
+        (JavaScriptSnippetToFetchURL):
+        (-[_WKInspector _fetchURLForTesting:]):
+
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp:
+        (WebKit::WebInspectorUIProxy::frontendLoaded): Notify the _WKInspectorDelegate
+        adapter that the frontend has finished loading.
+
+        * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.h:
+        * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm:
+        (-[WKInspectorResourceURLSchemeHandler allowedURLSchemesForCSP]):
+        (-[WKInspectorResourceURLSchemeHandler setAllowedURLSchemesForCSP:]):
+        (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+        Added. Keep track of allowed custom schemes and allowed main resources.
+        Apply the CSP directive for main resource requests only.
+
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        (-[WKInspectorViewController webViewConfiguration]):
+        Set the allowed URL schemes property so the URL scheme handler can include
+        the schemes in the dynamically computed 'connect-src' directive.
+
 2021-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Add trace points for WKWebView snapshotting

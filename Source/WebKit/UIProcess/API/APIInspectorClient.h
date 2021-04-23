@@ -39,6 +39,7 @@ public:
     virtual ~InspectorClient() = default;
 
     virtual void openURLExternally(WebKit::WebInspectorUIProxy&, const WTF::String& url) { }
+    virtual void frontendLoaded(WebKit::WebInspectorUIProxy&) { }
 };
 
 } // namespace API

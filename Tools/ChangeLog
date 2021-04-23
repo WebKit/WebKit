@@ -1,3 +1,33 @@
+2021-04-22  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] re-enable test case WKInspectorDelegate.InspectorConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=224577
+        <rdar://70505272>
+
+        Reviewed by Devin Rousso.
+
+        Trigger a fetch of a resource that uses a custom URL scheme handler in
+        order to test that custom scheme handlers registered in an _WKInspectorConfiguration
+        are getting used as expected.
+
+        Add an -inspectorFrontendLoaded: delegate method to -WKInspectorDelegate.
+        This is mainly used to prevent tests from progressing with a half-loaded inspector.
+
+        To make it possible to do this fetch(), there are some CSP related changes
+        that were made for Main.html so that fetching from a registered custom scheme is allowed.
+
+        Drive-by, per post-commit comments, add a better fix for the memory leak reported in
+        https://bugs.webkit.org/show_bug.cgi?id=223899. Thanks Joe!
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKInspectorDelegate.mm:
+        (resetGlobalState):
+        (-[InspectorDelegate inspectorFrontendLoaded:]):
+        (TEST):
+        (-[UIDelegate _webView:didAttachLocalInspector:]):
+        (-[UIDelegate _webView:willCloseLocalInspector:]):
+        (-[UIDelegate _webViewDidEnableInspectorBrowserDomain:]):
+        (-[UIDelegate _webViewDidDisableInspectorBrowserDomain:]):
+
 2021-04-22  Lauro Moura  <lmoura@igalia.com>
 
         Unreviewed. Gardening TestSSL flakiness

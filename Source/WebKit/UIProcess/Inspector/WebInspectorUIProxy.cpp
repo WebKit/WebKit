@@ -589,6 +589,9 @@ void WebInspectorUIProxy::frontendLoaded()
     if (m_extensionController)
         m_extensionController->inspectorFrontendLoaded();
 #endif
+
+    if (m_inspectorClient)
+        m_inspectorClient->frontendLoaded(*this);
 }
 
 void WebInspectorUIProxy::bringToFront()

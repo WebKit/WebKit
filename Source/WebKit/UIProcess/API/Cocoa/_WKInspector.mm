@@ -54,6 +54,7 @@ public:
     explicit InspectorClient(id <_WKInspectorDelegate> delegate)
         : m_delegate(delegate)
         , m_respondsToInspectorOpenURLExternally([delegate respondsToSelector:@selector(inspector:openURLExternally:)])
+        , m_respondsToInspectorFrontendLoaded([delegate respondsToSelector:@selector(inspectorFrontendLoaded:)])
     {
     }
 
@@ -69,9 +70,18 @@ private:
         [m_delegate inspector:wrapper(inspector) openURLExternally:[NSURL URLWithString:url]];
     }
 
+    void frontendLoaded(WebKit::WebInspectorUIProxy& inspector) final
+    {
+        if (!m_delegate || !m_respondsToInspectorFrontendLoaded)
+            return;
+
+        [m_delegate inspectorFrontendLoaded:wrapper(inspector)];
+    }
+
     WeakObjCPtr<id <_WKInspectorDelegate> > m_delegate;
 
     bool m_respondsToInspectorOpenURLExternally : 1;
+    bool m_respondsToInspectorFrontendLoaded : 1;
 };
 
 @implementation _WKInspector
