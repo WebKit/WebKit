@@ -2236,8 +2236,8 @@ private:
     void discardQueuedMouseEvents();
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
-#if PLATFORM(MAC)
     void didUpdateRenderingAfterCommittingLoad();
+#if PLATFORM(MAC)
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -2671,9 +2671,7 @@ private:
     bool m_isInPrintingMode { false };
     bool m_isPerformingDOMPrintOperation { false };
 
-#if PLATFORM(COCOA)
     bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
-#endif
 
     WebCore::ResourceRequest m_decidePolicyForResponseRequest;
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };

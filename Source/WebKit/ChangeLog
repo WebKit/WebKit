@@ -1,3 +1,42 @@
+2021-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Implement PageClient::makeViewBlank()
+        https://bugs.webkit.org/show_bug.cgi?id=224236
+
+        Reviewed by Chris Dumez.
+
+        Make most of the changes in r275485 cross platform and implement PageClient::makeViewBlank() for the GTK port.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::makeViewBlank):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseSnapshot):
+        (webkitWebViewBaseDraw):
+        (webkitWebViewBaseMakeBlank):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didUpdateRenderingAfterCommittingLoad):
+        (WebKit::WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate):
+        (WebKit::WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::didUpdateRenderingAfterCommittingLoad): Deleted.
+        * WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp:
+        (WebKit::CompositingCoordinator::flushPendingLayerChanges):
+        * WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp:
+        (WebKit::DrawingAreaCoordinatedGraphics::updateBackingStoreState):
+        (WebKit::DrawingAreaCoordinatedGraphics::display):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didUpdateRendering):
+        (WebKit::WebPage::didCommitLoad):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::didUpdateRendering): Deleted.
+
 2021-04-22  Jer Noble  <jer.noble@apple.com>
 
         [Mac] CMBaseClass object pointers can become unaligned on x86

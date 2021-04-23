@@ -177,6 +177,8 @@ private:
 
     String themeName() const override;
 
+    void makeViewBlank(bool) override;
+
     // Members of PageClientImpl class
     GtkWidget* m_viewWidget;
     DefaultUndoController m_undoController;

@@ -120,3 +120,5 @@ void webkitWebViewBaseDidLosePointerLock(WebKitWebViewBase*);
 void webkitWebViewBaseSetInputMethodContext(WebKitWebViewBase*, WebKitInputMethodContext*);
 WebKitInputMethodContext* webkitWebViewBaseGetInputMethodContext(WebKitWebViewBase*);
 void webkitWebViewBaseSynthesizeCompositionKeyPress(WebKitWebViewBase*, const String& text, Optional<Vector<WebCore::CompositionUnderline>>&&, Optional<WebKit::EditingRange>&&);
+
+void webkitWebViewBaseMakeBlank(WebKitWebViewBase*, bool);

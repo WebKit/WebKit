@@ -424,6 +424,7 @@ void DrawingAreaCoordinatedGraphics::updateBackingStoreState(uint64_t stateID, b
         m_webPage.finalizeRenderingUpdate({ });
         m_webPage.flushPendingEditorStateUpdate();
         m_webPage.scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
+        m_webPage.didUpdateRendering();
 
         if (m_layerTreeHost)
             m_layerTreeHost->sizeDidChange(m_webPage.size());
@@ -819,6 +820,8 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
 #if USE(DIRECT2D)
     bitmap->leakSharedResource(); // It will be destroyed in the UIProcess.
 #endif
+
+    m_webPage.didUpdateRendering();
 
     // Layout can trigger more calls to setNeedsDisplay and we don't want to process them
     // until the UI process has painted the update, so we stop the timer here.

@@ -641,4 +641,9 @@ String PageClientImpl::themeName() const
     return name;
 }
 
+void PageClientImpl::makeViewBlank(bool makeBlank)
+{
+    webkitWebViewBaseMakeBlank(WEBKIT_WEB_VIEW_BASE(m_viewWidget), makeBlank);
+}
+
 } // namespace WebKit

@@ -173,6 +173,8 @@ bool CompositingCoordinator::flushPendingLayerChanges()
         m_shouldSyncFrame = false;
     }
 
+    m_page.didUpdateRendering();
+
     return true;
 }
 

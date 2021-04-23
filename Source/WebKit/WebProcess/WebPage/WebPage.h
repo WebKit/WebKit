@@ -633,12 +633,12 @@ public:
     void updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor);
 #endif
 
+    void didUpdateRendering();
+
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);
 
-    void didUpdateRendering();
-    
     void setUseSystemAppearance(bool);
 
     void didEndMagnificationGesture();
@@ -2300,9 +2300,7 @@ private:
 
     bool m_canUseCredentialStorage { true };
 
-#if PLATFORM(MAC)
     bool m_didUpdateRenderingAfterCommittingLoad { false };
-#endif
 
     Vector<String> m_corsDisablingPatterns;
 

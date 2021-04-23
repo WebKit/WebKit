@@ -4086,6 +4086,15 @@ void WebPage::updateRendering()
     m_page->updateRendering();
 }
 
+void WebPage::didUpdateRendering()
+{
+    if (m_didUpdateRenderingAfterCommittingLoad)
+        return;
+
+    m_didUpdateRenderingAfterCommittingLoad = true;
+    send(Messages::WebPageProxy::DidUpdateRenderingAfterCommittingLoad());
+}
+
 void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
 {
     m_page->finalizeRenderingUpdate(flags);
@@ -6238,9 +6247,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
             scalePage(1, IntPoint());
     }
 
-#if PLATFORM(MAC)
     m_didUpdateRenderingAfterCommittingLoad = false;
-#endif
+
 #if PLATFORM(IOS_FAMILY)
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_hasRestoredExposedContentRectAfterDidCommitLoad = false;
