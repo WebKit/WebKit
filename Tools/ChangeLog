@@ -1,3 +1,19 @@
+2021-04-23  Youenn Fablet  <youenn@apple.com>
+
+        Fix KVO for camera/microphone capture state WKWebView API
+        https://bugs.webkit.org/show_bug.cgi?id=224922
+        <rdar://problem/77008199>
+
+        Reviewed by Eric Carlson.
+
+        Add tests for capture state API.
+
+        * TestWebKitAPI/Tests/WebKit/GetUserMedia.mm:
+        (-[MediaCaptureObserver observeValueForKeyPath:ofObject:change:context:]):
+        (TestWebKitAPI::waitUntilCameraState):
+        (TestWebKitAPI::waitUntilMicrophoneState):
+        (TestWebKitAPI::TEST):
+
 2021-04-22  Tyler Wilcock  <twilco.o@protonmail.com>
 
         [css-counter-styles] Parse @counter-style descriptors

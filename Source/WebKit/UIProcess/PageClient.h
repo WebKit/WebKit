@@ -542,6 +542,8 @@ public:
     virtual void didHandleAcceptedCandidate() = 0;
 #endif
 
+    virtual void microphoneCaptureWillChange() { }
+    virtual void cameraCaptureWillChange() { }
     virtual void microphoneCaptureChanged() { }
     virtual void cameraCaptureChanged() { }
 

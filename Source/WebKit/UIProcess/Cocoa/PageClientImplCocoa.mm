@@ -147,14 +147,24 @@ NSTextAlternatives *PageClientImplCocoa::platformDictationAlternatives(WebCore::
     return m_alternativeTextUIController->alternativesForContext(dictationContext);
 }
 
+void PageClientImplCocoa::microphoneCaptureWillChange()
+{
+    [m_webView willChangeValueForKey:@"microphoneCaptureState"];
+}
+
+void PageClientImplCocoa::cameraCaptureWillChange()
+{
+    [m_webView willChangeValueForKey:@"cameraCaptureState"];
+}
+
 void PageClientImplCocoa::microphoneCaptureChanged()
 {
-    [m_webView didChangeValueForKey:@"_microphoneCaptureState"];
+    [m_webView didChangeValueForKey:@"microphoneCaptureState"];
 }
 
 void PageClientImplCocoa::cameraCaptureChanged()
 {
-    [m_webView didChangeValueForKey:@"_cameraCaptureState"];
+    [m_webView didChangeValueForKey:@"cameraCaptureState"];
 }
 
 }

@@ -1,3 +1,26 @@
+2021-04-23  Youenn Fablet  <youenn@apple.com>
+
+        Fix KVO for camera/microphone capture state WKWebView API
+        https://bugs.webkit.org/show_bug.cgi?id=224922
+        <rdar://problem/77008199>
+
+        Reviewed by Eric Carlson.
+
+        Add missing willChange observer call and migrate keys to API keys.
+        Covered by API test.
+
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::microphoneCaptureWillChange):
+        (WebKit::PageClientImplCocoa::cameraCaptureWillChange):
+        (WebKit::PageClientImplCocoa::microphoneCaptureChanged):
+        (WebKit::PageClientImplCocoa::cameraCaptureChanged):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::microphoneCaptureWillChange):
+        (WebKit::PageClient::cameraCaptureWillChange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateReportedMediaCaptureState):
+
 2021-04-23  Chris Dumez  <cdumez@apple.com>
 
         Improve our constructDeletedValue() template specializations

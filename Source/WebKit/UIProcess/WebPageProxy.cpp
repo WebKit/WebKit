@@ -9230,8 +9230,14 @@ void WebPageProxy::updateReportedMediaCaptureState()
     bool microphoneCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::AudioCaptureMask) != (activeCaptureState & MediaProducer::AudioCaptureMask);
     bool cameraCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::VideoCaptureMask) != (activeCaptureState & MediaProducer::VideoCaptureMask);
 
+    if (microphoneCaptureChanged)
+        pageClient().microphoneCaptureWillChange();
+    if (cameraCaptureChanged)
+        pageClient().cameraCaptureWillChange();
+
     m_reportedMediaCaptureState = activeCaptureState;
     m_uiClient->mediaCaptureStateDidChange(m_mediaState);
+
     if (microphoneCaptureChanged)
         pageClient().microphoneCaptureChanged();
     if (cameraCaptureChanged)
