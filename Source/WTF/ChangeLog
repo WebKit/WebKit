@@ -1,3 +1,13 @@
+2021-04-22  Lauro Moura  <lmoura@igalia.com>
+
+        [WTF] Undefined behavior warning in StringBuilder::allocateBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=224942
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::allocateBuffer): Add check before calling memcpy
+
 2021-04-22  Simon Fraser  <simon.fraser@apple.com>
 
         Add trace points for WKWebView snapshotting
