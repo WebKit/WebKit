@@ -1,3 +1,11 @@
+2021-04-22  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WebDriver] Garden keypress failures
+
+        Unreviewed test gardening.
+
+        * TestExpectations.json:
+
 2021-01-22  Lauro Moura  <lmoura@igalia.com>
 
         [WebDriver] Add info about importing tests

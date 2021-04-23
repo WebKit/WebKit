@@ -179,6 +179,9 @@
             },
             "testNumberpadAndFunctionKeys": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/213961"}}
+            },
+            "testShouldFireKeyPressEvents": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
             }
         }
     },
@@ -396,6 +399,90 @@
             },
             "test_special_key_sends_keydown[SEPARATOR-expected63]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+            },
+            "test_printable_key_sends_correct_events[a-KeyA0]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_printable_key_sends_correct_events[a-KeyA1]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_printable_key_sends_correct_events[,-Comma]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_printable_key_sends_correct_events[@-Digit2]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_printable_key_sends_correct_events[\"-Quote]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_printable_key_sends_correct_events[\\u0416-]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_printable_key_sends_correct_events[\\u2603-]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_printable_key_sends_correct_events[\\uf6c2-]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_printable_key_sends_correct_events[\\xe0-]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[ADD-expected0]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[DECIMAL-expected6]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[DIVIDE-expected8]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[MULTIPLY-expected31]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NULL-expected32]": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD0-expected33]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD1-expected34]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD2-expected35]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD3-expected36]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD4-expected37]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD5-expected38]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD6-expected39]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD7-expected40]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD8-expected41]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[NUMPAD9-expected42]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[SPACE-expected65]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_special_key_sends_keydown[SUBTRACT-expected66]": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_sequence_of_keydown_printable_keys_sends_events": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
+            },
+            "test_sequence_of_keydown_printable_characters_sends_events": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/224736"}}
             }
         }
     },
