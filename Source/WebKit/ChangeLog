@@ -1,3 +1,16 @@
+2021-04-23  Youenn Fablet  <youenn@apple.com>
+
+        Handle rotation correctly in WebRTC GPUProcess rendering pipeline
+        https://bugs.webkit.org/show_bug.cgi?id=224927
+        <rdar://76915991>
+
+        Reviewed by Eric Carlson.
+
+        Instead of updating the inner layer, update the root layer.
+
+        * GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp:
+        (WebKit::RemoteSampleBufferDisplayLayer::updateAffineTransform):
+
 2021-04-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Implement PageClient::makeViewBlank()

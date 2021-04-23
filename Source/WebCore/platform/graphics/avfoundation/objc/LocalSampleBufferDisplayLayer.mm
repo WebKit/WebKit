@@ -248,6 +248,13 @@ CGRect LocalSampleBufferDisplayLayer::bounds() const
     return m_rootLayer.get().bounds;
 }
 
+void LocalSampleBufferDisplayLayer::updateRootLayerAffineTransform(CGAffineTransform transform)
+{
+    runWithoutAnimations([&] {
+        m_rootLayer.get().affineTransform = transform;
+    });
+}
+
 void LocalSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform transform)
 {
     runWithoutAnimations([&] {

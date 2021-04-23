@@ -78,7 +78,7 @@ void RemoteSampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bo
 
 void RemoteSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform transform)
 {
-    m_sampleBufferDisplayLayer->updateAffineTransform(transform);
+    m_sampleBufferDisplayLayer->updateRootLayerAffineTransform(transform);
 }
 
 void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, WebCore::MediaSample::VideoRotation rotation)
