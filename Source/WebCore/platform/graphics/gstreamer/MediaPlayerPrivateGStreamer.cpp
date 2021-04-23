@@ -2700,7 +2700,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     static Atomic<uint32_t> pipelineId;
 
-    m_pipeline = adoptGRef(gst_element_factory_make(playbinName, makeString(type, elementId, '-', pipelineId.exchangeAdd(1)).ascii().data()));
+    m_pipeline = gst_element_factory_make(playbinName, makeString(type, elementId, '-', pipelineId.exchangeAdd(1)).ascii().data());
     if (!m_pipeline) {
         GST_WARNING("%s not found, make sure to install gst-plugins-base", playbinName);
         loadingFailed(MediaPlayer::NetworkState::FormatError, MediaPlayer::ReadyState::HaveNothing, true);

@@ -1,5 +1,13 @@
 2021-04-23  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GStreamer follow-up after r276493
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Remove spurious adoptGRef call, as
+        this is not transfer-full.
+
+2021-04-23  Philippe Normand  <pnormand@igalia.com>
+
         [Media] Allow access to MediaElement id from MediaPlayerPrivate
         https://bugs.webkit.org/show_bug.cgi?id=224818
 
