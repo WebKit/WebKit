@@ -32,6 +32,18 @@
 
 namespace WebCore {
 
+// The keywords that can be used as values for the counter-style `system` descriptor.
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
+enum class CounterStyleSystem : uint8_t {
+    Cyclic,
+    Numeric,
+    Alphabetic,
+    Symbolic,
+    Additive,
+    Fixed,
+    Extends
+};
+
 class StyleRuleCounterStyle final : public StyleRuleBase {
 public:
     static Ref<StyleRuleCounterStyle> create(const AtomString& name, Ref<StyleProperties>&&);
@@ -41,6 +53,20 @@ public:
     MutableStyleProperties& mutableProperties();
 
     const AtomString& name() const { return m_name; }
+    String system() const { return m_properties->getPropertyValue(CSSPropertySystem); }
+    String negative() const { return m_properties->getPropertyValue(CSSPropertyNegative); }
+    String prefix() const { return m_properties->getPropertyValue(CSSPropertyPrefix); }
+    String suffix() const { return m_properties->getPropertyValue(CSSPropertySuffix); }
+    String range() const { return m_properties->getPropertyValue(CSSPropertyRange); }
+    String pad() const { return m_properties->getPropertyValue(CSSPropertyPad); }
+    String fallback() const { return m_properties->getPropertyValue(CSSPropertyFallback); }
+    String symbols() const { return m_properties->getPropertyValue(CSSPropertySymbols); }
+    String additiveSymbols() const { return m_properties->getPropertyValue(CSSPropertyAdditiveSymbols); }
+    String speakAs() const { return m_properties->getPropertyValue(CSSPropertySpeakAs); }
+
+    bool newValueInvalidOrEqual(CSSPropertyID, const RefPtr<CSSValue> newValue) const;
+
+    void setName(const AtomString& name) { m_name = name; }
 
 private:
     explicit StyleRuleCounterStyle(const AtomString&, Ref<StyleProperties>&&);
@@ -59,33 +85,33 @@ public:
     CSSRule::Type type() const final { return COUNTER_STYLE_RULE; }
 
     String name() const { return m_counterStyleRule->name(); }
-    // FIXME: Implement after we parse @counter-style descriptors.
-    String system() const { return emptyString(); }
-    String negative() const { return emptyString(); }
-    String prefix() const { return emptyString(); }
-    String suffix() const { return emptyString(); }
-    String range() const { return emptyString(); }
-    String pad() const { return emptyString(); }
-    String fallback() const { return emptyString(); }
-    String symbols() const { return emptyString(); }
-    String additiveSymbols() const { return emptyString(); }
-    String speakAs() const { return emptyString(); }
+    String system() const { return m_counterStyleRule->system(); }
+    String negative() const { return m_counterStyleRule->negative(); }
+    String prefix() const { return m_counterStyleRule->prefix(); }
+    String suffix() const { return m_counterStyleRule->suffix(); }
+    String range() const { return m_counterStyleRule->range(); }
+    String pad() const { return m_counterStyleRule->pad(); }
+    String fallback() const { return m_counterStyleRule->fallback(); }
+    String symbols() const { return m_counterStyleRule->symbols(); }
+    String additiveSymbols() const { return m_counterStyleRule->additiveSymbols(); }
+    String speakAs() const { return m_counterStyleRule->speakAs(); }
 
-    // FIXME: Implement after we parse @counter-style descriptors.
-    void setName(const String&) { }
-    void setSystem(const String&) { }
-    void setNegative(const String&) { }
-    void setPrefix(const String&) { }
-    void setSuffix(const String&) { }
-    void setRange(const String&) { }
-    void setPad(const String&) { }
-    void setFallback(const String&) { }
-    void setSymbols(const String&) { }
-    void setAdditiveSymbols(const String&) { }
-    void setSpeakAs(const String&) { }
+    void setName(const String&);
+    void setSystem(const String&);
+    void setNegative(const String&);
+    void setPrefix(const String&);
+    void setSuffix(const String&);
+    void setRange(const String&);
+    void setPad(const String&);
+    void setFallback(const String&);
+    void setSymbols(const String&);
+    void setAdditiveSymbols(const String&);
+    void setSpeakAs(const String&);
 
 private:
     CSSCounterStyleRule(StyleRuleCounterStyle&, CSSStyleSheet* parent);
+
+    void setterInternal(CSSPropertyID, const String&);
 
     Ref<StyleRuleCounterStyle> m_counterStyleRule;
 };

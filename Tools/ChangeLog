@@ -1,3 +1,15 @@
+2021-04-22  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse @counter-style descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=224718
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        Fix typo (missing 's').  CSSCounterStyleAtRulesEnabled, not
+        CSSCounterStyleAtRuleEnabled.
+
 2021-04-22  BJ Burg  <bburg@apple.com>
 
         [Cocoa] re-enable test case WKInspectorDelegate.InspectorConfiguration

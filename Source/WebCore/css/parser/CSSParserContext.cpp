@@ -181,6 +181,16 @@ void add(Hasher& hasher, const CSSParserContext& context)
 bool CSSParserContext::isPropertyRuntimeDisabled(CSSPropertyID property) const
 {
     switch (property) {
+    case CSSPropertyAdditiveSymbols:
+    case CSSPropertyFallback:
+    case CSSPropertyPad:
+    case CSSPropertySymbols:
+    case CSSPropertyNegative:
+    case CSSPropertyPrefix:
+    case CSSPropertyRange:
+    case CSSPropertySuffix:
+    case CSSPropertySystem:
+        return !counterStyleAtRulesEnabled;
     case CSSPropertyAspectRatio:
         return !aspectRatioEnabled;
     case CSSPropertyContain:

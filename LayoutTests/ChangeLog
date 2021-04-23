@@ -1,3 +1,63 @@
+2021-04-22  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse @counter-style descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=224718
+
+        Reviewed by Darin Adler.
+
+        Add test ensuring <image> @counter-style symbol values cannot be
+        parsed when the `counterStyleAtRuleImageSymbolsEnabled` feature flag
+        is disabled.
+
+        ---
+
+        This test is skipped on Windows because I haven't been able to get the
+        required feature flags (CSSCounterStyleAtRulesEnabled and
+        CSSCounterStyleAtRuleImageSymbolsEnabled) to work properly for that
+        port.
+
+        The code hidden behind these flags is all in the CSS parser, which is not
+        unique to Windows, so I think we can be confident that if the test passes
+        on all other platforms, that the behavior is correct on Windows too.
+
+        One attempt at implementing the necessary Windows-specific flag functionality is here:
+
+        https://bugs.webkit.org/attachment.cgi?id=426371&action=edit
+
+        Which failed to compile[1] with this error:
+
+        > C:\cygwin\home\buildbot\worker\Windows-EWS\build\Tools\DumpRenderTree\win\DumpRenderTree.cpp(834,51): error C2039: 'setCSSCounterStyleAtRulesEnabled': is not a member of 'IWebPreferencesPrivate7' [C:\cygwin\home\buildbot\worker\Windows-EWS\build\WebKitBuild\Release\Tools\DumpRenderTree\DumpRenderTreeLib.vcxproj]
+        > C:\cygwin\home\buildbot\worker\Windows-EWS\build\Tools\DumpRenderTree\win\DumpRenderTree.cpp(835,62): error C2039: 'setCSSCounterStyleAtRuleImageSymbolsEnabled': is not a member of 'IWebPreferencesPrivate7' [C:\cygwin\home\buildbot\worker\Windows-EWS\build\WebKitBuild\Release\Tools\DumpRenderTree\DumpRenderTreeLib.vcxproj]
+
+        Those methods are present in `IWebPreferencesPrivate7.idl`, and implemented similarly to other
+        flags in other places (e.g. win/WebPreferences.{h, cpp}, win/WebPreferenceKeysPrivate.h).
+        I can't reproduce this compilation error on my Windows machine.
+
+        I then tried removing the lines that caused the above compilation failure.
+        Those setters are called in DumpRenderTree::enableExperimentalFeatures, so in
+        lieu of enabling these flags there I could enable the flag I need via test header.
+
+        That patch is: https://bugs.webkit.org/attachment.cgi?id=426509&action=edit
+
+        This results in successful compilation, but causes lots (all?) of the
+        layout tests to fail[2] with a stacktrace that looks like:
+
+00007ffc`3e9e3113 WebKit!WebPreferences::speechRecognitionEnabled(int * enabled = 0x00007ffc`3eae0f50)+0x29 [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Source\WebKitLegacy\win\WebPreferences.cpp @ 2617]
+00007ffc`3e9e3cc0 DumpRenderTreeLib!resetWebPreferencesToConsistentValues(struct IWebPreferences * preferences = 0x00000205`e2f204b0)+0x63 [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Tools\DumpRenderTree\win\DumpRenderTree.cpp @ 847]
+00007ffc`3e9e4171 DumpRenderTreeLib!resetWebViewToConsistentStateBeforeTesting(class WTR::TestOptions * options = 0x00000065`738fea60)+0x2e0 [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Tools\DumpRenderTree\win\DumpRenderTree.cpp @ 1054]
+00007ffc`3e9e67d3 DumpRenderTreeLib!runTest(class std::basic_string<char,std::char_traits<char>,std::allocator<char> > * inputLine = <Value unavailable error>)+0x2f1 [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Tools\DumpRenderTree\win\DumpRenderTree.cpp @ 1239]
+00007ff7`89952f30 DumpRenderTreeLib!main(int argc = <Value unavailable error>, char ** argv = <Value unavailable error>)+0x5d3 [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Tools\DumpRenderTree\win\DumpRenderTree.cpp @ 1676]
+00007ff7`89953884 DumpRenderTree!main(int argc = 0n2, char ** argv = 0x00000205`e2e74b80)+0x880 [C:\cygwin\home\buildbot\worker\Windows-EWS\build\Tools\win\DLLLauncher\DLLLauncherMain.cpp @ 232]
+
+        I haven't done much digging into why this happens, and cannot reproduce it on my Windows machine.
+
+        [1]: https://ews-build.webkit.org/#/builders/10/builds/86747
+        [2]: https://ews-build.webkit.org/#/builders/10/builds/86897
+
+        * platform/win/TestExpectations: Skip newly added test on Windows.
+        * webexposed/counter-style-image-symbols-not-exposed-expected.txt: Added.
+        * webexposed/counter-style-image-symbols-not-exposed.html: Added.
+
 2021-04-22  Megan Gardner  <megan_gardner@apple.com>
 
         Sometimes appHighlights are not painted when created.
