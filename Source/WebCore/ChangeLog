@@ -1,3 +1,22 @@
+2021-04-23  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer][EME] cbcs fixes
+        https://bugs.webkit.org/show_bug.cgi?id=224976
+
+        Reviewed by Philippe Normand.
+
+        In cbcs you can get from qtdemux buffers without an iv_size
+        because it had constant_iv_size. We need to check that.
+
+        When decryption bails out because of the buffer being unencrypted,
+        we should TRACE so.
+
+        cbcs buffers could not include the subsample_count, we consider 0
+        as default.
+
+        * platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp:
+        (transformInPlace):
+
 2021-04-23  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Improve HashTableDeletedValue of ServiceWorkerRegistrationKey
