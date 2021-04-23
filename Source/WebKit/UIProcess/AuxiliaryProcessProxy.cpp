@@ -159,8 +159,8 @@ bool AuxiliaryProcessProxy::wasTerminated() const
 bool AuxiliaryProcessProxy::sendMessage(std::unique_ptr<IPC::Encoder> encoder, OptionSet<IPC::SendOption> sendOptions, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo, ShouldStartProcessThrottlerActivity shouldStartProcessThrottlerActivity)
 {
     // FIXME: We should turn this into a RELEASE_ASSERT().
-    ASSERT(isMainRunLoop());
-    if (!isMainRunLoop()) {
+    ASSERT(WTF::isMainRunLoop());
+    if (!WTF::isMainRunLoop()) {
         callOnMainRunLoop([protectedThis = makeRef(*this), encoder = WTFMove(encoder), sendOptions, asyncReplyInfo = WTFMove(asyncReplyInfo), shouldStartProcessThrottlerActivity]() mutable {
             protectedThis->sendMessage(WTFMove(encoder), sendOptions, WTFMove(asyncReplyInfo), shouldStartProcessThrottlerActivity);
         });
@@ -233,7 +233,7 @@ bool AuxiliaryProcessProxy::dispatchSyncMessage(IPC::Connection& connection, IPC
 void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier connectionIdentifier)
 {
     ASSERT(!m_connection);
-    ASSERT(isMainRunLoop());
+    ASSERT(WTF::isMainRunLoop());
 
     if (!IPC::Connection::identifierIsValid(connectionIdentifier))
         return;
