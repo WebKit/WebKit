@@ -38,6 +38,8 @@ STUBS_CLASS = __name__ + ".TestStubs"
 
 
 class TestStubs(unittest.TestCase):
+    __pytest_no_rewrite__ = True
+
     def test_empty(self):
         pass
 

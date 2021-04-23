@@ -22,6 +22,11 @@
 
 import unittest
 
+try:
+    import pytest
+except ImportError:
+    pass
+
 
 def xfail(*args, **kwargs):
     """a pytest.mark.xfail-like wrapper for unittest.expectedFailure
