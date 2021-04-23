@@ -124,8 +124,8 @@ void NetworkProcessProxy::terminate()
 
 void NetworkProcessProxy::didTerminate()
 {
-    if (this == defaultProcess().get())
-        defaultProcess() = nullptr;
+    if (this == defaultNetworkProcess().get())
+        defaultNetworkProcess() = nullptr;
 }
 
 void NetworkProcessProxy::sendCreationParametersToNewProcess()
