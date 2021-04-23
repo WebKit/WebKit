@@ -1,5 +1,17 @@
 2021-04-23  Cathie Chen  <cathiechen@igalia.com>
 
+        Not computing image aspect ratios from width and height attributes for lazy loaded images
+        https://bugs.webkit.org/show_bug.cgi?id=224197
+
+        Reviewed by Darin Adler.
+
+        The test cases for error images and images without src in img-aspect-ratio.html are passed. This patch
+        doesn't change the behavior of the original aspect ratio case, so it's failed like before.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+
+2021-04-23  Cathie Chen  <cathiechen@igalia.com>
+
         Import the update to "mapping attribute width and height to aspect ratio" tests from WPT
         https://bugs.webkit.org/show_bug.cgi?id=224911
 

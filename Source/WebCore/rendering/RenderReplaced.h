@@ -58,6 +58,10 @@ protected:
 
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const final;
 
+    // This function determines if the object is allowed to compute aspect ratio from attributes width and height.
+    virtual bool canMapWidthHeightToAspectRatio() const { return false; }
+    Optional<double> intrinsicAspectRatioFromWidthHeight() const;
+
     virtual LayoutUnit minimumReplacedHeight() const { return 0_lu; }
 
     bool isSelected() const;

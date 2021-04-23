@@ -1,3 +1,29 @@
+2021-04-23  Cathie Chen  <cathiechen@igalia.com>
+
+        Not computing image aspect ratios from width and height attributes for lazy loaded images
+        https://bugs.webkit.org/show_bug.cgi?id=224197
+
+        Reviewed by Darin Adler.
+
+        This patch supports error images and lazy loaded images (without src attribute) to compute
+        implicit aspect ratios from width and height attributes. Refactor the code a bit. Added
+        intrinsicAspectRatioFromWidthHeight() to compute aspect ratio from width and height attributes when
+        the object is allowed to which is decided by canMapWidthHeightToAspectRatio().
+        Remove `!downcast<RenderImage>(*this).cachedImage()` constraint, so that images without src attributes
+        is allowed. As to error images, compute the aspect ratio when the image shouldDisplayBrokenImageIcon().
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::canMapWidthHeightToAspectRatio const): To indicate that the object is allowed
+        to compute aspect ratio from width and height attributes.
+        (WebCore::RenderImage::computeIntrinsicRatioInformation const): When shouldDisplayBrokenImageIcon(),
+        try to compute the aspect ratio from attributes width and height.
+        * rendering/RenderImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::intrinsicAspectRatioFromWidthHeight const): Compute the aspect ratio from attributes width and height.
+        (WebCore::RenderReplaced::computeIntrinsicRatioInformation const):
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::canMapWidthHeightToAspectRatio const): Ditto.
+
 2021-04-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove virtual function calls in GraphicsLayer destructors
