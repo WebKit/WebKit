@@ -134,14 +134,14 @@ PASS clear uses discrete animation when animating between "left" and "right" wit
 PASS clear uses discrete animation when animating between "left" and "right" with effect easing
 PASS clear uses discrete animation when animating between "left" and "right" with keyframe easing
 PASS clip (type: rect) has testInterpolation function
-FAIL clip supports animating as a rect assert_equals: The value should be rect(30px, 30px, 30px, 30px) at 500ms expected "rect(30px, 30px, 30px, 30px)" but got "auto"
+PASS clip supports animating as a rect
 PASS clip (type: discrete) has testInterpolation function
-FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with linear easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
-FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with effect easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
-FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with keyframe easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
-FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with linear easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
-FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with effect easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
-FAIL clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with keyframe easing assert_equals: The value should be rect(10px, 10px, 10px, 10px) at 0ms expected "rect(10px, 10px, 10px, 10px)" but got "auto"
+PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with linear easing
+PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with effect easing
+PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "auto" with keyframe easing
+PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with linear easing
+PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with effect easing
+PASS clip uses discrete animation when animating between "rect(10px, 10px, 10px, 10px)" and "rect(10px, 10px, 10px, auto)" with keyframe easing
 PASS color (type: color) has testInterpolation function
 PASS color supports animating as color of rgb()
 PASS color supports animating as color of #RGB

@@ -1,5 +1,20 @@
 2021-04-24  Antoine Quint  <graouts@webkit.org>
 
+        Fix interpolation of the clip CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=225017
+
+        Reviewed by Dean Jackson.
+
+        While we interpolated the clip value correctly, we wouldn't set the RenderStyle bit that
+        indicates that there is a non-auto value in the first place. With a new dedicated wrapper,
+        we can ensure we set the bit correctly as we blend, and that we use discrete interpolation
+        if both the from and to values aren't auto. 
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
+2021-04-24  Antoine Quint  <graouts@webkit.org>
+
         Computed style for the translate CSS property should use px for the z value
         https://bugs.webkit.org/show_bug.cgi?id=225018
 

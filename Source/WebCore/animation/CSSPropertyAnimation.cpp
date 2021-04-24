@@ -857,7 +857,7 @@ private:
     void (RenderStyle::*m_setter)(T&&);
 };
 
-class LengthBoxPropertyWrapper final : public PropertyWrapperGetter<const LengthBox&> {
+class LengthBoxPropertyWrapper : public PropertyWrapperGetter<const LengthBox&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Flags {
@@ -872,8 +872,7 @@ public:
     {
     }
 
-private:
-    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const override
     {
         if (m_flags.contains(Flags::UsesFillKeyword) && from.borderImage().fill() != to.borderImage().fill())
             return false;
@@ -887,7 +886,7 @@ private:
             && canInterpolateLengths(fromLengthBox.left(), toLengthBox.left(), isLengthPercentage);
     }
 
-    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
         if (m_flags.contains(Flags::UsesFillKeyword))
             destination.setBorderImageSliceFill((!context.progress || !context.isDiscrete ? from : to).borderImage().fill());
@@ -904,6 +903,27 @@ private:
 
     void (RenderStyle::*m_setter)(LengthBox&&);
     OptionSet<Flags> m_flags;
+};
+
+class ClipWrapper final : public LengthBoxPropertyWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ClipWrapper()
+        : LengthBoxPropertyWrapper(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip, { LengthBoxPropertyWrapper::Flags::AllowsNegativeValues })
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        return from.hasClip() && to.hasClip() && LengthBoxPropertyWrapper::canInterpolate(from, to);
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        LengthBoxPropertyWrapper::blend(destination, from, to, context);
+        destination.setHasClip(true);
+    }
 };
 
 class PropertyWrapperClipPath final : public RefCountedPropertyWrapper<ClipPathOperation> {
@@ -2278,7 +2298,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<Visibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility),
         new PropertyWrapper<float>(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoomWithoutReturnValue),
 
-        new LengthBoxPropertyWrapper(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip, { LengthBoxPropertyWrapper::Flags::AllowsNegativeValues }),
+        new ClipWrapper,
 
         new AcceleratedPropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity),
         new AcceleratedPropertyWrapper<const TransformOperations&>(CSSPropertyTransform, &RenderStyle::transform, &RenderStyle::setTransform),
