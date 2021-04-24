@@ -1,5 +1,42 @@
 2021-04-23  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r276527. rdar://problem/77092655
+
+    [YARR Interpreter] Improper backtrack of parentheses with non-zero based greedy quantifiers
+    https://bugs.webkit.org/show_bug.cgi?id=224983
+    
+    Reviewed by Mark Lam.
+    
+    When we backtrack a parentheses with a greedy non zero based quantifier,
+    we don't properly restore for the case where we hadn't reached the minimum count.
+    We now save the input position on entry and restore it when we backtrack for
+    this case.  We also properly release the allocated ParenthesesDisjunctionContext's.
+    
+    * yarr/YarrInterpreter.cpp:
+    (JSC::Yarr::Interpreter::matchParentheses):
+    (JSC::Yarr::Interpreter::backtrackParentheses):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276527 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-23  Michael Saboff  <msaboff@apple.com>
+
+            [YARR Interpreter] Improper backtrack of parentheses with non-zero based greedy quantifiers
+            https://bugs.webkit.org/show_bug.cgi?id=224983
+
+            Reviewed by Mark Lam.
+
+            When we backtrack a parentheses with a greedy non zero based quantifier,
+            we don't properly restore for the case where we hadn't reached the minimum count.
+            We now save the input position on entry and restore it when we backtrack for
+            this case.  We also properly release the allocated ParenthesesDisjunctionContext's.
+
+            * yarr/YarrInterpreter.cpp:
+            (JSC::Yarr::Interpreter::matchParentheses):
+            (JSC::Yarr::Interpreter::backtrackParentheses):
+
+2021-04-23  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r276524. rdar://problem/77092695
 
     Fix B3 strength reduction for shl.
