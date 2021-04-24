@@ -1,3 +1,16 @@
+2021-04-23  Ian Gilbert  <iang@apple.com>
+
+        Crash in IndentOutdentCommand::outdentParagraph attempting to move a paragraph
+        https://bugs.webkit.org/show_bug.cgi?id=224909
+
+        Reviewed by Ryosuke Niwa.
+
+        Added check inside IndentOutdentCommand::outdentParagraph to ensure that inserting a 
+        HTMLBRElement was successful before attempting to move a paragraph to that node.
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+
 2021-04-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash in constructCustomElementSynchronously
