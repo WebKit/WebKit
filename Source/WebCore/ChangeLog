@@ -1,3 +1,17 @@
+2021-04-24  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Ignore content height and width when 'contain: size' is present
+        https://bugs.webkit.org/show_bug.cgi?id=225013
+
+        Reviewed by Antti Koivisto.
+
+        Enable size containment for "shrink to fit width" and for "height: auto" formatting context roots.    
+        https://www.w3.org/TR/css-contain-2/#size-containment.
+
+        * layout/FormattingContextGeometry.cpp:
+        (WebCore::Layout::FormattingContext::Geometry::contentHeightForFormattingContextRoot const):
+        (WebCore::Layout::FormattingContext::Geometry::shrinkToFitWidth):
+
 2021-04-24  Rob Buis  <rbuis@igalia.com>
 
         Move selectedOptions cache invalidation timing
