@@ -28,6 +28,9 @@ PASS background-image: "url("http://localhost/test-1")" onto "url("http://localh
 PASS background-origin (type: discrete) has testAddition function
 PASS background-origin: "content-box" onto "padding-box"
 PASS background-origin: "padding-box" onto "content-box"
+PASS background-repeat (type: discrete) has testAddition function
+PASS background-repeat: "round" onto "space"
+PASS background-repeat: "space" onto "round"
 PASS border-bottom-color (type: color) has testAddition function
 FAIL border-bottom-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"
 FAIL border-bottom-color supports animating as color of #RGB assert_equals: The value should be rgb(255, 128, 128) at 0ms expected "rgb(255, 128, 128)" but got "rgb(255, 0, 0)"

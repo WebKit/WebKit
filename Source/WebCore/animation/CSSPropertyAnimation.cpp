@@ -2470,6 +2470,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
     static const CSSPropertyID animatableShorthandProperties[] = {
         CSSPropertyBackground, // for background-color, background-position, background-image
         CSSPropertyBackgroundPosition,
+        CSSPropertyBackgroundRepeat,
         CSSPropertyFont, // for font-size, font-weight
         CSSPropertyWebkitMask, // for mask-position
         CSSPropertyWebkitMaskPosition,
