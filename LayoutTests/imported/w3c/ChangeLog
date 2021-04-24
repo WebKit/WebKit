@@ -1,3 +1,15 @@
+2021-04-24  Antoine Quint  <graouts@webkit.org>
+
+        Computed style for the translate CSS property should use px for the z value
+        https://bugs.webkit.org/show_bug.cgi?id=225018
+
+        Reviewed by Dean Jackson.
+
+        Mark a single WPT progression.
+
+        * web-platform-tests/css/css-transforms/animation/translate-composition-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2021-04-23  Cathie Chen  <cathiechen@igalia.com>
 
         Not computing image aspect ratios from width and height attributes for lazy loaded images

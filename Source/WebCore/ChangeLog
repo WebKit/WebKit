@@ -1,3 +1,13 @@
+2021-04-24  Antoine Quint  <graouts@webkit.org>
+
+        Computed style for the translate CSS property should use px for the z value
+        https://bugs.webkit.org/show_bug.cgi?id=225018
+
+        Reviewed by Dean Jackson.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTranslate):
+
 2021-04-24  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Refactor ValueRange from enum to enum class

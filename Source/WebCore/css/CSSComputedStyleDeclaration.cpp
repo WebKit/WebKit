@@ -623,7 +623,7 @@ static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle
     } else {
         list->append(zoomAdjustedPixelValue(transform.m41(), style));
         list->append(zoomAdjustedPixelValue(transform.m42(), style));
-        list->append(zoomAdjustedNumberValue(transform.m43(), style));
+        list->append(zoomAdjustedPixelValue(transform.m43(), style));
     }
 
     return list;
