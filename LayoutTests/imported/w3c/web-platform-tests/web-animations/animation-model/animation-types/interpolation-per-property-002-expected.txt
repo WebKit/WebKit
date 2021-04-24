@@ -210,8 +210,8 @@ PASS transform-style uses discrete animation when animating between "flat" and "
 PASS transform-style uses discrete animation when animating between "flat" and "preserve-3d" with keyframe easing
 PASS rotate (type: rotateList) has testInterpolation function
 PASS rotate without rotation axes
-FAIL rotate with rotation axes assert_equals: The value should be y 45deg at 500ms expected "y 45deg" but got "0 1 0 45deg"
-FAIL rotate with rotation axes and range over 360 degrees assert_equals: The value should be y 180deg at 250ms expected "y 180deg" but got "0 1 0 180deg"
+PASS rotate with rotation axes
+PASS rotate with rotation axes and range over 360 degrees
 PASS rotate with different rotation axes
 PASS translate (type: translateList) has testInterpolation function
 PASS translate with two unspecified values

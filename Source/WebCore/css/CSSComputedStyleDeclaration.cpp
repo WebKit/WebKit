@@ -653,19 +653,18 @@ static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& s
     if (!rotate || !rendererCanBeTransformed(renderer) || rotate->isIdentity())
         return cssValuePool.createIdentifierValue(CSSValueNone);
 
+    if (!rotate->is3DOperation())
+        return cssValuePool.createValue(rotate->angle(), CSSUnitType::CSS_DEG);
+
     auto list = CSSValueList::createSpaceSeparated();
 
-    bool hasImplicitX = !rotate->x();
-    bool hasImplicitY = !rotate->y();
-    bool hasImplicitZ = rotate->z() == 1;
-
-    if (!hasImplicitX && hasImplicitY && hasImplicitZ)
+    if (rotate->x() && !rotate->y() && !rotate->z())
         list->append(cssValuePool.createIdentifierValue(CSSValueX));
-    else if (hasImplicitX && !hasImplicitY && hasImplicitZ)
+    else if (!rotate->x() && rotate->y() && !rotate->z())
         list->append(cssValuePool.createIdentifierValue(CSSValueY));
-    else if (hasImplicitX && hasImplicitY && !hasImplicitZ)
+    else if (!rotate->x() && !rotate->y() && rotate->z())
         list->append(cssValuePool.createIdentifierValue(CSSValueZ));
-    else if (!hasImplicitX || !hasImplicitY || !hasImplicitZ) {
+    else {
         list->append(cssValuePool.createValue(rotate->x(), CSSUnitType::CSS_NUMBER));
         list->append(cssValuePool.createValue(rotate->y(), CSSUnitType::CSS_NUMBER));
         list->append(cssValuePool.createValue(rotate->z(), CSSUnitType::CSS_NUMBER));

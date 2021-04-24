@@ -1,5 +1,34 @@
 2021-04-24  Antoine Quint  <graouts@webkit.org>
 
+        Improve parsing and computed style of the rotate CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=225019
+
+        Reviewed by Dean Jackson.
+
+        There were a few issues with how we parsed the rotate CSS property and how we dealt with it
+        when resolving the computed style.
+
+        When parsing, we required individual vector coordinates to be 1 when others were 0 for a vector
+        to be considered parallel with the x, y or z axis. We now support any positive value. Then, as
+        we create the TransformOperation from the CSSValue, we must set the type to ROTATE_3D instead
+        of ROTATE_Z if the z axis was specified through the CSS value. Indeed, ROTATE_Z is equivalent
+        to ROTATE and without setting this type to ROTATE_3D, TransformOperation::is3DOperation() would
+        return false.
+
+        This is important because when figuring out the computed style, we should only return an angle
+        without a rotation vector if TransformOperation::is3DOperation() is false. For the case where
+        the operation was specified in 3D, we now use the same rule used when parsing to determine
+        whether the rotation vector is parallel with the x, y or z axis to use the matching keywords.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedRotate):
+        * css/TransformFunctions.cpp:
+        (WebCore::rotateForValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeRotate):
+
+2021-04-24  Antoine Quint  <graouts@webkit.org>
+
         Support interpolation of the background-repeat shorthand
         https://bugs.webkit.org/show_bug.cgi?id=225016
 

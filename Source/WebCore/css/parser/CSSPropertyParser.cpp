@@ -2070,13 +2070,13 @@ static RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSSParserMode 
         auto y = downcast<CSSPrimitiveValue>(*list->itemWithoutBoundsCheck(1)).doubleValue();
         auto z = downcast<CSSPrimitiveValue>(*list->itemWithoutBoundsCheck(2)).doubleValue();
 
-        if (x == 1 && !y && !z) {
+        if (x && !y && !z) {
             list = CSSValueList::createSpaceSeparated();
             list->append(CSSPrimitiveValue::createIdentifier(CSSValueX));
-        } else if (!x && y == 1 && !z) {
+        } else if (!x && y && !z) {
             list = CSSValueList::createSpaceSeparated();
             list->append(CSSPrimitiveValue::createIdentifier(CSSValueY));
-        } else if (!x && !y && z == 1) {
+        } else if (!x && !y && z) {
             list = CSSValueList::createSpaceSeparated();
             list->append(CSSPrimitiveValue::createIdentifier(CSSValueZ));
         }
