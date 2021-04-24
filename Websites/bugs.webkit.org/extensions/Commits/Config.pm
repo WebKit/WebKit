@@ -1,4 +1,4 @@
-# Copyright (C) 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,30 +20,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package Bugzilla::Extension::Trac;
+package Bugzilla::Extension::Commits;
 
 use strict;
 use warnings;
 
-use parent qw(Bugzilla::Extension);
+use constant NAME => "Commits";
+use constant REQUIRED_MODULES => [];
+use constant OPTIONAL_MODULES => [];
 
-our $VERSION = "1.0.0";
-
-sub bug_format_comment {
-    my ($self, $args) = @_;
-    my $regexes = $args->{'regexes'};
-
-    # Should match "r12345" and "trac.webkit.org/r12345" but not "https://trac.webkit.org/r12345"
-    push(@$regexes, { match => qr/(?<!\/)\b((r[[:digit:]]{5,}))\b/, replace => \&_replace_revision });
-    push(@$regexes, { match => qr/(?<!\/)(trac.webkit.org\/(r[[:digit:]]{5,}))\b/, replace => \&_replace_revision });
-}
-
-sub _replace_revision {
-    my $args = shift;
-    my $text = $args->{matches}->[0];
-    my $revision = $args->{matches}->[1];
-    return qq{<a href="https://trac.webkit.org/$revision">$text</a>};
-};
-
-# This must be the last line of your extension.
 __PACKAGE__->NAME;
