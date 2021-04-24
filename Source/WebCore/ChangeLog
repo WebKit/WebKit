@@ -1,5 +1,38 @@
 2021-04-24  Zalan Bujtas  <zalan@apple.com>
 
+        [RenderTreeBuilder] Subtree moving should clear the floats on all the descendants
+        https://bugs.webkit.org/show_bug.cgi?id=224996
+        <rdar://76837320>
+
+        Reviewed by Antti Koivisto.
+
+        While moving a subtree, we invalidate the floating object list so that we don't end up with incorrectly placed floats (they'll get regenerated during the subsequent layout).
+        A float can be "assigned" to more than one RenderBlockFlow (e.g intruding floats). It's very common that a set of descendant RenderBlockFlow
+        renderers "see" the same set of floats (each RenderBlockFlow has its own list of floating objects).
+        Now the invalidation is based on ancestor-to-descendant direction starting with finding the outer most containing block for a particular float (see outermostBlockContainingFloatingObject)
+        The invalidation logic also expects no gaps in the ancestor chain e.g.
+
+           RenderBlockFlow (A) -> float X
+             RenderBlockFlow (B) -> float X
+               RenderBlockFlow (C) -> float X
+           if float X is assigned to both A and C, then it must be assigned to B as well.
+
+        RenderBlockFlow::removeFloatingObjects() simply removes the float from the renderer. It does not invalidate the ancestor/descendant chain.
+        e.g. calling B.removeFloatingObjects() would just remove float X from RenderBlockFlow (B)
+
+           RenderBlockFlow (A) -> float X
+             RenderBlockFlow (B)
+               RenderBlockFlow (C) -> float X
+
+        and any subsequent invalidation attempt would fail to clear up A or C (depending on whether it is initiated on A or C).
+
+        Test: fast/multicol/floating-boxes-moved-under-multi-column.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::moveChildren):
+
+2021-04-24  Zalan Bujtas  <zalan@apple.com>
+
         [LFC] Ignore content height and width when 'contain: size' is present
         https://bugs.webkit.org/show_bug.cgi?id=225013
 

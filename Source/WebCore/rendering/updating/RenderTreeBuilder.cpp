@@ -531,8 +531,22 @@ void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelO
     // or when fullRemoveInsert is false.
     if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && is<RenderBlock>(from)) {
         downcast<RenderBlock>(from).removePositionedObjects(nullptr);
-        if (is<RenderBlockFlow>(from))
-            downcast<RenderBlockFlow>(from).removeFloatingObjects();
+        auto removeFloatingObjectsIfApplicable = [&] {
+            if (from.renderTreeBeingDestroyed())
+                return;
+            if (!is<RenderBlockFlow>(from))
+                return;
+            auto* floatingObjects = downcast<RenderBlockFlow>(from).floatingObjectSet();
+            if (!floatingObjects)
+                return;
+            // Here we remove the floating objects from the descendants as well.
+            auto copyOfFloatingObjects = WTF::map(*floatingObjects, [](auto& floatingObject) { 
+                return floatingObject.get();
+            });
+            for (auto* floatingObject : copyOfFloatingObjects)
+                floatingObject->renderer().removeFloatingOrPositionedChildFromBlockLists();
+        };
+        removeFloatingObjectsIfApplicable();
     }
 
     ASSERT(!beforeChild || &to == beforeChild->parent());
