@@ -1745,6 +1745,8 @@ webkit.org/b/139634 [ Debug ] fast/selectors/matches-backtracking.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/nth-child-of-register-requirement.html [ Slow ]
 webkit.org/b/139634 [ Debug ] fast/selectors/not-backtracking.html [ Slow ]
 
+webkit.org/b/224941 [ Debug ] editing/pasteboard/paste-as-quotation-then-paste-crash.html [ WontFix ]
+
 webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Slow ]
 [ Debug ] jquery/core.html [ Slow ]
 [ Debug ] jquery/event.html [ Slow ]

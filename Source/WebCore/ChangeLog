@@ -1,3 +1,19 @@
+2021-04-24  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in BreakBlockquoteCommand::doApply()
+        https://bugs.webkit.org/show_bug.cgi?id=224941
+
+        Reviewed by Ryosuke Niwa.
+
+        Despite assertions to the contrary, it is possible for there not to be any node
+        to move into the new blockquote in BreakBlockquoteCommand::doApply() as a result
+        of layout updates, so remove the assertions and handle this case.
+
+        Test: editing/pasteboard/paste-as-quotation-then-paste-crash.html
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+
 2021-04-24  Antoine Quint  <graouts@webkit.org>
 
         Improve parsing and computed style of the rotate CSS property

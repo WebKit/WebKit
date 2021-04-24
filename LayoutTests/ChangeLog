@@ -1,3 +1,17 @@
+2021-04-24  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in BreakBlockquoteCommand::doApply()
+        https://bugs.webkit.org/show_bug.cgi?id=224941
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for this crash, running only on Release for now.
+        Thanks to Tuomas Karkkainen for its basic structure.
+
+        * TestExpectations:
+        * editing/pasteboard/paste-as-quotation-then-paste-crash-expected.txt: Added.
+        * editing/pasteboard/paste-as-quotation-then-paste-crash.html: Added.
+
 2021-04-24  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Subtree moving should clear the floats on all the descendants
