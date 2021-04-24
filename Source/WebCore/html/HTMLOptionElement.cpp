@@ -234,9 +234,6 @@ void HTMLOptionElement::setSelectedState(bool selected)
 
     m_isSelected = selected;
     invalidateStyleForSubtree();
-
-    if (RefPtr<HTMLSelectElement> select = ownerSelectElement())
-        select->invalidateSelectedItems();
 }
 
 void HTMLOptionElement::childrenChanged(const ChildChange& change)

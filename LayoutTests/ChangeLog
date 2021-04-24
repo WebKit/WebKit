@@ -1,3 +1,15 @@
+2021-04-24  Rob Buis  <rbuis@igalia.com>
+
+        Move selectedOptions cache invalidation timing
+        https://bugs.webkit.org/show_bug.cgi?id=224894
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for this.
+
+        * fast/dom/HTMLSelectElement/selected-options-item-crash-expected.txt: Added.
+        * fast/dom/HTMLSelectElement/selected-options-item-crash.html: Added.
+
 2021-04-23  Chris Dumez  <cdumez@apple.com>
 
         http/tests/security/referrer-policy-header.html is slow

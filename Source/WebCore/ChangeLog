@@ -1,3 +1,27 @@
+2021-04-24  Rob Buis  <rbuis@igalia.com>
+
+        Move selectedOptions cache invalidation timing
+        https://bugs.webkit.org/show_bug.cgi?id=224894
+
+        Reviewed by Ryosuke Niwa.
+
+        Move selectedOptions cache invalidation timing out
+        of setSelectedState, having it in setSelectedState
+        can cause selectedOptions cache invalidation while
+        determining the cache.
+
+        Test: fast/dom/HTMLSelectElement/selected-options-item-crash.html
+
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::setSelectedState):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::updateListBoxSelection):
+        (WebCore::HTMLSelectElement::selectOption):
+        (WebCore::HTMLSelectElement::deselectItemsWithoutValidation):
+        (WebCore::HTMLSelectElement::restoreFormControlState):
+        (WebCore::HTMLSelectElement::reset):
+        (WebCore::HTMLSelectElement::updateSelectedState):
+
 2021-04-23  Ian Gilbert  <iang@apple.com>
 
         Crash in IndentOutdentCommand::outdentParagraph attempting to move a paragraph
