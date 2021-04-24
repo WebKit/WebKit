@@ -2146,7 +2146,7 @@ RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTo
     auto expression = parser.parseCalc(tokens, function);
     if (!expression)
         return nullptr;
-    auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRangeAll));
+    auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRange::All));
     LOG_WITH_STREAM(Calc, stream << "CSSCalcValue::create " << *result);
     return result;
 }

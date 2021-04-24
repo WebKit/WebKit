@@ -85,7 +85,7 @@ CSSParserTokenRange consumeFunction(CSSParserTokenRange& range)
     return contents;
 }
 
-static Optional<double> consumeNumberOrPercentDividedBy100Raw(CSSParserTokenRange& range, ValueRange valueRange = ValueRangeAll)
+static Optional<double> consumeNumberOrPercentDividedBy100Raw(CSSParserTokenRange& range, ValueRange valueRange = ValueRange::All)
 {
     if (auto percent = consumePercentRaw(range, valueRange))
         return *percent / 100.0;
@@ -97,7 +97,7 @@ static Optional<double> consumeNumberOrPercentDividedBy100Raw(CSSParserTokenRang
 // FIXME: consider pulling in the parsing logic from CSSCalculationValue.cpp.
 class CalcParser {
 public:
-    explicit CalcParser(CSSParserTokenRange& range, CalculationCategory destinationCategory, ValueRange valueRange = ValueRangeAll, CSSValuePool& cssValuePool = CSSValuePool::singleton())
+    explicit CalcParser(CSSParserTokenRange& range, CalculationCategory destinationCategory, ValueRange valueRange = ValueRange::All, CSSValuePool& cssValuePool = CSSValuePool::singleton())
         : m_sourceRange(range)
         , m_range(range)
         , m_valuePool(cssValuePool)
@@ -253,7 +253,7 @@ Optional<double> consumeNumberRaw(CSSParserTokenRange& range, ValueRange valueRa
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == NumberToken) {
-        if (valueRange == ValueRangeNonNegative && token.numericValue() < 0)
+        if (valueRange == ValueRange::NonNegative && token.numericValue() < 0)
             return WTF::nullopt;
         return range.consumeIncludingWhitespace().numericValue();
     }
@@ -306,7 +306,7 @@ Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
         return WTF::nullopt;
 
     // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
-    CalcParser calcParser(range, CalculationCategory::Number, ValueRangeAll);
+    CalcParser calcParser(range, CalculationCategory::Number, ValueRange::All);
     if (auto result = calcParser.consumeNumberRaw(); result
 #if !ENABLE(VARIATION_FONTS)
         && *result > 0 && *result < 1000 && divisibleBy100(*result)
@@ -372,13 +372,13 @@ Optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange& range, CSSParserMode c
         default:
             return WTF::nullopt;
         }
-        if ((valueRange == ValueRangeNonNegative && token.numericValue() < 0) || std::isinf(token.numericValue()))
+        if ((valueRange == ValueRange::NonNegative && token.numericValue() < 0) || std::isinf(token.numericValue()))
             return WTF::nullopt;
         return { { token.unitType(), range.consumeIncludingWhitespace().numericValue() } };
     }
     if (token.type() == NumberToken) {
         if (!shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless, UnitlessZeroQuirk::Allow)
-            || (valueRange == ValueRangeNonNegative && token.numericValue() < 0))
+            || (valueRange == ValueRange::NonNegative && token.numericValue() < 0))
             return WTF::nullopt;
         if (std::isinf(token.numericValue()))
             return WTF::nullopt;
@@ -411,7 +411,7 @@ Optional<double> consumePercentRaw(CSSParserTokenRange& range, ValueRange valueR
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == PercentageToken) {
-        if (std::isinf(token.numericValue()) || (valueRange == ValueRangeNonNegative && token.numericValue() < 0))
+        if (std::isinf(token.numericValue()) || (valueRange == ValueRange::NonNegative && token.numericValue() < 0))
             return WTF::nullopt;
         return range.consumeIncludingWhitespace().numericValue();
     }
@@ -529,7 +529,7 @@ Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode css
     if (token.type() != FunctionToken)
         return WTF::nullopt;
 
-    CalcParser calcParser(range, CalculationCategory::Angle, ValueRangeAll);
+    CalcParser calcParser(range, CalculationCategory::Angle, ValueRange::All);
     return calcParser.consumeAngleRaw();
 }
 
@@ -542,7 +542,7 @@ RefPtr<CSSPrimitiveValue> consumeAngleWorkerSafe(CSSParserTokenRange& range, CSS
 {
     const CSSParserToken& token = range.peek();
     if (token.type() == FunctionToken) {
-        CalcParser calcParser(range, CalculationCategory::Angle, ValueRangeAll, cssValuePool);
+        CalcParser calcParser(range, CalculationCategory::Angle, ValueRange::All, cssValuePool);
         if (const CSSCalcValue* calculation = calcParser.value()) {
             if (calculation->category() == CalculationCategory::Angle)
                 return calcParser.consumeValue();
@@ -601,7 +601,7 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode 
     if (acceptUnitless)
         unit = CSSUnitType::CSS_MS;
     if (token.type() == DimensionToken || acceptUnitless) {
-        if (valueRange == ValueRangeNonNegative && token.numericValue() < 0)
+        if (valueRange == ValueRange::NonNegative && token.numericValue() < 0)
             return nullptr;
         if (unit == CSSUnitType::CSS_MS || unit == CSSUnitType::CSS_S)
             return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), unit);
@@ -1970,7 +1970,7 @@ static RefPtr<CSSPrimitiveValue> consumePositionComponent(CSSParserTokenRange& r
 {
     if (range.peek().type() == IdentToken)
         return consumeIdent<CSSValueLeft, CSSValueTop, CSSValueBottom, CSSValueRight, CSSValueCenter>(range);
-    return consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, unitless);
+    return consumeLengthOrPercent(range, cssParserMode, ValueRange::All, unitless);
 }
 
 static bool isHorizontalPositionKeywordOnly(const CSSPrimitiveValue& value)
@@ -2182,9 +2182,9 @@ static RefPtr<CSSPrimitiveValue> consumeDeprecatedGradientPoint(CSSParserTokenRa
             return CSSValuePool::singleton().createValue(50., CSSUnitType::CSS_PERCENTAGE);
         return nullptr;
     }
-    RefPtr<CSSPrimitiveValue> result = consumePercent(args, ValueRangeAll);
+    RefPtr<CSSPrimitiveValue> result = consumePercent(args, ValueRange::All);
     if (!result)
-        result = consumeNumber(args, ValueRangeAll);
+        result = consumeNumber(args, ValueRange::All);
     return result;
 }
 
@@ -2248,7 +2248,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, con
 
     // For radial gradients only, we now expect a numeric radius.
     if (isDeprecatedRadialGradient) {
-        auto radius = consumeNumber(args, ValueRangeNonNegative);
+        auto radius = consumeNumber(args, ValueRange::NonNegative);
         if (!radius || !consumeCommaIncludingWhitespace(args))
             return nullptr;
         downcast<CSSRadialGradientValue>(result.get())->setFirstRadius(WTFMove(radius));
@@ -2267,7 +2267,7 @@ static RefPtr<CSSValue> consumeDeprecatedGradient(CSSParserTokenRange& args, con
     if (isDeprecatedRadialGradient) {
         if (!consumeCommaIncludingWhitespace(args))
             return nullptr;
-        auto radius = consumeNumber(args, ValueRangeNonNegative);
+        auto radius = consumeNumber(args, ValueRange::NonNegative);
         if (!radius)
             return nullptr;
         downcast<CSSRadialGradientValue>(result.get())->setSecondRadius(WTFMove(radius));
@@ -2290,8 +2290,8 @@ static bool consumeGradientColorStops(CSSParserTokenRange& range, const CSSParse
     
     auto consumeStopPosition = [&] {
         return gradient.gradientType() == CSSConicGradient
-            ? consumeAngleOrPercent(range, context.mode, ValueRangeAll, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)
-            : consumeLengthOrPercent(range, context.mode, ValueRangeAll);
+            ? consumeAngleOrPercent(range, context.mode, ValueRange::All, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)
+            : consumeLengthOrPercent(range, context.mode, ValueRange::All);
     };
 
     // The first color stop cannot be a color hint.
@@ -2343,10 +2343,10 @@ static RefPtr<CSSValue> consumeDeprecatedRadialGradient(CSSParserTokenRange& arg
 
     // Or, two lengths or percentages
     if (!shape && !sizeKeyword) {
-        auto horizontalSize = consumeLengthOrPercent(args, context.mode, ValueRangeNonNegative);
+        auto horizontalSize = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
         RefPtr<CSSPrimitiveValue> verticalSize;
         if (horizontalSize) {
-            verticalSize = consumeLengthOrPercent(args, context.mode, ValueRangeNonNegative);
+            verticalSize = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
             if (!verticalSize)
                 return nullptr;
             consumeCommaIncludingWhitespace(args);
@@ -2400,13 +2400,13 @@ static RefPtr<CSSValue> consumeRadialGradient(CSSParserTokenRange& args, const C
                 break;
             }
         } else {
-            auto center = consumeLengthOrPercent(args, context.mode, ValueRangeNonNegative);
+            auto center = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
             if (!center)
                 break;
             if (horizontalSize)
                 return nullptr;
             horizontalSize = center;
-            center = consumeLengthOrPercent(args, context.mode, ValueRangeNonNegative);
+            center = consumeLengthOrPercent(args, context.mode, ValueRange::NonNegative);
             if (center) {
                 verticalSize = center;
                 ++i;
@@ -2801,11 +2801,11 @@ static RefPtr<CSSFunctionValue> consumeFilterFunction(CSSParserTokenRange& range
         if (filterType == CSSValueHueRotate)
             parsedValue = consumeAngle(args, context.mode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
         else if (filterType == CSSValueBlur)
-            parsedValue = consumeLength(args, HTMLStandardMode, ValueRangeNonNegative);
+            parsedValue = consumeLength(args, HTMLStandardMode, ValueRange::NonNegative);
         else {
-            parsedValue = consumePercent(args, ValueRangeNonNegative);
+            parsedValue = consumePercent(args, ValueRange::NonNegative);
             if (!parsedValue)
-                parsedValue = consumeNumber(args, ValueRangeNonNegative);
+                parsedValue = consumeNumber(args, ValueRange::NonNegative);
             if (parsedValue && !allowsValuesGreaterThanOne(filterType)) {
                 bool isPercentage = downcast<CSSPrimitiveValue>(*parsedValue).isPercentage();
                 double maxAllowed = isPercentage ? 100.0 : 1.0;
@@ -2879,23 +2879,23 @@ RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange& range, const CSS
             // If we've already parsed these lengths, the given value is invalid as there cannot be two lengths components in a single <shadow> value.
             return nullptr;
         }
-        horizontalOffset = consumeLength(range, context.mode, ValueRangeAll);
+        horizontalOffset = consumeLength(range, context.mode, ValueRange::All);
         if (!horizontalOffset)
             return nullptr;
-        verticalOffset = consumeLength(range, context.mode, ValueRangeAll);
+        verticalOffset = consumeLength(range, context.mode, ValueRange::All);
         if (!verticalOffset)
             return nullptr;
 
         const CSSParserToken& token = range.peek();
         // The explicit check for calc() is unfortunate. This is ensuring that we only fail parsing if there is a length, but it fails the range check.
         if (token.type() == DimensionToken || token.type() == NumberToken || (token.type() == FunctionToken && CSSCalcValue::isCalcFunction(token.functionId()))) {
-            blurRadius = consumeLength(range, context.mode, ValueRangeNonNegative);
+            blurRadius = consumeLength(range, context.mode, ValueRange::NonNegative);
             if (!blurRadius)
                 return nullptr;
         }
 
         if (blurRadius && allowSpread)
-            spreadDistance = consumeLength(range, context.mode, ValueRangeAll);
+            spreadDistance = consumeLength(range, context.mode, ValueRange::All);
     }
     
     // In order for this to be a valid <shadow>, at least these lengths must be present.
@@ -3079,7 +3079,7 @@ Optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange& range, CSSParserMo
         return WTF::nullopt;
     }
 
-    if (auto result = consumeLengthOrPercentRaw(range, cssParserMode, ValueRangeNonNegative, unitless))
+    if (auto result = consumeLengthOrPercentRaw(range, cssParserMode, ValueRange::NonNegative, unitless))
         return { *result };
 
     return WTF::nullopt;
@@ -3093,10 +3093,10 @@ Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange& range, CSSPars
         return WTF::nullopt;
     }
 
-    if (auto number = consumeNumberRaw(range, ValueRangeNonNegative))
+    if (auto number = consumeNumberRaw(range, ValueRange::NonNegative))
         return { *number };
 
-    if (auto lengthOrPercent = consumeLengthOrPercentRaw(range, cssParserMode, ValueRangeNonNegative))
+    if (auto lengthOrPercent = consumeLengthOrPercentRaw(range, cssParserMode, ValueRange::NonNegative))
         return { *lengthOrPercent };
 
     return WTF::nullopt;

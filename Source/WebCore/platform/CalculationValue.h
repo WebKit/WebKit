@@ -221,7 +221,7 @@ inline CalcExpressionNode::CalcExpressionNode(CalcExpressionNodeType type)
 
 inline CalculationValue::CalculationValue(std::unique_ptr<CalcExpressionNode> expression, ValueRange range)
     : m_expression(WTFMove(expression))
-    , m_shouldClampToNonNegative(range == ValueRangeNonNegative)
+    , m_shouldClampToNonNegative(range == ValueRange::NonNegative)
 {
 }
 

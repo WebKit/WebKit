@@ -78,14 +78,14 @@ Optional<int> consumeIntegerRaw(CSSParserTokenRange&, double minimumValue = -std
 RefPtr<CSSPrimitiveValue> consumeInteger(CSSParserTokenRange&, double minimumValue = -std::numeric_limits<double>::max());
 Optional<unsigned> consumePositiveIntegerRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumePositiveInteger(CSSParserTokenRange&);
-Optional<double> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRangeAll);
+Optional<double> consumeNumberRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumeNumber(CSSParserTokenRange&, ValueRange);
 Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange&);
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumberWorkerSafe(CSSParserTokenRange&, CSSValuePool&);
 Optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
 RefPtr<CSSPrimitiveValue> consumeLength(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);
-Optional<double> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRangeAll);
+Optional<double> consumePercentRaw(CSSParserTokenRange&, ValueRange = ValueRange::All);
 RefPtr<CSSPrimitiveValue> consumePercent(CSSParserTokenRange&, ValueRange);
 RefPtr<CSSPrimitiveValue> consumePercentWorkerSafe(CSSParserTokenRange&, ValueRange, CSSValuePool&);
 Optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange&, CSSParserMode, ValueRange, UnitlessQuirk = UnitlessQuirk::Forbid);

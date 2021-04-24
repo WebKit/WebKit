@@ -44,9 +44,9 @@ enum class LengthType : uint8_t {
     Undefined
 };
 
-enum ValueRange {
-    ValueRangeAll,
-    ValueRangeNonNegative
+enum class ValueRange : uint8_t {
+    All,
+    NonNegative
 };
 
 struct BlendingContext;

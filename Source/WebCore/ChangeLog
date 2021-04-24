@@ -1,3 +1,169 @@
+2021-04-24  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Refactor ValueRange from enum to enum class
+        https://bugs.webkit.org/show_bug.cgi?id=224981
+
+        Reviewed by Sam Weinig.
+
+        Refactor ValueRange from:
+
+        enum ValueRange {
+            ValueRangeAll,
+            ValueRangeNonNegative
+        }
+
+        to:
+
+        enum ValueRange : uint8_t {
+            All,
+            NonNegative
+        }
+
+        making it smaller (one byte versus four) and harder to misuse (no
+        auto-coercion to number types).
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * css/CSSCalculationValue.cpp:
+        (WebCore::CSSCalcValue::create):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * css/CSSCalculationValue.h:
+        (WebCore::CSSCalcValue::createCalculationValue const):
+        (WebCore::CSSCalcValue::setPermittedValueRange):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * css/MediaQueryExpression.cpp:
+        (WebCore::consumeFirstValue):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::consumeTransformOrigin):
+        (WebCore::consumeLetterSpacing):
+        (WebCore::consumeWordSpacing):
+        (WebCore::consumeTabSize):
+        (WebCore::consumeTextSizeAdjust):
+        (WebCore::consumeFontSize):
+        (WebCore::consumeLineHeight):
+        (WebCore::consumeSize):
+        (WebCore::consumeTextIndent):
+        (WebCore::consumeScrollPadding):
+        (WebCore::consumeMaxWidthOrHeight):
+        (WebCore::consumeWidthOrHeight):
+        (WebCore::consumeMarginOrOffset):
+        (WebCore::consumeClipComponent):
+        (WebCore::consumeLineClamp):
+        (WebCore::consumeHyphenateLimit):
+        (WebCore::consumeColumnWidth):
+        (WebCore::consumeGapLength):
+        (WebCore::consumeZoom):
+        (WebCore::consumeAnimationIterationCount):
+        (WebCore::consumeAnimationValue):
+        (WebCore::consumeLineWidth):
+        (WebCore::consumeTranslate3d):
+        (WebCore::consumeNumbers):
+        (WebCore::consumePerspective):
+        (WebCore::consumeTransformValue):
+        (WebCore::consumeTranslate):
+        (WebCore::consumeScale):
+        (WebCore::consumeRotate):
+        (WebCore::consumePositionLonghand):
+        (WebCore::consumeFlexBasis):
+        (WebCore::consumeKerning):
+        (WebCore::consumeStrokeDasharray):
+        (WebCore::consumeBaselineShift):
+        (WebCore::consumeRxOrRy):
+        (WebCore::consumeBorderRadiusCorner):
+        (WebCore::consumeTextUnderlineOffset):
+        (WebCore::consumeTextDecorationThickness):
+        (WebCore::consumeVerticalAlign):
+        (WebCore::consumeShapeRadius):
+        (WebCore::consumeBasicShapePolygon):
+        (WebCore::consumeRadii):
+        (WebCore::consumeBasicShapeInset):
+        (WebCore::consumeBorderImageSlice):
+        (WebCore::consumeBorderImageOutset):
+        (WebCore::consumeBorderImageWidth):
+        (WebCore::consumeReflect):
+        (WebCore::consumeBackgroundSize):
+        (WebCore::consumeFitContent):
+        (WebCore::consumeGridBreadth):
+        (WebCore::consumeInitialLetter):
+        (WebCore::consumeWebkitMarqueeIncrement):
+        (WebCore::consumeWebkitMarqueeRepetition):
+        (WebCore::consumeWebkitMarqueeSpeed):
+        (WebCore::consumeAspectRatio):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::consumeBorderSpacing):
+        (WebCore::CSSPropertyParser::consumeFlex):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeNumberOrPercentDividedBy100Raw):
+        (WebCore::CSSPropertyParserHelpers::CalcParser::CalcParser):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthRaw):
+        (WebCore::CSSPropertyParserHelpers::consumePercentRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+        (WebCore::CSSPropertyParserHelpers::consumePositionComponent):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientPoint):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeGradientColorStops):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedRadialGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeRadialGradient):
+        (WebCore::CSSPropertyParserHelpers::consumeFilterFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeSingleShadow):
+        (WebCore::CSSPropertyParserHelpers::consumeFontSizeRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeLineHeightRaw):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * css/parser/CSSPropertyParserHelpers.h:
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * css/parser/CSSPropertyParserWorkerSafe.cpp:
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStretch):
+        (WebCore::CSSPropertyParserHelpersWorkerSafe::consumeFontStretchRange):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * page/IntersectionObserver.cpp:
+        (WebCore::parseRootMargin):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * platform/CalculationValue.h:
+        (WebCore::CalculationValue::CalculationValue):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * platform/Length.cpp:
+        (WebCore::convertTo100PercentMinusLength):
+        (WebCore::blendMixedTypes):
+        (WebCore::blend):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+        * platform/Length.h:
+        Refactor enum ValueRange to enum class ValueRange.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertTo100PercentMinusLength):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
+
 2021-04-24  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Subtree moving should clear the floats on all the descendants

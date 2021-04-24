@@ -351,7 +351,7 @@ inline Length BuilderConverter::convertTo100PercentMinusLength(const Length& len
     lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(Length(100, LengthType::Percent)));
     lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(length));
     auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
-    return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
+    return Length(CalculationValue::create(WTFMove(op), ValueRange::All));
 }
 
 inline Length BuilderConverter::convertPositionComponentX(BuilderState& builderState, const CSSValue& value)

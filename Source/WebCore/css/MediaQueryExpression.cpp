@@ -186,11 +186,11 @@ inline RefPtr<CSSPrimitiveValue> consumeFirstValue(const String& mediaFeature, C
         return value;
 
     if (!featureExpectingPositiveInteger(mediaFeature) && !isAspectRatioFeature(mediaFeature)) {
-        if (auto value = CSSPropertyParserHelpers::consumeNumber(range, ValueRangeNonNegative))
+        if (auto value = CSSPropertyParserHelpers::consumeNumber(range, ValueRange::NonNegative))
             return value;
     }
 
-    if (auto value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRangeNonNegative))
+    if (auto value = CSSPropertyParserHelpers::consumeLength(range, HTMLStandardMode, ValueRange::NonNegative))
         return value;
 
     if (auto value = CSSPropertyParserHelpers::consumeResolution(range))

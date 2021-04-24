@@ -1,3 +1,18 @@
+2021-04-24  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Refactor ValueRange from enum to enum class
+        https://bugs.webkit.org/show_bug.cgi?id=224981
+
+        Reviewed by Sam Weinig.
+
+        ValueRange has been refactored from enum to enum class : uint8_t to
+        make it smaller and harder to misuse.
+
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+        (TestWebKitAPI::createTestValue):
+        Refactor ValueRangeAll and ValueRangeNonNegative to ValueRange::All
+        and ValueRange::NonNegative.
+
 2021-04-23  Aakash Jain  <aakash_jain@apple.com>
 
         Delete unused buildbot.css and default.css

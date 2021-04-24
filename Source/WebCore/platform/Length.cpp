@@ -292,7 +292,7 @@ Length convertTo100PercentMinusLength(const Length& length)
     lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(Length(100, LengthType::Percent)));
     lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(length));
     auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
-    return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
+    return Length(CalculationValue::create(WTFMove(op), ValueRange::All));
 }
 
 static Length blendMixedTypes(const Length& from, const Length& to, const BlendingContext& context)
@@ -304,7 +304,7 @@ static Length blendMixedTypes(const Length& from, const Length& to, const Blendi
         return blend(from, Length(0, from.type()), context);
 
     auto blend = makeUnique<CalcExpressionBlendLength>(from, to, context.progress);
-    return Length(CalculationValue::create(WTFMove(blend), ValueRangeAll));
+    return Length(CalculationValue::create(WTFMove(blend), ValueRange::All));
 }
 
 Length blend(const Length& from, const Length& to, const BlendingContext& context)
@@ -339,7 +339,7 @@ Length blend(const Length& from, const Length& to, const BlendingContext& contex
 Length blend(const Length& from, const Length& to, const BlendingContext& context, ValueRange valueRange)
 {
     auto blended = blend(from, to, context);
-    if (valueRange == ValueRangeNonNegative && blended.isNegative())
+    if (valueRange == ValueRange::NonNegative && blended.isNegative())
         return { 0, from.isZero () ? to.type() : from.type() };
     return blended;
 }

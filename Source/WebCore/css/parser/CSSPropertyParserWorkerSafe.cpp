@@ -366,7 +366,7 @@ RefPtr<CSSPrimitiveValue> consumeFontStretch(CSSParserTokenRange& range, CSSValu
     if (auto result = consumeFontStretchKeywordValue(range, pool))
         return result;
 #if ENABLE(VARIATION_FONTS)
-    if (auto percent = CSSPropertyParserHelpers::consumePercentWorkerSafe(range, ValueRangeNonNegative, pool))
+    if (auto percent = CSSPropertyParserHelpers::consumePercentWorkerSafe(range, ValueRange::NonNegative, pool))
         return fontStretchIsWithinRange(percent->value<float>()) ? percent : nullptr;
 #endif
     return nullptr;
@@ -377,12 +377,12 @@ RefPtr<CSSValue> consumeFontStretchRange(CSSParserTokenRange& range, CSSValuePoo
 {
     if (auto result = consumeFontStretchKeywordValue(range, pool))
         return result;
-    auto firstPercent = CSSPropertyParserHelpers::consumePercentWorkerSafe(range, ValueRangeNonNegative, pool);
+    auto firstPercent = CSSPropertyParserHelpers::consumePercentWorkerSafe(range, ValueRange::NonNegative, pool);
     if (!firstPercent || !fontStretchIsWithinRange(firstPercent->value<float>()))
         return nullptr;
     if (range.atEnd())
         return firstPercent;
-    auto secondPercent = CSSPropertyParserHelpers::consumePercentWorkerSafe(range, ValueRangeNonNegative, pool);
+    auto secondPercent = CSSPropertyParserHelpers::consumePercentWorkerSafe(range, ValueRange::NonNegative, pool);
     if (!secondPercent || !fontStretchIsWithinRange(secondPercent->value<float>()) || firstPercent->floatValue() > secondPercent->floatValue())
         return nullptr;
     auto result = CSSValueList::createSpaceSeparated();

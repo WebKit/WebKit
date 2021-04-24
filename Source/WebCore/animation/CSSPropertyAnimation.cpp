@@ -101,7 +101,7 @@ static inline Color blendFunc(const Color& from, const Color& to, const CSSPrope
     return blend(from, to, context);
 }
 
-static inline Length blendFunc(const Length& from, const Length& to, const CSSPropertyBlendingContext& context, ValueRange valueRange = ValueRangeAll)
+static inline Length blendFunc(const Length& from, const Length& to, const CSSPropertyBlendingContext& context, ValueRange valueRange = ValueRange::All)
 {
     return blend(from, to, context, valueRange);
 }
@@ -110,7 +110,7 @@ static inline GapLength blendFunc(const GapLength& from, const GapLength& to, co
 {
     if (from.isNormal() || to.isNormal())
         return context.progress < 0.5 ? from : to;
-    return blend(from.length(), to.length(), context, ValueRangeNonNegative);
+    return blend(from.length(), to.length(), context, ValueRange::NonNegative);
 }
 
 static inline TabSize blendFunc(const TabSize& from, const TabSize& to, const CSSPropertyBlendingContext& context)
@@ -121,8 +121,8 @@ static inline TabSize blendFunc(const TabSize& from, const TabSize& to, const CS
 
 static inline LengthSize blendFunc(const LengthSize& from, const LengthSize& to, const CSSPropertyBlendingContext& context)
 {
-    return { blendFunc(from.width, to.width, context, ValueRangeNonNegative),
-             blendFunc(from.height, to.height, context, ValueRangeNonNegative) };
+    return { blendFunc(from.width, to.width, context, ValueRange::NonNegative),
+        blendFunc(from.height, to.height, context, ValueRange::NonNegative) };
 }
 
 static inline LengthPoint blendFunc(const LengthPoint& from, const LengthPoint& to, const CSSPropertyBlendingContext& context)
@@ -403,7 +403,7 @@ static inline TextDecorationThickness blendFunc(const TextDecorationThickness& f
     return TextDecorationThickness::createWithAuto();
 }
 
-static inline LengthBox blendFunc(const LengthBox& from, const LengthBox& to, const CSSPropertyBlendingContext& context, ValueRange valueRange = ValueRangeNonNegative)
+static inline LengthBox blendFunc(const LengthBox& from, const LengthBox& to, const CSSPropertyBlendingContext& context, ValueRange valueRange = ValueRange::NonNegative)
 {
     LengthBox result(blendFunc(from.top(), to.top(), context, valueRange),
                      blendFunc(from.right(), to.right(), context, valueRange),
@@ -791,7 +791,7 @@ protected:
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
-        auto valueRange = m_flags.contains(Flags::NegativeLengthsAreInvalid) ? ValueRangeNonNegative : ValueRangeAll;
+        auto valueRange = m_flags.contains(Flags::NegativeLengthsAreInvalid) ? ValueRange::NonNegative : ValueRange::All;
         (destination.*m_setter)(blendFunc(value(from), value(to), context, valueRange));
     }
 
@@ -898,7 +898,7 @@ private:
             (destination.*m_setter)(context.progress ? LengthBox(value(to)) : LengthBox(value(from)));
             return;
         }
-        auto valueRange = m_flags.contains(Flags::AllowsNegativeValues) ? ValueRangeAll : ValueRangeNonNegative;
+        auto valueRange = m_flags.contains(Flags::AllowsNegativeValues) ? ValueRange::All : ValueRange::NonNegative;
         (destination.*m_setter)(blendFunc(value(from), value(to), context, valueRange));
     }
 
