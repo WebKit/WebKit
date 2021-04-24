@@ -1,3 +1,27 @@
+2021-04-23  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: debug mode should send the second report on a 10 second delay after the first
+        https://bugs.webkit.org/show_bug.cgi?id=225010
+        <rdar://problem/77092303>
+
+        Reviewed by John Wilander.
+
+        Fix a bug in PCM debug mode where we don't set the timer for 10_s
+        after sending the first report for an attribution.
+
+        No new tests, this is debug mode only. Non-debug mode behavior is
+        covered by existing tests, and I tested debug mode manually.
+
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::firePendingAttributionRequests):
+        If the attribution has been sent to only one endpoint, indicated by
+        a non-null laterTimeToSend value, we should set the timer to be 10
+        seconds if debug mode is enabled.
+
+        Also, change the interval time from 1 minute to 10 seconds, because
+        there was no good reason that it was 1 minute and we should be
+        consistent. Also 1 minute is a long time to wait during a test.
+
 2021-04-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r275562.
