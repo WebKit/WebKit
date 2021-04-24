@@ -267,10 +267,6 @@ void NetworkProcess::didClose(IPC::Connection&)
     forEachNetworkSession([&] (auto& networkSession) {
         platformFlushCookies(networkSession.sessionID(), [callbackAggregator] { });
     });
-
-    // Make sure references to NetworkProcess in spaceRequester and closeHandler is removed.
-    for (auto& server : m_webIDBServers.values())
-        server->close();
 }
 
 void NetworkProcess::didCreateDownload()
@@ -551,6 +547,9 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
 
     m_storageManagerSet->remove(sessionID);
 
+#if ENABLE(INDEXED_DATABASE)
+    removeWebIDBServerIfPossible(sessionID);
+#endif
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2327,13 +2326,10 @@ Ref<WebIDBServer> NetworkProcess::createWebIDBServer(PAL::SessionID sessionID)
         path = m_idbDatabasePaths.get(sessionID);
     }
 
-    auto spaceRequester = [protectedThis = makeRef(*this), sessionID](const auto& origin, uint64_t spaceRequested) {
-        return protectedThis->storageQuotaManager(sessionID, origin)->requestSpaceOnBackgroundThread(spaceRequested);
-    };
-    auto closeHandler = [protectedThis = makeRef(*this), sessionID]() {
-        protectedThis->m_webIDBServers.remove(sessionID);
-    };
-    return WebIDBServer::create(sessionID, path, WTFMove(spaceRequester), WTFMove(closeHandler));
+    return WebIDBServer::create(sessionID, path, [this, weakThis = makeWeakPtr(this), sessionID](const auto& origin, uint64_t spaceRequested) {
+        RefPtr<StorageQuotaManager> storageQuotaManager = weakThis ? this->storageQuotaManager(sessionID, origin) : nullptr;
+        return storageQuotaManager ? storageQuotaManager->requestSpaceOnBackgroundThread(spaceRequested) : StorageQuotaManager::Decision::Deny;
+    });
 }
 
 WebIDBServer& NetworkProcess::webIDBServer(PAL::SessionID sessionID)
@@ -2362,6 +2358,25 @@ void NetworkProcess::setSessionStorageQuotaManagerIDBRootPath(PAL::SessionID ses
     ASSERT(sessionStorageQuotaManager);
     sessionStorageQuotaManager->setIDBRootPath(idbRootPath);
 }
+
+void NetworkProcess::removeWebIDBServerIfPossible(PAL::SessionID sessionID)
+{
+    ASSERT(RunLoop::isMain());
+
+    auto iterator = m_webIDBServers.find(sessionID);
+    if (iterator == m_webIDBServers.end())
+        return;
+
+    if (m_networkSessions.contains(sessionID))
+        return;
+
+    if (iterator->value->hasConnection())
+        return;
+
+    iterator->value->close();
+    m_webIDBServers.remove(iterator);
+}
+
 #endif // ENABLE(INDEXED_DATABASE)
 
 void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
@@ -2639,6 +2654,7 @@ void NetworkProcess::connectionToWebProcessClosed(IPC::Connection& connection, P
     auto* webIDBServer = m_webIDBServers.get(sessionID);
     ASSERT(webIDBServer);
     webIDBServer->removeConnection(connection);
+    removeWebIDBServerIfPossible(sessionID);
 #endif
 }
 
