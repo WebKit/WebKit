@@ -126,6 +126,8 @@ def parse_args(args):
             help="Enable (disable) an internal feature (--internal-feature FeatureName[=true|false])"),
         optparse.make_option("--experimental-feature", type="string", action="append", default=[],
             help="Enable (disable) an experimental feature (--experimental-feature FeatureName[=true|false])"),
+        optparse.make_option("--no-enable-all-experimental-features", action="store_false", default=True, dest="enable_all_experimental_features",
+            help="Enables all experimental features in WebKitTestRunner"),
     ]))
 
     option_group_definitions.append(("WebKit Options", [

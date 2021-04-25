@@ -539,6 +539,7 @@ private:
     bool m_gcBetweenTests { false };
     bool m_shouldDumpPixelsForAllTests { false };
     bool m_createdOtherPage { false };
+    bool m_enableAllExperimentalFeatures { true };
     std::vector<std::string> m_paths;
     std::set<std::string> m_allowedHosts;
     TestFeatures m_globalFeatures;

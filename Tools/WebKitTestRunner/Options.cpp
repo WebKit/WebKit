@@ -128,6 +128,12 @@ static bool parseFeature(std::string_view featureString, TestFeatures& features)
     return true;
 }
 
+static bool handleOptionNoEnableAllExperimentalFeatures(Options& options, const char*, const char* feature)
+{
+    options.enableAllExperimentalFeatures = false;
+    return true;
+}
+
 static bool handleOptionExperimentalFeature(Options& options, const char*, const char* feature)
 {
     return parseFeature(feature, options.features);
@@ -162,6 +168,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--show-webview", "Show the WebView during test runs (for debugging)", handleOptionShowWebView));
     optionList.append(Option("--show-touches", "Show the touches during test runs (for debugging)", handleOptionShowTouches));
     optionList.append(Option("--world-leaks", "Check for leaks of world objects (currently, documents)", handleOptionCheckForWorldLeaks));
+    optionList.append(Option("--no-enable-all-experimental-features", "Do not enable all experimental features by default", handleOptionNoEnableAllExperimentalFeatures));
     optionList.append(Option("--experimental-feature", "Enable experimental feature", handleOptionExperimentalFeature, true));
     optionList.append(Option("--internal-feature", "Enable internal feature", handleOptionInternalFeature, true));
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

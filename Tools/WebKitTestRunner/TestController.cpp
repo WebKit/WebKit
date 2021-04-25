@@ -533,6 +533,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_allowedHosts = options.allowedHosts;
     m_checkForWorldLeaks = options.checkForWorldLeaks;
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
+    m_enableAllExperimentalFeatures = options.enableAllExperimentalFeatures;
     m_globalFeatures = std::move(options.features);
 
     m_usingServerMode = (m_paths.size() == 1 && m_paths[0] == "-");
@@ -881,10 +882,11 @@ template<typename F> static void batchUpdatePreferences(WKPreferencesRef prefere
 
 void TestController::resetPreferencesToConsistentValues(const TestOptions& options)
 {
-    batchUpdatePreferences(platformPreferences(), [options] (auto preferences) {
+    batchUpdatePreferences(platformPreferences(), [options, enableAllExperimentalFeatures = m_enableAllExperimentalFeatures] (auto preferences) {
         WKPreferencesResetTestRunnerOverrides(preferences);
 
-        WKPreferencesEnableAllExperimentalFeatures(preferences);
+        if (enableAllExperimentalFeatures)
+            WKPreferencesEnableAllExperimentalFeatures(preferences);
 
         WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
         WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.

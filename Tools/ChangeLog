@@ -1,3 +1,28 @@
+2021-04-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an option to not enable all experimental features in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=224958
+
+        Reviewed by Tim Horton.
+
+        Added --no-enable-all-experimental-features to run-webkit-tests and WebKitTestRunner.
+
+        It causes a crash in DumpRenderTree for now. We should rectify this in the future
+        when we align the behaviors of WebKitTestRunner and DumpRenderTree.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Added --no-enable-all-experimental-features.
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.cmd_line): Pass along the option to WebKitTestRunner.
+        * WebKitTestRunner/Options.cpp:
+        (WTR::handleOptionNoEnableAllExperimentalFeatures): Added.
+        (WTR::OptionsHandler::OptionsHandler): Added --no-enable-all-experimental-features.
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        (WTR::TestController::resetPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.h:
+
 2021-04-24  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Refactor ValueRange from enum to enum class

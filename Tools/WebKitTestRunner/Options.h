@@ -49,6 +49,7 @@ struct Options {
     bool forceComplexText { false };
     bool checkForWorldLeaks { false };
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
+    bool enableAllExperimentalFeatures { true };
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
     TestFeatures features;
