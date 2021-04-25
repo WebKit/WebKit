@@ -29,6 +29,7 @@
 
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
+#include <wtf/RobinHoodHashSet.h>
 
 struct UFieldPositionIterator;
 
@@ -81,21 +82,22 @@ private:
 };
 
 String defaultLocale(JSGlobalObject*);
-const HashSet<String>& intlAvailableLocales();
-const HashSet<String>& intlCollatorAvailableLocales();
-const HashSet<String>& intlSegmenterAvailableLocales();
-inline const HashSet<String>& intlDateTimeFormatAvailableLocales() { return intlAvailableLocales(); }
-inline const HashSet<String>& intlDisplayNamesAvailableLocales() { return intlAvailableLocales(); }
-inline const HashSet<String>& intlNumberFormatAvailableLocales() { return intlAvailableLocales(); }
-inline const HashSet<String>& intlPluralRulesAvailableLocales() { return intlAvailableLocales(); }
-inline const HashSet<String>& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
-inline const HashSet<String>& intlListFormatAvailableLocales() { return intlAvailableLocales(); }
+using LocaleSet = MemoryCompactLookupOnlyRobinHoodHashSet<String>;
+const LocaleSet& intlAvailableLocales();
+const LocaleSet& intlCollatorAvailableLocales();
+const LocaleSet& intlSegmenterAvailableLocales();
+inline const LocaleSet& intlDateTimeFormatAvailableLocales() { return intlAvailableLocales(); }
+inline const LocaleSet& intlDisplayNamesAvailableLocales() { return intlAvailableLocales(); }
+inline const LocaleSet& intlNumberFormatAvailableLocales() { return intlAvailableLocales(); }
+inline const LocaleSet& intlPluralRulesAvailableLocales() { return intlAvailableLocales(); }
+inline const LocaleSet& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
+inline const LocaleSet& intlListFormatAvailableLocales() { return intlAvailableLocales(); }
 
 TriState intlBooleanOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName);
 String intlStringOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName, std::initializer_list<const char*> values, const char* notFound, const char* fallback);
 unsigned intlNumberOption(JSGlobalObject*, Optional<JSObject&> options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
-Vector<char, 32> localeIDBufferForLanguageTag(const CString&);
+Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
 
@@ -107,10 +109,10 @@ struct ResolvedLocale {
     RelevantExtensions extensions;
 };
 
-ResolvedLocale resolveLocale(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher, const ResolveLocaleOptions&, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<String> (*localeData)(const String&, RelevantExtensionKey));
-JSValue supportedLocales(JSGlobalObject*, const HashSet<String>& availableLocales, const Vector<String>& requestedLocales, JSValue options);
+ResolvedLocale resolveLocale(JSGlobalObject*, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, LocaleMatcher, const ResolveLocaleOptions&, std::initializer_list<RelevantExtensionKey> relevantExtensionKeys, Vector<String> (*localeData)(const String&, RelevantExtensionKey));
+JSValue supportedLocales(JSGlobalObject*, const LocaleSet& availableLocales, const Vector<String>& requestedLocales, JSValue options);
 String removeUnicodeLocaleExtension(const String& locale);
-String bestAvailableLocale(const HashSet<String>& availableLocales, const String& requestedLocale);
+String bestAvailableLocale(const LocaleSet& availableLocales, const String& requestedLocale);
 template<typename Predicate> String bestAvailableLocale(const String& requestedLocale, Predicate);
 Vector<String> numberingSystemsForLocale(const String& locale);
 
@@ -126,6 +128,8 @@ bool isUnicodeLanguageId(StringView);
 bool isStructurallyValidLanguageTag(StringView);
 
 bool isWellFormedCurrencyCode(StringView);
+
+Optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
 
 struct UFieldPositionIteratorDeleter {
     void operator()(UFieldPositionIterator*) const;

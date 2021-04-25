@@ -4,7 +4,7 @@ import cgi
 import os
 import sys
 
-method = os.environ.get('REQUEST_METHOD', '')
+request_method = os.environ.get('REQUEST_METHOD', '')
 
 sys.stdout.write(
     'Content-Type: text/html\r\n\r\n'
@@ -23,11 +23,10 @@ sys.stdout.write(
 )
 
 request = {}
-if method == 'POST':
+if request_method == 'POST':
     form = cgi.FieldStorage()
-    for key in sorted(form.keys()):
-        if not form[key].filename and key:
-            request[key] = form[request]
+    for key in form.keys():
+        request[key] = form.getvalue(key)
 
 if request.get('textdata', '') == 'foo':
     sys.stdout.write('You should not be seeing this text!')

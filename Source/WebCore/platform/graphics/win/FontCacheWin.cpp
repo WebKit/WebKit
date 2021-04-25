@@ -362,9 +362,9 @@ bool FontCache::isSystemFontForbiddenForEditing(const String&)
     return false;
 }
 
-RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, AtomString& outFontFamilyName)
+RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, String& outFontFamilyName)
 {
-    AtomString familyName(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
+    String familyName(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
     RefPtr<Font> fontData = fontForFamily(fontDescription, familyName);
     if (fontData)
         outFontFamilyName = familyName;
@@ -373,56 +373,57 @@ RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fon
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
-    static MainThreadNeverDestroyed<AtomString> fallbackFontName;
+    static NeverDestroyed<String> fallbackFontName;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&]() {
+        // FIXME: Would be even better to somehow get the user's default font here. For now we'll pick
+        // the default that the user would get without changing any prefs.
+
+        // Search all typical Windows-installed full Unicode fonts.
+        // Sorted by most to least glyphs according to http://en.wikipedia.org/wiki/Unicode_typefaces
+        // Start with Times New Roman also since it is the default if the user doesn't change prefs.
+        static NeverDestroyed<const String> fallbackFonts[] = {
+            String("Times New Roman", String::ConstructFromLiteral),
+            String("Microsoft Sans Serif", String::ConstructFromLiteral),
+            String("Tahoma", String::ConstructFromLiteral),
+            String("Lucida Sans Unicode", String::ConstructFromLiteral),
+            String("Arial", String::ConstructFromLiteral)
+        };
+        for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {
+            if (fontForFamily(fontDescription, fallbackFonts[i])) {
+                fallbackFontName.get() = fallbackFonts[i];
+                return;
+            }
+        }
+
+        // Fall back to the DEFAULT_GUI_FONT if no known Unicode fonts are available.
+        if (HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))) {
+            LOGFONT defaultGUILogFont;
+            GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
+            if (fontFromDescriptionAndLogFont(fontDescription, defaultGUILogFont, fallbackFontName))
+                return;
+        }
+
+        // Fall back to Non-client metrics fonts.
+        NONCLIENTMETRICS nonClientMetrics { };
+        nonClientMetrics.cbSize = sizeof(nonClientMetrics);
+        if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
+            if (fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMessageFont, fallbackFontName))
+                return;
+            if (fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMenuFont, fallbackFontName))
+                return;
+            if (fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfStatusFont, fallbackFontName))
+                return;
+            if (fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfCaptionFont, fallbackFontName))
+                return;
+            if (fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
+                return;
+        }
+    });
 
     if (!fallbackFontName.get().isEmpty())
         return *fontForFamily(fontDescription, fallbackFontName);
 
-    // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
-    // the default that the user would get without changing any prefs.
-
-    // Search all typical Windows-installed full Unicode fonts.
-    // Sorted by most to least glyphs according to http://en.wikipedia.org/wiki/Unicode_typefaces
-    // Start with Times New Roman also since it is the default if the user doesn't change prefs.
-    static MainThreadNeverDestroyed<const AtomString> fallbackFonts[] = {
-        AtomString("Times New Roman", AtomString::ConstructFromLiteral),
-        AtomString("Microsoft Sans Serif", AtomString::ConstructFromLiteral),
-        AtomString("Tahoma", AtomString::ConstructFromLiteral),
-        AtomString("Lucida Sans Unicode", AtomString::ConstructFromLiteral),
-        AtomString("Arial", AtomString::ConstructFromLiteral)
-    };
-    RefPtr<Font> simpleFont;
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(fallbackFonts); ++i) {
-        if (simpleFont = fontForFamily(fontDescription, fallbackFonts[i])) {
-            fallbackFontName.get() = fallbackFonts[i];
-            return *simpleFont;
-        }
-    }
-
-    // Fall back to the DEFAULT_GUI_FONT if no known Unicode fonts are available.
-    if (HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))) {
-        LOGFONT defaultGUILogFont;
-        GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
-        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, defaultGUILogFont, fallbackFontName))
-            return *simpleFont;
-    }
-
-    // Fall back to Non-client metrics fonts.
-    NONCLIENTMETRICS nonClientMetrics { };
-    nonClientMetrics.cbSize = sizeof(nonClientMetrics);
-    if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
-        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMessageFont, fallbackFontName))
-            return *simpleFont;
-        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfMenuFont, fallbackFontName))
-            return *simpleFont;
-        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfStatusFont, fallbackFontName))
-            return *simpleFont;
-        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfCaptionFont, fallbackFontName))
-            return *simpleFont;
-        if (simpleFont = fontFromDescriptionAndLogFont(fontDescription, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
-            return *simpleFont;
-    }
-    
     auto hFont = adoptGDIObject(static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
     FontPlatformData platformData(WTFMove(hFont), fontDescription.computedPixelSize(), false, false, false);
     return fontForPlatformData(platformData);
@@ -692,11 +693,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     return result;
 }
 
-const AtomString& FontCache::platformAlternateFamilyName(const AtomString& familyName)
+Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& familyName)
 {
-    static MainThreadNeverDestroyed<const AtomString> timesNewRoman("Times New Roman", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> microsoftSansSerif("Microsoft Sans Serif", AtomString::ConstructFromLiteral);
-
     switch (familyName.length()) {
     // On Windows, we don't support bitmap fonts, but legacy content expects support.
     // Thus we allow Times New Roman as an alternative for the bitmap font MS Serif,
@@ -705,7 +703,7 @@ const AtomString& FontCache::platformAlternateFamilyName(const AtomString& famil
     // would need it on other platforms too.
     case 8:
         if (equalLettersIgnoringASCIICase(familyName, "ms serif"))
-            return timesNewRoman;
+            return "Times New Roman"_s;
         break;
     // On Windows, we don't support bitmap fonts, but legacy content expects support.
     // Thus we allow Microsoft Sans Serif as an alternative for the bitmap font MS Sans Serif,
@@ -714,10 +712,10 @@ const AtomString& FontCache::platformAlternateFamilyName(const AtomString& famil
     // would need it on other platforms too.
     case 13:
         if (equalLettersIgnoringASCIICase(familyName, "ms sans serif"))
-            return microsoftSansSerif;
+            return "Microsoft Sans Serif"_s;
         break;
     }
-    return nullAtom();
+    return WTF::nullopt;
 }
 
 }

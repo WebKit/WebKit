@@ -721,7 +721,8 @@
             "description": "Fired when a file chooser for a file input element is dismissed by selecting files or cancelling.",
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context." },
-                { "name": "selectionCancelled", "type": "boolean", "description": "If true, the chooser was dismissed because file selection was cancelled." }
+                { "name": "selectionCancelled", "type": "boolean", "description": "If true, file selection was cancelled due to an error. For example, this could occur if a file's MIME type cannot be handled by WebKit." },
+                { "name": "selectedFiles", "type": "array", "items": { "type": "string" }, "optional": true, "description": "A list of file names that were successfully selected for upload." }
             ]
         },
         {

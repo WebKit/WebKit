@@ -42,38 +42,22 @@ RenderingUpdateScheduler::RenderingUpdateScheduler(Page& page)
     windowScreenDidChange(page.chrome().displayID());
 }
 
-void RenderingUpdateScheduler::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
+bool RenderingUpdateScheduler::scheduleAnimation()
 {
-    if (m_preferredFramesPerSecond == preferredFramesPerSecond)
-        return;
-
-    m_preferredFramesPerSecond = preferredFramesPerSecond;
-    DisplayRefreshMonitorManager::sharedManager().setPreferredFramesPerSecond(*this, m_preferredFramesPerSecond);
-}
-
-bool RenderingUpdateScheduler::scheduleAnimation(FramesPerSecond preferredFramesPerSecond)
-{
-#if !PLATFORM(IOS_FAMILY)
-    // PreferredFramesPerSecond can only be changed for iOS DisplayRefreshMonitor.
-    // The caller has to fall back to using the timer.
-    if (preferredFramesPerSecond != FullSpeedFramesPerSecond)
+    if (m_useTimer)
         return false;
-#endif
-    setPreferredFramesPerSecond(preferredFramesPerSecond);
-    auto result = DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
 
-    LOG_WITH_STREAM(EventLoop, stream << "RenderingUpdateScheduler for page " << &m_page << " scheduleAnimation(" << preferredFramesPerSecond << "fps) - scheduled " << result);
-
-    return result;
+    return DisplayRefreshMonitorManager::sharedManager().scheduleAnimation(*this);
 }
 
 void RenderingUpdateScheduler::adjustRenderingUpdateFrequency()
 {
-    Seconds interval = m_page.preferredRenderingUpdateInterval();
-
-    // PreferredFramesPerSecond is an integer and should be > 0.
-    if (interval <= 1_s)
-        setPreferredFramesPerSecond(preferredFramesPerSecondFromInterval(interval));
+    auto renderingUpdateFramesPerSecond = m_page.preferredRenderingUpdateFramesPerSecond();
+    if (renderingUpdateFramesPerSecond) {
+        setPreferredFramesPerSecond(renderingUpdateFramesPerSecond.value());
+        m_useTimer = false;
+    } else
+        m_useTimer = true;
 
     if (isScheduled()) {
         clearScheduled();
@@ -96,14 +80,10 @@ void RenderingUpdateScheduler::scheduleRenderingUpdate()
 
     tracePoint(ScheduleRenderingUpdate);
 
-    Seconds interval = m_page.preferredRenderingUpdateInterval();
-
-    // PreferredFramesPerSecond is an integer and should be > 0.
-    if (interval <= 1_s)
-        m_scheduled = scheduleAnimation(preferredFramesPerSecondFromInterval(interval));
-
-    if (!isScheduled())
-        startTimer(interval);
+    if (!scheduleAnimation()) {
+        LOG_WITH_STREAM(DisplayLink, stream << "RenderingUpdateScheduler::scheduleRenderingUpdate for interval " << m_page.preferredRenderingUpdateInterval() << " falling back to timer");
+        startTimer(m_page.preferredRenderingUpdateInterval());
+    }
 }
 
 bool RenderingUpdateScheduler::isScheduled() const
@@ -135,6 +115,7 @@ DisplayRefreshMonitorFactory* RenderingUpdateScheduler::displayRefreshMonitorFac
 
 void RenderingUpdateScheduler::windowScreenDidChange(PlatformDisplayID displayID)
 {
+    adjustRenderingUpdateFrequency();
     DisplayRefreshMonitorManager::sharedManager().windowScreenDidChange(displayID, *this);
 }
 

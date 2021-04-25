@@ -55,6 +55,7 @@ public:
     DECLARE_INFO;
 
     Wasm::Global* global() { return m_global.ptr(); }
+    JSObject* type(JSGlobalObject*);
 
 private:
     JSWebAssemblyGlobal(VM&, Structure*, Ref<Wasm::Global>&&);

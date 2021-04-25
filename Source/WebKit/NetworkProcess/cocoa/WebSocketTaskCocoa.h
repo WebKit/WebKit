@@ -28,10 +28,15 @@
 #if HAVE(NSURLSESSION_WEBSOCKET)
 
 #include "DataReference.h"
+#include "WebPageProxyIdentifier.h"
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
 OBJC_CLASS NSURLSessionWebSocketTask;
+
+namespace WebCore {
+class ResourceRequest;
+}
 
 namespace WebKit {
 class NetworkSession;
@@ -41,7 +46,7 @@ class NetworkSocketChannel;
 class WebSocketTask : public CanMakeWeakPtr<WebSocketTask> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebSocketTask(NetworkSocketChannel&, RetainPtr<NSURLSessionWebSocketTask>&&);
+    WebSocketTask(NetworkSocketChannel&, WebPageProxyIdentifier, const WebCore::ResourceRequest&, RetainPtr<NSURLSessionWebSocketTask>&&);
     ~WebSocketTask();
 
     void sendString(const IPC::DataReference&, CompletionHandler<void()>&&);
@@ -59,6 +64,9 @@ public:
 
     NetworkSessionCocoa* networkSession();
 
+    WebPageProxyIdentifier pageID() const { return m_pageID; }
+    String partition() const { return m_partition; }
+
 private:
     void readNextMessage();
 
@@ -66,6 +74,8 @@ private:
     RetainPtr<NSURLSessionWebSocketTask> m_task;
     bool m_receivedDidClose { false };
     bool m_receivedDidConnect { false };
+    WebPageProxyIdentifier m_pageID;
+    String m_partition;
 };
 
 } // namespace WebKit

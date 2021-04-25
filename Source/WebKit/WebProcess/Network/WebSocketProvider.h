@@ -25,16 +25,25 @@
 
 #pragma once
 
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/SocketProvider.h>
 
 namespace WebKit {
 
 class WebSocketProvider final : public WebCore::SocketProvider {
 public:
-    static Ref<WebSocketProvider> create() { return adoptRef(*new WebSocketProvider); }
+    static Ref<WebSocketProvider> create(WebPageProxyIdentifier webPageProxyID) { return adoptRef(*new WebSocketProvider(webPageProxyID)); }
+    WebSocketProvider(WebPageProxyIdentifier webPageProxyID)
+        : m_webPageProxyID(webPageProxyID)
+    {
+    }
+
     Ref<WebCore::SocketStreamHandle> createSocketStreamHandle(const URL&, WebCore::SocketStreamHandleClient&, WebCore::WebSocketIdentifier, PAL::SessionID, const String& credentialPartition, const WebCore::StorageSessionProvider*) final;
     RefPtr<WebCore::ThreadableWebSocketChannel> createWebSocketChannel(WebCore::Document&, WebCore::WebSocketChannelClient&) final;
     virtual ~WebSocketProvider() { }
+
+private:
+    WebPageProxyIdentifier m_webPageProxyID;
 };
 
 }

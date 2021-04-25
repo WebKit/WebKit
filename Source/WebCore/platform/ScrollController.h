@@ -132,7 +132,7 @@ public:
     void scrollPositionChanged();
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    void updateScrollSnapPoints(const ScrollSnapOffsetsInfo<LayoutUnit>&);
+    void updateScrollSnapPoints(const LayoutScrollSnapOffsetsInfo&);
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
     void setActiveScrollSnapIndicesForOffset(ScrollOffset);
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }

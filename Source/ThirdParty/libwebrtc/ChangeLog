@@ -1,3 +1,93 @@
+2021-04-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake][GStremer] Fails to build if OpenH264 is not present
+        https://bugs.webkit.org/show_bug.cgi?id=224089
+
+        Reviewed by Philippe Normand.
+
+        * CMakeLists.txt: Only try to link with OpenH264 when it is found.
+
+2021-03-31  Youenn Fablet  <youenn@apple.com>
+
+        In case WebRTC VTB decoder returns a null frame, mark the decoder as failing
+        https://bugs.webkit.org/show_bug.cgi?id=223993
+        <rdar://problem/76049206>
+
+        Reviewed by Eric Carlson.
+
+        In case VTB does not return any pixel buffer, consider decoding is failing.
+        Set the error so that we we will send the error on the next frame we try to decode.
+
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH264.mm:
+        (decompressionOutputCallback):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderH265.mm:
+        (h265DecompressionOutputCallback):
+        (-[RTCVideoDecoderH265 setError:]):
+        * Source/webrtc/sdk/objc/components/video_codec/RTCVideoDecoderVTBVP9.mm:
+        (vp9DecompressionOutputCallback):
+
+2021-03-31  Thibault Saunier  <tsaunier@igalia.com> and Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system
+        https://bugs.webkit.org/show_bug.cgi?id=202538
+
+        Reviewed by Xabier Rodriguez-Calvar and Adrian Perez de Castro.
+
+        In WPE/GTK we would like to have the libwebrtc openh264 encoder enabled if libopenh264 is
+        present on the host (eg not vendored).
+
+        * CMakeLists.txt:
+        * Source/webrtc/modules/video_coding/codecs/h264/h264.cc:
+        * Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.cc:
+        * Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.h:
+
+2021-03-26  Jessie Berlin  <jberlin@webkit.org>
+
+        Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags
+        https://bugs.webkit.org/show_bug.cgi?id=223779
+
+        Reviewed by Tim Horton.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
+2021-03-25  Jessie Berlin  <jberlin@webkit.org>
+
+        Remove 10.13 DEPLOYMENT_TARGETs and SYSTEM_VERSION_PREFIXs
+        https://bugs.webkit.org/show_bug.cgi?id=223765
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+
+2021-03-25  Youenn Fablet  <youenn@apple.com>
+
+        Switch from PORTALLOCATOR_DISABLE_ADAPTER_ENUMERATION to filtering interfaces in Network process
+        https://bugs.webkit.org/show_bug.cgi?id=223679
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+
+2021-03-25  Youenn Fablet  <youenn@apple.com>
+
+        Align RemoteVideoDecoder destruction strategy with RemoteVideoEncoder
+        https://bugs.webkit.org/show_bug.cgi?id=223745
+
+        Reviewed by Eric Carlson.
+
+        When decoder is released, we make sure to nullify the decoder callback.
+        We wait to release WebKit decoder at RemoteVideoDecoder destruction time.
+
+        * Source/webrtc/sdk/WebKit/WebKitDecoder.mm:
+        (webrtc::RemoteVideoDecoder::~RemoteVideoDecoder):
+        (webrtc::RemoteVideoDecoder::Release):
+
 2021-03-10  Jer Noble  <jer.noble@apple.com>
 
         CRASH in MergeUVRow_AVX2

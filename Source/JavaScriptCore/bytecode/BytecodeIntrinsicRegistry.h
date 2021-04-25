@@ -28,6 +28,7 @@
 
 #include "Identifier.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/RobinHoodHashMap.h>
 
 namespace JSC {
 
@@ -212,7 +213,7 @@ public:
 
 private:
     VM& m_vm;
-    HashMap<RefPtr<UniquedStringImpl>, Entry, IdentifierRepHash> m_bytecodeIntrinsicMap;
+    MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<UniquedStringImpl>, Entry, IdentifierRepHash> m_bytecodeIntrinsicMap;
 
 #define JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS(name) Strong<Unknown> m_##name;
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_SIMPLE_EACH_NAME(JSC_DECLARE_BYTECODE_INTRINSIC_CONSTANT_GENERATORS)

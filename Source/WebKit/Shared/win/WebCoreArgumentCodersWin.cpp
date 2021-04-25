@@ -104,6 +104,7 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
         return WTF::nullopt;
 
     std::unique_ptr<FontCustomPlatformData> fontCustomPlatformData;
+    FontPlatformData::CreationData* creationData = nullptr;
 
     if (includesCreationData.value()) {
         Optional<Ref<SharedBuffer>> fontFaceData;
@@ -119,6 +120,7 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
         fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
         if (!fontCustomPlatformData)
             return WTF::nullopt;
+        creationData = &fontCustomPlatformData->creationData;
     }
 
     Optional<LOGFONT> logFont;
@@ -133,7 +135,7 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
     if (!gdiFont)
         return WTF::nullopt;
 
-    return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, false);
+    return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, false, creationData);
 }
 
 } // namespace IPC

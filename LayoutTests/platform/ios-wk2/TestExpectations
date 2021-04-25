@@ -137,6 +137,7 @@ scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrollbars-on-positioned-content.html [ Failure ]
 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
+css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html [ Failure ]
 
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
@@ -342,7 +343,7 @@ webarchive/doctype.html [ Failure ]
 http/tests/download/inherited-encoding-form-submission-result.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
-http/tests/history/back-with-fragment-change.php [ Failure ]
+http/tests/history/back-with-fragment-change.py [ Failure ]
 http/tests/loading/bad-scheme-subframe.html [ Failure ]
 http/tests/misc/favicon-as-image.html [ Failure ]
 http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
@@ -932,8 +933,6 @@ editing/selection/select-out-of-floated-non-editable-09.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-10.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-11.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-12.html [ Skip ]
-css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html [ Skip ]
-css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
 
 webkit.org/b/192088 media/no-fullscreen-when-hidden.html [ Failure Pass ]
 
@@ -1050,7 +1049,7 @@ http/tests/navigation/ping-attribute [ Skip ]
 webkit.org/b/153380 webarchive/loading/object.html [ Pass Crash ]
 webkit.org/b/153380 webarchive/loading/missing-data.html [ Pass Crash ]
 
-webkit.org/b/153503 http/tests/appcache/404-resource-with-slow-main-resource.php [ Pass Failure ]
+webkit.org/b/153503 http/tests/appcache/404-resource-with-slow-main-resource.py [ Pass Failure ]
 
 # Uses WK1 TestRunner.setUseDeferredFramLoading
 http/tests/appcache/load-from-appcache-defer-resume-crash.html [ Skip ]
@@ -1766,7 +1765,7 @@ webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure 
 
 webkit.org/b/21365 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-video-element/intrinsic_sizes.htm [ Pass Failure ]
 
-webkit.org/b/214084 [ Release ] webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
+webkit.org/b/214084 webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
 
 webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Crash ]
 
@@ -1870,8 +1869,6 @@ webkit.org/b/216292 [ Release ] imported/w3c/web-platform-tests/css/css-flexbox/
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-ui/text-overflow-017.html [ Skip ]
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Skip ]
 
-webkit.org/b/217257 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Failure ]
-
 webkit.org/b/217258 svg/W3C-I18N/tspan-direction-rtl.svg [ Failure ]
 
 webkit.org/b/217263 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Slow Failure Crash ]
@@ -1908,3 +1905,5 @@ imported/w3c/web-platform-tests/css/css-counter-styles/lower-greek/css3-counter-
 webkit.org/b/223586 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
 webkit.org/b/214955 fast/parser/xml-colon-entity.html [ Failure ]
+
+webkit.org/b/223750 [ Debug ] security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.html [ Pass Crash ]

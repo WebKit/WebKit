@@ -112,7 +112,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlListFormatConstructorSupportedLocalesOf, (JSGlobalO
     // https://tc39.es/proposal-intl-list-format/#sec-Intl.ListFormat.supportedLocalesOf
 
     // 1. Let availableLocales be %ListFormat%.[[availableLocales]].
-    const HashSet<String>& availableLocales = intlListFormatAvailableLocales();
+    const auto& availableLocales = intlListFormatAvailableLocales();
 
     // 2. Let requestedLocales be CanonicalizeLocaleList(locales).
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));

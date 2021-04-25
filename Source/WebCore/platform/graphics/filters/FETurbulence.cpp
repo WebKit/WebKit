@@ -217,7 +217,7 @@ FETurbulence::StitchData FETurbulence::computeStitching(IntSize tileSize, float&
 }
 
 // This is taken 1:1 from SVG spec: http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement.
-ColorComponents<float> FETurbulence::noise2D(const PaintingData& paintingData, const StitchData& stitchData, const FloatPoint& noiseVector) const
+ColorComponents<float, 4> FETurbulence::noise2D(const PaintingData& paintingData, const StitchData& stitchData, const FloatPoint& noiseVector) const
 {
     struct NoisePosition {
         int index; // bx0, by0 in the spec text.
@@ -322,7 +322,8 @@ ColorComponents<float> FETurbulence::noise2D(const PaintingData& paintingData, c
 }
 
 // https://www.w3.org/TR/SVG/filters.html#feTurbulenceElement describes this conversion to color components.
-static inline ColorComponents<uint8_t> toIntBasedColorComponents(const ColorComponents<float>& floatComponents)
+// FIXME: This should use colorConvert<SRGBA<uint8>>(SRGBA<float>) to get the same behavior.
+static inline ColorComponents<uint8_t, 4> toIntBasedColorComponents(const ColorComponents<float, 4>& floatComponents)
 {
     return {
         std::clamp<uint8_t>(static_cast<int>(floatComponents[0] * 255), 0, 255),
@@ -332,9 +333,9 @@ static inline ColorComponents<uint8_t> toIntBasedColorComponents(const ColorComp
     };
 }
 
-ColorComponents<uint8_t> FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData stitchData, const FloatPoint& point) const
+ColorComponents<uint8_t, 4> FETurbulence::calculateTurbulenceValueForPoint(const PaintingData& paintingData, StitchData stitchData, const FloatPoint& point) const
 {
-    ColorComponents<float> turbulenceFunctionResult;
+    ColorComponents<float, 4> turbulenceFunctionResult;
     FloatPoint noiseVector(point.x() * paintingData.baseFrequencyX, point.y() * paintingData.baseFrequencyY);
     float ratio = 1;
     for (int octave = 0; octave < m_numOctaves; ++octave) {

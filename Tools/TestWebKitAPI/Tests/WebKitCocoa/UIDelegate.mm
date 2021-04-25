@@ -49,6 +49,7 @@
 #endif
 
 static bool done;
+static bool didReceiveMessage;
 
 @interface AudioObserver : NSObject
 @end
@@ -215,33 +216,43 @@ TEST(WebKit, GeolocationPermission)
 }
 
 @interface GeolocationDelegateNew : NSObject <WKUIDelegatePrivate>
+- (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler;
 @end
 
-@implementation GeolocationDelegateNew
-- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler {
-    EXPECT_WK_STREQ(origin.protocol, @"https");
-    EXPECT_WK_STREQ(origin.host, @"127.0.0.1");
-    EXPECT_EQ(origin.port, 9090);
+@implementation GeolocationDelegateNew {
+    Function<void(WKSecurityOrigin*, WKFrameInfo*)> _validationHandler;
+}
+- (void)setValidationHandler:(Function<void(WKSecurityOrigin*, WKFrameInfo*)>&&)validationHandler {
+    _validationHandler = WTFMove(validationHandler);
+}
 
-    EXPECT_WK_STREQ(frame.securityOrigin.protocol, @"https");
-    EXPECT_WK_STREQ(frame.securityOrigin.host, @"127.0.0.1");
-    EXPECT_EQ(frame.securityOrigin.port, 9091);
-    EXPECT_FALSE(frame.isMainFrame);
-    EXPECT_TRUE(frame.webView == webView);
+- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler {
+    if (_validationHandler)
+        _validationHandler(origin, frame);
 
     done  = true;
-    decisionHandler(_WKPermissionDecisionGrant);
+    decisionHandler(WKPermissionDecisionGrant);
+}
+@end
+ 
+@interface GeolocationPermissionMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation GeolocationPermissionMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    didReceiveMessage = true;
 }
 @end
 
 static const char* mainFrameText = R"DOCDOCDOC(
 <html><body>
-<iframe src='https://127.0.0.1:9091/frame' allow='camera:https://127.0.0.1:9091'></iframe>
+<iframe src='https://127.0.0.1:9091/frame' allow='geolocation:https://127.0.0.1:9091'></iframe>
 </body></html>
 )DOCDOCDOC";
 static const char* frameText = R"DOCDOCDOC(
 <html><body><script>
-navigator.geolocation.getCurrentPosition(() => { });
+navigator.geolocation.getCurrentPosition(() => { webkit.messageHandlers.testHandler.postMessage("ok") }, () => { webkit.messageHandlers.testHandler.postMessage("ko") });
 </script></body></html>
 )DOCDOCDOC";
 
@@ -267,10 +278,14 @@ TEST(WebKit, GeolocationPermissionInIFrame)
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().processPool = pool.get();
+
+    auto messageHandler = adoptNS([[GeolocationPermissionMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 
-    auto delegate = adoptNS([[GeolocationDelegateNew alloc] init]);
-    [webView setUIDelegate:delegate.get()];
+    auto permissionDelegate = adoptNS([[GeolocationDelegateNew alloc] init]);
+    [webView setUIDelegate:permissionDelegate.get()];
 
     auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
     [navigationDelegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
@@ -279,8 +294,74 @@ TEST(WebKit, GeolocationPermissionInIFrame)
     }];
     webView.get().navigationDelegate = navigationDelegate.get();
 
+    [permissionDelegate setValidationHandler:[&webView](WKSecurityOrigin *origin, WKFrameInfo *frame) {
+        EXPECT_WK_STREQ(origin.protocol, @"https");
+        EXPECT_WK_STREQ(origin.host, @"127.0.0.1");
+        EXPECT_EQ(origin.port, 9090);
+
+        EXPECT_WK_STREQ(frame.securityOrigin.protocol, @"https");
+        EXPECT_WK_STREQ(frame.securityOrigin.host, @"127.0.0.1");
+        EXPECT_EQ(frame.securityOrigin.port, 9091);
+        EXPECT_FALSE(frame.isMainFrame);
+        EXPECT_TRUE(frame.webView == webView);
+    }];
+
+    done = false;
+    didReceiveMessage = false;
     [webView loadRequest:server1.request()];
-    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    EXPECT_TRUE(done);
+}
+
+static const char* notAllowingMainFrameText = R"DOCDOCDOC(
+<html><body>
+<iframe src='https://127.0.0.1:9091/frame' allow='geolocation:https://127.0.0.1:9092'></iframe>
+</body></html>
+)DOCDOCDOC";
+
+TEST(WebKit, GeolocationPermissionInDisallowedIFrame)
+{
+    TestWebKitAPI::HTTPServer server1({
+        { "/", { notAllowingMainFrameText } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9090);
+
+    TestWebKitAPI::HTTPServer server2({
+        { "/frame", { frameText } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Https, nullptr, nullptr, 9091);
+
+    auto pool = adoptNS([[WKProcessPool alloc] init]);
+
+    WKGeolocationProviderV1 providerCallback;
+    memset(&providerCallback, 0, sizeof(WKGeolocationProviderV1));
+    providerCallback.base.version = 1;
+    providerCallback.startUpdating = [] (WKGeolocationManagerRef manager, const void*) {
+        WKGeolocationManagerProviderDidChangePosition(manager, adoptWK(WKGeolocationPositionCreate(0, 50.644358, 3.345453, 2.53)).get());
+    };
+    WKGeolocationManagerSetProvider(WKContextGetGeolocationManager((WKContextRef)pool.get()), &providerCallback.base);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = pool.get();
+
+    auto messageHandler = adoptNS([[GeolocationPermissionMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"testHandler"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto permissionDelegate = adoptNS([[GeolocationDelegateNew alloc] init]);
+    [webView setUIDelegate:permissionDelegate.get()];
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidReceiveAuthenticationChallenge:^(WKWebView *, NSURLAuthenticationChallenge *challenge, void (^callback)(NSURLSessionAuthChallengeDisposition, NSURLCredential *)) {
+        EXPECT_WK_STREQ(challenge.protectionSpace.authenticationMethod, NSURLAuthenticationMethodServerTrust);
+        callback(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+    }];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    done = false;
+    didReceiveMessage = false;
+    [webView loadRequest:server1.request()];
+    TestWebKitAPI::Util::run(&didReceiveMessage);
+    EXPECT_FALSE(done);
 }
 
 @interface InjectedBundleNodeHandleIsSelectElementDelegate : NSObject <WKUIDelegatePrivate>

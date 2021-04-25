@@ -42,11 +42,13 @@ template<typename> struct HSLA;
 template<typename> struct HWBA;
 template<typename> struct LCHA;
 template<typename> struct Lab;
+template<typename> struct Oklab;
+template<typename> struct Oklch;
 template<typename, WhitePoint> struct XYZA;
 
 // MARK: Make functions.
 
-template<typename ColorType, typename T> constexpr ColorType makeFromComponents(const ColorComponents<T>& c)
+template<typename ColorType, typename T> constexpr ColorType makeFromComponents(const ColorComponents<T, 4>& c)
 {
     return ColorType { c[0], c[1], c[2], c[3] };
 }
@@ -75,7 +77,7 @@ template<typename ColorType, unsigned Index> constexpr float clampedComponent(fl
     return std::clamp(c, componentInfo.min, componentInfo.max);
 }
 
-template<typename ColorType, unsigned Index, typename T> constexpr T clampedComponent(const ColorComponents<T>& c)
+template<typename ColorType, unsigned Index, typename T> constexpr T clampedComponent(const ColorComponents<T, 4>& c)
 {
     return clampedComponent<ColorType, Index>(c[Index]);
 }
@@ -85,17 +87,17 @@ template<typename T, typename ComponentType = T> constexpr ComponentType clamped
     return std::clamp<T>(alpha, AlphaTraits<ComponentType>::transparent, AlphaTraits<ComponentType>::opaque);
 }
 
-template<typename ColorType, typename T> constexpr ColorComponents<T> clampedComponents(const ColorComponents<T>& components)
+template<typename ColorType, typename T> constexpr ColorComponents<T, 4> clampedComponents(const ColorComponents<T, 4>& components)
 {
     return { clampedComponent<ColorType, 0>(components), clampedComponent<ColorType, 1>(components), clampedComponent<ColorType, 2>(components), clampedAlpha(components[3]) };
 }
 
-template<typename ColorType, typename T> constexpr ColorComponents<T> clampedComponentsExceptAlpha(const ColorComponents<T>& components)
+template<typename ColorType, typename T> constexpr ColorComponents<T, 4> clampedComponentsExceptAlpha(const ColorComponents<T, 4>& components)
 {
     return { clampedComponent<ColorType, 0>(components), clampedComponent<ColorType, 1>(components), clampedComponent<ColorType, 2>(components), components[3] };
 }
 
-template<typename ColorType, typename T> constexpr ColorType makeFromComponentsClamping(const ColorComponents<T>& components)
+template<typename ColorType, typename T> constexpr ColorType makeFromComponentsClamping(const ColorComponents<T, 4>& components)
 {
     return makeFromComponents<ColorType>(clampedComponents<ColorType>(components));
 }
@@ -110,7 +112,7 @@ template<typename ColorType, typename T> constexpr ColorType makeFromComponentsC
     return makeFromComponents<ColorType>(ColorComponents { clampedComponent<ColorType, 0>(c1), clampedComponent<ColorType, 1>(c2), clampedComponent<ColorType, 2>(c3), clampedAlpha<T, typename ColorType::ComponentType>(alpha) });
 }
 
-template<typename ColorType, typename T> constexpr ColorType makeFromComponentsClampingExceptAlpha(const ColorComponents<T>& components)
+template<typename ColorType, typename T> constexpr ColorType makeFromComponentsClampingExceptAlpha(const ColorComponents<T, 4>& components)
 {
     return makeFromComponents<ColorType>(clampedComponentsExceptAlpha<ColorType>(components));
 }
@@ -212,7 +214,7 @@ template<typename T, typename D, typename ColorType, typename M, typename TF> st
     T alpha;
 };
 
-template<typename T, typename D, typename ColorType, typename M, typename TF> constexpr ColorComponents<T> asColorComponents(const RGBAType<T, D, ColorType, M, TF>& c)
+template<typename T, typename D, typename ColorType, typename M, typename TF> constexpr ColorComponents<T, 4> asColorComponents(const RGBAType<T, D, ColorType, M, TF>& c)
 {
     return { c.red, c.green, c.blue, c.alpha };
 }
@@ -418,7 +420,7 @@ template<typename T> struct Lab : ColorWithAlphaHelper<Lab<T>> {
     T alpha;
 };
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const Lab<T>& c)
+template<typename T> constexpr ColorComponents<T, 4> asColorComponents(const Lab<T>& c)
 {
     return { c.lightness, c.a, c.b, c.alpha };
 }
@@ -453,7 +455,7 @@ template<typename T> struct LCHA : ColorWithAlphaHelper<LCHA<T>> {
     T alpha;
 };
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const LCHA<T>& c)
+template<typename T> constexpr ColorComponents<T, 4> asColorComponents(const LCHA<T>& c)
 {
     return { c.lightness, c.chroma, c.hue, c.alpha };
 }
@@ -489,7 +491,7 @@ template<typename T> struct HSLA : ColorWithAlphaHelper<HSLA<T>> {
     T alpha;
 };
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const HSLA<T>& c)
+template<typename T> constexpr ColorComponents<T, 4> asColorComponents(const HSLA<T>& c)
 {
     return { c.hue, c.saturation, c.lightness, c.alpha };
 }
@@ -524,7 +526,7 @@ template<typename T> struct HWBA : ColorWithAlphaHelper<HWBA<T>> {
     T alpha;
 };
 
-template<typename T> constexpr ColorComponents<T> asColorComponents(const HWBA<T>& c)
+template<typename T> constexpr ColorComponents<T, 4> asColorComponents(const HWBA<T>& c)
 {
     return { c.hue, c.whiteness, c.blackness, c.alpha };
 }
@@ -559,7 +561,7 @@ template<typename T, WhitePoint W> struct XYZA : ColorWithAlphaHelper<XYZA<T, W>
     T alpha;
 };
 
-template<typename T, WhitePoint W> constexpr ColorComponents<T> asColorComponents(const XYZA<T, W>& c)
+template<typename T, WhitePoint W> constexpr ColorComponents<T, 4> asColorComponents(const XYZA<T, W>& c)
 {
     return { c.x, c.y, c.z, c.alpha };
 }

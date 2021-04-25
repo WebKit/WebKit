@@ -3,7 +3,7 @@
 import sys
 from datetime import datetime, timedelta
 
-expires= datetime.utcnow() + timedelta(seconds=300)
+expires = datetime.utcnow() + timedelta(seconds=300)
 
 sys.stdout.write(
     'status: 200\r\n'

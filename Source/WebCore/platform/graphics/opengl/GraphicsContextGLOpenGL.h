@@ -540,6 +540,7 @@ private:
     // Called once by all the public entry points that eventually call OpenGL.
     // Called once by all the public entry points of ExtensionsGL that eventually call OpenGL.
     bool makeContextCurrent() WARN_UNUSED_RETURN;
+    void clearCurrentContext();
 
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or

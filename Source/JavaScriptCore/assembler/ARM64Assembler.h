@@ -383,6 +383,9 @@ public:
             data.realTypes.m_bitNumber = bitNumber;
             data.realTypes.m_compareRegister = compareRegister;
         }
+        // We are defining a copy constructor and assignment operator
+        // because the ones provided by the compiler are not
+        // optimal. See https://bugs.webkit.org/show_bug.cgi?id=90930
         LinkRecord(const LinkRecord& other)
         {
             data.copyTypes = other.data.copyTypes;

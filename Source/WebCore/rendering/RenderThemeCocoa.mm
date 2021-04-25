@@ -184,7 +184,7 @@ bool RenderThemeCocoa::paintApplePayButton(const RenderObject& renderer, const P
 String RenderThemeCocoa::mediaControlsStyleSheet()
 {
     if (m_mediaControlsStyleSheet.isEmpty())
-        m_mediaControlsStyleSheet = StringImpl::createStaticStringImpl(ModernMediaControlsUserAgentStyleSheet, sizeof(ModernMediaControlsUserAgentStyleSheet));
+        m_mediaControlsStyleSheet = StringImpl::createWithoutCopying(ModernMediaControlsUserAgentStyleSheet, sizeof(ModernMediaControlsUserAgentStyleSheet));
     return m_mediaControlsStyleSheet;
 }
 
@@ -197,7 +197,7 @@ Vector<String, 3> RenderThemeCocoa::mediaControlsScripts()
     }
 
     if (m_mediaControlsScript.isEmpty())
-        m_mediaControlsScript = StringImpl::createStaticStringImpl(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript));
+        m_mediaControlsScript = StringImpl::createWithoutCopying(ModernMediaControlsJavaScript, sizeof(ModernMediaControlsJavaScript));
 
 #if defined(RenderThemeCocoaAdditions_mediaControlsAdditionalScript)
     if (m_mediaControlsAdditionalScript.isEmpty())

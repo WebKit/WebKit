@@ -233,20 +233,24 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     # Create derived sources directories
     # -----------------------------------------------------------------------------
 
+    file(MAKE_DIRECTORY ${WTF_DERIVED_SOURCES_DIR})
+    file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR})
+
     if (ENABLE_WEBCORE)
-        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR})
+        file(MAKE_DIRECTORY ${PAL_DERIVED_SOURCES_DIR})
+        file(MAKE_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR})
     endif ()
 
     if (ENABLE_WEBKIT)
-        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT_DIR})
+        file(MAKE_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR})
     endif ()
 
     if (ENABLE_WEBKIT_LEGACY)
-        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR})
+        file(MAKE_DIRECTORY ${WebKitLegacy_DERIVED_SOURCES_DIR})
     endif ()
 
     if (ENABLE_WEBDRIVER)
-        file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBDRIVER_DIR})
+        file(MAKE_DIRECTORY ${WebDriver_DERIVED_SOURCES_DIR})
     endif ()
 
     # -----------------------------------------------------------------------------

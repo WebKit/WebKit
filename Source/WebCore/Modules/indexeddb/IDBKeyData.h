@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKey.h"
 #include <wtf/StdSet.h>
 #include <wtf/Variant.h>
@@ -308,5 +306,3 @@ Optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
 using IDBKeyDataSet = StdSet<IDBKeyData>;
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

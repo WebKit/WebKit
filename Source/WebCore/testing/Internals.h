@@ -43,6 +43,7 @@
 
 #if ENABLE(VIDEO)
 #include "MediaElementSession.h"
+#include "MediaUniqueIdentifier.h"
 #endif
 
 namespace WebCore {
@@ -136,6 +137,10 @@ class WebXRTest;
 #if ENABLE(MEDIA_SESSION)
 class MediaSession;
 struct MediaSessionActionDetails;
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+class MediaSessionCoordinator;
+class MockMediaSessionCoordinator;
+#endif
 #endif
 
 template<typename IDLType> class DOMPromiseDeferred;
@@ -445,9 +450,7 @@ public:
     ExceptionOr<void> insertAuthorCSS(const String&) const;
     ExceptionOr<void> insertUserCSS(const String&) const;
 
-#if ENABLE(INDEXED_DATABASE)
     unsigned numberOfIDBTransactions() const;
-#endif
 
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
@@ -681,6 +684,7 @@ public:
     ExceptionOr<String> mediaSessionRestrictions(const String& mediaType) const;
     void setMediaElementRestrictions(HTMLMediaElement&, StringView restrictionsString);
     ExceptionOr<void> postRemoteControlCommand(const String&, float argument);
+    void activeAudioRouteDidChange(bool shouldPause);
     bool elementIsBlockingDisplaySleep(HTMLMediaElement&) const;
 #endif
 
@@ -726,7 +730,10 @@ public:
 
     ExceptionOr<String> pathStringWithShrinkWrappedRects(const Vector<double>& rectComponents, double radius);
 
+#if ENABLE(VIDEO)
     String getCurrentMediaControlsStatusForElement(HTMLMediaElement&);
+    void setMediaControlsMaximumRightContainerButtonCountOverride(HTMLMediaElement&, size_t);
+#endif // ENABLE(VIDEO)
 
     String userVisibleString(const DOMURL&);
     void setShowAllPlugins(bool);
@@ -743,6 +750,7 @@ public:
     double lastHandledUserGestureTimestamp();
 
     void withUserGesture(RefPtr<VoidCallback>&&);
+    void withoutUserGesture(RefPtr<VoidCallback>&&);
 
     bool userIsInteracting();
 
@@ -1093,9 +1101,16 @@ public:
 #if ENABLE(MEDIA_SESSION)
     ExceptionOr<double> currentMediaSessionPosition(const MediaSession&);
     ExceptionOr<void> sendMediaSessionAction(MediaSession&, const MediaSessionActionDetails&);
-    using ArtworkImagePromise = DOMPromiseDeferred<IDLInterface<ImageData>>;
+
+        using ArtworkImagePromise = DOMPromiseDeferred<IDLInterface<ImageData>>;
     void loadArtworkImage(String&&, ArtworkImagePromise&&);
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    ExceptionOr<void> registerMockMediaSessionCoordinator(ScriptExecutionContext&, RefPtr<StringCallback>&&);
+    ExceptionOr<void> setMockMediaSessionCoordinatorCommandsShouldFail(bool);
 #endif
+
+#endif // ENABLE(MEDIA_SESSION)
 
     enum TreeType : uint8_t { Tree, ShadowIncludingTree, ComposedTree };
     String treeOrder(Node&, Node&, TreeType);
@@ -1139,6 +1154,11 @@ private:
 
 #if ENABLE(WEBXR)
     RefPtr<WebXRTest> m_xrTest;
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<MediaSessionCoordinator> m_mediaSessionCoordinator;
+    RefPtr<MockMediaSessionCoordinator> m_mockMediaSessionCoordinator;
 #endif
 };
 

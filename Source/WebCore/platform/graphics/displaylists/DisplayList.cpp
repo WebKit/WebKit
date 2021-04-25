@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -159,12 +159,12 @@ ItemBuffer& DisplayList::itemBuffer()
     return *m_items;
 }
 
-void DisplayList::setItemBufferClient(ItemBufferReadingClient* client)
+void DisplayList::setItemBufferReadingClient(ItemBufferReadingClient* client)
 {
     itemBuffer().setClient(client);
 }
 
-void DisplayList::setItemBufferClient(ItemBufferWritingClient* client)
+void DisplayList::setItemBufferWritingClient(ItemBufferWritingClient* client)
 {
     itemBuffer().setClient(client);
 }
@@ -182,7 +182,7 @@ void DisplayList::forEachItemBuffer(Function<void(const ItemBufferHandle&)>&& ma
 
 void DisplayList::setTracksDrawingItemExtents(bool value)
 {
-    RELEASE_ASSERT(!m_items || m_items->isEmpty());
+    RELEASE_ASSERT(isEmpty());
     m_tracksDrawingItemExtents = value;
 }
 
@@ -332,6 +332,25 @@ bool DisplayList::iterator::atEnd() const
     return m_cursor == endCursor;
 }
 
+DisplayList::iterator::ExtentUpdateResult DisplayList::iterator::updateCurrentDrawingItemExtent(ItemType itemType)
+{
+    auto& extents = m_displayList.m_drawingItemExtents;
+    if (extents.isEmpty())
+        return ExtentUpdateResult::Success;
+
+    if (!isDrawingItem(itemType)) {
+        m_currentExtent = WTF::nullopt;
+        return ExtentUpdateResult::Success;
+    }
+
+    if (m_drawingItemIndex >= extents.size())
+        return ExtentUpdateResult::Failure;
+
+    m_currentExtent = extents[m_drawingItemIndex];
+    m_drawingItemIndex++;
+    return ExtentUpdateResult::Success;
+}
+
 void DisplayList::iterator::updateCurrentItem()
 {
     clearCurrentItem();
@@ -341,34 +360,30 @@ void DisplayList::iterator::updateCurrentItem()
 
     auto& items = *itemBuffer();
     auto itemType = static_cast<ItemType>(m_cursor[0]);
-    if (isDrawingItem(itemType) && !m_displayList.m_drawingItemExtents.isEmpty()) {
-        m_currentExtent = m_displayList.m_drawingItemExtents[m_drawingItemIndex];
-        m_drawingItemIndex++;
-    } else
-        m_currentExtent = WTF::nullopt;
 
-    auto* client = items.m_readingClient;
+    if (updateCurrentDrawingItemExtent(itemType) == ExtentUpdateResult::Failure) {
+        m_isValid = false;
+        return;
+    }
+
     auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);
-    if (client) {
-        m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
-        if (isInlineItem(itemType)) {
-            if (UNLIKELY(!ItemHandle { m_cursor }.safeCopy({ m_currentBufferForItem })))
-                m_isValid = false;
+    m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
+    if (isInlineItem(itemType)) {
+        if (UNLIKELY(!ItemHandle { m_cursor }.safeCopy({ m_currentBufferForItem })))
+            m_isValid = false;
 
-            m_currentItemSizeInBuffer = paddedSizeOfTypeAndItem;
-        } else {
-            auto dataLength = reinterpret_cast<uint64_t*>(m_cursor)[1];
-            auto* startOfData = m_cursor + 2 * sizeof(uint64_t);
-            auto decodedItemHandle = client->decodeItem(startOfData, dataLength, itemType, m_currentBufferForItem);
-            if (UNLIKELY(!decodedItemHandle))
-                m_isValid = false;
-
-            m_currentBufferForItem[0] = static_cast<uint8_t>(itemType);
-            m_currentItemSizeInBuffer = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
-        }
-    } else {
-        m_currentBufferForItem = m_cursor;
         m_currentItemSizeInBuffer = paddedSizeOfTypeAndItem;
+    } else {
+        auto* client = items.m_readingClient;
+        RELEASE_ASSERT(client);
+        auto dataLength = reinterpret_cast<uint64_t*>(m_cursor)[1];
+        auto* startOfData = m_cursor + 2 * sizeof(uint64_t);
+        auto decodedItemHandle = client->decodeItem(startOfData, dataLength, itemType, m_currentBufferForItem);
+        if (UNLIKELY(!decodedItemHandle))
+            m_isValid = false;
+
+        m_currentBufferForItem[0] = static_cast<uint8_t>(itemType);
+        m_currentItemSizeInBuffer = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
     }
 }
 

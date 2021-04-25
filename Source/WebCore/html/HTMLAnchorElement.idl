@@ -21,8 +21,8 @@
 [
     Exposed=Window
 ] interface HTMLAnchorElement : HTMLElement {
-    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute DOMString attributionsourceid;
-    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute DOMString attributeon;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute unsigned long attributionsourceid;
+    [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurement, Reflect] attribute DOMString attributiondestination;
     [CEReactions=NotNeeded, EnabledBySetting=PrivateClickMeasurementFraudPrevention, Reflect] attribute DOMString attributionsourcenonce;
     [CEReactions=NotNeeded, Reflect] attribute DOMString charset;
     [CEReactions=NotNeeded, Reflect] attribute DOMString coords;

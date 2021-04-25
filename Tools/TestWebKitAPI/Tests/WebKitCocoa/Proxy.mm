@@ -94,6 +94,70 @@ TEST(WebKit, HTTPSProxy)
     EXPECT_WK_STREQ([delegate waitForAlert], "success!");
 }
 
+TEST(WebKit, SOCKS5)
+{
+    constexpr uint8_t socks5Version = 0x5; // https://tools.ietf.org/html/rfc1928#section-3
+    constexpr uint8_t noAuthenticationRequired = 0x00; // https://tools.ietf.org/html/rfc1928#section-3
+    constexpr uint8_t connect = 0x01; // https://tools.ietf.org/html/rfc1928#section-4
+    constexpr uint8_t reserved = 0x00; // https://tools.ietf.org/html/rfc1928#section-4
+    constexpr uint8_t domainName = 0x03; // https://tools.ietf.org/html/rfc1928#section-4
+    constexpr uint8_t requestSucceeded = 0x00; // https://tools.ietf.org/html/rfc1928#section-6
+
+    using namespace TestWebKitAPI;
+    HTTPServer server([](Connection connection) {
+        connection.receiveBytes([=] (Vector<uint8_t>&& bytes) {
+            constexpr uint8_t expectedAuthenticationMethodCount = 1;
+            Vector<uint8_t> expectedClientGreeting { socks5Version, expectedAuthenticationMethodCount, noAuthenticationRequired };
+            EXPECT_EQ(bytes, expectedClientGreeting);
+            connection.send(Vector<uint8_t> { socks5Version, noAuthenticationRequired }, [=] {
+                connection.receiveBytes([=] (Vector<uint8_t>&& bytes) {
+                    constexpr uint8_t httpPortFirstByte = 0;
+                    constexpr uint8_t httpPortSecondByte = 80;
+                    Vector<uint8_t> expectedConnectRequest {
+                        socks5Version,
+                        connect,
+                        reserved,
+                        domainName,
+                        static_cast<uint8_t>(strlen("example.com")),
+                        'e', 'x', 'a', 'm', 'p', 'l', 'e', '.', 'c', 'o', 'm',
+                        httpPortFirstByte, httpPortSecondByte
+                    };
+                    EXPECT_EQ(bytes, expectedConnectRequest);
+
+                    Vector<uint8_t> response { socks5Version, requestSucceeded, reserved,
+                        domainName,
+                        static_cast<uint8_t>(strlen("example.com")),
+                        'e', 'x', 'a', 'm', 'p', 'l', 'e', '.', 'c', 'o', 'm',
+                        httpPortFirstByte, httpPortSecondByte
+                    };
+                    connection.send(WTFMove(response), [=] {
+                        connection.receiveHTTPRequest([=] (Vector<char>&&) {
+                            connection.send(
+                                "HTTP/1.1 200 OK\r\n"
+                                "Content-Length: 34\r\n"
+                                "\r\n"
+                                "<script>alert('success!')</script>"
+                            );
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    auto storeConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
+    [storeConfiguration setProxyConfiguration:@{
+        @"SOCKSProxy": @"127.0.0.1",
+        @"SOCKSPort": @(server.port())
+    }];
+    [storeConfiguration setAllowsServerPreconnect:NO];
+    auto viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) configuration:viewConfiguration.get()]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
+}
+
 TEST(WebKit, HTTPProxyAuthentication)
 {
     TCPServer server([] (int socket) {

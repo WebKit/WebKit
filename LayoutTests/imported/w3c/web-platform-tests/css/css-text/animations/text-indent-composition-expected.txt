@@ -18,16 +18,16 @@ FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] t
 FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (0.6) should be [20%] assert_equals: expected "20 % " but got "- 10 % "
 FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (1) should be [100%] assert_equals: expected "100 % " but got "50 % "
 FAIL Compositing: property <text-indent> underlying [50%] from replace [-100%] to add [50%] at (1.5) should be [200%] assert_equals: expected "200 % " but got "125 % "
-FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (-0.3) should be [20px hanging each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0) should be [50px hanging each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0.3) should be [80px hanging each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0.6) should be [110px hanging each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (1) should be [150px hanging each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (1.5) should be [200px hanging each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (-0.3) should be [300px each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0) should be [300px each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0.3) should be [300px each-line] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0.6) should be [150px hanging] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (1) should be [150px hanging] assert_true: 'from' value should be supported expected true got false
-FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (1.5) should be [150px hanging] assert_true: 'from' value should be supported expected true got false
+PASS Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (-0.3) should be [20px hanging each-line]
+PASS Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0) should be [50px hanging each-line]
+PASS Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0.3) should be [80px hanging each-line]
+PASS Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (0.6) should be [110px hanging each-line]
+PASS Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (1) should be [150px hanging each-line]
+PASS Compositing: property <text-indent> underlying [250px] from add [50px each-line hanging] to replace [150px hanging each-line] at (1.5) should be [200px hanging each-line]
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (-0.3) should be [300px each-line] assert_equals: expected "300px each - line " but got "50px each - line "
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0) should be [300px each-line] assert_equals: expected "300px each - line " but got "50px each - line "
+FAIL Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0.3) should be [300px each-line] assert_equals: expected "300px each - line " but got "50px each - line "
+PASS Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (0.6) should be [150px hanging]
+PASS Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (1) should be [150px hanging]
+PASS Compositing: property <text-indent> underlying [250px each-line] from add [50px each-line] to replace [150px hanging] at (1.5) should be [150px hanging]
 

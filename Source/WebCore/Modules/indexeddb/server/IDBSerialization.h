@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyPath.h"
 #include "SharedBuffer.h"
 
@@ -41,5 +39,3 @@ RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData&);
 bool deserializeIDBKeyData(const uint8_t* buffer, size_t bufferSize, IDBKeyData&);
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

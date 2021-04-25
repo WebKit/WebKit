@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyData.h"
 #include "IDBKeyRange.h"
 
@@ -133,5 +131,3 @@ bool IDBKeyRangeData::decode(Decoder& decoder, IDBKeyRangeData& keyRange)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

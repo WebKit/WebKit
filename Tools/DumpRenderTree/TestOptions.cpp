@@ -107,7 +107,6 @@ const TestFeatures& TestOptions::defaults()
             // FIXME: These experimental features are currently the only ones not enabled for WebKitLegacy, we
             // should either enable them or stop exposing them (as we do with with preferences like HTTP3Enabled).
             // All other experimental features are automatically enabled regardless of their specified defaults.
-            { "AspectRatioOfImgFromWidthAndHeightEnabled", false },
             { "AsyncClipboardAPIEnabled", false },
             { "CSSOMViewSmoothScrollingEnabled", false },
             { "ContactPickerAPIEnabled", false },
@@ -129,7 +128,6 @@ const TestFeatures& TestOptions::defaults()
             { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
-            { "AspectRatioOfImgFromWidthAndHeightEnabled", false },
             { "AspectRatioEnabled", true },
             { "AsyncClipboardAPIEnabled", false },
             { "AttachmentElementEnabled", false },

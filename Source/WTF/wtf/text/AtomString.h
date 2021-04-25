@@ -73,6 +73,11 @@ public:
         COMPILE_ASSERT((characterCount - 1 <= ((unsigned(~0) - sizeof(StringImpl)) / sizeof(LChar))), AtomStringFromLiteralCannotOverflow);
     }
 
+    AtomString(ASCIILiteral literal)
+        : m_string(AtomStringImpl::addLiteral(literal.characters(), literal.length()))
+    {
+    }
+
     // We have to declare the copy constructor and copy assignment operator as well, otherwise
     // they'll be implicitly deleted by adding the move constructor and move assignment operator.
     AtomString(const AtomString& other) : m_string(other.m_string) { }
@@ -165,9 +170,6 @@ public:
 #endif
 
 private:
-    // The explicit constructors with AtomString::ConstructFromLiteral must be used for literals.
-    AtomString(ASCIILiteral);
-
     enum class CaseConvertType { Upper, Lower };
     template<CaseConvertType> AtomString convertASCIICase() const;
 

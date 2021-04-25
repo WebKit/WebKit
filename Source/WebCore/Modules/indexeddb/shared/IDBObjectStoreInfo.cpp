@@ -27,8 +27,6 @@
 #include "IDBObjectStoreInfo.h"
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 IDBObjectStoreInfo::IDBObjectStoreInfo()
@@ -147,5 +145,3 @@ String IDBObjectStoreInfo::condensedLoggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

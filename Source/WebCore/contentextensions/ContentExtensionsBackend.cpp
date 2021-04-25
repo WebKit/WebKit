@@ -174,8 +174,10 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
 {
     Document* currentDocument = nullptr;
     URL mainDocumentURL;
+    bool mainFrameContext = false;
 
     if (auto* frame = initiatingDocumentLoader.frame()) {
+        mainFrameContext = frame->isMainFrame();
         currentDocument = frame->document();
 
         if (initiatingDocumentLoader.isLoadingMainResource()
@@ -186,7 +188,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
             mainDocumentURL = mainDocument->url();
     }
 
-    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, resourceType };
+    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, resourceType, mainFrameContext };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
@@ -266,7 +268,7 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
 
 ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL)
 {
-    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, ResourceType::Raw };
+    ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, ResourceType::Ping };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;

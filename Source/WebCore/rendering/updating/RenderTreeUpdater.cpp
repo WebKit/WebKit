@@ -556,7 +556,6 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     };
 
     auto& document = root.document();
-    auto* timeline = document.existingTimeline();
 
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {
@@ -569,16 +568,11 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             switch (teardownType) {
             case TeardownType::Full:
             case TeardownType::RendererUpdateCancelingAnimations:
-                if (timeline) {
-                    if (document.renderTreeBeingDestroyed())
-                        timeline->cancelDeclarativeAnimationsForStyleable(Styleable::fromElement(element), WebAnimation::Silently::Yes);
-                    else if (teardownType == TeardownType::RendererUpdateCancelingAnimations)
-                        timeline->cancelDeclarativeAnimationsForStyleable(Styleable::fromElement(element), WebAnimation::Silently::No);
-                }
+                if (document.renderTreeBeingDestroyed() || teardownType == TeardownType::RendererUpdateCancelingAnimations)
+                    Styleable::fromElement(element).cancelDeclarativeAnimations();
                 break;
             case TeardownType::RendererUpdate:
-                if (timeline)
-                    timeline->willChangeRendererForStyleable(Styleable::fromElement(element));
+                Styleable::fromElement(element).willChangeRenderer();
                 break;
             }
 

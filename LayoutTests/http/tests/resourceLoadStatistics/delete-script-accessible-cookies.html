@@ -53,7 +53,7 @@
             testFailed("No testRunner or no internals.");
             return;
         }
-        await fetch("/cookies/resources/set-http-only-cookie.php?cookieName=" + httpOnlyCookieName, { credentials: "same-origin" });
+        await fetch("/cookies/resources/set-http-only-cookie.py?cookieName=" + httpOnlyCookieName, { credentials: "same-origin" });
         await fetch("/cookies/resources/setCookies.cgi", { headers: { "Set-Cookie": serverSideCookieName + "=1; path=/;" }, credentials: "same-origin" });
         document.cookie = clientSideCookieName + "=1";
         checkCookies(false);

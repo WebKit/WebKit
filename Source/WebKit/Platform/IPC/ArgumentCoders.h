@@ -497,8 +497,8 @@ template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t min
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity> struct ArgumentCoder<Vector<T, inlineCapacity, OverflowHandler, minCapacity>> : VectorArgumentCoder<std::is_arithmetic<T>::value, T, inlineCapacity, OverflowHandler, minCapacity> { };
 
-template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>> {
-    typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
+template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits>> {
+    typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, HashTableTraits> HashMapType;
 
     static void encode(Encoder& encoder, const HashMapType& hashMap)
     {
@@ -514,6 +514,7 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
             return WTF::nullopt;
 
         HashMapType hashMap;
+        hashMap.reserveInitialCapacity(hashMapSize);
         for (uint32_t i = 0; i < hashMapSize; ++i) {
             Optional<KeyArg> key;
             decoder >> key;
@@ -551,8 +552,8 @@ template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTrai
     }
 };
 
-template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct ArgumentCoder<HashSet<KeyArg, HashArg, KeyTraitsArg>> {
-    typedef HashSet<KeyArg, HashArg, KeyTraitsArg> HashSetType;
+template<typename KeyArg, typename HashArg, typename KeyTraitsArg, typename HashTableTraits> struct ArgumentCoder<HashSet<KeyArg, HashArg, KeyTraitsArg, HashTableTraits>> {
+    typedef HashSet<KeyArg, HashArg, KeyTraitsArg, HashTableTraits> HashSetType;
 
     static void encode(Encoder& encoder, const HashSetType& hashSet)
     {
@@ -579,6 +580,7 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Argume
             return WTF::nullopt;
 
         HashSetType hashSet;
+        hashSet.reserveInitialCapacity(hashSetSize);
         for (uint64_t i = 0; i < hashSetSize; ++i) {
             Optional<KeyArg> key;
             decoder >> key;

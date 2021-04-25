@@ -471,4 +471,8 @@ WTF_EXTERN_C_END
 @property (readonly) SSLProtocol _TLSNegotiatedProtocolVersion;
 @end
 
+@interface NSURLSessionWebSocketTask (SPI)
+- (void)_sendCloseCode:(NSURLSessionWebSocketCloseCode)closeCode reason:(NSData *)reason;
+@end
+
 #endif // defined(__OBJC__)

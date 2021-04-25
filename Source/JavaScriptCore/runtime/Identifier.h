@@ -294,6 +294,7 @@ JSValue identifierToSafePublicJSValue(VM&, const Identifier&);
 struct IdentifierRepHash : PtrHash<RefPtr<UniquedStringImpl>> {
     static unsigned hash(const RefPtr<UniquedStringImpl>& key) { return key->existingSymbolAwareHash(); }
     static unsigned hash(UniquedStringImpl* key) { return key->existingSymbolAwareHash(); }
+    static constexpr bool hasHashInValue = true;
 };
 
 struct IdentifierMapIndexHashTraits : HashTraits<int> {

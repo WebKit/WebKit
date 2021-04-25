@@ -7,7 +7,7 @@ file = __file__.split(':/cygwin')[-1]
 http_root = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(file))))
 sys.path.insert(0, http_root)
 
-from resources.portabilityLayer import setState, getState
+from resources.portabilityLayer import set_state, get_state
 from urllib.parse import parse_qs
 
 
@@ -26,7 +26,7 @@ def fail(state):
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
 stateFile = os.path.join(tempfile.gettempdir(), query.get('test', ['state.txt'])[0])
-state = getState(stateFile)
+state = get_state(stateFile)
 stateArg = query.get('state', [None])[0]
 
 sys.stdout.write('Content-Type: text/html\r\n')
@@ -53,7 +53,7 @@ elif state == 'Uninitialized':
             '\r\n'
             'FAIL: This request should not be displayed\n'
         )
-        setState('Denied', stateFile)
+        set_state('Denied', stateFile)
     else:
         fail(state)
 
@@ -67,7 +67,7 @@ elif state == 'Denied':
             'PASS: Request successfully blocked.\n'
         )
     else:
-        setState('Deny Ignored', stateFile)
+        set_state('Deny Ignored', stateFile)
         fail(state)
 
 elif state == 'Deny Ignored':

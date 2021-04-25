@@ -1,4 +1,4 @@
-# Copyright (C) 2017 Apple Inc. All rights reserved.
+# Copyright (C) 2017-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -107,6 +107,14 @@ class VersionNameMap(object):
                 closest_match = (os_name, os_version)
         return closest_match[0]
 
+    def max_public_version(self, platform=None):
+        found_max_version = None
+        for os_name, os_version in self.mapping_for_platform(platform, PUBLIC_TABLE).items():
+            if os_version > found_max_version:
+                found_max_version = os_version
+
+        return found_max_version
+
     @staticmethod
     def strip_name_formatting(name):
         # <OS> major.minor.tiny should map to <OS> major
@@ -149,6 +157,11 @@ class VersionNameMap(object):
         return sorted(names, key=lambda os_name: mapping[os_name])
 
     def mapping_for_platform(self, platform=None, table=PUBLIC_TABLE):
+        # Alias macos to mac here. Adding a separate entry to the table
+        # would cause from_name() to return either 'mac' or 'macos'.
+        if platform == 'macos':
+            platform = 'mac'
+
         """return proper os_name: os_version mapping for platform"""
         platform = self.default_system_platform if platform is None else platform
         return self.mapping.get(table, {}).get(platform, {})

@@ -579,6 +579,31 @@ class TestJSCBuildFactory(TestCase):
         ])
 
 
+class TestStressTestFactory(TestCase):
+    def test_stress_test_factory(self):
+        factory = factories.StressTestFactory(platform='mac-catalina', configuration='release', architectures=["x86_64"])
+        self.assertBuildSteps(factory.steps, [
+            _BuildStepFactory(steps.ConfigureBuild, platform='mac-catalina', configuration='release', architectures=["x86_64"],
+                              buildOnly=False, triggers=None, triggered_by=None, remotes=None, additionalArguments=None),
+            _BuildStepFactory(steps.FindModifiedLayoutTests),
+            _BuildStepFactory(steps.ValidatePatch),
+            _BuildStepFactory(steps.PrintConfiguration),
+            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSpecificRevision),
+            _BuildStepFactory(steps.FetchBranches),
+            _BuildStepFactory(steps.ShowIdentifier),
+            _BuildStepFactory(steps.ApplyPatch),
+            _BuildStepFactory(steps.DownloadBuiltProduct),
+            _BuildStepFactory(steps.ExtractBuiltProduct),
+            _BuildStepFactory(steps.WaitForCrashCollection),
+            _BuildStepFactory(steps.KillOldProcesses),
+            _BuildStepFactory(steps.RunWebKitTestsInStressMode),
+            _BuildStepFactory(steps.RunWebKitTestsInStressGuardmallocMode),
+            _BuildStepFactory(steps.TriggerCrashLogSubmission),
+            _BuildStepFactory(steps.SetBuildSummary),
+        ])
+
+
 class TestJSCBuildAndTestsFactory(TestCase):
     def test_jsc_mipsel_factory(self):
         factory = factories.JSCBuildFactory(platform='jsc', configuration='release', architectures=["mipsel"])

@@ -661,6 +661,9 @@
 /* File Upload alert sheet button string for choosing an existing media item from the Photo Library */
 "Photo Library (file upload action sheet)" = "Photo Library";
 
+/* Picture in Picture media controls context menu title */
+"Picture in Picture (Media Controls Menu)" = "Picture in Picture";
+
 /* Media Play context menu item */
 "Play" = "Play";
 

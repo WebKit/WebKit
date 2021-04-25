@@ -863,6 +863,17 @@ IGNORE_WARNINGS_END
     [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] concludeDrop:_dropSession.get()];
 }
 
+- (BOOL)containsDraggedType:(NSString *)expectedType
+{
+    for (NSItemProvider *itemProvider in self.sourceItemProviders) {
+        for (NSString *type in itemProvider.registeredTypeIdentifiers) {
+            if ([type isEqualToString:expectedType])
+                return YES;
+        }
+    }
+    return NO;
+}
+
 #pragma mark - WKUIDelegatePrivate
 
 - (void)_webView:(WKWebView *)webView dataInteraction:(UIDragInteraction *)interaction sessionWillBegin:(id <UIDragSession>)session

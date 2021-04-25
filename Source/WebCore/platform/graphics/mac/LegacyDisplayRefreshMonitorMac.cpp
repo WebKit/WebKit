@@ -28,16 +28,21 @@
 
 #if PLATFORM(MAC)
 
+#include "Logging.h"
 #include "RuntimeApplicationChecks.h"
-#include <QuartzCore/QuartzCore.h>
+#include <CoreVideo/CVDisplayLink.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+constexpr unsigned maxUnscheduledFireCount { 20 };
 
 LegacyDisplayRefreshMonitorMac::LegacyDisplayRefreshMonitorMac(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
 {
     ASSERT(!isInWebProcess());
+    setMaxUnscheduledFireCount(maxUnscheduledFireCount);
 }
 
 LegacyDisplayRefreshMonitorMac::~LegacyDisplayRefreshMonitorMac()
@@ -47,10 +52,8 @@ LegacyDisplayRefreshMonitorMac::~LegacyDisplayRefreshMonitorMac()
 
 void LegacyDisplayRefreshMonitorMac::stop()
 {
-    if (!m_displayLink)
-        return;
-
-    CVDisplayLinkStop(m_displayLink);
+    DisplayRefreshMonitor::stop();
+    LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::stop for dipslay " << displayID() << " destroying display link");
     CVDisplayLinkRelease(m_displayLink);
     m_displayLink = nullptr;
 }
@@ -58,51 +61,88 @@ void LegacyDisplayRefreshMonitorMac::stop()
 static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data)
 {
     LegacyDisplayRefreshMonitorMac* monitor = static_cast<LegacyDisplayRefreshMonitorMac*>(data);
-    monitor->displayLinkFired();
+    monitor->displayLinkCallbackFired();
     return kCVReturnSuccess;
 }
 
-bool LegacyDisplayRefreshMonitorMac::requestRefreshCallback()
+void LegacyDisplayRefreshMonitorMac::displayLinkCallbackFired()
 {
-    if (!isActive())
-        return false;
-
-    if (!m_displayLink) {
-        setIsActive(false);
-        CVReturn error = CVDisplayLinkCreateWithCGDisplay(displayID(), &m_displayLink);
-        if (error)
-            return false;
-
-        error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
-        if (error)
-            return false;
-
-        error = CVDisplayLinkStart(m_displayLink);
-        if (error)
-            return false;
-
-        setIsActive(true);
-    }
-
-    LockHolder lock(mutex());
-    setIsScheduled(true);
-    return true;
+    displayLinkFired(m_currentUpdate);
+    m_currentUpdate = m_currentUpdate.nextUpdate();
 }
 
-void LegacyDisplayRefreshMonitorMac::displayLinkFired()
+void LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
 {
-    LockHolder lock(mutex());
-    if (!isPreviousFrameDone())
-        return;
-
-    setIsPreviousFrameDone(false);
-
-    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] {
+    RunLoop::main().dispatch([this, displayUpdate, protectedThis = makeRef(*this)] {
         if (m_displayLink)
-            handleDisplayRefreshedNotificationOnMainThread(this);
+            displayDidRefresh(displayUpdate);
     });
 }
 
+WebCore::FramesPerSecond LegacyDisplayRefreshMonitorMac::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
+{
+    CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
+    return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
 }
+
+bool LegacyDisplayRefreshMonitorMac::ensureDisplayLink()
+{
+    if (m_displayLink)
+        return true;
+
+    auto error = CVDisplayLinkCreateWithCGDisplay(displayID(), &m_displayLink);
+    if (error)
+        return false;
+
+    error = CVDisplayLinkSetOutputCallback(m_displayLink, displayLinkCallback, this);
+    if (error)
+        return false;
+        
+    return true;
+}
+
+bool LegacyDisplayRefreshMonitorMac::startNotificationMechanism()
+{
+    if (!m_displayLink) {
+        if (!ensureDisplayLink())
+            return false;
+    }
+
+    if (!m_displayLinkIsActive) {
+        LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::startNotificationMechanism for display " << displayID() << " starting display link");
+
+        auto error = CVDisplayLinkStart(m_displayLink);
+        if (error)
+            return false;
+        
+        m_displayLinkIsActive = true;
+        m_currentUpdate = { 0, nominalFramesPerSecondFromDisplayLink(m_displayLink) };
+    }
+
+    return true;
+}
+
+void LegacyDisplayRefreshMonitorMac::stopNotificationMechanism()
+{
+    if (!m_displayLinkIsActive)
+        return;
+
+    if (m_displayLink) {
+        LOG_WITH_STREAM(DisplayLink, stream << "LegacyDisplayRefreshMonitorMac::stopNotificationMechanism for display " << displayID() << " stopping display link");
+        CVDisplayLinkStop(m_displayLink);
+    }
+        
+    m_displayLinkIsActive = false;
+}
+
+Optional<FramesPerSecond> LegacyDisplayRefreshMonitorMac::displayNominalFramesPerSecond()
+{
+    if (!ensureDisplayLink())
+        return WTF::nullopt;
+        
+    return nominalFramesPerSecondFromDisplayLink(m_displayLink);
+}
+
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

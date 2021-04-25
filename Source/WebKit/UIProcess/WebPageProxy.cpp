@@ -185,7 +185,6 @@
 #include <WebCore/ValidationBubble.h>
 #include <WebCore/WindowFeatures.h>
 #include <WebCore/WritingDirection.h>
-#include <pal/HysteresisActivity.h>
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/NeverDestroyed.h>
@@ -296,6 +295,11 @@
 #include "WebDateTimePicker.h"
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#include "MediaSessionCoordinatorProxyPrivate.h"
+#include "RemoteMediaSessionCoordinatorProxy.h"
+#endif
+
 // This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
@@ -318,35 +322,6 @@ namespace WebKit {
 using namespace WebCore;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageProxyCounter, ("WebPageProxy"));
-
-#if HAVE(CVDISPLAYLINK)
-class ScrollingObserver {
-    WTF_MAKE_NONCOPYABLE(ScrollingObserver);
-    WTF_MAKE_FAST_ALLOCATED;
-    friend NeverDestroyed<ScrollingObserver>;
-public:
-    static ScrollingObserver& singleton();
-
-    void willSendWheelEvent()
-    {
-        m_hysteresis.impulse();
-    }
-
-private:
-    ScrollingObserver()
-        : m_hysteresis([](PAL::HysteresisState state) { DisplayLink::setShouldSendIPCOnBackgroundQueue(state == PAL::HysteresisState::Started); })
-    {
-    }
-
-    PAL::HysteresisActivity m_hysteresis;
-};
-
-ScrollingObserver& ScrollingObserver::singleton()
-{
-    static NeverDestroyed<ScrollingObserver> detector;
-    return detector;
-}
-#endif
 
 class StorageRequests {
     WTF_MAKE_NONCOPYABLE(StorageRequests); WTF_MAKE_FAST_ALLOCATED;
@@ -507,6 +482,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     , m_backForwardList(WebBackForwardList::create(*this))
     , m_waitsForPaintAfterViewDidMoveToWindow(m_configuration->waitsForPaintAfterViewDidMoveToWindow())
     , m_hasRunningProcess(process.state() != WebProcessProxy::State::Terminated)
+#if HAVE(CVDISPLAYLINK)
+    , m_wheelEventActivityHysteresis([this](PAL::HysteresisState state) { wheelEventHysteresisUpdated(state); })
+#endif
     , m_controlledByAutomation(m_configuration->isControlledByAutomation())
 #if PLATFORM(COCOA)
     , m_isSmartInsertDeleteEnabled(TextChecker::isSmartInsertDeleteEnabled())
@@ -2724,10 +2702,21 @@ void WebPageProxy::handleWheelEvent(const NativeWebWheelEvent& event)
     }
 }
 
+#if HAVE(CVDISPLAYLINK)
+void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState state)
+{
+    if (!m_process->hasConnection() || !m_displayID)
+        return;
+
+    bool wantsFullSpeedUpdates = state == PAL::HysteresisState::Started;
+    process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
+}
+#endif
+
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
 #if HAVE(CVDISPLAYLINK)
-    ScrollingObserver::singleton().willSendWheelEvent();
+    m_wheelEventActivityHysteresis.impulse();
 #endif
 
     send(
@@ -3744,6 +3733,8 @@ void WebPageProxy::setIntrinsicDeviceScaleFactor(float scaleFactor)
 
 void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFramesPerSecond)
 {
+    m_displayID = displayID;
+
     if (!hasRunningProcess())
         return;
 
@@ -4674,7 +4665,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         else if (navigation && navigation->privateClickMeasurement())
             privateClickMeasurement = navigation->privateClickMeasurement();
         if (privateClickMeasurement) {
-            if (privateClickMeasurement->attributeOnSite().matches(frame->url()))
+            if (privateClickMeasurement->destinationSite().matches(frame->url()))
                 websiteDataStore().networkProcess().send(Messages::NetworkProcess::StorePrivateClickMeasurement(m_websiteDataStore->sessionID(), *privateClickMeasurement), 0);
         }
     }
@@ -7218,6 +7209,15 @@ void WebPageProxy::logDiagnosticMessageWithValueDictionary(const String& message
     effectiveClient->logDiagnosticMessageWithValueDictionary(this, message, description, WTFMove(apiDictionary));
 }
 
+void WebPageProxy::logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain domain)
+{
+    auto* effectiveClient = effectiveDiagnosticLoggingClient(ShouldSample::No);
+    if (!effectiveClient)
+        return;
+
+    effectiveClient->logDiagnosticMessageWithDomain(this, message, domain);
+}
+
 void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)
 {
     PerformanceLoggingClient::ScrollingEvent event = static_cast<PerformanceLoggingClient::ScrollingEvent>(eventType);
@@ -9495,16 +9495,18 @@ void WebPageProxy::setURLSchemeHandlerForScheme(Ref<WebURLSchemeHandler>&& handl
 {
     auto canonicalizedScheme = WTF::URLParser::maybeCanonicalizeScheme(scheme);
     ASSERT(canonicalizedScheme);
-    ASSERT(!WTF::URLParser::isSpecialScheme(canonicalizedScheme.value()));
+
+    bool schemeIsInHTTPFamily = *canonicalizedScheme == "http" || *canonicalizedScheme == "https";
+    ASSERT_UNUSED(schemeIsInHTTPFamily, schemeIsInHTTPFamily || !WTF::URLParser::isSpecialScheme(canonicalizedScheme.value()));
 
     auto schemeResult = m_urlSchemeHandlersByScheme.add(canonicalizedScheme.value(), handler.get());
     ASSERT_UNUSED(schemeResult, schemeResult.isNewEntry);
 
-    auto identifier = handler->identifier();
-    auto identifierResult = m_urlSchemeHandlersByIdentifier.add(identifier, WTFMove(handler));
-    ASSERT_UNUSED(identifierResult, identifierResult.isNewEntry);
+    auto handlerIdentifier = handler->identifier();
+    auto handlerIdentifierResult = m_urlSchemeHandlersByIdentifier.add(handlerIdentifier, WTFMove(handler));
+    ASSERT_UNUSED(handlerIdentifierResult, handlerIdentifierResult.isNewEntry);
 
-    send(Messages::WebPage::RegisterURLSchemeHandler(identifier, canonicalizedScheme.value()));
+    send(Messages::WebPage::RegisterURLSchemeHandler(handlerIdentifier, canonicalizedScheme.value()));
 }
 
 WebURLSchemeHandler* WebPageProxy::urlSchemeHandlerForScheme(const String& scheme)
@@ -10015,9 +10017,9 @@ void WebPageProxy::setPrivateClickMeasurementTokenSignatureURLForTesting(const U
     websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementTokenSignatureURLForTesting(m_websiteDataStore->sessionID(), url), WTFMove(completionHandler));
 }
 
-void WebPageProxy::setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& attributeOnURL, CompletionHandler<void()>&& completionHandler)
+void WebPageProxy::setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& destinationURL, CompletionHandler<void()>&& completionHandler)
 {
-    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAttributionReportURLsForTesting(m_websiteDataStore->sessionID(), sourceURL, attributeOnURL), WTFMove(completionHandler));
+    websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::SetPrivateClickMeasurementAttributionReportURLsForTesting(m_websiteDataStore->sessionID(), sourceURL, destinationURL), WTFMove(completionHandler));
 }
 
 void WebPageProxy::markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
@@ -10365,6 +10367,24 @@ WebCore::CaptureSourceOrError WebPageProxy::createRealtimeMediaSourceForSpeechRe
 SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
 {
     return SandboxExtension::HandleArray();
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&& completionHandler)
+{
+    ASSERT(!m_mediaSessionCoordinatorProxy);
+
+    sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
+
+        if (!weakThis || !success) {
+            completionHandler({ });
+            return;
+        }
+
+        weakThis->m_mediaSessionCoordinatorProxy = RemoteMediaSessionCoordinatorProxy::create(*weakThis, WTFMove(privateCoordinator));
+        completionHandler(makeWeakPtr(weakThis->m_mediaSessionCoordinatorProxy.get()));
+    });
 }
 #endif
 

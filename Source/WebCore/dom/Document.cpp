@@ -115,9 +115,12 @@
 #include "HighlightRegister.h"
 #include "History.h"
 #include "HitTestResult.h"
+#include "IDBConnectionProxy.h"
+#include "IDBOpenDBRequest.h"
 #include "IdleCallbackController.h"
 #include "ImageBitmapRenderingContext.h"
 #include "ImageLoader.h"
+#include "ImageOverlayController.h"
 #include "InspectorInstrumentation.h"
 #include "IntersectionObserver.h"
 #include "JSCustomElementInterface.h"
@@ -277,11 +280,6 @@
 
 #if ENABLE(FULLSCREEN_API)
 #include "RenderFullScreen.h"
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBConnectionProxy.h"
-#include "IDBOpenDBRequest.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -2613,12 +2611,11 @@ void Document::willBeRemovedFromFrame()
     if (is<PluginDocument>(*this))
         downcast<PluginDocument>(*this).detachFromPluginElement();
 
-#if ENABLE(POINTER_LOCK)
-    if (page())
-        page()->pointerLockController().documentDetached(*this);
-#endif
-
     if (auto* page = this->page()) {
+#if ENABLE(POINTER_LOCK)
+        page->pointerLockController().documentDetached(*this);
+#endif
+        page->imageOverlayController().documentDetached(*this);
         if (auto* validationMessageClient = page->validationMessageClient())
             validationMessageClient->documentDetached(*this);
     }
@@ -3474,7 +3471,6 @@ void Document::disableWebAssembly(const String& errorMessage)
     frame()->script().disableWebAssembly(errorMessage);
 }
 
-#if ENABLE(INDEXED_DATABASE)
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
 {
     if (!m_idbConnectionProxy) {
@@ -3485,7 +3481,6 @@ IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
     }
     return m_idbConnectionProxy.get();
 }
-#endif
 
 SocketProvider* Document::socketProvider()
 {
@@ -5455,18 +5450,14 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
 
         clearSharedObjectPool();
 
-#if ENABLE(INDEXED_DATABASE)
         if (m_idbConnectionProxy)
             m_idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), true);
-#endif
         break;
     case NotInBackForwardCache:
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
-#if ENABLE(INDEXED_DATABASE)
         if (m_idbConnectionProxy)
             m_idbConnectionProxy->setContextSuspended(*scriptExecutionContext(), false);
-#endif
         break;
     case AboutToEnterBackForwardCache:
         break;
@@ -7449,7 +7440,7 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
     // Use the JS file provided by the Chrome client, or fallback to the default one.
     String jsString = page()->chrome().client().plugInExtraScript();
     if (!jsString || !scriptController.shouldAllowUserAgentScripts(*this))
-        jsString = String(plugInsJavaScript, sizeof(plugInsJavaScript));
+        jsString = StringImpl::createWithoutCopying(plugInsJavaScript, sizeof(plugInsJavaScript));
 
     setHasEvaluatedUserAgentScripts();
     scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(jsString), world);

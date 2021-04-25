@@ -25,8 +25,6 @@
 #include "config.h"
 #include "SQLiteIDBTransaction.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCursorInfo.h"
 #include "IndexedDB.h"
 #include "Logging.h"
@@ -225,5 +223,3 @@ void SQLiteIDBTransaction::addRemovedBlobFile(const String& removedFilename)
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

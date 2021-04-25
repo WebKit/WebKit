@@ -31,8 +31,6 @@
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <pal/SessionID.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 namespace IDBServer {
@@ -104,5 +102,3 @@ IDBSerializationContext::IDBSerializationContext(PAL::SessionID sessionID)
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif

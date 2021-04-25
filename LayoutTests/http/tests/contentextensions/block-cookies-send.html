@@ -17,7 +17,7 @@ function imageDone()
 {
 	document.getElementById("logger").innerHTML += "After the image, document.cookie is '" + document.cookie + "'<br>";
 	document.getElementById("iframe").onload = iframeDone;
-	document.getElementById("iframe").src = "http://127.0.0.1:8000/cookies/resources/echo-cookies.php";
+	document.getElementById("iframe").src = "http://127.0.0.1:8000/cookies/resources/echo-cookies.py";
 }
 
 
@@ -25,5 +25,5 @@ function imageDone()
 
 This test loads a resource that sets a cookie, then verifies that the cookie is not sent out when it should be blocked.<br>
 <div id="logger"></div>
-<img src="http://127.0.0.1:8000/cookies/resources/cookie-utility.php?queryfunction=setFooCookie" onerror="imageDone();">
+<img src="http://127.0.0.1:8000/cookies/resources/cookie-utility.py?queryfunction=setFooCookie" onerror="imageDone();">
 <iframe id="iframe" name="iframe"></iframe>

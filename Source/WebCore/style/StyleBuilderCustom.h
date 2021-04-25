@@ -77,6 +77,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageSlice);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(CaretColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Contain);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
@@ -138,6 +139,7 @@ public:
     // Custom handling of value setting only.
     static void applyValueBaselineShift(BuilderState&, CSSValue&);
     static void applyValueDirection(BuilderState&, CSSValue&);
+    static void applyInheritVerticalAlign(BuilderState&);
     static void applyValueVerticalAlign(BuilderState&, CSSValue&);
     static void applyInitialTextAlign(BuilderState&);
     static void applyValueTextAlign(BuilderState&, CSSValue&);
@@ -329,6 +331,12 @@ bool BuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrim
     return true;
 }
 
+inline void BuilderCustom::applyInheritVerticalAlign(BuilderState& builderState)
+{
+    builderState.style().setVerticalAlignLength(forwardInheritedValue(builderState.parentStyle().verticalAlignLength()));
+    builderState.style().setVerticalAlign(forwardInheritedValue(builderState.parentStyle().verticalAlign()));
+}
+
 inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -458,48 +466,38 @@ inline void BuilderCustom::applyValueSize(BuilderState& builderState, CSSValue& 
 inline void BuilderCustom::applyInheritTextIndent(BuilderState& builderState)
 {
     builderState.style().setTextIndent(Length { builderState.parentStyle().textIndent() });
-#if ENABLE(CSS3_TEXT)
     builderState.style().setTextIndentLine(builderState.parentStyle().textIndentLine());
     builderState.style().setTextIndentType(builderState.parentStyle().textIndentType());
-#endif
 }
 
 inline void BuilderCustom::applyInitialTextIndent(BuilderState& builderState)
 {
     builderState.style().setTextIndent(RenderStyle::initialTextIndent());
-#if ENABLE(CSS3_TEXT)
     builderState.style().setTextIndentLine(RenderStyle::initialTextIndentLine());
     builderState.style().setTextIndentType(RenderStyle::initialTextIndentType());
-#endif
 }
 
 inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSValue& value)
 {
     Length lengthOrPercentageValue;
-#if ENABLE(CSS3_TEXT)
     TextIndentLine textIndentLineValue = RenderStyle::initialTextIndentLine();
     TextIndentType textIndentTypeValue = RenderStyle::initialTextIndentType();
-#endif
     for (auto& item : downcast<CSSValueList>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(item.get());
         if (!primitiveValue.valueID())
             lengthOrPercentageValue = primitiveValue.convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData());
-#if ENABLE(CSS3_TEXT)
-        else if (primitiveValue.valueID() == CSSValueWebkitEachLine)
+        else if (primitiveValue.valueID() == CSSValueEachLine)
             textIndentLineValue = TextIndentLine::EachLine;
-        else if (primitiveValue.valueID() == CSSValueWebkitHanging)
+        else if (primitiveValue.valueID() == CSSValueHanging)
             textIndentTypeValue = TextIndentType::Hanging;
-#endif
     }
 
     if (lengthOrPercentageValue.isUndefined())
         return;
 
     builderState.style().setTextIndent(WTFMove(lengthOrPercentageValue));
-#if ENABLE(CSS3_TEXT)
     builderState.style().setTextIndentLine(textIndentLineValue);
     builderState.style().setTextIndentType(textIndentTypeValue);
-#endif
 }
 
 enum BorderImageType { BorderImage, WebkitMaskBoxImage };
@@ -795,6 +793,48 @@ inline void BuilderCustom::applyValueOutlineStyle(BuilderState& builderState, CS
     builderState.style().setOutlineStyle(primitiveValue);
 }
 
+inline void BuilderCustom::applyInitialCaretColor(BuilderState& builderState)
+{
+    if (builderState.applyPropertyToRegularStyle())
+        builderState.style().setHasAutoCaretColor();
+    if (builderState.applyPropertyToVisitedLinkStyle())
+        builderState.style().setHasVisitedLinkAutoCaretColor();
+}
+
+inline void BuilderCustom::applyInheritCaretColor(BuilderState& builderState)
+{
+    Color color = builderState.parentStyle().caretColor();
+    if (builderState.applyPropertyToRegularStyle()) {
+        if (builderState.parentStyle().hasAutoCaretColor())
+            builderState.style().setHasAutoCaretColor();
+        else
+            builderState.style().setCaretColor(color);
+    }
+    if (builderState.applyPropertyToVisitedLinkStyle()) {
+        if (builderState.parentStyle().hasVisitedLinkAutoCaretColor())
+            builderState.style().setHasVisitedLinkAutoCaretColor();
+        else
+            builderState.style().setVisitedLinkCaretColor(color);
+    }
+}
+
+inline void BuilderCustom::applyValueCaretColor(BuilderState& builderState, CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    if (builderState.applyPropertyToRegularStyle()) {
+        if (primitiveValue.valueID() == CSSValueAuto)
+            builderState.style().setHasAutoCaretColor();
+        else
+            builderState.style().setCaretColor(builderState.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ false));
+    }
+    if (builderState.applyPropertyToVisitedLinkStyle()) {
+        if (primitiveValue.valueID() == CSSValueAuto)
+            builderState.style().setHasVisitedLinkAutoCaretColor();
+        else
+            builderState.style().setVisitedLinkCaretColor(builderState.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
+    }
+}
+
 inline void BuilderCustom::applyInitialClip(BuilderState& builderState)
 {
     builderState.style().setClip(Length(), Length(), Length(), Length());
@@ -1021,7 +1061,7 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
                 family = builderState.document().settings().standardFontFamily();
             else {
                 isGenericFamily = true;
-                family = CSSPropertyParserHelpers::genericFontFamilyFromValueID(contentValue.valueID());
+                family = CSSPropertyParserHelpers::genericFontFamily(contentValue.valueID());
             }
         }
 

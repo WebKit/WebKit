@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #include <CoreGraphics/CGDisplayConfiguration.h>

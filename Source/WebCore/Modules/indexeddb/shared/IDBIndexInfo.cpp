@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBIndexInfo.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -69,5 +67,3 @@ String IDBIndexInfo::condensedLoggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

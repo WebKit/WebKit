@@ -59,8 +59,8 @@ public:
         return instance;
     }
 
+    static bool isAddFastAndNonObservable(Structure*);
     bool isIteratorProtocolFastAndNonObservable();
-    bool canCloneFastAndNonObservable(Structure*);
     JSSet* clone(JSGlobalObject*, VM&, Structure*);
 
 private:

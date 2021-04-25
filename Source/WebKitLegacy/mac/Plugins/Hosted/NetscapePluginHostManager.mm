@@ -135,7 +135,7 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
         return MACH_PORT_NULL;
 
     mach_port_t renderServerPort = CARenderServerGetPort();
-    if (renderServerPort == MACH_PORT_NULL)
+    if (!MACH_PORT_VALID(renderServerPort))
         return false;
 
     NSString *pluginHostAppPath = [[NSBundle bundleForClass:[WebNetscapePluginPackage class]] pathForAuxiliaryExecutable:pluginHostAppName];

@@ -42,6 +42,7 @@ public:
     void parseHeader(const SharedBuffer::DataSegment&, bool allDataReceived);
     void decodeFrame(size_t index, ScalableImageDecoderFrame&, const SharedBuffer::DataSegment&);
     size_t imageCount() const;
+    double repetitionCount() const;
 
 private:
     RefPtr<WebCore::AVIFImageDecoder> m_decoder;

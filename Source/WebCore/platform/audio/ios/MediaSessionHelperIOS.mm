@@ -96,10 +96,6 @@ public:
     ~MediaSessionHelperiOS();
 
     void externalOutputDeviceAvailableDidChange();
-    void applicationWillEnterForeground(MediaSessionHelperClient::SuspendedUnderLock);
-    void applicationDidEnterBackground(MediaSessionHelperClient::SuspendedUnderLock);
-    void applicationWillBecomeInactive();
-    void applicationDidBecomeActive();
 #if HAVE(CELESTIAL)
     void mediaServerConnectionDied();
     void updateCarPlayIsConnected(Optional<bool>&&);
@@ -110,17 +106,11 @@ public:
 #endif
 
 private:
-    using HasAvailableTargets = MediaSessionHelperClient::HasAvailableTargets;
-    using PlayingToAutomotiveHeadUnit = MediaSessionHelperClient::PlayingToAutomotiveHeadUnit;
-    using ShouldPause = MediaSessionHelperClient::ShouldPause;
-    using SupportsAirPlayVideo = MediaSessionHelperClient::SupportsAirPlayVideo;
-    using SuspendedUnderLock = MediaSessionHelperClient::SuspendedUnderLock;
-
     void setIsPlayingToAutomotiveHeadUnit(bool);
 
     void providePresentingApplicationPID(int) final;
-    void startMonitoringWirelessRoutes() final;
-    void stopMonitoringWirelessRoutes() final;
+    void startMonitoringWirelessRoutesInternal() final;
+    void stopMonitoringWirelessRoutesInternal() final;
 
     RetainPtr<WebMediaSessionHelper> m_objcObserver;
 #if HAVE(CELESTIAL)
@@ -166,11 +156,92 @@ void MediaSessionHelper::removeClient(MediaSessionHelperClient& client)
     m_clients.remove(client);
 }
 
+void MediaSessionHelper::activeAudioRouteDidChange(ShouldPause shouldPause)
+{
+    for (auto& client : m_clients)
+        client.activeAudioRouteDidChange(shouldPause);
+}
+
+void MediaSessionHelper::applicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)
+{
+    for (auto& client : m_clients)
+        client.applicationWillEnterForeground(suspendedUnderLock);
+}
+
+void MediaSessionHelper::applicationDidEnterBackground(SuspendedUnderLock suspendedUnderLock)
+{
+    for (auto& client : m_clients)
+        client.applicationDidEnterBackground(suspendedUnderLock);
+}
+
+void MediaSessionHelper::applicationWillBecomeInactive()
+{
+    for (auto& client : m_clients)
+        client.applicationWillBecomeInactive();
+}
+
+void MediaSessionHelper::applicationDidBecomeActive()
+{
+    for (auto& client : m_clients)
+        client.applicationDidBecomeActive();
+}
+
+void MediaSessionHelper::mediaServerConnectionDied()
+{
+    for (auto& client : m_clients)
+        client.mediaServerConnectionDied();
+}
+
+void MediaSessionHelper::externalOutputDeviceAvailableDidChange(HasAvailableTargets hasAvailableTargets)
+{
+    m_isExternalOutputDeviceAvailable = hasAvailableTargets == HasAvailableTargets::Yes;
+    for (auto& client : m_clients)
+        client.externalOutputDeviceAvailableDidChange(hasAvailableTargets);
+}
+
+void MediaSessionHelper::isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit playingToAutomotiveHeadUnit)
+{
+    bool newValue = playingToAutomotiveHeadUnit == PlayingToAutomotiveHeadUnit::Yes;
+    if (newValue == m_isPlayingToAutomotiveHeadUnit)
+        return;
+
+    m_isPlayingToAutomotiveHeadUnit = newValue;
+    for (auto& client : m_clients)
+        client.isPlayingToAutomotiveHeadUnitDidChange(playingToAutomotiveHeadUnit);
+}
+
+void MediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, Ref<MediaPlaybackTarget>&& playbackTarget)
+{
+    m_playbackTarget = WTFMove(playbackTarget);
+    m_activeVideoRouteSupportsAirPlayVideo = supportsAirPlayVideo == SupportsAirPlayVideo::Yes;
+    for (auto& client : m_clients)
+        client.activeVideoRouteDidChange(supportsAirPlayVideo, *m_playbackTarget);
+}
+
+void MediaSessionHelper::startMonitoringWirelessRoutes()
+{
+    if (m_monitoringWirelessRoutesCount++)
+        return;
+    startMonitoringWirelessRoutesInternal();
+}
+
+void MediaSessionHelper::stopMonitoringWirelessRoutes()
+{
+    if (!m_monitoringWirelessRoutesCount) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (--m_monitoringWirelessRoutesCount)
+        return;
+    stopMonitoringWirelessRoutesInternal();
+}
+
 MediaSessionHelperiOS::MediaSessionHelperiOS()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     m_objcObserver = adoptNS([[WebMediaSessionHelper alloc] initWithCallback:this]);
-    m_isExternalOutputDeviceAvailable = [m_objcObserver hasWirelessTargetsAvailable];
+    setIsExternalOutputDeviceAvailable([m_objcObserver hasWirelessTargetsAvailable]);
     END_BLOCK_OBJC_EXCEPTIONS
 
 #if HAVE(CELESTIAL)
@@ -207,11 +278,8 @@ void MediaSessionHelperiOS::providePresentingApplicationPID(int pid)
 #endif
 }
 
-void MediaSessionHelperiOS::startMonitoringWirelessRoutes()
+void MediaSessionHelperiOS::startMonitoringWirelessRoutesInternal()
 {
-    if (m_monitoringWirelessRoutesCount++)
-        return;
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 #if !PLATFORM(WATCHOS)
     [m_objcObserver startMonitoringAirPlayRoutes];
@@ -219,16 +287,8 @@ void MediaSessionHelperiOS::startMonitoringWirelessRoutes()
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void MediaSessionHelperiOS::stopMonitoringWirelessRoutes()
+void MediaSessionHelperiOS::stopMonitoringWirelessRoutesInternal()
 {
-    if (!m_monitoringWirelessRoutesCount) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (--m_monitoringWirelessRoutesCount)
-        return;
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 #if !PLATFORM(WATCHOS)
     [m_objcObserver stopMonitoringAirPlayRoutes];
@@ -249,8 +309,7 @@ void MediaSessionHelperiOS::mediaServerConnectionDied()
         return;
 
     m_havePresentedApplicationPID = false;
-    for (auto& client : m_clients)
-        client.mediaServerConnectionDied();
+    MediaSessionHelper::mediaServerConnectionDied();
 }
 
 void MediaSessionHelperiOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIsConnected)
@@ -270,63 +329,32 @@ void MediaSessionHelperiOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIsC
 
 void MediaSessionHelperiOS::setIsPlayingToAutomotiveHeadUnit(bool isPlaying)
 {
-    if (isPlaying == m_isPlayingToAutomotiveHeadUnit)
-        return;
-
-    m_isPlayingToAutomotiveHeadUnit = isPlaying;
-    for (auto& client : m_clients)
-        client.isPlayingToAutomotiveHeadUnitDidChange(m_isPlayingToAutomotiveHeadUnit ? PlayingToAutomotiveHeadUnit::Yes : PlayingToAutomotiveHeadUnit::No);
+    isPlayingToAutomotiveHeadUnitDidChange(isPlaying ? PlayingToAutomotiveHeadUnit::Yes : PlayingToAutomotiveHeadUnit::No);
 }
 #endif // HAVE(CELESTIAL)
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
 void MediaSessionHelperiOS::activeAudioRouteDidChange(bool shouldPause)
 {
-    for (auto& client : m_clients)
-        client.activeAudioRouteDidChange(shouldPause ? ShouldPause::Yes : ShouldPause::No);
+    MediaSessionHelper::activeAudioRouteDidChange(shouldPause ? ShouldPause::Yes : ShouldPause::No);
 }
 
 void MediaSessionHelperiOS::activeVideoRouteDidChange()
 {
-    m_playbackTarget = MediaPlaybackTargetCocoa::create();
-    m_activeVideoRouteSupportsAirPlayVideo = m_playbackTarget->supportsRemoteVideoPlayback();
-    for (auto& client : m_clients)
-        client.activeVideoRouteDidChange(m_activeVideoRouteSupportsAirPlayVideo ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No, *m_playbackTarget);
+    auto target = MediaPlaybackTargetCocoa::create();
+    auto supportsRemoteVideoPlayback = target->supportsRemoteVideoPlayback() ? SupportsAirPlayVideo::Yes : SupportsAirPlayVideo::No;
+    MediaSessionHelper::activeVideoRouteDidChange(supportsRemoteVideoPlayback, WTFMove(target));
 }
 #endif
 
-void MediaSessionHelperiOS::applicationDidBecomeActive()
-{
-    for (auto& client : m_clients)
-        client.applicationDidBecomeActive();
-}
-
-void MediaSessionHelperiOS::applicationDidEnterBackground(MediaSessionHelperClient::SuspendedUnderLock underLock)
-{
-    for (auto& client : m_clients)
-        client.applicationDidEnterBackground(underLock);
-}
-
-void MediaSessionHelperiOS::applicationWillBecomeInactive()
-{
-    for (auto& client : m_clients)
-        client.applicationWillBecomeInactive();
-}
-
-void MediaSessionHelperiOS::applicationWillEnterForeground(MediaSessionHelperClient::SuspendedUnderLock underLock)
-{
-    for (auto& client : m_clients)
-        client.applicationWillEnterForeground(underLock);
-}
-
 void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
 {
+    HasAvailableTargets hasAvailableTargets;
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    m_isExternalOutputDeviceAvailable = [m_objcObserver hasWirelessTargetsAvailable];
+    hasAvailableTargets = [m_objcObserver hasWirelessTargetsAvailable] ? HasAvailableTargets::Yes : HasAvailableTargets::No;
     END_BLOCK_OBJC_EXCEPTIONS
 
-    for (auto& client : m_clients)
-        client.externalOutputDeviceAvailableDidChange(m_isExternalOutputDeviceAvailable ? HasAvailableTargets::Yes : HasAvailableTargets::No);
+    MediaSessionHelper::externalOutputDeviceAvailableDidChange(hasAvailableTargets);
 }
 
 @implementation WebMediaSessionHelper

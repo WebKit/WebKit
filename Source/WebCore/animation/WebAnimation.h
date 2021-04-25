@@ -75,7 +75,6 @@ public:
     Optional<Seconds> currentTime(Optional<Seconds> = WTF::nullopt) const;
     ExceptionOr<void> setCurrentTime(Optional<Seconds>);
 
-    enum class Silently : uint8_t { Yes, No };
     double playbackRate() const { return m_playbackRate + 0; }
     void setPlaybackRate(double);
 
@@ -94,7 +93,7 @@ public:
     using FinishedPromise = DOMPromiseProxyWithResolveCallback<IDLInterface<WebAnimation>>;
     FinishedPromise& finished() { return m_finishedPromise.get(); }
 
-    virtual void cancel(Silently = Silently::No);
+    virtual void cancel();
     ExceptionOr<void> finish();
     ExceptionOr<void> play();
     void updatePlaybackRate(double);
@@ -158,6 +157,7 @@ protected:
 private:
     enum class DidSeek : uint8_t { Yes, No };
     enum class SynchronouslyNotify : uint8_t { Yes, No };
+    enum class Silently : uint8_t { Yes, No };
     enum class RespectHoldTime : uint8_t { Yes, No };
     enum class AutoRewind : uint8_t { Yes, No };
     enum class TimeToRunPendingTask : uint8_t { NotScheduled, ASAP, WhenReady };
@@ -175,7 +175,7 @@ private:
     ExceptionOr<void> play(AutoRewind);
     void runPendingPauseTask();
     void runPendingPlayTask();
-    void resetPendingTasks(Silently = Silently::No);
+    void resetPendingTasks();
     void setEffectInternal(RefPtr<AnimationEffect>&&, bool = false);
     void setTimelineInternal(RefPtr<AnimationTimeline>&&);
     bool isEffectInvalidationSuspended() { return m_suspendCount; }

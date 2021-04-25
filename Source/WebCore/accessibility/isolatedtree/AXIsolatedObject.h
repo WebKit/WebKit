@@ -373,6 +373,7 @@ private:
 
     // PlainTextRange support.
     PlainTextRange selectedTextRange() const override;
+    int insertionPointLineNumber() const override;
     PlainTextRange doAXRangeForLine(unsigned) const override;
     String doAXStringForRange(const PlainTextRange&) const override;
     PlainTextRange doAXRangeForPosition(const IntPoint&) const override;
@@ -386,8 +387,6 @@ private:
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
 
     // TODO: Text ranges and selection.
-    unsigned selectionStart() const override;
-    unsigned selectionEnd() const override;
     String selectedText() const override;
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;

@@ -231,7 +231,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     jit.emitFunctionPrologue();
     jit.subPtr(MacroAssembler::TrustedImm32(totalFrameSize), MacroAssembler::stackPointerRegister);
-    jit.store64(CCallHelpers::TrustedImm64(0), CCallHelpers::addressFor(CallFrameSlot::codeBlock));
+    jit.emitZeroToCallFrameHeader(CallFrameSlot::codeBlock);
 
     for (const RegisterAtOffset& regAtOffset : registersToSpill) {
         GPRReg reg = regAtOffset.reg().gpr();
@@ -367,12 +367,14 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 
     if (!!moduleInformation.memory) {
         GPRReg baseMemory = pinnedRegs.baseMemoryPointer;
-        GPRReg scratchOrBoundsCheckingSize = stackLimitGPR;
+        GPRReg scratchOrBoundsCheckingSize = InvalidGPRReg;
         auto mode = instance()->memoryMode();
 
         if (isARM64E()) {
             if (mode != Wasm::MemoryMode::Signaling)
                 scratchOrBoundsCheckingSize = pinnedRegs.boundsCheckingSizeRegister;
+            else
+                scratchOrBoundsCheckingSize = stackLimitGPR;
             jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedBoundsCheckingSize()), scratchOrBoundsCheckingSize);
         } else {
             if (mode != Wasm::MemoryMode::Signaling)
@@ -380,7 +382,7 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         }
 
         jit.loadPtr(CCallHelpers::Address(scratchGPR, Wasm::Instance::offsetOfCachedMemory()), baseMemory);
-        jit.cageConditionally(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchOrBoundsCheckingSize);
+        jit.cageConditionallyAndUntag(Gigacage::Primitive, baseMemory, scratchOrBoundsCheckingSize, scratchGPR);
     }
 
     // We use this callee to indicate how to unwind past these types of frames:
@@ -390,13 +392,11 @@ MacroAssemblerCodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
         m_jsToWasmICCallee.set(vm, this, JSToWasmICCallee::create(vm, globalObject(), this));
     jit.storePtr(CCallHelpers::TrustedImmPtr(m_jsToWasmICCallee.get()), CCallHelpers::addressFor(CallFrameSlot::callee));
 
-    {
-        // FIXME: Currently we just do an indirect jump. But we should teach the Module
-        // how to repatch us:
-        // https://bugs.webkit.org/show_bug.cgi?id=196570
-        jit.loadPtr(entrypointLoadLocation(), scratchGPR);
-        jit.call(scratchGPR, WasmEntryPtrTag);
-    }
+    // FIXME: Currently we just do an indirect jump. But we should teach the Module
+    // how to repatch us:
+    // https://bugs.webkit.org/show_bug.cgi?id=196570
+    jit.loadPtr(entrypointLoadLocation(), scratchGPR);
+    jit.call(scratchGPR, WasmEntryPtrTag);
 
     marshallJSResult(jit, signature, wasmCallInfo, savedResultRegisters);
 

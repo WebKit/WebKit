@@ -27,6 +27,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <wtf/RetainPtr.h>
+
 @class UIImage;
 
 namespace WebKit {

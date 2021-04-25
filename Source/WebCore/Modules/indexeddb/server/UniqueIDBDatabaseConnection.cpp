@@ -26,8 +26,6 @@
 #include "config.h"
 #include "UniqueIDBDatabaseConnection.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBConnectionToClient.h"
 #include "IDBTransactionInfo.h"
 #include "Logging.h"
@@ -233,5 +231,3 @@ void UniqueIDBDatabaseConnection::deleteTransaction(UniqueIDBDatabaseTransaction
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

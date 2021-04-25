@@ -31,11 +31,13 @@
 #include "RenderElement.h"
 #include "RenderStyleConstants.h"
 #include "WebAnimationTypes.h"
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
 class KeyframeEffectStack;
 class RenderStyle;
+class WebAnimation;
 
 struct Styleable {
     Element& element;
@@ -147,6 +149,18 @@ struct Styleable {
         element.setLastStyleChangeEventStyle(pseudoId, WTFMove(style));
     }
 
+    void elementWasRemoved() const;
+
+    void willChangeRenderer() const;
+    void cancelDeclarativeAnimations() const;
+
+    void animationWasAdded(WebAnimation&) const;
+    void animationWasRemoved(WebAnimation&) const;
+
+    void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&) const;
+
+    void updateCSSAnimations(const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const RenderStyle* parentElementStyle) const;
+    void updateCSSTransitions(const RenderStyle& currentStyle, const RenderStyle& newStyle) const;
 };
 
 } // namespace WebCore

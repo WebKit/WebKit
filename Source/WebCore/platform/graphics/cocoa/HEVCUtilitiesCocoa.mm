@@ -32,8 +32,9 @@
 #import "HEVCUtilities.h"
 #import "MediaCapabilitiesInfo.h"
 
-#import <pal/cocoa/AVFoundationSoftLink.h>
+#import <wtf/RobinHoodHashMap.h>
 #import <wtf/text/StringToIntegerConversion.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
 
 #import "VideoToolboxSoftLink.h"
 
@@ -126,11 +127,11 @@ bool validateHEVCParameters(HEVCParameterSet& parameters, MediaCapabilitiesInfo&
 
 static Optional<CMVideoCodecType> codecTypeForDoViCodecString(const String& codecString)
 {
-    static auto map = makeNeverDestroyed<HashMap<String, CMVideoCodecType>>({
-        { "avc1", kCMVideoCodecType_H264 },
-        { "avc3", kCMVideoCodecType_H264 },
-        { "hvc1", kCMVideoCodecType_HEVC },
-        { "hev1", kCMVideoCodecType_HEVC },
+    static auto map = makeNeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<String, CMVideoCodecType>>({
+        { "avc1"_s, kCMVideoCodecType_H264 },
+        { "avc3"_s, kCMVideoCodecType_H264 },
+        { "hvc1"_s, kCMVideoCodecType_HEVC },
+        { "hev1"_s, kCMVideoCodecType_HEVC },
     });
 
     auto findResult = map.get().find(codecString);

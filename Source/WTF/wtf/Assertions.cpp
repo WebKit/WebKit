@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2019 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc.  All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2011 University of Szeged. All rights reserved.
  *
@@ -37,6 +37,7 @@
 #include <wtf/LoggingAccumulator.h>
 #include <wtf/PrintStream.h>
 #include <wtf/StackTrace.h>
+#include <wtf/WTFConfig.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -114,7 +115,14 @@ WTF_ATTRIBUTE_PRINTF(1, 0) static String createWithFormatAndArguments(const char
     return StringImpl::create(reinterpret_cast<const LChar*>(buffer.data()), length);
 }
 
+#if PLATFORM(COCOA)
+void disableForwardingVPrintfStdErrToOSLog()
+{
+    g_wtfConfig.disableForwardingVPrintfStdErrToOSLog = true;
 }
+#endif
+
+} // namespace WTF
 
 extern "C" {
 
@@ -147,10 +155,12 @@ static void vprintf_stderr_common(const char* format, va_list args)
     }
 
 #if PLATFORM(COCOA)
-    va_list copyOfArgs;
-    va_copy(copyOfArgs, args);
-    os_log_with_args(OS_LOG_DEFAULT, OS_LOG_TYPE_DEFAULT, format, copyOfArgs, __builtin_return_address(0));
-    va_end(copyOfArgs);
+    if (!g_wtfConfig.disableForwardingVPrintfStdErrToOSLog) {
+        va_list copyOfArgs;
+        va_copy(copyOfArgs, args);
+        os_log_with_args(OS_LOG_DEFAULT, OS_LOG_TYPE_DEFAULT, format, copyOfArgs, __builtin_return_address(0));
+        va_end(copyOfArgs);
+    }
 #endif
 
     // Fall through to write to stderr in the same manner as other platforms.

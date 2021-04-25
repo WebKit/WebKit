@@ -3,7 +3,7 @@
 <script src="../../../resources/ui-helper.js"></script>
 <script src="../../../resources/js-test-pre.js"></script>
 <body>
-<video src="../../content/audio-tracks.mp4" style="position: absolute; left: 0; top: 0; width: 400px;" controls autoplay muted playsinline></video>
+<video src="../../content/audio-tracks.mp4" style="position: absolute; left: 0; top: 0; width: 600px;" controls autoplay muted playsinline></video>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
@@ -12,6 +12,8 @@ description("Clicking on a track in the tracks contextmenu.");
 
 const media = document.querySelector("video");
 const shadowRoot = window.internals.shadowRoot(media);
+
+window.internals.setMediaControlsMaximumRightContainerButtonCountOverride(media, 100); // A finite value larger than anything likely.
 
 let selectedTrack = null;
 
@@ -42,7 +44,7 @@ async function clickOnFrenchAudioTrack()
     debug("Selecting 'French' track...");
     let contextmenu = await getTracksContextMenu();
     let languagesMenu = contextmenu[0].children.find((submenu) => submenu.title === "Languages");
-    if (languagesMenu.children?.length) {
+    if (languagesMenu?.children?.length) {
         await UIHelper.chooseMenuAction(languagesMenu.title);
         await UIHelper.delayFor(500); // give time for the UIMenu to animate
     }
@@ -54,7 +56,7 @@ async function clickOnSpanishAudioTrack()
     debug("Selecting 'Spanish' track...");
     let contextmenu = await getTracksContextMenu();
     let languagesMenu = contextmenu[0].children.find((submenu) => submenu.title === "Languages");
-    if (languagesMenu.children?.length) {
+    if (languagesMenu?.children?.length) {
         await UIHelper.chooseMenuAction(languagesMenu.title);
         await UIHelper.delayFor(500); // give time for the UIMenu to animate
     }

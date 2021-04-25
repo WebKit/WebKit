@@ -138,6 +138,14 @@ webkit.org/b/215405 accessibility/gtk/caret-browsing-select-focus.html [ Failure
 webkit.org/b/215405 accessibility/gtk/combobox-descendants-orientation-crash.html [ Failure ]
 webkit.org/b/215405 accessibility/gtk/text-for-range-combo-box.html [ Failure ]
 webkit.org/b/215405 inspector/dom/getAccessibilityPropertiesForNode.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-embedded-objects.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-entry-and-password.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-formatted.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-heading.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-list-items.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-simple.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-table-cells.html [ Failure ]
+webkit.org/b/223862 accessibility/gtk/text-for-range-with-link.html [ Failure ]
 
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
@@ -188,6 +196,10 @@ webkit.org/b/216777 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transforms/animation/list-interpolation.html [ Pass Crash ]
 webkit.org/b/216777 imported/w3c/web-platform-tests/css/css-transitions/parsing/transition-delay-invalid.html [ Pass Crash ]
 webkit.org/b/216777 fast/table/007.html [ Pass Crash ]
+
+# Modern-media-controls support
+webkit.org/b/182502 http/tests/media/modern-media-controls [ Skip ]
+webkit.org/b/182502 media/modern-media-controls [ Skip ]
 
 # Navigation
 webkit.org/b/218349 fast/forms/focus2.html [ Failure ]
@@ -421,7 +433,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-tra
 webkit.org/b/210341 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure ]
 webkit.org/b/210342 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-trackdefaults.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefault.html [ Failure ]
-webkit.org/b/175876 imported/w3c/web-platform-tests/media-source/mediasource-endofstream-invaliderror.html [ Pass Crash ]
 
 # CSS filters related failures
 webkit.org/b/99026 css3/filters/effect-brightness.html [ Failure ]
@@ -1054,8 +1065,6 @@ webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ S
 
 webkit.org/b/209403 fast/forms/placeholder-content-center.html [ ImageOnlyFailure ]
 
-webkit.org/b/209725 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Failure ]
-
 webkit.org/b/209727 fast/forms/placeholder-content-line-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/210487 http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with-interaction.py [ Failure ]
@@ -1150,6 +1159,8 @@ webkit.org/b/210926 fast/mediastream/getDisplayMedia-max-constraints3.html [ Ski
 
 webkit.org/b/212232 editing/async-clipboard/clipboard-read-while-pasting.html [ Crash ]
 
+webkit.org/b/223960 editing/execCommand/insert-image-in-composed-list.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1210,8 +1221,6 @@ webkit.org/b/127280 media/audio-concurrent-supported.html [ Failure Timeout Pass
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure Pass ]
 
 # Tests showing flakiness in the bot
-webkit.org/b/131533 media/track/track-remove-active-cue-crash.html [ Timeout Pass Crash ]
-
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure ]
 
 # Fast overflow.
@@ -1286,8 +1295,6 @@ webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 webkit.org/b/177527 [ Release ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/179356 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure ]
-
-webkit.org/b/179444 http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html [ Pass Crash ]
 
 webkit.org/b/178784 [ Release ] inspector/console/webcore-logging.html [ Pass Crash ]
 
@@ -1435,7 +1442,6 @@ webkit.org/b/198830 [ Release ] media/video-fullscreen-restriction-removed.html 
 webkit.org/b/198830 [ Release ] media/video-orientation.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/W3C/video/networkState/networkState_during_loadstart.html [ Pass Crash ]
 
-webkit.org/b/198830 [ Release ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/no-autoplay-with-user-gesture-requirement.html [ Pass Crash ]
 webkit.org/b/198830 [ Release ] media/track/audio-track-add-remove.html [ Pass Crash ]
@@ -1561,6 +1567,16 @@ webkit.org/b/214801 fast/forms/datalist/datalist-show-hide.html [ Failure Pass ]
 
 webkit.org/b/214802 http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Failure Pass ]
 
+webkit.org/b/224105 compositing/video/video-clip-change-src.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/224106 fast/forms/textfield-onchange-without-focus.html [ ImageOnlyFailure Pass ]
+
+webkit.org/b/224108 gamepad/gamepad-visibility-1.html [ Failure Pass ]
+
+webkit.org/b/224112 media/video-as-img-output-pts.html [ Crash Timeout Pass ]
+
+webkit.org/b/224117 intersection-observer/intersection-observer-keeps-js-wrapper-of-target-alive.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1641,7 +1657,7 @@ webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-ori
 # EventSender::dumpFilenameBeingDragged not implemented.
 webkit.org/b/61826 fast/events/drag-image-filename.html [ Timeout ]
 
-webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure ]
+webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
 
 webkit.org/b/147518 inspector/debugger/nested-inspectors.html [ Timeout ]
 
@@ -1751,6 +1767,10 @@ webkit.org/b/211566 http/tests/resourceLoadStatistics/exemptDomains/app-bound-do
 webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
 
 webkit.org/b/219979 gamepad/gamepad-polling-access.html [ Timeout Pass ]
+
+webkit.org/b/224073 media/non-existent-video-playback-interrupted.html [ Timeout Pass ]
+
+webkit.org/b/224074 webrtc/concurrentVideoPlayback.html [ Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -2446,6 +2466,20 @@ webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_mo
 webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure Pass ]
 
 webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
+
+webkit.org/b/223980 editing/deleting/insert-in-orphaned-selection-crash.html [ Failure ]
+
+webkit.org/b/223981 inspector/canvas/recording-2d-saves.html [ Failure ]
+
+webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-missing-varyings.html [ Failure ]
+webkit.org/b/224062 webgl/1.0.3/conformance/glsl/misc/shaders-with-varyings.html [ Failure ]
+webkit.org/b/224062 webgl/1.0.3/conformance/rendering/gl-scissor-test.html [ Failure ]
+
+webkit.org/b/222495 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
+
+webkit.org/b/224067 media/media-source/media-source-timestampoffset-trim.html [ Failure ]
+
+webkit.org/b/224076 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

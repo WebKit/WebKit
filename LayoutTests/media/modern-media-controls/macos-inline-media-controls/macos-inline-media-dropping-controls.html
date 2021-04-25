@@ -10,15 +10,20 @@ window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
 mediaControls.shouldUseSingleBarLayout = true;
+mediaControls.maximumRightContainerButtonCountOverride = 100; // A finite value larger than anything likely.
+
+// Trigger a layout so that `maximumRightContainerButtonCountOverride` takes effect.
+mediaControls.needsLayout = true;
+scheduler.flushScheduledLayoutCallbacks();
 
 const droppableControls = [
-    mediaControls.skipForwardButton,
-    mediaControls.skipBackButton,
-    mediaControls.airplayButton,
-    mediaControls.tracksButton,
-    mediaControls.pipButton,
     mediaControls.fullscreenButton,
-    mediaControls.muteButton
+    mediaControls.airplayButton,
+    mediaControls.muteButton,
+    mediaControls.skipBackButton,
+    mediaControls.skipForwardButton,
+    mediaControls.pipButton,
+    mediaControls.tracksButton,
 ];
 
 function ready()
@@ -28,11 +33,16 @@ function ready()
 
 shouldBecomeEqual("ready()", "true", () => {
     debug("");
-    droppableControls.forEach(control => {
-        while (control.visible)
-            mediaControls.width--;
-        debug(`${control.constructor.name} was dropped at ${mediaControls.width + 1}.`);
-    });
+    while (droppableControls.length) {
+        for (let i = droppableControls.length - 1; i >= 0; --i) {
+            if (!droppableControls[i].visible) {
+                debug(`${droppableControls[i].constructor.name} was dropped at ${mediaControls.width + 1}.`);
+                droppableControls.splice(i, 1);
+            }
+        }
+
+        mediaControls.width--;
+    }
     debug("");
     finishJSTest();
 });

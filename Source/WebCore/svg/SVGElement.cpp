@@ -55,13 +55,14 @@
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGElement);
 
-static NEVER_INLINE HashMap<AtomStringImpl*, CSSPropertyID> createAttributeNameToCSSPropertyIDMap()
+static NEVER_INLINE MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, CSSPropertyID> createAttributeNameToCSSPropertyIDMap()
 {
     using namespace HTMLNames;
     using namespace SVGNames;
@@ -141,16 +142,16 @@ static NEVER_INLINE HashMap<AtomStringImpl*, CSSPropertyID> createAttributeNameT
         &yAttr.get(),
     };
 
-    HashMap<AtomStringImpl*, CSSPropertyID> map;
+    MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, CSSPropertyID> map;
 
     for (auto& name : attributeNames) {
         const AtomString& localName = name->localName();
-        map.add(localName.impl(), cssPropertyID(localName));
+        map.add(localName, cssPropertyID(localName));
     }
 
     // FIXME: When CSS supports "transform-origin" this special case can be removed,
     // and we can add transform_originAttr to the table above instead.
-    map.add(transform_originAttr->localName().impl(), CSSPropertyTransformOrigin);
+    map.add(transform_originAttr->localName(), CSSPropertyTransformOrigin);
 
     return map;
 }
@@ -724,7 +725,7 @@ QualifiedName SVGElement::animatableAttributeForName(const AtomString& localName
             &SVGNames::zAttr.get(),
             &SVGNames::hrefAttr.get(),
         };
-        HashMap<AtomString, QualifiedName> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, QualifiedName> map;
         for (auto& name : names) {
             auto addResult = map.add(name->localName(), *name);
             ASSERT_UNUSED(addResult, addResult.isNewEntry);
@@ -780,7 +781,7 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
         return CSSPropertyInvalid;
 
     static const auto properties = makeNeverDestroyed(createAttributeNameToCSSPropertyIDMap());
-    return properties.get().get(attrName.localName().impl());
+    return properties.get().get(attrName.localName());
 }
 
 bool SVGElement::isPresentationAttribute(const QualifiedName& name) const

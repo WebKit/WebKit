@@ -31,6 +31,7 @@
 #include "FontCache.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
+#include "InMemoryDisplayList.h"
 #include "LayoutRect.h"
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
@@ -38,6 +39,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -50,7 +52,7 @@ static bool useBackslashAsYenSignForFamily(const AtomString& family)
     if (family.isEmpty())
         return false;
     static const auto set = makeNeverDestroyed([] {
-        HashSet<AtomString> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
         auto add = [&set] (const char* name, std::initializer_list<UChar> unicodeName) {
             unsigned nameLength = strlen(name);
             set.add(AtomString { name, nameLength, AtomString::ConstructFromLiteral });
@@ -150,7 +152,7 @@ bool FontCascade::isCurrent(const FontSelector& fontSelector) const
 {
     if (!m_fonts)
         return false;
-    if (m_fonts->generation() != FontCache::singleton().generation())
+    if (m_fonts->generation() != fontSelector.fontCache().generation())
         return false;
     if (m_fonts->fontSelectorVersion() != fontSelector.version())
         return false;
@@ -168,7 +170,7 @@ void FontCascade::updateFonts(Ref<FontCascadeFonts>&& fonts) const
 
 void FontCascade::update(RefPtr<FontSelector>&& fontSelector) const
 {
-    FontCache::singleton().updateFontCascade(*this, WTFMove(fontSelector));
+    FontCache::fontCacheFallbackToSingleton(fontSelector).updateFontCascade(*this, WTFMove(fontSelector));
 }
 
 GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
@@ -210,7 +212,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
     drawEmphasisMarks(context, glyphBuffer, mark, startPoint);
 }
 
-std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
+std::unique_ptr<DisplayList::InMemoryDisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(!context.paintingDisabled());
     unsigned destination = to.valueOr(run.length());
@@ -226,7 +228,7 @@ std::unique_ptr<DisplayList::DisplayList> FontCascade::displayListForTextRun(Gra
     if (glyphBuffer.isEmpty())
         return nullptr;
     
-    std::unique_ptr<DisplayList::DisplayList> displayList = makeUnique<DisplayList::DisplayList>();
+    std::unique_ptr<DisplayList::InMemoryDisplayList> displayList = makeUnique<DisplayList::InMemoryDisplayList>();
     GraphicsContext recordingContext([&](GraphicsContext& displayListContext) {
         return makeUnique<DisplayList::Recorder>(displayListContext, *displayList, context.state(), FloatRect(), AffineTransform(), nullptr, DisplayList::DrawGlyphsRecorder::DrawGlyphsDeconstruction::DontDeconstruct);
     });
@@ -382,41 +384,41 @@ bool FontCascade::hasValidAverageCharWidth() const
         return false;
 #endif
 
-    static const auto map = makeNeverDestroyed(HashSet<AtomString> {
-        "American Typewriter",
-        "Arial Hebrew",
-        "Chalkboard",
-        "Cochin",
-        "Corsiva Hebrew",
-        "Courier",
-        "Euphemia UCAS",
-        "Geneva",
-        "Gill Sans",
-        "Hei",
-        "Helvetica",
-        "Hoefler Text",
-        "InaiMathi",
-        "Kai",
-        "Lucida Grande",
-        "Marker Felt",
-        "Monaco",
-        "Mshtakan",
-        "New Peninim MT",
-        "Osaka",
-        "Raanana",
-        "STHeiti",
-        "Symbol",
-        "Times",
-        "Apple Braille",
-        "Apple LiGothic",
-        "Apple LiSung",
-        "Apple Symbols",
-        "AppleGothic",
-        "AppleMyungjo",
-        "#GungSeo",
-        "#HeadLineA",
-        "#PCMyungjo",
-        "#PilGi",
+    static const auto map = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> {
+        "American Typewriter"_s,
+        "Arial Hebrew"_s,
+        "Chalkboard"_s,
+        "Cochin"_s,
+        "Corsiva Hebrew"_s,
+        "Courier"_s,
+        "Euphemia UCAS"_s,
+        "Geneva"_s,
+        "Gill Sans"_s,
+        "Hei"_s,
+        "Helvetica"_s,
+        "Hoefler Text"_s,
+        "InaiMathi"_s,
+        "Kai"_s,
+        "Lucida Grande"_s,
+        "Marker Felt"_s,
+        "Monaco"_s,
+        "Mshtakan"_s,
+        "New Peninim MT"_s,
+        "Osaka"_s,
+        "Raanana"_s,
+        "STHeiti"_s,
+        "Symbol"_s,
+        "Times"_s,
+        "Apple Braille"_s,
+        "Apple LiGothic"_s,
+        "Apple LiSung"_s,
+        "Apple Symbols"_s,
+        "AppleGothic"_s,
+        "AppleMyungjo"_s,
+        "#GungSeo"_s,
+        "#HeadLineA"_s,
+        "#PCMyungjo"_s,
+        "#PilGi"_s,
     });
     return !map.get().contains(family);
 }

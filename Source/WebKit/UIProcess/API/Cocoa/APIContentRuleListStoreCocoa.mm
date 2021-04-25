@@ -33,7 +33,7 @@
 
 namespace API {
 
-WTF::String ContentRuleListStore::defaultStorePath(bool legacyFilename)
+WTF::String ContentRuleListStore::defaultStorePath()
 {
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSURL>> contentRuleListStoreURL;
@@ -52,10 +52,7 @@ WTF::String ContentRuleListStore::defaultStorePath(bool legacyFilename)
             url = [url URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
         }
         
-        if (legacyFilename)
-            contentRuleListStoreURL.get() = [url URLByAppendingPathComponent:@"ContentExtensions" isDirectory:YES];
-        else
-            contentRuleListStoreURL.get() = [url URLByAppendingPathComponent:@"ContentRuleLists" isDirectory:YES];
+        contentRuleListStoreURL.get() = [url URLByAppendingPathComponent:@"ContentRuleLists" isDirectory:YES];
     });
 
     if (![[NSFileManager defaultManager] createDirectoryAtURL:contentRuleListStoreURL.get().get() withIntermediateDirectories:YES attributes:nil error:nullptr])

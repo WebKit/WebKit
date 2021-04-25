@@ -26,6 +26,20 @@ describe("/api/report-commits/ with insert=true", function () {
             }
         ],
     };
+    const subversionCommitWithRevisionIdentifier = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "141977",
+                "revisionIdentifier": "127231@main",
+                "time": "2013-02-06T08:55:20.9Z",
+                "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                "message": "some message",
+            }
+        ],
+    };
     const subversionInvalidCommit = {
         "workerName": "someWorker",
         "workerPassword": "somePassword",
@@ -73,6 +87,44 @@ describe("/api/report-commits/ with insert=true", function () {
                 "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
                 "message": "some message",
             }
+        ]
+    }
+
+    const duplicatedCommitRevisionIdentifierCommits = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948",
+                "revisionIdentifier": "184276@main",
+                "time": "2017-01-20T02:52:34.577Z",
+                "author": {"name": "Zalan Bujtas", "account": "zalan@apple.com"},
+                "message": "a message",
+            },
+            {
+                "repository": "WebKit",
+                "revision": "210949",
+                "revisionIdentifier": "184276@main",
+                "time": "2017-01-20T03:23:50.645Z",
+                "author": {"name": "Chris Dumez", "account": "cdumez@apple.com"},
+                "message": "some message",
+            },
+        ]
+    }
+
+    const invalidCommitRevisionIdentifierCommits = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "WebKit",
+                "revision": "210948",
+                "revisionIdentifier": "184276",
+                "time": "2017-01-20T02:52:34.577Z",
+                "author": {"name": "Zalan Bujtas", "account": "zalan@apple.com"},
+                "message": "a message",
+            },
         ]
     }
 
@@ -145,6 +197,22 @@ describe("/api/report-commits/ with insert=true", function () {
         });
     });
 
+    it("should reject an invalid revision label", async () => {
+        await addWorkerForReport(subversionCommit);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', invalidCommitRevisionIdentifierCommits);
+        assert.strictEqual(response['status'], 'InvalidRevisionIdentifier');
+        const rows = await TestServer.database().selectAll('commits');
+        assert.strictEqual(rows.length, 0);
+    });
+
+    it("should reject with duplicated commit revision labels", async () => {
+        await addWorkerForReport(subversionCommit);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', duplicatedCommitRevisionIdentifierCommits);
+        assert.strictEqual(response['status'], 'DuplicatedRevisionIdentifier');
+        const rows = await TestServer.database().selectAll('commits');
+        assert.strictEqual(rows.length, 0);
+    });
+
     it("should store two commits from a valid worker", () => {
         return addWorkerForReport(subversionTwoCommits).then(() => {
             return TestServer.remoteAPI().postJSON('/api/report-commits/', subversionTwoCommits);
@@ -213,6 +281,25 @@ describe("/api/report-commits/ with insert=true", function () {
             assert.strictEqual(committers[0]['name'], reportedData['author']['name']);
             assert.strictEqual(committers[0]['account'], reportedData['author']['account']);
         });
+    });
+
+    it("should update an existing commit with commit label if there is one", async () => {
+        const db = TestServer.database();
+        const reportedData = subversionCommitWithRevisionIdentifier.commits[0];
+        await addWorkerForReport(subversionCommitWithRevisionIdentifier);
+        await db.insert('repositories', {'id': 1, 'name': 'WebKit'}),
+        await db.insert('commits', {'repository': 1, 'revision': reportedData['revision'], 'time': reportedData['time']})
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', subversionCommitWithRevisionIdentifier);
+        assert.strictEqual(response['status'], 'OK');
+        const commits = await db.selectAll('commits');
+        const committers = await db.selectAll('committers');
+        assert.strictEqual(commits.length, 1);
+        assert.strictEqual(committers.length, 1);
+        assert.strictEqual(commits[0]['message'], reportedData['message']);
+        assert.strictEqual(commits[0]['revision_identifier'], reportedData['revisionIdentifier']);
+        assert.strictEqual(commits[0]['committer'], committers[0]['id']);
+        assert.strictEqual(committers[0]['name'], reportedData['author']['name']);
+        assert.strictEqual(committers[0]['account'], reportedData['author']['account']);
     });
 
     it("should not update an unrelated commit", () => {
@@ -589,6 +676,111 @@ describe("/api/report-commits/ with insert=true", function () {
         }).then((response) => {
             assert.strictEqual(response['status'], 'OwnedCommitShouldNotContainTimestamp');
         });
+    });
+
+    const invalidOwnedCommitUseRevisionIdentifierAsRevison = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 1,
+                "ownedCommits": {
+                    "WebKit": {
+                        "revision": "127232@main",
+                        "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                        "message": "WebKit Commit",
+                    }
+                }
+            }
+        ]
+    };
+
+    it("should reject inserting one commit with owned commits that use revision label as revision", async () => {
+        await addWorkerForReport(invalidOwnedCommitUseRevisionIdentifierAsRevison);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', invalidOwnedCommitUseRevisionIdentifierAsRevison);
+        assert.strictEqual(response['status'], 'InvalidRevision');
+    });
+
+    const invalidRevisionIdentifierOwnedCommit = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 1,
+                "ownedCommits": {
+                    "WebKit": {
+                        "revision": "141978",
+                        "revisionIdentifier": "127232",
+                        "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                        "message": "WebKit Commit",
+                    }
+                }
+            }
+        ]
+    };
+
+    it("should reject inserting one commit with owned commits that have invalid revision label", async () => {
+        await addWorkerForReport(invalidRevisionIdentifierOwnedCommit);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', invalidRevisionIdentifierOwnedCommit);
+        assert.strictEqual(response['status'], 'InvalidRevisionIdentifier');
+    });
+
+    const invalidAuthorOwnedCommit = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 1,
+                "ownedCommits": {
+                    "WebKit": {
+                        "revision": "141978",
+                        "revisionIdentifier": "127232@main",
+                        "author": null,
+                        "message": "WebKit Commit",
+                    }
+                }
+            }
+        ]
+    };
+    it("should reject inserting one commit with owned commits that have invalid author", async () => {
+        await addWorkerForReport(invalidAuthorOwnedCommit);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', invalidAuthorOwnedCommit);
+        assert.strictEqual(response['status'], 'InvalidAuthorFormat');
+    });
+
+    const ownedCommitWithRevisionIdentifier = {
+        "workerName": "someWorker",
+        "workerPassword": "somePassword",
+        "commits": [
+            {
+                "repository": "OSX",
+                "revision": "Sierra16D32",
+                "order": 1,
+                "ownedCommits": {
+                    "WebKit": {
+                        "revision": "141978",
+                        "revisionIdentifier": "127232@main",
+                        "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
+                        "message": "WebKit Commit",
+                    }
+                }
+            }
+        ]
+    };
+
+    it("should insert one commit with commit revision label", async () => {
+        await addWorkerForReport(ownedCommitWithRevisionIdentifier);
+        const response = await TestServer.remoteAPI().postJSON('/api/report-commits/', ownedCommitWithRevisionIdentifier);
+        assert.strictEqual(response['status'], 'OK');
+        const db = TestServer.database();
+        const commit = await db.selectRows('commits', {'revision': '141978'});
+        assert.strictEqual(commit[0].revision_identifier, ownedCommitWithRevisionIdentifier.commits[0].ownedCommits['WebKit'].revisionIdentifier);
     });
 });
 

@@ -43,16 +43,29 @@ public:
     
     virtual ~LegacyDisplayRefreshMonitorMac();
 
-    void displayLinkFired() final;
-    bool requestRefreshCallback() final;
-    void stop() final;
+    void displayLinkCallbackFired();
 
 private:
     explicit LegacyDisplayRefreshMonitorMac(PlatformDisplayID);
 
+    void dispatchDisplayDidRefresh(const DisplayUpdate&) final;
+
+    void stop() final;
+
+    bool startNotificationMechanism() final;
+    void stopNotificationMechanism() final;
+    Optional<FramesPerSecond> displayNominalFramesPerSecond() final;
+    
+    bool ensureDisplayLink();
+
+    static FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
+
     CVDisplayLinkRef m_displayLink { nullptr };
+    
+    DisplayUpdate m_currentUpdate;
+    bool m_displayLinkIsActive { false };
 };
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

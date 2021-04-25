@@ -126,7 +126,7 @@ struct WebProcessCreationParameters {
     bool hasStylusDevice { false };
     bool memoryCacheDisabled { false };
     bool attrStyleEnabled { false };
-    bool useGPUProcessForMediaEnabled { false };
+    bool shouldThrowExceptionForGlobalConstantRedeclaration { true };
 
 #if ENABLE(SERVICE_CONTROLS)
     bool hasImageServices { false };
@@ -140,7 +140,6 @@ struct WebProcessCreationParameters {
 
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier;
-    uint32_t uiProcessSDKVersion { 0 };
     int latencyQOS { 0 };
     int throughputQOS { 0 };
 #endif

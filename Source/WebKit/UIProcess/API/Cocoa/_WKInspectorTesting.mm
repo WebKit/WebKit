@@ -49,11 +49,11 @@ static NSString *JavaScriptSnippetToOpenURLExternally(NSURL *url)
 - (void)_openURLExternallyForTesting:(NSURL *)url useFrontendAPI:(BOOL)useFrontendAPI
 {
     if (useFrontendAPI)
-        _inspector->evaluateInFrontendForTesting(JavaScriptSnippetToOpenURLExternally(url));
+        _inspector->evaluateInFrontendForTesting(JavaScriptSnippetToOpenURLExternally([url copy]));
     else {
         // Force the navigation request to be handled naturally through the
         // internal NavigationDelegate of WKInspectorViewController.
-        [self.inspectorWebView loadRequest:[NSURLRequest requestWithURL:url]];
+        [self.inspectorWebView loadRequest:[NSURLRequest requestWithURL:[url copy]]];
     }
 }
 

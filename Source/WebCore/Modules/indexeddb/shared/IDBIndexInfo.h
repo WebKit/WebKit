@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyPath.h"
 #include <wtf/text/WTFString.h>
 
@@ -100,5 +98,3 @@ bool IDBIndexInfo::decode(Decoder& decoder, IDBIndexInfo& info)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

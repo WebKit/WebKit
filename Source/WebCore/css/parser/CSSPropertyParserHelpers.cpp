@@ -46,6 +46,7 @@
 #include "Pair.h"
 #include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"
+#include "WebKitFontFamilyNames.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -1662,12 +1663,12 @@ static ColorMixPercentages normalizedMixPercentages(const ColorMixComponent& mix
 // Normalization is special cased for HWBA, which needs to normalize the whiteness and blackness components and convert to sRGB
 // and HSLA, which just needs to be converted to sRGB. All other color types can go through this non-specialized case.
 
-template<typename ColorType> inline Color makeColorTypeByNormalizingComponentsAfterMix(const ColorComponents<float>& colorComponents)
+template<typename ColorType> inline Color makeColorTypeByNormalizingComponentsAfterMix(const ColorComponents<float, 4>& colorComponents)
 {
     return makeFromComponents<ColorType>(colorComponents);
 }
 
-template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>(const ColorComponents<float>& colorComponents)
+template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>>(const ColorComponents<float, 4>& colorComponents)
 {
     auto [hue, whiteness, blackness, alpha] = colorComponents;
     auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(whiteness, blackness);
@@ -1675,12 +1676,12 @@ template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HWBA<float>
     return convertColor<SRGBA<uint8_t>>(HWBA<float> { hue, normalizedWhitness, normalizedBlackness, alpha });
 }
 
-template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>(const ColorComponents<float>& colorComponents)
+template<> inline Color makeColorTypeByNormalizingComponentsAfterMix<HSLA<float>>(const ColorComponents<float, 4>& colorComponents)
 {
     return convertColor<SRGBA<uint8_t>>(makeFromComponents<HSLA<float>>(colorComponents));
 }
 
-template<size_t I, typename ComponentType> static void fixupHueComponentsPriorToMix(ColorComponents<ComponentType>& colorComponents1, ColorComponents<ComponentType>& colorComponents2)
+template<size_t I, typename ComponentType> static void fixupHueComponentsPriorToMix(ColorComponents<ComponentType, 4>& colorComponents1, ColorComponents<ComponentType, 4>& colorComponents2)
 {
     auto normalizeAnglesUsingShorterAlgorithm = [] (auto theta1, auto theta2) -> std::pair<ComponentType, ComponentType> {
         // https://drafts.csswg.org/css-color-4/#hue-shorter
@@ -3061,7 +3062,7 @@ Optional<FontRaw> consumeFontWorkerSafe(CSSParserTokenRange& range, CSSParserMod
     return result;
 }
 
-const AtomString& genericFontFamilyFromValueID(CSSValueID ident)
+const AtomString& genericFontFamily(CSSValueID ident)
 {
     switch (ident) {
     case CSSValueSerif:
@@ -3080,6 +3081,29 @@ const AtomString& genericFontFamilyFromValueID(CSSValueID ident)
         return systemUiFamily.get();
     default:
         return emptyAtom();
+    }
+}
+
+WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID ident)
+{
+    switch (ident) {
+    case CSSValueSerif:
+        return WebKitFontFamilyNames::FamilyNamesIndex::SerifFamily;
+    case CSSValueSansSerif:
+        return WebKitFontFamilyNames::FamilyNamesIndex::SansSerifFamily;
+    case CSSValueCursive:
+        return WebKitFontFamilyNames::FamilyNamesIndex::CursiveFamily;
+    case CSSValueFantasy:
+        return WebKitFontFamilyNames::FamilyNamesIndex::FantasyFamily;
+    case CSSValueMonospace:
+        return WebKitFontFamilyNames::FamilyNamesIndex::MonospaceFamily;
+    case CSSValueWebkitPictograph:
+        return WebKitFontFamilyNames::FamilyNamesIndex::PictographFamily;
+    case CSSValueSystemUi:
+        return WebKitFontFamilyNames::FamilyNamesIndex::SystemUiFamily;
+    default:
+        ASSERT_NOT_REACHED();
+        return WebKitFontFamilyNames::FamilyNamesIndex::StandardFamily;
     }
 }
 

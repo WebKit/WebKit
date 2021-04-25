@@ -48,11 +48,8 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
         m_processLauncher->invalidate();
         m_processLauncher = nullptr;
     }
-    auto pendingMessages = WTFMove(m_pendingMessages);
-    for (auto& pendingMessage : pendingMessages) {
-        if (pendingMessage.asyncReplyInfo)
-            pendingMessage.asyncReplyInfo->first(nullptr);
-    }
+
+    replyToPendingMessages();
 }
 
 void AuxiliaryProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
@@ -246,6 +243,15 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
         if (pendingMessage.asyncReplyInfo)
             IPC::addAsyncReplyHandler(*connection(), pendingMessage.asyncReplyInfo->second, WTFMove(pendingMessage.asyncReplyInfo->first));
         m_connection->sendMessage(WTFMove(encoder), sendOptions);
+    }
+}
+
+void AuxiliaryProcessProxy::replyToPendingMessages()
+{
+    auto pendingMessages = WTFMove(m_pendingMessages);
+    for (auto& pendingMessage : pendingMessages) {
+        if (pendingMessage.asyncReplyInfo)
+            pendingMessage.asyncReplyInfo->first(nullptr);
     }
 }
 

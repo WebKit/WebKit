@@ -31,8 +31,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 class IDBRecordIdentifier : public RefCounted<IDBRecordIdentifier> {
@@ -73,5 +71,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -137,7 +137,7 @@ function refreshConfigurations() {
 }
 
 function BranchSelector(callback) {
-    const defaultBranches = new Set(['trunk', 'master']);
+    const defaultBranches = new Set(['trunk', 'master', 'main']);
     const defaultBranchKey = [...defaultBranches].sort().join('/');
     const branchModifier = new QueryModifier('branch');
 

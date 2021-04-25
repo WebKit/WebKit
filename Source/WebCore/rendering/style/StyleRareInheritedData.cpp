@@ -101,10 +101,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textEmphasisMark(static_cast<unsigned>(TextEmphasisMark::None))
     , textEmphasisPosition(static_cast<unsigned>(RenderStyle::initialTextEmphasisPosition().toRaw()))
     , textOrientation(static_cast<unsigned>(TextOrientation::Mixed))
-#if ENABLE(CSS3_TEXT)
-    , textIndentLine(RenderStyle::initialTextIndentLine())
-    , textIndentType(RenderStyle::initialTextIndentType())
-#endif
+    , textIndentLine(static_cast<unsigned>(RenderStyle::initialTextIndentLine()))
+    , textIndentType(static_cast<unsigned>(RenderStyle::initialTextIndentType()))
     , lineBoxContain(static_cast<unsigned>(RenderStyle::initialLineBoxContain().toRaw()))
     , imageOrientation(RenderStyle::initialImageOrientation())
     , imageRendering(static_cast<unsigned>(RenderStyle::initialImageRendering()))
@@ -118,8 +116,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , imageResolutionSnap(RenderStyle::initialImageResolutionSnap())
 #endif
 #if ENABLE(CSS3_TEXT)
-    , textAlignLast(RenderStyle::initialTextAlignLast())
-    , textJustify(RenderStyle::initialTextJustify())
+    , textAlignLast(static_cast<unsigned>(RenderStyle::initialTextAlignLast()))
+    , textJustify(static_cast<unsigned>(RenderStyle::initialTextJustify()))
 #endif
     , textDecorationSkip(RenderStyle::initialTextDecorationSkip().toRaw())
     , textUnderlinePosition(static_cast<unsigned>(RenderStyle::initialTextUnderlinePosition()))
@@ -135,6 +133,8 @@ StyleRareInheritedData::StyleRareInheritedData()
     , hasSetStrokeWidth(false)
     , hasSetStrokeColor(false)
     , mathStyle(static_cast<unsigned>(RenderStyle::initialMathStyle()))
+    , hasAutoCaretColor(true)
+    , hasVisitedLinkAutoCaretColor(true)
     , effectiveTouchActions(RenderStyle::initialTouchActions())
     , strokeWidth(RenderStyle::initialStrokeWidth())
     , strokeColor(RenderStyle::initialStrokeColor())
@@ -197,10 +197,8 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
     , textOrientation(o.textOrientation)
-#if ENABLE(CSS3_TEXT)
     , textIndentLine(o.textIndentLine)
     , textIndentType(o.textIndentType)
-#endif
     , lineBoxContain(o.lineBoxContain)
     , imageOrientation(o.imageOrientation)
     , imageRendering(o.imageRendering)
@@ -231,6 +229,8 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , hasSetStrokeWidth(o.hasSetStrokeWidth)
     , hasSetStrokeColor(o.hasSetStrokeColor)
     , mathStyle(o.mathStyle)
+    , hasAutoCaretColor(o.hasAutoCaretColor)
+    , hasVisitedLinkAutoCaretColor(o.hasVisitedLinkAutoCaretColor)
     , effectiveTouchActions(o.effectiveTouchActions)
     , eventListenerRegionTypes(o.eventListenerRegionTypes)
     , strokeWidth(o.strokeWidth)
@@ -316,10 +316,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textEmphasisMark == o.textEmphasisMark
         && textEmphasisPosition == o.textEmphasisPosition
         && textOrientation == o.textOrientation
-#if ENABLE(CSS3_TEXT)
         && textIndentLine == o.textIndentLine
         && textIndentType == o.textIndentType
-#endif
         && lineBoxContain == o.lineBoxContain
 #if PLATFORM(IOS_FAMILY)
         && touchCalloutEnabled == o.touchCalloutEnabled
@@ -354,6 +352,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hasSetStrokeWidth == o.hasSetStrokeWidth
         && hasSetStrokeColor == o.hasSetStrokeColor
         && mathStyle == o.mathStyle
+        && hasAutoCaretColor == o.hasAutoCaretColor
+        && hasVisitedLinkAutoCaretColor == o.hasVisitedLinkAutoCaretColor
         && effectiveTouchActions == o.effectiveTouchActions
         && eventListenerRegionTypes == o.eventListenerRegionTypes
         && strokeWidth == o.strokeWidth

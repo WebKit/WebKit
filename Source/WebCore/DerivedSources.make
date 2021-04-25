@@ -162,7 +162,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/geolocation/PositionOptions.idl \
     $(WebCore)/Modules/highlight/HighlightRegister.idl \
     $(WebCore)/Modules/highlight/Highlight.idl \
-    $(WebCore)/Modules/indexeddb/DOMWindow+IndexedDatabase.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
@@ -176,7 +175,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/indexeddb/IDBTransaction.idl \
     $(WebCore)/Modules/indexeddb/IDBTransactionMode.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
-    $(WebCore)/Modules/indexeddb/WorkerGlobalScope+IndexedDatabase.idl \
+    $(WebCore)/Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl \
     $(WebCore)/Modules/mediacapabilities/AudioConfiguration.idl \
     $(WebCore)/Modules/mediacapabilities/ColorGamut.idl \
     $(WebCore)/Modules/mediacapabilities/HdrMetadataType.idl \
@@ -207,12 +206,18 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediasession/MediaImage.idl \
     $(WebCore)/Modules/mediasession/MediaMetadata.idl \
     $(WebCore)/Modules/mediasession/MediaMetadataInit.idl \
+    $(WebCore)/Modules/mediasession/MediaMetadataPlaylistMixin.idl \
     $(WebCore)/Modules/mediasession/MediaPositionState.idl \
     $(WebCore)/Modules/mediasession/MediaSession.idl \
     $(WebCore)/Modules/mediasession/MediaSessionAction.idl \
     $(WebCore)/Modules/mediasession/MediaSessionActionDetails.idl \
     $(WebCore)/Modules/mediasession/MediaSessionActionHandler.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionCoordinator.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionCoordinatorMixin.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionCoordinatorState.idl \
     $(WebCore)/Modules/mediasession/MediaSessionPlaybackState.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionPlaylistMixin.idl \
+    $(WebCore)/Modules/mediasession/MediaSessionReadyState.idl \
     $(WebCore)/Modules/mediasession/Navigator+MediaSession.idl \
     $(WebCore)/Modules/mediastream/CanvasCaptureMediaStreamTrack.idl \
     $(WebCore)/Modules/mediastream/DoubleRange.idl \

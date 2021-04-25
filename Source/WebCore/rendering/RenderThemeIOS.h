@@ -114,8 +114,8 @@ private:
     void paintSearchFieldDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    Color checkboxRadioBackgroundColor(ControlStates::States, OptionSet<StyleColor::Options>);
-    Color checkboxRadioIndicatorColor(ControlStates::States, OptionSet<StyleColor::Options>);
+    Color checkboxRadioBackgroundColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
+    Color checkboxRadioIndicatorColor(OptionSet<ControlStates::States>, OptionSet<StyleColor::Options>);
 
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintRadio(const RenderObject&, const PaintInfo&, const FloatRect&) override;
@@ -136,6 +136,15 @@ private:
     bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) final;
 #endif
+
+    void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
+    bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) final;
+
+    void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const final;
+    bool paintSearchFieldResultsDecorationPart(const RenderBox&, const PaintInfo&, const IntRect&) final;
+
+    void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
+    bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 #endif
 
     bool supportsFocusRing(const RenderStyle&) const final;

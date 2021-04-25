@@ -1,7 +1,7 @@
 [
     {
         "trigger": {
-            "url-filter": "save-ping.php",
+            "url-filter": "save-ping.py",
             "resource-type": ["ping"]
         },
         "action": {

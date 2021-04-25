@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyData.h"
 #include "IDBValue.h"
 
@@ -71,5 +69,3 @@ inline IDBCursorRecord IDBCursorRecord::isolatedCopy() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

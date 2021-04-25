@@ -1417,6 +1417,19 @@ if (WTF_CPU_X86_64 OR WTF_CPU_X86)
     )
 endif()
 
+
+find_package(Openh264)
+if (NOT Openh264_FOUND)
+    message(WARNING "openh264 is not found, not building support.")
+    set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 0)
+else()
+    list(APPEND webrtc_SOURCES
+        Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.cc
+    )
+    set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 1)
+endif ()
+configure_file(LibWebRTCWebKitMacros.h.in LibWebRTCWebKitMacros.h @ONLY)
+
 add_library(webrtc STATIC ${webrtc_SOURCES})
 
 target_compile_options(webrtc PRIVATE
@@ -1463,6 +1476,7 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_OPUS_SUPPORT_120MS_PTIME=0
   WEBRTC_OPUS_VARIABLE_COMPLEXITY=0
   WEBRTC_USE_BUILTIN_OPUS=1
+  WEBRTC_USE_H264=1
   WEBRTC_POSIX
   WEBRTC_USE_BUILTIN_ISAC_FIX=1
   WEBRTC_USE_BUILTIN_ISAC_FLOAT=0
@@ -1515,6 +1529,10 @@ target_link_libraries(webrtc ${LIBVPX_LIBRARY})
 target_link_libraries(webrtc ${LIBEVENT_LIBRARY})
 
 target_link_libraries(webrtc ${LIBOPUS_LIBRARY})
+
+if (Openh264_FOUND)
+    target_link_libraries(webrtc ${Openh264_LIBRARY})
+endif ()
 
 # libsrtp package compilation
 set(libsrtp_SOURCES

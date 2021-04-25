@@ -115,6 +115,8 @@ static RetainPtr<NSImage> defaultExternalDragImage()
         _filePromiseDestinationURLs = adoptNS([NSMutableArray new]);
         [_webView setUIDelegate:self];
         self.dragDestinationAction = WKDragDestinationActionAny & ~WKDragDestinationActionLoad;
+
+        [[NSPasteboard pasteboardWithName:NSPasteboardNameDrag] clearContents];
     }
     return self;
 }
@@ -447,6 +449,15 @@ static BOOL getFilePathsAndTypeIdentifiers(NSArray<NSURL *> *fileURLs, NSArray<N
 
 - (void)endDataTransfer
 {
+}
+
+- (BOOL)containsDraggedType:(NSString *)expectedType
+{
+    for (NSPasteboardType type in [NSPasteboard pasteboardWithName:NSPasteboardNameDrag].types) {
+        if ([type isEqualToString:expectedType])
+            return YES;
+    }
+    return NO;
 }
 
 #pragma mark - WKUIDelegatePrivate

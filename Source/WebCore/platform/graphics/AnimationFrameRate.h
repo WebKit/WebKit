@@ -26,14 +26,18 @@
 #pragma once
 
 #include <wtf/OptionSet.h>
+#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
-#include <wtf/text/TextStream.h>
+
+namespace WTF {
+class TextStream;
+}
 
 namespace WebCore {
 
 using FramesPerSecond = unsigned;
 
-enum class ThrottlingReason {
+enum class ThrottlingReason : uint8_t {
     VisuallyIdle                    = 1 << 0,
     OutsideViewport                 = 1 << 1,
     LowPowerMode                    = 1 << 2,
@@ -51,9 +55,14 @@ constexpr const FramesPerSecond FullSpeedFramesPerSecond = 60;
 constexpr const FramesPerSecond HalfSpeedThrottlingFramesPerSecond = 30;
 
 WEBCORE_EXPORT FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond);
-WEBCORE_EXPORT Seconds preferredFrameInterval(const OptionSet<ThrottlingReason>&, Optional<FramesPerSecond> nominalFramesPerSecond);
+
+// This will return WTF::nullopt if throttling results in a frequency < 1fps.
+WEBCORE_EXPORT Optional<FramesPerSecond> preferredFramesPerSecond(OptionSet<ThrottlingReason>, Optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS);
+
+WEBCORE_EXPORT Seconds preferredFrameInterval(OptionSet<ThrottlingReason>, Optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS);
+
 WEBCORE_EXPORT FramesPerSecond preferredFramesPerSecondFromInterval(Seconds);
 
-WEBCORE_EXPORT TextStream& operator<<(TextStream&, const OptionSet<ThrottlingReason>&);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const OptionSet<ThrottlingReason>&);
 
-}
+} // namespace WebCore

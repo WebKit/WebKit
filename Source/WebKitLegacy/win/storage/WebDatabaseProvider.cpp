@@ -28,7 +28,6 @@
 #include <shlobj.h>
 #include <shlwapi.h>
 
-#if ENABLE(INDEXED_DATABASE)
 String WebDatabaseProvider::indexedDatabaseDirectoryPath()
 {
     char executablePath[MAX_PATH];
@@ -50,4 +49,3 @@ String WebDatabaseProvider::indexedDatabaseDirectoryPath()
 
     return String(databaseDirectory);
 }
-#endif

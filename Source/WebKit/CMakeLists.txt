@@ -189,6 +189,9 @@ set(WebKit_MESSAGES_IN_FILES
     Shared/Plugins/NPObjectMessageReceiver
 
     UIProcess/DrawingAreaProxy
+
+    UIProcess/Media/RemoteMediaSessionCoordinatorProxy
+
     UIProcess/SpeechRecognitionRemoteRealtimeMediaSourceManager
     UIProcess/SpeechRecognitionServer
     UIProcess/VisitedLinkStore
@@ -248,6 +251,8 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/Inspector/WebInspector
     WebProcess/Inspector/WebInspectorInterruptDispatcher
     WebProcess/Inspector/WebInspectorUI
+
+    WebProcess/MediaSession/RemoteMediaSessionCoordinator
 
     WebProcess/Network/webrtc/LibWebRTCNetwork
     WebProcess/Network/webrtc/RTCDataChannelRemoteManager

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBDatabaseInfo.h"
 #include "IDBError.h"
 #include "IDBGetAllResult.h"
@@ -263,5 +261,3 @@ template<> struct EnumTraits<WebCore::IDBResultType> {
 };
 
 } // namespace WTF
-
-#endif // ENABLE(INDEXED_DATABASE)

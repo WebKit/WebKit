@@ -120,6 +120,11 @@ struct FeaturesMtl : FeatureSetBase
             "rewrite_row_major_matrices", FeatureCategory::MetalFeatures,
             "Rewrite row major matrices in shaders as column major.",
             &members};
+
+    Feature intelThinMipmapWorkaround = {
+            "intel_thin_mipmap_workaround", FeatureCategory::MetalWorkarounds,
+            "Generate mipmaps for thin (<5 pixel) wide textures on the CPU for Intel",
+            &members};
 };
 
 }  // namespace angle

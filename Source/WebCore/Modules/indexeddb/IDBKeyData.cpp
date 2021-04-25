@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBKeyData.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "KeyedCoding.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -504,5 +502,3 @@ size_t IDBKeyData::size() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -32,6 +32,7 @@
 #include "SVGPatternElement.h"
 #include "SVGRenderStyle.h"
 #include "SVGURIReference.h"
+#include <wtf/RobinHoodHashSet.h>
 
 #if ENABLE(TREE_DEBUGGING)
 #include <stdio.h>
@@ -43,9 +44,9 @@ SVGResources::SVGResources()
 {
 }
 
-static HashSet<AtomString>& clipperFilterMaskerTags()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& clipperFilterMaskerTags()
 {
-    static NeverDestroyed<HashSet<AtomString>> s_tagList;
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> s_tagList;
     if (s_tagList.get().isEmpty()) {
         // "container elements": http://www.w3.org/TR/SVG11/intro.html#TermContainerElement
         // "graphics elements" : http://www.w3.org/TR/SVG11/intro.html#TermGraphicsElement
@@ -92,9 +93,9 @@ static HashSet<AtomString>& clipperFilterMaskerTags()
     return s_tagList;
 }
 
-static HashSet<AtomString>& markerTags()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& markerTags()
 {
-    static NeverDestroyed<HashSet<AtomString>> s_tagList;
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> s_tagList;
     if (s_tagList.get().isEmpty()) {
         s_tagList.get().add(SVGNames::lineTag->localName());
         s_tagList.get().add(SVGNames::pathTag->localName());
@@ -105,9 +106,9 @@ static HashSet<AtomString>& markerTags()
     return s_tagList;
 }
 
-static HashSet<AtomString>& fillAndStrokeTags()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& fillAndStrokeTags()
 {
-    static NeverDestroyed<HashSet<AtomString>> s_tagList;
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> s_tagList;
     if (s_tagList.get().isEmpty()) {
         s_tagList.get().add(SVGNames::altGlyphTag->localName());
         s_tagList.get().add(SVGNames::circleTag->localName());
@@ -126,9 +127,9 @@ static HashSet<AtomString>& fillAndStrokeTags()
     return s_tagList;
 }
 
-static HashSet<AtomString>& chainableResourceTags()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>& chainableResourceTags()
 {
-    static NeverDestroyed<HashSet<AtomString>> s_tagList;
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> s_tagList;
     if (s_tagList.get().isEmpty()) {
         s_tagList.get().add(SVGNames::linearGradientTag->localName());
         s_tagList.get().add(SVGNames::filterTag->localName());

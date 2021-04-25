@@ -347,6 +347,7 @@ class CheckerDispatcherSkipTest(unittest.TestCase):
         """Test should_skip_without_warning() for False return values."""
         paths = ['foo.txt',
                  os.path.join('LayoutTests', 'ChangeLog'),
+                 os.path.join('LayoutTests', 'foo.py'),
         ]
 
         for path in paths:

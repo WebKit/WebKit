@@ -26,17 +26,17 @@ PASS getComputedStyle(button.element).height is "16px"
 
 PiPButton
 PASS getComputedStyle(button.element).top became "18px"
-PASS getComputedStyle(button.element).left is "43px"
+PASS getComputedStyle(button.element).left is "55px"
 PASS getComputedStyle(button.element).height is "16px"
 
 TracksButton
 PASS getComputedStyle(button.element).top became "18px"
-PASS getComputedStyle(button.element).left is "74px"
+PASS getComputedStyle(button.element).left is "98px"
 PASS getComputedStyle(button.element).height is "16px"
 
 FullscreenButton
 PASS getComputedStyle(button.element).top became "18px"
-PASS getComputedStyle(button.element).left is "103px"
+PASS getComputedStyle(button.element).left is "139px"
 PASS getComputedStyle(button.element).height is "16px"
 PASS successfullyParsed is true
 

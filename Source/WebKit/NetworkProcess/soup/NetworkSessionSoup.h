@@ -27,6 +27,7 @@
 
 #include "NetworkSession.h"
 #include "SoupCookiePersistentStorageType.h"
+#include "WebPageProxyIdentifier.h"
 
 typedef struct _SoupSession SoupSession;
 
@@ -62,7 +63,7 @@ public:
     void setProxySettings(WebCore::SoupNetworkProxySettings&&);
 
 private:
-    std::unique_ptr<WebSocketTask> createWebSocketTask(NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
+    std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol) final;
     void clearCredentials() final;
 
     std::unique_ptr<WebCore::SoupNetworkSession> m_networkSession;

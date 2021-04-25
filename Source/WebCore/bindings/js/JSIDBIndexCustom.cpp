@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSIDBIndex.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBIndex.h"
 #include <JavaScriptCore/HeapInlines.h>
 
@@ -43,5 +41,3 @@ void JSIDBIndex::visitAdditionalChildren(Visitor& visitor)
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBIndex);
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

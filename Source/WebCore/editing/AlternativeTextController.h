@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,14 +106,6 @@ private:
 #if USE(AUTOCORRECTION_PANEL)
     using AutocorrectionReplacement = String;
 
-    struct AlternativeTextInfo {
-        SimpleRange rangeWithAlternative;
-        bool isActive;
-        AlternativeTextType type;
-        String originalText;
-        Variant<AutocorrectionReplacement, DictationContext> details;
-    };
-
     String dismissSoon(ReasonForDismissingAlternativeText);
     void timerFired();
     void recordSpellcheckerResponseForModifiedCorrection(const SimpleRange& rangeOfCorrection, const String& corrected, const String& correction);
@@ -129,8 +121,8 @@ private:
 
     Timer m_timer;
     Optional<SimpleRange> m_rangeWithAlternative;
-    bool m_isActive;
-    bool m_isDismissedByEditing;
+    bool m_isActive { };
+    bool m_isDismissedByEditing { };
     AlternativeTextType m_type;
     String m_originalText;
     Variant<AutocorrectionReplacement, DictationContext> m_details;

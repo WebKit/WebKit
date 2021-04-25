@@ -27,8 +27,6 @@
 
 #include "config.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 
 #include "ExceptionCode.h"
@@ -522,5 +520,3 @@ Optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& lexic
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

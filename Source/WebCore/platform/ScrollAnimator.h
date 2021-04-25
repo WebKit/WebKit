@@ -69,16 +69,15 @@ public:
     virtual ~ScrollAnimator();
 
     enum ScrollBehavior {
-        Default = 0,
-        DoDirectionalSnapping = 1 << 1,
-        NeverAnimate = 1 << 2,
+        Default,
+        DoDirectionalSnapping,
     };
 
     // Computes a scroll destination for the given parameters.  Returns false if
     // already at the destination.  Otherwise, starts scrolling towards the
     // destination and returns true.  Scrolling may be immediate or animated.
     // The base class implementation always scrolls immediately, never animates.
-    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, OptionSet<ScrollBehavior>);
+    virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier, ScrollBehavior = ScrollBehavior::Default);
 
     bool scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
     virtual bool scrollToPositionWithoutAnimation(const FloatPoint& position, ScrollClamping = ScrollClamping::Clamped);
@@ -150,7 +149,9 @@ public:
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    virtual bool processWheelEventForScrollSnap(const PlatformWheelEvent&) { return false; }
+#if PLATFORM(MAC)
+    bool processWheelEventForScrollSnap(const PlatformWheelEvent&);
+#endif
     void updateScrollSnapState();
     bool activeScrollSnapIndexDidChange() const;
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;

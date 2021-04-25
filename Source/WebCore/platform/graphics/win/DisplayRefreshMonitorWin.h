@@ -34,12 +34,16 @@ class DisplayRefreshMonitorWin : public DisplayRefreshMonitor {
 public:
     static RefPtr<DisplayRefreshMonitorWin> create(PlatformDisplayID);
 
-    void displayLinkFired() override;
-    bool requestRefreshCallback() override;
-
 private:
     explicit DisplayRefreshMonitorWin(PlatformDisplayID);
+
+    bool startNotificationMechanism() final;
+    void stopNotificationMechanism() final;
+    
+    void displayLinkCallbackFired();
+
     RunLoop::Timer<DisplayRefreshMonitorWin> m_timer;
+    DisplayUpdate m_currentUpdate;
 };
 
 } // namespace WebCore

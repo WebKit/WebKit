@@ -431,9 +431,8 @@ public:
     bool supportsPath() const override { return false; }
 
     TextIteratorBehavior textIteratorBehaviorForTextRange() const override;
-    PlainTextRange selectedTextRange() const override { return PlainTextRange(); }
-    unsigned selectionStart() const override { return selectedTextRange().start; }
-    unsigned selectionEnd() const override { return selectedTextRange().length; }
+    PlainTextRange selectedTextRange() const override { return { }; }
+    int insertionPointLineNumber() const override { return -1; }
 
     URL url() const override { return URL(); }
     VisibleSelection selection() const override { return VisibleSelection(); }

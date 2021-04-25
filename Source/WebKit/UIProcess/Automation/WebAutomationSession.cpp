@@ -900,13 +900,13 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
     String browsingContextHandle = handleForWebPageProxy(page);
     if (!m_filesToSelectForFileUpload.size()) {
         resultListener.cancel();
-        m_domainNotifier->fileChooserDismissed(browsingContextHandle, true);
+        m_domainNotifier->fileChooserDismissed(browsingContextHandle, true, { });
         return;
     }
 
     if (m_filesToSelectForFileUpload.size() > 1 && !parameters.allowMultipleFiles()) {
         resultListener.cancel();
-        m_domainNotifier->fileChooserDismissed(browsingContextHandle, true);
+        m_domainNotifier->fileChooserDismissed(browsingContextHandle, true, { });
         return;
     }
 
@@ -925,17 +925,22 @@ void WebAutomationSession::handleRunOpenPanel(const WebPageProxy& page, const We
     }
 
     // Per §14.3.10.5 in the W3C spec, if at least one file cannot be accepted, the command should fail.
-    // The REST API service can tell that this failed by checking the "files" attribute of the input element.
     for (const String& filename : m_filesToSelectForFileUpload) {
         if (!fileCanBeAcceptedForUpload(filename, allowedMIMETypes, allowedFileExtensions)) {
             resultListener.cancel();
-            m_domainNotifier->fileChooserDismissed(browsingContextHandle, true);
+            m_domainNotifier->fileChooserDismissed(browsingContextHandle, true, { });
             return;
         }
     }
 
+    // Copy the file list we used before calling out to the open panel listener.
+    Ref<JSON::ArrayOf<String>> selectedFiles = JSON::ArrayOf<String>::create();
+    for (const String& filename : m_filesToSelectForFileUpload)
+        selectedFiles->addItem(filename);
+
     resultListener.chooseFiles(m_filesToSelectForFileUpload);
-    m_domainNotifier->fileChooserDismissed(browsingContextHandle, false);
+
+    m_domainNotifier->fileChooserDismissed(browsingContextHandle, false, WTFMove(selectedFiles));
 }
 
 void WebAutomationSession::evaluateJavaScriptFunction(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const String& function, Ref<JSON::Array>&& arguments, Optional<bool>&& expectsImplicitCallbackArgument, Optional<double>&& callbackTimeout, Ref<EvaluateJavaScriptFunctionCallback>&& callback)

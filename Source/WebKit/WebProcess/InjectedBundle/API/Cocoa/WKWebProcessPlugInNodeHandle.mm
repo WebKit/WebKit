@@ -177,6 +177,11 @@ static _WKAutoFillButtonType toWKAutoFillButtonType(WebCore::AutoFillButtonType 
     return _nodeHandle->isSelectElement();
 }
 
+- (BOOL)isSelectableTextNode
+{
+    return _nodeHandle->isSelectableTextNode();
+}
+
 - (BOOL)isTextField
 {
     return _nodeHandle->isTextField();

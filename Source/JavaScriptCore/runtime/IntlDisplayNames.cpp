@@ -83,7 +83,7 @@ void IntlDisplayNames::initializeDisplayNames(JSGlobalObject* globalObject, JSVa
         return { };
     };
 
-    auto& availableLocales = intlDisplayNamesAvailableLocales();
+    const auto& availableLocales = intlDisplayNamesAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { }, localeData);
 
     m_locale = resolved.locale;

@@ -143,7 +143,7 @@ class BuiltinsInternalsWrapperImplementationGenerator(BuiltinsGenerator):
         return '\n'.join(lines)
 
     def generate_initialize_method(self):
-        lines = ["void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject)",
+        lines = ["SUPPRESS_ASAN void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& globalObject)",
                 "{",
                 "    UNUSED_PARAM(globalObject);"]
 

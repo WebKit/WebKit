@@ -711,12 +711,12 @@ const HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::systemPreview
 {
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> systemPreviewMIMETypes = std::initializer_list<String> {
         // The official type: https://www.iana.org/assignments/media-types/model/vnd.usdz+zip
-        "model/vnd.usdz+zip",
+        "model/vnd.usdz+zip"_s,
         // Unofficial, but supported because we documented them.
-        "model/usd",
-        "model/vnd.pixar.usd",
+        "model/usd"_s,
+        "model/vnd.pixar.usd"_s,
         // Reality files.
-        "model/vnd.reality"
+        "model/vnd.reality"_s,
     };
     return systemPreviewMIMETypes;
 }

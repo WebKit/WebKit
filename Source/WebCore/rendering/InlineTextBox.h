@@ -92,7 +92,7 @@ public:
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
-    int baselinePosition(FontBaseline) const final;
+    LayoutUnit baselinePosition(FontBaseline) const final;
     LayoutUnit lineHeight() const final;
 
     Optional<bool> emphasisMarkExistsAndIsAbove(const RenderStyle&) const;

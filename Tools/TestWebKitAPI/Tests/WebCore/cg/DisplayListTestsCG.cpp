@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,8 +100,10 @@ private:
         return { globalBufferIdentifier, globalItemBuffer, globalItemBufferCapacity };
     }
 
-    RefPtr<SharedBuffer> encodeItem(ItemHandle) const final { return SharedBuffer::create(); }
-    void didAppendData(const ItemBufferHandle&, size_t, DidChangeItemBuffer) final { }
+    RefPtr<SharedBuffer> encodeItemOutOfLine(ItemHandle) const final
+    {
+        return SharedBuffer::create();
+    }
 };
 
 TEST(DisplayListTests, OutOfLineItemDecodingFailure)
@@ -114,7 +116,7 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
 
     DisplayList originalList;
     WritingClient writer;
-    originalList.setItemBufferClient(&writer);
+    originalList.setItemBufferWritingClient(&writer);
 
     Path path;
     path.moveTo({ 10., 10. });
@@ -125,14 +127,14 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
 
     DisplayList shallowCopy {{ ItemBufferHandle { globalBufferIdentifier, globalItemBuffer, originalList.sizeInBytes() } }};
     ReadingClient reader;
-    shallowCopy.setItemBufferClient(&reader);
+    shallowCopy.setItemBufferReadingClient(&reader);
 
     Replayer replayer { context, shallowCopy };
     auto result = replayer.replay();
     EXPECT_GT(result.numberOfBytesRead, 0U);
     EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
     EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
-    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItem);
+    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
 }
 
 TEST(DisplayListTests, InlineItemValidationFailure)
@@ -145,7 +147,7 @@ TEST(DisplayListTests, InlineItemValidationFailure)
 
     DisplayList list;
     ReadingClient reader;
-    list.setItemBufferClient(&reader);
+    list.setItemBufferReadingClient(&reader);
     list.append<FlushContext>(FlushIdentifier { });
 
     Replayer replayer { context, list };
@@ -153,7 +155,7 @@ TEST(DisplayListTests, InlineItemValidationFailure)
     EXPECT_EQ(result.numberOfBytesRead, 0U);
     EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
     EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
-    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItem);
+    EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
 }
 
 } // namespace TestWebKitAPI

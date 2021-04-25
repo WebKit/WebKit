@@ -1,5 +1,5 @@
 # Copyright (C) 2009 Google Inc. All rights reserved.
-# Copyright (C) 2018, 2019 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -32,7 +32,7 @@ from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.mocktool import MockOptions, MockTool
 
-from webkitscmpy import mocks, Commit
+from webkitcorepy import mocks
 
 
 class UploadCommandsTest(CommandsTest):
@@ -206,14 +206,12 @@ Committed r9876 (5@main): <https://commits.webkit.org/5@main>
 --- End comment ---
 
 """
-        with mocks.remote.Svn('svn.webkit.org/repository/webkit') as repo:
-            repo.commits['trunk'].append(Commit(
-                author=dict(name='Justin Garcia', emails=['justin.garcia@apple.com']),
-                identifier='5@trunk',
+        with mocks.Requests('commits.webkit.org', **{
+            'r9876/json': mocks.Response.fromJson(dict(
+                identifier='5@main',
                 revision=9876,
-                timestamp=1601668000,
-                message='Patch by opendarwin.org@mitzpettel.com\n    Reviewed by darin and hyatt\n',
-            ))
+            )),
+        }):
             self.assert_execute_outputs(MarkBugFixed(), [], expected_logs=expected_logs, tool=tool, options=options)
 
     def test_edit_changelog(self):

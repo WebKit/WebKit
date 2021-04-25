@@ -49,18 +49,17 @@ AspectRatioEnabled:
     WebCore:
       default: true
 
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 AspectRatioOfImgFromWidthAndHeightEnabled:
   type: bool
   humanReadableName: "Aspect ratio of <img> from width and height"
   humanReadableDescription: "Map HTML attributes width/height to the default aspect ratio of <img>"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
       default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: This is on by default in WebKit2 PLATFORM(COCOA). Perhaps we should consider turning it on for WebKitLegacy as well.
 AsyncClipboardAPIEnabled:
@@ -632,11 +631,37 @@ MediaRecorderEnabled:
     WebCore:
       default: false
 
+MediaSessionCoordinatorEnabled:
+  type: bool
+  humanReadableName: "Experimental MediaSession coordinator API"
+  humanReadableDescription: "Enable experimental MediaSession coordinator API"
+  condition: ENABLE(MEDIA_SESSION_COORDINATOR)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MediaSessionEnabled:
   type: bool
   humanReadableName: "Media Session API"
   humanReadableDescription: "Media Session API"
   condition: ENABLE(MEDIA_SESSION)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+MediaSessionPlaylistEnabled:
+  type: bool
+  humanReadableName: "Experimental MediaSession playlist API"
+  humanReadableDescription: "Enable experimental MediaSession playlist API"
+  condition: ENABLE(MEDIA_SESSION_PLAYLIST)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -654,6 +679,7 @@ ModelElementEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "ENABLE(SEPARATED_MODEL)": true
       default: false
     WebCore:
       default: false
@@ -1104,6 +1130,18 @@ WebGL2Enabled:
   humanReadableDescription: "WebGL 2 prototype"
   webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGL2)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+
+WebGLUsingMetal:
+  type: bool
+  humanReadableName: "WebGL via Metal"
+  humanReadableDescription: "Use the Metal backend for ANGLE"
+  webcoreBinding: RuntimeEnabledFeatures
+  condition: ENABLE(WEBGL)
   defaultValue:
     WebKitLegacy:
       default: true

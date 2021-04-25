@@ -28,6 +28,8 @@
 
 namespace WebCore {
 
+constexpr FramesPerSecond DefaultFramesPerSecond = 60;
+
 RefPtr<DisplayRefreshMonitorWin> DisplayRefreshMonitorWin::create(PlatformDisplayID displayID)
 {
     return adoptRef(*new DisplayRefreshMonitorWin(displayID));
@@ -35,28 +37,28 @@ RefPtr<DisplayRefreshMonitorWin> DisplayRefreshMonitorWin::create(PlatformDispla
 
 DisplayRefreshMonitorWin::DisplayRefreshMonitorWin(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
-    , m_timer(RunLoop::main(), this, &DisplayRefreshMonitorWin::displayLinkFired)
+    , m_timer(RunLoop::main(), this, &DisplayRefreshMonitorWin::displayLinkCallbackFired)
+    , m_currentUpdate({ 0, DefaultFramesPerSecond })
 {
 }
 
-bool DisplayRefreshMonitorWin::requestRefreshCallback()
+void DisplayRefreshMonitorWin::displayLinkCallbackFired()
 {
-    if (!isActive())
-        return false;
-    m_timer.startOneShot(16_ms);
-    setIsActive(true);
-    setIsScheduled(true);
+    displayLinkFired(m_currentUpdate);
+    m_currentUpdate = m_currentUpdate.nextUpdate();
+}
+
+bool DisplayRefreshMonitorWin::startNotificationMechanism()
+{
+    if (!m_timer.isActive())
+        m_timer.startRepeating(16_ms);
+
     return true;
 }
 
-void DisplayRefreshMonitorWin::displayLinkFired()
+void DisplayRefreshMonitorWin::stopNotificationMechanism()
 {
-    if (!isPreviousFrameDone())
-        return;
-
-    setIsPreviousFrameDone(false);
-
-    handleDisplayRefreshedNotificationOnMainThread(this);
+    m_timer.stop();
 }
 
 } // namespace WebCore

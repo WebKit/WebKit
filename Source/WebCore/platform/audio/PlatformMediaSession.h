@@ -28,6 +28,7 @@
 #include "MediaSessionGroupIdentifier.h"
 #include "MediaSessionIdentifier.h"
 #include "Timer.h"
+#include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/WeakPtr.h>
@@ -138,8 +139,8 @@ public:
         SkipBackwardCommand,
         NextTrackCommand,
         PreviousTrackCommand,
-        BeginScrubbing,
-        EndScrubbing,
+        BeginScrubbingCommand,
+        EndScrubbingCommand,
     };
     bool canReceiveRemoteControlCommands() const;
     virtual void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument&);
@@ -395,8 +396,8 @@ template <> struct EnumTraits<WebCore::PlatformMediaSession::RemoteControlComman
     WebCore::PlatformMediaSession::RemoteControlCommandType::SkipBackwardCommand,
     WebCore::PlatformMediaSession::RemoteControlCommandType::NextTrackCommand,
     WebCore::PlatformMediaSession::RemoteControlCommandType::PreviousTrackCommand,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbing,
-    WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbing
+    WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand,
+    WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand
     >;
 };
 

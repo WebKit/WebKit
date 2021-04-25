@@ -24,26 +24,25 @@ import json
 
 from collections import defaultdict
 from flask import abort, jsonify, request
-from resultsdbpy.controller.commit import Commit
 from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query
-from webkitscmpy import ScmBase, Commit as ScmCommit
+from webkitscmpy import ScmBase, Commit
 
 
-def _find_comparison(commit_context, repository_id, branch, id, uuid, timestamp, priority=min):
-    if bool(id) + bool(uuid) + bool(timestamp) > 1:
-        abort(400, description='Can only search by one of [commit id, commit uuid, timestamp] in a single request')
+def _find_comparison(commit_context, repository_id, branch, ref, uuid, timestamp, priority=min):
+    if bool(ref) + bool(uuid) + bool(timestamp) > 1:
+        abort(400, description='Can only search by one of [commit id/ref, commit uuid, timestamp] in a single request')
 
     try:
         if uuid:
             # We don't need real commit to search by uuid and CommitContexts have trouble diffrentiating between uuids and timestamps.
             uuid = priority([int(element) for element in uuid])
-            return Commit('?', '?', '?', uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER, uuid % Commit.TIMESTAMP_TO_UUID_MULTIPLIER)
+            return Commit(timestamp=uuid // Commit.UUID_MULTIPLIER, order=uuid % Commit.UUID_MULTIPLIER)
         if timestamp:
             return priority([round(float(element)) for element in timestamp])
     except ValueError:
         abort(400, description='Timestamp and uuid must be integers')
 
-    if not repository_id and not id:
+    if not repository_id and not ref:
         return None
     if not repository_id:
         repository_id = commit_context.repositories.keys()
@@ -53,11 +52,11 @@ def _find_comparison(commit_context, repository_id, branch, id, uuid, timestamp,
 
     result = []
     for repository in repository_id:
-        for b in branch:
-            if id:
-                for elm in id:
-                    result += commit_context.find_commits_by_id(repository, b, elm)
-            else:
+        if ref:
+            for elm in ref:
+                result += commit_context.find_commits_by_ref(repository, ref=elm)
+        else:
+            for b in branch:
                 result += commit_context.find_commits_in_range(repository, b, limit=1)
 
     if not result:
@@ -68,9 +67,9 @@ def _find_comparison(commit_context, repository_id, branch, id, uuid, timestamp,
 def uuid_range_for_commit_range_query():
     def decorator(method):
         def real_method(obj, branch=None,
-                        after_repository_id=None, after_branch=None, after_id=None, after_uuid=None,
+                        after_repository_id=None, after_branch=None, after_id=None, after_uuid=None, after_ref=None,
                         after_timestamp=None,
-                        before_repository_id=None, before_branch=None, before_id=None, before_uuid=None,
+                        before_repository_id=None, before_branch=None, before_id=None, before_uuid=None, before_ref=None,
                         before_timestamp=None, **kwargs):
             # We're making an asumption that the class using this decorator actually has a commit_context, if it does not,
             # this decorator will fail spectacularly
@@ -79,11 +78,11 @@ def uuid_range_for_commit_range_query():
                     branch = [None]
                 begin = _find_comparison(
                     obj.commit_context, repository_id=after_repository_id, branch=after_branch or branch,
-                    id=after_id, uuid=after_uuid, timestamp=after_timestamp, priority=min,
+                    ref=after_ref or after_id, uuid=after_uuid, timestamp=after_timestamp, priority=min,
                 )
                 end = _find_comparison(
                     obj.commit_context, repository_id=before_repository_id, branch=before_branch or branch,
-                    id=before_id, uuid=before_uuid, timestamp=before_timestamp, priority=max,
+                    ref=before_ref or before_id, uuid=before_uuid, timestamp=before_timestamp, priority=max,
                 )
                 return method(obj, begin=begin, end=end, branch=branch, **kwargs)
 
@@ -96,13 +95,14 @@ def uuid_range_for_commit_range_query():
 def uuid_range_for_query():
     def decorator(method):
         @uuid_range_for_commit_range_query()
-        def real_method(obj, repository_id=None, branch=None, id=None, uuid=None, timestamp=None, begin=None, end=None, **kwargs):
-            # We're making an asumption that the class using this decorator actually has a commit_context, if it does not,
+        def real_method(obj, repository_id=None, branch=None, id=None, ref=None, uuid=None, timestamp=None, begin=None, end=None, **kwargs):
+            # We're making an assumption that the class using this decorator actually has a commit_context, if it does not,
             # this decorator will fail spectacularly
             with obj.commit_context:
                 index = _find_comparison(
                     obj.commit_context, repository_id=repository_id, branch=branch,
-                    id=id, uuid=uuid, timestamp=timestamp, priority=max,
+                    ref=ref or id,
+                    uuid=uuid, timestamp=timestamp, priority=max,
                 )
                 if index:
                     if begin or end:
@@ -110,7 +110,7 @@ def uuid_range_for_query():
                     begin = index
                     end = index
 
-                if isinstance(end, Commit) and end.repository_id != '?':
+                if isinstance(end, Commit) and end.repository_id:
                     repositories = list(obj.commit_context.repositories.keys())
                     repositories.remove(end.repository_id)
                     commits = [end]
@@ -140,9 +140,9 @@ class CommitController(HasCommitContext):
 
     @uuid_range_for_commit_range_query()
     @limit_for_query(DEFAULT_LIMIT)
-    def _find(self, repository_id=None, branch=None, id=None, uuid=None, timestamp=None, limit=None, begin=None, end=None, **kwargs):
+    def _find(self, repository_id=None, branch=None, id=None, ref=None, uuid=None, timestamp=None, limit=None, begin=None, end=None, **kwargs):
         AssertRequest.query_kwargs_empty(**kwargs)
-
+        ref = ref or id
         with self.commit_context:
             if not repository_id:
                 repository_id = self.commit_context.repositories.keys()
@@ -152,8 +152,8 @@ class CommitController(HasCommitContext):
             if not branch:
                 branch = [None]
 
-            if bool(id) + bool(uuid) + bool(timestamp) > 1:
-                abort(400, description='Can only search by one of [commit id, commit uuid, timestamp] in a single request')
+            if bool(ref) + bool(uuid) + bool(timestamp) > 1:
+                abort(400, description='Can only search by one of [commit id/ref, commit uuid, timestamp] in a single request')
 
             result = []
             for repository in repository_id:
@@ -164,9 +164,9 @@ class CommitController(HasCommitContext):
                     if len(results_for_repo) >= limit:
                         continue
 
-                    if id:
-                        for elm in id:
-                            results_for_repo += self.commit_context.find_commits_by_id(repository, b, elm, limit=limit - len(results_for_repo))
+                    if ref:
+                        for elm in ref:
+                            results_for_repo += self.commit_context.find_commits_by_ref(repository, ref=elm, limit=limit - len(results_for_repo))
                     elif uuid:
                         for elm in uuid:
                             results_for_repo += self.commit_context.find_commits_by_uuid(repository, b, int(elm), limit=limit - len(results_for_repo))
@@ -280,7 +280,7 @@ class CommitController(HasCommitContext):
                 abort(400, description='Expected uploaded data to be json')
 
         try:
-            candidate = ScmCommit.from_json(commit)
+            candidate = Commit.from_json(commit)
 
             # Commit needs to be sufficiently defined
             if candidate.repository_id and candidate.branch and candidate.timestamp and (candidate.revision or candidate.hash):
@@ -308,9 +308,9 @@ class CommitController(HasCommitContext):
 
 
         for arg in commit.keys():
-            if arg in required_args or arg in one_of_args:
+            if arg in required_args or arg in one_of_args or arg in ['branch']:
                 continue
-            if arg in ['branch', 'timestamp', 'order', 'committer', 'message']:
+            if arg in ['timestamp', 'order', 'committer', 'message']:
                 abort(400, description='Not enough arguments provided to define a commit, but too many to search for a commit')
             abort(400, description=f"'{arg}' is not valid for defining commits")
 
@@ -328,12 +328,4 @@ class CommitController(HasCommitContext):
 
         if is_endpoint:
             return jsonify({'status': 'ok'})
-        return Commit(
-            repository_id=commit.repository_id,
-            id=commit.revision or commit.hash,
-            branch=commit.branch,
-            timestamp=commit.timestamp,
-            order=commit.order,
-            committer=commit.author.email if commit.author else None,
-            message=commit.message,
-        )
+        return commit

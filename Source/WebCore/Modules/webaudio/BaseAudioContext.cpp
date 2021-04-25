@@ -210,9 +210,8 @@ void BaseAudioContext::clear()
     // Audio thread is dead. Nobody will schedule node deletion action. Let's do it ourselves.
     do {
         deleteMarkedNodes();
-        m_nodesToDelete.appendVector(m_nodesMarkedForDeletion);
-        m_nodesMarkedForDeletion.clear();
-    } while (m_nodesToDelete.size());
+        m_nodesToDelete = std::exchange(m_nodesMarkedForDeletion, { });
+    } while (!m_nodesToDelete.isEmpty());
 
     clearPendingActivity();
 }
@@ -763,8 +762,12 @@ void BaseAudioContext::markForDeletion(AudioNode& node)
 
     if (isAudioThreadFinished())
         m_nodesToDelete.append(&node);
-    else
+    else {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         m_nodesMarkedForDeletion.append(&node);
+    }
 
     // This is probably the best time for us to remove the node from automatic pull list,
     // since all connections are gone and we hold the graph lock. Then when handlePostRenderTasks()
@@ -781,12 +784,15 @@ void BaseAudioContext::scheduleNodeDeletion()
         return;
 
     // Make sure to call deleteMarkedNodes() on main thread.    
-    if (m_nodesMarkedForDeletion.size() && !m_isDeletionScheduled) {
-        m_nodesToDelete.appendVector(m_nodesMarkedForDeletion);
-        m_nodesMarkedForDeletion.clear();
+    if (!m_nodesMarkedForDeletion.isEmpty() && !m_isDeletionScheduled) {
+        ASSERT(m_nodesToDelete.isEmpty());
+        m_nodesToDelete = std::exchange(m_nodesMarkedForDeletion, { });
 
         m_isDeletionScheduled = true;
 
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         callOnMainThread([protectedThis = makeRef(*this)]() mutable {
             protectedThis->deleteMarkedNodes();
         });
@@ -824,7 +830,10 @@ void BaseAudioContext::deleteMarkedNodes()
 
 void BaseAudioContext::markSummingJunctionDirty(AudioSummingJunction* summingJunction)
 {
-    ASSERT(isGraphOwner());    
+    ASSERT(isGraphOwner());
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     m_dirtySummingJunctions.add(summingJunction);
 }
 
@@ -870,6 +879,9 @@ void BaseAudioContext::addAutomaticPullNode(AudioNode& node)
 {
     ASSERT(isGraphOwner());
 
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     if (m_automaticPullNodes.add(&node).isNewEntry)
         m_automaticPullNodesNeedUpdating = true;
 }
@@ -887,6 +899,10 @@ void BaseAudioContext::updateAutomaticPullNodes()
     ASSERT(isGraphOwner());
 
     if (m_automaticPullNodesNeedUpdating) {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
         // Copy from m_automaticPullNodes to m_renderingAutomaticPullNodes.
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
 
@@ -913,6 +929,10 @@ ScriptExecutionContext* BaseAudioContext::scriptExecutionContext() const
 
 void BaseAudioContext::isPlayingAudioDidChange()
 {
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
     // Make sure to call Document::updateIsPlayingMedia() on the main thread, since
     // we could be on the audio I/O thread here and the call into WebCore could block.
     callOnMainThread([protectedThis = makeRef(*this)] {

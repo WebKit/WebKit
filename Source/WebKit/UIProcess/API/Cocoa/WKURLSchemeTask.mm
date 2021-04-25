@@ -34,6 +34,7 @@
 #import <WebCore/ResourceResponse.h>
 #import <WebCore/SharedBuffer.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/MainThread.h>
 
 static WebKit::WebURLSchemeTask::ExceptionType getExceptionTypeFromMainRunLoop(Function<WebKit::WebURLSchemeTask::ExceptionType ()>&& function)
@@ -66,6 +67,9 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
     case WebKit::WebURLSchemeTask::ExceptionType::RedirectAfterResponse:
         [NSException raise:NSInternalInconsistencyException format:@"No redirects are allowed after the response"];
         break;
+    case WebKit::WebURLSchemeTask::ExceptionType::WaitingForRedirectCompletionHandler:
+        [NSException raise:NSInternalInconsistencyException format:@"No callbacks are allowed while waiting for the redirection completion handler to be invoked"];
+        break;
     }
 }
 
@@ -90,6 +94,18 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 - (BOOL)_requestOnlyIfCached
 {
     return _urlSchemeTask->task().nsRequest().cachePolicy == NSURLRequestReturnCacheDataDontLoad;
+}
+
+- (void)willPerformRedirection:(NSURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
+{
+    auto function = [protectedSelf = retainPtr(self), self, protectedResponse = retainPtr(response), response, protectedRequest = retainPtr(request), request, handler = makeBlockPtr(completionHandler)] () mutable {
+        return _urlSchemeTask->task().willPerformRedirection(response, request, [handler = WTFMove(handler)] (WebCore::ResourceRequest&& actualNewRequest) {
+            handler.get()(actualNewRequest.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody));
+        });
+    };
+
+    auto result = getExceptionTypeFromMainRunLoop(WTFMove(function));
+    raiseExceptionIfNecessary(result);
 }
 
 - (void)didReceiveResponse:(NSURLResponse *)response

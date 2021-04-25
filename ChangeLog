@@ -1,3 +1,68 @@
+2021-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        Compile WebKit with UBSan
+        <https://webkit.org/b/176131>
+        <rdar://problem/34174018>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Makefile.shared:
+        - Add support for "UBSAN=YES" argument to make.
+
+2021-03-27  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r275111) [GLIB] Fix build with new derived sources and forwarding headers scheme
+        https://bugs.webkit.org/show_bug.cgi?id=223834
+
+        Unreviewed build fix.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-03-26  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r275111) [GLIB] Fix build with new derived sources and forwarding headers scheme
+        https://bugs.webkit.org/show_bug.cgi?id=223834
+
+        Unreviewed build fix.
+
+        Buildfix for now. Actual removal of older scheme will come in the
+        future.
+
+        * Source/cmake/OptionsWPE.cmake: Add some missing variables with the
+        per framework source and header dirs.
+
+2021-03-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Deprecate using DERIVED_SOURCES_DIR/FOWARDING_HEADERS_DIR directly
+        https://bugs.webkit.org/show_bug.cgi?id=223763
+
+        Reviewed by Michael Catanzaro.
+
+        Remove any usages of DERIVED_SOURCES_DIR and FOWARDING_HEADERS_DIR. There are still some
+        uses in GTK/WPE but those should be phased out.
+
+        Sets the directory structure to look like an Apple build in terms of where headers and
+        derived sources are held. Rather than having one root derived sources and one root
+        header directory those directories are now per project. This helps catch any errors with
+        header includes.
+
+        Deletes some old Mac CMake code that is no longer relevant around creating forwarding
+        headers.
+
+        For AppleWin the old structure is used because of its internal build which assumes the
+        old structure.
+
+        * Source/cmake/OptionsAppleWin.cmake:
+        * Source/cmake/OptionsFTW.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsPlayStation.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWinCairo.cmake:
+        * Source/cmake/WebKitCommon.cmake:
+        * Source/cmake/WebKitFS.cmake:
+        * Source/cmake/WebKitMacros.cmake:
+
 2021-03-23  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Use an imported target for the LCMS2 library

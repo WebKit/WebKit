@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IndexKey.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 IndexKey::IndexKey()
@@ -85,5 +83,3 @@ Vector<IDBKeyData> IndexKey::multiEntry() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -13,16 +13,16 @@ PASS CSS Transitions with transition: all: property <border-image-source> from [
 PASS CSS Transitions with transition: all: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (1.5) should be [url(../support/orange_color.png)]
-FAIL CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (-0.3) should be [initial] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0) should be [initial] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.3) should be [initial] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
+PASS CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (-0.3) should be [initial]
+PASS CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0) should be [initial]
+PASS CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.3) should be [initial]
 PASS CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.5) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (1.5) should be [url(../support/orange_color.png)]
-FAIL Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (-0.3) should be [initial] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0) should be [initial] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.3) should be [initial] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
+PASS Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (-0.3) should be [initial]
+PASS Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0) should be [initial]
+PASS Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.3) should be [initial]
 PASS Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.5) should be [url(../support/orange_color.png)]
 PASS Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS Web Animations: property <border-image-source> from [initial] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
@@ -69,16 +69,16 @@ PASS CSS Transitions with transition: all: property <border-image-source> from [
 PASS CSS Transitions with transition: all: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (1.5) should be [url(../support/orange_color.png)]
-FAIL CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (-0.3) should be [unset] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0) should be [unset] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.3) should be [unset] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
+PASS CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (-0.3) should be [unset]
+PASS CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0) should be [unset]
+PASS CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.3) should be [unset]
 PASS CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.5) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (1.5) should be [url(../support/orange_color.png)]
-FAIL Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (-0.3) should be [unset] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0) should be [unset] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.3) should be [unset] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
+PASS Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (-0.3) should be [unset]
+PASS Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0) should be [unset]
+PASS Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.3) should be [unset]
 PASS Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.5) should be [url(../support/orange_color.png)]
 PASS Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS Web Animations: property <border-image-source> from [unset] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
@@ -97,16 +97,16 @@ PASS CSS Transitions with transition: all: property <border-image-source> from [
 PASS CSS Transitions with transition: all: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (1.5) should be [url(../support/orange_color.png)]
-FAIL CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (-0.3) should be [none] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0) should be [none] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.3) should be [none] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
+PASS CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (-0.3) should be [none]
+PASS CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0) should be [none]
+PASS CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.3) should be [none]
 PASS CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.5) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
 PASS CSS Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (1.5) should be [url(../support/orange_color.png)]
-FAIL Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (-0.3) should be [none] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0) should be [none] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
-FAIL Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.3) should be [none] assert_equals: expected "none " but got "url ( http : / / localhost : 8800 / ... / orange_color.png ) "
+PASS Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (-0.3) should be [none]
+PASS Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0) should be [none]
+PASS Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.3) should be [none]
 PASS Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.5) should be [url(../support/orange_color.png)]
 PASS Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (0.6) should be [url(../support/orange_color.png)]
 PASS Web Animations: property <border-image-source> from [none] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
@@ -140,56 +140,56 @@ PASS Web Animations: property <border-image-source> from [url(../support/aqua_co
 PASS Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [url(../support/orange_color.png)] at (1) should be [url(../support/orange_color.png)]
 PASS Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [url(../support/orange_color.png)] at (1.5) should be [url(../support/orange_color.png)]
 PASS CSS Transitions: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (-0.3) should be [linear-gradient(45deg, blue, orange)]
-PASS CSS Transitions: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(45deg, blue, orange)]
+FAIL CSS Transitions: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(45deg, blue, orange)] assert_equals: expected "linear - gradient ( 45deg , blue , orange ) " but got "url ( http : / / localhost : 8800 / ... / aqua_color.png ) "
 PASS CSS Transitions: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.3) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.6) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (1) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (1.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (-0.3) should be [linear-gradient(45deg, blue, orange)]
-PASS CSS Transitions with transition: all: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(45deg, blue, orange)]
+FAIL CSS Transitions with transition: all: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(45deg, blue, orange)] assert_equals: expected "linear - gradient ( 45deg , blue , orange ) " but got "url ( http : / / localhost : 8800 / ... / aqua_color.png ) "
 PASS CSS Transitions with transition: all: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.3) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.6) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (1) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (1.5) should be [linear-gradient(45deg, blue, orange)]
 FAIL CSS Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (-0.3) should be [url(../support/aqua_color.png)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / aqua_color.png ) " but got "linear - gradient ( 45deg , blue , orange ) "
-FAIL CSS Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0) should be [url(../support/aqua_color.png)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / aqua_color.png ) " but got "linear - gradient ( 45deg , blue , orange ) "
+PASS CSS Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0) should be [url(../support/aqua_color.png)]
 FAIL CSS Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.3) should be [url(../support/aqua_color.png)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / aqua_color.png ) " but got "linear - gradient ( 45deg , blue , orange ) "
 PASS CSS Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.6) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (1) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (1.5) should be [linear-gradient(45deg, blue, orange)]
 FAIL Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (-0.3) should be [url(../support/aqua_color.png)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / aqua_color.png ) " but got "linear - gradient ( 45deg , blue , orange ) "
-FAIL Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0) should be [url(../support/aqua_color.png)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / aqua_color.png ) " but got "linear - gradient ( 45deg , blue , orange ) "
+PASS Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0) should be [url(../support/aqua_color.png)]
 FAIL Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.3) should be [url(../support/aqua_color.png)] assert_equals: expected "url ( http : / / localhost : 8800 / ... / aqua_color.png ) " but got "linear - gradient ( 45deg , blue , orange ) "
 PASS Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.5) should be [linear-gradient(45deg, blue, orange)]
 PASS Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (0.6) should be [linear-gradient(45deg, blue, orange)]
 PASS Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (1) should be [linear-gradient(45deg, blue, orange)]
 PASS Web Animations: property <border-image-source> from [url(../support/aqua_color.png)] to [linear-gradient(45deg, blue, orange)] at (1.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (-0.3) should be [linear-gradient(45deg, blue, orange)]
-PASS CSS Transitions: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(45deg, blue, orange)]
+FAIL CSS Transitions: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(45deg, blue, orange)] assert_equals: expected "linear - gradient ( 45deg , blue , orange ) " but got "linear - gradient ( - 45deg , red , yellow ) "
 PASS CSS Transitions: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.3) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.6) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (1) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (1.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (-0.3) should be [linear-gradient(45deg, blue, orange)]
-PASS CSS Transitions with transition: all: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(45deg, blue, orange)]
+FAIL CSS Transitions with transition: all: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(45deg, blue, orange)] assert_equals: expected "linear - gradient ( 45deg , blue , orange ) " but got "linear - gradient ( - 45deg , red , yellow ) "
 PASS CSS Transitions with transition: all: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.3) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.6) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (1) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Transitions with transition: all: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (1.5) should be [linear-gradient(45deg, blue, orange)]
 FAIL CSS Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (-0.3) should be [linear-gradient(-45deg, red, yellow)] assert_equals: expected "linear - gradient ( - 45deg , red , yellow ) " but got "linear - gradient ( 45deg , blue , orange ) "
-FAIL CSS Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(-45deg, red, yellow)] assert_equals: expected "linear - gradient ( - 45deg , red , yellow ) " but got "linear - gradient ( 45deg , blue , orange ) "
+PASS CSS Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(-45deg, red, yellow)]
 FAIL CSS Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.3) should be [linear-gradient(-45deg, red, yellow)] assert_equals: expected "linear - gradient ( - 45deg , red , yellow ) " but got "linear - gradient ( 45deg , blue , orange ) "
 PASS CSS Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.5) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.6) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (1) should be [linear-gradient(45deg, blue, orange)]
 PASS CSS Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (1.5) should be [linear-gradient(45deg, blue, orange)]
 FAIL Web Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (-0.3) should be [linear-gradient(-45deg, red, yellow)] assert_equals: expected "linear - gradient ( - 45deg , red , yellow ) " but got "linear - gradient ( 45deg , blue , orange ) "
-FAIL Web Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(-45deg, red, yellow)] assert_equals: expected "linear - gradient ( - 45deg , red , yellow ) " but got "linear - gradient ( 45deg , blue , orange ) "
+PASS Web Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0) should be [linear-gradient(-45deg, red, yellow)]
 FAIL Web Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.3) should be [linear-gradient(-45deg, red, yellow)] assert_equals: expected "linear - gradient ( - 45deg , red , yellow ) " but got "linear - gradient ( 45deg , blue , orange ) "
 PASS Web Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.5) should be [linear-gradient(45deg, blue, orange)]
 PASS Web Animations: property <border-image-source> from [linear-gradient(-45deg, red, yellow)] to [linear-gradient(45deg, blue, orange)] at (0.6) should be [linear-gradient(45deg, blue, orange)]

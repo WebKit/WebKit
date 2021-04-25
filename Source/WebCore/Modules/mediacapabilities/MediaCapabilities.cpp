@@ -39,31 +39,31 @@
 #include "MediaEncodingConfiguration.h"
 #include "MediaEngineConfigurationFactory.h"
 #include "Settings.h"
-#include <wtf/HashSet.h>
 #include <wtf/Logger.h>
+#include <wtf/RobinHoodHashSet.h>
 
 namespace WebCore {
 
-static const HashSet<String>& bucketMIMETypes()
+static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& bucketMIMETypes()
 {
     // A "bucket" MIME types is one whose container type does not uniquely specify a codec.
     // See: https://tools.ietf.org/html/rfc6381
-    static NeverDestroyed<HashSet<String>> bucketMIMETypes = HashSet<String>({
-        "audio/3gpp",
-        "video/3gpp",
-        "audio/3gpp2",
-        "video/3gpp2",
-        "audio/mp4",
-        "video/mp4",
-        "application/mp4",
-        "video/quicktime",
-        "application/mp21",
-        "audio/vnd.apple.mpegurl",
-        "video/vnd.apple.mpegurl",
-        "audio/ogg",
-        "video/ogg",
-        "video/webm",
-        "audio/webm",
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> bucketMIMETypes(std::initializer_list<String> {
+        "audio/3gpp"_s,
+        "video/3gpp"_s,
+        "audio/3gpp2"_s,
+        "video/3gpp2"_s,
+        "audio/mp4"_s,
+        "video/mp4"_s,
+        "application/mp4"_s,
+        "video/quicktime"_s,
+        "application/mp21"_s,
+        "audio/vnd.apple.mpegurl"_s,
+        "video/vnd.apple.mpegurl"_s,
+        "audio/ogg"_s,
+        "video/ogg"_s,
+        "video/webm"_s,
+        "audio/webm"_s,
     });
     return bucketMIMETypes;
 }

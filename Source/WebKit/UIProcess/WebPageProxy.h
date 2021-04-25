@@ -112,6 +112,7 @@
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebCore/ViewportArguments.h>
 #include <memory>
+#include <pal/HysteresisActivity.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
@@ -329,10 +330,12 @@ class NativeWebKeyboardEvent;
 class NativeWebMouseEvent;
 class NativeWebWheelEvent;
 class PageClient;
+class MediaSessionCoordinatorProxyPrivate;
 class ProvisionalPageProxy;
 class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
+class RemoteMediaSessionCoordinatorProxy;
 class RemoteScrollingCoordinatorProxy;
 class SecKeyProxyStore;
 class SpeechRecognitionPermissionManager;
@@ -1519,6 +1522,7 @@ public:
     void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
     void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, WebCore::ShouldSample);
     void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary&, WebCore::ShouldSample);
+    void logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain);
 
     // Performance logging.
     void logScrollingEvent(uint32_t eventType, MonotonicTime, uint64_t);
@@ -1714,7 +1718,7 @@ public:
     void simulateResourceLoadStatisticsSessionRestart(CompletionHandler<void()>&&);
     void setPrivateClickMeasurementTokenPublicKeyURLForTesting(const URL&, CompletionHandler<void()>&&);
     void setPrivateClickMeasurementTokenSignatureURLForTesting(const URL&, CompletionHandler<void()>&&);
-    void setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& attributeOnURL, CompletionHandler<void()>&&);
+    void setPrivateClickMeasurementAttributionReportURLsForTesting(const URL& sourceURL, const URL& destinationURL, CompletionHandler<void()>&&);
     void markPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&&);
     void setPCMFraudPreventionValuesForTesting(const String& unlinkableToken, const String& secretToken, const String& signature, const String& keyID, CompletionHandler<void()>&&);
 
@@ -1882,6 +1886,10 @@ public:
 
 #if HAVE(TRANSLATION_UI_SERVICES)
     bool canHandleContextMenuTranslation() const;
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    void createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&&, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&&);
 #endif
 
 #if PLATFORM(COCOA)
@@ -2289,6 +2297,10 @@ private:
 
     WebWheelEventCoalescer& wheelEventCoalescer();
 
+#if HAVE(CVDISPLAYLINK)
+    void wheelEventHysteresisUpdated(PAL::HysteresisState);
+#endif
+
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventTracking(const WebTouchEvent&);
     WebCore::TrackingType touchEventTrackingType(const WebTouchEvent&) const;
@@ -2645,6 +2657,11 @@ private:
 
     std::unique_ptr<WebWheelEventCoalescer> m_wheelEventCoalescer;
 
+    Optional<WebCore::PlatformDisplayID> m_displayID;
+#if HAVE(CVDISPLAYLINK)
+    PAL::HysteresisActivity m_wheelEventActivityHysteresis;
+#endif
+
     Deque<NativeWebMouseEvent> m_mouseEventQueue;
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
 #if ENABLE(MAC_GESTURE_EVENTS)
@@ -2912,6 +2929,10 @@ private:
 #endif
 
     std::unique_ptr<SpeechRecognitionPermissionManager> m_speechRecognitionPermissionManager;
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<RemoteMediaSessionCoordinatorProxy> m_mediaSessionCoordinatorProxy;
+#endif
 
 #if USE(DIRECT2D)
     COMPtr<ID3D11Device1> m_device;

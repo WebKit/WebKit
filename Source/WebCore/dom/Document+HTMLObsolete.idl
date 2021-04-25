@@ -38,6 +38,5 @@ partial interface Document {
     undefined captureEvents();
     undefined releaseEvents();
 
-    // FIXME: 'all' is not specified to be [Replaceable].
-    [Replaceable, SameObject] readonly attribute HTMLAllCollection all;
+    [SameObject] readonly attribute HTMLAllCollection all;
 };

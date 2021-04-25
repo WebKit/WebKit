@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,8 +77,7 @@ void setPermissionsOfConfigPage()
 
         auto result = attemptVMMapping();
 
-#if HAVE(VM_FLAGS_PERMANENT) && PLATFORM(IOS_FAMILY_SIMULATOR)
-        // FIXME: Remove this when the oldest OS we support simulator on has VM_FLAGS_PERMANENT
+#if HAVE(VM_FLAGS_PERMANENT)
         if (result != KERN_SUCCESS) {
             flags &= ~VM_FLAGS_PERMANENT;
             result = attemptVMMapping();

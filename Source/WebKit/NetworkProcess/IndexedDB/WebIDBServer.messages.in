@@ -20,8 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE(INDEXED_DATABASE)
-
 messages -> WebIDBServer {
     DeleteDatabase(WebCore::IDBRequestData requestData)
     OpenDatabase(WebCore::IDBRequestData requestData)
@@ -52,5 +50,3 @@ messages -> WebIDBServer {
 
     GetAllDatabaseNamesAndVersions(WebCore::IDBResourceIdentifier requestIdentifier, struct WebCore::ClientOrigin origin) WantsConnection
 }
-
-#endif // ENABLE(INDEXED_DATABASE)

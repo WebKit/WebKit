@@ -145,10 +145,6 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
 
-webkit.org/b/188061 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Slow ]
-
-[ Debug ] webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Slow ]
-
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
@@ -1622,7 +1618,6 @@ webkit.org/b/198867 webgl/many-contexts.html [ Skip ]
 webkit.org/b/203171 inspector/layers/layers-for-node.html [ Pass Failure ]
 
 webkit.org/b/203357 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/event-dispatch.tentative.html [ Pass Failure ]
-webkit.org/b/203356 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html [ Pass Failure ]
 
 # rdar://54275897 ([ macOS ] Add support for batched key requests)
 platform/mac/media/encrypted-media/fps-multiple-pssh.html [ Skip ]
@@ -2018,7 +2013,8 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 [ arm64 ] webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing.html [ Failure ]
 
 # rdar://65848157 ([AS Layout Tests] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html is failing)
-[ arm64 ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
+# Marked as failing on all architectures below. When that is fixed, this bug still needs to be fixed.
+# [ arm64 ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
 
 # rdar://64535650 (BlitFramebuffer sRGB webgl tests crashing/failing)
 [ arm64 ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Failure ]
@@ -2204,8 +2200,6 @@ webkit.org/b/222185 media/media-extension-with-fragment.html [ Crash ]
 
 webkit.org/b/222205 css3/calc/transforms-translate.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/222195 inspector/animation/lifecycle-css-transition.html [ Pass Timeout ]
-
 webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Pass Failure Slow ]
 
 # Not all OSes support the same set of emoji.
@@ -2248,3 +2242,67 @@ webkit.org/b/223271 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 webkit.org/b/221833 fast/text/image-alt-text-bidi-2.html [ ImageOnlyFailure ]
 
 webkit.org/b/223484 [ arm64 ] compositing/style-change/backface-visibility-change.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/223724 These two tests are flakey timeouts on iOS Debug:
+[ Debug ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html [ Pass Timeout ]
+[ Debug ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin-redirect.html [ Pass Timeout ]
+
+webkit.org/b/223761 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html [ Pass Timeout ]
+
+webkit.org/b/223759 [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html [ Pass Timeout ]
+
+webkit.org/b/222239 fast/canvas/webgl/context-creation-attributes.html [ Pass Failure ]
+webkit.org/b/222239 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Pass Failure ]
+webkit.org/b/222239 webgl/2.0.0/conformance2/extensions/promoted-extensions-in-shaders.html [ Pass Failure ]
+webkit.org/b/222239 webgl/2.0.0/conformance2/rendering/fs-color-type-mismatch-color-buffer-type.html [ Pass Failure ]
+webkit.org/b/222239 webgl/2.0.0/conformance/extensions/webgl-draw-buffers.html [ Skip ]
+webkit.org/b/222239 webgl/2.0.0/conformance2/textures/misc/texel-fetch-undefined.html [ Skip ]
+webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
+
+webkit.org/b/222239 webgl/2.0.0/conformance/glsl/bugs/compound-assignment-type-combination.html [ Pass Failure Slow ]
+webkit.org/b/222239 webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Pass Failure Slow ]
+
+# Note: Even when fixed, this bug needs to be marked as Slow in debug builds.
+webkit.org/b/222239 webgl/2.0.0/conformance2/state/gl-object-get-calls.html [ Pass Failure Slow ]
+
+# These ones only seem to fail on the bots. Could be older OSes?
+webkit.org/b/222239 webgl/1.0.3/conformance/uniforms/uniform-default-values.html [ Pass Failure ]
+webkit.org/b/222239 webgl/2.0.0/conformance/uniforms/uniform-default-values.html [ Pass Failure ]
+
+webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
+webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
+
+# ASTC may be supported on M1 macs, but we should skip it for now
+fast/canvas/webgl/webgl-compressed-texture-astc.html [ Skip ]
+
+# This fails on Catalina, but not Big Sur.
+[ Catalina Mojave ] inspector/canvas/updateShader-webgl.html [ Skip ]
+
+webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance2/buffers/one-large-uniform-buffer.html [ Failure ]
+webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance2/buffers/uniform-buffers.html [ Failure ]
+webkit.org/b/224016 [ Catalina ] webgl/1.0.3/conformance/ogles/GL/all/all_001_to_004.html [ Skip ]
+webkit.org/b/224016 [ Catalina ] webgl/1.0.3/conformance/ogles/GL/any/any_001_to_004.html [ Skip ]
+webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance/ogles/GL/all/all_001_to_004.html [ Skip ]
+webkit.org/b/224016 [ Catalina ] webgl/2.0.0/conformance/ogles/GL/any/any_001_to_004.html [ Skip ]
+
+webkit.org/b/223820 inspector/debugger/csp-exceptions.html [ Pass Failure Timeout ]
+
+webkit.org/b/222748 [ Debug ] http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html [ Pass Failure ]
+
+webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
+
+webkit.org/b/223966 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html [ Pass Failure ]
+
+webkit.org/b/223973 [ Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html [ Pass Failure ]
+
+webkit.org/b/223975 inspector/protocol/condition.html [ Pass Timeout ]
+
+webkit.org/b/220754 http/wpt/service-workers/service-worker-spinning-activate.https.html [ Pass Failure ]
+
+webkit.org/b/223976 [ Debug ] imported/w3c/web-platform-tests/cors/redirect-preflight.htm [ Pass Failure ]
+
+webkit.org/b/224033 imported/w3c/web-platform-tests/custom-elements/reactions/HTMLMediaElement.html [ Pass Crash ]
+
+webkit.org/b/222750 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html [ Pass Failure Crash ]
+
+webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html [ Pass Failure ]

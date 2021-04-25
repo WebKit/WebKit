@@ -333,12 +333,36 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
         return rc
 
 
-class CheckPatchRelevance(buildstep.BuildStep):
+class AnalyzePatch(buildstep.BuildStep):
+    flunkOnFailure = True
+    haltOnFailure = True
+
+    def _get_patch(self):
+        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
+        if not sourcestamp or not sourcestamp.patch:
+            return None
+        return sourcestamp.patch[1]
+
+    @defer.inlineCallbacks
+    def _addToLog(self, logName, message):
+        try:
+            log = self.getLog(logName)
+        except KeyError:
+            log = yield self.addLog(logName)
+        log.addStdout(message)
+
+    def getResultSummary(self):
+        if self.results == FAILURE:
+            return {'step': 'Patch doesn\'t have relevant changes'}
+        if self.results == SUCCESS:
+            return {'step': 'Patch contains relevant changes'}
+        return buildstep.BuildStep.getResultSummary(self)
+
+
+class CheckPatchRelevance(AnalyzePatch):
     name = 'check-patch-relevance'
     description = ['check-patch-relevance running']
     descriptionDone = ['Patch contains relevant changes']
-    flunkOnFailure = True
-    haltOnFailure = True
 
     bindings_paths = [
         'Source/WebCore',
@@ -415,20 +439,6 @@ class CheckPatchRelevance(buildstep.BuildStep):
                     return True
         return False
 
-    def _get_patch(self):
-        sourcestamp = self.build.getSourceStamp(self.getProperty('codebase', ''))
-        if not sourcestamp or not sourcestamp.patch:
-            return None
-        return sourcestamp.patch[1]
-
-    @defer.inlineCallbacks
-    def _addToLog(self, logName, message):
-        try:
-            log = self.getLog(logName)
-        except KeyError:
-            log = yield self.addLog(logName)
-        log.addStdout(message)
-
     def start(self):
         patch = self._get_patch()
         if not patch:
@@ -447,10 +457,45 @@ class CheckPatchRelevance(buildstep.BuildStep):
         self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
         return None
 
-    def getResultSummary(self):
-        if self.results == FAILURE:
-            return {'step': 'Patch doesn\'t have relevant changes'}
-        return super(CheckPatchRelevance, self).getResultSummary()
+
+class FindModifiedLayoutTests(AnalyzePatch):
+    name = 'find-modified-layout-tests'
+    RE_LAYOUT_TEST = b'^(\+\+\+).*(LayoutTests.*\.html)'
+    DIRECTORIES_TO_IGNORE = ['reference', 'reftest', 'resources', 'support', 'script-tests', 'tools']
+    SUFFIXES_TO_IGNORE = ['-expected', '-expected-mismatch', '-ref', '-notref']
+
+    def find_test_names_from_patch(self, patch):
+        tests = []
+        for line in patch.splitlines():
+            match = re.search(self.RE_LAYOUT_TEST, line, re.IGNORECASE)
+            if match:
+                if any((suffix + '.html').encode('utf-8') in line for suffix in self.SUFFIXES_TO_IGNORE):
+                    continue
+                test_name = match.group(2).decode('utf-8')
+                if any(directory in test_name.split('/') for directory in self.DIRECTORIES_TO_IGNORE):
+                    continue
+                tests.append(test_name)
+        return list(set(tests))
+
+    def start(self):
+        patch = self._get_patch()
+        if not patch:
+            self.finished(SUCCESS)
+            return None
+
+        tests = self.find_test_names_from_patch(patch)
+
+        if tests:
+            self._addToLog('stdio', 'This patch modifies following tests: {}'.format(tests))
+            self.setProperty('modified_tests', tests)
+            self.finished(SUCCESS)
+            return None
+
+        self._addToLog('stdio', 'This patch does not modify any layout tests')
+        self.finished(FAILURE)
+        self.build.results = SKIPPED
+        self.build.buildFinished(['Patch {} doesn\'t have relevant changes'.format(self.getProperty('patch_id', ''))], SKIPPED)
+        return None
 
 
 class Bugzilla(object):
@@ -472,6 +517,7 @@ class BugzillaMixin(object):
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
     revert_preamble = 'REVERT of r'
+    fast_cq_preamble = '[fast-cq]'
 
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
@@ -549,8 +595,8 @@ class BugzillaMixin(object):
         patch_author = patch_json.get('creator')
         self.setProperty('patch_author', patch_author)
         patch_title = patch_json.get('summary')
-        if patch_title.startswith(self.revert_preamble):
-            self.setProperty('revert', True)
+        if patch_title.lower().startswith((self.revert_preamble, self.fast_cq_preamble)):
+            self.setProperty('fast_commit_queue', True)
         if self.addURLs:
             self.addURL('Patch by: {}'.format(patch_author), '')
         return patch_json.get('is_obsolete')
@@ -1459,7 +1505,7 @@ class CompileWebKit(shell.Compile):
         super(CompileWebKit, self).__init__(logEnviron=False, **kwargs)
 
     def doStepIf(self, step):
-        return not (self.getProperty('revert') and self.getProperty('buildername', '').lower() == 'commit-queue')
+        return not (self.getProperty('fast_commit_queue') and self.getProperty('buildername', '').lower() == 'commit-queue')
 
     def start(self):
         platform = self.getProperty('platform')
@@ -2018,6 +2064,8 @@ class RunWebKitTests(shell.Test):
     jsonFileName = 'layout-test-results/full_results.json'
     logfiles = {'json': jsonFileName}
     test_failures_log_name = 'test-failures'
+    ENABLE_GUARD_MALLOC = False
+    EXIT_AFTER_FAILURES = '30'
     command = ['python', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
                '--no-show-results',
@@ -2037,14 +2085,9 @@ class RunWebKitTests(shell.Test):
 
     def doStepIf(self, step):
         return not ((self.getProperty('buildername', '').lower() == 'commit-queue') and
-                    (self.getProperty('revert') or self.getProperty('passed_mac_wk2')))
+                    (self.getProperty('fast_commit_queue') or self.getProperty('passed_mac_wk2')))
 
-    def start(self):
-        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
-        self.addLogObserver('stdio', self.log_observer)
-        self.log_observer_json = logobserver.BufferLogObserver()
-        self.addLogObserver('json', self.log_observer_json)
-
+    def setLayoutTestCommand(self):
         platform = self.getProperty('platform')
         appendCustomBuildFlags(self, platform, self.getProperty('fullPlatform'))
         additionalArguments = self.getProperty('additionalArguments')
@@ -2059,10 +2102,13 @@ class RunWebKitTests(shell.Test):
         if patch_author in ['webkit-wpt-import-bot@igalia.com']:
             self.setCommand(self.command + ['imported/w3c/web-platform-tests'])
         else:
-            self.setCommand(self.command + ['--exit-after-n-failures', '30', '--skip-failing-tests'])
+            self.setCommand(self.command + ['--exit-after-n-failures', self.EXIT_AFTER_FAILURES, '--skip-failing-tests'])
 
         if additionalArguments:
             self.setCommand(self.command + additionalArguments)
+
+        if self.ENABLE_GUARD_MALLOC:
+            self.setCommand(self.command + ['--guard-malloc'])
 
         if self.name == 'run-layout-tests-without-patch':
             # In order to speed up testing, on the step that retries running the layout tests without patch
@@ -2089,6 +2135,12 @@ class RunWebKitTests(shell.Test):
                     list_retry_tests = sorted(first_results_failing_tests.union(second_results_failing_tests))
                     self.setCommand(self.command + list_retry_tests)
 
+    def start(self):
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+        self.log_observer_json = logobserver.BufferLogObserver()
+        self.addLogObserver('json', self.log_observer_json)
+        self.setLayoutTestCommand()
         return shell.Test.start(self)
 
     # FIXME: This will break if run-webkit-tests changes its default log formatter.
@@ -2198,6 +2250,43 @@ class RunWebKitTests(shell.Test):
             return {'step': status}
 
         return super(RunWebKitTests, self).getResultSummary()
+
+
+class RunWebKitTestsInStressMode(RunWebKitTests):
+    name = 'run-layout-tests-in-stress-mode'
+    suffix = 'stress-mode'
+    EXIT_AFTER_FAILURES = '10'
+    NUM_ITERATIONS = 100
+
+    def setLayoutTestCommand(self):
+        RunWebKitTests.setLayoutTestCommand(self)
+
+        self.setCommand(self.command + ['--iterations', self.NUM_ITERATIONS])
+        modified_tests = self.getProperty('modified_tests')
+        if modified_tests:
+            self.setCommand(self.command + modified_tests)
+
+    def evaluateCommand(self, cmd):
+        rc = self.evaluateResult(cmd)
+        if rc == SUCCESS or rc == WARNINGS:
+            message = 'Passed layout tests'
+            self.descriptionDone = message
+            self.build.results = SUCCESS
+            self.setProperty('build_summary', message)
+        else:
+            self.setProperty('build_summary', 'Found test failures')
+            self.build.addStepsAfterCurrentStep([
+                ArchiveTestResults(),
+                UploadTestResults(identifier=self.suffix),
+                ExtractTestResults(identifier=self.suffix),
+            ])
+        return rc
+
+
+class RunWebKitTestsInStressGuardmallocMode(RunWebKitTestsInStressMode):
+    name = 'run-layout-tests-in-guard-malloc-stress-mode'
+    suffix = 'guard-malloc'
+    ENABLE_GUARD_MALLOC = True
 
 
 class ReRunWebKitTests(RunWebKitTests):

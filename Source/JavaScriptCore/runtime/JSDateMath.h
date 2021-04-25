@@ -52,6 +52,8 @@ class JSGlobalObject;
 class OpaqueICUTimeZone;
 class VM;
 
+static constexpr double minECMAScriptTime = -8.64E15;
+
 // We do not expose icu::TimeZone in this header file. And we cannot use icu::TimeZone forward declaration
 // because icu namespace can be an alias to icu$verNum namespace.
 struct OpaqueICUTimeZoneDeleter {

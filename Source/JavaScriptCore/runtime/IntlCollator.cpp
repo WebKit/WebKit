@@ -199,7 +199,7 @@ void IntlCollator::initializeCollator(JSGlobalObject* globalObject, JSValue loca
     if (!caseFirstOption.isNull())
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Kf)] = caseFirstOption;
 
-    auto& availableLocales = intlCollatorAvailableLocales();
+    const auto& availableLocales = intlCollatorAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Co, RelevantExtensionKey::Kf, RelevantExtensionKey::Kn }, localeData);
 
     m_locale = resolved.locale;
@@ -444,7 +444,7 @@ bool IntlCollator::updateCanDoASCIIUCADUCETComparison() const
 }
 
 #if ASSERT_ENABLED
-void IntlCollator::checkICULocaleInvariants(const HashSet<String>& locales)
+void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
 {
     for (auto& locale : locales) {
         auto checkASCIIOrderingWithDUCET = [](const String& locale, UCollator& collator) {

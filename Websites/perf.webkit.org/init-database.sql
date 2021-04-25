@@ -102,6 +102,7 @@ CREATE TABLE commits (
     commit_id serial PRIMARY KEY,
     commit_repository integer NOT NULL REFERENCES repositories ON DELETE CASCADE,
     commit_revision varchar(64) NOT NULL,
+    commit_revision_identifier varchar(64) DEFAULT NULL,
     commit_previous_commit integer REFERENCES commits ON DELETE CASCADE,
     commit_time timestamp,
     commit_order integer,
@@ -109,7 +110,8 @@ CREATE TABLE commits (
     commit_message text,
     commit_reported boolean NOT NULL DEFAULT FALSE,
     commit_testability varchar(128) DEFAULT NULL,
-    CONSTRAINT commit_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision));
+    CONSTRAINT commit_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision),
+    CONSTRAINT commit_string_identifier_in_repository_must_be_unique UNIQUE(commit_repository, commit_revision_identifier));
 CREATE INDEX commit_time_index ON commits(commit_time);
 CREATE INDEX commit_order_index ON commits(commit_order);
 

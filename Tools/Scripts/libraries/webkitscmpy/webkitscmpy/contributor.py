@@ -31,6 +31,7 @@ class Contributor(object):
     GIT_AUTHOR_RE = re.compile(r'Author: (?P<author>.*) <(?P<email>[^@]+@[^@]+)(@.*)?>')
     AUTOMATED_CHECKIN_RE = re.compile(r'Author: (?P<author>.*) <devnull>')
     UNKNOWN_AUTHOR = re.compile(r'Author: (?P<author>.*) <None>')
+    EMPTY_AUTHOR = re.compile(r'Author: (?P<author>.*) <>')
     SVN_AUTHOR_RE = re.compile(r'r\d+ \| (?P<email>.*) \| (?P<date>.*) \| \d+ lines?')
     SVN_PATCH_FROM_RE = re.compile(r'Patch by (?P<author>.*) <(?P<email>.*)> on \d+-\d+-\d+')
 
@@ -102,6 +103,8 @@ class Contributor(object):
 
             self[contributor.name] = contributor
             for email in contributor.emails or []:
+                if not email:
+                    continue
                 self[email] = contributor
                 self[email.lower()] = contributor
             return contributor
@@ -112,7 +115,7 @@ class Contributor(object):
         email = None
         author = None
 
-        for expression in [cls.GIT_AUTHOR_RE, cls.SVN_AUTHOR_RE, cls.SVN_PATCH_FROM_RE, cls.AUTOMATED_CHECKIN_RE, cls.UNKNOWN_AUTHOR]:
+        for expression in [cls.GIT_AUTHOR_RE, cls.SVN_AUTHOR_RE, cls.SVN_PATCH_FROM_RE, cls.AUTOMATED_CHECKIN_RE, cls.UNKNOWN_AUTHOR, cls.EMPTY_AUTHOR]:
             match = expression.match(line)
             if match:
                 if 'author' in expression.groupindex:

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StructureIDTable.h"
 
+#include "ResourceExhaustion.h"
 #include <wtf/Atomics.h>
 #include <wtf/DataLog.h>
 #include <wtf/RawPointer.h>
@@ -109,7 +110,7 @@ void StructureIDTable::resize(size_t newCapacity)
 
     // If m_size is already s_maximumNumberOfStructures, newCapacity becomes s_maximumNumberOfStructures in the above code.
     // In that case, we should crash because of exhaust of StructureIDs.
-    RELEASE_ASSERT_WITH_MESSAGE(m_size < newCapacity, "Crash intentionally because of exhaust of StructureIDs.");
+    RELEASE_ASSERT_RESOURCE_AVAILABLE(m_size < newCapacity, StructureIDExhaustion, "Crash intentionally because of exhaust of StructureIDs.");
 
     // Create the new table.
     auto newTable = makeUniqueArray<StructureOrOffset>(newCapacity);

@@ -41,7 +41,7 @@
 namespace WebCore {
 
 namespace DisplayList {
-class DisplayList;
+class InMemoryDisplayList;
 }
 
 class FloatRoundedRect;
@@ -630,7 +630,7 @@ private:
 
     Vector<FloatRect> m_dirtyRects;
 
-    std::unique_ptr<DisplayList::DisplayList> m_displayList;
+    std::unique_ptr<DisplayList::InMemoryDisplayList> m_displayList;
 
     ContentsLayerPurpose m_contentsLayerPurpose { ContentsLayerPurpose::None };
     bool m_isCommittingChanges { false };

@@ -20,8 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from resultsdbpy.controller.commit import Commit
-from webkitscmpy import remote
+from webkitscmpy import remote, Commit
 
 
 class Repository(object):
@@ -30,10 +29,7 @@ class Repository(object):
         self.key = key
         self.default_branch = default_branch or 'main'
 
-    def commit_for_id(self, id):
-        raise NotImplementedError()
-
-    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=True):
+    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=False):
         raise NotImplementedError()
 
     def url_for_commit(self, commit):
@@ -52,19 +48,7 @@ class StashRepository(Repository):
             default_branch=default_branch or self.remote.default_branch,
         )
 
-    def commit_for_id(self, id):
-        commit = self.remote.commit(hash=id, include_identifier=False)
-        return Commit(
-            repository_id=self.key,
-            id=commit.hash,
-            branch=commit.branch,
-            timestamp=commit.timestamp,
-            order=commit.order,
-            committer=commit.author.email,
-            message=commit.message,
-        )
-
-    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=True):
+    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=False):
         if identifier:
             fast = False
         if ref:
@@ -72,7 +56,12 @@ class StashRepository(Repository):
         return self.remote.commit(revision=revision, hash=hash, identifier=identifier, include_identifier=not fast)
 
     def url_for_commit(self, commit):
-        return f'{self.remote.url}/commits/{commit}'
+        if not isinstance(commit, Commit):
+            raise TypeError(f'Expected type {Commit}, got {type(commit)}')
+
+        if commit.identifier or commit.hash:
+            return f'{self.remote.url}/commits/{commit.hash}'
+        return None
 
     def representations(self):
         return ['hash', 'identifier']
@@ -81,35 +70,47 @@ class StashRepository(Repository):
 class WebKitRepository(Repository):
 
     def __init__(self):
-        self.remote = remote.Svn('https://svn.webkit.org/repository/webkit')
+        self.svn = remote.Svn('https://svn.webkit.org/repository/webkit')
+        self.github = remote.GitHub('https://github.com/WebKit/WebKit')
         super(WebKitRepository, self).__init__(
             key='webkit',
-            default_branch=self.remote.default_branch,
+            default_branch=self.github.default_branch,
         )
 
-    def commit_for_id(self, id):
-        commit = self.remote.commit(revision=id, include_identifier=False)
-        return Commit(
-            repository_id=self.key,
-            id=commit.revision,
-            branch=commit.branch,
-            timestamp=commit.timestamp,
-            order=commit.order,
-            committer=commit.author.email,
-            message=commit.message,
-        )
-
-    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=True):
+    def commit(self, ref=None, revision=None, hash=None, identifier=None, fast=False):
         if identifier:
             fast = False
+
         if ref:
             if isinstance(ref, int) or ref.isdigit():
-                ref = 'r{}'.format(ref)
-            return self.remote.find(ref, include_identifier=not fast)
-        return self.remote.commit(revision=revision, hash=hash, identifier=identifier, include_identifier=not fast)
+                result = self.svn.find('r{}'.format(ref), include_identifier=not fast)
+            else:
+                result = self.github.find(ref, include_identifier=not fast)
+        else:
+            result = (self.svn if revision and not hash else self.github).commit(
+                revision=None if hash else revision,
+                hash=hash,
+                identifier=None if not hash and not revision else identifier,
+                include_identifier=not fast,
+            )
+
+        if not fast and result.hash and result.identifier:
+            result = self.github.commit(identifier=str(result))
+
+        if result.branch in self.svn.DEFAULT_BRANCHES:
+            result.branch = self.default_branch
+        return result
 
     def url_for_commit(self, commit):
-        return f'https://commits.webkit.org/r{commit}'
+        if not isinstance(commit, Commit):
+            raise TypeError(f'Expected type {Commit}, got {type(commit)}')
+
+        if commit.identifier or commit.hash:
+            return f'https://commits.webkit.org/{commit}'
+        if commit.revision:
+            return f'https://commits.webkit.org/r{commit.revision}'
+        return None
+
 
     def representations(self):
-        return ['identifier', 'revision']
+        return ['identifier', 'hash', 'revision']

@@ -29,12 +29,11 @@ import zipfile
 from cassandra.cqlengine import columns
 from collections import defaultdict
 from datetime import datetime
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 
-from webkitscmpy import Commit as ScmCommit
+from webkitscmpy import Commit
 
 
 class UploadContext(object):
@@ -63,7 +62,7 @@ class UploadContext(object):
 
         def unpack(self):
             return dict(
-                commits=[ScmCommit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
+                commits=[Commit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
                 sdk=None if self.sdk == '?' else self.sdk,
                 test_results=json.loads(UploadContext.from_zip(bytearray(self.test_results))),
                 timestamp=calendar.timegm(self.time_uploaded.timetuple()),
@@ -83,7 +82,7 @@ class UploadContext(object):
 
         def unpack(self):
             return dict(
-                commits=[ScmCommit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
+                commits=[Commit.from_json(element) for element in json.loads(UploadContext.from_zip(bytearray(self.commits)))],
                 sdk=None if self.sdk == '?' else self.sdk,
                 test_results=json.loads(UploadContext.from_zip(bytearray(self.test_results))),
                 timestamp=calendar.timegm(self.time_uploaded.timetuple()),
@@ -181,7 +180,7 @@ class UploadContext(object):
                 data = json.loads(raw_data)
                 self.synchronously_process_test_results(
                     configuration=Configuration.from_json(data['configuration']),
-                    commits=[ScmCommit.from_json(commit_json) for commit_json in data['commits']],
+                    commits=[Commit.from_json(commit_json) for commit_json in data['commits']],
                     suite=data['suite'],
                     timestamp=data['timestamp'],
                     test_results=data['test_results'],
@@ -243,7 +242,7 @@ class UploadContext(object):
         if not isinstance(suite, str):
             raise TypeError(f'Expected type {str}, got {type(suite)}')
         for commit in commits:
-            if not isinstance(commit, ScmCommit) and not isinstance(commit, Commit):
+            if not isinstance(commit, Commit):
                 raise TypeError(f'Expected type {Commit}, got {type(commit)}')
         if len(commits) < 1:
             raise ValueError('Each test result must have at least 1 associated commit')
@@ -262,7 +261,7 @@ class UploadContext(object):
 
                 self.configuration_context.insert_row_with_configuration(
                     self.SuitesByConfiguration.__table_name__, configuration, suite=suite, branch=branch,
-                    ttl=int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None,
+                    ttl=int((uuid // Commit.UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None,
                 )
                 self.configuration_context.insert_row_with_configuration(
                     self.UploadsByConfiguration.__table_name__, configuration=configuration,
@@ -270,7 +269,7 @@ class UploadContext(object):
                     commits=self.to_zip(json.dumps(commits, cls=commits[0].Encoder)),
                     test_results=self.to_zip(json.dumps(test_results)),
                     upload_version=version,
-                    ttl=int((uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None,
+                    ttl=int((uuid // Commit.UUID_MULTIPLIER) + self.ttl_seconds - time.time()) if self.ttl_seconds else None,
                 )
 
     def find_test_results(self, configurations, suite, branch=None, begin=None, end=None, recent=True, limit=100):

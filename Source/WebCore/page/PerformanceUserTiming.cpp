@@ -35,15 +35,16 @@
 #include "SerializedScriptValue.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 
 namespace WebCore {
 
 using NavigationTimingFunction = unsigned long long (PerformanceTiming::*)() const;
-static const HashMap<String, NavigationTimingFunction>& restrictedMarkNamesToNavigationTimingFunctionMap()
+static const MemoryCompactLookupOnlyRobinHoodHashMap<String, NavigationTimingFunction>& restrictedMarkNamesToNavigationTimingFunctionMap()
 {
     ASSERT(isMainThread());
 
-    static auto map = makeNeverDestroyed<HashMap<String, NavigationTimingFunction>>({
+    static auto map = makeNeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashMap<String, NavigationTimingFunction>>({
         { "connectEnd"_s, &PerformanceTiming::connectEnd },
         { "connectStart"_s, &PerformanceTiming::connectStart },
         { "domComplete"_s, &PerformanceTiming::domComplete },

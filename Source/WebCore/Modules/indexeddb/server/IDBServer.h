@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBConnectionToClient.h"
 #include "IDBDatabaseIdentifier.h"
 #include "StorageQuotaManager.h"
@@ -108,7 +106,7 @@ public:
     WEBCORE_EXPORT void renameOrigin(const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&);
 
     StorageQuotaManager::Decision requestSpace(const ClientOrigin&, uint64_t taskSize);
-    WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&);
+    WEBCORE_EXPORT static uint64_t diskUsage(const String& rootDirectory, const ClientOrigin&, StorageQuotaManager::ShouldPrintUsageDetail);
 
     WEBCORE_EXPORT void stopDatabaseActivitiesOnMainThread();
 
@@ -139,5 +137,3 @@ private:
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

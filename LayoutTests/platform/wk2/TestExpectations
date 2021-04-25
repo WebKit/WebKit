@@ -231,6 +231,27 @@ webaudio/Panner/hrtf-database.html [ Timeout ]
 webaudio/codec-tests/aac/vbr-128kbps-44khz.html [ Timeout ]
 webaudio/codec-tests/mp3/128kbps-44khz.html [ Timeout ]
 
+# webkit.org/b/221791
+# fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
+# fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
+# fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
+# fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html [ Failure ]
+# fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Failure ]
+# fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Failure ]
+
+# webkit.org/b/221790
+# webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
+# webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
+# webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
+# webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Failure ]
+# webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Failure ]
+# webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Failure ]
+
+# webkit.org/b/221806
+# webgl/2.0.0/conformance/extensions/oes-texture-float-with-video.html [ Failure ]
+# webgl/2.0.0/conformance/extensions/oes-texture-half-float-with-video.html [ Failure ]
+# webgl/2.0.0/conformance/textures/video/tex-2d-rgb-rgb-unsigned_byte.html [ Failure ]
+
 webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
 
 webkit.org/b/221819 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/mediaElementAudioSourceToScriptProcessorTest.html [ Failure ]

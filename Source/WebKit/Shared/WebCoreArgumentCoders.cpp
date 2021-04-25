@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include "ShareableBitmap.h"
+#include "ShareableResource.h"
 #include "SharedBufferDataReference.h"
 #include "StreamConnectionEncoder.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
@@ -73,6 +74,7 @@
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#include <WebCore/ScriptBuffer.h>
 #include <WebCore/ScrollingConstraints.h>
 #include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/SearchPopupMenu.h>
@@ -122,7 +124,12 @@ using namespace WebKit;
 
 static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 {
-    uint64_t bufferSize = buffer ? buffer->size() : 0;
+    bool isNull = !buffer;
+    encoder << isNull;
+    if (isNull)
+        return;
+
+    uint64_t bufferSize = buffer->size();
     encoder << bufferSize;
     if (!bufferSize)
         return;
@@ -144,12 +151,24 @@ static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
 
 static WARN_UNUSED_RETURN bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
 {
+    Optional<bool> isNull;
+    decoder >> isNull;
+    if (!isNull)
+        return false;
+
+    if (*isNull) {
+        buffer = nullptr;
+        return true;
+    }
+
     uint64_t bufferSize = 0;
     if (!decoder.decode(bufferSize))
         return false;
 
-    if (!bufferSize)
+    if (!bufferSize) {
+        buffer = SharedBuffer::create();
         return true;
+    }
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     if (!decoder.bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
@@ -2716,7 +2735,6 @@ bool ArgumentCoder<MediaConstraints>::decode(Decoder& decoder, WebCore::MediaCon
 }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
 void ArgumentCoder<IDBKeyPath>::encode(Encoder& encoder, const IDBKeyPath& keyPath)
 {
     bool isString = WTF::holds_alternative<String>(keyPath);
@@ -2745,7 +2763,6 @@ bool ArgumentCoder<IDBKeyPath>::decode(Decoder& decoder, IDBKeyPath& keyPath)
     }
     return true;
 }
-#endif
 
 #if ENABLE(SERVICE_WORKER)
 void ArgumentCoder<ServiceWorkerOrClientData>::encode(Encoder& encoder, const ServiceWorkerOrClientData& data)
@@ -2813,6 +2830,7 @@ bool ArgumentCoder<ServiceWorkerOrClientIdentifier>::decode(Decoder& decoder, Se
     }
     return true;
 }
+
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -3049,6 +3067,70 @@ Optional<Ref<SharedBuffer>> ArgumentCoder<Ref<WebCore::SharedBuffer>>::decode(De
         return WTF::nullopt;
 
     return buffer.releaseNonNull();
+}
+
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+static ShareableResource::Handle tryConvertToShareableResourceHandle(const ScriptBuffer& script)
+{
+    if (!script.containsSingleFileMappedSegment())
+        return ShareableResource::Handle { };
+
+    auto& segment = script.buffer()->begin()->segment;
+    auto sharedMemory = SharedMemory::wrapMap(const_cast<char*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
+    if (!sharedMemory)
+        return ShareableResource::Handle { };
+
+    auto shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, segment->size());
+    if (!shareableResource)
+        return ShareableResource::Handle { };
+
+    ShareableResource::Handle shareableResourceHandle;
+    shareableResource->createHandle(shareableResourceHandle);
+    return shareableResourceHandle;
+}
+
+static Optional<WebCore::ScriptBuffer> decodeScriptBufferAsShareableResourceHandle(Decoder& decoder)
+{
+    ShareableResource::Handle handle;
+    if (!decoder.decode(handle) || handle.isNull())
+        return WTF::nullopt;
+    auto buffer = handle.tryWrapInSharedBuffer();
+    if (!buffer)
+        return WTF::nullopt;
+    return WebCore::ScriptBuffer { WTFMove(buffer) };
+}
+#endif
+
+void ArgumentCoder<WebCore::ScriptBuffer>::encode(Encoder& encoder, const WebCore::ScriptBuffer& script)
+{
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    auto handle = tryConvertToShareableResourceHandle(script);
+    bool isShareableResourceHandle = !handle.isNull();
+    encoder << isShareableResourceHandle;
+    if (isShareableResourceHandle) {
+        encoder << handle;
+        return;
+    }
+#endif
+    encodeSharedBuffer(encoder, script.buffer());
+}
+
+Optional<WebCore::ScriptBuffer> ArgumentCoder<WebCore::ScriptBuffer>::decode(Decoder& decoder)
+{
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    Optional<bool> isShareableResourceHandle;
+    decoder >> isShareableResourceHandle;
+    if (!isShareableResourceHandle)
+        return WTF::nullopt;
+    if (*isShareableResourceHandle)
+        return decodeScriptBufferAsShareableResourceHandle(decoder);
+#endif
+
+    RefPtr<SharedBuffer> buffer;
+    if (!decodeSharedBuffer(decoder, buffer))
+        return WTF::nullopt;
+
+    return WebCore::ScriptBuffer { WTFMove(buffer) };
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)

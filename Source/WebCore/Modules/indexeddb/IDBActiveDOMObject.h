@@ -29,8 +29,6 @@
 #include "ScriptExecutionContext.h"
 #include <wtf/Threading.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 class IDBActiveDOMObject : public ActiveDOMObject {
@@ -92,5 +90,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

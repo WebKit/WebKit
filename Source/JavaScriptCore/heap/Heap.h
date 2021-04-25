@@ -87,7 +87,7 @@ class StopIfNecessaryTimer;
 class SweepingScope;
 class VM;
 class VerifierSlotVisitor;
-class WeakGCMapBase;
+class WeakGCHashTable;
 struct CurrentThreadState;
 
 #ifdef JSC_GLIB_API_ENABLED
@@ -289,8 +289,8 @@ public:
     void releaseSoon(std::unique_ptr<JSCGLibWrapperObject>&&);
 #endif
 
-    JS_EXPORT_PRIVATE void registerWeakGCMap(WeakGCMapBase* weakGCMap);
-    JS_EXPORT_PRIVATE void unregisterWeakGCMap(WeakGCMapBase* weakGCMap);
+    JS_EXPORT_PRIVATE void registerWeakGCHashTable(WeakGCHashTable*);
+    JS_EXPORT_PRIVATE void unregisterWeakGCHashTable(WeakGCHashTable*);
 
     void addLogicallyEmptyWeakBlock(WeakBlock*);
 
@@ -526,7 +526,7 @@ private:
     void endMarking();
 
     void reapWeakHandles();
-    void pruneStaleEntriesFromWeakGCMaps();
+    void pruneStaleEntriesFromWeakGCHashTables();
     void sweepArrayBuffers();
     void snapshotUnswept();
     void deleteSourceProviderCaches();
@@ -689,7 +689,7 @@ private:
 #endif
     unsigned m_deferralDepth { 0 };
 
-    HashSet<WeakGCMapBase*> m_weakGCMaps;
+    HashSet<WeakGCHashTable*> m_weakGCHashTables;
     
     std::unique_ptr<MarkStackArray> m_sharedCollectorMarkStack;
     std::unique_ptr<MarkStackArray> m_sharedMutatorMarkStack;

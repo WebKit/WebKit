@@ -26,8 +26,6 @@
 #include "config.h"
 #include "UniqueIDBDatabaseTransaction.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBIterateCursorData.h"
 #include "IDBResultData.h"
 #include "IDBServer.h"
@@ -415,5 +413,3 @@ void UniqueIDBDatabaseTransaction::didActivateInBackingStore(const IDBError& err
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBTransaction.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "DOMException.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
@@ -1515,5 +1513,3 @@ uint64_t IDBTransaction::generateOperationID()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

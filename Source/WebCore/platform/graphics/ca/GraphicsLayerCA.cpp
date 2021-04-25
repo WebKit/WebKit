@@ -35,6 +35,7 @@
 #include "FloatRect.h"
 #include "GraphicsLayerFactory.h"
 #include "Image.h"
+#include "InMemoryDisplayList.h"
 #include "Logging.h"
 #include "Model.h"
 #include "PlatformCAFilters.h"
@@ -402,7 +403,7 @@ Ref<PlatformCAAnimation> GraphicsLayerCA::createPlatformCAAnimation(PlatformCAAn
 #endif
 }
 
-typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>> LayerDisplayListHashMap;
+typedef HashMap<const GraphicsLayerCA*, std::pair<FloatRect, std::unique_ptr<DisplayList::InMemoryDisplayList>>> LayerDisplayListHashMap;
 
 static LayerDisplayListHashMap& layerDisplayListMap()
 {
@@ -1710,7 +1711,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     if (usesDisplayListDrawing() && m_drawsContent && (!m_hasEverPainted || hadDirtyRects)) {
         TraceScope tracingScope(DisplayListRecordStart, DisplayListRecordEnd);
 
-        m_displayList = makeUnique<DisplayList::DisplayList>();
+        m_displayList = makeUnique<DisplayList::InMemoryDisplayList>();
         
         FloatRect initialClip(boundsOrigin(), size());
 
@@ -1744,7 +1745,7 @@ void GraphicsLayerCA::platformCALayerPaintContents(PlatformCALayer*, GraphicsCon
         
         if (UNLIKELY(isTrackingDisplayListReplay())) {
             auto replayList = replayer.replay(clip, isTrackingDisplayListReplay()).trackedDisplayList;
-            layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::DisplayList>>(clip, WTFMove(replayList)));
+            layerDisplayListMap().add(this, std::pair<FloatRect, std::unique_ptr<DisplayList::InMemoryDisplayList>>(clip, WTFMove(replayList)));
         } else
             replayer.replay(clip);
 
@@ -3095,53 +3096,6 @@ void GraphicsLayerCA::updateAnimations()
         // sound base to add animations on top of with additivity enabled.
         addBaseValueTransformAnimation(AnimatedPropertyTransform, TransformationMatrixSource::UseIdentityMatrix);
 
-        // Core Animation might require additive animations to be applied in the reverse order.
-#if !PLATFORM(WIN) && !HAVE(CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED)
-        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedPropertyID property) {
-            if (animations.isEmpty()) {
-                addBaseValueTransformAnimation(property);
-                return;
-            }
-
-            LayerPropertyAnimation* earliestAnimation = nullptr;
-            for (auto* animation : animations) {
-                if (auto beginTime = animation->computedBeginTime()) {
-                    if (!earliestAnimation || *earliestAnimation->computedBeginTime() > *beginTime)
-                        earliestAnimation = animation;
-                }
-            }
-
-            Vector<RefPtr<PlatformCAAnimation>> caAnimations;
-
-            // If we have an animation with an explicit begin time that does not fill backwards and starts with a delay,
-            // we must create a non-interpolating animation to set the current value for this transform-related property
-            // until that animation begins.
-            if (earliestAnimation) {
-                auto fillMode = earliestAnimation->m_animation->fillMode();
-                if (fillMode != PlatformCAAnimation::Backwards && fillMode != PlatformCAAnimation::Both) {
-                    Seconds earliestBeginTime = *earliestAnimation->computedBeginTime() + animationGroupBeginTime;
-                    if (earliestBeginTime > currentTime) {
-                        if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
-                            prepareAnimationForAddition(*baseValueTransformAnimation);
-                            caAnimations.append(baseValueTransformAnimation->m_animation);
-                        }
-                    }
-                }
-            }
-
-            for (auto* animation : animations) {
-                prepareAnimationForAddition(*animation);
-                caAnimations.append(animation->m_animation);
-            }
-
-            addAnimationGroup(property, caAnimations);
-        };
-
-        addAnimationsForProperty(translateAnimations, AnimatedPropertyTranslate);
-        addAnimationsForProperty(rotateAnimations, AnimatedPropertyRotate);
-        addAnimationsForProperty(scaleAnimations, AnimatedPropertyScale);
-        addAnimationsForProperty(transformAnimations, AnimatedPropertyTransform);
-#else
         auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedPropertyID property) {
             if (animations.isEmpty()) {
                 addBaseValueTransformAnimation(property);
@@ -3182,7 +3136,6 @@ void GraphicsLayerCA::updateAnimations()
         addAnimationsForProperty(scaleAnimations, AnimatedPropertyScale);
         addAnimationsForProperty(rotateAnimations, AnimatedPropertyRotate);
         addAnimationsForProperty(translateAnimations, AnimatedPropertyTranslate);
-#endif
     }
 }
 

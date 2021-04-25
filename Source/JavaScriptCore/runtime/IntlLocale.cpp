@@ -87,7 +87,7 @@ bool LocaleIDBuilder::initialize(const String& tag)
     if (!isStructurallyValidLanguageTag(tag))
         return false;
     ASSERT(tag.isAllASCII());
-    m_buffer = localeIDBufferForLanguageTag(tag.ascii());
+    m_buffer = localeIDBufferForLanguageTagWithNullTerminator(tag.ascii());
     return m_buffer.size();
 }
 
@@ -95,12 +95,11 @@ CString LocaleIDBuilder::toCanonical()
 {
     ASSERT(m_buffer.size());
 
-    Vector<char, 32> buffer;
-    auto status = callBufferProducingFunction(uloc_canonicalize, m_buffer.data(), buffer);
-    if (U_FAILURE(status))
+    auto buffer = canonicalizeLocaleIDWithoutNullTerminator(m_buffer.data());
+    if (!buffer)
         return CString();
 
-    auto result = canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer));
+    auto result = canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTFMove(buffer.value()));
     return CString(result.data(), result.size());
 }
 

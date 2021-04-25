@@ -208,7 +208,7 @@ NetworkProcessProxy& WebsiteDataStore::networkProcess()
 {
     if (!m_networkProcess) {
         m_networkProcess = networkProcessForSession(m_sessionID);
-        m_networkProcess->addSession(*this);
+        m_networkProcess->addSession(*this, NetworkProcessProxy::SendParametersToNetworkProcess::Yes);
     }
 
     return *m_networkProcess;
@@ -1317,6 +1317,12 @@ void WebsiteDataStore::statisticsDatabaseHasAllTables(CompletionHandler<void(boo
     networkProcess().statisticsDatabaseHasAllTables(m_sessionID, WTFMove(completionHandler));
 }
 
+void WebsiteDataStore::statisticsDatabaseColumnsForTable(const String& tableName, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    networkProcess().statisticsDatabaseColumnsForTable(m_sessionID, tableName, WTFMove(completionHandler));
+}
+
 void WebsiteDataStore::setLastSeen(const URL& url, Seconds seconds, CompletionHandler<void()>&& completionHandler)
 {
     if (url.protocolIsAbout() || url.isEmpty()) {
@@ -1725,23 +1731,16 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
     });
 }
 
-void WebsiteDataStore::networkProcessCrashed(NetworkProcessProxy&)
+void WebsiteDataStore::networkProcessDidTerminate(NetworkProcessProxy& networkProcess)
 {
-    if (m_networkProcess)
-        m_networkProcess->didTerminate();
+    ASSERT(!m_networkProcess || m_networkProcess == &networkProcess);
     m_networkProcess = nullptr;
 }
 
 void WebsiteDataStore::terminateNetworkProcess()
 {
-    auto processPools = copyToVectorOf<RefPtr<WebProcessPool>>(WebProcessPool::allProcessPools());
-    for (auto& processPool : processPools)
-        processPool->terminateServiceWorkers();
-
-    if (!m_networkProcess)
-        return;
-    m_networkProcess->terminate();
-    m_networkProcess = nullptr;
+    if (auto networkProcess = std::exchange(m_networkProcess, nullptr))
+        networkProcess->terminate();
 }
 
 void WebsiteDataStore::sendNetworkProcessPrepareToSuspendForTesting(CompletionHandler<void()>&& completionHandler)
@@ -1906,6 +1905,15 @@ void WebsiteDataStore::setCacheModelSynchronouslyForTesting(CacheModel cacheMode
         processPool->setCacheModelSynchronouslyForTesting(cacheModel);
 }
 
+Vector<WebsiteDataStoreParameters> WebsiteDataStore::parametersFromEachWebsiteDataStore()
+{
+    Vector<WebsiteDataStoreParameters> parameters;
+    parameters.reserveInitialCapacity(allDataStores().size());
+    for (auto* dataStore : allDataStores().values())
+        parameters.uncheckedAppend(dataStore->parameters());
+    return parameters;
+}
+
 WebsiteDataStoreParameters WebsiteDataStore::parameters()
 {
     WebsiteDataStoreParameters parameters;
@@ -1984,11 +1992,9 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
 
     parameters.networkSessionParameters = WTFMove(networkSessionParameters);
 
-#if ENABLE(INDEXED_DATABASE)
     parameters.indexedDatabaseDirectory = resolvedIndexedDatabaseDirectory();
     if (!parameters.indexedDatabaseDirectory.isEmpty())
         SandboxExtension::createHandleForReadWriteDirectory(parameters.indexedDatabaseDirectory, parameters.indexedDatabaseDirectoryExtensionHandle);
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     parameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();

@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class FontCache;
 class FontCascadeDescription;
 class FontDescription;
 class FontSelectorClient;
@@ -54,6 +55,7 @@ public:
 
     virtual void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomString& family) = 0;
 
+    virtual FontCache& fontCache() const = 0;
     virtual void fontCacheInvalidated() { }
 
     virtual void registerForInvalidationCallbacks(FontSelectorClient&) = 0;

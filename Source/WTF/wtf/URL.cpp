@@ -854,24 +854,25 @@ bool protocolIsInHTTPFamily(StringView url)
         && (url[4] == ':' || (isASCIIAlphaCaselessEqual(url[4], 's') && length >= 6 && url[5] == ':'));
 }
 
+
+static StaticStringImpl aboutBlankString { "about:blank" };
 const URL& aboutBlankURL()
 {
     static LazyNeverDestroyed<URL> staticBlankURL;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        static constexpr const char* aboutBlank = "about:blank";
-        staticBlankURL.construct(URL(), StringImpl::createStaticStringImpl(aboutBlank, strlen(aboutBlank)));
+        staticBlankURL.construct(URL(), &aboutBlankString);
     });
     return staticBlankURL;
 }
 
+static StaticStringImpl aboutSrcDocString { "about:srcdoc" };
 const URL& aboutSrcDocURL()
 {
     static LazyNeverDestroyed<URL> staticSrcDocURL;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&] {
-        static constexpr const char* aboutSrcDoc = "about:srcdoc";
-        staticSrcDocURL.construct(URL(), StringImpl::createStaticStringImpl(aboutSrcDoc, strlen(aboutSrcDoc)));
+        staticSrcDocURL.construct(URL(), &aboutSrcDocString);
     });
     return staticSrcDocURL;
 }

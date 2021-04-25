@@ -63,6 +63,7 @@ public:
 
     virtual bool draggable() const;
     WEBCORE_EXPORT void setDraggable(bool);
+    virtual bool isDraggableIgnoringAttributes() const { return false; }
 
     WEBCORE_EXPORT bool spellcheck() const;
     WEBCORE_EXPORT void setSpellcheck(bool);
@@ -88,6 +89,7 @@ public:
     TextDirection directionalityIfhasDirAutoAttribute(bool& isAuto) const;
 
     virtual bool isTextControlInnerTextElement() const { return false; }
+    virtual bool isSearchFieldResultsButtonElement() const { return false; }
 
     bool willRespondToMouseMoveEvents() override;
     bool willRespondToMouseWheelEvents() override;
@@ -130,6 +132,7 @@ public:
     WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
     bool hasImageOverlay() const;
     static bool isInsideImageOverlay(const SimpleRange&);
+    static bool isInsideImageOverlay(const Node&);
     WEBCORE_EXPORT static bool isImageOverlayText(const Node&);
 
 #if ENABLE(IMAGE_EXTRACTION)

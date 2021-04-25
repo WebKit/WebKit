@@ -44,10 +44,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, RegistrableDomain&& registrableDomain, SWServer& server)
+WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, SWServer& server)
     : SWServerToContextConnection(WTFMove(registrableDomain))
     , m_connection(connection)
     , m_server(makeWeakPtr(server))
+    , m_webPageProxyID(webPageProxyID)
 {
     server.addContextConnection(*this);
 }
@@ -104,6 +105,24 @@ void WebSWServerToContextConnection::fireActivateEvent(ServiceWorkerIdentifier s
 void WebSWServerToContextConnection::terminateWorker(ServiceWorkerIdentifier serviceWorkerIdentifier)
 {
     send(Messages::WebSWContextManagerConnection::TerminateWorker(serviceWorkerIdentifier));
+}
+
+void WebSWServerToContextConnection::didSaveScriptsToDisk(ServiceWorkerIdentifier serviceWorkerIdentifier, const ScriptBuffer& script, const HashMap<URL, ScriptBuffer>& importedScripts)
+{
+#if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
+    // Send file-mapped ScriptBuffers over to the ServiceWorker process so that it can replace its heap-allocated copies and save on dirty memory.
+    auto scriptToSend = script.containsSingleFileMappedSegment() ? script : ScriptBuffer();
+    HashMap<URL, ScriptBuffer> importedScriptsToSend;
+    for (auto& pair : importedScripts) {
+        if (pair.value.containsSingleFileMappedSegment())
+            importedScriptsToSend.add(pair.key, pair.value);
+    }
+    if (scriptToSend || !importedScriptsToSend.isEmpty())
+        send(Messages::WebSWContextManagerConnection::DidSaveScriptsToDisk { serviceWorkerIdentifier, scriptToSend, importedScriptsToSend });
+#else
+    UNUSED_PARAM(script);
+    UNUSED_PARAM(importedScripts);
+#endif
 }
 
 void WebSWServerToContextConnection::terminateDueToUnresponsiveness()

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBCursorWithValue.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include <JavaScriptCore/HeapInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
@@ -58,5 +56,3 @@ IDBCursorWithValue::IDBCursorWithValue(IDBIndex& index, const IDBCursorInfo& inf
 IDBCursorWithValue::~IDBCursorWithValue() = default;
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -1,3 +1,708 @@
+2021-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Define AtomString(ASCIILiteral) and use ASCIILiteral more to avoid memory allocation
+        https://bugs.webkit.org/show_bug.cgi?id=224125
+
+        Reviewed by Saam Barati.
+
+        Add AtomString(ASCIILiteral). ASCIILiteral ensures that storage is constant non-heap string by its type.
+        So we can just use it as a literal (not allocating a string storage).
+
+        * wtf/text/AtomString.h:
+
+2021-04-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Enable PreferPageRenderingUpdatesNear60FPSEnabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=224133
+
+        Reviewed by Tim Horton.
+
+        Turn the PreferPageRenderingUpdatesNear60FPSEnabled internal setting on by default. This
+        means that requestAnimationFrame on 144Hz displays will fire at 72Hz. 60Hz displays are
+        unaffected.
+
+        Firing at "close to 60fps" was determined to be necessary for web compatibility and power.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
+        [MacOS] Enable NSURLSession WebSocket code path in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=220973
+        <rdar://problem/73655870>
+
+        Reviewed by Darin Adler.
+
+        * wtf/PlatformHave.h:
+        Bump NSURLSessionWebSocket path to above BigSur and iOS14.
+
+2021-04-02  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, fix passing hash value
+        https://bugs.webkit.org/show_bug.cgi?id=223895
+
+        * wtf/RobinHoodHashTable.h:
+        (WTF::SizePolicy>::addPassingHashCode):
+
+2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce RobinHoodHashTable
+        https://bugs.webkit.org/show_bug.cgi?id=223895
+
+        Reviewed by Fil Pizlo.
+
+        This patch implements RobinHoodHashTable[1]. We don't use it as a default hashtable since it has different performance v.s. memory-saving characteristics,
+        and this patch's goal is not tackling on making this default. Rather, the goal of this patch is introducing it to non-performance sensitive area quickly
+        so that we can save memory. RobinHoodHashTable more frequently computes hash value compared to HashTable, so this is not drop-in replacement for the existing
+        one. But still, this is useful since we know that "while there are many small HashTables and they holds much memory, there are super large HashTables and
+        they holds almost same amount of memory while they are a few.". This patch's goal is applying this RobinHoodHashTable to these "large, but a few" singleton tables.
+
+        RobinHoodHashTable maintains distance-from-initial-bucket (DIB) small by adjusting existing entries when inserting. When inserting, if we found that the
+        existing entry has less DIB than the current inserting entry's DIB, then we swap entries, and insert the existing entry to the other place. This is giving
+        some good DIB from rich entry to poor entry (that's why it is called RobinHood Hashing), and making average DIB lower. And this algorithm adds good invariant
+        that, when looking up an entry, and we found that existing entry has smaller DIB, then we can stop searching in the middle of the chain since we know that
+        we should swap entries when this happened when inserting. These two tricks maintain HashTable performance even under significantly high load factor: 90% load-factor
+        just works. 95% load-factor regress adding performance, but still it does not become catastrophic compared to normal open-addressing HashTable.
+
+        We introduce RobinHoodHashTable, and adding several kinds of tables based on load-factors.
+
+        1. MemoryCompactLookupOnlyRobinHoodHashSet / HashMap
+
+            This has 95% load-factor. This is suitable for sets and maps which is mostly-constant: constructing once, and looking up repeatedly. In WebKit, there are so
+            many this kind of tables e.g. singleton HashMap for various kinds of things. We can use this super high load-factor table so that we can save memory even while
+            we are maintains fast HashTable lookup.
+
+        2. MemoryCompactRobinHoodHashSet / HashMap
+
+            This has 90% load-factor. It just works, and we can try using it if sets and maps are significantly performance intensive.
+
+        3. FastRobinHoodHashSet / HashMap
+
+            This has 75% load-factor. This is still good compared to HashSet and HashMap since they are using 50% load-factor for large sized tables. This has very slightly performance regressed
+            compared to 50% load-factor large HashSet and HashMap, but if that is not performance intensive (e.g. AtomStringTable is one of the most performance intensive table), this is good.
+
+        In this patch, we replace many singleton HashSet / HashMap with RobinHoodHashTable.
+
+        [1]: https://www.sebastiansylvan.com/post/robin-hood-hashing-should-be-your-default-hash-table-implementation/
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Forward.h:
+        * wtf/HashMap.h:
+        (WTF::Y>::swap):
+        (WTF::Y>::size const):
+        (WTF::Y>::capacity const):
+        (WTF::Y>::isEmpty const):
+        (WTF::Y>::begin):
+        (WTF::Y>::end):
+        (WTF::Y>::begin const):
+        (WTF::Y>::end const):
+        (WTF::Y>::find):
+        (WTF::Y>::find const):
+        (WTF::Y>::contains const):
+        (WTF::Y>::get const):
+        (WTF::Y>::inlineGet const):
+        (WTF::TableTraitsArg>::inlineSet):
+        (WTF::TableTraitsArg>::inlineAdd):
+        (WTF::TableTraitsArg>::inlineEnsure):
+        (WTF::TableTraitsArg>::set):
+        (WTF::TableTraitsArg>::add):
+        (WTF::TableTraitsArg>::fastAdd):
+        (WTF::TableTraitsArg>::ensure):
+        (WTF::Y>::remove):
+        (WTF::Y>::removeIf):
+        (WTF::Y>::clear):
+        (WTF::Y>::take):
+        (WTF::Y>::checkConsistency const):
+        (WTF::Y>::isValidKey):
+        (WTF::operator==):
+        (WTF::operator!=):
+        (WTF::X>::swap): Deleted.
+        (WTF::X>::size const): Deleted.
+        (WTF::X>::capacity const): Deleted.
+        (WTF::X>::isEmpty const): Deleted.
+        (WTF::X>::begin): Deleted.
+        (WTF::X>::end): Deleted.
+        (WTF::X>::begin const): Deleted.
+        (WTF::X>::end const): Deleted.
+        (WTF::X>::find): Deleted.
+        (WTF::X>::find const): Deleted.
+        (WTF::X>::contains const): Deleted.
+        (WTF::X>::get const): Deleted.
+        (WTF::X>::inlineGet const): Deleted.
+        (WTF::MappedTraitsArg>::inlineSet): Deleted.
+        (WTF::MappedTraitsArg>::inlineAdd): Deleted.
+        (WTF::MappedTraitsArg>::inlineEnsure): Deleted.
+        (WTF::MappedTraitsArg>::set): Deleted.
+        (WTF::MappedTraitsArg>::add): Deleted.
+        (WTF::MappedTraitsArg>::fastAdd): Deleted.
+        (WTF::MappedTraitsArg>::ensure): Deleted.
+        (WTF::MappedTraits>::get const): Deleted.
+        (WTF::MappedTraits>::inlineGet const): Deleted.
+        (WTF::X>::remove): Deleted.
+        (WTF::X>::removeIf): Deleted.
+        (WTF::X>::clear): Deleted.
+        (WTF::MappedTraits>::take): Deleted.
+        (WTF::X>::take): Deleted.
+        (WTF::X>::checkConsistency const): Deleted.
+        (WTF::X>::isValidKey): Deleted.
+        * wtf/HashSet.h:
+        (WTF::W>::swap):
+        (WTF::W>::size const):
+        (WTF::W>::capacity const):
+        (WTF::W>::isEmpty const):
+        (WTF::W>::begin const):
+        (WTF::W>::end const):
+        (WTF::W>::find const):
+        (WTF::W>::contains const):
+        (WTF::TableTraits>::find const):
+        (WTF::TableTraits>::contains const):
+        (WTF::TableTraits>::ensure):
+        (WTF::W>::add):
+        (WTF::W>::addVoid):
+        (WTF::TableTraits>::add):
+        (WTF::W>::remove):
+        (WTF::W>::removeIf):
+        (WTF::W>::clear):
+        (WTF::W>::take):
+        (WTF::W>::takeAny):
+        (WTF::TableTraits>::remove):
+        (WTF::TableTraits>::take):
+        (WTF::W>::isValidValue):
+        (WTF::= const):
+        (WTF::W>::checkConsistency const):
+        (WTF::V>::swap): Deleted.
+        (WTF::V>::size const): Deleted.
+        (WTF::V>::capacity const): Deleted.
+        (WTF::V>::isEmpty const): Deleted.
+        (WTF::V>::begin const): Deleted.
+        (WTF::V>::end const): Deleted.
+        (WTF::V>::find const): Deleted.
+        (WTF::V>::contains const): Deleted.
+        (WTF::Traits>::find const): Deleted.
+        (WTF::Traits>::contains const): Deleted.
+        (WTF::Traits>::ensure): Deleted.
+        (WTF::V>::add): Deleted.
+        (WTF::V>::addVoid): Deleted.
+        (WTF::Traits>::add): Deleted.
+        (WTF::V>::remove): Deleted.
+        (WTF::V>::removeIf): Deleted.
+        (WTF::V>::clear): Deleted.
+        (WTF::V>::take): Deleted.
+        (WTF::V>::takeAny): Deleted.
+        (WTF::Traits>::remove): Deleted.
+        (WTF::Traits>::take): Deleted.
+        (WTF::V>::isValidValue): Deleted.
+        (WTF::V>::checkConsistency const): Deleted.
+        * wtf/HashTable.h:
+        (WTF::addIterator):
+        (WTF::removeIterator):
+        (WTF::invalidateIterators):
+        (WTF::HashTable::~HashTable):
+        (WTF::HashTable::random):
+        (WTF::KeyTraits>::inlineLookup):
+        (WTF::KeyTraits>::lookupForWriting):
+        (WTF::KeyTraits>::fullLookupForWriting):
+        (WTF::KeyTraits>::addUniqueForInitialization):
+        (WTF::KeyTraits>::add):
+        (WTF::KeyTraits>::addPassingHashCode):
+        (WTF::KeyTraits>::removeAndInvalidateWithoutEntryConsistencyCheck):
+        (WTF::KeyTraits>::removeAndInvalidate):
+        (WTF::KeyTraits>::clear):
+        (WTF::KeyTraits>::swap):
+        (WTF::KeyTraits>::HashTable):
+        (WTF::HashTable::invalidateIterators): Deleted.
+        (WTF::KeyTraits>::invalidateIterators): Deleted.
+        * wtf/RobinHoodHashMap.h: Added.
+        * wtf/RobinHoodHashSet.h: Added.
+        * wtf/RobinHoodHashTable.h: Added.
+        (WTF::RobinHoodHashTable::~RobinHoodHashTable):
+        (WTF::RobinHoodHashTable::begin):
+        (WTF::RobinHoodHashTable::end):
+        (WTF::RobinHoodHashTable::begin const):
+        (WTF::RobinHoodHashTable::end const):
+        (WTF::RobinHoodHashTable::random):
+        (WTF::RobinHoodHashTable::random const):
+        (WTF::RobinHoodHashTable::size const):
+        (WTF::RobinHoodHashTable::capacity const):
+        (WTF::RobinHoodHashTable::isEmpty const):
+        (WTF::RobinHoodHashTable::reserveInitialCapacity):
+        (WTF::RobinHoodHashTable::add):
+        (WTF::RobinHoodHashTable::find):
+        (WTF::RobinHoodHashTable::find const):
+        (WTF::RobinHoodHashTable::contains const):
+        (WTF::RobinHoodHashTable::isEmptyBucket):
+        (WTF::RobinHoodHashTable::isEmptyOrDeletedBucket):
+        (WTF::RobinHoodHashTable::lookup):
+        (WTF::RobinHoodHashTable::checkTableConsistency):
+        (WTF::RobinHoodHashTable::internalCheckTableConsistency const):
+        (WTF::RobinHoodHashTable::internalCheckTableConsistencyExceptSize const):
+        (WTF::RobinHoodHashTable::internalCheckTableConsistencyExceptSize):
+        (WTF::RobinHoodHashTable::internalCheckTableConsistency):
+        (WTF::RobinHoodHashTable::shouldExpand):
+        (WTF::RobinHoodHashTable::computeTableHash):
+        (WTF::RobinHoodHashTable::shouldExpand const):
+        (WTF::RobinHoodHashTable::shouldShrink const):
+        (WTF::RobinHoodHashTable::shrink):
+        (WTF::RobinHoodHashTable::deleteBucket):
+        (WTF::RobinHoodHashTable::desiredIndex):
+        (WTF::RobinHoodHashTable::probeDistance):
+        (WTF::RobinHoodHashTable::makeIterator):
+        (WTF::RobinHoodHashTable::makeConstIterator const):
+        (WTF::RobinHoodHashTable::makeKnownGoodIterator):
+        (WTF::RobinHoodHashTable::makeKnownGoodConstIterator const):
+        (WTF::RobinHoodHashTable::checkTableConsistencyExceptSize):
+        (WTF::RobinHoodHashTable::tableSize const):
+        (WTF::RobinHoodHashTable::tableSizeMask const):
+        (WTF::RobinHoodHashTable::keyCount const):
+        (WTF::RobinHoodHashTable::tableHash const):
+        (WTF::SizePolicy>::checkKey):
+        (WTF::SizePolicy>::lookup):
+        (WTF::SizePolicy>::inlineLookup):
+        (WTF::SizePolicy>::initializeBucket):
+        (WTF::SizePolicy>::add):
+        (WTF::SizePolicy>::maintainProbeDistanceForAdd):
+        (WTF::SizePolicy>::addPassingHashCode):
+        (WTF::SizePolicy>::reinsert):
+        (WTF::SizePolicy>::find):
+        (WTF::SizePolicy>::find const):
+        (WTF::SizePolicy>::contains const):
+        (WTF::SizePolicy>::removeAndInvalidateWithoutEntryConsistencyCheck):
+        (WTF::SizePolicy>::removeAndInvalidate):
+        (WTF::SizePolicy>::remove):
+        (WTF::SizePolicy>::removeWithoutEntryConsistencyCheck):
+        (WTF::SizePolicy>::allocateTable):
+        (WTF::SizePolicy>::deallocateTable):
+        (WTF::SizePolicy>::expand):
+        (WTF::SizePolicy>::computeBestTableSize):
+        (WTF::SizePolicy>::shrinkToBestSize):
+        (WTF::SizePolicy>::rehash):
+        (WTF::SizePolicy>::clear):
+        (WTF::SizePolicy>::RobinHoodHashTable):
+        (WTF::SizePolicy>::swap):
+        (WTF::=):
+        (WTF::SizePolicy>::checkTableConsistency const):
+        (WTF::SizePolicy>::checkTableConsistencyExceptSize const):
+        * wtf/text/AtomStringHash.h:
+        * wtf/text/AtomStringImpl.cpp:
+        * wtf/text/AtomStringTable.cpp:
+        (WTF::AtomStringTable::~AtomStringTable):
+        * wtf/text/AtomStringTable.h:
+        (WTF::AtomStringTable::table):
+        * wtf/text/StringHash.h:
+
+2021-04-01  Kate Cheney  <katherine_cheney@apple.com>
+
+        Clear network website data when a user clears history/website data
+        https://bugs.webkit.org/show_bug.cgi?id=224030
+        <rdar://problem/75288338>
+
+        Reviewed by David Kilzer.
+
+        * wtf/cocoa/SoftLinking.h:
+        Add a new soft link macro to link umbrella private frameworks. We need
+        this to support internal additions we need to clear network domain data.
+
+2021-04-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r275267): [GTK][WPE] 12 new crashes on service-workers layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=224059
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Have the glib implementation of FileSystem::writeToFile() return early when the size to
+        write is 0, instead of calling g_output_stream_write_all(). It appears that passing a
+        NULL buffer to g_output_stream_write_all() crashes, even if size is 0.
+
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::writeToFile):
+
+2021-03-31  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Allow ASCWebKitSPISupport to be used on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=224036
+        <rdar://76028645>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformHave.h:
+
+2021-03-31  Sam Weinig  <weinig@apple.com>
+
+        Ease experimentation by enabling <model> if SEPARATED_MODEL is being used
+        https://bugs.webkit.org/show_bug.cgi?id=224011
+
+        Reviewed by Tim Horton.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        There is little point to experimenting with SEPARATED_MODEL if <model> is disabled.
+
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
+        Remove CA_WHERE_ADDITIVE_TRANSFORMS_ARE_REVERSED
+        https://bugs.webkit.org/show_bug.cgi?id=224000
+
+        Reviewed by Simon Fraser.
+
+        Since trunk is no longer maintained on macOS versions earlier than 10.15,
+        we can remove this compile-time flag.
+
+        * wtf/PlatformHave.h:
+
+2021-03-30  Chris Dumez  <cdumez@apple.com>
+
+        Service Worker scripts use too much memory in the network process
+        https://bugs.webkit.org/show_bug.cgi?id=223808
+        <rdar://75637093>
+
+        Reviewed by Geoff Garen.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::deleteNonEmptyDirectory):
+        Add an implementation of FileSystem::deleteNonEmptyDirectory() on all supported platforms.
+        We previously only had implemetations for Cocoa and Windows.
+
+        (WTF::FileSystemImpl::mapToFile):
+        Moved most of the mapToFile() logic from NetworkCacheData::mapToFile() to FileSystem, so that
+        it can be reused by the new SWScriptStorage class. It creates the destination file, mmap's it,
+        writes the provided data to it and then returns the mmap'd file.
+
+        (WTF::FileSystemImpl::readOrMakeSalt):
+        Move readOrMakeSalt() from NetworkCacheData to FileSystem so that it can be reused by the new
+        SWScriptStorage.
+        
+        * wtf/FileSystem.h:
+
+2021-03-30  Sam Weinig  <weinig@apple.com>
+
+        JSGlobalObject's m_customGetterFunctionMap and m_customSetterFunctionMap should be sets, not maps, and should use both the identifier and function pointer as the key
+        https://bugs.webkit.org/show_bug.cgi?id=223613
+
+        Reviewed by Saam Barati.
+
+        Adds a heterogenous HashSet::ensure, which allows lazy construction of the value to
+        insert into the HashSet only if the heterogenous key (e.g. a key + HashTranslator
+        that are not the same as the HashSet's ValueType) does not match any item in the
+        set. For example given a set of ExpensiveToConstruct, but uniquely identifiable
+        by CheapToConstruct:
+        
+            HashSet<ExpensiveToConstruct> hashSet;
+            ...
+            struct Translator {
+                static unsigned hash(const CheapToConstruct& key)
+                {
+                    return key.hash();
+                }
+                static bool equal(const ExpensiveToConstruct& a, const CheapToConstruct& b)
+                {
+                    return a == b;
+                }
+            };
+            
+            hashSet.ensure<Translator>(CheapToConstruct { ... }, [] {
+                return ExpensiveToConstruct { ... };
+            });
+
+        This will be used by the custom getter/setter sets to avoid constructing the GC objects
+        unless they are really needed.
+
+        Also took the opertunity to replace some typedefs with usings, and fixed some comments.
+
+        * wtf/HashSet.h:
+        (WTF::Traits>::ensure):
+
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add disableForwardingVPrintfStdErrToOSLog() and use it in the jsc shell.
+        https://bugs.webkit.org/show_bug.cgi?id=223963
+
+        Reviewed by Saam Barati.
+
+        * wtf/Assertions.cpp:
+        (WTF::disableForwardingVPrintfStdErrToOSLog):
+        * wtf/Assertions.h:
+        * wtf/WTFConfig.h:
+
+2021-03-29  Alex Christensen  <achristensen@webkit.org>
+
+        Use terminate_with_reason instead of xpc_connection_kill
+        https://bugs.webkit.org/show_bug.cgi?id=223618
+
+        Reviewed by Darin Adler.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
+2021-03-28  Cameron McCormack  <heycam@apple.com>
+
+        Enable AspectRatioOfImgFromWidthAndHeightEnabled for WebKitLegacy.
+        https://bugs.webkit.org/show_bug.cgi?id=223815
+
+        Reviewed by Sam Weinig.
+
+        There's no reason this is enabled for WebKit and not WebKitLegacy.
+        And set WebCore = true since this feature could conceivably be
+        used in SVG images.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-03-28  Sam Weinig  <weinig@apple.com>
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=223810
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+        Remove ENABLE_INDEXED_DATABASE and ENABLE_INDEXED_DATABASE_IN_WORKERS.
+
+2021-03-27  Chris Dumez  <cdumez@apple.com>
+
+        wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WebCore::Style::RuleFeature'
+        https://bugs.webkit.org/show_bug.cgi?id=223828
+
+        Reviewed by David Kilzer.
+
+        Fix issue found by UBSan in Vector::append(const U*, size_t):
+        wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WebCore::Style::RuleFeature'
+        wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WebCore::LayoutRect'
+        wtf/Vector.h:1276:88: runtime error: reference binding to null pointer of type 'const WTF::RefPtr<WebCore::CSSStyleSheet, WTF::RawPtrTraits<WebCore::CSSStyleSheet>, WTF::DefaultRefDerefTraits<WebCore::CSSStyleSheet> >'
+
+        * wtf/Vector.h:
+        (WTF::Malloc>::append):
+        Return early if dataSize is 0. For some call sites, the pointer may be null and dataSize is 0. In such cases,
+        we should just return early instead of proceeding and using the null pointer. I believe this can happen if
+        you call Vector::appendVector() with an empty Vector for example.
+
+2021-03-26  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r275038?): Perf test IndexedDB/stress/large-binary-keys.html failing with logging about memory pressure events
+        https://bugs.webkit.org/show_bug.cgi?id=223826
+        <rdar://problem/75906134>
+
+        Reviewed by Darin Adler.
+
+        Use RELEASE_LOG() instead of WTFLogAlways() to log memory pressure events, so that they don't
+        show on stdout in the performance tests and make them fail.
+
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+
+2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Use PUICQuickboardController for text input when HAVE(QUICKBOARD_CONTROLLER) is defined
+        https://bugs.webkit.org/show_bug.cgi?id=223809
+        <rdar://problem/56730407>
+
+        Reviewed by Tim Horton.
+
+        Remove the `QuickboardControllerForTextInputEnabled` WebKit preference, now that the feature is enabled by
+        default behind a build-time flag.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use new Apple ICU APIs to avoid C++ ICU API usage
+        https://bugs.webkit.org/show_bug.cgi?id=223783
+        <rdar://problem/75060240>
+
+        Reviewed by Mark Lam.
+
+        * wtf/DateMath.h:
+        (WTF::LocalTimeOffset::LocalTimeOffset):
+
+2021-03-26  Per Arne  <pvollan@apple.com>
+
+        Enforce notifyd message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=223601
+        <rdar://75098580>
+
+        Reviewed by Brent Fulgham.
+
+        Add ENABLE define for Notify filtering.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-03-26  Dean Jackson  <dino@apple.com>
+
+        Enable Metal ANGLE backend for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=220076
+        <rdar://problem/72565020>
+
+        Reviewed by Sam Weinig.
+
+        Turn the Metal backend for ANGLE on, moving the feature
+        from Internal to Experimental.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-26  Jessie Berlin  <jberlin@webkit.org>
+
+        Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags
+        https://bugs.webkit.org/show_bug.cgi?id=223779
+
+        Reviewed by Tim Horton.
+
+        * Configurations/DebugRelease.xcconfig:
+
+2021-03-25  Megan Gardner  <megan_gardner@apple.com>
+
+        Have App Highlights be a Configuration Setting instead of an internal Preference setting.
+        https://bugs.webkit.org/show_bug.cgi?id=223720
+        rdar://75196085
+
+        Reviewed by Wenson Hsieh.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * Scripts/Preferences/WebPreferencesInternal.yaml:
+
+2021-03-25  Jessie Berlin  <jberlin@webkit.org>
+
+        Remove 10.13 DEPLOYMENT_TARGETs and SYSTEM_VERSION_PREFIXs
+        https://bugs.webkit.org/show_bug.cgi?id=223765
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+
+2021-03-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r275057.
+        https://bugs.webkit.org/show_bug.cgi?id=223768
+
+        Caused build failure
+
+        Reverted changeset:
+
+        "Enforce notifyd message filtering"
+        https://bugs.webkit.org/show_bug.cgi?id=223601
+        https://trac.webkit.org/changeset/275057
+
+2021-03-25  Kate Cheney  <katherine_cheney@apple.com>
+
+        Some calls in AuthenticatorPresenterCoordinator::selectAssertionResponse are not yet available for mac
+        https://bugs.webkit.org/show_bug.cgi?id=223752
+        <rdar://problem/75808515>
+
+        Reviewed by Jiewen Tan.
+
+        * wtf/PlatformHave.h:
+
+2021-03-25  Per Arne  <pvollan@apple.com>
+
+        Enforce notifyd message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=223601
+        <rdar://75098580>
+
+        Reviewed by Brent Fulgham.
+
+        Add ENABLE define for Notify filtering.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-03-25  Don Olmstead  <don.olmstead@sony.com>
+
+        Embiggen maximum HashTable size when not using ANGLE
+        https://bugs.webkit.org/show_bug.cgi?id=223757
+
+        Reviewed by Alex Christensen.
+
+        This is a partial revert of r274603 which cut the maximum size HashTable from 400 to 250.
+        When not using ANGLE directly for an OpenGL ES implementation there's some code hashing its
+        sh::ShaderVariable from the shader compiler ANGLE ships with. This type is too big and
+        triggers the static_assert.
+
+        The eventual goal is for ANGLE to be the OpenGL ES implementation for WebKit when enabling
+        WebGL. On PlayStation we already have a system OpenGL ES and any use of WebGL is in legacy
+        applications. The WebGL compliance features in ANGLE aren't needed in this case so ideally
+        we wouldn't even compile out ANGLE.
+
+        This patch punts on fixing the actual problem and just resolves this build issue.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-03-25  Chris Dumez  <cdumez@apple.com>
+
+        Do not do process pre-warming when the system is under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=223717
+        <rdar://problem/75810423>
+
+        Reviewed by Antti Koivisto.
+
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+        - Listen to the same memory pressure notifications on macOS and iOS. Previously, macOS would not respond to
+          non-critical memory pressure notifications for example. Also, since macOS would not listen for the notification
+          that happens when the memory usage goes back to normal, MemoruPressureHandler::isUnderMemoryPressure() would
+          start returning true after a critical memory pressure notification and it would never go back to false.
+
+2021-03-25  Alberto Garcia  <berto@igalia.com>
+
+        REGRESSION(r271560): [Linux] release assert in Thread::initializePlatformThreading
+        https://bugs.webkit.org/show_bug.cgi?id=223069
+
+        Reviewed by Carlos Garcia Campos.
+
+        Replace an existing signal handler instead of aborting.
+
+        * wtf/posix/ThreadingPOSIX.cpp:
+        (WTF::Thread::initializePlatformThreading):
+
+2021-03-24  Mark Lam  <mark.lam@apple.com>
+
+        WTF::setPermissionsOfConfigPage() should allow its VM_FLAGS_PERMANENT workaround unconditionally.
+        https://bugs.webkit.org/show_bug.cgi?id=223725
+        rdar://75813316
+
+        Reviewed by Saam Barati.
+
+        If the OS does not support the flag, then we should not require it.
+
+        * wtf/WTFConfig.cpp:
+        (WTF::setPermissionsOfConfigPage):
+
+2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use StaticStringImpl instead of StringImpl::createStaticStringImpl if it is not dynamic string content
+        https://bugs.webkit.org/show_bug.cgi?id=223714
+
+        Reviewed by Saam Barati.
+
+        We should just use StaticStringImpl instead of StringImpl::createStaticStringImpl if the string content is
+        not dynamically allocated one. Keep in mind that this URL code is strongly assuming that internal StringImpl
+        is static so that this string (and URL) can be used in multiple threads. And StaticStringImpl meets this requirement.
+
+        * wtf/URL.cpp:
+        (WTF::aboutBlankURL):
+        (WTF::aboutSrcDocURL):
+
+2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        All string resources from UserAgentStyleSheets / UserAgentScripts should be used as non-copying StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=223685
+
+        Reviewed by Saam Barati.
+
+        Add StringImpl::createWithoutCopying for `const char*`.
+
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::createWithoutCopying):
+
+2021-03-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Add Experimental MediaSession coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=222158
+        <rdar://problem/74508862>
+
+        Reviewed by Jer Noble.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+        * wtf/PlatformEnableCocoa.h:
+
 2021-03-24  Chris Dumez  <cdumez@apple.com>
 
         Address undefined behavior found by UBSan in StringToIntegerConversion.h

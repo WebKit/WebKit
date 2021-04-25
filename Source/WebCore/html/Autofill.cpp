@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 
@@ -48,72 +49,72 @@ struct AutofillInfo {
     AutofillCategory category;
 };
 
-static const HashMap<AtomString, AutofillInfo>& fieldNameMap()
+static const MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, AutofillInfo>& fieldNameMap()
 {
     static const auto map = makeNeverDestroyed([] {
         struct MapEntry {
-            const char* name;
+            ASCIILiteral name;
             AutofillInfo value;
         };
         static const MapEntry entries[] = {
-            { "off", { AutofillFieldName::None, AutofillCategory::Off } },
-            { "on", { AutofillFieldName::None,  AutofillCategory::Automatic } },
-            { "name", { AutofillFieldName::Name, AutofillCategory::Normal } },
-            { "honorific-prefix", { AutofillFieldName::HonorificPrefix, AutofillCategory::Normal } },
-            { "given-name", { AutofillFieldName::GivenName, AutofillCategory::Normal } },
-            { "additional-name", { AutofillFieldName::AdditionalName, AutofillCategory::Normal } },
-            { "family-name", { AutofillFieldName::FamilyName, AutofillCategory::Normal } },
-            { "honorific-suffix", { AutofillFieldName::HonorificSuffix, AutofillCategory::Normal } },
-            { "nickname", { AutofillFieldName::Nickname, AutofillCategory::Normal } },
-            { "username", { AutofillFieldName::Username, AutofillCategory::Normal } },
-            { "new-password", { AutofillFieldName::NewPassword, AutofillCategory::Normal } },
-            { "current-password", { AutofillFieldName::CurrentPassword, AutofillCategory::Normal } },
-            { "organization-title", { AutofillFieldName::OrganizationTitle, AutofillCategory::Normal } },
-            { "organization", { AutofillFieldName::Organization, AutofillCategory::Normal } },
-            { "street-address", { AutofillFieldName::StreetAddress, AutofillCategory::Normal } },
-            { "address-line1", { AutofillFieldName::AddressLine1, AutofillCategory::Normal } },
-            { "address-line2", { AutofillFieldName::AddressLine2, AutofillCategory::Normal } },
-            { "address-line3", { AutofillFieldName::AddressLine3, AutofillCategory::Normal } },
-            { "address-level4", { AutofillFieldName::AddressLevel4, AutofillCategory::Normal } },
-            { "address-level3", { AutofillFieldName::AddressLevel3, AutofillCategory::Normal } },
-            { "address-level2", { AutofillFieldName::AddressLevel2, AutofillCategory::Normal } },
-            { "address-level1", { AutofillFieldName::AddressLevel1, AutofillCategory::Normal } },
-            { "country", { AutofillFieldName::Country, AutofillCategory::Normal } },
-            { "country-name", { AutofillFieldName::CountryName, AutofillCategory::Normal } },
-            { "postal-code", { AutofillFieldName::PostalCode, AutofillCategory::Normal } },
-            { "cc-name", { AutofillFieldName::CcName, AutofillCategory::Normal } },
-            { "cc-given-name", { AutofillFieldName::CcGivenName, AutofillCategory::Normal } },
-            { "cc-additional-name", { AutofillFieldName::CcAdditionalName, AutofillCategory::Normal } },
-            { "cc-family-name", { AutofillFieldName::CcFamilyName, AutofillCategory::Normal } },
-            { "cc-number", { AutofillFieldName::CcNumber, AutofillCategory::Normal } },
-            { "cc-exp", { AutofillFieldName::CcExp, AutofillCategory::Normal } },
-            { "cc-exp-month", { AutofillFieldName::CcExpMonth, AutofillCategory::Normal } },
-            { "cc-exp-year", { AutofillFieldName::CcExpYear, AutofillCategory::Normal } },
-            { "cc-csc", { AutofillFieldName::CcCsc, AutofillCategory::Normal } },
-            { "cc-type", { AutofillFieldName::CcType, AutofillCategory::Normal } },
-            { "transaction-currency", { AutofillFieldName::TransactionCurrency, AutofillCategory::Normal } },
-            { "transaction-amount", { AutofillFieldName::TransactionAmount, AutofillCategory::Normal } },
-            { "language", { AutofillFieldName::Language, AutofillCategory::Normal } },
-            { "bday", { AutofillFieldName::Bday, AutofillCategory::Normal } },
-            { "bday-day", { AutofillFieldName::BdayDay, AutofillCategory::Normal } },
-            { "bday-month", { AutofillFieldName::BdayMonth, AutofillCategory::Normal } },
-            { "bday-year", { AutofillFieldName::BdayYear, AutofillCategory::Normal } },
-            { "sex", { AutofillFieldName::Sex, AutofillCategory::Normal } },
-            { "url", { AutofillFieldName::URL, AutofillCategory::Normal } },
-            { "photo", { AutofillFieldName::Photo, AutofillCategory::Normal } },
+            { "off"_s, { AutofillFieldName::None, AutofillCategory::Off } },
+            { "on"_s, { AutofillFieldName::None,  AutofillCategory::Automatic } },
+            { "name"_s, { AutofillFieldName::Name, AutofillCategory::Normal } },
+            { "honorific-prefix"_s, { AutofillFieldName::HonorificPrefix, AutofillCategory::Normal } },
+            { "given-name"_s, { AutofillFieldName::GivenName, AutofillCategory::Normal } },
+            { "additional-name"_s, { AutofillFieldName::AdditionalName, AutofillCategory::Normal } },
+            { "family-name"_s, { AutofillFieldName::FamilyName, AutofillCategory::Normal } },
+            { "honorific-suffix"_s, { AutofillFieldName::HonorificSuffix, AutofillCategory::Normal } },
+            { "nickname"_s, { AutofillFieldName::Nickname, AutofillCategory::Normal } },
+            { "username"_s, { AutofillFieldName::Username, AutofillCategory::Normal } },
+            { "new-password"_s, { AutofillFieldName::NewPassword, AutofillCategory::Normal } },
+            { "current-password"_s, { AutofillFieldName::CurrentPassword, AutofillCategory::Normal } },
+            { "organization-title"_s, { AutofillFieldName::OrganizationTitle, AutofillCategory::Normal } },
+            { "organization"_s, { AutofillFieldName::Organization, AutofillCategory::Normal } },
+            { "street-address"_s, { AutofillFieldName::StreetAddress, AutofillCategory::Normal } },
+            { "address-line1"_s, { AutofillFieldName::AddressLine1, AutofillCategory::Normal } },
+            { "address-line2"_s, { AutofillFieldName::AddressLine2, AutofillCategory::Normal } },
+            { "address-line3"_s, { AutofillFieldName::AddressLine3, AutofillCategory::Normal } },
+            { "address-level4"_s, { AutofillFieldName::AddressLevel4, AutofillCategory::Normal } },
+            { "address-level3"_s, { AutofillFieldName::AddressLevel3, AutofillCategory::Normal } },
+            { "address-level2"_s, { AutofillFieldName::AddressLevel2, AutofillCategory::Normal } },
+            { "address-level1"_s, { AutofillFieldName::AddressLevel1, AutofillCategory::Normal } },
+            { "country"_s, { AutofillFieldName::Country, AutofillCategory::Normal } },
+            { "country-name"_s, { AutofillFieldName::CountryName, AutofillCategory::Normal } },
+            { "postal-code"_s, { AutofillFieldName::PostalCode, AutofillCategory::Normal } },
+            { "cc-name"_s, { AutofillFieldName::CcName, AutofillCategory::Normal } },
+            { "cc-given-name"_s, { AutofillFieldName::CcGivenName, AutofillCategory::Normal } },
+            { "cc-additional-name"_s, { AutofillFieldName::CcAdditionalName, AutofillCategory::Normal } },
+            { "cc-family-name"_s, { AutofillFieldName::CcFamilyName, AutofillCategory::Normal } },
+            { "cc-number"_s, { AutofillFieldName::CcNumber, AutofillCategory::Normal } },
+            { "cc-exp"_s, { AutofillFieldName::CcExp, AutofillCategory::Normal } },
+            { "cc-exp-month"_s, { AutofillFieldName::CcExpMonth, AutofillCategory::Normal } },
+            { "cc-exp-year"_s, { AutofillFieldName::CcExpYear, AutofillCategory::Normal } },
+            { "cc-csc"_s, { AutofillFieldName::CcCsc, AutofillCategory::Normal } },
+            { "cc-type"_s, { AutofillFieldName::CcType, AutofillCategory::Normal } },
+            { "transaction-currency"_s, { AutofillFieldName::TransactionCurrency, AutofillCategory::Normal } },
+            { "transaction-amount"_s, { AutofillFieldName::TransactionAmount, AutofillCategory::Normal } },
+            { "language"_s, { AutofillFieldName::Language, AutofillCategory::Normal } },
+            { "bday"_s, { AutofillFieldName::Bday, AutofillCategory::Normal } },
+            { "bday-day"_s, { AutofillFieldName::BdayDay, AutofillCategory::Normal } },
+            { "bday-month"_s, { AutofillFieldName::BdayMonth, AutofillCategory::Normal } },
+            { "bday-year"_s, { AutofillFieldName::BdayYear, AutofillCategory::Normal } },
+            { "sex"_s, { AutofillFieldName::Sex, AutofillCategory::Normal } },
+            { "url"_s, { AutofillFieldName::URL, AutofillCategory::Normal } },
+            { "photo"_s, { AutofillFieldName::Photo, AutofillCategory::Normal } },
 
-            { "tel", { AutofillFieldName::Tel, AutofillCategory::Contact } },
-            { "tel-country-code", { AutofillFieldName::TelCountryCode, AutofillCategory::Contact } },
-            { "tel-national", { AutofillFieldName::TelNational, AutofillCategory::Contact } },
-            { "tel-area-code", { AutofillFieldName::TelAreaCode, AutofillCategory::Contact } },
-            { "tel-local", { AutofillFieldName::TelLocal, AutofillCategory::Contact } },
-            { "tel-local-prefix", { AutofillFieldName::TelLocalPrefix, AutofillCategory::Contact } },
-            { "tel-local-suffix", { AutofillFieldName::TelLocalSuffix, AutofillCategory::Contact } },
-            { "tel-extension", { AutofillFieldName::TelExtension, AutofillCategory::Contact } },
-            { "email", { AutofillFieldName::Email, AutofillCategory::Contact } },
-            { "impp", { AutofillFieldName::Impp, AutofillCategory::Contact } },
+            { "tel"_s, { AutofillFieldName::Tel, AutofillCategory::Contact } },
+            { "tel-country-code"_s, { AutofillFieldName::TelCountryCode, AutofillCategory::Contact } },
+            { "tel-national"_s, { AutofillFieldName::TelNational, AutofillCategory::Contact } },
+            { "tel-area-code"_s, { AutofillFieldName::TelAreaCode, AutofillCategory::Contact } },
+            { "tel-local"_s, { AutofillFieldName::TelLocal, AutofillCategory::Contact } },
+            { "tel-local-prefix"_s, { AutofillFieldName::TelLocalPrefix, AutofillCategory::Contact } },
+            { "tel-local-suffix"_s, { AutofillFieldName::TelLocalSuffix, AutofillCategory::Contact } },
+            { "tel-extension"_s, { AutofillFieldName::TelExtension, AutofillCategory::Contact } },
+            { "email"_s, { AutofillFieldName::Email, AutofillCategory::Contact } },
+            { "impp"_s, { AutofillFieldName::Impp, AutofillCategory::Contact } },
         };
-        HashMap<AtomString, AutofillInfo> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<AtomString, AutofillInfo> map;
         for (auto& entry : entries)
             map.add(entry.name, entry.value);
         return map;

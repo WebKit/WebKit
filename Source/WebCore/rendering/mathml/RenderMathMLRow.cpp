@@ -52,13 +52,13 @@ MathMLRowElement& RenderMathMLRow::element() const
     return static_cast<MathMLRowElement&>(nodeForNonAnonymous());
 }
 
-Optional<int> RenderMathMLRow::firstLineBaseline() const
+Optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
 {
     auto* baselineChild = firstChildBox();
     if (!baselineChild)
-        return Optional<int>();
+        return Optional<LayoutUnit>();
 
-    return Optional<int>(static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->logicalTop())));
+    return LayoutUnit { static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->logicalTop())) };
 }
 
 static RenderMathMLOperator* toVerticalStretchyOperator(RenderBox* box)

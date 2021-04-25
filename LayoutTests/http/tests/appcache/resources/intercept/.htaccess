@@ -1,2 +1,2 @@
 RewriteEngine on
-RewriteRule ^.* /appcache/resources/print-uri.php [L,NS]
+RewriteRule ^.* /appcache/resources/print-uri.py [L,NS]

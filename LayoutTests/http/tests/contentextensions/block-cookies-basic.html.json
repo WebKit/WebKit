@@ -4,7 +4,7 @@
             "type": "block-cookies"
         },
         "trigger": {
-            "url-filter": "http://127.0.0.1:8000/cookies/resources/cookie-utility.php"
+            "url-filter": "http://127.0.0.1:8000/cookies/resources/cookie-utility.py"
         }
     }
 ]

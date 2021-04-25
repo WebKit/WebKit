@@ -56,14 +56,14 @@ public:
     // to prevent crashing while loading old data.
     // Also update ContentRuleListStore::getContentRuleListSource to be able to find the original JSON
     // source from old versions.
-    // Update ContentRuleListStore::getContentRuleListSource with this.
-    static constexpr uint32_t CurrentContentRuleListFileVersion = 10;
+    // Update getContentRuleListSourceFromMappedFile with this.
+    static constexpr uint32_t CurrentContentRuleListFileVersion = 11;
 
-    static ContentRuleListStore& defaultStore(bool legacyFilename);
-    static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath, bool legacyFilename);
+    static ContentRuleListStore& defaultStore();
+    static Ref<ContentRuleListStore> storeWithPath(const WTF::String& storePath);
 
-    explicit ContentRuleListStore(bool legacyFilename);
-    explicit ContentRuleListStore(const WTF::String& storePath, bool legacyFilename);
+    explicit ContentRuleListStore();
+    explicit ContentRuleListStore(const WTF::String& storePath);
     virtual ~ContentRuleListStore();
 
     void compileContentRuleList(const WTF::String& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)>);
@@ -77,15 +77,12 @@ public:
     void getContentRuleListSource(const WTF::String& identifier, CompletionHandler<void(WTF::String)>);
 
 private:
-    WTF::String defaultStorePath(bool legacyFilename);
-    static ContentRuleListStore& legacyDefaultStore();
-    static ContentRuleListStore& nonLegacyDefaultStore();
+    WTF::String defaultStorePath();
     
     const WTF::String m_storePath;
     Ref<WTF::WorkQueue> m_compileQueue;
     Ref<WTF::WorkQueue> m_readQueue;
     Ref<WTF::WorkQueue> m_removeQueue;
-    bool m_legacyFilename { false };
 };
 
 const std::error_category& contentRuleListStoreErrorCategory();

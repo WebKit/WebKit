@@ -54,6 +54,7 @@ struct InteractionInformationAtPosition {
     bool canBeValid { true };
     Optional<bool> nodeAtPositionHasDoubleClickHandler;
     bool isSelectable { false };
+    bool isSelected { false };
     bool prefersDraggingOverTextSelection { false };
     bool isNearMarkedText { false };
     bool touchCalloutEnabled { true };
@@ -70,6 +71,7 @@ struct InteractionInformationAtPosition {
     bool preventTextInteraction { false };
 #endif
     bool shouldNotUseIBeamInEditableContent { false };
+    bool isImageOverlayText { false };
     WebCore::FloatPoint adjustedPointForNodeRespondingToClickEvents;
     URL url;
     URL imageURL;

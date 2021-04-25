@@ -29,10 +29,16 @@
 
 #else
 
+#import <Foundation/NSObject.h>
+
 @protocol MTLDeviceSPI <MTLDevice>
 - (NSString*)vendorName;
 - (NSString*)familyName;
 - (NSString*)productName;
+@end
+
+@interface _MTLDevice : NSObject
+- (void)_purgeDevice;
 @end
 
 #endif

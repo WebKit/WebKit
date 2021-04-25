@@ -251,6 +251,17 @@ AnimatedImageAsyncDecodingEnabled:
       default: true
     WebCore:
       default: true
+      
+AppHighlightsEnabled:
+  type: bool
+  condition: ENABLE(APP_HIGHLIGHTS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 AppleMailPaginationQuirkEnabled:
   type: bool

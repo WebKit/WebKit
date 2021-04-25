@@ -33,6 +33,7 @@
 #include "WebProcess.h"
 #include "WebTouchEvent.h"
 #include "WebWheelEvent.h"
+#include <WebCore/DisplayUpdate.h>
 #include <WebCore/Page.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/MainThread.h>
@@ -288,13 +289,16 @@ void EventDispatcher::notifyScrollingTreesDisplayWasRefreshed(PlatformDisplayID 
 }
 
 #if HAVE(CVDISPLAYLINK)
-void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID)
+void EventDispatcher::displayWasRefreshed(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool sendToMainThread)
 {
     ASSERT(!RunLoop::isMain());
     notifyScrollingTreesDisplayWasRefreshed(displayID);
 
-    RunLoop::main().dispatch([displayID]() {
-        DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
+    if (!sendToMainThread)
+        return;
+
+    RunLoop::main().dispatch([displayID, displayUpdate]() {
+        DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID, displayUpdate);
     });
 }
 #endif

@@ -2518,6 +2518,14 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         _page->setUserInterfaceLayoutDirection(toUserInterfaceLayoutDirection(contentAttribute));
 }
 
+- (BOOL)canBecomeFocused
+{
+    if (self.usesStandardContentView)
+        return [_contentView canBecomeFocusedForWebView];
+
+    return [_customContentView canBecomeFocused];
+}
+
 @end
 
 @implementation WKWebView (WKPrivateIOS)
@@ -2530,7 +2538,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         WebCore::PrivateClickMeasurement measurement(
             WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
             WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
-            WebCore::PrivateClickMeasurement::AttributeOnSite(attribution.destinationURL),
+            WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
             attribution.sourceDescription,
             attribution.purchaser
         );
@@ -2547,8 +2555,8 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
     if (!measurement || !measurement->sourceID().isValid())
         return nil;
 
-    auto attributeOnURL = URL(URL(), makeString("https://", measurement->attributeOnSite().registrableDomain.string()));
-    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->sourceID().id destinationURL:attributeOnURL sourceDescription:measurement->sourceDescription() purchaser:measurement->purchaser()]).autorelease();
+    auto destinationURL = URL(URL(), makeString("https://", measurement->destinationSite().registrableDomain.string()));
+    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->sourceID().id destinationURL:destinationURL sourceDescription:measurement->sourceDescription() purchaser:measurement->purchaser()]).autorelease();
 #else
     return nil;
 #endif

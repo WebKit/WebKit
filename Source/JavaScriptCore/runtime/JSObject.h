@@ -404,7 +404,7 @@ public:
         return JSValue();
     }
         
-    JSValue getIndex(JSGlobalObject* globalObject, unsigned i) const
+    JSValue getIndex(JSGlobalObject* globalObject, uint64_t i) const
     {
         if (JSValue result = tryGetIndexQuickly(i))
             return result;

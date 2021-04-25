@@ -362,6 +362,7 @@ _NEVER_SKIPPED_JS_FILES = [
 
 _NEVER_SKIPPED_FILES = _NEVER_SKIPPED_JS_FILES + [
     'TestExpectations',
+    '.py'
 ]
 
 # Files to skip that are less obvious.
@@ -634,8 +635,9 @@ class CheckerDispatcher(object):
         basename = os.path.basename(file_path)
         if basename.startswith('ChangeLog'):
             return False
-        elif basename in _NEVER_SKIPPED_FILES:
-            return False
+        for suffix in _NEVER_SKIPPED_FILES:
+            if basename.endswith(suffix):
+                return False
         for skipped_file in _SKIPPED_FILES_WITHOUT_WARNING:
             if self._should_skip_file_path(file_path, skipped_file):
                 return True

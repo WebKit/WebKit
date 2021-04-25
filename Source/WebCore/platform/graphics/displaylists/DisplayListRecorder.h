@@ -65,7 +65,7 @@ public:
     class Delegate {
     public:
         virtual ~Delegate() { }
-        virtual void willAppendItemOfType(ItemType) { }
+        virtual bool canAppendItemOfType(ItemType) { return false; }
         virtual void cacheNativeImage(NativeImage&) { }
         virtual bool isCachedImageBuffer(const ImageBuffer&) const { return false; }
         virtual void cacheFont(Font&) { }
@@ -155,7 +155,9 @@ private:
     template<typename T, class... Args>
     void append(Args&&... args)
     {
-        willAppendItemOfType(T::itemType);
+        if (UNLIKELY(!canAppendItemOfType(T::itemType)))
+            return;
+
         m_displayList.append<T>(std::forward<Args>(args)...);
 
         if constexpr (T::isDrawingItem) {
@@ -172,7 +174,7 @@ private:
         }
     }
 
-    WEBCORE_EXPORT void willAppendItemOfType(ItemType);
+    WEBCORE_EXPORT bool canAppendItemOfType(ItemType);
 
     void cacheNativeImage(NativeImage&);
 

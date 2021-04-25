@@ -76,6 +76,14 @@
     return wrapper(_frame->hitTest(WebCore::IntPoint(point)));
 }
 
+- (WKWebProcessPlugInHitTestResult *)hitTest:(CGPoint)point options:(WKHitTestOptions)options
+{
+    auto types = WebKit::WebFrame::defaultHitTestRequestTypes();
+    if (options & WKHitTestOptionAllowUserAgentShadowRootContent)
+        types.remove(WebCore::HitTestRequest::DisallowUserAgentShadowContent);
+    return wrapper(_frame->hitTest(WebCore::IntPoint(point), types));
+}
+
 - (JSValue *)jsNodeForNodeHandle:(WKWebProcessPlugInNodeHandle *)nodeHandle inWorld:(WKWebProcessPlugInScriptWorld *)world
 {
     JSValueRef valueRef = _frame->jsWrapperForWorld(&[nodeHandle _nodeHandle], &[world _scriptWorld]);

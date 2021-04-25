@@ -84,7 +84,7 @@ WebInspectorUIProxy::~WebInspectorUIProxy()
 void WebInspectorUIProxy::setInspectorClient(std::unique_ptr<API::InspectorClient>&& inspectorClient)
 {
     if (!inspectorClient) {
-        m_inspectorClient = makeUnique<API::InspectorClient>();
+        m_inspectorClient = nullptr;
         return;
     }
 
@@ -634,7 +634,8 @@ void WebInspectorUIProxy::setForcedAppearance(InspectorFrontendClient::Appearanc
 
 void WebInspectorUIProxy::openURLExternally(const String& url)
 {
-    m_inspectorClient->openURLExternally(*this, url);
+    if (m_inspectorClient)
+        m_inspectorClient->openURLExternally(*this, url);
 }
 
 void WebInspectorUIProxy::inspectedURLChanged(const String& urlString)

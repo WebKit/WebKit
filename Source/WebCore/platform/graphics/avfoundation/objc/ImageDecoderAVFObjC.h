@@ -88,7 +88,7 @@ public:
     WEBCORE_EXPORT void setExpectedContentSize(long long) final;
     WEBCORE_EXPORT void setData(SharedBuffer&, bool allDataReceived) final;
     bool isAllDataReceived() const final { return m_isAllDataReceived; }
-    void clearFrameBufferCache(size_t) final;
+    WEBCORE_EXPORT void clearFrameBufferCache(size_t) final;
 
     bool hasTrack() const { return !!m_track; }
     WEBCORE_EXPORT Vector<ImageDecoder::FrameInfo> frameInfos() const;

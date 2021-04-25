@@ -68,31 +68,31 @@ void WebURLSchemeTaskProxy::stopLoading()
     m_urlSchemeHandler.taskDidStopLoading(*this);
 }
     
-void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request)
+void WebURLSchemeTaskProxy::didPerformRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
 {
-    if (!hasLoader())
+    if (!hasLoader()) {
+        completionHandler({ });
         return;
-    
-    auto completionHandler = [this, protectedThis = makeRef(*this), originalRequest = request] (ResourceRequest&& request) {
-        m_waitingForCompletionHandler = false;
-        // We do not inform the UIProcess of WebKit's new request with the given suggested request.
-        // We do want to know if WebKit would have generated a request that differs from the suggested request, though.
-        if (request.url() != originalRequest.url())
-            RELEASE_LOG(Loading, "Redirected scheme task would have been sent to a different URL.");
+    }
 
-        processNextPendingTask();
-    };
-    
     if (m_waitingForCompletionHandler) {
         RELEASE_LOG(Loading, "Received redirect during previous redirect processing, queuing it.");
-        queueTask([this, protectedThis = makeRef(*this), redirectResponse = WTFMove(redirectResponse), request = WTFMove(request)]() mutable {
-            didPerformRedirection(WTFMove(redirectResponse), WTFMove(request));
+        queueTask([this, protectedThis = makeRef(*this), redirectResponse = WTFMove(redirectResponse), request = WTFMove(request), completionHandler = WTFMove(completionHandler)]() mutable {
+            didPerformRedirection(WTFMove(redirectResponse), WTFMove(request), WTFMove(completionHandler));
         });
         return;
     }
     m_waitingForCompletionHandler = true;
 
-    m_coreLoader->willSendRequest(WTFMove(request), redirectResponse, WTFMove(completionHandler));
+    auto innerCompletionHandler = [this, protectedThis = makeRef(*this), originalRequest = request, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request) mutable {
+        m_waitingForCompletionHandler = false;
+
+        completionHandler(WTFMove(request));
+
+        processNextPendingTask();
+    };
+
+    m_coreLoader->willSendRequest(WTFMove(request), redirectResponse, WTFMove(innerCompletionHandler));
 }
 
 void WebURLSchemeTaskProxy::didReceiveResponse(const ResourceResponse& response)

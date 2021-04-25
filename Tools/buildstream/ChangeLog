@@ -1,3 +1,32 @@
+2021-03-27  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Backport GTK4 Clipboard fix for GdkContentProviderUnion
+        https://bugs.webkit.org/show_bug.cgi?id=223813
+
+        Reviewed by Philippe Normand.
+
+        From https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/3346
+
+        Will fix some clipbaoard crashes.
+
+        * elements/sdk/gtk.bst:
+        * patches/gtk-clipboard-Fix-a-crash-when-GdkContentProviderUnion-d.patch: Added.
+
+2021-03-25  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to GStreamer 1.18.4
+        https://bugs.webkit.org/show_bug.cgi?id=223644
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/sdk/gst-libav.bst:
+        * elements/sdk/gst-plugins-bad.bst:
+        * elements/sdk/gst-plugins-base.bst:
+        * elements/sdk/gst-plugins-good.bst:
+        * elements/sdk/gst-plugins-ugly.bst:
+        * elements/sdk/gstreamer.bst:
+        * patches/gst-plugins-base-0001-videodecoder-Fix-racy-critical-when-pool-negotiation.patch: Removed.
+
 2021-03-24  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Add nghttp2 client library

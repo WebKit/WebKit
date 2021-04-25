@@ -26,8 +26,6 @@
 #include "config.h"
 #include "MemoryCursor.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBResourceIdentifier.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -61,5 +59,3 @@ MemoryCursor* MemoryCursor::cursorForIdentifier(const IDBResourceIdentifier& ide
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

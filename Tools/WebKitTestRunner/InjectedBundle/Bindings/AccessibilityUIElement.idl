@@ -169,6 +169,7 @@
     object columnHeaders();
     object rowHeaders();
 
+    object detailsElements();
     object errorMessageElements();
     AccessibilityUIElement ariaOwnsElementAtIndex(unsigned long index);
     AccessibilityUIElement ariaOwnsReferencingElementAtIndex(unsigned long index);

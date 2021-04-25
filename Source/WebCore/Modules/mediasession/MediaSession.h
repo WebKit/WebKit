@@ -27,54 +27,112 @@
 
 #if ENABLE(MEDIA_SESSION)
 
-#include "JSMediaPositionState.h"
-#include "JSMediaSessionAction.h"
-#include "JSMediaSessionPlaybackState.h"
+#include "ActiveDOMObject.h"
+#include "EventTarget.h"
+#include "GenericEventQueue.h"
 #include "MediaPositionState.h"
 #include "MediaSessionAction.h"
 #include "MediaSessionActionHandler.h"
 #include "MediaSessionPlaybackState.h"
+#include "MediaSessionReadyState.h"
 #include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Document;
 class MediaMetadata;
+class MediaSessionCoordinator;
 class Navigator;
 
-class MediaSession : public RefCounted<MediaSession>, public CanMakeWeakPtr<MediaSession> {
+class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public EventTargetWithInlineData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MediaSession> create(Navigator&);
     ~MediaSession();
 
     MediaMetadata* metadata() const { return m_metadata.get(); };
     void setMetadata(RefPtr<MediaMetadata>&&);
+    void metadataUpdated();
 
     MediaSessionPlaybackState playbackState() const { return m_playbackState; };
     void setPlaybackState(MediaSessionPlaybackState);
 
     void setActionHandler(MediaSessionAction, RefPtr<MediaSessionActionHandler>&&);
+
     ExceptionOr<void> setPositionState(Optional<MediaPositionState>&&);
+    Optional<MediaPositionState> positionState() const { return m_positionState; }
+
     WEBCORE_EXPORT Optional<double> currentPosition() const;
 
     Document* document() const;
     
-    void metadataUpdated();
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    MediaSessionReadyState readyState() const { return m_readyState; };
+    void setReadyState(MediaSessionReadyState);
 
-    void actionHandlersUpdated();
+    MediaSessionCoordinator* coordinator() const { return m_coordinator.get(); }
+    WEBCORE_EXPORT void setCoordinator(MediaSessionCoordinator*);
+#endif
+
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+    const Vector<Ref<MediaMetadata>>& playlist() const { return m_playlist; }
+    ExceptionOr<void> setPlaylist(ScriptExecutionContext&, Vector<RefPtr<MediaMetadata>>&&);
+#endif
+
     bool hasActionHandler(MediaSessionAction) const;
     WEBCORE_EXPORT RefPtr<MediaSessionActionHandler> handlerForAction(MediaSessionAction) const;
     bool hasActiveActionHandlers() const { return !m_actionHandlers.isEmpty(); }
 
+    void callActionHandler(const MediaSessionActionDetails&);
+
+    const Logger& logger() const { return *m_logger.get(); }
+
+    // EventTarget
+    using RefCounted::ref;
+    using RefCounted::deref;
+
+    class Observer : public CanMakeWeakPtr<Observer> {
+    public:
+        virtual ~Observer() = default;
+
+        virtual void metadataChanged(const RefPtr<MediaMetadata>&) { }
+        virtual void positionStateChanged(const Optional<MediaPositionState>&) { }
+        virtual void playbackStateChanged(MediaSessionPlaybackState) { }
+        virtual void actionHandlersChanged() { }
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+        virtual void readyStateChanged(MediaSessionReadyState) { }
+#endif
+    };
+    void addObserver(Observer&);
+    void removeObserver(Observer&);
+
 private:
     explicit MediaSession(Navigator&);
 
-    const Logger& logger() const { return *m_logger.get(); }
     const void* logIdentifier() const { return m_logIdentifier; }
+
+    void forEachObserver(const Function<void(Observer&)>&);
+    void notifyMetadataObservers();
+    void notifyPositionStateObservers();
+    void notifyPlaybackStateObservers();
+    void notifyActionHandlerObservers();
+    void notifyReadyStateObservers();
+
+    // EventTarget
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+    EventTargetInterface eventTargetInterface() const final { return MediaSessionEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final { return "MediaSession"; }
+    bool virtualHasPendingActivity() const final;
 
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
@@ -85,7 +143,22 @@ private:
     HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, WTF::IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers;
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;
+
+    WeakHashSet<Observer> m_observers;
+    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    MediaSessionReadyState m_readyState { MediaSessionReadyState::HaveNothing };
+    RefPtr<MediaSessionCoordinator> m_coordinator;
+#endif
+
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+    Vector<Ref<MediaMetadata>> m_playlist;
+#endif
 };
+
+String convertEnumerationToString(MediaSessionPlaybackState);
+String convertEnumerationToString(MediaSessionAction);
 
 }
 

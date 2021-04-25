@@ -61,9 +61,8 @@ RenderListItem::~RenderListItem()
 RenderStyle RenderListItem::computeMarkerStyle() const
 {
     if (!is<PseudoElement>(element())) {
-        auto markerStyle = getCachedPseudoStyle(PseudoId::Marker, &style());
-        ASSERT(markerStyle);
-        return RenderStyle::clone(*markerStyle);
+        if (auto markerStyle = getCachedPseudoStyle(PseudoId::Marker, &style()))
+            return RenderStyle::clone(*markerStyle);
     }
 
     // The marker always inherits from the list item, regardless of where it might end

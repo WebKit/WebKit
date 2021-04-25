@@ -1,0 +1,27 @@
+Test that playback resumes after "begingscrubbing/endscrubbing" remote control commands.
+
+
+* set video.src
+EVENT(playing)
+
+* Send a "begin scrubbing" command.
+RUN(internals.postRemoteControlCommand('beginscrubbing'))
+
+* Send a seek command.
+RUN(internals.postRemoteControlCommand('seekToPlaybackPosition', 1.1))
+EVENT(seeked)
+
+* Send another seek command.
+RUN(internals.postRemoteControlCommand('seekToPlaybackPosition', 1.2))
+EVENT(seeked)
+
+* Send another seek command.
+RUN(internals.postRemoteControlCommand('seekToPlaybackPosition', 1.3))
+EVENT(seeked)
+
+* Send an "end scrubbing" command.
+RUN(internals.postRemoteControlCommand('endscrubbing'))
+EXPECTED (video.paused == 'false') OK
+
+END OF TEST
+

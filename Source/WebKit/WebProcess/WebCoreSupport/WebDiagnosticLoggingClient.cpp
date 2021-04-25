@@ -93,4 +93,11 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(const S
     m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithValueDictionary(message, description, value, ShouldSample::No));
 }
 
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain domain)
+{
+    ASSERT(!m_page.corePage() || m_page.corePage()->settings().diagnosticLoggingEnabled());
+
+    m_page.send(Messages::WebPageProxy::LogDiagnosticMessageWithDomain(message, domain));
+}
+
 } // namespace WebKit

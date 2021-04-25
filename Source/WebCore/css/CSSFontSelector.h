@@ -32,6 +32,7 @@
 #include "Font.h"
 #include "FontSelector.h"
 #include "Timer.h"
+#include "WebKitFontFamilyNames.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -70,6 +71,7 @@ public:
 
     void addFontFaceRule(StyleRuleFontFace&, bool isInitiatingElementInUserAgentShadowTree);
 
+    FontCache& fontCache() const final { return m_fontCache.get(); }
     void fontCacheInvalidated() final;
 
     bool isEmpty() const;
@@ -123,6 +125,7 @@ private:
     Vector<PendingFontFaceRule> m_stagingArea;
 
     WeakPtr<ScriptExecutionContext> m_context;
+    Ref<FontCache> m_fontCache;
     RefPtr<FontFaceSet> m_fontFaceSet;
     Ref<CSSFontFaceSet> m_cssFontFaceSet;
     HashSet<FontSelectorClient*> m_clients;
@@ -143,7 +146,7 @@ private:
     bool m_buildIsUnderway { false };
     bool m_isStopped { false };
 
-    WTF::Vector<AtomString> m_fontFamilyNames;
+    WebKitFontFamilyNames::FamilyNamesList<AtomString> m_fontFamilyNames;
 };
 
 } // namespace WebCore

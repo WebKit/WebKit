@@ -212,15 +212,15 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
         oldEffect->setAnimation(nullptr);
-        if (!doNotRemoveFromTimeline && m_timeline && previousTarget && previousTarget != newTarget)
-            m_timeline->animationWasRemovedFromStyleable(*this, *previousTarget);
+        if (!doNotRemoveFromTimeline && previousTarget && previousTarget != newTarget)
+            previousTarget->animationWasRemoved(*this);
         updateRelevance();
     }
 
     if (m_effect) {
         m_effect->setAnimation(this);
-        if (m_timeline && newTarget && previousTarget != newTarget)
-            m_timeline->animationWasAddedToStyleable(*this, *newTarget);
+        if (newTarget && previousTarget != newTarget)
+            newTarget->animationWasAdded(*this);
     }
 
     InspectorInstrumentation::didSetWebAnimationEffect(*this);
@@ -244,10 +244,9 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
             // In the case of a declarative animation, we don't want to remove the animation from the relevant maps because
             // while the timeline was set via the API, the element still has a transition or animation set up and we must
             // not break the relationship.
-            if (m_timeline && !isDeclarativeAnimation())
-                m_timeline->animationWasRemovedFromStyleable(*this, *target);
-            if (timeline)
-                timeline->animationWasAddedToStyleable(*this, *target);
+            if (!isDeclarativeAnimation())
+                target->animationWasRemoved(*this);
+            target->animationWasAdded(*this);
         }
     }
 
@@ -282,10 +281,10 @@ void WebAnimation::effectTargetDidChange(const Optional<const Styleable>& previo
 {
     if (m_timeline) {
         if (previousTarget)
-            m_timeline->animationWasRemovedFromStyleable(*this, *previousTarget);
+            previousTarget->animationWasRemoved(*this);
 
         if (newTarget)
-            m_timeline->animationWasAddedToStyleable(*this, *newTarget);
+            newTarget->animationWasAdded(*this);
 
         // This could have changed whether we have replaced animations, so we may need to schedule an update.
         m_timeline->animationTimingDidChange(*this);
@@ -620,9 +619,9 @@ Seconds WebAnimation::effectEndTime() const
     return m_effect ? m_effect->endTime() : 0_s;
 }
 
-void WebAnimation::cancel(Silently silently)
+void WebAnimation::cancel()
 {
-    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " cancel(silently " << (silently == Silently::Yes) << ") (current time is " << currentTime() << ")");
+    LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " cancel() (current time is " << currentTime() << ")");
 
     // 3.4.16. Canceling an animation
     // https://drafts.csswg.org/web-animations-1/#canceling-an-animation-section
@@ -634,11 +633,11 @@ void WebAnimation::cancel(Silently silently)
     // 1. If animation's play state is not idle, perform the following steps:
     if (playState() != PlayState::Idle) {
         // 1. Run the procedure to reset an animation's pending tasks on animation.
-        resetPendingTasks(silently);
+        resetPendingTasks();
 
         // 2. Reject the current finished promise with a DOMException named "AbortError".
         // 3. Set the [[PromiseIsHandled]] internal slot of the current finished promise to true.
-        if (silently == Silently::No && !m_finishedPromise->isFulfilled())
+        if (!m_finishedPromise->isFulfilled())
             m_finishedPromise->reject(Exception { AbortError }, RejectAsHandled::Yes);
 
         // 4. Let current finished promise be a new (pending) Promise object.
@@ -655,8 +654,7 @@ void WebAnimation::cancel(Silently silently)
         //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
         //    scheduled event time is an unresolved time value.
         // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
-        if (silently == Silently::No)
-            enqueueAnimationPlaybackEvent(eventNames().cancelEvent, WTF::nullopt, m_timeline ? m_timeline->currentTime() : WTF::nullopt);
+        enqueueAnimationPlaybackEvent(eventNames().cancelEvent, WTF::nullopt, m_timeline ? m_timeline->currentTime() : WTF::nullopt);
     }
 
     // 2. Make animation's hold time unresolved.
@@ -701,7 +699,7 @@ void WebAnimation::enqueueAnimationEvent(Ref<AnimationEventBase>&& event)
     }
 }
 
-void WebAnimation::resetPendingTasks(Silently silently)
+void WebAnimation::resetPendingTasks()
 {
     // The procedure to reset an animation's pending tasks for animation is as follows:
     // https://drafts.csswg.org/web-animations-1/#reset-an-animations-pending-tasks
@@ -723,8 +721,7 @@ void WebAnimation::resetPendingTasks(Silently silently)
 
     // 5. Reject animation's current ready promise with a DOMException named "AbortError".
     // 6. Set the [[PromiseIsHandled]] internal slot of animation’s current ready promise to true.
-    if (silently == Silently::No)
-        m_readyPromise->reject(Exception { AbortError }, RejectAsHandled::Yes);
+    m_readyPromise->reject(Exception { AbortError }, RejectAsHandled::Yes);
 
     // 7. Let animation's current ready promise be the result of creating a new resolved Promise object.
     m_readyPromise = makeUniqueRef<ReadyPromise>(*this, &WebAnimation::readyPromiseResolve);
@@ -1370,7 +1367,7 @@ void WebAnimation::persist()
         if (is<KeyframeEffect>(m_effect)) {
             auto& keyframeEffect = downcast<KeyframeEffect>(*m_effect);
             auto styleable = keyframeEffect.targetStyleable();
-            m_timeline->animationWasAddedToStyleable(*this, *styleable);
+            styleable->animationWasAdded(*this);
             styleable->ensureKeyframeEffectStack().addEffect(keyframeEffect);
         }
     }

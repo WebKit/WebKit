@@ -41,6 +41,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncLength);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncGrow);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncGet);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncSet);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyTableProtoFuncType);
 }
 
 #include "WebAssemblyTablePrototype.lut.h"
@@ -55,6 +56,7 @@ const ClassInfo WebAssemblyTablePrototype::s_info = { "WebAssembly.Table", &Base
  grow   webAssemblyTableProtoFuncGrow   Function 1
  get    webAssemblyTableProtoFuncGet    Function 1
  set    webAssemblyTableProtoFuncSet    Function 2
+ type   webAssemblyTableProtoFuncType   Function 0
  @end
  */
 
@@ -162,6 +164,16 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalOb
         table->set(index, value);
     
     return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncType, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyTable* table = getTable(globalObject, vm, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(table->type(globalObject)));
 }
 
 WebAssemblyTablePrototype* WebAssemblyTablePrototype::create(VM& vm, JSGlobalObject*, Structure* structure)

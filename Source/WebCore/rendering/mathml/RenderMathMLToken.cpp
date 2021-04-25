@@ -554,12 +554,12 @@ void RenderMathMLToken::updateFromElement()
     setMathVariantGlyphDirty();
 }
 
-Optional<int> RenderMathMLToken::firstLineBaseline() const
+Optional<LayoutUnit> RenderMathMLToken::firstLineBaseline() const
 {
     if (m_mathVariantCodePoint) {
         auto mathVariantGlyph = style().fontCascade().glyphDataForCharacter(m_mathVariantCodePoint.value(), m_mathVariantIsMirrored);
         if (mathVariantGlyph.font)
-            return Optional<int>(static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y())));
+            return LayoutUnit { static_cast<int>(lroundf(-mathVariantGlyph.font->boundsForGlyph(mathVariantGlyph.glyph).y())) };
     }
     return RenderMathMLBlock::firstLineBaseline();
 }

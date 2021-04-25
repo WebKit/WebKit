@@ -23,7 +23,7 @@ function canLoad(url)
 
 function cached()
 {
-    if (canLoad("/appcache/access-via-redirect.php")) {
+    if (canLoad("/appcache/access-via-redirect.py")) {
         document.getElementById('result').innerHTML = "FAILURE: Start of redirect chain is in cache."
         return;
     }

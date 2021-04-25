@@ -59,8 +59,8 @@ Protocol::ErrorStringOr<Ref<Protocol::ServiceWorker::Configuration>> ServiceWork
     return Protocol::ServiceWorker::Configuration::create()
         .setTargetId(m_serviceWorkerGlobalScope.identifier())
         .setSecurityOrigin(m_serviceWorkerGlobalScope.securityOrigin()->toRawString())
-        .setUrl(m_serviceWorkerGlobalScope.thread().contextData().scriptURL.string())
-        .setContent(m_serviceWorkerGlobalScope.thread().contextData().script)
+        .setUrl(m_serviceWorkerGlobalScope.contextData().scriptURL.string())
+        .setContent(m_serviceWorkerGlobalScope.contextData().script.toString())
         .release();
 }
 

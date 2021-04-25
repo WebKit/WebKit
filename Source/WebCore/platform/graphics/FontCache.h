@@ -32,13 +32,16 @@
 #include "FontCascadeFonts.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
+#include "FontSelector.h"
 #include "FontTaggedSettings.h"
 #include "Timer.h"
 #include <array>
 #include <limits.h>
 #include <wtf/Forward.h>
+#include <wtf/HashTraits.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/AtomStringHash.h>
@@ -46,6 +49,11 @@
 
 #if PLATFORM(COCOA)
 #include "FontCacheCoreText.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#include <wtf/Lock.h>
+#include <wtf/RecursiveLockAdapter.h>
 #endif
 
 #if OS(WINDOWS)
@@ -57,8 +65,6 @@
 namespace WebCore {
 
 class FontCascade;
-class FontPlatformData;
-class FontSelector;
 class OpenTypeVerticalData;
 class Font;
 enum class IsForPlatformFont : uint8_t;
@@ -108,16 +114,13 @@ struct FontDescriptionKey {
 
     inline unsigned computeHash() const
     {
-        IntegerHasher hasher;
-        hasher.add(m_size);
-        hasher.add(m_fontSelectionRequest.weight);
-        hasher.add(m_fontSelectionRequest.width);
-        hasher.add(m_fontSelectionRequest.slope.valueOr(normalItalicValue()));
-        hasher.add(m_locale.existingHash());
-        for (unsigned flagItem : m_flags)
-            hasher.add(flagItem);
-        hasher.add(m_featureSettings.hash());
-        hasher.add(m_variationSettings.hash());
+        Hasher hasher;
+        add(hasher, m_size);
+        add(hasher, m_fontSelectionRequest.tied());
+        add(hasher, m_locale.existingHash());
+        add(hasher, m_flags);
+        add(hasher, m_featureSettings.hash());
+        add(hasher, m_variationSettings.hash());
         return hasher.hash();
     }
 
@@ -183,6 +186,8 @@ struct FontCascadeCacheKey {
     unsigned fontSelectorVersion;
 };
 
+bool operator==(const FontCascadeCacheKey&, const FontCascadeCacheKey&);
+
 struct FontCascadeCacheEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -194,15 +199,30 @@ public:
     Ref<FontCascadeFonts> fonts;
 };
 
-// FIXME: Should make hash traits for FontCascadeCacheKey instead of using a hash as the key (so we hash a hash).
-typedef HashMap<unsigned, std::unique_ptr<FontCascadeCacheEntry>, AlreadyHashed> FontCascadeCache;
+struct FontCascadeCacheKeyHash {
+    static unsigned hash(const WebCore::FontCascadeCacheKey&);
+    static bool equal(const WebCore::FontCascadeCacheKey& a, const WebCore::FontCascadeCacheKey& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = false;
+};
 
-class FontCache {
-    friend class WTF::NeverDestroyed<FontCache>;
+struct FontCascadeCacheKeyHashTraits : WTF::GenericHashTraits<WebCore::FontCascadeCacheKey> {
+    static WebCore::FontCascadeCacheKey emptyValue() { return { }; }
+    static void constructDeletedValue(WebCore::FontCascadeCacheKey& slot) { slot.fontSelectorId = std::numeric_limits<unsigned>::max(); }
+    static bool isDeletedValue(const WebCore::FontCascadeCacheKey& slot) { return slot.fontSelectorId == std::numeric_limits<unsigned>::max(); }
+};
+
+using FontCascadeCache = HashMap<FontCascadeCacheKey, std::unique_ptr<FontCascadeCacheEntry>, FontCascadeCacheKeyHash, FontCascadeCacheKeyHashTraits>;
+
+class FontCache : public RefCounted<FontCache> {
+    friend class WTF::NeverDestroyed<FontCache, MainThreadAccessTraits>;
 
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
+    static Ref<FontCache> create();
     WEBCORE_EXPORT static FontCache& singleton();
+    static FontCache& fontCacheFallbackToSingleton(RefPtr<FontSelector>);
+
+    ~FontCache();
 
     // These methods are implemented by the platform.
     enum class PreferColoredFont : uint8_t { No, Yes };
@@ -226,15 +246,15 @@ public:
     // It comes into play when you create an @font-face which shares a family name as a preinstalled font.
     Vector<FontSelectionCapabilities> getFontSelectionCapabilitiesInFamily(const AtomString&, AllowUserInstalledFonts);
 
-    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const AtomString&, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
+    WEBCORE_EXPORT RefPtr<Font> fontForFamily(const FontDescription&, const String&, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
     WEBCORE_EXPORT Ref<Font> lastResortFallbackFont(const FontDescription&);
     WEBCORE_EXPORT Ref<Font> fontForPlatformData(const FontPlatformData&);
-    RefPtr<Font> similarFont(const FontDescription&, const AtomString& family);
+    RefPtr<Font> similarFont(const FontDescription&, const String& family);
 
     void addClient(FontSelector&);
     void removeClient(FontSelector&);
 
-    unsigned short generation();
+    unsigned short generation() const { return m_generation; }
     WEBCORE_EXPORT void invalidate();
 
     WEBCORE_EXPORT size_t fontCount();
@@ -247,7 +267,7 @@ public:
     void clearWidthCaches();
 
 #if PLATFORM(WIN)
-    RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, AtomString& outFontFamilyName);
+    RefPtr<Font> fontFromDescriptionAndLogFont(const FontDescription&, const LOGFONT&, String& outFontFamilyName);
 #endif
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -275,7 +295,6 @@ public:
 
 private:
     FontCache();
-    ~FontCache() = delete;
 
     WEBCORE_EXPORT void purgeInactiveFontDataIfNeeded();
     void pruneUnreferencedEntriesFromFontCascadeCache();
@@ -283,19 +302,28 @@ private:
     Ref<FontCascadeFonts> retrieveOrAddCachedFonts(const FontCascadeDescription&, RefPtr<FontSelector>&&);
 
     // FIXME: This method should eventually be removed.
-    FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomString& family, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
+    FontPlatformData* getCachedFontPlatformData(const FontDescription&, const String& family, const FontFeatureSettings* fontFaceFeatures = nullptr, FontSelectionSpecifiedCapabilities fontFaceCapabilities = { }, bool checkingAlternateName = false);
 
     // These methods are implemented by each platform.
     WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities);
     
-    static const AtomString& alternateFamilyName(const AtomString&);
-    static const AtomString& platformAlternateFamilyName(const AtomString&);
+    static Optional<ASCIILiteral> alternateFamilyName(const String&);
+    static Optional<ASCIILiteral> platformAlternateFamilyName(const String&);
 
     Timer m_purgeTimer;
     
     bool m_shouldMockBoldSystemFontForAccessibility { false };
 
+    HashSet<FontSelector*> m_clients;
+    struct FontDataCaches;
+    UniqueRef<FontDataCaches> m_fontDataCaches;
     FontCascadeCache m_fontCascadeCache;
+
+    unsigned short m_generation { 0 };
+
+#if PLATFORM(IOS_FAMILY)
+    RecursiveLock m_fontLock;
+#endif
 
 #if PLATFORM(COCOA)
     ListHashSet<String> m_seenFamiliesForPrewarming;
@@ -348,6 +376,11 @@ Optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::decode(De
         return { };
 
     return prewarmInformation;
+}
+
+inline FontCache& FontCache::fontCacheFallbackToSingleton(RefPtr<FontSelector> fontSelector)
+{
+    return fontSelector ? fontSelector->fontCache() : FontCache::singleton();
 }
 
 }

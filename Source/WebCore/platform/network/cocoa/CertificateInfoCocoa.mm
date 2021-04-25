@@ -38,7 +38,10 @@ void CertificateInfo::dump() const
         NSLog(@"CertificateInfo SecTrust\n");
         NSLog(@"  Entries: %ld\n", entries);
         for (CFIndex i = 0; i < entries; ++i) {
+            // FIXME: Adopt replacement where available.
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary(SecTrustGetCertificateAtIndex(trust(), i)));
+            ALLOW_DEPRECATED_DECLARATIONS_END
             NSLog(@"  %@", (__bridge NSString *)summary.get());
         }
 

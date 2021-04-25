@@ -5,7 +5,7 @@ import os
 import sys
 
 uri = os.environ.get('REQUEST_URI', '')
-usrname = base64.b64decode(os.environ.get('HTTP_AUTHORIZATION', ' Og==').split(' ')[1]).decode().split(':')[0]
+username = base64.b64decode(os.environ.get('HTTP_AUTHORIZATION', ' Og==').split(' ')[1]).decode().split(':')[0]
 
 sys.stdout.write(
     'Cache-Control: no-store\r\n'

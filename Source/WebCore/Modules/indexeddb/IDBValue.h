@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "ThreadSafeDataBuffer.h"
 #include <wtf/text/WTFString.h>
 
@@ -86,5 +84,3 @@ Optional<IDBValue> IDBValue::decode(Decoder& decoder)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

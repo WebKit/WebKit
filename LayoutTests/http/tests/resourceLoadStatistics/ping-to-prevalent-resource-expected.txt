@@ -20,5 +20,5 @@ Frame: '<!--frame3-->'
 --------
 Ping received.
 HTTP_HOST: localhost:8000
-REQUEST_URI: /contentextensions/resources/save-ping.php?test=ping-to-prevalent-resource
+REQUEST_URI: /contentextensions/resources/save-ping.py?test=ping-to-prevalent-resource
 No cookies in ping.

@@ -67,6 +67,7 @@
 #include "VisibleUnits.h"
 #include "markup.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -739,7 +740,7 @@ static bool isProhibitedParagraphChild(const AtomString& name)
             &ulTag.get(),
             &xmpTag.get(),
         };
-        HashSet<AtomString> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
         for (auto& tag : tags)
             set.add(tag->localName());
         return set;
@@ -1139,12 +1140,12 @@ void ReplaceSelectionCommand::doApply()
     // breaking the blockquote will prevent the content from actually being inserted in the table.
     if (shouldHandleMailBlockquote && m_preventNesting && !(enclosingNodeOfType(insertionPos, &isTableStructureNode))) {
         applyCommandToComposite(BreakBlockquoteCommand::create(document())); 
-        // This will leave a br between the split. 
-        Node* br = endingSelection().start().deprecatedNode(); 
-        ASSERT(br->hasTagName(brTag)); 
-        // Insert content between the two blockquotes, but remove the br (since it was just a placeholder). 
-        insertionPos = positionInParentBeforeNode(br);
-        removeNode(*br);
+        // This will leave a br between the split.
+        if (auto br = makeRefPtr(endingSelection().start().deprecatedNode())) {
+            ASSERT(br->hasTagName(brTag));
+            insertionPos = positionInParentBeforeNode(br.get());
+            removeNode(*br);
+        }
     }
     
     // Inserting content could cause whitespace to collapse, e.g. inserting <div>foo</div> into hello^ world.

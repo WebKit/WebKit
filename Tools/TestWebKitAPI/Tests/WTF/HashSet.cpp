@@ -70,11 +70,11 @@ void testInitialCapacity()
     EXPECT_GT(static_cast<unsigned>(testSet.capacity()), initialCapacity);
 }
 
-template<unsigned size> void generateTestCapacityUpToSize();
-template<> void generateTestCapacityUpToSize<0>()
+template<unsigned size> inline void generateTestCapacityUpToSize();
+template<> inline void generateTestCapacityUpToSize<0>()
 {
 }
-template<unsigned size> void generateTestCapacityUpToSize()
+template<unsigned size> inline void generateTestCapacityUpToSize()
 {
     generateTestCapacityUpToSize<size - 1>();
     testInitialCapacity<size>();

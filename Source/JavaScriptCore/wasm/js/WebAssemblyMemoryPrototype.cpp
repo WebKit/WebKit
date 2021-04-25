@@ -40,6 +40,7 @@
 namespace JSC {
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyMemoryProtoFuncGrow);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyMemoryProtoFuncBuffer);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyMemoryProtoFuncType);
 }
 
 #include "WebAssemblyMemoryPrototype.lut.h"
@@ -53,6 +54,7 @@ const ClassInfo WebAssemblyMemoryPrototype::s_info = { "WebAssembly.Memory", &Ba
 @begin prototypeTableWebAssemblyMemory
  grow   webAssemblyMemoryProtoFuncGrow   Function 1
  buffer webAssemblyMemoryProtoFuncBuffer Accessor 0
+ type   webAssemblyMemoryProtoFuncType   Function 0
 @end
 */
 
@@ -95,6 +97,17 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyMemoryProtoFuncBuffer, (JSGlobalObject* glob
     RETURN_IF_EXCEPTION(throwScope, { });
     RELEASE_AND_RETURN(throwScope, JSValue::encode(memory->buffer(globalObject)));
 }
+
+JSC_DEFINE_HOST_FUNCTION(webAssemblyMemoryProtoFuncType, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+
+    JSWebAssemblyMemory* memory = getMemory(globalObject, vm, callFrame->thisValue());
+    RETURN_IF_EXCEPTION(throwScope, { });
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(memory->type(globalObject)));
+}
+
 
 WebAssemblyMemoryPrototype* WebAssemblyMemoryPrototype::create(VM& vm, JSGlobalObject*, Structure* structure)
 {

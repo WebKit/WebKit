@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/DiagnosticLoggingDomain.h>
 #include <WebCore/DiagnosticLoggingResultType.h>
 #include <wtf/text/WTFString.h>
 
@@ -47,6 +48,8 @@ public:
     virtual void logDiagnosticMessageWithEnhancedPrivacy(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description) = 0;
 
     virtual void logDiagnosticMessageWithValueDictionary(WebKit::WebPageProxy*, const WTF::String& message, const WTF::String& description, Ref<API::Dictionary>&&) = 0;
+
+    virtual void logDiagnosticMessageWithDomain(WebKit::WebPageProxy*, const WTF::String&, WebCore::DiagnosticLoggingDomain) { }
 };
 
 } // namespace API

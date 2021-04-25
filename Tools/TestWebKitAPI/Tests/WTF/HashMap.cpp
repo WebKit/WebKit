@@ -668,14 +668,14 @@ public:
 };
 
 
-void testMovingUsingEnsure(Ref<RefLogger>&& logger)
+static void testMovingUsingEnsure(Ref<RefLogger>&& logger)
 {
     HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
     
     map.ensure(1, [&] { return makeUnique<ObjectWithRefLogger>(WTFMove(logger)); });
 }
 
-void testMovingUsingAdd(Ref<RefLogger>&& logger)
+static void testMovingUsingAdd(Ref<RefLogger>&& logger)
 {
     HashMap<unsigned, std::unique_ptr<ObjectWithRefLogger>> map;
 

@@ -43,22 +43,22 @@ function load(url)
 
 function test()
 {
-    if (load("resources/online-allowlist.php?cached") != load("resources/online-allowlist.php?cached")) {
+    if (load("resources/online-allowlist.py?cached") != load("resources/online-allowlist.py?cached")) {
         log("FAIL: Explicit entry didn't override online allowlist.");
         hadError = true;
     }
 
-    if (load("resources/online-allowlist.php?uncached") == load("resources/online-allowlist.php?uncached")) {
+    if (load("resources/online-allowlist.py?uncached") == load("resources/online-allowlist.py?uncached")) {
         log("FAIL: Online allowlist resource wasn't reloaded from network.");
         hadError = true;
     }
 
-    if (load("resources/online-allowlist.php?uncachedxxx") == load("resources/online-allowlist.php?uncachedxxx")) {
+    if (load("resources/online-allowlist.py?uncachedxxx") == load("resources/online-allowlist.py?uncachedxxx")) {
         log("FAIL: Online allowlist resource wasn't reloaded from network (prefix matching).");
         hadError = true;
     }
 
-    if (canLoad("resources/online-allowlist.php?foobar")) {
+    if (canLoad("resources/online-allowlist.py?foobar")) {
         log("FAIL: Uncached resource was successfully loaded.");
         hadError = true;
     }

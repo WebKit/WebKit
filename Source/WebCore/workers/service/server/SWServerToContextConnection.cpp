@@ -116,10 +116,10 @@ void SWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWor
     completionHandler();
 }
 
-void SWServerToContextConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, URL&& scriptURL, String&& script, URL&& responseURL, String&& mimeType)
+void SWServerToContextConnection::setScriptResource(ServiceWorkerIdentifier serviceWorkerIdentifier, URL&& scriptURL, ServiceWorkerContextData::ImportedScript&& script)
 {
     if (auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier))
-        worker->setScriptResource(WTFMove(scriptURL), ServiceWorkerContextData::ImportedScript { WTFMove(script), WTFMove(responseURL), WTFMove(mimeType) });
+        worker->setScriptResource(WTFMove(scriptURL), WTFMove(script));
 }
 
 void SWServerToContextConnection::didFailHeartBeatCheck(ServiceWorkerIdentifier identifier)

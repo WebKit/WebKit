@@ -25,6 +25,6 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 </script>
-<meta http-equiv="refresh" content="0;http://localhost:8000/cookies/resources/echo-http-and-dom-cookies-and-notify-done.php">
+<meta http-equiv="refresh" content="0;http://localhost:8000/cookies/resources/echo-http-and-dom-cookies-and-notify-done.py">
 </head>
 </html>

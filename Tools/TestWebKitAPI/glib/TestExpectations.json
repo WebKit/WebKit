@@ -12,6 +12,15 @@
             }
         }
     },
+    "TestBackForwardList": {
+        "subtests": {
+            "/webkit/BackForwardList/navigation": {
+                "expected": {
+                    "all": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/224175"}
+                }
+            }
+        }
+    },
     "TestGeolocationManager": {
         "subtests": {
             "/webkit/WebKitGeolocationManager/current-position": {
@@ -102,6 +111,16 @@
                 "expected": {
                     "gtk": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"},
                     "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/213785"}
+                }
+            },
+            "/webkit/WebKitWebsiteData/itp": {
+                "expected": {
+                    "all": {"status": ["PASS", "TIMEOUT"], "bug": "webkit.org/b/224175"}
+                }
+            },
+            "/webkit/WebKitWebsiteData/configuration": {
+                "expected": {
+                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/224175"}
                 }
             }
         }

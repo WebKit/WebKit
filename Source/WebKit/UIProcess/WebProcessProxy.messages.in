@@ -72,8 +72,9 @@ messages -> WebProcessProxy LegacyReceiver {
 #endif
 
 #if HAVE(CVDISPLAYLINK)
-    StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
+    StartDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond)
     StopDisplayLink(WebKit::DisplayLinkObserverID observerID, uint32_t displayID)
+    SetDisplayLinkPreferredFramesPerSecond(WebKit::DisplayLinkObserverID observerID, uint32_t displayID, unsigned preferredFramesPerSecond);
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

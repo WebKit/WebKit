@@ -26,14 +26,9 @@
 
 #pragma once
 
-#include "CSSValue.h"
-#include "ComputedEffectTiming.h"
 #include "RenderStyle.h"
-#include "Styleable.h"
 #include "WebAnimation.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/Markable.h>
 #include <wtf/Optional.h>
 #include <wtf/Ref.h>
@@ -41,10 +36,6 @@
 #include <wtf/Seconds.h>
 
 namespace WebCore {
-
-class CSSAnimation;
-class CSSTransition;
-class DeclarativeAnimation;
 
 class AnimationTimeline : public RefCounted<AnimationTimeline>, public CanMakeWeakPtr<AnimationTimeline> {
 public:
@@ -61,19 +52,6 @@ public:
     Optional<double> bindingsCurrentTime();
     virtual Optional<Seconds> currentTime() { return m_currentTime; }
 
-    void elementWasRemoved(const Styleable&);
-
-    void willChangeRendererForStyleable(const Styleable&);
-    void cancelDeclarativeAnimationsForStyleable(const Styleable&, WebAnimation::Silently);
-
-    void animationWasAddedToStyleable(WebAnimation&, const Styleable&);
-    void animationWasRemovedFromStyleable(WebAnimation&, const Styleable&);
-
-    void removeDeclarativeAnimationFromListsForOwningElement(WebAnimation&, const Styleable&);
-
-    void updateCSSAnimationsForStyleable(const Styleable&, const RenderStyle* currentStyle, const RenderStyle& afterChangeStyle, const RenderStyle* parentElementStyle);
-    void updateCSSTransitionsForStyleable(const Styleable&, const RenderStyle& currentStyle, const RenderStyle& newStyle);
-
 protected:
     explicit AnimationTimeline();
 
@@ -82,8 +60,6 @@ protected:
 
 private:
     void updateGlobalPosition(WebAnimation&);
-    void updateCSSTransitionsForStyleableAndProperty(const Styleable&, CSSPropertyID, const RenderStyle& currentStyle, const RenderStyle& afterChangeStyle, const MonotonicTime);
-    void removeCSSAnimationCreatedByMarkup(const Styleable&, CSSAnimation&);
 
     Markable<Seconds, Seconds::MarkableTraits> m_currentTime;
 };

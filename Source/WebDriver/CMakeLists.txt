@@ -5,7 +5,7 @@ include(WebKitCommon)
 set(WebDriver_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WEBDRIVER_DIR}"
-    "${DERIVED_SOURCES_WEBDRIVER_DIR}"
+    "${WebDriver_DERIVED_SOURCES_DIR}"
 )
 
 set(WebDriver_SOURCES
@@ -36,13 +36,13 @@ set(WebDriver_SCRIPTS
 )
 
 MAKE_JS_FILE_ARRAYS(
-    ${DERIVED_SOURCES_WEBDRIVER_DIR}/WebDriverAtoms.cpp
-    ${DERIVED_SOURCES_WEBDRIVER_DIR}/WebDriverAtoms.h
+    ${WebDriver_DERIVED_SOURCES_DIR}/WebDriverAtoms.cpp
+    ${WebDriver_DERIVED_SOURCES_DIR}/WebDriverAtoms.h
     WebDriver
     WebDriver_SCRIPTS
     Session.cpp
 )
-list(APPEND WebDriver_SOURCES ${DERIVED_SOURCES_WEBDRIVER_DIR}/WebDriverAtoms.cpp)
+list(APPEND WebDriver_SOURCES ${WebDriver_DERIVED_SOURCES_DIR}/WebDriverAtoms.cpp)
 
 WEBKIT_EXECUTABLE_DECLARE(WebDriver)
 

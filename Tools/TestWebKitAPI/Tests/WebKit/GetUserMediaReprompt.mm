@@ -106,8 +106,8 @@ TEST(WebKit2, GetUserMediaRepromptAfterAudioVideoBeingDenied)
     preferences._mockCaptureDevicesEnabled = YES;
     auto webView = adoptNS([[GetUserMediaRepromptTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get() processPoolConfiguration:processPoolConfig.get()]);
     auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
-    [delegate setAudioDecision:_WKPermissionDecisionGrant];
-    [delegate setVideoDecision:_WKPermissionDecisionDeny];
+    [delegate setAudioDecision:WKPermissionDecisionGrant];
+    [delegate setVideoDecision:WKPermissionDecisionDeny];
     [webView setUIDelegate:delegate.get()];
 
     [webView loadTestPageNamed:@"getUserMediaAudioVideoCapture"];

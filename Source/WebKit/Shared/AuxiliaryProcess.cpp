@@ -30,6 +30,7 @@
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/LogInitialization.h>
 #include <pal/SessionID.h>
 
@@ -69,7 +70,7 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     RELEASE_ASSERT_WITH_MESSAGE(parameters.processIdentifier, "Unable to initialize child process without a WebCore process identifier");
     Process::setIdentifier(*parameters.processIdentifier);
 
-    platformInitialize();
+    platformInitialize(parameters);
 
 #if PLATFORM(COCOA)
     m_priorityBoostMessage = parameters.priorityBoostMessage;
@@ -90,6 +91,7 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     // In WebKit2, only the UI process should ever be generating certain identifiers.
     PAL::SessionID::enableGenerationProtection();
     ContentWorldIdentifier::enableGenerationProtection();
+    WebPageProxyIdentifier::enableGenerationProtection();
 
     m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier, *this);
     initializeConnection(m_connection.get());
@@ -237,7 +239,7 @@ Optional<std::pair<IPC::Connection::Identifier, IPC::Attachment>> AuxiliaryProce
 }
 
 #if !PLATFORM(COCOA)
-void AuxiliaryProcess::platformInitialize()
+void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
 {
 }
 

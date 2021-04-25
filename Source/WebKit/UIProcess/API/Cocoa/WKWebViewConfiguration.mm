@@ -174,6 +174,9 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad;
     BOOL _drawsBackground;
     BOOL _undoManagerAPIEnabled;
+#if ENABLE(APP_HIGHLIGHTS)
+    BOOL _appHighlightsEnabled;
+#endif
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -269,6 +272,9 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _applePayEnabled = DEFAULT_VALUE_FOR_ApplePayEnabled;
 #endif
 
+#if ENABLE(APP_HIGHLIGHTS)
+    _appHighlightsEnabled = DEFAULT_VALUE_FOR_AppHighlightsEnabled;
+#endif
     return self;
 }
 
@@ -443,6 +449,9 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     configuration->_drawsBackground = self->_drawsBackground;
 
     configuration->_undoManagerAPIEnabled = self->_undoManagerAPIEnabled;
+#if ENABLE(APP_HIGHLIGHTS)
+    configuration->_appHighlightsEnabled = self->_appHighlightsEnabled;
+#endif
 
     return configuration;
 }
@@ -545,7 +554,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)setURLSchemeHandler:(id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme
 {
-    if ([WKWebView handlesURLScheme:urlScheme])
+    if ([WKWebView handlesURLScheme:urlScheme] && [urlScheme caseInsensitiveCompare:@"http"] != NSOrderedSame && [urlScheme caseInsensitiveCompare:@"https"] != NSOrderedSame)
         [NSException raise:NSInvalidArgumentException format:@"'%@' is a URL scheme that WKWebView handles natively", urlScheme];
 
     auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(urlScheme);
@@ -1217,6 +1226,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)_undoManagerAPIEnabled
 {
     return _undoManagerAPIEnabled;
+}
+
+- (void)_setAppHighlightsEnabled:(BOOL)enabled
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    _appHighlightsEnabled = enabled;
+#endif
+}
+
+- (BOOL)_appHighlightsEnabled
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    return _appHighlightsEnabled;
+#else
+    return NO;
+#endif
 }
 
 - (BOOL)_shouldRelaxThirdPartyCookieBlocking

@@ -1340,6 +1340,15 @@ PlainTextRange AXIsolatedObject::selectedTextRange() const
     });
 }
 
+int AXIsolatedObject::insertionPointLineNumber() const
+{
+    return Accessibility::retrieveValueFromMainThread<int>([this] () -> int {
+        if (auto* axObject = associatedAXObject())
+            return axObject->insertionPointLineNumber();
+        return -1;
+    });
+}
+
 PlainTextRange AXIsolatedObject::doAXRangeForLine(unsigned lineIndex) const
 {
     return Accessibility::retrieveValueFromMainThread<PlainTextRange>([&lineIndex, this] () -> PlainTextRange {
@@ -1434,24 +1443,6 @@ Optional<SimpleRange> AXIsolatedObject::elementRange() const
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
     return axObject ? axObject->elementRange() : WTF::nullopt;
-}
-
-unsigned AXIsolatedObject::selectionStart() const
-{
-    return Accessibility::retrieveValueFromMainThread<unsigned>([this] () -> unsigned {
-        if (auto* object = associatedAXObject())
-            return object->selectionStart();
-        return 0;
-    });
-}
-
-unsigned AXIsolatedObject::selectionEnd() const
-{
-    return Accessibility::retrieveValueFromMainThread<unsigned>([this] () -> unsigned {
-        if (auto* object = associatedAXObject())
-            return object->selectionEnd();
-        return 0;
-    });
 }
 
 String AXIsolatedObject::selectedText() const

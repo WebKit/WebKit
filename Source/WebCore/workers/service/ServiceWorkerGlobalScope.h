@@ -44,7 +44,7 @@ class ServiceWorkerThread;
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorkerGlobalScope);
 public:
-    static Ref<ServiceWorkerGlobalScope> create(const ServiceWorkerContextData&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    static Ref<ServiceWorkerGlobalScope> create(ServiceWorkerContextData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     ~ServiceWorkerGlobalScope();
 
@@ -68,12 +68,15 @@ public:
     const ServiceWorkerContextData::ImportedScript* scriptResource(const URL&) const;
     void setScriptResource(const URL&, ServiceWorkerContextData::ImportedScript&&);
 
+    void didSaveScriptsToDisk(ScriptBuffer&&, HashMap<URL, ScriptBuffer>&& importedScripts);
+
+    const ServiceWorkerContextData& contextData() const { return m_contextData; }
     const CertificateInfo& certificateInfo() const { return m_contextData.certificateInfo; }
 
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Serviceworker; }
     
 private:
-    ServiceWorkerGlobalScope(const ServiceWorkerContextData&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
+    ServiceWorkerGlobalScope(ServiceWorkerContextData&&, const WorkerParameters&, Ref<SecurityOrigin>&&, ServiceWorkerThread&, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*);
 
     bool hasPendingEvents() const { return !m_extendedEvents.isEmpty(); }
 

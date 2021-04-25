@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,11 +24,13 @@
  */
 
 [
+    ActiveDOMObject,
     Conditional=MEDIA_SESSION,
     Exposed=Window,
-    ImplementationLacksVTable,
     ExportMacro=WEBCORE_EXPORT,
-] interface MediaSession {
+    JSGenerateToJSObject,
+] interface MediaSession : EventTarget
+{
     attribute MediaMetadata? metadata;
 
     attribute MediaSessionPlaybackState playbackState;
@@ -37,3 +39,6 @@
 
     undefined setPositionState(optional MediaPositionState? state = null);
 };
+
+MediaSession includes MediaSessionCoordinatorMixin;
+MediaSession includes MediaSessionPlaylistMixin;

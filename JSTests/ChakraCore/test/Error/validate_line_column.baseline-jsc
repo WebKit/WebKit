@@ -4,7 +4,7 @@ global code@validate_line_column.js:16:4
 @validate_line_column.js:21:11
 foo@validate_line_column.js:10:17
 global code@validate_line_column.js:20:4
-@validate_line_column.js:26:7
+@validate_line_column.js:26:23
 foo@validate_line_column.js:10:17
 global code@validate_line_column.js:24:4
 @validate_line_column.js:30:14

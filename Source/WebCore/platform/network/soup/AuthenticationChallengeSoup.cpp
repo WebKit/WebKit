@@ -64,6 +64,8 @@ static ProtectionSpace protectionSpaceFromSoupAuthAndURL(SoupAuth* soupAuth, con
 #if USE(SOUP2)
     auto host = url.host();
     auto port = url.port();
+    if (!port)
+        port = defaultPortForProtocol(url.protocol());
 #else
     URL authURL({ }, makeString("http://", soup_auth_get_authority(soupAuth)));
     auto host = authURL.host();

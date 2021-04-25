@@ -26,8 +26,6 @@
 #include "config.h"
 #include "MemoryIDBBackingStore.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCursorInfo.h"
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetRecordData.h"
@@ -635,5 +633,3 @@ void MemoryIDBBackingStore::close()
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

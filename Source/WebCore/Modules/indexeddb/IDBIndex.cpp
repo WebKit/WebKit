@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBIndex.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "IDBCursor.h"
 #include "IDBDatabase.h"
@@ -429,5 +427,3 @@ void IDBIndex::deref()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

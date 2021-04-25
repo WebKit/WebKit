@@ -27,6 +27,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaDescription.h"
 #include <wtf/MediaTime.h>
 #include <wtf/Vector.h>
 

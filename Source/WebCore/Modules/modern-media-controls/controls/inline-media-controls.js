@@ -184,6 +184,18 @@ class InlineMediaControls extends MediaControls
                 this.overflowButton.addContextMenuOptions(button.contextMenuOptions);
         }
 
+        let collapsableButtons = this._collapsableButtons();
+        let shownRightContainerButtons = this.rightContainer.children.filter(button => button.enabled && !button.dropped);
+        let maximumRightContainerButtonCount = this.maximumRightContainerButtonCountOverride ?? 2; // Allow AirPlay and overflow if all buttons are shown.
+        for (let i = shownRightContainerButtons.length - 1; i >= 0 && shownRightContainerButtons.length > maximumRightContainerButtonCount; --i) {
+            let button = shownRightContainerButtons[i];
+            if (!collapsableButtons.has(button))
+                continue;
+
+            button.dropped = true;
+            this.overflowButton.addContextMenuOptions(button.contextMenuOptions);
+        }
+
         // Update layouts once more.
         this.leftContainer.layout();
         this.rightContainer.layout();
@@ -269,13 +281,25 @@ class InlineMediaControls extends MediaControls
 
     _droppableButtons()
     {
+        let buttons = this._collapsableButtons();
+        buttons.add(this.skipForwardButton);
+        buttons.add(this.skipBackButton);
+        if (this._shouldUseSingleBarLayout || this.preferredMuteButtonStyle === Button.Styles.Bar)
+            buttons.add(this.muteButton);
+        buttons.add(this.airplayButton);
         if (this._shouldUseSingleBarLayout)
-            return [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton, this.pipButton, this.muteButton, this.fullscreenButton, this.overflowButton];
+            buttons.add(this.fullscreenButton);
+        buttons.add(this.overflowButton);
+        return buttons;
+    }
 
-        const buttons = [this.skipForwardButton, this.skipBackButton, this.airplayButton, this.tracksButton];
-        if (this.preferredMuteButtonStyle === Button.Styles.Bar)
-            buttons.push(this.muteButton);
-        buttons.push(this.overflowButton);
+    _collapsableButtons()
+    {
+        let buttons = new Set([
+            this.tracksButton,
+        ]);
+        if (this._shouldUseSingleBarLayout)
+            buttons.add(this.pipButton);
         return buttons;
     }
 

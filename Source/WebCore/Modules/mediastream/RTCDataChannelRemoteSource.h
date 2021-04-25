@@ -26,13 +26,13 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "RTCDataChannelHandler.h"
 #include "RTCDataChannelHandlerClient.h"
 #include "RTCDataChannelIdentifier.h"
 #include "RTCDataChannelRemoteSourceConnection.h"
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
-
-class RTCDataChannelHandler;
 
 class RTCDataChannelRemoteSource : public RTCDataChannelHandlerClient {
 public:

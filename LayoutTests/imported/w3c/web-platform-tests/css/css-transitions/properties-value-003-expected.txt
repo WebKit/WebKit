@@ -19,7 +19,7 @@ PASS background-image image(url) / values
 PASS background-image image(url) / events
 PASS background-image image(data) / values
 PASS background-image image(data) / events
-FAIL background-image image(gradient) / values assert_not_equals: must not be target value after start got disallowed value "-webkit-linear-gradient(top, rgb(186, 218, 85), rgb(240, 117, 117))"
+FAIL background-image image(gradient) / values assert_not_equals: may not be target value while transitioning on .transition got disallowed value "-webkit-linear-gradient(top, rgb(186, 218, 85), rgb(240, 117, 117))"
 PASS background-image image(gradient) / events
 FAIL background-size background-size(keyword) / values assert_not_equals: must not be target value after start got disallowed value "contain"
 FAIL background-size background-size(keyword) / events assert_equals: Expected TransitionEnd events triggered on .transition expected "background-size:2s" but got ""

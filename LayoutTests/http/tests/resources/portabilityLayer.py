@@ -22,15 +22,40 @@
 
 import os
 
+def get_cookies():
+    cookies = {}
+    if 'HTTP_COOKIE' in os.environ:
+        header_cookies = os.environ['HTTP_COOKIE']
+        header_cookies = header_cookies.split('; ')
 
-def setState(state, file):
-    with open(file, 'w') as file:
-        file.write(state)
-    return state
+        for cookie in header_cookies:
+            cookie = cookie.split('=')
+            cookies[cookie[0]] = cookie[1]
 
+    return cookies
 
-def getState(file, default='Uninitialized'):
+def get_count(file):
+    if not os.path.isfile(file):
+        with open(file, 'w') as open_file:
+            open_file.write('0')
+            return '0'
+
+    with open(file, 'r') as open_file:
+        return open_file.read()
+
+def get_state(file, default='Uninitialized'):
     if not os.path.isfile(file):
         return default
     with open(file, 'r') as file:
         return file.read()
+
+def set_state(state, file):
+    with open(file, 'w') as file:
+        file.write(state)
+    return state
+
+def step_state(file):
+    state = get_count(file)
+    with open(file, 'w') as open_file:
+        open_file.write(f'{int(state) + 1}')
+    return state

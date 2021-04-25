@@ -325,7 +325,6 @@ static BOOL areEssentiallyEqual(double a, double b)
     SettingsController *settings = [[NSApplication sharedApplication] browserAppDelegate].settingsController;
 
     [[WebPreferences standardPreferences] setShowDebugBorders:settings.layerBordersVisible];
-    [[WebPreferences standardPreferences] setSimpleLineLayoutEnabled:settings.simpleLineLayoutEnabled];
     [[WebPreferences standardPreferences] setLegacyLineLayoutVisualCoverageEnabled:settings.legacyLineLayoutVisualCoverageEnabled];
     [[WebPreferences standardPreferences] setShowRepaintCounter:settings.layerBordersVisible];
     [[WebPreferences standardPreferences] setSuppressesIncrementalRendering:settings.incrementalRenderingSuppressed];

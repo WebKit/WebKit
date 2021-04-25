@@ -36,7 +36,6 @@
 #import "WKFoundation.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FileHandle.h>
-#import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/SystemVersion.h>
 #import <mach-o/dyld.h>
 #import <mach/mach.h>
@@ -44,6 +43,7 @@
 #import <pal/crypto/CryptoDigest.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
+#import <pal/spi/cocoa/NotifySPI.h>
 #import <pwd.h>
 #import <stdlib.h>
 #import <sys/sysctl.h>
@@ -66,6 +66,11 @@
 
 SOFT_LINK_SYSTEM_LIBRARY(libsystem_info)
 SOFT_LINK_OPTIONAL(libsystem_info, mbr_close_connections, int, (), ());
+
+#if ENABLE(NOTIFY_FILTERING)
+SOFT_LINK_SYSTEM_LIBRARY(libsystem_notify)
+SOFT_LINK_OPTIONAL(libsystem_notify, notify_set_options, void, __cdecl, (uint32_t));
+#endif
 
 #if PLATFORM(MAC)
 #define USE_CACHE_COMPILED_SANDBOX 1
@@ -145,14 +150,6 @@ struct SandboxInfo {
 constexpr uint32_t CachedSandboxVersionNumber = 1;
 #endif // USE(CACHE_COMPILED_SANDBOX)
 
-static void initializeTimerCoalescingPolicy()
-{
-    // Set task_latency and task_throughput QOS tiers as appropriate for a visible application.
-    struct task_qos_policy qosinfo = { LATENCY_QOS_TIER_0, THROUGHPUT_QOS_TIER_0 };
-    kern_return_t kr = task_policy_set(mach_task_self(), TASK_BASE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
-    ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
-}
-
 void AuxiliaryProcess::launchServicesCheckIn()
 {
 #if HAVE(CSCHECKFIXDISABLE)
@@ -162,15 +159,6 @@ void AuxiliaryProcess::launchServicesCheckIn()
 
     _LSSetApplicationLaunchServicesServerConnectionStatus(0, 0);
     RetainPtr<CFDictionaryRef> unused = _LSApplicationCheckIn(kLSDefaultSessionID, CFBundleGetInfoDictionary(CFBundleGetMainBundle()));
-}
-
-void AuxiliaryProcess::platformInitialize()
-{
-    initializeTimerCoalescingPolicy();
-
-    FloatingPointEnvironment::singleton().saveMainThreadEnvironment();
-
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 
 static OSStatus enableSandboxStyleFileQuarantine()
@@ -195,6 +183,14 @@ static OSStatus enableSandboxStyleFileQuarantine()
     return qtn_proc_apply_to_self(quarantineProperties);
 #else
     return false;
+#endif
+}
+
+static void setNotifyOptions()
+{
+#if ENABLE(NOTIFY_FILTERING)
+    if (notify_set_optionsPtr())
+        notify_set_optionsPtr()(NOTIFY_OPT_DISPATCH | NOTIFY_OPT_REGEN | NOTIFY_OPT_FILTERED);
 #endif
 }
 
@@ -524,6 +520,8 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     ASSERT(static_cast<void *>(sandboxDataPtr + profile.size) <= static_cast<void *>(cachedSandboxContents.data() + cachedSandboxContents.size()));
     profile.data = sandboxDataPtr;
 
+    setNotifyOptions();
+
     if (sandbox_apply(&profile)) {
         WTFLogAlways("%s: Could not apply cached sandbox: %s\n", getprogname(), strerror(errno));
         return false;
@@ -562,6 +560,9 @@ static bool compileAndApplySandboxSlowCase(const String& profileOrProfilePath, b
     char* errorBuf;
     CString temp = isProfilePath ? FileSystem::fileSystemRepresentation(profileOrProfilePath) : profileOrProfilePath.utf8();
     uint64_t flags = isProfilePath ? SANDBOX_NAMED_EXTERNAL : 0;
+
+    setNotifyOptions();
+
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (sandbox_init_with_parameters(temp.data(), flags, parameters.namedParameterArray(), &errorBuf)) {
         ALLOW_DEPRECATED_DECLARATIONS_END
@@ -621,6 +622,8 @@ static bool applySandbox(const AuxiliaryProcessInitializationParameters& paramet
     if (!sandboxProfile)
         return compileAndApplySandboxSlowCase(profileOrProfilePath, isProfilePath, sandboxInitializationParameters);
 
+    setNotifyOptions();
+    
     if (sandbox_apply(sandboxProfile.get())) {
         WTFLogAlways("%s: Could not apply compiled sandbox: %s\n", getprogname(), strerror(errno));
         CRASH();

@@ -29,6 +29,8 @@
 
 #include "ArrayConstructor.h"
 #include "ArrayPrototype.h"
+#include "JSCustomGetterFunction.h"
+#include "JSCustomSetterFunction.h"
 #include "JSFunction.h"
 #include "LinkTimeConstant.h"
 #include "ObjectPrototype.h"
@@ -122,6 +124,31 @@ inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return b
 ALWAYS_INLINE VM& getVM(JSGlobalObject* globalObject)
 {
     return globalObject->vm();
+}
+
+template<typename T>
+inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const Weak<T>& value)
+{
+    if (!value)
+        return 0;
+    return hash(value->propertyName(), value->customFunctionPointer());
+}
+
+template<typename T>
+inline bool JSGlobalObject::WeakCustomGetterOrSetterHash<T>::equal(const Weak<T>& a, const Weak<T>& b)
+{
+    if (!a || !b)
+        return false;
+    return a == b;
+}
+
+template<typename T>
+inline unsigned JSGlobalObject::WeakCustomGetterOrSetterHash<T>::hash(const PropertyName& propertyName, typename T::CustomFunctionPointer functionPointer)
+{
+    unsigned hash = DefaultHash<typename T::CustomFunctionPointer>::hash(functionPointer);
+    if (!propertyName.isNull())
+        hash = WTF::pairIntHash(hash, propertyName.uid()->existingSymbolAwareHash());
+    return hash;
 }
 
 } // namespace JSC

@@ -29,7 +29,9 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
@@ -87,4 +89,34 @@ TEST(WebKit, NetworkProcessLaunchOnlyWhenNecessary)
     [[webView configuration].processPool _registerURLSchemeAsSecure:@"test"];
     [[webView configuration].processPool _registerURLSchemeAsBypassingContentSecurityPolicy:@"test"];
     EXPECT_FALSE([[webView configuration].websiteDataStore _networkProcessExists]);
+}
+
+TEST(WebKit, NetworkProcessCrashWhenNotAssociatedWithDataStore)
+{
+    pid_t networkProcessPID = 0;
+    @autoreleasepool {
+        auto viewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+        auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+        [viewConfiguration setWebsiteDataStore:dataStore.get()];
+        auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:viewConfiguration.get()]);
+        [webView loadHTMLString:@"foo" baseURL:[NSURL URLWithString:@"about:blank"]];
+        while (![dataStore _networkProcessIdentifier])
+            TestWebKitAPI::Util::spinRunLoop(10);
+        networkProcessPID = [dataStore _networkProcessIdentifier];
+        EXPECT_TRUE(!!networkProcessPID);
+    }
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    // Kill the network process once it is no longer associated with any WebsiteDataStore.
+    kill(networkProcessPID, 9);
+    TestWebKitAPI::Util::spinRunLoop(10);
+
+    auto viewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:viewConfiguration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    EXPECT_NE(networkProcessPID, [webView configuration].websiteDataStore._networkProcessIdentifier);
 }

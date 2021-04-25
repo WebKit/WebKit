@@ -680,7 +680,12 @@ void isIntegralOrPointerType(T, Types... types)
     static_assert(std::is_integral<T>::value || std::is_enum<T>::value || std::is_pointer<T>::value, "All types need to be bitwise_cast-able to integral type for logging");
     isIntegralOrPointerType(types...);
 }
-}
+
+#if PLATFORM(COCOA)
+WTF_EXPORT_PRIVATE void disableForwardingVPrintfStdErrToOSLog();
+#endif
+
+} // namespace WTF
 
 inline void compilerFenceForCrash()
 {

@@ -135,7 +135,7 @@ def main():
     webkit_root = up(up(up(host.filesystem.abspath(__file__))))
 
     if lldb_python_directory not in sys.path:
-        sys.path.append(lldb_python_directory)
+        sys.path.insert(0, lldb_python_directory)
     tester.add_tree(host.filesystem.join(webkit_root, 'Tools', 'lldb'))
 
     return not tester.run(host=host, webkit_root=webkit_root)

@@ -29,6 +29,8 @@
 #include "BytecodeIntrinsicRegistry.h"
 #include "CommonIdentifiers.h"
 #include "JSCBuiltins.h"
+#include <wtf/RobinHoodHashMap.h>
+#include <wtf/RobinHoodHashSet.h>
 
 namespace JSC {
 
@@ -142,6 +144,7 @@ namespace JSC {
     macro(setBucketNext) \
     macro(setBucketKey) \
     macro(setPrototypeDirect) \
+    macro(setPrototypeDirectOrThrow) \
     macro(regExpBuiltinExec) \
     macro(regExpMatchFast) \
     macro(regExpProtoFlagsGetter) \
@@ -199,6 +202,9 @@ class BuiltinNames {
     WTF_MAKE_NONCOPYABLE(BuiltinNames); WTF_MAKE_FAST_ALLOCATED;
     
 public:
+    using PrivateNameSet = MemoryCompactLookupOnlyRobinHoodHashSet<String>;
+    using WellKnownSymbolMap = MemoryCompactLookupOnlyRobinHoodHashMap<String, SymbolImpl*>;
+
     BuiltinNames(VM&, CommonIdentifiers*);
 
     PrivateSymbolImpl* lookUpPrivateName(const Identifier&) const;
@@ -232,8 +238,6 @@ private:
     const JSC::Identifier m_dollarVMName;
     const JSC::Identifier m_dollarVMPrivateName;
     const JSC::Identifier m_polyProtoPrivateName;
-    using PrivateNameSet = HashSet<String>;
-    using WellKnownSymbolMap = HashMap<String, SymbolImpl*>;
     PrivateNameSet m_privateNameSet;
     WellKnownSymbolMap m_wellKnownSymbolsMap;
 };

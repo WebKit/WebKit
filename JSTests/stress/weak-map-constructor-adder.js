@@ -1,5 +1,18 @@
 // WeakMap constructor with adder change.
 
+function shouldThrow(func, errorMessage) {
+    var errorThrown = false;
+    try {
+        func();
+    } catch (error) {
+        errorThrown = true;
+        if (String(error) !== errorMessage)
+            throw new Error(`Bad error: ${error}`);
+    }
+    if (!errorThrown)
+        throw new Error("Didn't throw!");
+}
+
 var originalAdder = WeakMap.prototype.set;
 var counter = 0;
 
@@ -38,14 +51,12 @@ WeakMap.prototype.set = function () {
 
 var map = new WeakMap();
 var map = new WeakMap([]);
-var error = null;
-try {
-    var map = new WeakMap([ [0, 0] ]);
-} catch (e) {
-    error = e;
-}
-if (!error)
-    throw "Error: error not thrown";
-if (String(error) !== "Error: adder called")
-    throw "Error: bad error " + String(error);
 
+shouldThrow(() => {
+    new WeakMap([ [0, 0] ]);
+}, "Error: adder called");
+
+WeakMap.prototype.set = null;
+shouldThrow(() => {
+    new WeakMap([ [0, 0] ]);
+}, "TypeError: 'set' property of a WeakMap should be callable.");

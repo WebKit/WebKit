@@ -79,46 +79,48 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
 #endif
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    class HashTable;
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename HashTable, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableIterator;
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename HashTable, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableConstIterator;
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    void addIterator(const HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*,
-        HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*);
+    template<typename HashTableType, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void addIterator(const HashTableType*, HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*);
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    void removeIterator(HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*);
+    template<typename HashTableType, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void removeIterator(HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*);
+
+    template<typename HashTableType>
+    void invalidateIterators(const HashTableType*);
 
 #if !CHECK_HASHTABLE_ITERATORS
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void addIterator(const HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*,
-        HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*) { }
+    template<typename HashTableType, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void addIterator(const HashTableType*, HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*) { }
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void removeIterator(HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*) { }
+    template<typename HashTableType, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void removeIterator(HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*) { }
+
+    template<typename HashTableType>
+    void invalidateIterators(const HashTableType*) { }
 
 #endif
 
     typedef enum { HashItemKnownGood } HashItemKnownGoodTag;
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename HashTable, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableConstIterator : public std::iterator<std::forward_iterator_tag, Value, std::ptrdiff_t, const Value*, const Value&> {
         WTF_MAKE_FAST_ALLOCATED;
     private:
-        typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
-        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
-        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
+        using HashTableType = HashTable;
+        typedef HashTableIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
         typedef Value ValueType;
         typedef const ValueType& ReferenceType;
         typedef const ValueType* PointerType;
 
-        friend class HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
-        friend class HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
+        friend HashTableType;
+        friend iterator;
 
         void skipEmptyBuckets()
         {
@@ -243,18 +245,18 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 #endif
     };
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename HashTable, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableIterator : public std::iterator<std::forward_iterator_tag, Value, std::ptrdiff_t, Value*, Value&> {
         WTF_MAKE_FAST_ALLOCATED;
     private:
-        typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
-        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
-        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
+        using HashTableType = HashTable;
+        typedef HashTableIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
         typedef Value ValueType;
         typedef ValueType& ReferenceType;
         typedef ValueType* PointerType;
 
-        friend class HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
+        friend HashTableType;
 
         HashTableIterator(HashTableType* table, PointerType pos, PointerType end) : m_iterator(table, pos, end) { }
         HashTableIterator(HashTableType* table, PointerType pos, PointerType end, HashItemKnownGoodTag tag) : m_iterator(table, pos, end, tag) { }
@@ -347,8 +349,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTable {
     public:
-        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
-        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
+        using HashTableType = HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
+        typedef HashTableIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
         typedef Traits ValueTraits;
         typedef Key KeyType;
         typedef Value ValueType;
@@ -407,7 +410,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         HashTable();
         ~HashTable() 
         {
-            invalidateIterators(); 
+            invalidateIterators(this); 
             if (m_table)
                 deallocateTable(m_table);
 #if CHECK_HASHTABLE_USE_AFTER_DESTRUCTION
@@ -435,7 +438,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             if (isEmpty())
                 return end();
 
-            while (1) {
+            while (true) {
                 auto& bucket = m_table[weakRandomUint32() & tableSizeMask()];
                 if (!isEmptyOrDeletedBucket(bucket))
                     return makeKnownGoodIterator(&bucket);
@@ -559,12 +562,6 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         static void checkTableConsistencyExceptSize() { }
 #endif
 
-#if CHECK_HASHTABLE_ITERATORS
-        void invalidateIterators();
-#else
-        static void invalidateIterators() { }
-#endif
-
         // Load-factor for small table is 75%.
         static constexpr unsigned smallMaxLoadNumerator = HashTableSizePolicy::smallMaxLoadNumerator;
         static constexpr unsigned smallMaxLoadDenominator = HashTableSizePolicy::smallMaxLoadDenominator;
@@ -668,8 +665,12 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename HashTranslator, typename T>
     ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::inlineLookup(const T& key) -> ValueType*
     {
+#if USE(ANGLE)
         static_assert(sizeof(Key) + sizeof(Value) < 250, "Your HashTable types are too big to efficiently move when rehashing.  Consider using UniqueRef instead");
-
+#else
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=223637
+        static_assert(sizeof(Key) + sizeof(Value) < 400, "Your HashTable types are too big to efficiently move when rehashing.  Consider using UniqueRef instead");
+#endif
         checkKey<HashTranslator>(key);
 
         unsigned k = 0;
@@ -690,7 +691,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ++m_stats->numAccesses;
 #endif
 
-        while (1) {
+        while (true) {
             ValueType* entry = table + i;
                 
             // we count on the compiler to optimize out this branch
@@ -746,7 +747,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         ValueType* deletedEntry = nullptr;
 
-        while (1) {
+        while (true) {
             ValueType* entry = table + i;
             
             // we count on the compiler to optimize out this branch
@@ -807,7 +808,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         ValueType* deletedEntry = nullptr;
 
-        while (1) {
+        while (true) {
             ValueType* entry = table + i;
             
             // we count on the compiler to optimize out this branch
@@ -852,7 +853,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         checkKey<HashTranslator>(key);
 
-        invalidateIterators();
+        invalidateIterators(this);
 
         internalCheckTableConsistency();
 
@@ -872,7 +873,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 #endif
 
         ValueType* entry;
-        while (1) {
+        while (true) {
             entry = table + i;
 
             if (isEmptyBucket(*entry))
@@ -928,7 +929,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     {
         checkKey<HashTranslator>(key);
 
-        invalidateIterators();
+        invalidateIterators(this);
 
         if (!m_table)
             expand(nullptr);
@@ -954,7 +955,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         ValueType* deletedEntry = nullptr;
         ValueType* entry;
-        while (1) {
+        while (true) {
             entry = table + i;
             
             // we count on the compiler to optimize out this branch
@@ -1013,7 +1014,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     {
         checkKey<HashTranslator>(key);
 
-        invalidateIterators();
+        invalidateIterators(this);
 
         if (!m_table)
             expand();
@@ -1106,14 +1107,14 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::removeAndInvalidateWithoutEntryConsistencyCheck(ValueType* pos)
     {
-        invalidateIterators();
+        invalidateIterators(this);
         remove(pos);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::removeAndInvalidate(ValueType* pos)
     {
-        invalidateIterators();
+        invalidateIterators(this);
         internalCheckTableConsistency();
         remove(pos);
     }
@@ -1369,7 +1370,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::clear()
     {
-        invalidateIterators();
+        invalidateIterators(this);
         if (!m_table)
             return;
 
@@ -1405,8 +1406,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::swap(HashTable& other)
     {
-        invalidateIterators();
-        other.invalidateIterators();
+        invalidateIterators(this);
+        invalidateIterators(&other);
 
         std::swap(m_table, other.m_table);
 
@@ -1430,7 +1431,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         , m_mutex(makeUnique<Lock>())
 #endif
     {
-        other.invalidateIterators();
+        invalidateIterators(&other);
 
         m_table = std::exchange(other.m_table, nullptr);
 
@@ -1496,30 +1497,29 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
 #if CHECK_HASHTABLE_ITERATORS
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::invalidateIterators()
+    template<typename HashTableType>
+    void invalidateIterators(const HashTableType* table)
     {
-        auto locker = holdLock(*m_mutex);
-        const_iterator* next;
-        for (const_iterator* p = m_iterators; p; p = next) {
+        auto locker = holdLock(*table->m_mutex);
+        typename HashTableType::const_iterator* next;
+        for (typename HashTableType::const_iterator* p = table->m_iterators; p; p = next) {
             next = p->m_next;
-            p->m_table = 0;
-            p->m_next = 0;
-            p->m_previous = 0;
+            p->m_table = nullptr;
+            p->m_next = nullptr;
+            p->m_previous = nullptr;
         }
-        m_iterators = 0;
+        table->m_iterators = nullptr;
     }
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    void addIterator(const HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>* table,
-        HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>* it)
+    template<typename HashTableType, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void addIterator(const HashTableType* table, HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits>* it)
     {
         it->m_table = table;
-        it->m_previous = 0;
+        it->m_previous = nullptr;
 
         // Insert iterator at head of doubly-linked list of iterators.
         if (!table) {
-            it->m_next = 0;
+            it->m_next = nullptr;
         } else {
             auto locker = holdLock(*table->m_mutex);
             ASSERT(table->m_iterators != it);
@@ -1532,8 +1532,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         }
     }
 
-    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    void removeIterator(HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>* it)
+    template<typename HashTableType, typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void removeIterator(HashTableConstIterator<HashTableType, Key, Value, Extractor, HashFunctions, Traits, KeyTraits>* it)
     {
         // Delete iterator from doubly-linked list of iterators.
         if (!it->m_table) {
@@ -1555,12 +1555,17 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             }
         }
 
-        it->m_table = 0;
-        it->m_next = 0;
-        it->m_previous = 0;
+        it->m_table = nullptr;
+        it->m_next = nullptr;
+        it->m_previous = nullptr;
     }
 
 #endif // CHECK_HASHTABLE_ITERATORS
+
+    struct HashTableTraits {
+        template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+        using TableType = HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
+    };
 
     // iterator adapters
 

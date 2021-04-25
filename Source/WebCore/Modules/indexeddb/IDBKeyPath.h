@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -58,5 +56,3 @@ String loggingString(const IDBKeyPath&);
 #endif
 
 } // namespace WebCore
-
-#endif

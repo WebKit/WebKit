@@ -34,7 +34,7 @@ class RepositoryTest(WaitForDockerTestCase):
             commit = svn_repo.commit(revision=6)
             self.assertEqual(commit.uuid, 160163990000)
             self.assertEqual(commit.message, '6th commit')
-            self.assertEqual(commit.branch, 'trunk')
+            self.assertEqual(commit.branch, 'main')
 
     def test_ref_svn(self):
         with MockModelFactory.webkit():

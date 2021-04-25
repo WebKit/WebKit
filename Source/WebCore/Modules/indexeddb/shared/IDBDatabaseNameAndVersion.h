@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -67,5 +65,3 @@ inline IDBDatabaseNameAndVersion IDBDatabaseNameAndVersion::isolatedCopy() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

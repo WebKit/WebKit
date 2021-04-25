@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBRequest.h"
 #include "IDBRequestData.h"
 #include "IDBResourceIdentifier.h"
@@ -186,5 +184,3 @@ private:
 
 } // namespace IDBClient
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

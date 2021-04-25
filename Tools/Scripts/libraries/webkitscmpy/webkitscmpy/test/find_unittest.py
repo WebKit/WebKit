@@ -158,7 +158,7 @@ Revision: 4
 Hash: 1abe25b443e9
 Identifier: 3@main
     4th commit
-    svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+    git-svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 '''.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
         )
 
@@ -181,7 +181,7 @@ Identifier: 3@main
                 ), timestamp=1601663000,
                 order=0,
                 branch='main',
-                message='4th commit\nsvn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
+                message='4th commit\ngit-svn-id: https://svn.example.org/repository/repository/trunk@4 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
             ))
 
     def test_tag_svn(self):

@@ -1,0 +1,23 @@
+<html lang="en">
+<head>
+<style></style>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  onload = () => {
+    internals.settings.setShouldEnableTextAutosizingBoost(true);
+    document.styleSheets[0].insertRule(`:last-child { font-feature-settings: "smcp" on, "c2sc" on, "pcap" off, "c2pc" off, "unic" off, "titl" off; }`);
+    document.styleSheets[0].insertRule(`:last-child { all: inherit; }`);
+    document.styleSheets[0].insertRule(`:first-of-type { zoom: 10; }`);
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`* { font-weight: calc(150 + 50); }`);
+    document.body.offsetTop;
+    document.styleSheets[0].insertRule(`* { writing-mode: vertical-lr; }`);
+  };
+</script>
+</head>
+<body>
+<p>This test passes if it does not crash.</p>
+</body>
+</html>

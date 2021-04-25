@@ -320,6 +320,23 @@ void WebResourceLoadStatisticsStore::statisticsDatabaseHasAllTables(CompletionHa
     });
 }
 
+void WebResourceLoadStatisticsStore::statisticsDatabaseColumnsForTable(const String& table, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    postTask([this, table = table.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        if (!m_statisticsStore || !is<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore)) {
+            completionHandler({ });
+            ASSERT_NOT_REACHED();
+            return;
+        }
+        auto columns = downcast<ResourceLoadStatisticsDatabaseStore>(*m_statisticsStore).columnsForTable(table);
+        postTaskReply([columns = WTFMove(columns), completionHandler = WTFMove(completionHandler)] () mutable {
+            completionHandler(WTFMove(columns));
+        });
+    });
+}
+
 void WebResourceLoadStatisticsStore::resourceLoadStatisticsUpdated(Vector<ResourceLoadStatistics>&& statistics, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
@@ -1505,7 +1522,7 @@ void WebResourceLoadStatisticsStore::markAllUnattributedPrivateClickMeasurementA
     });
 }
 
-void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributeOnSite& attributeOnSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(Optional<Seconds>)>&& completionHandler)
+void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const PrivateClickMeasurement::SourceSite& sourceSite, const PrivateClickMeasurement::AttributionDestinationSite& destinationSite, PrivateClickMeasurement::AttributionTriggerData&& attributionTriggerData, CompletionHandler<void(Optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
@@ -1514,7 +1531,7 @@ void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const Priv
         return;
     }
 
-    postTask([this, sourceSite, attributeOnSite, attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
+    postTask([this, sourceSite, destinationSite, attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(WTF::nullopt);
@@ -1522,7 +1539,7 @@ void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const Priv
             return;
         }
 
-        auto seconds = m_statisticsStore->attributePrivateClickMeasurement(sourceSite, attributeOnSite, WTFMove(attributionTriggerData));
+        auto seconds = m_statisticsStore->attributePrivateClickMeasurement(sourceSite, destinationSite, WTFMove(attributionTriggerData));
         postTaskReply([seconds, completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler(seconds);
         });
@@ -1622,18 +1639,18 @@ void WebResourceLoadStatisticsStore::privateClickMeasurementToString(CompletionH
     });
 }
 
-void WebResourceLoadStatisticsStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear)
+void WebResourceLoadStatisticsStore::clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, PrivateClickMeasurement::AttributionReportEndpoint attributionReportEndpoint)
 {
     ASSERT(RunLoop::isMain());
 
     if (isEphemeral())
         return;
 
-    postTask([this, attributionToClear = WTFMove(attributionToClear)]() mutable {
+    postTask([this, attributionToClear = WTFMove(attributionToClear), attributionReportEndpoint]() mutable {
         if (!m_statisticsStore)
             return;
 
-        m_statisticsStore->clearSentAttribution(WTFMove(attributionToClear));
+        m_statisticsStore->clearSentAttribution(WTFMove(attributionToClear), attributionReportEndpoint);
     });
 }
 

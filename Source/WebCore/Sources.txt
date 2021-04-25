@@ -68,7 +68,6 @@ Modules/highlight/AppHighlightRangeData.cpp
 Modules/highlight/AppHighlightStorage.cpp
 Modules/highlight/HighlightRegister.cpp
 Modules/highlight/Highlight.cpp
-Modules/indexeddb/DOMWindowIndexedDatabase.cpp
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBCursorWithValue.cpp
 Modules/indexeddb/IDBDatabase.cpp
@@ -90,7 +89,7 @@ Modules/indexeddb/IDBRequestCompletionEvent.cpp
 Modules/indexeddb/IDBTransaction.cpp
 Modules/indexeddb/IDBValue.cpp
 Modules/indexeddb/IDBVersionChangeEvent.cpp
-Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.cpp
+Modules/indexeddb/WindowOrWorkerGlobalScopeIndexedDatabase.cpp
 Modules/indexeddb/client/IDBConnectionProxy.cpp
 Modules/indexeddb/client/IDBConnectionToServer.cpp
 Modules/indexeddb/client/TransactionOperation.cpp
@@ -131,6 +130,8 @@ Modules/mediacapabilities/MediaCapabilities.cpp
 Modules/mediacapabilities/NavigatorMediaCapabilities.cpp
 Modules/mediasession/MediaMetadata.cpp
 Modules/mediasession/MediaSession.cpp
+Modules/mediasession/MediaSessionCoordinator.cpp
+Modules/mediasession/MediaSessionCoordinatorPrivate.cpp
 Modules/mediasession/NavigatorMediaSession.cpp
 Modules/mediacontrols/MediaControlsHost.cpp
 Modules/mediarecorder/BlobEvent.cpp
@@ -623,7 +624,9 @@ bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWebGL2RenderingContextCustom.cpp
 bindings/js/JSWebGLRenderingContextCustom.cpp
 bindings/js/JSWebXRReferenceSpaceCustom.cpp
+bindings/js/JSWebXRRigidTransformCustom.cpp
 bindings/js/JSWebXRSpaceCustom.cpp
+bindings/js/JSWebXRViewCustom.cpp
 bindings/js/JSWindowProxy.cpp
 bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
@@ -1696,6 +1699,7 @@ page/FrameTree.cpp
 page/FrameView.cpp
 page/FrameViewLayoutContext.cpp
 page/History.cpp
+page/ImageOverlayController.cpp
 page/IntersectionObserver.cpp
 page/IntersectionObserverEntry.cpp
 page/Location.cpp
@@ -1939,6 +1943,7 @@ platform/graphics/CustomPaintImage.cpp
 platform/graphics/DisplayRefreshMonitor.cpp
 platform/graphics/DisplayRefreshMonitorClient.cpp
 platform/graphics/DisplayRefreshMonitorManager.cpp
+platform/graphics/DisplayUpdate.cpp
 platform/graphics/FloatLine.cpp
 platform/graphics/FloatPoint.cpp
 platform/graphics/FloatPoint3D.cpp
@@ -2022,6 +2027,7 @@ platform/graphics/displaylists/DisplayListItemBuffer.cpp
 platform/graphics/displaylists/DisplayListItemType.cpp
 platform/graphics/displaylists/DisplayListRecorder.cpp
 platform/graphics/displaylists/DisplayListReplayer.cpp
+platform/graphics/displaylists/InMemoryDisplayList.cpp
 platform/graphics/filters/DistantLightSource.cpp
 platform/graphics/filters/FEBlend.cpp
 platform/graphics/filters/FEColorMatrix.cpp
@@ -2065,6 +2071,7 @@ platform/graphics/iso/ISOSchemeTypeBox.cpp
 platform/graphics/iso/ISOTrackEncryptionBox.cpp
 platform/graphics/iso/ISOVTTCue.cpp
 platform/graphics/opengl/GraphicsContextGLOpenGL.cpp
+platform/graphics/opengl/GraphicsContextGLOpenGLManager.cpp
 platform/graphics/opentype/OpenTypeMathData.cpp
 platform/graphics/transforms/AffineTransform.cpp
 platform/graphics/transforms/Matrix3DTransformOperation.cpp
@@ -2491,6 +2498,7 @@ style/StyleScopeRuleSets.cpp
 style/StyleSharingResolver.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
+style/Styleable.cpp
 style/UserAgentStyle.cpp
 svg/DocumentSVG.cpp
 svg/SVGAElement.cpp
@@ -2635,6 +2643,7 @@ svg/properties/SVGAttributeAnimator.cpp
 workers/AbstractWorker.cpp
 workers/DedicatedWorkerGlobalScope.cpp
 workers/DedicatedWorkerThread.cpp
+workers/ScriptBuffer.cpp
 workers/Worker.cpp
 workers/WorkerAnimationController.cpp
 workers/WorkerConsoleClient.cpp
@@ -2679,6 +2688,7 @@ workers/service/context/ServiceWorkerThreadProxy.cpp
 workers/service/server/RegistrationDatabase.cpp
 workers/service/server/RegistrationStore.cpp
 workers/service/server/SWOriginStore.cpp
+workers/service/server/SWScriptStorage.cpp
 workers/service/server/SWServer.cpp
 workers/service/server/SWServerJobQueue.cpp
 workers/service/server/SWServerRegistration.cpp
@@ -3226,6 +3236,8 @@ JSMediaKeys.cpp
 JSMediaKeysRequirement.cpp
 JSMediaList.cpp
 JSMediaMetadata.cpp
+JSMediaSessionCoordinator.cpp
+JSMediaSessionCoordinatorState.cpp
 JSMediaMetadataInit.cpp
 JSMediaPositionState.cpp
 JSMediaQueryList.cpp
@@ -3236,6 +3248,7 @@ JSMediaSessionActionDetails.cpp
 JSMediaSessionActionHandler.cpp
 JSMediaSessionAction.cpp
 JSMediaSessionPlaybackState.cpp
+JSMediaSessionReadyState.cpp
 JSMediaSession.cpp
 JSMediaSource.cpp
 JSMediaStream.cpp

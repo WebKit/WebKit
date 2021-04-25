@@ -260,9 +260,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebKit::initializeLogChannelsIfNecessary(parameters.webKitLoggingChannels);
 #endif
 
-    WebCore::setApplicationBundleIdentifier(parameters.uiProcessBundleIdentifier);
-    setApplicationSDKVersion(parameters.uiProcessSDKVersion);
-
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
 
 #if ENABLE(SANDBOX_EXTENSIONS)

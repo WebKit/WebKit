@@ -113,9 +113,9 @@ static const URLSchemesMap& builtinLocalURLSchemes()
 {
     ASSERT(schemeRegistryLock.isHeld());
     static const auto schemes = makeNeverDestroyed(URLSchemesMap {
-        "file",
+        "file"_s,
 #if PLATFORM(COCOA)
-        "applewebdata",
+        "applewebdata"_s,
 #endif
     });
     return schemes;
@@ -139,12 +139,12 @@ const Vector<String>& builtinSecureSchemes()
 {
     ASSERT(schemeRegistryLock.isHeld());
     static const auto schemes = makeNeverDestroyed(Vector<String> {
-        "https",
-        "about",
-        "data",
-        "wss",
+        "https"_s,
+        "about"_s,
+        "data"_s,
+        "wss"_s,
 #if PLATFORM(GTK) || PLATFORM(WPE)
-        "resource",
+        "resource"_s,
 #endif
     });
     return schemes;
@@ -161,11 +161,11 @@ const Vector<String>& builtinSchemesWithUniqueOrigins()
 {
     ASSERT(schemeRegistryLock.isHeld());
     static const auto schemes = makeNeverDestroyed(Vector<String> {
-        "about",
-        "javascript",
+        "about"_s,
+        "javascript"_s,
         // This is an intentional difference from the behavior the HTML specification calls for.
         // See https://bugs.webkit.org/show_bug.cgi?id=11885
-        "data",
+        "data"_s,
     });
     return schemes;
 }
@@ -180,7 +180,7 @@ static URLSchemesMap& schemesWithUniqueOrigins()
 const Vector<String>& builtinEmptyDocumentSchemes()
 {
     ASSERT(isMainThread());
-    static const auto schemes = makeNeverDestroyed(Vector<String> { "about" });
+    static const auto schemes = makeNeverDestroyed(Vector<String> { "about"_s });
     return schemes;
 }
 
@@ -201,7 +201,7 @@ static URLSchemesMap& schemesForbiddenFromDomainRelaxation()
 const Vector<String>& builtinCanDisplayOnlyIfCanRequestSchemes()
 {
     ASSERT(schemeRegistryLock.isHeld());
-    static const auto schemes = makeNeverDestroyed(Vector<String> { "blob" });
+    static const auto schemes = makeNeverDestroyed(Vector<String> { "blob"_s });
     return schemes;
 }
 
@@ -267,7 +267,7 @@ static URLSchemesMap& schemesAllowingDatabaseAccessInPrivateBrowsing()
 const Vector<String>& builtinCORSEnabledSchemes()
 {
     ASSERT(isMainThread());
-    static const auto schemes = makeNeverDestroyed(Vector<String> { "http", "https" });
+    static const auto schemes = makeNeverDestroyed(Vector<String> { "http"_s, "https"_s });
     return schemes;
 }
 

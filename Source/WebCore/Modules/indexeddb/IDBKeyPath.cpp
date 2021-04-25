@@ -25,8 +25,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INDEXED_DATABASE)
 #include "IDBKeyPath.h"
 
 #include <wtf/ASCIICType.h>
@@ -249,5 +247,3 @@ String loggingString(const IDBKeyPath& path)
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

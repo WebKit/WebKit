@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBDatabaseIdentifier.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "SecurityOrigin.h"
 #include <wtf/FileSystem.h>
 #include <wtf/Ref.h>
@@ -80,5 +78,3 @@ String IDBDatabaseIdentifier::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

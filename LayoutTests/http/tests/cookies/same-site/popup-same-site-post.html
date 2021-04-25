@@ -23,7 +23,7 @@ async_test(t => {
     }));
 
     var f = document.createElement('form');
-    f.action = "http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.php";
+    f.action = "http://127.0.0.1:8000/cookies/resources/post-cookies-to-opener.py";
     f.method = "POST";
     f.target = "_blank";
     window.onload = t.step_func(f.submit.bind(f));

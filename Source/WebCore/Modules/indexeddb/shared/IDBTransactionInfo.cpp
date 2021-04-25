@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBTransactionInfo.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBTransaction.h"
 
 namespace WebCore {
@@ -119,5 +117,3 @@ String IDBTransactionInfo::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AnimationFrameRate.h"
 #include "PlatformScreen.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
@@ -33,6 +34,7 @@ namespace WebCore {
 
 class DisplayRefreshMonitor;
 class DisplayRefreshMonitorFactory;
+struct DisplayUpdate;
 
 class DisplayRefreshMonitorClient {
 public:
@@ -48,14 +50,18 @@ public:
     bool hasDisplayID() const { return !!m_displayID; }
     void setDisplayID(PlatformDisplayID displayID) { m_displayID = displayID; }
 
+    void setPreferredFramesPerSecond(FramesPerSecond);
+    FramesPerSecond preferredFramesPerSecond() const { return m_preferredFramesPerSecond; }
+
     void setIsScheduled(bool isScheduled) { m_scheduled = isScheduled; }
     bool isScheduled() const { return m_scheduled; }
 
-    void fireDisplayRefreshIfNeeded();
+    void fireDisplayRefreshIfNeeded(const DisplayUpdate&);
 
 private:
-    bool m_scheduled { false };
     Optional<PlatformDisplayID> m_displayID;
+    FramesPerSecond m_preferredFramesPerSecond { FullSpeedFramesPerSecond };
+    bool m_scheduled { false };
 };
 
 }

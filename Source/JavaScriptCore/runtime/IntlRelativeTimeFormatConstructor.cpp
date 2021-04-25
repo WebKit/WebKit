@@ -111,7 +111,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlRelativeTimeFormatConstructorFuncSupportedLocalesOf
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto& availableLocales = intlRelativeTimeFormatAvailableLocales();
+    const auto& availableLocales = intlRelativeTimeFormatAvailableLocales();
 
     auto requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

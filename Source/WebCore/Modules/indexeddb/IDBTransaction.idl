@@ -26,7 +26,6 @@
 
 [
     ActiveDOMObject,
-    Conditional=INDEXED_DATABASE,
     JSCustomMarkFunction,
     SkipVTableValidation,
     Exposed=(Window,Worker)

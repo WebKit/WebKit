@@ -11,6 +11,8 @@ sys.path.insert(0, http_root)
 token_signing_file = open('{}.tmp'.format(token_signing_filepath), 'a')
 cookies_found = False
 is_last_request = False
+is_wrong_content_type = False
+is_null_content = False
 
 request_method = os.environ.get('REQUEST_METHOD', None)
 host = os.environ.get('HTTP_HOST', None)
@@ -43,6 +45,14 @@ if uri:
     if position_of_dummy != -1:
         is_last_request = True
 
+    position_of_dummy = uri.find('&wrongContentType=')
+    if position_of_dummy != -1:
+        is_wrong_content_type = True
+
+    position_of_dummy = uri.find('&nullContent=')
+    if position_of_dummy != -1:
+        is_null_content = True
+
 if not cookies_found:
     token_signing_file.write('No cookies in token signing request.\n')
 
@@ -54,10 +64,17 @@ if is_last_request:
     if os.path.isfile('{}.tmp'.format(token_signing_filepath)):
         os.rename('{}.tmp'.format(token_signing_filepath), token_signing_filepath)
 
+content_type = 'application/json'
+if is_wrong_content_type:
+    content_type = 'text/html'
+
+content = '{"token_public_key": "ABCD", "unlinkable_token": "ABCD"}'
+if is_null_content:
+    content = ''
+
 sys.stdout.write(
     'status: 201\r\n'
-    'unlinkable_token_public_key: ABCD\r\n'
-    'secret_token_signature: ABCD\r\n'
     'Set-Cookie: cookieSetInTokenSigningResponse=1; path=/\r\n'
-    'Content-Type: text/html\r\n\r\n'
+    'Content-Type: {}\r\n\r\n'
+    '{}'.format(content_type, content)
 )

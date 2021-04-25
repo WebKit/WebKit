@@ -38,10 +38,10 @@ import unittest
 # that Tools/Scripts is in sys.path for the next imports to work correctly.
 script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 if script_dir not in sys.path:
-    sys.path.append(script_dir)
+    sys.path.insert(0, script_dir)
 third_party_py = os.path.join(script_dir, "webkitpy", "thirdparty", "autoinstalled")
 if third_party_py not in sys.path:
-    sys.path.append(third_party_py)
+    sys.path.insert(0, third_party_py)
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem_mock import MockFileSystem

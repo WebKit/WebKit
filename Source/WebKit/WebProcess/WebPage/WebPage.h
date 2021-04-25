@@ -190,6 +190,7 @@ class IntPoint;
 class KeyboardEvent;
 class MediaPlaybackTargetContext;
 class MediaPlayerRequestInstallMissingPluginsCallback;
+class MediaSessionCoordinator;
 class Page;
 class PrintContext;
 class Range;
@@ -255,6 +256,7 @@ class NotificationPermissionRequestManager;
 class PDFPlugin;
 class PageBanner;
 class PluginView;
+class RemoteMediaSessionCoordinator;
 class RemoteRenderingBackendProxy;
 class RemoteWebInspectorUI;
 class TextCheckingControllerProxy;
@@ -1410,6 +1412,10 @@ public:
     bool shouldUsePDFPlugin(const String& contentType, StringView path) const;
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    void createMediaSessionCoordinator(const String&, CompletionHandler<void(bool)>&&);
+#endif
+
     void setLastNavigationWasAppBound(bool wasAppBound) { m_lastNavigationWasAppBound = wasAppBound; }
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
 
@@ -1801,6 +1807,7 @@ private:
 
     void registerURLSchemeHandler(uint64_t identifier, const String& scheme);
 
+    void urlSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&);
     void urlSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     void urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, const WebCore::ResourceResponse&);
     void urlSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, const IPC::DataReference&);
@@ -2251,16 +2258,17 @@ private:
     uint64_t m_visitedLinkTableID;
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    RefPtr<WebCore::MediaSessionCoordinator> m_mediaSessionCoordinator;
+    RefPtr<RemoteMediaSessionCoordinator> m_remoteMediaSessionCoordinator;
+#endif
+
 #if ENABLE(GPU_PROCESS)
     std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
     WeakHashSet<WebCore::Element> m_elementsWithExtractedImages;
-#endif
-
-#if HAVE(STATIC_FONT_REGISTRY)
-    RefPtr<SandboxExtension> m_fontExtension;
 #endif
 };
 

@@ -26,8 +26,11 @@
 
 #include "config.h"
 #include "AnimationFrameRate.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+static constexpr OptionSet<ThrottlingReason> halfSpeedThrottlingReasons { ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame, ThrottlingReason::VisuallyIdle };
 
 FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond nominalFramesPerSecond)
 {
@@ -41,22 +44,42 @@ FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond nominalFramesPer
     return fullSpeedRatio - std::floor(fullSpeedRatio) <= 0.5 ? floorSpeed : ceilSpeed;
 }
 
-Seconds preferredFrameInterval(const OptionSet<ThrottlingReason>& reasons, Optional<FramesPerSecond> nominalFramesPerSecond)
+Optional<FramesPerSecond> preferredFramesPerSecond(OptionSet<ThrottlingReason> reasons, Optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
+{
+    if (reasons.contains(ThrottlingReason::OutsideViewport))
+        return WTF::nullopt;
+
+    if (!nominalFramesPerSecond || *nominalFramesPerSecond == FullSpeedFramesPerSecond) {
+        // FIXME: handle ThrottlingReason::VisuallyIdle
+        if (reasons.containsAny(halfSpeedThrottlingReasons))
+            return HalfSpeedThrottlingFramesPerSecond;
+
+        return FullSpeedFramesPerSecond;
+    }
+
+    auto framesPerSecond = preferFrameRatesNear60FPS ? framesPerSecondNearestFullSpeed(*nominalFramesPerSecond) : *nominalFramesPerSecond;
+    if (reasons.containsAny(halfSpeedThrottlingReasons))
+        framesPerSecond /= IntervalThrottlingFactor;
+
+    return framesPerSecond;
+}
+
+Seconds preferredFrameInterval(OptionSet<ThrottlingReason> reasons, Optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
 {
     if (reasons.contains(ThrottlingReason::OutsideViewport))
         return AggressiveThrottlingAnimationInterval;
 
     if (!nominalFramesPerSecond || *nominalFramesPerSecond == FullSpeedFramesPerSecond) {
         // FIXME: handle ThrottlingReason::VisuallyIdle
-        if (reasons.containsAny({ ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame }))
+        if (reasons.containsAny(halfSpeedThrottlingReasons))
             return HalfSpeedThrottlingAnimationInterval;
         return FullSpeedAnimationInterval;
     }
 
-    auto framesPerSecond = framesPerSecondNearestFullSpeed(*nominalFramesPerSecond);
+    auto framesPerSecond = preferFrameRatesNear60FPS ? framesPerSecondNearestFullSpeed(*nominalFramesPerSecond) : *nominalFramesPerSecond;
     auto interval = Seconds(1.0 / framesPerSecond);
 
-    if (reasons.containsAny({ ThrottlingReason::LowPowerMode, ThrottlingReason::NonInteractedCrossOriginFrame, ThrottlingReason::VisuallyIdle }))
+    if (reasons.containsAny(halfSpeedThrottlingReasons))
         interval *= IntervalThrottlingFactor;
 
     return interval;

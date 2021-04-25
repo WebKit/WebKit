@@ -112,7 +112,8 @@ OSStatus AudioSampleDataSource::setOutputFormat(const CAAudioStreamDescription& 
     m_outputDescription = CAAudioStreamDescription { format };
 
     {
-        // FIXME: This does heap allocations on the audio thread.
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         m_ringBuffer->allocate(format, static_cast<size_t>(m_maximumSampleCount));
         m_scratchBuffer = AudioSampleBufferList::create(m_outputDescription->streamDescription(), m_maximumSampleCount);

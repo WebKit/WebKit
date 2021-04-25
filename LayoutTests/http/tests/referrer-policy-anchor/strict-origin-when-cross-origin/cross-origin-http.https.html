@@ -11,7 +11,7 @@ function clickLink() {
     let a = document.createElement("a");
     let policy = "strict-origin-when-cross-origin";
     a.referrerPolicy = policy;
-    a.href = "http://localhost:8000/referrer-policy/resources/check-referrer.php?expected=" + expected + "&policy=" + policy;
+    a.href = "http://localhost:8000/referrer-policy/resources/check-referrer.py?expected=" + expected + "&policy=" + policy;
     a.click();
 }
 </script>

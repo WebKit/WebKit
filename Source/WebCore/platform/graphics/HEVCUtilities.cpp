@@ -26,9 +26,9 @@
 #include "config.h"
 #include "HEVCUtilities.h"
 
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashMap.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -116,12 +116,12 @@ Optional<HEVCParameterSet> parseHEVCCodecParameters(const String& codecString)
 
 static String codecStringForDoViCodecType(const String& codec)
 {
-    using MapType = HashMap<String, String>;
+    using MapType = MemoryCompactLookupOnlyRobinHoodHashMap<String, String>;
     static NeverDestroyed<MapType> types = std::initializer_list<MapType::KeyValuePairType>({
-        { "dvhe", "hev1" },
-        { "dvh1", "hvc1" },
-        { "dvav", "avc3" },
-        { "dva1", "avc1" }
+        { "dvhe"_s, "hev1"_s },
+        { "dvh1"_s, "hvc1"_s },
+        { "dvav"_s, "avc3"_s },
+        { "dva1"_s, "avc1"_s }
     });
 
     auto findResults = types.get().find(codec);
@@ -133,13 +133,13 @@ static String codecStringForDoViCodecType(const String& codec)
 static Optional<unsigned short> profileIDForAlphabeticDoViProfile(const String& profile)
 {
     // See Table 7 of "Dolby Vision Profiles and Levels Version 1.3.2"
-    using MapType = HashMap<String, unsigned short>;
+    using MapType = MemoryCompactLookupOnlyRobinHoodHashMap<String, unsigned short>;
     static NeverDestroyed<MapType> map = std::initializer_list<MapType::KeyValuePairType>({
-        { "dvhe.dtr", 4 },
-        { "dvhe.stn", 5 },
-        { "dvhe.dtb", 7 },
-        { "dvhe.st", 8 },
-        { "dvav.se", 9 }
+        { "dvhe.dtr"_s, 4 },
+        { "dvhe.stn"_s, 5 },
+        { "dvhe.dtb"_s, 7 },
+        { "dvhe.st"_s, 8 },
+        { "dvav.se"_s, 9 }
     });
 
     auto findResults = map.get().find(profile);

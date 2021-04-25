@@ -56,6 +56,7 @@ WEBCORE_EXPORT
     BOOL _hasEnabledAudio;
     BOOL _hasEnabledVideo;
     BOOL _canTogglePlayback;
+    BOOL _canSeek;
 }
 
 @property (assign) WebCore::PlaybackSessionInterfaceMac* playbackSessionInterfaceMac;
@@ -73,6 +74,7 @@ WEBCORE_EXPORT
 @property (getter=isPictureInPictureActive) BOOL pictureInPictureActive;
 @property BOOL canTogglePictureInPicture;
 - (void)togglePictureInPicture;
+@property (nonatomic, readonly) BOOL canSeek;
 
 - (AVTouchBarMediaSelectionOption *)currentAudioTouchBarMediaSelectionOption;
 - (void)setCurrentAudioTouchBarMediaSelectionOption:(AVTouchBarMediaSelectionOption *)option;

@@ -46,8 +46,8 @@ void TranslatedShaderInfo::reset()
     for (mtl::SamplerBinding &binding : actualSamplerBindings)
     {
         binding.textureBinding = mtl::kMaxShaderSamplers;
+        binding.samplerBinding = 0;
     }
-
     for (uint32_t &binding : actualUBOBindings)
     {
         binding = mtl::kMaxShaderBuffers;
@@ -428,7 +428,7 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
         (*mslCodeOut)[type]                         = source;
         (*mslShaderInfoOut)[type].metalShaderSource = source;
         gl::Shader *shader                        = programState.getAttachedShader(type);
-        sh::TranslatorMetalReflection *reflection = getReflectionFromShader(shader);
+        const sh::TranslatorMetalReflection *reflection = getReflectionFromShader(shader);
         if(reflection->hasUBOs)
         {
             (*mslShaderInfoOut)[type].hasUBOArgumentBuffer = true;
@@ -454,7 +454,6 @@ angle::Result GlslangGetMSL(const gl::Context *glContext,
             GetAssignedSamplerBindings(reflection, originalSamplerBindings, structSamplers,
                                        &mslShaderInfoOut->at(type).actualSamplerBindings);
         }
-        reflection->reset();
     }
     return angle::Result::Continue;
 }

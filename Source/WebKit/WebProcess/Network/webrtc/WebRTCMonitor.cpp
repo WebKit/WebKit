@@ -48,6 +48,11 @@ void WebRTCMonitor::sendOnMainThread(Function<void(IPC::Connection&)>&& callback
     });
 }
 
+void WebRTCMonitor::setEnumeratingAllNetworkInterfacesEnabled(bool enabled)
+{
+    m_enableEnumeratingAllNetworkInterfaces = enabled;
+}
+
 void WebRTCMonitor::StartUpdating()
 {
     RELEASE_LOG_IF_ALLOWED("StartUpdating");
@@ -59,7 +64,7 @@ void WebRTCMonitor::StartUpdating()
 
     sendOnMainThread([this](auto& connection) {
         RELEASE_LOG_IF_ALLOWED("StartUpdating - Asking network process to start updating");
-        connection.send(Messages::NetworkRTCMonitor::StartUpdatingIfNeeded(), 0);
+        connection.send(Messages::NetworkRTCMonitor::StartUpdatingIfNeeded(m_enableEnumeratingAllNetworkInterfaces), 0);
     });
     ++m_clientCount;
 }

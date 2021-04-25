@@ -35,4 +35,13 @@ class PiPButton extends Button
         });
     }
 
+    // Public
+
+    get contextMenuOptions()
+    {
+        return {
+            includePictureInPicture: true,
+        };
+    }
+
 }

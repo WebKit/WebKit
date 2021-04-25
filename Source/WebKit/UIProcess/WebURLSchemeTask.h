@@ -76,8 +76,10 @@ public:
         RedirectAfterResponse,
         TaskAlreadyStopped,
         NoResponseSent,
+        WaitingForRedirectCompletionHandler,
         None,
     };
+    ExceptionType willPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&,  Function<void(WebCore::ResourceRequest&&)>&&);
     ExceptionType didPerformRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&);
     ExceptionType didReceiveResponse(const WebCore::ResourceResponse&);
     ExceptionType didReceiveData(Ref<WebCore::SharedBuffer>&&);
@@ -87,6 +89,8 @@ public:
     void pageDestroyed();
 
     void suppressTaskStoppedExceptions() { m_shouldSuppressTaskStoppedExceptions = true; }
+
+    bool waitingForRedirectCompletionHandlerCallback() const { return m_waitingForRedirectCompletionHandlerCallback; }
 
 private:
     WebURLSchemeTask(WebURLSchemeHandler&, WebPageProxy&, WebProcessProxy&, WebCore::PageIdentifier, URLSchemeTaskParameters&&, SyncLoadCompletionHandler&&);
@@ -110,6 +114,8 @@ private:
     SyncLoadCompletionHandler m_syncCompletionHandler;
     WebCore::ResourceResponse m_syncResponse;
     RefPtr<WebCore::SharedBuffer> m_syncData;
+
+    bool m_waitingForRedirectCompletionHandlerCallback { false };
 };
 
 } // namespace WebKit

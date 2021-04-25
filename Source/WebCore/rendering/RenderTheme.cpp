@@ -241,11 +241,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case SearchFieldCancelButtonPart:
         return adjustSearchFieldCancelButtonStyle(style, element);
     case SearchFieldDecorationPart:
-        return adjustSearchFieldDecorationPartStyle(style, element);
     case SearchFieldResultsDecorationPart:
-        return adjustSearchFieldResultsDecorationPartStyle(style, element);
     case SearchFieldResultsButtonPart:
-        return adjustSearchFieldResultsButtonStyle(style, element);
+        return adjustSearchFieldDecorationStyle(style, element);
     case ProgressBarPart:
         return adjustProgressBarStyle(style, element);
     case MeterPart:
@@ -269,6 +267,25 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case ListButtonPart:
         return adjustListButtonStyle(style, element);
 #endif
+    default:
+        break;
+    }
+}
+
+void RenderTheme::adjustSearchFieldDecorationStyle(RenderStyle& style, const Element* element) const
+{
+    if (is<SearchFieldResultsButtonElement>(element) && !downcast<SearchFieldResultsButtonElement>(*element).canAdjustStyleForAppearance()) {
+        style.setAppearance(NoControlPart);
+        return;
+    }
+
+    switch (style.appearance()) {
+    case SearchFieldDecorationPart:
+        return adjustSearchFieldDecorationPartStyle(style, element);
+    case SearchFieldResultsDecorationPart:
+        return adjustSearchFieldResultsDecorationPartStyle(style, element);
+    case SearchFieldResultsButtonPart:
+        return adjustSearchFieldResultsButtonStyle(style, element);
     default:
         break;
     }
@@ -767,11 +784,11 @@ bool RenderTheme::supportsFocusRing(const RenderStyle& style) const
 bool RenderTheme::stateChanged(const RenderObject& o, ControlStates::States state) const
 {
     // Default implementation assumes the controls don't respond to changes in :hover state
-    if (state == ControlStates::HoverState && !supportsHover(o.style()))
+    if (state == ControlStates::States::Hovered && !supportsHover(o.style()))
         return false;
 
     // Assume pressed state is only responded to if the control is enabled.
-    if (state == ControlStates::PressedState && !isEnabled(o))
+    if (state == ControlStates::States::Pressed && !isEnabled(o))
         return false;
 
     // Repaint the control.
@@ -787,33 +804,33 @@ void RenderTheme::updateControlStatesForRenderer(const RenderBox& box, ControlSt
         controlStates.setTimeSinceControlWasFocused(box.page().focusController().timeSinceFocusWasSet());
 }
 
-ControlStates::States RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const
+OptionSet<ControlStates::States> RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const
 {
-    ControlStates::States states = 0;
+    OptionSet<ControlStates::States> states;
     if (isHovered(o)) {
-        states |= ControlStates::HoverState;
+        states.add(ControlStates::States::Hovered);
         if (isSpinUpButtonPartHovered(o))
-            states |= ControlStates::SpinUpState;
+            states.add(ControlStates::States::SpinUp);
     }
     if (isPressed(o)) {
-        states |= ControlStates::PressedState;
+        states.add(ControlStates::States::Pressed);
         if (isSpinUpButtonPartPressed(o))
-            states |= ControlStates::SpinUpState;
+            states.add(ControlStates::States::SpinUp);
     }
     if (isFocused(o) && o.style().outlineStyleIsAuto() == OutlineIsAuto::On)
-        states |= ControlStates::FocusState;
+        states.add(ControlStates::States::Focused);
     if (isEnabled(o))
-        states |= ControlStates::EnabledState;
+        states.add(ControlStates::States::Enabled);
     if (isChecked(o))
-        states |= ControlStates::CheckedState;
+        states.add(ControlStates::States::Checked);
     if (isDefault(o))
-        states |= ControlStates::DefaultState;
+        states.add(ControlStates::States::Default);
     if (!isActive(o))
-        states |= ControlStates::WindowInactiveState;
+        states.add(ControlStates::States::WindowInactive);
     if (isIndeterminate(o))
-        states |= ControlStates::IndeterminateState;
+        states.add(ControlStates::States::Indeterminate);
     if (isPresenting(o))
-        states |= ControlStates::PresentingState;
+        states.add(ControlStates::States::Presenting);
     return states;
 }
 

@@ -54,3 +54,4 @@
 #include "StructureInlines.h"
 #include "ThrowScope.h"
 #include "WeakGCMapInlines.h"
+#include "WeakGCSetInlines.h"

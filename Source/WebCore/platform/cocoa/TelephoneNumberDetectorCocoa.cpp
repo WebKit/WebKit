@@ -47,15 +47,23 @@ namespace TelephoneNumberDetector {
 
 static DDDFAScannerRef phoneNumbersScanner()
 {
-    if (!DataDetectorsCoreLibrary())
-        return nullptr;
+    static NeverDestroyed<RetainPtr<DDDFAScannerRef>> scanner;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        if (DataDetectorsCoreLibrary()) {
+            if (auto cache = adoptCF(DDDFACacheCreateFromFramework()))
+                scanner.get() = adoptCF(DDDFAScannerCreateFromCache(cache.get()));
+        }
+    });
+    return scanner.get().get();
+}
 
-    static struct __DDDFACache* cache = DDDFACacheCreateFromFramework();
-    if (!cache)
-        return nullptr;
-
-    static DDDFAScannerRef scanner = DDDFAScannerCreateFromCache(cache);
-    return scanner;
+void prewarm()
+{
+    // Prewarm on a background queue to avoid hanging the main thread.
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        phoneNumbersScanner();
+    });
 }
 
 bool isSupported()

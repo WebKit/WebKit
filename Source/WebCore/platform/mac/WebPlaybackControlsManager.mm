@@ -54,6 +54,7 @@ using WebCore::PlaybackSessionInterfaceMac;
 @synthesize allowsPictureInPicturePlayback;
 @synthesize pictureInPictureActive;
 @synthesize canTogglePictureInPicture;
+@synthesize canSeek = _canSeek;
 
 - (void)dealloc
 {
@@ -90,6 +91,8 @@ using WebCore::PlaybackSessionInterfaceMac;
 - (void)setSeekableTimeRanges:(NSArray *)timeRanges
 {
     _seekableTimeRanges = timeRanges;
+
+    _canSeek = timeRanges.count;
 }
 
 - (BOOL)isSeeking
@@ -130,7 +133,7 @@ using WebCore::PlaybackSessionInterfaceMac;
     // quirk means we pretend Netflix is a live stream for Touch Bar.) It's not ideal to return YES all the time for
     // other media. The intent of the API is that we return NO when the media is being scrubbed via the on-screen scrubber.
     // But we can only possibly get the right answer for media that uses the default controls.
-    return std::isfinite(_contentDuration) && [_seekableTimeRanges count];
+    return _canSeek && std::isfinite(_contentDuration);
 }
 
 - (void)beginTouchBarScrubbing
@@ -143,7 +146,7 @@ using WebCore::PlaybackSessionInterfaceMac;
         return;
         
     _playbackSessionInterfaceMac->willBeginScrubbing();
-    model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbing, { });
+    model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::BeginScrubbingCommand, { });
 }
 
 - (void)endTouchBarScrubbing
@@ -152,7 +155,7 @@ using WebCore::PlaybackSessionInterfaceMac;
         return;
 
     if (auto* model = _playbackSessionInterfaceMac->playbackSessionModel())
-        model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbing, { });
+        model->sendRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType::EndScrubbingCommand, { });
 }
 
 - (NSArray<AVTouchBarMediaSelectionOption *> *)audioTouchBarMediaSelectionOptions

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SQLiteIDBBackingStore.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "IDBCursorInfo.h"
 #include "IDBGetAllRecordsData.h"
@@ -1267,12 +1265,19 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     return IDBError { };
 }
 
-uint64_t SQLiteIDBBackingStore::databasesSizeForDirectory(const String& directory)
+uint64_t SQLiteIDBBackingStore::databasesSizeForDirectory(const String& directory, bool shouldPrintUsageDetail)
 {
     uint64_t diskUsage = 0;
     for (auto& dbDirectory : FileSystem::listDirectory(directory, "*")) {
-        for (auto& file : FileSystem::listDirectory(dbDirectory, "*.sqlite3"_s))
-            diskUsage += SQLiteFileSystem::getDatabaseFileSize(file);
+        for (auto& file : FileSystem::listDirectory(dbDirectory, "*.sqlite3"_s)) {
+            auto fileSize = SQLiteFileSystem::getDatabaseFileSize(file);
+            diskUsage += fileSize;
+            if (shouldPrintUsageDetail) {
+                auto databaseNameAndVersion = databaseNameAndVersionFromFile(file);
+                String databaseName = databaseNameAndVersion ? databaseNameAndVersion->name : "[UNKNOWN]";
+                WTFLogAlways("SQLiteIDBBackingStore::databasesSizeForDirectory filePath='%s', database='%s', size=%" PRIu64, file.utf8().data(), databaseName.utf8().data(), fileSize);
+            }
+        }
     }
     return diskUsage;
 }
@@ -3085,5 +3090,3 @@ bool SQLiteIDBBackingStore::hasTransaction(const IDBResourceIdentifier& transact
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

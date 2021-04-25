@@ -358,6 +358,12 @@
 #include <WebCore/ImageExtractionResult.h>
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+#include "RemoteMediaSessionCoordinator.h"
+#include <WebCore/MediaSessionCoordinator.h>
+#include <WebCore/NavigatorMediaSession.h>
+#endif
+
 #if PLATFORM(IOS)
 #include "WebPreferencesDefaultValuesIOS.h"
 #endif
@@ -526,7 +532,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     PageConfiguration pageConfiguration(
         WebProcess::singleton().sessionID(),
         makeUniqueRef<WebEditorClient>(this),
-        WebSocketProvider::create(),
+        WebSocketProvider::create(parameters.webPageProxyIdentifier),
         createLibWebRTCProvider(*this),
         WebProcess::singleton().cacheStorageProvider(),
         m_userContentController,
@@ -623,12 +629,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
 
 #if HAVE(STATIC_FONT_REGISTRY)
-    if (parameters.fontMachExtensionHandle) {
-        if ((m_fontExtension = SandboxExtension::create(WTFMove(*parameters.fontMachExtensionHandle)))) {
-            bool ok = m_fontExtension->consume();
-            ASSERT_UNUSED(ok, ok);
-        }
-    }
+    if (parameters.fontMachExtensionHandle)
+        WebProcess::singleton().switchFromStaticFontRegistryToUserFontRegistry(WTFMove(*parameters.fontMachExtensionHandle));
 #endif
 
     m_page = makeUnique<Page>(WTFMove(pageConfiguration));
@@ -1012,11 +1014,6 @@ WebPage::~WebPage()
         if (completionHandler)
             completionHandler(WTF::nullopt);
     }
-#endif
-
-#if HAVE(STATIC_FONT_REGISTRY)
-    if (m_fontExtension)
-        m_fontExtension->revoke();
 #endif
 }
 
@@ -6734,12 +6731,21 @@ void WebPage::registerURLSchemeHandler(uint64_t handlerIdentifier, const String&
     m_identifierToURLSchemeHandlerProxyMap.add(handlerIdentifier, schemeResult.iterator->value.get());
 }
 
+void WebPage::urlSchemeTaskWillPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, ResourceResponse&& response, ResourceRequest&& request, CompletionHandler<void(WebCore::ResourceRequest&&)>&& completionHandler)
+{
+    auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
+    ASSERT(handler);
+
+    auto actualNewRequest = request;
+    handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request), WTFMove(completionHandler));
+}
+
 void WebPage::urlSchemeTaskDidPerformRedirection(uint64_t handlerIdentifier, uint64_t taskIdentifier, ResourceResponse&& response, ResourceRequest&& request)
 {
     auto* handler = m_identifierToURLSchemeHandlerProxyMap.get(handlerIdentifier);
     ASSERT(handler);
-    
-    handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request));
+
+    handler->taskDidPerformRedirection(taskIdentifier, WTFMove(response), WTFMove(request), [] (ResourceRequest&&) {});
 }
     
 void WebPage::urlSchemeTaskDidReceiveResponse(uint64_t handlerIdentifier, uint64_t taskIdentifier, const ResourceResponse& response)
@@ -7377,6 +7383,25 @@ void WebPage::restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&& memor
             continue;
         document->appHighlightStorage().restoreAppHighlight(SharedBuffer::create(static_cast<const char*>(sharedMemory->data()), sharedMemory->size()));
     }
+}
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+void WebPage::createMediaSessionCoordinator(const String& identifier, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto* document = m_mainFrame->coreFrame()->document();
+    if (!document || !document->domWindow()) {
+        completionHandler(false);
+        return;
+    }
+
+    auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
+    auto coordinator = RemoteMediaSessionCoordinator::create(*this, identifier);
+    m_remoteMediaSessionCoordinator = coordinator.ptr();
+    m_mediaSessionCoordinator = MediaSessionCoordinator::create(coordinator.get());
+    session.setCoordinator(m_mediaSessionCoordinator.get());
+
+    completionHandler(true);
 }
 #endif
 

@@ -33,7 +33,7 @@
 #import "TestUIDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import <WebKit/WKContentRuleListPrivate.h>
-#import <WebKit/WKContentRuleListStore.h>
+#import <WebKit/WKContentRuleListStorePrivate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKUserContentController.h>
@@ -198,6 +198,14 @@ static String webSocketAcceptValue(const Vector<char>& request)
     return base64Encode(hash.data(), SHA1::hashSize);
 }
 
+static void respond(id<WKURLSchemeTask> task, const char* html)
+{
+    NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:strlen(html) textEncodingName:nil] autorelease];
+    [task didReceiveResponse:response];
+    [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
+    [task didFinish];
+};
+
 TEST(ContentRuleList, ResourceTypes)
 {
     using namespace TestWebKitAPI;
@@ -214,21 +222,15 @@ TEST(ContentRuleList, ResourceTypes)
 
     auto handler = [[TestURLSchemeHandler new] autorelease];
     handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
-        auto respond = [task] (const char* html) {
-            NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:strlen(html) textEncodingName:nil] autorelease];
-            [task didReceiveResponse:response];
-            [task didReceiveData:[NSData dataWithBytes:html length:strlen(html)]];
-            [task didFinish];
-        };
         NSString *path = task.request.URL.path;
         if ([path isEqualToString:@"/checkWebSocket.html"])
-            return respond([NSString stringWithFormat:@"<script>var ws = new WebSocket('ws://localhost:%d/test');ws.onopen=()=>{alert('onopen')};ws.onerror=()=>{alert('onerror')}</script>", serverPort].UTF8String);
+            return respond(task, [NSString stringWithFormat:@"<script>var ws = new WebSocket('ws://localhost:%d/test');ws.onopen=()=>{alert('onopen')};ws.onerror=()=>{alert('onerror')}</script>", serverPort].UTF8String);
         if ([path isEqualToString:@"/checkFetch.html"])
-            return respond("<script>fetch('test:///fetchContent').then(()=>{alert('fetched')}).catch(()=>{alert('did not fetch')})</script>");
+            return respond(task, "<script>fetch('test:///fetchContent').then(()=>{alert('fetched')}).catch(()=>{alert('did not fetch')})</script>");
         if ([path isEqualToString:@"/fetchContent"])
-            return respond("hello");
+            return respond(task, "hello");
         if ([path isEqualToString:@"/checkXHR.html"])
-            return respond("<script>var xhr = new XMLHttpRequest();xhr.open('GET', 'test:///fetchContent');xhr.onreadystatechange=()=>{if(xhr.readyState==4){setTimeout(()=>{alert('xhr finished')}, 0)}};xhr.onerror=()=>{alert('xhr error')};xhr.send()</script>");
+            return respond(task, "<script>var xhr = new XMLHttpRequest();xhr.open('GET', 'test:///fetchContent');xhr.onreadystatechange=()=>{if(xhr.readyState==4){setTimeout(()=>{alert('xhr finished')}, 0)}};xhr.onerror=()=>{alert('xhr error')};xhr.send()</script>");
 
         ASSERT_NOT_REACHED();
     };
@@ -276,6 +278,47 @@ TEST(ContentRuleList, ResourceTypes)
     EXPECT_EQ(beaconServer.totalRequests(), 5u);
 }
 
+TEST(ContentRuleList, ThirdParty)
+{
+    auto handler = [[TestURLSchemeHandler new] autorelease];
+    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main.html"]) {
+            return respond(task, "<script>"
+                "function testWebKit() { fetch('test://webkit.org/resource.txt', {mode:'no-cors'}).then(()=>{alert('webkit.org loaded');}).catch(()=>{alert('webkit.org blocked');}) };"
+                "fetch('test://sub.example.com/resource.txt', {mode:'no-cors'}).then(()=>{alert('sub.example.com loaded');testWebKit();}).catch(()=>{alert('sub.example.com blocked');testWebKit();})"
+            "</script>");
+        }
+        if ([path isEqualToString:@"/resource.txt"])
+            return respond(task, "hi");
+
+        ASSERT_NOT_REACHED();
+    };
+    auto configuration = [[WKWebViewConfiguration new] autorelease];
+    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
+    configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto webView = [[[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration] autorelease];
+
+    auto listWithLoadType = [] (const char* type) {
+        return makeContentRuleList([NSString stringWithFormat:@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"resource.txt\",\"load-type\":[\"%s\"]}}]", type]);
+    };
+
+    WKUserContentController *userContentController = webView.configuration.userContentController;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://example.com/main.html"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "sub.example.com loaded");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit.org loaded");
+    
+    [userContentController addContentRuleList:listWithLoadType("third-party").get()];
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "sub.example.com loaded");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit.org blocked");
+    [userContentController removeAllContentRuleLists];
+    [userContentController addContentRuleList:listWithLoadType("first-party").get()];
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "sub.example.com blocked");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "webkit.org loaded");
+}
+
 TEST(ContentRuleList, SupportsRegex)
 {
     NSArray<NSString *> *allowed = @[
@@ -300,6 +343,149 @@ TEST(ContentRuleList, SupportsRegex)
     ];
     for (NSString *regex in disallowed)
         EXPECT_FALSE([WKContentRuleList _supportsRegularExpression:regex]);
+}
+
+TEST(ContentRuleList, TopFrameChildFrame)
+{
+    auto handler = [[TestURLSchemeHandler new] autorelease];
+    __block bool loadedIFrame = false;
+    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSString *path = task.request.URL.path;
+        if ([path isEqualToString:@"/main.html"])
+            return respond(task, "<iframe src='frame.html'></iframe>");
+        if ([path isEqualToString:@"/frame.html"]) {
+            EXPECT_FALSE(loadedIFrame);
+            loadedIFrame = true;
+            return respond(task, "hi");
+        }
+        if ([path isEqualToString:@"/fetch_main.html"]) {
+            return respond(task, "<script>"
+                "function addiframe() { var iframe = document.createElement('iframe'); iframe.src = 'fetch_iframe.html'; document.body.appendChild(iframe); };"
+                "function testfetch() { fetch('/fetched.txt').then(()=>{alert('main frame fetched successfully');addiframe()}).catch(()=>{alert('main frame fetch failed');addiframe();}) }"
+                "</script><body onload='testfetch()'/>");
+        }
+        if ([path isEqualToString:@"/fetched.txt"])
+            return respond(task, "hi");
+        if ([path isEqualToString:@"/fetch_iframe.html"]) {
+            return respond(task, "<script>"
+                "function testfetch() { fetch('/fetched.txt').then(()=>{alert('iframe fetched successfully')}).catch(()=>{alert('iframe fetch failed');}) }"
+                "</script><body onload='testfetch()'/>");
+        }
+        ASSERT_NOT_REACHED();
+    };
+    auto configuration = [[WKWebViewConfiguration new] autorelease];
+    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
+    configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto webView = [[[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration] autorelease];
+    WKUserContentController *userContentController = webView.configuration.userContentController;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///main.html"]]];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_TRUE(loadedIFrame);
+
+    [userContentController addContentRuleList:makeContentRuleList(@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\",\"load-context\":[\"child-frame\"]}}]").get()];
+    loadedIFrame = false;
+    [webView reload];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_FALSE(loadedIFrame);
+    
+    [userContentController removeAllContentRuleLists];
+    
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///fetch_main.html"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame fetched successfully");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe fetched successfully");
+
+    auto listWithLoadContext = [] (const char* type) {
+        return makeContentRuleList([NSString stringWithFormat:@"[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\",\"load-context\":[\"%s\"],\"resource-type\":[\"fetch\"]}}]", type]);
+    };
+    [userContentController addContentRuleList:listWithLoadContext("child-frame").get()];
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame fetched successfully");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe fetch failed");
+
+    [userContentController removeAllContentRuleLists];
+    [userContentController addContentRuleList:listWithLoadContext("top-frame").get()];
+    [webView reload];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "main frame fetch failed");
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "iframe fetched successfully");
+}
+
+TEST(ContentRuleList, LegacyVersionAndName)
+{
+    NSString *directory = [NSTemporaryDirectory() stringByAppendingPathComponent:@"ContentRuleListTestDirectory"];
+    WKContentRuleListStore *store = [WKContentRuleListStore storeWithURL:[NSURL fileURLWithPath:directory]];
+    
+    auto handler = [[TestURLSchemeHandler new] autorelease];
+    handler.startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        respond(task, "hi");
+    };
+
+    auto setupLegacyContentRuleList = [directory] {
+        // Compiled with CurrentContentRuleListFileVersion = 10
+        std::array<uint8_t, 163> oldVersionCompiledContentRuleList {
+            0x0a, 0x00, 0x00, 0x00, 0x3e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x2a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x01, 0x5b, 0x7b, 0x22, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x3a, 0x7b, 0x22, 0x74, 0x79,
+            0x70, 0x65, 0x22, 0x3a, 0x22, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x22, 0x7d, 0x2c, 0x22, 0x74, 0x72,
+            0x69, 0x67, 0x67, 0x65, 0x72, 0x22, 0x3a, 0x7b, 0x22, 0x75, 0x72, 0x6c, 0x2d, 0x66, 0x69, 0x6c,
+            0x74, 0x65, 0x72, 0x22, 0x3a, 0x22, 0x74, 0x65, 0x73, 0x74, 0x22, 0x7d, 0x7d, 0x5d, 0x00, 0x2a,
+            0x00, 0x00, 0x00, 0x10, 0x74, 0x05, 0x1b, 0xfd, 0x10, 0x65, 0x08, 0x10, 0x74, 0xfd, 0x1b, 0xf5,
+            0x12, 0x73, 0x74, 0x07, 0xf8, 0x1b, 0xee, 0x10, 0x74, 0x05, 0x1b, 0xe9, 0x06, 0x00, 0x00, 0x00,
+            0x00, 0x10, 0x65, 0xef, 0x10, 0x74, 0xe4, 0x1b, 0xdc, 0x05, 0x00, 0x00, 0x00, 0x0a, 0x05, 0x00,
+            0x00, 0x00, 0x0a
+        };
+        NSData *data = [NSData dataWithBytes:oldVersionCompiledContentRuleList.data() length:oldVersionCompiledContentRuleList.size()];
+        [data writeToFile:[directory stringByAppendingPathComponent:@"ContentExtension-test"] atomically:YES];
+        [[NSFileManager defaultManager] removeItemAtPath:[directory stringByAppendingPathComponent:@"ContentRuleList-test"] error:nil];
+    };
+    
+    auto legacyFileExists = [directory] {
+        return [[NSFileManager defaultManager] fileExistsAtPath:[directory stringByAppendingPathComponent:@"ContentRuleList-test"]];
+    };
+
+    setupLegacyContentRuleList();
+    __block RetainPtr<WKContentRuleList> retainedList;
+    [store lookUpContentRuleListForIdentifier:@"test" completionHandler:^(WKContentRuleList *list, NSError *) {
+        retainedList = list;
+    }];
+    while (!retainedList)
+        TestWebKitAPI::Util::spinRunLoop();
+    auto configuration = [[WKWebViewConfiguration new] autorelease];
+    [configuration setURLSchemeHandler:handler forURLScheme:@"test"];
+    [configuration setURLSchemeHandler:handler forURLScheme:@"scheme"];
+    configuration.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto webView = [[[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration] autorelease];
+    [webView.configuration.userContentController addContentRuleList:retainedList.get()];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"scheme:///"]]];
+    [webView _test_waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///"]]];
+    [webView _test_waitForDidFailProvisionalNavigation];
+
+    setupLegacyContentRuleList();
+    __block bool removed = false;
+    [store removeContentRuleListForIdentifier:@"test" completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+        EXPECT_FALSE(legacyFileExists());
+        removed = true;
+    }];
+    TestWebKitAPI::Util::run(&removed);
+    
+    setupLegacyContentRuleList();
+    __block bool foundAvailable = false;
+    [store getAvailableContentRuleListIdentifiers:^(NSArray<NSString *> *identifiers) {
+        EXPECT_EQ(identifiers.count, 1u);
+        EXPECT_WK_STREQ(identifiers[0], @"test");
+        foundAvailable = true;
+    }];
+    TestWebKitAPI::Util::run(&removed);
+
+    __block bool gotSource = false;
+    [store _getContentRuleListSourceForIdentifier:@"test" completionHandler:^(NSString *source) {
+        EXPECT_WK_STREQ(source, "[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"test\"}}]");
+        gotSource = true;
+    }];
+    TestWebKitAPI::Util::run(&gotSource);
 }
 
 #if HAVE(SSL)

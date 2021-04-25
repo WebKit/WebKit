@@ -892,7 +892,7 @@ static RefPtr<CSSPrimitiveValue> consumeFontStretchKeywordValue(CSSParserTokenRa
 #if ENABLE(VARIATION_FONTS)
 static bool fontStretchIsWithinRange(float stretch)
 {
-    return stretch > 0;
+    return stretch >= 0;
 }
 #endif
 
@@ -1170,42 +1170,41 @@ static RefPtr<CSSValueList> consumeSize(CSSParserTokenRange& range, CSSParserMod
 static RefPtr<CSSValue> consumeTextIndent(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     // [ <length> | <percentage> ] && hanging? && each-line?
-    // Keywords only allowed when css3Text is enabled.
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-
-    bool hasLengthOrPercentage = false;
-//    bool hasEachLine = false;
-    bool hasHanging = false;
+    RefPtr<CSSValue> lengthOrPercentage;
+    RefPtr<CSSPrimitiveValue> eachLine;
+    RefPtr<CSSPrimitiveValue> hanging;
 
     do {
-        if (!hasLengthOrPercentage) {
+        if (!lengthOrPercentage) {
             if (RefPtr<CSSValue> textIndent = consumeLengthOrPercent(range, cssParserMode, ValueRangeAll, UnitlessQuirk::Allow)) {
-                list->append(*textIndent);
-                hasLengthOrPercentage = true;
+                lengthOrPercentage = textIndent;
                 continue;
             }
         }
 
         CSSValueID id = range.peek().id();
- /* FIXME-NEWPARSER: We don't support this yet.
-        if (!hasEachLine && id == CSSValueEachLine) {
-            list->append(*consumeIdent(range));
-            hasEachLine = true;
+        if (!eachLine && id == CSSValueEachLine) {
+            eachLine = consumeIdent(range);
             continue;
         }
-*/
-        
-        if (!hasHanging && id == CSSValueHanging) {
-            list->append(consumeIdent(range).releaseNonNull());
-            hasHanging = true;
+
+        if (!hanging && id == CSSValueHanging) {
+            hanging = consumeIdent(range);
             continue;
         }
-        
+
         return nullptr;
     } while (!range.atEnd());
 
-    if (!hasLengthOrPercentage)
+    if (!lengthOrPercentage)
         return nullptr;
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    list->append(*lengthOrPercentage);
+    if (hanging)
+        list->append(hanging.releaseNonNull());
+    if (eachLine)
+        list->append(eachLine.releaseNonNull());
 
     return list;
 }

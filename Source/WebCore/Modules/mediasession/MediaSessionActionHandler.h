@@ -29,7 +29,6 @@
 
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
-#include "JSMediaSessionActionDetails.h"
 #include "MediaSessionActionDetails.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>

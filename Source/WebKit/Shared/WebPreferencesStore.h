@@ -27,7 +27,7 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -66,7 +66,7 @@ struct WebPreferencesStore {
 
     using Value = Variant<String, bool, uint32_t, double>;
 
-    typedef HashMap<String, Value> ValueMap;
+    using ValueMap = MemoryCompactRobinHoodHashMap<String, Value>;
     ValueMap m_values;
     ValueMap m_overriddenDefaults;
 

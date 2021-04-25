@@ -137,7 +137,7 @@ private:
 
     void terminationTimerFired();
 
-    void platformInitialize();
+    void platformInitialize(const AuxiliaryProcessInitializationParameters&);
     void platformStopRunLoop();
 
     // The timeout, in seconds, before this process will be terminated if termination
@@ -163,6 +163,8 @@ private:
 struct AuxiliaryProcessInitializationParameters {
     String uiProcessName;
     String clientIdentifier;
+    String clientBundleIdentifier;
+    uint32_t clientSDKVersion;
     Optional<WebCore::ProcessIdentifier> processIdentifier;
     IPC::Connection::Identifier connectionIdentifier;
     HashMap<String, String> extraInitializationData;

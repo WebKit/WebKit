@@ -1866,6 +1866,32 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     }).autorelease();
 }
 
+static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityChildrenVector& objects)
+{
+    AXCoreObject::AccessibilityChildrenVector accessibleElements;
+    for (const auto& object : objects) {
+        if (!object)
+            continue;
+
+        Accessibility::enumerateDescendants<AXCoreObject>(*object, true, [&accessibleElements] (AXCoreObject& descendant) {
+            if (descendant.wrapper().isAccessibilityElement)
+                accessibleElements.append(&descendant);
+        });
+    }
+
+    return convertToNSArray(accessibleElements);
+}
+
+- (NSArray *)accessibilityDetailsElements
+{
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
+    AXCoreObject::AccessibilityChildrenVector detailsElements;
+    self.axBackingObject->ariaDetailsElements(detailsElements);
+    return accessibleElementsForObjects(detailsElements);
+}
+
 - (NSArray *)accessibilityErrorMessageElements
 {
     if (![self _prepareAccessibilityCall])
@@ -1873,17 +1899,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 
     AXCoreObject::AccessibilityChildrenVector errorElements;
     self.axBackingObject->ariaErrorMessageElements(errorElements);
-
-    AXCoreObject::AccessibilityChildrenVector accessibleElements;
-    for (const auto& element : errorElements) {
-        ASSERT(element);
-        Accessibility::enumerateDescendants<AXCoreObject>(*element, true, [&accessibleElements] (AXCoreObject& descendant) {
-            if (descendant.wrapper().isAccessibilityElement)
-                accessibleElements.append(&descendant);
-        });
-    }
-
-    return convertToNSArray(accessibleElements);
+    return accessibleElementsForObjects(errorElements);
 }
 
 - (id)accessibilityLinkedElement

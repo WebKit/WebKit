@@ -46,19 +46,10 @@ namespace WebKit {
 using namespace WebCore;
 
 // Currently we have one global WebGL processing instance.
-static IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
+IPC::StreamConnectionWorkQueue& remoteGraphicsContextGLStreamWorkQueue()
 {
     static NeverDestroyed<IPC::StreamConnectionWorkQueue> instance("RemoteGraphicsContextGL work queue");
     return instance.get();
-}
-
-static constexpr Seconds dispatchReleaseAllResourcesIfUnusedTimeout = 0.2_s;
-static unsigned remoteGraphicsContextCount;
-static void dispatchReleaseAllResourcesIfUnused()
-{
-#if PLATFORM(COCOA)
-    remoteGraphicsContextGLStreamWorkQueue().dispatch(GraphicsContextGLOpenGL::releaseAllResourcesIfUnused);
-#endif
 }
 
 #if !PLATFORM(COCOA)
@@ -76,6 +67,7 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
     , m_streamConnection(IPC::StreamServerConnection<RemoteGraphicsContextGL>::create(gpuConnectionToWebProcess.connection(), WTFMove(stream), remoteGraphicsContextGLStreamWorkQueue()))
     , m_graphicsContextGLIdentifier(graphicsContextGLIdentifier)
     , m_renderingBackend(makeRef(renderingBackend))
+    , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
 {
     ASSERT(RunLoop::isMain());
 }
@@ -89,7 +81,6 @@ RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
 void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
 {
     ASSERT(RunLoop::isMain());
-    ++remoteGraphicsContextCount;
     remoteGraphicsContextGLStreamWorkQueue().dispatch([attributes = WTFMove(attributes), protectedThis = makeRef(*this)]() mutable {
         protectedThis->workQueueInitialize(WTFMove(attributes));
     });
@@ -102,10 +93,8 @@ void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&&
     m_streamConnection->stopReceivingMessages(Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
     remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
         protectedThis->workQueueUninitialize();
+        protectedThis->m_renderingResourcesRequest = { };
     });
-    --remoteGraphicsContextCount;
-    if (!remoteGraphicsContextCount)
-        RunLoop::current().dispatchAfter(dispatchReleaseAllResourcesIfUnusedTimeout, dispatchReleaseAllResourcesIfUnused);
 }
 
 #if PLATFORM(MAC)

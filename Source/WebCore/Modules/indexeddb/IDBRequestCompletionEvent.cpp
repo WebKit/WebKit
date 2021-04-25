@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBRequestCompletionEvent.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -41,5 +39,3 @@ IDBRequestCompletionEvent::IDBRequestCompletionEvent(const AtomString& type, Can
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

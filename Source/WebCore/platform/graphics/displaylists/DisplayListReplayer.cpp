@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #include "DisplayListItems.h"
 #include "GraphicsContext.h"
+#include "InMemoryDisplayList.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 
@@ -153,7 +154,7 @@ std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Rep
 
     if (item.is<BeginClipToDrawingCommands>()) {
         if (m_maskImageBuffer)
-            return { StopReplayReason::InvalidItem, WTF::nullopt };
+            return { StopReplayReason::InvalidItemOrExtent, WTF::nullopt };
         auto& clipItem = item.get<BeginClipToDrawingCommands>();
         m_maskImageBuffer = ImageBuffer::createCompatibleBuffer(clipItem.destination().size(), clipItem.colorSpace(), m_context);
         if (!m_maskImageBuffer)
@@ -163,7 +164,7 @@ std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Rep
 
     if (item.is<EndClipToDrawingCommands>()) {
         if (!m_maskImageBuffer)
-            return { StopReplayReason::InvalidItem, WTF::nullopt };
+            return { StopReplayReason::InvalidItemOrExtent, WTF::nullopt };
         auto& clipItem = item.get<EndClipToDrawingCommands>();
         m_context.clipToImageBuffer(*m_maskImageBuffer, clipItem.destination());
         m_maskImageBuffer = nullptr;
@@ -179,9 +180,9 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
     LOG_WITH_STREAM(DisplayLists, stream << "\nReplaying with clip " << initialClip);
     UNUSED_PARAM(initialClip);
 
-    std::unique_ptr<DisplayList> replayList;
+    std::unique_ptr<InMemoryDisplayList> replayList;
     if (UNLIKELY(trackReplayList))
-        replayList = makeUnique<DisplayList>();
+        replayList = makeUnique<InMemoryDisplayList>();
 
 #if !LOG_DISABLED
     size_t i = 0;
@@ -195,7 +196,7 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
         }
 
         if (!item) {
-            result.reasonForStopping = StopReplayReason::InvalidItem;
+            result.reasonForStopping = StopReplayReason::InvalidItemOrExtent;
             break;
         }
 

@@ -29,16 +29,13 @@
 #import "WebDatabaseManagerPrivate.h"
 
 #import "WebDatabaseManagerClient.h"
+#import "WebDatabaseProvider.h"
 #import "WebPlatformStrategies.h"
 #import "WebSecurityOriginInternal.h"
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/DatabaseTracker.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/cocoa/VectorCocoa.h>
-
-#if ENABLE(INDEXED_DATABASE)
-#import "WebDatabaseProvider.h"
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 #import "WebDatabaseManagerInternal.h"
@@ -143,9 +140,7 @@ static NSString *databasesDirectoryPath();
 // For DumpRenderTree support only
 - (void)deleteAllIndexedDatabases
 {
-#if ENABLE(INDEXED_DATABASE)
     WebDatabaseProvider::singleton().deleteAllDatabases();
-#endif
 }
 
 #if PLATFORM(IOS_FAMILY)

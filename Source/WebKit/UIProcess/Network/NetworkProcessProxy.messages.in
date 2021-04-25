@@ -25,10 +25,6 @@ messages -> NetworkProcessProxy LegacyReceiver NotRefCounted {
     NegotiatedLegacyTLS(WebKit::WebPageProxyIdentifier pageID)
     DidNegotiateModernTLS(WebKit::WebPageProxyIdentifier pageID, WebCore::AuthenticationChallenge challenge)
 
-    DidFetchWebsiteData(WebKit::CallbackID callbackID, struct WebKit::WebsiteData websiteData)
-    DidDeleteWebsiteData(WebKit::CallbackID callbackID)
-    DidDeleteWebsiteDataForOrigins(WebKit::CallbackID callbackID)
-
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
     TerminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
 

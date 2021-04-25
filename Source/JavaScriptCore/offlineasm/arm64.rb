@@ -135,13 +135,13 @@ class RegisterID
             arm64GPRName('x2', kind)
         when 't3', 'a3', 'wa3'
             arm64GPRName('x3', kind)
-        when 't4', 'wa4'
+        when 't4', 'a4', 'wa4'
             arm64GPRName('x4', kind)
-        when 't5', 'wa5'
+        when 't5', 'a5', 'wa5'
           arm64GPRName('x5', kind)
-        when 't6', 'wa6'
+        when 't6', 'a6', 'wa6'
           arm64GPRName('x6', kind)
-        when 't7', 'wa7'
+        when 't7', 'a7', 'wa7'
           arm64GPRName('x7', kind)
         when 'ws0'
           arm64GPRName('x9', kind)

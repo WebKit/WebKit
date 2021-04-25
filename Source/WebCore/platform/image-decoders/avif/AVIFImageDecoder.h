@@ -59,6 +59,7 @@ private:
     std::unique_ptr<AVIFImageReader> m_reader { nullptr };
 
     size_t m_frameCount { 0 };
+    int m_repetitionCount { 0 };
 };
 
 } // namespace WebCore

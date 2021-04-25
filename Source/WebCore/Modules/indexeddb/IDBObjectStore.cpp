@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBObjectStore.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "DOMStringList.h"
 #include "Document.h"
 #include "IDBBindingUtilities.h"
@@ -767,5 +765,3 @@ void IDBObjectStore::deref()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

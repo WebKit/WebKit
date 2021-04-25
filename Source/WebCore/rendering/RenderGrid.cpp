@@ -1233,7 +1233,7 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& child)
 }
 
 // FIXME: This logic could be refactored somehow and defined in RenderBox.
-static int synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
+static LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
 {
     return (direction == HorizontalLine ? box.size().height() : box.size().width()).toInt();
 }
@@ -1253,7 +1253,7 @@ bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child, GridAxis ba
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it might be refactored somehow.
-int RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode mode) const
+LayoutUnit RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode mode) const
 {
     ASSERT_UNUSED(mode, mode == PositionOnContainingLine);
     auto baseline = firstLineBaseline();
@@ -1263,7 +1263,7 @@ int RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode direction
     return baseline.value() + (direction == HorizontalLine ? marginTop() : marginRight()).toInt();
 }
 
-Optional<int> RenderGrid::firstLineBaseline() const
+Optional<LayoutUnit> RenderGrid::firstLineBaseline() const
 {
     if (isWritingModeRoot() || !m_grid.hasGridItems())
         return WTF::nullopt;
@@ -1294,12 +1294,12 @@ Optional<int> RenderGrid::firstLineBaseline() const
         // FIXME: We should pass |direction| into firstLineBaseline and stop bailing out if we're a writing
         // mode root. This would also fix some cases where the grid is orthogonal to its container.
         LineDirectionMode direction = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
-        return synthesizedBaselineFromBorderBox(*baselineChild, direction) + logicalTopForChild(*baselineChild).toInt();
+        return synthesizedBaselineFromBorderBox(*baselineChild, direction) + logicalTopForChild(*baselineChild);
     }
     return baseline.value() + baselineChild->logicalTop().toInt();
 }
 
-Optional<int> RenderGrid::inlineBlockBaseline(LineDirectionMode) const
+Optional<LayoutUnit> RenderGrid::inlineBlockBaseline(LineDirectionMode) const
 {
     return firstLineBaseline();
 }

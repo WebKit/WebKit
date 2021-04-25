@@ -546,11 +546,8 @@ PlatformDisplayID Chrome::displayID() const
     return m_page.displayID();
 }
 
-void Chrome::windowScreenDidChange(PlatformDisplayID displayID, Optional<unsigned> nominalFrameInterval)
+void Chrome::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPerSecond> nominalFrameInterval)
 {
-    if (displayID == m_page.displayID() && nominalFrameInterval == m_page.displayNominalFramesPerSecond())
-        return;
-
     m_page.windowScreenDidChange(displayID, nominalFrameInterval);
 }
 

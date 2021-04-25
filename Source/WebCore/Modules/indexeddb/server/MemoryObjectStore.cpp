@@ -26,8 +26,6 @@
 #include "config.h"
 #include "MemoryObjectStore.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "IDBError.h"
 #include "IDBGetAllResult.h"
@@ -517,5 +515,3 @@ void MemoryObjectStore::renameIndex(MemoryIndex& index, const String& newName)
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

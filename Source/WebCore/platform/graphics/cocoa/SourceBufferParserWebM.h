@@ -37,6 +37,7 @@
 #include <wtf/Box.h>
 #include <wtf/Function.h>
 #include <wtf/MediaTime.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -235,8 +236,8 @@ private:
 
     TrackData* trackDataForTrackNumber(uint64_t);
 
-    static const HashSet<String>& supportedVideoCodecs();
-    static const HashSet<String>& supportedAudioCodecs();
+    static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedVideoCodecs();
+    static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedAudioCodecs();
 
     // webm::Callback
     webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;

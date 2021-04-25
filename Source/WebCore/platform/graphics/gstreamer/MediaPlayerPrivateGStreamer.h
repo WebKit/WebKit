@@ -530,6 +530,9 @@ private:
     uint64_t m_totalVideoFrames { 0 };
     uint64_t m_droppedVideoFrames { 0 };
 
+    // This is set to true if no videoflip element has been added to the pipeline.
+    bool m_shouldHandleOrientationTags { false };
+
 private:
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)
     GUniquePtr<struct wpe_video_plane_display_dmabuf_source> m_wpeVideoPlaneDisplayDmaBuf;

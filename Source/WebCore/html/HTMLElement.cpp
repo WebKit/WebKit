@@ -210,7 +210,8 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
     } else if (name == draggableAttr) {
         if (equalLettersIgnoringASCIICase(value, "true")) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
+            if (!isDraggableIgnoringAttributes())
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
         } else if (equalLettersIgnoringASCIICase(value, "false"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
     } else if (name == dirAttr) {
@@ -709,7 +710,11 @@ ExceptionOr<void> HTMLElement::setContentEditable(const String& enabled)
 
 bool HTMLElement::draggable() const
 {
-    return equalLettersIgnoringASCIICase(attributeWithoutSynchronization(draggableAttr), "true");
+    auto& value = attributeWithoutSynchronization(draggableAttr);
+    if (isDraggableIgnoringAttributes())
+        return !equalLettersIgnoringASCIICase(value, "false");
+
+    return equalLettersIgnoringASCIICase(value, "true");
 }
 
 void HTMLElement::setDraggable(bool value)
@@ -1250,11 +1255,16 @@ bool HTMLElement::isInsideImageOverlay(const SimpleRange& range)
     if (!commonAncestor)
         return false;
 
-    auto host = imageOverlayHost(*commonAncestor);
+    return isInsideImageOverlay(*commonAncestor);
+}
+
+bool HTMLElement::isInsideImageOverlay(const Node& node)
+{
+    auto host = imageOverlayHost(node);
     if (!host)
         return false;
 
-    return host->userAgentShadowRoot()->contains(*commonAncestor);
+    return host->userAgentShadowRoot()->contains(node);
 }
 
 bool HTMLElement::isImageOverlayText(const Node& node)
@@ -1301,7 +1311,7 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
 
     auto shadowRoot = makeRef(ensureUserAgentShadowRoot());
     if (!previousContainer) {
-        static NeverDestroyed<const String> shadowStyle(imageOverlayUserAgentStyleSheet, String::ConstructFromLiteral);
+        static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(imageOverlayUserAgentStyleSheet, sizeof(imageOverlayUserAgentStyleSheet)));
         auto style = HTMLStyleElement::create(HTMLNames::styleTag, document(), false);
         style->setTextContent(shadowStyle);
         shadowRoot->appendChild(WTFMove(style));

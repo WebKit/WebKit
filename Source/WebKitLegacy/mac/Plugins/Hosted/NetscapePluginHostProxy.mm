@@ -312,7 +312,7 @@ bool NetscapePluginHostProxy::processRequests()
         __ReplyUnion__WKWebKitPluginClient_subsystem reply;
         mach_msg_header_t* replyHeader = reinterpret_cast<mach_msg_header_t*>(&reply);
         
-        if (WebKitPluginClient_server(msg, replyHeader) && replyHeader->msgh_remote_port != MACH_PORT_NULL) {
+        if (WebKitPluginClient_server(msg, replyHeader) && MACH_PORT_VALID(replyHeader->msgh_remote_port)) {
             kr = mach_msg(replyHeader, MACH_SEND_MSG, replyHeader->msgh_size, 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
             
             if (kr != KERN_SUCCESS) {

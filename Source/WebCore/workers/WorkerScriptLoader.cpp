@@ -34,6 +34,7 @@
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "ServiceWorker.h"
+#include "ServiceWorkerContextData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "TextResourceDecoder.h"
 #include "WorkerGlobalScope.h"
@@ -60,7 +61,7 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
 
     if (isServiceWorkerGlobalScope) {
         if (auto* scriptResource = downcast<ServiceWorkerGlobalScope>(workerGlobalScope).scriptResource(url)) {
-            m_script.append(scriptResource->script);
+            m_script.append(scriptResource->script.toString());
             m_responseURL = scriptResource->responseURL;
             m_responseMIMEType = scriptResource->mimeType;
             return WTF::nullopt;
@@ -101,7 +102,7 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
         if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(responseMIMEType()))
             return Exception { NetworkError, "mime type is not a supported JavaScript mime type"_s };
 
-        downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
+        downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { ScriptBuffer { script() }, m_responseURL, m_responseMIMEType });
     }
 #endif
     return WTF::nullopt;

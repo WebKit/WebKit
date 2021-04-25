@@ -376,6 +376,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     \
     v(Unsigned, exceptionStackTraceLimit, 100, Normal, "Stack trace limit for internal Exception object") \
     v(Unsigned, defaultErrorStackTraceLimit, 100, Normal, "The default value for Error.stackTraceLimit") \
+    v(Bool, exitOnResourceExhaustion, false, Normal, nullptr) \
     v(Bool, useExceptionFuzz, false, Normal, nullptr) \
     v(Unsigned, fireExceptionFuzzAt, 0, Normal, nullptr) \
     v(Bool, validateDFGExceptionHandling, false, Normal, "Causes the DFG to emit code validating exception handling for each node that can exit") /* This is true by default on Debug builds */\

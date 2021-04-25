@@ -129,16 +129,6 @@ bool defaultAsyncOverflowScrollingEnabled()
     return defaultAsyncFrameAndOverflowScrollingEnabled();
 }
 
-#if ENABLE(APP_HIGHLIGHTS)
-bool defaultAppHighlightsEnabled()
-{
-#if HAVE(SYSTEM_FEATURE_FLAGS)
-    return isFeatureFlagEnabled("app_highlights");
-#endif
-    return false;
-}
-#endif
-
 #if ENABLE(GPU_PROCESS)
 
 bool defaultUseGPUProcessForCanvasRenderingEnabled()
@@ -185,7 +175,7 @@ bool defaultCaptureAudioInGPUProcessEnabled()
 {
 #if HAVE(SYSTEM_FEATURE_FLAGS)
 #if PLATFORM(MAC)
-    return false;
+    return isFeatureFlagEnabled("gpu_process_webrtc");
 #elif PLATFORM(IOS_FAMILY)
     return isFeatureFlagEnabled("gpu_process_media");
 #endif
@@ -204,9 +194,7 @@ bool defaultCaptureAudioInUIProcessEnabled()
 
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
-#if PLATFORM(MAC)
-    return false;
-#elif HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("gpu_process_webrtc");
 #else
     return false;

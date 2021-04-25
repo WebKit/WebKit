@@ -8,7 +8,7 @@ file = __file__.split(':/cygwin')[-1]
 http_root = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(file))))
 sys.path.insert(0, http_root)
 
-from resources.portabilityLayer import setState, getState
+from resources.portabilityLayer import set_state, get_state
 from urllib.parse import parse_qs
 
 sys.stdout.write(
@@ -25,7 +25,7 @@ stateFile = os.path.join(tempfile.gettempdir(), 'xmlhttprequest-redirect-cross-o
 command = query.get('command', [None])[0]
 if command:
     if command == 'status':
-        sys.stdout.write(getState(stateFile, default=''))
+        sys.stdout.write(get_state(stateFile, default=''))
     sys.exit(0)
 
 method = os.environ.get('REQUEST_METHOD')
@@ -37,13 +37,13 @@ if method == 'OPTIONS':
 
 # Only allow simple cross-site requests - since we did not allow preflight, this is all we should ever get.
 if method not in ['GET', 'HEAD', 'POST']:
-    setState('FAIL. Non-simple method {}.'.format(method), stateFile)
+    set_state('FAIL. Non-simple method {}.'.format(method), stateFile)
     sys.exit(0)
 
 if content and not re.match(r'^application\/x\-www\-form\-urlencoded(;.+)?$', contentType) \
     and not re.match(r'^multipart\/form\-data(;.+)?$', contentType) \
     and not re.match(r'^text\/plain(;.+)?$', contentType):
-    setState('FAIL. Non-simple content type: {}.'.format(contentType), stateFile)
+    set_state('FAIL. Non-simple content type: {}.'.format(contentType), stateFile)
 
 if os.environ.get('HTTP_X_WEBKIT_TEST'):
-    setState('FAIL. Custom header sent with a simple request.', stateFile)
+    set_state('FAIL. Custom header sent with a simple request.', stateFile)

@@ -39,20 +39,23 @@ public:
     {
         return adoptRef(*new DisplayRefreshMonitorMac(displayID));
     }
-    
+
     virtual ~DisplayRefreshMonitorMac();
-    
-    void displayLinkFired() final;
-    bool requestRefreshCallback() final;
-    
+
 private:
     explicit DisplayRefreshMonitorMac(WebCore::PlatformDisplayID);
-    
-    bool hasRequestedRefreshCallback() const final { return m_hasSentMessage; }
+
+    void dispatchDisplayDidRefresh(const WebCore::DisplayUpdate&) final;
+
+    bool startNotificationMechanism() final;
+    void stopNotificationMechanism() final;
+
+    void adjustPreferredFramesPerSecond(FramesPerSecond) final;
 
     DisplayLinkObserverID m_observerID;
     std::unique_ptr<WebCore::RunLoopObserver> m_runLoopObserver;
-    bool m_hasSentMessage { false };
+
+    bool m_displayLinkIsActive { false };
     bool m_firstCallbackInCurrentRunloop { false };
 };
 

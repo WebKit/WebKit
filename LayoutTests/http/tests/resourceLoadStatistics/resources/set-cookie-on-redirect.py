@@ -12,14 +12,14 @@ sys.stdout.write('Content-Type: text/html\r\n')
 if step == 1:
     sys.stdout.write(
         'status: 302\r\n'
-        'Location: http://localhost:8000/cookies/resources/set-cookie-on-redirect.php?step=2\r\n\r\n'
+        'Location: http://localhost:8000/cookies/resources/set-cookie-on-redirect.py?step=2\r\n\r\n'
     )
 elif step == 2:
     expires = datetime.utcnow() + timedelta(seconds=86400)
     sys.stdout.write(
         'status: 302\r\n'
         'Set-Cookie: test_cookie=1; expires={} GMT; Max-Age=86400\r\n'
-        'Location: http://localhost:8000/cookies/resources/set-cookie-on-redirect.php?step=3\r\n\r\n'.format(expires.strftime('%a, %d-%b-%Y %H:%M:%S'))
+        'Location: http://localhost:8000/cookies/resources/set-cookie-on-redirect.py?step=3\r\n\r\n'.format(expires.strftime('%a, %d-%b-%Y %H:%M:%S'))
     )
 elif step == 3:
     cookies = {}

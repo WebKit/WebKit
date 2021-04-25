@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "DiagnosticLoggingDomain.h"
 #include "DiagnosticLoggingResultType.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -48,6 +49,7 @@ public:
     using ValueDictionary = HashMap<String, ValuePayload>;
 
     virtual void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, ShouldSample) = 0;
+    virtual void logDiagnosticMessageWithDomain(const String& message, DiagnosticLoggingDomain) = 0;
 
     static bool shouldLogAfterSampling(ShouldSample);
 

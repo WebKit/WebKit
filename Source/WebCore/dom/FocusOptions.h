@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include "FocusDirection.h"
 
 namespace WebCore {

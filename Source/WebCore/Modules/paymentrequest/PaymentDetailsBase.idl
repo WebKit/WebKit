@@ -29,5 +29,4 @@
     sequence<PaymentItem> displayItems;
     sequence<PaymentShippingOption> shippingOptions;
     sequence<PaymentDetailsModifier> modifiers;
-    object data;
 };

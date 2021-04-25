@@ -34,3 +34,5 @@
     attribute DOMString album;
     [SetterCallWith=ScriptExecutionContext] attribute FrozenArray<MediaImage> artwork;
 };
+
+MediaMetadata includes MediaMetadataPlaylistMixin;

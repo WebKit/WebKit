@@ -119,6 +119,8 @@ public:
     bool canSendMessage() const { return state() != State::Terminated;}
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo = WTF::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
+    void replyToPendingMessages();
+
     void shutDownProcess();
 
     WebCore::ProcessIdentifier coreProcessIdentifier() const { return m_processIdentifier; }

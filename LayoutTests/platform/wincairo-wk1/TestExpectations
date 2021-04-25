@@ -311,3 +311,11 @@ webkit.org/b/220579 fast/events/currentTarget-gc-crash.html [ Skip ]
 
 fast/css/sticky/sticky-in-rtl-overflow.html [ ImageOnlyFailure ]
 http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
+
+[ Debug ] http/tests/misc/redirect-to-about-blank.html [ Skip ]
+[ Release ] http/tests/misc/redirect-to-external-url.html [ Failure ]
+[ Debug ] http/tests/misc/redirect-to-external-url.html [ Skip ]
+
+# Skip Service Workers in WK1
+http/tests/workers/service [ Skip ]
+http/wpt/service-workers [ Skip ]

@@ -40,65 +40,69 @@ using namespace SVGNames;
 
 static const HashSet<String, ASCIICaseInsensitiveHash>& supportedSVGFeatures()
 {
+#define PREFIX_W3C "org.w3c."
+#define PREFIX_SVG11 "http://www.w3.org/tr/svg11/feature#"
     static NeverDestroyed<HashSet<String, ASCIICaseInsensitiveHash>> features = [] {
-        static const char* const features10[] = {
-            "dom",
-            "dom.svg",
-            "dom.svg.static",
-            "svg",
-            "svg.static",
+        static const ASCIILiteral features10[] = {
+            PREFIX_W3C "dom"_s,
+            PREFIX_W3C "dom.svg"_s,
+            PREFIX_W3C "dom.svg.static"_s,
+            PREFIX_W3C "svg"_s,
+            PREFIX_W3C "svg.static"_s,
         };
-        static const char* const features11[] = {
-            "animation",
-            "basegraphicsattribute",
-            "basicclip",
-            "basicfilter",
-            "basicpaintattribute",
-            "basicstructure",
-            "basictext",
-            "clip",
-            "conditionalprocessing",
-            "containerattribute",
-            "coreattribute",
-            "cursor",
-            "documenteventsattribute",
-            "extensibility",
-            "externalresourcesrequired",
-            "filter",
-            "gradient",
-            "graphicaleventsattribute",
-            "graphicsattribute",
-            "hyperlinking",
-            "image",
-            "marker",
-            "mask",
-            "opacityattribute",
-            "paintattribute",
-            "pattern",
-            "script",
-            "shape",
-            "structure",
-            "style",
-            "svg-animation",
-            "svgdom-animation",
-            "text",
-            "view",
-            "viewportattribute",
-            "xlinkattribute",
-            "basicfont",
-            "font",
-            "svg",
-            "svg-static",
-            "svgdom",
-            "svgdom-static",
+        static const ASCIILiteral features11[] = {
+            PREFIX_SVG11 "animation"_s,
+            PREFIX_SVG11 "basegraphicsattribute"_s,
+            PREFIX_SVG11 "basicclip"_s,
+            PREFIX_SVG11 "basicfilter"_s,
+            PREFIX_SVG11 "basicpaintattribute"_s,
+            PREFIX_SVG11 "basicstructure"_s,
+            PREFIX_SVG11 "basictext"_s,
+            PREFIX_SVG11 "clip"_s,
+            PREFIX_SVG11 "conditionalprocessing"_s,
+            PREFIX_SVG11 "containerattribute"_s,
+            PREFIX_SVG11 "coreattribute"_s,
+            PREFIX_SVG11 "cursor"_s,
+            PREFIX_SVG11 "documenteventsattribute"_s,
+            PREFIX_SVG11 "extensibility"_s,
+            PREFIX_SVG11 "externalresourcesrequired"_s,
+            PREFIX_SVG11 "filter"_s,
+            PREFIX_SVG11 "gradient"_s,
+            PREFIX_SVG11 "graphicaleventsattribute"_s,
+            PREFIX_SVG11 "graphicsattribute"_s,
+            PREFIX_SVG11 "hyperlinking"_s,
+            PREFIX_SVG11 "image"_s,
+            PREFIX_SVG11 "marker"_s,
+            PREFIX_SVG11 "mask"_s,
+            PREFIX_SVG11 "opacityattribute"_s,
+            PREFIX_SVG11 "paintattribute"_s,
+            PREFIX_SVG11 "pattern"_s,
+            PREFIX_SVG11 "script"_s,
+            PREFIX_SVG11 "shape"_s,
+            PREFIX_SVG11 "structure"_s,
+            PREFIX_SVG11 "style"_s,
+            PREFIX_SVG11 "svg-animation"_s,
+            PREFIX_SVG11 "svgdom-animation"_s,
+            PREFIX_SVG11 "text"_s,
+            PREFIX_SVG11 "view"_s,
+            PREFIX_SVG11 "viewportattribute"_s,
+            PREFIX_SVG11 "xlinkattribute"_s,
+            PREFIX_SVG11 "basicfont"_s,
+            PREFIX_SVG11 "font"_s,
+            PREFIX_SVG11 "svg"_s,
+            PREFIX_SVG11 "svg-static"_s,
+            PREFIX_SVG11 "svgdom"_s,
+            PREFIX_SVG11 "svgdom-static"_s,
         };
         HashSet<String, ASCIICaseInsensitiveHash> set;
         for (auto& feature : features10)
-            set.add(makeString("org.w3c.", feature));
+            set.add(feature);
         for (auto& feature : features11)
-            set.add(makeString("http://www.w3.org/tr/svg11/feature#", feature));
+            set.add(feature);
         return set;
     }();
+#undef PREFIX_W3C
+#undef PREFIX_SVG11
     return features;
 }
 
@@ -163,7 +167,7 @@ void SVGTests::svgAttributeChanged(const QualifiedName& attrName)
     m_contextElement.invalidateStyleAndRenderersForSubtree();
 }
 
-void SVGTests::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
+void SVGTests::addSupportedAttributes(MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName>& supportedAttributes)
 {
     supportedAttributes.add(requiredFeaturesAttr);
     supportedAttributes.add(requiredExtensionsAttr);

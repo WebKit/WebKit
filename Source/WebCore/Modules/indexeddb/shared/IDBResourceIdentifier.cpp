@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBResourceIdentifier.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
 #include "IDBRequest.h"
@@ -106,5 +104,3 @@ String IDBResourceIdentifier::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

@@ -22,6 +22,7 @@
 #include "FontCustomPlatformData.h"
 
 #include "FontDescription.h"
+#include "FontMemoryResource.h"
 #include "FontPlatformData.h"
 #include "OpenTypeUtilities.h"
 #include "SharedBuffer.h"
@@ -32,11 +33,13 @@
 
 namespace WebCore {
 
-FontCustomPlatformData::~FontCustomPlatformData()
+FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformData::CreationData&& creationData)
+    : name(name)
+    , creationData(WTFMove(creationData))
 {
-    if (fontReference)
-        RemoveFontMemResourceEx(fontReference);
 }
+
+FontCustomPlatformData::~FontCustomPlatformData() = default;
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities)
 {
@@ -86,13 +89,13 @@ static String createUniqueFontName()
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
     String fontName = createUniqueFontName();
-    HANDLE fontReference = renameAndActivateFont(buffer, fontName);
+    auto fontResource = renameAndActivateFont(buffer, fontName);
 
-    if (!fontReference)
+    if (!fontResource)
         return nullptr;
 
-    FontPlatformData::CreationData creationData = { buffer, itemInCollection };
-    return makeUnique<FontCustomPlatformData>(fontReference, fontName, WTFMove(creationData));
+    FontPlatformData::CreationData creationData = { buffer, itemInCollection, fontResource.releaseNonNull() };
+    return makeUnique<FontCustomPlatformData>(fontName, WTFMove(creationData));
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

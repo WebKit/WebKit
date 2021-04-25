@@ -42,6 +42,10 @@
 
 namespace WebCore {
 
+namespace WebKitFontFamilyNames {
+enum class FamilyNamesIndex;
+}
+
 // When these functions are successful, they will consume all the relevant
 // tokens from the range and also consume any whitespace which follows. When
 // the start of the range doesn't match the type we're looking for, the range
@@ -169,7 +173,8 @@ Optional<Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange&);
 Optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange&, CSSParserMode, UnitlessQuirk = UnitlessQuirk::Forbid);
 Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange&, CSSParserMode);
 Optional<FontRaw> consumeFontWorkerSafe(CSSParserTokenRange&, CSSParserMode);
-const AtomString& genericFontFamilyFromValueID(CSSValueID);
+const AtomString& genericFontFamily(CSSValueID);
+WebKitFontFamilyNames::FamilyNamesIndex genericFontFamilyIndex(CSSValueID);
 
 bool isFontStyleAngleInRange(double angleInDegrees);
 

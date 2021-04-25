@@ -44,11 +44,11 @@
 
 namespace WebKit {
 
-void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin*, const URL&, id<WebAllowDenyPolicyListener>, UIView *);
+void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin&, const URL&, id<WebAllowDenyPolicyListener>, UIView *);
 
-void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin* origin, const URL& url, id<WebAllowDenyPolicyListener> listener, UIView *view)
+void decidePolicyForGeolocationRequestFromOrigin(WebCore::SecurityOrigin& origin, const URL& url, id<WebAllowDenyPolicyListener> listener, UIView *view)
 {
-    RetainPtr<WebSecurityOrigin> securityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
+    auto securityOrigin = adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:&origin]);
     RetainPtr<UIWebGeolocationPolicyDecider> decider = [UIWebGeolocationPolicyDecider sharedPolicyDecider];
     if ([decider respondsToSelector:@selector(decidePolicyForGeolocationRequestFromOrigin:requestingURL:view:listener:)])
         [decider decidePolicyForGeolocationRequestFromOrigin:securityOrigin.get() requestingURL:url view:view listener:listener];

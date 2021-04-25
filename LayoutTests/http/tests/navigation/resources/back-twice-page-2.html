@@ -11,7 +11,7 @@ if (!window.localStorage.page2Started) {
     // The second time we visit the page (i.e., while going back), insert an
     // iframe that doesn't commit during the test.
     var f = document.createElement("iframe");
-    f.src = "../../history/resources/back-during-onload-hung-page.php";
+    f.src = "../../history/resources/back-during-onload-hung-page.py";
     document.body.appendChild(f);
 
     // Now go back.  This will compete with the second queueBackNavigation

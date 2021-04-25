@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +69,9 @@ struct Config {
     // as a global singleton.
 
     bool isPermanentlyFrozen;
+#if PLATFORM(COCOA)
+    bool disableForwardingVPrintfStdErrToOSLog;
+#endif
 
 #if USE(PTHREADS)
     bool isUserSpecifiedThreadSuspendResumeSignalConfigured;

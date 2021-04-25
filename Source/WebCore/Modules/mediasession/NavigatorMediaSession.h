@@ -41,7 +41,7 @@ public:
     explicit NavigatorMediaSession(Navigator&);
     ~NavigatorMediaSession();
 
-    static MediaSession& mediaSession(Navigator&);
+    WEBCORE_EXPORT static MediaSession& mediaSession(Navigator&);
     MediaSession& mediaSession();
 
 private:

@@ -55,6 +55,19 @@ describe('CommitLogViewer', () => {
         "message": "another message",
     };
 
+    const webkitCommit210950WithRevisionIdentifier = {
+        "id": "185338",
+        "revision": "210950",
+        "revisionIdentifier": "184278@main",
+        "repository": 1,
+        "previousCommit": null,
+        "ownsCommits": false,
+        "time": +new Date("2017-01-20T03:49:37.887Z"),
+        "authorName": "Commit Queue",
+        "authorEmail": "commit-queue@webkit.org",
+        "message": "another message",
+    };
+
     it('should initially be empty with no spinner', () => {
         const context = new BrowsingContext();
         return importCommitLogViewer(context).then((CommitLogViewer) => {
@@ -129,9 +142,9 @@ describe('CommitLogViewer', () => {
                 "status": "OK",
                 "commits": [webkitCommit210948],
             });
-
+            await requests[0].promise;
+            await requests[1].promise;
             await waitForComponentsToRender(context);
-
             expect(viewer.content('spinner-container').offsetHeight).to.be(0);
             expect(viewer.content('commits-list').matches(':empty')).to.be(false);
             expect(viewer.content('commits-list').textContent).to.contain('r210949');
@@ -142,6 +155,49 @@ describe('CommitLogViewer', () => {
             expect(viewer.content('repository-name').textContent).to.contain('WebKit');
             expect(viewer.content('commits-list').querySelector('a')).to.be(null);
         });
+    });
+
+    it('should show revision label', async () => {
+        const context = new BrowsingContext();
+        const CommitLogViewer = await importCommitLogViewer(context);
+        const Repository = context.symbols.Repository;
+        const requests = context.symbols.RemoteAPI.requests;
+        const viewer = new CommitLogViewer;
+        const webkit = new Repository(1, {name: 'WebKit'});
+        context.document.body.appendChild(viewer.element());
+
+        viewer.enqueueToRender();
+        await waitForComponentsToRender(context);
+
+        viewer.view(webkit, '210948', '210950');
+        await waitForComponentsToRender(context);
+        expect(viewer.content('spinner-container').offsetHeight).to.not.be(0);
+        expect(viewer.content('commits-list').matches(':empty')).to.be(true);
+        expect(viewer.content('repository-name').matches(':empty')).to.be(false);
+        expect(viewer.content('repository-name').textContent).to.contain('WebKit');
+        expect(requests.length).to.be(2);
+        expect(requests[0].url).to.be('/api/commits/1/?precedingRevision=210948&lastRevision=210950');
+        expect(requests[1].url).to.be('/api/commits/1/210948');
+        requests[0].resolve({
+            "status": "OK",
+            "commits": [webkitCommit210949, webkitCommit210950WithRevisionIdentifier],
+        });
+
+        requests[1].resolve({
+            "status": "OK",
+            "commits": [webkitCommit210948],
+        });
+
+        await requests[0].promise;
+        await requests[1].promise;
+        await waitForComponentsToRender(context);
+        expect(viewer.content('spinner-container').offsetHeight).to.be(0);
+        expect(viewer.content('commits-list').matches(':empty')).to.be(false);
+        expect(viewer.content('commits-list').textContent).to.contain('184278@main (r210950)');
+        expect(viewer.content('commits-list').textContent).to.contain('Commit Queue');
+        expect(viewer.content('repository-name').matches(':empty')).to.be(false);
+        expect(viewer.content('repository-name').textContent).to.contain('WebKit');
+        expect(viewer.content('commits-list').querySelector('a')).to.be(null);
     });
 
 });

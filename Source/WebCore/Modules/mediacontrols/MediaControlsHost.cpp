@@ -45,6 +45,7 @@
 #include "FloatRect.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElement.h"
+#include "HTMLVideoElement.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControlTextTrackContainerElement.h"
@@ -55,6 +56,7 @@
 #include "RenderTheme.h"
 #include "TextTrack.h"
 #include "TextTrackList.h"
+#include "UserGestureIndicator.h"
 #include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/CompletionHandler.h>
@@ -265,7 +267,7 @@ bool MediaControlsHost::isInMediaDocument() const
 
 bool MediaControlsHost::userGestureRequired() const
 {
-    return m_mediaElement && !m_mediaElement->mediaSession().playbackPermitted();
+    return m_mediaElement && !m_mediaElement->mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
 }
 
 bool MediaControlsHost::shouldForceControlsDisplay() const
@@ -500,7 +502,18 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     constexpr auto invalidMenuItemIdentifier = ContextMenuItemTagNoAction;
 #endif
 
-    using MenuData = Variant<RefPtr<AudioTrack>, RefPtr<TextTrack> MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData>;
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    enum class PictureInPictureTag { IncludePictureInPicture };
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+
+    using MenuData = Variant<
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+        PictureInPictureTag,
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
+        RefPtr<AudioTrack>,
+        RefPtr<TextTrack>
+        MediaControlsHostAdditions_showMediaControlsContextMenu_MenuData
+    >;
     HashMap<MenuItemIdentifier, MenuData> idMap;
 
     auto createSubmenu = [] (const String& title, const String& icon, Vector<MenuItem>&& children) -> MenuItem {
@@ -512,18 +525,27 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #endif
     };
 
-    auto createMenuItem = [&] (MenuData data, const String& title, bool checked = false) -> MenuItem {
+    auto createMenuItem = [&] (MenuData data, const String& title, bool checked = false, const String& icon = nullString()) -> MenuItem {
         auto id = idMap.size() + 1;
         idMap.add(id, data);
 
 #if USE(UICONTEXTMENU)
-        return { id, title, /* icon */ nullString(), checked, /* children */ { } };
+        return { id, title, icon, checked, /* children */ { } };
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
+        UNUSED_PARAM(icon);
         return { CheckableActionType, static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id), title, /* enabled */ true, checked };
 #endif
     };
 
     Vector<MenuItem> items;
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    if (optionsJSONObject->getBoolean("includePictureInPicture"_s).valueOr(false)) {
+        ASSERT(is<HTMLVideoElement>(mediaElement));
+        ASSERT(downcast<HTMLVideoElement>(mediaElement).webkitSupportsPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture));
+        items.append(createMenuItem(PictureInPictureTag::IncludePictureInPicture, WEB_UI_STRING_KEY("Picture in Picture", "Picture in Picture (Media Controls Menu)", "Picture in Picture media controls context menu title"), false, "pip.enter"_s));
+    }
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
 
     if (optionsJSONObject->getBoolean("includeLanguages"_s).valueOr(false)) {
         if (auto* audioTracks = mediaElement.audioTracks(); audioTracks && audioTracks->length() > 1) {
@@ -601,8 +623,16 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 
         auto& mediaElement = *weakMediaElement;
 
+        UserGestureIndicator gestureIndicator(ProcessingUserGesture, &mediaElement.document());
+
         auto selectedItem = idMap.get(selectedItemID);
         WTF::switchOn(selectedItem,
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+            [&] (PictureInPictureTag) {
+                // Media controls are not shown when in PiP so we can assume that we're not in PiP.
+                downcast<HTMLVideoElement>(mediaElement).webkitSetPresentationMode(HTMLVideoElement::VideoPresentationMode::PictureInPicture);
+            },
+#endif // ENABLE(VIDEO_PRESENTATION_MODE)
             [&] (RefPtr<AudioTrack>& selectedAudioTrack) {
                 for (auto& track : idMap.values()) {
                     if (auto* audioTrack = WTF::get_if<RefPtr<AudioTrack>>(track))

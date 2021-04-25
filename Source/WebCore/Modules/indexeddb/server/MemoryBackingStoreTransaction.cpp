@@ -26,8 +26,6 @@
 #include "config.h"
 #include "MemoryBackingStoreTransaction.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyRangeData.h"
 #include "IDBValue.h"
 #include "IndexedDB.h"
@@ -292,5 +290,3 @@ void MemoryBackingStoreTransaction::finish()
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

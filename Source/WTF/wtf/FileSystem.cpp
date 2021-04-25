@@ -27,6 +27,7 @@
 #include "config.h"
 #include <wtf/FileSystem.h>
 
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/FileMetadata.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Scope.h>
@@ -322,9 +323,8 @@ bool MappedFileData::mapFileHandle(PlatformFileHandle handle, FileOpenMode openM
         return false;
     }
 
-    if (!size) {
+    if (!size)
         return true;
-    }
 
     int pageProtection = PROT_READ;
     switch (openMode) {
@@ -411,6 +411,102 @@ String createTemporaryZipArchive(const String&)
     return { };
 }
 #endif
+
+#if !PLATFORM(COCOA) && !OS(WINDOWS)
+bool deleteNonEmptyDirectory(const String& path)
+{
+    auto entries = listDirectory(path, "*"_s);
+    for (auto& entry : entries) {
+        if (fileIsDirectory(entry, ShouldFollowSymbolicLinks::No))
+            deleteNonEmptyDirectory(entry);
+        else
+            deleteFile(entry);
+    }
+    return deleteEmptyDirectory(path);
+}
+#endif
+
+MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(const uint8_t*, size_t)>&)>&& apply, PlatformFileHandle* outputHandle)
+{
+    constexpr bool failIfFileExists = true;
+    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::ReadWrite, FileSystem::FileAccessPermission::User, failIfFileExists);
+    if (!FileSystem::isHandleValid(handle) || !FileSystem::truncateFile(handle, bytesSize)) {
+        FileSystem::closeFile(handle);
+        return { };
+    }
+
+    FileSystem::makeSafeToUseMemoryMapForPath(path);
+    bool success;
+    FileSystem::MappedFileData mappedFile(handle, FileSystem::FileOpenMode::ReadWrite, FileSystem::MappedFileMode::Shared, success);
+    if (!success) {
+        FileSystem::closeFile(handle);
+        return { };
+    }
+
+    void* map = const_cast<void*>(mappedFile.data());
+    uint8_t* mapData = static_cast<uint8_t*>(map);
+
+    apply([&mapData](const uint8_t* chunk, size_t chunkSize) {
+        memcpy(mapData, chunk, chunkSize);
+        mapData += chunkSize;
+        return true;
+    });
+
+#if OS(WINDOWS)
+    DWORD oldProtection;
+    VirtualProtect(map, bytesSize, FILE_MAP_READ, &oldProtection);
+    FlushViewOfFile(map, bytesSize);
+#else
+    // Drop the write permission.
+    mprotect(map, bytesSize, PROT_READ);
+
+    // Flush (asynchronously) to file, turning this into clean memory.
+    msync(map, bytesSize, MS_ASYNC);
+#endif
+
+    if (outputHandle)
+        *outputHandle = handle;
+    else
+        FileSystem::closeFile(handle);
+
+    return mappedFile;
+}
+
+static Salt makeSalt()
+{
+    Salt salt;
+    static_assert(salt.size() == 8, "Salt size");
+    *reinterpret_cast<uint32_t*>(&salt[0]) = cryptographicallyRandomNumber();
+    *reinterpret_cast<uint32_t*>(&salt[4]) = cryptographicallyRandomNumber();
+    return salt;
+}
+
+Optional<Salt> readOrMakeSalt(const String& path)
+{
+    if (FileSystem::fileExists(path)) {
+        auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
+        Salt salt;
+        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, reinterpret_cast<char*>(salt.data()), salt.size()));
+        FileSystem::closeFile(file);
+        if (bytesRead == salt.size())
+            return salt;
+
+        FileSystem::deleteFile(path);
+    }
+
+    Salt salt = makeSalt();
+    FileSystem::makeAllDirectories(FileSystem::directoryName(path));
+    auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Write, FileSystem::FileAccessPermission::User);
+    if (!FileSystem::isHandleValid(file))
+        return { };
+
+    bool success = static_cast<std::size_t>(FileSystem::writeToFile(file, reinterpret_cast<char*>(salt.data()), salt.size())) == salt.size();
+    FileSystem::closeFile(file);
+    if (!success)
+        return { };
+
+    return salt;
+}
 
 } // namespace FileSystemImpl
 } // namespace WTF

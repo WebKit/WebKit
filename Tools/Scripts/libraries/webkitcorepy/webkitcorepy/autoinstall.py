@@ -232,9 +232,10 @@ class Package(object):
         if self.is_cached():
             return
 
-        # Make sure that setuptools and wheel are installed, since setup.py relies on it
-        if self.name not in ['setuptools', 'wheel']:
+        # Make sure that setuptools, setuptools_scm and wheel are installed, since setup.py relies on it
+        if self.name not in ['setuptools', 'setuptools_scm', 'wheel']:
             AutoInstall.install('setuptools')
+            AutoInstall.install('setuptools_scm')
             AutoInstall.install('wheel')
 
         # In some cases a package may check if another package is installed without actually

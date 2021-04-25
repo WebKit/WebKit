@@ -438,10 +438,7 @@ LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const Inline
         }
         if (!isFormattingContextRootCandidateToTextIndent)
             return { };
-        auto invertLineRange = false;
-#if ENABLE(CSS3_TEXT)
-        invertLineRange = root.style().textIndentType() == TextIndentType::Hanging;
-#endif
+        auto invertLineRange = root.style().textIndentType() == TextIndentType::Hanging;
         // text-indent: hanging inverts which lines are affected.
         // inverted line range -> all the lines except the first one.
         // !inverted line range -> first line gets the indent.

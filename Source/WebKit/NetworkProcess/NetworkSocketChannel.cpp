@@ -36,9 +36,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier)
+std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID)
 {
-    auto result = makeUnique<NetworkSocketChannel>(connection, connection.networkProcess().networkSession(sessionID), request, protocol, identifier);
+    auto result = makeUnique<NetworkSocketChannel>(connection, connection.networkProcess().networkSession(sessionID), request, protocol, identifier, webPageProxyID);
     if (!result->m_socket) {
         result->didClose(0, "Cannot create a web socket task"_s);
         return nullptr;
@@ -46,18 +46,19 @@ std::unique_ptr<NetworkSocketChannel> NetworkSocketChannel::create(NetworkConnec
     return result;
 }
 
-NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier)
+NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connection, NetworkSession* session, const ResourceRequest& request, const String& protocol, WebSocketIdentifier identifier, WebPageProxyIdentifier webPageProxyID)
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
     , m_session(makeWeakPtr(session))
     , m_errorTimer(*this, &NetworkSocketChannel::sendDelayedError)
+    , m_webPageProxyID(webPageProxyID)
 {
     if (!m_session)
         return;
 
-    m_socket = m_session->createWebSocketTask(*this, request, protocol);
+    m_socket = m_session->createWebSocketTask(webPageProxyID, *this, request, protocol);
     if (m_socket) {
-        m_session->addWebSocketTask(*m_socket);
+        m_session->addWebSocketTask(webPageProxyID, *m_socket);
         m_socket->resume();
     }
 }
@@ -65,7 +66,7 @@ NetworkSocketChannel::NetworkSocketChannel(NetworkConnectionToWebProcess& connec
 NetworkSocketChannel::~NetworkSocketChannel()
 {
     if (m_session)
-        m_session->removeWebSocketTask(*m_socket);
+        m_session->removeWebSocketTask(m_webPageProxyID, *m_socket);
 
     if (m_socket)
         m_socket->cancel();

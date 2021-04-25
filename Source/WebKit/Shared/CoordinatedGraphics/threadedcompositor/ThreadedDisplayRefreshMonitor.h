@@ -57,9 +57,13 @@ public:
 private:
     ThreadedDisplayRefreshMonitor(WebCore::PlatformDisplayID, Client&);
 
+    bool startNotificationMechanism() final { return true; }
+    void stopNotificationMechanism() final { }
+
     void displayRefreshCallback();
     RunLoop::Timer<ThreadedDisplayRefreshMonitor> m_displayRefreshTimer;
     Client* m_client;
+    WebCore::DisplayUpdate m_currentUpdate;
 };
 
 } // namespace WebKit

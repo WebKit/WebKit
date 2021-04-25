@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
+import contextlib
 import io
 import time
 
@@ -29,7 +30,7 @@ from resultsdbpy.model.configuration_context_unittest import ConfigurationContex
 from resultsdbpy.model.model import Model
 from resultsdbpy.model.repository import StashRepository, WebKitRepository
 
-from webkitscmpy import mocks
+from webkitscmpy import mocks, Commit
 
 
 class MockModelFactory(object):
@@ -65,16 +66,44 @@ class MockModelFactory(object):
         return mocks.remote.BitBucket(remote='bitbucket.example.com/projects/SAFARI/repos/safari')
 
     @classmethod
+    @contextlib.contextmanager
     def webkit(cls):
-        return mocks.remote.Svn(remote='svn.webkit.org/repository/webkit')
+        svn = mocks.remote.Svn(remote='svn.webkit.org/repository/webkit')
+        github = mocks.remote.GitHub(remote='github.com/WebKit/WebKit', git_svn=True)
+        github.commits = {}
+
+        for branch, commits in svn.commits.items():
+            if 'tag' in branch:
+                continue
+            if branch == 'trunk':
+                branch = 'main'
+            github.commits[branch] = []
+
+            for commit in commits:
+                github.commits[branch].append(Commit(
+                    repository_id=commit.repository_id,
+                    branch=branch,
+                    author=commit.author,
+                    message=commit.message,
+                    timestamp=commit.timestamp,
+                    order=commit.order,
+                    identifier=commit.identifier,
+                    branch_point=commit.branch_point,
+                    revision=commit.revision,
+                    hash=commit.hash,
+                ))
+
+        with svn, github:
+            yield github
 
     @classmethod
     def create(cls, redis, cassandra, async_processing=False):
         oldest_commit = time.time()
-        for repo in [cls.safari(), cls.webkit()]:
-            for commits in repo.commits.values():
-                for commit in commits:
-                    oldest_commit = min(oldest_commit, commit.timestamp)
+        with cls.safari() as safari, cls.webkit() as webkit:
+            for repo in [safari, webkit]:
+                for commits in repo.commits.values():
+                    for commit in commits:
+                        oldest_commit = min(oldest_commit, commit.timestamp)
 
         model = Model(
             redis=redis,
@@ -93,7 +122,7 @@ class MockModelFactory(object):
                     for branch, commits in repository.commits.items():
                         for commit in commits:
                             model.commit_context.register_partial_commit(
-                                key, hash=commit.hash, revision=commit.revision,
+                                key, hash=commit.hash, revision=commit.revision, fast=False,
                             )
         return model
 

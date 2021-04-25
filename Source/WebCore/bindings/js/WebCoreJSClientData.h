@@ -107,9 +107,8 @@ public:
 #if ENABLE(WEB_AUDIO)
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSAudioWorkletGlobalScope;
 #endif
-#if ENABLE(INDEXED_DATABASE)
     std::unique_ptr<JSC::HeapCellType> m_heapCellTypeForJSIDBSerializationGlobalObject;
-#endif
+
 private:
     JSC::IsoSubspace m_domBuiltinConstructorSpace;
     JSC::IsoSubspace m_domConstructorSpace;
@@ -118,9 +117,7 @@ private:
     JSC::IsoSubspace m_runtimeMethodSpace;
     JSC::IsoSubspace m_runtimeObjectSpace;
     JSC::IsoSubspace m_windowProxySpace;
-#if ENABLE(INDEXED_DATABASE)
     JSC::IsoSubspace m_idbSerializationSpace;
-#endif
     std::unique_ptr<DOMIsoSubspaces> m_subspaces;
     Vector<JSC::IsoSubspace*> m_outputConstraintSpaces;
 };

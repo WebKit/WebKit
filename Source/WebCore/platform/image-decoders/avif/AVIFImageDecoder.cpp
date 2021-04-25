@@ -39,9 +39,10 @@ AVIFImageDecoder::~AVIFImageDecoder() = default;
 
 RepetitionCount AVIFImageDecoder::repetitionCount() const
 {
-    // FIXME: Repetition of avifs is tricky. We deal with it in webkit.org/b/223127
-    // To make the animation tests reliable, we animate avifs one time for now.
-    return RepetitionCountOnce;
+    if (failed() || m_frameCount <= 1)
+        return RepetitionCountOnce;
+
+    return m_repetitionCount ? m_repetitionCount : RepetitionCountInfinite;
 }
 
 size_t AVIFImageDecoder::findFirstRequiredFrameToDecode(size_t frameIndex)
@@ -106,6 +107,11 @@ void AVIFImageDecoder::tryDecodeSize(bool allDataReceived)
     m_reader->parseHeader(*m_data, allDataReceived);
 
     m_frameCount = m_reader->imageCount();
+
+    // FIXME: The avif sequence image can repeat for non-integer times (e.g., 2.5 times)
+    // but ScalableImageDecoder accepts an integer only for the repetition count.
+    // https://github.com/AOMediaCodec/av1-avif/issues/73
+    m_repetitionCount = static_cast<RepetitionCount>(std::round(m_reader->repetitionCount()));
 }
 
 void AVIFImageDecoder::decode(size_t frameIndex, bool allDataReceived)

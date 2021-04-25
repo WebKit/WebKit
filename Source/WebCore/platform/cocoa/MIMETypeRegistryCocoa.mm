@@ -29,17 +29,19 @@
 
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <wtf/RobinHoodHashMap.h>
+#import <wtf/RobinHoodHashSet.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebCore {
 
-static HashMap<String, HashSet<String>>& extensionsForMIMETypeMap()
+static MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRobinHoodHashSet<String>>& extensionsForMIMETypeMap()
 {
     static auto extensionsForMIMETypeMap = makeNeverDestroyed([] {
-        HashMap<String, HashSet<String>> map;
+        MemoryCompactLookupOnlyRobinHoodHashMap<String, MemoryCompactLookupOnlyRobinHoodHashSet<String>> map;
 
         auto addExtension = [&](const String& type, const String& extension) {
-            map.add(type, HashSet<String>()).iterator->value.add(extension);
+            map.add(type, MemoryCompactLookupOnlyRobinHoodHashSet<String>()).iterator->value.add(extension);
         };
 
         auto addExtensions = [&](const String& type, NSArray<NSString *> *extensions) {

@@ -148,7 +148,7 @@ static int synthesizedBaselineFromContentBox(const RenderBox& box, LineDirection
     return direction == HorizontalLine ? box.borderTop() + box.paddingTop() + box.contentHeight() : box.borderRight() + box.paddingRight() + box.contentWidth();
 }
 
-int RenderButton::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
+LayoutUnit RenderButton::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
 {
     // We cannot rely on RenderFlexibleBox::baselinePosition() because of flexboxes have some special behavior
     // regarding baselines that shouldn't apply to buttons.

@@ -1,3 +1,1854 @@
+2021-04-05  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (r275358): [ iOS wk2 ] media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls.html is a constant text failure
+        https://bugs.webkit.org/show_bug.cgi?id=224130
+        <rdar://problem/76164289>
+
+        Unreviewed test fix.
+
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls-expected.txt:
+        Set a `maximumRightContainerButtonCountOverride` so that the collapsing behavior of the
+        overflow button doesn't affect the test (and force a layout to ensure it's picked up).
+
+2021-04-05  Christopher Reid  <chris.reid@sony.com>
+
+        [WinCairo] Enable Service Worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=223591
+
+        Reviewed by Fujii Hironori.
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2021-04-02  Amir Mark Jr  <amir_mark@apple.com>
+
+        [ MacOS ] media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=224123
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove [Replaceable] extended attribute from `document.all`
+        https://bugs.webkit.org/show_bug.cgi?id=223883
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/undetectable-document-all-expected.txt:
+        * fast/dom/undetectable-document-all.html:
+        * platform/gtk/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk1/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/mac-wk2/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/idlharness.https-expected.txt:
+
+2021-04-02  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS Debug] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html is a flakey crash and failure
+        https://bugs.webkit.org/show_bug.cgi?id=222750
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-04-02  Robert Jenner  <jenner@apple.com>
+
+        [ EWS iOS wk2 ] css2.1/20110323/replaced-intrinsic-ratio-001.htm is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=224121
+
+        Uneviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updated test expectations to Pass Failure because it was slowing down EWS. Keeping expectation while test is reviewed.
+
+2021-04-02  Zalan Bujtas  <zalan@apple.com>
+
+        [AspectRatio] Out-of-flow box with intrinsic width (e.g. <img>) may trigger infinite recursion
+        https://bugs.webkit.org/show_bug.cgi?id=224113
+
+        Reviewed by Rob Buis.
+
+        * fast/replaced/infinite-recursion-with-intrinsic-width-expected.txt: Added.
+        * fast/replaced/infinite-recursion-with-intrinsic-width.html: Added.
+
+2021-04-02  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/referrer-policy convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223234
+        <rdar://problem/75460136>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cache/resources/svg-defs-vary.py:
+        * http/tests/css/resources/webfont-request.py:
+        (get_request_count):
+        (set_request_count):
+        (getRequestCount): Deleted.
+        (setRequestCount): Deleted.
+        * http/tests/eventsource/resources/status-codes.py:
+        * http/tests/misc/resources/dns-prefetch-control.py:
+        * http/tests/misc/resources/protected/protected-image.py:
+        * http/tests/navigation/ping-attribute/resources/utilities.js:
+        (clearLastPingResultAndRunTest):
+        * http/tests/navigation/resources/post-goback-same-url.py:
+        * http/tests/navigation/resources/randomredirects/randomredirect.py:
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/no-referrer-when-downgrade/same-origin.html:
+        * http/tests/referrer-policy-anchor/no-referrer/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/no-referrer/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/no-referrer/same-origin.html:
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/same-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/same-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/same-origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/strict-origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/strict-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/strict-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/strict-origin/same-origin.html:
+        * http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http-http.html:
+        * http/tests/referrer-policy-anchor/unsafe-url/cross-origin-http.https.html:
+        * http/tests/referrer-policy-anchor/unsafe-url/same-origin.html:
+        * http/tests/referrer-policy-img/no-referrer-when-downgrade/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/no-referrer-when-downgrade/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/no-referrer-when-downgrade/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/no-referrer-when-downgrade/same-origin.html:
+        * http/tests/referrer-policy-img/no-referrer/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/no-referrer/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/no-referrer/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/no-referrer/same-origin.html:
+        * http/tests/referrer-policy-img/origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/origin-when-cross-origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-img/origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/origin/same-origin.html:
+        * http/tests/referrer-policy-img/same-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/same-origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/same-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/same-origin/same-origin.html:
+        * http/tests/referrer-policy-img/strict-origin-when-cross-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/strict-origin-when-cross-origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/strict-origin-when-cross-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/strict-origin-when-cross-origin/same-origin.html:
+        * http/tests/referrer-policy-img/strict-origin/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/strict-origin/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/strict-origin/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/strict-origin/same-origin.html:
+        * http/tests/referrer-policy-img/unsafe-url/cross-origin-http-http.html:
+        * http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https-expected.txt:
+        * http/tests/referrer-policy-img/unsafe-url/cross-origin-http.https.html:
+        * http/tests/referrer-policy-img/unsafe-url/same-origin.html:
+        * http/tests/referrer-policy/resources/check-referrer.php: Removed.
+        * http/tests/referrer-policy/resources/check-referrer.py: Added.
+        * http/tests/referrer-policy/resources/image.php: Removed.
+        * http/tests/referrer-policy/resources/image.py: Added.
+        * http/tests/referrer-policy/resources/script.php: Removed.
+        * http/tests/referrer-policy/resources/script.py: Added.
+        * http/tests/security/xssAuditor/resources/tag-with-pause.py:
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.php.json: Removed.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies-worker.py.json: Added.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies.php.json: Removed.
+        * http/tests/websocket/tests/hybi/contentextensions/block-cookies.py.json: Added.
+        * imported/blink/http/tests/misc/input-image-fallback-content-crash.html:
+        * resources/js-test.js:
+        (downgradeReferrerCallback):
+
+2021-04-02  Aditya Keerthi  <akeerthi@apple.com>
+
+        Do not paint native decorations for search fields without '-webkit-appearance: searchfield'
+        https://bugs.webkit.org/show_bug.cgi?id=223946
+        <rdar://problem/75621365>
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined tests to account for the removal of the native decoration
+        when a different -webkit-appearance is specified on a search field.
+
+        * platform/ios/fast/css/input-search-padding-expected.txt:
+        * platform/mac/fast/css/text-input-with-webkit-border-radius-expected.txt:
+
+2021-04-02  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: textRectsFromMarkers always fails
+        https://bugs.webkit.org/show_bug.cgi?id=223556
+        <rdar://74256003>
+
+        Reviewed by Zalan Bujtas.
+
+        * accessibility/ios-simulator/text-rects-for-range-matches-expected.txt: Added.
+        * accessibility/ios-simulator/text-rects-for-range-matches.html: Added.
+
+2021-04-02  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/multipart convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223475
+        <rdar://problem/75587716>
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/multipart/invalid-image-data-standalone.html:
+        * http/tests/multipart/invalid-image-data.html:
+        * http/tests/multipart/multipart-async-image.html:
+        * http/tests/multipart/multipart-image.html:
+        * http/tests/multipart/resources/multipart.php: Removed.
+        * http/tests/multipart/resources/multipart.py: Added.
+        (send_part):
+        * http/tests/multipart/stop-crash.html:
+
+2021-04-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of flaky tests
+
+        Unreviewed gardening.
+
+        Update list of flaky tests.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2021-04-02  Chris Lord  <clord@igalia.com>
+
+        Implement text rendering on OffscreenCanvas in a Worker
+        https://bugs.webkit.org/show_bug.cgi?id=202793
+
+        Reviewed by Darin Adler.
+
+        Adjust expectations for manual OffscreenCanvas worker text test.
+
+        * platform/glib/TestExpectations:
+
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
+        No audio output when unplugged wired headset during a call
+        https://bugs.webkit.org/show_bug.cgi?id=216389
+        <rdar://problem/68692800>
+
+        Reviewed by Eric Carlson.
+
+        * fast/mediastream/MediaStream-video-element-change-audio-route-expected.txt: Added.
+        * fast/mediastream/MediaStream-video-element-change-audio-route.html: Added.
+
+2021-04-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] align-content issues
+        https://bugs.webkit.org/show_bug.cgi?id=221468
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix the relative path to a stylesheet in 4 expected results. The tests were working as expected
+        but the expected results were wrong without those CSS rules.
+
+        * TestExpectations: Unskip 4 tests that should be passing now.
+
+2021-04-02  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r268176): [GStreamer] media/video-orientation-canvas.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223850
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/gtk/TestExpectations: Unflag now-passing test.
+
+2021-04-02  Youenn Fablet  <youenn@apple.com>
+
+        Bail out early if encoded frame is written twice
+        https://bugs.webkit.org/show_bug.cgi?id=224041
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/write-twice-transform-expected.txt: Added.
+        * http/wpt/webrtc/write-twice-transform.html: Added.
+        * http/wpt/webrtc/write-twice-transform.js: Added.
+        (onrtctransform.process):
+        (onrtctransform):
+
+2021-04-01  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/cache convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222935
+        <rdar://problem/75183314>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cache/cache-redirections.html:
+        * http/tests/cache/resources/cache-control-redirect.php: Removed.
+        * http/tests/cache/resources/cache-control-redirect.py: Added.
+        * http/tests/cache/resources/permanent-redirect.php: Removed.
+        * http/tests/cache/resources/x-frame-options.php: Removed.
+        * http/tests/cache/resources/x-frame-options.py: Added.
+        * http/tests/cache/x-frame-options-304.html:
+        * http/tests/navigation/window-open-redirect-and-remove-opener.html:
+        * http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash.html:
+
+2021-04-01  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/history convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222614
+        <rdar://problem/74946423>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/history/back-to-post.php: Removed.
+        * http/tests/history/back-to-post.py: Added.
+        * http/tests/history/back-with-fragment-change-expected.txt:
+        * http/tests/history/back-with-fragment-change.php: Removed.
+        * http/tests/history/back-with-fragment-change.py: Added.
+        * http/tests/history/resources/back-during-onload-hung-page.php: Removed.
+        * http/tests/history/resources/back-during-onload-hung-page.py: Added.
+        * http/tests/history/resources/back-during-onload-middle.html:
+        * http/tests/navigation/resources/back-twice-page-2.html:
+        * platform/glib/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
+2021-04-01  Robert Jenner  <jenner@apple.com>
+
+        inspector/animation/lifecycle-css-transition.html is a flakey timeout on EWS
+        https://bugs.webkit.org/show_bug.cgi?id=222195
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Removing test expectations to see if it is still an issue on EWS.
+
+2021-04-01  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION (r275358): [ macOS ] 2X media/modern-media-controls layout-tests are text failing
+        https://bugs.webkit.org/show_bug.cgi?id=224061
+        <rdar://problem/76115550>
+
+        Unreviewed test fix.
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls-expected.txt:
+        Set a `maximumRightContainerButtonCountOverride` so that the collapsing behavior of the
+        overflow button doesn't affect the test (and force a layout to ensure it's picked up).
+
+2021-04-01  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur Wk1 Release] webanimations/accelerated* tests are flaky image failing
+        https://bugs.webkit.org/show_bug.cgi?id=224066
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-04-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274381.
+        https://bugs.webkit.org/show_bug.cgi?id=224080
+
+        Caused stuttery select scrolling
+
+        Reverted changeset:
+
+        "Add basic (non-momentum) wheel event handling for scroll
+        snap"
+        https://bugs.webkit.org/show_bug.cgi?id=222594
+        https://trac.webkit.org/changeset/274381
+
+2021-04-01  Chris Gambrell  <cgambrell@apple.com>
+
+        LayoutTests] Convert http/tests/download convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222618
+        <rdar://problem/74949253>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/download/default-encoding-expected.txt:
+        * http/tests/download/default-encoding.html:
+        * http/tests/download/inherited-encoding-expected.txt:
+        * http/tests/download/inherited-encoding-form-submission-result-expected.txt:
+        * http/tests/download/inherited-encoding-form-submission-result.html:
+        * http/tests/download/inherited-encoding.html:
+        * http/tests/download/literal-utf-8-expected.txt:
+        * http/tests/download/literal-utf-8.html:
+        * http/tests/download/resources/literal-koi8-r.php: Removed.
+        * http/tests/download/resources/literal-koi8-r.py: Added.
+        * http/tests/download/resources/literal-utf-8.php: Removed.
+        * http/tests/download/resources/literal-utf-8.py: Added.
+
+2021-04-01  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of layout tests.
+
+        Unreviewed gardening.
+
+        Report and mark new failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2021-04-01  Chris Gambrell  <cgambrell@apple.com>
+
+        Flaky LayoutTests in http/tests/appcache
+        https://bugs.webkit.org/show_bug.cgi?id=224054
+        <rdar://problem/76108352>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/appcache/fail-on-update-2.html:
+        * http/tests/appcache/fail-on-update.html:
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest.py:
+        * http/tests/appcache/resources/abort-cache-ondownloading.text.py:
+        * http/tests/appcache/resources/not-exist.vob.py:
+
+2021-04-01  Mark Lam  <mark.lam@apple.com>
+
+        Fix some missing exception checks in HTMLMediaElement methods.
+        https://bugs.webkit.org/show_bug.cgi?id=224038
+        rdar://69573092
+
+        Reviewed by Eric Carlson.
+
+        * media/missing-exception-checks-in-HTMLMediaElement-methods-expected.txt: Added.
+        * media/missing-exception-checks-in-HTMLMediaElement-methods.html: Added.
+
+2021-04-01  Devin Rousso  <drousso@apple.com>
+
+        Limit the number of buttons shown in media controls
+        https://bugs.webkit.org/show_bug.cgi?id=223909
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-containers-styles-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-buttons-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls-expected.txt:
+
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor.html:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin.html: Removed.
+        * media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-right-container-margin-expected.txt: Removed.
+        macOS fullscreen controls don't adjust the `buttonMargin` anymore as buttons are moved into
+        the overflow menu instead.
+
+        * media/modern-media-controls/tracks-support/auto-text-track.html:
+        * media/modern-media-controls/tracks-support/click-track-in-contextmenu.html:
+        * media/modern-media-controls/tracks-support/hidden-tracks.html:
+        * media/modern-media-controls/tracks-support/off-text-track.html:
+        * media/modern-media-controls/tracks-support/show-contextmenu-then-double-click-on-tracks-button.html:
+        * media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html:
+        Override the default maximum right container button count so that the tracks button is shown.
+
+2021-04-01  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r275295.
+        https://bugs.webkit.org/show_bug.cgi?id=224046
+
+        Broken 3 layout tests on wk1
+
+        Reverted changeset:
+
+        "[LayoutTests] Convert http/tests/download convert PHP to
+        Python"
+        https://bugs.webkit.org/show_bug.cgi?id=222618
+        https://trac.webkit.org/changeset/275295
+
+2021-04-01  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] '-webkit-appearance: none' is not respected for searchfield decorations
+        https://bugs.webkit.org/show_bug.cgi?id=224018
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined tests to account for the change to the way we paint
+        searchfield decorations on iOS. Added a new test to verify that
+        '-webkit-appearance: none' is respected.
+
+        * fast/forms/ios/form-control-refresh/search/search-decoration-appearance-expected-mismatch.html: Added.
+        * fast/forms/ios/form-control-refresh/search/search-decoration-appearance.html: Added.
+        * platform/ios-simulator/fast/forms/datalist/datalist-searchinput-appearance-expected.txt:
+        * platform/ios/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/ios/fast/css/input-search-padding-expected.txt:
+        * platform/ios/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/ios/fast/css/text-overflow-input-expected.txt:
+        * platform/ios/fast/forms/box-shadow-override-expected.txt:
+        * platform/ios/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/ios/fast/forms/input-appearance-height-expected.txt:
+        * platform/ios/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/ios/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/ios/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/ios/fast/forms/search-input-rtl-expected.txt:
+        * platform/ios/fast/forms/search-styled-expected.txt:
+        * platform/ios/fast/replaced/width100percent-searchfield-expected.txt:
+
+2021-04-01  Rob Buis  <rbuis@igalia.com>
+
+        Use Element for checking Settings in CSSComputedStyleDeclaration
+        https://bugs.webkit.org/show_bug.cgi?id=223598
+
+        Reviewed by Darin Adler.
+
+        Adapt tests to verify that non-rendered elements do not expose
+        contain/aspect-ratio when these features are disabled.
+        Add tests for rotate, scale and translate as well.
+
+        * fast/css/aspect-ratio-invalidate-if-disabled-expected.txt:
+        * fast/css/aspect-ratio-invalidate-if-disabled.html:
+        * fast/css/contain-invalidate-if-disabled-expected.txt:
+        * fast/css/contain-invalidate-if-disabled.html:
+        * fast/css/overscroll-behavior-invalidate-if-disabled-expected.txt:
+        * fast/css/overscroll-behavior-invalidate-if-disabled.html:
+        * fast/css/rotate-invalidate-if-disabled-expected.txt: Added.
+        * fast/css/rotate-invalidate-if-disabled.html: Added.
+        * fast/css/scale-invalidate-if-disabled-expected.txt: Added.
+        * fast/css/scale-invalidate-if-disabled.html: Added.
+        * fast/css/translate-invalidate-if-disabled-expected.txt: Added.
+        * fast/css/translate-invalidate-if-disabled.html: Added.
+        * platform/win/TestExpectations:
+
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
+        [ Debug wk2 ] ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData)
+        https://bugs.webkit.org/show_bug.cgi?id=223750
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Adding the Failure back to the test expectations that I removed during the prior update.
+
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
+        ASSERTION FAILED: CustomElementReactionDisallowedScope::isReactionAllowed() ./dom/CustomElementReactionQueue.cpp(175) : static void WebCore::CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(WebCore::Element &)
+        https://bugs.webkit.org/show_bug.cgi?id=224033
+
+        Uneviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations: Updated test expectations while test is reviewed.
+        * platform/mac/TestExpectations:
+
+2021-03-31  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Missing scope release in JSDOMBuiltinConstructorBase
+        https://bugs.webkit.org/show_bug.cgi?id=216851
+        <rdar://problem/69144642>
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/transform-stream-expected.txt: Added.
+        * js/dom/transform-stream.html: Added.
+
+2021-03-31  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/cache convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222935
+        <rdar://problem/75183314>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cache/cache-redirections.html:
+        * http/tests/cache/resources/cache-control-redirect.php: Removed.
+        * http/tests/cache/resources/cache-control-redirect.py: Added.
+        * http/tests/cache/resources/permanent-redirect.php: Removed.
+        * http/tests/cache/resources/x-frame-options.php: Removed.
+        * http/tests/cache/resources/x-frame-options.py: Added.
+        * http/tests/cache/x-frame-options-304.html:
+        * http/tests/navigation/window-open-redirect-and-remove-opener.html:
+        * http/tests/xmlhttprequest/cacheable-cross-origin-redirect-crash.html:
+
+2021-03-31  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/appcache convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221286
+        <rdar://problem/73893844>
+
+        Reviewed by Jonathan Bedard.
+
+        * TestExpectations:
+        * http/tests/appcache/404-resource-with-slow-main-resource.php: Removed.
+        * http/tests/appcache/404-resource-with-slow-main-resource.py: Added.
+        * http/tests/appcache/abort-cache-onchecking-manifest-404.html:
+        * http/tests/appcache/abort-cache-onchecking.html:
+        * http/tests/appcache/access-via-redirect.php: Removed.
+        * http/tests/appcache/access-via-redirect.py: Added.
+        * http/tests/appcache/auth.html:
+        * http/tests/appcache/document-cookie-http-only.php: Removed.
+        * http/tests/appcache/document-cookie-http-only.py: Added.
+        * http/tests/appcache/document-cookie.php: Removed.
+        * http/tests/appcache/document-cookie.py: Added.
+        * http/tests/appcache/fail-on-update-2.html:
+        * http/tests/appcache/fail-on-update.html:
+        * http/tests/appcache/fallback.html:
+        * http/tests/appcache/identifier-test.html:
+        * http/tests/appcache/main-resource-redirect.html:
+        * http/tests/appcache/manifest-redirect-2.html:
+        * http/tests/appcache/manifest-redirect.html:
+        * http/tests/appcache/online-whitelist.html:
+        * http/tests/appcache/remove-cache.html:
+        * http/tests/appcache/resource-redirect-2-expected.txt:
+        * http/tests/appcache/resource-redirect-expected.txt:
+        * http/tests/appcache/resources/abort-cache-onchecking-resource-404.manifest:
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest.php: Removed.
+        * http/tests/appcache/resources/abort-cache-onchecking.manifest.py: Added.
+        * http/tests/appcache/resources/abort-cache-ondownloading.manifest:
+        * http/tests/appcache/resources/abort-cache-ondownloading.text.php: Removed.
+        * http/tests/appcache/resources/abort-cache-ondownloading.text.py: Added.
+        * http/tests/appcache/resources/abort-cache-onprogress.manifest:
+        * http/tests/appcache/resources/access-via-redirect.html:
+        * http/tests/appcache/resources/appcache-cookies-test.html:
+        * http/tests/appcache/resources/auth/iframe.php: Removed.
+        * http/tests/appcache/resources/auth/iframe.py: Added.
+        * http/tests/appcache/resources/auth/manifest.php: Removed.
+        * http/tests/appcache/resources/auth/manifest.py: Added.
+        * http/tests/appcache/resources/auth/setup.php: Removed.
+        * http/tests/appcache/resources/auth/setup.py: Added.
+        * http/tests/appcache/resources/auth/subresource.php: Removed.
+        * http/tests/appcache/resources/auth/subresource.py: Added.
+        * http/tests/appcache/resources/cookie-protected-script.php: Removed.
+        * http/tests/appcache/resources/cookie-protected-script.py: Added.
+        * http/tests/appcache/resources/document-cookie.manifest:
+        * http/tests/appcache/resources/fail-on-update-2.html:
+        * http/tests/appcache/resources/fail-on-update-2.php: Removed.
+        * http/tests/appcache/resources/fail-on-update-2.py: Added.
+        * http/tests/appcache/resources/fail-on-update.php: Removed.
+        * http/tests/appcache/resources/fail-on-update.py: Added.
+        * http/tests/appcache/resources/fallback-redirect.php: Removed.
+        * http/tests/appcache/resources/fallback-redirect.py: Added.
+        * http/tests/appcache/resources/identifier-test-real.php: Removed.
+        * http/tests/appcache/resources/identifier-test-real.py: Added.
+        * http/tests/appcache/resources/identifier-test.php: Removed.
+        * http/tests/appcache/resources/identifier-test.py: Added.
+        * http/tests/appcache/resources/intercept/.htaccess:
+        * http/tests/appcache/resources/main-resource-redirect-frame.php: Removed.
+        * http/tests/appcache/resources/main-resource-redirect-frame.py: Added.
+        * http/tests/appcache/resources/manifest-if-cookie.php: Removed.
+        * http/tests/appcache/resources/manifest-if-cookie.py: Added.
+        * http/tests/appcache/resources/manifest-protected-script.php: Removed.
+        * http/tests/appcache/resources/manifest-redirect-2.php: Removed.
+        * http/tests/appcache/resources/manifest-redirect-2.py: Added.
+        * http/tests/appcache/resources/manifest-redirect.php: Removed.
+        * http/tests/appcache/resources/manifest-redirect.py: Added.
+        * http/tests/appcache/resources/navigating-away-while-cache-attempt-in-progress.manifest:
+        * http/tests/appcache/resources/not-exist.vob.php: Removed.
+        * http/tests/appcache/resources/not-exist.vob.py: Added.
+        * http/tests/appcache/resources/online-allowlist.manifest:
+        * http/tests/appcache/resources/online-allowlist.php: Removed.
+        * http/tests/appcache/resources/online-allowlist.py: Added.
+        * http/tests/appcache/resources/print-uri.php: Removed.
+        * http/tests/appcache/resources/print-uri.py: Added.
+        * http/tests/appcache/resources/remove-cache-frame-2.html:
+        * http/tests/appcache/resources/remove-cache-frame.html:
+        * http/tests/appcache/resources/remove-cache.php: Removed.
+        * http/tests/appcache/resources/remove-cache.py: Added.
+        * http/tests/appcache/resources/resource-redirect-2.manifest:
+        * http/tests/appcache/resources/resource-redirect-2.php: Removed.
+        * http/tests/appcache/resources/resource-redirect-2.py: Added.
+        * http/tests/appcache/resources/resource-redirect.manifest:
+        * http/tests/appcache/resources/resource-redirect.php: Removed.
+        * http/tests/appcache/resources/resource-redirect.py: Added.
+        * http/tests/appcache/resources/scope1/cookie-protected-manifest.php: Removed.
+        * http/tests/appcache/resources/scope1/cookie-protected-manifest.py: Added.
+        * http/tests/appcache/resources/scope2/cookie-protected-script.php: Removed.
+        * http/tests/appcache/resources/scope2/cookie-protected-script.py: Added.
+        * http/tests/appcache/resources/slow-resource.php: Removed.
+        * http/tests/appcache/resources/slow-resource.py: Added.
+        * http/tests/appcache/resources/uncacheable-resource.php: Removed.
+        * http/tests/appcache/resources/uncacheable-resource.py: Added.
+        * http/tests/appcache/resources/update-cache.php: Removed.
+        * http/tests/appcache/resources/update-cache.py: Added.
+        * http/tests/appcache/resources/x-frame-options-prevents-framing-test.html:
+        * http/tests/appcache/update-cache.html:
+        * http/tests/appcache/x-frame-options-prevents-framing-expected.txt:
+        * http/tests/appcache/x-frame-options-prevents-framing.php: Removed.
+        * http/tests/appcache/x-frame-options-prevents-framing.py: Added.
+        * http/tests/resources/portabilityLayer.py:
+        (get_count):
+        (get_state):
+        (set_state):
+        (step_state):
+        (setState): Deleted.
+        (getState): Deleted.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.py:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.py:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.py:
+        * http/tests/xmlhttprequest/resources/access-control-preflight-denied-xsrf.py:
+        * http/tests/xmlhttprequest/resources/no-custom-header.py:
+        * http/tests/xmlhttprequest/resources/redirect-cross-origin-tripmine.py:
+        * http/tests/xmlhttprequest/resources/remember-bad-password/count-failures.py:
+        * platform/ios-wk2/TestExpectations:
+
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
+        [ macOS wk2 ARM64 ] tiled-drawing/top-content-inset-fixed-attachment-cover-local.html is a flakey Image failure
+        https://bugs.webkit.org/show_bug.cgi?id=224032
+
+        Uneviewed test garending.
+
+        * platform/mac-wk2/TestExpectations: Updated test expectations to Pass ImageOnlyFailure while test is reviewed. 
+
+2021-03-31  Peng Liu  <peng.liu6@apple.com>
+
+        [ macOS wk2 ] media/pip-video-going-into-fullscreen.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223762
+
+        Reviewed by Eric Carlson.
+
+        Fix a flaky test related to video fullscreen by:
+        1) Wait for a video presentation mode change to complete before moving to the next step in the test.
+        2) Request the video to exit fullscreen before `endTest()` (to avoid interference with other tests).
+
+        * media/pip-video-going-into-fullscreen-expected.txt:
+        * media/pip-video-going-into-fullscreen.html:
+        * platform/mac-wk2/TestExpectations:
+
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
+        inspector/canvas/console-record-2d.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=219214
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updated test expectations to Pass Timeout while test is reviewed.
+
+2021-03-31  Cameron McCormack  <heycam@apple.com>
+
+        Avoid creating any complex text runs when font-size is zero.
+        https://bugs.webkit.org/show_bug.cgi?id=223983
+
+        Reviewed by Myles C. Maxfield.
+
+        * fast/text/font-size-zero-complex-expected.html: Added.
+        * fast/text/font-size-zero-complex.html: Added.
+
+2021-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception check validation below convertVariadicArguments().
+        https://bugs.webkit.org/show_bug.cgi?id=224027
+        rdar://68912995
+
+        Reviewed by Saam Barati.
+
+        * js/dom/missing-exception-check-in-convertVariadicArguments-expected.txt: Added.
+        * js/dom/missing-exception-check-in-convertVariadicArguments.html: Added.
+
+2021-03-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        REGRESSION (Metal ANGLE): [Catalina] 6 consistent WebGL failures / timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=224016
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Mark tests as failing / skipped.
+
+2021-03-31  Venky Dass  <yaranamavenkataramana@apple.com>
+
+        Null pointer access crash in WebCore::makeBoundaryPoint(..)
+        https://bugs.webkit.org/show_bug.cgi?id=223977
+
+        Reviewed by Darin Adler.
+
+        Adding a refression test case.
+
+        * editing/inserting/crash-make-boundary-point-expected.txt: Added.
+        * editing/inserting/crash-make-boundary-point.html: Added.
+
+2021-03-31  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/contentextensions convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223891
+        <rdar://problem/75965634>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/contentextensions/block-cookies-basic.html:
+        * http/tests/contentextensions/block-cookies-basic.html.json:
+        * http/tests/contentextensions/block-cookies-in-image-load-in-onunload.html:
+        * http/tests/contentextensions/block-cookies-in-ping.html:
+        * http/tests/contentextensions/block-cookies-send.html:
+        * http/tests/contentextensions/resources/save_ping.py:
+        (not_being_called):
+        * http/tests/cookies/cookie-with-multiple-level-path.html:
+        * http/tests/cookies/document-cookie-after-showModalDialog.html:
+        * http/tests/cookies/document-cookie-during-iframe-parsing.html:
+        * http/tests/cookies/only-accept-first-party-cookies.html:
+        * http/tests/cookies/resources/cookie-utilities.js:
+        * http/tests/cookies/resources/cookie-utility.php: Removed.
+        * http/tests/cookies/resources/cookie-utility.py: Added.
+        (delete_cookie):
+        * http/tests/cookies/resources/cookie-with-multiple-level-path.php: Removed.
+        * http/tests/cookies/resources/cookie-with-multiple-level-path.py: Added.
+        * http/tests/cookies/resources/echo-cookies.php: Removed.
+        * http/tests/cookies/resources/echo-cookies.py: Added.
+        * http/tests/cookies/resources/echo-http-and-dom-cookies-and-notify-done.php: Removed.
+        * http/tests/cookies/resources/echo-http-and-dom-cookies-and-notify-done.py: Added.
+        * http/tests/cookies/resources/echo-json.php: Removed.
+        * http/tests/cookies/resources/echo-json.py: Added.
+        * http/tests/cookies/resources/post-cookies-onmessage.php: Removed.
+        * http/tests/cookies/resources/post-cookies-onmessage.py: Added.
+        * http/tests/cookies/resources/post-cookies-to-opener.php: Removed.
+        * http/tests/cookies/resources/post-cookies-to-opener.py: Added.
+        * http/tests/cookies/resources/resetCookies.js:
+        (resetCookies):
+        * http/tests/cookies/resources/set-cookie-and-redirect-back.php: Removed.
+        * http/tests/cookies/resources/set-cookie-and-redirect-back.py: Added.
+        * http/tests/cookies/resources/set-cookie-and-serve.php: Removed.
+        * http/tests/cookies/resources/set-cookie-and-serve.py: Added.
+        * http/tests/cookies/resources/set-cookie-on-redirect.php: Removed.
+        * http/tests/cookies/resources/set-cookie-on-redirect.py: Added.
+        * http/tests/cookies/resources/set-http-only-cookie.php: Removed.
+        * http/tests/cookies/resources/set-http-only-cookie.py: Added.
+        * http/tests/cookies/resources/setArraycookies-result.php: Removed.
+        * http/tests/cookies/resources/setArraycookies.php: Removed.
+        * http/tests/cookies/resources/setUtf8Cookies-result.php: Removed.
+        * http/tests/cookies/resources/setUtf8Cookies.php: Removed.
+        * http/tests/cookies/resources/third-party-cookie-relaxing-iframe.html:
+        * http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-cross-origin-redirect.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-from-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-same-origin-redirect.html:
+        * http/tests/cookies/same-site/fetch-in-same-origin-service-worker.html:
+        * http/tests/cookies/same-site/lax-samesite-cookie-after-cross-site-history-load.php: Removed.
+        * http/tests/cookies/same-site/lax-samesite-cookie-after-cross-site-history-load.py: Added.
+        * http/tests/cookies/same-site/popup-cross-site-post.html:
+        * http/tests/cookies/same-site/popup-cross-site.html:
+        * http/tests/cookies/same-site/popup-same-site-post.html:
+        * http/tests/cookies/same-site/popup-same-site-via-cross-site-redirect.html:
+        * http/tests/cookies/same-site/popup-same-site-via-same-site-redirect.html:
+        * http/tests/cookies/same-site/popup-same-site.html:
+        * http/tests/cookies/same-site/resources/click-hyperlink.php: Removed.
+        * http/tests/cookies/same-site/resources/click-hyperlink.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-navigating-iframe-in-cross-origin-page.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-navigating-iframe-in-cross-origin-page.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-same-origin-redirect.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-same-origin-redirect.py: Added.
+        * http/tests/cookies/same-site/resources/fetch-in-same-origin-service-worker.php: Removed.
+        * http/tests/cookies/same-site/resources/fetch-in-same-origin-service-worker.py: Added.
+        * http/tests/cookies/same-site/resources/post-from-popup.html:
+        * http/tests/cookies/same-site/set-first-party-cross-site-cookies.php:
+        * http/tests/cookies/same-site/set-first-party-same-site-cookies.php:
+        * http/tests/cookies/set-cookie-on-redirect.html:
+        * http/tests/cookies/third-party-cookie-relaxing-expected.txt:
+        * http/tests/plugins/resources/third-party-cookie-accept-policy-iframe.html:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+        * http/tests/resourceLoadStatistics/delete-script-accessible-cookies.html:
+        * http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion-database.html:
+        * http/tests/resourceLoadStatistics/exemptDomains/app-bound-domains-exempt-from-website-data-deletion.html:
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html:
+        * http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-removed-with-user-interaction-7-days-ago.html:
+        * http/tests/resourceLoadStatistics/operating-dates-all-website-data-removed.html:
+        * http/tests/resourceLoadStatistics/resources/set-all-kinds-of-cookies.py:
+        * http/tests/resourceLoadStatistics/resources/set-cookie-on-redirect.py:
+        * http/tests/resourceLoadStatistics/resources/set-cookie.py:
+        * http/tests/resourceLoadStatistics/standalone-web-application-exempt-from-website-data-deletion.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html:
+        * http/tests/resources/__init__.py: Removed.
+        * http/tests/resources/portabilityLayer.py:
+        (get_cookies):
+        (getState):
+        * http/tests/security/cookies/third-party-cookie-blocking-redirect.html:
+        * http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.html:
+        * http/tests/websocket/tests/hybi/websocket-blocked-from-setting-cookie-as-third-party.html:
+        * http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.html:
+        * http/tests/xmlhttprequest/access-control-preflight-credential-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-preflight-credential-sync-expected.txt:
+
+2021-03-31  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] MediaSessionCoordinator should have join and leave methods
+        https://bugs.webkit.org/show_bug.cgi?id=223955
+        <rdar://problem/76021588>
+
+        Reviewed by Jer Noble.
+
+        * media/media-session/mock-coordinator-expected.txt:
+        * media/media-session/mock-coordinator.html:
+
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION (r275227): [ macOS iOS Release ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=224006
+
+        Uneviewed test gardening.
+
+        * platform/mac/TestExpectations: Removed test expectations because EWS was not flagging this failure.
+
+2021-03-31  Youenn Fablet  <youenn@apple.com>
+
+        In case WebRTC VTB decoder returns a null frame, mark the decoder as failing
+        https://bugs.webkit.org/show_bug.cgi?id=223993
+        <rdar://problem/76049206>
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/webrtc-late-transform-expected.txt: Added.
+        * http/wpt/webrtc/webrtc-late-transform.html: Added.
+
+2021-03-31  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/download convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222618
+        <rdar://problem/74949253>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/download/default-encoding-expected.txt:
+        * http/tests/download/default-encoding.html:
+        * http/tests/download/inherited-encoding-expected.txt:
+        * http/tests/download/inherited-encoding-form-submission-result-expected.txt:
+        * http/tests/download/inherited-encoding-form-submission-result.html:
+        * http/tests/download/inherited-encoding.html:
+        * http/tests/download/literal-utf-8-expected.txt:
+        * http/tests/download/literal-utf-8.html:
+        * http/tests/download/resources/literal-koi8-r.php: Removed.
+        * http/tests/download/resources/literal-koi8-r.py: Added.
+        * http/tests/download/resources/literal-utf-8.php: Removed.
+        * http/tests/download/resources/literal-utf-8.py: Added.
+
+2021-03-31  Antti Koivisto  <antti@apple.com>
+
+        Animated pseudo element style resolved against wrong parent style
+        https://bugs.webkit.org/show_bug.cgi?id=223990
+        rdar://74997361
+
+        Reviewed by Antoine Quint.
+
+        * fast/animation/pseudo-element-style-adjuster-expected.html: Added.
+        * fast/animation/pseudo-element-style-adjuster.html: Added.
+
+2021-03-31  Youenn Fablet  <youenn@apple.com>
+
+        Apply permission policy to geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=223248
+
+        Reviewed by Eric Carlson.
+
+        * http/tests/security/sandboxed-iframe-geolocation-getCurrentPosition-expected.txt:
+        * http/tests/security/sandboxed-iframe-geolocation-watchPosition-expected.txt:
+
+2021-03-31  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r274244): [GTK][WPE] Two http/tests/security/contentSecurityPolicy tests crash
+        https://bugs.webkit.org/show_bug.cgi?id=223978
+
+        Reviewed by Philippe Normand.
+
+        Apache not longer sends a Content-Length header with the cgi/python version of this tests,
+        but it used chunked transfer encoding.
+        It seems this confuses libsoup causing a critical event.
+        Add an empty \r\n at the end of the test to indicate that the server has finished sending
+        the data.
+
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.py:
+        * http/tests/security/contentSecurityPolicy/1.1/scripthash-blocked-by-legacy-enforced-policy-and-blocked-by-report-policy.py:
+
+2021-03-31  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize constructors of ES6 collections
+        https://bugs.webkit.org/show_bug.cgi?id=223953
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/basic-weakset-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Computed style for background-position should not use "left" and "top" keywords
+        https://bugs.webkit.org/show_bug.cgi?id=223878
+
+        Reviewed by Simon Fraser.
+
+        * fast/backgrounds/background-position-parsing-2-expected.txt: Removed.
+        * fast/backgrounds/background-position-parsing-2.html: We remove this test because it is incorrect
+        and superseded by WPT tests that we now pass, checking parsing of both valid and invalid values.
+        * fast/css/background-position-serialize-expected.txt:
+        * fast/css/background-position-serialize.html: Update this test to not expect "left" or "top".
+        * transitions/resources/transition-test-helpers.js: Update the helper to not rely on keywords
+        to obtain x and y values from the computed style.
+
+2021-03-30  Devin Rousso  <drousso@apple.com>
+
+        [Catalina WK2] 5 media/modern-media-controls/tracks-support tests consistently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=223673
+        <rdar://problem/75769577>
+
+        Unreviewed, check that the `subtitlesMenu` exists before attempting to look at its `children`.
+
+        * media/modern-media-controls/tracks-support/auto-text-track.html:
+        * media/modern-media-controls/tracks-support/click-track-in-contextmenu.html:
+        * media/modern-media-controls/tracks-support/hidden-tracks.html:
+        * media/modern-media-controls/tracks-support/off-text-track.html:
+        * media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html:
+
+2021-03-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK][WPE] Gardening of tests.
+
+        Unreviewed gardening
+
+        Update list of expected failures.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2021-03-30  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Introduce PrivateClickMeasurementNetworkLoader
+        https://bugs.webkit.org/show_bug.cgi?id=222217
+        <rdar://74817863>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/privateClickMeasurement/resources/fraudPreventionTestURL.py:
+        Changes the token_public_key and unlinkable_token to be returned via JSON contents.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Debug ] imported/w3c/web-platform-tests/cors/redirect-preflight.htm is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223976
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Failure while test is reviewed.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ Mac ] http/wpt/service-workers/service-worker-spinning-activate.https.html is flaky failing
+        Nhttps://bugs.webkit.org/show_bug.cgi?id=220754
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations to Pass Failure while test is reviewed.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [mac-wk2] LayoutTest fast/mediastream/getUserMedia-webaudio.html is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=170960
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to include Failure.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] inspector/protocol/condition.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223975
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Timeout while test is reviewed.
+
+2021-03-30  Venky Dass  <yaranamavenkataramana@apple.com>
+
+        Nullptr crash in Crash in WebCore::positionInParentBeforeNode(..) where a NULL check is missing.
+        https://bugs.webkit.org/show_bug.cgi?id=223639
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding a regression test case.
+
+        * editing/inserting/edit-style-and-insert-image-expected.txt: Added.
+        * editing/inserting/edit-style-and-insert-image.html: Added.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223973
+
+        unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Failure while test is reviewed.
+
+2021-03-30  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur WK1 Debug] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.html  is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=223944
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ macOS wk2 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223969
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updated test expectations to Pass Failure while test is reviewed.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223966
+
+        Unreviewed test gardening. 
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Failure while test can be reviewed.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ Mac wk2 and iOS wk2 ] webrtc/libwebrtc/descriptionGetters.html is flaky failing.
+        https://bugs.webkit.org/show_bug.cgi?id=214084
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: removed release tag, as it is occurring outside of release.
+        * platform/mac-wk2/TestExpectations: removed release tag, as it is occurring outside of release.
+
+2021-03-30  Robert Jenner  <jenner@apple.com>
+
+        [ macOS iOS ] crypto/crypto-random-values-oom.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223949
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations: Updated expectations to Pass Timeout while test is reviewed. 
+        * platform/mac/TestExpectations: Updated expectations to Pass Timeout while test is reviewed. 
+
+2021-03-30  Frédéric Wang  <fwang@igalia.com>
+
+        Release assert in compareAnimationsByCompositeOrder
+        https://bugs.webkit.org/show_bug.cgi?id=223368
+
+        Reviewed by Antoine Quint.
+
+        Add regression test.
+
+        * animations/animation-remove-element-crash-expected.txt: Added.
+        * animations/animation-remove-element-crash.html: Added.
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        [CSS Backgrounds] WPT test css/css-backgrounds/animations/border-image-width-interpolation.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=206578
+
+        Reviewed by Dean Jackson.
+
+        Unskip imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation.html
+        as well as imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-outset-composition.html
+        and imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-composition.html.
+
+        * TestExpectations:
+
+2021-03-30  Andres Gonzalez  <andresg_22@apple.com>
+
+        Fix for accessibility/textarea-insertion-point-line-number.html.
+        https://bugs.webkit.org/show_bug.cgi?id=223936
+        <rdar://problem/76007361>
+
+        Reviewed by Chris Fleizach.
+
+        Updated this test and corrected several issues where the expected
+        returned values were incorrect.
+
+        * accessibility/textarea-insertion-point-line-number-expected.txt:
+        * accessibility/textarea-insertion-point-line-number.html:
+
+2021-03-30  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Two taps required to view <select> options on Square Checkout
+        https://bugs.webkit.org/show_bug.cgi?id=223933
+        <rdar://problem/74828029>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a layout test to exercise the new codepath when a <select>
+        has a single <optgroup> containing all of the <option>s.
+
+        * fast/forms/ios/form-control-refresh/select/all-options-in-single-optgroup-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/select/all-options-in-single-optgroup.html: Added.
+
+2021-03-30  Antti Koivisto  <antti@apple.com>
+
+        [LFC][Integration] Elements that overflow inline-blocks are not hit tested correctly
+        https://bugs.webkit.org/show_bug.cgi?id=223932
+        rdar://75888718
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/inline-block/hit-test-negative-margin-child-expected.txt: Added.
+        * fast/inline-block/hit-test-negative-margin-child.html: Added.
+
+2021-03-30  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/contentextensions convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223835
+        <rdar://problem/75912102>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/contentextensions/block-cookies-in-csp-report-expected.txt:
+        * http/tests/contentextensions/block-cookies-in-csp-report.php: Removed.
+        * http/tests/contentextensions/block-cookies-in-csp-report.php.json: Removed.
+        * http/tests/contentextensions/block-cookies-in-csp-report.py: Added.
+        * http/tests/contentextensions/block-cookies-in-csp-report.py.json: Added.
+        * http/tests/contentextensions/block-cookies-in-image-load-in-onunload-expected.txt:
+        * http/tests/contentextensions/block-cookies-in-image-load-in-onunload.html:
+        * http/tests/contentextensions/block-cookies-in-image-load-in-onunload.html.json:
+        * http/tests/contentextensions/block-cookies-in-ping-expected.txt:
+        * http/tests/contentextensions/block-cookies-in-ping.html:
+        * http/tests/contentextensions/block-cookies-in-ping.html.json:
+        * http/tests/contentextensions/block-csp-report-expected.txt:
+        * http/tests/contentextensions/block-csp-report.php: Removed.
+        * http/tests/contentextensions/block-csp-report.php.json: Removed.
+        * http/tests/contentextensions/block-csp-report.py: Added.
+        * http/tests/contentextensions/block-csp-report.py.json: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-redirect.php: Removed.
+        * http/tests/contentextensions/block-everything-unless-domain-redirect.php.json: Removed.
+        * http/tests/contentextensions/block-everything-unless-domain-redirect.py: Added.
+        * http/tests/contentextensions/block-everything-unless-domain-redirect.py.json: Added.
+        * http/tests/contentextensions/block-image-load-in-onunload-expected.txt:
+        * http/tests/contentextensions/block-image-load-in-onunload.html:
+        * http/tests/contentextensions/block-image-load-in-onunload.html.json:
+        * http/tests/contentextensions/block-ping-expected.txt:
+        * http/tests/contentextensions/block-ping-resource-type-ping-expected.txt:
+        * http/tests/contentextensions/block-ping-resource-type-ping.html:
+        * http/tests/contentextensions/block-ping-resource-type-ping.html.json:
+        * http/tests/contentextensions/block-ping-resource-type-raw-expected.txt:
+        * http/tests/contentextensions/block-ping-resource-type-raw.html:
+        * http/tests/contentextensions/block-ping-resource-type-raw.html.json:
+        * http/tests/contentextensions/block-ping.html:
+        * http/tests/contentextensions/block-ping.html.json:
+        * http/tests/contentextensions/fetch-redirect-blocked.html:
+        * http/tests/contentextensions/hide-on-csp-report-expected.txt:
+        * http/tests/contentextensions/hide-on-csp-report.php: Removed.
+        * http/tests/contentextensions/hide-on-csp-report.php.json: Removed.
+        * http/tests/contentextensions/hide-on-csp-report.py: Added.
+        * http/tests/contentextensions/hide-on-csp-report.py.json: Added.
+        * http/tests/contentextensions/hide-on-ping-expected.txt:
+        * http/tests/contentextensions/hide-on-ping-with-ping-that-redirects-expected.txt:
+        * http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html:
+        * http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html.json:
+        * http/tests/contentextensions/hide-on-ping.html:
+        * http/tests/contentextensions/hide-on-ping.html.json:
+        * http/tests/contentextensions/main-resource-redirect-blocked.php: Removed.
+        * http/tests/contentextensions/main-resource-redirect-blocked.php.json: Removed.
+        * http/tests/contentextensions/main-resource-redirect-blocked.py: Added.
+        * http/tests/contentextensions/main-resource-redirect-blocked.py.json: Added.
+        * http/tests/contentextensions/reload-without-contentextensions.html:
+        * http/tests/contentextensions/resources/delete-ping.php: Removed.
+        * http/tests/contentextensions/resources/delete-ping.py: Added.
+        * http/tests/contentextensions/resources/get-ping-data.php: Removed.
+        * http/tests/contentextensions/resources/get-ping-data.py: Added.
+        * http/tests/contentextensions/resources/ping-file-path.php: Removed.
+        * http/tests/contentextensions/resources/ping_file_path.py: Added.
+        * http/tests/contentextensions/resources/redirect.php: Removed.
+        * http/tests/contentextensions/resources/redirect.py: Added.
+        * http/tests/contentextensions/resources/save-ping-and-redirect-to-save-ping.php: Removed.
+        * http/tests/contentextensions/resources/save-ping-and-redirect-to-save-ping.py: Added.
+        * http/tests/contentextensions/resources/save-ping.php: Removed.
+        * http/tests/contentextensions/resources/save-ping.py: Added.
+        * http/tests/contentextensions/resources/save_ping.py: Added.
+        (not_being_called):
+        (save_ping):
+        * http/tests/contentextensions/resources/subresource-redirect.php: Removed.
+        * http/tests/contentextensions/resources/subresource-redirect.py: Added.
+        * http/tests/contentextensions/subresource-redirect-blocked.html:
+        * http/tests/privateClickMeasurement/resources/redirectToConversionOnIPAddress.py:
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource-expected.txt:
+        * http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html:
+
+2021-03-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html for test update
+        https://bugs.webkit.org/show_bug.cgi?id=223735
+
+        Reviewed by Dean Jackson.
+
+        Add few tests in preparation to fix bugs related to the tested functionality and to add tests
+        testing the fixes.
+
+        * webgl/pending/README.md: Added.
+        * webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias-expected.txt: Added.
+        * webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html: Added.
+        * webgl/pending/resources/js-test-pre.js: Added.
+        * webgl/pending/resources/webgl_test_files/conformance/context/context-attributes-alpha-depth-stencil-antialias.html: Added.
+        * webgl/pending/resources/webgl_test_files/js/js-test-post.js: Added.
+        * webgl/pending/resources/webgl_test_files/js/js-test-pre.js: Added.
+        * webgl/pending/resources/webgl_test_files/js/webgl-test-utils.js: Added.
+        * webgl/pending/resources/webgl_test_files/resources/js-test-style.css: Added.
+        * webgl/pending/resources/webkit-webgl-test-harness.js: Added.
+
+2021-03-30  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK][WPE] Timeouts on WPT css/css-images ref-tests after updating WPT import
+        https://bugs.webkit.org/show_bug.cgi?id=214472
+
+        Reviewed by Žan Doberšek.
+
+        * platform/glib/TestExpectations: Change expectations back to passes
+
+2021-03-30  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Update WebGL conformance test suite 2021-03-24
+        https://bugs.webkit.org/show_bug.cgi?id=223736
+
+        Reviewed by Dean Jackson.
+
+        To commit 44ac38b3b23be26fa8812334ec3e9bf67ecb5a9f  Fix whitespace by rerunning IDL extraction scripts. (#3265)
+        As per it looks like there's been a significant recent regression in the video-related conformance tests
+        in the test suite.
+
+        * webgl/2.0.y/conformance2/textures/misc/immutable-tex-render-feedback-expected.txt: Added.
+        * webgl/2.0.y/conformance2/textures/misc/immutable-tex-render-feedback.html: Added.
+        * webgl/resources/webgl_test_files/conformance/extensions/webgl-webcodecs-video-frame.html:
+        * webgl/resources/webgl_test_files/conformance/textures/misc/video-rotation.html:
+        * webgl/resources/webgl_test_files/conformance2/extensions/oes-draw-buffers-indexed.html:
+        * webgl/resources/webgl_test_files/conformance2/textures/misc/immutable-tex-render-feedback.html: Added.
+        * webgl/resources/webgl_test_files/js/webgl-test-utils.js:
+        (destroyContext):
+        * webgl/resources/webgl_test_files/resources/video-rotation-0.vp9.mp4: Added.
+        * webgl/resources/webgl_test_files/resources/video-rotation-180.vp9.mp4: Added.
+        * webgl/resources/webgl_test_files/resources/video-rotation-270.vp9.mp4: Added.
+        * webgl/resources/webgl_test_files/resources/video-rotation-90.vp9.mp4: Added.
+
+2021-03-29  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS Debug] http/tests/security/contentSecurityPolicy/frame-src-cross-origin-load.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=222748
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2021-03-29  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION(r274992): Nullptr crash in FontCache::retrieveOrAddCachedFonts
+        https://bugs.webkit.org/show_bug.cgi?id=223858
+        <rdar://75883697>
+
+        Reviewed by Darin Adler and Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * fonts/font-cache-crash-expected.txt: Added.
+        * fonts/font-cache-crash.html: Added.
+
+2021-03-29  Devin Rousso  <drousso@apple.com>
+
+        Propagate user gestures through `requestAnimationFrame` just like `setTimeout`
+        https://bugs.webkit.org/show_bug.cgi?id=223775
+        <rdar://problem/75860868>
+
+        Reviewed by Geoffrey Garen.
+
+        * editing/pasteboard/dom-paste/dom-paste-requires-user-gesture.html:
+        * fast/animation/request-animation-frame-propagate-user-gesture.html: Added.
+        * fast/animation/request-animation-frame-propagate-user-gesture-expected.txt: Added.
+
+2021-03-29  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Debug wk2 ] compositing/video/video-update-rendering.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223900
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updated expectations to Pass Failure while test is reviewed.
+
+2021-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        [macOS] Playback is paused after scrubbing with the touch bar
+        https://bugs.webkit.org/show_bug.cgi?id=223887
+        rdar://75597684
+
+        Reviewed by Jer Noble.
+
+        * media/remote-control-command-scrubbing-expected.txt: Added.
+        * media/remote-control-command-scrubbing.html: Added.
+
+2021-03-29  Robert Jenner  <jenner@apple.com>
+
+        [ macOS wk2 ] media/pip-video-going-into-fullscreen.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223762
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass timeout while test is being reviewed.
+
+2021-03-29  Frédéric Wang  <fwang@igalia.com>
+
+        Release assert in Vector::at in RenderLayoutState::establishLineGrid
+        https://bugs.webkit.org/show_bug.cgi?id=223362
+
+        Reviewed by Zalan Bujtas.
+
+        Add regression test.
+
+        * fast/line-grid/establish-line-grid-crash-expected.txt: Added.
+        * fast/line-grid/establish-line-grid-crash.html: Added.
+
+2021-03-28  Antoine Quint  <graouts@webkit.org>
+
+        Add support for animating the vertical-align CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223853
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: Unskip tests related to vertical-align interpolation since they are
+        no longer crashing.
+
+2021-03-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Add several A11y test failures to TestExpectations.
+
+        * platform/gtk/TestExpectations:
+
+2021-03-28  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Garden fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html as slow
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2021-03-28  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Emit baseline for imported/w3c/web-platform-tests/css/css-color/system-color-compute.html
+
+        r271968 added a specific result for iOS to account for different system colors.
+        GLIB fails on the same test as iOS, so emiting a specific baseline is justified.
+
+        * platform/glib/imported/w3c/web-platform-tests/css/css-color/system-color-compute-expected.txt: Added.
+
+2021-03-28  Youenn Fablet  <youenn@apple.com>
+
+        Use-after-move in UserMediaPermissionRequestManagerProxy::checkUserMediaPermissionForSpeechRecognition
+        https://bugs.webkit.org/show_bug.cgi?id=223842
+        <rdar://problem/75791668>
+
+        Reviewed by Eric Carlson.
+
+        * fast/speechrecognition/start-recognition-after-denied-gum-expected.txt: Added.
+        * fast/speechrecognition/start-recognition-after-denied-gum.html: Added.
+        * fast/speechrecognition/start-recognition-after-gum-expected.txt: Added.
+        * fast/speechrecognition/start-recognition-after-gum.html: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+
+2021-03-27  Kate Cheney  <katherine_cheney@apple.com>
+
+        PCM: Send report to both click source and attribution destination website
+        https://bugs.webkit.org/show_bug.cgi?id=223615
+        <rdar://problem/75849443>
+
+        Reviewed by Brent Fulgham.
+
+        Layout test coverage.
+
+        * http/tests/privateClickMeasurement/resources/conversionFilePath.py:
+        * http/tests/privateClickMeasurement/resources/conversionReport.py:
+        * http/tests/privateClickMeasurement/resources/fraudPreventionTestURL.py:
+        * http/tests/privateClickMeasurement/resources/getConversionData.py:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request-expected.txt:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+
+2021-03-27  Zalan Bujtas  <zalan@apple.com>
+
+        [Multicolumn] Do not try to re-validate a multicol spanner when the renderer is moved internally
+        https://bugs.webkit.org/show_bug.cgi?id=223836
+        <rdar://75742694>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestExpectations:
+        * fast/multicol/spanner-get-re-added-on-move-crash-expected.txt: Added.
+        * fast/multicol/spanner-get-re-added-on-move-crash.html: Added.
+
+2021-03-26  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] inspector/debugger/csp-exceptions.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223830
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Failure Timeout while test is being reviewed. I added Timeout to the expectation because while the failure is a text failure, the text failure indicates that it's a timeout.
+
+2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Use PUICQuickboardController for text input when HAVE(QUICKBOARD_CONTROLLER) is defined
+        https://bugs.webkit.org/show_bug.cgi?id=223809
+        <rdar://problem/56730407>
+
+        Reviewed by Tim Horton.
+
+        Remove some extraneous instancees of `QuickboardControllerForTextInputEnabled=true` from watch-specific layout
+        tests, now that the feature is enabled by default.
+
+        * fast/forms/watchos/delete-content-in-text-field.html:
+        * fast/forms/watchos/edit-text-field-calls-injected-bundle.html:
+        * fast/forms/watchos/enter-text-with-spellcheck-disabled-expected.txt: Added.
+        * fast/forms/watchos/enter-text-with-spellcheck-disabled.html: Added.
+
+        Add a new test to exercise the missing selector checks in `-[WKContentView _updateTextInputTraits:]`.
+
+        * fast/forms/watchos/form-control-label-text.html:
+        * fast/forms/watchos/time-picker-value-change.html:
+        * fast/forms/watchos/username-text-content-type.html:
+
+2021-03-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Allow some image overlay content to render in fully transparent image elements
+        https://bugs.webkit.org/show_bug.cgi?id=223781
+        <rdar://problem/75886351>
+
+        Reviewed by Tim Horton.
+
+        Adjust an existing layout test so that it actually checks what it was intended to check; add a new layout test
+        to cover the changes in this bug.
+
+        * fast/images/image-extraction/mac/select-word-in-draggable-image-overlay.html:
+
+        Drive-by fix: remove some extraneous imported scripts from this layout test, and additionally simplify the test
+        so that it doesn't rely on event sender to select text.
+
+        * fast/images/image-extraction/mac/select-word-in-transparent-image-overlay-expected-mismatch.html: Added.
+        * fast/images/image-extraction/mac/select-word-in-transparent-image-overlay.html: Added.
+
+        Add a new layout test with a fully transparent image element that covers a div of the same size, with a
+        background image that is identical to the image element's image. This emulates the behavior of certain websites
+        that prompted this fallback image overlay rendering codepath in the first place.
+
+2021-03-26  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement cachedPropertyValue for WebXR [SameObject] attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223635
+
+        Reviewed by Chris Dumez.
+
+        Update WebXR [SameObject] related test expectations.
+
+        * platform/wpe/TestExpectations:
+
+2021-03-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        * platform/glib/TestExpectations: Unflag
+        media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html
+        and
+        media/encrypted-media/clearKey/clearKey-session-life-cycle.html
+
+2021-03-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Unflag
+        http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html.
+
+2021-03-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Unflagging
+        media/track/track-remove-active-cue-crash.html.
+
+2021-03-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Unflag
+        http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html
+
+2021-03-26  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        Unreviewed.
+
+        * platform/gtk/TestExpectations: Unflagging
+        mediasource-endofstream-invaliderror.html.
+
+2021-03-26  Dean Jackson  <dino@apple.com>
+
+        Enable Metal ANGLE backend for WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=220076
+        <rdar://problem/72565020>
+
+        Reviewed by Sam Weinig.
+
+        Updated results for WebGL 2 content with the Metal ANGLE
+        backend. See https://bugs.webkit.org/show_bug.cgi?id=222239
+
+        * platform/mac/TestExpectations:
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wk2/TestExpectations:
+
+2021-03-26  Rob Buis  <rbuis@igalia.com>
+
+        Remove ASSERT in RenderListItem::computeMarkerStyle
+        https://bugs.webkit.org/show_bug.cgi?id=222670
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/lists/list-item-compute-marker-style-crash-expected.txt: Added.
+        * fast/lists/list-item-compute-marker-style-crash.xhtml: Added.
+
+2021-03-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo-wk1/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2021-03-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Don't add `-webkit-user-select: none;` on image elements with `draggable=true`
+        https://bugs.webkit.org/show_bug.cgi?id=223774
+        <rdar://problem/75860124>
+
+        Reviewed by Tim Horton.
+
+        * fast/images/image-extraction/mac/select-word-in-draggable-image-overlay-expected-mismatch.html: Added.
+        * fast/images/image-extraction/mac/select-word-in-draggable-image-overlay.html: Added.
+
+2021-03-25  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html causes GPURestarts on some machines
+        https://bugs.webkit.org/show_bug.cgi?id=223767
+
+        Reviewed by Darin Adler.
+
+        Avoid GPURestarts on Intel machines by reducing test workload. The
+        core of this test, using default generic attributes, is still in
+        place.
+
+        * fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html:
+
+2021-03-25  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin-redirect.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223759
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Timeout while test is reviewed.
+
+2021-03-25  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223761
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass Timeout while test is reviewed.
+
+2021-03-25  Zalan Bujtas  <zalan@apple.com>
+
+        [RenederTreeBuilder] Do not try to normalize the tree while destroying the multicolumn flow
+        https://bugs.webkit.org/show_bug.cgi?id=223722
+        <rdar://75731256>
+
+        Reviewed by Simon Fraser.
+
+        * fast/multicol/crash-while-destroying-the-column-context-expected.txt: Added.
+        * fast/multicol/crash-while-destroying-the-column-context.html: Added.
+
+2021-03-25  Andres Gonzalez  <andresg_22@apple.com>
+
+        AX: Consider implementing @aria-details.
+        https://bugs.webkit.org/show_bug.cgi?id=165842
+        rdar://30725491
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/aria-details-expected.txt: Added.
+        * accessibility/ios-simulator/aria-details.html: Added.
+        * accessibility/mac/aria-details-expected.txt: Added.
+        * accessibility/mac/aria-details.html: Added.
+        * platform/mac-wk1/TestExpectations:
+
+2021-03-25  Cameron McCormack  <heycam@apple.com>
+
+        Collapse newly adjacent anonymous table cells when a table cell is detached from between them.
+        https://bugs.webkit.org/show_bug.cgi?id=220934
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/table/table-anonymous-cell-collapse-expected.html: Added.
+        * fast/table/table-anonymous-cell-collapse.html: Added.
+
+2021-03-25  Tim Nguyen  <ntim@apple.com>
+
+        Enable normalization-conic-2.html WPT now that underlying bug is fixed.
+        Also skip some conic-gradient tests only on Windows instead of all platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=221294
+        <rdar://problem/74157218>
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: enabled imported/w3c/web-platform-tests/css/css-images/normalization-conic-2.html.
+
+2021-03-25  Robert Jenner  <jenner@apple.com>
+
+        [ Debug wk2 ] ASSERTION FAILED: willBeComposited == needsToBeComposited(layer, queryData)
+        https://bugs.webkit.org/show_bug.cgi?id=223750
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations: Added test expectation to Pass Crash while test is reviewed.
+        * platform/mac-wk2/TestExpectations: Updated test expectation to Pass Crash while test is reviewed.
+
+2021-03-25  John Wilander  <wilander@apple.com>
+
+        PCM: Rename attributeOn to attributionDestination and change the IDL data type of attributionSourceId to unsigned long
+        https://bugs.webkit.org/show_bug.cgi?id=223661
+        <rdar://problem/75762075>
+
+        Reviewed by Brent Fulgham.
+
+        The PR review of the update of the PCM spec lead WebKit, Mozilla, and Google to decide on two changes:
+        1. Rename attributeOn to attributionDestination
+        2. Change the IDL data type of attributionSourceId from DOMString to unsigned long
+
+        The spec change can be seen in this commit:
+        https://github.com/privacycg/private-click-measurement/pull/75/commits/8623b5df5e899e6652bc5b00313585f7eeafa797
+
+        Test cases were updated accordingly.
+
+        * http/tests/contentextensions/block-private-click-measurement.html:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-reflect-expected.txt:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-reflect.html:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-validation-expected.txt:
+        * http/tests/privateClickMeasurement/anchor-tag-attributes-validation.html:
+            Since attributionSourceId is now an unsigned long, tests that checked invalid
+            string values are no longer relevant. It should be noted that a set
+            attributionSourceId with an invalid value becomes 0 which is a valid value.
+        * http/tests/privateClickMeasurement/attribution-conversion-through-cross-site-image-redirect.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-in-new-window.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-with-priority.html:
+        * http/tests/privateClickMeasurement/attribution-conversion-through-image-redirect-without-priority.html:
+        * http/tests/privateClickMeasurement/clear-through-website-data-removal.html:
+        * http/tests/privateClickMeasurement/conversion-disabled-in-ephemeral-session.html:
+        * http/tests/privateClickMeasurement/expired-ad-click-gets-removed-on-session-start.html:
+        * http/tests/privateClickMeasurement/expired-attribution-report-gets-sent-on-session-start.html:
+        * http/tests/privateClickMeasurement/expired-attributions-removed.html:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-higher-priority.html:
+        * http/tests/privateClickMeasurement/second-attribution-converted-with-lower-priority.html:
+        * http/tests/privateClickMeasurement/second-conversion-with-higher-priority.html:
+        * http/tests/privateClickMeasurement/second-conversion-with-lower-priority.html:
+        * http/tests/privateClickMeasurement/send-attribution-conversion-request.html:
+        * http/tests/privateClickMeasurement/store-disabled-in-ephemeral-session.html:
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html:
+        * http/tests/privateClickMeasurement/store-private-click-measurement.html:
+
+2021-03-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r274826 and r274968.
+        https://bugs.webkit.org/show_bug.cgi?id=223746
+
+        Added broken layout test
+
+        Reverted changesets:
+
+        "AX: textRectsFromMarkers always fails"
+        https://bugs.webkit.org/show_bug.cgi?id=223556
+        https://trac.webkit.org/changeset/274826
+
+        "AX: Add functions rectsForTextMarkerRange for testing"
+        https://bugs.webkit.org/show_bug.cgi?id=223705
+        https://trac.webkit.org/changeset/274968
+
+2021-03-24  Lauro Moura  <lmoura@igalia.com>
+
+        [GTK] Re-skip modern-media-controls tests after r274810
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Skipping them again until proper
+        support is added.
+
+2021-03-24  Lauro Moura  <lmoura@igalia.com>
+
+        [GLIB] Gardening already closed bug and a WPE flaky
+
+        Unreviewed test gardening.
+
+        * platform/glib/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2021-03-24  Robert Jenner  <jenner@apple.com>
+
+        [ Debug ] http/tests/security/webaudio-render-remote-audio-allowed-crossorigin.html and one other test are flakey timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=223724
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator/TestExpectations: Updated test expectations to Pass Timeout while test is reviewed. 
+        * platform/mac/TestExpectations: Updated test expectations to Pass Timeout while test is reviewed.
+
+2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        All string resources from UserAgentStyleSheets / UserAgentScripts should be used as non-copying StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=223685
+
+        Reviewed by Saam Barati.
+
+        * fast/dom/HTMLMeterElement/meter-element-markup-expected.txt:
+
+2021-03-24  Robert Jenner  <jenner@apple.com>
+
+        [ macOS Wk2 ]inspector/indexeddb/clearObjectStore.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=222140
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to include Pass Failure Timeout.
+
+2021-03-24  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r274919) [ATK] accessibility/set-selected-text-range-contenteditable.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=223710
+
+        Reviewed by Adrian Perez de Castro.
+
+        r274919 clamped the values passed to the accessibility elements,
+        making the {-1,0} text range to be collapsed to {0,0} as text ranges
+        are composed of unsigned ints.
+
+        This commit updates the test to remove the ATK-specific case of
+        passing -1 to point to the final offset of a text range.
+
+        * accessibility/set-selected-text-range-contenteditable.html: Remove
+        ATK-specific quirk.
+        * platform/glib/accessibility/set-selected-text-range-contenteditable-expected.txt: Removed.
+
+2021-03-24  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Add Experimental MediaSession coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=222158
+        <rdar://problem/74508862>
+
+        Reviewed by Jer Noble.
+
+        * platform/TestExpectations:
+        * media/media-session/mock-coordinator-expected.txt: Added.
+        * media/media-session/mock-coordinator.html: Added.
+
 2021-03-24  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r274870) fast/canvas/webgl/texImage2D-mse-flipY-true.html and fast/canvas/webgl/texImage2D-mse-flipY-false.html are crashing

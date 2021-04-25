@@ -335,7 +335,7 @@ void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, ScrollingStateTr
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-const ScrollSnapOffsetsInfo<float>& ScrollingTreeScrollingNode::snapOffsetsInfo() const
+const FloatScrollSnapOffsetsInfo& ScrollingTreeScrollingNode::snapOffsetsInfo() const
 {
     return m_snapOffsetsInfo;
 }

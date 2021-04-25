@@ -28,7 +28,7 @@ while no_timeout or timeout_msecs > 0:
         break
 
     time.sleep(0.01)
-    if no_timeout:
+    if not no_timeout:
         timeout_msecs -= 10
 
 sys.stdout.write(

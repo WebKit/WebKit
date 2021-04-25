@@ -188,8 +188,8 @@
         "caret-color" : {
             "inherited": true,
             "codegen-properties": {
-                "initial": "currentColor",
-                "visited-link-color-support": true
+                "visited-link-color-support": true,
+                "custom": "All"
             },
             "specification": {
                 "category": "css-ui",
@@ -4330,7 +4330,7 @@
         },
         "vertical-align": {
             "codegen-properties": {
-                "custom": "Value"
+                "custom": "Inherit|Value"
             },
             "specification": {
                 "category": "css-22",

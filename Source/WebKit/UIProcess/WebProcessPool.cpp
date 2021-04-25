@@ -360,6 +360,11 @@ WebProcessPool::~WebProcessPool()
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 #endif
 
+#if ENABLE(GPU_PROCESS)
+    if (m_gpuProcess)
+        m_gpuProcess->replyToPendingMessages();
+#endif
+
     // Only remaining processes should be pre-warmed ones as other keep the process pool alive.
     while (!m_processes.isEmpty()) {
         auto& process = m_processes.first();
@@ -467,12 +472,13 @@ void WebProcessPool::screenPropertiesStateChanged()
 #endif
 }
 
-void WebProcessPool::networkProcessCrashed(NetworkProcessProxy& networkProcessProxy)
+void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProcessProxy, NetworkProcessProxy::TerminationReason reason)
 {
     for (auto& supplement : m_supplements.values())
         supplement->processDidClose(&networkProcessProxy);
 
-    m_client.networkProcessDidCrash(this);
+    if (reason == NetworkProcessProxy::TerminationReason::Crash)
+        m_client.networkProcessDidCrash(this);
 
     if (m_automationSession)
         m_automationSession->terminate();
@@ -826,6 +832,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled;
     parameters.attrStyleEnabled = m_configuration->attrStyleEnabled();
+    parameters.shouldThrowExceptionForGlobalConstantRedeclaration = m_configuration->shouldThrowExceptionForGlobalConstantRedeclaration();
 
 #if ENABLE(SERVICE_CONTROLS)
     auto& serviceController = ServicesController::singleton();

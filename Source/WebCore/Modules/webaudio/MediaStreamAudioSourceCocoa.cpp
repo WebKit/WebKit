@@ -79,7 +79,8 @@ void MediaStreamAudioSource::consumeAudio(AudioBus& bus, size_t numberOfFrames)
 
     auto description = streamDescription(m_currentSettings.sampleRate(), bus.numberOfChannels());
     if (!audioBuffer || audioBuffer->channelCount() != bus.numberOfChannels()) {
-        // FIXME: We should avoid this WebAudioBufferList allocation on the audio thread.
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         m_audioBuffer = makeUnique<WebAudioBufferList>(description, WTF::safeCast<uint32_t>(numberOfFrames));
         audioBuffer = &downcast<WebAudioBufferList>(*m_audioBuffer);

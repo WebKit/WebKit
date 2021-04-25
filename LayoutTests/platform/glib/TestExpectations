@@ -580,13 +580,15 @@ webkit.org/b/213293 fast/images/hidpi-image-position-on-device-pixels-with-borde
 # HTTP-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/214797 http/tests/images/jpeg-partial-load.html [ ImageOnlyFailure Timeout Pass ]
+webkit.org/b/214797 http/tests/images/jpeg-partial-load.html [ ImageOnlyFailure Timeout Crash Pass ]
 
-webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeout Pass ]
+webkit.org/b/214798 http/tests/images/image-supports-video.html [ Missing Timeout Crash Pass ]
 
 webkit.org/b/207723 http/tests/contentextensions/hide-on-ping-with-ping-that-redirects.html [ Pass Failure ]
 
 webkit.org/b/217961 webkit.org/b/223636 http/tests/images/mp4-partial-load.html [ Crash Timeout Pass ]
+
+webkit.org/b/224109 http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of HTTP-related bugs
@@ -608,8 +610,6 @@ webkit.org/b/208292 storage/indexeddb/detached-iframe.html [ Failure Pass ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # JavaScriptCore-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/222453 [ Release ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-order-4-tla.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of JavaScriptCore-related bugs
@@ -642,6 +642,8 @@ webkit.org/b/215217 [ Debug ] imported/w3c/web-platform-tests/mathml/presentatio
 
 webkit.org/b/216871 imported/w3c/web-platform-tests/mathml/relations/css-styling/color-004.tentative.html [ ImageOnlyFailure ]
 
+webkit.org/b/224111 imported/w3c/web-platform-tests/mathml/presentation-markup/operators/mo-form-dynamic-002.html [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of MathML-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -656,7 +658,6 @@ webkit.org/b/203146 http/wpt/offscreen-canvas [ Pass ]
 webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Pass ]
 webkit.org/b/206055 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.svg.worker.html [ Skip ]
 webkit.org/b/206055 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.worker.html [ Skip ]
-webkit.org/b/223671 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w.html [ Failure ]
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/canvas/offscreen/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
@@ -712,8 +713,6 @@ webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/filter/offscreencanvas.filter.w.html [ Slow ]
 webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/filter/offscreencanvas.filter.w.html [ Slow ]
 
-webkit.org/b/223671 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/draw-generic-family/2d.text.draw.generic.family.w.html [ Pass Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -745,6 +744,7 @@ webkit.org/b/188101 perf/append-text-nodes-without-renderers.html [ Failure Pass
 webkit.org/b/211837 perf/rel-list-remove.html [ Failure Pass ]
 webkit.org/b/213520 perf/htmlcollection-backwards-iteration.html [ Pass Failure ]
 webkit.org/b/218609 perf/clone-with-focus.html [ Failure Pass ]
+webkit.org/b/224118 perf/array-reverse.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Perf-related bugs
@@ -1035,6 +1035,8 @@ webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip
 
 webkit.org/b/223624 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
 
+webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Slow ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1114,7 +1116,7 @@ webkit.org/b/200301 storage/websql/test-authorizer.html [ Failure ]
 # WebSocket-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Pass Failure ]
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Pass Failure ]
 
 webkit.org/b/208287 http/tests/eventsource/eventsource-page-cache-connected.html [ Timeout Pass ]
 
@@ -1261,8 +1263,9 @@ webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-select
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-053.html [ Pass ]
 webkit.org/b/214461 imported/w3c/web-platform-tests/css/css-pseudo/active-selection-054.html [ Pass ]
 
-webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-degenerate.html [ Timeout ]
-webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic.html [ Timeout ]
+webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-degenerate.html [ Pass ]
+webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic.html [ Pass ]
+webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization-conic-2.html [ Pass ]
 
 webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-from-image-computed-style.html [ Failure Pass ]
 webkit.org/b/214473 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-none-computed-style.html [ Failure Pass ]
@@ -1369,9 +1372,6 @@ webkit.org/b/205857 media/encrypted-media/mock-navigator-requestMediaKeySystemAc
 webkit.org/b/205860 media/encrypted-media/mock-MediaKeySession-remove.html [ Skip ]
 
 webkit.org/b/190578 media/encrypted-media/mock-MediaKeySystemAccess.html [ Skip ]
-
-webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-webm-video-playback-mse.html [ Pass Crash ]
-webkit.org/b/210390 media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Crash Pass ]
 
 webkit.org/b/190991 media/encrypted-media/encrypted-media-constants.html [ Failure ]
 webkit.org/b/190991 media/encrypted-media/encrypted-media-is-type-supported.html [ Failure ]
@@ -1593,6 +1593,9 @@ webrtc/video-sframe.html [ Skip ]
 
 # Depends on HTTP Live Streaming (non-supported in non-Apple ports).
 fast/url/data-url-mediatype.html [ Skip ]
+
+# Needs Cocoa specific features
+editing/pasteboard/copy-paste-data-detected-links.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
@@ -2041,7 +2044,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seq
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
 webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Timeout Failure ]
 webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Crash Failure ]
-webkit.org/b/214349 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure Crash ]
+webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Failure Crash ]
 webkit.org/b/220083 [ Debug ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Crash ]
 
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Pass Failure ]
@@ -2049,6 +2052,21 @@ webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
 webkit.org/b/220242 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Pass Failure ]
 
+webkit.org/b/223965 http/tests/contentextensions/block-cookies-in-csp-report.py [ Crash ]
+webkit.org/b/223965 http/tests/contentextensions/block-csp-report.py [ Crash ]
+webkit.org/b/223965 http/tests/contentextensions/block-everything-unless-domain-redirect.py [ Crash ]
+webkit.org/b/223965 http/tests/contentextensions/hide-on-csp-report.py [ Crash ]
+webkit.org/b/223965 http/tests/contentextensions/main-resource-redirect-blocked.py [ Crash ]
+
+webkit.org/b/224068 http/wpt/webrtc/webrtc-late-transform.html [ Failure ]
+
+webkit.org/b/224071 webgl/pending/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Timeout ]
+
+webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-by-media-src-star.html [ ImageOnlyFailure Pass ]
+webkit.org/b/224107 fast/images/animated-image-mp4-crash.html [ Crash Timeout Pass ]
+webkit.org/b/224114 imported/w3c/web-platform-tests/wasm/webapi/instantiateStreaming-bad-imports.any.worker.html [ Failure Pass ]
+webkit.org/b/224115 imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately-before-installed.https.html [ Failure Pass ]
+webkit.org/b/224116 imported/w3c/web-platform-tests/navigation-timing/test_performance_attributes.sub.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 

@@ -54,6 +54,7 @@
 
 #if ENABLE(Condition11) || (ENABLE(Condition11) && ENABLE(Condition22)) || ENABLE(Condition12) || ENABLE(Condition22) || (ENABLE(Condition22) && ENABLE(Condition33)) || ENABLE(Condition23)
 #include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
 #endif
 
 #if ENABLE(Condition11) || ENABLE(Condition12)

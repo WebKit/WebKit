@@ -402,7 +402,7 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
 {
     using SourceID = PrivateClickMeasurement::SourceID;
     using SourceSite = PrivateClickMeasurement::SourceSite;
-    using AttributeOnSite = PrivateClickMeasurement::AttributeOnSite;
+    using AttributionDestinationSite = PrivateClickMeasurement::AttributionDestinationSite;
 
     auto* page = document().page();
     if (!page || page->sessionID().isEphemeral()
@@ -410,14 +410,16 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
         || !UserGestureIndicator::processingUserGesture())
         return WTF::nullopt;
 
-    if (!hasAttributeWithoutSynchronization(attributionsourceidAttr) && !hasAttributeWithoutSynchronization(attributeonAttr))
+    auto hasAttributionSourceIDAttr = hasAttributeWithoutSynchronization(attributionsourceidAttr);
+    auto hasAttributionDestinationAttr = hasAttributeWithoutSynchronization(attributiondestinationAttr);
+    if (!hasAttributionSourceIDAttr && !hasAttributionDestinationAttr)
         return WTF::nullopt;
-    
+
     auto attributionSourceIDAttr = attributeWithoutSynchronization(attributionsourceidAttr);
-    auto attributeOnAttr = attributeWithoutSynchronization(attributeonAttr);
-    
-    if (attributionSourceIDAttr.isEmpty() || attributeOnAttr.isEmpty()) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributeon need to be set for Private Click Measurement to work."_s);
+    auto attributionDestinationAttr = attributeWithoutSynchronization(attributiondestinationAttr);
+
+    if (!hasAttributionSourceIDAttr || !hasAttributionDestinationAttr || attributionSourceIDAttr.isEmpty() || attributionDestinationAttr.isEmpty()) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "Both attributionsourceid and attributiondestination need to be set for Private Click Measurement to work."_s);
         return WTF::nullopt;
     }
 
@@ -429,7 +431,7 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
     
     auto attributionSourceID = parseHTMLNonNegativeInteger(attributionSourceIDAttr);
     if (!attributionSourceID) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid can not be converted to a non-negative integer which is required for Private Click Measurement."_s);
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributionsourceid is not a non-negative integer which is required for Private Click Measurement."_s);
         return WTF::nullopt;
     }
     
@@ -438,19 +440,19 @@ Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasuremen
         return WTF::nullopt;
     }
 
-    URL attributeOnURL { URL(), attributeOnAttr };
-    if (!attributeOnURL.isValid() || !attributeOnURL.protocolIsInHTTPFamily()) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributeon could not be converted to a valid HTTP-family URL."_s);
+    URL destinationURL { URL(), attributionDestinationAttr };
+    if (!destinationURL.isValid() || !destinationURL.protocolIsInHTTPFamily()) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination could not be converted to a valid HTTP-family URL."_s);
         return WTF::nullopt;
     }
 
     RegistrableDomain documentRegistrableDomain { document().url() };
-    if (documentRegistrableDomain.matches(attributeOnURL)) {
-        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributeon can not be the same site as the current website."_s);
+    if (documentRegistrableDomain.matches(destinationURL)) {
+        document().addConsoleMessage(MessageSource::Other, MessageLevel::Warning, "attributiondestination can not be the same site as the current website."_s);
         return WTF::nullopt;
     }
 
-    auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(documentRegistrableDomain), AttributeOnSite(attributeOnURL) };
+    auto privateClickMeasurement = PrivateClickMeasurement { SourceID(attributionSourceID.value()), SourceSite(documentRegistrableDomain), AttributionDestinationSite(destinationURL) };
 
     auto attributionSourceNonceAttr = attributeWithoutSynchronization(attributionsourcenonceAttr);
     if (!attributionSourceNonceAttr.isEmpty()) {

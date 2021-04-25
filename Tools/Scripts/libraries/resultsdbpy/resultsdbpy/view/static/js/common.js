@@ -119,12 +119,14 @@ class QueryModifier {
 
 // Based on <https://stackoverflow.com/questions/6234773/can-i-escape-html-special-chars-in-javascript>
 function escapeHTML(text) {
-    return text.replace(/[&<"'\n]/g, function(character) {
+    return text.replace(/[&<>"'\n]/g, function(character) {
         switch (character) {
             case '&':
                 return '&amp;';
             case '<':
                 return '&lt;';
+            case '>':
+                return '&gt;';
             case '"':
                 return '&quot;';
             case '\n':

@@ -22,10 +22,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "config.h"
 #include "IDBSerialization.h"
-
-#if ENABLE(INDEXED_DATABASE)
 
 #include "IDBKeyData.h"
 #include "IDBKeyPath.h"
@@ -419,5 +418,3 @@ bool deserializeIDBKeyData(const uint8_t* data, size_t size, IDBKeyData& result)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

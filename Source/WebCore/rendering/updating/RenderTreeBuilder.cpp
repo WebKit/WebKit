@@ -51,6 +51,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTable.h"
+#include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderTableSection.h"
 #include "RenderText.h"
@@ -163,11 +164,11 @@ RenderTreeBuilder::~RenderTreeBuilder()
     s_current = m_previous;
 }
 
-void RenderTreeBuilder::destroy(RenderObject& renderer)
+void RenderTreeBuilder::destroy(RenderObject& renderer, CanCollapseAnonymousBlock canCollapseAnonymousBlock)
 {
     RELEASE_ASSERT(RenderTreeMutationDisallowedScope::isMutationAllowed());
     ASSERT(renderer.parent());
-    auto toDestroy = detach(*renderer.parent(), renderer);
+    auto toDestroy = detach(*renderer.parent(), renderer, canCollapseAnonymousBlock);
 
 #if ENABLE(FULLSCREEN_API)
     if (is<RenderFullScreen>(renderer))
@@ -426,7 +427,7 @@ void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<R
     parent.didAttachChild(newChild, beforeChild);
 }
 
-void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild, ReinsertAfterMove reinsertAfterMove)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
@@ -446,12 +447,14 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
     if (!parent.renderTreeBeingDestroyed()) {
         newChild->insertedIntoTree();
 
-        auto* fragmentedFlow = newChild->enclosingFragmentedFlow();
-        if (is<RenderMultiColumnFlow>(fragmentedFlow))
-            multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
+        auto needsStateReset = reinsertAfterMove == ReinsertAfterMove::No;
+        if (needsStateReset) {
+            if (auto* fragmentedFlow = newChild->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(fragmentedFlow))
+                multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
 
-        if (is<RenderElement>(*newChild))
-            RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
+            if (is<RenderElement>(*newChild))
+                RenderCounter::rendererSubtreeAttached(downcast<RenderElement>(*newChild));
+        }
     }
 
     newChild->setNeedsLayoutAndPrefWidthsRecalc();
@@ -481,7 +484,7 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
         attach(to, WTFMove(childToMove), beforeChild);
     } else {
         auto childToMove = detachFromRenderElement(from, child);
-        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild);
+        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild, ReinsertAfterMove::Yes);
     }
 }
 
@@ -826,8 +829,19 @@ void RenderTreeBuilder::destroyAndCleanUpAnonymousWrappers(RenderObject& rendere
     };
     clearFloatsAndOutOfFlowPositionedObjects();
 
-    if (is<RenderTableRow>(destroyRoot))
-        tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
+    auto collapseAndDestroyAnonymousSiblings = [&] {
+        // FIXME: Probably need to handle other table parts here as well.
+        if (is<RenderTableCell>(destroyRoot)) {
+            tableBuilder().collapseAndDestroyAnonymousSiblingCells(downcast<RenderTableCell>(destroyRoot));
+            return;
+        }
+
+        if (is<RenderTableRow>(destroyRoot)) {
+            tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
+            return;
+        }
+    };
+    collapseAndDestroyAnonymousSiblings();
 
     // FIXME: Do not try to collapse/cleanup the anonymous wrappers inside destroy (see webkit.org/b/186746).
     auto destroyRootParent = makeWeakPtr(*destroyRoot.parent());

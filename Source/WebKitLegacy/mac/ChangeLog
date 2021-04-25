@@ -1,3 +1,68 @@
+2021-03-31  Chris Dumez  <cdumez@apple.com>
+
+        Use MACH_PORT_VALID() when wanting to check if a mach port is valid
+        https://bugs.webkit.org/show_bug.cgi?id=224004
+
+        Reviewed by Darin Adler.
+
+        Use MACH_PORT_VALID() when wanting to check if a mach port is valid, instead of checking for
+        MACH_PORT_NULL. MACH_PORT_VALID() is the correct way to check for validity since it also checks
+        for the MACH_PORT_DEAD value.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::processRequests):
+
+2021-03-28  Sam Weinig  <weinig@apple.com>
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=223810
+
+        Reviewed by Simon Fraser.
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS conditionals.
+
+        * Storage/WebDatabaseManager.mm:
+        (-[WebDatabaseManager deleteAllIndexedDatabases]):
+
+2021-03-26  David Kilzer  <ddkilzer@apple.com>
+
+        WebFeature class fails to copy/retain its instance variables
+        <https://webkit.org/b/223823>
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebFeature.m:
+        (-[WebFeature initWithKey:preferenceKey:name:details:defaultValue:hidden:]):
+        - Copy (and thereby retain) instance variables, fulfilling the
+          promise of its @property declarations and preventing
+          use-after-release issues.
+        (-[WebFeature dealloc]): Add.
+        - Release the instance variables copied in the constructor.
+
+2021-03-26  Jessie Berlin  <jberlin@webkit.org>
+
+        Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags
+        https://bugs.webkit.org/show_bug.cgi?id=223779
+
+        Reviewed by Tim Horton.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
+2021-03-25  Jessie Berlin  <jberlin@webkit.org>
+
+        Remove 10.13 DEPLOYMENT_TARGETs and SYSTEM_VERSION_PREFIXs
+        https://bugs.webkit.org/show_bug.cgi?id=223765
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+
 2021-03-23  Tim Horton  <timothy_horton@apple.com>
 
         Consolidate Books bundle checks

@@ -46,6 +46,7 @@ struct InteractionInformationRequest {
     bool includeImageData { false };
 
     bool linkIndicatorShouldHaveLegacyMargins { false };
+    bool disallowUserAgentShadowContent { false };
 
     InteractionInformationRequest() { }
     explicit InteractionInformationRequest(WebCore::IntPoint point)

@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyPath.h"
 #include "IndexKey.h"
 #include <wtf/Forward.h>
@@ -66,5 +64,3 @@ JSC::JSValue toJS(JSC::JSGlobalObject*, JSDOMGlobalObject*, const IDBKeyData&);
 
 Optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSC::JSGlobalObject&, const IDBValue&, const IDBKeyData&, const Optional<IDBKeyPath>&);
 }
-
-#endif // ENABLE(INDEXED_DATABASE)

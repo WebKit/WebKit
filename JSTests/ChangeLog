@@ -1,3 +1,116 @@
+2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Reduce bytecode instruction count emitted for `class extends`
+        https://bugs.webkit.org/show_bug.cgi?id=223884
+
+        Reviewed by Yusuke Suzuki.
+
+        * ChakraCore/test/Error/validate_line_column.baseline-jsc:
+
+2021-04-02  Jessica Tallon  <jtallon@igalia.com>
+
+        Add tests for the new type method on certain JS-API wasm objects.
+        https://bugs.webkit.org/show_bug.cgi?id=222412
+
+        Reviewed by Yusuke Suzuki.
+
+        * wasm/js-api/global.js: Added.
+        (assert.throws):
+        * wasm/js-api/table.js:
+        (assert.truthy):
+        * wasm/js-api/test_memory.js:
+
+2021-04-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize createListFromArrayLike() and Proxy's [[OwnPropertyKeys]] method
+        https://bugs.webkit.org/show_bug.cgi?id=223928
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/json-stringify-array-replacer.js:
+        Reduce running time from over 350ms to ~60ms.
+
+        * microbenchmarks/reflect-own-keys-proxy-2.js: Added.
+        * microbenchmarks/reflect-own-keys-proxy.js: Added.
+
+2021-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check in HashMapImpl::add().
+        https://bugs.webkit.org/show_bug.cgi?id=224007
+        rdar://76053163
+
+        Reviewed by Saam Barati.
+
+        * stress/missing-exception-check-in-HashMapImpl-add.js: Added.
+
+2021-03-31  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize constructors of ES6 collections
+        https://bugs.webkit.org/show_bug.cgi?id=223953
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/map-constructor.js:
+        * microbenchmarks/set-constructor.js: Added.
+        * microbenchmarks/weak-map-constructor.js: Added.
+        * microbenchmarks/weak-set-constructor.js: Added.
+        * stress/map-constructor-adder.js:
+        * stress/set-constructor-adder.js:
+        * stress/weak-map-constructor-adder-error-cross-realm.js: Added.
+        * stress/weak-map-constructor-adder.js:
+        * stress/weak-set-constructor-adder-error-cross-realm.js: Added.
+        * stress/weak-set-constructor-adder.js:
+        * stress/weak-set-constructor.js:
+
+2021-03-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening.
+
+        * stress/early-return-from-builtin.js: Disable this test for memoryLimited configurations.
+
+2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use AppleICU SPI for canonicalization
+        https://bugs.webkit.org/show_bug.cgi?id=223552
+
+        Reviewed by Ryosuke Niwa.
+
+        * stress/intl-canonical-locale-alias-mapping.js: Added.
+        (shouldBe):
+        (Intl.getCanonicalLocales):
+
+2021-03-25  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r275056.
+
+        This is no longer needed
+
+        Reverted changeset:
+
+        "stress/early-return-from-builtin.js.default is failing on iOS
+        JSC testers"
+        https://commits.webkit.org/r275056
+
+2021-03-25  Truitt Savell  <tsavell@apple.com>
+
+        stress/early-return-from-builtin.js.default is failing on iOS JSC testers
+        rdar://75597901
+
+        Unreviewed test gardening.
+
+        * stress/early-return-from-builtin.js:
+
+2021-03-25  Saam Barati  <sbarati@apple.com>
+
+        early-return-from-builtin.js should try/catch in case of OOM
+        https://bugs.webkit.org/show_bug.cgi?id=223756
+
+        Reviewed by Yusuke Suzuki.
+
+        It's throwing an OOM on iOS.
+
+        * stress/early-return-from-builtin.js:
+
 2021-03-24  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Interpreter incorrectly matches non-BMP characters with multiple . w/dotAll flag

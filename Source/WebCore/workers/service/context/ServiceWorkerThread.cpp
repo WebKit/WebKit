@@ -73,9 +73,11 @@ private:
 // FIXME: Use a valid WorkerObjectProxy
 // FIXME: Use valid runtime flags
 
-ServiceWorkerThread::ServiceWorkerThread(const ServiceWorkerContextData& data, String&& userAgent, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
-    : WorkerThread({ data.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), data.contentSecurityPolicy, false, MonotonicTime::now(), { }, data.workerType, FetchRequestCredentials::Omit, settingsValues }, data.script, loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, data.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
-    , m_data(data.isolatedCopy())
+ServiceWorkerThread::ServiceWorkerThread(ServiceWorkerContextData&& data, String&& userAgent, const Settings::Values& settingsValues, WorkerLoaderProxy& loaderProxy, WorkerDebuggerProxy& debuggerProxy, IDBClient::IDBConnectionProxy* idbConnectionProxy, SocketProvider* socketProvider)
+    : WorkerThread({ data.scriptURL, emptyString(), "serviceworker:" + Inspector::IdentifiersFactory::createIdentifier(), WTFMove(userAgent), platformStrategies()->loaderStrategy()->isOnLine(), data.contentSecurityPolicy, false, MonotonicTime::now(), { }, data.workerType, FetchRequestCredentials::Omit, settingsValues }, data.script.toString(), loaderProxy, debuggerProxy, DummyServiceWorkerThreadProxy::shared(), WorkerThreadStartMode::Normal, data.registration.key.topOrigin().securityOrigin().get(), idbConnectionProxy, socketProvider, JSC::RuntimeFlags::createAllEnabled())
+    , m_serviceWorkerIdentifier(data.serviceWorkerIdentifier)
+    , m_jobDataIdentifier(data.jobDataIdentifier)
+    , m_data(crossThreadCopy(data))
     , m_workerObjectProxy(DummyServiceWorkerThreadProxy::shared())
     , m_heartBeatTimeout(SWContextManager::singleton().connection()->shouldUseShortTimeout() ? heartBeatTimeoutForTest : heartBeatTimeout)
     , m_heartBeatTimer { *this, &ServiceWorkerThread::heartBeatTimerFired }
@@ -88,7 +90,8 @@ ServiceWorkerThread::~ServiceWorkerThread() = default;
 
 Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, Ref<SecurityOrigin>&& topOrigin)
 {
-    return ServiceWorkerGlobalScope::create(m_data, params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
+    RELEASE_ASSERT(m_data);
+    return ServiceWorkerGlobalScope::create(*std::exchange(m_data, WTF::nullopt), params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
 }
 
 void ServiceWorkerThread::runEventLoop()
@@ -257,10 +260,10 @@ void ServiceWorkerThread::heartBeatTimerFired()
         connection->didFailHeartBeatCheck(identifier());
         break;
     case State::Starting:
-        connection->serviceWorkerFailedToStart(m_data.jobDataIdentifier, identifier(), "Service Worker script execution timed out"_s);
+        connection->serviceWorkerFailedToStart(m_jobDataIdentifier, identifier(), "Service Worker script execution timed out"_s);
         break;
     case State::Installing:
-        connection->didFinishInstall(m_data.jobDataIdentifier, identifier(), false);
+        connection->didFinishInstall(m_jobDataIdentifier, identifier(), false);
         break;
     }
 }
@@ -276,7 +279,7 @@ void ServiceWorkerThread::finishedFiringInstallEvent(bool hasRejectedAnyPromise)
     m_state = State::Idle;
 
     if (auto* connection = SWContextManager::singleton().connection())
-        connection->didFinishInstall(m_data.jobDataIdentifier, identifier(), !hasRejectedAnyPromise);
+        connection->didFinishInstall(m_jobDataIdentifier, identifier(), !hasRejectedAnyPromise);
 }
 
 void ServiceWorkerThread::willPostTaskToFireActivateEvent()

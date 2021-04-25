@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2005-2020 Apple Inc.  All rights reserved.
+# Copyright (C) 2005-2021 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@ Usage: $programName [options]
   --[no-]asan                        Enable or disable clang address sanitizer
   --[no-]coverage                    Enable or disable LLVM Source-based Code Coverage
   --[no-]tsan                        Enable or disable clang thread sanitizer
+  --[no-]ubsan                       Enable or disable clang undefined behavior sanitizer
   --force-optimization-level=<level> Optimization level: O3, O2, O1, O0, Os, Ofast, Og, or none
   --lto-mode=<mode>                  Set LTO mode: full, thin, or none
   --debug                            Set the default configuration to debug
@@ -56,6 +57,8 @@ my $enableCoverage = checkForArgumentAndRemoveFromARGV("--coverage");
 my $disableCoverage = checkForArgumentAndRemoveFromARGV("--no-coverage");
 my $enableTSAN = checkForArgumentAndRemoveFromARGV("--tsan");
 my $disableTSAN = checkForArgumentAndRemoveFromARGV("--no-tsan");
+my $enableUBSAN = checkForArgumentAndRemoveFromARGV("--ubsan");
+my $disableUBSAN = checkForArgumentAndRemoveFromARGV("--no-ubsan");
 my $ltoMode;
 if (!checkForArgumentAndRemoveFromARGVGettingValue("--lto-mode", \$ltoMode)) {
     $ltoMode="";
@@ -81,21 +84,24 @@ my $baseProductDir = baseProductDir();
 system "mkdir", "-p", "$baseProductDir";
 
 if (checkForArgumentAndRemoveFromARGV("--reset")) {
-    unlink "$baseProductDir/Configuration";
-    unlink "$baseProductDir/Architecture";
-    unlink "$baseProductDir/ASan";
-    unlink "$baseProductDir/Coverage";
-    unlink File::Spec->catfile($baseProductDir, "TSan");
-    unlink "$baseProductDir/ForceOptimizationLevel";
-    unlink "$baseProductDir/LTO";
+    for my $fileName (qw(Architecture ASan Configuration Coverage ForceOptimizationLevel LTO TSan UBSan)) {
+        unlink File::Spec->catfile($baseProductDir, $fileName);
+    }
     exit 0;
 }
 
-if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$enableCoverage && !$disableCoverage && !$enableTSAN && !$disableTSAN && !$ltoMode && !$forceOptimizationLevel)
+if ((!$configuration && !$architecture && !$enableASAN && !$disableASAN && !$enableCoverage && !$disableCoverage && !$enableTSAN && !$disableTSAN && !$enableUBSAN && !$disableUBSAN && !$ltoMode && !$forceOptimizationLevel)
     || ($enableASAN && $disableASAN)
     || ($enableCoverage && $disableCoverage)
     || ($enableTSAN && $disableTSAN)
+    || ($enableUBSAN && $disableUBSAN)
     ) {
+    print STDERR $usage;
+    exit 1;
+}
+
+if ($enableASAN && $enableTSAN) {
+    print STDERR "ERROR: Address Sanitizer and Thread Sanitzer can't be enabled together.\n";
     print STDERR $usage;
     exit 1;
 }
@@ -118,6 +124,19 @@ if ($forceOptimizationLevel
     exit 1;
 }
 
+sub updateOrDeleteConfigurationFile($$)
+{
+    my ($fileName, $contents) = @_;
+    my $filePath = File::Spec->catfile($baseProductDir, $fileName);
+    if ($contents) {
+       open FILE, ">", $filePath or die;
+       print FILE $contents;
+       close FILE;
+    } else {
+        unlink $filePath;
+    }
+}
+
 if ($configuration) {
     open CONFIGURATION, ">", "$baseProductDir/Configuration" or die;
     print CONFIGURATION $configuration;
@@ -134,29 +153,10 @@ if ($architecture) {
     }
 }
 
-if ($enableASAN) {
-    open ASAN, ">", "$baseProductDir/ASan" or die;
-    print ASAN "YES";
-    close ASAN;
-} elsif ($disableASAN) {
-    unlink "$baseProductDir/ASan";
-}
-
-if ($enableCoverage) {
-    open Coverage, ">", "$baseProductDir/Coverage" or die;
-    print Coverage "YES";
-    close Coverage;
-} elsif ($disableCoverage) {
-    unlink "$baseProductDir/Coverage";
-}
-
-if ($enableTSAN) {
-    open TSAN, ">", File::Spec->catfile($baseProductDir, "TSan") or die;
-    print TSAN "YES";
-    close TSAN;
-} elsif ($disableTSAN) {
-    unlink File::Spec->catfile($baseProductDir, "TSan");
-}
+updateOrDeleteConfigurationFile("ASan", $enableASAN ? "YES" : undef);
+updateOrDeleteConfigurationFile("Coverage", $enableCoverage ? "YES" : undef);
+updateOrDeleteConfigurationFile("TSan", $enableTSAN ? "YES" : undef);
+updateOrDeleteConfigurationFile("UBSan", $enableUBSAN ? "YES" : undef);
 
 if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {
     unlink "$baseProductDir/ForceOptimizationLevel";

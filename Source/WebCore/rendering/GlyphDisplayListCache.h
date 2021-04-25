@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "DisplayList.h"
 #include "FontCascade.h"
+#include "InMemoryDisplayList.h"
 #include "Logging.h"
 #include "TextRun.h"
 #include <wtf/HashMap.h>
@@ -89,7 +89,7 @@ public:
     }
     
 private:
-    using GlyphRunMap = HashMap<const LayoutRun*, std::unique_ptr<DisplayList::DisplayList>>;
+    using GlyphRunMap = HashMap<const LayoutRun*, std::unique_ptr<DisplayList::InMemoryDisplayList>>;
     GlyphRunMap m_glyphRunMap;
 };
     

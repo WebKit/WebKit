@@ -866,13 +866,6 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     RefPtr<Frame> newFocusedFrame = m_page->focusController().focusedFrame();
     RefPtr<Element> newFocusedElement = newFocusedFrame ? newFocusedFrame->document()->focusedElement() : nullptr;
 
-    // If the focus has not changed, we need to notify the client anyway, since it might be
-    // necessary to start assisting the node.
-    // If the node has been focused by JavaScript without user interaction, the
-    // keyboard is not on screen.
-    if (newFocusedElement && newFocusedElement == oldFocusedElement)
-        elementDidRefocus(*newFocusedElement);
-
     if (nodeRespondingToClick.document().settings().contentChangeObserverEnabled()) {
         auto& document = nodeRespondingToClick.document();
         // Dispatch mouseOut to dismiss tooltip content when tapping on the control bar buttons (cc, settings).
@@ -2672,19 +2665,32 @@ static void dataDetectorLinkPositionInformation(Element& element, InteractionInf
 
 #endif
 
-static void imagePositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+static Optional<std::pair<RenderImage&, Image&>> imageRendererAndImage(Element& element)
 {
-    auto& renderImage = downcast<RenderImage>(*(element.renderer()));
+    if (!is<RenderImage>(element.renderer()))
+        return WTF::nullopt;
+
+    auto& renderImage = downcast<RenderImage>(*element.renderer());
     if (!renderImage.cachedImage() || renderImage.cachedImage()->errorOccurred())
-        return;
+        return WTF::nullopt;
 
     auto* image = renderImage.cachedImage()->imageForRenderer(&renderImage);
     if (!image || image->width() <= 1 || image->height() <= 1)
+        return WTF::nullopt;
+
+    return {{ renderImage, *image }};
+}
+
+static void imagePositionInformation(WebPage& page, Element& element, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    auto rendererAndImage = imageRendererAndImage(element);
+    if (!rendererAndImage)
         return;
 
+    auto& [renderImage, image] = *rendererAndImage;
     info.isImage = true;
     info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
-    info.isAnimatedImage = image->isAnimated();
+    info.isAnimatedImage = image.isAnimated();
 
     if (request.includeSnapshot || request.includeImageData)
         info.image = createShareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
@@ -2740,12 +2746,17 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     if (auto* renderer = element.renderer()) {
         bool shouldCollectImagePositionInformation = renderer->isRenderImage();
-#if ENABLE(IMAGE_EXTRACTION)
-        if (innerNonSharedNode && HTMLElement::isImageOverlayText(*innerNonSharedNode))
+        if (shouldCollectImagePositionInformation && innerNonSharedNode && HTMLElement::isImageOverlayText(*innerNonSharedNode)) {
             shouldCollectImagePositionInformation = false;
-#else
-        UNUSED_PARAM(innerNonSharedNode);
-#endif
+            info.isImageOverlayText = true;
+            if (request.includeImageData) {
+                if (auto rendererAndImage = imageRendererAndImage(element)) {
+                    auto& [renderImage, image] = *rendererAndImage;
+                    info.imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+                    info.image = createShareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
+                }
+            }
+        }
         if (shouldCollectImagePositionInformation)
             imagePositionInformation(page, element, request, info);
         boundsPositionInformation(*renderer, info);
@@ -2766,6 +2777,8 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
 
     RenderObject* renderer = hitNode->renderer();
     boundsPositionInformation(*renderer, info);
+
+    info.isSelected = result.isSelected();
     
     if (is<Element>(*hitNode)) {
         Element& element = downcast<Element>(*hitNode);
@@ -2928,8 +2941,16 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
         info.nodeAtPositionHasDoubleClickHandler = m_page->mainFrame().nodeRespondingToDoubleClickEvent(request.point, adjustedPoint);
 
     auto& eventHandler = m_page->mainFrame().eventHandler();
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::AllowFrameScrollbars, HitTestRequest::AllowVisibleChildFrameContentOnly };
-    auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitType);
+    auto hitTestRequestTypes = OptionSet<HitTestRequest::RequestType> {
+        HitTestRequest::ReadOnly,
+        HitTestRequest::AllowFrameScrollbars,
+        HitTestRequest::AllowVisibleChildFrameContentOnly,
+    };
+
+    if (request.disallowUserAgentShadowContent)
+        hitTestRequestTypes.add(HitTestRequest::DisallowUserAgentShadowContent);
+
+    auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitTestRequestTypes);
     if (auto* hitFrame = hitTestResult.innerNodeFrame()) {
         info.cursor = hitFrame->eventHandler().selectCursor(hitTestResult, false);
         if (request.includeCaretContext)
@@ -3083,6 +3104,11 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
         renderer->localToContainerPoint(FloatPoint(), nullptr, UseTransforms, &inFixed);
         information.insideFixedPosition = inFixed;
         information.isRTL = renderer->style().direction() == TextDirection::RTL;
+
+#if ENABLE(ASYNC_SCROLLING)
+        if (auto* scrollingCoordinator = this->scrollingCoordinator())
+            information.containerScrollingNodeID = scrollingCoordinator->scrollableContainerNodeID(*renderer);
+#endif
     } else
         information.interactionRect = { };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,9 +38,9 @@
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
-
 
 #define TERMINATE_WEB_PROCESS_WITH_MESSAGE(message) \
     RELEASE_LOG_FAULT(IPC, "Requesting termination of web process %" PRIu64 " for reason: %" PUBLIC_LOG_STRING, m_gpuConnectionToWebProcess->webProcessIdentifier().toUInt64(), #message); \
@@ -87,7 +87,8 @@ void RemoteRenderingBackend::startListeningForIPC()
 RemoteRenderingBackend::~RemoteRenderingBackend()
 {
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
-    m_workQueue->dispatch([remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
+    // Make sure rendering resource request is released after destroying the cache.
+    m_workQueue->dispatch([renderingResourcesRequest = WTFMove(m_renderingResourcesRequest), remoteResourceCache = WTFMove(m_remoteResourceCache)] { });
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()
@@ -166,6 +167,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     }
 
     m_remoteResourceCache.cacheImageBuffer(makeRef(*imageBuffer));
+    updateRenderingResourceRequest();
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
@@ -208,7 +210,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         MESSAGE_CHECK_WITH_RETURN_VALUE(displayList, nullptr, "Failed to map display list from shared memory");
 
         auto result = submit(*displayList, *destination);
-        MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::InvalidItem, nullptr, "Detected invalid display list item");
+        MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::InvalidItemOrExtent, nullptr, "Detected invalid display list item or extent");
         MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::OutOfMemory, nullptr, "Cound not allocate memory");
 
         auto advanceResult = handle.advance(result.numberOfBytesRead);
@@ -316,14 +318,67 @@ void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIden
     m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified }, WTF::nullopt }};
 }
 
-void RemoteRenderingBackend::getImageData(AlphaPremultiplication outputFormat, IntRect srcRect, RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(RefPtr<WebCore::ImageData>&&)>&& completionHandler)
+Optional<SharedMemory::IPCHandle> RemoteRenderingBackend::updateSharedMemoryForGetImageDataHelper(size_t byteCount)
+{
+    MESSAGE_CHECK_WITH_RETURN_VALUE(!m_getImageDataSharedMemory || byteCount > m_getImageDataSharedMemory->size(), WTF::nullopt, "The existing Shmem for getImageData() is already big enough to handle the request");
+
+    if (byteCount > 64 * MB) {
+        // Just a sanity check. A 4K image is 36MB.
+        return WTF::nullopt;
+    }
+
+    destroyGetImageDataSharedMemory();
+    m_getImageDataSharedMemory = SharedMemory::allocate(byteCount);
+    SharedMemory::Handle handle;
+    if (m_getImageDataSharedMemory)
+        m_getImageDataSharedMemory->createHandle(handle, SharedMemory::Protection::ReadOnly);
+    return SharedMemory::IPCHandle { WTFMove(handle), m_getImageDataSharedMemory ? m_getImageDataSharedMemory->size() : 0 };
+}
+
+void RemoteRenderingBackend::updateSharedMemoryForGetImageData(size_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    RefPtr<ImageData> imageData;
-    if (auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(renderingResourceIdentifier))
-        imageData = imageBuffer->getImageData(outputFormat, srcRect);
-    completionHandler(WTFMove(imageData));
+    if (auto handle = updateSharedMemoryForGetImageDataHelper(byteCount))
+        completionHandler(WTFMove(handle.value()));
+    else
+        completionHandler({ });
+}
+
+void RemoteRenderingBackend::semaphoreForGetImageData(CompletionHandler<void(const IPC::Semaphore&)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+    completionHandler(m_getImageDataSemaphore);
+}
+
+void RemoteRenderingBackend::updateSharedMemoryAndSemaphoreForGetImageData(size_t byteCount, CompletionHandler<void(const SharedMemory::IPCHandle&, const IPC::Semaphore&)>&& completionHandler)
+{
+    ASSERT(!RunLoop::isMain());
+
+    if (auto handle = updateSharedMemoryForGetImageDataHelper(byteCount))
+        completionHandler(WTFMove(handle.value()), m_getImageDataSemaphore);
+    else
+        completionHandler({ }, m_getImageDataSemaphore);
+}
+
+void RemoteRenderingBackend::destroyGetImageDataSharedMemory()
+{
+    m_getImageDataSharedMemory = nullptr;
+}
+
+void RemoteRenderingBackend::populateGetImageDataSharedMemory(WebCore::ImageData* imageData)
+{
+    MESSAGE_CHECK(m_getImageDataSharedMemory, "We can't run getImageData without a buffer to write into");
+
+    if (imageData && imageData->data()) {
+        MESSAGE_CHECK(imageData->data()->byteLength() <= m_getImageDataSharedMemory->size(), "Shmem for return of getImageData is too small");
+        memcpy(m_getImageDataSharedMemory->data(), imageData->data()->data(), imageData->data()->byteLength());
+    } else
+        memset(m_getImageDataSharedMemory->data(), 0, m_getImageDataSharedMemory->size());
+
+#if OS(DARWIN)
+    m_getImageDataSemaphore.signal();
+#endif
 }
 
 void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
@@ -420,6 +475,7 @@ void RemoteRenderingBackend::releaseRemoteResource(RenderingResourceIdentifier r
 {
     ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.releaseRemoteResource(renderingResourceIdentifier);
+    updateRenderingResourceRequest();
 }
 
 void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemBufferIdentifier identifier, const SharedMemory::IPCHandle& handle, RenderingResourceIdentifier destinationBufferIdentifier)
@@ -532,6 +588,16 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     }
     ASSERT_NOT_REACHED();
     return WTF::nullopt;
+}
+
+void RemoteRenderingBackend::updateRenderingResourceRequest()
+{
+    bool hasActiveDrawables = !m_remoteResourceCache.imageBuffers().isEmpty() || !m_remoteResourceCache.nativeImages().isEmpty();
+    bool hasActiveRequest = m_renderingResourcesRequest.isRequested();
+    if (hasActiveDrawables && !hasActiveRequest)
+        m_renderingResourcesRequest = ScopedRenderingResourcesRequest::acquire();
+    else if (!hasActiveDrawables && hasActiveRequest)
+        m_renderingResourcesRequest = { };
 }
 
 } // namespace WebKit

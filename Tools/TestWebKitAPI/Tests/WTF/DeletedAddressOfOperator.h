@@ -77,6 +77,7 @@ template<> struct DefaultHash<DeletedAddressOfOperator> {
     }
 
     static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool hasHashInValue = true; // This is not correct, but for debugging of RobinHoodHashSet.
 };
 }
 

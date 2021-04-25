@@ -526,15 +526,15 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
 
     // FIXME: This should do something efficient to find the run range.
     for (auto& run : WTF::makeReversedRange(inlineContent.runs)) {
-        auto runRect = Layout::toLayoutRect(run.rect());
-        runRect.moveBy(accumulatedOffset);
-
-        if (!locationInContainer.intersects(runRect))
-            continue;
-
         auto& renderer = m_boxTree.rendererForLayoutBox(run.layoutBox());
 
         if (is<RenderText>(renderer)) {
+            auto runRect = Layout::toLayoutRect(run.rect());
+            runRect.moveBy(accumulatedOffset);
+
+            if (!locationInContainer.intersects(runRect))
+                continue;
+            
             auto& style = run.style();
             if (style.visibility() != Visibility::Visible || style.pointerEvents() == PointerEvents::None)
                 continue;

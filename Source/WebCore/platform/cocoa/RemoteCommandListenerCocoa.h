@@ -47,7 +47,7 @@ private:
     const RemoteCommandsSet& defaultCommands();
     RemoteCommandsSet m_currentCommands;
 };
-    
+
 }
 
 #endif // PLATFORM(MAC)

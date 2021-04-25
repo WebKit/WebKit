@@ -44,7 +44,7 @@ arch = None
 
 def webkit_build_dir():
     scriptpath = os.path.dirname(os.path.realpath(__file__))
-    return subprocess.check_output([os.path.join(scriptpath, "webkit-build-directory"), "--top-level"]).strip()
+    return subprocess.check_output([os.path.join(scriptpath, "webkit-build-directory"), "--top-level"]).decode().strip()
 
 def main():
     parser = argparse.ArgumentParser(description='Dumps the in-memory layout of the given class or classes, showing padding holes.')

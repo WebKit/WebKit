@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010 &yet, LLC. (nate@andyet.net)
@@ -75,7 +75,15 @@
 #include "ExceptionHelpers.h"
 #include "VM.h"
 #include <limits>
+#include <wtf/unicode/icu/ICUHelpers.h>
 
+#if U_ICU_VERSION_MAJOR_NUM >= 69 || (U_ICU_VERSION_MAJOR_NUM == 68 && USE(APPLE_INTERNAL_SDK))
+#define HAVE_ICU_C_TIMEZONE_API 1
+#ifdef U_HIDE_DRAFT_API
+#undef U_HIDE_DRAFT_API
+#endif
+#include <unicode/ucal.h>
+#else
 // icu::TimeZone and icu::BasicTimeZone features are only available in ICU C++ APIs.
 // We use these C++ APIs as an exception.
 #undef U_SHOW_CPLUSPLUS_API
@@ -85,38 +93,79 @@
 #include <unicode/unistr.h>
 #undef U_SHOW_CPLUSPLUS_API
 #define U_SHOW_CPLUSPLUS_API 0
+#endif
 
 namespace JSC {
 
+
+#if HAVE(ICU_C_TIMEZONE_API)
+class OpaqueICUTimeZone {
+    WTF_MAKE_FAST_ALLOCATED(OpaqueICUTimeZone);
+public:
+    std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> m_calendar;
+};
+#endif
+
 void OpaqueICUTimeZoneDeleter::operator()(OpaqueICUTimeZone* timeZone)
 {
-    if (timeZone)
+    if (timeZone) {
+#if HAVE(ICU_C_TIMEZONE_API)
+        delete timeZone;
+#else
         delete bitwise_cast<icu::TimeZone*>(timeZone);
+#endif
+    }
 }
 
 // Get the combined UTC + DST offset for the time passed in.
 //
 // NOTE: The implementation relies on the fact that no time zones have
 // more than one daylight savings offset change per month.
-// If this function is called with NaN it returns NaN.
+// If this function is called with NaN it returns random value.
 LocalTimeOffset DateCache::calculateLocalTimeOffset(double millisecondsFromEpoch, WTF::TimeType inputTimeType)
 {
-    auto& timeZoneCache = *bitwise_cast<icu::TimeZone*>(this->timeZoneCache());
     int32_t rawOffset = 0;
     int32_t dstOffset = 0;
     UErrorCode status = U_ZERO_ERROR;
+
+    // This function can fail input date is invalid: NaN etc.
+    // We can return any values in this case since later we fail when computing non timezone offset part anyway.
+    constexpr LocalTimeOffset failed { false, 0 };
+
+#if HAVE(ICU_C_TIMEZONE_API)
+    auto& timeZoneCache = *this->timeZoneCache();
+    ucal_setMillis(timeZoneCache.m_calendar.get(), millisecondsFromEpoch, &status);
+    if (U_FAILURE(status))
+        return failed;
+
+    if (inputTimeType != WTF::LocalTime) {
+        rawOffset = ucal_get(timeZoneCache.m_calendar.get(), UCAL_ZONE_OFFSET, &status);
+        if (U_FAILURE(status))
+            return failed;
+        dstOffset = ucal_get(timeZoneCache.m_calendar.get(), UCAL_DST_OFFSET, &status);
+        if (U_FAILURE(status))
+            return failed;
+    } else {
+        ucal_getTimeZoneOffsetFromLocal(timeZoneCache.m_calendar.get(), UCAL_TZ_LOCAL_FORMER, UCAL_TZ_LOCAL_FORMER, &rawOffset, &dstOffset, &status);
+        if (U_FAILURE(status))
+            return failed;
+    }
+#else
+    auto& timeZoneCache = *bitwise_cast<icu::TimeZone*>(this->timeZoneCache());
     if (inputTimeType != WTF::LocalTime) {
         constexpr bool isLocalTime = false;
         timeZoneCache.getOffset(millisecondsFromEpoch, isLocalTime, rawOffset, dstOffset, status);
+        if (U_FAILURE(status))
+            return failed;
     } else {
         // icu::TimeZone is a timezone instance which inherits icu::BasicTimeZone.
         // https://unicode-org.atlassian.net/browse/ICU-13705 will move getOffsetFromLocal to icu::TimeZone.
         static_cast<const icu::BasicTimeZone&>(timeZoneCache).getOffsetFromLocal(millisecondsFromEpoch, icu::BasicTimeZone::kFormer, icu::BasicTimeZone::kFormer, rawOffset, dstOffset, status);
+        if (U_FAILURE(status))
+            return failed;
     }
-    // The above can fail if input date is invalid: NaN etc.
-    // We can return any values in this case since later we fail when computing non timezone offset part anyway.
-    if (U_FAILURE(status))
-        return { false, 0 };
+#endif
+
     return { !!dstOffset, rawOffset + dstOffset };
 }
 
@@ -284,6 +333,24 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
 // https://tc39.es/ecma402/#sec-defaulttimezone
 String DateCache::defaultTimeZone()
 {
+#if HAVE(ICU_C_TIMEZONE_API)
+    auto& timeZone = *timeZoneCache();
+    Vector<UChar, 32> buffer;
+    auto status = callBufferProducingFunction(ucal_getTimeZoneID, timeZone.m_calendar.get(), buffer);
+    if (U_FAILURE(status))
+        return "UTC"_s;
+
+    Vector<UChar, 32> canonicalBuffer;
+    status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, buffer.data(), buffer.size(), canonicalBuffer, nullptr);
+    if (U_FAILURE(status))
+        return "UTC"_s;
+
+    String canonical = String(canonicalBuffer);
+    if (isUTCEquivalent(canonical))
+        return "UTC"_s;
+
+    return canonical;
+#else
     icu::UnicodeString timeZoneID;
     icu::UnicodeString canonicalTimeZoneID;
     auto& timeZone = *bitwise_cast<icu::TimeZone*>(timeZoneCache());
@@ -300,6 +367,7 @@ String DateCache::defaultTimeZone()
         return "UTC"_s;
 
     return canonical;
+#endif
 }
 
 // To confine icu::TimeZone destructor invocation in this file.
@@ -313,9 +381,20 @@ Ref<DateInstanceData> DateCache::cachedDateInstanceData(double millisecondsFromE
 
 void DateCache::timeZoneCacheSlow()
 {
-    // Do not use icu::TimeZone::createDefault. ICU internally has a cache for timezone and createDefault returns this cached value.
     ASSERT(!m_timeZoneCache);
+#if HAVE(ICU_C_TIMEZONE_API)
+    auto* cache = new OpaqueICUTimeZone;
+    Vector<UChar, 32> timeZoneID;
+    auto status = callBufferProducingFunction(ucal_getHostTimeZone, timeZoneID);
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    cache->m_calendar = std::unique_ptr<UCalendar, ICUDeleter<ucal_close>>(ucal_open(timeZoneID.data(), timeZoneID.size(), "", UCAL_DEFAULT, &status));
+    ASSERT_UNUSED(status, U_SUCCESS(status));
+    ucal_setGregorianChange(cache->m_calendar.get(), minECMAScriptTime, &status); // Ignore "unsupported" error.
+    m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(cache);
+#else
+    // Do not use icu::TimeZone::createDefault. ICU internally has a cache for timezone and createDefault returns this cached value.
     m_timeZoneCache = std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter>(bitwise_cast<OpaqueICUTimeZone*>(icu::TimeZone::detectHostTimeZone()));
+#endif
 }
 
 void DateCache::reset()

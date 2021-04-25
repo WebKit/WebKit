@@ -157,7 +157,7 @@ static Ref<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePiece
     return CSSBorderImageSliceValue::create(CSSValuePool::singleton().createValue(WTFMove(quad)), image.fill());
 }
 
-static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
+static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box, const RenderStyle& style)
 {
     RefPtr<CSSPrimitiveValue> top;
     RefPtr<CSSPrimitiveValue> right;
@@ -169,7 +169,7 @@ static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
     if (box.top().isRelative())
         top = cssValuePool.createValue(box.top().value(), CSSUnitType::CSS_NUMBER);
     else
-        top = cssValuePool.createValue(box.top());
+        top = cssValuePool.createValue(box.top(), style);
 
     if (box.right() == box.top() && box.bottom() == box.top() && box.left() == box.top()) {
         right = top;
@@ -179,7 +179,7 @@ static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
         if (box.right().isRelative())
             right = cssValuePool.createValue(box.right().value(), CSSUnitType::CSS_NUMBER);
         else
-            right = cssValuePool.createValue(box.right());
+            right = cssValuePool.createValue(box.right(), style);
 
         if (box.bottom() == box.top() && box.right() == box.left()) {
             bottom = top;
@@ -188,7 +188,7 @@ static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
             if (box.bottom().isRelative())
                 bottom = cssValuePool.createValue(box.bottom().value(), CSSUnitType::CSS_NUMBER);
             else
-                bottom = cssValuePool.createValue(box.bottom());
+                bottom = cssValuePool.createValue(box.bottom(), style);
 
             if (box.left() == box.right())
                 left = right;
@@ -196,7 +196,7 @@ static Ref<CSSPrimitiveValue> valueForNinePieceImageQuad(const LengthBox& box)
                 if (box.left().isRelative())
                     left = cssValuePool.createValue(box.left().value(), CSSUnitType::CSS_NUMBER);
                 else
-                    left = cssValuePool.createValue(box.left());
+                    left = cssValuePool.createValue(box.left(), style);
             }
         }
     }
@@ -222,7 +222,7 @@ static Ref<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image)
     return cssValuePool.createValue(Pair::create(WTFMove(horizontalRepeat), WTFMove(verticalRepeat)));
 }
 
-static Ref<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
+static Ref<CSSValue> valueForNinePieceImage(const NinePieceImage& image, const RenderStyle& style)
 {
     if (!image.hasImage())
         return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
@@ -232,8 +232,8 @@ static Ref<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
         imageValue = image.image()->cssValue();
 
     auto imageSlices = valueForNinePieceImageSlice(image);
-    auto borderSlices = valueForNinePieceImageQuad(image.borderSlices());
-    auto outset = valueForNinePieceImageQuad(image.outset());
+    auto borderSlices = valueForNinePieceImageQuad(image.borderSlices(), style);
+    auto outset = valueForNinePieceImageQuad(image.outset(), style);
     auto repeat = valueForNinePieceImageRepeat(image);
     return createBorderImageValue(WTFMove(imageValue), WTFMove(imageSlices), WTFMove(borderSlices), WTFMove(outset), WTFMove(repeat));
 }
@@ -282,18 +282,18 @@ static Ref<CSSValue> valueForReflection(const StyleReflection* reflection, const
         break;
     }
 
-    return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), valueForNinePieceImage(reflection->mask()));
+    return CSSReflectValue::create(direction.releaseNonNull(), offset.releaseNonNull(), valueForNinePieceImage(reflection->mask(), style));
 }
 
 static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, const FillLayer& layer, const RenderStyle& style)
 {
     auto list = CSSValueList::createSpaceSeparated();
-    if (layer.isBackgroundXOriginSet()) {
+    if (layer.isBackgroundXOriginSet() && layer.backgroundXOrigin() != Edge::Left) {
         ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
         list->append(CSSValuePool::singleton().createValue(layer.backgroundXOrigin()));
     }
     list->append(zoomAdjustedPixelValueForLength(layer.xPosition(), style));
-    if (layer.isBackgroundYOriginSet()) {
+    if (layer.isBackgroundYOriginSet() && layer.backgroundYOrigin() != Edge::Top) {
         ASSERT(propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
         list->append(CSSValuePool::singleton().createValue(layer.backgroundYOrigin()));
     }
@@ -2688,11 +2688,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitMaskPositionX: {
             auto& layers = propertyID == CSSPropertyWebkitMaskPositionX ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
-                return cssValuePool.createValue(layers.xPosition());
+                return cssValuePool.createValue(layers.xPosition(), style);
 
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(cssValuePool.createValue(currLayer->xPosition()));
+                list->append(cssValuePool.createValue(currLayer->xPosition(), style));
 
             return list;
         }
@@ -2700,11 +2700,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitMaskPositionY: {
             auto& layers = propertyID == CSSPropertyWebkitMaskPositionY ? style.maskLayers() : style.backgroundLayers();
             if (!layers.next())
-                return cssValuePool.createValue(layers.yPosition());
+                return cssValuePool.createValue(layers.yPosition(), style);
 
             auto list = CSSValueList::createCommaSeparated();
             for (auto* currLayer = &layers; currLayer; currLayer = currLayer->next())
-                list->append(cssValuePool.createValue(currLayer->yPosition()));
+                list->append(cssValuePool.createValue(currLayer->yPosition(), style));
 
             return list;
         }
@@ -3136,15 +3136,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyOverflowY:
             return cssValuePool.createValue(style.overflowY());
         case CSSPropertyOverscrollBehavior:
-            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+            if (!m_element->document().settings().overscrollBehaviorEnabled())
                 return nullptr;
             return cssValuePool.createValue(std::max(style.overscrollBehaviorX(), style.overscrollBehaviorY()));
         case CSSPropertyOverscrollBehaviorX:
-            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+            if (!m_element->document().settings().overscrollBehaviorEnabled())
                 return nullptr;
             return cssValuePool.createValue(style.overscrollBehaviorX());
         case CSSPropertyOverscrollBehaviorY:
-            if (renderer && !renderer->settings().overscrollBehaviorEnabled())
+            if (!m_element->document().settings().overscrollBehaviorEnabled())
                 return nullptr;
             return cssValuePool.createValue(style.overscrollBehaviorY());
         case CSSPropertyPaddingTop:
@@ -3234,22 +3234,16 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             }
             RELEASE_ASSERT_NOT_REACHED();
         case CSSPropertyTextIndent: {
-            // If CSS3_TEXT is disabled or text-indent has only one value(<length> | <percentage>),
-            // getPropertyCSSValue() returns CSSValue.
             auto textIndent = zoomAdjustedPixelValueForLength(style.textIndent(), style);
-#if ENABLE(CSS3_TEXT)
-            // If CSS3_TEXT is enabled and text-indent has -webkit-each-line or -webkit-hanging,
-            // getPropertyCSSValue() returns CSSValueList.
             if (style.textIndentLine() == TextIndentLine::EachLine || style.textIndentType() == TextIndentType::Hanging) {
                 auto list = CSSValueList::createSpaceSeparated();
                 list->append(WTFMove(textIndent));
-                if (style.textIndentLine() == TextIndentLine::EachLine)
-                    list->append(cssValuePool.createIdentifierValue(CSSValueWebkitEachLine));
                 if (style.textIndentType() == TextIndentType::Hanging)
-                    list->append(cssValuePool.createIdentifierValue(CSSValueWebkitHanging));
+                    list->append(cssValuePool.createIdentifierValue(CSSValueHanging));
+                if (style.textIndentLine() == TextIndentLine::EachLine)
+                    list->append(cssValuePool.createIdentifierValue(CSSValueEachLine));
                 return list;
             }
-#endif
             return textIndent;
         }
         case CSSPropertyTextShadow:
@@ -3301,7 +3295,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             case VerticalAlign::BaselineMiddle:
                 return cssValuePool.createIdentifierValue(CSSValueWebkitBaselineMiddle);
             case VerticalAlign::Length:
-                return cssValuePool.createValue(style.verticalAlignLength());
+                return cssValuePool.createValue(style.verticalAlignLength(), style);
             }
             ASSERT_NOT_REACHED();
             return nullptr;
@@ -3461,7 +3455,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitAppearance:
             return cssValuePool.createValue(style.appearance());
         case CSSPropertyAspectRatio:
-            if (renderer && !renderer->settings().aspectRatioEnabled())
+            if (!m_element->document().settings().aspectRatioEnabled())
                 return nullptr;
             switch (style.aspectRatioType()) {
             case AspectRatioType::Auto:
@@ -3483,7 +3477,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             ASSERT_NOT_REACHED();
             return nullptr;
         case CSSPropertyContain: {
-            if (renderer && !renderer->settings().cssContainmentEnabled())
+            if (!m_element->document().settings().cssContainmentEnabled())
                 return nullptr;
             auto containment = style.contain();
             if (!containment)
@@ -3504,25 +3498,25 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyWebkitBackfaceVisibility:
             return cssValuePool.createIdentifierValue((style.backfaceVisibility() == BackfaceVisibility::Hidden) ? CSSValueHidden : CSSValueVisible);
         case CSSPropertyWebkitBorderImage:
-            return valueForNinePieceImage(style.borderImage());
+            return valueForNinePieceImage(style.borderImage(), style);
         case CSSPropertyBorderImageOutset:
-            return valueForNinePieceImageQuad(style.borderImage().outset());
+            return valueForNinePieceImageQuad(style.borderImage().outset(), style);
         case CSSPropertyBorderImageRepeat:
             return valueForNinePieceImageRepeat(style.borderImage());
         case CSSPropertyBorderImageSlice:
             return valueForNinePieceImageSlice(style.borderImage());
         case CSSPropertyBorderImageWidth:
-            return valueForNinePieceImageQuad(style.borderImage().borderSlices());
+            return valueForNinePieceImageQuad(style.borderImage().borderSlices(), style);
         case CSSPropertyWebkitMaskBoxImage:
-            return valueForNinePieceImage(style.maskBoxImage());
+            return valueForNinePieceImage(style.maskBoxImage(), style);
         case CSSPropertyWebkitMaskBoxImageOutset:
-            return valueForNinePieceImageQuad(style.maskBoxImage().outset());
+            return valueForNinePieceImageQuad(style.maskBoxImage().outset(), style);
         case CSSPropertyWebkitMaskBoxImageRepeat:
             return valueForNinePieceImageRepeat(style.maskBoxImage());
         case CSSPropertyWebkitMaskBoxImageSlice:
             return valueForNinePieceImageSlice(style.maskBoxImage());
         case CSSPropertyWebkitMaskBoxImageWidth:
-            return valueForNinePieceImageQuad(style.maskBoxImage().borderSlices());
+            return valueForNinePieceImageQuad(style.maskBoxImage().borderSlices(), style);
         case CSSPropertyWebkitMaskBoxImageSource:
             if (style.maskBoxImageSource())
                 return style.maskBoxImageSource()->cssValue();
@@ -3648,15 +3642,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             ASSERT_NOT_REACHED();
             return nullptr;
         case CSSPropertyTranslate:
-            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
             return computedTranslate(renderer, style);
         case CSSPropertyScale:
-            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
             return computedScale(renderer, style);
         case CSSPropertyRotate:
-            if (renderer && !renderer->settings().cssIndividualTransformPropertiesEnabled())
+            if (!m_element->document().settings().cssIndividualTransformPropertiesEnabled())
                 return nullptr;
             return computedRotate(renderer, style);
         case CSSPropertyTransitionDelay:
@@ -3796,7 +3790,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         case CSSPropertyBorderLeft:
             return getCSSPropertyValuesForShorthandProperties(borderLeftShorthand());
         case CSSPropertyBorderImage:
-            return valueForNinePieceImage(style.borderImage());
+            return valueForNinePieceImage(style.borderImage(), style);
         case CSSPropertyBorderInline: {
             auto value = propertyValue(CSSPropertyBorderInlineStart, DoNotUpdateLayout);
             if (!compareCSSValuePtr<CSSValue>(value, propertyValue(CSSPropertyBorderInlineEnd, DoNotUpdateLayout)))

@@ -39,6 +39,7 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <WebCore/SynchronousLoaderClient.h>
+#include <WebCore/TextEncoding.h>
 
 namespace WebKit {
 
@@ -468,6 +469,18 @@ void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& re
             m_session->networkStorageSession()->setCookiesFromHTTPResponse(request.firstPartyForCookies(), response.url, setCookieString);
         }
     }
+}
+
+String NetworkDataTaskCurl::suggestedFilename() const
+{
+    if (!m_suggestedFilename.isEmpty())
+        return m_suggestedFilename;
+
+    String suggestedFilename = m_response.suggestedFilename();
+    if (!suggestedFilename.isEmpty())
+        return suggestedFilename;
+
+    return decodeURLEscapeSequences(m_response.url().lastPathComponent());
 }
 
 void NetworkDataTaskCurl::blockCookies()

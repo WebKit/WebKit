@@ -162,14 +162,16 @@ class ReportProcessor {
                 $this->rollback_with_error('FailedToUpdateBuildRequest', array('buildRequest' => $build_request_id, 'build' => $build_id));
         }
 
-
         foreach ($revisions as $repository_name => $revision_data) {
             $repository_id = $this->db->select_or_insert_row('repositories', 'repository', array('name' => $repository_name, 'owner' => NULL));
             if (!$repository_id)
                 $this->rollback_with_error('FailedToInsertRepository', array('name' => $repository_name));
 
-            $commit_data = array('repository' => $repository_id, 'revision' => $revision_data['revision'], 'time' => array_get($revision_data, 'timestamp'));
-
+            $commit_data = array(
+                'repository' => $repository_id, 
+                'revision' => $revision_data['revision'], 
+                'time' => array_get($revision_data, 'timestamp'), 
+                'revision_identifier' => array_get($revision_data, 'revisionIdentifier', null));
             $mismatching_commit = $this->db->query_and_fetch_all('SELECT * FROM build_commits, commits
                 WHERE build_commit = commit_id AND commit_build = $1 AND commit_repository = $2 AND commit_revision != $3 LIMIT 1',
                 array($build_id, $repository_id, $revision_data['revision']));

@@ -31,6 +31,7 @@
 #if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
 #include "GLContext.h"
+#include "GraphicsContextGLOpenGLManager.h"
 #include "TextureMapperGCGLPlatformLayer.h"
 #include <ANGLE/ShaderLang.h>
 #include <wtf/Deque.h>
@@ -62,13 +63,6 @@
 
 namespace WebCore {
 
-static const size_t MaxActiveContexts = 16;
-static Deque<GraphicsContextGLOpenGL*, MaxActiveContexts>& activeContexts()
-{
-    static NeverDestroyed<Deque<GraphicsContextGLOpenGL*, MaxActiveContexts>> s_activeContexts;
-    return s_activeContexts;
-}
-
 RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextGLAttributes attributes, HostWindow* hostWindow)
 {
     static bool initialized = false;
@@ -82,13 +76,9 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
     if (!success)
         return nullptr;
 
-    auto& contexts = activeContexts();
-    if (contexts.size() >= MaxActiveContexts)
-        contexts.first()->recycleContext();
-
-    // Calling recycleContext() above should have lead to the graphics context being
-    // destroyed and thus removed from the active contexts list.
-    if (contexts.size() >= MaxActiveContexts)
+    // Make space for the incoming context if we're full.
+    GraphicsContextGLOpenGLManager::sharedManager().recycleContextIfNecessary();
+    if (GraphicsContextGLOpenGLManager::sharedManager().hasTooManyContexts())
         return nullptr;
 
     // Create the GraphicsContextGLOpenGL object first in order to establist a current context on this thread.
@@ -100,7 +90,8 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
         return nullptr;
 #endif
 
-    contexts.append(context.get());
+    GraphicsContextGLOpenGLManager::sharedManager().addContext(context.get());
+
     return context;
 }
 
@@ -308,6 +299,7 @@ GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes att
 #if USE(ANGLE)
 GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
+    GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
     if (m_texture)
@@ -344,15 +336,11 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
     if (m_vao)
         deleteVertexArray(m_vao);
 #endif
-
-    auto* activeContext = activeContexts().takeLast([this](auto* it) {
-        return it == this;
-    });
-    ASSERT_UNUSED(activeContext, !!activeContext);
 }
 #else
 GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
 {
+    GraphicsContextGLOpenGLManager::sharedManager().removeContext(this);
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
     if (m_texture)
@@ -389,11 +377,6 @@ GraphicsContextGLOpenGL::~GraphicsContextGLOpenGL()
     if (m_vao)
         deleteVertexArray(m_vao);
 #endif
-
-    auto* activeContext = activeContexts().takeLast([this](auto* it) {
-        return it == this;
-    });
-    ASSERT_UNUSED(activeContext, !!activeContext);
 }
 #endif // USE(ANGLE)
 

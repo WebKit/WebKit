@@ -40,10 +40,7 @@ class IDBConnectionToServer;
 class WEBCORE_EXPORT DatabaseProvider : public RefCounted<DatabaseProvider> {
 public:
     virtual ~DatabaseProvider();
-
-#if ENABLE(INDEXED_DATABASE)
     virtual IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(const PAL::SessionID&) = 0;
-#endif
 };
 
 } // namespace WebCore

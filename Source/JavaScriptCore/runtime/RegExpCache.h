@@ -33,7 +33,7 @@
 #include "Strong.h"
 #include "Weak.h"
 #include <array>
-#include <wtf/HashMap.h>
+#include <wtf/RobinHoodHashMap.h>
 
 namespace JSC {
 
@@ -45,7 +45,7 @@ class RegExpCache final : private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
 
     friend class RegExp;
-    typedef HashMap<RegExpKey, Weak<RegExp>> RegExpCacheMap;
+    typedef MemoryCompactRobinHoodHashMap<RegExpKey, Weak<RegExp>> RegExpCacheMap;
 
 public:
     RegExpCache(VM* vm);

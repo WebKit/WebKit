@@ -101,7 +101,7 @@ bool RootInlineBox::isHyphenated() const
     return false;
 }
 
-int RootInlineBox::baselinePosition(FontBaseline baselineType) const
+LayoutUnit RootInlineBox::baselinePosition(FontBaseline baselineType) const
 {
     return renderer().baselinePosition(baselineType, isFirstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
 }

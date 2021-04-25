@@ -27,6 +27,7 @@
 #include "BrandedStructure.h"
 #include "ButterflyInlines.h"
 #include "Error.h"
+#include "JSArrayInlines.h"
 #include "JSFunction.h"
 #include "JSObject.h"
 #include "JSTypedArrays.h"
@@ -43,37 +44,18 @@ CompleteSubspace* JSFinalObject::subspaceFor(VM& vm)
     return &vm.cellSpace;
 }
 
-// Section 7.3.17 of the spec.
-template <typename AddFunction> // Add function should have a type like: (JSValue, RuntimeType) -> bool
-void createListFromArrayLike(JSGlobalObject* globalObject, JSValue arrayLikeValue, RuntimeTypeMask legalTypesFilter, const String& notAnObjectErroMessage, const String& illegalTypeErrorMessage, AddFunction addFunction)
+// https://tc39.es/ecma262/#sec-createlistfromarraylike
+template <typename Functor> // A functor should have a type like: (JSValue) -> bool
+void forEachInArrayLike(JSGlobalObject* globalObject, JSObject* arrayLikeObject, Functor functor)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!arrayLikeValue.isObject()) {
-        throwTypeError(globalObject, scope, notAnObjectErroMessage);
-        return;
-    }
-    
-    Vector<JSValue> result;
-    JSValue lengthProperty = arrayLikeValue.get(globalObject, vm.propertyNames->length);
+    uint64_t length = static_cast<uint64_t>(toLength(globalObject, arrayLikeObject));
     RETURN_IF_EXCEPTION(scope, void());
-    double lengthAsDouble = lengthProperty.toLength(globalObject);
-    RETURN_IF_EXCEPTION(scope, void());
-    RELEASE_ASSERT(lengthAsDouble >= 0.0 && lengthAsDouble == std::trunc(lengthAsDouble));
-    uint64_t length = static_cast<uint64_t>(lengthAsDouble);
     for (uint64_t index = 0; index < length; index++) {
-        JSValue next = arrayLikeValue.get(globalObject, index);
+        JSValue value = arrayLikeObject->getIndex(globalObject, index);
         RETURN_IF_EXCEPTION(scope, void());
-        
-        RuntimeType type = runtimeTypeForValue(vm, next);
-        if (!(type & legalTypesFilter)) {
-            throwTypeError(globalObject, scope, illegalTypeErrorMessage);
-            return;
-        }
-        
-        bool exitEarly = addFunction(next, type);
-        if (exitEarly)
+        if (!functor(value))
             return;
     }
 }

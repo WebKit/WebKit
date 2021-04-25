@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "DOMException.h"
 #include "ExceptionCode.h"
 #include <wtf/text/WTFString.h>
@@ -98,5 +96,3 @@ bool IDBError::decode(Decoder& decoder, IDBError& error)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

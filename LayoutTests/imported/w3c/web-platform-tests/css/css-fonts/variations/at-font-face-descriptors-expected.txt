@@ -43,12 +43,12 @@ PASS font-stretch(valid): Legal percentage: 100%
 PASS font-stretch(valid): Legal percentage: 1000%
 PASS font-stretch(invalid): Only percentages, not numbers allowed: 100
 PASS font-stretch(invalid): Negative values are illegal: -1%
-FAIL font-stretch(valid): Zero is legal: 0% assert_not_equals: Valid value should be accepted. got disallowed value ""
+PASS font-stretch(valid): Zero is legal: 0%
 PASS font-stretch(invalid): Extra content after value: 100% a
 FAIL font-stretch(valid): Simple calc value: calc(200.5%) assert_equals: Unexpected resulting value. expected "200.5%" but got "calc(200.5%)"
 FAIL font-stretch(valid): Valid calc expression: calc(50%*2 - 20%) assert_equals: Unexpected resulting value. expected "80%" but got "calc(80%)"
-FAIL font-stretch(valid): Negative calc value (to be clamped): calc(-100%) assert_not_equals: Valid value should be accepted. got disallowed value ""
-FAIL font-stretch(valid): Negative calc expression (to be clamped): calc(50% - 50%*2) assert_not_equals: Valid value should be accepted. got disallowed value ""
+PASS font-stretch(valid): Negative calc value (to be clamped): calc(-100%)
+PASS font-stretch(valid): Negative calc expression (to be clamped): calc(50% - 50%*2)
 PASS font-stretch(invalid): Unit-less calc value: calc(100)
 PASS font-stretch(invalid): Calc value with units: calc(100px)
 PASS font-stretch(valid): Simple range: 100% 200%

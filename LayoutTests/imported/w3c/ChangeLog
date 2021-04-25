@@ -1,3 +1,275 @@
+2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove [Replaceable] extended attribute from `document.all`
+        https://bugs.webkit.org/show_bug.cgi?id=223883
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/dom/idlharness.https-expected.txt:
+
+2021-04-02  Jessica Tallon  <jtallon@igalia.com>
+
+        Update wasm JS-API tests for the type method to latest upstream.
+        https://bugs.webkit.org/show_bug.cgi?id=222412
+
+        Reviewed by Yusuke Suzuki.
+
+        The upstream tests has recently added a test for the table type method and
+        updated the other type tests to methods to keep up with a recent spec change.
+        This adds those updated tests as well as now expectations they pass.
+
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.js:
+        (assert_type):
+        (string_appeared_here.test):
+        * web-platform-tests/wasm/jsapi/global/type.tentative.any.worker-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.js:
+        (assert_type):
+        * web-platform-tests/wasm/jsapi/memory/type.tentative.any.worker-expected.txt:
+
+2021-04-02  Chris Lord  <clord@igalia.com>
+
+        Implement text rendering on OffscreenCanvas in a Worker
+        https://bugs.webkit.org/show_bug.cgi?id=202793
+
+        Reviewed by Darin Adler.
+
+        Adjust test expectations.
+
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.basic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.complex.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.invalid.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.font.parse.tiny.worker-expected.txt:
+
+2021-04-02  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] align-content issues
+        https://bugs.webkit.org/show_bug.cgi?id=221468
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/css/css-flexbox/align-content_center-expected.html: Fixed stylesheet link.
+        * web-platform-tests/css/css-flexbox/align-content_flex-end-expected.html: Ditto.
+        * web-platform-tests/css/css-flexbox/align-content_space-around-expected.html: Ditto.
+        * web-platform-tests/css/css-flexbox/align-content_stretch-expected.html: Ditto.
+
+2021-04-01  Rob Buis  <rbuis@igalia.com>
+
+        aspect-ratio not recomputed on hover
+        https://bugs.webkit.org/show_bug.cgi?id=224028
+
+        Reviewed by Zalan Bujtas.
+
+        Add test for this.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio.html: Added.
+
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
+        Unreviewed. Import WPT test modified in https://github.com/web-platform-tests/wpt/pull/28315
+        with updated expectation showing a slight progression in a failing test (we fail the second
+        assertion instead of the first one).
+
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation-expected.txt:
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation.html:
+
+2021-03-31  Robert Jenner  <jenner@apple.com>
+
+        REGRESSION (r275227): [ macOS iOS Release ] imported/w3c/web-platform-tests/css/css-transitions/properties-value-003.html is a constant failure
+        https://bugs.webkit.org/show_bug.cgi?id=224006
+
+        Uneviewed test gardening.
+
+        Rebaseline test that started to consantly fail. 
+
+        * web-platform-tests/css/css-transitions/properties-value-003-expected.txt:
+
+2021-03-31  Antoine Quint  <graouts@webkit.org>
+
+        font-stretch should support 0% and disallow animating to a value below 0%
+        https://bugs.webkit.org/show_bug.cgi?id=223994
+
+        Reviewed by Antti Koivisto.
+
+        Mark 23 tests as PASS results.
+
+        * web-platform-tests/css/css-fonts/animations/font-stretch-interpolation-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/at-font-face-descriptors-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-parse-numeric-stretch-style-weight-expected.txt:
+        * web-platform-tests/css/css-fonts/variations/font-stretch-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Computed style for a border-radius corner should never be 0px when the provided width isn't 0px
+        https://bugs.webkit.org/show_bug.cgi?id=223927
+
+        Reviewed by Dean Jackson.
+
+        Mark 5 tests as PASS results as a result of returning the correct computed style for
+        "border-top-left-radius: 40px 0px". This is importing a change made to WPT via
+        https://github.com/web-platform-tests/wpt/pull/28310.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-radius-computed-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-radius-computed.html:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of box-shadow and text-shadow CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=223924
+
+        Reviewed by Dean Jackson.
+
+        Mark all interpolation tests for box-shadow and text-shadow as PASS results.
+
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-composition-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/box-shadow-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/text-shadow-interpolation-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Computed style for background-position should not use "left" and "top" keywords
+        https://bugs.webkit.org/show_bug.cgi?id=223878
+
+        Reviewed by Simon Fraser.
+
+        Add 106 new PASS results.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-position-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-position-computed-expected.txt:
+        * web-platform-tests/css/css-pseudo/first-letter-allowed-properties.html: Update the test per WPT PR #28284.
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        CSS properties backed by StyleImage should not interpolate when one of the values is "none"
+        https://bugs.webkit.org/show_bug.cgi?id=223929
+
+        Reviewed by Dean Jackson.
+
+        Mark 76 new PASS results.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-image-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-source-interpolation-expected.txt:
+        * web-platform-tests/css/css-lists/animations/list-style-image-interpolation-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Account for "hanging" and "each-line" when blending text-interpolation
+        https://bugs.webkit.org/show_bug.cgi?id=223914
+
+        Reviewed by Dean Jackson.
+
+        * web-platform-tests/css/css-text/animations/text-indent-composition-expected.txt:
+        * web-platform-tests/css/css-text/animations/text-indent-interpolation-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        [CSS Backgrounds] WPT test css/css-backgrounds/animations/border-image-width-interpolation.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=206578
+
+        Reviewed by Dean Jackson.
+
+        Update the test output, the remaining failures are due to issues with calc() serialization (see
+        https://bugs.webkit.org/show_bug.cgi?id=223875).
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+
+2021-03-30  Antoine Quint  <graouts@webkit.org>
+
+        Account for "cover" and "contain" when interpolating background-size
+        https://bugs.webkit.org/show_bug.cgi?id=223879
+
+        Reviewed by Antti Koivisto.
+
+        Add 40 PASS results for the background-size interpolation test.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-size-interpolation-expected.txt:
+
+2021-03-29  Antoine Quint  <graouts@webkit.org>
+
+        Enable "hanging" and "each-line" keywords for the text-indent CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223851
+
+        Reviewed by Antti Koivisto.
+
+        Mark all tests in the parsing-related tests as PASS results for text-indent.
+        The animation tests will be dealt with in bug 223914.
+
+        * web-platform-tests/css/css-text/animations/text-indent-composition-expected.txt:
+        * web-platform-tests/css/css-text/animations/text-indent-interpolation-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-indent-computed-expected.txt:
+        * web-platform-tests/css/css-text/parsing/text-indent-valid-expected.txt:
+
+2021-03-28  Antoine Quint  <graouts@webkit.org>
+
+        Add support for animating the vertical-align CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223853
+
+        Reviewed by Antti Koivisto.
+
+        Add 161 PASS results in the WPT suite now that we support animating vertical-align.
+
+        * web-platform-tests/css/css-transitions/animations/vertical-align-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-001-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-implicit-001-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-inherit-001-expected.txt:
+        * web-platform-tests/css/css-transitions/properties-value-inherit-002-expected.txt:
+
+2021-03-26  Tim Nguyen  <ntim.bugs@gmail.com>
+
+        Add interpolation for object-position CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223568
+
+        Reviewed by Antoine Quint.
+
+        * web-platform-tests/css/css-images/object-position-interpolation.html: Added.
+
+2021-03-26  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement cachedPropertyValue for WebXR [SameObject] attributes
+        https://bugs.webkit.org/show_bug.cgi?id=223635
+
+        Reviewed by Chris Dumez.
+
+        Update WebXR [SameObject] related test expectations.
+
+        * web-platform-tests/webxr/xrRigidTransform_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrSession_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrView_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrViewerPose_views_sameObject.https-expected.txt: Added.
+
+2021-03-25  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of the caret-color CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223181
+        <rdar://problem/75687413>
+
+        Reviewed by Antti Koivisto.
+
+        Add 64 PASS results for the caret-color interpolation test which now is passing completely.
+        The test css/css-ui/caret-color-021.html also progresses.
+
+        * web-platform-tests/css/css-ui/animation/caret-color-interpolation-expected.txt:
+        * web-platform-tests/css/css-ui/caret-color-021-expected.txt:
+
+2021-03-25  Antoine Quint  <graouts@webkit.org>
+
+        Improve interpolation of the shape-outside CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=223738
+
+        Reviewed by Antti Koivisto.
+
+        Add another 29 PASS results for shape-outside interpolation.
+
+        * web-platform-tests/css/css-shapes/animation/shape-outside-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
 2021-03-24  Antoine Quint  <graouts@webkit.org>
 
         Fix interpolation of the border-spacing property

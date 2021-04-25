@@ -90,6 +90,7 @@ namespace WTF {
         }
 
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
+        static constexpr bool hasHashInValue = true;
     };
 
     struct ASCIICaseInsensitiveHash {

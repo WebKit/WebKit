@@ -35,8 +35,8 @@
 #include "JSPromise.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
-#include "LazyProperty.h"
 #include "LazyClassStructure.h"
+#include "LazyProperty.h"
 #include "NumberPrototype.h"
 #include "ParserModes.h"
 #include "RegExpGlobalData.h"
@@ -45,6 +45,7 @@
 #include "SymbolPrototype.h"
 #include "VM.h"
 #include "Watchpoint.h"
+#include "WeakGCSet.h"
 #include <JavaScriptCore/JSBase.h>
 #include <array>
 #include <wtf/HashSet.h>
@@ -546,8 +547,6 @@ public:
     bool isMapPrototypeSetFastAndNonObservable();
     bool isSetPrototypeAddFastAndNonObservable();
 
-    WeakGCMap<GetValueFunc, JSCustomGetterFunction>& customGetterFunctionMap() { return m_customGetterFunctionMap; }
-    WeakGCMap<PutValueFunc, JSCustomSetterFunction>& customSetterFunctionMap() { return m_customSetterFunctionMap; }
 
 #if ENABLE(DFG_JIT)
     using ReferencedGlobalPropertyWatchpointSets = HashMap<RefPtr<UniquedStringImpl>, Ref<WatchpointSet>, IdentifierRepHash>;
@@ -563,8 +562,21 @@ public:
     RuntimeFlags m_runtimeFlags;
     ConsoleClient* m_consoleClient { nullptr };
     Optional<unsigned> m_stackTraceLimit;
-    WeakGCMap<GetValueFunc, JSCustomGetterFunction> m_customGetterFunctionMap;
-    WeakGCMap<PutValueFunc, JSCustomSetterFunction> m_customSetterFunctionMap;
+
+    template<typename T>
+    struct WeakCustomGetterOrSetterHash {
+        static unsigned hash(const Weak<T>&);
+        static bool equal(const Weak<T>&, const Weak<T>&);
+        static unsigned hash(const PropertyName&, typename T::CustomFunctionPointer);
+
+        static constexpr bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>> m_customGetterFunctionSet;
+    WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>> m_customSetterFunctionSet;
+
+    WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>>& customGetterFunctionSet() { return m_customGetterFunctionSet; }
+    WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>>& customSetterFunctionSet() { return m_customSetterFunctionSet; }
 
 #if ASSERT_ENABLED
     const JSGlobalObject* m_globalObjectAtDebuggerEntry { nullptr };
@@ -1116,6 +1128,7 @@ protected:
             , value(v)
             , attributes(a)
         {
+            ASSERT(Thread::current().stack().contains(this));
         }
 
         const Identifier identifier;
@@ -1138,6 +1151,7 @@ private:
     void initializeAggregateErrorConstructor(LazyClassStructure::Initializer&);
 
     JS_EXPORT_PRIVATE void init(VM&);
+    void initStaticGlobals(VM&);
     void fixupPrototypeChainWithObjectPrototype(VM&);
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);

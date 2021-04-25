@@ -228,7 +228,9 @@ void SourceBufferParserAVFObjC::flushPendingMediaData()
 
 void SourceBufferParserAVFObjC::setShouldProvideMediaDataForTrackID(bool should, uint64_t trackID)
 {
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_parser setShouldProvideMediaData:should forTrackID:trackID];
+    END_BLOCK_OBJC_EXCEPTIONS
 }
 
 bool SourceBufferParserAVFObjC::shouldProvideMediadataForTrackID(uint64_t trackID)

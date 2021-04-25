@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,7 +77,7 @@ struct ItemHandle {
     template<typename T> T& get() const
     {
         ASSERT(is<T>());
-        return *reinterpret_cast<T*>(&data[sizeof(uint64_t)]);
+        return *reinterpret_cast<T*>(data + sizeof(uint64_t));
     }
 
     bool safeCopy(ItemHandle destination) const;
@@ -87,16 +87,40 @@ enum class DidChangeItemBuffer : bool { No, Yes };
 
 class ItemBufferWritingClient {
 public:
-    virtual ~ItemBufferWritingClient() { }
+    virtual ~ItemBufferWritingClient()
+    {
+    }
 
-    virtual ItemBufferHandle createItemBuffer(size_t) = 0;
-    virtual RefPtr<SharedBuffer> encodeItem(ItemHandle) const = 0;
-    virtual void didAppendData(const ItemBufferHandle&, size_t numberOfBytes, DidChangeItemBuffer) = 0;
+    virtual ItemBufferHandle createItemBuffer(size_t)
+    {
+        return { };
+    }
+
+    virtual Optional<std::size_t> requiredSizeForItem(ItemHandle) const
+    {
+        return WTF::nullopt;
+    }
+
+    virtual RefPtr<SharedBuffer> encodeItemOutOfLine(ItemHandle) const
+    {
+        return nullptr;
+    }
+
+    virtual void encodeItemInline(ItemHandle, uint8_t*) const
+    {
+    }
+
+    virtual void didAppendData(const ItemBufferHandle&, size_t numberOfBytes, DidChangeItemBuffer)
+    {
+        UNUSED_PARAM(numberOfBytes);
+    }
 };
 
 class ItemBufferReadingClient {
 public:
-    virtual ~ItemBufferReadingClient() { }
+    virtual ~ItemBufferReadingClient()
+    {
+    }
 
     virtual Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t dataLength, ItemType, uint8_t* handleLocation) = 0;
 };
@@ -149,9 +173,10 @@ public:
     // data back into an item of type T.
     template<typename T, class... Args> void append(Args&&... args)
     {
-        static_assert(std::is_trivially_destructible<T>::value || !T::isInlineItem);
+        static_assert(std::is_trivially_destructible<T>::value == T::isInlineItem);
 
-        if (!T::isInlineItem && m_writingClient) {
+        if (!T::isInlineItem) {
+            RELEASE_ASSERT(m_writingClient);
 #if COMPILER(MSVC)
             __declspec(align(8)) typedef uint8_t EncodingBuffer[sizeof(uint64_t) + sizeof(T)];
 #else
@@ -166,9 +191,6 @@ public:
         }
 
         auto bufferChanged = swapWritableBufferIfNeeded(paddedSizeOfTypeAndItemInBytes(T::itemType));
-
-        if (!std::is_trivially_destructible<T>::value)
-            m_itemsToDestroyInAllocatedBuffers.append({ &m_writableBuffer.data[m_writtenNumberOfBytes] });
 
         uncheckedAppend<T>(bufferChanged, std::forward<Args>(args)...);
     }
@@ -194,7 +216,6 @@ private:
 
     ItemBufferReadingClient* m_readingClient { nullptr };
     ItemBufferWritingClient* m_writingClient { nullptr };
-    Vector<ItemHandle> m_itemsToDestroyInAllocatedBuffers;
     Vector<uint8_t*> m_allocatedBuffers;
     ItemBufferHandles m_readOnlyBuffers;
     ItemBufferHandle m_writableBuffer;

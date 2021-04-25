@@ -143,13 +143,11 @@ void NetworkProcessConnection::didReceiveMessage(IPC::Connection& connection, IP
     }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
     if (decoder.messageReceiverName() == Messages::WebIDBConnectionToServer::messageReceiverName()) {
         if (m_webIDBConnection)
             m_webIDBConnection->didReceiveMessage(connection, decoder);
         return;
     }
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWClientConnection::messageReceiverName()) {
@@ -204,10 +202,8 @@ void NetworkProcessConnection::didClose(IPC::Connection&)
     Ref<NetworkProcessConnection> protector(*this);
     WebProcess::singleton().networkProcessConnectionClosed(this);
 
-#if ENABLE(INDEXED_DATABASE)
     if (auto idbConnection = std::exchange(m_webIDBConnection, nullptr))
         idbConnection->connectionToServerLost();
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     if (auto swConnection = std::exchange(m_swConnection, nullptr))
@@ -283,14 +279,12 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 }
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
 WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServer()
 {
     if (!m_webIDBConnection)
         m_webIDBConnection = WebIDBConnectionToServer::create();
     return *m_webIDBConnection;
 }
-#endif
 
 #if ENABLE(SERVICE_WORKER)
 WebSWClientConnection& NetworkProcessConnection::serviceWorkerConnection()

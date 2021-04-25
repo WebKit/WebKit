@@ -54,8 +54,8 @@ bool PrivateClickMeasurement::isValid() const
         && m_attributionTriggerData.value().isValid()
         && m_sourceID.isValid()
         && !m_sourceSite.registrableDomain.isEmpty()
-        && !m_attributeOnSite.registrableDomain.isEmpty()
-        && m_earliestTimeToSend;
+        && !m_destinationSite.registrableDomain.isEmpty()
+        && (m_timesToSend.sourceEarliestTimeToSend || m_timesToSend.destinationEarliestTimeToSend);
 }
 
 Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMeasurement::parseAttributionRequest(const URL& redirectURL)
@@ -92,7 +92,17 @@ Expected<PrivateClickMeasurement::AttributionTriggerData, String> PrivateClickMe
     return makeUnexpected("[Private Click Measurement] Conversion was not accepted because the URL path contained unrecognized parts."_s);
 }
 
-Optional<Seconds> PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(AttributionTriggerData&& attributionTriggerData)
+bool PrivateClickMeasurement::hasPreviouslyBeenReported()
+{
+    return !m_timesToSend.sourceEarliestTimeToSend || !m_timesToSend.destinationEarliestTimeToSend;
+}
+
+static Seconds randomlyBetweenTwentyFourAndFortyEightHours()
+{
+    return 24_h + Seconds(randomNumber() * (24_h).value());
+}
+
+PrivateClickMeasurement::AttributionSecondsUntilSendData PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(AttributionTriggerData&& attributionTriggerData)
 {
     if (!attributionTriggerData.isValid() || (m_attributionTriggerData && m_attributionTriggerData->priority >= attributionTriggerData.priority))
         return { };
@@ -100,9 +110,11 @@ Optional<Seconds> PrivateClickMeasurement::attributeAndGetEarliestTimeToSend(Att
     m_attributionTriggerData = WTFMove(attributionTriggerData);
     // 24-48 hour delay before sending. This helps privacy since the conversion and the attribution
     // requests are detached and the time of the attribution does not reveal the time of the conversion.
-    auto seconds = 24_h + Seconds(randomNumber() * (24_h).value());
-    m_earliestTimeToSend = WallTime::now() + seconds;
-    return seconds;
+    auto sourceSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours();
+    auto destinationSecondsUntilSend = randomlyBetweenTwentyFourAndFortyEightHours();
+    m_timesToSend = { WallTime::now() + sourceSecondsUntilSend, WallTime::now() + destinationSecondsUntilSend };
+
+    return AttributionSecondsUntilSendData { sourceSecondsUntilSend, destinationSecondsUntilSend };
 }
 
 bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasurement& other) const
@@ -143,7 +155,7 @@ URL PrivateClickMeasurement::attributionReportAttributeOnURL() const
     if (!isValid())
         return URL();
 
-    return attributionReportURL(m_attributeOnSite.registrableDomain);
+    return attributionReportURL(m_destinationSite.registrableDomain);
 }
 
 Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
@@ -155,7 +167,7 @@ Ref<JSON::Object> PrivateClickMeasurement::attributionReportJSON() const
     reportDetails->setString("source_engagement_type"_s, "click"_s);
     reportDetails->setString("source_site"_s, m_sourceSite.registrableDomain.string());
     reportDetails->setInteger("source_id"_s, m_sourceID.id);
-    reportDetails->setString("attributed_on_site"_s, m_attributeOnSite.registrableDomain.string());
+    reportDetails->setString("attributed_on_site"_s, m_destinationSite.registrableDomain.string());
     reportDetails->setInteger("trigger_data"_s, m_attributionTriggerData->data);
     reportDetails->setInteger("version"_s, 2);
 

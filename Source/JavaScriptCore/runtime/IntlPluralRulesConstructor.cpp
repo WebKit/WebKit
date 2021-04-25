@@ -115,7 +115,7 @@ JSC_DEFINE_HOST_FUNCTION(IntlPluralRulesConstructorFuncSupportedLocalesOf, (JSGl
 
     // 13.3.2 Intl.PluralRules.supportedLocalesOf (locales [, options ])
     // https://tc39.github.io/ecma402/#sec-intl.pluralrules.supportedlocalesof
-    const HashSet<String>& availableLocales = intlPluralRulesAvailableLocales();
+    const auto& availableLocales = intlPluralRulesAvailableLocales();
 
     Vector<String> requestedLocales = canonicalizeLocaleList(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());

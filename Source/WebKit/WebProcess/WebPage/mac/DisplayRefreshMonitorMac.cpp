@@ -32,6 +32,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxy.h"
 #include "WebProcessProxyMessages.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayRefreshMonitor.h>
 #include <WebCore/RunLoopObserver.h>
 #include <wtf/text/TextStream.h>
@@ -39,49 +40,69 @@
 namespace WebKit {
 using namespace WebCore;
 
+// Avoid repeated start/stop IPC when rescheduled inside the callback.
+constexpr unsigned maxUnscheduledFireCount { 1 };
+
 DisplayRefreshMonitorMac::DisplayRefreshMonitorMac(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
     , m_observerID(DisplayLinkObserverID::generate())
 {
     ASSERT(isMainRunLoop());
+    setMaxUnscheduledFireCount(maxUnscheduledFireCount);
 }
 
 DisplayRefreshMonitorMac::~DisplayRefreshMonitorMac()
 {
-    if (m_hasSentMessage)
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID()), 0);
+    // stop() should have been called.
+    ASSERT(!m_displayLinkIsActive);
 }
 
-bool DisplayRefreshMonitorMac::requestRefreshCallback()
+void DisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpdate& displayUpdate)
 {
-    if (!isActive())
-        return false;
+    // FIXME: This will perturb displayUpdate.
+    if (!m_firstCallbackInCurrentRunloop)
+        return;
 
-    if (!m_hasSentMessage) {
-        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID()), 0);
-        m_hasSentMessage = true;
+    DisplayRefreshMonitor::dispatchDisplayDidRefresh(displayUpdate);
+}
+
+bool DisplayRefreshMonitorMac::startNotificationMechanism()
+{
+    if (m_displayLinkIsActive)
+        return true;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "[Web ] DisplayRefreshMonitorMac::requestRefreshCallback for display " << displayID() << " - starting");
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID(), maxClientPreferredFramesPerSecond().valueOr(FullSpeedFramesPerSecond)), 0);
+    if (!m_runLoopObserver) {
+        // The RunLoopObserver repeats.
         m_runLoopObserver = makeUnique<RunLoopObserver>(kCFRunLoopEntry, [this]() {
             m_firstCallbackInCurrentRunloop = true;
         });
-        m_runLoopObserver->schedule(CFRunLoopGetCurrent());
     }
-    
-    setIsScheduled(true);
+
+    m_runLoopObserver->schedule(CFRunLoopGetCurrent());
+    m_displayLinkIsActive = true;
 
     return true;
 }
 
-void DisplayRefreshMonitorMac::displayLinkFired()
+void DisplayRefreshMonitorMac::stopNotificationMechanism()
 {
-    ASSERT(isMainRunLoop());
-    if (!m_firstCallbackInCurrentRunloop)
+    if (!m_displayLinkIsActive)
         return;
-    m_firstCallbackInCurrentRunloop = false;
 
-    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorMac::displayLinkFired() for display " << displayID());
+    LOG_WITH_STREAM(DisplayLink, stream << "DisplayRefreshMonitorMac::requestRefreshCallback - stopping");
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID()), 0);
+    m_runLoopObserver->invalidate();
+    
+    m_displayLinkIsActive = false;
+}
 
-    // Since we are on the main thread, we can just call handleDisplayRefreshedNotificationOnMainThread here.
-    handleDisplayRefreshedNotificationOnMainThread(this);
+void DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
+{
+    LOG_WITH_STREAM(DisplayLink, stream << "[Web] DisplayRefreshMonitorMac::adjustPreferredFramesPerSecond for display link on display " << displayID() << " to " << preferredFramesPerSecond);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::SetDisplayLinkPreferredFramesPerSecond(m_observerID, displayID(), preferredFramesPerSecond), 0);
+
 }
 
 } // namespace WebKit

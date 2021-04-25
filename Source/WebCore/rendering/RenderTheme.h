@@ -403,7 +403,7 @@ protected:
 
 public:
     void updateControlStatesForRenderer(const RenderBox&, ControlStates&) const;
-    ControlStates::States extractControlStatesForRenderer(const RenderObject&) const;
+    OptionSet<ControlStates::States> extractControlStatesForRenderer(const RenderObject&) const;
     bool isActive(const RenderObject&) const;
     bool isChecked(const RenderObject&) const;
     bool isIndeterminate(const RenderObject&) const;
@@ -447,6 +447,8 @@ protected:
     virtual ColorCache& colorCache(OptionSet<StyleColor::Options>) const;
 
 private:
+    void adjustSearchFieldDecorationStyle(RenderStyle&, const Element*) const;
+
     mutable HashMap<uint8_t, ColorCache, DefaultHash<uint8_t>, WTF::UnsignedWithZeroKeyHashTraits<uint8_t>> m_colorCacheMap;
 };
 

@@ -1594,9 +1594,10 @@ Position makeDeprecatedLegacyPosition(const BoundaryPoint& point)
 
 Optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
 {
-    if (position.isNull())
+    auto container = makeRefPtr(position.containerNode());
+    if (!container)
         return WTF::nullopt;
-    return BoundaryPoint { *position.containerNode(), static_cast<unsigned>(position.computeOffsetInContainerNode()) };
+    return BoundaryPoint { container.releaseNonNull(), static_cast<unsigned>(position.computeOffsetInContainerNode()) };
 }
 
 PartialOrdering documentOrder(const Position& a, const Position& b)

@@ -48,6 +48,8 @@ public:
 
     DECLARE_INFO;
 
+    JSObject* type(JSGlobalObject*);
+
 private:
     WebAssemblyGlobalPrototype(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*);

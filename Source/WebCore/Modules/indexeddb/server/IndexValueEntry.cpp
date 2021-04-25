@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IndexValueEntry.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCursorInfo.h"
 
 namespace WebCore {
@@ -228,5 +226,3 @@ IndexValueEntry::Iterator IndexValueEntry::reverseFind(const IDBKeyData& key, Cu
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

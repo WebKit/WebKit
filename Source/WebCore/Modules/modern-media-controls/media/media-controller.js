@@ -373,4 +373,11 @@ class MediaController
         this.controls.visible = shouldControlsBeAvailable;
     }
 
+    // Testing
+
+    set maximumRightContainerButtonCountOverride(count)
+    {
+        this.controls.maximumRightContainerButtonCountOverride = count;
+    }
+
 }

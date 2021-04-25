@@ -43,14 +43,21 @@ public:
     
     virtual ~DisplayRefreshMonitorIOS();
 
-    void displayLinkFired() override;
-    bool requestRefreshCallback() override;
+    void displayLinkCallbackFired();
 
 private:
     explicit DisplayRefreshMonitorIOS(PlatformDisplayID);
+
+    void stop() final;
+    bool startNotificationMechanism() final;
+    void stopNotificationMechanism() final;
+    Optional<FramesPerSecond> displayNominalFramesPerSecond() final;
+
     RetainPtr<WebDisplayLinkHandler> m_handler;
+    DisplayUpdate m_currentUpdate;
+    bool m_displayLinkIsActive { false };
 };
 
-}
+} // namespace WebCore
 
 #endif // PLATFORM(IOS_FAMILY)

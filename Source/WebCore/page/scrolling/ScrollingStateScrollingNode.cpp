@@ -157,7 +157,7 @@ void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-void ScrollingStateScrollingNode::setSnapOffsetsInfo(const ScrollSnapOffsetsInfo<float>& info)
+void ScrollingStateScrollingNode::setSnapOffsetsInfo(const FloatScrollSnapOffsetsInfo& info)
 {
     if (m_snapOffsetsInfo.isEqual(info))
         return;

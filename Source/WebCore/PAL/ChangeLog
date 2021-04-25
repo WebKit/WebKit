@@ -1,3 +1,125 @@
+2021-04-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        RemoteRenderingBackend should clean up CG resources after last Canvas is destroyed in Gpu process
+        https://bugs.webkit.org/show_bug.cgi?id=223885
+        <rdar://problem/75637356>
+
+        Reviewed by Simon Fraser.
+
+        Add SPI interface _MTLDevice for its _purgeDevice method.
+
+        * pal/spi/cocoa/MetalSPI.h:
+
+2021-04-01  Jean-Yves Avenard  <jya@apple.com>
+
+        Previous artwork isn't cleared when NowPlaying info doesn't contain an artwork
+        https://bugs.webkit.org/show_bug.cgi?id=224031
+        <rdar://76044544>
+
+        Reviewed by Youenn Fablet.
+
+        * pal/spi/mac/MediaRemoteSPI.h: Add MRMediaRemoteMergePolicy enum definitions.
+
+2021-04-01  Jean-Yves Avenard  <jya@apple.com>
+
+        Now Playing artwork doesn't update when changed.
+        https://bugs.webkit.org/show_bug.cgi?id=223731
+        <rdar://problem/75823923>
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/mac/MediaRemoteSPI.h:
+
+2021-03-31  Youenn Fablet  <youenn@apple.com>
+
+        Make use of NSURLSessionWebSocket.sendCloseCode if available
+        https://bugs.webkit.org/show_bug.cgi?id=223999
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
+2021-03-29  Per Arne  <pvollan@apple.com>
+
+        The header file NotifySPI.h should not be private
+        https://bugs.webkit.org/show_bug.cgi?id=223893
+        <rdar://75942308>
+
+        Unreviewed build fix.
+
+        * PAL.xcodeproj/project.pbxproj:
+
+2021-03-26  Per Arne  <pvollan@apple.com>
+
+        Enforce notifyd message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=223601
+        <rdar://75098580>
+
+        Reviewed by Brent Fulgham.
+
+        Add Notify SPI file.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/NotifySPI.h: Added.
+
+2021-03-26  Devin Rousso  <drousso@apple.com>
+
+        Adopt AVKit SPI for hiding touch bar seeking controls
+        https://bugs.webkit.org/show_bug.cgi?id=223773
+        <rdar://problem/68937617>
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/cocoa/AVKitSPI.h:
+
+2021-03-26  Jessie Berlin  <jberlin@webkit.org>
+
+        Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags
+        https://bugs.webkit.org/show_bug.cgi?id=223779
+
+        Reviewed by Tim Horton.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
+2021-03-25  Jessie Berlin  <jberlin@webkit.org>
+
+        Remove 10.13 DEPLOYMENT_TARGETs and SYSTEM_VERSION_PREFIXs
+        https://bugs.webkit.org/show_bug.cgi?id=223765
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+
+2021-03-25  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r275057.
+        https://bugs.webkit.org/show_bug.cgi?id=223768
+
+        Caused build failure
+
+        Reverted changeset:
+
+        "Enforce notifyd message filtering"
+        https://bugs.webkit.org/show_bug.cgi?id=223601
+        https://trac.webkit.org/changeset/275057
+
+2021-03-25  Per Arne  <pvollan@apple.com>
+
+        Enforce notifyd message filtering
+        https://bugs.webkit.org/show_bug.cgi?id=223601
+        <rdar://75098580>
+
+        Reviewed by Brent Fulgham.
+
+        Add Notify SPI file.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/spi/cocoa/NotifySPI.h: Added.
+
 2021-03-19  Jer Noble  <jer.noble@apple.com>
 
         Many media/media-fragments/ tests are crashing due to other tests that run before them.

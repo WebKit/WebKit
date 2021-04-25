@@ -171,7 +171,7 @@ Color Color::semanticColor() const
     return { asInline(), Flags::Semantic };
 }
 
-std::pair<ColorSpace, ColorComponents<float>> Color::colorSpaceAndComponents() const
+std::pair<ColorSpace, ColorComponents<float, 4>> Color::colorSpaceAndComponents() const
 {
     if (isOutOfLine())
         return { colorSpace(), asOutOfLine().components() };

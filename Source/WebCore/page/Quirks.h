@@ -62,7 +62,7 @@ public:
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
     bool shouldStripQuotationMarkInFontFaceSetFamily() const;
 #if ENABLE(TOUCH_EVENTS)
-    bool shouldDispatchSimulatedMouseEvents() const;
+    bool shouldDispatchSimulatedMouseEvents(EventTarget*) const;
     bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTarget*) const;
     Optional<Event::IsCancelable> simulatedMouseEventTypeForTarget(EventTarget*) const;
     bool shouldMakeTouchEventNonCancelableForTarget(EventTarget*) const;
@@ -173,7 +173,13 @@ private:
 #endif
     mutable Optional<bool> m_shouldDisableElementFullscreenQuirk;
 #if ENABLE(TOUCH_EVENTS)
-    mutable Optional<bool> m_shouldDispatchSimulatedMouseEventsQuirk;
+    enum class ShouldDispatchSimulatedMouseEvents : uint8_t {
+        Unknown,
+        No,
+        DependingOnTargetFor_mybinder_org,
+        Yes,
+    };
+    mutable ShouldDispatchSimulatedMouseEvents m_shouldDispatchSimulatedMouseEventsQuirk { ShouldDispatchSimulatedMouseEvents::Unknown };
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
     mutable Optional<bool> m_shouldSynthesizeTouchEventsQuirk;

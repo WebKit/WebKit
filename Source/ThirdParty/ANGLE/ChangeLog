@@ -1,3 +1,127 @@
+2021-03-30  Kyle Piddington  <kpiddington@apple.com>
+
+        Enable sample_compare operations in Metal ANGLE
+        Sample_compare operations, and shadow sampling was accidently switched off when initially
+        setting up ANGLE_Metal. Enabling shadow sampling fixes most of the 
+        webgl/2.0.0/deqp/functional/gles3/textureshadow/ test suite, which is currently failing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=223833
+
+        Reviewed by Jon Lee.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeFeatures):
+
+2021-03-26  Jessie Berlin  <jberlin@webkit.org>
+
+        Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags
+        https://bugs.webkit.org/show_bug.cgi?id=223779
+
+        Reviewed by Tim Horton.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
+2021-03-25  Kyle Piddington  <kpiddington@apple.com>
+
+        ANGLE Metal crash ASAN webgl/1.0.3/conformance/misc/object-deletion-behaviour.html
+        https://bugs.webkit.org/show_bug.cgi?id=223739
+
+        Reviewed by Dean Jackson.
+
+        Previously, ANGLE would try to read color attachments off of the
+        cached render targets. However, since validation happens before
+        state sync, the cached render targets may be out of date.
+
+        For non-surface backed render targets, we instead get a fresh copy
+        of the render target when determening the native pixel format.
+
+        * src/libANGLE/renderer/metal/FrameBufferMtl.h:
+        * src/libANGLE/renderer/metal/FrameBufferMtl.mm:
+        (rx::FramebufferMtl::getImplementationColorReadFormat const):
+        (rx::FramebufferMtl::getColorReadRenderTargetNoCache const):
+
+
+2021-03-25  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] Add CPU mipmap generation for workaround on Intel devices.
+        https://bugs.webkit.org/show_bug.cgi?id=223778
+
+        Reviewed by Dean Jackson.
+
+        Mipmap generation on Intel does not reliably work for textures with
+        width less than four. To reliably pass webGL conformance, we need
+        to switch to CPU mipmap generation when generating mipmaps in this
+        specific circumstance.
+
+        This patch fixes the following four tests on Intel
+        webgl/1.0.3/conformance/limits/gl-max-texture-dimensions.html
+        webgl/1.0.3/conformance/textures/texture-size.html
+        webgl/2.0.0/conformance/limits/gl-max-texture-dimensions.html
+        webgl/2.0.0/conformance/textures/misc/texture-size.html
+
+        * include/platform/Feature.h:
+        (angle::FeatureCategoryToString):
+        * include/platform/FeaturesMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeFeatures):
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        (rx::TextureMtl::generateMipmap):
+
+2021-03-25  Jessie Berlin  <jberlin@webkit.org>
+
+        Remove 10.13 DEPLOYMENT_TARGETs and SYSTEM_VERSION_PREFIXs
+        https://bugs.webkit.org/show_bug.cgi?id=223765
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+
+2021-03-24  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal ANGLE non-blockers: Fix webgl/1.0.3/conformance/uniforms/uniform-default-values.html, Stencil debug layer assertions
+        https://bugs.webkit.org/show_bug.cgi?id=223667
+
+        https://bugs.webkit.org/show_bug.cgi?id=223667
+
+        On Release, uniformDefaultValues was resetting program memory
+        either early, or oddly. Since program reflection should be constant
+        per Shader anyway, drop the 'reset' after assigning reflection data.
+
+        In addition, clamp stencil rectangle to always be within framebuffer bounds. Code taken from upstream ANGLE.
+
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        (rx::ProgramMtl::linkImplDirect):
+        * src/libANGLE/renderer/metal/mtl_command_buffer.mm:
+        (rx::mtl::RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect):
+        (rx::mtl::RenderCommandEncoder::restart):
+        (rx::mtl::RenderCommandEncoder::setScissorRect):
+        * src/libANGLE/renderer/metal/mtl_glslang_mtl_utils.mm:
+        (rx::mtl::TranslatedShaderInfo::reset):
+        (rx::mtl::GlslangGetMSL):
+
+2021-03-24  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal ANGLE crashes LayoutTests/inspector/canvas/updateShader-webgl.html
+        Rather than rely on an instance variable in a C++ class, just query the dictionary constant when needed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=223695
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/ProgramMtl.h:
+        * src/libANGLE/renderer/metal/ProgramMtl.mm:
+        (rx::ProgramMtl::ProgramMtl):
+        (rx::ProgramMtl::linkImplSpirv):
+        (rx::ProgramMtl::linkImplDirect):
+        (rx::ProgramMtl::linkTranslatedShaders):
+
 2021-03-23  Kyle Piddington  <kpiddington@apple.com>
 
         ANGLE Metal fixes for program generation bugs

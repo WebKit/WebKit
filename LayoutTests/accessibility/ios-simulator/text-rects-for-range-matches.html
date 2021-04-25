@@ -18,7 +18,9 @@
                 var text = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
 
                 var rectsForRange = text.rectsForTextMarkerRange(text.textMarkerRangeForElement(text), "testing");
-                debug("Rect for range should not be empty: " + rectsForRange);
+                var size = rectsForRange.match(/{[\d]+, [\d]+}, {([\d]+), ([\d]+)}/);
+                debug("Rect for range should not be empty: width > 0: " + (size[1] > 0));
+                debug("Rect for range should not be empty: height > 0: " + (size[2] > 0));
             }
 
             </script>

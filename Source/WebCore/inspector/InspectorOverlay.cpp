@@ -35,6 +35,7 @@
 #include "CSSGridAutoRepeatValue.h"
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
+#include "CSSStyleDeclaration.h"
 #include "DOMCSSNamespace.h"
 #include "DOMTokenList.h"
 #include "Element.h"
@@ -83,6 +84,9 @@ static constexpr float rulerStepIncrement = 50;
 static constexpr float rulerStepLength = 8;
 static constexpr float rulerSubStepIncrement = 5;
 static constexpr float rulerSubStepLength = 5;
+
+static constexpr float layoutLabelPadding = 3;
+static constexpr float layoutLabelArrowSize = 4;
 
 static constexpr UChar bullet = 0x2022;
 static constexpr UChar ellipsis = 0x2026;
@@ -1199,12 +1203,8 @@ void InspectorOverlay::drawLayoutHatching(GraphicsContext& context, FloatQuad qu
     context.strokePath(hatchPath);
 }
 
-void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, FloatPoint point, InspectorOverlay::LabelArrowDirection direction, Color backgroundColor, float maximumWidth)
+FontCascade InspectorOverlay::fontForLayoutLabel()
 {
-    GraphicsContextStateSaver saver(context);
-    
-    context.translate(point);
-    
     FontCascadeDescription fontDescription;
     fontDescription.setFamilies({ "system-ui" });
     fontDescription.setWeight(FontSelectionValue(500));
@@ -1212,76 +1212,248 @@ void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, F
 
     FontCascade font(WTFMove(fontDescription), 0, 0);
     font.update(nullptr);
+    return font;
+}
 
-    constexpr auto padding = 4;
-    constexpr auto arrowSize = 4;
+Path InspectorOverlay::backgroundPathForLayoutLabel(float width, float height, InspectorOverlay::LabelArrowDirection arrowDirection, InspectorOverlay::LabelArrowEdgePosition arrowEdgePosition, float arrowSize)
+{
+    Path path;
+    FloatSize offsetForArrowEdgePosition;
+
+    switch (arrowDirection) {
+    case InspectorOverlay::LabelArrowDirection::Down:
+        path.moveTo({ -(width / 2), -height - arrowSize});
+        path.addLineTo({ -(width / 2), -arrowSize });
+
+        switch (arrowEdgePosition) {
+        case InspectorOverlay::LabelArrowEdgePosition::Leading:
+            path.addLineTo({ -(width / 2), 0 });
+            path.addLineTo({ -(width / 2) + arrowSize, -arrowSize });
+            offsetForArrowEdgePosition = { (width / 2), 0 };
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Middle:
+            path.addLineTo({ -arrowSize, -arrowSize });
+            path.addLineTo({ 0, 0 });
+            path.addLineTo({ arrowSize, -arrowSize });
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            path.addLineTo({ (width / 2) - arrowSize, -arrowSize });
+            path.addLineTo({ (width / 2), 0 });
+            offsetForArrowEdgePosition = { -(width / 2), 0 };
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
+
+        path.addLineTo({ (width / 2), -arrowSize });
+        path.addLineTo({ (width / 2), -height - arrowSize });
+        break;
+    case InspectorOverlay::LabelArrowDirection::Up:
+        path.moveTo({ -(width / 2), height + arrowSize });
+        path.addLineTo({ -(width / 2), arrowSize });
+
+        switch (arrowEdgePosition) {
+        case InspectorOverlay::LabelArrowEdgePosition::Leading:
+            path.addLineTo({ -(width / 2), 0 });
+            path.addLineTo({ -(width / 2) + arrowSize, arrowSize });
+            offsetForArrowEdgePosition = { (width / 2), 0 };
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Middle:
+            path.addLineTo({ -arrowSize, arrowSize });
+            path.addLineTo({ 0, 0 });
+            path.addLineTo({ arrowSize, arrowSize });
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            path.addLineTo({ (width / 2) - arrowSize, arrowSize });
+            path.addLineTo({ (width / 2), 0 });
+            offsetForArrowEdgePosition = { -(width / 2), 0 };
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
+
+        path.addLineTo({ (width / 2), arrowSize });
+        path.addLineTo({ (width / 2), height + arrowSize });
+        break;
+    case InspectorOverlay::LabelArrowDirection::Right:
+        path.moveTo({ -width - arrowSize, (height / 2) });
+        path.addLineTo({ -arrowSize, (height / 2) });
+
+        switch (arrowEdgePosition) {
+        case InspectorOverlay::LabelArrowEdgePosition::Leading:
+            path.addLineTo({ -arrowSize, -(height / 2) + arrowSize });
+            path.addLineTo({ 0, -(height / 2) });
+            offsetForArrowEdgePosition = { 0, (height / 2) };
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Middle:
+            path.addLineTo({ -arrowSize, arrowSize });
+            path.addLineTo({ 0, 0 });
+            path.addLineTo({ -arrowSize, -arrowSize });
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            path.addLineTo({ 0, (height / 2) });
+            path.addLineTo({ -arrowSize, (height / 2) - arrowSize });
+            offsetForArrowEdgePosition = { 0, -(height / 2) };
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
+
+        path.addLineTo({ -arrowSize, -(height / 2) });
+        path.addLineTo({ -width - arrowSize, -(height / 2) });
+        break;
+    case InspectorOverlay::LabelArrowDirection::Left:
+        path.moveTo({ width + arrowSize, (height / 2) });
+        path.addLineTo({ arrowSize, (height / 2) });
+
+        switch (arrowEdgePosition) {
+        case InspectorOverlay::LabelArrowEdgePosition::Leading:
+            path.addLineTo({ arrowSize, -(height / 2) + arrowSize });
+            path.addLineTo({ 0, -(height / 2) });
+            offsetForArrowEdgePosition = { 0, (height / 2) };
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Middle:
+            path.addLineTo({ arrowSize, arrowSize });
+            path.addLineTo({ 0, 0 });
+            path.addLineTo({ arrowSize, -arrowSize });
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            path.addLineTo({ 0, (height / 2) });
+            path.addLineTo({ arrowSize, (height / 2) - arrowSize });
+            offsetForArrowEdgePosition = { 0, -(height / 2) };
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
+
+        path.addLineTo({ arrowSize, -(height / 2) });
+        path.addLineTo({ width + arrowSize, -(height / 2) });
+        break;
+    case InspectorOverlay::LabelArrowDirection::None:
+        path.addLineTo({ 0, height });
+        path.addLineTo({ width, height });
+        path.addLineTo({ width, 0 });
+        break;
+    }
+
+    path.closeSubpath();
+    path.translate(offsetForArrowEdgePosition);
+
+    return path;
+}
+
+static FloatSize expectedSizeForLayoutLabel(String label, InspectorOverlay::LabelArrowDirection direction, float maximumWidth = 0)
+{
+    auto font = InspectorOverlay::fontForLayoutLabel();
+
+    float textHeight = font.fontMetrics().floatHeight();
+    float textWidth = font.width(TextRun(label));
+    if (maximumWidth && textWidth + (layoutLabelPadding * 2) > maximumWidth)
+        textWidth = maximumWidth;
+
+    switch (direction) {
+    case InspectorOverlay::LabelArrowDirection::Down:
+    case InspectorOverlay::LabelArrowDirection::Up:
+        return { textWidth + (layoutLabelPadding * 2), textHeight + (layoutLabelPadding * 2) + layoutLabelArrowSize };
+    case InspectorOverlay::LabelArrowDirection::Right:
+    case InspectorOverlay::LabelArrowDirection::Left:
+        return { textWidth + (layoutLabelPadding * 2) + layoutLabelArrowSize, textHeight + (layoutLabelPadding * 2) };
+    case InspectorOverlay::LabelArrowDirection::None:
+        return { textWidth + (layoutLabelPadding * 2), textHeight + (layoutLabelPadding * 2) };
+    }
+}
+
+void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, FloatPoint point, InspectorOverlay::LabelArrowDirection arrowDirection, InspectorOverlay::LabelArrowEdgePosition arrowEdgePosition, Color backgroundColor, float maximumWidth)
+{
+    ASSERT(arrowEdgePosition != LabelArrowEdgePosition::None || arrowDirection == LabelArrowDirection::None);
+
+    GraphicsContextStateSaver saver(context);
+    
+    context.translate(point);
+
+    auto font = fontForLayoutLabel();
     float textHeight = font.fontMetrics().floatHeight();
     float textDescent = font.fontMetrics().floatDescent();
     
     float textWidth = font.width(TextRun(label));
-    if (maximumWidth && textWidth + (padding * 2) > maximumWidth) {
+    if (maximumWidth && textWidth + (layoutLabelPadding * 2) > maximumWidth) {
         label.append("..."_s);
-        while (textWidth + (padding * 2) > maximumWidth && label.length() >= 4) {
+        while (textWidth + (layoutLabelPadding * 2) > maximumWidth && label.length() >= 4) {
             // Remove the fourth from last character (the character before the ellipsis) and remeasure.
             label.remove(label.length() - 4);
             textWidth = font.width(TextRun(label));
         }
     }
-    
-    Path labelPath;
+
     FloatPoint textPosition;
-    
-    switch (direction) {
+    switch (arrowDirection) {
     case InspectorOverlay::LabelArrowDirection::Down:
-        labelPath.moveTo({ -(textWidth / 2) - padding, -textHeight - (padding * 2) - arrowSize });
-        labelPath.addLineTo({ -(textWidth / 2) - padding, -arrowSize });
-        labelPath.addLineTo({ -arrowSize, -arrowSize });
-        labelPath.addLineTo({ 0, 0 });
-        labelPath.addLineTo({ arrowSize, -arrowSize });
-        labelPath.addLineTo({ (textWidth / 2) + padding, -arrowSize });
-        labelPath.addLineTo({ (textWidth / 2) + padding, -textHeight - (padding * 2) - arrowSize });
-        textPosition = FloatPoint(-(textWidth / 2), -textDescent - arrowSize - padding);
+        switch (arrowEdgePosition) {
+        case InspectorOverlay::LabelArrowEdgePosition::Leading:
+            textPosition = FloatPoint(layoutLabelPadding, -textDescent - layoutLabelArrowSize - layoutLabelPadding);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Middle:
+            textPosition = FloatPoint(-(textWidth / 2), -textDescent - layoutLabelArrowSize - layoutLabelPadding);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            textPosition = FloatPoint(-(textWidth) - layoutLabelPadding, -textDescent - layoutLabelArrowSize - layoutLabelPadding);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
         break;
     case InspectorOverlay::LabelArrowDirection::Up:
-        labelPath.moveTo({ -(textWidth / 2) - padding, textHeight + (padding * 2) + arrowSize });
-        labelPath.addLineTo({ -(textWidth / 2) - padding, arrowSize });
-        labelPath.addLineTo({ -arrowSize, arrowSize });
-        labelPath.addLineTo({ 0, 0 });
-        labelPath.addLineTo({ arrowSize, arrowSize });
-        labelPath.addLineTo({ (textWidth / 2) + padding, arrowSize });
-        labelPath.addLineTo({ (textWidth / 2) + padding, textHeight + (padding * 2) + arrowSize });
-        textPosition = FloatPoint(-(textWidth / 2), textHeight - textDescent + arrowSize + padding);
+        switch (arrowEdgePosition) {
+        case InspectorOverlay::LabelArrowEdgePosition::Leading:
+            textPosition = FloatPoint(layoutLabelPadding, textHeight - textDescent + layoutLabelArrowSize + layoutLabelPadding);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Middle:
+            textPosition = FloatPoint(-(textWidth / 2), textHeight - textDescent + layoutLabelArrowSize + layoutLabelPadding);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            textPosition = FloatPoint(-(textWidth) - layoutLabelPadding, textHeight - textDescent + layoutLabelArrowSize + layoutLabelPadding);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
         break;
     case InspectorOverlay::LabelArrowDirection::Right:
-        labelPath.moveTo({ -textWidth - (padding * 2) - arrowSize, (textHeight / 2) + padding });
-        labelPath.addLineTo({ -arrowSize, (textHeight / 2) + padding });
-        labelPath.addLineTo({ -arrowSize, arrowSize });
-        labelPath.addLineTo({ 0, 0 });
-        labelPath.addLineTo({ -arrowSize, -arrowSize });
-        labelPath.addLineTo({ -arrowSize, -(textHeight / 2) - padding });
-        labelPath.addLineTo({ -textWidth - (padding * 2) - arrowSize, -(textHeight / 2) - padding });
-        textPosition = FloatPoint(-textWidth - arrowSize - padding, (textHeight / 2) - textDescent);
+        switch (arrowEdgePosition) {
+        case InspectorOverlay::LabelArrowEdgePosition::Leading:
+            textPosition = FloatPoint(-textWidth - layoutLabelArrowSize - layoutLabelPadding, layoutLabelPadding + textHeight - textDescent);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Middle:
+            textPosition = FloatPoint(-textWidth - layoutLabelArrowSize - layoutLabelPadding, (textHeight / 2) - textDescent);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            textPosition = FloatPoint(-textWidth - layoutLabelArrowSize - layoutLabelPadding, -layoutLabelPadding - textDescent);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
         break;
     case InspectorOverlay::LabelArrowDirection::Left:
-        labelPath.moveTo({ textWidth + (padding * 2) + arrowSize, (textHeight / 2) + padding });
-        labelPath.addLineTo({ arrowSize, (textHeight / 2) + padding });
-        labelPath.addLineTo({ arrowSize, arrowSize });
-        labelPath.addLineTo({ 0, 0 });
-        labelPath.addLineTo({ arrowSize, -arrowSize });
-        labelPath.addLineTo({ arrowSize, -(textHeight / 2) - padding });
-        labelPath.addLineTo({ textWidth + (padding * 2) + arrowSize, -(textHeight / 2) - padding });
-        textPosition = FloatPoint(arrowSize + padding, (textHeight / 2) - textDescent);
+        switch (arrowEdgePosition) {
+        case InspectorOverlay::LabelArrowEdgePosition::Leading:
+            textPosition = FloatPoint(layoutLabelArrowSize + layoutLabelPadding, layoutLabelPadding + textHeight - textDescent);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Middle:
+            textPosition = FloatPoint(layoutLabelArrowSize + layoutLabelPadding, (textHeight / 2) - textDescent);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::Trailing:
+            textPosition = FloatPoint(layoutLabelArrowSize + layoutLabelPadding, -layoutLabelPadding - textDescent);
+            break;
+        case InspectorOverlay::LabelArrowEdgePosition::None:
+            break;
+        }
         break;
     case InspectorOverlay::LabelArrowDirection::None:
-        labelPath.addLineTo({ 0, textHeight + (padding * 2) });
-        labelPath.addLineTo({ textWidth + (padding * 2), textHeight + (padding * 2) });
-        labelPath.addLineTo({ textWidth + (padding * 2), 0 });
-        textPosition = FloatPoint(padding, padding + textHeight - textDescent);
+        textPosition = FloatPoint(layoutLabelPadding, layoutLabelPadding + textHeight - textDescent);
         break;
     }
-    
-    labelPath.closeSubpath();
-    
+
+    Path labelPath = backgroundPathForLayoutLabel(textWidth + (layoutLabelPadding * 2), textHeight + (layoutLabelPadding * 2), arrowDirection, arrowEdgePosition, layoutLabelArrowSize);
+
     context.setFillColor(backgroundColor);
     context.fillPath(labelPath);
     context.strokePath(labelPath);
@@ -1315,28 +1487,32 @@ void InspectorOverlay::drawGridOverlay(GraphicsContext& context, const Inspector
     // Draw labels on top of all other lines.
     context.setStrokeThickness(1);
     for (auto area : gridOverlay.areas)
-        drawLayoutLabel(context, area.name, area.quad.p1(), LabelArrowDirection::None, translucentLabelBackgroundColor, area.quad.boundingBox().width());
+        drawLayoutLabel(context, area.name, area.quad.p1(), LabelArrowDirection::None, LabelArrowEdgePosition::None, translucentLabelBackgroundColor, area.quad.boundingBox().width());
 
     for (auto label : gridOverlay.labels)
-        drawLayoutLabel(context, label.text, label.location, label.arrowDirection, label.backgroundColor);
+        drawLayoutLabel(context, label.text, label.location, label.arrowDirection, label.arrowEdgePosition, label.backgroundColor);
 }
 
 static Vector<String> authoredGridTrackSizes(Node* node, GridTrackSizingDirection direction, unsigned expectedTrackCount)
 {
-    if (!is<Element>(node))
+    if (!is<StyledElement>(node))
         return { };
-    
-    auto element = downcast<Element>(node);
-    auto styleRules = element->styleResolver().styleRulesForElement(element);
-    styleRules.reverse();
-    RefPtr<CSSValue> cssValue;
-    for (auto styleRule : styleRules) {
-        ASSERT(styleRule);
-        if (!styleRule)
-            continue;
-        cssValue = styleRule->properties().getPropertyCSSValue(direction == GridTrackSizingDirection::ForColumns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows);
-        if (cssValue)
-            break;
+
+    auto element = downcast<StyledElement>(node);
+    auto directionCSSPropertyID = direction == GridTrackSizingDirection::ForColumns ? CSSPropertyID::CSSPropertyGridTemplateColumns : CSSPropertyID::CSSPropertyGridTemplateRows;
+    RefPtr<CSSValue> cssValue = element->cssomStyle().getPropertyCSSValueInternal(directionCSSPropertyID);
+
+    if (!cssValue) {
+        auto styleRules = element->styleResolver().styleRulesForElement(element);
+        styleRules.reverse();
+        for (auto styleRule : styleRules) {
+            ASSERT(styleRule);
+            if (!styleRule)
+                continue;
+            cssValue = styleRule->properties().getPropertyCSSValue(directionCSSPropertyID);
+            if (cssValue)
+                break;
+        }
     }
     
     if (!cssValue || !is<CSSValueList>(cssValue))
@@ -1419,13 +1595,14 @@ static OrderedNamedGridLinesMap gridLineNames(const RenderStyle* renderStyle, Gr
     return combinedGridLineNames;
 }
 
-static InspectorOverlay::Highlight::GridHighlightOverlay::Label buildLabel(String text, FloatPoint location, Color backgroundColor, InspectorOverlay::LabelArrowDirection arrowDirection)
+static InspectorOverlay::Highlight::GridHighlightOverlay::Label buildLabel(String text, FloatPoint location, Color backgroundColor, InspectorOverlay::LabelArrowDirection arrowDirection, InspectorOverlay::LabelArrowEdgePosition arrowEdgePosition)
 {
     InspectorOverlay::Highlight::GridHighlightOverlay::Label label;
     label.text = text;
     label.location = location;
     label.backgroundColor = backgroundColor;
     label.arrowDirection = arrowDirection;
+    label.arrowEdgePosition = arrowEdgePosition;
     return label;
 }
 
@@ -1454,8 +1631,10 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
     if (!pageView)
         return { };
     FloatRect viewportBounds = { { 0, 0 }, pageView->sizeForVisibleContent() };
+
+    auto scrollPosition = pageView->scrollPosition();
     if (offsetBoundsByScroll)
-        viewportBounds.setLocation(pageView->scrollPosition());
+        viewportBounds.setLocation(scrollPosition);
     
     auto& renderGrid = *downcast<RenderGrid>(renderer);
     auto columnPositions = renderGrid.columnPositions();
@@ -1504,11 +1683,12 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             gridHighlightOverlay.gridLines.append(columnStartLine);
         }
         
-        FloatPoint gapLabelPosition = columnStartLine.start();
+        FloatLine gapLabelLine = columnStartLine;
         if (i) {
             gridHighlightOverlay.gaps.append({ previousColumnEndLine.start(), columnStartLine.start(), columnStartLine.end(), previousColumnEndLine.end() });
             FloatLine lineBetweenColumnTops = { columnStartLine.start(), previousColumnEndLine.start() };
-            gapLabelPosition = lineBetweenColumnTops.pointAtRelativeDistance(0.5);
+            FloatLine lineBetweenColumnBottoms = { columnStartLine.end(), previousColumnEndLine.end() };
+            gapLabelLine = { lineBetweenColumnTops.pointAtRelativeDistance(0.5), lineBetweenColumnTops.pointAtRelativeDistance(0.5) };
         }
 
         if (i < columnWidths.size() && i < columnPositions.size()) {
@@ -1539,7 +1719,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
                 }
                 
                 FloatLine trackTopLine = { columnStartLine.start(), columnEndLine.start() };
-                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, LabelArrowDirection::Up));
+                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackTopLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, LabelArrowDirection::Up, LabelArrowEdgePosition::Middle));
             }
         } else
             previousColumnEndLine = columnStartLine;
@@ -1554,9 +1734,34 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
                 lineLabel.append(lineName);
             }
         }
-        // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
-        if (!lineLabel.isEmpty())
-            gridHighlightOverlay.labels.append(buildLabel(lineLabel.toString(), gapLabelPosition, Color::white, LabelArrowDirection::Down));
+
+        if (!lineLabel.isEmpty()) {
+            auto text = lineLabel.toString();
+            auto arrowDirection = LabelArrowDirection::Down;
+            auto arrowEdgePosition = LabelArrowEdgePosition::Middle;
+
+            if (!i)
+                arrowEdgePosition = LabelArrowEdgePosition::Leading;
+            else if (i == columnPositions.size() - 1)
+                arrowEdgePosition = LabelArrowEdgePosition::Trailing;
+
+            auto expectedLabelSize = expectedSizeForLayoutLabel(text, arrowDirection);
+            auto gapLabelPosition = gapLabelLine.start();
+
+            // The area under the window's toolbar is drawable, but not meaningfully visible, so we must account for that space.
+            auto topEdgeInset = pageView->topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
+            if (gapLabelLine.start().y() - expectedLabelSize.height() - topEdgeInset + scrollPosition.y() - viewportBounds.y() < 0) {
+                arrowDirection = LabelArrowDirection::Up;
+
+                // Special case for the first column to make sure the label will be out of the way of the first row's label.
+                // The label heights will be the same, as they use the same font, so moving down by this label's size will
+                // create enough space for this special circumstance.
+                if (!i)
+                    gapLabelPosition = gapLabelLine.pointAtAbsoluteDistance(expectedLabelSize.height());
+            }
+
+            gridHighlightOverlay.labels.append(buildLabel(text, gapLabelPosition, Color::white, arrowDirection, arrowEdgePosition));
+        }
     }
 
     auto rowHeights = renderGrid.trackSizesForComputedStyle(GridTrackSizingDirection::ForRows);
@@ -1607,7 +1812,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
                     }
                 }
                 FloatLine trackLeftLine = { rowStartLine.start(), rowEndLine.start() };
-                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, LabelArrowDirection::Left));
+                gridHighlightOverlay.labels.append(buildLabel(trackSizeLabel, trackLeftLine.pointAtRelativeDistance(0.5), translucentLabelBackgroundColor, LabelArrowDirection::Left, LabelArrowEdgePosition::Middle));
             }
         } else
             previousRowEndLine = rowStartLine;
@@ -1622,9 +1827,23 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
                 lineLabel.append(lineName);
             }
         }
-        // FIXME: <webkit.org/b/221972> Layout labels can be drawn outside the viewport, and a best effort should be made to keep them in the viewport while the grid is in the viewport.
-        if (!lineLabel.isEmpty())
-            gridHighlightOverlay.labels.append(buildLabel(lineLabel.toString(), gapLabelPosition, Color::white, LabelArrowDirection::Right));
+
+        if (!lineLabel.isEmpty()) {
+            auto text = lineLabel.toString();
+            auto arrowDirection = LabelArrowDirection::Right;
+            auto arrowEdgePosition = LabelArrowEdgePosition::Middle;
+
+            if (!i)
+                arrowEdgePosition = LabelArrowEdgePosition::Leading;
+            else if (i == rowPositions.size() - 1)
+                arrowEdgePosition = LabelArrowEdgePosition::Trailing;
+
+            auto expectedLabelSize = expectedSizeForLayoutLabel(text, arrowDirection);
+            if (gapLabelPosition.x() - expectedLabelSize.width() + scrollPosition.x() - viewportBounds.x() < 0)
+                arrowDirection = LabelArrowDirection::Left;
+
+            gridHighlightOverlay.labels.append(buildLabel(text, gapLabelPosition, Color::white, arrowDirection, arrowEdgePosition));
+        }
     }
 
     if (gridOverlay.config.showAreaNames) {

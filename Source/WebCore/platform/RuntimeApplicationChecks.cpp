@@ -66,6 +66,11 @@ static Optional<AuxiliaryProcessType>& auxiliaryProcessType()
     return auxiliaryProcessType;
 }
 
+bool isInAuxiliaryProcess()
+{
+    return !!auxiliaryProcessType();
+}
+
 void setAuxiliaryProcessType(AuxiliaryProcessType type)
 {
     auxiliaryProcessType() = type;

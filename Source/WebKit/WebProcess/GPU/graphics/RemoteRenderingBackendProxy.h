@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #include "RenderingBackendIdentifier.h"
 #include <WebCore/DisplayList.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/WeakPtr.h>
 
@@ -75,6 +76,10 @@ public:
     void willAppendItem(WebCore::RenderingResourceIdentifier);
     void sendDeferredWakeupMessageIfNeeded();
 
+    SharedMemory* sharedMemoryForGetImageData(size_t dataSize, IPC::Timeout);
+    bool waitForGetImageDataToComplete(IPC::Timeout);
+    void destroyGetImageDataSharedMemory();
+
     // IPC::MessageSender.
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
@@ -84,7 +89,6 @@ public:
 
     // Messages to be sent.
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, WebCore::DestinationColorSpace, WebCore::PixelFormat);
-    RefPtr<WebCore::ImageData> getImageData(WebCore::AlphaPremultiplication outputFormat, const WebCore::IntRect& srcRect, WebCore::RenderingResourceIdentifier);
     String getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution, WebCore::RenderingResourceIdentifier);
     Vector<uint8_t> getDataForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::RenderingResourceIdentifier);
     Vector<uint8_t> getBGRADataForImageBuffer(WebCore::RenderingResourceIdentifier);
@@ -129,6 +133,10 @@ private:
     Optional<GPUProcessWakeupMessageArguments> m_deferredWakeupMessageArguments;
     unsigned m_remainingItemsToAppendBeforeSendingWakeup { 0 };
     IPC::Semaphore m_resumeDisplayListSemaphore;
+    Optional<IPC::Semaphore> m_getImageDataSemaphore;
+    RefPtr<SharedMemory> m_getImageDataSharedMemory;
+    uint64_t m_getImageDataSharedMemoryLength { 0 };
+    WebCore::Timer m_destroyGetImageDataSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory };
 };
 
 } // namespace WebKit

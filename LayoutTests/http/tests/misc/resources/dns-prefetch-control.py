@@ -20,5 +20,5 @@ sys.stdout.write(
     '<body>\n'
     '<a href=\'http://{domain}/\'>{domain}</a>\n'
     '</body>\n'
-    '</html>\n'.format(fake_domain)
+    '</html>\n'.format(domain=fake_domain)
 )

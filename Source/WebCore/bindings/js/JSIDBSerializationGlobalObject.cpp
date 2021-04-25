@@ -28,8 +28,6 @@
 
 #include "WebCoreJSClientData.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 using namespace JSC;
@@ -65,6 +63,4 @@ void JSIDBSerializationGlobalObject::destroy(JSCell* cell)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)
 

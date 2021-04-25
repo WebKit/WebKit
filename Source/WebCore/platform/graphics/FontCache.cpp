@@ -46,28 +46,8 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
-#if PLATFORM(IOS_FAMILY)
-#include <wtf/Lock.h>
-#include <wtf/RecursiveLockAdapter.h>
-
-static RecursiveLock fontLock;
-
-#endif // PLATFORM(IOS_FAMILY)
-
-
 namespace WebCore {
 using namespace WTF;
-
-FontCache& FontCache::singleton()
-{
-    static NeverDestroyed<FontCache> globalFontCache;
-    return globalFontCache;
-}
-
-FontCache::FontCache()
-    : m_purgeTimer(*this, &FontCache::purgeInactiveFontDataIfNeeded)
-{
-}
 
 struct FontPlatformDataCacheKey {
     WTF_MAKE_FAST_ALLOCATED;
@@ -85,7 +65,6 @@ public:
     { }
 
     bool isHashTableDeletedValue() const { return m_fontDescriptionKey.isHashTableDeletedValue(); }
-
     bool operator==(const FontPlatformDataCacheKey& other) const
     {
         if (m_fontDescriptionKey != other.m_fontDescriptionKey
@@ -126,140 +105,35 @@ struct FontPlatformDataCacheKeyHash {
             hasher.add(std::numeric_limits<unsigned>::max());
         return hasher.hash();
     }
-         
+
     static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
     {
         return a == b;
     }
 
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPlatformDataCacheKey> {
-    static const bool emptyValueIsZero = false;
+    static constexpr bool emptyValueIsZero = false;
 };
-
-typedef HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyHashTraits> FontPlatformDataCache;
-
-static FontPlatformDataCache& fontPlatformDataCache()
-{
-    static NeverDestroyed<FontPlatformDataCache> cache;
-    return cache;
-}
-
-const AtomString& FontCache::alternateFamilyName(const AtomString& familyName)
-{
-    static MainThreadNeverDestroyed<const AtomString> arial("Arial", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> courier("Courier", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> courierNew("Courier New", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> helvetica("Helvetica", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> times("Times", AtomString::ConstructFromLiteral);
-    static MainThreadNeverDestroyed<const AtomString> timesNewRoman("Times New Roman", AtomString::ConstructFromLiteral);
-
-    const AtomString& platformSpecificAlternate = platformAlternateFamilyName(familyName);
-    if (!platformSpecificAlternate.isNull())
-        return platformSpecificAlternate;
-
-    switch (familyName.length()) {
-    case 5:
-        if (equalLettersIgnoringASCIICase(familyName, "arial"))
-            return helvetica;
-        if (equalLettersIgnoringASCIICase(familyName, "times"))
-            return timesNewRoman;
-        break;
-    case 7:
-        if (equalLettersIgnoringASCIICase(familyName, "courier"))
-            return courierNew;
-        break;
-    case 9:
-        if (equalLettersIgnoringASCIICase(familyName, "helvetica"))
-            return arial;
-        break;
-#if !OS(WINDOWS)
-    // On Windows, Courier New is a TrueType font that is always present and
-    // Courier is a bitmap font that we do not support. So, we don't want to map
-    // Courier New to Courier.
-    // FIXME: Not sure why this is harmful on Windows, since the alternative will
-    // only be tried if Courier New is not found.
-    case 11:
-        if (equalLettersIgnoringASCIICase(familyName, "courier new"))
-            return courier;
-        break;
-#endif
-    case 15:
-        if (equalLettersIgnoringASCIICase(familyName, "times new roman"))
-            return times;
-        break;
-    }
-
-    return nullAtom();
-}
-
-FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const AtomString& passedFamilyName,
-    const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
-{
-#if PLATFORM(IOS_FAMILY)
-    auto locker = holdLock(fontLock);
-#endif
-    
-#if OS(WINDOWS) && ENABLE(OPENTYPE_VERTICAL)
-    // Leading "@" in the font name enables Windows vertical flow flag for the font.
-    // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
-    // IE disregards "@" regardless of the orientatoin, so we follow the behavior.
-    const AtomString& familyName = (passedFamilyName.isEmpty() || passedFamilyName[0] != '@') ?
-        passedFamilyName : AtomString(passedFamilyName.impl()->substring(1));
-#else
-    const AtomString& familyName = passedFamilyName;
-#endif
-
-    static bool initialized;
-    if (!initialized) {
-        platformInit();
-        initialized = true;
-    }
-
-    FontPlatformDataCacheKey key(familyName, fontDescription, fontFaceFeatures, fontFaceCapabilities);
-
-    auto addResult = fontPlatformDataCache().add(key, nullptr);
-    FontPlatformDataCache::iterator it = addResult.iterator;
-    if (addResult.isNewEntry) {
-        it->value = createFontPlatformData(fontDescription, familyName, fontFaceFeatures, fontFaceCapabilities);
-
-        if (!it->value && !checkingAlternateName) {
-            // We were unable to find a font.  We have a small set of fonts that we alias to other names,
-            // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
-            const AtomString& alternateName = alternateFamilyName(familyName);
-            if (!alternateName.isNull()) {
-                FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, fontFaceFeatures, fontFaceCapabilities, true);
-                // Lookup the key in the hash table again as the previous iterator may have
-                // been invalidated by the recursive call to getCachedFontPlatformData().
-                it = fontPlatformDataCache().find(key);
-                ASSERT(it != fontPlatformDataCache().end());
-                if (fontPlatformDataForAlternateName)
-                    it->value = makeUnique<FontPlatformData>(*fontPlatformDataForAlternateName);
-            }
-        }
-    }
-
-    return it->value.get();
-}
 
 struct FontDataCacheKeyHash {
     static unsigned hash(const FontPlatformData& platformData)
     {
         return platformData.hash();
     }
-         
+
     static bool equal(const FontPlatformData& a, const FontPlatformData& b)
     {
         return a == b;
     }
 
-    static const bool safeToCompareToEmptyOrDeleted = true;
+    static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
-    static const bool emptyValueIsZero = true;
+    static constexpr bool emptyValueIsZero = true;
     static const FontPlatformData& emptyValue()
     {
         static NeverDestroyed<FontPlatformData> key(0.f, false, false);
@@ -275,31 +149,127 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
 };
 
-typedef HashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontDataCache;
-
-static FontDataCache& cachedFonts()
-{
-    static NeverDestroyed<FontDataCache> cache;
-    return cache;
-}
-
+using FontPlatformDataCache = HashMap<FontPlatformDataCacheKey, std::unique_ptr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyHashTraits>;
+using FontDataCache = HashMap<FontPlatformData, Ref<Font>, FontDataCacheKeyHash, FontDataCacheKeyTraits>;
 #if ENABLE(OPENTYPE_VERTICAL)
-typedef HashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits> FontVerticalDataCache;
-
-FontVerticalDataCache& fontVerticalDataCache()
-{
-    static NeverDestroyed<FontVerticalDataCache> fontVerticalDataCache;
-    return fontVerticalDataCache;
-}
-
-RefPtr<OpenTypeVerticalData> FontCache::verticalData(const FontPlatformData& platformData)
-{
-    auto addResult = fontVerticalDataCache().ensure(platformData, [&platformData] {
-        return OpenTypeVerticalData::create(platformData);
-    });
-    return addResult.iterator->value;
-}
+using FontVerticalDataCache = HashMap<FontPlatformData, RefPtr<OpenTypeVerticalData>, FontDataCacheKeyHash, FontDataCacheKeyTraits>;
 #endif
+
+struct FontCache::FontDataCaches {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+    FontDataCache data;
+    FontPlatformDataCache platformData;
+#if ENABLE(OPENTYPE_VERTICAL)
+    FontVerticalDataCache verticalData;
+#endif
+};
+
+Ref<FontCache> FontCache::create()
+{
+    ASSERT(!isMainThread());
+    return adoptRef(*new FontCache());
+}
+
+FontCache& FontCache::singleton()
+{
+    static MainThreadNeverDestroyed<FontCache> globalFontCache;
+    return globalFontCache;
+}
+
+FontCache::~FontCache() = default;
+
+FontCache::FontCache()
+    : m_purgeTimer(*this, &FontCache::purgeInactiveFontDataIfNeeded)
+    , m_fontDataCaches(makeUniqueRef<FontDataCaches>())
+{
+}
+
+Optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyName)
+{
+    if (auto platformSpecificAlternate = platformAlternateFamilyName(familyName))
+        return platformSpecificAlternate;
+
+    switch (familyName.length()) {
+    case 5:
+        if (equalLettersIgnoringASCIICase(familyName, "arial"))
+            return "Helvetica"_s;
+        if (equalLettersIgnoringASCIICase(familyName, "times"))
+            return "Times New Roman"_s;
+        break;
+    case 7:
+        if (equalLettersIgnoringASCIICase(familyName, "courier"))
+            return "Courier New"_s;
+        break;
+    case 9:
+        if (equalLettersIgnoringASCIICase(familyName, "helvetica"))
+            return "Arial"_s;
+        break;
+#if !OS(WINDOWS)
+    // On Windows, Courier New is a TrueType font that is always present and
+    // Courier is a bitmap font that we do not support. So, we don't want to map
+    // Courier New to Courier.
+    // FIXME: Not sure why this is harmful on Windows, since the alternative will
+    // only be tried if Courier New is not found.
+    case 11:
+        if (equalLettersIgnoringASCIICase(familyName, "courier new"))
+            return "Courier"_s;
+        break;
+#endif
+    case 15:
+        if (equalLettersIgnoringASCIICase(familyName, "times new roman"))
+            return "Times"_s;
+        break;
+    }
+
+    return WTF::nullopt;
+}
+
+FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName,
+    const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
+{
+#if PLATFORM(IOS_FAMILY)
+    auto locker = holdLock(m_fontLock);
+#endif
+
+#if OS(WINDOWS) && ENABLE(OPENTYPE_VERTICAL)
+    // Leading "@" in the font name enables Windows vertical flow flag for the font.
+    // Because we do vertical flow by ourselves, we don't want to use the Windows feature.
+    // IE disregards "@" regardless of the orientation, so we follow the behavior.
+    const String& familyName = passedFamilyName.substring(passedFamilyName[0] == '@' ? 1 : 0);
+#else
+    const String& familyName = passedFamilyName;
+#endif
+
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&]() {
+        platformInit();
+    });
+
+    FontPlatformDataCacheKey key(familyName, fontDescription, fontFaceFeatures, fontFaceCapabilities);
+
+    auto addResult = m_fontDataCaches->platformData.add(key, nullptr);
+    FontPlatformDataCache::iterator it = addResult.iterator;
+    if (addResult.isNewEntry) {
+        it->value = createFontPlatformData(fontDescription, familyName, fontFaceFeatures, fontFaceCapabilities);
+
+        if (!it->value && !checkingAlternateName) {
+            // We were unable to find a font.  We have a small set of fonts that we alias to other names,
+            // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
+            if (auto alternateName = alternateFamilyName(familyName)) {
+                auto* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, *alternateName, fontFaceFeatures, fontFaceCapabilities, true);
+                // Lookup the key in the hash table again as the previous iterator may have
+                // been invalidated by the recursive call to getCachedFontPlatformData().
+                it = m_fontDataCaches->platformData.find(key);
+                ASSERT(it != m_fontDataCaches->platformData.end());
+                if (fontPlatformDataForAlternateName)
+                    it->value = makeUnique<FontPlatformData>(*fontPlatformDataForAlternateName);
+            }
+        }
+    }
+
+    return it->value.get();
+}
 
 #if PLATFORM(IOS_FAMILY)
 const unsigned cMaxInactiveFontData = 120;
@@ -312,7 +282,7 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const AtomString& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(0_s);
@@ -326,10 +296,10 @@ RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, co
 Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 {
 #if PLATFORM(IOS_FAMILY)
-    auto locker = holdLock(fontLock);
+    auto locker = holdLock(m_fontLock);
 #endif
-    
-    auto addResult = cachedFonts().ensure(platformData, [&] {
+
+    auto addResult = m_fontDataCaches->data.ensure(platformData, [&] {
         return Font::create(platformData);
     });
 
@@ -345,7 +315,7 @@ void FontCache::purgeInactiveFontDataIfNeeded()
 
     LOG(Fonts, "FontCache::purgeInactiveFontDataIfNeeded() - underMemoryPressure %d, inactiveFontDataLimit %u", underMemoryPressure, inactiveFontDataLimit);
 
-    if (cachedFonts().size() < inactiveFontDataLimit)
+    if (m_fontDataCaches->data.size() < inactiveFontDataLimit)
         return;
     unsigned inactiveCount = inactiveFontCount();
     if (inactiveCount <= inactiveFontDataLimit)
@@ -363,12 +333,12 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
     pruneSystemFallbackFonts();
 
 #if PLATFORM(IOS_FAMILY)
-    auto locker = holdLock(fontLock);
+    auto locker = holdLock(m_fontLock);
 #endif
 
     while (purgeCount) {
         Vector<Ref<Font>, 20> fontsToDelete;
-        for (auto& font : cachedFonts().values()) {
+        for (auto& font : m_fontDataCaches->data.values()) {
             LOG(Fonts, " trying to purge font %s (has one ref %d)", font->platformData().description().utf8().data(), font->hasOneRef());
             if (!font->hasOneRef())
                 continue;
@@ -380,30 +350,30 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
         if (fontsToDelete.isEmpty())
             break;
         for (auto& font : fontsToDelete) {
-            bool success = cachedFonts().remove(font->platformData());
+            bool success = m_fontDataCaches->data.remove(font->platformData());
             ASSERT_UNUSED(success, success);
 #if ENABLE(OPENTYPE_VERTICAL)
-            fontVerticalDataCache().remove(font->platformData());
+            m_fontDataCaches->verticalData.remove(font->platformData());
 #endif
         }
     };
 
     Vector<FontPlatformDataCacheKey> keysToRemove;
-    keysToRemove.reserveInitialCapacity(fontPlatformDataCache().size());
-    for (auto& entry : fontPlatformDataCache()) {
-        if (entry.value && !cachedFonts().contains(*entry.value))
+    keysToRemove.reserveInitialCapacity(m_fontDataCaches->platformData.size());
+    for (auto& entry : m_fontDataCaches->platformData) {
+        if (entry.value && !m_fontDataCaches->data.contains(*entry.value))
             keysToRemove.uncheckedAppend(entry.key);
     }
 
     LOG(Fonts, " removing %lu keys", keysToRemove.size());
 
     for (auto& key : keysToRemove)
-        fontPlatformDataCache().remove(key);
+        m_fontDataCaches->platformData.remove(key);
 
     platformPurgeInactiveFontData();
 }
 
-static bool keysMatch(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
+bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
 {
     if (a.fontDescriptionKey != b.fontDescriptionKey)
         return false;
@@ -419,6 +389,18 @@ static bool keysMatch(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b
     return true;
 }
 
+unsigned FontCascadeCacheKeyHash::hash(const FontCascadeCacheKey& key)
+{
+    // FIXME: Should hash the key and the family name characters rather than making a hash out of other hashes.
+    Hasher hasher;
+    add(hasher, key.fontDescriptionKey.computeHash());
+    add(hasher, key.fontSelectorId);
+    add(hasher, key.fontSelectorVersion);
+    for (auto& family : key.families)
+        add(hasher, family.isNull() ? 0 : WebCore::FontCascadeDescription::familyNameHash(family));
+    return hasher.hash();
+}
+
 void FontCache::invalidateFontCascadeCache()
 {
     m_fontCascadeCache.clear();
@@ -429,6 +411,16 @@ void FontCache::clearWidthCaches()
     for (auto& value : m_fontCascadeCache.values())
         value->fonts.get().widthCache().clear();
 }
+
+#if ENABLE(OPENTYPE_VERTICAL)
+RefPtr<OpenTypeVerticalData> FontCache::verticalData(const FontPlatformData& platformData)
+{
+    auto addResult = m_fontDataCaches->verticalData.ensure(platformData, [&platformData] {
+        return OpenTypeVerticalData::create(platformData);
+    });
+    return addResult.iterator->value;
+}
+#endif
 
 static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
@@ -441,20 +433,6 @@ static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription&
     key.fontSelectorId = fontSelector ? fontSelector->uniqueId() : 0;
     key.fontSelectorVersion = fontSelector ? fontSelector->version() : 0;
     return key;
-}
-
-static unsigned computeFontCascadeCacheHash(const FontCascadeCacheKey& key)
-{
-    // FIXME: Should hash the key and the family name characters rather than making a hash out of other hashes.
-    IntegerHasher hasher;
-    hasher.add(key.fontDescriptionKey.computeHash());
-    hasher.add(key.fontSelectorId);
-    hasher.add(key.fontSelectorVersion);
-    for (unsigned i = 0; i < key.families.size(); ++i) {
-        auto& family = key.families[i];
-        hasher.add(family.isNull() ? 0 : FontCascadeDescription::familyNameHash(family));
-    }
-    return hasher.hash();
 }
 
 void FontCache::pruneUnreferencedEntriesFromFontCascadeCache()
@@ -473,10 +451,8 @@ void FontCache::pruneSystemFallbackFonts()
 Ref<FontCascadeFonts> FontCache::retrieveOrAddCachedFonts(const FontCascadeDescription& fontDescription, RefPtr<FontSelector>&& fontSelector)
 {
     auto key = makeFontCascadeCacheKey(fontDescription, fontSelector.get());
-
-    unsigned hash = computeFontCascadeCacheHash(key);
-    auto addResult = m_fontCascadeCache.add(hash, nullptr);
-    if (!addResult.isNewEntry && keysMatch(addResult.iterator->value->key, key))
+    auto addResult = m_fontCascadeCache.add(key, nullptr);
+    if (!addResult.isNewEntry)
         return addResult.iterator->value->fonts.get();
 
     auto& newEntry = addResult.iterator->value;
@@ -502,66 +478,48 @@ void FontCache::updateFontCascade(const FontCascade& fontCascade, RefPtr<FontSel
 
 size_t FontCache::fontCount()
 {
-    return cachedFonts().size();
+    return m_fontDataCaches->data.size();
 }
 
 size_t FontCache::inactiveFontCount()
 {
 #if PLATFORM(IOS_FAMILY)
-    auto locker = holdLock(fontLock);
+    auto locker = holdLock(m_fontLock);
 #endif
     unsigned count = 0;
-    for (auto& font : cachedFonts().values()) {
+    for (auto& font : m_fontDataCaches->data.values()) {
         if (font->hasOneRef())
             ++count;
     }
     return count;
 }
 
-static HashSet<FontSelector*>* gClients;
-
 void FontCache::addClient(FontSelector& client)
 {
-    if (!gClients)
-        gClients = new HashSet<FontSelector*>;
-
-    ASSERT(!gClients->contains(&client));
-    gClients->add(&client);
+    ASSERT(!m_clients.contains(&client));
+    m_clients.add(&client);
 }
 
 void FontCache::removeClient(FontSelector& client)
 {
-    ASSERT(gClients);
-    ASSERT(gClients->contains(&client));
+    ASSERT(m_clients.contains(&client));
 
-    gClients->remove(&client);
-}
-
-static unsigned short gGeneration = 0;
-
-unsigned short FontCache::generation()
-{
-    return gGeneration;
+    m_clients.remove(&client);
 }
 
 void FontCache::invalidate()
 {
-    if (!gClients) {
-        ASSERT(fontPlatformDataCache().isEmpty());
-        return;
-    }
-
-    fontPlatformDataCache().clear();
+    m_fontDataCaches->platformData.clear();
 #if ENABLE(OPENTYPE_VERTICAL)
-    fontVerticalDataCache().clear();
+    m_fontDataCaches->verticalData.clear();
 #endif
     invalidateFontCascadeCache();
 
-    gGeneration++;
+    m_generation++;
 
     Vector<Ref<FontSelector>> clients;
-    clients.reserveInitialCapacity(gClients->size());
-    for (auto it = gClients->begin(), end = gClients->end(); it != end; ++it)
+    clients.reserveInitialCapacity(m_clients.size());
+    for (auto it = m_clients.begin(), end = m_clients.end(); it != end; ++it)
         clients.uncheckedAppend(**it);
 
     for (unsigned i = 0; i < clients.size(); ++i)
@@ -585,7 +543,7 @@ void FontCache::prewarm(const PrewarmInformation&)
 {
 }
 
-RefPtr<Font> FontCache::similarFont(const FontDescription&, const AtomString&)
+RefPtr<Font> FontCache::similarFont(const FontDescription&, const String&)
 {
     return nullptr;
 }

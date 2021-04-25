@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from flask import abort, redirect, request
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.view.site_menu import SiteMenu
 from webkitflaskpy.util import AssertRequest, query_as_kwargs
+from webkitscmpy import Commit
 
 
 class CommitView(object):
@@ -56,7 +56,7 @@ class CommitView(object):
         repositories = [commit.repository_id] + sorted([str(key) for key, lst in siblings.items() if lst])
 
         return self.environment.get_template('commit.html').render(
-            title=self.site_menu.title + ': ' + str(commit.id),
+            title=self.site_menu.title + ': ' + str(commit),
             commit=commit,
             repository_ids=repositories,
             commits=Commit.Encoder().default([commit] + [item for lst in siblings.values() for item in lst]),
@@ -64,9 +64,9 @@ class CommitView(object):
 
     def info(self):
         commit = self._single_commit()
-        info_url = self.commit_context.repositories[commit.repository_id].url_for_commit(commit.id)
+        info_url = self.commit_context.repositories[commit.repository_id].url_for_commit(commit)
         if not info_url:
-            abort(410, description=f'Found commit {len(commit.id)}, but no info url found')
+            abort(410, description=f'Found commit {commit}, but no info url found')
         return redirect(info_url)
 
     def previous(self):
@@ -74,16 +74,16 @@ class CommitView(object):
             original_commit = self._single_commit()
             commit = self.commit_context.previous_commit(original_commit)
             if not commit:
-                abort(404, description=f'{original_commit.id} has no registered previous commit')
-        return redirect(f'/commit?repository_id={commit.repository_id}&id={commit.id}')
+                abort(404, description=f'{original_commit} has no registered previous commit')
+        return redirect(f'/commit?repository_id={commit.repository_id}&id={commit}')
 
     def next(self):
         with self.commit_context:
             original_commit = self._single_commit()
             commit = self.commit_context.next_commit(original_commit)
             if not commit:
-                abort(404, description=f'{original_commit.id} has no registered subsequent commit')
-            return redirect(f'/commit?repository_id={commit.repository_id}&id={commit.id}')
+                abort(404, description=f'{original_commit} has no registered subsequent commit')
+            return redirect(f'/commit?repository_id={commit.repository_id}&id={commit}')
 
     @SiteMenu.render_with_site_menu()
     def commits(self, **kwargs):

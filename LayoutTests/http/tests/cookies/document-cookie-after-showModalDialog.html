@@ -17,7 +17,7 @@ testButton.onclick = () => {
     document.cookie = "testKey=testValue";
     shouldBeEqualToString('normalizeCookie(document.cookie)', 'testKey=testValue');
 
-    showModalDialog("resources/set-cookie-and-serve.php?cookie-name=foo&cookie-value=bar&destination=close-modal-dialog.html");
+    showModalDialog("resources/set-cookie-and-serve.py?cookie-name=foo&cookie-value=bar&destination=close-modal-dialog.html");
 
     // This is so the cookie gets removed at the end of the test.
     registerCookieForCleanup('foo=bar; path=/');

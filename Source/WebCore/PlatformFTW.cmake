@@ -19,10 +19,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/win"
 )
 
-list(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
-)
-
 list(APPEND WebCore_SOURCES
     accessibility/win/AXObjectCacheWin.cpp
     accessibility/win/AccessibilityObjectWin.cpp

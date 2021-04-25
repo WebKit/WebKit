@@ -29,10 +29,6 @@ list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
     ${DumpRenderTree_DIR}/mac
     ${DumpRenderTree_DIR}/mac/InternalHeaders/WebKit
     ${DumpRenderTree_DIR}/TestNetscapePlugIn
-    ${FORWARDING_HEADERS_DIR}
-    ${FORWARDING_HEADERS_DIR}/WebCore
-    ${FORWARDING_HEADERS_DIR}/WebKit
-    ${FORWARDING_HEADERS_DIR}/WebKitLegacy
     ${WEBCORE_DIR}/testing/cocoa
     ${WEBKITLEGACY_DIR}
     ${WebKitTestRunner_SHARED_DIR}/cocoa

@@ -56,7 +56,7 @@ async function runTests()
             debug("Setting third-party cookie 'foo' through cross-origin WebSocket handshake and checking that it doesn't write first-party cookies.");
             await testCrossOriginCookie();
             let iframeElement = document.createElement("iframe");
-            iframeElement.src = "http://localhost:8000/cookies/resources/echo-cookies.php";
+            iframeElement.src = "http://localhost:8000/cookies/resources/echo-cookies.py";
             iframeElement.onload = finishJSTest;
             debug("<br>Opening localhost third-party iframe to check its cookies.");
             document.body.appendChild(iframeElement);

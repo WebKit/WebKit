@@ -66,10 +66,8 @@ public:
 
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, CompletionHandler<void(Vector<String>&& filePaths)>&&);
 
-#if ENABLE(INDEXED_DATABASE)
     WebIDBConnectionToServer* existingIDBConnectionToServer() const { return m_webIDBConnection.get(); };
     WebIDBConnectionToServer& idbConnectionToServer();
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     WebSWClientConnection& serviceWorkerConnection();
@@ -122,9 +120,7 @@ private:
     Optional<audit_token_t> m_networkProcessAuditToken;
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
     RefPtr<WebIDBConnectionToServer> m_webIDBConnection;
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     RefPtr<WebSWClientConnection> m_swConnection;

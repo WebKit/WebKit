@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBServer.h"
 #include "UniqueIDBDatabase.h"
 #include <wtf/HashMap.h>
@@ -101,5 +99,3 @@ private:
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

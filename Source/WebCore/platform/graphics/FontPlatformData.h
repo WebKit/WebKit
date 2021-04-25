@@ -32,6 +32,7 @@
 
 #if PLATFORM(WIN)
 #include "COMPtr.h"
+#include "FontMemoryResource.h"
 #include "SharedGDIObject.h"
 #endif
 
@@ -136,7 +137,7 @@ public:
 #endif
 
 #if PLATFORM(WIN)
-    FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
+    FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, bool useGDI, CreationData* = nullptr);
 #if USE(CORE_TEXT)
     FontPlatformData(GDIObject<HFONT>, CTFontRef, CGFontRef, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
 #endif
@@ -262,6 +263,9 @@ public:
     struct CreationData {
         Ref<SharedBuffer> fontFaceData;
         String itemInCollection;
+#if PLATFORM(WIN)
+        Ref<FontMemoryResource> m_fontResource;
+#endif
     };
 
     const Optional<CreationData>& creationData() const

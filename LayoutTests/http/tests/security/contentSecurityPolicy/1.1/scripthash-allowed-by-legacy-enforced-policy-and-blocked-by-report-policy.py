@@ -24,4 +24,5 @@ sys.stdout.write(
     '<iframe src="../resources/echo-report.php?test=/security/contentSecurityPolicy/1.1/scripthash-allowed-by-legacy-enforced-policy-and-blocked-by-report-policy.py"></iframe>\n'
     '</body>\n'
     '</html>\n'
+    '\r\n'
 )

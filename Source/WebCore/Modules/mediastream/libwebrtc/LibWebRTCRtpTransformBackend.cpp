@@ -50,9 +50,12 @@ void LibWebRTCRtpTransformBackend::setOutputCallback(rtc::scoped_refptr<webrtc::
 
 void LibWebRTCRtpTransformBackend::processTransformedFrame(RTCRtpTransformableFrame& frame)
 {
+    auto rtcFrame = static_cast<LibWebRTCRtpTransformableFrame&>(frame).takeRTCFrame();
+    if (!rtcFrame)
+        return;
     auto locker = holdLock(m_outputCallbackLock);
     if (m_outputCallback)
-        m_outputCallback->OnTransformedFrame(static_cast<LibWebRTCRtpTransformableFrame&>(frame).takeRTCFrame());
+        m_outputCallback->OnTransformedFrame(WTFMove(rtcFrame));
 }
 
 void LibWebRTCRtpTransformBackend::Transform(std::unique_ptr<webrtc::TransformableFrameInterface> rtcFrame)

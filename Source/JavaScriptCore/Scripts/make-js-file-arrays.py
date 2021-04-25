@@ -70,6 +70,8 @@ def main():
     print('namespace {0:s} {{'.format(namespace), file=sourceFile)
 
     for inputFileName in inputPaths:
+        variableName = os.path.splitext(os.path.basename(inputFileName))[0]
+        sourceURLDirective = "//# sourceURL=__InjectedScript_" + variableName + ".js\n"
 
         if is_3:
             inputStream = io.open(inputFileName, encoding='utf-8')
@@ -79,9 +81,9 @@ def main():
         data = inputStream.read()
 
         if not options.no_minify:
-            characters = jsmin(data)
+            characters = sourceURLDirective + jsmin(data)
         else:
-            characters = data
+            characters = sourceURLDirective + data
 
         if options.fail_if_non_ascii:
             for character in characters:
@@ -96,8 +98,6 @@ def main():
         # Use the size of codepoints instead of the characters
         # because UTF-8 characters may need more than one byte.
         size = len(codepoints)
-
-        variableName = os.path.splitext(os.path.basename(inputFileName))[0]
 
         print('extern const char {0:s}JavaScript[{1:d}];'.format(variableName, size), file=headerFile)
         print('const char {0:s}JavaScript[{1:d}] = {{'.format(variableName, size), file=sourceFile)

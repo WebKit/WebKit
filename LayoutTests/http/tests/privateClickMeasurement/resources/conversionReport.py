@@ -29,10 +29,15 @@ if content_type is not None:
 
 if uri is not None:
     position_of_nonce = uri.find('?nonce=')
+    position_of_nonce_alternate = uri.find('&nonce=')
+
     if position_of_nonce == -1:
         output_url = uri
     else:
         output_url = uri[0:position_of_nonce]
+
+    if position_of_nonce_alternate != -1:
+        output_url = uri[0:position_of_nonce_alternate]
 
     conversion_file.write('REQUEST_URI: {}\n'.format(output_url))
 

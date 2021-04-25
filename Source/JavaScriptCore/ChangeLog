@@ -1,3 +1,733 @@
+2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Reduce bytecode instruction count emitted for `class extends`
+        https://bugs.webkit.org/show_bug.cgi?id=223884
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch adds a variant of globalFuncSetPrototypeDirect() that throws on
+        invalid [[Prototype]] values (instead of ignoring them) and utilizes it in
+        ClassExprNode::emitBytecode(), removing equivalent checks.
+
+        Throwing for invalid `superclass.prototype` value after setting the [[Prototype]]
+        of `constructor` is unobservable because it's a newly created extensible object
+        and `superclass` is a proven object.
+
+        The fact that [[Prototype]] set can throw only in case of `superclass.prototype`
+        allows keeping descriptive error message via custom appender. To find "extends"
+        in a source code, ClassExprNode is made an instance of ThrowableExpressionData.
+
+        This change reduces the number of emitted bytecodes by 4, and fixes IsConstructor's
+        error [1] to point to correct source code location.
+
+        [1]: https://tc39.es/ecma262/#sec-runtime-semantics-classdefinitionevaluation (step 5.f)
+
+        * builtins/BuiltinNames.h:
+        * bytecode/LinkTimeConstant.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDirectSetPrototypeOf):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitPutConstantProperty):
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createClassExpr):
+        * parser/Nodes.h:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createClassExpr):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::invalidPrototypeSourceAppender):
+        (JSC::createInvalidPrototypeError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObjectFunctions.h:
+
+2021-04-02  Jessica Tallon  <jtallon@igalia.com>
+
+        Add type method to WebAssembly.Memory, WebAssembly.Table & WebAssembly.Global objects
+        https://bugs.webkit.org/show_bug.cgi?id=222412
+
+        Reviewed by Yusuke Suzuki.
+
+        This adds a type method to several WASM objects as part of the work to add WASM
+        type reflections to the JS-API. The methods return a JSON object which describes
+        the type of the object and can be passed to the constructor to create a new wasm
+        object of that type.
+
+         * wasm/js/JSWebAssemblyGlobal.cpp:
+        (JSC::JSWebAssemblyGlobal::type):
+        * wasm/js/JSWebAssemblyGlobal.h:
+        * wasm/js/JSWebAssemblyMemory.cpp:
+        (JSC::JSWebAssemblyMemory::type):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::type):
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WebAssemblyGlobalPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyGlobalPrototype.h:
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce RobinHoodHashTable
+        https://bugs.webkit.org/show_bug.cgi?id=223895
+
+        Reviewed by Fil Pizlo.
+
+        * builtins/BuiltinNames.cpp:
+        (JSC::lookUpPrivateNameImpl):
+        (JSC::lookUpWellKnownSymbolImpl):
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * runtime/Identifier.h:
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        (JSC::IntlCollator::checkICULocaleInvariants):
+        * runtime/IntlCollator.h:
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlDisplayNames.cpp:
+        (JSC::IntlDisplayNames::initializeDisplayNames):
+        * runtime/IntlDisplayNamesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlListFormat.cpp:
+        (JSC::IntlListFormat::initializeListFormat):
+        * runtime/IntlListFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlObject.cpp:
+        (JSC::addScriptlessLocaleIfNeeded):
+        (JSC::intlAvailableLocales):
+        (JSC::intlCollatorAvailableLocales):
+        (JSC::intlSegmenterAvailableLocales):
+        (JSC::bestAvailableLocale):
+        (JSC::lookupMatcher):
+        (JSC::bestFitMatcher):
+        (JSC::resolveLocale):
+        (JSC::lookupSupportedLocales):
+        (JSC::bestFitSupportedLocales):
+        (JSC::supportedLocales):
+        * runtime/IntlObject.h:
+        (JSC::intlDateTimeFormatAvailableLocales):
+        (JSC::intlDisplayNamesAvailableLocales):
+        (JSC::intlNumberFormatAvailableLocales):
+        (JSC::intlPluralRulesAvailableLocales):
+        (JSC::intlRelativeTimeFormatAvailableLocales):
+        (JSC::intlListFormatAvailableLocales):
+        * runtime/IntlPluralRules.cpp:
+        (JSC::IntlPluralRules::initializePluralRules):
+        * runtime/IntlPluralRulesConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlRelativeTimeFormat.cpp:
+        (JSC::IntlRelativeTimeFormat::initializeRelativeTimeFormat):
+        * runtime/IntlRelativeTimeFormatConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/IntlSegmenter.cpp:
+        (JSC::IntlSegmenter::initializeSegmenter):
+        * runtime/IntlSegmenterConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/RegExpCache.h:
+        * runtime/RegExpKey.h:
+
+2021-04-01  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        REGRESSION(r274724): JITCage trampoline needs to be adjusted
+        https://bugs.webkit.org/show_bug.cgi?id=224065
+
+        Reviewed by Saam Barati.
+
+        r274724 introduced a new parameter to custom setters, but it didn't change the parameter recognization of JITCage trampolines for custom accessors.
+        As a result, we are jumping with the wrong pointer, and crash when custom setter is called with JITCage.
+
+        This patch fixes the above bug.
+
+        1. Now, custom getter and custom setter have different number of parameters. We should have two different trampolines to invoke it. We remove vmEntryCustomAccessor, and
+           add vmEntryCustomGetter/vmEntryCustomSetter.
+        2. vmEntryCustomSetter should use a4 parameter as a executable address for trampoline.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCallDOMGetter):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallDOMGetter):
+        * llint/LLIntThunks.cpp:
+        * llint/LLIntThunks.h:
+        * llint/LowLevelInterpreter.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/registers.rb:
+        * runtime/PropertySlot.h:
+
+2021-04-01  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Use ucal_getTimeZoneOffsetFromLocal if ICU 69 is present
+        https://bugs.webkit.org/show_bug.cgi?id=224075
+
+        Reviewed by Yusuke Suzuki.
+
+        Apple ICU 68 cherry picked ucal_getTimeZoneOffsetFromLocal (see r223783),
+        but now that ICU 69 is in RC, we can go ahead and update the #if for non-Apple platforms.
+
+        * runtime/JSDateMath.cpp:
+
+2021-04-01  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Remove use of ENABLE from API header
+        https://bugs.webkit.org/show_bug.cgi?id=224060
+        <rdar://76111678>
+
+        Reviewed by Mark Lam.
+
+        The use of the ENABLE macro in these API headers has caused build failures. Instead of
+        conditionally exposing these API methods we make them into no-ops if DFG is disabled.
+
+        * API/JSVirtualMachine.mm:
+        (+[JSVirtualMachine setNumberOfDFGCompilerThreads:]):
+        (+[JSVirtualMachine setNumberOfFTLCompilerThreads:]):
+        * API/JSVirtualMachinePrivate.h:
+
+2021-04-01  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize createListFromArrayLike() and Proxy's [[OwnPropertyKeys]] method
+        https://bugs.webkit.org/show_bug.cgi?id=223928
+
+        Reviewed by Yusuke Suzuki.
+
+        createListFromArrayLike() changes:
+
+          1. Use toLength() / getIndex() methods that have fast paths.
+          2. Remove RuntimeTypeMask and error messages from its signature: type checks are better
+             performed in advance / inside a functor to keep the helper more versatile.
+          3. Invert functor's return value to align with Structure::forEachProperty() and friends.
+          4. Rename it to forEachInArrayLike() as no list is actually returned.
+
+        ProxyObject::performGetOwnPropertyNames() changes:
+
+          1. Remove RuntimeTypeMask filtering as it's already performed by PropertyNameArray::add().
+          2. Store target's keys in a HashSet for faster insertion / search.
+          3. Don't populate `targetConfigurableKeys` for extensible target as it won't be used [1].
+          4. Leverage return value of HashSet::remove() instead of using a helper.
+
+        This patch advances Proxy's [[OwnPropertyKeys]] microbenchmarks by 20-30%,
+        mainly due to createListFromArrayLike() changes. No behavior changes.
+
+        Also, utilizes forEachInArrayLike() for allow list of JSON.stringify().
+
+        [1]: https://tc39.es/ecma262/#sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys (step 20)
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getIndex const):
+        * runtime/JSObjectInlines.h:
+        (JSC::forEachInArrayLike):
+        (JSC::createListFromArrayLike): Deleted.
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+        * runtime/ReflectObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
+2021-03-31  David Kilzer  <ddkilzer@apple.com>
+
+        UBSan: JSC::Parser<LexerType>::parseProperty(): runtime error: load of value nnn, which is not a valid value for type 'bool'
+        <https://webkit.org/b/223896>
+        <rdar://problem/75970132>
+
+        Reviewed by Darin Adler.
+
+        Based on a suggestion by Darin Adler.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseProperty):
+        - Change 'escaped' to 'wasUnescapedIdent' to avoid the undefined
+          behavior since m_token.m_data.escaped is only set in the case
+          when an identifer is parsed (in Lexer<>::parseIdentifer()),
+          not a string (in Lexer<>::parseString()). This simplifies the
+          logic later in the method.
+
+2021-03-31  Mark Lam  <mark.lam@apple.com>
+
+        Missing exception check in HashMapImpl::add().
+        https://bugs.webkit.org/show_bug.cgi?id=224007
+        rdar://76053163
+
+        Reviewed by Saam Barati.
+
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::add):
+
+2021-03-31  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Remove warnings about unnecessary operator= for ARMv7Assembler LinkRecord
+        https://bugs.webkit.org/show_bug.cgi?id=223916
+
+        Reviewed by Darin Adler.
+
+        Many years ago we defined an assignment operator for LinkRecord in
+        order to speed up build times (see #90930). Recent GCC versions
+        tell us that if we do that we almost certainly want to define a
+        copy constructor too. The ARM64Assembler file already does it, so
+        do it too for ARMv7 to remove the warnings.
+
+        * assembler/ARM64Assembler.h:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::LinkRecord::LinkRecord):
+        (JSC::ARMv7Assembler::LinkRecord::operator=):
+
+2021-03-31  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Optimize constructors of ES6 collections
+        https://bugs.webkit.org/show_bug.cgi?id=223953
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch speeds up the constructors by avoiding call() for non-observable
+        "set" / "add" methods and using getIndex() for Map / WeakMap collections.
+
+        For Map / Set, this change leverages existing cloning helpers, which rely on
+        watchpoints, to avoid even a method lookup. However, slower path is used for
+        subclasses. Results in 1.9x speed-up for common case.
+
+        For WeakMap / WeakSet, adder function is checked by C++ pointer, which enables
+        fast path even for cross-realm subclasses. Results in 2.3x progression.
+
+        Both approaches require special handling of a cross-realm NewTarget to ensure
+        that raised exceptions (OOM / TypeError) belong to realm of the adder function,
+        and not to constructor's or NewTarget's.
+
+        Also, adds descriptve error messages for non-callable "set" / "add" properties.
+
+        * runtime/JSMap.cpp:
+        (JSC::JSMap::isSetFastAndNonObservable):
+        (JSC::JSMap::canCloneFastAndNonObservable): Deleted.
+        * runtime/JSMap.h:
+        * runtime/JSSet.cpp:
+        (JSC::JSSet::isAddFastAndNonObservable):
+        (JSC::JSSet::canCloneFastAndNonObservable): Deleted.
+        * runtime/JSSet.h:
+        * runtime/MapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/SetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakMapPrototype.h:
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/WeakSetPrototype.h:
+
+2021-03-30  Devin Rousso  <drousso@apple.com>
+
+        REGRESSION(r274607): media controls script is visible in Web Inspector even without the engineering "Show WebKit-internal scripts" enabled
+        https://bugs.webkit.org/show_bug.cgi?id=223961
+
+        Reviewed by Yusuke Suzuki.
+
+        It turns out that Web Inspector will only ignore scripts that have a source URL directive
+        that matches `__InjectedScript_*.js`, not those that have a (source) URL matching that.
+
+        In addition to Web Inspector ignoring these scripts in the UI, it will also cause the
+        `Debugger` to not pause in scripts with a matching source URL directive (unless the
+        local build engineering only "Pause in WebKit-internal scripts" is enabled).
+
+        * Scripts/make-js-file-arrays.py:
+        (main):
+        Add a `//# sourceURL=__InjectedScript_*.js` to the contents before it's encoded.
+
+2021-03-30  Sam Weinig  <weinig@apple.com>
+
+        JSGlobalObject's m_customGetterFunctionMap and m_customSetterFunctionMap should be sets, not maps, and should use both the identifier and function pointer as the key
+        https://bugs.webkit.org/show_bug.cgi?id=223613
+
+        Reviewed by Saam Barati.
+
+        - Adds a generic WeakGCSet class to go with the existing WeakGCMap.
+        - Renames WeakGCMapBase to WeakGCHashTable, moves it to its own file
+          and now uses it as the base class of both WeakGCSet and WeakGCMap.
+        - Replaces JSGlobalObject's customGetterFunctionMap/customSetterFunctionMap
+          with customGetterFunctionSet/customSetterFunctionSet, using the new
+          WeakGCSet, and updates them to use both the function pointer and 
+          property name for the key, rather than just the function pointer which
+          is what the previous code did. This allows multiple custom functions
+          to use the same underlying function pointer as long as they have distinct
+          property names, which is going to be used to optimize the bindings for
+          CSSStyleDeclaration.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::runEndPhase):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCHashTables):
+        (JSC::Heap::registerWeakGCHashTable):
+        (JSC::Heap::unregisterWeakGCHashTable):
+        (JSC::Heap::pruneStaleEntriesFromWeakGCMaps): Deleted.
+        (JSC::Heap::registerWeakGCMap): Deleted.
+        (JSC::Heap::unregisterWeakGCMap): Deleted.
+        * heap/Heap.h:
+        Update for new name. WeakGCMapBase -> WeakGCHashTable.
+
+        * runtime/JSCInlines.h:
+        Add WeakGCSetInlines.h
+
+        * runtime/JSCustomGetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomGetterFunction::JSCustomGetterFunction):
+        (JSC::JSCustomGetterFunction::create):
+        * runtime/JSCustomGetterFunction.h:
+        * runtime/JSCustomSetterFunction.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSCustomSetterFunction::JSCustomSetterFunction):
+        (JSC::JSCustomSetterFunction::create):
+        * runtime/JSCustomSetterFunction.h:
+        Add helper type CustomFunctionPointer and helper function customFunctionPointer()
+        to allow some generic hashing code to run on either JSCustomGetterFunction
+        or JSCustomSetterFunction.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::WeakCustomGetterOrSetterHash::hash):
+        (JSC::JSGlobalObject::WeakCustomGetterOrSetterHash::equal):
+        (JSC::JSGlobalObject::customGetterFunctionSet):
+        (JSC::JSGlobalObject::customSetterFunctionSet):
+        (JSC::JSGlobalObject::customGetterFunctionMap): Deleted.
+        (JSC::JSGlobalObject::customSetterFunctionMap): Deleted.
+        Replace m_customGetterFunctionMap/m_customSetterFunctionMap with 
+        m_customGetterFunctionSet/m_customSetterFunctionSet. As the key is included
+        in the value, it saves space to use a set rather than a map. We now also
+        hash and compare both the function pointer and the property name to allow
+        sharing implementations.
+
+        * runtime/JSObject.cpp:
+        (JSC::WeakCustomGetterOrSetterHashTranslator::hash):
+        (JSC::WeakCustomGetterOrSetterHashTranslator::equal):
+        (JSC::createCustomGetterFunction):
+        (JSC::createCustomSetterFunction):
+        Update creation functions to use the new sets, making use of the
+        ensureValue function and a HashTranslator allowing the use of a
+        std::pair<PropertyName, FunctionPointer> as an alternative lookup
+        key. This allows us to avoid creating the JSCustomGetterFunction/JSCustomSetterFunction
+        pointer if one with the same property name and function pointer are
+        already in the set.
+
+        * runtime/WeakGCHashTable.h: Added.
+        (JSC::WeakGCHashTable::~WeakGCHashTable):
+        Moved from WeakGCMap and renamed as it is now the base of both
+        WeakGCMap and WeakGCSet.
+ 
+        * runtime/WeakGCMap.h:
+        Update to use new WeakGCHashTable base class.
+
+        * runtime/WeakGCMapInlines.h:
+        (JSC::KeyTraitsArg>::WeakGCMap):
+        (JSC::KeyTraitsArg>::~WeakGCMap):
+        Update for new Heap function names for WeakGCHashTable.
+
+        * runtime/WeakGCSet.h: Added.
+        * runtime/WeakGCSetInlines.h: Added.
+        (JSC::TraitsArg>::WeakGCSet):
+        (JSC::TraitsArg>::~WeakGCSet):
+        (JSC::TraitsArg>::find):
+        (JSC::TraitsArg>::find const):
+        (JSC::TraitsArg>::contains const):
+        (JSC::TraitsArg>::pruneStaleEntries):
+        Added a minimal WeakGCSet based on WeakGCMap. 
+
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add disableForwardingVPrintfStdErrToOSLog() and use it in the jsc shell.
+        https://bugs.webkit.org/show_bug.cgi?id=223963
+
+        Reviewed by Saam Barati.
+
+        This prevents automatic forwarding of vprintf_stderr_common() to os_log_with_args(),
+        which results in duplicate output when using the jsc shell.  As a result, ASSERT
+        fail messages and crash stack traces will be more readable.
+
+        * jsc.cpp:
+        (main):
+
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add Options::exitOnResourceExhaustion() to enable exiting instead of crashing on resource exhaustion.
+        https://bugs.webkit.org/show_bug.cgi?id=223959
+        rdar://63934158
+
+        Reviewed by Tadeu Zagallo.
+
+        This is useful to unblock fuzzers from false positive crashes due to resource
+        exhaustion.  Currently, this is only applied to StructureID exhaustion.
+
+        Since we're adding this facility, we might as well implement it in such a way that
+        it can be easily deployed for other types of resource exhaustion as well.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/OptionsList.h:
+        * runtime/ResourceExhaustion.cpp: Added.
+        (JSC::handleResourceExhaustion):
+        * runtime/ResourceExhaustion.h: Added.
+        * runtime/StructureIDTable.cpp:
+        (JSC::StructureIDTable::resize):
+
+2021-03-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Ensure that GlobalPropertyInfo is allocated on the stack.
+        https://bugs.webkit.org/show_bug.cgi?id=223911
+
+        Unreviewed test gardening.
+
+        Rebaseline builtins generator tests after r275212.
+
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Add more information to GC verifier verbose dumps.
+        https://bugs.webkit.org/show_bug.cgi?id=223951
+
+        Reviewed by Yusuke Suzuki.
+
+        * heap/VerifierSlotVisitor.cpp:
+        (JSC::VerifierSlotVisitor::dumpMarkerData):
+
+2021-03-30  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that GlobalPropertyInfo is allocated on the stack.
+        https://bugs.webkit.org/show_bug.cgi?id=223911
+        rdar://75865742
+
+        Reviewed by Yusuke Suzuki.
+
+        We rely on GlobalPropertyInfo being allocated on the stack to allow its JSValue
+        value to be scanned by the GC.  Unfortunately, an ASAN compilation would choose
+        to allocate the GlobalPropertyInfo on a side buffer instead of directly on the
+        stack.  This prevents the GC from doing the needed scan.
+
+        We'll fix this by suppressing ASAN on the functions that allocated GlobalPropertyInfo
+        arrays.  Also added an ASSERT in the GlobalPropertyInfo constructor to assert that
+        it is allocated on the stack.
+
+        * Scripts/wkbuiltins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.generate_initialize_method):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::initStaticGlobals):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::exposeDollarVM):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::GlobalPropertyInfo::GlobalPropertyInfo):
+
+2021-03-29  Xan López  <xan@igalia.com>
+
+        [JSC] Use helper method when possible to store data in the callframe header
+        https://bugs.webkit.org/show_bug.cgi?id=223432
+
+        Reviewed by Yusuke Suzuki.
+
+        A bunch of the direct stores to the callframe header are zeroing
+        out the codeblock slot. Create a helper method to do that and use
+        it accordingly. For the rest, use emitPutToCallFrameHeader, which
+        already does the right thing. Also, remove a lot of unused helper
+        methods in AssemblyHelpers (which have been updated for no reason
+        throughout the years).
+
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitPutToCallFrameHeaderBeforePrologue): Deleted.
+        (JSC::AssemblyHelpers::emitPutPayloadToCallFrameHeaderBeforePrologue): Deleted.
+        (JSC::AssemblyHelpers::emitPutTagToCallFrameHeaderBeforePrologue): Deleted.
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
+2021-03-28  Sam Weinig  <weinig@apple.com>
+
+        Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports
+        https://bugs.webkit.org/show_bug.cgi?id=223810
+
+        Reviewed by Simon Fraser.
+
+        * inspector/protocol/IndexedDB.json:
+        Update for remove ENABLE_INDEXED_DATABASE conditional.
+
+2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use AppleICU SPI for canonicalization
+        https://bugs.webkit.org/show_bug.cgi?id=223552
+
+        Reviewed by Ryosuke Niwa.
+
+        uloc_canonicalize does not perform alias mapping. This is different from ECMA402's canonicalization requirement.
+        ICU C++ icu::Locale can canonicalize locale ID with alias mapping, but this is not exposed to C API.
+
+        In this patch, we adopt AppleICU SPI "ualoc_canonicalForm" added in rdar://74314220. This canonicalization can perform
+        alias mapping too. We do not extend uloc_canonicalize since this API explicitly says "It does NOT map aliased names in any way."[1].
+        In [2], we are tracking upstreaming of this new SPI. Once it is upstreamed to the mainline ICU, we will switch to that.
+
+        [1]: https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/uloc_8h.html#a69b148194cf57ac40d4bb15c5b905260
+        [2]: https://unicode-org.atlassian.net/browse/ICU-21506
+
+        * runtime/IntlLocale.cpp:
+        (JSC::LocaleIDBuilder::initialize):
+        (JSC::LocaleIDBuilder::toCanonical):
+        * runtime/IntlObject.cpp:
+        (JSC::localeIDBufferForLanguageTagWithNullTerminator):
+        (JSC::canonicalizeLanguageTag):
+        (JSC::canonicalizeLocaleIDWithoutNullTerminator):
+        (JSC::localeIDBufferForLanguageTag): Deleted.
+        * runtime/IntlObject.h:
+
+2021-03-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Deprecate using DERIVED_SOURCES_DIR/FOWARDING_HEADERS_DIR directly
+        https://bugs.webkit.org/show_bug.cgi?id=223763
+
+        Reviewed by Michael Catanzaro.
+
+        Remove any usages of DERIVED_SOURCES_DIR and FOWARDING_HEADERS_DIR.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+
+2021-03-26  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use new Apple ICU APIs to avoid C++ ICU API usage
+        https://bugs.webkit.org/show_bug.cgi?id=223783
+        <rdar://problem/75060240>
+
+        Reviewed by Mark Lam.
+
+        This patch adopts ICU 69's draft APIs to avoid using ICU C++ APIs in newer macOS build.
+        AppleICU adopts these draft APIs so that we can use it even in ICU 68 if ICU is AppleICU.
+        The API is ucal_getTimeZoneOffsetFromLocal, which is back-ported from ICU 69[1].
+        The purpose of this API is that calculating timezone offset and dst offset from *local* time.
+
+        [1]: https://github.com/unicode-org/icu/commit/53aa0505c5f95a8cebbd7b4421d474fd2a790b80
+
+        * runtime/IntlDateTimeFormat.cpp:
+        * runtime/JSDateMath.cpp:
+        (JSC::OpaqueICUTimeZoneDeleter::operator()):
+        (JSC::DateCache::calculateLocalTimeOffset):
+        (JSC::DateCache::defaultTimeZone):
+        (JSC::DateCache::timeZoneCacheSlow):
+        * runtime/JSDateMath.h:
+
+2021-03-26  Jessie Berlin  <jberlin@webkit.org>
+
+        Update the BEFORE/SINCE, SYSTEM_VERSION_PREFIX, and MACOSX_DEPLOYMENT_TARGET flags
+        https://bugs.webkit.org/show_bug.cgi?id=223779
+
+        Reviewed by Tim Horton.
+
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKitTargetConditionals.xcconfig:
+
+2021-03-25  Saam Barati  <sbarati@apple.com>
+
+        validate untagArrayPtr
+        https://bugs.webkit.org/show_bug.cgi?id=214953
+        <rdar://problem/66391434>
+
+        Reviewed by Mark Lam.
+
+        This patch adds validation to untagArrayPtr along paths where we don't
+        immediately store/load from the result.
+        
+        This patch also changes the removeArrayPtrTag macro assembler function to
+        use a bitwise and instead of xpacd to strip the tag, because it's faster.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::untagArrayPtr):
+        (JSC::MacroAssemblerARM64E::removeArrayPtrTag):
+        * assembler/testmasm.cpp:
+        (JSC::testCagePreservesPACFailureBit):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateWithGuard):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::untagArrayPtr):
+        (JSC::FTL::DFG::LowerDFGToB3::caged):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::cageWithoutUntagging):
+        (JSC::AssemblyHelpers::cageConditionallyAndUntag):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::cageWithoutUntagging): Deleted.
+        (JSC::AssemblyHelpers::cageConditionally): Deleted.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::jsCallEntrypointSlow):
+
+2021-03-25  Jessie Berlin  <jberlin@webkit.org>
+
+        Remove 10.13 DEPLOYMENT_TARGETs and SYSTEM_VERSION_PREFIXs
+        https://bugs.webkit.org/show_bug.cgi?id=223765
+
+        Reviewed by Tim Horton.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+
+2021-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] JSC crashes if a function expects a parameter but doesn't receive any
+        https://bugs.webkit.org/show_bug.cgi?id=223646
+
+        Reviewed by Adrian Perez de Castro.
+
+        Handle the case of receiving fewer argumens than expected in function calls and constructors. We pass undefined
+        for the expected arguments that are missing. We were not correctly handling the case of converting undefined and
+        null values to JSCValue, so this patch fixes that case too.
+
+        * API/glib/JSCCallbackFunction.cpp:
+        (JSC::JSCCallbackFunction::call):
+        (JSC::JSCCallbackFunction::construct):
+        * API/glib/JSCContext.cpp:
+        (jscContextJSValueToWrappedObject):
+        (jscContextJSValueToGValue):
+
 2021-03-24  Michael Saboff  <msaboff@apple.com>
 
         [YARR] Interpreter incorrectly matches non-BMP characters with multiple . w/dotAll flag

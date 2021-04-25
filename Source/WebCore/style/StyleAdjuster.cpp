@@ -57,6 +57,7 @@
 #include "Settings.h"
 #include "Text.h"
 #include "WebAnimationTypes.h"
+#include <wtf/RobinHoodHashSet.h>
 
 namespace WebCore {
 namespace Style {
@@ -497,7 +498,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 {
     // https://drafts.csswg.org/css-display-3/#unbox-html
-    static NeverDestroyed<HashSet<AtomString>> tagNames = [] {
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> tagNames = [] {
         static const HTMLQualifiedName* const tagList[] = {
             &brTag.get(),
             &wbrTag.get(),
@@ -517,7 +518,8 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
             &textareaTag.get(),
             &selectTag.get(),
         };
-        HashSet<AtomString> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
+        set.reserveInitialCapacity(sizeof(tagList));
         for (auto& name : tagList)
             set.add(name->localName());
         return set;

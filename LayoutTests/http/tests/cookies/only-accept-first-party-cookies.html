@@ -7,7 +7,7 @@
         jsTestIsAsync = true;
 
         const iframeUrls = {
-            echoCookies : "http://localhost:8000/cookies/resources/echo-cookies.php",
+            echoCookies : "http://localhost:8000/cookies/resources/echo-cookies.py",
             resetCookies : "http://localhost:8000/cookies/resources/reset-cookies.html"
         };
 
@@ -19,7 +19,7 @@
         }
 
         function setCookieInRedirect(hashValue) {
-            document.location.href = "http://localhost:8000/cookies/resources/set-cookie-and-redirect-back.php?redirectBackTo=http://127.0.0.1:8000/cookies/only-accept-first-party-cookies.html#" + hashValue;
+            document.location.href = "http://localhost:8000/cookies/resources/set-cookie-and-redirect-back.py?redirectBackTo=http://127.0.0.1:8000/cookies/only-accept-first-party-cookies.html#" + hashValue;
         }
 
         function runNextTestOrFinish() {

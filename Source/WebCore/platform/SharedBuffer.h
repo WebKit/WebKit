@@ -68,7 +68,10 @@ public:
     static Ref<SharedBuffer> create() { return adoptRef(*new SharedBuffer); }
     static Ref<SharedBuffer> create(const char* data, size_t size) { return adoptRef(*new SharedBuffer(data, size)); }
     static Ref<SharedBuffer> create(const unsigned char* data, size_t size) { return adoptRef(*new SharedBuffer(data, size)); }
-    static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath);
+    static Ref<SharedBuffer> create(FileSystem::MappedFileData&& mappedFileData) { return adoptRef(*new SharedBuffer(WTFMove(mappedFileData))); }
+
+    enum class MayUseFileMapping : bool { No, Yes };
+    static RefPtr<SharedBuffer> createWithContentsOfFile(const String& filePath, FileSystem::MappedFileMode = FileSystem::MappedFileMode::Shared, MayUseFileMapping = MayUseFileMapping::Yes);
 
     static Ref<SharedBuffer> create(Vector<char>&&);
     static Ref<SharedBuffer> create(Vector<uint8_t>&&);
@@ -143,6 +146,8 @@ public:
         RetainPtr<NSData> createNSData() const;
 #endif
 
+        bool containsMappedFileData() const;
+
     private:
         DataSegment(Vector<char>&& data)
             : m_immutableData(WTFMove(data)) { }
@@ -182,6 +187,7 @@ public:
     using DataSegmentVector = Vector<DataSegmentVectorEntry, 1>;
     DataSegmentVector::const_iterator begin() const { return m_segments.begin(); }
     DataSegmentVector::const_iterator end() const { return m_segments.end(); }
+    bool hasOneSegment() const;
     
     // begin and end take O(1) time, this takes O(log(N)) time.
     SharedBufferDataView getSomeData(size_t position) const;

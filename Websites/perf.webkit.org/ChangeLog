@@ -1,3 +1,32 @@
+2021-03-31  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Add commit revision label support
+        https://bugs.webkit.org/show_bug.cgi?id=222897
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new column revision label.
+        Make all commit api also can work with revision label.
+        Change the commit label display with commit revision label.
+
+        * browser-tests/commit-log-viewer-tests.js: Fix a failed test case, while requesting the remote api, 
+        we should wait for those promises resolved and then wait for commponent to render.
+        * init-database.sql: Add new column revision_identifier.
+        * migrate-database.sql: Add new column revision_identifier.
+        * public/include/commit-log-fetcher.php: Make api that works with revision should work with revision label.
+        * public/include/commit-updater.php: Ditto.
+        * public/include/report-processor.php: Make the processor can also insert revision label.
+        * public/v3/models/commit-log.js:
+        (CommitLog.prototype.updateSingleton):
+        (CommitLog.prototype.revisionIdentifier):
+        (CommitLog.prototype.label): Make the label include revision label and revision.
+        (CommitLog.prototype.diff): Make the diff label include revision label and revision.
+        * server-tests/api-commits-tests.js:
+        * server-tests/api-report-commits-tests.js:
+        * server-tests/api-report-tests.js:
+        (reportWithRevisionIdentifierCommit):
+        * unit-tests/commit-log-tests.js:
+
 2021-03-22  Dewei Zhu  <dewei_zhu@apple.com>
 
         [perf dashboard] Remove v1 and v2 code.

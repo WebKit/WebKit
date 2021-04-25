@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBValue.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "SerializedScriptValue.h"
 #include <wtf/CrossThreadTask.h>
 
@@ -102,5 +100,3 @@ size_t IDBValue::size() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

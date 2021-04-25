@@ -40,9 +40,11 @@ namespace WebKit {
 
 using namespace WebCore;
 
-WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, RetainPtr<NSURLSessionWebSocketTask>&& task)
+WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webPageProxyID, const WebCore::ResourceRequest& request, RetainPtr<NSURLSessionWebSocketTask>&& task)
     : m_channel(channel)
     , m_task(WTFMove(task))
+    , m_pageID(webPageProxyID)
+    , m_partition(request.cachePartition())
 {
     readNextMessage();
     m_channel.didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
@@ -142,6 +144,10 @@ void WebSocketTask::close(int32_t code, const String& reason)
         code = 1005;
     auto utf8 = reason.utf8();
     auto nsData = adoptNS([[NSData alloc] initWithBytes:utf8.data() length:utf8.length()]);
+    if ([m_task respondsToSelector:@selector(_sendCloseCode:reason:)]) {
+        [m_task _sendCloseCode:(NSURLSessionWebSocketCloseCode)code reason:nsData.get()];
+        return;
+    }
     [m_task cancelWithCloseCode:(NSURLSessionWebSocketCloseCode)code reason:nsData.get()];
 }
 

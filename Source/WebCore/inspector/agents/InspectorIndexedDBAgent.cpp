@@ -32,12 +32,9 @@
 #include "config.h"
 #include "InspectorIndexedDBAgent.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "AddEventListenerOptions.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
-#include "DOMWindowIndexedDatabase.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventListener.h"
@@ -61,6 +58,7 @@
 #include "InstrumentingAgents.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
+#include "WindowOrWorkerGlobalScopeIndexedDatabase.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
@@ -558,7 +556,7 @@ static Protocol::ErrorStringOr<IDBFactory*> IDBFactoryFromDocument(Document* doc
     if (!domWindow)
         return makeUnexpected("Missing window for given document"_s);
 
-    IDBFactory* idbFactory = DOMWindowIndexedDatabase::indexedDB(*domWindow);
+    IDBFactory* idbFactory = WindowOrWorkerGlobalScopeIndexedDatabase::indexedDB(*domWindow);
     if (!idbFactory)
         makeUnexpected("Missing IndexedDB factory of window for given document"_s);
     
@@ -740,4 +738,3 @@ void InspectorIndexedDBAgent::clearObjectStore(const String& securityOrigin, con
 }
 
 } // namespace WebCore
-#endif // ENABLE(INDEXED_DATABASE)

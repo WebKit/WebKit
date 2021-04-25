@@ -2175,7 +2175,7 @@ compositing/visible-rect/coverage-scrolling.html [ Failure Pass ]
 imported/blink/animations/background-shorthand-crash.html [ Pass Timeout ]
 imported/blink/animations/base-render-style-font-selector-version-assert.html [ Pass Timeout ]
 imported/blink/compositing/draws-content/canvas-simple-background.html [ ImageOnlyFailure Pass ]
-imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure Pass ]
+# imported/blink/compositing/draws-content/webgl-simple-background.html [ ImageOnlyFailure Pass ]
 imported/blink/compositing/layer-creation/iframe-clip-removed.html [ Pass Timeout ]
 imported/blink/compositing/overflow/body-switch-composited-scrolling.html [ ImageOnlyFailure Pass ]
 imported/blink/compositing/squashing/invalidate-on-grouped-mapping-reorder.html [ Pass Timeout ]
@@ -2268,7 +2268,7 @@ webkit.org/b/153803 perf/show-hide-table-rows.html [ Pass Failure ]
 
 webkit.org/b/152306 fast/forms/input-user-input-sanitization.html [ Skip ]
 
-webkit.org/b/153314 http/tests/history/back-to-post.php [ Pass Timeout ]
+webkit.org/b/153314 http/tests/history/back-to-post.py [ Pass Timeout ]
 
 webkit.org/b/153929 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Pass Failure ]
 
@@ -2613,14 +2613,9 @@ webkit.org/b/173611 media/video-buffered.html [ Pass Failure ]
 webkit.org/b/171617 perf/object-keys.html [ Pass Failure ]
 
 # WebGL tests which need triaging https://bugs.webkit.org/b/174100
-fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/webgl-draw-buffers.html [ Failure ]
 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
-webgl/1.0.3/conformance/context/context-attribute-preserve-drawing-buffer.html [ Failure ]
-webgl/1.0.3/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
-webgl/1.0.3/conformance/context/context-hidden-alpha.html [ Failure ]
-webgl/1.0.3/conformance/extensions/webgl-compressed-texture-pvrtc.html [ Failure ]
 fast/canvas/webgl/read-pixels-test.html [ Skip ]
 fast/canvas/webgl/webglcontextchangedevent.html [ Skip ]
 webgl/1.0.3/conformance/context/context-creation-and-destruction.html [ Skip ]
@@ -3275,7 +3270,7 @@ webkit.org/b/207769 crypto/subtle/rsa-indexeddb-non-exportable.html [ Pass Timeo
 webkit.org/b/207770 http/tests/cache/disk-cache/disk-cache-vary-cookie.html [ Pass Timeout ]
 
 webkit.org/b/207858 fast/canvas/webgl/context-attributes-alpha.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/207858 fast/canvas/webgl/match-page-color-space.html [ Pass Failure ImageOnlyFailure ]
+# webkit.org/b/207858 fast/canvas/webgl/match-page-color-space.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/smell-test.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/webgl-backing-store-size-update.html [ Pass Failure ImageOnlyFailure ]
 webkit.org/b/207858 webgl/webgl-border.html [ Pass Failure ImageOnlyFailure ]
@@ -3381,9 +3376,9 @@ imported/w3c/web-platform-tests/dom/ranges/Range-surroundContents.html [ Slow ]
 # <rdar://problem/64546452> [ iOS ] mathml/opentype/munderover-stretch-width.html is flaky failing.
 mathml/opentype/munderover-stretch-width.html [ Pass Failure ]
 
-# <rdar://problem/64701357> REGRESSION: [ iOS wk2 ] webgl/1.0.3/conformance/glsl/functions/glsl-function-sign.html and webgl/1.0.3/conformance/glsl/misc/glsl-function-nodes.html are failing consistently.
-webgl/1.0.3/conformance/glsl/functions/glsl-function-sign.html [ Failure ]
-webgl/1.0.3/conformance/glsl/misc/glsl-function-nodes.html [ Failure ]
+# # <rdar://problem/64701357> REGRESSION: [ iOS wk2 ] webgl/1.0.3/conformance/glsl/functions/glsl-function-sign.html and webgl/1.0.3/conformance/glsl/misc/glsl-function-nodes.html are failing consistently.
+# webgl/1.0.3/conformance/glsl/functions/glsl-function-sign.html [ Failure ]
+# webgl/1.0.3/conformance/glsl/misc/glsl-function-nodes.html [ Failure ]
 
 # <rdar://problem/64816264> [ iOS wk2 ] streams/pipe-to.html is flaky failing.
 streams/pipe-to.html [ Pass Failure ]
@@ -3434,3 +3429,8 @@ webkit.org/b/222840 security/contentSecurityPolicy/video-with-data-url-allowed-b
 fast/text/mending-heart.html [ Failure ] 
 
 webkit.org/b/221833 fast/text/image-alt-text-bidi.html [ ImageOnlyFailure ]
+
+webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOnlyFailure ]
+webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]

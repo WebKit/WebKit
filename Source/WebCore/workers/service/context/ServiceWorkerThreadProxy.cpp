@@ -83,11 +83,7 @@ static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& con
 
 static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& document)
 {
-#if ENABLE(INDEXED_DATABASE)
     return document.idbConnectionProxy();
-#else
-    return nullptr;
-#endif
 }
 
 static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
@@ -96,10 +92,13 @@ static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
     return set;
 }
 
-ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, String&& userAgent, CacheStorageProvider& cacheStorageProvider, StorageBlockingPolicy storageBlockingPolicy)
+ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, ServiceWorkerContextData&& data, String&& userAgent, CacheStorageProvider& cacheStorageProvider, StorageBlockingPolicy storageBlockingPolicy)
     : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data, storageBlockingPolicy))
     , m_document(*m_page->mainFrame().document())
-    , m_serviceWorkerThread(ServiceWorkerThread::create(data, WTFMove(userAgent), m_document->settingsValues(), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
+#if ENABLE(REMOTE_INSPECTOR)
+    , m_remoteDebuggable(makeUnique<ServiceWorkerDebuggable>(*this, data))
+#endif
+    , m_serviceWorkerThread(ServiceWorkerThread::create(WTFMove(data), WTFMove(userAgent), m_document->settingsValues(), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
     , m_cacheStorageProvider(cacheStorageProvider)
     , m_inspectorProxy(*this)
 {
@@ -113,7 +112,6 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
     allServiceWorkerThreadProxies().add(this);
 
 #if ENABLE(REMOTE_INSPECTOR)
-    m_remoteDebuggable = makeUnique<ServiceWorkerDebuggable>(*this, data);
     m_remoteDebuggable->setRemoteDebuggingAllowed(true);
     m_remoteDebuggable->init();
 #endif
@@ -280,6 +278,13 @@ void ServiceWorkerThreadProxy::fireActivateEvent()
     thread().willPostTaskToFireActivateEvent();
     thread().runLoop().postTask([this, protectedThis = makeRef(*this)](auto&) mutable {
         thread().queueTaskToFireActivateEvent();
+    });
+}
+
+void ServiceWorkerThreadProxy::didSaveScriptsToDisk(ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
+{
+    thread().runLoop().postTask([script = WTFMove(script), importedScripts = WTFMove(importedScripts)](auto& context) mutable {
+        downcast<ServiceWorkerGlobalScope>(context).didSaveScriptsToDisk(WTFMove(script), WTFMove(importedScripts));
     });
 }
 

@@ -42,7 +42,6 @@ WebDatabaseProvider::~WebDatabaseProvider()
 {
 }
 
-#if ENABLE(INDEXED_DATABASE)
 WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(const PAL::SessionID& sessionID)
 {
     return m_idbServerMap.ensure(sessionID, [&sessionID] {
@@ -55,5 +54,3 @@ void WebDatabaseProvider::deleteAllDatabases()
     for (auto& server : m_idbServerMap.values())
         server->closeAndDeleteDatabasesModifiedSince(-WallTime::infinity());
 }
-
-#endif

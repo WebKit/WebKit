@@ -28,8 +28,6 @@
 
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 IDBDatabaseInfo::IDBDatabaseInfo()
@@ -177,5 +175,3 @@ void IDBDatabaseInfo::setMaxIndexID(uint64_t maxIndexID)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

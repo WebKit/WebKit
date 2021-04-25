@@ -50,6 +50,7 @@
 #include "StyleScope.h"
 #include "StyledElement.h"
 #include "TextPainter.h"
+#include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/VM.h>
 #include <wtf/FastMalloc.h>
@@ -129,6 +130,8 @@ static void releaseCriticalMemory(Synchronous synchronous, MaintainBackForwardCa
         GCController::singleton().garbageCollectSoon();
 #endif
     }
+
+    WorkerGlobalScope::releaseMemoryInWorkers(synchronous);
 }
 
 void releaseMemory(Critical critical, Synchronous synchronous, MaintainBackForwardCache maintainBackForwardCache, MaintainMemoryCache maintainMemoryCache)

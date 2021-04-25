@@ -53,10 +53,8 @@ struct WebsiteDataStoreParameters {
     SandboxExtension::Handle cookieStoragePathExtensionHandle;
     NetworkSessionCreationParameters networkSessionParameters;
 
-#if ENABLE(INDEXED_DATABASE)
     String indexedDatabaseDirectory;
     SandboxExtension::Handle indexedDatabaseDirectoryExtensionHandle;
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;

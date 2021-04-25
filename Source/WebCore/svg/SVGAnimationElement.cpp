@@ -41,6 +41,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
@@ -127,7 +128,7 @@ static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
 bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
 {
     static const auto supportedAttributes = makeNeverDestroyed([] {
-        HashSet<QualifiedName> set;
+        MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> set;
         SVGTests::addSupportedAttributes(set);
         set.add({
             SVGNames::valuesAttr.get(),

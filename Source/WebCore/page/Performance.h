@@ -36,8 +36,9 @@
 #include "DOMHighResTimeStamp.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "GenericTaskQueue.h"
 #include "ReducedResolutionSeconds.h"
+#include "ScriptExecutionContext.h"
+#include "Timer.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Variant.h>
 
@@ -134,13 +135,13 @@ private:
     // https://w3c.github.io/resource-timing/#dfn-resource-timing-buffer-full-flag
     bool m_resourceTimingBufferFullFlag { false };
     bool m_waitingForBackupBufferToBeProcessed { false };
+    bool m_hasScheduledTimingBufferDeliveryTask { false };
 
     MonotonicTime m_timeOrigin;
 
     RefPtr<PerformancePaintTiming> m_firstContentfulPaint;
     std::unique_ptr<PerformanceUserTiming> m_userTiming;
 
-    GenericTaskQueue<ScriptExecutionContext> m_performanceTimelineTaskQueue;
     ListHashSet<RefPtr<PerformanceObserver>> m_observers;
 };
 

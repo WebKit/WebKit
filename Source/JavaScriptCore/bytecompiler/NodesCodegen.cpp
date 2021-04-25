@@ -817,7 +817,7 @@ void PropertyListNode::emitPutConstantProperty(BytecodeGenerator& generator, Reg
 
     if (PropertyNode::isUnderscoreProtoSetter(generator.vm(), node)) {
         RefPtr<RegisterID> prototype = generator.emitNode(node.m_assign);
-        generator.emitDirectSetPrototypeOf(newObj, prototype.get());
+        generator.emitDirectSetPrototypeOf<InvalidPrototypeMode::Ignore>(newObj, prototype.get(), m_position, m_position, m_position);
         return;
     }
 
@@ -5211,19 +5211,14 @@ RegisterID* ClassExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID
 
         Ref<Label> superclassIsConstructorLabel = generator.newLabel();
         generator.emitJumpIfTrue(generator.emitIsConstructor(generator.newTemporary(), superclass.get()), superclassIsConstructorLabel.get());
+        generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
         generator.emitThrowTypeError("The superclass is not a constructor."_s);
         generator.emitLabel(superclassIsConstructorLabel.get());
         generator.emitGetById(protoParent.get(), superclass.get(), generator.propertyNames().prototype);
 
-        Ref<Label> protoParentIsObjectOrNullLabel = generator.newLabel();
-        generator.emitJumpIfTrue(generator.emitIsObject(generator.newTemporary(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
-        generator.emitJumpIfTrue(generator.emitIsNull(generator.newTemporary(), protoParent.get()), protoParentIsObjectOrNullLabel.get());
-        generator.emitThrowTypeError("The value of the superclass's prototype property is not an object or null."_s);
-        generator.emitLabel(protoParentIsObjectOrNullLabel.get());
-
-        generator.emitDirectSetPrototypeOf(constructor.get(), superclass.get());
+        generator.emitDirectSetPrototypeOf<InvalidPrototypeMode::Throw>(constructor.get(), superclass.get(), m_position, m_position, m_position); // never actually throws
         generator.emitLabel(superclassIsNullLabel.get());
-        generator.emitDirectSetPrototypeOf(prototype.get(), protoParent.get());
+        generator.emitDirectSetPrototypeOf<InvalidPrototypeMode::Throw>(prototype.get(), protoParent.get(), divot(), divotStart(), divotEnd());
     }
 
     if (needsHomeObject)

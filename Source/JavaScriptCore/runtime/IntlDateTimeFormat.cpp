@@ -31,6 +31,7 @@
 #include "IntlObjectInlines.h"
 #include "JSBoundFunction.h"
 #include "JSCInlines.h"
+#include "JSDateMath.h"
 #include "ObjectConstructor.h"
 #include <unicode/ucal.h>
 #include <unicode/uenum.h>
@@ -58,8 +59,6 @@ void UDateIntervalFormatDeleter::operator()(UDateIntervalFormat* formatter)
     if (formatter)
         udtitvfmt_close(formatter);
 }
-
-static constexpr double minECMAScriptTime = -8.64E15;
 
 const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
@@ -567,7 +566,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String();
     }
 
-    const HashSet<String>& availableLocales = intlDateTimeFormatAvailableLocales();
+    const auto& availableLocales = intlDateTimeFormatAvailableLocales();
     auto resolved = resolveLocale(globalObject, availableLocales, requestedLocales, localeMatcher, localeOptions, { RelevantExtensionKey::Ca, RelevantExtensionKey::Hc, RelevantExtensionKey::Nu }, localeData);
 
     m_locale = resolved.locale;

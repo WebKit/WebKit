@@ -229,6 +229,10 @@ webkit.org/b/211221 http/tests/performance/paint-timing/performance-paint-timing
 # We don't yet support EXIF-based resolution
 webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
 
+# Scrolling
+webkit.org/b/223729 [ Release ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pass Failure ]
+webkit.org/b/223729 [ Debug ] css3/scroll-snap/scroll-snap-wheel-event.html [ Pass ]
+
 # Scrolling coordinator
 webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.html [ Pass Timeout ]
 
@@ -597,8 +601,6 @@ webkit.org/b/210236 fast/canvas/webgl/hide-some-renderer-info.html [ Failure ]
 webkit.org/b/210236 fast/canvas/webgl/webgl2-glsl3-compile.html [ Failure ]
 webkit.org/b/210236 webgl/webgl-vertex-array-object-defined.html [ Failure ]
 
-webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Failure ]
-
 webkit.org/b/210262 fast/selectors/text-field-selection-stroke-color.html [ ImageOnlyFailure ]
 webkit.org/b/210262 fast/selectors/text-field-selection-text-shadow.html [ ImageOnlyFailure ]
 
@@ -661,6 +663,7 @@ imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https.html 
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_inverse.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_matrix.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrRigidTransform_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_cancelAnimationFrame_invalidhandle.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_end.https.html [ Pass ]
@@ -672,7 +675,10 @@ imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_getViewerP
 imported/w3c/web-platform-tests/webxr/xrSession_requestAnimationFrame_timestamp.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_requestReferenceSpace_features.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrSession_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrSession_viewer_referenceSpace.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrView_sameObject.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrViewerPose_views_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrViewport_valid.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_constructor.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrWebGLLayer_framebuffer_draw.https.html [ Pass ]

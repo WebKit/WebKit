@@ -682,3 +682,7 @@
     (sysctl-name
         "kern.maxfilesperproc"
         "kern.ostype"))
+
+;; Allow accesses to the ASD
+(allow mach-lookup
+    (global-name "com.apple.AuthenticationServicesCore.AuthenticationServicesAgent"))

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "OpenTypeUtilities.h"
 
+#include "FontMemoryResource.h"
 #include "SharedBuffer.h"
 
 #if USE(DIRECT2D)
@@ -414,18 +415,19 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<cha
 }
 
 // Rename the font and install the new font data into the system
-HANDLE renameAndActivateFont(const SharedBuffer& fontData, const String& fontName)
+RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer& fontData, const String& fontName)
 {
     Vector<char> rewrittenFontData;
     if (!renameFont(fontData, fontName, rewrittenFontData))
-        return 0;
+        return { };
 
     DWORD numFonts = 0;
     HANDLE fontHandle = AddFontMemResourceEx(rewrittenFontData.data(), rewrittenFontData.size(), 0, &numFonts);
-
-    if (fontHandle && numFonts < 1) {
+    if (!fontHandle)
+        return { };
+    if (numFonts < 1) {
         RemoveFontMemResourceEx(fontHandle);
-        return 0;
+        return { };
     }
 
 #if USE(DIRECT2D)
@@ -433,7 +435,7 @@ HANDLE renameAndActivateFont(const SharedBuffer& fontData, const String& fontNam
     ASSERT(SUCCEEDED(hr));
 #endif
 
-    return fontHandle;
+    return FontMemoryResource::create(fontHandle);
 }
 
 }

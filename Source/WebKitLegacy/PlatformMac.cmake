@@ -7,9 +7,6 @@ add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
 list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKITLEGACY_DIR}"
     "${WEBKITLEGACY_DIR}/mac"
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders"
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebCore"
-    "${DERIVED_SOURCES_DIR}/ForwardingHeaders/WebKitLegacy"
 )
 
 list(APPEND WebKitLegacy_UNIFIED_SOURCE_LIST_FILES

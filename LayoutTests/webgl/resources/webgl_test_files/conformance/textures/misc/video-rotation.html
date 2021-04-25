@@ -29,7 +29,7 @@ found in the LICENSE.txt file.
         let gl = wtu.create3DContext(canvas);
         let program = tiu.setupTexturedQuad(gl, gl.RGBA);
         const resourcePath = "../../../resources/";
-        const tolerance = 5;
+        const tolerance = 10;
 
         const expectedColors = {
             top: { location: [0.5, 0.25], color: [255, 0, 0] },
@@ -89,11 +89,12 @@ found in the LICENSE.txt file.
                 return;
             }
 
-            const type = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
-            if (!video.canPlayType(type).replace(/no/, '')) {
-                debug(type + " unsupported");
+            let supports_h264 = !!video.canPlayType('video/mp4; codecs="avc1.42E01E"').replace(/no/, '');
+            let supports_vp9 = !!video.canPlayType('video/mp4; codecs="vp09.00.10.08"').replace(/no/, '');
+            if (!supports_h264 && !supports_vp9) {
+                testFailed("No supported video types.");
                 return;
-            };
+            }
 
             let tex = gl.createTexture();
             // Bind the texture to the default texture unit 0
@@ -107,27 +108,44 @@ found in the LICENSE.txt file.
             // These files were created by converting exif-orientation-test-1-normal.jpg to mp4
             // files, rotating them using the transpose filter, and adding rotate metadata, all
             // using the ffmpeg command-line tool.
+            //
+            // From sdk/tests/resources/ directory:
+            //
             // 0:
-            // ffmpeg -noautorotate -i sdk/tests/resources/exif-orientation-test-1-normal.jpg -pix_fmt yuv420p temp.mp4 &&
-            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=0 sdk/tests/resources/video-rotation-0.mp
+            // ffmpeg -noautorotate -i exif-orientation-test-1-normal.jpg -pix_fmt yuv420p -y temp.mp4 &&
+            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=0 video-rotation-0.mp4
+            // ffmpeg -noautorotate -i exif-orientation-test-1-normal.jpg -pix_fmt yuv420p -crf 0 -vcodec libvpx-vp9 -y temp.mp4 &&
+            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=0 video-rotation-0.vp9.mp4
             // 90:
-            // ffmpeg -noautorotate -i sdk/tests/resources/exif-orientation-test-1-normal.jpg -vf "transpose=2" -pix_fmt yuv420p temp.mp4 &&
-            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=270 sdk/tests/resources/video-rotation-90.mp4
+            // ffmpeg -noautorotate -i exif-orientation-test-1-normal.jpg -vf "transpose=2" -pix_fmt yuv420p -y temp.mp4 &&
+            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=270 video-rotation-90.mp4
+            // ffmpeg -noautorotate -i exif-orientation-test-1-normal.jpg -vf "transpose=2" -pix_fmt yuv420p -crf 0 -vcodec libvpx-vp9 -y temp.mp4 &&
+            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=270 video-rotation-90.vp9.mp4
             // 180:
-            // ffmpeg -noautorotate -i sdk/tests/resources/exif-orientation-test-1-normal.jpg -vf "transpose=2,transpose=2" -pix_fmt yuv420p temp.mp4 &&
-            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=180 sdk/tests/resources/video-rotation-180.mp4
+            // ffmpeg -noautorotate -i exif-orientation-test-1-normal.jpg -vf "transpose=2,transpose=2" -pix_fmt yuv420p -y temp.mp4 &&
+            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=180 video-rotation-180.mp4
+            // ffmpeg -noautorotate -i exif-orientation-test-1-normal.jpg -vf "transpose=2,transpose=2" -pix_fmt yuv420p -crf 0 -vcodec libvpx-vp9 -y temp.mp4 &&
+            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=180 video-rotation-180.vp9.mp4
             // 270:
-            // ffmpeg -noautorotate -i sdk/tests/resources/exif-orientation-test-1-normal.jpg -vf "transpose=1" -pix_fmt yuv420p temp.mp4 &&
-            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=90 sdk/tests/resources/video-rotation-270.mp4
+            // ffmpeg -noautorotate -i exif-orientation-test-1-normal.jpg -vf "transpose=1" -pix_fmt yuv420p -y temp.mp4 &&
+            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=90 video-rotation-270.mp4
+            // ffmpeg -noautorotate -i exif-orientation-test-1-normal.jpg -vf "transpose=1" -pix_fmt yuv420p -crf 0 -vcodec libvpx-vp9 -y temp.mp4 &&
+            // ffmpeg -i temp.mp4 -c copy -metadata:s:v:0 rotate=90 video-rotation-270.vp9.mp4
             const filenames = [
-                "video-rotation-0.mp4",
-                "video-rotation-90.mp4",
-                "video-rotation-180.mp4",
-                "video-rotation-270.mp4",
+                "video-rotation-0",
+                "video-rotation-90",
+                "video-rotation-180",
+                "video-rotation-270",
             ];
 
-            for (let fn of filenames) {
-                await testVideoElement(fn);
+            if (supports_h264) {
+                for (let fn of filenames)
+                    await testVideoElement(fn + ".mp4");
+            }
+
+            if (supports_vp9) {
+                for (let fn of filenames)
+                    await testVideoElement(fn + ".vp9.mp4");
             }
 
             finishTest();

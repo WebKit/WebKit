@@ -3,8 +3,8 @@ AbcAbcAbc
 
 PASS @supports: 100 - only percentages, not numbers allowed
 PASS @supports: -1% - negative values are illegal
-FAIL @supports: 0% - zero is legal assert_equals: zero is legal expected true but got false
-FAIL @getComputedStyle: 0% - zero is legal assert_equals: zero is legal expected "0%" but got "normal"
+PASS @supports: 0% - zero is legal
+PASS @getComputedStyle: 0% - zero is legal
 PASS @supports: 1% - legal percentage
 PASS @getComputedStyle: 1% - legal percentage
 PASS @supports: 10% - legal percentage
@@ -39,10 +39,10 @@ PASS @supports: calc(200.5%) - Simple calc value
 PASS @getComputedStyle: calc(200.5%) - Simple calc value
 PASS @supports: calc(50%*2 - 20%) - Valid calc expression
 PASS @getComputedStyle: calc(50%*2 - 20%) - Valid calc expression
-FAIL @supports: calc(-100%) - Negative calc value (to be clamped) assert_equals: Negative calc value (to be clamped) expected true but got false
-FAIL @getComputedStyle: calc(-100%) - Negative calc value (to be clamped) assert_equals: Negative calc value (to be clamped) expected "0%" but got "80%"
-FAIL @supports: calc(50% - 50%*2) - Negative calc expression (to be clamped) assert_equals: Negative calc expression (to be clamped) expected true but got false
-FAIL @getComputedStyle: calc(50% - 50%*2) - Negative calc expression (to be clamped) assert_equals: Negative calc expression (to be clamped) expected "0%" but got "80%"
+PASS @supports: calc(-100%) - Negative calc value (to be clamped)
+PASS @getComputedStyle: calc(-100%) - Negative calc value (to be clamped)
+PASS @supports: calc(50% - 50%*2) - Negative calc expression (to be clamped)
+PASS @getComputedStyle: calc(50% - 50%*2) - Negative calc expression (to be clamped)
 PASS @supports: calc(100) - Unit-less calc value
 PASS @supports: calc(100px) - Calc value with units
 PASS @supports: 100% 700% - Extra percentage after numeric value

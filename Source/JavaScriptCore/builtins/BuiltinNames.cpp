@@ -113,7 +113,7 @@ struct CharBufferSeacher {
 };
 
 template<typename CharacterType>
-static PrivateSymbolImpl* lookUpPrivateNameImpl(const HashSet<String>& set, const WTF::HashTranslatorCharBuffer<CharacterType>& buffer)
+static PrivateSymbolImpl* lookUpPrivateNameImpl(const BuiltinNames::PrivateNameSet& set, const WTF::HashTranslatorCharBuffer<CharacterType>& buffer)
 {
     auto iterator = set.find<CharBufferSeacher<CharacterType>>(buffer);
     if (iterator == set.end())
@@ -126,7 +126,7 @@ static PrivateSymbolImpl* lookUpPrivateNameImpl(const HashSet<String>& set, cons
 }
 
 template<typename CharacterType>
-static SymbolImpl* lookUpWellKnownSymbolImpl(const HashMap<String, SymbolImpl*>& map, const WTF::HashTranslatorCharBuffer<CharacterType>& buffer)
+static SymbolImpl* lookUpWellKnownSymbolImpl(const BuiltinNames::WellKnownSymbolMap& map, const WTF::HashTranslatorCharBuffer<CharacterType>& buffer)
 {
     auto iterator = map.find<CharBufferSeacher<CharacterType>>(buffer);
     if (iterator == map.end())

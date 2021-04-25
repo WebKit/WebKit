@@ -7,14 +7,14 @@ PASS WeakSet instanceof WeakSet is false
 PASS WeakSet.prototype instanceof WeakSet is false
 PASS new WeakSet() instanceof WeakSet is true
 PASS WeakSet() threw exception TypeError: calling WeakSet constructor without new is invalid.
-PASS set.add(0) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
-PASS set.add(0.5) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
-PASS set.add('foo') threw exception TypeError: Attempted to add a non-object key to a WeakSet.
-PASS set.add(true) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
-PASS set.add(false) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
-PASS set.add(null) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
-PASS set.add(undefined) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
-PASS set.add(Symbol.iterator) threw exception TypeError: Attempted to add a non-object key to a WeakSet.
+PASS set.add(0) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
+PASS set.add(0.5) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
+PASS set.add('foo') threw exception TypeError: Attempted to add a non-object value to a WeakSet.
+PASS set.add(true) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
+PASS set.add(false) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
+PASS set.add(null) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
+PASS set.add(undefined) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
+PASS set.add(Symbol.iterator) threw exception TypeError: Attempted to add a non-object value to a WeakSet.
 PASS set.has(0) is false
 PASS set.has(0.5) is false
 PASS set.has('foo') is false

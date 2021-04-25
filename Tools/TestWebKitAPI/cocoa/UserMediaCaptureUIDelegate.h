@@ -24,27 +24,27 @@
  */
 
 #if ENABLE(MEDIA_STREAM)
-#import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKUIDelegate.h>
 
 @interface UserMediaCaptureUIDelegate : NSObject<WKUIDelegate> {
     bool _wasPrompted;
     int _numberOfPrompts;
-    _WKPermissionDecision _audioDecision;
-    _WKPermissionDecision _videoDecision;
+    WKPermissionDecision _audioDecision;
+    WKPermissionDecision _videoDecision;
 }
 
 @property (readonly) BOOL wasPrompted;
 @property int numberOfPrompts;
-@property _WKPermissionDecision decision;
+@property WKPermissionDecision decision;
 
 - (void)waitUntilPrompted;
 -(void)resetWasPrompted;
 
--(void)setAudioDecision:(_WKPermissionDecision)decision;
--(void)setVideoDecision:(_WKPermissionDecision)decision;
+-(void)setAudioDecision:(WKPermissionDecision)decision;
+-(void)setVideoDecision:(WKPermissionDecision)decision;
 
 // WKUIDelegate
-- (void)_webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame audio:(BOOL)audio video:(BOOL)video decisionHandler:(void (^)(_WKPermissionDecision decision))decisionHandler;
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler;
 - (void)_webView:(WKWebView *)webView checkUserMediaPermissionForURL:(NSURL *)url mainFrameURL:(NSURL *)mainFrameURL frameIdentifier:(NSUInteger)frameIdentifier decisionHandler:(void (^)(NSString *salt, BOOL authorized))decisionHandler;
 
 @end

@@ -41,8 +41,8 @@ shouldBecomeEqual("centerContainer.element.getBoundingClientRect().width", "178"
     shouldBe("centerContainer.element.getBoundingClientRect().height", "44");
 
     debug("");
-    shouldBecomeEqual("Math.floor(rightContainer.element.getBoundingClientRect().width)", "131", () => {
-        shouldBeCloseTo("rightContainer.element.getBoundingClientRect().left", 503, 0.5);
+    shouldBecomeEqual("Math.floor(rightContainer.element.getBoundingClientRect().width)", "123", () => {
+        shouldBeCloseTo("rightContainer.element.getBoundingClientRect().left", 511, 0.5);
         shouldBe("rightContainer.element.getBoundingClientRect().top", "500");
         shouldBe("rightContainer.element.getBoundingClientRect().height", "44");
 

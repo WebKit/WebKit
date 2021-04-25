@@ -930,7 +930,7 @@ if (isWorker()) {
 
 function downgradeReferrerCallback(policy, host) {
     let scriptElement = document.createElement("script");
-    scriptElement.src = "http://".concat(host, ":8000/referrer-policy/resources/script.php");
+    scriptElement.src = "http://".concat(host, ":8000/referrer-policy/resources/script.py");
     scriptElement.referrerPolicy = policy;
     document.body.appendChild(scriptElement);
 }

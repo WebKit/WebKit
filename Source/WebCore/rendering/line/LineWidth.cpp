@@ -239,16 +239,11 @@ IndentTextOrNot requiresIndent(bool isFirstLine, bool isAfterHardLineBreak, cons
     IndentTextOrNot shouldIndentText = DoNotIndentText;
     if (isFirstLine)
         shouldIndentText = IndentText;
-#if ENABLE(CSS3_TEXT)
     else if (isAfterHardLineBreak && style.textIndentLine() == TextIndentLine::EachLine)
         shouldIndentText = IndentText;
 
     if (style.textIndentType() == TextIndentType::Hanging)
         shouldIndentText = shouldIndentText == IndentText ? DoNotIndentText : IndentText;
-#else
-    UNUSED_PARAM(isAfterHardLineBreak);
-    UNUSED_PARAM(style);
-#endif
     return shouldIndentText;
 }
 

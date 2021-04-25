@@ -75,10 +75,20 @@ JSC_DEFINE_HOST_FUNCTION(constructWeakSet, (JSGlobalObject* globalObject, CallFr
 
     auto adderFunctionCallData = getCallData(vm, adderFunction);
     if (adderFunctionCallData.type == CallData::Type::None)
-        return JSValue::encode(throwTypeError(globalObject, scope));
+        return throwVMTypeError(globalObject, scope, "'add' property of a WeakSet should be callable."_s);
+
+    bool canPerformFastAdd = adderFunctionCallData.type == CallData::Type::Native && adderFunctionCallData.native.function == protoFuncWeakSetAdd;
 
     scope.release();
     forEachInIterable(globalObject, iterable, [&](VM&, JSGlobalObject* globalObject, JSValue nextValue) {
+        if (canPerformFastAdd) {
+            if (nextValue.isObject())
+                weakSet->add(vm, asObject(nextValue));
+            else
+                throwTypeError(asObject(adderFunction)->globalObject(vm), scope, WeakSetNonObjectValueError);
+            return;
+        }
+
         MarkedArgumentBuffer arguments;
         arguments.append(nextValue);
         ASSERT(!arguments.hasOverflowed());

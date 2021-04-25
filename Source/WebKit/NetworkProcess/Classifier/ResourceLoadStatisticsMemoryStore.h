@@ -111,12 +111,12 @@ public:
     // Private Click Measurement is not implemented in the ITP memory store.
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) override { };
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() override { };
-    Optional<Seconds> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributeOnSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) override { return { }; };
+    Optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) override { return { }; };
     Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement() override { return { }; };
     void clearPrivateClickMeasurement(Optional<RegistrableDomain>) override { };
     void clearExpiredPrivateClickMeasurement() override { };
     String privateClickMeasurementToString() override { return String(); };
-    void clearSentAttribution(WebCore::PrivateClickMeasurement&&) override { };
+    void clearSentAttribution(WebCore::PrivateClickMeasurement&&, WebCore::PrivateClickMeasurement::AttributionReportEndpoint) override { };
     void markAttributedPrivateClickMeasurementsAsExpiredForTesting() override { };
 
 private:

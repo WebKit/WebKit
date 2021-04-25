@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBKeyData.h"
 
 namespace WebCore {
@@ -84,5 +82,3 @@ bool IDBIterateCursorData::decode(Decoder& decoder, IDBIterateCursorData& iterat
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

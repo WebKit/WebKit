@@ -44,16 +44,16 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerGlobalScope);
 
-Ref<ServiceWorkerGlobalScope> ServiceWorkerGlobalScope::create(const ServiceWorkerContextData& data, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, ServiceWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+Ref<ServiceWorkerGlobalScope> ServiceWorkerGlobalScope::create(ServiceWorkerContextData&& data, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, ServiceWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
 {
-    auto scope = adoptRef(*new ServiceWorkerGlobalScope { data, params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider });
+    auto scope = adoptRef(*new ServiceWorkerGlobalScope { WTFMove(data), params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider });
     scope->applyContentSecurityPolicyResponseHeaders(params.contentSecurityPolicyResponseHeaders);
     return scope;
 }
 
-ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(const ServiceWorkerContextData& data, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, ServiceWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
+ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(ServiceWorkerContextData&& data, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, ServiceWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
     : WorkerGlobalScope(WorkerThreadType::ServiceWorker, params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider)
-    , m_contextData(crossThreadCopy(data))
+    , m_contextData(WTFMove(data))
     , m_registration(ServiceWorkerRegistration::getOrCreate(*this, navigator().serviceWorker(), WTFMove(m_contextData.registration)))
     , m_clients(ServiceWorkerClients::create())
 {
@@ -153,6 +153,22 @@ void ServiceWorkerGlobalScope::setScriptResource(const URL& url, ServiceWorkerCo
     });
 
     m_contextData.scriptResourceMap.set(url, WTFMove(script));
+}
+
+void ServiceWorkerGlobalScope::didSaveScriptsToDisk(ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
+{
+    // These scripts should be identical to the ones we have. However, these are mmap'd so using them helps reduce dirty memory usage.
+    if (script) {
+        ASSERT(m_contextData.script == script);
+        m_contextData.script = WTFMove(script);
+    }
+    for (auto& pair : importedScripts) {
+        auto it = m_contextData.scriptResourceMap.find(pair.key);
+        if (it == m_contextData.scriptResourceMap.end())
+            continue;
+        ASSERT(it->value.script == pair.value); // Do a memcmp to make sure the scripts are identical.
+        it->value.script = WTFMove(pair.value);
+    }
 }
 
 } // namespace WebCore

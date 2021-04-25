@@ -210,7 +210,8 @@ void ScriptProcessorNode::process(size_t framesToProcess)
     // m_bufferReadWriteIndex will wrap back around to 0 when the current input and output buffers are full.
     // When this happens, fire an event and swap buffers.
     if (!m_bufferReadWriteIndex) {
-        // Dispatching a Function to the main thread requires heap allocations.
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
         // Reference ourself so we don't accidentally get deleted before fireProcessEvent() gets called.

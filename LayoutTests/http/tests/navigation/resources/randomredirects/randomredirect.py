@@ -10,5 +10,5 @@ sys.stdout.write(
     'Expires: Thu, 01 Jan 1970 00:00:00 GMT\r\n'
     'Vary: Accept-Encoding, Cookie\r\n'
     'Connection: keep-alive\r\n'
-    'Location: {}.py\r\n\r\n'.format(random.randint(0, 10))
+    'Location: {}.py\r\n\r\n'.format(random.randint(0, 9))
 )

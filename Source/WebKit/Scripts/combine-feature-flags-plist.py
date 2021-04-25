@@ -44,7 +44,10 @@ def main(argv):
                     print('Error!', key, 'does not exist in' + feature_flags_plist_path)
                     return 1
 
-                feature_flags[key].update(internal_feature_flags[key])
+                if 'Attributes' in feature_flags[key] and 'Attributes' in internal_feature_flags[key]:
+                    feature_flags[key]['Attributes'].update(internal_feature_flags[key]['Attributes'])
+                else:
+                    feature_flags[key].update(internal_feature_flags[key])
 
             with open(output_plist_path, 'wb') as output_plist_file:
                 plistlib.dump(feature_flags, output_plist_file)

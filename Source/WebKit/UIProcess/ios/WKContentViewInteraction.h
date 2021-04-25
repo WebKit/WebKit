@@ -475,7 +475,9 @@ enum class ProceedWithImageExtraction : bool {
     Vector<BlockPtr<void(WebKit::ProceedWithImageExtraction)>> _actionsToPerformAfterPendingImageExtraction;
 #if USE(UICONTEXTMENU)
     RetainPtr<UIMenu> _imageExtractionContextMenu;
+    BOOL _contextMenuWasTriggeredByImageExtractionTimeout;
 #endif // USE(UICONTEXTMENU)
+    BOOL _isProceedingWithImageExtraction;
 #endif // ENABLE(IMAGE_EXTRACTION)
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -672,6 +674,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled;
 
 #if USE(UICONTEXTMENU)
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement;
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
 - (void)_removeContextMenuViewIfPossible;
 #endif

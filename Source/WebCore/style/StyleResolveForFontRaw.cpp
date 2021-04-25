@@ -32,28 +32,39 @@
 #include "StyleResolveForFontRaw.h"
 
 #include "CSSFontSelector.h"
+#include "CSSHelper.h"
 #include "CSSPropertyParserHelpers.h"
 #include "Document.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
 #include "RenderStyle.h"
+#include "ScriptExecutionContext.h"
 #include "Settings.h"
 #include "StyleFontSizeFunctions.h"
+#include "WebKitFontFamilyNames.h"
 
 namespace WebCore {
 
 namespace Style {
 
 using namespace CSSPropertyParserHelpers;
+using namespace WebKitFontFamilyNames;
 
-Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescription&& fontDescription, Document& document)
+static bool useFixedDefaultSize(const FontCascadeDescription& fontDescription)
 {
+    return fontDescription.familyCount() == 1 && fontDescription.firstFamily() == familyNamesData->at(FamilyNamesIndex::MonospaceFamily);
+}
+
+Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescription&& fontDescription, ScriptExecutionContext& context)
+{
+    ASSERT(context.cssFontSelector());
+
     // Map the font property longhands into the style.
     float parentSize = fontDescription.specifiedSize();
 
     // Font family applied in the same way as StyleBuilderCustom::applyValueFontFamily
     // Before mapping in a new font-family property, we should reset the generic family.
-    bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
+    bool oldFamilyUsedFixedDefaultSize = useFixedDefaultSize(fontDescription);
 
     Vector<AtomString> families;
     families.reserveInitialCapacity(fontRaw.family.size());
@@ -63,7 +74,10 @@ Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
         bool isGenericFamily = false;
         switchOn(item, [&] (CSSValueID ident) {
             isGenericFamily = ident != CSSValueWebkitBody;
-            family = isGenericFamily ? CSSPropertyParserHelpers::genericFontFamilyFromValueID(ident) : AtomString(document.settings().standardFontFamily());
+            if (isGenericFamily)
+                family = familyNamesData->at(CSSPropertyParserHelpers::genericFontFamilyIndex(ident));
+            else
+                family = AtomString(context.settingsValues().fontGenericFamilies.standardFontFamily());
         }, [&] (const String& familyString) {
             family = familyString;
         });
@@ -79,11 +93,11 @@ Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
         return WTF::nullopt;
     fontDescription.setFamilies(families);
 
-    if (fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize) {
+    if (useFixedDefaultSize(fontDescription) != oldFamilyUsedFixedDefaultSize) {
         if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier()) {
-            auto size = Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, document);
+            auto size = Style::fontSizeForKeyword(sizeIdentifier, !oldFamilyUsedFixedDefaultSize, context.settingsValues());
             fontDescription.setSpecifiedSize(size);
-            fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), 1.0, MinimumFontSizeRule::None, document.settingsValues()));
+            fontDescription.setComputedSize(Style::computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), 1.0, MinimumFontSizeRule::None, context.settingsValues()));
         }
     }
 
@@ -176,7 +190,7 @@ Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
         case CSSValueXxLarge:
         case CSSValueWebkitXxxLarge:
             fontDescription.setKeywordSizeFromIdentifier(ident);
-            return Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), document);
+            return Style::fontSizeForKeyword(ident, fontDescription.useFixedDefaultSize(), context.settingsValues());
         case CSSValueLarger:
             return parentSize * 1.2f;
         case CSSValueSmaller:
@@ -187,8 +201,13 @@ Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
     }, [&] (const CSSPropertyParserHelpers::LengthOrPercentRaw& lengthOrPercent) {
         return switchOn(lengthOrPercent, [&] (const CSSPropertyParserHelpers::LengthRaw& length) {
             auto fontCascade = FontCascade(FontCascadeDescription(fontDescription));
-            fontCascade.update(&document.fontSelector());
-            return static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(length.type, length.value, CSSPropertyFontSize, &fontCascade.fontMetrics(), &fontCascade.fontDescription(), &fontCascade.fontDescription(), document.renderView()));
+            fontCascade.update(context.cssFontSelector());
+            // FIXME: Passing null for the RenderView parameter means that vw and vh units will evaluate to
+            //        zero and vmin and vmax units will evaluate as if they were px units.
+            //        It's unclear in the specification if they're expected to work on OffscreenCanvas, given
+            //        that it's off-screen and therefore doesn't strictly have an associated viewport.
+            //        This needs clarification and possibly fixing.
+            return static_cast<float>(CSSPrimitiveValue::computeUnzoomedNonCalcLengthDouble(length.type, length.value, CSSPropertyFontSize, &fontCascade.fontMetrics(), &fontCascade.fontDescription(), &fontCascade.fontDescription(), is<Document>(context) ? downcast<Document>(context).renderView() : nullptr));
         }, [&] (double percentage) {
             return static_cast<float>((parentSize * percentage) / 100.0);
         });
@@ -203,7 +222,7 @@ Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
     // it, even though there is line-height information on FontRaw.
 
     auto fontCascade = FontCascade(WTFMove(fontDescription));
-    fontCascade.update(&document.fontSelector());
+    fontCascade.update(context.cssFontSelector());
     return fontCascade;
 }
 

@@ -52,6 +52,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/SimpleRange.h>
+#include <WebCore/Text.h>
 #include <WebCore/VisiblePosition.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -373,6 +374,15 @@ bool InjectedBundleNodeHandle::isTextField() const
 bool InjectedBundleNodeHandle::isSelectElement() const
 {
     return is<HTMLSelectElement>(m_node);
+}
+
+bool InjectedBundleNodeHandle::isSelectableTextNode() const
+{
+    if (!is<Text>(m_node))
+        return false;
+
+    auto renderer = m_node->renderer();
+    return renderer && renderer->style().userSelect() != UserSelect::None;
 }
 
 RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElementCellAbove()

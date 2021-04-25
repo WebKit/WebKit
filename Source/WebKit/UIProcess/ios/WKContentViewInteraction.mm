@@ -908,6 +908,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _isChangingFocus = NO;
     _isBlurringFocusedElement = NO;
 
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
+    _contextMenuWasTriggeredByImageExtractionTimeout = NO;
+#endif
+
 #if ENABLE(DATALIST_ELEMENT)
     _dataListTextSuggestionsInputView = nil;
     _dataListTextSuggestions = nil;
@@ -963,6 +967,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _activeTextInteractionCount = 0;
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
+
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
+    _contextMenuWasTriggeredByImageExtractionTimeout = NO;
+#endif
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
@@ -2307,6 +2315,11 @@ static Class tapAndAHalfRecognizerClass()
     if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
+    if (gestureRecognizer == _imageExtractionTimeoutGestureRecognizer && otherGestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
+        return YES;
+#endif
+
     return NO;
 }
 
@@ -2314,6 +2327,11 @@ static Class tapAndAHalfRecognizerClass()
 {
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
+
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
+    if (gestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships] && otherGestureRecognizer == _imageExtractionTimeoutGestureRecognizer)
+        return YES;
+#endif
 
     return NO;
 }
@@ -3046,6 +3064,12 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 {
     [self _elementDidBlur];
     _page->clearSelection();
+}
+
+- (void)_invalidateCurrentPositionInformation
+{
+    _hasValidPositionInformation = NO;
+    _positionInformation = { };
 }
 
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
@@ -4493,8 +4517,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     _textInteractionDidChangeFocusedElement = NO;
     _activeTextInteractionCount = 0;
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
-    _hasValidPositionInformation = NO;
-    _positionInformation = { };
+    [self _invalidateCurrentPositionInformation];
 }
 
 #if !USE(UIKIT_KEYBOARD_ADDITIONS)
@@ -4525,7 +4548,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     constexpr bool isKeyboardEventValid = false;
     _page->setInitialFocus(selectingForward, isKeyboardEventValid, { }, [protectedSelf = retainPtr(self), completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler([protectedSelf becomeFirstResponder]);
+        if (completionHandler)
+            completionHandler([protectedSelf becomeFirstResponder]);
     });
 }
 
@@ -5234,8 +5258,10 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         traits.autocorrectionType = disableAutocorrectAndAutocapitalize ? UITextAutocorrectionTypeNo : (_focusedElementInformation.isAutocorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo);
 
     if (!_focusedElementInformation.isSpellCheckingEnabled) {
-        traits.smartQuotesType = UITextSmartQuotesTypeNo;
-        traits.smartDashesType = UITextSmartDashesTypeNo;
+        if ([traits respondsToSelector:@selector(setSmartQuotesType:)])
+            traits.smartQuotesType = UITextSmartQuotesTypeNo;
+        if ([traits respondsToSelector:@selector(setSmartDashesType:)])
+            traits.smartDashesType = UITextSmartDashesTypeNo;
     }
 
     switch (_focusedElementInformation.inputMode) {
@@ -6510,12 +6536,19 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [context setSuggestions:suggestions.get()];
     [context setInitialText:_focusedElementInformation.value];
     [context setAcceptsEmoji:YES];
+    [context setShouldPresentModernTextInputUI:YES];
     [quickboardController setQuickboardPresentingViewController:presentingViewController];
     [quickboardController setExcludedFromScreenCapture:[context isSecureTextEntry]];
     [quickboardController setTextInputContext:context.get()];
     [quickboardController setDelegate:self];
 
     return quickboardController;
+}
+
+static bool canUseQuickboardControllerFor(UITextContentType type)
+{
+    // We can remove this restriction once PUICQuickboardController supports displaying text suggestion strings that are not login credentials.
+    return [type isEqualToString:UITextContentTypeUsername] || [type isEqualToString:UITextContentTypePassword] || [type isEqualToString:UITextContentTypeEmailAddress];
 }
 
 #endif // HAVE(QUICKBOARD_CONTROLLER)
@@ -6548,7 +6581,7 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         break;
     default: {
 #if HAVE(QUICKBOARD_CONTROLLER)
-        if (_page->preferences().quickboardControllerForTextInputEnabled()) {
+        if (canUseQuickboardControllerFor(self.textContentTypeForQuickboard)) {
             _presentedQuickboardController = [self _createQuickboardController:presentingViewController];
             break;
         }
@@ -8238,6 +8271,29 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
 }
 
+- (void)overridePositionTrackingViewForTargetedPreviewIfNecessary:(UITargetedPreview *)targetedPreview containerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
+{
+    if (!scrollingNodeID)
+        return;
+
+    UIScrollView *positionTrackingView = self.webView.scrollView;
+    if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
+        positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID);
+
+    if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
+        [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
+}
+
+- (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement
+{
+    RetainPtr<UITargetedPreview> targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect);
+
+    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
+
+    _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
+    return _contextMenuInteractionTargetedPreview.get();
+}
+
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible
 {
     RetainPtr<UITargetedPreview> targetedPreview;
@@ -8255,14 +8311,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (!targetedPreview)
         targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds);
 
-    if (_positionInformation.containerScrollingNodeID) {
-        UIScrollView *positionTrackingView = self.webView.scrollView;
-        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
-            positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(_positionInformation.containerScrollingNodeID);
-
-        if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
-            [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
-    }
+    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_positionInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
@@ -9937,13 +9986,19 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 - (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
 {
+#if ENABLE(IMAGE_EXTRACTION)
+    BOOL triggeredByImageExtractionTimeout = std::exchange(_contextMenuWasTriggeredByImageExtractionTimeout, NO);
+#else
+    BOOL triggeredByImageExtractionTimeout = NO;
+#endif
+
     if (!_webView)
         return completion(nil);
 
     if (!self.webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
-    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion)] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
+    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion), triggeredByImageExtractionTimeout] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf || proceedWithImageExtraction == WebKit::ProceedWithImageExtraction::Yes) {
             completion(nil);
@@ -9959,6 +10014,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([interaction locationInView:strongSelf.get()]) };
         request.includeSnapshot = true;
         request.includeLinkIndicator = true;
+        request.disallowUserAgentShadowContent = triggeredByImageExtractionTimeout;
         request.linkIndicatorShouldHaveLegacyMargins = ![strongSelf _shouldUseContextMenus];
 
         [strongSelf doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(strongSelf.get()), completion] (WebKit::InteractionInformationAtPosition) {

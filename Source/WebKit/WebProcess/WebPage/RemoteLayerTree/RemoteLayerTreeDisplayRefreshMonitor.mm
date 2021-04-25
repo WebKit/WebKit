@@ -26,12 +26,19 @@
 #import "config.h"
 #import "RemoteLayerTreeDisplayRefreshMonitor.h"
 
+#import "Logging.h"
+#include <wtf/text/TextStream.h>
+
 namespace WebKit {
 using namespace WebCore;
+
+constexpr FramesPerSecond DefaultPreferredFramesPerSecond = 60;
 
 RemoteLayerTreeDisplayRefreshMonitor::RemoteLayerTreeDisplayRefreshMonitor(PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     : DisplayRefreshMonitor(displayID)
     , m_drawingArea(makeWeakPtr(drawingArea))
+    , m_preferredFramesPerSecond(DefaultPreferredFramesPerSecond)
+    , m_currentUpdate({ 0, m_preferredFramesPerSecond })
 {
 }
 
@@ -41,21 +48,30 @@ RemoteLayerTreeDisplayRefreshMonitor::~RemoteLayerTreeDisplayRefreshMonitor()
         m_drawingArea->willDestroyDisplayRefreshMonitor(this);
 }
 
-void RemoteLayerTreeDisplayRefreshMonitor::setPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
+void RemoteLayerTreeDisplayRefreshMonitor::adjustPreferredFramesPerSecond(FramesPerSecond preferredFramesPerSecond)
 {
+    if (preferredFramesPerSecond == m_preferredFramesPerSecond)
+        return;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "RemoteLayerTreeDisplayRefreshMonitor::adjustMaxPreferredFramesPerSecond to " << preferredFramesPerSecond);
+
+    m_preferredFramesPerSecond = preferredFramesPerSecond;
+    m_currentUpdate = { 0, m_preferredFramesPerSecond };
+
     if (m_drawingArea)
         m_drawingArea->setPreferredFramesPerSecond(preferredFramesPerSecond);
 }
 
 bool RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback()
 {
-    if (!m_drawingArea || !isActive())
+    if (!m_drawingArea)
         return false;
 
-    if (!isScheduled())
+    if (!isScheduled()) {
+        LOG_WITH_STREAM(DisplayLink, stream << "RemoteLayerTreeDisplayRefreshMonitor::requestRefreshCallback - triggering update");
         static_cast<DrawingArea&>(*m_drawingArea.get()).triggerRenderingUpdate();
+    }
 
-    setIsActive(true);
     setIsScheduled(true);
     return true;
 }
@@ -68,7 +84,8 @@ void RemoteLayerTreeDisplayRefreshMonitor::didUpdateLayers()
         return;
 
     setIsPreviousFrameDone(false);
-    handleDisplayRefreshedNotificationOnMainThread(this);
+    displayDidRefresh(m_currentUpdate);
+    m_currentUpdate = m_currentUpdate.nextUpdate();
 }
 
 void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDrawingArea& drawingArea)
@@ -76,4 +93,9 @@ void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDraw
     m_drawingArea = makeWeakPtr(drawingArea);
 }
 
+Optional<FramesPerSecond> RemoteLayerTreeDisplayRefreshMonitor::displayNominalFramesPerSecond()
+{
+    return m_preferredFramesPerSecond;
 }
+
+} // namespace WebKit

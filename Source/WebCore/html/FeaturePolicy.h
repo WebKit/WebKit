@@ -43,6 +43,7 @@ public:
         Microphone,
         SpeakerSelection,
         DisplayCapture,
+        Geolocation,
         SyncXHR,
         Fullscreen,
 #if ENABLE(DEVICE_ORIENTATION)
@@ -67,6 +68,7 @@ private:
     AllowRule m_microphoneRule;
     AllowRule m_speakerSelectionRule;
     AllowRule m_displayCaptureRule;
+    AllowRule m_geolocationRule;
     AllowRule m_syncXHRRule;
     AllowRule m_fullscreenRule;
 #if ENABLE(DEVICE_ORIENTATION)

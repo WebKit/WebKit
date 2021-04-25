@@ -8,14 +8,16 @@ class CommitLogFetcher {
 
     static function find_commit_id_by_revision($db, $repository_id, $revision)
     {
-        $commit_rows = $db->query_and_fetch_all('SELECT commit_id FROM commits WHERE commit_repository = $1 AND commit_revision = $2', array($repository_id, $revision));
+        $column_name = CommitLogFetcher::is_commit_revision_identifier($revision) ? 'commit_revision_identifier' : 'commit_revision';
+        
+        $commit_rows = $db->query_and_fetch_all("SELECT commit_id FROM commits WHERE commit_repository = $1 AND $column_name = $2", array($repository_id, $revision));
         if ($commit_rows)
             return $commit_rows[0]['commit_id'];
 
         if (!ctype_alnum($revision))
             return NULL;
 
-        $commit_rows = $db->query_and_fetch_all('SELECT commit_id FROM commits WHERE commit_repository = $1 AND commit_revision LIKE $2 LIMIT 2', array($repository_id, Database::escape_for_like($revision) . '%'));
+        $commit_rows = $db->query_and_fetch_all("SELECT commit_id FROM commits WHERE commit_repository = $1 AND $column_name  LIKE $2 LIMIT 2", array($repository_id, Database::escape_for_like($revision) . '%'));
         if (!$commit_rows)
             return NULL;
         if (count($commit_rows) > 1)
@@ -55,6 +57,7 @@ class CommitLogFetcher {
     {
         $statements = 'SELECT commit_id as "id",
             commit_revision as "revision",
+            commit_revision_identifier as "revisionIdentifier",
             commit_previous_commit as "previousCommit",
             commit_time as "time",
             committer_name as "authorName",
@@ -192,8 +195,14 @@ class CommitLogFetcher {
         return $this->format_single_commit($commit);
     }
 
+    private static function is_commit_revision_identifier($commit_revision_or_revision_identifier) 
+    {
+        return preg_match('/^\d+@[\w\.\-]*$/', $commit_revision_or_revision_identifier);
+    }
+
     private function commit_for_revision($repository_id, $revision) {
-        $commit_info = array('repository' => $repository_id, 'revision' => $revision);
+        $commit_info = array('repository' => $repository_id); 
+        $commit_info[$this->is_commit_revision_identifier($revision) ? 'revision_identifier' : 'revision'] = $revision;
         $row = $this->db->select_last_row('commits', 'commit', $commit_info);
         if (!$row)
             exit_with_error('UnknownCommit', $commit_info);
@@ -201,7 +210,8 @@ class CommitLogFetcher {
     }
 
     private function commit_for_revision_prefix($repository_id, $revision_prefix) {
-        $rows = $this->db->query_and_fetch_all('SELECT * FROM commits WHERE commit_repository = $1 AND commit_revision LIKE $2 ORDER BY commit_revision LIMIT 2', array($repository_id, Database::escape_for_like($revision_prefix) . '%'));
+        $column_name = $this->is_commit_revision_identifier($revision_prefix) ? 'revision_identifier' : 'revision';
+        $rows = $this->db->query_and_fetch_all("SELECT * FROM commits WHERE commit_repository = $1 AND commit_$column_name LIKE $2 ORDER BY commit_$column_name LIMIT 2", array($repository_id, Database::escape_for_like($revision_prefix) . '%'));
         if (count($rows) == 0)
             exit_with_error('UnknownCommit', array('repository' => $repository_id, 'revision' => $revision_prefix));
         if (count($rows) == 2) {
@@ -224,6 +234,7 @@ class CommitLogFetcher {
         return array(
             'id' => $commit_row['commit_id'],
             'revision' => $commit_row['commit_revision'],
+            'revisionIdentifier' => $commit_row['commit_revision_identifier'],
             'repository' => $commit_row['commit_repository'],
             'previousCommit' => $commit_row['commit_previous_commit'],
             'time' => Database::to_js_time($commit_row['commit_time']),

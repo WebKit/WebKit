@@ -98,6 +98,7 @@ function mac_process_network_entitlements()
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications:1 string LSDisplayName
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitNetworkingSandbox bool YES
+        plistbuddy Add :com.apple.symptom_analytics.configure bool YES
     fi
 }
 
@@ -313,6 +314,7 @@ function ios_family_process_network_entitlements()
 
     plistbuddy Add :seatbelt-profiles array
     plistbuddy Add :seatbelt-profiles:0 string com.apple.WebKit.Networking
+    plistbuddy Add :com.apple.symptom_analytics.configure bool YES
 }
 
 function ios_family_process_plugin_entitlements()

@@ -67,24 +67,13 @@ void RemoteMediaSessionHelper::gpuProcessConnectionDidClose(GPUProcessConnection
     connectToGPUProcess();
 }
 
-void RemoteMediaSessionHelper::startMonitoringWirelessRoutes()
+void RemoteMediaSessionHelper::startMonitoringWirelessRoutesInternal()
 {
-    if (m_monitoringWirelessRoutesCount++)
-        return;
-
     connection().send(Messages::RemoteMediaSessionHelperProxy::StartMonitoringWirelessRoutes(), { });
 }
 
-void RemoteMediaSessionHelper::stopMonitoringWirelessRoutes()
+void RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal()
 {
-    if (!m_monitoringWirelessRoutesCount) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (--m_monitoringWirelessRoutesCount)
-        return;
-
     connection().send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
 }
 
@@ -93,60 +82,14 @@ void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid)
     connection().send(Messages::RemoteMediaSessionHelperProxy::ProvidePresentingApplicationPID(pid), { });
 }
 
-void RemoteMediaSessionHelper::applicationWillEnterForeground(SuspendedUnderLock suspendedUnderLock)
-{
-    for (auto& client : m_clients)
-        client.applicationWillEnterForeground(suspendedUnderLock);
-}
-
-void RemoteMediaSessionHelper::applicationDidEnterBackground(SuspendedUnderLock suspendedUnderLock)
-{
-    for (auto& client : m_clients)
-        client.applicationDidEnterBackground(suspendedUnderLock);
-}
-
-void RemoteMediaSessionHelper::applicationWillBecomeInactive()
-{
-    for (auto& client : m_clients)
-        client.applicationWillBecomeInactive();
-}
-
-void RemoteMediaSessionHelper::applicationDidBecomeActive()
-{
-    for (auto& client : m_clients)
-        client.applicationDidBecomeActive();
-}
-
-void RemoteMediaSessionHelper::externalOutputDeviceAvailableDidChange(HasAvailableTargets hasAvailableTargets)
-{
-    for (auto& client : m_clients)
-        client.externalOutputDeviceAvailableDidChange(hasAvailableTargets);
-}
-
-void RemoteMediaSessionHelper::isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit playingToAutomotiveHeadUnit)
-{
-    for (auto& client : m_clients)
-        client.isPlayingToAutomotiveHeadUnitDidChange(playingToAutomotiveHeadUnit);
-}
-
-void RemoteMediaSessionHelper::activeAudioRouteDidChange(ShouldPause shouldPause)
-{
-    for (auto& client : m_clients)
-        client.activeAudioRouteDidChange(shouldPause);
-}
-
 void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, MediaPlaybackTargetContext&& targetContext)
 {
-    RefPtr<MediaPlaybackTarget> targetObject;
-    if (targetContext.type() == MediaPlaybackTargetContext::AVOutputContextType)
-        m_playbackTarget = WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext());
-    else {
+    if (targetContext.type() != MediaPlaybackTargetContext::AVOutputContextType) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    for (auto& client : m_clients)
-        client.activeVideoRouteDidChange(supportsAirPlayVideo, *m_playbackTarget);
+    WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext()));
 }
 
 }

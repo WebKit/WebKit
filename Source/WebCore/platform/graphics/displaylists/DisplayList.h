@@ -77,8 +77,8 @@ public:
     const NativeImageHashMap& nativeImages() const { return m_nativeImages; }
     const FontRenderingResourceMap& fonts() const { return m_fonts; }
 
-    WEBCORE_EXPORT void setItemBufferClient(ItemBufferReadingClient*);
-    WEBCORE_EXPORT void setItemBufferClient(ItemBufferWritingClient*);
+    WEBCORE_EXPORT void setItemBufferReadingClient(ItemBufferReadingClient*);
+    WEBCORE_EXPORT void setItemBufferWritingClient(ItemBufferWritingClient*);
     WEBCORE_EXPORT void prepareToAppend(ItemBufferHandle&&);
 
 #if !defined(NDEBUG) || !LOG_DISABLED
@@ -140,6 +140,10 @@ public:
         WEBCORE_EXPORT void clearCurrentItem();
         WEBCORE_EXPORT void updateCurrentItem();
         WEBCORE_EXPORT void advance();
+
+        enum class ExtentUpdateResult : bool { Failure, Success };
+        ExtentUpdateResult updateCurrentDrawingItemExtent(ItemType);
+
         bool atEnd() const;
 
         ItemBuffer* itemBuffer() const { return m_displayList.itemBufferIfExists(); }

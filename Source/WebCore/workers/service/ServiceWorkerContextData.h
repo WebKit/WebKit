@@ -27,6 +27,7 @@
 
 #include "CertificateInfo.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
+#include "ScriptBuffer.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -41,11 +42,9 @@ namespace WebCore {
 
 struct ServiceWorkerContextData {
     struct ImportedScript {
-        String script;
+        ScriptBuffer script;
         URL responseURL;
         String mimeType;
-
-        ImportedScript isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
 
         template<class Encoder> void encode(Encoder& encoder) const
         {
@@ -54,33 +53,35 @@ struct ServiceWorkerContextData {
 
         template<class Decoder> static Optional<ImportedScript> decode(Decoder& decoder)
         {
-            Optional<String> script;
+            Optional<ScriptBuffer> script;
             decoder >> script;
             if (!script)
                 return WTF::nullopt;
-            
+
             Optional<URL> responseURL;
             decoder >> responseURL;
             if (!responseURL)
                 return WTF::nullopt;
-            
+
             Optional<String> mimeType;
             decoder >> mimeType;
             if (!mimeType)
                 return WTF::nullopt;
-            
+
             return {{
                 WTFMove(*script),
                 WTFMove(*responseURL),
                 WTFMove(*mimeType)
             }};
         }
+
+        ImportedScript isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
     };
 
     Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
     ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
-    String script;
+    ScriptBuffer script;
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     String referrerPolicy;
@@ -98,9 +99,8 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy << scriptURL << workerType << loadedFromDisk;
-    encoder << scriptResourceMap;
-    encoder << certificateInfo;
+    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << referrerPolicy
+        << scriptURL << workerType << loadedFromDisk << scriptResourceMap << certificateInfo;
 }
 
 template<class Decoder>
@@ -120,8 +120,9 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!serviceWorkerIdentifier)
         return WTF::nullopt;
 
-    String script;
-    if (!decoder.decode(script))
+    Optional<ScriptBuffer> script;
+    decoder >> script;
+    if (!script)
         return WTF::nullopt;
 
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
@@ -135,7 +136,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     URL scriptURL;
     if (!decoder.decode(scriptURL))
         return WTF::nullopt;
-    
+
     WorkerType workerType;
     if (!decoder.decode(workerType))
         return WTF::nullopt;
@@ -152,12 +153,12 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     decoder >> certificateInfo;
     if (!certificateInfo)
         return WTF::nullopt;
-    
+
     return {{
         WTFMove(*jobDataIdentifier),
         WTFMove(*registration),
         WTFMove(*serviceWorkerIdentifier),
-        WTFMove(script),
+        WTFMove(*script),
         WTFMove(*certificateInfo),
         WTFMove(contentSecurityPolicy),
         WTFMove(referrerPolicy),

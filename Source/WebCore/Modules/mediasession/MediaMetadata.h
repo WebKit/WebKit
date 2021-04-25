@@ -91,6 +91,11 @@ public:
 
     const MediaSessionMetadata& metadata() const { return m_metadata; }
 
+#if ENABLE(MEDIA_SESSION_PLAYLIST)
+    const String& trackIdentifier() const { return m_metadata.trackIdentifier; }
+    void setTrackIdentifier(const String&);
+#endif
+
 private:
     MediaMetadata();
     void setArtworkImage(Image*);

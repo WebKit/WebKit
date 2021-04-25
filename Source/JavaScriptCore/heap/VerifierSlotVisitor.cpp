@@ -252,6 +252,11 @@ void VerifierSlotVisitor::dumpMarkerData(HeapCell* cell)
         if (cell) {
             if (isJSCellKind(cell->cellKind()))
                 dataLogLn(JSValue(static_cast<JSCell*>(cell)));
+
+            bool isMarked = heap()->isMarked(cell);
+            const char* wasOrWasNot = isMarked ? "was" : "was NOT";
+            dataLogLn("In the real GC, cell ", RawPointer(cell), " ", wasOrWasNot, " marked.");
+
             if (cell->isPreciseAllocation())
                 markerData = markerDataForPreciseAllocation(cell->preciseAllocation());
             else
@@ -260,21 +265,21 @@ void VerifierSlotVisitor::dumpMarkerData(HeapCell* cell)
                 dataLogLn("Marker data is not available for cell ", RawPointer(cell));
                 break;
             }
-            dataLog("Cell ", RawPointer(cell), " was visited");
+            dataLog("In the verifier GC, cell ", RawPointer(cell), " was visited");
 
         } else {
             RELEASE_ASSERT(opaqueRoot);
 
             bool containsOpaqueRoot = heap()->m_opaqueRoots.contains(opaqueRoot);
             const char* wasOrWasNot = containsOpaqueRoot ? "was" : "was NOT";
-            dataLogLn("In the real GC, opaque root", RawPointer(opaqueRoot), " ", wasOrWasNot, " added to the heap's opaque roots.");
+            dataLogLn("In the real GC, opaque root ", RawPointer(opaqueRoot), " ", wasOrWasNot, " added to the heap's opaque roots.");
 
             markerData = markerDataForOpaqueRoot(opaqueRoot);
             if (!markerData) {
                 dataLogLn("Marker data is not available for opaque root ", RawPointer(opaqueRoot));
                 break;
             }
-            dataLog("Opaque root ", RawPointer(opaqueRoot), " was added");
+            dataLog("In the verifier GC, opaque root ", RawPointer(opaqueRoot), " was added");
         }
 
         ReferrerToken referrer = markerData->referrer();

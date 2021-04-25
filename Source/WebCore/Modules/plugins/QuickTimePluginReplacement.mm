@@ -67,7 +67,7 @@ static JSValue *jsValueWithAVMetadataItemInContext(AVMetadataItem *, JSContext *
 
 static String quickTimePluginReplacementScript()
 {
-    static NeverDestroyed<String> script(StringImpl::createStaticStringImpl(QuickTimePluginReplacementJavaScript, sizeof(QuickTimePluginReplacementJavaScript)));
+    static NeverDestroyed<String> script(StringImpl::createWithoutCopying(QuickTimePluginReplacementJavaScript, sizeof(QuickTimePluginReplacementJavaScript)));
     return script;
 }
 

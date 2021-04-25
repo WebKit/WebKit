@@ -41,7 +41,7 @@ this_dir = os.path.abspath(sys.path[0])
 up = os.path.dirname
 script_dir = up(up(this_dir))
 if script_dir not in sys.path:
-    sys.path.append(script_dir)
+    sys.path.insert(0, script_dir)
 
 from webkitpy.common.system import executive
 from webkitpy.common.system import executive_mock

@@ -117,7 +117,7 @@ public:
 
     bool isHyphenated() const;
 
-    int baselinePosition(FontBaseline baselineType) const final;
+    LayoutUnit baselinePosition(FontBaseline baselineType) const final;
     LayoutUnit lineHeight() const final;
 
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;

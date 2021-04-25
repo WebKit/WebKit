@@ -54,7 +54,7 @@ function checkDone() {
 editor.addEventListener("click", event => {
     editor.focus();
     shouldBe("document.execCommand('Paste')", "true");
-    requestAnimationFrame(() => {
+    internals.withoutUserGesture(() => {
         shouldBe("document.execCommand('Paste')", "false")
         shouldBeEqualToString("editor.textContent", "Click here to copy");
         checkDone();

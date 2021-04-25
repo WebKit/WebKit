@@ -28,12 +28,13 @@
 
 #import "WebProcessPool.h"
 #import <pal/spi/cocoa/NSUserDefaultsSPI.h>
+#import <wtf/WeakObjCPtr.h>
 
 @interface WKUserDefaults : NSUserDefaults {
 @private
-    NSString *m_suiteName;
+    RetainPtr<NSString> m_suiteName;
 @public
-    WKPreferenceObserver *m_observer;
+    WeakObjCPtr<WKPreferenceObserver> m_observer;
 }
 - (void)findPreferenceChangesAndNotifyForKeys:(NSDictionary<NSString *, id> *)oldValues toValuesForKeys:(NSDictionary<NSString *, id> *)newValues;
 @end
@@ -71,7 +72,7 @@
         }
 
         auto globalValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
-        auto domainValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, (__bridge CFStringRef)m_suiteName, kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
+        auto domainValue = adoptCF(CFPreferencesCopyValue((__bridge CFStringRef)key, (__bridge CFStringRef)m_suiteName.get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost));
 
         auto preferenceValuesAreEqual = [] (id a, id b) {
             return a == b || [a isEqual:b];
@@ -81,7 +82,7 @@
             [m_observer preferenceDidChange:nil key:key encodedValue:encodedString];
 
         if (preferenceValuesAreEqual((__bridge id)domainValue.get(), newValue))
-            [m_observer preferenceDidChange:m_suiteName key:key encodedValue:encodedString];
+            [m_observer preferenceDidChange:m_suiteName.get() key:key encodedValue:encodedString];
     }
 }
 

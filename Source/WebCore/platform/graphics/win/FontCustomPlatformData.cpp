@@ -22,6 +22,7 @@
 #include "FontCustomPlatformData.h"
 
 #include "FontDescription.h"
+#include "FontMemoryResource.h"
 #include "FontPlatformData.h"
 #include "OpenTypeUtilities.h"
 #include "SharedBuffer.h"
@@ -40,18 +41,18 @@
 
 namespace WebCore {
 
-FontCustomPlatformData::~FontCustomPlatformData()
+FontCustomPlatformData::FontCustomPlatformData(const String& name, FontPlatformData::CreationData&& creationData)
+    : name(name)
+    , creationData(WTFMove(creationData))
 {
-    if (fontReference)
-        RemoveFontMemResourceEx(fontReference);
 }
+
+FontCustomPlatformData::~FontCustomPlatformData() = default;
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities)
 {
     int size = fontDescription.computedPixelSize();
     FontRenderingMode renderingMode = fontDescription.renderingMode();
-
-    ASSERT(fontReference);
 
     auto faceName = name.charactersWithNullTermination();
     if (faceName.size() > LF_FACESIZE) {
@@ -107,12 +108,11 @@ static String createUniqueFontName()
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
     String fontName = createUniqueFontName();
-    HANDLE fontReference;
-    fontReference = renameAndActivateFont(buffer, fontName);
-    if (!fontReference)
+    auto fontResource = renameAndActivateFont(buffer, fontName);
+    if (!fontResource)
         return nullptr;
-    FontPlatformData::CreationData creationData = { buffer, itemInCollection };
-    auto result = makeUnique<FontCustomPlatformData>(fontReference, fontName, WTFMove(creationData));
+    FontPlatformData::CreationData creationData = { buffer, itemInCollection, fontResource.releaseNonNull() };
+    auto result = makeUnique<FontCustomPlatformData>(fontName, WTFMove(creationData));
 #if USE(CORE_TEXT)
     result->fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(buffer.createCFData().get()));
 #endif

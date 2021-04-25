@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBServer.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
@@ -760,13 +758,14 @@ StorageQuotaManager::Decision IDBServer::requestSpace(const ClientOrigin& origin
     return result;
 }
 
-uint64_t IDBServer::diskUsage(const String& rootDirectory, const ClientOrigin& origin)
+uint64_t IDBServer::diskUsage(const String& rootDirectory, const ClientOrigin& origin, StorageQuotaManager::ShouldPrintUsageDetail shouldPrintUsageDetail)
 {
     ASSERT(!isMainThread());
 
     auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v0"_str);
     auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v1"_str);
-    return SQLiteIDBBackingStore::databasesSizeForDirectory(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForDirectory(newVersionOriginDirectory);
+    bool shouldPrintUsageDetailForDirectory = shouldPrintUsageDetail == StorageQuotaManager::ShouldPrintUsageDetail::Yes;
+    return SQLiteIDBBackingStore::databasesSizeForDirectory(oldVersionOriginDirectory, shouldPrintUsageDetailForDirectory) + SQLiteIDBBackingStore::databasesSizeForDirectory(newVersionOriginDirectory, shouldPrintUsageDetailForDirectory);
 }
 
 void IDBServer::upgradeFilesIfNecessary()
@@ -797,5 +796,3 @@ void IDBServer::stopDatabaseActivitiesOnMainThread()
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

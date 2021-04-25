@@ -72,6 +72,9 @@ fast/history/page-cache-media-recorder.html [ Skip ]
 http/wpt/audio-output [ Skip ]
 imported/w3c/web-platform-tests/audio-output [ Skip ]
 
+fast/speechrecognition/start-recognition-after-gum.html [ Skip ]
+fast/speechrecognition/start-recognition-after-denied-gum.html [ Skip ]
+
 # Datalist is unsupported in WK1
 accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]
@@ -920,7 +923,7 @@ webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-ind
 
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
-webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.php [ Pass Failure ]
+webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.py [ Pass Failure ]
 
 # prefetch not supported in WK1
 http/wpt/prefetch [ Skip ]
@@ -958,6 +961,7 @@ accessibility/aria-current-state-changed-notification.html [ Skip ]
 accessibility/aria-current.html [ Skip ]
 accessibility/aria-sort-changed-notification.html [ Skip ]
 accessibility/aria-sort.html [ Skip ]
+accessibility/mac/aria-details.html [ Skip ]
 accessibility/mac/aria-errormessage.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
@@ -1084,7 +1088,7 @@ webkit.org/b/205412 [ Mojave Debug ] webgl/1.0.3/conformance/rendering/many-draw
 
 webkit.org/b/212851 [ Mojave Release ] js/dom/unhandled-promise-rejection-console-no-report.html [ Pass Failure ]
 
-webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
+webkit.org/b/68278 http/tests/history/back-with-fragment-change.py [ Failure ]
 
 # <rdar://problem/60376665> [ macOS ] svg/custom/glyph-selection-arabic-forms.svg is failing since around r252706
 [ Mojave ] svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
@@ -1257,3 +1261,17 @@ webkit.org/b/223283 fast/repaint/canvas-object-fit.html [ Pass Failure ]
 webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
 
 webkit.org/b/222686 imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-auto-repeat-max-size-001.html [ Pass Failure ]
+
+webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-upload-progress.any.html [ Pass Failure ]
+
+# webkit.org/b/224066 Updating test expectations for 10 tests
+[ BigSur ] webanimations/accelerated-animation-easing-and-direction-update.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-animation-with-easing.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-overlapping-transform-animations.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-transform-related-animation-property-order.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-transition-by-removing-property.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass ImageOnlyFailure ]
+[ BigSur ] webanimations/accelerated-translate-animation.html [ Pass ImageOnlyFailure ]

@@ -204,7 +204,7 @@ public:
     FloatRect logicalFrameRect() const { return isHorizontal() ? FloatRect(m_topLeft.x(), m_topLeft.y(), m_logicalWidth, logicalHeight()) : FloatRect(m_topLeft.y(), m_topLeft.x(), m_logicalWidth, logicalHeight()); }
     FloatRect frameRect() const { return FloatRect(topLeft(), size()); }
 
-    WEBCORE_EXPORT virtual int baselinePosition(FontBaseline baselineType) const;
+    WEBCORE_EXPORT virtual LayoutUnit baselinePosition(FontBaseline baselineType) const;
     WEBCORE_EXPORT virtual LayoutUnit lineHeight() const;
 
     WEBCORE_EXPORT virtual int caretMinOffset() const;

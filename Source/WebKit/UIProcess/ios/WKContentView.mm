@@ -531,6 +531,21 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     return self.window.windowScene.interfaceOrientation;
 }
 
+- (BOOL)canBecomeFocused
+{
+    return [_webView canBecomeFocused];
+}
+
+- (BOOL)canBecomeFocusedForWebView
+{
+    return YES;
+}
+
+- (void)didUpdateFocusInContext:(UIFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator
+{
+    [self _becomeFirstResponderWithSelectionMovingForward:context.focusHeading == UIFocusHeadingNext completionHandler:nil];
+}
+
 #pragma mark Internal
 
 - (void)_windowDidMoveToScreenNotification:(NSNotification *)notification

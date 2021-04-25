@@ -151,6 +151,8 @@ private:
 
     template<typename RectType> HitTestProgress addNodeToListBasedTestResultCommon(Node*, const HitTestRequest&, const HitTestLocation&, const RectType&);
 
+    RefPtr<Node> nodeForImageData() const;
+
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement() const;
 #endif

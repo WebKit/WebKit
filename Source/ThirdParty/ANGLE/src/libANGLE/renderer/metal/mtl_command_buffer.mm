@@ -1128,6 +1128,24 @@ void RenderCommandEncoder::endEncodingImpl(bool considerDiscardSimulation)
     mStateCache.reset();
 }
 
+
+inline void RenderCommandEncoder::initAttachmentWriteDependencyAndScissorRect(
+    const RenderPassAttachmentDesc &attachment)
+{
+    TextureRef texture = attachment.texture();
+    if (texture)
+    {
+        cmdBuffer().setWriteDependency(texture);
+
+        const MipmapNativeLevel &mipLevel = attachment.level();
+
+        mRenderPassMaxScissorRect.width =
+            std::min<NSUInteger>(mRenderPassMaxScissorRect.width, texture->width(mipLevel));
+        mRenderPassMaxScissorRect.height =
+            std::min<NSUInteger>(mRenderPassMaxScissorRect.height, texture->height(mipLevel));
+    }
+}
+
 inline void RenderCommandEncoder::initWriteDependency(const TextureRef &texture)
 {
     if (texture)
@@ -1248,16 +1266,19 @@ RenderCommandEncoder &RenderCommandEncoder::restart(const RenderPassDesc &desc)
     mRenderPassDesc = desc;
     mRecording      = true;
     mHasDrawCalls   = false;
-
+    mRenderPassMaxScissorRect = {.x      = 0,
+                                 .y      = 0,
+                                 .width  = std::numeric_limits<NSUInteger>::max(),
+                                 .height = std::numeric_limits<NSUInteger>::max()};
     // mask writing dependency & set appropriate store options
     for (uint32_t i = 0; i < mRenderPassDesc.numColorAttachments; ++i)
     {
-        initWriteDependency(mRenderPassDesc.colorAttachments[i].texture());
+        initAttachmentWriteDependencyAndScissorRect(mRenderPassDesc.colorAttachments[i]);
     }
 
-    initWriteDependency(mRenderPassDesc.depthAttachment.texture());
+    initAttachmentWriteDependencyAndScissorRect(mRenderPassDesc.depthAttachment);
 
-    initWriteDependency(mRenderPassDesc.stencilAttachment.texture());
+    initAttachmentWriteDependencyAndScissorRect(mRenderPassDesc.stencilAttachment);
 
     // Convert to Objective-C descriptor
     mRenderPassDesc.convertToMetalDesc(mCachedRenderPassDescObjC);
@@ -1388,13 +1409,25 @@ RenderCommandEncoder &RenderCommandEncoder::setViewport(const MTLViewport &viewp
 
 RenderCommandEncoder &RenderCommandEncoder::setScissorRect(const MTLScissorRect &rect)
 {
-    if (mStateCache.scissorRect.valid() && mStateCache.scissorRect.value() == rect)
+    NSUInteger clampedWidth =  rect.x > mRenderPassMaxScissorRect.width ? 0 : mRenderPassMaxScissorRect.width - rect.x;
+    NSUInteger clampedHeight = rect.y > mRenderPassMaxScissorRect.height ? 0 : mRenderPassMaxScissorRect.height - rect.y;
+
+    MTLScissorRect clampedRect = {
+        rect.x, rect.y, std::min(rect.width, clampedWidth), std::min(rect.height, clampedHeight) };
+
+    if (mStateCache.scissorRect.valid() && mStateCache.scissorRect.value() == clampedRect)
     {
         return *this;
     }
-    mStateCache.scissorRect = rect;
+    
+    if (ANGLE_UNLIKELY(clampedRect.width == 0 || clampedRect.height == 0))
+    {
+        //An empty rectangle isn't a valid scissor.
+        return *this;
+    }
+    mStateCache.scissorRect = clampedRect;
 
-    mCommands.push(CmdType::SetScissorRect).push(rect);
+    mCommands.push(CmdType::SetScissorRect).push(clampedRect);
 
     return *this;
 }

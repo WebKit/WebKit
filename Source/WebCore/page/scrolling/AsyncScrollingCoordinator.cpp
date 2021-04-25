@@ -92,10 +92,10 @@ void AsyncScrollingCoordinator::handleWheelEventPhase(ScrollingNodeID nodeID, Pl
 #endif
 
 #if ENABLE(CSS_SCROLL_SNAP)
-static inline void setStateScrollingNodeSnapOffsetsAsFloat(ScrollingStateScrollingNode& node, const ScrollSnapOffsetsInfo<LayoutUnit>* offsetInfo, float deviceScaleFactor)
+static inline void setStateScrollingNodeSnapOffsetsAsFloat(ScrollingStateScrollingNode& node, const LayoutScrollSnapOffsetsInfo* offsetInfo, float deviceScaleFactor)
 {
     if (!offsetInfo) {
-        node.setSnapOffsetsInfo(ScrollSnapOffsetsInfo<float>());
+        node.setSnapOffsetsInfo(FloatScrollSnapOffsetsInfo());
         return;
     }
 

@@ -28,6 +28,7 @@
 
 #include "ArgumentCoders.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebsiteDataStoreParameters.h"
 
 #if PLATFORM(COCOA)
 #include "ArgumentCodersCF.h"
@@ -36,6 +37,9 @@
 namespace WebKit {
 
 NetworkProcessCreationParameters::NetworkProcessCreationParameters() = default;
+NetworkProcessCreationParameters::~NetworkProcessCreationParameters() = default;
+NetworkProcessCreationParameters::NetworkProcessCreationParameters(NetworkProcessCreationParameters&&) = default;
+NetworkProcessCreationParameters& NetworkProcessCreationParameters::operator=(NetworkProcessCreationParameters&&) = default;
 
 void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
@@ -53,7 +57,6 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << urlSchemesRegisteredForCustomProtocols;
 #if PLATFORM(COCOA)
     encoder << uiProcessBundleIdentifier;
-    encoder << uiProcessSDKVersion;
     IPC::encode(encoder, networkATSContext.get());
 #endif
 #if USE(SOUP)
@@ -68,6 +71,7 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
 
     encoder << enablePrivateClickMeasurement;
     encoder << enablePrivateClickMeasurementDebugMode;
+    encoder << websiteDataStoreParameters;
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -111,8 +115,6 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
 #if PLATFORM(COCOA)
     if (!decoder.decode(result.uiProcessBundleIdentifier))
         return false;
-    if (!decoder.decode(result.uiProcessSDKVersion))
-        return false;
     if (!IPC::decode(decoder, result.networkATSContext))
         return false;
 #endif
@@ -137,6 +139,12 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
         return false;
     if (!decoder.decode(result.enablePrivateClickMeasurementDebugMode))
         return false;
+
+    Optional<Vector<WebsiteDataStoreParameters>> websiteDataStoreParameters;
+    decoder >> websiteDataStoreParameters;
+    if (!websiteDataStoreParameters)
+        return false;
+    result.websiteDataStoreParameters = WTFMove(*websiteDataStoreParameters);
 
     return true;
 }

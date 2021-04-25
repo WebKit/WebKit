@@ -269,6 +269,20 @@ accessibility/aria-listbox-clear-selection-crash.html [ Skip ]
 accessibility/listbox-clear-selection.html [ Skip ]
 accessibility/embedded-image-description.html [ Skip ]
 
+# TODO Conic gradients
+http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]
+fast/gradients/conic-repeating.html [ Skip ]
+fast/gradients/conic.html [ Skip ]
+fast/gradients/conic-off-center.html [ Skip ]
+fast/gradients/conic-center-outside-box.html [ Skip ]
+fast/gradients/conic-extended-stops.html [ Skip ]
+fast/gradients/conic-from-angle.html [ Skip ]
+fast/gradients/conic-repeating-last-stop.html [ Skip ]
+fast/gradients/conic-gradient-alpha.html [ Skip ]
+fast/gradients/conic-gradient-extended-stops.html [ Skip ]
+fast/gradients/conic-gradient.html [ Skip ]
+fast/gradients/conic-two-hints.html [ Skip ]
+
 # TODO Investigate why these mouse scroll tests are failing.
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 fast/events/wheel/continuous-platform-wheelevent-in-scrolling-div.html [ Failure ]
@@ -871,6 +885,9 @@ http/tests/navigation/page-cache-getUserMedia-pending-promise.html [ Skip ]
 
 http/wpt/audio-output [ Skip ]
 imported/w3c/web-platform-tests/audio-output [ Skip ]
+
+fast/speechrecognition/start-recognition-after-gum.html [ Skip ]
+fast/speechrecognition/start-recognition-after-denied-gum.html [ Skip ]
 
 # needs enhanced eventSender.contextMenu() return value
 #webkit.org/b/45021 media/context-menu-actions.html
@@ -2232,8 +2249,8 @@ http/tests/navigation/post-goback1.html [ Skip ] # Timeout
 http/tests/navigation/history-back-across-form-submission-to-fragment.html [ Skip ] # Timeout
 http/tests/navigation/https-no-store-subframe-in-page-cache.html [ Skip ] # Timeout
 http/tests/navigation/back-send-referrer.html [ Skip ] # Timeout
-http/tests/history/back-with-fragment-change.php [ Skip ] # Timeout
-http/tests/history/back-to-post.php [ Skip ] # Timeout
+http/tests/history/back-with-fragment-change.py [ Skip ] # Timeout
+http/tests/history/back-to-post.py [ Skip ] # Timeout
 http/tests/history/replacestate-post-to-get-2.html [ Skip ] # Timeout
 http/tests/workers/text-encoding.html [ Skip ] # Timeout
 http/tests/security/cross-frame-access-protocol-explicit-domain.html [ Skip ] # Timeout
@@ -4577,6 +4594,9 @@ fast/events/page-visibility-iframe-propagation-test.html [ Timeout Pass ]
 http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Timeout Pass ]
 
 fast/css/aspect-ratio-invalidate-if-disabled.html [ Failure ]
+fast/css/rotate-invalidate-if-disabled.html [ Failure ]
+fast/css/scale-invalidate-if-disabled.html [ Failure ]
+fast/css/translate-invalidate-if-disabled.html [ Failure ]
 fast/css/parsing-color-contrast.html [ Failure ]
 fast/images/missing-content-image-crash.html [ Failure ]
 fast/mediasession/metadata/artworkdownload.html [ Failure ]

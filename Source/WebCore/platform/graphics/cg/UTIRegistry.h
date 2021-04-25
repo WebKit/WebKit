@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include <wtf/HashSet.h>
+#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-const HashSet<String>& defaultSupportedImageTypes();
+const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes();
 HashSet<String>& additionalSupportedImageTypes();
 WEBCORE_EXPORT void setAdditionalSupportedImageTypes(const Vector<String>&);
 WEBCORE_EXPORT void setAdditionalSupportedImageTypesForTesting(const String&);

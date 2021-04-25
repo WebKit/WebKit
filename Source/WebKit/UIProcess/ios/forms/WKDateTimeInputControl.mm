@@ -152,7 +152,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForHighlightingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
-    return [_view _createTargetedContextMenuHintPreviewIfPossible];
+    return [_view _createTargetedContextMenuHintPreviewForFocusedElement];
 }
 
 - (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
@@ -413,14 +413,10 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
     _initialValue = _view.focusedElementInformation.value;
     _initialValueAsNumber = _view.focusedElementInformation.valueAsNumber;
     [self setDateTimePickerToInitialValue];
-    
-#if USE(UICONTEXTMENU)
-    WebKit::InteractionInformationRequest positionInformationRequest { WebCore::IntPoint(_view.focusedElementInformation.lastInteractionLocation) };
-    [_view doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
-        [self showDateTimePicker];
-    } forRequest:positionInformationRequest];
-#endif
 
+#if USE(UICONTEXTMENU)
+    [self showDateTimePicker];
+#endif
 }
 
 - (void)setHour:(NSInteger)hour minute:(NSInteger)minute

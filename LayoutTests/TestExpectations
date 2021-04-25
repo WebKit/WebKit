@@ -2273,6 +2273,9 @@ webkit.org/b/157849 fast/frames/crash-during-iframe-load-stop.html [ Pass Timeou
 webkit.org/b/158085 http/tests/css/shared-stylesheet-mutation.html [ Pass Failure ]
 
 http/tests/appcache/remove-cache.html [ DumpJSConsoleLogInStdErr ]
+http/tests/appcache/404-resource-with-slow-main-resource.py [ DumpJSConsoleLogInStdErr ]
+http/tests/appcache/fail-on-update.html [ DumpJSConsoleLogInStdErr ]
+http/tests/appcache/fail-on-update-2.html [ DumpJSConsoleLogInStdErr ]
 
 # PiP tests are only relevant on macOS Sierra and newer.
 media/element-containing-pip-video-going-into-fullscreen.html [ WontFix ]
@@ -3010,18 +3013,6 @@ imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-context
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_escaping-2.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_popups_nonescaping-2.html [ Skip ]
 
-http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]
-fast/gradients/conic-repeating.html [ Skip ]
-fast/gradients/conic.html [ Skip ]
-fast/gradients/conic-off-center.html [ Skip ]
-fast/gradients/conic-center-outside-box.html [ Skip ]
-fast/gradients/conic-extended-stops.html [ Skip ]
-fast/gradients/conic-from-angle.html [ Skip ]
-fast/gradients/conic-repeating-last-stop.html [ Skip ]
-fast/gradients/conic-gradient-alpha.html [ Skip ]
-fast/gradients/conic-gradient-extended-stops.html [ Skip ]
-fast/gradients/conic-gradient.html [ Skip ]
-fast/gradients/conic-two-hints.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic.html [ ImageOnlyFailure ]
 
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
@@ -3405,6 +3396,8 @@ webgl/1.0.3/conformance/glsl/misc/shaders-with-mis-matching-uniforms.html [ Skip
 webgl/1.0.3/conformance/glsl/misc/struct-nesting-of-variable-names.html [ Skip ]
 webgl/1.0.3/conformance/glsl/misc/struct-unary-operators.html [ Skip ]
 webgl/1.0.3/conformance/uniforms/gl-uniform-arrays.html [ Skip ]
+webgl/2.0.0/conformance/glsl/bugs/complex-glsl-does-not-crash.html [ Skip ]
+webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ]
 
 # webkit.org/b/203908 Tests generate inconsistent results or time out
 webgl/1.0.3/conformance/textures/texture-npot-video.html [ Skip ]
@@ -3622,16 +3615,10 @@ webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css3-bor
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-stretch.html [ ImageOnlyFailure ]
 webkit.org/b/206753 imported/w3c/web-platform-tests/css/css-backgrounds/first-letter-space-not-selected.html [ ImageOnlyFailure ]
 
-webkit.org/b/206578 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation.html [ Skip ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-height-ratio-auto-5px.html [ Skip ]
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Skip ]
 
 webkit.org/b/207260 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ ImageOnlyFailure ]
-
-webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/animations/vertical-align-composition.html [ Skip ]
-webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-transitions/animations/vertical-align-interpolation.html [ Skip ]
-webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-outset-composition.html [ Skip ]
-webkit.org/b/207261 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/animations/border-image-width-composition.html [ Skip ]
 
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
 
@@ -4016,11 +4003,6 @@ webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-just
 webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-start.html [ ImageOnlyFailure ]
 webkit.org/b/221477 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_justifycontent-start-rtl.html [ ImageOnlyFailure ]
 
-# align-content in flexbox.
-webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_center.html [ ImageOnlyFailure ]
-webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_flex-end.html [ ImageOnlyFailure ]
-webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_space-around.html [ ImageOnlyFailure ]
-webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/align-content_stretch.html [ ImageOnlyFailure ]
 
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-horiz-002.xhtml [ ImageOnlyFailure ]
 webkit.org/b/221468 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-self-vert-002.xhtml [ ImageOnlyFailure ]
@@ -4449,7 +4431,6 @@ webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/image-resolut
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/image-resolution/image-resolution-010.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/infinite-radial-gradient-refcrash.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-conic-2.html [ ImageOnlyFailure ]
-webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/normalization-conic-2.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/normalization-linear.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/normalization-radial.html [ ImageOnlyFailure ]
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/out-of-range-color-stop-conic.html [ ImageOnlyFailure ]
@@ -4637,6 +4618,7 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/wr
 # Cocoa-only
 http/tests/media/hls/hls-hdr-switch.html [ Skip ]
 http/tests/media/video-canplaythrough-webm.html [ Skip ]
+media/media-session/mock-coordinator.html [ Skip ]
 
 # These tests rely on webkit-test-runner flags that aren't implemented for DumpRenderTree, so they will fail under legacy WebKit.
 editing/selection/expando.html [ Failure ]
@@ -5012,3 +4994,4 @@ imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-
 imported/w3c/web-platform-tests/css/css-counter-styles/upper-roman/css3-counter-styles-024a.html [ ImageOnlyFailure ]
 
 webkit.org/b/223170 [ Debug ] fast/multicol/widow-relayout-with-border-fit.html [ Skip ]
+webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.html [ Skip ]

@@ -91,9 +91,9 @@ public:
     bool usesScrollSnap() const;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    WEBCORE_EXPORT const ScrollSnapOffsetsInfo<LayoutUnit>* snapOffsetInfo() const;
+    WEBCORE_EXPORT const LayoutScrollSnapOffsetsInfo* snapOffsetInfo() const;
     virtual void updateSnapOffsets() { };
-    void setScrollSnapOffsetInfo(const ScrollSnapOffsetsInfo<LayoutUnit>&);
+    void setScrollSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo&);
     void clearSnapOffsets();
     unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
     void setCurrentHorizontalSnapPointIndex(unsigned index) { m_currentHorizontalSnapPointIndex = index; }
@@ -385,8 +385,8 @@ private:
     mutable std::unique_ptr<ScrollAnimator> m_scrollAnimator;
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    ScrollSnapOffsetsInfo<LayoutUnit>& ensureSnapOffsetsInfo();
-    std::unique_ptr<ScrollSnapOffsetsInfo<LayoutUnit>> m_snapOffsetsInfo;
+    LayoutScrollSnapOffsetsInfo& ensureSnapOffsetsInfo();
+    std::unique_ptr<LayoutScrollSnapOffsetsInfo> m_snapOffsetsInfo;
     unsigned m_currentHorizontalSnapPointIndex { 0 };
     unsigned m_currentVerticalSnapPointIndex { 0 };
 #endif

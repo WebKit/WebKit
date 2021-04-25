@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBResourceIdentifier.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -77,5 +75,3 @@ public:
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

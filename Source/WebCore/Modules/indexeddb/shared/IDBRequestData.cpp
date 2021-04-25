@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBRequestData.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBConnectionToServer.h"
 #include "IDBDatabase.h"
 #include "IDBOpenDBRequest.h"
@@ -157,5 +155,3 @@ uint64_t IDBRequestData::requestedVersion() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

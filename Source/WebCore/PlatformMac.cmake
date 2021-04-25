@@ -344,8 +344,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/mac/SimpleFontDataCoreText.cpp
     platform/graphics/mac/WebLayer.mm
 
-    platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
-
     platform/graphics/opentype/OpenTypeCG.cpp
     platform/graphics/opentype/OpenTypeMathData.cpp
 

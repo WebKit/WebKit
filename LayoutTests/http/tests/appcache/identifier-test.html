@@ -15,12 +15,12 @@ function receiveMessage(event)
         return;
     }
 
-    window.open("http://localhost:8000/appcache/resources/identifier-test.php", "_blank");
+    window.open("http://localhost:8000/appcache/resources/identifier-test.py", "_blank");
 }
 
 window.addEventListener("message", receiveMessage, false);
 
-window.open("http://localhost:8000/appcache/resources/identifier-test-real.php", "_blank");
+window.open("http://localhost:8000/appcache/resources/identifier-test-real.py", "_blank");
 
 </script>
 This page opens a test page in a new window, and that page should get app cached.<br>

@@ -27,45 +27,13 @@ import time
 from cassandra.cqlengine import columns
 from cassandra.cqlengine.models import Model
 from datetime import datetime
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.model.repository import Repository
 
-from webkitscmpy import ScmBase, Commit as ScmCommit, Contributor
-
+from webkitscmpy import ScmBase, Commit, Contributor
 
 class CommitContext(object):
 
     class CommitModel(Model):
-        repository_id = columns.Text(partition_key=True, required=True)
-        branch = columns.Text(partition_key=True, required=True)
-        committer = columns.Text()
-        message = columns.Text()
-
-        def to_commit(self):
-            return Commit(
-                repository_id=self.repository_id, branch=self.branch,
-                id=self.commit_id,
-                timestamp=self.uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER,
-                order=self.uuid % Commit.TIMESTAMP_TO_UUID_MULTIPLIER,
-                committer=self.committer, message=self.message,
-            )
-
-    class CommitByID(CommitModel):
-        __table_name__ = 'commits_id_to_timestamp_uuid'
-        commit_id = columns.Text(primary_key=True, required=True)
-        uuid = columns.BigInt(required=True)
-
-    class CommitByUuidAscending(CommitModel):
-        __table_name__ = 'commits_timestamp_uuid_to_id_ascending'
-        uuid = columns.BigInt(primary_key=True, required=True, clustering_order='ASC')
-        commit_id = columns.Text(required=True)
-
-    class CommitByUuidDescending(CommitModel):
-        __table_name__ = 'commits_timestamp_uuid_to_id_descending'
-        uuid = columns.BigInt(primary_key=True, required=True, clustering_order='DESC')
-        commit_id = columns.Text(required=True)
-
-    class CommitModelMk2(Model):
         repository_id = columns.Text(partition_key=True, required=True)
         people = columns.Text(required=False)
         message = columns.Text(required=False)
@@ -75,29 +43,29 @@ class CommitContext(object):
         revision = columns.Integer(required=False)
 
         def to_commit(self):
-            return ScmCommit(
+            return Commit(
                 repository_id=self.repository_id, branch=self.branch,
-                timestamp=self.uuid // Commit.TIMESTAMP_TO_UUID_MULTIPLIER,
-                order=self.uuid % Commit.TIMESTAMP_TO_UUID_MULTIPLIER,
-                author=self.people.get('author') if self.people else None,
+                timestamp=self.uuid // Commit.UUID_MULTIPLIER,
+                order=self.uuid % Commit.UUID_MULTIPLIER,
+                author=json.loads(self.people) if self.people else None,
                 message=self.message,
                 identifier=self.identifier,
                 hash=self.hash,
                 revision=self.revision,
             )
 
-    class CommitByRef(CommitModelMk2):
+    class CommitByRef(CommitModel):
         __table_name__ = 'commits_ref_to_object'
         ref = columns.Text(primary_key=True, required=True)
         uuid = columns.BigInt(required=True)
         branch = columns.Text(required=True)
 
-    class CommitByUuidAscendingMk2(CommitModelMk2):
+    class CommitByUuidAscending(CommitModel):
         __table_name__ = 'commits_uuid_to_object_ascending'
         branch = columns.Text(partition_key=True, required=True)
         uuid = columns.BigInt(primary_key=True, required=True, clustering_order='ASC')
 
-    class CommitByUuidDescendingMk2(CommitModelMk2):
+    class CommitByUuidDescending(CommitModel):
         __table_name__ = 'commits_uuid_to_object_descending'
         branch = columns.Text(partition_key=True, required=True)
         uuid = columns.BigInt(primary_key=True, required=True, clustering_order='DESC')
@@ -120,10 +88,7 @@ class CommitContext(object):
         self.name = 'commit-identifiers'
 
         with self:
-            for old in [self.CommitByID, self.CommitByUuidAscending, self.CommitByUuidDescending]:
-                self.cassandra.create_table(old)
-
-            for table in [self.CommitByRef, self.CommitByUuidAscendingMk2, self.CommitByUuidDescendingMk2, self.Branches]:
+            for table in [self.CommitByRef, self.CommitByUuidAscending, self.CommitByUuidDescending, self.Branches]:
                 self.cassandra.create_table(table)
 
     def __enter__(self):
@@ -135,10 +100,10 @@ class CommitContext(object):
     @classmethod
     def timestamp_to_uuid(cls, timestamp=None):
         if timestamp is None:
-            return int(time.time()) * Commit.TIMESTAMP_TO_UUID_MULTIPLIER
+            return int(time.time()) * Commit.UUID_MULTIPLIER
         elif isinstance(timestamp, datetime):
-            return calendar.timegm(timestamp.timetuple()) * Commit.TIMESTAMP_TO_UUID_MULTIPLIER
-        return int(timestamp) * Commit.TIMESTAMP_TO_UUID_MULTIPLIER
+            return calendar.timegm(timestamp.timetuple()) * Commit.UUID_MULTIPLIER
+        return int(timestamp) * Commit.UUID_MULTIPLIER
 
     @classmethod
     def convert_to_uuid(cls, value, default=0):
@@ -160,7 +125,7 @@ class CommitContext(object):
         # this case, track branches which are not the default branch independently.
         for commit in commits:
             repo = self.repositories.get(commit.repository_id, Repository(key=commit.repository_id))
-            if commit.branch != repo.default_branch:
+            if commit.branch not in ScmBase.DEFAULT_BRANCHES:
                 branches.add(commit.branch)
         if len(branches) == 0:
             branches.add(self.DEFAULT_BRANCH_KEY)
@@ -184,45 +149,26 @@ class CommitContext(object):
             raise TypeError(f'Expected type {Repository}, got {type(repository)}')
         self.repositories[repository.key] = repository
 
-    def find_commits_by_id(self, repository_id, branch, commit_id, limit=100):
-        if branch is None:
-            branch = self.repositories[repository_id].default_branch
-
-        def callback(commit_id=commit_id):
+    def find_commits_by_ref(self, repository_id, ref, limit=100):
+        def callback(ref=ref):
             with self:
-                if isinstance(commit_id, int) or commit_id.isdigit():
+                if isinstance(ref, int) or ref.isdigit():
                     return [model.to_commit() for model in self.cassandra.select_from_table(
-                        self.CommitByID.__table_name__, limit=limit,
-                        repository_id=repository_id, branch=branch, commit_id=str(commit_id),
+                        self.CommitByRef.__table_name__, limit=limit,
+                        repository_id=repository_id, ref='r{}'.format(ref),
                     )]
 
                 # FIXME: SASI indecies are the canoical way to solve this problem, but require Cassandra 3.4 which
                 # hasn't been deployed to our datacenters yet. This works for commits, but is less transparent.
                 return [model.to_commit() for model in self.cassandra.select_from_table(
-                    self.CommitByID.__table_name__, limit=limit,
-                    repository_id=repository_id, branch=branch, commit_id__gte=commit_id.lower(), commit_id__lte=(commit_id.lower() + 'g'),
+                    self.CommitByRef.__table_name__, limit=limit,
+                    repository_id=repository_id, ref__gte=ref.lower(), ref__lte=(ref.lower() + 'g'),
                 )]
 
         return self.run_function_through_redis_cache(
-            f'repository_id={repository_id}:branch={branch}:commit_id={str(commit_id).lower()}',
+            f'repository_id={repository_id}:ref={str(ref).lower()}',
             callback,
         )
-
-    def find_commits_by_ref(self, repository_id, ref, limit=100):
-        # FIXME: Should use the redis cache, but the redis cache doesn't support new-style commits yet
-        with self:
-            if isinstance(ref, int) or ref.isdigit():
-                return [model.to_commit() for model in self.cassandra.select_from_table(
-                    self.CommitByRef.__table_name__, limit=limit,
-                    repository_id=repository_id, ref='r{}'.format(ref),
-                )]
-
-            # FIXME: SASI indecies are the canoical way to solve this problem, but require Cassandra 3.4 which
-            # hasn't been deployed to our datacenters yet. This works for commits, but is less transparent.
-            return [model.to_commit() for model in self.cassandra.select_from_table(
-                self.CommitByRef.__table_name__, limit=limit,
-                repository_id=repository_id, ref__gte=ref.lower(), ref__lte=(ref.lower() + 'g'),
-            )]
 
     def find_commits_by_uuid(self, repository_id, branch, uuid, limit=100):
         if branch is None:
@@ -358,9 +304,9 @@ class CommitContext(object):
             for commit in commits:
                 self.register_partial_commit(
                     repository_id=commit.repository_id,
-                    ref=commit.id,
                     revision=commit.revision,
                     hash=commit.hash,
+                    identifier=commit.identifier,
                     fast=False,
                 )
         except Exception as e:
@@ -372,25 +318,17 @@ class CommitContext(object):
         return dict(status='ok')
 
     def register_commit(self, commit):
-        if not isinstance(commit, ScmCommit):
-            raise TypeError(f'Expected type {ScmCommit}, got {type(commit)}')
+        if not isinstance(commit, Commit):
+            raise TypeError(f'Expected type {Commit}, got {type(commit)}')
 
         with self:
             if commit.repository_id not in self.repositories:
                 self.repositories[commit.repository_id] = Repository(key=commit.repository_id)
 
-            for old in [self.CommitByID, self.CommitByUuidAscending, self.CommitByUuidDescending]:
-                self.cassandra.insert_row(
-                    old.__table_name__,
-                    repository_id=commit.repository_id,
-                    branch=commit.branch,
-                    commit_id=str(commit.revision).lower() if commit.revision else commit.hash,
-                    uuid=commit.uuid,
-                    committer=commit.author.email if commit.author else None,
-                    message=commit.message,
-                )
+            if commit.branch in ScmBase.DEFAULT_BRANCHES:
+                commit.branch = self.repositories[commit.repository_id].default_branch
 
-            for table in [self.CommitByUuidAscendingMk2, self.CommitByUuidDescendingMk2, self.Branches]:
+            for table in [self.CommitByUuidAscending, self.CommitByUuidDescending]:
                 self.cassandra.insert_row(
                     table.__table_name__,
                     repository_id=commit.repository_id,
@@ -399,7 +337,7 @@ class CommitContext(object):
                     hash=commit.hash,
                     identifier=str(commit) if commit.identifier else None,
                     uuid=commit.uuid,
-                    committer=json.dumps(commit.author, cls=Contributor.Encoder) if commit.author else None,
+                    people=json.dumps(commit.author, cls=Contributor.Encoder) if commit.author else None,
                     message=commit.message,
                 )
 
@@ -420,7 +358,7 @@ class CommitContext(object):
                     hash=commit.hash,
                     identifier=str(commit) if commit.identifier else None,
                     uuid=commit.uuid,
-                    committer=json.dumps(commit.author, cls=Contributor.Encoder) if commit.author else None,
+                    people=json.dumps(commit.author, cls=Contributor.Encoder) if commit.author else None,
                     message=commit.message,
                 )
 
@@ -444,10 +382,7 @@ class CommitContext(object):
             return self.register_commit(commit)
 
     def url(self, commit):
-        if not isinstance(commit, Commit) and not isinstance(commit, ScmCommit):
-            raise TypeError(f'Expected type {Commit}, got {type(commit)}')
-
         repo = self.repositories.get(commit.repository_id)
         if repo:
-            return repo.url_for_commit(commit.id if isinstance(commit, Commit) else commit.hash or commit.revision)
+            return repo.url_for_commit(commit)
         return None

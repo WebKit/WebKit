@@ -28,10 +28,12 @@
 #include "config.h"
 #include "WorkerGlobalScope.h"
 
+#include "CSSFontSelector.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "ContentSecurityPolicy.h"
 #include "Crypto.h"
+#include "FontCache.h"
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
@@ -57,6 +59,16 @@
 namespace WebCore {
 using namespace Inspector;
 
+static Lock allWorkerGlobalScopeIdentifiersLock;
+static HashSet<ScriptExecutionContextIdentifier>& allWorkerGlobalScopeIdentifiers(LockHolder& holder)
+{
+    UNUSED_PARAM(holder);
+
+    static NeverDestroyed<HashSet<ScriptExecutionContextIdentifier>> identifiers;
+    ASSERT(allWorkerGlobalScopeIdentifiersLock.isLocked());
+    return identifiers;
+}
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(WorkerGlobalScope);
 
 WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, WorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
@@ -67,9 +79,7 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_isOnline(params.isOnline)
     , m_shouldBypassMainWorldContentSecurityPolicy(params.shouldBypassMainWorldContentSecurityPolicy)
     , m_topOrigin(WTFMove(topOrigin))
-#if ENABLE(INDEXED_DATABASE)
     , m_connectionProxy(connectionProxy)
-#endif
     , m_socketProvider(socketProvider)
     , m_performance(Performance::create(this, params.timeOrigin))
     , m_referrerPolicy(params.referrerPolicy)
@@ -77,9 +87,10 @@ WorkerGlobalScope::WorkerGlobalScope(WorkerThreadType type, const WorkerParamete
     , m_workerType(params.workerType)
     , m_credentials(params.credentials)
 {
-#if !ENABLE(INDEXED_DATABASE)
-    UNUSED_PARAM(connectionProxy);
-#endif
+    {
+        auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
+        allWorkerGlobalScopeIdentifiers(locker).add(contextIdentifier());
+    }
 
     if (m_topOrigin->hasUniversalAccess())
         origin->grantUniversalAccess();
@@ -96,6 +107,13 @@ WorkerGlobalScope::~WorkerGlobalScope()
     // We need to remove from the contexts map very early in the destructor so that calling postTask() on this WorkerGlobalScope from another thread is safe.
     removeFromContextsMap();
 
+    {
+        auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
+        allWorkerGlobalScopeIdentifiers(locker).remove(contextIdentifier());
+    }
+
+    if (m_cssFontSelector)
+        m_cssFontSelector->stopLoadingAndClearFonts();
     m_performance = nullptr;
     m_crypto = nullptr;
 
@@ -113,9 +131,7 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
-#if ENABLE(INDEXED_DATABASE)
     stopIndexedDatabase();
-#endif
 
     if (m_cacheStorageConnection)
         m_cacheStorageConnection->clearPendingRequests();
@@ -172,42 +188,28 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerGlobalScope::createRTCDataCh
     return connection;
 }
 
-#if ENABLE(INDEXED_DATABASE)
-
 IDBClient::IDBConnectionProxy* WorkerGlobalScope::idbConnectionProxy()
 {
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     return m_connectionProxy.get();
-#else
-    return nullptr;
-#endif
 }
 
 void WorkerGlobalScope::stopIndexedDatabase()
 {
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     if (m_connectionProxy)
         m_connectionProxy->forgetActivityForCurrentThread();
-#endif
 }
 
 void WorkerGlobalScope::suspend()
 {
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, true);
-#endif
 }
 
 void WorkerGlobalScope::resume()
 {
-#if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, false);
-#endif
 }
-
-#endif // ENABLE(INDEXED_DATABASE)
 
 WorkerLocation& WorkerGlobalScope::location() const
 {
@@ -500,6 +502,20 @@ CSSValuePool& WorkerGlobalScope::cssValuePool()
     return *m_cssValuePool;
 }
 
+CSSFontSelector* WorkerGlobalScope::cssFontSelector()
+{
+    if (!m_cssFontSelector)
+        m_cssFontSelector = CSSFontSelector::create(*this);
+    return m_cssFontSelector.get();
+}
+
+FontCache& WorkerGlobalScope::fontCache()
+{
+    if (!m_fontCache)
+        m_fontCache = FontCache::create();
+    return *m_fontCache;
+}
+
 ReferrerPolicy WorkerGlobalScope::referrerPolicy() const
 {
     return m_referrerPolicy;
@@ -508,6 +524,43 @@ ReferrerPolicy WorkerGlobalScope::referrerPolicy() const
 WorkerThread& WorkerGlobalScope::thread() const
 {
     return *static_cast<WorkerThread*>(workerOrWorkletThread());
+}
+
+void WorkerGlobalScope::releaseMemory(Synchronous synchronous)
+{
+    ASSERT(isContextThread());
+
+    JSC::JSLockHolder lock(vm());
+    vm().deleteAllCode(JSC::DeleteAllCodeIfNotCollecting);
+
+    if (synchronous == Synchronous::Yes) {
+        if (!vm().heap.isCurrentThreadBusy()) {
+            vm().heap.collectNow(JSC::Sync, JSC::CollectionScope::Full);
+            WTF::releaseFastMallocFreeMemory();
+            return;
+        }
+    }
+#if PLATFORM(IOS_FAMILY)
+    if (!vm().heap.isCurrentThreadBusy()) {
+        vm().heap.collectNowFullIfNotDoneRecently(JSC::Async);
+        return;
+    }
+#endif
+#if USE(CF) || USE(GLIB)
+    vm().heap.reportAbandonedObjectGraph();
+#else
+    vm().heap.collectNow(JSC::Async, JSC::CollectionScope::Full);
+#endif
+}
+
+void WorkerGlobalScope::releaseMemoryInWorkers(Synchronous synchronous)
+{
+    auto locker = holdLock(allWorkerGlobalScopeIdentifiersLock);
+    for (auto& globalScopeIdentifier : allWorkerGlobalScopeIdentifiers(locker)) {
+        postTaskTo(globalScopeIdentifier, [synchronous](auto& context) {
+            downcast<WorkerGlobalScope>(context).releaseMemory(synchronous);
+        });
+    }
 }
 
 } // namespace WebCore

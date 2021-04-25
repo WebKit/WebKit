@@ -466,7 +466,7 @@
       "platform": "mac-catalina",
       "configuration": "release",
       "architectures": ["x86_64"],
-      "triggers": ["api-tests-mac-ews", "macos-catalina-release-wk1-tests-ews", "macos-catalina-release-wk2-tests-ews"],
+      "triggers": ["api-tests-mac-ews", "macos-catalina-release-wk1-tests-ews", "macos-catalina-release-wk2-tests-ews", "macos-release-wk2-stress-tests-ews"],
       "workernames": ["ews118", "ews119", "ews120", "ews150"]
     },
     {
@@ -490,6 +490,17 @@
       "architectures": ["x86_64"],
       "triggered_by": ["macos-catalina-release-build-ews"],
       "workernames": ["ews104", "ews105", "ews106", "ews107"]
+    },
+    {
+      "name": "macOS-Release-WK2-Stress-Tests-EWS",
+      "shortname": "mac-wk2-stress",
+      "icon": "testOnly",
+      "factory": "StressTestFactory",
+      "platform": "mac-catalina",
+      "configuration": "release",
+      "architectures": ["x86_64"],
+      "triggered_by": ["macos-catalina-release-build-ews"],
+      "workernames": ["ews151"]
     },
     {
       "name": "macOS-Catalina-Debug-Build-EWS",
@@ -533,7 +544,7 @@
       "architectures": ["i386"],
       "workernames": ["ews164", "ews165", "ews166"]
     },
-     {
+    {
       "name": "tvOS-14-Build-EWS",
       "shortname": "tv",
       "icon": "buildOnly",
@@ -604,7 +615,7 @@
       "triggers": ["jsc-tests-mipsel-tests-ews"],
       "workernames": ["igalia-jsc32-mipsel-ews", "igalia-jsc32-mipsel-ews-03"]
     },
-  {
+    {
       "name": "JSC-MIPSEL-32bits-Tests-EWS",
       "shortname": "jsc-mips-tests",
       "icon": "testOnly",
@@ -771,6 +782,13 @@
       "name": "macos-catalina-release-wk2-tests-ews",
       "builderNames": [
         "macOS-Catalina-Release-WK2-Tests-EWS"
+      ]
+    },
+    {
+      "type": "Triggerable",
+      "name": "macos-release-wk2-stress-tests-ews",
+      "builderNames": [
+        "macOS-Release-WK2-Stress-Tests-EWS"
       ]
     },
     {

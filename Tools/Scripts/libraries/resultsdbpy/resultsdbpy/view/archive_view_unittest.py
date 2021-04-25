@@ -24,13 +24,13 @@ import base64
 import json
 
 from fakeredis import FakeStrictRedis
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.configuration_context_unittest import ConfigurationContextTest
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 from resultsdbpy.view.view_routes_unittest import WebSiteTestCase
+from webkitscmpy import Commit
 
 
 class ArchiveViewUnittest(WebSiteTestCase):
@@ -51,7 +51,7 @@ class ArchiveViewUnittest(WebSiteTestCase):
                 ), dict(
                     repository_id='webkit',
                     id='6',
-                    branch='trunk',
+                    branch='main',
                     timestamp=1601665100,
                     order=0,
                     committer='jbedard@apple.com',

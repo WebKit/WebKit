@@ -30,5 +30,4 @@
     required DOMString label;
     required PaymentCurrencyAmount amount;
     boolean selected = false;
-    object data;
 };

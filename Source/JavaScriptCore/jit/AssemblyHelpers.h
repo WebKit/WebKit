@@ -687,18 +687,7 @@ public:
         ASSERT(entry.isHeader());
         loadPtr(Address(from, entry.offset() * sizeof(Register)), to);
     }
-    void emitGetFromCallFrameHeader32(VirtualRegister entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
-    {
-        ASSERT(entry.isHeader());
-        load32(Address(from, entry.offset() * sizeof(Register)), to);
-    }
-#if USE(JSVALUE64)
-    void emitGetFromCallFrameHeader64(VirtualRegister entry, GPRReg to, GPRReg from = GPRInfo::callFrameRegister)
-    {
-        ASSERT(entry.isHeader());
-        load64(Address(from, entry.offset() * sizeof(Register)), to);
-    }
-#endif // USE(JSVALUE64)
+
     void emitPutToCallFrameHeader(GPRReg from, VirtualRegister entry)
     {
         ASSERT(entry.isHeader());
@@ -711,47 +700,12 @@ public:
         storePtr(TrustedImmPtr(value), Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
     }
 
-    void emitGetCallerFrameFromCallFrameHeaderPtr(RegisterID to)
+    void emitZeroToCallFrameHeader(VirtualRegister entry)
     {
-        loadPtr(Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()), to);
-    }
-    void emitPutCallerFrameToCallFrameHeader(RegisterID from)
-    {
-        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::callerFrameOffset()));
+        ASSERT(entry.isHeader());
+        storePtr(TrustedImmPtr(nullptr), Address(GPRInfo::callFrameRegister, entry.offset() * sizeof(Register)));
     }
 
-    void emitPutReturnPCToCallFrameHeader(RegisterID from)
-    {
-        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
-    }
-    void emitPutReturnPCToCallFrameHeader(TrustedImmPtr from)
-    {
-        storePtr(from, Address(GPRInfo::callFrameRegister, CallFrame::returnPCOffset()));
-    }
-
-    // emitPutToCallFrameHeaderBeforePrologue() and related are used to access callee frame header
-    // fields before the code from emitFunctionPrologue() has executed.
-    // First, the access is via the stack pointer. Second, the address calculation must also take
-    // into account that the stack pointer may not have been adjusted down for the return PC and/or
-    // caller's frame pointer. On some platforms, the callee is responsible for pushing the
-    // "link register" containing the return address in the function prologue.
-#if USE(JSVALUE64)
-    void emitPutToCallFrameHeaderBeforePrologue(GPRReg from, VirtualRegister entry)
-    {
-        storePtr(from, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta()));
-    }
-#else
-    void emitPutPayloadToCallFrameHeaderBeforePrologue(GPRReg from, VirtualRegister entry)
-    {
-        storePtr(from, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload)));
-    }
-
-    void emitPutTagToCallFrameHeaderBeforePrologue(TrustedImm32 tag, VirtualRegister entry)
-    {
-        storePtr(tag, Address(stackPointerRegister, entry.offset() * static_cast<ptrdiff_t>(sizeof(Register)) - prologueStackPointerDelta() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag)));
-    }
-#endif
-    
     JumpList branchIfNotEqual(JSValueRegs regs, JSValue value)
     {
 #if USE(JSVALUE64)
@@ -1731,76 +1685,9 @@ public:
         ok.link(this);
     }
 
-    void cageWithoutUntagging(Gigacage::Kind kind, GPRReg storage)
-    {
-#if GIGACAGE_ENABLED
-        if (!Gigacage::isEnabled(kind))
-            return;
-
-#if CPU(ARM64E)
-        RegisterID tempReg = InvalidGPRReg;
-        if (kind == Gigacage::Primitive) {
-            tempReg = getCachedMemoryTempRegisterIDAndInvalidate();
-            move(storage, tempReg);
-            // Flip the registers since bitFieldInsert only inserts into the low bits.
-            std::swap(storage, tempReg);
-        }
-#endif
-        andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
-        addPtr(TrustedImmPtr(Gigacage::basePtr(kind)), storage);
-#if CPU(ARM64E)
-        if (kind == Gigacage::Primitive)
-            bitFieldInsert64(storage, 0, 64 - numberOfPACBits, tempReg);
-#endif
-
-#else
-        UNUSED_PARAM(kind);
-        UNUSED_PARAM(storage);
-#endif
-    }
-
+    JS_EXPORT_PRIVATE void cageWithoutUntagging(Gigacage::Kind, GPRReg storage);
     // length may be the same register as scratch.
-    void cageConditionally(Gigacage::Kind kind, GPRReg storage, GPRReg length, GPRReg scratch)
-    {
-#if GIGACAGE_ENABLED
-        if (Gigacage::isEnabled(kind)) {
-            if (kind != Gigacage::Primitive || Gigacage::disablingPrimitiveGigacageIsForbidden())
-                cageWithoutUntagging(kind, storage);
-            else {
-#if CPU(ARM64E)
-                if (length == scratch)
-                    scratch = getCachedMemoryTempRegisterIDAndInvalidate();
-#endif
-                JumpList done;
-                done.append(branchTest8(NonZero, AbsoluteAddress(&Gigacage::disablePrimitiveGigacageRequested)));
-
-                loadPtr(Gigacage::addressOfBasePtr(kind), scratch);
-                done.append(branchTest64(Zero, scratch));
-#if CPU(ARM64E)
-                GPRReg tempReg = getCachedDataTempRegisterIDAndInvalidate();
-                move(storage, tempReg);
-                ASSERT(LogicalImmediate::create64(Gigacage::mask(kind)).isValid());
-                andPtr(TrustedImmPtr(Gigacage::mask(kind)), tempReg);
-                addPtr(scratch, tempReg);
-                bitFieldInsert64(tempReg, 0, 64 - numberOfPACBits, storage);
-#else
-                andPtr(TrustedImmPtr(Gigacage::mask(kind)), storage);
-                addPtr(scratch, storage);
-#endif // CPU(ARM64E)
-                done.link(this);
-            }
-        }
-#endif
-
-#if CPU(ARM64E)
-        if (kind == Gigacage::Primitive)
-            untagArrayPtr(length, storage);
-#endif
-        UNUSED_PARAM(kind);
-        UNUSED_PARAM(storage);
-        UNUSED_PARAM(length);
-        UNUSED_PARAM(scratch);
-    }
+    JS_EXPORT_PRIVATE void cageConditionallyAndUntag(Gigacage::Kind, GPRReg storage, GPRReg length, GPRReg scratch, bool validateAuth = true);
 
     void emitComputeButterflyIndexingMask(GPRReg vectorLengthGPR, GPRReg scratchGPR, GPRReg resultGPR)
     {

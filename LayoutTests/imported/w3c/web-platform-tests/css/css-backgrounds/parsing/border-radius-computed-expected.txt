@@ -12,4 +12,5 @@ PASS Property border-top-left-radius value 'calc(-0.5em + 10px)'
 PASS Property border-top-right-radius value '20%'
 PASS Property border-bottom-right-radius value 'calc(0.5em + 10px) 40%'
 PASS Property border-bottom-left-radius value '50% 60px'
+PASS Property border-top-left-radius value '40px 0px'
 

@@ -28,7 +28,6 @@
 
 #include "DOMWindow.h"
 #include "Frame.h"
-#include "RuntimeApplicationChecks.h"
 #include "ScriptController.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapInlines.h>
@@ -43,16 +42,6 @@
 #endif
 
 namespace WebCore {
-
-// FIXME: <rdar://problem/25965028> This should be removed or replaced with a Setting that iBooks can use if it is still needed.
-static bool globalConstRedeclarationShouldThrow()
-{
-#if PLATFORM(COCOA)
-    return !CocoaApplication::isIBooks();
-#else
-    return true;
-#endif
-}
 
 JSC::VM* g_commonVMOrNull;
 
@@ -83,8 +72,6 @@ JSC::VM& commonVMSlow()
         vm.apiLock().makeWebThreadAware();
     vm.heap.machineThreads().addCurrentThread();
 #endif
-
-    vm.setGlobalConstRedeclarationShouldThrow(globalConstRedeclarationShouldThrow());
 
     JSVMClientData::initNormalWorld(&vm, WorkerThreadType::Main);
 

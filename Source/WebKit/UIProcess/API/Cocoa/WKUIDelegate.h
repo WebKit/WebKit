@@ -45,6 +45,18 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol UIContextMenuInteractionCommitAnimating;
 #endif
 
+typedef NS_ENUM(NSInteger, WKPermissionDecision) {
+    WKPermissionDecisionPrompt,
+    WKPermissionDecisionGrant,
+    WKPermissionDecisionDeny,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
+    WKMediaCaptureTypeCamera,
+    WKMediaCaptureTypeMicrophone,
+    WKMediaCaptureTypeCameraAndMicrophone,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 /*! A class conforming to the WKUIDelegate protocol provides methods for
  presenting native UI on behalf of a webpage.
  */
@@ -122,6 +134,17 @@ NS_ASSUME_NONNULL_BEGIN
  If you do not implement this method, the web view will behave as if the user selected the Cancel button.
  */
 - (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(nullable NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * _Nullable result))completionHandler;
+
+
+/*! @abstract A delegate to request permission for microphone audio and camera video access.
+ @param webView The web view invoking the delegate method.
+ @param origin The origin of the page.
+ @param frame Information about the frame whose JavaScript initiated this call.
+ @param type The type of capture (camera, microphone).
+ @param decisionHandler The completion handler to call once the decision is made
+ @discussion If not implemented, the result is the same as calling the decisionHandler with WKPermissionDecisionPrompt.
+ */
+- (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 #if TARGET_OS_IPHONE
 

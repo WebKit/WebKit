@@ -197,27 +197,27 @@ static void updateStates(NSCell* cell, const ControlStates& controlStates, bool 
     if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
         useAnimation = false;
     
-    ControlStates::States states = controlStates.states();
+    auto states = controlStates.states();
 
     // Hover state is not supported by Aqua.
     
     // Pressed state
     bool oldPressed = [cell isHighlighted];
-    bool pressed = states & ControlStates::PressedState;
+    bool pressed = states.contains(ControlStates::States::Pressed);
     if (pressed != oldPressed) {
         [(NSButtonCell*)cell _setHighlighted:pressed animated:useAnimation];
     }
     
     // Enabled state
     bool oldEnabled = [cell isEnabled];
-    bool enabled = states & ControlStates::EnabledState;
+    bool enabled = states.contains(ControlStates::States::Enabled);
     if (enabled != oldEnabled)
         [cell setEnabled:enabled];
 
     // Checked and Indeterminate
     bool oldIndeterminate = [cell state] == NSControlStateValueMixed;
-    bool indeterminate = (states & ControlStates::IndeterminateState);
-    bool checked = states & ControlStates::CheckedState;
+    bool indeterminate = states.contains(ControlStates::States::Indeterminate);
+    bool checked = states.contains(ControlStates::States::Checked);
     bool oldChecked = [cell state] == NSControlStateValueOn;
     if (oldIndeterminate != indeterminate || checked != oldChecked) {
         NSControlStateValue newState = indeterminate ? NSControlStateValueMixed : (checked ? NSControlStateValueOn : NSControlStateValueOff);
@@ -225,7 +225,7 @@ static void updateStates(NSCell* cell, const ControlStates& controlStates, bool 
     }
 
     // Presenting state
-    if (states & ControlStates::PresentingState)
+    if (states.contains(ControlStates::States::Presenting))
         [(NSButtonCell*)cell _setHighlighted:YES animated:NO];
 
     // Window inactive state does not need to be checked explicitly, since we paint parented to 
@@ -443,7 +443,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
     NSView *view = ThemeMac::ensuredView(scrollView, controlStates, true /* useUnparentedView */);
 
     bool needsRepaint = false;
-    bool isCellFocused = controlStates.states() & ControlStates::FocusState;
+    bool isCellFocused = controlStates.states().contains(ControlStates::States::Focused);
 
     if ([toggleButtonCell _stateAnimationRunning]) {
         context.translate(inflatedRect.location());
@@ -534,9 +534,9 @@ static void setUpButtonCell(NSButtonCell *cell, ControlPart part, const ControlS
 
 static NSButtonCell *button(ControlPart part, const ControlStates& controlStates, const IntSize& zoomedSize, float zoomFactor)
 {
-    ControlStates::States states = controlStates.states();
+    auto states = controlStates.states();
     NSButtonCell *cell;
-    if (states & ControlStates::DefaultState) {
+    if (states.contains(ControlStates::States::Default)) {
         static NeverDestroyed<RetainPtr<NSButtonCell>> defaultCell = buttonCell(DefaultButtonCell);
         cell = defaultCell.get().get();
     } else {
@@ -552,7 +552,7 @@ static void paintButton(ControlPart part, ControlStates& controlStates, Graphics
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     // Determine the width and height needed for the control and prepare the cell for painting.
-    ControlStates::States states = controlStates.states();
+    auto states = controlStates.states();
     NSButtonCell *buttonCell = button(part, controlStates, IntSize(zoomedRect.size()), zoomFactor);
     GraphicsContextStateSaver stateSaver(context);
 
@@ -586,8 +586,8 @@ static void paintButton(ControlPart part, ControlStates& controlStates, Graphics
     NSWindow *window = [view window];
     NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
 
-    bool needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(buttonCell, context, inflatedRect, view, true, states & ControlStates::FocusState, deviceScaleFactor);
-    if (states & ControlStates::DefaultState)
+    bool needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(buttonCell, context, inflatedRect, view, true, states.contains(ControlStates::States::Focused), deviceScaleFactor);
+    if (states.contains(ControlStates::States::Default))
         [window setDefaultButtonCell:buttonCell];
     else if ([previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:nil];
@@ -633,9 +633,9 @@ static void paintStepper(ControlStates& controlStates, GraphicsContext& context,
 
     NSString *coreUIState;
     auto states = controlStates.states();
-    if (!(states & ControlStates::EnabledState))
+    if (!states.contains(ControlStates::States::Enabled))
         coreUIState = (__bridge NSString *)kCUIStateDisabled;
-    else if (states & ControlStates::PressedState)
+    else if (states.contains(ControlStates::States::Pressed))
         coreUIState = (__bridge NSString *)kCUIStatePressed;
     else
         coreUIState = (__bridge NSString *)kCUIStateActive;
@@ -666,7 +666,7 @@ static void paintStepper(ControlStates& controlStates, GraphicsContext& context,
         (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetButtonLittleArrows,
         (__bridge NSString *)kCUISizeKey: coreUISize,
         (__bridge NSString *)kCUIStateKey: coreUIState,
-        (__bridge NSString *)kCUIValueKey: (states & ControlStates::SpinUpState) ? @1 : @0,
+        (__bridge NSString *)kCUIValueKey: states.contains(ControlStates::States::SpinUp) ? @1 : @0,
         (__bridge NSString *)kCUIIsFlippedKey: @NO,
         (__bridge NSString *)kCUIScaleKey: @1,
         (__bridge NSString *)kCUIMaskOnlyKey: @NO
@@ -689,7 +689,7 @@ NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& contr
     [themeView setAppearance:[NSAppearance currentAppearance]];
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    themeWindowHasKeyAppearance = !(controlStates.states() & ControlStates::WindowInactiveState);
+    themeWindowHasKeyAppearance = !controlStates.states().contains(ControlStates::States::WindowInactive);
 
     return themeView;
 }
@@ -750,7 +750,7 @@ static void paintColorWell(ControlStates& controlStates, GraphicsContext& contex
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     // Determine the width and height needed for the control and prepare the cell for painting.
-    ControlStates::States states = controlStates.states();
+    auto states = controlStates.states();
     NSButtonCell *buttonCell = button(ColorWellPart, controlStates, IntSize(zoomedRect.size()), zoomFactor);
     GraphicsContextStateSaver stateSaver(context);
 
@@ -766,7 +766,7 @@ static void paintColorWell(ControlStates& controlStates, GraphicsContext& contex
     NSWindow *window = [view window];
     NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
 
-    bool needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(buttonCell, context, inflatedRect, view, true, states & ControlStates::FocusState, deviceScaleFactor);
+    bool needsRepaint = ThemeMac::drawCellOrFocusRingWithViewIntoContext(buttonCell, context, inflatedRect, view, true, states.contains(ControlStates::States::Focused), deviceScaleFactor);
     if ([previousDefaultButtonCell isEqual:buttonCell])
         [window setDefaultButtonCell:nil];
 

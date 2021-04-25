@@ -233,7 +233,7 @@ uint64_t Engine::diskUsage(const String& rootPath, const WebCore::ClientOrigin& 
         return 0;
 
     String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
-    auto salt = readOrMakeSalt(saltPath);
+    auto salt = FileSystem::readOrMakeSalt(saltPath);
     if (!salt)
         return 0;
 
@@ -374,7 +374,7 @@ void Engine::initialize(CompletionCallback&& callback)
     m_ioQueue->dispatch([this, weakThis = makeWeakPtr(this), rootPath = m_rootPath.isolatedCopy()] () mutable {
         FileSystem::makeAllDirectories(rootPath);
         String saltPath = FileSystem::pathByAppendingComponent(rootPath, "salt"_s);
-        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = readOrMakeSalt(saltPath)]() mutable {
+        RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), salt = FileSystem::readOrMakeSalt(saltPath)]() mutable {
             if (!weakThis)
                 return;
 
@@ -702,7 +702,7 @@ void Engine::clearAllCachesFromDisk(CompletionHandler<void()>&& completionHandle
         LockHolder locker(globalSizeFileLock);
         for (auto& filename : FileSystem::listDirectory(path, "*")) {
             if (FileSystem::fileIsDirectory(filename, FileSystem::ShouldFollowSymbolicLinks::No))
-                deleteDirectoryRecursively(filename);
+                FileSystem::deleteNonEmptyDirectory(filename);
         }
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });
@@ -749,18 +749,18 @@ void Engine::clearCachesForOriginFromDirectories(const Vector<String>& folderPat
 
             // If cache salt is initialized and the paths do not match, some cache files have probably be removed or partially corrupted.
             ASSERT(!m_salt || folderPath == cachesRootPath(*folderOrigin));
-            deleteDirectoryRecursivelyOnBackgroundThread(folderPath, [callbackAggregator = WTFMove(callbackAggregator)] { });
+            deleteNonEmptyDirectoryOnBackgroundThread(folderPath, [callbackAggregator = WTFMove(callbackAggregator)] { });
         });
     }
 }
 
-void Engine::deleteDirectoryRecursivelyOnBackgroundThread(const String& path, CompletionHandler<void()>&& completionHandler)
+void Engine::deleteNonEmptyDirectoryOnBackgroundThread(const String& path, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     m_ioQueue->dispatch([path = path.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         LockHolder locker(globalSizeFileLock);
-        deleteDirectoryRecursively(path);
+        FileSystem::deleteNonEmptyDirectory(path);
 
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });

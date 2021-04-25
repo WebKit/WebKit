@@ -45,12 +45,15 @@ public:
     const Vector<Ref<WebXRView>>& views() const;
     void setViews(Vector<Ref<WebXRView>>&&);
 
+    JSValueInWrappedObject& cachedViews() { return m_cachedViews; }
+
 private:
     WebXRViewerPose(Ref<WebXRRigidTransform>&&, bool emulatedPosition);
 
     bool isViewerPose() const final { return true; }
 
     Vector<Ref<WebXRView>> m_views;
+    JSValueInWrappedObject m_cachedViews;
 };
 
 } // namespace WebCore

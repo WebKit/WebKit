@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSIDBCursor.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBBindingUtilities.h"
 #include "JSDOMBinding.h"
 #include "JSIDBCursorWithValue.h"
@@ -75,5 +73,3 @@ JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* global
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

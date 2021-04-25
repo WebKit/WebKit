@@ -50,20 +50,6 @@ AlwaysZoomOnDoubleTap:
   defaultValue:
     WebKit:
       default: false
-      
-AppHighlightsEnabled:
-  type: bool
-  humanReadableName: "App Highlights"
-  humanReadableDescription: "Enable persistent highlights for apps"
-  condition: ENABLE(APP_HIGHLIGHTS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: WebKit::defaultAppHighlightsEnabled()
-    WebCore:
-      default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 ApplePayRemoteUIEnabled:
@@ -581,11 +567,11 @@ PreferPageRenderingUpdatesNear60FPSEnabled:
   humanReadableDescription: "Prefer page rendering updates near 60 frames per second rather than use the display's refresh rate"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 PrefixedWebAudioEnabled:
   type: bool
@@ -598,17 +584,6 @@ PrefixedWebAudioEnabled:
     WebKit:
       default: false
     WebCore:
-      default: false
-
-QuickboardControllerForTextInputEnabled:
-  type: bool
-  humanReadableName: "Quickboard controller"
-  humanReadableDescription: "Enable quickboard controller for text input"
-  condition: HAVE(QUICKBOARD_CONTROLLER)
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
       default: false
 
 ResourceLoadSchedulingEnabled:
@@ -803,18 +778,6 @@ WebAPIStatisticsEnabled:
   humanReadableName: "Web API Statistics"
   humanReadableDescription: "Enable Web API Statistics"
   webcoreBinding: RuntimeEnabledFeatures
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-
-WebGLUsingMetal:
-  type: bool
-  humanReadableName: "WebGL via Metal"
-  humanReadableDescription: "Use the Metal backend for ANGLE"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEBGL)
   defaultValue:
     WebKitLegacy:
       default: false

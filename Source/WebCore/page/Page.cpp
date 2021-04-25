@@ -45,6 +45,7 @@
 #include "DebugPageOverlays.h"
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
+#include "DisplayRefreshMonitorManager.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentTimeline.h"
@@ -72,6 +73,8 @@
 #include "HTMLTextFormControlElement.h"
 #include "HistoryController.h"
 #include "HistoryItem.h"
+#include "IDBConnectionToServer.h"
+#include "ImageOverlayController.h"
 #include "InspectorClient.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
@@ -160,10 +163,6 @@
 
 #if PLATFORM(MAC)
 #include "ServicesOverlayController.h"
-#endif
-
-#if ENABLE(INDEXED_DATABASE)
-#include "IDBConnectionToServer.h"
 #endif
 
 #if ENABLE(WEBGL)
@@ -290,6 +289,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if PLATFORM(MAC) && (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION))
     , m_servicesOverlayController(makeUnique<ServicesOverlayController>(*this))
 #endif
+    , m_imageOverlayController(makeUnique<ImageOverlayController>(*this))
     , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_pageOverlayController(makeUnique<PageOverlayController>(*this))
 #if ENABLE(APPLE_PAY)
@@ -1182,6 +1182,11 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPer
 
     m_displayID = displayID;
     m_displayNominalFramesPerSecond = nominalFramesPerSecond;
+    if (!m_displayNominalFramesPerSecond) {
+        // If the caller didn't give us a refresh rate, maybe the relevant DisplayRefreshMonitor can? This happens in WebKitLegacy
+        // because WebView doesn't have a convenient way to access the display refresh rate.
+        m_displayNominalFramesPerSecond = DisplayRefreshMonitorManager::sharedManager().nominalFramesPerSecondForDisplay(m_displayID, chrome().client().displayRefreshMonitorFactory());
+    }
 
     for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
         if (frame->document())
@@ -1196,7 +1201,7 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPer
 #endif
 
     if (m_scrollingCoordinator)
-        m_scrollingCoordinator->windowScreenDidChange(displayID, nominalFramesPerSecond);
+        m_scrollingCoordinator->windowScreenDidChange(displayID, m_displayNominalFramesPerSecond);
 
     renderingUpdateScheduler().windowScreenDidChange(displayID);
 
@@ -1776,11 +1781,14 @@ void Page::resumeScriptedAnimations()
     });
 }
 
+Optional<FramesPerSecond> Page::preferredRenderingUpdateFramesPerSecond() const
+{
+    return preferredFramesPerSecond(m_throttlingReasons, m_displayNominalFramesPerSecond, settings().preferPageRenderingUpdatesNear60FPSEnabled());
+}
+
 Seconds Page::preferredRenderingUpdateInterval() const
 {
-    if (!settings().preferPageRenderingUpdatesNear60FPSEnabled())
-        return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond);
-    return preferredFrameInterval(m_throttlingReasons, WTF::nullopt);
+    return preferredFrameInterval(m_throttlingReasons, m_displayNominalFramesPerSecond, settings().preferPageRenderingUpdatesNear60FPSEnabled());
 }
 
 void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
@@ -1788,7 +1796,7 @@ void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
     if (isVisuallyIdle == m_throttlingReasons.contains(ThrottlingReason::VisuallyIdle))
         return;
 
-    m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::VisuallyIdle;
+    m_throttlingReasons.set(ThrottlingReason::VisuallyIdle, isVisuallyIdle);
     renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 }
 
@@ -1800,7 +1808,7 @@ void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
     if (isLowPowerModeEnabled == m_throttlingReasons.contains(ThrottlingReason::LowPowerMode))
         return;
 
-    m_throttlingReasons = m_throttlingReasons ^ ThrottlingReason::LowPowerMode;
+    m_throttlingReasons.set(ThrottlingReason::LowPowerMode, isLowPowerModeEnabled);
     renderingUpdateScheduler().adjustRenderingUpdateFrequency();
 
     updateDOMTimerAlignmentInterval();
@@ -2880,10 +2888,8 @@ void Page::setSessionID(PAL::SessionID sessionID)
     ASSERT(m_sessionID == PAL::SessionID::legacyPrivateSessionID() || m_sessionID == PAL::SessionID::defaultSessionID());
     ASSERT(sessionID == PAL::SessionID::legacyPrivateSessionID() || sessionID == PAL::SessionID::defaultSessionID());
 
-#if ENABLE(INDEXED_DATABASE)
     if (sessionID != m_sessionID)
         m_idbConnectionToServer = nullptr;
-#endif
 
     if (sessionID != m_sessionID && m_sessionStorage)
         m_sessionStorage->setSessionIDForTesting(sessionID);
@@ -3039,7 +3045,6 @@ void Page::setAllowsMediaDocumentInlinePlayback(bool flag)
 
 #endif
 
-#if ENABLE(INDEXED_DATABASE)
 IDBClient::IDBConnectionToServer& Page::idbConnection()
 {
     if (!m_idbConnectionToServer)
@@ -3057,7 +3062,6 @@ void Page::clearIDBConnection()
 {
     m_idbConnectionToServer = nullptr;
 }
-#endif
 
 #if ENABLE(RESOURCE_USAGE)
 void Page::setResourceUsageOverlayVisible(bool visible)

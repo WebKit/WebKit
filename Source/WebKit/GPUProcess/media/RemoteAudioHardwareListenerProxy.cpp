@@ -38,6 +38,7 @@ RemoteAudioHardwareListenerProxy::RemoteAudioHardwareListenerProxy(GPUConnection
     , m_identifier(WTFMove(identifier))
     , m_listener(WebCore::AudioHardwareListener::create(*this))
 {
+    audioOutputDeviceChanged();
 }
 
 RemoteAudioHardwareListenerProxy::~RemoteAudioHardwareListenerProxy() = default;

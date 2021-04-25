@@ -31,6 +31,7 @@
 #if ENABLE(GEOLOCATION)
 
 #include "Document.h"
+#include "FeaturePolicy.h"
 #include "Frame.h"
 #include "GeoNotifier.h"
 #include "GeolocationController.h"
@@ -351,6 +352,9 @@ static bool isRequestFromIBooks()
     
 bool Geolocation::shouldBlockGeolocationRequests()
 {
+    if (!isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type::Geolocation, *document(), LogFeaturePolicyFailure::Yes))
+        return true;
+
     bool isSecure = SecurityOrigin::isSecure(document()->url()) || document()->isSecureContext();
     bool hasMixedContent = !document()->foundMixedContent().isEmpty();
     bool isLocalOrigin = securityOrigin()->isLocal();
@@ -358,7 +362,7 @@ bool Geolocation::shouldBlockGeolocationRequests()
         if (isLocalOrigin || (isSecure && !hasMixedContent) || isRequestFromIBooks())
             return false;
     }
-    
+
     logError(securityOrigin()->toString(), isSecure, hasMixedContent, document());
     return true;
 }

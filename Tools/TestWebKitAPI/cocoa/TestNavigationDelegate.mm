@@ -184,6 +184,17 @@
     self.navigationDelegate = nil;
 }
 
+- (void)_test_waitForDidFailProvisionalNavigation
+{
+    EXPECT_FALSE(self.navigationDelegate);
+
+    auto navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    self.navigationDelegate = navigationDelegate.get();
+    [navigationDelegate waitForDidFailProvisionalNavigation];
+
+    self.navigationDelegate = nil;
+}
+
 - (void)_test_waitForDidFinishNavigationWithoutPresentationUpdate
 {
     EXPECT_FALSE(self.navigationDelegate);

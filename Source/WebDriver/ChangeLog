@@ -1,3 +1,30 @@
+2021-03-25  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Use WebDriver_DERIVED_SOURCES value
+        https://bugs.webkit.org/show_bug.cgi?id=223760
+
+        Reviewed by Ross Kirsling.
+
+        Replace DERIVED_SOURCES_WEBDRIVER_DIR with WebDriver_DERIVED_SOURCES.
+
+        * CMakeLists.txt:
+
+2021-03-24  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        All string resources from UserAgentStyleSheets / UserAgentScripts should be used as non-copying StringImpl
+        https://bugs.webkit.org/show_bug.cgi?id=223685
+
+        Reviewed by Saam Barati.
+
+        * Session.cpp:
+        (WebDriver::Session::fullscreenWindow):
+        (WebDriver::Session::findElements):
+        (WebDriver::Session::isElementSelected):
+        (WebDriver::Session::isElementEnabled):
+        (WebDriver::Session::isElementDisplayed):
+        (WebDriver::Session::getElementAttribute):
+        (WebDriver::Session::elementClear):
+
 2021-02-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Add support for libsoup3

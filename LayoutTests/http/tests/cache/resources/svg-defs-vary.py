@@ -2,7 +2,7 @@
 
 import sys
 
-sys.stodut.write(
+sys.stdout.write(
     'Content-Type: image/svg+xml\r\n'
     'Vary: Cookie\r\n'
     'Cache-Control: max-age=31536000\r\n\r\n'

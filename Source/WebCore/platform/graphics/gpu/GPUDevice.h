@@ -70,6 +70,7 @@ enum class GPUBufferMappedOption;
 class GPUDevice : public RefCounted<GPUDevice>, public CanMakeWeakPtr<GPUDevice> {
 public:
     static RefPtr<GPUDevice> tryCreate(const Optional<GPURequestAdapterOptions>&);
+    static void prewarm();
 
     RefPtr<GPUBuffer> tryCreateBuffer(const GPUBufferDescriptor&, GPUBufferMappedOption, GPUErrorScopes&);
     RefPtr<GPUTexture> tryCreateTexture(const GPUTextureDescriptor&) const;

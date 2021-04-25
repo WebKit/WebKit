@@ -137,14 +137,35 @@ static void addConicSector(cairo_pattern_t *gradient, float cx, float cy, float 
 static RefPtr<cairo_pattern_t> createConic(float xo, float yo, float r, float angleRadians,
     Gradient::ColorStopVector stops, float globalAlpha)
 {
+    // Degenerated gradients with two stops at the same offset arrive with a single stop at 0.0
+    // Add another point here so it can be interpolated properly below.
+    if (stops.size() == 1)
+        stops = { stops.first(), stops.first() };
+
     // It's not possible to paint an entire circle with a single Bezier curve.
     // To have a good approximation to a circle it's necessary to use at least four Bezier curves.
     // So add three additional interpolated stops, allowing for four Bezier curves.
     if (stops.size() == 2) {
-        auto interpolatedStop = [&] (double fraction) -> Gradient::ColorStop {
-            return { blend(stops.first().offset, stops.last().offset, fraction), blendWithoutPremultiply(stops.first().color, stops.last().color, fraction) };
-        };
-        stops = { stops.first(), interpolatedStop(0.25), interpolatedStop(0.5), interpolatedStop(0.75), stops.last() };
+        // The first two checks avoid degenerated interpolations. These interpolations
+        // may cause Cairo to enter really slow operations with huge bezier parameters.
+        if (stops.first().offset == 1.0) {
+            auto first = stops.first();
+            stops = {
+                {0, first.color}, {0.25, first.color}, {0.5, first.color}, {0.75, first.color}, first
+            };
+        } else if (stops.last().offset == 0.0) {
+            auto last = stops.last();
+            stops = {
+                last, {0.25, last.color}, {0.5, last.color}, {0.75, last.color}, {1.0, last.color}
+            };
+        } else {
+            auto interpolatedStop = [&] (double fraction) -> Gradient::ColorStop {
+                auto offset = blend(stops.first().offset, stops.last().offset, fraction);
+                auto interpColor = blendWithoutPremultiply(stops.first().color, stops.last().color, fraction);
+                return { offset, interpColor };
+            };
+            stops = { stops.first(), interpolatedStop(0.25), interpolatedStop(0.5), interpolatedStop(0.75), stops.last() };
+        }
     }
 
     if (stops.first().offset > 0.0f)

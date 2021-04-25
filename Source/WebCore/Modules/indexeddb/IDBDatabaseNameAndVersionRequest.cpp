@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBDatabaseNameAndVersionRequest.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBConnectionProxy.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
@@ -78,5 +76,3 @@ void IDBDatabaseNameAndVersionRequest::stop()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

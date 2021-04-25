@@ -134,9 +134,12 @@ public:
         return adoptRef(*new EmptyDisplayRefreshMonitor(displayID));
     }
 
-    void displayLinkFired() final { }
+    void displayLinkFired(const DisplayUpdate&) final { }
     bool requestRefreshCallback() final { return false; }
     void stop() final { }
+
+    bool startNotificationMechanism() final { return true; }
+    void stopNotificationMechanism() final { }
 
 private:
     explicit EmptyDisplayRefreshMonitor(PlatformDisplayID displayID)
@@ -161,7 +164,6 @@ private:
 };
 
 class EmptyDatabaseProvider final : public DatabaseProvider {
-#if ENABLE(INDEXED_DATABASE)
     struct EmptyIDBConnectionToServerDeletegate final : public IDBClient::IDBConnectionToServerDelegate {
         IDBConnectionIdentifier identifier() const final { return { }; }
         void deleteDatabase(const IDBRequestData&) final { }
@@ -199,7 +201,6 @@ class EmptyDatabaseProvider final : public DatabaseProvider {
         static auto& emptyConnection = IDBClient::IDBConnectionToServer::create(emptyDelegate.get()).leakRef();
         return emptyConnection;
     }
-#endif
 };
 
 class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
@@ -208,6 +209,7 @@ class EmptyDiagnosticLoggingClient final : public DiagnosticLoggingClient {
     void logDiagnosticMessageWithValue(const String&, const String&, double, unsigned, ShouldSample) final { }
     void logDiagnosticMessageWithEnhancedPrivacy(const String&, const String&, ShouldSample) final { }
     void logDiagnosticMessageWithValueDictionary(const String&, const String&, const ValueDictionary&, ShouldSample) final { }
+    void logDiagnosticMessageWithDomain(const String&, DiagnosticLoggingDomain) final { };
 };
 
 #if ENABLE(DRAG_SUPPORT)

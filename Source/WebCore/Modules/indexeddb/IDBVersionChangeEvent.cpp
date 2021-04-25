@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBVersionChangeEvent.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -58,5 +56,3 @@ EventInterface IDBVersionChangeEvent::eventInterface() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

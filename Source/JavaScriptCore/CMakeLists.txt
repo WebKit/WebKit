@@ -933,6 +933,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/IteratorOperations.h
     runtime/IteratorPrototype.h
     runtime/JSArray.h
+    runtime/JSArrayInlines.h
     runtime/JSArrayBuffer.h
     runtime/JSArrayBufferPrototype.h
     runtime/JSArrayBufferView.h
@@ -1044,6 +1045,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/RegExpKey.h
     runtime/RegExpObject.h
     runtime/RegExpStringIteratorPrototype.h
+    runtime/ResourceExhaustion.h
     runtime/RuntimeFlags.h
     runtime/RuntimeType.h
     runtime/SamplingProfiler.h
@@ -1097,8 +1099,11 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/VMTraps.h
     runtime/VarOffset.h
     runtime/Watchdog.h
+    runtime/WeakGCHashTable.h
     runtime/WeakGCMap.h
     runtime/WeakGCMapInlines.h
+    runtime/WeakGCSet.h
+    runtime/WeakGCSetInlines.h
     runtime/WriteBarrier.h
     runtime/WriteBarrierInlines.h
 
@@ -1257,7 +1262,6 @@ add_custom_command(
     VERBATIM)
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol)
 file(MAKE_DIRECTORY ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector)
 add_custom_command(
     OUTPUT ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.cpp

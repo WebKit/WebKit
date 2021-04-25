@@ -40,7 +40,7 @@
 #include "MediaElementSession.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
-#include "MediaSessionIdentifier.h"
+#include "MediaUniqueIdentifier.h"
 #include "TextTrack.h"
 #include "VideoTrack.h"
 #include "VisibilityChangeClient.h"
@@ -494,6 +494,7 @@ public:
     void pageScaleFactorChanged();
     void userInterfaceLayoutDirectionChanged();
     WEBCORE_EXPORT String getCurrentMediaControlsStatus();
+    WEBCORE_EXPORT void setMediaControlsMaximumRightContainerButtonCountOverride(size_t);
     MediaControlsHost* mediaControlsHost() { return m_mediaControlsHost.get(); }
 
     bool isDisablingSleep() const { return m_sleepDisabler.get(); }
@@ -565,7 +566,7 @@ public:
     void applicationWillResignActive();
     void applicationDidBecomeActive();
 
-    MediaSessionIdentifier mediaSessionUniqueIdentifier() const;
+    MediaUniqueIdentifier mediaUniqueIdentifier() const;
     String mediaSessionTitle() const;
     String sourceApplicationIdentifier() const;
 
@@ -845,6 +846,7 @@ private:
     void updateMediaController();
     bool isBlocked() const;
     bool isBlockedOnMediaController() const;
+    void setCurrentSrc(const URL&);
     bool hasCurrentSrc() const override { return !m_currentSrc.isEmpty(); }
     bool isLiveStream() const override { return movieLoadType() == MovieLoadType::LiveStream; }
 
@@ -870,6 +872,7 @@ private:
     bool canProduceAudio() const final;
     bool hasMediaStreamSource() const final;
     void processIsSuspendedChanged() final;
+    bool shouldOverridePauseDuringRouteChange() const final;
 
     void pageMutedStateDidChange() override;
 
@@ -965,6 +968,7 @@ private:
     ReadyState m_readyState { HAVE_NOTHING };
     ReadyState m_readyStateMaximum { HAVE_NOTHING };
     URL m_currentSrc;
+    MediaUniqueIdentifier m_currentIdentifier;
 
     RefPtr<MediaError> m_error;
 

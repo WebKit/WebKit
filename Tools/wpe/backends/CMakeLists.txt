@@ -3,8 +3,6 @@ find_package(Wayland REQUIRED)
 find_package(WaylandProtocols 1.12 REQUIRED)
 find_package(WPEBackend_fdo 1.3.0 REQUIRED)
 
-set(DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WPEToolingBackends")
-
 file(MAKE_DIRECTORY ${DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR})
 
 set(WPEToolingBackends_SOURCES

@@ -23,7 +23,6 @@
 from fakeredis import FakeStrictRedis
 from redis import StrictRedis
 from resultsdbpy.controller.api_routes import APIRoutes
-from resultsdbpy.controller.commit import Commit
 from resultsdbpy.flask_support.flask_testcase import FlaskTestCase
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
@@ -32,6 +31,7 @@ from resultsdbpy.model.model import Model
 from resultsdbpy.model.wait_for_docker_test_case import WaitForDockerTestCase
 from resultsdbpy.model.repository import StashRepository, WebKitRepository
 from webkitcorepy import OutputCapture
+from webkitscmpy import Commit
 
 
 class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
@@ -76,7 +76,7 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
         response = client.get(self.URL + '/api/commits/branches')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(dict(
-            webkit=['branch-a', 'branch-b', 'tags/tag-1', 'tags/tag-2', 'trunk'],
+            webkit=['branch-a', 'branch-b', 'main'],
             safari=['branch-a', 'branch-b', 'main']), response.json())
 
         response = client.get(self.URL + '/api/commits/branches?branch=branch')
@@ -121,27 +121,28 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
         git_commit = Commit(
             repository_id='safari',
             branch='main',
-            id='8eba280e32daaf5fddbbb65aea37932ea9ad85df',
+            hash='8eba280e32daaf5fddbbb65aea37932ea9ad85df',
             timestamp=1601650100,
             order=0,
-            committer='jbedard@webkit.org',
+            author='jbedard@webkit.org',
             message='custom commit',
         )
-        self.assertEqual(200, client.post(self.URL + '/api/commits', data=Commit.Encoder().default(git_commit)).status_code)
+        print(Commit.Encoder().default(git_commit))
+        self.assertEqual(200, client.post(self.URL + '/api/commits', json=Commit.Encoder().default(git_commit)).status_code)
         response = client.get(self.URL + '/api/commits?repository_id=safari')
         self.assertEqual(200, response.status_code)
         self.assertEqual(Commit.from_json(response.json()[0]), git_commit)
 
         svn_commit = Commit(
             repository_id='webkit',
-            branch='trunk',
-            id='1234',
+            branch='main',
+            revision='1234',
             timestamp=1601650100,
             order=0,
-            committer='jbedard@webkit.org',
+            author='jbedard@webkit.org',
             message='custom commit',
         )
-        self.assertEqual(200, client.post(self.URL + '/api/commits', data=Commit.Encoder().default(svn_commit)).status_code)
+        self.assertEqual(200, client.post(self.URL + '/api/commits', json=Commit.Encoder().default(svn_commit)).status_code)
         response = client.get(self.URL + '/api/commits?repository_id=webkit')
         self.assertEqual(200, response.status_code)
         self.assertEqual(Commit.from_json(response.json()[0]), svn_commit)
@@ -204,8 +205,8 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
         self.register_all_commits(client)
         response = client.get(self.URL + '/api/commits?after_id=6&before_id=fff83bb2d917')
         self.assertEqual(200, response.status_code)
-        self.assertEqual([Commit.from_json(element).id for element in response.json()], [
-            '6', '9b8311f25a77ba14923d9d5a6532103f54abefcb', 'fff83bb2d9171b4d9196e977eb0508fd57e7a08d',
+        self.assertEqual([Commit.from_json(element).revision or Commit.from_json(element).hash for element in response.json()], [
+            6, '9b8311f25a77ba14923d9d5a6532103f54abefcb', 'fff83bb2d9171b4d9196e977eb0508fd57e7a08d',
         ])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)

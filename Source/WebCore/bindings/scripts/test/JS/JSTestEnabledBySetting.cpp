@@ -46,6 +46,7 @@
 
 #if ENABLE(TEST_FEATURE)
 #include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
 #endif
 
 

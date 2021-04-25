@@ -568,7 +568,7 @@
     (global-name "com.apple.logd.events")
     (global-name "com.apple.distributed_notifications@1v3")
     (global-name "com.apple.aggregated")
-    (global-name "com.apple.cfprefsd.daemon"))
+)
 
 (allow mach-lookup (with report) (with telemetry)
     (global-name "com.apple.tccd"))
@@ -757,6 +757,52 @@
 ;;;
 ;;; End UIKit-apps.sb content
 ;;;
+
+;; In CFPrefs direct mode, access to preference files is required.
+(allow file-read*
+    (home-literal
+        "/Library/Preferences/com.apple.Accessibility.plist"
+        "/Library/Preferences/com.apple.AdLib.plist"
+        "/Library/Preferences/com.apple.EmojiPreferences.plist"
+        "/Library/Preferences/com.apple.InputModePreferences.plist"
+        "/Library/Preferences/com.apple.LaunchServices.plist"
+        "/Library/Preferences/com.apple.Metal.plist"
+        "/Library/Preferences/com.apple.MobileAsset.plist"
+        "/Library/Preferences/com.apple.Preferences.plist"
+        "/Library/Preferences/com.apple.PrototypeTools.plist"
+        "/Library/Preferences/com.apple.SpeakSelection.plist"
+        "/Library/Preferences/com.apple.UIKit.plist"
+        "/Library/Preferences/com.apple.VoiceOverTouch.plist"
+        "/Library/Preferences/com.apple.WebFoundation.plist"
+        "/Library/Preferences/com.apple.WebUI.plist"
+        "/Library/Preferences/com.apple.airplay.plist"
+        "/Library/Preferences/com.apple.audio.virtualaudio.plist"
+        "/Library/Preferences/com.apple.avfoundation.plist"
+        "/Library/Preferences/com.apple.avfoundation.frecents.plist"
+        "/Library/Preferences/com.apple.avfoundation.videoperformancehud.plist"
+        "/Library/Preferences/com.apple.avkit.plist"
+        "/Library/Preferences/com.apple.coreanimation.plist"
+        "/Library/Preferences/com.apple.coreaudio.plist"
+        "/Library/Preferences/com.apple.coremedia.plist"
+        "/Library/Preferences/com.apple.corevideo.plist"
+        "/Library/Preferences/com.apple.da.plist"
+        "/Library/Preferences/com.apple.keyboard.plist"
+        "/Library/Preferences/com.apple.lookup.shared.plist"
+        "/Library/Preferences/com.apple.mediaaccessibility.plist"
+        "/Library/Preferences/com.apple.mediaaccessibility.public.plist"
+        "/Library/Preferences/com.apple.mediaremote.plist"
+        "/Library/Preferences/com.apple.mobileipod.plist"
+        "/Library/Preferences/com.apple.mt.plist"
+        "/Library/Preferences/com.apple.hangtracer.plist"
+        "/Library/Preferences/com.apple.iokit.IOMobileGraphicsFamily.plist"
+        "/Library/Preferences/com.apple.itunesstored.plist"
+        "/Library/Preferences/com.apple.opengl.plist"
+        "/Library/Preferences/com.apple.preferences.sounds.plist"
+        "/Library/Preferences/com.apple.security.plist"
+        "/Library/Preferences/com.apple.voiceservices.plist"
+        "/Library/Preferences/com.apple.voiceservices.logging.plist"
+    )
+)
 
 (deny sysctl*)
 (allow sysctl-read

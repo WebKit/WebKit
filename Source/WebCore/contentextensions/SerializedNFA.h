@@ -49,10 +49,17 @@ public:
         const T* begin() const { return m_begin; }
         const T* end() const { return m_begin + m_size; }
         size_t size() const { return m_size; }
-        const T& operator[](size_t i) const
+        const T* pointerAt(size_t i) const
         {
             RELEASE_ASSERT(i < m_size);
-            return begin()[i];
+            return begin() + i;
+        }
+        T valueAt(size_t i) const
+        {
+            RELEASE_ASSERT(i < m_size);
+            T value;
+            memcpy(&value, begin() + i, sizeof(T));
+            return value;
         }
     private:
         const T* m_begin { nullptr };
@@ -75,8 +82,8 @@ public:
         const SerializedNFA& serializedNFA;
         uint32_t position;
 
-        const uint32_t& operator*() const { return serializedNFA.targets()[position]; }
-        const uint32_t* operator->() const { return &serializedNFA.targets()[position]; }
+        uint32_t operator*() const { return serializedNFA.targets().valueAt(position); }
+        const uint32_t* operator->() const { return serializedNFA.targets().pointerAt(position); }
 
         bool operator==(const ConstTargetIterator& other) const
         {
@@ -120,24 +127,24 @@ public:
 
         char first() const
         {
-            return range().first;
+            return range()->first;
         }
 
         char last() const
         {
-            return range().last;
+            return range()->last;
         }
 
         IterableConstTargets data() const
         {
-            const ImmutableRange<char>& range = this->range();
-            return { serializedNFA, range.targetStart, range.targetEnd };
+            const ImmutableRange<char>* range = this->range();
+            return { serializedNFA, range->targetStart, range->targetEnd };
         };
 
     private:
-        const ImmutableRange<char>& range() const
+        const ImmutableRange<char>* range() const
         {
-            return serializedNFA.transitions()[position];
+            return serializedNFA.transitions().pointerAt(position);
         }
     };
 
@@ -160,8 +167,8 @@ public:
 
     IterableConstRange transitionsForNode(uint32_t nodeId) const
     {
-        const auto& node = nodes()[nodeId];
-        return { *this, node.rangesStart, node.rangesEnd };
+        const auto* node = nodes().pointerAt(nodeId);
+        return { *this, node->rangesStart, node->rangesEnd };
     }
 
 private:

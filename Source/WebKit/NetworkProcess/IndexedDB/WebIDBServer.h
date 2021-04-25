@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "Connection.h"
 
 #include "WebIDBConnectionToClient.h"
@@ -105,5 +103,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

@@ -27,6 +27,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "Connection.h"
+#include "DataReference.h"
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
 #include <WebCore/RTCDataChannelRemoteSourceConnection.h>
 #include <wtf/WorkQueue.h>

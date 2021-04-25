@@ -55,7 +55,7 @@ auto SWContextManager::connection() const -> Connection*
 void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerThreadProxy>&& serviceWorkerThreadProxy)
 {
     auto serviceWorkerIdentifier = serviceWorkerThreadProxy->identifier();
-    auto jobDataIdentifier = serviceWorkerThreadProxy->thread().contextData().jobDataIdentifier;
+    auto jobDataIdentifier = serviceWorkerThreadProxy->thread().jobDataIdentifier();
     auto* threadProxy = serviceWorkerThreadProxy.ptr();
     auto result = m_workerMap.add(serviceWorkerIdentifier, WTFMove(serviceWorkerThreadProxy));
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -118,6 +118,12 @@ void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Secon
         return;
     }
     stopWorker(*serviceWorker, timeout, WTFMove(completionHandler));
+}
+
+void SWContextManager::didSaveScriptsToDisk(ServiceWorkerIdentifier identifier, ScriptBuffer&& script, HashMap<URL, ScriptBuffer>&& importedScripts)
+{
+    if (auto serviceWorker = m_workerMap.get(identifier))
+        serviceWorker->didSaveScriptsToDisk(WTFMove(script), WTFMove(importedScripts));
 }
 
 void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Seconds timeout, Function<void()>&& completionHandler)

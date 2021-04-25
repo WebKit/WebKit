@@ -62,18 +62,11 @@ private:
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     // MediaSessionHelper
-    void startMonitoringWirelessRoutes() final;
-    void stopMonitoringWirelessRoutes() final;
+    void startMonitoringWirelessRoutesInternal() final;
+    void stopMonitoringWirelessRoutesInternal() final;
     void providePresentingApplicationPID(int) final;
 
     // Messages
-    void applicationWillEnterForeground(SuspendedUnderLock);
-    void applicationDidEnterBackground(SuspendedUnderLock);
-    void applicationWillBecomeInactive();
-    void applicationDidBecomeActive();
-    void externalOutputDeviceAvailableDidChange(HasAvailableTargets);
-    void isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit);
-    void activeAudioRouteDidChange(ShouldPause);
     void activeVideoRouteDidChange(SupportsAirPlayVideo, WebCore::MediaPlaybackTargetContext&&);
 
     WebProcess& m_process;

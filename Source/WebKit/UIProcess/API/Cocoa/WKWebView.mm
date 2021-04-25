@@ -542,6 +542,10 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setColorFilterEnabled(!![_configuration _colorFilterEnabled]);
 
     pageConfiguration->preferences()->setUndoManagerAPIEnabled(!![_configuration _undoManagerAPIEnabled]);
+    
+#if ENABLE(APP_HIGHLIGHTS)
+    pageConfiguration->preferences()->setAppHighlightsEnabled(!![_configuration _appHighlightsEnabled]);
+#endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     pageConfiguration->preferences()->setLegacyEncryptedMediaAPIEnabled(!![_configuration _legacyEncryptedMediaAPIEnabled]);
@@ -975,6 +979,68 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     });
 }
 
+- (WKMediaCaptureState)cameraCaptureState
+{
+    auto state = _page->reportedMediaState();
+    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+        return WKMediaCaptureStateActive;
+    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+        return WKMediaCaptureStateMuted;
+    return WKMediaCaptureStateNone;
+}
+
+- (WKMediaCaptureState)microphoneCaptureState
+{
+    auto state = _page->reportedMediaState();
+    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+        return WKMediaCaptureStateActive;
+    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+        return WKMediaCaptureStateMuted;
+    return WKMediaCaptureStateNone;
+}
+
+- (void)setMicrophoneCaptureState:(WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
+{
+    if (!completionHandler)
+        completionHandler = [] { };
+
+    if (state == WKMediaCaptureStateNone) {
+        _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::Audio, [completionHandler = makeBlockPtr(completionHandler)] {
+            completionHandler();
+        });
+        return;
+    }
+    auto mutedState = _page->mutedStateFlags();
+    if (state == WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::AudioCaptureIsMuted)
+        mutedState ^= WebCore::MediaProducer::AudioCaptureIsMuted;
+    else if (state == WKMediaCaptureStateMuted)
+        mutedState = WebCore::MediaProducer::AudioCaptureIsMuted;
+    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
+- (void)setCameraCaptureState:(WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
+{
+    if (!completionHandler)
+        completionHandler = [] { };
+
+    if (state == WKMediaCaptureStateNone) {
+        _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::Video, [completionHandler = makeBlockPtr(completionHandler)] {
+            completionHandler();
+        });
+        return;
+    }
+    auto mutedState = _page->mutedStateFlags();
+    if (state == WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::VideoCaptureIsMuted)
+        mutedState ^= WebCore::MediaProducer::VideoCaptureIsMuted;
+    else if (state == WKMediaCaptureStateMuted)
+        mutedState = WebCore::MediaProducer::VideoCaptureIsMuted;
+    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (void)_evaluateJavaScript:(NSString *)javaScriptString asAsyncFunction:(BOOL)asAsyncFunction withSourceURL:(NSURL *)sourceURL withArguments:(NSDictionary<NSString *, id> *)arguments forceUserGesture:(BOOL)forceUserGesture inFrame:(WKFrameInfo *)frame inWorld:(WKContentWorld *)world completionHandler:(void (^)(id, NSError *))completionHandler
 {
     auto handler = adoptNS([completionHandler copy]);
@@ -1389,7 +1455,6 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-
 - (id <_WKAppHighlightDelegate>)_appHighlightDelegate
 {
 #if ENABLE(APP_HIGHLIGHTS)
@@ -1750,62 +1815,6 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
 - (BOOL)_negotiatedLegacyTLS
 {
     return _page->pageLoadState().hasNegotiatedLegacyTLS();
-}
-
-- (_WKMediaCaptureState)_cameraCaptureState
-{
-    auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
-        return _WKMediaCaptureStateActive;
-    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
-        return _WKMediaCaptureStateMuted;
-    return _WKMediaCaptureStateNone;
-}
-
-- (_WKMediaCaptureState)_microphoneCaptureState
-{
-    auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
-        return _WKMediaCaptureStateActive;
-    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
-        return _WKMediaCaptureStateMuted;
-    return _WKMediaCaptureStateNone;
-}
-
-- (void)setMicrophoneCaptureState:(_WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
-{
-    if (state == _WKMediaCaptureStateNone) {
-        _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::Audio, [completionHandler = makeBlockPtr(completionHandler)] {
-            completionHandler();
-        });
-        return;
-    }
-    auto mutedState = _page->mutedStateFlags();
-    if (state == _WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::AudioCaptureIsMuted)
-        mutedState ^= WebCore::MediaProducer::AudioCaptureIsMuted;
-    else if (state == _WKMediaCaptureStateMuted)
-        mutedState = WebCore::MediaProducer::AudioCaptureIsMuted;
-    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler();
-    });
-}
-
-- (void)setCameraCaptureState:(_WKMediaCaptureState)state completionHandler:(void (^)(void))completionHandler
-{
-    if (state == _WKMediaCaptureStateNone) {
-        _page->stopMediaCapture(WebCore::MediaProducer::MediaCaptureKind::Video, [completionHandler = makeBlockPtr(completionHandler)] {
-            completionHandler();
-        });
-        return;
-    }
-    auto mutedState = _page->mutedStateFlags();
-    if (state == _WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::VideoCaptureIsMuted)
-        mutedState ^= WebCore::MediaProducer::VideoCaptureIsMuted;
-    else if (state == _WKMediaCaptureStateMuted)
-        mutedState = WebCore::MediaProducer::VideoCaptureIsMuted;
-    _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
-        completionHandler();
-    });
 }
 
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler

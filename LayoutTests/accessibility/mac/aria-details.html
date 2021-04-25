@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<img id="image1" src="pythagorean.jpg" alt="Pythagorean Theorem" aria-details="details1 details2">
+<details open id="details1">
+  <p>
+    The Pythagorean Theorem is a relationship in Euclidean Geometry between the three sides of
+    a right triangle, where the square of the hypotenuse is the sum of the squares of the two
+    opposing sides.
+  </p>
+  <p>
+    The following drawing illustrates an application of the Pythagorean Theorem when used to
+    construct a skateboard ramp.
+  </p>
+  <p>
+    In this example you will notice a skateboard ramp with a base and vertical board whose width
+    is the width of the ramp. To compute how long the ramp must be, simply calculate the
+    base length, square it, sum it with the square of the height of the ramp, and take the
+    square root of the sum.
+  </p>
+</details>
+<p>See an <a href="http://foo.com/pt.html" id="details2">Application of the Pythagorean Theorem</a>.</p>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+    description("This verifies the exposure of aria-details.");
+
+    if (window.accessibilityController) {
+        image1 = accessibilityController.accessibleElementById("image1");
+        details = image1.detailsElements();
+        shouldBe("details.length", "2");
+        shouldBe("details[0].domIdentifier", "'details1'");
+        shouldBe("details[1].domIdentifier", "'details2'");
+    }
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

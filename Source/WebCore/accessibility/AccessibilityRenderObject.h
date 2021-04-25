@@ -127,6 +127,7 @@ public:
     
     URL url() const override;
     PlainTextRange selectedTextRange() const override;
+    int insertionPointLineNumber() const override;
     VisibleSelection selection() const override;
     String stringValue() const override;
     String helpText() const override;

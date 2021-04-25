@@ -202,7 +202,7 @@ angle::Result FramebufferMtl::clearBufferfi(const gl::Context *context,
 const gl::InternalFormat &FramebufferMtl::getImplementationColorReadFormat(
     const gl::Context *context) const
 {
-    return GetReadAttachmentInfo(context, getColorReadRenderTarget(context));
+    return GetReadAttachmentInfo(context, getColorReadRenderTargetNoCache(context));
 }
 
 angle::Result FramebufferMtl::readPixels(const gl::Context *context,
@@ -639,6 +639,30 @@ RenderTargetMtl *FramebufferMtl::getColorReadRenderTarget(const gl::Context *con
     }
 
     return mColorRenderTargets[mState.getReadIndex()];
+}
+
+RenderTargetMtl *FramebufferMtl::getColorReadRenderTargetNoCache(const gl::Context *context) const
+{
+    if (mState.getReadIndex() >= mColorRenderTargets.size())
+    {
+        return nullptr;
+    }
+
+    if (mBackbuffer)
+    {
+        //If we have a backbuffer/window surface, we can take the old path here and return
+        //the cached color render target.
+        return getColorReadRenderTarget(context);
+    }
+    //If we have no backbuffer, get the attachment from state color attachments, as it may have changed before syncing.
+    const gl::FramebufferAttachment * attachment = mState.getColorAttachment(mState.getReadIndex());
+    RenderTargetMtl * currentTarget = nullptr;
+    if(attachment->getRenderTarget(context, attachment->getRenderToTextureSamples(),
+                                &currentTarget) == angle::Result::Stop)
+    {
+        return nullptr;
+    }
+    return currentTarget;
 }
 
 int FramebufferMtl::getSamples() const

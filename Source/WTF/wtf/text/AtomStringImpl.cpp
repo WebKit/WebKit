@@ -63,7 +63,7 @@ public:
 
 #endif // USE(WEB_THREAD)
 
-using StringTableImpl = HashSet<PackedPtr<StringImpl>>;
+using StringTableImpl = AtomStringTable::StringTableImpl;
 
 static ALWAYS_INLINE StringTableImpl& stringTable()
 {

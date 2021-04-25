@@ -75,7 +75,9 @@ JSC_DEFINE_HOST_FUNCTION(constructWeakMap, (JSGlobalObject* globalObject, CallFr
 
     auto adderFunctionCallData = getCallData(vm, adderFunction);
     if (adderFunctionCallData.type == CallData::Type::None)
-        return JSValue::encode(throwTypeError(globalObject, scope));
+        return throwVMTypeError(globalObject, scope, "'set' property of a WeakMap should be callable."_s);
+
+    bool canPerformFastSet = adderFunctionCallData.type == CallData::Type::Native && adderFunctionCallData.native.function == protoFuncWeakMapSet;
 
     scope.release();
     forEachInIterable(globalObject, iterable, [&](VM& vm, JSGlobalObject* globalObject, JSValue nextItem) {
@@ -85,11 +87,21 @@ JSC_DEFINE_HOST_FUNCTION(constructWeakMap, (JSGlobalObject* globalObject, CallFr
             return;
         }
 
-        JSValue key = nextItem.get(globalObject, static_cast<unsigned>(0));
+        JSObject* nextObject = asObject(nextItem);
+
+        JSValue key = nextObject->getIndex(globalObject, static_cast<unsigned>(0));
         RETURN_IF_EXCEPTION(scope, void());
 
-        JSValue value = nextItem.get(globalObject, static_cast<unsigned>(1));
+        JSValue value = nextObject->getIndex(globalObject, static_cast<unsigned>(1));
         RETURN_IF_EXCEPTION(scope, void());
+
+        if (canPerformFastSet) {
+            if (key.isObject())
+                weakMap->set(vm, asObject(key), value);
+            else
+                throwTypeError(asObject(adderFunction)->globalObject(vm), scope, WeakMapNonObjectKeyError);
+            return;
+        }
 
         MarkedArgumentBuffer arguments;
         arguments.append(key);

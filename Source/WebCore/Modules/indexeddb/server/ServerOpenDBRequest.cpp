@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServerOpenDBRequest.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBResultData.h"
 
 namespace WebCore {
@@ -87,5 +85,3 @@ void ServerOpenDBRequest::connectionClosedOrFiredVersionChangeEvent(uint64_t con
 
 } // namespace IDBServer
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

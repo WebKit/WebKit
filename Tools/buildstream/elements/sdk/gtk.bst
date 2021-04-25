@@ -6,6 +6,8 @@ sources:
   track: master
   track-tags: true
   ref: 4.0.0-0-g591c2f05956935adbebed5fc345a309dde2d449c
+- kind: patch
+  path: patches/gtk-clipboard-Fix-a-crash-when-GdkContentProviderUnion-d.patch
 build-depends:
 - sdk-build-depends/sassc.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst

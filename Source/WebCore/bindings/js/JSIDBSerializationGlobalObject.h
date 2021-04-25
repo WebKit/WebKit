@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "EmptyScriptExecutionContext.h"
 #include "JSDOMGlobalObject.h"
 
@@ -63,6 +61,4 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)
 

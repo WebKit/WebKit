@@ -11,6 +11,7 @@ layer at (0,0) size 800x600
         text run at (158,21) width 5: " "
       RenderTextControl {INPUT} at (164,23) size 165x20 [bgcolor=#7676801F]
         RenderFlexibleBox {DIV} at (5,2) size 154x15
+          RenderBlock {DIV} at (0,1) size 11x12
           RenderBlock {DIV} at (15,0) size 138x14
           RenderBlock {DIV} at (152,7) size 0x0
       RenderText {#text} at (330,21) size 5x19
@@ -32,11 +33,11 @@ layer at (17,33) size 141x14
       text run at (0,0) width 21: "text"
 layer at (17,33) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
-layer at (194,33) size 137x14
+layer at (193,33) size 137x14
   RenderBlock {DIV} at (20,2) size 139x15 [color=#640000]
     RenderText {#text} at (0,0) size 36x14
       text run at (0,0) width 36: "search"
-layer at (194,33) size 137x14
+layer at (193,33) size 138x14
   RenderBlock {DIV} at (0,0) size 138x14
 layer at (351,33) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15 [color=#640000]
@@ -56,8 +57,6 @@ layer at (179,58) size 141x14
       text run at (0,0) width 85: "default disabled"
 layer at (179,58) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
-layer at (178,35) size 11x11
-  RenderBlock {DIV} at (0,1) size 11x12 [bgcolor=#A9A9A9]
 layer at (508,30) size 153x21
   RenderTextControl {INPUT} at (499,22) size 154x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
 layer at (514,33) size 139x14

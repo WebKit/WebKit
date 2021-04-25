@@ -57,8 +57,12 @@ JSC_ANNOTATE_LLINT_JIT_OPERATION(llint_function_for_call_arity_checkUntagGateAft
 JSC_ANNOTATE_LLINT_JIT_OPERATION(llint_function_for_call_arity_checkTagGateAfter);
 JSC_ANNOTATE_LLINT_JIT_OPERATION(llint_function_for_construct_arity_checkUntagGateAfter);
 JSC_ANNOTATE_LLINT_JIT_OPERATION(llint_function_for_construct_arity_checkTagGateAfter);
-JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryCustomAccessor);
+JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryCustomGetter);
+JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryCustomSetter);
 JSC_ANNOTATE_LLINT_JIT_OPERATION(vmEntryHostFunction);
+
+static_assert(FunctionTraits<decltype(vmEntryCustomGetter)>::arity == FunctionTraits<GetValueFuncWithPtr>::arity, "When changing GetValueFuncWithPtr, need to change vmEntryCustomGetter implementation too.");
+static_assert(FunctionTraits<decltype(vmEntryCustomSetter)>::arity == FunctionTraits<PutValueFuncWithPtr>::arity, "When changing PutValueFuncWithPtr, need to change vmEntryCustomSetter implementation too.");
 
 #endif
 

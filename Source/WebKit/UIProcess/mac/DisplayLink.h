@@ -29,6 +29,8 @@
 
 #include "DisplayLinkObserverID.h"
 #include <CoreVideo/CVDisplayLink.h>
+#include <WebCore/AnimationFrameRate.h>
+#include <WebCore/DisplayUpdate.h>
 #include <WebCore/PlatformScreen.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -45,13 +47,18 @@ public:
     explicit DisplayLink(WebCore::PlatformDisplayID);
     ~DisplayLink();
     
-    void addObserver(IPC::Connection&, DisplayLinkObserverID);
+    void addObserver(IPC::Connection&, DisplayLinkObserverID, WebCore::FramesPerSecond);
     void removeObserver(IPC::Connection&, DisplayLinkObserverID);
     void removeObservers(IPC::Connection&);
 
+    void incrementFullSpeedRequestClientCount(IPC::Connection&);
+    void decrementFullSpeedRequestClientCount(IPC::Connection&);
+
+    void setPreferredFramesPerSecond(IPC::Connection&, DisplayLinkObserverID, WebCore::FramesPerSecond);
+
     WebCore::PlatformDisplayID displayID() const { return m_displayID; }
     
-    Optional<unsigned> nominalFramesPerSecond() const;
+    WebCore::FramesPerSecond nominalFramesPerSecond() const { return m_displayNominalFramesPerSecond; }
 
     // When responsiveness is critical, we send the IPC to a background queue. Otherwise, we send it to the
     // main thread to avoid unnecessary thread hopping and save power.
@@ -61,10 +68,26 @@ private:
     static CVReturn displayLinkCallback(CVDisplayLinkRef, const CVTimeStamp*, const CVTimeStamp*, CVOptionFlags, CVOptionFlags*, void* data);
     void notifyObserversDisplayWasRefreshed();
 
+    void removeInfoForConnectionIfPossible(IPC::Connection&);
+
+    static WebCore::FramesPerSecond nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef);
+
+    struct ObserverInfo {
+        DisplayLinkObserverID observerID;
+        WebCore::FramesPerSecond preferredFramesPerSecond;
+    };
+    
+    struct ConnectionClientInfo {
+        unsigned fullSpeedUpdatesClientCount { 0 };
+        Vector<ObserverInfo> observers;
+    };
+
     CVDisplayLinkRef m_displayLink { nullptr };
     Lock m_observersLock;
-    HashMap<RefPtr<IPC::Connection>, Vector<DisplayLinkObserverID>> m_observers;
+    HashMap<RefPtr<IPC::Connection>, ConnectionClientInfo> m_observers;
     WebCore::PlatformDisplayID m_displayID;
+    WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
+    WebCore::DisplayUpdate m_currentUpdate;
     unsigned m_fireCountWithoutObservers { 0 };
     static bool shouldSendIPCOnBackgroundQueue;
 };

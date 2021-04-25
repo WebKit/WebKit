@@ -262,6 +262,18 @@ static String invalidParameterInstanceofhasInstanceValueNotFunctionSourceAppende
     return invalidParameterInstanceofSourceAppender("[Symbol.hasInstance] is not a function, undefined, or null"_s, originalMessage, sourceText, runtimeType, occurrence);
 }
 
+static String invalidPrototypeSourceAppender(const String& originalMessage, const String& sourceText, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred occurrence)
+{
+    if (occurrence == ErrorInstance::FoundApproximateSource)
+        return defaultApproximateSourceError(originalMessage, sourceText);
+
+    auto extendsIndex = sourceText.reverseFind("extends");
+    if (extendsIndex == notFound || sourceText.find("extends") != extendsIndex)
+        return makeString(originalMessage, " (evaluating '", sourceText, "')");
+
+    return "The value of the superclass's prototype property is not an object or null."_s;
+}
+
 JSObject* createError(JSGlobalObject* globalObject, JSValue value, const String& message, ErrorInstance::SourceAppender appender)
 {
     VM& vm = globalObject->vm();
@@ -319,6 +331,11 @@ JSObject* createNotAFunctionError(JSGlobalObject* globalObject, JSValue value)
 JSObject* createNotAnObjectError(JSGlobalObject* globalObject, JSValue value)
 {
     return createError(globalObject, value, "is not an object"_s, defaultSourceAppender);
+}
+
+JSObject* createInvalidPrototypeError(JSGlobalObject* globalObject, JSValue value)
+{
+    return createError(globalObject, value, "is not an object or null"_s, invalidPrototypeSourceAppender);
 }
 
 JSObject* createErrorForInvalidGlobalAssignment(JSGlobalObject* globalObject, const String& propertyName)

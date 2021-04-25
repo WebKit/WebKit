@@ -151,4 +151,29 @@ TEST_F(FileSystemTest, openExistingFileAndFailIfFileExists)
     EXPECT_FALSE(FileSystem::isHandleValid(handle));
 }
 
+TEST_F(FileSystemTest, deleteNonEmptyDirectory)
+{
+    auto createTestTile = [](const String& path) {
+        auto fileHandle = FileSystem::openFile(path, FileSystem::FileOpenMode::Write);
+        EXPECT_TRUE(FileSystem::isHandleValid(fileHandle));
+        FileSystem::writeToFile(fileHandle, FileSystemTestData, strlen(FileSystemTestData));
+        FileSystem::closeFile(fileHandle);
+    };
+
+    FileSystem::PlatformFileHandle temporaryFile;
+    auto temporaryTestFolder = FileSystem::openTemporaryFile("deleteNonEmptyDirectoryTest", temporaryFile);
+    FileSystem::closeFile(temporaryFile);
+
+    EXPECT_TRUE(FileSystem::deleteFile(temporaryTestFolder));
+    EXPECT_TRUE(FileSystem::makeAllDirectories(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder" })));
+    createTestTile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file1.txt"));
+    createTestTile(FileSystem::pathByAppendingComponent(temporaryTestFolder, "file2.txt"));
+    createTestTile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder", "file3.txt" }));
+    createTestTile(FileSystem::pathByAppendingComponents(temporaryTestFolder, { "subfolder", "file4.txt" }));
+    EXPECT_FALSE(FileSystem::deleteEmptyDirectory(temporaryTestFolder));
+    EXPECT_TRUE(FileSystem::fileExists(temporaryTestFolder));
+    EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(temporaryTestFolder));
+    EXPECT_FALSE(FileSystem::fileExists(temporaryTestFolder));
+}
+
 }

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBCursorInfo.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBDatabase.h"
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
@@ -113,5 +111,3 @@ String IDBCursorInfo::loggingString() const
 #endif
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

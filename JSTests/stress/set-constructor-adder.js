@@ -1,5 +1,18 @@
 // Set constructor with adder change.
 
+function shouldThrow(func, errorMessage) {
+    var errorThrown = false;
+    try {
+        func();
+    } catch (error) {
+        errorThrown = true;
+        if (String(error) !== errorMessage)
+            throw new Error(`Bad error: ${error}`);
+    }
+    if (!errorThrown)
+        throw new Error("Didn't throw!");
+}
+
 var originalAdder = Set.prototype.add;
 var counter = 0;
 
@@ -21,14 +34,12 @@ Set.prototype.add = function () {
 
 var set = new Set();
 var set = new Set([]);
-var error = null;
-try {
-    var set = new Set([0]);
-} catch (e) {
-    error = e;
-}
-if (!error)
-    throw "Error: error not thrown";
-if (String(error) !== "Error: adder called")
-    throw "Error: bad error " + String(error);
 
+shouldThrow(() => {
+    new Set([0]);
+}, "Error: adder called");
+
+Set.prototype.add = Symbol();
+shouldThrow(() => {
+    new Set([0]);
+}, "TypeError: 'add' property of a Set should be callable.");

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBDatabase.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "DOMStringList.h"
 #include "EventNames.h"
 #include "EventQueue.h"
@@ -501,5 +499,3 @@ void IDBDatabase::didDeleteIndexInfo(const IDBIndexInfo& info)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

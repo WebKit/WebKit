@@ -26,8 +26,6 @@
 #include "config.h"
 #include "JSIDBTransaction.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "JSDOMBinding.h"
 
 
@@ -43,5 +41,3 @@ void JSIDBTransaction::visitAdditionalChildren(Visitor& visitor)
 DEFINE_VISIT_ADDITIONAL_CHILDREN(JSIDBTransaction);
 
 } // namespace WebCore
-
-#endif

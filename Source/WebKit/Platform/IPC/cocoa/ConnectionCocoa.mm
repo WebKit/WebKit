@@ -32,6 +32,7 @@
 #import "MachMessage.h"
 #import "MachPort.h"
 #import "MachUtilities.h"
+#import "ReasonSPI.h"
 #import "WKCrashReporter.h"
 #import <WebCore/AXObjectCache.h>
 #import <mach/mach_error.h>
@@ -96,10 +97,7 @@ private:
     
     void watchdogTimerFired()
     {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        // FIXME: This was deprecated in favor of terminate_with_reason().
-        xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
-ALLOW_DEPRECATED_DECLARATIONS_END
+        terminate_with_reason(xpc_connection_get_pid(m_xpcConnection.get()), OS_REASON_WEBKIT, static_cast<uint64_t>(WebKit::ReasonCode::WatchdogTimerFired), "ConnectionTerminationWatchdog::watchdogTimerFired", OS_REASON_FLAG_NO_CRASH_REPORT);
         delete this;
     }
 
@@ -610,10 +608,7 @@ Optional<audit_token_t> Connection::getAuditToken()
 bool Connection::kill()
 {
     if (m_xpcConnection) {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        // FIXME: This was deprecated in favor of terminate_with_reason().
-        xpc_connection_kill(m_xpcConnection.get(), SIGKILL);
-ALLOW_DEPRECATED_DECLARATIONS_END
+        terminate_with_reason(xpc_connection_get_pid(m_xpcConnection.get()), OS_REASON_WEBKIT, static_cast<uint64_t>(WebKit::ReasonCode::ConnectionKilled), "Connection::kill", OS_REASON_FLAG_NO_CRASH_REPORT);
         m_wasKilled = true;
         return true;
     }

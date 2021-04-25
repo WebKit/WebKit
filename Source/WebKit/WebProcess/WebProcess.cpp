@@ -484,6 +484,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     setMemoryCacheDisabled(parameters.memoryCacheDisabled);
 
     WebCore::RuntimeEnabledFeatures::sharedFeatures().setAttrStyleEnabled(parameters.attrStyleEnabled);
+    
+    commonVM().setGlobalConstRedeclarationShouldThrow(parameters.shouldThrowExceptionForGlobalConstantRedeclaration);
 
 #if ENABLE(SERVICE_CONTROLS)
     setEnabledServices(parameters.hasImageServices, parameters.hasSelectionServices, parameters.hasRichContentServices);
@@ -608,6 +610,10 @@ void WebProcess::markIsNoLongerPrewarmed()
 
 void WebProcess::prewarmGlobally()
 {
+    if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
+        RELEASE_LOG(PerformanceLogging, "WebProcess::prewarmGlobally: Not prewarming because the system in under memory pressure");
+        return;
+    }
     WebCore::ProcessWarming::prewarmGlobally();
 }
 
@@ -1110,7 +1116,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
     for (auto* storageAreaMap : copyToVector(m_storageAreaMaps.values()))
         storageAreaMap->disconnect();
 
-#if ENABLE(INDEXED_DATABASE)
     for (auto& page : m_pageMap.values()) {
         auto idbConnection = page->corePage()->optionalIDBConnection();
         if (!idbConnection)
@@ -1121,7 +1126,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
             page->corePage()->clearIDBConnection();
         }
     }
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     if (SWContextManager::singleton().connection())
@@ -1889,11 +1893,11 @@ bool WebProcess::areAllPagesThrottleable() const
 }
 
 #if HAVE(CVDISPLAYLINK)
-void WebProcess::displayWasRefreshed(uint32_t displayID)
+void WebProcess::displayWasRefreshed(uint32_t displayID, const DisplayUpdate& displayUpdate)
 {
     ASSERT(RunLoop::isMain());
     m_eventDispatcher->notifyScrollingTreesDisplayWasRefreshed(displayID);
-    DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID);
+    DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID, displayUpdate);
 }
 #endif
 

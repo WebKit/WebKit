@@ -77,6 +77,8 @@ void MediaRecorderPrivateMock::videoSampleAvailable(MediaSample&)
 
 void MediaRecorderPrivateMock::audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t)
 {
+    // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+    // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     auto locker = holdLock(m_bufferLock);
     m_buffer.append("Audio Track ID: ");

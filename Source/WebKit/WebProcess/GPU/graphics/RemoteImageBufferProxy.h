@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,8 +64,11 @@ public:
 
     ~RemoteImageBufferProxy()
     {
-        if (!m_remoteRenderingBackendProxy)
+        if (!m_remoteRenderingBackendProxy) {
+            clearDisplayList();
             return;
+        }
+
         flushDrawingContext();
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseImageBuffer(m_renderingResourceIdentifier);
         m_remoteRenderingBackendProxy->releaseRemoteResource(m_renderingResourceIdentifier);
@@ -100,7 +103,8 @@ protected:
         ASSERT(m_remoteRenderingBackendProxy);
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
 
-        m_drawingContext.displayList().setItemBufferClient(this);
+        m_drawingContext.displayList().setItemBufferWritingClient(this);
+        m_drawingContext.displayList().setItemBufferReadingClient(nullptr);
         m_drawingContext.displayList().setTracksDrawingItemExtents(false);
     }
 
@@ -193,12 +197,25 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return nullptr;
 
+        auto imageData = WebCore::ImageData::create(srcRect.size());
+        if (!imageData || !imageData->data())
+            return nullptr;
+        size_t dataSize = imageData->data()->byteLength();
+
+        IPC::Timeout timeout = 5_s;
+        SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetImageData(dataSize, timeout);
+        if (!sharedMemory)
+            return nullptr;
+
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
         mutableThis.m_drawingContext.recorder().getImageData(outputFormat, srcRect);
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=220649 Use the recorded command instead of the synchronous IPC message.
+        mutableThis.flushDrawingContextAsync();
 
-        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        return m_remoteRenderingBackendProxy->getImageData(outputFormat, srcRect, m_renderingResourceIdentifier);
+        if (m_remoteRenderingBackendProxy->waitForGetImageDataToComplete(timeout))
+            memcpy(imageData->data()->data(), sharedMemory->data(), dataSize);
+        else
+            memset(imageData->data()->data(), 0, dataSize);
+        return imageData;
     }
 
     void putImageData(WebCore::AlphaPremultiplication inputFormat, const WebCore::ImageData& imageData, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint = { }, WebCore::AlphaPremultiplication destFormat = WebCore::AlphaPremultiplication::Premultiplied) override
@@ -274,10 +291,12 @@ protected:
         m_drawingContext.displayList().clear();
     }
 
-    void willAppendItemOfType(WebCore::DisplayList::ItemType) override
+    bool canAppendItemOfType(WebCore::DisplayList::ItemType) override
     {
-        if (LIKELY(m_remoteRenderingBackendProxy))
-            m_remoteRenderingBackendProxy->willAppendItem(m_renderingResourceIdentifier);
+        if (UNLIKELY(!m_remoteRenderingBackendProxy))
+            return false;
+        m_remoteRenderingBackendProxy->willAppendItem(m_renderingResourceIdentifier);
+        return true;
     }
 
     void didAppendData(const WebCore::DisplayList::ItemBufferHandle& handle, size_t numberOfBytes, WebCore::DisplayList::DidChangeItemBuffer didChangeItemBuffer) override
@@ -292,7 +311,7 @@ protected:
             m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheFont(font);
     }
 
-    WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) override
+    WebCore::DisplayList::ItemBufferHandle createItemBuffer(size_t capacity) final
     {
         if (LIKELY(m_remoteRenderingBackendProxy))
             return m_remoteRenderingBackendProxy->createItemBuffer(capacity, m_renderingResourceIdentifier);
@@ -301,7 +320,7 @@ protected:
         return { };
     }
 
-    RefPtr<WebCore::SharedBuffer> encodeItem(WebCore::DisplayList::ItemHandle item) const override
+    RefPtr<WebCore::SharedBuffer> encodeItemOutOfLine(WebCore::DisplayList::ItemHandle item) const final
     {
         /* This needs to match (1) isInlineItem() in DisplayListItemType.cpp, (2) RemoteRenderingBackend::decodeItem(),
          * and (3) all the "static constexpr bool isInlineItem"s inside the individual item classes.

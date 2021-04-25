@@ -143,7 +143,7 @@ void TestController::navigationDidBecomeDownloadShared(WKDownloadRef download, c
     WKDownloadClientV0 client {
         { 0, clientInfo },
         TestController::downloadDidReceiveServerRedirectToURL,
-        nullptr, // didReceiveAuthenticationChallenge
+        TestController::downloadDidReceiveAuthenticationChallenge,
         TestController::decideDestinationWithSuggestedFilename,
         nullptr, // didWriteData
         TestController::downloadDidFinish,
@@ -918,7 +918,6 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
     WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
     WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
-    WKPreferencesSetIsNSURLSessionWebSocketEnabled(preferences, false);
     WKPreferencesSetFetchAPIKeepAliveEnabled(preferences, true);
     WKPreferencesSetMediaPreloadingEnabled(preferences, true);
     WKPreferencesSetExposeSpeakersEnabled(preferences, true);
@@ -2163,7 +2162,7 @@ WKStringRef TestController::decideDestinationWithSuggestedFilename(WKDownloadRef
     if (suggestedFilename.isEmpty())
         suggestedFilename = "Unknown";
     
-    String destination = temporaryFolder + "/" + suggestedFilename;
+    String destination = temporaryFolder + pathSeparator + suggestedFilename;
     if (FileSystem::fileExists(destination))
         FileSystem::deleteFile(destination);
 
@@ -2197,6 +2196,11 @@ void TestController::downloadDidFail(WKDownloadRef, WKErrorRef error)
         m_currentInvocation->outputText(makeString("Failed: ", domain, ", code=", code, ", description=", description, "\n"));
     }
     m_currentInvocation->notifyDownloadDone();
+}
+
+void TestController::downloadDidReceiveAuthenticationChallenge(WKDownloadRef, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
+{
+    static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveAuthenticationChallenge(nullptr, authenticationChallenge);
 }
 
 void TestController::processDidCrash()
@@ -3652,10 +3656,10 @@ void TestController::setPrivateClickMeasurementTokenSignatureURLForTesting(WKURL
     runUntil(callbackContext.done, noTimeout);
 }
 
-void TestController::setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef attributeOnURL)
+void TestController::setPrivateClickMeasurementAttributionReportURLsForTesting(WKURLRef sourceURL, WKURLRef destinationURL)
 {
     PrivateClickMeasurementVoidCallbackContext callbackContext(*this);
-    WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting(m_mainWebView->page(), sourceURL, attributeOnURL, privateClickMeasurementVoidCallback, &callbackContext);
+    WKPageSetPrivateClickMeasurementAttributionReportURLsForTesting(m_mainWebView->page(), sourceURL, destinationURL, privateClickMeasurementVoidCallback, &callbackContext);
     runUntil(callbackContext.done, noTimeout);
 }
 

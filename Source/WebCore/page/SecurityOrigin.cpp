@@ -119,12 +119,11 @@ static bool shouldTreatAsUniqueOrigin(const URL& url)
     if (url.hasSpecialScheme()
 #if PLATFORM(COCOA)
         || url.protocolIs("applewebdata")
+        || url.protocolIs("x-apple-ql-id")
+        || url.protocolIs("x-apple-ql-magic")
 #endif
 #if PLATFORM(GTK) || PLATFORM(WPE)
         || url.protocolIs("resource")
-#endif
-#if USE(QUICK_LOOK)
-        || url.protocolIs("x-apple-ql-id")
 #endif
         || url.protocolIs("blob"))
         return false;

@@ -65,9 +65,9 @@ namespace WebKit {
 
 static const Seconds unexpectedActivityDuration = 10_s;
 
-const HashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
+const MemoryCompactLookupOnlyRobinHoodHashSet<String>& WebProcessProxy::platformPathsWithAssumedReadAccess()
 {
-    static NeverDestroyed<HashSet<String>> platformPathsWithAssumedReadAccess(std::initializer_list<String> {
+    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<String>> platformPathsWithAssumedReadAccess(std::initializer_list<String> {
         [NSBundle bundleWithIdentifier:@"com.apple.WebCore"].resourcePath.stringByStandardizingPath,
         [NSBundle bundleWithIdentifier:@"com.apple.WebKit"].resourcePath.stringByStandardizingPath
     });
@@ -291,12 +291,16 @@ void WebProcessProxy::sendAudioComponentRegistrations()
     if (!isAudioToolboxCoreFrameworkAvailable() || !canLoad_AudioToolboxCore_AudioComponentFetchServerRegistrations())
         return;
 
-    CFDataRef registrations { nullptr };
-    if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
-        return;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [protectedThis = makeRef(*this)] () mutable {
+        CFDataRef registrations { nullptr };
+        if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
+            return;
 
-    auto registrationData = SharedBuffer::create(registrations);
-    send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), registrations = retainPtr(registrations)] () mutable {
+            auto registrationData = SharedBuffer::create(registrations.get());
+            protectedThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
+        });
+    });
 }
 
 }

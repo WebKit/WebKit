@@ -32,6 +32,7 @@
 #include "COMEnumVariant.h"
 #include "COMPropertyBag.h"
 #include "MarshallingHelpers.h"
+#include "WebDatabaseProvider.h"
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
 #include "WebSecurityOrigin.h"
@@ -43,10 +44,6 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MainThread.h>
-
-#if ENABLE(INDEXED_DATABASE)
-#include "WebDatabaseProvider.h"
-#endif
 
 using namespace WebCore;
 
@@ -340,9 +337,7 @@ HRESULT WebDatabaseManager::deleteDatabase(_In_ BSTR databaseName, _In_opt_ IWeb
 
 HRESULT WebDatabaseManager::deleteAllIndexedDatabases()
 {
-#if ENABLE(INDEXED_DATABASE)
     WebDatabaseProvider::singleton().deleteAllDatabases();
-#endif
     return S_OK;
 }
 

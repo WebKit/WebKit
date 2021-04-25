@@ -26,8 +26,6 @@
 #include "config.h"
 #include "IDBGetResult.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 namespace WebCore {
 
 void IDBGetResult::dataFromBuffer(SharedBuffer& buffer)
@@ -64,5 +62,3 @@ void IDBGetResult::setValue(IDBValue&& value)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INDEXED_DATABASE)

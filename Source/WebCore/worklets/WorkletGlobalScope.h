@@ -97,9 +97,7 @@ protected:
     WorkletGlobalScope(Document&, Ref<JSC::VM>&&, ScriptSourceCode&&);
 
 private:
-#if ENABLE(INDEXED_DATABASE)
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final { ASSERT_NOT_REACHED(); return nullptr; }
-#endif
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return WorkletGlobalScopeEventTargetInterfaceType; }

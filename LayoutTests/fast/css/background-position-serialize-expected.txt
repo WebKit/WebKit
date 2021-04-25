@@ -61,7 +61,7 @@ PASS: t.style.backgroundPosition should be right 20px bottom 10px and is.
 PASS: window.getComputedStyle(t).backgroundPosition should be right 20px bottom 10px and is.
 t.setAttribute('style', 'background-position: top 10px right 20px');
 PASS: t.style.backgroundPosition should be right 20px top 10px and is.
-PASS: window.getComputedStyle(t).backgroundPosition should be right 20px top 10px and is.
+PASS: window.getComputedStyle(t).backgroundPosition should be right 20px 10px and is.
 t.setAttribute('style', 'background-position: 50% left');
 PASS: t.style.backgroundPosition should be and is.
 t.setAttribute('style', 'background-position-x: right 20px');
