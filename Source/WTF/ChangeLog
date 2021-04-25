@@ -1,3 +1,28 @@
+2021-04-25  Devin Rousso  <drousso@apple.com>
+
+        Add `ALWAYS_LOG_WITH_STREAM` macro for easier development/debugging
+        https://bugs.webkit.org/show_bug.cgi?id=224959
+
+        Reviewed by Darin Adler.
+
+        It's often very helpful to use existing `operator<<` defined on objects, but annoying to
+        have to copypaste the boilerplate code that creates a `WTF::TextStream` and uses it in a
+        `WTFLogAlways` or wait for a debug build to enable existing `LOG_WITH_STREAM`.
+
+        * wtf/Assertions.h:
+        (LOG_WITH_STREAM): Moved from `Source/WebCore/pal/LogMacros.h`.
+        (ALWAYS_LOG_WITH_STREAM): Added.
+        Add `ALWAYS_LOG_WITH_STREAM` so that one change existing `LOG` when debugging with minimal
+        friction. As an example, many times I've wished I could've just changed
+        ```
+            LOG_WITH_STREAM(Channel, stream << node);
+        ```
+        to something like
+        ```
+            ALWAYS_LOG_WITH_STREAM(stream << node);
+        ```
+        and avoid having to modify the surrounding code too much.
+
 2021-04-23  Darin Adler  <darin@apple.com>
 
         Remove decoder memory allocations based on untrusted data (sizes) in the stream; related changes

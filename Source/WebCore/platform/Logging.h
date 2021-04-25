@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <pal/LogMacros.h>
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 

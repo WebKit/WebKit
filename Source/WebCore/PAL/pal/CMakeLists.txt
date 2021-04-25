@@ -3,7 +3,6 @@ set(PAL_PUBLIC_HEADERS
     FileSizeFormatter.h
     Gunzip.h
     HysteresisActivity.h
-    LogMacros.h
     Logging.h
     SessionID.h
 
