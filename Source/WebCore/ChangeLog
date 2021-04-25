@@ -1,3 +1,16 @@
+2021-04-25  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        css-contain category missing from CSSProperties.json
+        https://bugs.webkit.org/show_bug.cgi?id=224990
+
+        Reviewed by Darin Adler.
+
+        * css/CSSProperties.json:
+        Add missing css-contain category to avoid style lint errors.  Example
+        error:
+
+        ERROR: Source/WebCore/css/CSSProperties.json:0:  property "contain" has category "css-contain" which is not in the set of categories.  [json/syntax] [5]
+
 2021-04-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Deploy Ref/RefPtr in DeleteSelectionCommand

@@ -7226,6 +7226,11 @@
             "longname": "CSS Compositing and Blending",
             "url": "https://www.w3.org/TR/compositing-1/"
         },
+        "css-contain": {
+            "shortname": "CSS Containment",
+            "longname": "CSS Containment Module",
+            "url": "https://drafts.csswg.org/css-contain-2/"
+        },
         "css-content": {
             "shortname": "CSS Generated Content",
             "longname": "CSS Generated Content Module",
