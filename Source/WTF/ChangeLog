@@ -1,3 +1,16 @@
+2021-04-25  Darin Adler  <darin@apple.com>
+
+        Fix handling of overflow of /= and *= operators with double over Checked<uint64_t> and other 64-bit types.
+        https://bugs.webkit.org/show_bug.cgi?id=224835
+
+        Reviewed by Chris Dumez.
+
+        * wtf/CheckedArithmetic.h: Since it is quite difficult to write correct implementations of the
+        operations where we multiply or divide a checked integer by a floating point number, deleted
+        those functions, which were barely used. Also corrected return types of various member functions,
+        which were unconventional "const Type", replacing them with the conventional "Type" for functions
+        that return a distinct value, "Type&" for assignment operators, and bool for relational operators.
+
 2021-04-25  Devin Rousso  <drousso@apple.com>
 
         Add `ALWAYS_LOG_WITH_STREAM` macro for easier development/debugging

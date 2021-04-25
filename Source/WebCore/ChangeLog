@@ -1,3 +1,14 @@
+2021-04-25  Darin Adler  <darin@apple.com>
+
+        Fix handling of overflow of /= and *= operators with double over Checked<uint64_t> and other 64-bit types.
+        https://bugs.webkit.org/show_bug.cgi?id=224835
+
+        Reviewed by Chris Dumez.
+
+        * platform/graphics/gpu/cocoa/GPUBindGroupAllocatorMetal.mm:
+        (WebCore::GPUBindGroupAllocator::reallocate): Use integer math instead of floating point math to increase
+        the size by 25% each time through the loop, staying within the capabilities of our checked integer class.
+
 2021-04-25  Cameron McCormack  <heycam@apple.com>
 
         Remove templated operator<<(TextStream&, T*) that interferes with raw pointer formatting.

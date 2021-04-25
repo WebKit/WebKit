@@ -130,7 +130,7 @@ bool GPUBindGroupAllocator::reallocate(NSUInteger newOffset)
 
     auto newLength = Checked<NSUInteger>(m_argumentBuffer.get().length);
     while (newLength < newOffset) {
-        newLength *= 1.25;
+        newLength += newLength / 4U;
 
         if (newLength.hasOverflowed()) {
             newLength = std::numeric_limits<NSUInteger>::max();
