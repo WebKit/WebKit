@@ -1,3 +1,38 @@
+2021-04-25  Jer Noble  <jer.noble@apple.com>
+
+        [GPUP][iOS] Silent video playback can interrupt system audio
+        https://bugs.webkit.org/show_bug.cgi?id=225031
+        <rdar://76652073>
+
+        Reviewed by Eric Carlson.
+
+        When the WebContent process asks the GPU Process to set the AVAudioSession audio session
+        category, the GPU Process as an optimization returns early if the session category being
+        requested is the same as has already been set. However, the default value of the category
+        is "None" (which translates to AVAudioSessionCategoryAmbient), and setting the category
+        to "None" becomes a no-op due to this default. As such, the GPUP never sets the underlying
+        AVAudioSession's category away from the default, which is AVAudioSessionCategorySoloAmbient,
+        and thus will interrupt other audio during playback.
+
+        Additionally, there's a subtle logic error where the audio session category is not changed
+        when a given WebContent process (and it's RemoteAudioSession & Proxy) goes away.
+
+        The fix for both of these issues is to re-calculate the correct audio session category
+        when a RemoteAudioSessionProxy is added or removed from RemoteAudioSessionProxyManager.
+        Since "None" is the default value for a RemoteAudioSessionProxy, the mere act of adding
+        a new RemoteAudioSessionProxy (which is created when a WebContent process is created)
+        will cause the audio session category to be set to AVAudioSessionCategoryAmbient.
+
+        * GPUProcess/media/RemoteAudioSessionProxy.cpp:
+        (WebKit::RemoteAudioSessionProxy::setCategory):
+        * GPUProcess/media/RemoteAudioSessionProxy.h:
+        * GPUProcess/media/RemoteAudioSessionProxyManager.cpp:
+        (WebKit::RemoteAudioSessionProxyManager::addProxy):
+        (WebKit::RemoteAudioSessionProxyManager::removeProxy):
+        (WebKit::RemoteAudioSessionProxyManager::updateCategory):
+        (WebKit::RemoteAudioSessionProxyManager::setCategoryForProcess): Deleted.
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+
 2021-04-25  Dean Jackson  <dino@apple.com>
 
         [WebXR] Should be enabled when WEBXR_INTERNALS is true
