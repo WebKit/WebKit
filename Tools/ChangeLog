@@ -1,3 +1,12 @@
+2021-04-24  Aakash Jain  <aakash_jain@apple.com>
+
+        Rename slave to worker in webkitpy - part 2
+        https://bugs.webkit.org/show_bug.cgi?id=224988
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/system/crashlogs_unittest.py:
+
 2021-04-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an option to not enable all experimental features in WebKitTestRunner
