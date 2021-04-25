@@ -1,3 +1,44 @@
+2021-04-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy Ref/RefPtr in DeleteSelectionCommand
+        https://bugs.webkit.org/show_bug.cgi?id=225028
+
+        Reviewed by Wenson Hsieh.
+
+        Deployed smart pointers in DeleteSelectionCommand.
+
+        Also deployed ScriptDisallowedScope around the code which accesses the render tree.
+
+        No new tests since there should be no observable behavioral differences.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::isTableRowEmpty):
+        (WebCore::isSpecialHTMLElement): Moved from Editing.cpp.
+        (WebCore::firstInSpecialElement): Ditto.
+        (WebCore::lastInSpecialElement): Ditto.
+        (WebCore::positionBeforeContainingSpecialElement): Ditto. Now returns a pair instead of returning
+        Position and "returning" the special element via an out argument.
+        (WebCore::positionAfterContainingSpecialElement): Ditto.
+        (WebCore::DeleteSelectionCommand::initializeStartEnd):
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        (WebCore::DeleteSelectionCommand::handleSpecialCaseBRDelete):
+        (WebCore::firstEditablePositionInNode):
+        (WebCore::DeleteSelectionCommand::insertBlockPlaceholderForTableCellIfNeeded):
+        (WebCore::DeleteSelectionCommand::removeNode):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        (WebCore::DeleteSelectionCommand::mergeParagraphs):
+        (WebCore::DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows):
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/Editing.cpp:
+        (WebCore::isRenderedTable): Return false when the node is not a HTMLElement for consistency.
+        (WebCore::isSpecialHTMLElement): Moved to DeleteSelectionCommand.cpp.
+        (WebCore::firstInSpecialElement): Ditto.
+        (WebCore::lastInSpecialElement): Ditto.
+        (WebCore::positionBeforeContainingSpecialElement): Ditto.
+        (WebCore::positionAfterContainingSpecialElement): Ditto.
+        * editing/Editing.h:
+
 2021-04-24  Tim Horton  <timothy_horton@apple.com>
 
         Changing the source of a model element with clipping applied does not update the model

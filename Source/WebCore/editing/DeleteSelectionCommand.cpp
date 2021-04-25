@@ -43,6 +43,7 @@
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
+#include "ScriptDisallowedScope.h"
 #include "Text.h"
 #include "VisibleUnits.h"
 
@@ -65,12 +66,93 @@ static bool isTableRowEmpty(Node* row)
 {
     if (!isTableRow(row))
         return false;
-        
-    for (Node* child = row->firstChild(); child; child = child->nextSibling())
-        if (isTableCell(child) && !isTableCellEmpty(child))
+
+    for (auto child = makeRefPtr(row->firstChild()); child; child = child->nextSibling()) {
+        if (isTableCell(child.get()) && !isTableCellEmpty(child.get()))
             return false;
-    
+    }
+
     return true;
+}
+
+static bool isSpecialHTMLElement(const Node& node)
+{
+    ScriptDisallowedScope scriptDisallowedScope;
+
+    if (!is<HTMLElement>(node))
+        return false;
+
+    if (downcast<HTMLElement>(node).isLink())
+        return true;
+
+    auto* renderer = downcast<HTMLElement>(node).renderer();
+    if (!renderer)
+        return false;
+
+    if (renderer->style().display() == DisplayType::Table || renderer->style().display() == DisplayType::InlineTable)
+        return true;
+
+    if (renderer->style().isFloating())
+        return true;
+
+    if (renderer->style().position() != PositionType::Static)
+        return true;
+
+    return false;
+}
+
+static RefPtr<HTMLElement> firstInSpecialElement(const Position& position)
+{
+    auto rootEditableElement = makeRefPtr(position.rootEditableElement());
+    for (auto node = makeRefPtr(position.deprecatedNode()); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
+        if (!isSpecialHTMLElement(*node))
+            continue;
+        VisiblePosition visiblePosition = position;
+        VisiblePosition firstInElement = firstPositionInOrBeforeNode(node.get());
+        if ((isRenderedTable(node.get()) && visiblePosition == firstInElement.next()) || visiblePosition == firstInElement) {
+            RELEASE_ASSERT(is<HTMLElement>(node));
+            return static_pointer_cast<HTMLElement>(node);
+        }
+    }
+    return nullptr;
+}
+
+static RefPtr<HTMLElement> lastInSpecialElement(const Position& position)
+{
+    auto rootEditableElement = makeRefPtr(position.rootEditableElement());
+    for (auto node = makeRefPtr(position.deprecatedNode()); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
+        if (!isSpecialHTMLElement(*node))
+            continue;
+        VisiblePosition visiblePosition = position;
+        VisiblePosition lastInElement = lastPositionInOrAfterNode(node.get());
+        if ((isRenderedTable(node.get()) && visiblePosition == lastInElement.previous()) || visiblePosition == lastInElement) {
+            RELEASE_ASSERT(is<HTMLElement>(node));
+            return static_pointer_cast<HTMLElement>(node);
+        }
+    }
+    return nullptr;
+}
+
+static std::pair<Position, RefPtr<HTMLElement>> positionBeforeContainingSpecialElement(const Position& position)
+{
+    auto element = firstInSpecialElement(position);
+    if (!element)
+        return { position, nullptr };
+    auto result = positionInParentBeforeNode(element.get());
+    if (result.isNull() || result.containerNode()->rootEditableElement() != position.containerNode()->rootEditableElement())
+        return { position, nullptr };
+    return { result, WTFMove(element) };
+}
+
+static std::pair<Position, RefPtr<HTMLElement>> positionAfterContainingSpecialElement(const Position& position)
+{
+    auto element = lastInSpecialElement(position);
+    if (!element)
+        return { position, nullptr };
+    auto result = positionInParentAfterNode(element.get());
+    if (result.isNull() || result.deprecatedNode()->rootEditableElement() != position.containerNode()->rootEditableElement())
+        return { position, nullptr };
+    return { result, WTFMove(element) };
 }
 
 DeleteSelectionCommand::DeleteSelectionCommand(Document& document, bool smartDelete, bool mergeBlocksAfterDelete, bool replace, bool expandForSpecialElements, bool sanitizeMarkup, EditAction editingAction)
@@ -103,10 +185,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(const VisibleSelection& selection
 }
 
 void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
-{
-    HTMLElement* startSpecialContainer = nullptr;
-    HTMLElement* endSpecialContainer = nullptr;
- 
+{ 
     start = m_selectionToDelete.start();
     end = m_selectionToDelete.end();
  
@@ -122,12 +201,9 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
         return;
     
     while (1) {
-        startSpecialContainer = nullptr;
-        endSpecialContainer = nullptr;
-    
-        Position s = positionBeforeContainingSpecialElement(start, &startSpecialContainer);
-        Position e = positionAfterContainingSpecialElement(end, &endSpecialContainer);
-        
+        auto [startBeforeSpecialElement, startSpecialContainer] = positionBeforeContainingSpecialElement(start);
+        auto [endAfterSpecialElement, endSpecialContainer] = positionAfterContainingSpecialElement(end);
+
         if (!startSpecialContainer && !endSpecialContainer)
             break;
 
@@ -137,24 +213,24 @@ void DeleteSelectionCommand::initializeStartEnd(Position& start, Position& end)
             break;
 
         // If we're going to expand to include the startSpecialContainer, it must be fully selected.
-        if (startSpecialContainer && !endSpecialContainer && positionInParentAfterNode(startSpecialContainer) >= end)
+        if (startSpecialContainer && !endSpecialContainer && positionInParentAfterNode(startSpecialContainer.get()) >= end)
             break;
 
         // If we're going to expand to include the endSpecialContainer, it must be fully selected.
-        if (endSpecialContainer && !startSpecialContainer && start >= positionInParentBeforeNode(endSpecialContainer))
+        if (endSpecialContainer && !startSpecialContainer && start >= positionInParentBeforeNode(endSpecialContainer.get()))
             break;
 
-        if (startSpecialContainer && startSpecialContainer->isDescendantOf(endSpecialContainer))
+        if (startSpecialContainer && startSpecialContainer->isDescendantOf(endSpecialContainer.get())) {
             // Don't adjust the end yet, it is the end of a special element that contains the start
             // special element (which may or may not be fully selected).
-            start = s;
-        else if (endSpecialContainer && endSpecialContainer->isDescendantOf(startSpecialContainer))
+            start = startBeforeSpecialElement;
+        } else if (endSpecialContainer && endSpecialContainer->isDescendantOf(startSpecialContainer.get())) {
             // Don't adjust the start yet, it is the start of a special element that contains the end
             // special element (which may or may not be fully selected).
-            end = e;
-        else {
-            start = s;
-            end = e;
+            end = endAfterSpecialElement;
+        } else {
+            start = startBeforeSpecialElement;
+            end = endAfterSpecialElement;
         }
     }
 }
@@ -245,8 +321,8 @@ bool DeleteSelectionCommand::initializePositionData()
     // Don't move content out of a table cell.
     // If the cell is non-editable, enclosingNodeOfType won't return it by default, so
     // tell that function that we don't care if it returns non-editable nodes.
-    Node* startCell = enclosingNodeOfType(m_upstreamStart, &isTableCell, CanCrossEditingBoundary);
-    Node* endCell = enclosingNodeOfType(m_downstreamEnd, &isTableCell, CanCrossEditingBoundary);
+    auto startCell = makeRefPtr(enclosingNodeOfType(m_upstreamStart, &isTableCell, CanCrossEditingBoundary));
+    auto endCell = makeRefPtr(enclosingNodeOfType(m_downstreamEnd, &isTableCell, CanCrossEditingBoundary));
     // FIXME: This isn't right.  A borderless table with two rows and a single column would appear as two paragraphs.
     if (endCell && endCell != startCell)
         m_mergeBlocksAfterDelete = false;
@@ -358,10 +434,10 @@ void DeleteSelectionCommand::saveTypingStyleState()
 
 bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
 {
-    Node* nodeAfterUpstreamStart = m_upstreamStart.computeNodeAfterPosition();
-    Node* nodeAfterDownstreamStart = m_downstreamStart.computeNodeAfterPosition();
+    auto nodeAfterUpstreamStart = makeRefPtr(m_upstreamStart.computeNodeAfterPosition());
+    auto nodeAfterDownstreamStart = makeRefPtr(m_downstreamStart.computeNodeAfterPosition());
     // Upstream end will appear before BR due to canonicalization
-    Node* nodeAfterUpstreamEnd = m_upstreamEnd.computeNodeAfterPosition();
+    auto nodeAfterUpstreamEnd = makeRefPtr(m_upstreamEnd.computeNodeAfterPosition());
 
     if (!nodeAfterUpstreamStart || !nodeAfterDownstreamStart)
         return false;
@@ -381,7 +457,7 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
     // FIXME: This code doesn't belong in here.
     // We detect the case where the start is an empty line consisting of BR not wrapped in a block element.
     if (upstreamStartIsBR && downstreamStartIsBR
-        && !(isStartOfBlock(positionBeforeNode(nodeAfterUpstreamStart)) && isEndOfBlock(positionAfterNode(nodeAfterDownstreamStart)))
+        && !(isStartOfBlock(positionBeforeNode(nodeAfterUpstreamStart.get())) && isEndOfBlock(positionAfterNode(nodeAfterDownstreamStart.get())))
         && (!nodeAfterUpstreamEnd || nodeAfterUpstreamEnd->hasTagName(brTag) || nodeAfterUpstreamEnd->previousSibling() != nodeAfterUpstreamStart)) {
         m_startsAtEmptyLine = true;
         m_endingPosition = m_downstreamEnd;
@@ -393,20 +469,23 @@ bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
 static Position firstEditablePositionInNode(Node* node)
 {
     ASSERT(node);
-    Node* next = node;
+    auto next = makeRefPtr(node);
     while (next && !next->hasEditableStyle())
         next = NodeTraversal::next(*next, node);
-    return next ? firstPositionInOrBeforeNode(next) : Position();
+    return next ? firstPositionInOrBeforeNode(next.get()) : Position();
 }
 
 void DeleteSelectionCommand::insertBlockPlaceholderForTableCellIfNeeded(Element& element)
 {
     // Make sure empty cell has some height.
-    auto* renderer = element.renderer();
-    if (!is<RenderTableCell>(renderer))
-        return;
-    if (downcast<RenderTableCell>(*renderer).contentHeight() > 0)
-        return;
+    {
+        ScriptDisallowedScope scriptDisallowedScope;
+        auto* renderer = element.renderer();
+        if (!is<RenderTableCell>(renderer))
+            return;
+        if (downcast<RenderTableCell>(*renderer).contentHeight() > 0)
+            return;
+    }
     insertBlockPlaceholder(firstEditablePositionInNode(&element));
 }
     
@@ -440,14 +519,14 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
             if (!node.firstChild())
                 return;
             // Search this non-editable region for editable regions to empty.
-            RefPtr<Node> child = node.firstChild();
+            auto child = makeRefPtr(node.firstChild());
             while (child) {
-                RefPtr<Node> nextChild = child->nextSibling();
+                auto nextChild = makeRefPtr(child->nextSibling());
                 removeNode(*child, shouldAssumeContentIsAlwaysEditable);
                 // Bail if nextChild is no longer node's child.
                 if (nextChild && nextChild->parentNode() != &node)
                     return;
-                child = nextChild;
+                child = WTFMove(nextChild);
             }
             
             // Don't remove editable regions that are inside non-editable ones, just clear them.
@@ -458,26 +537,26 @@ void DeleteSelectionCommand::removeNode(Node& node, ShouldAssumeContentIsAlwaysE
     if (shouldRemoveContentOnly(node)) {
         // Do not remove an element of table structure; remove its contents.
         // Likewise for the root editable element.
-        auto* child = NodeTraversal::next(node, &node);
+        auto child = makeRefPtr(NodeTraversal::next(node, &node));
         while (child) {
             if (shouldRemoveContentOnly(*child)) {
                 child = NodeTraversal::next(*child, &node);
                 continue;
             }
-            auto* remove = child;
-            child = NodeTraversal::nextSkippingChildren(*child, &node);
-            removeNodeUpdatingStates(*remove, shouldAssumeContentIsAlwaysEditable);
+            auto nextChild = makeRefPtr(NodeTraversal::nextSkippingChildren(*child, &node));
+            removeNodeUpdatingStates(*child, shouldAssumeContentIsAlwaysEditable);
+            child = WTFMove(nextChild);
         }
         
         ASSERT(is<Element>(node));
         auto& element = downcast<Element>(node);
         document().updateLayoutIgnorePendingStylesheets();
         // Check if we need to insert a placeholder for descendant table cells.
-        auto* descendant = ElementTraversal::next(element, &element);
+        auto descendant = makeRefPtr(ElementTraversal::next(element, &element));
         while (descendant) {
-            auto* placeholderCandidate = descendant;
-            descendant = ElementTraversal::next(*descendant, &element);
-            insertBlockPlaceholderForTableCellIfNeeded(*placeholderCandidate);
+            auto nextDescendant = makeRefPtr(ElementTraversal::next(*descendant, &element));
+            insertBlockPlaceholderForTableCellIfNeeded(*descendant);
+            descendant = WTFMove(nextDescendant);
         }
         insertBlockPlaceholderForTableCellIfNeeded(element);
         return;
@@ -535,8 +614,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
         return;
 
     int startOffset = m_upstreamStart.deprecatedEditingOffset();
-    Node* startNode = m_upstreamStart.deprecatedNode();
-    
+    auto startNode = makeRefPtr(m_upstreamStart.deprecatedNode());
+
     makeStylingElementsDirectChildrenOfEditableRootToPreventStyleLoss();
 
     // Never remove the start block unless it's a table, in which case we won't merge content in.
@@ -582,19 +661,19 @@ void DeleteSelectionCommand::handleGeneralDelete()
     else {
         bool startNodeWasDescendantOfEndNode = m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode());
         // The selection to delete spans more than one node.
-        RefPtr<Node> node(startNode);
+        auto node = startNode.copyRef();
         
         if (startOffset > 0) {
-            if (is<Text>(*startNode)) {
+            if (is<Text>(*node)) {
                 // in a text node that needs to be trimmed
-                Text& text = downcast<Text>(*node);
+                Text& text = downcast<Text>(*startNode);
                 deleteTextFromNode(text, startOffset, text.length() - startOffset);
-                node = NodeTraversal::next(*node);
+                node = NodeTraversal::next(*startNode);
             } else {
                 node = startNode->traverseToChildAt(startOffset);
             }
         } else if (startNode == m_upstreamEnd.deprecatedNode() && is<Text>(*startNode)) {
-            Text& text = downcast<Text>(*m_upstreamEnd.deprecatedNode());
+            Text& text = downcast<Text>(*startNode);
             deleteTextFromNode(text, 0, m_upstreamEnd.deprecatedEditingOffset());
         }
         
@@ -611,8 +690,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 removeNode(*node);
                 node = nextNode.get();
             } else {
-                Node* n = node->lastDescendant();
-                if (m_downstreamEnd.deprecatedNode() == n && m_downstreamEnd.deprecatedEditingOffset() >= caretMaxOffset(*n)) {
+                auto lastDescendant = makeRefPtr(node->lastDescendant());
+                if (m_downstreamEnd.deprecatedNode() == lastDescendant && m_downstreamEnd.deprecatedEditingOffset() >= caretMaxOffset(*lastDescendant)) {
                     removeNode(*node);
                     node = nullptr;
                 } else
@@ -630,9 +709,8 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 if (is<Text>(*m_downstreamEnd.deprecatedNode())) {
                     // in a text node that needs to be trimmed
                     Text& text = downcast<Text>(*m_downstreamEnd.deprecatedNode());
-                    if (m_downstreamEnd.deprecatedEditingOffset() > 0) {
+                    if (m_downstreamEnd.deprecatedEditingOffset() > 0)
                         deleteTextFromNode(text, 0, m_downstreamEnd.deprecatedEditingOffset());
-                    }
                 // Remove children of m_downstreamEnd.deprecatedNode() that come after m_upstreamStart.
                 // Don't try to remove children if m_upstreamStart was inside m_downstreamEnd.deprecatedNode()
                 // and m_upstreamStart has been removed from the document, because then we don't 
@@ -642,7 +720,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 } else if (!(startNodeWasDescendantOfEndNode && !m_upstreamStart.anchorNode()->isConnected())) {
                     unsigned offset = 0;
                     if (m_upstreamStart.deprecatedNode()->isDescendantOf(m_downstreamEnd.deprecatedNode())) {
-                        Node* n = m_upstreamStart.deprecatedNode();
+                        auto n = makeRefPtr(m_upstreamStart.deprecatedNode());
                         while (n && n->parentNode() != m_downstreamEnd.deprecatedNode())
                             n = n->parentNode();
                         if (n)
@@ -702,7 +780,7 @@ void DeleteSelectionCommand::mergeParagraphs()
     
     // m_downstreamEnd's block has been emptied out by deletion.  There is no content inside of it to
     // move, so just remove it.
-    Element* endBlock = enclosingBlock(m_downstreamEnd.deprecatedNode());
+    auto endBlock = makeRefPtr(enclosingBlock(m_downstreamEnd.deprecatedNode()));
     if (!endBlock)
         return;
 
@@ -729,7 +807,8 @@ void DeleteSelectionCommand::mergeParagraphs()
     // FIXME: Consider RTL.
     if (!m_startsAtEmptyLine && isStartOfParagraph(mergeDestination) && startOfParagraphToMove.absoluteCaretBounds().x() > mergeDestination.absoluteCaretBounds().x()) {
         if (mergeDestination.deepEquivalent().downstream().deprecatedNode()->hasTagName(brTag)) {
-            removeNodeAndPruneAncestors(*mergeDestination.deepEquivalent().downstream().deprecatedNode());
+            auto nodeToRemove = makeRefPtr(mergeDestination.deepEquivalent().downstream().deprecatedNode());
+            removeNodeAndPruneAncestors(*nodeToRemove);
             m_endingPosition = startOfParagraphToMove.deepEquivalent();
             return;
         }
@@ -768,25 +847,26 @@ void DeleteSelectionCommand::mergeParagraphs()
 void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
 {
     if (m_endTableRow && m_endTableRow->isConnected() && m_endTableRow != m_startTableRow) {
-        Node* row = m_endTableRow->previousSibling();
+        auto row = makeRefPtr(m_endTableRow->previousSibling());
         while (row && row != m_startTableRow) {
-            RefPtr<Node> previousRow = row->previousSibling();
-            if (isTableRowEmpty(row))
+            auto previousRow = makeRefPtr(row->previousSibling());
+            if (isTableRowEmpty(row.get())) {
                 // Use a raw removeNode, instead of DeleteSelectionCommand's, because
                 // that won't remove rows, it only empties them in preparation for this function.
                 CompositeEditCommand::removeNode(*row);
-            row = previousRow.get();
+            }
+            row = WTFMove(previousRow);
         }
     }
     
     // Remove empty rows after the start row.
     if (m_startTableRow && m_startTableRow->isConnected() && m_startTableRow != m_endTableRow) {
-        Node* row = m_startTableRow->nextSibling();
+        auto row = makeRefPtr(m_startTableRow->nextSibling());
         while (row && row != m_endTableRow) {
-            RefPtr<Node> nextRow = row->nextSibling();
-            if (isTableRowEmpty(row))
+            auto nextRow = makeRefPtr(row->nextSibling());
+            if (isTableRowEmpty(row.get()))
                 CompositeEditCommand::removeNode(*row);
-            row = nextRow.get();
+            row = WTFMove(nextRow);
         }
     }
 
@@ -854,6 +934,7 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
     if (!rangeOfFirstCharacter)
         return String();
 
+    ScriptDisallowedScope scriptDisallowedScope;
     for (auto* marker : document().markers().markersInRange(*rangeOfFirstCharacter, DocumentMarker::Autocorrected)) {
         int startOffset = marker->startOffset();
         if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
@@ -896,9 +977,8 @@ void DeleteSelectionCommand::doApply()
 
     // If the deletion is occurring in a text field, and we're not deleting to replace the selection, then let the frame call across the bridge to notify the form delegate. 
     if (!m_replace) {
-        Element* textControl = enclosingTextFormControl(m_selectionToDelete.start());
-        if (textControl && textControl->focused())
-            document().editor().textWillBeDeletedInTextField(textControl);
+        if (auto textControl = makeRefPtr(enclosingTextFormControl(m_selectionToDelete.start())); textControl && textControl->focused())
+            document().editor().textWillBeDeletedInTextField(textControl.get());
     }
 
     // save this to later make the selection with
@@ -912,7 +992,7 @@ void DeleteSelectionCommand::doApply()
         // Don't need a placeholder when deleting a selection that starts just before a table
         // and ends inside it (we do need placeholders to hold open empty cells, but that's
         // handled elsewhere).
-        if (auto* table = isLastPositionBeforeTable(m_selectionToDelete.visibleStart())) {
+        if (auto table = makeRefPtr(isLastPositionBeforeTable(m_selectionToDelete.visibleStart()))) {
             if (m_selectionToDelete.end().deprecatedNode()->isDescendantOf(*table))
                 m_needPlaceholder = false;
         }
@@ -961,9 +1041,9 @@ void DeleteSelectionCommand::doApply()
 
     bool shouldRebalaceWhiteSpace = true;
     if (!document().editor().behavior().shouldRebalanceWhiteSpacesInSecureField()) {
-        Node* node = m_endingPosition.deprecatedNode();
-        if (is<Text>(node)) {
-            Text& textNode = downcast<Text>(*node);
+        if (auto endNode = makeRefPtr(m_endingPosition.deprecatedNode()); is<Text>(endNode)) {
+            auto& textNode = downcast<Text>(*endNode);
+            ScriptDisallowedScope scriptDisallowedScope;
             if (textNode.length() && textNode.renderer())
                 shouldRebalaceWhiteSpace = textNode.renderer()->style().textSecurity() == TextSecurity::None;
         }        
