@@ -1,3 +1,14 @@
+2021-04-25  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Should be enabled when WEBXR_INTERNALS is true
+        https://bugs.webkit.org/show_bug.cgi?id=225026
+        <rdar://problem/77111380>
+
+        Reviewed by Sam Weinig.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+        (WebKit::defaultWebXREnabled): Return true when HAVE(WEBXR_INTERNALS).
+
 2021-04-24  Tim Horton  <timothy_horton@apple.com>
 
         Changing the source of a model element with clipping applied does not update the model
