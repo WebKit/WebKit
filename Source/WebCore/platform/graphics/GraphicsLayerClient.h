@@ -90,7 +90,7 @@ typedef unsigned LayerTreeAsTextBehavior;
 enum class PlatformLayerTreeAsTextFlags : uint8_t {
     Debug = 1 << 0,
     IgnoreChildren = 1 << 1,
-    IncludeOpacity = 1 << 2,
+    IncludeModels = 1 << 2,
 };
 
 enum GraphicsLayerPaintFlags {

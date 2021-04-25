@@ -66,4 +66,10 @@ void PlatformCALayerRemoteModelHosting::populateCreationProperties(RemoteLayerTr
     properties.model = m_model.ptr();
 }
 
+void PlatformCALayerRemoteModelHosting::dumpAdditionalProperties(TextStream& ts, OptionSet<PlatformLayerTreeAsTextFlags> flags)
+{
+    if (flags.contains(PlatformLayerTreeAsTextFlags::IncludeModels))
+        ts << indent << "(model data size " << m_model->data()->size() << ")\n";
+}
+
 } // namespace WebKit

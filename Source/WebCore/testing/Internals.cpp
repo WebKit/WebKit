@@ -2861,8 +2861,8 @@ static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags(unsigned
         platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::Debug);
     if (flags & Internals::PLATFORM_LAYER_TREE_IGNORES_CHILDREN)
         platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::IgnoreChildren);
-    if (flags & Internals::PLATFORM_LAYER_TREE_INCLUDE_OPACITY)
-        platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::IncludeOpacity);
+    if (flags & Internals::PLATFORM_LAYER_TREE_INCLUDE_MODELS)
+        platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::IncludeModels);
     return platformLayerTreeFlags;
 }
 

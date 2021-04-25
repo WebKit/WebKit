@@ -1,3 +1,16 @@
+2021-04-24  Tim Horton  <timothy_horton@apple.com>
+
+        Changing the source of a model element with clipping applied does not update the model
+        https://bugs.webkit.org/show_bug.cgi?id=224917
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteModelHosting.mm:
+        (WebKit::PlatformCALayerRemoteModelHosting::dumpAdditionalProperties):
+        Add a bit to platformLayerTreeAsText() that makes PlatformCALayerRemoteModelHosting
+        dump the size of the model that it is hosting, which is used in the test for this bug.
+
 2021-04-23  Kate Cheney  <katherine_cheney@apple.com>
 
         PCM: debug mode should send the second report on a 10 second delay after the first

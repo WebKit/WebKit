@@ -1,3 +1,26 @@
+2021-04-24  Tim Horton  <timothy_horton@apple.com>
+
+        Changing the source of a model element with clipping applied does not update the model
+        https://bugs.webkit.org/show_bug.cgi?id=224917
+
+        Reviewed by Simon Fraser.
+
+        * model-element/model-element-contents-layer-updates-expected.txt: Added.
+        * model-element/model-element-contents-layer-updates-with-clipping-expected.txt: Added.
+        * model-element/model-element-contents-layer-updates-with-clipping.html: Added.
+        * model-element/model-element-contents-layer-updates.html: Added.
+        * model-element/resources/cube.usdz: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        Add tests that ensure that adding a <model> with one source, then changing
+        it to another, correctly updates the content layer. Test this both
+        with and without clipping (the without-clipping case passed before this change,
+        with-clipping failed).
+
+        These tests only work on Cocoa ports with UI-side compositing enabled
+        because they depend on the PlatformCALayer subclass holding on to the model
+        data (and logging its size) in order to distinguish between the two models.
+
 2021-04-24  Julian Gonzalez  <julian_a_gonzalez@apple.com>
 
         Crash in BreakBlockquoteCommand::doApply()

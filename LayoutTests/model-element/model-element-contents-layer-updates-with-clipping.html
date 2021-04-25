@@ -1,0 +1,44 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ModelElementEnabled=true ] -->
+<html>
+<body>
+<model id="model" style="border-radius: 5px">
+    <source src="resources/heart.usdz">
+</model>
+<pre id="layers"></pre>
+<script>
+    let layers = document.getElementById("layers");
+    let source = document.getElementsByTagName("source")[0];
+
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText();
+    } else
+        layers.textContent = "This test requires testRunner.";
+
+    let model = document.getElementById("model");
+
+    model.ready.then(value => {
+        layers.textContent = "Before Changing Source:\n";
+        layers.textContent += window.internals.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS);
+
+        source.src = "resources/cube.usdz";
+        model.ready.then(value => {
+            if (window.testRunner) {
+                layers.textContent += "After Changing Source:\n";
+                layers.textContent += window.internals.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_MODELS);
+            }
+        }, reason => {
+            layers.textContent = `Failed. Second model did not load: ${reason}`;
+        }).finally(() => { 
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+        
+    }, reason => {
+        layers.textContent = `Failed. First model did not load: ${reason}`;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    });
+</script>
+</body>
+</html>

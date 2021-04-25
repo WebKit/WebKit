@@ -300,6 +300,8 @@ public:
     static CGRect frameForLayer(const PlatformLayer*);
 
     void moveToLayerPool();
+    
+    virtual void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);

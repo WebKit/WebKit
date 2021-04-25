@@ -25,7 +25,7 @@
 
     model.ready.then(value => {
         if (window.testRunner)
-            layers.innerText = window.internals.platformLayerTreeAsText(model, window.internals.PLATFORM_LAYER_TREE_INCLUDE_OPACITY);
+            layers.innerText = window.internals.platformLayerTreeAsText(model);
         model.remove();
     }, reason => {
         layers.textContent = `Failed. Model did not load: ${reason}`;
