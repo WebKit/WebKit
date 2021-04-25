@@ -3964,13 +3964,10 @@ webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-
 
 # Tables as flex items.
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-fixed-min-width-3.html [ ImageOnlyFailure ]
-webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-percent-width-cell-001.html [ ImageOnlyFailure ]
-webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-specified-width.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-1.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-column-2.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-inflexible-in-row-2.html [ ImageOnlyFailure ]
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-specified-height.html [ ImageOnlyFailure ]
-webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-item-flex-percentage-width.html [ ImageOnlyFailure ]
 
 # SVGs as flex items.
 webkit.org/b/221474 imported/w3c/web-platform-tests/css/css-flexbox/svg-root-as-flex-item-002.html [ ImageOnlyFailure ]

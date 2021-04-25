@@ -1,3 +1,14 @@
+2021-04-25  Felipe Erias  <felipeerias@igalia.com>
+
+        [css-flexbox] Table layout disregards overriding width
+        https://bugs.webkit.org/show_bug.cgi?id=224934
+
+        Reviewed by Darin Adler.
+
+        * TestExpectations: Remove three WPT tests that now pass.
+        * platform/glib/TestExpectations: Remove one WPT test that now passes.
+        * platform/gtk/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-contains-strict-expected.txt: Added.
+
 2021-04-24  Tim Horton  <timothy_horton@apple.com>
 
         Changing the source of a model element with clipping applied does not update the model
