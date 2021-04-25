@@ -1,3 +1,22 @@
+2021-04-25  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] Select proper IOSurface backing format for WebGL environment
+        https://bugs.webkit.org/show_bug.cgi?id=224948
+        <rdar://76284889>
+
+        Depending on the architecture, WebCore expects different 
+        IOSurface texture targets for the main buffer. When running catalyst on 
+        Arm64 devices, Metal-ANGLE needs to select the TEXTURE_2D texture target for our
+        IOSurface/Pbuffer bind point, rather than TEXTURE_RECTANGLE.
+
+	Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::needsEAGLOnMac):
+        (rx::DisplayMtl::EGLDrawingBufferTextureTarget):
+        (rx::DisplayMtl::generateConfigs):
+
 2021-04-23  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r276190.
