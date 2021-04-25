@@ -157,7 +157,7 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    void setLegacyCDMSession(RemoteLegacyCDMSessionIdentifier&& instanceId);
+    void setLegacyCDMSession(Optional<RemoteLegacyCDMSessionIdentifier>&& instanceId);
     void keyAdded();
 #endif
 
@@ -329,7 +329,7 @@ private:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     bool m_shouldContinueAfterKeyNeeded { false };
-    RemoteLegacyCDMSessionIdentifier m_legacySession;
+    Optional<RemoteLegacyCDMSessionIdentifier> m_legacySession;
 #endif
 
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)

@@ -76,7 +76,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    SetLegacyCDMSession(WebKit::RemoteLegacyCDMSessionIdentifier instanceId)
+    SetLegacyCDMSession(Optional<WebKit::RemoteLegacyCDMSessionIdentifier> instanceId)
     KeyAdded()
 #endif
 

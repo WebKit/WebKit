@@ -1056,7 +1056,7 @@ void MediaPlayerPrivateRemote::setCDM(LegacyCDM* cdm)
 void MediaPlayerPrivateRemote::setCDMSession(LegacyCDMSession* session)
 {
     if (!session || session->type() != CDMSessionTypeRemote) {
-        connection().send(Messages::RemoteMediaPlayerProxy::SetLegacyCDMSession({ }), m_id);
+        connection().send(Messages::RemoteMediaPlayerProxy::SetLegacyCDMSession(WTF::nullopt), m_id);
         return;
     }
 
