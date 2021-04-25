@@ -50,7 +50,6 @@
 #include <wtf/Scope.h>
 #include <wtf/Variant.h>
 
-
 namespace WebCore {
 using namespace JSC;
 

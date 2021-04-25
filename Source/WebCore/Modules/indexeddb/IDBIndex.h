@@ -28,6 +28,7 @@
 #include "IDBCursor.h"
 #include "IDBIndexInfo.h"
 #include "IDBRequest.h"
+#include <wtf/IsoMalloc.h>
 
 namespace JSC {
 class CallFrame;
@@ -40,8 +41,7 @@ class IDBKeyRange;
 struct IDBKeyRangeData;
 
 class IDBIndex final : public ActiveDOMObject {
-    WTF_MAKE_NONCOPYABLE(IDBIndex);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_ISO_ALLOCATED(IDBIndex);
 public:
     IDBIndex(ScriptExecutionContext&, const IDBIndexInfo&, IDBObjectStore&);
 

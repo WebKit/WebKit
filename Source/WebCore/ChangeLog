@@ -1,3 +1,37 @@
+2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make more IndexedDB objects iso-heap'ed
+        https://bugs.webkit.org/show_bug.cgi?id=225029
+
+        Reviewed by Darin Adler.
+
+        Deployed IsoHeap on more IndexedDB objects.
+
+        * Modules/indexeddb/IDBFactory.cpp:
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/IDBGetAllResult.cpp:
+        * Modules/indexeddb/IDBGetAllResult.h:
+        * Modules/indexeddb/IDBGetResult.cpp:
+        * Modules/indexeddb/IDBGetResult.h:
+        * Modules/indexeddb/IDBIndex.cpp:
+        * Modules/indexeddb/IDBIndex.h:
+        * Modules/indexeddb/IDBKey.cpp:
+        * Modules/indexeddb/IDBKey.h:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        * Modules/indexeddb/IDBObjectStore.h:
+        * Modules/indexeddb/IDBRecordIdentifier.h: Removed since it's not used anywhere.
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/client/IDBConnectionProxy.cpp:
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/client/IDBConnectionToServer.cpp:
+        * Modules/indexeddb/client/IDBConnectionToServer.h:
+        * Modules/indexeddb/client/TransactionOperation.cpp:
+        * Modules/indexeddb/client/TransactionOperation.h:
+        * Modules/indexeddb/shared/IDBDatabaseInfo.cpp:
+        * Modules/indexeddb/shared/IDBDatabaseInfo.h:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-04-25  Devin Rousso  <drousso@apple.com>
 
         Add `ALWAYS_LOG_WITH_STREAM` macro for easier development/debugging

@@ -26,7 +26,11 @@
 #include "config.h"
 #include "IDBGetResult.h"
 
+#include <wtf/IsoMallocInlines.h>
+
 namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(IDBGetResult);
 
 void IDBGetResult::dataFromBuffer(SharedBuffer& buffer)
 {
