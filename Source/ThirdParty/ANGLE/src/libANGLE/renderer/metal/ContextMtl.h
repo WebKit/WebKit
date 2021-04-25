@@ -157,13 +157,6 @@ class ContextMtl : public ContextImpl, public mtl::Context
                                                                    const GLint *baseVertices,
                                                                    const GLuint *baseInstances,
                                                                    GLsizei drawcount) override;
-    angle::Result drawElementsSimpleTypesPrimitiveRestart(const gl::Context *context,
-                                                          gl::PrimitiveMode mode,
-                                                          GLsizei count,
-                                                          gl::DrawElementsType type,
-                                                          const void *indices,
-                                                          GLsizei instances);
-
     // Device loss
     gl::GraphicsResetStatus getResetStatus() override;
 

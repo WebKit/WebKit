@@ -579,58 +579,6 @@ angle::Result ContextMtl::drawLineLoopElements(const gl::Context *context,
     return drawElementsInstanced(context, gl::PrimitiveMode::Lines, count, type, indices,
                                  instances);
 }
-angle::Result ContextMtl::drawElementsSimpleTypesPrimitiveRestart(const gl::Context *context,
-                                                                  gl::PrimitiveMode mode,
-                                                                  GLsizei count,
-                                                                  gl::DrawElementsType type,
-                                                                  const void *indices,
-                                                                  GLsizei instances)
-{
-
-    mtl::BufferRef genIdxBuffer;
-    uint32_t genIdxBufferOffset;
-    uint32_t reservedIndices = count;
-    size_t genIndicesCount;
-    ANGLE_TRY(AllocateBufferFromPool(this, reservedIndices, &mPrimitiveRestartBuffer, &genIdxBuffer,
-                                     &genIdxBufferOffset));
-    switch (mode)
-    {
-        case gl::PrimitiveMode::Points:
-            ANGLE_TRY(getDisplay()->getUtils().generatePrimitiveRestartPointsBuffer(
-                this, {type, count, indices, genIdxBuffer, genIdxBufferOffset, true},
-                &genIndicesCount));
-            break;
-        case gl::PrimitiveMode::Lines:
-            ANGLE_TRY(getDisplay()->getUtils().generatePrimitiveRestartLinesBuffer(
-                this, {type, count, indices, genIdxBuffer, genIdxBufferOffset, true},
-                &genIndicesCount));
-            break;
-        case gl::PrimitiveMode::Triangles:
-            ANGLE_TRY(getDisplay()->getUtils().generatePrimitiveRestartTrianglesBuffer(
-                this, {type, count, indices, genIdxBuffer, genIdxBufferOffset, true},
-                &genIndicesCount));
-            break;
-        default:
-            UNREACHABLE();
-            return angle::Result::Stop;
-    }
-    ANGLE_TRY(mPrimitiveRestartBuffer.commit(this));
-    MTLPrimitiveType mtlType = mtl::GetPrimitiveType(mode);
-    if (mState.isTransformFeedbackActiveUnpaused())
-    {
-        ANGLE_TRY(setupDraw(context, mode, 0, count, instances, type,
-                            reinterpret_cast<const void *>(0), true));
-
-        execDrawIndexedInstanced(mtlType, (uint32_t)genIndicesCount, MTLIndexTypeUInt32,
-                                 genIdxBuffer, genIdxBufferOffset, instances);
-    }
-    ANGLE_TRY(setupDraw(context, mode, 0, count, instances, type, indices, false));
-
-    execDrawIndexedInstanced(mtlType, (uint32_t)genIndicesCount, MTLIndexTypeUInt32, genIdxBuffer,
-                             genIdxBufferOffset, instances);
-
-    return angle::Result::Continue;
-}
 
 angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
                                            gl::PrimitiveMode mode,
@@ -657,12 +605,18 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     mtl::BufferRef idxBuffer;
     size_t convertedOffset             = 0;
     gl::DrawElementsType convertedType = type;
-    ANGLE_TRY(mVertexArray->getIndexBuffer(context, type, mode, count, indices, &idxBuffer,
+    ANGLE_TRY(mVertexArray->getIndexBuffer(context, type, count, indices, &idxBuffer,
                                            &convertedOffset, &convertedType));
 
     ASSERT(idxBuffer);
     ASSERT((convertedOffset % mtl::kIndexBufferOffsetAlignment) == 0);
     uint32_t convertedCounti32 = (uint32_t)count;
+    
+    //Draw commands will only be broken up if transform feedback is enabled,
+    //if the mode is a simple type, and if the buffer contained any restart
+    //indices.
+    const std::vector<DrawCommandRange> drawCommands = mVertexArray->getDrawIndices(context, type, convertedType, mode, convertedCounti32, convertedOffset);
+    
     if (mState.isTransformFeedbackActiveUnpaused())
     {
         ANGLE_TRY(setupDraw(context, mode, 0, convertedCounti32, instances, type, indices, true));
@@ -673,14 +627,21 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
         if (instances == 0)
         {
             // Normal draw
-            mRenderEncoder.drawIndexed(mtlType, convertedCounti32, mtlIdxType, idxBuffer,
-                                       convertedOffset);
+            for(auto & command : drawCommands)
+            {
+                mRenderEncoder.drawIndexed(mtlType, command.count, mtlIdxType, idxBuffer,
+                                           command.offset);
+
+            }
         }
         else
         {
             // Instanced draw
-            execDrawIndexedInstanced(mtlType, convertedCounti32, mtlIdxType, idxBuffer,
-                                     convertedOffset, instanceCount);
+            for(auto & command : drawCommands)
+            {
+                execDrawIndexedInstanced(mtlType, command.count, mtlIdxType, idxBuffer,
+                                     command.offset, instanceCount);
+            }
         }
     }
 
@@ -693,14 +654,20 @@ angle::Result ContextMtl::drawElementsImpl(const gl::Context *context,
     if (instances == 0)
     {
         // Normal draw
-        mRenderEncoder.drawIndexed(mtlType, convertedCounti32, mtlIdxType, idxBuffer,
-                                   convertedOffset);
+        for(auto & command : drawCommands)
+        {
+            mRenderEncoder.drawIndexed(mtlType, command.count, mtlIdxType, idxBuffer,
+                                   command.offset);
+        }
     }
     else
     {
         // Instanced draw
-        execDrawIndexedInstanced(mtlType, convertedCounti32, mtlIdxType, idxBuffer, convertedOffset,
+        for(auto & command : drawCommands)
+        {
+            execDrawIndexedInstanced(mtlType, command.count, mtlIdxType, idxBuffer, command.offset,
                                  instanceCount);
+        }
     }
 
     return angle::Result::Continue;
