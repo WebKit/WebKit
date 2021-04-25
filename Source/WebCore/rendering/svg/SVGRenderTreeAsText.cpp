@@ -383,7 +383,7 @@ static void writeStandardPrefix(TextStream& ts, const RenderObject& object, Opti
     ts << object.renderName();
 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
-        ts << " " << static_cast<const void*>(&object);
+        ts << " " << &object;
 
     if (object.node())
         ts << " {" << object.node()->nodeName() << "}";

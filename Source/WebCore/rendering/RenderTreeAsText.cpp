@@ -216,7 +216,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     ts << o.renderName();
 
     if (behavior.contains(RenderAsTextFlag::ShowAddresses))
-        ts << " " << static_cast<const void*>(&o);
+        ts << " " << &o;
 
     if (o.style().usedZIndex()) // FIXME: This should use !hasAutoUsedZIndex().
         ts << " zI: " << o.style().usedZIndex();
@@ -647,9 +647,9 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
     ts << indent << "layer ";
     
     if (behavior.contains(RenderAsTextFlag::ShowAddresses)) {
-        ts << static_cast<const void*>(&layer) << " ";
+        ts << &layer << " ";
         if (auto* scrollableArea = layer.scrollableArea())
-            ts << "scrollableArea " << static_cast<const void*>(scrollableArea) << " ";
+            ts << "scrollableArea " << scrollableArea << " ";
     }
 
     ts << adjustedLayoutBounds;

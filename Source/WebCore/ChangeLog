@@ -1,3 +1,25 @@
+2021-04-25  Cameron McCormack  <heycam@apple.com>
+
+        Remove templated operator<<(TextStream&, T*) that interferes with raw pointer formatting.
+        https://bugs.webkit.org/show_bug.cgi?id=224962
+
+        Reviewed by Darin Adler.
+
+        We can end up calling into this one (which unhelpfully casts its
+        argument to intptr_t) instead of the `const void*` one in
+        TextStream.h.
+
+        Removing this means we can drop static_cast<const void*>(...) in
+        various places in debugging output code.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::outputPaintOrderTreeRecursive):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStandardPrefix):
+        * rendering/svg/SVGRenderTreeAsText.h:
+
 2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make more IndexedDB objects iso-heap'ed

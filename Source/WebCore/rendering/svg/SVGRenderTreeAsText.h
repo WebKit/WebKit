@@ -76,11 +76,4 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const Vector<Item*>& v)
     return ts;
 }
 
-template<typename Pointer>
-WTF::TextStream& operator<<(WTF::TextStream& ts, Pointer* t)
-{
-    ts << reinterpret_cast<intptr_t>(t);
-    return ts;
-}
-
 } // namespace WebCore

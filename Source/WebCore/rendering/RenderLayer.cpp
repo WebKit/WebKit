@@ -5817,7 +5817,7 @@ static void outputPaintOrderTreeRecursive(TextStream& stream, const WebCore::Ren
     stream << &layer << " " << layerRect;
 
     if (auto* scrollableArea = layer.scrollableArea())
-        stream << " [SA " << static_cast<const void*>(scrollableArea) << "]";
+        stream << " [SA " << scrollableArea << "]";
 
     if (layer.isComposited()) {
         auto& backing = *layer.backing();
