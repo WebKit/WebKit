@@ -1,3 +1,30 @@
+2021-04-25  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        jsonchecker.py validate_string uses Python 2 basestring type instead of Python 2/3 str type
+        https://bugs.webkit.org/show_bug.cgi?id=224978
+
+        Reviewed by Darin Adler.
+
+        validate_string uses the Python 2 basestring type instead of the Python 2/3
+        str type.  This causes the check to exit early the first time it validates
+        a string with this error:
+
+        name 'basestring' is not defined
+
+        This resulted in jsonchecker not checking the file beyond the first
+        string validation.  
+
+        I believe this caused jsonchecker to miss a bug in one of my previous
+        patches in which I put the "settings-flag" property in the wrong
+        place:
+
+        https://bugs.webkit.org/show_bug.cgi?id=224718#c20
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONCSSPropertiesChecker.validate_string):
+        validate_string with Python 2 / 3 str type instead of Python 2
+        basestring.
+
 2021-04-24  Aakash Jain  <aakash_jain@apple.com>
 
         Rename slave to worker in webkitpy - part 2

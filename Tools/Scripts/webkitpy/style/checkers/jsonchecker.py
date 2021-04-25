@@ -164,7 +164,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
         self.validate_type(property_name, property_key, key, value, bool)
 
     def validate_string(self, property_name, property_key, key, value):
-        self.validate_type(property_name, property_key, key, value, basestring)
+        self.validate_type(property_name, property_key, key, value, str)
 
     def validate_array(self, property_name, property_key, key, value):
         self.validate_type(property_name, property_key, key, value, list)
