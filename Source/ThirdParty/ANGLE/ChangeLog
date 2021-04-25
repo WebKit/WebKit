@@ -1,3 +1,14 @@
+2021-04-25  John Cunningham  <johncunningham@apple.com>
+
+        [Metal ANGLE] Temporarily remove AST validation even for debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=224991
+        rdar://76299178
+ 
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/renderer/metal/ShaderMtl.mm:
+        (rx::ShaderMtl::compileImplMtl):
+
 2021-04-25  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal ANGLE] Select proper IOSurface backing format for WebGL environment

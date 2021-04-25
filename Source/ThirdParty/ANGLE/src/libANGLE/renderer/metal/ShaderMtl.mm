@@ -85,7 +85,9 @@ std::shared_ptr<WaitableCompileEvent> ShaderMtl::compileImplMtl(
     const std::string &source,
     ShCompileOptions compileOptions)
 {
-#if defined(ANGLE_ENABLE_ASSERTS)
+// TODO(jcunningham): Remove this workaround once correct fix to move validation to the very end is in place.
+// See: https://bugs.webkit.org/show_bug.cgi?id=224991
+#if defined(ANGLE_ENABLE_ASSERTS) && 0
     compileOptions |= SH_VALIDATE_AST;
 #endif
 
