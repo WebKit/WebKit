@@ -122,6 +122,7 @@ fast/images/eps-as-image.html [ Skip ]
 fast/images/avif-image-decoding.html [ Skip ]
 fast/images/avif-as-image.html [ Skip ]
 fast/images/animated-avif.html [ Skip ]
+http/tests/images/avif-partial-load-crash.html [ Skip ]
 
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]

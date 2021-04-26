@@ -41,24 +41,21 @@ AVIFImageReader::AVIFImageReader(RefPtr<AVIFImageDecoder>&& decoder)
 
 AVIFImageReader::~AVIFImageReader() = default;
 
-void AVIFImageReader::parseHeader(const SharedBuffer::DataSegment& data, bool allDataReceived)
+bool AVIFImageReader::parseHeader(const SharedBuffer::DataSegment& data, bool allDataReceived)
 {
-    if (avifDecoderSetIOMemory(m_avifDecoder.get(), reinterpret_cast<const uint8_t*>(data.data()), data.size()) != AVIF_RESULT_OK) {
-        m_decoder->setFailed();
-        return;
-    }
+    if (avifDecoderSetIOMemory(m_avifDecoder.get(), reinterpret_cast<const uint8_t*>(data.data()), data.size()) != AVIF_RESULT_OK)
+        return allDataReceived ? m_decoder->setFailed() : false;
 
     if (avifDecoderParse(m_avifDecoder.get()) != AVIF_RESULT_OK
-        || avifDecoderNextImage(m_avifDecoder.get()) != AVIF_RESULT_OK) {
-        m_decoder->setFailed();
-        return;
-    }
+        || avifDecoderNextImage(m_avifDecoder.get()) != AVIF_RESULT_OK)
+        return allDataReceived ? m_decoder->setFailed() : false;
 
     if (!m_dataParsed && allDataReceived)
         m_dataParsed = true;
 
     const avifImage* firstImage = m_avifDecoder->image;
     m_decoder->setSize(IntSize(firstImage->width, firstImage->height));
+    return true;
 }
 
 void AVIFImageReader::decodeFrame(size_t frameIndex, ScalableImageDecoderFrame& buffer, const SharedBuffer::DataSegment& data)
@@ -122,7 +119,7 @@ double AVIFImageReader::repetitionCount() const
         return 0.0;
 
     double accumulatedFrameDuration = 0.0;
-    for (size_t i = 0; i < m_avifDecoder->imageCount; ++i) {
+    for (int i = 0; i < m_avifDecoder->imageCount; ++i) {
         avifImageTiming timing;
         if (avifDecoderNthImageTiming(m_avifDecoder.get(), i, &timing) != AVIF_RESULT_OK)
             return 0.0;

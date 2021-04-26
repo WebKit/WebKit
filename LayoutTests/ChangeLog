@@ -1,3 +1,17 @@
+2021-04-25  ChangSeok Oh  <changseok@webkit.org>
+
+        Fix a crash caused by AVIF decoding failure
+        https://bugs.webkit.org/show_bug.cgi?id=223843
+        <rdar://problem/76205084>
+
+        Reviewed by Philippe Normand.
+
+        Check if partial load of avif images crashes.
+
+        * TestExpectations: Skip the test for non-gtk platforms.
+        * http/tests/images/avif-partial-load-crash-expected.txt: Added.
+        * http/tests/images/avif-partial-load-crash.html: Added.
+
 2021-04-25  Felipe Erias  <felipeerias@igalia.com>
 
         [css-flexbox] Table layout disregards overriding width
