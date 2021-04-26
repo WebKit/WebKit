@@ -79,7 +79,7 @@ def get_state(file, default='Uninitialized'):
         return file.read()
 
 
-def set_state(state, file):
+def set_state(file, state):
     with open(file, 'w') as open_file:
         open_file.write(state)
     return state

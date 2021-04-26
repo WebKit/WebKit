@@ -91,7 +91,7 @@ function test5()
 function resetManifest()
 {
     if (applicationCache.status != applicationCache.UNCACHED && applicationCache.status != applicationCache.OBSOLETE) {
-        timeoutId = setTimeout(resetManifest, 100);
+        timeoutId = setTimeout(resetManifest, 400);
         return;
     }
 
@@ -104,7 +104,7 @@ applicationCache.onnoupdate = test;
 applicationCache.oncached = test;
 
 // If the manifest script happened to be in a wrong state, reset it.
-var timeoutId = setTimeout(resetManifest, 100);
+var timeoutId = setTimeout(resetManifest, 400);
 
 </script>
 </body>

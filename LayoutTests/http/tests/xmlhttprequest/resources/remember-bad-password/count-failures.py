@@ -36,7 +36,7 @@ if command:
     if command == 'status':
         sys.stdout.write(get_state(stateFile, default='0'))
     elif command == 'reset':
-        sys.stdout.write(set_state('0', stateFile))
+        sys.stdout.write(set_state(stateFile, '0'))
     sys.exit(0)
 
 credentials = base64.b64decode(os.environ.get('HTTP_AUTHORIZATION', ' Og==').split(' ')[1]).decode().split(':')
@@ -57,4 +57,4 @@ else:
         'Authentication canceled'
     )
     if username:
-        set_state(str(int(get_state(stateFile, default='0')) + 1), stateFile)
+        set_state(stateFile, str(int(get_state(stateFile, default='0')) + 1))

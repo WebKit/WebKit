@@ -20,7 +20,7 @@
     // The rand value is necessary to cache-bust slow resources.
     var rand = Math.random();
     document.write("<link rel=preload href='../resources/slow-script.pl?delay=200;rand=" + rand + "' as=script onload='window.finishedScript = true; test();'>");
-    document.write("<link rel=preload href='../resources/slow-image.php?rand=" + rand + "' as=image onload='window.finishedImage = true; test();'>");
+    document.write("<link rel=preload href='../resources/slow-image.py?rand=" + rand + "' as=image onload='window.finishedImage = true; test();'>");
 </script>
 <body>
 <script>

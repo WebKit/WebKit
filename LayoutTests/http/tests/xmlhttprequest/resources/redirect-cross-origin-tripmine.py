@@ -37,13 +37,13 @@ if method == 'OPTIONS':
 
 # Only allow simple cross-site requests - since we did not allow preflight, this is all we should ever get.
 if method not in ['GET', 'HEAD', 'POST']:
-    set_state('FAIL. Non-simple method {}.'.format(method), stateFile)
+    set_state(stateFile, 'FAIL. Non-simple method {}.'.format(method))
     sys.exit(0)
 
 if content and not re.match(r'^application\/x\-www\-form\-urlencoded(;.+)?$', contentType) \
     and not re.match(r'^multipart\/form\-data(;.+)?$', contentType) \
     and not re.match(r'^text\/plain(;.+)?$', contentType):
-    set_state('FAIL. Non-simple content type: {}.'.format(contentType), stateFile)
+    set_state(stateFile, 'FAIL. Non-simple content type: {}.'.format(contentType))
 
 if os.environ.get('HTTP_X_WEBKIT_TEST'):
-    set_state('FAIL. Custom header sent with a simple request.', stateFile)
+    set_state(stateFile, 'FAIL. Custom header sent with a simple request.')

@@ -9,8 +9,8 @@
   <body>
     <script>
 promise_test(function(t) {
-    var url1 = "http://localhost:8000/resources/download-json-with-delay.php?iteration=2&delay=100&cors=true&allowCache=true&test=1";
-    var url2 = "http://localhost:8000/resources/download-json-with-delay.php?iteration=2&delay=100&cors=true&allowCache=true&test=2";
+    var url1 = "http://localhost:8000/resources/download-json-with-delay.py?iteration=2&delay=100&cors=true&allowCache=true&test=1";
+    var url2 = "http://localhost:8000/resources/download-json-with-delay.py?iteration=2&delay=100&cors=true&allowCache=true&test=2";
     return Promise.all([
             fetch(url1, {"mode": "no-cors"}).then((response) => {
                 assert_equals(response.type, "opaque");
@@ -36,8 +36,8 @@ promise_test(function(t) {
 }, 'Ensure cors checks work when loading in parallel the same resource with different modes');
 
 promise_test(function(t) {
-    var url3 = "http://localhost:8000/resources/download-json-with-delay.php?iteration=2&delay=100&cors=true&allowCache=true&test=3";
-    var url4 = "http://localhost:8000/resources/download-json-with-delay.php?iteration=2&delay=100&cors=true&allowCache=true&test=4";
+    var url3 = "http://localhost:8000/resources/download-json-with-delay.py?iteration=2&delay=100&cors=true&allowCache=true&test=3";
+    var url4 = "http://localhost:8000/resources/download-json-with-delay.py?iteration=2&delay=100&cors=true&allowCache=true&test=4";
     return fetch(url3, {"mode": "cors"}).then((response) => {
         assert_equals(response.type, "cors");
         return response.arrayBuffer().then((arrayBuffer) => {

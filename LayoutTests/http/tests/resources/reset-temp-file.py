@@ -2,17 +2,12 @@
 import os
 import sys
 import tempfile
-
 from urllib.parse import parse_qs
 
-query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
-stateFile = os.path.join(tempfile.gettempdir(), query.get('filename', ['state.txt'])[0])
+filename = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True).get('filename', ['state.txt'])[0]
+state_file = os.path.join(tempfile.gettempdir(), filename)
 
-sys.stdout.write('Content-Type: text/html\r\n')
-sys.stdout.write('\r\n')
+sys.stdout.write('Content-Type: text/html\r\n\r\n')
 
-try:
-    if os.path.exists(stateFile):
-        os.remove(stateFile)
-except OSError:
-    print('FAIL: unable to write to file: {}'.format(stateFile))
+if os.path.exists(state_file):
+    os.remove(state_file)

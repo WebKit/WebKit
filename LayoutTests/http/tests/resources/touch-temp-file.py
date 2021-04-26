@@ -5,9 +5,6 @@ import sys
 import tempfile
 from urllib.parse import parse_qs
 
-file = __file__.split(':/cygwin')[-1]
-http_root = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(file))))
-
 filename = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True).get('filename', ['state.txt'])[0]
 tmpFilePath = os.path.join(tempfile.gettempdir(), filename)
 

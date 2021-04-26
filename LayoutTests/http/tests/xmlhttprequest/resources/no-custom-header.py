@@ -23,9 +23,9 @@ stateFile = os.path.join(tempfile.gettempdir(), query.get('filename', ['state.tx
 
 if os.environ.get('REQUEST_METHOD') == 'OPTIONS':
     if os.environ.get('HTTP_X_CUSTOM_HEADER'):
-        set_state('FAIL', stateFile)
+        set_state(stateFile, 'FAIL')
     else:
-        set_state('PASS', stateFile)
+        set_state(stateFile, 'PASS')
 else:
     if os.environ.get('HTTP_X_CUSTOM_HEADER'):
         sys.stdout.write(get_state(stateFile, default='FAIL'))

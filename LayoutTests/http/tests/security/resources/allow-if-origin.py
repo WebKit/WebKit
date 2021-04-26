@@ -33,7 +33,10 @@ if allowCreds:
 if allowCache:
     sys.stdout.write('Cache-Control: max-age=100\r\n')
 
-sys.stdout.write('Content-Type: {}\r\n\r\n'.format(contentType))
+sys.stdout.write(
+    'Content-Length: {}\r\n'
+    'Content-Type: {}\r\n\r\n'.format(os.path.getsize(os.path.join('/'.join(__file__.split('/')[0:-1]), name)), contentType)
+)
 sys.stdout.flush()
 with open(os.path.join('/'.join(__file__.split('/')[0:-1]), name), 'rb') as file:
     sys.stdout.buffer.write(file.read())

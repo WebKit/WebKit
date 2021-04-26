@@ -53,7 +53,7 @@ elif state == 'Uninitialized':
             '\r\n'
             'FAIL: This request should not be displayed\n'
         )
-        set_state('Denied', stateFile)
+        set_state(stateFile, 'Denied')
     else:
         fail(state)
 
@@ -67,7 +67,7 @@ elif state == 'Denied':
             'PASS: Request successfully blocked.\n'
         )
     else:
-        set_state('Deny Ignored', stateFile)
+        set_state(stateFile, 'Deny Ignored')
         fail(state)
 
 elif state == 'Deny Ignored':

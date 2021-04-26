@@ -14,7 +14,7 @@
         
 var test = async_test("Ensuring that fetch response body promise is not fulfilled when window is closed");
 test.step(function() {
-    var url = "/resources/download-json-with-delay.php?iteration=5&delay=1000";
+    var url = "/resources/download-json-with-delay.py?iteration=5&delay=1000";
     fetch(url).then(test.step_func(function(response) {
         assert_equals(response.status, 200);
         response.text().then(test.step_func(function(buffer) {

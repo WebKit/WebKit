@@ -37,7 +37,7 @@ if state == 'Uninitialized':
             'Access-Control-Max-Age: 10\r\n'
             '\r\n'
         )
-        set_state('OptionsSent', stateFile)
+        set_state(stateFile, 'OptionsSent')
     else:
         fail()
 
@@ -49,7 +49,7 @@ elif state == 'OptionsSent':
             '\r\n'
             'PASS: First PUT request.'
         )
-        set_state('FirstPUTSent', stateFile)
+        set_state(stateFile, 'FirstPUTSent')
     else:
         fail()
 
@@ -69,7 +69,7 @@ elif state == 'FirstPUTSent':
             'Access-Control-Allow-Headers: x-webkit-test\r\n'
             '\r\n'
         )
-        set_state('FAILSecondOPTIONSSent', stateFile)
+        set_state(stateFile, 'FAILSecondOPTIONSSent')
     else:
         fail()
 

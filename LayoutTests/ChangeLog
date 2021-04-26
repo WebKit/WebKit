@@ -1,3 +1,135 @@
+2021-04-26  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/resources convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=224622
+        <rdar://problem/76727052>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/appcache/fallback.html:
+        * http/tests/appcache/main-resource-fallback-for-network-error-crash.html:
+        * http/tests/appcache/main-resource-hash.html:
+        * http/tests/appcache/main-resource-redirect.html:
+        * http/tests/appcache/multi-fallback.html:
+        * http/tests/appcache/non-html.xhtml:
+        * http/tests/appcache/offline-access.html:
+        * http/tests/appcache/remove-cache.html:
+        * http/tests/appcache/resources/fail-on-update-2.py:
+        * http/tests/appcache/resources/fail-on-update.py:
+        * http/tests/appcache/resources/fallback.manifest:
+        * http/tests/appcache/resources/main-resource-redirect-frame.py:
+        * http/tests/appcache/resources/main-resource-redirect.manifest:
+        * http/tests/appcache/resources/multi-fallback.manifest:
+        * http/tests/appcache/resources/non-html.manifest:
+        * http/tests/appcache/resources/offline-access-frame.html:
+        * http/tests/appcache/resources/offline-access.js:
+        (test):
+        * http/tests/appcache/resources/offline-access.manifest:
+        * http/tests/appcache/resources/remove-cache.py:
+        * http/tests/cache/network-error-during-revalidation.html:
+        * http/tests/cache/resources/network-error-during-revalidation-frame.html:
+        * http/tests/cache/subresource-fragment-identifier.html:
+        * http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.html:
+        * http/tests/cookies/same-site/fetch-in-cross-origin-iframe.html:
+        * http/tests/css/border-image-loading.html:
+        * http/tests/css/css-image-loading.html:
+        * http/tests/css/css-image-valued-shape.html:
+        * http/tests/css/font-face-src-loading.html:
+        * http/tests/css/mask-image-loading.html:
+        * http/tests/css/reflection-mask-image-loading.html:
+        * http/tests/css/resources/request-logging.js:
+        (ResourceLogging.CallCommand):
+        * http/tests/css/vertical-align-baseline-after-image-load-2-expected.html:
+        * http/tests/css/vertical-align-baseline-after-image-load-2.html:
+        * http/tests/css/vertical-align-baseline-after-image-load-3-expected.html:
+        * http/tests/css/vertical-align-baseline-after-image-load-3.html:
+        * http/tests/css/vertical-align-baseline-after-image-load-expected.html:
+        * http/tests/css/vertical-align-baseline-after-image-load.html:
+        * http/tests/fetch/clone-response-body.html:
+        * http/tests/fetch/closing-while-fetching.html:
+        * http/tests/fetch/fetch-cors-with-referrer.html:
+        * http/tests/fetch/fetching-same-resource-with-different-options-expected.txt:
+        * http/tests/fetch/fetching-same-resource-with-different-options.html:
+        * http/tests/fetch/get-response-body-while-loading.html:
+        * http/tests/images/decode-slow-load-static-image.html:
+        * http/tests/images/draw-pattern-slow-load-large-image.html:
+        * http/tests/images/gif-progressive-load.html:
+        * http/tests/images/image-supports-video.html:
+        * http/tests/images/jpeg-partial-load.html:
+        * http/tests/images/loading-image-border.html:
+        * http/tests/images/loading-image-no-border.html:
+        * http/tests/images/mp4-partial-load.html:
+        * http/tests/images/png-partial-load-no-alpha.html:
+        * http/tests/images/png-partial-load.html:
+        * http/tests/images/png-progressive-load.html:
+        * http/tests/images/webp-partial-load.html:
+        * http/tests/images/webp-progressive-load.html:
+        * http/tests/loading/preload-img-test.html:
+        * http/tests/local/fileapi/file-last-modified-using-open-panel.html:
+        * http/tests/local/fileapi/file-last-modified.html:
+        * http/tests/local/fileapi/resources/temp-file-utils.js:
+        (createTempFile):
+        (touchTempFile):
+        (removeTempFile):
+        * http/tests/local/link-stylesheet-load-order-preload.html:
+        * http/tests/local/link-stylesheet-load-order.html:
+        * http/tests/media/track/track-webvtt-slow-loading-2.html:
+        * http/tests/media/track/track-webvtt-slow-loading.html:
+        * http/tests/misc/repeat-open-cancel.html:
+        * http/tests/navigation/pending-location-change-assert.html:
+        * http/tests/preload/delaying_onload_link_preload_after_discovery_image.html:
+        * http/tests/preload/dynamic_remove_preload_href.html:
+        * http/tests/preload/not_delaying_window_onload_before_discovery.html:
+        * http/tests/preload/not_evicting_preload_at_onload.html:
+        * http/tests/resources/basic-auth.php: Removed.
+        * http/tests/resources/digest-auth: Removed.
+        * http/tests/resources/download-json-with-delay.php: Removed.
+        * http/tests/resources/download-json-with-delay.py: Added.
+        * http/tests/resources/echo-iframe-src.php: Removed.
+        * http/tests/resources/echo-iframe-src.py: Added.
+        * http/tests/resources/file-last-modified.php: Removed.
+        * http/tests/resources/file-last-modified.py: Added.
+        * http/tests/resources/load-and-stall.php: Removed.
+        * http/tests/resources/load-and-stall.py: Added.
+        * http/tests/resources/network-simulator.php: Removed.
+        * http/tests/resources/network-simulator.py: Added.
+        (temp_path_base):
+        (generate_no_cache_http_header):
+        (content_type):
+        (generate_response):
+        (handle_increate_resource_count_command):
+        (handle_reset_resource_count_command):
+        (handle_get_resource_count_command):
+        (handle_start_resource_requests_log):
+        (handle_get_resource_requests_log):
+        (handle_log_resource_request):
+        * http/tests/resources/portabilityLayer.py:
+        (set_state):
+        * http/tests/resources/redirect-to-video-if-accepted.php: Removed.
+        * http/tests/resources/redirect-to-video-if-accepted.py: Added.
+        * http/tests/resources/reset-temp-file.php: Removed.
+        * http/tests/resources/reset-temp-file.py:
+        * http/tests/resources/slow-image.php: Removed.
+        * http/tests/resources/slow-image.py: Added.
+        * http/tests/resources/slow-notify-done.php: Removed.
+        * http/tests/resources/slow-notify-done.py: Added.
+        * http/tests/resources/touch-temp-file.php: Removed.
+        * http/tests/resources/touch-temp-file.py:
+        * http/tests/resources/write-temp-file.php: Removed.
+        * http/tests/resources/write-temp-file.py:
+        * http/tests/security/XFrameOptions/x-frame-options-ancestors-same-origin-allow.html:
+        * http/tests/security/resources/allow-if-origin.py:
+        * http/tests/swipe/swipe-back-with-outstanding-load-cancellation.html:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.py:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.py:
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.py:
+        * http/tests/xmlhttprequest/resources/access-control-preflight-denied-xsrf.py:
+        * http/tests/xmlhttprequest/resources/no-custom-header.py:
+        * http/tests/xmlhttprequest/resources/redirect-cross-origin-tripmine.py:
+        * http/tests/xmlhttprequest/resources/remember-bad-password/count-failures.py:
+        * http/tests/xmlhttprequest/state-after-network-error.html:
+
 2021-04-26  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r271861): [iOS] Accessory bar navigation to elements outside the viewport fails
