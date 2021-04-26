@@ -1,3 +1,15 @@
+2021-04-26  Keith Miller  <keith_miller@apple.com>
+
+        CodeBlock should do a better job accounting for extra memory it allocates.
+        https://bugs.webkit.org/show_bug.cgi?id=225068
+
+        Reviewed by Mark Lam.
+
+        Small convenience function to help compute the memory used by a Bag for JS GC
+        accounting.
+
+        * wtf/Bag.h:
+
 2021-04-26  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         Bump CeilingOnPageSize to 16KB on MIPS

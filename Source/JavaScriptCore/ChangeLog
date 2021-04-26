@@ -1,5 +1,24 @@
 2021-04-26  Keith Miller  <keith_miller@apple.com>
 
+        CodeBlock should do a better job accounting for extra memory it allocates.
+        https://bugs.webkit.org/show_bug.cgi?id=225068
+
+        Reviewed by Mark Lam.
+
+        Right now we aren't telling the JS GC about the extra memory
+        attached to CodeBlocks. It looks like on at least some sites this
+        can be a fairly large percentage of the total memory retained by
+        the JS object graph.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::JITData::size const):
+        * bytecode/CodeBlock.h:
+        * jit/JITCodeMap.h:
+        (JSC::JITCodeMap::memorySize const):
+
+2021-04-26  Keith Miller  <keith_miller@apple.com>
+
         numCalleeLocals, numParameters, and numVars should be unsigned
         https://bugs.webkit.org/show_bug.cgi?id=224995
 

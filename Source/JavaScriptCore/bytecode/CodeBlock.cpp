@@ -984,6 +984,14 @@ void CodeBlock::visitChildren(Visitor& visitor)
         extraMemory += m_metadata->sizeInBytes();
     if (m_jitCode && !m_jitCode->isShared())
         extraMemory += m_jitCode->size();
+#if ENABLE(JIT)
+    if (m_jitData)
+        extraMemory += m_jitData->size(locker);
+#endif
+    extraMemory += m_argumentValueProfiles.size() * sizeof(ValueProfile);
+    extraMemory += m_functionDecls.size() * sizeof(decltype(*m_functionDecls.data()));
+    extraMemory += m_functionExprs.size() * sizeof(decltype(*m_functionExprs.data()));
+
     visitor.reportExtraMemoryVisited(extraMemory);
 
     stronglyVisitStrongReferences(locker, visitor);
@@ -1020,6 +1028,29 @@ bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker& locker, Visitor& v
 
 template bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker&, AbstractSlotVisitor&);
 template bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker&, SlotVisitor&);
+
+#if ENABLE(JIT)
+size_t CodeBlock::JITData::size(const ConcurrentJSLocker&) const
+{
+    size_t size = sizeof(JITData);
+    size += m_stubInfos.estimatedAllocationSizeInBytes();
+    size += m_addICs.estimatedAllocationSizeInBytes();
+    size += m_mulICs.estimatedAllocationSizeInBytes();
+    size += m_negICs.estimatedAllocationSizeInBytes();
+    size += m_subICs.estimatedAllocationSizeInBytes();
+    size += m_byValInfos.estimatedAllocationSizeInBytes();
+    size += m_callLinkInfos.estimatedAllocationSizeInBytes();
+    size += m_rareCaseProfiles.size() * sizeof(decltype(*m_rareCaseProfiles.data()));
+    size += m_switchJumpTables.size() * sizeof(decltype(*m_switchJumpTables.data()));
+    size += m_stringSwitchJumpTables.size() * sizeof(decltype(*m_stringSwitchJumpTables.data()));
+    // FIXME: account for m_calleeSaveRegisters but it's not a big deal since it's a fixed size and small.
+    if (m_pcToCodeOriginMap)
+        size += m_pcToCodeOriginMap->memorySize();
+    if (m_jitCodeMap)
+        size += m_jitCodeMap.memorySize();
+    return size;
+}
+#endif
 
 bool CodeBlock::shouldJettisonDueToWeakReference(VM& vm)
 {
