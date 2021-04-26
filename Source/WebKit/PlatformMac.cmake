@@ -1,12 +1,14 @@
-add_definitions("-ObjC++ -std=c++17")
+add_definitions("-ObjC++ -std=c++17 -D__STDC_WANT_LIB_EXT1__")
 find_library(APPLICATIONSERVICES_LIBRARY ApplicationServices)
 find_library(CARBON_LIBRARY Carbon)
+find_library(CORESERVICES_LIBRARY CoreServices)
+find_library(NETWORK_LIBRARY Network)
 find_library(SECURITY_LIBRARY Security)
 find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 find_library(QUARTZ_LIBRARY Quartz)
 find_library(AVFOUNDATION_LIBRARY AVFoundation)
 find_library(AVFAUDIO_LIBRARY AVFAudio HINTS ${AVFOUNDATION_LIBRARY}/Versions/*/Frameworks)
-find_library(DEVICEIDENTITY_LIBRARY DeviceIdentity HINTS /System/Library/PrivateFrameworks)
+find_library(DEVICEIDENTITY_LIBRARY DeviceIdentity HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
@@ -14,12 +16,17 @@ add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
 set(MACOSX_FRAMEWORK_IDENTIFIER com.apple.WebKit)
 
+add_definitions(-iframework ${CORESERVICES_LIBRARY}/Versions/Current/Frameworks)
+
 include(Headers.cmake)
 
 list(APPEND WebKit_PRIVATE_LIBRARIES
+    PAL
     WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
+    ${CORESERVICES_LIBRARY}
     ${DEVICEIDENTITY_LIBRARY}
+    ${NETWORK_LIBRARY}
     ${SECURITYINTERFACE_LIBRARY}
 )
 
@@ -32,7 +39,12 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 )
 
 list(APPEND WebKit_SOURCES
+    GPUProcess/media/RemoteAudioDestinationManager.cpp
+
+    NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm
     NetworkProcess/cocoa/WebSocketTaskCocoa.mm
+
+    NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm
 
     NetworkProcess/webrtc/NetworkRTCProvider.mm
 
@@ -40,11 +52,33 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/Cocoa/WKMain.mm
 
+    Shared/Cocoa/DefaultWebBrowserChecks.mm
+    Shared/Cocoa/XPCEndpoint.mm
+    Shared/Cocoa/XPCEndpointClient.mm
+
+    UIProcess/QuickLookThumbnailLoader.mm
+    UIProcess/QuickLookThumbnailingSoftLink.mm
+
+    UIProcess/API/Cocoa/_WKAuthenticationExtensionsClientOutputs.mm
+    UIProcess/API/Cocoa/_WKAuthenticatorAssertionResponse.mm
+    UIProcess/API/Cocoa/_WKAuthenticatorAttestationResponse.mm
+    UIProcess/API/Cocoa/_WKAuthenticatorResponse.mm
+
+    UIProcess/Cocoa/PreferenceObserver.mm
     UIProcess/Cocoa/WKSafeBrowsingWarning.mm
     UIProcess/Cocoa/WKShareSheet.mm
     UIProcess/Cocoa/WKStorageAccessAlert.mm
+    UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
+
+    UIProcess/PDF/WKPDFHUDView.mm
 
     WebProcess/InjectedBundle/API/c/mac/WKBundlePageMac.mm
+
+    WebProcess/WebAuthentication/WebAuthenticatorCoordinator.cpp
+
+    WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp
+    WebProcess/cocoa/HandleXPCEndpointMessages.mm
+    WebProcess/cocoa/LaunchServicesDatabaseManager.mm
 )
 
 list(APPEND WebKit_SOURCES
@@ -54,6 +88,7 @@ list(APPEND WebKit_SOURCES
 )
 
 list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
+    "${CMAKE_BINARY_DIR}/libwebrtc/PrivateHeaders"
     "${ICU_INCLUDE_DIRS}"
     "${WEBKIT_DIR}/NetworkProcess/cocoa"
     "${WEBKIT_DIR}/NetworkProcess/mac"
@@ -69,6 +104,8 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/Inspector/Cocoa"
     "${WEBKIT_DIR}/UIProcess/Inspector/mac"
     "${WEBKIT_DIR}/UIProcess/Launcher/mac"
+    "${WEBKIT_DIR}/UIProcess/Media/cocoa"
+    "${WEBKIT_DIR}/UIProcess/PDF"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/ios"
     "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/mac"
@@ -81,6 +118,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/mac"
     "${WEBKIT_DIR}/Platform/unix"
     "${WEBKIT_DIR}/Platform/spi/Cocoa"
+    "${WEBKIT_DIR}/Platform/spi/ios"
     "${WEBKIT_DIR}/Platform/spi/mac"
     "${WEBKIT_DIR}/Platform/IPC/mac"
     "${WEBKIT_DIR}/Platform/IPC/cocoa"
@@ -104,6 +142,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebAuthentication"
     "${WEBKIT_DIR}/WebProcess/cocoa"
     "${WEBKIT_DIR}/WebProcess/mac"
+    "${WEBKIT_DIR}/WebProcess/GPU/graphics/cocoa"
     "${WEBKIT_DIR}/WebProcess/Inspector/mac"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/Cocoa"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/mac"
@@ -115,6 +154,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/mac"
     "${WEBKITLEGACY_DIR}"
+    "${WebKitLegacy_FRAMEWORK_HEADERS_DIR}"
 )
 
 set(XPCService_SOURCES
@@ -182,19 +222,31 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/Cocoa/UserMediaCaptureManagerProxy
     UIProcess/Cocoa/VideoFullscreenManagerProxy
 
+    UIProcess/Inspector/WebInspectorUIExtensionControllerProxy
+
+    UIProcess/Media/AudioSessionRoutingArbitratorProxy
+
     UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy
 
     UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy
 
     UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy
+    UIProcess/WebAuthentication/WebAuthnProcessProxy
 
     UIProcess/mac/SecItemShimProxy
+
+    WebAuthnProcess/WebAuthnConnectionToWebProcess
+    WebAuthnProcess/WebAuthnProcess
 
     WebProcess/ApplePay/WebPaymentCoordinator
 
     WebProcess/GPU/media/RemoteImageDecoderAVFManager
 
     WebProcess/GPU/media/ios/RemoteMediaSessionHelper
+
+    WebProcess/Inspector/WebInspectorUIExtensionController
+
+    WebProcess/WebAuthentication/WebAuthnProcessConnection
 
     WebProcess/WebPage/ViewGestureGeometryCollector
     WebProcess/WebPage/ViewUpdateDispatcher
@@ -375,6 +427,7 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKInspectorPrivate.h
     UIProcess/API/Cocoa/_WKInspectorPrivateForTesting.h
     UIProcess/API/Cocoa/_WKInspectorWindow.h
+    UIProcess/API/Cocoa/_WKInternalDebugFeature.h
     UIProcess/API/Cocoa/_WKLayoutMode.h
     UIProcess/API/Cocoa/_WKLinkIconParameters.h
     UIProcess/API/Cocoa/_WKOverlayScrollbarStyle.h
@@ -417,6 +470,25 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h
     UIProcess/API/Cocoa/_WKWebsiteDataStoreDelegate.h
     UIProcess/API/Cocoa/_WKWebsitePolicies.h
+
+    UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h
+
+    UIProcess/API/mac/WKWebViewPrivateForTestingMac.h
+
+    UIProcess/Cocoa/WKShareSheet.h
+
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessBundleParameters.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFormDelegatePrivate.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInHitTestResult.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInLoadDelegate.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInPageGroup.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h
+    WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h
 
     WebProcess/InjectedBundle/API/mac/WKDOMDocument.h
     WebProcess/InjectedBundle/API/mac/WKDOMElement.h

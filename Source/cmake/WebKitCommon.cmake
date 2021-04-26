@@ -46,7 +46,11 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
 
     list(FIND ALL_PORTS ${PORT} RET)
     if (${RET} EQUAL -1)
-        message(FATAL_ERROR "Please choose which WebKit port to build (one of ${ALL_PORTS})")
+        if (APPLE)
+            set(PORT "Mac")
+        else ()
+            message(FATAL_ERROR "Please choose which WebKit port to build (one of ${ALL_PORTS})")
+        endif ()
     endif ()
 
     string(TOLOWER ${PORT} WEBKIT_PORT_DIR)

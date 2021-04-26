@@ -16,6 +16,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/OpenGLSoftLinkCocoa.h
     cocoa/PassKitSoftLink.h
     cocoa/SpeechSoftLink.h
+    cocoa/UsageTrackingSoftLink.h
 
     mac/LookupSoftLink.h
 
@@ -70,6 +71,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     spi/cocoa/NSURLConnectionSPI.h
     spi/cocoa/NSURLDownloadSPI.h
     spi/cocoa/NSURLFileTypeMappingsSPI.h
+    spi/cocoa/NSUserDefaultsSPI.h
     spi/cocoa/NSXPCConnectionSPI.h
     spi/cocoa/NotifySPI.h
     spi/cocoa/PassKitInstallmentsSPI.h
@@ -152,6 +154,7 @@ list(APPEND PAL_SOURCES
     cocoa/OpenGLSoftLinkCocoa.mm
     cocoa/PassKitSoftLink.mm
     cocoa/SpeechSoftLink.mm
+    cocoa/UsageTrackingSoftLink.mm
 
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 

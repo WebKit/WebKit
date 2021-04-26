@@ -5,6 +5,7 @@ add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Fram
 add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
 
 list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
+    "${PAL_FRAMEWORK_HEADERS_DIR}"
     "${WEBKITLEGACY_DIR}"
     "${WEBKITLEGACY_DIR}/mac"
     "${WEBKITLEGACY_DIR}/mac/WebView"
@@ -512,6 +513,7 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     mac/WebCoreSupport/WebKitFullScreenListener.h
     mac/WebCoreSupport/WebOpenPanelResultListener.h
 
+    mac/WebView/WebArchive.h
     mac/WebView/WebHTMLViewPrivate.h
     mac/WebView/WebFrame.h
     mac/WebView/WebScriptWorld.h
