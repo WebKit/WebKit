@@ -1,5 +1,17 @@
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
+        Add missing SPI declarations
+        https://bugs.webkit.org/show_bug.cgi?id=225061
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/CryptoKitCBridgingSoftLink.h:
+        * pal/spi/cocoa/CryptoKitCBridgingSPI.h: Added.
+        * pal/spi/mac/DataDetectorsSPI.h:
+
+2021-04-26  Alex Christensen  <achristensen@webkit.org>
+
         Update Mac-specific CMake files
         https://bugs.webkit.org/show_bug.cgi?id=225064
 

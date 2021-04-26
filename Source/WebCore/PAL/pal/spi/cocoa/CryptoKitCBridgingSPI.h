@@ -27,11 +27,22 @@
 
 #if HAVE(RSA_BSSA)
 
-#import <pal/spi/cocoa/CryptoKitCBridgingSPI.h>
-#import <wtf/SoftLinking.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CryptoKitCBridging);
+#import <CryptoKitCBridging/RSABSSA.h>
 
-SOFT_LINK_CLASS_FOR_HEADER(PAL, RSABSSATokenBlinder);
+#else
 
-#endif
+@interface RSABSSATokenWaitingActivation : NSObject
+@property (nonatomic, retain, readonly) NSData *blindedMessage;
+@end
+
+@interface RSABSSATokenReady : NSObject
+@property (nonatomic, retain, readonly) NSData *tokenContent;
+@property (nonatomic, retain, readonly) NSData *keyId;
+@property (nonatomic, retain, readonly) NSData *signature;
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#endif // HAVE(RSA_BSSA)
