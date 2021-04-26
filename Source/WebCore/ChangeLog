@@ -1,3 +1,15 @@
+2021-04-26  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r272379) [Win] Some emojis are painted with a blank square on the right side of it
+        https://bugs.webkit.org/show_bug.cgi?id=225047
+
+        Reviewed by Don Olmstead.
+
+        imported/w3c/web-platform-tests/mathml/relations/css-styling tests cover this change.
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal): Don't add the 0 glyphs for Windows too.
+
 2021-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Remove [CallNamedSetterOnlyForSupportedProperties] extended attribute
