@@ -650,10 +650,14 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
     Locker<Lock> locker(m_referencedIndexLock);
 
     Vector<uint64_t> identifiersToRemove;
+    Vector<std::unique_ptr<IDBIndex>> indexesToDelete;
     for (auto& iterator : m_deletedIndexes) {
         if (m_info.hasIndex(iterator.key)) {
             auto name = iterator.value->info().name();
-            m_referencedIndexes.set(name, WTFMove(iterator.value));
+            auto result = m_referencedIndexes.add(name, nullptr);
+            if (!result.isNewEntry)
+                indexesToDelete.append(std::exchange(result.iterator->value, nullptr));
+            result.iterator->value = std::exchange(iterator.value, nullptr);
             identifiersToRemove.append(iterator.key);
         }
     }
@@ -663,6 +667,12 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
 
     for (auto& index : m_referencedIndexes.values())
         index->rollbackInfoForVersionChangeAbort();
+
+    for (auto& index : indexesToDelete) {
+        index->rollbackInfoForVersionChangeAbort();
+        auto indexIdentifier = index->info().identifier();
+        m_deletedIndexes.set(indexIdentifier, std::exchange(index, nullptr));
+    }
 }
 
 void IDBObjectStore::visitReferencedIndexes(SlotVisitor& visitor) const
