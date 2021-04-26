@@ -1,3 +1,13 @@
+2021-04-26  Mark Lam  <mark.lam@apple.com>
+
+        %TypedArray%.prototype.sort() should not use a regular array as a temp buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=225062
+        rdar://77021547
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/typedarray-sort-should-not-use-a-regular-array-as-temp-buffer.js: Added.
+
 2021-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] OrdinarySet should invoke custom [[Set]] methods

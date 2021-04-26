@@ -1,3 +1,22 @@
+2021-04-26  Mark Lam  <mark.lam@apple.com>
+
+        %TypedArray%.prototype.sort() should not use a regular array as a temp buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=225062
+        rdar://77021547
+
+        Reviewed by Yusuke Suzuki.
+
+        %TypedArray%.prototype.sort() should not be affected by property changes in
+        Array.prototype.
+
+        References:
+        [1] https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort
+        [2] https://tc39.es/ecma262/#sec-array.prototype.sort
+        [3] https://tc39.es/ecma262/#sec-sortcompare
+
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArrayMergeSort):
+
 2021-04-26  Keith Miller  <keith_miller@apple.com>
 
         CodeBlock should do a better job accounting for extra memory it allocates.

@@ -173,7 +173,8 @@ function typedArrayMergeSort(array, valueCount, comparator)
 {
     "use strict";
 
-    var buffer = @newArrayWithSize(valueCount);
+    var constructor = @typedArrayGetOriginalConstructor(array);
+    var buffer = new constructor(valueCount);
     var dst = buffer;
     var src = array;
 
