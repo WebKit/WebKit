@@ -1,3 +1,18 @@
+2021-04-26  Don Olmstead  <don.olmstead@sony.com>
+
+        ANGLE X11 build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=225003
+
+        Reviewed by Kenneth Russell.
+
+        X11 headers define a bunch of macros with common terms, interfering with WebCore and WTF
+        enum values. As a workaround, we explicitly undef them.
+
+        This is the same fix as the one to GLContext.h in r274869 but applied to the ANGLE headers
+        that are including X11.
+
+        * platform/graphics/angle/ANGLEHeaders.h:
+
 2021-04-26  Antti Koivisto  <antti@apple.com>
 
         Refcount Style::Resolver
