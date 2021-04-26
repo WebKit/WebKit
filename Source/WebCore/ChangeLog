@@ -1,3 +1,27 @@
+2021-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        embed element with the src attribute set prevents WebKitTestRunner from exiting
+        https://bugs.webkit.org/show_bug.cgi?id=223791
+
+        Reviewed by Ryosuke Niwa.
+
+        The problem is that the load never finishes, so WTR keeps waiting for the final message from injected bundle
+        that happens when the page is loaded. When the src attribute is changed,
+        HTMLPlugInImageElement::updateImageLoaderWithNewURLSoon() is called. That calls
+        HTMLPlugInImageElement::scheduleUpdateForAfterStyleResolution() that increases the document load event delay
+        count and queues a style post resolution callback. The document load event delay count is decreased in
+        HTMLPlugInImageElement::updateAfterStyleResolution(), called by the style post resolution callback. But the
+        callback is never called because the embed element is not in tree, and it's never added, keeping the document
+        load event delay unbalanced. We should not call scheduleUpdateForAfterStyleResolution() when the element
+        is not in render tree, since we know Node::invalidateStyle() will return early and style post resolution
+        callbacks will not be called. If the element is added to the tree eventually,
+        scheduleUpdateForAfterStyleResolution() will be called by didRecalcStyle, so the image will be loaded.
+
+        Test: fast/images/embed-image-onload-src-change.html
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateImageLoaderWithNewURLSoon):
+
 2021-04-25  ChangSeok Oh  <changseok@webkit.org>
 
         Fix a crash caused by AVIF decoding failure
