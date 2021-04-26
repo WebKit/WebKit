@@ -1,3 +1,13 @@
+2021-04-26  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews-app] Status bubble should only display important messages in pop-over - part 4
+        https://bugs.webkit.org/show_bug.cgi?id=225076
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+
 2021-04-26  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Modernize WebKit GLib testing
