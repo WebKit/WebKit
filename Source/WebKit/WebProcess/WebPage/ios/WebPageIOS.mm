@@ -2555,7 +2555,7 @@ static inline bool isObscuredElement(Element& element)
     auto topDocument = makeRef(element.document().topDocument());
     auto elementRectInMainFrame = element.clientRect();
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent, HitTestRequest::DisallowUserAgentShadowContent };
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::IgnoreClipping };
     HitTestResult result(elementRectInMainFrame.center());
 
     topDocument->hitTest(hitType, result);

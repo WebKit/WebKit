@@ -1,3 +1,26 @@
+2021-04-26  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r271861): [iOS] Accessory bar navigation to elements outside the viewport fails
+        https://bugs.webkit.org/show_bug.cgi?id=224980
+        <rdar://problem/77042311>
+
+        Reviewed by Wenson Hsieh.
+
+        r271861 introduced logic to prevent obscured elements from being
+        focusable using the accessory bar, using hit testing. However, it also
+        prevented elements outside the viewport from participating in accessory
+        bar navigation.
+
+        To fix, include HitTestRequest::IgnoreClipping in the hit test request
+        options. This ensures that hit test requests are not clipped to the
+        viewport.
+
+        Note that this behavior is covered by an existing test, but the test
+        only failed on smaller devices.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isObscuredElement):
+
 2021-04-26  Don Olmstead  <don.olmstead@sony.com>
 
         Fix includes for some GTK/GLib headers
