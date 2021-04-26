@@ -1,3 +1,24 @@
+2021-04-26  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: REGRESSION(r270134) Elements Tab: Details Sidebar toggle is unexpectedly disabled  after switching from Timelines tab
+        https://bugs.webkit.org/show_bug.cgi?id=224772
+        <rdar://73470211>
+
+        Reviewed by Devin Rousso.
+
+        Ensure the logic for identifying and showing the represented object for the selected `DOMNode`
+        is not run unless the Elements Tab is visible. This guards agains the partial setting of state
+        when the Elements Tab is not the default tab while opening Web Inspector.
+
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        (WI.ElementsTabContentView.prototype.showRepresentedObject):
+        (WI.ElementsTabContentView.prototype.attached):
+        (WI.ElementsTabContentView.prototype.detached):
+        (WI.ElementsTabContentView.prototype._showDOMTreeContentViewIfNeeded):
+        (WI.ElementsTabContentView.prototype._mainFrameDidChange):
+        (WI.ElementsTabContentView.prototype._mainResourceDidChange):
+
 2021-04-25  Devin Rousso  <drousso@apple.com>
 
         Web Inspector: Audit: REGRESSION(?): creating a new test in Edit mode causes the Results folder to appear
