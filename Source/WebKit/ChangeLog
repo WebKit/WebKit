@@ -1,3 +1,60 @@
+2021-04-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData() hangs for a long time
+        https://bugs.webkit.org/show_bug.cgi?id=225063
+        <rdar://problem/76248557>
+
+        Reviewed by Brent Fulgham.
+
+        Unique index values speed up sqlite database queries, and prevent
+        repeated entries in tables without primary keys. Its possible to
+        get into a state where some tables in the ITP database do not have index
+        values. We should check on open if the database has index values, and
+        create them if not. This may require migrating existing data and
+        removing repeated entries.
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        Remove semi-colons in CREATE UNIQUE INDEX queries. They aren't needed
+        and if we remove them we can use these constexpr values to check for
+        the correct stored index later on.
+
+        (WebKit::stripIndexQueryToMatchStoredValue):
+        We use CREATE UNIQUE INDEX IF NOT EXISTS to avoid an error if the
+        unique index already exists, but the value is stored in the database
+        without the "IF NOT EXISTS" portion. In order to check for correct
+        values we need to strip this out.
+
+        (WebKit::expectedTableAndIndexQueries):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries):
+        Return the schema and index for a given table. If the index is empty
+        that means SQLite created an automatic index and we should return
+        WTF::nullopt.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::missingUniqueIndices):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::missingReferenceToObservedDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::needsUpdatedSchema):
+        (WebKit::insertDistinctValuesInTableQuery):
+        Since unique indices prevent repeat entries, tables without them might
+        have repeated entries. We need to select only one of each entry to
+        migrate to the new tables. This picks the one with the most recent
+        lastUpdated time.
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::createUniqueIndices):
+        This fix revealed an index that is never created. I added it here. 
+
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount):
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _isRelationshipOnlyInDatabaseOnce:thirdParty:completionHandler:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        Convert SPI previously only used for layout tests to be used for an
+        API test where we can load a database with repeated values to ensure
+        the migration is correct after my change.
+
 2021-04-26  Ben Nham  <nham@apple.com>
 
         Reduce memory footprint for background tabs

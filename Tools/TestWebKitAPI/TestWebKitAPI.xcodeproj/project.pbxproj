@@ -301,6 +301,7 @@
 		4971B13024623A3C0096994D /* basicITPDatabase.db-wal in Resources */ = {isa = PBXBuildFile; fileRef = 4971B12E24623A3B0096994D /* basicITPDatabase.db-wal */; };
 		4971B13124623A4F0096994D /* basicITPDatabase.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4971B12C246239D30096994D /* basicITPDatabase.db */; };
 		49897D6C241FE9E400ECF153 /* in-app-browser-privacy-local-file.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 49D7FBA7241FDDDA00AB67FA /* in-app-browser-privacy-local-file.html */; };
+		498D030A26376B34009CBFAD /* resourceLoadStatisticsMissingUniqueIndex.db in Copy Resources */ = {isa = PBXBuildFile; fileRef = 498D030926376B2C009CBFAD /* resourceLoadStatisticsMissingUniqueIndex.db */; };
 		4995A6F025E8772000E5F0A9 /* csp-document-uri-report.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4995A6EF25E876A300E5F0A9 /* csp-document-uri-report.html */; };
 		49AEEF6D2407359D00C87E4C /* InAppBrowserPrivacy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49AEEF6B2407358600C87E4C /* InAppBrowserPrivacy.mm */; };
 		4BFDFFA71314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4BFDFFA61314776C0061F24B /* HitTestResultNodeHandle_Bundle.cpp */; };
@@ -1336,6 +1337,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				498D030A26376B34009CBFAD /* resourceLoadStatisticsMissingUniqueIndex.db in Copy Resources */,
 				55A817FF2181021A0004A39A /* 100x100-red.tga in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
@@ -2095,6 +2097,7 @@
 		4971B12C246239D30096994D /* basicITPDatabase.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = basicITPDatabase.db; sourceTree = SOURCE_ROOT; };
 		4971B12D24623A3B0096994D /* basicITPDatabase.db-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "basicITPDatabase.db-shm"; sourceTree = SOURCE_ROOT; };
 		4971B12E24623A3B0096994D /* basicITPDatabase.db-wal */ = {isa = PBXFileReference; lastKnownFileType = text; path = "basicITPDatabase.db-wal"; sourceTree = SOURCE_ROOT; };
+		498D030926376B2C009CBFAD /* resourceLoadStatisticsMissingUniqueIndex.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = resourceLoadStatisticsMissingUniqueIndex.db; sourceTree = "<group>"; };
 		4995A6EF25E876A300E5F0A9 /* csp-document-uri-report.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "csp-document-uri-report.html"; sourceTree = "<group>"; };
 		49AEEF682407276F00C87E4C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		49AEEF6B2407358600C87E4C /* InAppBrowserPrivacy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InAppBrowserPrivacy.mm; sourceTree = "<group>"; };
@@ -3871,6 +3874,7 @@
 		A16F66B81C40E9E100BD4D24 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				498D030926376B2C009CBFAD /* resourceLoadStatisticsMissingUniqueIndex.db */,
 				55A817FE218101DF0004A39A /* 100x100-red.tga */,
 				55A817FD218101DF0004A39A /* 400x400-green.png */,
 				F4CFCDD9249FC9D900527482 /* Ahem.ttf */,

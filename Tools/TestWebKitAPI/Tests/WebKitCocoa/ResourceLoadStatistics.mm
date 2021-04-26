@@ -1408,3 +1408,50 @@ TEST(ResourceLoadStatistics, BackForwardPerPageData)
     
     TestWebKitAPI::Util::run(&doneFlag);
 }
+
+TEST(ResourceLoadStatistics, MigrateDistinctDataFromTableWithMissingIndexes)
+{
+    auto *sharedProcessPool = [WKProcessPool _sharedProcessPool];
+
+    auto defaultFileManager = [NSFileManager defaultManager];
+    auto *dataStore = [WKWebsiteDataStore defaultDataStore];
+    NSURL *itpRootURL = [[dataStore _configuration] _resourceLoadStatisticsDirectory];
+    NSURL *fileURL = [itpRootURL URLByAppendingPathComponent:@"observations.db"];
+    [defaultFileManager removeItemAtPath:itpRootURL.path error:nil];
+    EXPECT_FALSE([defaultFileManager fileExistsAtPath:itpRootURL.path]);
+
+    // Load an incorrect database schema with pre-seeded ITP data. In this case, it contains various entries of webkit.org and apple.com
+    // repeatedly stored as subframes, subresources, and unique redirects. It also has them as repeated source and destination sites for PCM.
+    // Once we add unique indexes, each entry should be migrated exactly once. Debug asserts when running the test will indicate failure.
+    [defaultFileManager createDirectoryAtURL:itpRootURL withIntermediateDirectories:YES attributes:nil error:nil];
+    NSURL *newFileURL = [[NSBundle mainBundle] URLForResource:@"resourceLoadStatisticsMissingUniqueIndex" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:newFileURL.path]);
+    [defaultFileManager copyItemAtPath:newFileURL.path toPath:fileURL.path error:nil];
+    EXPECT_TRUE([defaultFileManager fileExistsAtPath:fileURL.path]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setProcessPool: sharedProcessPool];
+    configuration.get().websiteDataStore = dataStore;
+
+    // We need an active NetworkProcess to perform ResourceLoadStatistics operations.
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    __block bool doneFlag = false;
+    // Check that the webkit.org is stored as appearing under apple.com exactly once.
+    [dataStore _isRelationshipOnlyInDatabaseOnce:[NSURL URLWithString:@"http://apple.com"] thirdParty:[NSURL URLWithString:@"http://webkit.org"] completionHandler:^void(BOOL result) {
+        EXPECT_TRUE(result);
+        doneFlag = true;
+    }];
+    TestWebKitAPI::Util::run(&doneFlag);
+
+    doneFlag = false;
+    // Check that the apple.com is stored as appearing under webkit.org exactly once.
+    [dataStore _isRelationshipOnlyInDatabaseOnce:[NSURL URLWithString:@"http://webkit.org"] thirdParty:[NSURL URLWithString:@"http://apple.com"] completionHandler:^void(BOOL result) {
+        EXPECT_TRUE(result);
+        doneFlag = true;
+    }];
+
+    TestWebKitAPI::Util::run(&doneFlag);
+}

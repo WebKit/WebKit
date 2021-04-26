@@ -1,3 +1,20 @@
+2021-04-26  Kate Cheney  <katherine_cheney@apple.com>
+
+        ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData() hangs for a long time
+        https://bugs.webkit.org/show_bug.cgi?id=225063
+        <rdar://problem/76248557>
+
+        Reviewed by Brent Fulgham.
+
+        Test coverage. Currently API testing is the only way to test data
+        migration and schema changes in the ITP database because we can load
+        a pre-seeded database and check the correct values after migration.
+        We should add some ability for unit testing in the future.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ResourceLoadStatistics.mm:
+        (TEST):
+
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Update Mac-specific CMake files
