@@ -1,3 +1,45 @@
+2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Resync WPT shadow DOM tests as of 02f0cc10
+        https://bugs.webkit.org/show_bug.cgi?id=225042
+
+        Reviewed by Antti Koivisto.
+
+        Resync'ed shadow DOM tests as of 02f0cc10c4e92627ccfd8b30ce03e04278af5224.
+
+        * resources/resource-files.json:
+        * web-platform-tests/shadow-dom/accesskey.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/accesskey.tentative.html: Added.
+        * web-platform-tests/shadow-dom/declarative/declarative-after-attachshadow.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.tentative.html: Added.
+        * web-platform-tests/shadow-dom/declarative/getinnerhtml.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.tentative.html: Renamed from innerhtml-before-closing-tag.html.
+        * web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.tentative.html: Renamed from innerhtml-on-ordinary-template.html.
+        * web-platform-tests/shadow-dom/declarative/move-template-before-closing-tag.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/declarative/move-template-before-closing-tag.tentative.html: Renamed from move-template-before-closing-tag.html.
+        * web-platform-tests/shadow-dom/declarative/script-access.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/w3c-import.log:
+        * web-platform-tests/shadow-dom/event-on-pseudo-element-crash.html: Added.
+        * web-platform-tests/shadow-dom/focus/ShadowRoot-delegatesFocus-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/ShadowRoot-delegatesFocus.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-selector-delegatesFocus.html:
+        * web-platform-tests/shadow-dom/focus/w3c-import.log:
+        * web-platform-tests/shadow-dom/imperative-slot-api-crash-expected.txt: Added.
+        * web-platform-tests/shadow-dom/imperative-slot-api-crash.html: Added.
+        * web-platform-tests/shadow-dom/imperative-slot-api-expected.txt: Added.
+        * web-platform-tests/shadow-dom/imperative-slot-api-slotchange-expected.txt: Renamed from slots-imperative-api-slotchange.tentative-expected.txt.
+        * web-platform-tests/shadow-dom/imperative-slot-api-slotchange.html: Renamed from slots-imperative-api-slotchange.tentative.html.
+        * web-platform-tests/shadow-dom/imperative-slot-api.html: Renamed from slots-imperative-slot-api.tentative.html.
+        * web-platform-tests/shadow-dom/nested-slot-remove-crash-expected.txt:
+        * web-platform-tests/shadow-dom/nested-slot-remove-crash.html:
+        * web-platform-tests/shadow-dom/w3c-import.log:
+
 2021-04-25  Felipe Erias  <felipeerias@igalia.com>
 
         [css-flexbox] Table layout disregards overriding width

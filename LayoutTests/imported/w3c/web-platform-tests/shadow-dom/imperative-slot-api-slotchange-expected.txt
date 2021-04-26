@@ -1,6 +1,6 @@
 
 FAIL slotchange event must not fire synchronously. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
-FAIL slotchange event should not fire when assignments do not change assignedNodes. assert_throws_dom: function "() => { tTree.s1.assign([tTree.c4]); }" threw object "TypeError: tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c4])', 'tTree.s1.assign' is undefined)" that is not a DOMException NotAllowedError: property "code" is equal to undefined, expected 0
+FAIL slotchange event should not fire when assignments do not change assignedNodes. tTree.s1.assign is not a function. (In 'tTree.s1.assign([])', 'tTree.s1.assign' is undefined)
 FAIL slotchange event should not fire when same node is assigned. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1, tTree.c2])', 'tTree.s1.assign' is undefined)
 FAIL Fire slotchange event when slot's assigned nodes changes. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)
 FAIL Fire slotchange event on previous slot and new slot when node is reassigned. tTree.s1.assign is not a function. (In 'tTree.s1.assign([tTree.c1])', 'tTree.s1.assign' is undefined)

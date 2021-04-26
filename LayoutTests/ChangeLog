@@ -1,3 +1,17 @@
+2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Resync WPT shadow DOM tests as of 02f0cc10
+        https://bugs.webkit.org/show_bug.cgi?id=225042
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined the test and added platform specific results for the crash tests.
+
+        * platform/ios/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-api-crash-expected.txt: Added.
+        * platform/ios/imported/w3c/web-platform-tests/shadow-dom/event-on-pseudo-element-crash-expected.txt: Added.
+        * platform/mac/imported/w3c/web-platform-tests/shadow-dom/event-on-pseudo-element-crash-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/shadow-dom/nested-slot-remove-crash-expected.txt: Rebaselined.
+
 2021-04-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         embed element with the src attribute set prevents WebKitTestRunner from exiting
