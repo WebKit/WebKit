@@ -1,3 +1,10 @@
+2021-04-26  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Emit new GLIB baselines after r276584.
+
+        * platform/glib/imported/w3c/web-platform-tests/shadow-dom/event-on-pseudo-element-crash-expected.txt: Added.
+        * platform/glib/imported/w3c/web-platform-tests/shadow-dom/imperative-slot-api-crash-expected.txt: Added.
+
 2021-04-26  Enrique Ocaña González  <eocanha@igalia.com>
 
         [GStreamer] media/track/in-band/ layout tests introduced in r154908 are failing
