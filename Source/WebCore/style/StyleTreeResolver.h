@@ -66,11 +66,11 @@ private:
 
     struct Scope : RefCounted<Scope> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(TreeResolverScope);
-        Resolver& resolver;
+        Ref<Resolver> resolver;
         SelectorFilter selectorFilter;
         SharingResolver sharingResolver;
-        ShadowRoot* shadowRoot { nullptr };
-        Scope* enclosingScope { nullptr };
+        RefPtr<ShadowRoot> shadowRoot;
+        RefPtr<Scope> enclosingScope;
 
         Scope(Document&);
         Scope(ShadowRoot&, Scope& enclosingScope);

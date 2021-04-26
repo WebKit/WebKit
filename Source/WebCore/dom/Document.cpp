@@ -2384,7 +2384,7 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 Style::Resolver& Document::userAgentShadowTreeStyleResolver()
 {
     if (!m_userAgentShadowTreeStyleResolver)
-        m_userAgentShadowTreeStyleResolver = makeUnique<Style::Resolver>(*this);
+        m_userAgentShadowTreeStyleResolver = Style::Resolver::create(*this);
     return *m_userAgentShadowTreeStyleResolver;
 }
 

@@ -1741,7 +1741,7 @@ private:
 
     UniqueRef<Quirks> m_quirks;
 
-    std::unique_ptr<Style::Resolver> m_userAgentShadowTreeStyleResolver;
+    RefPtr<Style::Resolver> m_userAgentShadowTreeStyleResolver;
 
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document> m_contextDocument;

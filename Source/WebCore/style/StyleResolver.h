@@ -79,10 +79,10 @@ struct ElementStyle {
     std::unique_ptr<Relations> relations;
 };
 
-class Resolver {
-    WTF_MAKE_NONCOPYABLE(Resolver); WTF_MAKE_FAST_ALLOCATED;
+class Resolver : public RefCounted<Resolver> {
+    WTF_MAKE_ISO_ALLOCATED(Resolver);
 public:
-    Resolver(Document&);
+    static Ref<Resolver> create(Document&);
     ~Resolver();
 
     ElementStyle styleForElement(const Element&, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle = nullptr, RuleMatchingBehavior = RuleMatchingBehavior::MatchAllRules, const SelectorFilter* = nullptr);
@@ -142,6 +142,8 @@ public:
 
 private:
     friend class PageRuleCollector;
+
+    Resolver(Document&);
 
     class State {
     public:
