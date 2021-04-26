@@ -1,3 +1,9 @@
+2021-04-25  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Unreviewed test gardening
+
+        * platform/wincairo/TestExpectations:
+
 2021-04-25  ChangSeok Oh  <changseok@webkit.org>
 
         Fix a crash caused by AVIF decoding failure
