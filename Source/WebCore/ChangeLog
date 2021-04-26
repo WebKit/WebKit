@@ -1,3 +1,22 @@
+2021-04-26  Said Abou-Hallawa  <said@apple.com>
+
+        Remove redundant frameDetached() from the SVGImage destructor
+        https://bugs.webkit.org/show_bug.cgi?id=221616
+        <rdar://problem/74149106>
+
+        Reviewed by Chris Dumez.
+
+        SVGImage was originally written such that it has two separate objects:
+        a page and a frame; see https://trac.webkit.org/r18470. So it made sense
+        at that time to clean up the page and the frame separately. The Frame 
+        was cleaned up by telling the frame's loader that the frameDetached().
+
+        This code is not necessary right now since the page owns the main frame.
+        And its destructor recursively detaches itself from all the frames.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::~SVGImage):
+
 2021-04-26  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r272379) [Win] Some emojis are painted with a blank square on the right side of it
