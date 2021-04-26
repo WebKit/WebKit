@@ -1,3 +1,157 @@
+2021-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] OrdinarySet should invoke custom [[Set]] methods
+        https://bugs.webkit.org/show_bug.cgi?id=217916
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes putInlineSlow() to handle special properties (like JSFunction's "name"
+        and JSArray's "length") in prototype chain. When such property is encountered, prototype
+        chain traversal is stopped; if it's read-only, a TypeError is thrown in strict mode.
+
+        This change adds OverridesPut out of line type info flag, and utilizes it in putInlineSlow()
+        to invoke overriden methods. While this approach requires put() methods to be aware of
+        altered receivers, it renders several benefits:
+          1. put() method can be used for both "real" [[Set]] overrides and special properties,
+             with its return value remaining `bool`;
+          2. it is simpler, faster, and more predictable than calling [[GetOwnProperty]] in
+             putInlineSlow() or adding defineOwnPropertyViaPut() to the method table.
+
+        Removes ordinarySetSlow() for non-index properties, which didn't invoke some [[Set]]
+        methods as well. Instead, definePropertyOnReceiver() is introduced for altered receivers,
+        which performs correctly when reached because:
+          1. all special properties were already handled (unless it's Reflect.set);
+          2. performing putDirectInternal() is unobservable (unless ProxyObject was seen);
+          3. putDirectInternal() now fully implements property definition of OrdinarySet [1];
+          4. put() override is required if a spec defines custom [[DefineOwnProperty]].
+
+        Since indexed puts handle overrides / altered receivers quite differently, they will
+        be fixed in a follow-up, completely removing ordinarySetSlow().
+
+        Also, by merging putEntry() / putToPrimitive() into putInlineSlow() and introducing
+        putInlineFastReplacingStaticPropertyIfNeeded() helper, this patch fixes a few bugs:
+          1. Direct [[Set]] to non-reified static property now preserves its attributes when replacing [[Value]].
+          2. Prototype chain [[Set]] to non-reified static property now throws if receiver is non-extensible.
+          3. Non-reified static writable property now shadows read-only one that is further in prototype chain.
+          4. Non-reified static properties in prototype chain of a primitive are now considered.
+
+        Fixes a few issues that were previously unobservable:
+          1. PropertyAttribute::CustomValue is now unset when a setter-less property is reassigned.
+          2. uint64_t putByIndexInline() now calls put() via method table like uint32_t counterpart.
+
+        Other notable refactors:
+          1. Inlines callCustomSetter(), dropping weird TriState return value.
+          2. Simplifies initialization of StringPrototype.
+          3. Simplifies isThisValueAltered() to pointer comparisons at non-JSProxy call sites.
+          4. Removes doPutPropertySecurityCheck() methods as the same checks are performed by put() methods.
+          5. Removes prototypeChainMayInterceptStoreTo(), which pretty much duplicated canPerformFastPutInline().
+          6. Removes dummy JSArrayBufferView::put() method.
+          7. Removes now unused lookupPut().
+
+        Aligns JSC with V8 and SpiderMonkey.
+
+        This patch carefully preserves the current behavior of Reflect.set with CustomValue
+        and prototype chain [[Set]] to a JSCallbackObject / legacy platform object.
+
+        This change is performance-neutral on /put/ microbenchmarks as it doesn't affect
+        caching, only the slow path. Reflect.set with JSFinalObject receiver is 130% faster.
+        putInlineSlow() microbenchmarks progress by 4-18%.
+
+        [1]: https://tc39.es/ecma262/#sec-ordinarysetwithowndescriptor (step 3)
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        * API/tests/testapiScripts/testapi.js:
+        * debugger/DebuggerScope.h:
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.h:
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter): Deleted.
+        * runtime/CustomGetterSetter.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::put):
+        * runtime/GetterSetter.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::put):
+        * runtime/JSArray.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::put): Deleted.
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::doPutPropertySecurityCheck): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::definePropertyOnReceiverSlow):
+        (JSC::JSObject::definePropertyOnReceiver):
+        (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded):
+        (JSC::JSObject::doPutPropertySecurityCheck): Deleted.
+        (JSC::JSObject::prototypeChainMayInterceptStoreTo): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::hasNonReifiedStaticProperties):
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::doPutPropertySecurityCheck): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInlineExcludingProto):
+        (JSC::JSObject::putInlineForJSObject):
+        (JSC::JSObject::putInlineFast):
+        (JSC::JSObject::putDirectInternal):
+        * runtime/JSProxy.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::hasStaticPropertyTable const):
+        (JSC::TypeInfo::overridesPut const):
+        (JSC::TypeInfo::getOwnPropertySlotMayBeWrongAboutDontEnum const):
+        (JSC::TypeInfo::hasPutPropertySecurityCheck const): Deleted.
+        * runtime/Lookup.h:
+        (JSC::putEntry): Deleted.
+        (JSC::lookupPut): Deleted.
+        * runtime/PropertySlot.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::put):
+        * runtime/ProxyObject.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::context const):
+        (JSC::PutPropertySlot::isTaintedByOpaqueObject const):
+        (JSC::PutPropertySlot::setIsTaintedByOpaqueObject):
+        * runtime/ReflectObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::StringPrototype::create):
+        * runtime/StringPrototype.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::validateFlags):
+        * runtime/Structure.h:
+        (JSC::Structure::hasNonReifiedStaticProperties const):
+        * tools/JSDollarVM.cpp:
+
 2021-04-23  Michael Saboff  <msaboff@apple.com>
 
         [YARR Interpreter] Improper backtrack of parentheses with non-zero based greedy quantifiers

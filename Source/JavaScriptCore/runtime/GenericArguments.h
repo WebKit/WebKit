@@ -36,7 +36,7 @@ template<typename Type>
 class GenericArguments : public JSNonFinalObject {
 public:
     typedef JSNonFinalObject Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnPropertyNames | OverridesPut | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
 protected:
     GenericArguments(VM& vm, Structure* structure)

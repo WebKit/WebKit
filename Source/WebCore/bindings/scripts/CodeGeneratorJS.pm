@@ -1181,6 +1181,8 @@ sub GeneratePut
     push(@$outputArray, "{\n");
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
+    push(@$outputArray, "    if (UNLIKELY(thisObject != putPropertySlot.thisValue()))\n");
+    push(@$outputArray, "        return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);\n");
 
     push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());\n\n");
 
@@ -2954,11 +2956,6 @@ sub GenerateHeader
         $structureFlags{"JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero"} = 1;
     }
 
-    if ($interface->extendedAttributes->{CheckSecurity}) {
-        push(@headerContent, "    static void doPutPropertySecurityCheck(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PutPropertySlot&);\n");
-        $structureFlags{"JSC::HasPutPropertySecurityCheck"} = 1;
-    }
-
     if ($interface->extendedAttributes->{Plugin} || GetNamedSetterOperation($interface)) {
         $structureFlags{"JSC::ProhibitsPropertyCaching"} = 1;
     }
@@ -2971,6 +2968,7 @@ sub GenerateHeader
     if (InstanceOverridesPut($interface)) {
         push(@headerContent, "    static bool put(JSC::JSCell*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static bool putByIndex(JSC::JSCell*, JSC::JSGlobalObject*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n");
+        $structureFlags{"JSC::OverridesPut"} = 1;
     }
     
     if (InstanceOverridesDefineOwnProperty($interface)) {

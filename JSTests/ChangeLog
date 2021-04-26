@@ -1,3 +1,25 @@
+2021-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] OrdinarySet should invoke custom [[Set]] methods
+        https://bugs.webkit.org/show_bug.cgi?id=217916
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/put-slow-no-cache-array.js: Added.
+        * microbenchmarks/put-slow-no-cache-function.js: Added.
+        * microbenchmarks/put-slow-no-cache-js-proxy.js: Added.
+        * microbenchmarks/put-slow-no-cache-long-prototype-chain.js: Added.
+        * microbenchmarks/put-slow-no-cache.js: Added.
+        * microbenchmarks/reflect-set-with-receiver.js: Added.
+        * stress/custom-get-set-proto-chain-put.js:
+        * stress/module-namespace-access-set-fails.js: Added.
+        * stress/put-non-reified-static-accessor-or-custom.js: Added.
+        * stress/put-non-reified-static-function-or-custom.js: Added.
+        * stress/put-to-primitive-non-reified-static-custom.js: Added.
+        * stress/put-to-primitive.js: Added.
+        * stress/put-to-proto-chain-overrides-put.js: Added.
+        * stress/typed-array-canonical-numeric-index-string-set.js: Added.
+
 2021-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Baseline should have fast path for switch_imm

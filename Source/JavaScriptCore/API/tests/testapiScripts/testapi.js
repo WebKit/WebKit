@@ -208,6 +208,26 @@ shouldBe("symbolToStringTagDescriptor.configurable", true);
 MyObject[Symbol.toStringTag] = "Foo";
 shouldBe("Object.prototype.toString.call(MyObject)", "[object Foo]");
 
+var MyObjectHeir = Object.create(MyObject);
+MyObjectHeir.throwOnSet = 22;
+var MyObjectHeirThrowOnSetDescriptor = Object.getOwnPropertyDescriptor(MyObjectHeir, "throwOnSet");
+shouldBe("typeof MyObjectHeirThrowOnSetDescriptor", "object");
+shouldBe("MyObjectHeirThrowOnSetDescriptor.value", 22);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.writable", true);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.enumerable", true);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.configurable", true);
+shouldThrow("MyObject.throwOnSet = 22");
+
+var globalObjectHeir = Object.create(this);
+globalObjectHeir.globalStaticValue2 = 33;
+var globalObjectHeirGlobalStaticValue2Descriptor = Object.getOwnPropertyDescriptor(globalObjectHeir, "globalStaticValue2");
+shouldBe("typeof globalObjectHeirGlobalStaticValue2Descriptor", "object");
+shouldBe("globalObjectHeirGlobalStaticValue2Descriptor.value", 33);
+shouldBe("globalObjectHeirGlobalStaticValue2Descriptor.writable", true);
+shouldBe("globalObjectHeirGlobalStaticValue2Descriptor.enumerable", true);
+shouldBe("globalObjectHeirGlobalStaticValue2Descriptor.configurable", true);
+shouldBe("this.globalStaticValue2", 3);
+
 derived = new Derived();
 
 shouldBe("derived instanceof Derived", true);

@@ -45,7 +45,7 @@ public:
 
 private:
     StringPrototype(VM&, Structure*);
-    void finishCreation(VM&, JSGlobalObject*, JSString*);
+    void finishCreation(VM&, JSGlobalObject*);
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(StringPrototype, StringObject);
 
