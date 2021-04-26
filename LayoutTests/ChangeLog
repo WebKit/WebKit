@@ -1,3 +1,17 @@
+2021-04-26  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION: fast/forms/ios/ipad/open-picker-using-keyboard.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=225053
+        <rdar://problem/77042251>
+
+        Reviewed by Wenson Hsieh.
+
+        Update the test to account for the fact that <select> elements now
+        present a context menu rather than a popover.
+
+        * fast/forms/ios/ipad/open-picker-using-keyboard-expected.txt:
+        * fast/forms/ios/ipad/open-picker-using-keyboard.html:
+
 2021-04-26  Chris Gambrell  <cgambrell@apple.com>
 
         [LayoutTests] Convert http/tests/resources convert PHP to Python

@@ -1,4 +1,4 @@
-Tests that pressing the spacebar and Escape to open and close the popover work, do not cause a value change, and that we scroll the form control into view when the popover is opened.
+Tests that pressing the spacebar and Escape to open and close the menu work, do not cause a value change, and that we scroll the form control into view when the menu is opened.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

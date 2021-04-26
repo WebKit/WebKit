@@ -64,9 +64,9 @@ async function runTest()
             if (window.scrollY)
                 return;
             shouldBeZero("window.scrollY");
-            await UIHelper.waitForPopoverToPresent();
+            await UIHelper.waitForContextMenuToShow();
             UIHelper.keyDown("escape");
-            await UIHelper.waitForPopoverToDismiss();
+            await UIHelper.waitForContextMenuToHide();
             done();
         }
         // The scroll initiated by pressing the spacebar is animated. Multiple scroll events are
@@ -81,14 +81,14 @@ async function runTest()
         shouldBeEqualToString('document.getElementById("test").value', expectedValue);
         debug("<br>After dismissing popover by pressing Escape:");
         UIHelper.keyDown("escape");
-        await UIHelper.waitForPopoverToDismiss();
+        await UIHelper.waitForContextMenuToHide();
         shouldBeEqualToString('document.getElementById("test").value', expectedValue);
         debug("<br>After opening popover by pressing spacebar:");
         UIHelper.keyDown(" ");
-        await UIHelper.waitForPopoverToPresent();
+        await UIHelper.waitForContextMenuToShow();
         shouldBeEqualToString('document.getElementById("test").value', expectedValue);
         UIHelper.keyDown("escape");
-        await UIHelper.waitForPopoverToDismiss();
+        await UIHelper.waitForContextMenuToHide();
         debug("<br>After scrolling the page and pressing spacebar:");
         window.addEventListener("scroll", testScrollIntoView, { once: true });
         window.scrollTo(0, document.body.scrollHeight); // Scroll to the bottom of the page.
@@ -99,7 +99,7 @@ async function runTest()
     UIHelper.keyDown("\t", ["altKey"]);
 }
 
-description("Tests that pressing the spacebar and Escape to open and close the popover work, do not cause a value change, and that we scroll the form control into view when the popover is opened.");
+description("Tests that pressing the spacebar and Escape to open and close the menu work, do not cause a value change, and that we scroll the form control into view when the menu is opened.");
 
 runTest();
 </script>
