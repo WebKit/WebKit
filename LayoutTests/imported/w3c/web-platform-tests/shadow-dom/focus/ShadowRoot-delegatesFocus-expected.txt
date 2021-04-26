@@ -1,5 +1,5 @@
 
-FAIL default delegatesFocus value assert_equals: expected (boolean) false but got (undefined) undefined
-FAIL delegatesFocus set to false in init dict assert_equals: expected (boolean) false but got (undefined) undefined
-FAIL delegatesFocus set to true in init dict assert_equals: expected (boolean) true but got (undefined) undefined
+PASS default delegatesFocus value
+PASS delegatesFocus set to false in init dict
+PASS delegatesFocus set to true in init dict
 
