@@ -57,7 +57,7 @@ ALWAYS_INLINE int numberOfExtraSlots(int argumentCountIncludingThis)
 
 ALWAYS_INLINE int numberOfStackPaddingSlots(CodeBlock* codeBlock, int argumentCountIncludingThis)
 {
-    if (argumentCountIncludingThis >= codeBlock->numParameters())
+    if (static_cast<unsigned>(argumentCountIncludingThis) >= codeBlock->numParameters())
         return 0;
     int alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), argumentCountIncludingThis + CallFrame::headerSizeInRegisters);
     int alignedFrameSizeForParameters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), codeBlock->numParameters() + CallFrame::headerSizeInRegisters);
@@ -66,7 +66,7 @@ ALWAYS_INLINE int numberOfStackPaddingSlots(CodeBlock* codeBlock, int argumentCo
 
 ALWAYS_INLINE int numberOfStackPaddingSlotsWithExtraSlots(CodeBlock* codeBlock, int argumentCountIncludingThis)
 {
-    if (argumentCountIncludingThis >= codeBlock->numParameters())
+    if (static_cast<unsigned>(argumentCountIncludingThis) >= codeBlock->numParameters())
         return 0;
     return numberOfStackPaddingSlots(codeBlock, argumentCountIncludingThis) + numberOfExtraSlots(argumentCountIncludingThis);
 }

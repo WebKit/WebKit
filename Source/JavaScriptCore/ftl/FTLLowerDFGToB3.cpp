@@ -362,7 +362,7 @@ public:
             if (m_graph.m_plan.mode() == FTLForOSREntryMode) {
                 auto* jitCode = m_ftlState.jitCode->ftlForOSREntry();
                 FixedVector<DFG::FlushFormat> argumentFlushFormats(codeBlock()->numParameters());
-                for (int i = 0; i < codeBlock()->numParameters(); ++i)
+                for (unsigned i = 0; i < codeBlock()->numParameters(); ++i)
                     argumentFlushFormats[i] = m_graph.m_argumentFormats[0][i];
                 jitCode->setArgumentFlushFormats(WTFMove(argumentFlushFormats));
             } else {

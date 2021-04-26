@@ -1,3 +1,85 @@
+2021-04-26  Keith Miller  <keith_miller@apple.com>
+
+        numCalleeLocals, numParameters, and numVars should be unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=224995
+
+        Reviewed by Mark Lam.
+
+        All of the various CodeBlock classes currently have the
+        numCalleeLocals and numVars marked as ints. I believe this is just
+        a historical artifact or because VirtualRegister's offset is an
+        int to make handling constants easier. Regardless, it's a bit
+        strange to not handle the sign conversion at the point of
+        comparison between a VirtualRegister offset and the local/var
+        count. This doesn't completely fix every place we use ints for
+        these values but starts on the right track. Lastly, I also added
+        some Check<unsigned>s to the wasm parser for sanity checking.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numParameters const):
+        (JSC::CodeBlock::numberOfArgumentsToSkip const):
+        (JSC::CodeBlock::numCalleeLocals const):
+        (JSC::CodeBlock::numVars const):
+        (JSC::CodeBlock::numTmps const):
+        (JSC::CodeBlock::addressOfNumParameters):
+        (JSC::CodeBlock::isTemporaryRegister):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::numCalleeLocals const):
+        (JSC::UnlinkedCodeBlock::numVars const):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::numCalleeLocals const):
+        (JSC::UnlinkedCodeBlockGenerator::numVars const):
+        (JSC::UnlinkedCodeBlockGenerator::setNumCalleeLocals):
+        (JSC::UnlinkedCodeBlockGenerator::setNumVars):
+        (JSC::UnlinkedCodeBlockGenerator::setNumParameters):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        * bytecompiler/BytecodeGeneratorBaseInlines.h:
+        (JSC::BytecodeGeneratorBase<Traits>::newRegister):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * interpreter/CallFrameClosure.h:
+        * interpreter/ProtoCallFrameInlines.h:
+        (JSC::ProtoCallFrame::init):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::numberOfStackPaddingSlots):
+        (JSC::CommonSlowPaths::numberOfStackPaddingSlotsWithExtraSlots):
+        * wasm/WasmFunctionCodeBlock.h:
+        (JSC::Wasm::FunctionCodeBlock::numVars const):
+        (JSC::Wasm::FunctionCodeBlock::numCalleeLocals const):
+        (JSC::Wasm::FunctionCodeBlock::setNumVars):
+        (JSC::Wasm::FunctionCodeBlock::setNumCalleeLocals):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::push):
+        (JSC::Wasm::LLIntGenerator::getDropKeepCount):
+        (JSC::Wasm::LLIntGenerator::walkExpressionStack):
+        (JSC::Wasm::LLIntGenerator::checkConsistency):
+        (JSC::Wasm::LLIntGenerator::materializeConstantsAndLocals):
+        (JSC::Wasm::LLIntGenerator::splitStack):
+        (JSC::Wasm::LLIntGenerator::finalize):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addTopLevel):
+        (JSC::Wasm::LLIntGenerator::addBlock):
+        (JSC::Wasm::LLIntGenerator::addIf):
+        (JSC::Wasm::LLIntGenerator::addElseToUnreachable):
+
 2021-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] OrdinarySet should invoke custom [[Set]] methods
