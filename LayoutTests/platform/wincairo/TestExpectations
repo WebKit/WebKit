@@ -1083,12 +1083,13 @@ http/tests/referrer-policy-iframe [ Skip ]
 http/tests/referrer-policy-script [ Skip ]
 
 # testRunner.setStatisticsShouldDowngradeReferrer() is not supported
-http/tests/security/referrer-policy-header.html [ Skip ] 
-http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ] 
-http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ] 
-http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ] 
-http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ] 
-http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ] 
+http/tests/security/referrer-policy-header.html [ Skip ]
+http/tests/security/referrer-policy-header-multipart.html [ Skip ]
+http/tests/navigation/ping-attribute/area-cross-origin.html [ Skip ]
+http/tests/navigation/ping-attribute/anchor-cross-origin.html [ Skip ]
+http/tests/referrer-policy/no-referrer-when-downgrade/ [ Skip ]
+http/tests/referrer-policy/unsafe-url/cross-origin-http-http.html [ Skip ]
+http/tests/referrer-policy/unsafe-url/cross-origin-http.https.html [ Skip ]
 
 # ResourceLoadStatistics
 http/tests/resourceLoadStatistics [ Pass ]

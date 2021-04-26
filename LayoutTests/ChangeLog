@@ -1,3 +1,14 @@
+2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewesd EWS fixes.
+
+        Skip http/tests/security/referrer-policy-header-multipart.html on WebKit1
+        after r276526 split it out of http/tests/security/referrer-policy-header.html
+
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2021-04-25  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Unreviewed test gardening
