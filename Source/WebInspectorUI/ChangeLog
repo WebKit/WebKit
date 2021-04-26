@@ -1,3 +1,21 @@
+2021-04-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: Uncaught Exception: Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key range.
+        https://bugs.webkit.org/show_bug.cgi?id=224993
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.async processJSON):
+        (WI.AuditManager.prototype.async addTest):
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.willDismissPopover):
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.populateContextMenu):
+        Make sure to save any newly created audits not already in `WI.objectStores.audits` immediately
+        so that if the developer tries to delete it before exiting Edit mode (which is normally when
+        everything is saved) an exception isn't thrown about it not being in `WI.objectStores.audits`.
+
 2021-04-26  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: REGRESSION(r270134) Elements Tab: Details Sidebar toggle is unexpectedly disabled  after switching from Timelines tab

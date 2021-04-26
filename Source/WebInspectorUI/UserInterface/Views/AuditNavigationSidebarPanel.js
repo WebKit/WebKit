@@ -119,7 +119,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             return;
         }
 
-        WI.auditManager.addTest(audit);
+        WI.auditManager.addTest(audit, {save: true});
 
         WI.showRepresentedObject(audit);
     }

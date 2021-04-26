@@ -222,10 +222,9 @@ WI.AuditManager = class AuditManager extends WI.Object
         if (!object)
             return;
 
-        if (object instanceof WI.AuditTestBase) {
-            this.addTest(object);
-            WI.objectStores.audits.putObject(object);
-        } else if (object instanceof WI.AuditTestResultBase)
+        if (object instanceof WI.AuditTestBase)
+            this.addTest(object, {save: true});
+        else if (object instanceof WI.AuditTestResultBase)
             this._addResult(object);
 
         WI.showRepresentedObject(object);
@@ -267,12 +266,15 @@ WI.AuditManager = class AuditManager extends WI.Object
         });
     }
 
-    addTest(test)
+    addTest(test, {save} = {})
     {
         console.assert(test instanceof WI.AuditTestBase, test);
         console.assert(!this._tests.includes(test), test);
 
         this._tests.push(test);
+
+        if (save)
+            WI.objectStores.audits.putObject(test);
 
         this.dispatchEventToListeners(WI.AuditManager.Event.TestAdded, {test});
     }
