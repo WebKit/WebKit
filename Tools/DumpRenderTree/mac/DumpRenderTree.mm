@@ -270,6 +270,7 @@ static int forceComplexText;
 static int useAcceleratedDrawing;
 static int gcBetweenTests;
 static int allowAnyHTTPSCertificateForAllowedHosts;
+static int enableAllExperimentalFeatures = YES;
 static int showWebView;
 static int printTestCount;
 static int checkForWorldLeaks;
@@ -863,8 +864,10 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
     [preferences _batchUpdatePreferencesInBlock:^(WebPreferences *preferences) {
         [preferences _resetForTesting];
 
-        for (WebFeature *feature in [WebPreferences _experimentalFeatures])
-            [preferences _setEnabled:YES forFeature:feature];
+        if (enableAllExperimentalFeatures) {
+            for (WebFeature *feature in [WebPreferences _experimentalFeatures])
+                [preferences _setEnabled:YES forFeature:feature];
+        }
 
         if (persistentUserStyleSheetLocation()) {
             preferences.userStyleSheetLocation = [NSURL URLWithString:(__bridge NSString *)persistentUserStyleSheetLocation().get()];
@@ -1000,6 +1003,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"no-timeout", no_argument, &useTimeoutWatchdog, NO},
         {"allowed-host", required_argument, nullptr, 'a'},
         {"allow-any-certificate-for-allowed-hosts", no_argument, &allowAnyHTTPSCertificateForAllowedHosts, YES},
+        {"no-enable-all-experimental-features", no_argument, &enableAllExperimentalFeatures, NO},
         {"show-webview", no_argument, &showWebView, YES},
         {"print-test-count", no_argument, &printTestCount, YES},
         {"world-leaks", no_argument, &checkForWorldLeaks, NO},

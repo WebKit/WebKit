@@ -1,3 +1,17 @@
+2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add an option to not enable all experimental features in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=225041
+
+        Reviewed by Wenson Hsieh.
+
+        Added --no-enable-all-experimental-features to DumpRenderTree as we did
+        for WebKitTestRunner in r276559. 
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setWebPreferencesForTestOptions):
+        (initializeGlobalsFromCommandLineOptions):
+
 2021-04-25  Darin Adler  <darin@apple.com>
 
         Fix handling of overflow of /= and *= operators with double over Checked<uint64_t> and other 64-bit types.
