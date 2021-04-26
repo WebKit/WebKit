@@ -122,6 +122,9 @@ find_package(WebKitRequirements REQUIRED
         libwpe
 )
 
+# The OpenGL ES implementation is in the same library as the EGL implementation
+set(OpenGLES2_NAMES ${EGL_NAMES})
+
 find_package(Cairo REQUIRED)
 find_package(CURL REQUIRED)
 find_package(EGL REQUIRED)
@@ -129,6 +132,7 @@ find_package(Fontconfig REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(HarfBuzz REQUIRED COMPONENTS ICU)
 find_package(ICU 60.2 REQUIRED COMPONENTS data i18n uc)
+find_package(OpenGLES2 REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(PNG REQUIRED)
 find_package(Threads REQUIRED)
