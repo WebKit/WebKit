@@ -81,7 +81,7 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
 
             // Give the rest of the view a chance to load.
             setTimeout(() => {
-                let testCodeMirror = WI.CodeMirrorEditor.create(testEditorElement, {
+                this._testCodeMirror = WI.CodeMirrorEditor.create(testEditorElement, {
                     autoCloseBrackets: true,
                     lineNumbers: true,
                     lineWrapping: true,
@@ -91,12 +91,6 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
                     styleSelectedText: true,
                     value: this.representedObject.test,
                 });
-
-                if (this.representedObject.editable) {
-                    testCodeMirror.on("blur", (event) => {
-                        this.representedObject.test = testCodeMirror.getValue().trim();
-                    });
-                }
             });
             return;
         }
@@ -325,6 +319,13 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
         this._resultDataGeneralContainer = null;
         this._resultDataDOMNodesContainer = null;
         this._resultDataErrorsContainer = null;
+    }
+
+    saveEditedData()
+    {
+        super.saveEditedData();
+
+        this.representedObject.test = this._testCodeMirror.getValue().trim();
     }
 
     showRunningPlaceholder()

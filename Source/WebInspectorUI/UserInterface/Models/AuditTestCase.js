@@ -100,7 +100,6 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
     set test(test)
     {
         console.assert(this.editable);
-        console.assert(WI.auditManager.editing);
         console.assert(typeof test === "string", test);
 
         if (test === this._test)

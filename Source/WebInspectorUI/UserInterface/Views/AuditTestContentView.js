@@ -287,6 +287,8 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
             this.representedObject.removeEventListener(WI.AuditTestBase.Event.SupportedChanged, this._handleTestSupportedChanged, this);
 
             WI.auditManager.removeEventListener(WI.AuditManager.Event.EditingChanged, this._handleEditingChanged, this);
+            if (this.representedObject.editable && WI.auditManager.editing)
+                this.saveEditedData();
         }
 
         super.detached();
@@ -310,6 +312,12 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
         this.hidePlaceholder();
 
         this._placeholderElement = placeholderElement;
+    }
+
+    saveEditedData()
+    {
+        console.assert(this.representedObject.editable, this.representedObject);
+        this.representedObject.setup = this._setupCodeMirror.getValue().trim();
     }
 
     showRunningPlaceholder()
@@ -494,7 +502,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
 
         // Give the rest of the view a chance to load.
         setTimeout(() => {
-            let setupCodeMirror = WI.CodeMirrorEditor.create(setupEditorElement, {
+            this._setupCodeMirror = WI.CodeMirrorEditor.create(setupEditorElement, {
                 autoCloseBrackets: true,
                 lineNumbers: true,
                 lineWrapping: true,
@@ -504,12 +512,6 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
                 styleSelectedText: true,
                 value: this.representedObject.setup,
             });
-
-            if (this.representedObject.editable) {
-                setupCodeMirror.on("blur", (event) => {
-                    this.representedObject.setup = setupCodeMirror.getValue().trim();
-                });
-            }
         });
 
         this._setupEditorElement.parentNode.replaceChild(setupEditorElement, this._setupEditorElement);
@@ -577,6 +579,10 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
     _handleEditingChanged(event)
     {
         this.needsLayout();
+
+        // We only need to save changes when editing is done. No need to save it after entering the editing mode.
+        if (!WI.auditManager.editing && this.representedObject.editable)
+            this.saveEditedData();
 
         this._updateExportNavigationItems();
     }
