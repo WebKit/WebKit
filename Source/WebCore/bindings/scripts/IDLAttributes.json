@@ -48,9 +48,6 @@
         "CallbackThisObject": {
             "contextsAllowed": ["callback-function", "operation"]
         },
-        "CallNamedSetterOnlyForSupportedProperties": {
-            "contextsAllowed": ["operation"]
-        },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],
             "values": ["Document", "ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World", "PropertyName"],
