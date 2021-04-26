@@ -1,3 +1,17 @@
+2021-04-26  Ben Nham  <nham@apple.com>
+
+        Reduce memory footprint for background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=225007
+
+        Reviewed by Chris Dumez.
+
+        When a WebContent process contains only non-visible pages (e.g. if it is a background tab),
+        we should attempt to reduce our memory footprint after some time interval to help relieve
+        system-wide memory pressure. This is enabled only on Mac because iOS already does something
+        similar just before WebContent suspends.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-04-26  Keith Miller  <keith_miller@apple.com>
 
         CodeBlock should do a better job accounting for extra memory it allocates.
