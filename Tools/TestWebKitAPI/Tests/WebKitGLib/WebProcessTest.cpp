@@ -20,7 +20,7 @@
 #include "config.h"
 #include "WebProcessTest.h"
 
-#include "WebKitWebExtensionPrivate.h"
+#include <WebKit/WebKitWebExtensionPrivate.h>
 #include <gio/gio.h>
 #include <jsc/jsc.h>
 #include <wtf/HashSet.h>

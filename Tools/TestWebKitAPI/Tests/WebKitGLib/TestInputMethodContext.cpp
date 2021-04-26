@@ -26,7 +26,7 @@
 #if PLATFORM(GTK)
 #include <WebCore/GtkVersioning.h>
 #if USE(GTK4)
-#include "WebKitWebViewBaseInternal.h"
+#include <webkit2/WebKitWebViewBaseInternal.h>
 using PlatformEventKey = GdkEvent;
 #else
 using PlatformEventKey = GdkEventKey;
