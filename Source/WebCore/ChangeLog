@@ -1,3 +1,39 @@
+2021-04-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] media/track/in-band/ layout tests introduced in r154908 are failing
+        https://bugs.webkit.org/show_bug.cgi?id=120665
+
+        Reviewed by Philippe Normand.
+
+        Solved a deadlock when processing samples from a text track while the main thread is starting to play.
+        In those circumstances, the text sink is set by Playbin as non-async, so the main thread calling
+        MediaPlayerPrivateGStreamer::play() is blocked waiting for the preroll to finish. While prerolling,
+        a text sample is detected in a non-main thread and sent to the main thread for processing. The current
+        code waits in the non-main thread for the processing to finish, but that won't ever happen because
+        the main thread is busy in play() waiting for the preroll to complete. Since the non-main thread
+        doesn't need any result from the main thread, a simple change to avoid the wait is enough to solve the
+        deadlock.
+
+        There was also a bug preventing all the languages of the text tracks being detected on time. Sometimes
+        the tag event specifying the track language emitted by the demuxer arrives too late to the
+        webkittextcombiner sink pad (up to several seconds since sent!) and the language remains unset when
+        the test checks for it. As a result, the test fails because the second track isn't reported to be in
+        French language ("fr"). The solution to this is to find an earlier (more upstream) pad and listen
+        there for the (sticky) tag events. There can be multiple tag events, so all of them are checked until
+        one having the GST_TAG_LANGUAGE_CODE tag is found.
+
+        Covered by existing tests (now unskipped).
+
+        * platform/graphics/gstreamer/TextSinkGStreamer.cpp:
+        (webkitTextSinkHandleSample): Don't wait for handleTextSample() to be completed in the main thread. This avoids the deadlock.
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp:
+        (WebCore::findBestUpstreamPad): Find a pad more upstream than the current one.
+        (WebCore::TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer): Call setPad() instead of setting it by hand here.
+        (WebCore::TrackPrivateBaseGStreamer::setPad): Also manage m_bestUpstreamPad in parallel to m_pad. Add a probe to listen to the tag events instead of checking the "tags" property (the property wasn't present in the best upstream pad).
+        (WebCore::TrackPrivateBaseGStreamer::disconnect): Remove the probe from m_bestUpstreamPad, instead of removing the old notify::tags listener from m_pad.
+        (WebCore::TrackPrivateBaseGStreamer::tagsChanged): Check the sticky tag events until the language one is found (or the last event if no language event is available).
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h: Added m_bestUpstreamPad and m_eventProbe. Moved setPad() implementation to the cpp file.
+
 2021-04-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Implement ShadowRoot.prototype.delegatesFocus attribute

@@ -49,7 +49,7 @@ public:
     };
 
     GstPad* pad() const { return m_pad.get(); }
-    void setPad(GRefPtr<GstPad>&& pad) { m_pad = WTFMove(pad); }
+    void setPad(GRefPtr<GstPad>&&);
 
     virtual void disconnect();
 
@@ -79,7 +79,9 @@ protected:
     AtomString m_label;
     AtomString m_language;
     GRefPtr<GstPad> m_pad;
+    GRefPtr<GstPad> m_bestUpstreamPad;
     GRefPtr<GstStream> m_stream;
+    gulong m_eventProbe;
 
 private:
     bool getLanguageCode(GstTagList* tags, AtomString& value);

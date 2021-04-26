@@ -1,3 +1,22 @@
+2021-04-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] media/track/in-band/ layout tests introduced in r154908 are failing
+        https://bugs.webkit.org/show_bug.cgi?id=120665
+
+        Reviewed by Philippe Normand.
+
+        Removed track-in-band-mpegts-metadata.html because it relies on private streams on mpegts
+        and those won't ever be exposed by tsdemux. Made testCuesAddedOnce() test more robust
+        when finding text tracks.
+
+        * media/content/user-private-streams.ts: Removed.
+        * media/in-band-tracks.js:
+        (pollProgress): Make sure that the function repeated at intervals is properly stopped in all the cases.
+        (canplaythrough): More robust track detection.
+        (testCuesAddedOnce): Ditto.
+        * media/track/in-band/track-in-band-mpegts-metadata.html: Removed.
+        * platform/glib/TestExpectations: Unskip media/track/in-band tests.
+
 2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Resync WPT shadow DOM tests as of 02f0cc10

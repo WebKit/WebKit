@@ -1,3 +1,20 @@
+2021-04-26  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] media/track/in-band/ layout tests introduced in r154908 are failing
+        https://bugs.webkit.org/show_bug.cgi?id=120665
+
+        Reviewed by Philippe Normand.
+
+        Fix media/track/in-band/tests
+
+        Add libkate as dependency, so gst-plugins-bad detects it and can build the GstKateDec element.
+        This isn't actually needed when using Flatpak (the dependency has been added there), but is still
+        useful when using jhbuild and is also coherent with the need of other multimedia dependencies
+        such as libvpx.
+
+        * gtk/install-dependencies:
+        * wpe/install-dependencies:
+
 2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add an option to not enable all experimental features in DumpRenderTree

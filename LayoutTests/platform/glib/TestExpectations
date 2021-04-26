@@ -1567,9 +1567,6 @@ webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-b
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
 webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
-# The feature is enabled at build-time, but the whole test set is failing.
-webkit.org/b/120665 media/track/in-band [ Skip ]
-
 # PiP is not supported yet
 webkit.org/b/202756 media/picture-in-picture/ [ Skip ]
 webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
