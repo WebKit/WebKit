@@ -1,3 +1,14 @@
+2021-04-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Update sandbox message filter syntax
+        https://bugs.webkit.org/show_bug.cgi?id=223384
+
+        Reviewed by Brent Fulgham.
+
+        Update sandbox message filter syntax on iOS. The previous syntax should also still be supported.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-04-25  Devin Rousso  <drousso@apple.com>
 
         Add `ALWAYS_LOG_WITH_STREAM` macro for easier development/debugging
