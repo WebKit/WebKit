@@ -504,6 +504,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDOMJITPrototype, JSTestDOMJITPrototype
 
 using JSTestDOMJITDOMConstructor = JSDOMConstructorNotConstructable<JSTestDOMJIT>;
 
+template<> const ClassInfo JSTestDOMJITDOMConstructor::s_info = { "TestDOMJIT", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJITDOMConstructor) };
+
 template<> JSValue JSTestDOMJITDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSNode::getConstructor(vm, &globalObject);
@@ -515,8 +517,6 @@ template<> void JSTestDOMJITDOMConstructor::initializeProperties(VM& vm, JSDOMGl
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDOMJIT"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestDOMJITDOMConstructor::s_info = { "TestDOMJIT", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDOMJITDOMConstructor) };
 
 /* Hash table for prototype */
 

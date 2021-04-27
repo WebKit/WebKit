@@ -27,6 +27,6 @@
 [
     EnabledBySetting=CSSCustomPropertiesAndValues,
     ImplementedBy=DOMCSSRegisterCustomProperty
-] partial interface DOMCSSNamespace {
-    [CallWith=Document] static undefined registerProperty(DOMCSSCustomPropertyDescriptor descriptor);
+] partial namespace DOMCSSNamespace {
+    [CallWith=Document] undefined registerProperty(DOMCSSCustomPropertyDescriptor descriptor);
 };

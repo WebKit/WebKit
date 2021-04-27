@@ -97,6 +97,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReadOnlyMapLikePrototype, JSTestReadOn
 
 using JSTestReadOnlyMapLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestReadOnlyMapLike>;
 
+template<> const ClassInfo JSTestReadOnlyMapLikeDOMConstructor::s_info = { "TestReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLikeDOMConstructor) };
+
 template<> JSValue JSTestReadOnlyMapLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -109,8 +111,6 @@ template<> void JSTestReadOnlyMapLikeDOMConstructor::initializeProperties(VM& vm
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestReadOnlyMapLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestReadOnlyMapLikeDOMConstructor::s_info = { "TestReadOnlyMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLikeDOMConstructor) };
 
 /* Hash table for prototype */
 

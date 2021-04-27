@@ -650,7 +650,7 @@ sub containsInterfaceOrCallbackInterfaceFromIDL
     my $idlFile = shift;
 
     my $fileContents = $idlFile->fileContents;
-    my $containsInterfaceOrCallbackInterface = ($fileContents =~ /\b(callback interface|interface)\s+(\w+)/gs);
+    my $containsInterfaceOrCallbackInterface = ($fileContents =~ /\b(callback interface|interface|namespace)\s+(\w+)/gs);
 
     if ($validateAgainstParser) {
         print "Validating containsInterfaceOrCallbackInterfaceFromIDL for " . $idlFile->fileName . " against validation parser.\n" if $verbose;
@@ -700,7 +700,7 @@ sub getInterfaceExtendedAttributesFromIDL
     my $fileContents = $idlFile->fileContents;
 
     my $extendedAttributes = {};
-    if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface)\s+(\w+)/gs) {
+    if ($fileContents =~ /\[(.*)\]\s+(callback interface|interface|namespace)\s+(\w+)/gs) {
         my $parameters = $1;
         if (index($parameters, '}') != -1) {
             # In case we have a declaration like a dictionary with extended attributes defined before the interface.

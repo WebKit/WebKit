@@ -1,3 +1,72 @@
+2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] `window.CSS` should be non-callable object with correct Symbol.toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=220855
+
+        Reviewed by Sam Weinig.
+
+        Although `window.CSS` is the only namespace object currently handled by code generator,
+        it's being extended by multiple Houdini specs [1], so keeping it generated is important.
+
+        This patch brings spec compliance [2] and web interop while striking a balance between
+        reducing generated code, avoiding indirection in the generator, and a small code diff.
+
+        Feature-wise, a namespace object is a subset of an interface; so instead of creating a
+        separate harness for it, like for callback interfaces, namespace objects are converted
+        to interfaces before being handed over to code generator, with a flag on.
+
+        While we can reduce the generated code even further, namely around subspaceForImpl(),
+        this change rather aligns namespace objects with [JSBuiltin] interfaces to avoid making
+        generator more complicated and introducing an interface with distinct set of methods.
+
+        Web-facing changes for `window.CSS` are:
+
+          1. Removed [[Call]] and [[Construct]] methods, making `typeof CSS` return "object",
+             which is used for feature detection (thus important for web interop).
+          2. Removed "length" / "name" / "prototype" properties.
+          3. Changed [[Prototype]] value to %Object.prototype%.
+          4. Added Symbol.toStringTag property with correct descriptor.
+
+        All of the above were proven web-compatible by Blink and Gecko.
+
+        Also, this patch limits the usage of NeedsConstructorProperty only to
+        %Interface%.prototype.constructor, as its name suggests.
+
+        [1] https://ishoudinireadyyet.com
+        [2] https://heycam.github.io/webidl/#namespace-object
+
+        Tests: imported/w3c/web-platform-tests/css/cssom/idlharness.html
+               imported/w3c/web-platform-tests/css/cssom/CSS-namespace-object-class-string.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMConstructorNotCallable.h: Added.
+        (WebCore::JSDOMConstructorNotCallable::subspaceFor):
+        (WebCore::JSDOMConstructorNotCallable::JSDOMConstructorNotCallable):
+        (WebCore::JSDOMConstructorNotCallable::initializeProperties):
+        (WebCore::JSDOMConstructorNotCallable<JSClass>::create):
+        (WebCore::JSDOMConstructorNotCallable<JSClass>::createStructure):
+        (WebCore::JSDOMConstructorNotCallable<JSClass>::finishCreation):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsImplementationClass):
+        (GenerateHeader):
+        (GenerateImplementation):
+        (GeneratePrototypeDeclaration):
+        (GetConstructorTemplateClassName):
+        (GenerateConstructorHelperMethods):
+        (NeedsConstructorProperty):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/IDLParser.pm:
+        (convertNamespaceToInterface):
+        (Parse):
+        (parseNamespace):
+        * bindings/scripts/preprocess-idls.pl:
+        (containsInterfaceOrCallbackInterfaceFromIDL):
+        (getInterfaceExtendedAttributesFromIDL):
+        * bindings/scripts/test/JS/*: Updated.
+        * css/DOMCSSNamespace+CSSPainting.idl:
+        * css/DOMCSSNamespace+CSSPropertiesandValues.idl:
+        * css/DOMCSSNamespace.idl:
+
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
         Don't keep local storage data in memory in the NetworkProcess

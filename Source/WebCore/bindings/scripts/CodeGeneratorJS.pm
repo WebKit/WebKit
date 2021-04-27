@@ -1664,6 +1664,7 @@ sub NeedsImplementationClass
     my ($interface) = @_;
 
     return 0 if $interface->extendedAttributes->{JSBuiltin};
+    return 0 if $interface->isNamespaceObject;
     return 1;
 }
 
@@ -2901,7 +2902,7 @@ sub GenerateHeader
     $structureFlags{"JSC::ImplementsHasInstance | JSC::ImplementsDefaultHasInstance"} = 1 if $interfaceName eq "DOMWindow";
         
     # Prototype
-    unless (ShouldUseGlobalObjectPrototype($interface)) {
+    unless (ShouldUseGlobalObjectPrototype($interface) || $interface->isNamespaceObject) {
         push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);\n");
         push(@headerContent, "    static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);\n");
     }
@@ -4197,6 +4198,8 @@ sub GenerateImplementation
 
     my $implType = GetImplClassName($interface);
 
+    AddToImplIncludes("${implType}.h") if $interface->isNamespaceObject;
+
     @implContent = ();
 
     push(@implContent, "\n\nnamespace WebCore {\n");
@@ -4326,7 +4329,7 @@ sub GenerateImplementation
 
     GeneratePrototypeDeclaration(\@implContent, $className, $interface) if !HeaderNeedsPrototypeDeclaration($interface);
 
-    GenerateConstructorDeclaration(\@implContent, $className, $interface) if NeedsConstructorProperty($interface);
+    GenerateConstructorDeclaration(\@implContent, $className, $interface) if !$interface->extendedAttributes->{LegacyNoInterfaceObject};
 
     my @hashKeys = ();
     my @hashValue1 = ();
@@ -4344,7 +4347,7 @@ sub GenerateImplementation
     $object->GenerateHashTable($className, $hashName, $numInstanceProperties, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, 0) if $numInstanceProperties > 0;
 
     # - Add all interface object (aka constructor) properties (constants, static attributes, static operations).
-    if (NeedsConstructorProperty($interface)) {
+    if (!$interface->extendedAttributes->{LegacyNoInterfaceObject}) {
         my $hashSize = 0;
         my $hashName = $className . "ConstructorTable";
 
@@ -4482,18 +4485,20 @@ sub GenerateImplementation
         $hashSize++;
     }
 
-    my $justGenerateValueArray = !IsDOMGlobalObject($interface);
+    if (!$interface->isNamespaceObject) {
+        my $justGenerateValueArray = !IsDOMGlobalObject($interface);
 
-    $object->GenerateHashTable($className, $hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, $justGenerateValueArray);
+        $object->GenerateHashTable($className, $hashName, $hashSize, \@hashKeys, \@hashSpecials, \@hashValue1, \@hashValue2, \%conditionals, \%readWriteConditionals, $justGenerateValueArray);
 
-    my $hashTable = $justGenerateValueArray ? "nullptr" : "&${className}PrototypeTable";
-    push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ${hashTable}, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
+        my $prototypeHashTable = $justGenerateValueArray ? "nullptr" : "&${className}PrototypeTable";
+        push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ${prototypeHashTable}, nullptr, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
 
-    push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
-    push(@implContent, "{\n");
-    push(@implContent, "    Base::finishCreation(vm);\n");
+        push(@implContent, "void ${className}Prototype::finishCreation(VM& vm)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    Base::finishCreation(vm);\n");
+    }
 
-    if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalInterface($interface)) {
+    if (PrototypeHasStaticPropertyTable($interface) && !IsGlobalInterface($interface) && !$interface->isNamespaceObject) {
         push(@implContent, "    reifyStaticProperties(vm, ${className}::info(), ${className}PrototypeTableValues, *this);\n");
 
         my @runtimeEnabledProperties = @runtimeEnabledOperations;
@@ -4573,8 +4578,11 @@ sub GenerateImplementation
     }
 
     assert("JSC_TO_STRING_TAG_WITHOUT_TRANSITION() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
-    push(@implContent, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
-    push(@implContent, "}\n\n");
+
+    if (!$interface->isNamespaceObject) {
+        push(@implContent, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
+        push(@implContent, "}\n\n");
+    }
 
     # - Initialize static ClassInfo object
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
@@ -4724,7 +4732,7 @@ sub GenerateImplementation
     push(@implContent, "    vm.heap.reportExtraMemoryAllocated(wrapped().memoryCost());\n") if $interface->extendedAttributes->{ReportExtraMemoryCost};
     push(@implContent, "}\n\n");
 
-    unless (ShouldUseGlobalObjectPrototype($interface)) {
+    unless (ShouldUseGlobalObjectPrototype($interface) || $interface->isNamespaceObject) {
         push(@implContent, "JSObject* ${className}::createPrototype(VM& vm, JSDOMGlobalObject& globalObject)\n");
         push(@implContent, "{\n");
         if ($interface->parentType) {
@@ -4795,6 +4803,7 @@ sub GenerateImplementation
 
         my $castingFunction = $interface->extendedAttributes->{CustomProxyToJSObject} ? "to${className}" : GetCastingHelperForThisObject($interface);
         # FIXME: Remove ImplicitThis keyword as it is no longer defined by WebIDL spec and is only used in DOMWindow.
+        # https://bugs.webkit.org/show_bug.cgi?id=223758
         if ($interface->extendedAttributes->{ImplicitThis}) {
             push(@implContent, "template<> inline ${className}* IDLAttribute<${className}>::cast(JSGlobalObject& lexicalGlobalObject, EncodedJSValue thisValue)\n");
             push(@implContent, "{\n");
@@ -4816,6 +4825,7 @@ sub GenerateImplementation
         AddToImplIncludes("JSDOMOperation.h");
 
         # FIXME: Make consistent IDLAttribute<>::cast and IDLOperation<>::cast in case of CustomProxyToJSObject.
+        # https://bugs.webkit.org/show_bug.cgi?id=223758
         my $castingFunction = $interface->extendedAttributes->{CustomProxyToJSObject} ? "to${className}" : GetCastingHelperForThisObject($interface);
         my $thisValue = $interface->extendedAttributes->{CustomProxyToJSObject} ? "callFrame.thisValue().toThis(&lexicalGlobalObject, ECMAMode::sloppy())" : "callFrame.thisValue()";
         push(@implContent, "template<> inline ${className}* IDLOperation<${className}>::cast(JSGlobalObject& lexicalGlobalObject, CallFrame& callFrame)\n");
@@ -7484,6 +7494,8 @@ sub GeneratePrototypeDeclaration
 {
     my ($outputArray, $className, $interface) = @_;
 
+    return if $interface->isNamespaceObject;
+
     my $prototypeClassName = "${className}Prototype";
 
     my %structureFlags = ();
@@ -7542,6 +7554,7 @@ sub GetConstructorTemplateClassName
 {
     my $interface = shift;
     return "JSDOMBuiltinConstructor" if HasJSBuiltinConstructor($interface);
+    return "JSDOMConstructorNotCallable" if $interface->isNamespaceObject;
     return "JSDOMConstructorNotConstructable" if $interface->extendedAttributes->{LegacyFactoryFunction};
     return "JSDOMConstructorNotConstructable" unless IsConstructable($interface);
     return "JSDOMConstructor";
@@ -7745,6 +7758,8 @@ sub GenerateConstructorHelperMethods
         $leastConstructorLength = 0;
     }
 
+    push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(${constructorClassName}) };\n\n");
+
     # If the interface has a parent interface which does not have [LegacyNoInterfaceObject], then use its interface object as prototype,
     # otherwise use FunctionPrototype: http://heycam.github.io/webidl/#interface-object
     push(@$outputArray, "template<> JSValue ${constructorClassName}::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)\n");
@@ -7755,6 +7770,10 @@ sub GenerateConstructorHelperMethods
     if (!$generatingLegacyFactoryFunction and $interface->parentType) {
         my $parentClassName = "JS" . $interface->parentType->name;
         push(@$outputArray, "    return ${parentClassName}::getConstructor(vm, &globalObject);\n");
+    } elsif ($interface->isNamespaceObject) {
+        AddToImplIncludes("<JavaScriptCore/ObjectPrototype.h>");
+        push(@$outputArray, "    UNUSED_PARAM(vm);\n");
+        push(@$outputArray, "    return globalObject.objectPrototype();\n");
     } else {
         AddToImplIncludes("<JavaScriptCore/FunctionPrototype.h>");
         push(@$outputArray, "    UNUSED_PARAM(vm);\n");
@@ -7773,12 +7792,14 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(vm), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     } elsif ($interface->isCallback) {
         push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
+    } elsif ($interface->isNamespaceObject) {
+        push(@$outputArray, "    JSC_TO_STRING_TAG_WITHOUT_TRANSITION();\n");
     } else {
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
     assert("jsNontrivialString() requires strings two or more characters long") if length($visibleInterfaceName) < 2;
-    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, \"$visibleInterfaceName\"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, \"$visibleInterfaceName\"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n") if !$interface->isNamespaceObject;
 
     if ($interface->extendedAttributes->{LegacyFactoryFunctionEnabledBySetting}) {
         my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $interface, "&globalObject");
@@ -7786,7 +7807,7 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "    if (!${runtimeEnableConditionalString})\n");
         push(@$outputArray, "        constructorLength = 0;\n");
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(constructorLength), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
-    } else {
+    } elsif (!$interface->isNamespaceObject) {
         push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
@@ -7821,7 +7842,6 @@ sub GenerateConstructorHelperMethods
         push(@$outputArray, "}\n");
         push(@$outputArray, "\n");
     }
-    push(@$outputArray, "template<> const ClassInfo ${constructorClassName}::s_info = { \"${visibleInterfaceName}\", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE($constructorClassName) };\n\n");
 }
 
 sub HasCustomConstructor
@@ -7866,6 +7886,7 @@ sub NeedsConstructorProperty
 {
     my $interface = shift;
     
+    return 0 if $interface->isNamespaceObject;
     return !$interface->extendedAttributes->{LegacyNoInterfaceObject};
 }
 

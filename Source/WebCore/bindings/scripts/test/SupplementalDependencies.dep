@@ -220,6 +220,10 @@ WebDOMTestNamedSetterWithLegacyUnforgeableProperties.h:
 JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h: 
 DOMTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h: 
 WebDOMTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h: 
+JSTestNamespaceObject.h: TestPartialNamespaceObject.idl
+DOMTestNamespaceObject.h: TestPartialNamespaceObject.idl
+WebDOMTestNamespaceObject.h: TestPartialNamespaceObject.idl
+TestPartialNamespaceObject.idl:
 JSTestNode.h: 
 DOMTestNode.h: 
 WebDOMTestNode.h: 

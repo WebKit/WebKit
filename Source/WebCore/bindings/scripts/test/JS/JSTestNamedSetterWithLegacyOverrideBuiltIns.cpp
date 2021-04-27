@@ -83,6 +83,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterWithLegacyOverrideBuiltInsP
 
 using JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterWithLegacyOverrideBuiltIns>;
 
+template<> const ClassInfo JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor::s_info = { "TestNamedSetterWithLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor) };
+
 template<> JSValue JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -95,8 +97,6 @@ template<> void JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor::initi
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterWithLegacyOverrideBuiltIns"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor::s_info = { "TestNamedSetterWithLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterWithLegacyOverrideBuiltInsDOMConstructor) };
 
 /* Hash table for prototype */
 

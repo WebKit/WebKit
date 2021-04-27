@@ -1975,6 +1975,8 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestObjDOMConstructor::cons
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSTestObjDOMConstructorConstruct, JSTestObjDOMConstructor::construct);
 
+template<> const ClassInfo JSTestObjDOMConstructor::s_info = { "TestObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjDOMConstructor) };
+
 template<> JSValue JSTestObjDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -2004,8 +2006,6 @@ template<> void JSTestObjDOMConstructor::initializeProperties(VM& vm, JSDOMGloba
     }
 #endif
 }
-
-template<> const ClassInfo JSTestObjDOMConstructor::s_info = { "TestObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestObjDOMConstructor) };
 
 /* Hash table for prototype */
 

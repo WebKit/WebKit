@@ -1,3 +1,20 @@
+2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] `window.CSS` should be non-callable object with correct Symbol.toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=220855
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/console/idlharness.any-expected.txt:
+        * web-platform-tests/console/idlharness.any.worker-expected.txt:
+        * web-platform-tests/css/cssom/CSS-namespace-object-class-string-expected.txt:
+        * web-platform-tests/css/cssom/idlharness-expected.txt:
+        * web-platform-tests/resources/idlharness.js:
+        Sync from upstream 15ecbfebd504.
+
+        * web-platform-tests/wasm/jsapi/idlharness.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any.worker-expected.txt:
+
 2021-04-27  Antoine Quint  <graouts@webkit.org>
 
         Correctly interpolate stroke-dasharray in the discrete case

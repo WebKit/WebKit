@@ -107,6 +107,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONInheritPrototype, JSTestD
 
 using JSTestDefaultToJSONInheritDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONInherit>;
 
+template<> const ClassInfo JSTestDefaultToJSONInheritDOMConstructor::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritDOMConstructor) };
+
 template<> JSValue JSTestDefaultToJSONInheritDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSTestDefaultToJSON::getConstructor(vm, &globalObject);
@@ -118,8 +120,6 @@ template<> void JSTestDefaultToJSONInheritDOMConstructor::initializeProperties(V
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDefaultToJSONInherit"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestDefaultToJSONInheritDOMConstructor::s_info = { "TestDefaultToJSONInherit", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInheritDOMConstructor) };
 
 /* Hash table for prototype */
 

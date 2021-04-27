@@ -288,6 +288,8 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestInterfaceDOMConstructor
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSTestInterfaceDOMConstructorConstruct, JSTestInterfaceDOMConstructor::construct);
 
+template<> const ClassInfo JSTestInterfaceDOMConstructor::s_info = { "TestInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceDOMConstructor) };
+
 template<> JSValue JSTestInterfaceDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -301,8 +303,6 @@ template<> void JSTestInterfaceDOMConstructor::initializeProperties(VM& vm, JSDO
     putDirect(vm, vm.propertyNames->length, jsNumber(1), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestInterface::info(), JSTestInterfaceConstructorTableValues, *this);
 }
-
-template<> const ClassInfo JSTestInterfaceDOMConstructor::s_info = { "TestInterface", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestInterfaceDOMConstructor) };
 
 /* Hash table for prototype */
 
