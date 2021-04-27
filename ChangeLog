@@ -1,3 +1,16 @@
+2021-04-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Don't use FORWARDING_HEADERS_DIR for GTK WebKit headers
+        https://bugs.webkit.org/show_bug.cgi?id=225006
+
+        Reviewed by Michael Catanzaro.
+
+        Create CMake variables WebKit2Gtk_FRAMEWORK_HEADERS_DIR and WebKit2Gtk_DERIVED_SOURCES_DIR
+        to represent where the WebKit2 GTK headers and derived sources will reside. The names and
+        locations set then follow along with the conventions used for the other frameworks.
+
+        * Source/cmake/OptionsGTK.cmake:
+
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Update Mac-specific CMake files
