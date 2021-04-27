@@ -1,3 +1,16 @@
+2021-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Disable WebRTC trace event macros
+        https://bugs.webkit.org/show_bug.cgi?id=225104
+        <rdar://76146558>
+
+        Reviewed by Eric Carlson.
+
+        We are not using trace events so we can disable them as a small optimization.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+
 2021-04-23  Philippe Normand  <pnormand@igalia.com>
 
         [LibWebRTC][WPE][GTK] Enable vp9 and NO_MAIN_THREAD_WRAPPING
