@@ -745,7 +745,7 @@ void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalida
     }
 }
 
-void Element::setFocus(bool flag)
+void Element::setFocus(bool flag, FocusVisibility visibility)
 {
     if (flag == focused())
         return;
@@ -764,13 +764,8 @@ void Element::setFocus(bool flag)
     for (auto* element = this; element; element = element->parentElementInComposedTree())
         element->setHasFocusWithin(flag);
 
-    auto computeHasFocusVisible = [&] {
-        if (!flag)
-            return false;
-        // Elements that support keyboard input (form inputs and contenteditable) always match :focus-visible when focused.
-        return hasFocusVisible() || isTextField() || isContentEditable();
-    };
-    setHasFocusVisible(computeHasFocusVisible());
+    // Elements that support keyboard input (form inputs and contenteditable) always match :focus-visible when focused.
+    setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || isTextField() || isContentEditable()));
 }
 
 void Element::setHasFocusVisible(bool flag)
@@ -3078,16 +3073,15 @@ void Element::focus(const FocusOptions& options)
         if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document->topDocument().securityOrigin().isSameOriginDomain(document->securityOrigin()))
             return;
 
+        FocusOptions optionsWithVisibility = options;
         if (!document->wasLastFocusByClick())
-            newTarget->setHasFocusVisible(true);
+            optionsWithVisibility.visibility = FocusVisibility::Visible;
 
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), options)) {
-            newTarget->setHasFocusVisible(false);
+        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), optionsWithVisibility))
             return;
-        }
     }
 
     newTarget->findTargetAndUpdateFocusAppearance(options.selectionRestorationMode, options.preventScroll ? SelectionRevealMode::DoNotReveal : SelectionRevealMode::Reveal);

@@ -1,3 +1,45 @@
+2021-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION (r276264): Reproducible crash in WebCore::UserActionElementSet::clearFlags
+        https://bugs.webkit.org/show_bug.cgi?id=224957
+
+        Reviewed by Ryosuke Niwa.
+
+        The crash was due to a problem with the focus and focus-visible flags getting out of sync.
+        The problem was related to how we deal we script focus in Element::focus(),
+        we were setting the focus-visible flag before doing focus,
+        and if the element was moved to a different document in that process,
+        we were resetting the flag for the same element, but pointing to the new document.
+        So the old document still kept information about the element and the flag, and it shouldn't.
+
+        This patch is based on a patch by Ryosuke Niwa <rniwa@webkit.org>.
+        The approach to solve the issue is to consolidate the timing for both focus and focus-visible flags
+        so they don't get out of sync.
+        For that we add a new FocusVisibility enum to FocusOptions, and we pass it to Element::setFocus()
+        and use it to pass a different value to Element::setHasFocusVisible().
+
+        Test: fast/selectors/focus-visible-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+        * dom/Element.cpp:
+        (WebCore::Element::setFocus):
+        (WebCore::Element::focus):
+        * dom/Element.h:
+        * dom/FocusOptions.h:
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::setFocus):
+        * html/HTMLAreaElement.h:
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::setFocus):
+        * html/HTMLFrameElementBase.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::internalKeyEvent):
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollToFragmentInternal):
+
 2021-04-26  Tim Nguyen  <ntim@apple.com>
 
         Create a containing block when relevant properties are set in the current element will-change

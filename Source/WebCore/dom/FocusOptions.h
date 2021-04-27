@@ -34,11 +34,14 @@ enum class FocusRemovalEventsMode : bool { Dispatch, DoNotDispatch };
 
 enum class FocusTrigger : bool { Other, Click };
 
+enum class FocusVisibility : bool { Invisible, Visible };
+
 struct FocusOptions {
     SelectionRestorationMode selectionRestorationMode { SelectionRestorationMode::RestoreOrSelectAll };
     FocusDirection direction { FocusDirection::None };
     FocusRemovalEventsMode removalEventsMode { FocusRemovalEventsMode::Dispatch };
     FocusTrigger trigger { FocusTrigger::Other };
+    FocusVisibility visibility { FocusVisibility::Invisible };
     bool preventScroll { false };
 };
 

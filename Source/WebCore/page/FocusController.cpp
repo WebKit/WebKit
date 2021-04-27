@@ -535,8 +535,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         }
     }
 
-    element->setHasFocusVisible(true);
-    element->focus({ SelectionRestorationMode::SelectAll, direction });
+    element->focus({ SelectionRestorationMode::SelectAll, direction, { }, { }, FocusVisibility::Visible });
     return true;
 }
 

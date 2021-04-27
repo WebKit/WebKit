@@ -4554,7 +4554,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         // Set focus on the new node
         m_focusedElement = newFocusedElement;
         setFocusNavigationStartingNode(m_focusedElement.get());
-        m_focusedElement->setFocus(true);
+        m_focusedElement->setFocus(true, options.visibility);
         m_latestFocusTrigger = options.trigger;
 
         // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.

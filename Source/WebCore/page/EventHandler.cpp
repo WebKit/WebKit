@@ -3551,6 +3551,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
         return keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
     };
+    // FIXME: This is wrong for text form controls and contenteditable elements (https://webkit.org/b/225075).
     element->setHasFocusVisible(shouldMatchFocusVisible(*element));
 
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
@@ -3602,6 +3603,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         element = eventTargetElementForDocument(m_frame.document());
         if (!element)
             return false;
+        // FIXME: This is wrong for text form controls and contenteditable elements (https://webkit.org/b/225075).
         element->setHasFocusVisible(shouldMatchFocusVisible(*element));
     }
 

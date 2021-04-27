@@ -1,3 +1,13 @@
+2021-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        REGRESSION (r276264): Reproducible crash in WebCore::UserActionElementSet::clearFlags
+        https://bugs.webkit.org/show_bug.cgi?id=224957
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/selectors/focus-visible-crash-expected.txt: Added.
+        * fast/selectors/focus-visible-crash.html: Added.
+
 2021-04-26  Tim Nguyen  <ntim@apple.com>
 
         Create a containing block when relevant properties are set in the current element will-change

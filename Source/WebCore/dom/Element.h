@@ -327,7 +327,7 @@ public:
 
     virtual void setActive(bool = true, bool pause = false, Style::InvalidationScope = Style::InvalidationScope::All);
     virtual void setHovered(bool = true, Style::InvalidationScope = Style::InvalidationScope::All);
-    virtual void setFocus(bool);
+    virtual void setFocus(bool, FocusVisibility = FocusVisibility::Invisible);
     void setBeingDragged(bool);
     void setHasFocusVisible(bool);
     void setHasFocusWithin(bool);
