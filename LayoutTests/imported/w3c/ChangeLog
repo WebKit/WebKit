@@ -1,5 +1,16 @@
 2021-04-27  Antoine Quint  <graouts@webkit.org>
 
+        Fix animation of the visibility CSS property between "hidden" and "collapse"
+        https://bugs.webkit.org/show_bug.cgi?id=225103
+
+        Reviewed by Antti Koivisto.
+
+        Mark 1 WPT progression.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2021-04-27  Antoine Quint  <graouts@webkit.org>
+
         Correctly specify interpolation of page-break-* properties
         https://bugs.webkit.org/show_bug.cgi?id=225098
 

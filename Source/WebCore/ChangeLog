@@ -1,5 +1,19 @@
 2021-04-27  Antoine Quint  <graouts@webkit.org>
 
+        Fix animation of the visibility CSS property between "hidden" and "collapse"
+        https://bugs.webkit.org/show_bug.cgi?id=225103
+
+        Reviewed by Antti Koivisto.
+
+        The Web Animations spec details the special behavior when animating the visibility property
+        in https://drafts.csswg.org/web-animations-1/#animating-visibility. There it says that when
+        interpolating between non-visible values, we should use discrete interpolation formula.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+
+2021-04-27  Antoine Quint  <graouts@webkit.org>
+
         Correctly specify interpolation of page-break-* properties
         https://bugs.webkit.org/show_bug.cgi?id=225098
 

@@ -379,6 +379,9 @@ static inline RefPtr<StyleImage> blendFilter(CachedImage* image, const FilterOpe
 
 static inline Visibility blendFunc(Visibility from, Visibility to, const CSSPropertyBlendingContext& context)
 {
+    if (from != Visibility::Visible && to != Visibility::Visible)
+        return context.progress < 0.5 ? from : to;
+
     // Any non-zero result means we consider the object to be visible. Only at 0 do we consider the object to be
     // invisible. The invisible value we use (Visibility::Hidden vs. Visibility::Collapse) depends on the specified from/to values.
     double fromVal = from == Visibility::Visible ? 1. : 0.;

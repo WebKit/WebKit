@@ -225,7 +225,7 @@ PASS scale
 PASS visibility (type: visibility) has testInterpolation function
 PASS visibility uses visibility animation when animating from "visible" to "hidden"
 PASS visibility uses visibility animation when animating from "hidden" to "visible"
-FAIL visibility uses visibility animation when animating from "hidden" to "collapse" assert_equals: The value should be hidden at 0ms expected "hidden" but got "collapse"
+PASS visibility uses visibility animation when animating from "hidden" to "collapse"
 PASS visibility uses visibility animation when animating from "visible" to "hidden" with easeInOutBack easing
 PASS white-space (type: discrete) has testInterpolation function
 PASS white-space uses discrete animation when animating between "pre" and "nowrap" with linear easing
