@@ -1,3 +1,18 @@
+2021-04-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Smart invert>Safari>images & other colors improperly invert
+        https://bugs.webkit.org/show_bug.cgi?id=225077
+        <rdar://problem/77176061>
+
+        Reviewed by Alan Bujtas.
+
+        The invert colors property is gathered during the screen data collection phase.
+        So properly update the value in WebCore, we need to resend these properties when 
+        accessibility settings change.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::accessibilitySettingsDidChange):
+
 2021-04-27  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Direct AVIF loading does not work.

@@ -3840,6 +3840,8 @@ void WebPageProxy::accessibilitySettingsDidChange()
     if (!hasRunningProcess())
         return;
 
+    // Also update screen properties which encodes invert colors.
+    process().processPool().screenPropertiesStateChanged();
     send(Messages::WebPage::AccessibilitySettingsDidChange());
 }
 
