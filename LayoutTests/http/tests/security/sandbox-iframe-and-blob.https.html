@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+    <iframe id="myFrame" sandbox="allow-scripts"></iframe>
+    <script>
+promise_test(async () => {
+    myFrame.src = "resources/sandbox-iframe-and-blob-frame.html";
+    const result = await new Promise((resolve, reject) => {
+        window.onmessage = (event) => {
+            resolve(event.data);
+        };
+        setTimeout(() => reject("iframe load timed out"), 5000);
+    });
+    assert_equals(result, 'loaded');
+}, "Verify blob URLs are loaded with sandbox iframes");
+    </script>
+</body>
+</html>
