@@ -199,7 +199,7 @@ private:
     void finishCreation(VM&);
 
     static IsoSubspace* subspaceForImpl(VM&, SubspaceAccess);
-    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
+    static JSC_HOST_CALL_ATTRIBUTES EncodedJSValue customToPrimitive(JSGlobalObject*, CallFrame*);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);

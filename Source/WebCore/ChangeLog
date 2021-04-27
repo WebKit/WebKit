@@ -1,3 +1,27 @@
+2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Remove defaultValue() from the method table
+        https://bugs.webkit.org/show_bug.cgi?id=225032
+
+        Reviewed by Darin Adler.
+
+        Test: platform/mac/fast/dom/objc-wrapper-toprimitive.html
+
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcFallbackObjectImp::finishCreation):
+        (JSC::Bindings::ObjcFallbackObjectImp::getOwnPropertySlot):
+        (JSC::Bindings::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::Bindings::ObjcFallbackObjectImp::defaultValue): Deleted.
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::finishCreation):
+        (JSC::Bindings::RuntimeObject::getOwnPropertySlot):
+        (JSC::Bindings::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::Bindings::RuntimeObject::defaultValue): Deleted.
+        * bridge/runtime_object.h:
+
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
         Copy-on-write semantics should be an internal implementation detail of StorageMap

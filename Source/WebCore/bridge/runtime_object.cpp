@@ -38,6 +38,7 @@ namespace Bindings {
 
 WEBCORE_EXPORT const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RuntimeObject) };
 
+static JSC_DECLARE_HOST_FUNCTION(convertRuntimeObjectToPrimitive);
 static JSC_DECLARE_HOST_FUNCTION(callRuntimeObject);
 static JSC_DECLARE_HOST_FUNCTION(callRuntimeConstructor);
 
@@ -55,6 +56,9 @@ void RuntimeObject::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+    putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
+        JSFunction::create(vm, globalObject(vm), 1, "[Symbol.toPrimitive]"_s, convertRuntimeObjectToPrimitive),
+        static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 void RuntimeObject::destroy(JSCell* cell)
@@ -143,6 +147,9 @@ bool RuntimeObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexical
         throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope);
         return false;
     }
+
+    if (propertyName.uid() == vm.propertyNames->toPrimitiveSymbol.impl())
+        return JSObject::getOwnPropertySlot(thisObject, lexicalGlobalObject, propertyName, slot);
     
     RefPtr<Instance> instance = thisObject->m_instance;
 
@@ -213,21 +220,24 @@ bool RuntimeObject::deleteProperty(JSCell*, JSGlobalObject*, PropertyName, Delet
     return false;
 }
 
-JSValue RuntimeObject::defaultValue(const JSObject* object, JSGlobalObject* lexicalGlobalObject, PreferredPrimitiveType hint)
+JSC_DEFINE_HOST_FUNCTION(convertRuntimeObjectToPrimitive, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     VM& vm = lexicalGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const RuntimeObject* thisObject = jsCast<const RuntimeObject*>(object);
-    if (!thisObject->m_instance)
-        return throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope);
-    
-    RefPtr<Instance> instance = thisObject->m_instance;
+    auto* thisObject = jsDynamicCast<RuntimeObject*>(vm, callFrame->thisValue());
+    if (!thisObject)
+        return throwVMTypeError(lexicalGlobalObject, scope, "RuntimeObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
+    auto instance = makeRefPtr(thisObject->getInternalInstance());
+    if (!instance)
+        return JSValue::encode(throwRuntimeObjectInvalidAccessError(lexicalGlobalObject, scope));
+    auto hint = toPreferredPrimitiveType(lexicalGlobalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
 
     instance->begin();
     JSValue result = instance->defaultValue(lexicalGlobalObject, hint);
     instance->end();
-    return result;
+    return JSValue::encode(result);
 }
 
 JSC_DEFINE_HOST_FUNCTION(callRuntimeObject, (JSGlobalObject* globalObject, CallFrame* callFrame))

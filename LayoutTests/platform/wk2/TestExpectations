@@ -557,6 +557,7 @@ loader/navigation-while-deferring-loads.html [ Skip ]
 
 # WebKitTestRunner doesn't have objCController
 platform/mac/fast/dom/objc-wrapper-identity.html
+platform/mac/fast/dom/objc-wrapper-toprimitive.html
 platform/mac/fast/dom/wrapper-classes-objc.html
 platform/mac/fast/dom/wrapper-round-tripping.html
 platform/mac/fast/objc/dom-html-select-activate.html

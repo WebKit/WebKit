@@ -664,7 +664,6 @@ public:
     bool deleteProperty(JSGlobalObject*, uint32_t propertyName);
     bool deleteProperty(JSGlobalObject*, uint64_t propertyName);
 
-    JS_EXPORT_PRIVATE static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
     JSValue ordinaryToPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
 
     JS_EXPORT_PRIVATE bool hasInstance(JSGlobalObject*, JSValue value, JSValue hasInstanceValue);

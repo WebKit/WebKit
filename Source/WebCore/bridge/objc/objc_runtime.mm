@@ -45,6 +45,8 @@ using namespace WebCore;
 namespace JSC {
 namespace Bindings {
 
+static JSC_DECLARE_HOST_FUNCTION(convertObjCFallbackObjectToPrimitive);
+
 ClassStructPtr webScriptObjectClass()
 {
     static ClassStructPtr<WebScriptObject> webScriptObjectClass = NSClassFromString(@"WebScriptObject");
@@ -232,10 +234,16 @@ void ObjcFallbackObjectImp::finishCreation(JSGlobalObject* globalObject)
     VM& vm = globalObject->vm();
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
+    putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
+        JSFunction::create(vm, globalObject, 0, "[Symbol.toPrimitive]"_s, convertObjCFallbackObjectToPrimitive),
+        static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-bool ObjcFallbackObjectImp::getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot& slot)
+bool ObjcFallbackObjectImp::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = globalObject->vm();
+    if (propertyName.uid() == vm.propertyNames->toPrimitiveSymbol.impl())
+        return JSObject::getOwnPropertySlot(object, globalObject, propertyName, slot);
     // keep the prototype from getting called instead of just returning false
     slot.setUndefined();
     return true;
@@ -301,11 +309,17 @@ bool ObjcFallbackObjectImp::deleteProperty(JSCell*, JSGlobalObject*, PropertyNam
     return false;
 }
 
-JSValue ObjcFallbackObjectImp::defaultValue(const JSObject* object, JSGlobalObject* lexicalGlobalObject, PreferredPrimitiveType)
+JSC_DEFINE_HOST_FUNCTION(convertObjCFallbackObjectToPrimitive, (JSGlobalObject* lexicalGlobalObject, CallFrame* callFrame))
 {
     VM& vm = lexicalGlobalObject->vm();
-    const ObjcFallbackObjectImp* thisObject = jsCast<const ObjcFallbackObjectImp*>(object);
-    return thisObject->_instance->getValueOfUndefinedField(lexicalGlobalObject, Identifier::fromString(vm, thisObject->m_item));
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* thisObject = jsDynamicCast<ObjcFallbackObjectImp*>(vm, callFrame->thisValue());
+    if (!thisObject)
+        return throwVMTypeError(lexicalGlobalObject, scope, "ObjcFallbackObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
+
+    scope.release();
+    return JSValue::encode(thisObject->getInternalObjCInstance()->getValueOfUndefinedField(lexicalGlobalObject, Identifier::fromString(vm, thisObject->propertyName())));
 }
 
 bool ObjcFallbackObjectImp::toBoolean(JSGlobalObject*) const

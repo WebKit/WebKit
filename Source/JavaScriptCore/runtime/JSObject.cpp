@@ -2310,11 +2310,6 @@ JSValue JSObject::ordinaryToPrimitive(JSGlobalObject* globalObject, PreferredPri
     return throwTypeError(globalObject, scope, "No default value"_s);
 }
 
-JSValue JSObject::defaultValue(const JSObject* object, JSGlobalObject* globalObject, PreferredPrimitiveType hint)
-{
-    return object->ordinaryToPrimitive(globalObject, hint);
-}
-
 JSValue JSObject::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveType preferredType) const
 {
     VM& vm = globalObject->vm();
@@ -2325,7 +2320,7 @@ JSValue JSObject::toPrimitive(JSGlobalObject* globalObject, PreferredPrimitiveTy
     if (value)
         return value;
 
-    RELEASE_AND_RETURN(scope, this->methodTable(vm)->defaultValue(this, globalObject, preferredType));
+    RELEASE_AND_RETURN(scope, ordinaryToPrimitive(globalObject, preferredType));
 }
 
 bool JSObject::getOwnStaticPropertySlot(VM& vm, PropertyName propertyName, PropertySlot& slot)

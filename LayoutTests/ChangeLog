@@ -1,3 +1,18 @@
+2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Remove defaultValue() from the method table
+        https://bugs.webkit.org/show_bug.cgi?id=225032
+
+        Reviewed by Darin Adler.
+
+        * platform/mac/fast/dom/objc-wrapper-toprimitive-expected.txt: Added.
+        * platform/mac/fast/dom/objc-wrapper-toprimitive.html: Added.
+        * platform/wk2/TestExpectations:
+        * plugins/npruntime/tostring-expected.txt:
+        * plugins/npruntime/tostring.html:
+        * plugins/npruntime/valueof-expected.txt:
+        * plugins/npruntime/valueof.html:
+
 2021-04-27  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add borders for better control visibility

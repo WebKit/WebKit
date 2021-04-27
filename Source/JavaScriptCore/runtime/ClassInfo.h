@@ -71,9 +71,6 @@ struct MethodTable {
     using ToThisFunctionPtr = JSValue (*)(JSCell*, JSGlobalObject*, ECMAMode);
     ToThisFunctionPtr METHOD_TABLE_ENTRY(toThis);
 
-    using DefaultValueFunctionPtr = JSValue (*)(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
-    DefaultValueFunctionPtr METHOD_TABLE_ENTRY(defaultValue);
-
     using GetOwnPropertyNamesFunctionPtr = void (*)(JSObject*, JSGlobalObject*, PropertyNameArray&, DontEnumPropertiesMode);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnPropertyNames);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnSpecialPropertyNames);
@@ -156,7 +153,6 @@ struct MethodTable {
         &ClassName::getOwnPropertySlot, \
         &ClassName::getOwnPropertySlotByIndex, \
         &ClassName::toThis, \
-        &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
         &ClassName::getOwnSpecialPropertyNames, \
         &ClassName::customHasInstance, \

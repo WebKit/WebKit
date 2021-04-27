@@ -183,12 +183,6 @@ void slowValidateCell(JSCell* cell)
     ASSERT_GC_OBJECT_LOOKS_VALID(cell);
 }
 
-JSValue JSCell::defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType)
-{
-    RELEASE_ASSERT_NOT_REACHED();
-    return jsUndefined();
-}
-
 bool JSCell::getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&)
 {
     RELEASE_ASSERT_NOT_REACHED();
