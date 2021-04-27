@@ -34,7 +34,7 @@ var kExampleBuilderStatusJSON =  {
         "category": "6webkit linux latest",
         "currentBuilds": [11462],
         "pendingBuilds": 0,
-        "slaves": ["vm124-m1"],
+        "workers": ["vm124-m1"],
         "state": "building"
     },
     "WebKit Mac10.6": {
@@ -43,7 +43,7 @@ var kExampleBuilderStatusJSON =  {
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
         "pendingBuilds": 0,
-        "slaves": ["vm124-m1"],
+        "workers": ["vm124-m1"],
         "state": "building"
     },
     "WebKit ASAN": {
@@ -52,7 +52,7 @@ var kExampleBuilderStatusJSON =  {
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
         "pendingBuilds": 0,
-        "slaves": ["vm124-m1"],
+        "workers": ["vm124-m1"],
         "state": "building"
     },
 };
@@ -64,7 +64,7 @@ var kExampleWebKitDotOrgBuilderStatusJSON =  {
         "category": "6webkit linux latest",
         "currentBuilds": [11462],
         "pendingBuilds": 0,
-        "slaves": ["vm124-m1"],
+        "workers": ["vm124-m1"],
         "state": "building"
     },
     "GTK Linux 64-bit Debug": {
@@ -73,7 +73,7 @@ var kExampleWebKitDotOrgBuilderStatusJSON =  {
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
         "pendingBuilds": 0,
-        "slaves": ["vm124-m1"],
+        "workers": ["vm124-m1"],
         "state": "building"
     },
     "Qt Linux Release": {
@@ -82,7 +82,7 @@ var kExampleWebKitDotOrgBuilderStatusJSON =  {
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
         "pendingBuilds": 0,
-        "slaves": ["vm124-m1"],
+        "workers": ["vm124-m1"],
         "state": "building"
     },
 };
@@ -116,7 +116,7 @@ var kExampleBuildInfoJSON = {
         ["mastername", "chromium.webkit", "master.cfg"],
         ["revision", "92358", "Build"],
         ["scheduler", "s6_webkit_rel", "Scheduler"],
-        ["slavename", "vm124-m1", "BuildSlave"]
+        ["workername", "vm124-m1", "Worker"]
     ],
     "reason": "",
     "requests": [{
@@ -155,7 +155,7 @@ var kExampleBuildInfoJSON = {
         "submittedAt": 1312444298.989818
     }],
     "results": 2,
-    "slave": "vm124-m1",
+    "worker": "vm124-m1",
     "sourceStamp": {
         "branch": "trunk",
         "changes": [{
@@ -376,11 +376,11 @@ var kExampleBuildInfoWithWebKitTestCrashJSON = {
         ["repository", "svn://svn-mirror.golo.chromium.org/chrome/trunk", "Build"],
         ["revision", "104939", "Build"],
         ["scheduler", "s1_chromium_dbg_dep", "Scheduler"],
-        ["slavename", "vm114-m1", "BuildSlave"]
+        ["workername", "vm114-m1", "Worker"]
     ],
     "reason": "downstream",
     "results": 2,
-    "slave": "vm114-m1",
+    "worker": "vm114-m1",
     "sourceStamp": {
         "branch": "src",
         "changes": [{
@@ -641,11 +641,11 @@ var kExampleBuildInfoWithTaskKillWarning = {
         ["repository", "svn://svn-mirror.golo.chromium.org/chrome/trunk", "Build"],
         ["revision", "104939", "Build"],
         ["scheduler", "s1_chromium_dbg_dep", "Scheduler"],
-        ["slavename", "vm114-m1", "BuildSlave"]
+        ["workername", "vm114-m1", "Worker"]
     ],
     "reason": "downstream",
     "results": 2,
-    "slave": "vm114-m1",
+    "worker": "vm114-m1",
     "sourceStamp": {
         "branch": "src",
         "changes": [{
@@ -698,7 +698,7 @@ var kExamplePerfBuilderStatusJSON =  {
         "category": "6webkit linux latest",
         "currentBuilds": [11462],
         "pendingBuilds": 0,
-        "slaves": ["vm124-m1"],
+        "workers": ["vm124-m1"],
         "state": "building"
     },
     "Mac10.6 Perf": {
@@ -707,7 +707,7 @@ var kExamplePerfBuilderStatusJSON =  {
         "category": "6webkit linux latest",
         "currentBuilds": [11461, 11462],
         "pendingBuilds": 0,
-        "slaves": ["vm124-m1"],
+        "workers": ["vm124-m1"],
         "state": "building"
     },
 };
@@ -741,7 +741,7 @@ var kExamplePerfBuildInfoJSON = {
         ["mastername", "chromium.webkit", "master.cfg"],
         ["revision", "92358", "Build"],
         ["scheduler", "s6_webkit_rel", "Scheduler"],
-        ["slavename", "vm124-m1", "BuildSlave"]
+        ["workername", "vm124-m1", "Worker"]
     ],
     "reason": "",
     "requests": [{
@@ -780,7 +780,7 @@ var kExamplePerfBuildInfoJSON = {
         "submittedAt": 1312444298.989818
     }],
     "results": 2,
-    "slave": "vm124-m1",
+    "worker": "vm124-m1",
     "sourceStamp": {
         "branch": "trunk",
         "changes": [{

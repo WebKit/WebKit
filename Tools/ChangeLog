@@ -1,3 +1,14 @@
+2021-04-27  Aakash Jain  <aakash_jain@apple.com>
+
+        Rename slave to worker in TestFailures
+        https://bugs.webkit.org/show_bug.cgi?id=225079
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/public_html/TestFailures/scripts/Builder.js:
+        * CISupport/build-webkit-org/public_html/TestFailures/scripts/builders_unittests.js:
+        * CISupport/build-webkit-org/public_html/TestFailures/scripts/results_unittests.js:
+
 2021-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Subdivide image overlay text into one or more elements per line
