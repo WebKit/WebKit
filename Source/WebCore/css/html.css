@@ -438,7 +438,7 @@ input[type="search"] {
     -webkit-appearance: searchfield;
     box-sizing: border-box;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-    border: initial;
+    border: 1px solid -webkit-control-background;
     background-color: -apple-system-opaque-tertiary-fill;
 #endif
 }
@@ -498,7 +498,7 @@ input:is([type="date"], [type="time"], [type="datetime-local"], [type="month"], 
     overflow: hidden;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     -webkit-appearance: menulist-button;
-    border: initial;
+    border: 1px solid -webkit-control-background;
     background-color: -apple-system-opaque-secondary-fill;
     font-family: system-ui;
     color: -apple-system-blue;
@@ -834,7 +834,7 @@ input:is([type="button"], [type="submit"], [type="reset"]), input[type="file"]::
     background-color: ButtonFace;
 #else
     padding: 0 1.0em;
-    border: initial;
+    border: 1px solid -webkit-control-background;
     font: 11px system-ui;
     background-color: -apple-system-opaque-secondary-fill;
     color: -apple-system-blue;
@@ -1007,12 +1007,6 @@ input[type="radio"] {
 }
 #endif
 
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-select:focus {
-    border-color: rgb(17, 46, 135);
-}
-#endif
-
 #if defined(ENABLE_INPUT_TYPE_COLOR) && ENABLE_INPUT_TYPE_COLOR
 
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
@@ -1056,7 +1050,7 @@ select {
     padding: 0 0.4em 0 0.4em;
     color: -apple-system-blue;
     font: 11px system-ui;
-    border: initial;
+    border: 1px solid -webkit-control-background;
     border-radius: initial;
     background-color: -apple-system-opaque-secondary-fill;
 #else

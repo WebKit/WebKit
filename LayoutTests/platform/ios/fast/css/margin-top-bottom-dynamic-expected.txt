@@ -35,14 +35,14 @@ layer at (0,0) size 800x600
             text run at (1,1) width 86: "Lorem ipsum"
       RenderBlock (anonymous) at (0,288) size 784x44
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,22) size 114x20 [color=#FFFFFF] [bgcolor=#007AFF]
-          RenderBlock (anonymous) at (11,3) size 92x14
+        RenderButton {INPUT} at (2,22) size 116x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,3) size 92x14
             RenderText at (0,0) size 92x14
               text run at (0,0) width 92: "Negative margin"
-        RenderText {#text} at (117,21) size 5x19
-          text run at (117,21) width 5: " "
-        RenderButton {INPUT} at (123,22) size 109x20 [color=#FFFFFF] [bgcolor=#007AFF]
-          RenderBlock (anonymous) at (11,3) size 87x14
+        RenderText {#text} at (119,21) size 5x19
+          text run at (119,21) width 5: " "
+        RenderButton {INPUT} at (125,22) size 111x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,3) size 87x14
             RenderText at (0,0) size 87x14
               text run at (0,0) width 87: "Positive margin"
         RenderText {#text} at (0,0) size 0x0
@@ -58,14 +58,14 @@ layer at (0,0) size 800x600
             text run at (1,1) width 86: "Lorem ipsum"
       RenderBlock (anonymous) at (0,460) size 784x44
         RenderBR {BR} at (0,0) size 0x19
-        RenderButton {INPUT} at (2,22) size 114x20 [color=#FFFFFF] [bgcolor=#007AFF]
-          RenderBlock (anonymous) at (11,3) size 92x14
+        RenderButton {INPUT} at (2,22) size 116x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,3) size 92x14
             RenderText at (0,0) size 92x14
               text run at (0,0) width 92: "Negative margin"
-        RenderText {#text} at (117,21) size 5x19
-          text run at (117,21) width 5: " "
-        RenderButton {INPUT} at (123,22) size 109x20 [color=#FFFFFF] [bgcolor=#007AFF]
-          RenderBlock (anonymous) at (11,3) size 87x14
+        RenderText {#text} at (119,21) size 5x19
+          text run at (119,21) width 5: " "
+        RenderButton {INPUT} at (125,22) size 111x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,3) size 87x14
             RenderText at (0,0) size 87x14
               text run at (0,0) width 87: "Positive margin"
         RenderText {#text} at (0,0) size 0x0

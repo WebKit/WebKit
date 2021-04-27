@@ -16,15 +16,15 @@ layer at (0,0) size 800x2570
         RenderText {#text} at (10,10) size 60x19
           text run at (10,10) width 60: "Line One"
         RenderBR {BR} at (69,10) size 1x19
-        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (5,3) size 90x14
+        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 88x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (10,56) size 200x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (11,3) size 178x14
-            RenderText at (83,0) size 12x14
-              text run at (83,0) width 12: "Hi"
+        RenderButton {INPUT} at (10,56) size 200x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,3) size 176x14
+            RenderText at (82,0) size 12x14
+              text run at (82,0) width 12: "Hi"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,198) size 784x20
         RenderText {#text} at (0,0) size 482x19
@@ -33,15 +33,15 @@ layer at (0,0) size 800x2570
         RenderText {#text} at (10,10) size 60x19
           text run at (10,10) width 60: "Line One"
         RenderBR {BR} at (69,10) size 1x19
-        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (5,3) size 90x14
+        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 88x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (11,3) size 78x14
-            RenderText at (33,0) size 12x14
-              text run at (33,0) width 12: "Hi"
+        RenderButton {INPUT} at (110,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,3) size 76x14
+            RenderText at (32,0) size 12x14
+              text run at (32,0) width 12: "Hi"
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (210,30) size 0x19
       RenderBlock (anonymous) at (0,314) size 784x20
@@ -52,13 +52,13 @@ layer at (0,0) size 800x2570
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line One"
           RenderBR {BR} at (59,0) size 1x19
-          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 90x14
+          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 88x14
               RenderText at (0,0) size 22x14
                 text run at (0,0) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,32) size 34x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (11,3) size 12x14
+        RenderButton {INPUT} at (110,32) size 36x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,3) size 12x14
             RenderText at (0,0) size 12x14
               text run at (0,0) width 12: "Hi"
         RenderBlock (anonymous) at (10,54) size 200x20
@@ -71,15 +71,15 @@ layer at (0,0) size 800x2570
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line One"
           RenderBR {BR} at (59,0) size 1x19
-          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 90x14
+          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 88x14
               RenderText at (0,0) size 22x14
                 text run at (0,0) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
-        RenderButton {INPUT} at (110,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (11,3) size 78x14
-            RenderText at (33,0) size 12x14
-              text run at (33,0) width 12: "Hi"
+        RenderButton {INPUT} at (110,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (12,3) size 76x14
+            RenderText at (32,0) size 12x14
+              text run at (32,0) width 12: "Hi"
         RenderBlock (anonymous) at (10,54) size 200x20
           RenderBR {BR} at (0,0) size 0x19
       RenderBlock (anonymous) at (0,586) size 784x20
@@ -89,8 +89,8 @@ layer at (0,0) size 800x2570
         RenderText {#text} at (10,10) size 60x19
           text run at (10,10) width 60: "Line One"
         RenderBR {BR} at (69,10) size 1x19
-        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (5,3) size 90x14
+        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 88x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
@@ -110,8 +110,8 @@ layer at (0,0) size 800x2570
         RenderText {#text} at (10,10) size 60x19
           text run at (10,10) width 60: "Line One"
         RenderBR {BR} at (69,10) size 1x19
-        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (5,3) size 90x14
+        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 88x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
@@ -134,8 +134,8 @@ layer at (0,0) size 800x2570
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line One"
           RenderBR {BR} at (59,0) size 1x19
-          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 90x14
+          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 88x14
               RenderText at (0,0) size 22x14
                 text run at (0,0) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
@@ -158,8 +158,8 @@ layer at (0,0) size 800x2570
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line One"
           RenderBR {BR} at (59,0) size 1x19
-          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 90x14
+          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 88x14
               RenderText at (0,0) size 22x14
                 text run at (0,0) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
@@ -184,8 +184,8 @@ layer at (0,0) size 800x2570
         RenderText {#text} at (10,10) size 60x19
           text run at (10,10) width 60: "Line One"
         RenderBR {BR} at (69,10) size 1x19
-        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (5,3) size 90x14
+        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 88x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
@@ -199,8 +199,8 @@ layer at (0,0) size 800x2570
         RenderText {#text} at (10,10) size 60x19
           text run at (10,10) width 60: "Line One"
         RenderBR {BR} at (69,10) size 1x19
-        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (5,3) size 90x14
+        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 88x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
@@ -214,8 +214,8 @@ layer at (0,0) size 800x2570
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line One"
           RenderBR {BR} at (59,0) size 1x19
-          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 90x14
+          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 88x14
               RenderText at (0,0) size 22x14
                 text run at (0,0) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
@@ -231,8 +231,8 @@ layer at (0,0) size 800x2570
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line One"
           RenderBR {BR} at (59,0) size 1x19
-          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 90x14
+          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 88x14
               RenderText at (0,0) size 22x14
                 text run at (0,0) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
@@ -245,8 +245,8 @@ layer at (0,0) size 800x2570
         RenderText {#text} at (10,10) size 60x19
           text run at (10,10) width 60: "Line One"
         RenderBR {BR} at (69,10) size 1x19
-        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (5,3) size 90x14
+        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 88x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
@@ -261,8 +261,8 @@ layer at (0,0) size 800x2570
         RenderText {#text} at (10,10) size 60x19
           text run at (10,10) width 60: "Line One"
         RenderBR {BR} at (69,10) size 1x19
-        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-          RenderBlock (anonymous) at (5,3) size 90x14
+        RenderMenuList {SELECT} at (10,32) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+          RenderBlock (anonymous) at (6,3) size 88x14
             RenderText at (0,0) size 22x14
               text run at (0,0) width 22: "One"
         RenderText {#text} at (0,0) size 0x0
@@ -277,8 +277,8 @@ layer at (0,0) size 800x2570
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line One"
           RenderBR {BR} at (59,0) size 1x19
-          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 90x14
+          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 88x14
               RenderText at (0,0) size 22x14
                 text run at (0,0) width 22: "One"
           RenderText {#text} at (0,0) size 0x0
@@ -294,8 +294,8 @@ layer at (0,0) size 800x2570
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Line One"
           RenderBR {BR} at (59,0) size 1x19
-          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 90x14
+          RenderMenuList {SELECT} at (0,22) size 100x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 88x14
               RenderText at (0,0) size 22x14
                 text run at (0,0) width 22: "One"
           RenderText {#text} at (0,0) size 0x0

@@ -1,3 +1,61 @@
+2021-04-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add borders for better control visibility
+        https://bugs.webkit.org/show_bug.cgi?id=225058
+        <rdar://problem/77161616>
+
+        Reviewed by Sam Weinig.
+
+        The solid gray backgrounds of new form controls have poor visibility on
+        site's that have gray-ish backgrounds or draw the controls on top of
+        a gray area. To fix this, borders are added to all controls to ensure
+        visibility no matter the background.
+
+        The border color is the system background color. This means the border
+        is invisible on white backgrounds in light mode, and dark backgrounds
+        in dark mode, ensuring the controls match UIKit styles on backgrounds
+        where they are guaranteed to be visible. However, these borders are
+        visible when the page/area background has a similar color to the control
+        background, improving control visibility.
+
+        To paint the borders, a mix of UA stylesheet changes and custom painting
+        changes are used. This approach is taken to maintain our existing level
+        of stylability. UA stylesheet changes were applied to controls that
+        specified a "1px solid black" border in the old design. The border is
+        now brought back, but with a different color. For controls that have
+        always had completely custom painting (independent of styles), the
+        border is painted by the theme.
+
+        * css/html.css:
+
+        Specify a "1px solid -webkit-control-background" border on controls
+        that previously (pre-redesign) specified a border in the UA stylesheet.
+
+        * css/legacyFormControlsIOS.css:
+        (select:focus):
+
+        Move the <select> focus style into the legacy stylesheet, since it
+        should not apply to the new design.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintCheckbox):
+
+        Paint the checkbox border inside the painting rect, and inset the
+        actual checkbox by the border. This is necessary, checkboxes use
+        "box-sizing: border-box", and we do not want to increase the overall
+        size of checkboxes for compatibility reasons.
+
+        (WebCore::RenderThemeIOS::paintRadio):
+
+        Painted in a similar manner as checkboxes.
+
+        (WebCore::RenderThemeIOS::paintProgressBarWithFormControlRefresh):
+        (WebCore::RenderThemeIOS::paintMeter):
+        (WebCore::RenderThemeIOS::paintSliderTrackWithFormControlRefresh):
+
+        Slider tracks are already inset by the border size, so we can just
+        draw a border in the available area.
+
 2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] `window.CSS` should be non-callable object with correct Symbol.toStringTag

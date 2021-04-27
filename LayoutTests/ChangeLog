@@ -1,3 +1,200 @@
+2021-04-27  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Add borders for better control visibility
+        https://bugs.webkit.org/show_bug.cgi?id=225058
+        <rdar://problem/77161616>
+
+        Reviewed by Sam Weinig.
+
+        Rebaselined tests to account for changes in appearance.
+
+        * accessibility/ios-simulator/unobscured-content-rect-expected.txt:
+        * accessibility/ios-simulator/unobscured-content-rect.html:
+        * editing/editable-region/search-field-basic-expected.txt:
+        * fast/forms/date/date-input-rendering-basic-expected.txt:
+        * fast/forms/date/date-pseudo-elements-expected.txt:
+        * fast/forms/ios/form-control-refresh/checkbox/border.html:
+
+        Specify a border style, so that the border applies. Note that this test
+        is currently failing on internal bots.
+
+        * fast/forms/ios/form-control-refresh/checkbox/subpixel-clipping-expected-mismatch.html:
+        * fast/forms/ios/form-control-refresh/checkbox/subpixel-clipping.html:
+
+        Add a green background so that the (white) border is visible.
+
+        * fast/forms/ios/form-control-refresh/radio/border.html:
+        * fast/forms/ios/form-control-refresh/radio/subpixel-clipping-expected-mismatch.html:
+        * fast/forms/ios/form-control-refresh/radio/subpixel-clipping.html:
+        * fast/forms/time/time-input-rendering-basic-expected.txt:
+        * platform/ios-simulator/fast/forms/datalist/datalist-searchinput-appearance-expected.txt:
+        * platform/ios-wk2/compositing/contents-opaque/control-layer-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4641033-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4944770-1-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4944770-2-expected.txt:
+        * platform/ios-wk2/editing/selection/caret-before-select-expected.txt:
+        * platform/ios-wk2/fast/block/margin-collapse/103-expected.txt:
+        * platform/ios-wk2/fast/forms/basic-buttons-expected.txt:
+        * platform/ios-wk2/fast/forms/targeted-frame-submission-expected.txt:
+        * platform/ios-wk2/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/ios-wk2/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/ios-wk2/fast/parser/document-write-option-expected.txt:
+        * platform/ios-wk2/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-pseudo/file-chooser-button-display-toggle-crash.tentative-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/baseline-alignment-and-overflow.tentative-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/abspos-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/html/rendering/widgets/select-wrap-no-spill.optional-expected.txt:
+        * platform/ios/css2.1/20110323/replaced-elements-001-expected.txt:
+        * platform/ios/css3/flexbox/button-expected.txt:
+        * platform/ios/editing/selection/3690703-2-expected.txt:
+        * platform/ios/editing/selection/3690703-expected.txt:
+        * platform/ios/editing/selection/3690719-expected.txt:
+        * platform/ios/editing/selection/4397952-expected.txt:
+        * platform/ios/editing/selection/5240265-expected.txt:
+        * platform/ios/editing/selection/replaced-boundaries-3-expected.txt:
+        * platform/ios/editing/selection/select-box-expected.txt:
+        * platform/ios/editing/selection/select-element-paragraph-boundary-expected.txt:
+        * platform/ios/editing/selection/selection-button-text-expected.txt:
+        * platform/ios/fast/block/float/float-avoidance-expected.txt:
+        * platform/ios/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/ios/fast/css/continuationCrash-expected.txt:
+        * platform/ios/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/ios/fast/css/input-search-padding-expected.txt:
+        * platform/ios/fast/css/margin-top-bottom-dynamic-expected.txt:
+        * platform/ios/fast/css/rtl-ordering-expected.txt:
+        * platform/ios/fast/css/text-input-with-webkit-border-radius-expected.txt:
+        * platform/ios/fast/css/text-overflow-input-expected.txt:
+        * platform/ios/fast/css/text-transform-select-expected.txt:
+        * platform/ios/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt:
+        * platform/ios/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/ios/fast/dynamic/positioned-movement-with-positioned-children-expected.txt:
+        * platform/ios/fast/forms/001-expected.txt:
+        * platform/ios/fast/forms/003-expected.txt:
+        * platform/ios/fast/forms/004-expected.txt:
+        * platform/ios/fast/forms/basic-selects-expected.txt:
+        * platform/ios/fast/forms/blankbuttons-expected.txt:
+        * platform/ios/fast/forms/box-shadow-override-expected.txt:
+        * platform/ios/fast/forms/button-align-expected.txt:
+        * platform/ios/fast/forms/button-cannot-be-nested-expected.txt:
+        * platform/ios/fast/forms/button-default-title-expected.txt:
+        * platform/ios/fast/forms/button-generated-content-expected.txt:
+        * platform/ios/fast/forms/button-positioned-expected.txt:
+        * platform/ios/fast/forms/button-sizes-expected.txt:
+        * platform/ios/fast/forms/button-style-color-expected.txt:
+        * platform/ios/fast/forms/button-table-styles-expected.txt:
+        * platform/ios/fast/forms/button-text-transform-expected.txt:
+        * platform/ios/fast/forms/button-white-space-expected.txt:
+        * platform/ios/fast/forms/control-clip-expected.txt:
+        * platform/ios/fast/forms/control-clip-overflow-expected.txt:
+        * platform/ios/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/ios/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/ios/fast/forms/file/file-input-direction-expected.txt:
+        * platform/ios/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/ios/fast/forms/form-element-geometry-expected.txt:
+        * platform/ios/fast/forms/formmove3-expected.txt:
+        * platform/ios/fast/forms/hidden-listbox-expected.txt:
+        * platform/ios/fast/forms/input-appearance-height-expected.txt:
+        * platform/ios/fast/forms/input-button-sizes-expected.txt:
+        * platform/ios/fast/forms/input-first-letter-expected.txt:
+        * platform/ios/fast/forms/input-value-expected.txt:
+        * platform/ios/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/ios/fast/forms/listbox-scrollbar-incremental-load-expected.txt:
+        * platform/ios/fast/forms/listbox-width-change-expected.txt:
+        * platform/ios/fast/forms/menulist-clip-expected.txt:
+        * platform/ios/fast/forms/menulist-deselect-update-expected.txt:
+        * platform/ios/fast/forms/menulist-narrow-width-expected.txt:
+        * platform/ios/fast/forms/menulist-no-overflow-expected.txt:
+        * platform/ios/fast/forms/menulist-option-wrap-expected.txt:
+        * platform/ios/fast/forms/menulist-restrict-line-height-expected.txt:
+        * platform/ios/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/ios/fast/forms/menulist-style-color-expected.txt:
+        * platform/ios/fast/forms/menulist-width-change-expected.txt:
+        * platform/ios/fast/forms/option-script-expected.txt:
+        * platform/ios/fast/forms/option-strip-whitespace-expected.txt:
+        * platform/ios/fast/forms/option-text-clip-expected.txt:
+        * platform/ios/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/ios/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/ios/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/ios/fast/forms/search-input-rtl-expected.txt:
+        * platform/ios/fast/forms/search/search-zoom-computed-style-height-expected.txt:
+        * platform/ios/fast/forms/select-align-expected.txt:
+        * platform/ios/fast/forms/select-background-none-expected.txt:
+        * platform/ios/fast/forms/select-baseline-expected.txt:
+        * platform/ios/fast/forms/select-block-background-expected.txt:
+        * platform/ios/fast/forms/select-change-listbox-size-expected.txt:
+        * platform/ios/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/ios/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/ios/fast/forms/select-dirty-parent-pref-widths-expected.txt:
+        * platform/ios/fast/forms/select-disabled-appearance-expected.txt:
+        * platform/ios/fast/forms/select-element-focus-ring-expected.txt:
+        * platform/ios/fast/forms/select-empty-option-height-expected.txt:
+        * platform/ios/fast/forms/select-initial-position-expected.txt:
+        * platform/ios/fast/forms/select-list-box-with-height-expected.txt:
+        * platform/ios/fast/forms/select-selected-expected.txt:
+        * platform/ios/fast/forms/select-style-expected.txt:
+        * platform/ios/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/ios/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/ios/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/ios/fast/forms/selectlist-minsize-expected.txt:
+        * platform/ios/fast/forms/stuff-on-my-optgroup-expected.txt:
+        * platform/ios/fast/html/details-replace-summary-child-expected.txt:
+        * platform/ios/fast/html/details-replace-text-expected.txt:
+        * platform/ios/fast/html/keygen-expected.txt:
+        * platform/ios/fast/invalid/014-expected.txt:
+        * platform/ios/fast/replaced/replaced-breaking-expected.txt:
+        * platform/ios/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/ios/fast/replaced/three-selects-break-expected.txt:
+        * platform/ios/fast/replaced/width100percent-button-expected.txt:
+        * platform/ios/fast/replaced/width100percent-menulist-expected.txt:
+        * platform/ios/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/ios/fast/selectors/064-expected.txt:
+        * platform/ios/fast/table/append-cells2-expected.txt:
+        * platform/ios/fast/table/remove-td-display-none-expected.txt:
+        * platform/ios/fast/text/drawBidiText-expected.txt:
+        * platform/ios/fast/text/international/bidi-listbox-atsui-expected.txt:
+        * platform/ios/fast/text/international/bidi-listbox-expected.txt:
+        * platform/ios/fast/text/international/bidi-menulist-expected.txt:
+        * platform/ios/fast/text/international/hindi-spacing-expected.txt:
+        * platform/ios/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/ios/svg/custom/foreign-object-skew-expected.txt:
+        * platform/ios/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug138725-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug29326-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug39209-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4429-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug52505-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug52506-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug60749-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug68912-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug92647-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/ios/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/ios/tables/mozilla/core/margins-expected.txt:
+        * platform/ios/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/ios/tables/mozilla/other/move_row-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug1725-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt:
+        * platform/ios/transforms/2d/zoom-menulist-expected.txt:
+
 2021-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/events/ios/dragstart-on-image-by-long-pressing.html sometimes fails with a text diff

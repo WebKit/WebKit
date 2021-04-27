@@ -66,19 +66,19 @@ layer at (0,0) size 800x722
         RenderBlock {P} at (0,0) size 784x49
           RenderText {#text} at (0,1) size 267x19
             text run at (0,1) width 267: "How does your browser fare on this test? "
-          RenderMenuList {SELECT} at (268,2) size 233x20 [color=#007AFF] [bgcolor=#E9E9EA]
-            RenderBlock (anonymous) at (5,3) size 222x14
+          RenderMenuList {SELECT} at (268,2) size 236x20 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (6,3) size 223x14
               RenderText at (0,0) size 139x14
                 text run at (0,0) width 139: "The test renders correctly."
-          RenderText {#text} at (502,1) size 5x19
-            text run at (502,1) width 5: " "
+          RenderText {#text} at (505,1) size 5x19
+            text run at (505,1) width 5: " "
           RenderInline {LABEL} at (0,0) size 232x19
-            RenderText {#text} at (506,1) size 73x19
-              text run at (506,1) width 73: "Comment: "
-            RenderTextControl {INPUT} at (580,2) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
+            RenderText {#text} at (509,1) size 73x19
+              text run at (509,1) width 73: "Comment: "
+            RenderTextControl {INPUT} at (583,2) size 156x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
           RenderText {#text} at (0,0) size 0x0
-          RenderButton {INPUT} at (2,27) size 62x20 [color=#FFFFFF] [bgcolor=#007AFF]
-            RenderBlock (anonymous) at (11,3) size 40x14
+          RenderButton {INPUT} at (2,27) size 64x20 [color=#FFFFFF] [bgcolor=#007AFF] [border: (1px solid #FFFFFF)]
+            RenderBlock (anonymous) at (12,3) size 40x14
               RenderText at (0,0) size 40x14
                 text run at (0,0) width 40: "Submit"
           RenderText {#text} at (0,0) size 0x0
@@ -115,5 +115,5 @@ layer at (0,0) size 800x722
       RenderBlock {P} at (0,664) size 784x21
         RenderText {#text} at (0,0) size 185x19
           text run at (0,0) width 185: "Last updated in March 1999."
-layer at (595,500) size 141x14
+layer at (598,500) size 141x14
   RenderBlock {DIV} at (6,3) size 143x15
