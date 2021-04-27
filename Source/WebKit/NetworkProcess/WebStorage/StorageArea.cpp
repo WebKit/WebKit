@@ -31,6 +31,7 @@
 #include "StorageAreaMapMessages.h"
 #include "StorageManager.h"
 #include <WebCore/StorageMap.h>
+#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -40,11 +41,12 @@ StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const Sec
     : m_localStorageNamespace(makeWeakPtr(localStorageNamespace))
     , m_securityOrigin(securityOrigin)
     , m_quotaInBytes(quotaInBytes)
-    , m_storageMap(StorageMap::create(m_quotaInBytes))
     , m_identifier(Identifier::generate())
     , m_queue(WTFMove(queue))
 {
     ASSERT(!RunLoop::isMain());
+    if (isEphemeral())
+        m_storageMap = StorageMap::create(m_quotaInBytes);
 }
 
 StorageArea::~StorageArea()
@@ -61,7 +63,7 @@ void StorageArea::addListener(IPC::Connection::UniqueID connectionID)
     ASSERT(!m_eventListeners.contains(connectionID));
 
     if (m_eventListeners.isEmpty() && !isEphemeral())
-        openDatabaseAndImportItemsIfNeeded();
+        ensureDatabase();
 
     m_eventListeners.add(connectionID);
 }
@@ -74,11 +76,8 @@ void StorageArea::removeListener(IPC::Connection::UniqueID connectionID)
     if (!m_eventListeners.isEmpty())
         return;
 
-    if (!m_localStorageNamespace)
-        return;
-
-    syncToDatabase();
-    m_localStorageNamespace->removeStorageArea(m_securityOrigin);
+    if (m_localStorageNamespace)
+        m_localStorageNamespace->removeStorageArea(m_securityOrigin);
 }
 
 bool StorageArea::hasListener(IPC::Connection::UniqueID connectionID) const
@@ -101,19 +100,17 @@ std::unique_ptr<StorageArea> StorageArea::clone() const
 void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& value, const String& urlString, bool& quotaException)
 {
     ASSERT(!RunLoop::isMain());
-    openDatabaseAndImportItemsIfNeeded();
 
     String oldValue;
-
-    auto newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
-    if (newStorageMap)
-        m_storageMap = WTFMove(newStorageMap);
+    if (isEphemeral()) {
+        auto newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
+        if (newStorageMap)
+            m_storageMap = WTFMove(newStorageMap);
+    } else
+        ensureDatabase().setItem(key, value, oldValue, quotaException);
 
     if (quotaException)
         return;
-
-    if (m_localStorageDatabase)
-        m_localStorageDatabase->setItem(key, value);
 
     dispatchEvents(sourceConnection, storageAreaImplID, key, oldValue, value, urlString);
 }
@@ -121,18 +118,16 @@ void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, StorageAre
 void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& urlString)
 {
     ASSERT(!RunLoop::isMain());
-    openDatabaseAndImportItemsIfNeeded();
 
     String oldValue;
-    auto newStorageMap = m_storageMap->removeItem(key, oldValue);
-    if (newStorageMap)
-        m_storageMap = WTFMove(newStorageMap);
-
+    if (isEphemeral()) {
+        auto newStorageMap = m_storageMap->removeItem(key, oldValue);
+        if (newStorageMap)
+            m_storageMap = WTFMove(newStorageMap);
+    } else
+        ensureDatabase().removeItem(key, oldValue);
     if (oldValue.isNull())
         return;
-
-    if (m_localStorageDatabase)
-        m_localStorageDatabase->removeItem(key);
 
     dispatchEvents(sourceConnection, storageAreaImplID, key, oldValue, String(), urlString);
 }
@@ -140,35 +135,40 @@ void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, Storage
 void StorageArea::clear(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& urlString)
 {
     ASSERT(!RunLoop::isMain());
-    openDatabaseAndImportItemsIfNeeded();
 
-    if (!m_storageMap->length())
-        return;
-
-    m_storageMap = StorageMap::create(m_quotaInBytes);
-
-    if (m_localStorageDatabase)
-        m_localStorageDatabase->clear();
+    if (isEphemeral()) {
+        if (!m_storageMap->length())
+            return;
+        if (auto newStorageMap = m_storageMap->clear())
+            m_storageMap = WTFMove(newStorageMap);
+    } else {
+        if (!ensureDatabase().clear())
+            return;
+    }
 
     dispatchEvents(sourceConnection, storageAreaImplID, String(), String(), String(), urlString);
 }
 
-const HashMap<String, String>& StorageArea::items() const
+HashMap<String, String> StorageArea::items() const
 {
     ASSERT(!RunLoop::isMain());
-    openDatabaseAndImportItemsIfNeeded();
+    if (isEphemeral())
+        return m_storageMap->items();
 
-    return m_storageMap->items();
+    return ensureDatabase().items();
 }
 
 void StorageArea::clear()
 {
     ASSERT(!RunLoop::isMain());
-    m_storageMap = StorageMap::create(m_quotaInBytes);
-
-    if (m_localStorageDatabase) {
-        m_localStorageDatabase->close();
-        m_localStorageDatabase = nullptr;
+    if (isEphemeral()) {
+        if (auto newStorageMap = m_storageMap->clear())
+            m_storageMap = WTFMove(newStorageMap);
+    } else {
+        if (m_localStorageDatabase) {
+            m_localStorageDatabase->close();
+            m_localStorageDatabase = nullptr;
+        }
     }
 
     for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
@@ -179,22 +179,17 @@ void StorageArea::clear()
     }
 }
 
-void StorageArea::openDatabaseAndImportItemsIfNeeded() const
+LocalStorageDatabase& StorageArea::ensureDatabase() const
 {
-    ASSERT(!RunLoop::isMain());
-    if (!m_localStorageNamespace)
-        return;
+    ASSERT(!isEphemeral());
 
     ASSERT(m_localStorageNamespace->storageManager()->localStorageDatabaseTracker());
     // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
-    if (!m_localStorageDatabase)
-        m_localStorageDatabase = LocalStorageDatabase::create(m_queue.copyRef(), *m_localStorageNamespace->storageManager()->localStorageDatabaseTracker(), m_securityOrigin);
-
-    if (m_didImportItemsFromDatabase)
-        return;
-
-    m_localStorageDatabase->importItems(*m_storageMap);
-    m_didImportItemsFromDatabase = true;
+    if (!m_localStorageDatabase) {
+        m_localStorageDatabase = LocalStorageDatabase::create(m_queue.copyRef(), *m_localStorageNamespace->storageManager()->localStorageDatabaseTracker(), m_securityOrigin, m_quotaInBytes);
+        m_localStorageDatabase->openIfExisting();
+    }
+    return *m_localStorageDatabase;
 }
 
 void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
@@ -209,14 +204,6 @@ void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, Sto
                 connection->send(Messages::StorageAreaMap::DispatchStorageEvent(optionalStorageAreaImplID, key, oldValue, newValue, urlString), destinationStorageAreaID);
         });
     }
-}
-
-void StorageArea::syncToDatabase()
-{
-    if (!m_localStorageDatabase)
-        return;
-
-    m_localStorageDatabase->updateDatabase();
 }
 
 void StorageArea::close()

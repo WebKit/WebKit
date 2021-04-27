@@ -1,3 +1,22 @@
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Don't keep local storage data in memory in the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=225065
+
+        Reviewed by Alex Christensen.
+
+        * platform/sql/SQLiteDatabase.h:
+        * platform/sql/SQLiteFileSystem.h:
+        Export a couple more symbols.
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::clear):
+        * storage/StorageMap.h:
+        Add a clear() function to StorageMap so that StorageArea doesn't reconstruct a
+        new StorageMap object unnecessarily when:
+        - The StorageMap is not shared
+        - The StorageMap is empty (and clear() is a no-op)
+
 2021-04-27  Youenn Fablet  <youenn@apple.com>
 
         SWContextManager::postMessageToServiceWorker should check for valid service worker

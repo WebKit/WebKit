@@ -1,3 +1,18 @@
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Don't keep local storage data in memory in the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=225065
+
+        Reviewed by Alex Christensen.
+
+        * Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::clear):
+        (WebKit::StorageAreaImpl::clearForOriginDeletion):
+        Use the new StorageMap::clear() to avoid constructing a new StorageMap unnecessarily
+        when:
+        - The StorageMap is not shared
+        - The StorageMap is empty
+
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Update Mac-specific CMake files

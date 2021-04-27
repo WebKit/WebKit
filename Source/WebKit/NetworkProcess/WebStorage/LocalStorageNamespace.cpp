@@ -73,10 +73,8 @@ void LocalStorageNamespace::clearAllStorageAreas()
 void LocalStorageNamespace::flushAndClose(const SecurityOriginData& origin)
 {
     ASSERT(!RunLoop::isMain());
-    if (auto* storageArea = m_storageAreaMap.get(origin)) {
-        storageArea->syncToDatabase();
+    if (auto* storageArea = m_storageAreaMap.get(origin))
         storageArea->close();
-    }
 }
 
 

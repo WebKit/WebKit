@@ -155,16 +155,7 @@ void StorageManagerSet::waitUntilSyncingLocalStorageFinished()
 {
     ASSERT(RunLoop::isMain());
 
-    BinarySemaphore semaphore;
-    m_queue->dispatch([this, &semaphore] {
-        for (const auto& storageArea : m_storageAreas.values()) {
-            ASSERT(storageArea);
-            if (storageArea)
-                storageArea->syncToDatabase();
-        }
-        semaphore.signal();
-    });
-    semaphore.wait();
+    m_queue->dispatchSync([] { });
 }
 
 void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)

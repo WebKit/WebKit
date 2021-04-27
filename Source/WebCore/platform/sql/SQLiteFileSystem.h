@@ -89,7 +89,7 @@ public:
     static bool truncateDatabaseFile(sqlite3* database);
 #endif
     
-    static long long getDatabaseFileSize(const String& fileName);
+    WEBCORE_EXPORT static long long getDatabaseFileSize(const String& fileName);
     WEBCORE_EXPORT static Optional<WallTime> databaseCreationTime(const String& fileName);
     WEBCORE_EXPORT static Optional<WallTime> databaseModificationTime(const String& fileName);
 

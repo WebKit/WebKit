@@ -174,8 +174,8 @@ void StorageAreaImpl::clear(Frame* sourceFrame)
     if (!m_storageMap->length())
         return;
 
-    unsigned quota = m_storageMap->quota();
-    m_storageMap = StorageMap::create(quota);
+    if (auto newStorageMap = m_storageMap->clear())
+        m_storageMap = WTFMove(newStorageMap);
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleClear();
@@ -214,10 +214,8 @@ void StorageAreaImpl::clearForOriginDeletion()
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
     
-    if (m_storageMap->length()) {
-        unsigned quota = m_storageMap->quota();
-        m_storageMap = StorageMap::create(quota);
-    }
+    if (auto newStorageMap = m_storageMap->clear())
+        m_storageMap = WTFMove(newStorageMap);
 
     if (m_storageAreaSync) {
         m_storageAreaSync->scheduleClear();

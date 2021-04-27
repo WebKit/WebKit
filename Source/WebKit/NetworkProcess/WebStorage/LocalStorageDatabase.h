@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2013, 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,16 +26,14 @@
 #pragma once
 
 #include <WebCore/SQLiteDatabase.h>
-#include <WebCore/SecurityOriginData.h>
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WorkQueue.h>
 
 namespace WebCore {
-class SecurityOrigin;
-class StorageMap;
+class SQLiteStatementAutoResetScope;
 class SuddenTerminationDisabler;
+
+struct SecurityOriginData;
 }
 
 namespace WebKit {
@@ -44,17 +42,15 @@ class LocalStorageDatabaseTracker;
 
 class LocalStorageDatabase : public RefCounted<LocalStorageDatabase> {
 public:
-    static Ref<LocalStorageDatabase> create(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&);
+    static Ref<LocalStorageDatabase> create(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&, unsigned quotaInBytes);
     ~LocalStorageDatabase();
 
-    // Will block until the import is complete.
-    void importItems(WebCore::StorageMap&);
-
-    void setItem(const String& key, const String& value);
-    void removeItem(const String& key);
-    void clear();
-
-    void updateDatabase();
+    HashMap<String, String> items() const;
+    void openIfExisting();
+    void removeItem(const String& key, String& oldValue);
+    bool clear();
+    String item(const String& key) const;
+    void setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
 
     // Will block until all pending changes have been written to disk.
     void close();
@@ -62,39 +58,34 @@ public:
     void handleLowMemoryWarning();
 
 private:
-    LocalStorageDatabase(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&);
+    LocalStorageDatabase(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&, unsigned quotaInBytes);
 
-    enum DatabaseOpeningStrategy {
-        CreateIfNonExistent,
-        SkipIfNonExistent
-    };
-    bool tryToOpenDatabase(DatabaseOpeningStrategy);
-    void openDatabase(DatabaseOpeningStrategy);
+    enum class ShouldCreateDatabase : bool { No, Yes };
+    bool tryToOpenDatabase(ShouldCreateDatabase);
+    void openDatabase(ShouldCreateDatabase);
 
     bool migrateItemTableIfNeeded();
+    bool databaseIsEmpty() const;
 
-    void itemDidChange(const String& key, const String& value);
-
-    void scheduleDatabaseUpdate();
-    void updateDatabaseWithChangedItems(const HashMap<String, String>&);
-
-    bool databaseIsEmpty();
+    WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, const String& query) const;
 
     Ref<WorkQueue> m_queue;
     Ref<LocalStorageDatabaseTracker> m_tracker;
     WebCore::SecurityOriginData m_securityOrigin;
 
     String m_databasePath;
-    WebCore::SQLiteDatabase m_database;
+    mutable WebCore::SQLiteDatabase m_database;
+    unsigned m_quotaInBytes { 0 };
     bool m_failedToOpenDatabase { false };
-    bool m_didImportItems { false };
     bool m_isClosed { false };
-
-    bool m_didScheduleDatabaseUpdate { false };
-    bool m_shouldClearItems { false };
-    HashMap<String, String> m_changedItems;
+    Optional<uint64_t> m_databaseSize;
 
     std::unique_ptr<WebCore::SuddenTerminationDisabler> m_disableSuddenTerminationWhileWritingToLocalStorage;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_clearStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_insertStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_getItemStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_getItemsStatement;
+    mutable std::unique_ptr<WebCore::SQLiteStatement> m_deleteItemStatement;
 };
 
 

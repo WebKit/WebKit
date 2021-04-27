@@ -175,6 +175,18 @@ RefPtr<StorageMap> StorageMap::removeItem(const String& key, String& oldValue)
     return nullptr;
 }
 
+RefPtr<StorageMap> StorageMap::clear()
+{
+    // Implement copy-on-write semantics here. We're guaranteed that the only refs of StorageMaps belong to Storage objects
+    // so if more than one Storage object refs this map, copy it before mutating it.
+    if (refCount() > 1 && !m_map.isEmpty())
+        return StorageMap::create(m_quotaSize);
+
+    m_map.clear();
+    m_currentLength = 0;
+    return nullptr;
+}
+
 bool StorageMap::contains(const String& key) const
 {
     return m_map.contains(key);

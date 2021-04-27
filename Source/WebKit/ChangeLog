@@ -1,5 +1,78 @@
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
+        Don't keep local storage data in memory in the NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=225065
+
+        Reviewed by Alex Christensen.
+
+        When a WebPage would start to use the local storage API, the WebProcess
+        would send a sync IPC to the NetworkProcess to retrieve all the local
+        storage entries for the origin. The NetworkProcess would read those
+        entries from a SQLite database and send them back to the WebProcess.
+        Both the NetworkProcess would keep the entries in memory, in a
+        StorageMap object (which is basically a HashMap). On some sites, the
+        strings in the local storage may be very large. It is useful for the
+        WebProcess to keep them in memory for performance reasons, especially
+        considering that the Web API is synchronous. However, there is no real
+        need to keep them in memory in the Network Process side, especially
+        given that the WebProcess already has its own copy. On the network
+        process side, we can get rid of the StorageMap entirely in the local
+        storage case and 100% rely on the SQLite database. This is what this
+        patch implements.
+
+        A/B testing shows this is a 2-3% progression on Membuster. There does
+        not appear to be a meaningful progression on PLUM sadly. This is also
+        neutral on PLT.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::estimateEntrySize):
+        (WebKit::LocalStorageDatabase::create):
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        (WebKit::LocalStorageDatabase::openDatabase):
+        (WebKit::LocalStorageDatabase::tryToOpenDatabase):
+        (WebKit::LocalStorageDatabase::items const):
+        (WebKit::LocalStorageDatabase::removeItem):
+        (WebKit::LocalStorageDatabase::item const):
+        (WebKit::LocalStorageDatabase::setItem):
+        (WebKit::LocalStorageDatabase::clear):
+        (WebKit::LocalStorageDatabase::close):
+        (WebKit::LocalStorageDatabase::databaseIsEmpty const):
+        (WebKit::LocalStorageDatabase::openIfExisting):
+        (WebKit::LocalStorageDatabase::scopedStatement const):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h:
+        - Update LocalStorageDatabase API to match more closely the API of
+          StorageMap. This way StorageArea can rely on the LocalStorageDatabase
+          entirely instead of the StorageMap with minimal changes.
+        - Add quota support similarly to what is done in StorageArea so that
+          LocalStorageDatabase::setItem() fails when the quota is reached.
+        - Cache the SQLiteStatements for performance reasons
+
+        * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+        (WebKit::LocalStorageNamespace::flushAndClose):
+        We no longer need to call syncToDatabase() before closing since
+        LocalStorageDatabase no longer has a queue on pending operations.
+
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::StorageArea):
+        (WebKit::StorageArea::addListener):
+        (WebKit::StorageArea::removeListener):
+        (WebKit::StorageArea::setItem):
+        (WebKit::StorageArea::removeItem):
+        (WebKit::StorageArea::clear):
+        (WebKit::StorageArea::items const):
+        (WebKit::StorageArea::ensureDatabase const):
+        * NetworkProcess/WebStorage/StorageArea.h:
+        If the StorageArea is used for local storage, we now don't even initialize
+        a StorageMap and rely entirely on LocalStorageDatabase. If the StorageArea
+        is used for session storage, we keep using a StorageMap since there is no
+        backing database. This is fairly straightforward because I updated the
+        LocalStorageDatabase API to match fairly closely the StorageMap one.
+
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::waitUntilSyncingLocalStorageFinished):
+
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
         [IPC Hardening] Make sure IPC::Decoder constructors consistently call markInvalid() when decoding fails
         https://bugs.webkit.org/show_bug.cgi?id=225110
         <rdar://76547775>

@@ -43,6 +43,7 @@ public:
     WEBCORE_EXPORT RefPtr<StorageMap> setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
     WEBCORE_EXPORT RefPtr<StorageMap> setItemIgnoringQuota(const String& key, const String& value);
     WEBCORE_EXPORT RefPtr<StorageMap> removeItem(const String&, String& oldValue);
+    WEBCORE_EXPORT RefPtr<StorageMap> clear();
 
     WEBCORE_EXPORT bool contains(const String& key) const;
 
