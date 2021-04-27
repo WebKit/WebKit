@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebProcessPlugInRangeHandle.h"
+#import <WebKit/WKWebProcessPlugInRangeHandle.h>
 
 #import "InjectedBundleRangeHandle.h"
 #import "WKObject.h"

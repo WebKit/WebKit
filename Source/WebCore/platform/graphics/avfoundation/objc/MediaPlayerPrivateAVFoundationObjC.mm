@@ -47,7 +47,6 @@
 #import "ImageRotationSessionVT.h"
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
-#import "LocalizedDeviceModel.h"
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlaybackTargetMock.h"
@@ -89,7 +88,6 @@
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/avfoundation/OutputContext.h>
-#import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -107,6 +105,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import "LocalizedDeviceModel.h"
 #import "WAKAppKitStubs.h"
 #import <CoreImage/CoreImage.h>
 #import <UIKit/UIDevice.h>
@@ -119,6 +118,8 @@
 
 #import "CoreVideoSoftLink.h"
 #import "MediaRemoteSoftLink.h"
+
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 
 namespace std {
 template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionAVFObjC>>::iterator> {

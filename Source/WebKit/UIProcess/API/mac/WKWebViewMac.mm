@@ -33,7 +33,7 @@
 #import "WKSafeBrowsingWarning.h"
 #import "WKScrollViewMac.h"
 #import "WKTextFinderClient.h"
-#import "WKUIDelegatePrivate.h"
+#import <WebKit/WKUIDelegatePrivate.h>
 #import "WebBackForwardList.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"

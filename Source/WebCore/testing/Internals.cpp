@@ -327,8 +327,11 @@
 #include "ScrollbarThemeMac.h"
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(IOS_FAMILY)
 #include "MediaSessionHelperIOS.h"
+#endif
+
+#if PLATFORM(COCOA)
 #include "SystemBattery.h"
 #include "VP9UtilitiesCocoa.h"
 #include <pal/spi/cf/CoreTextSPI.h>

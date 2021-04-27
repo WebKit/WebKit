@@ -31,7 +31,7 @@
 #include "Logging.h"
 #include "WebProcessProxy.h"
 #include <WebCore/GraphicsChecksMac.h>
-#include <WebCore/OpenGLSoftLinkCocoa.h>
+#include <pal/cocoa/OpenGLSoftLinkCocoa.h>
 
 namespace WebKit {
 

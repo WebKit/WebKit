@@ -34,13 +34,16 @@
 #import "GraphicsContextGLOpenGLManager.h"
 #import "Logging.h"
 #import "RuntimeApplicationChecks.h"
-#import "WebCoreThread.h"
 #import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import "WebCoreThread.h"
+#endif
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCV.h"

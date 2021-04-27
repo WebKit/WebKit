@@ -1,3 +1,58 @@
+2021-04-26  Alex Christensen  <achristensen@webkit.org>
+
+        Consistently include headers with <Framework/Header.h>
+        https://bugs.webkit.org/show_bug.cgi?id=225067
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/API/Cocoa/_WKRenderingProgressEventsInternal.h:
+        * Shared/API/Cocoa/_WKSameDocumentNavigationTypeInternal.h:
+        * UIProcess/API/Cocoa/NSAttributedString.mm:
+        * UIProcess/API/Cocoa/WKBrowsingContextGroupInternal.h:
+        * UIProcess/API/Cocoa/WKConnectionInternal.h:
+        * UIProcess/API/Cocoa/WKNavigationDataInternal.h:
+        * UIProcess/API/Cocoa/WKScriptMessage.mm:
+        * UIProcess/API/Cocoa/WKSecurityOriginInternal.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationInternal.h:
+        * UIProcess/API/Cocoa/WKWebViewInternal.h:
+        * UIProcess/API/Cocoa/WKWebpagePreferences.mm:
+        * UIProcess/API/Cocoa/WKWebpagePreferencesInternal.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfoInternal.h:
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        * UIProcess/API/Cocoa/_WKAttachmentInternal.h:
+        * UIProcess/API/Cocoa/_WKAuthenticatorResponseInternal.h:
+        * UIProcess/API/Cocoa/_WKInspectorConfiguration.mm:
+        * UIProcess/API/Cocoa/_WKThumbnailView.mm:
+        * UIProcess/API/Cocoa/_WKUserContentFilterInternal.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanelForTesting.h:
+        * UIProcess/API/Cocoa/_WKWebAuthenticationPanelInternal.h:
+        * UIProcess/API/mac/WKWebViewMac.h:
+        * UIProcess/API/mac/WKWebViewMac.mm:
+        * UIProcess/Cocoa/MediaUtilities.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        * UIProcess/Cocoa/SOAuthorization/PopUpSOAuthorizationSession.mm:
+        * UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        * UIProcess/Cocoa/WKContactPicker.mm:
+        * UIProcess/Cocoa/WKShareSheet.mm:
+        * UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm:
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/Inspector/mac/RemoteWebInspectorUIProxyMac.mm:
+        * UIProcess/Inspector/mac/WKInspectorViewController.mm:
+        * UIProcess/WebAuthentication/Cocoa/WebAuthenticationPanelClient.mm:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/mac/HighPerformanceGPUManager.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrameInternal.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.mm:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandleInternal.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMInternals.h:
+        * WebProcess/InjectedBundle/API/mac/WKDOMTextIterator.mm:
+
 2021-04-26  Kate Cheney  <katherine_cheney@apple.com>
 
         ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData() hangs for a long time

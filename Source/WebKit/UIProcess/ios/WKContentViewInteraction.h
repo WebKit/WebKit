@@ -27,10 +27,6 @@
 
 #import "WKContentView.h"
 
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-#import "WKShareSheet.h"
-#endif
-
 #import "DragDropInteractionState.h"
 #import "EditorState.h"
 #import "FocusedElementInformation.h"
@@ -43,16 +39,16 @@
 #import "TextCheckingController.h"
 #import "TransactionID.h"
 #import "UIKitSPI.h"
-#import "WKActionSheetAssistant.h"
-#import "WKAirPlayRoutePicker.h"
-#import "WKContactPicker.h"
-#import "WKDeferringGestureRecognizer.h"
-#import "WKFileUploadPanel.h"
-#import "WKFormPeripheral.h"
-#import "WKKeyboardScrollingAnimator.h"
-#import "WKShareSheet.h"
-#import "WKSyntheticTapGestureRecognizer.h"
-#import "WKTouchActionGestureRecognizer.h"
+#import <WebKit/WKActionSheetAssistant.h>
+#import <WebKit/WKAirPlayRoutePicker.h>
+#import <WebKit/WKContactPicker.h>
+#import <WebKit/WKDeferringGestureRecognizer.h>
+#import <WebKit/WKFileUploadPanel.h>
+#import <WebKit/WKFormPeripheral.h>
+#import <WebKit/WKKeyboardScrollingAnimator.h>
+#import <WebKit/WKShareSheet.h>
+#import <WebKit/WKSyntheticTapGestureRecognizer.h>
+#import <WebKit/WKTouchActionGestureRecognizer.h>
 #import "WebAutocorrectionContext.h"
 #import "_WKElementAction.h"
 #import "_WKFormInputSession.h"

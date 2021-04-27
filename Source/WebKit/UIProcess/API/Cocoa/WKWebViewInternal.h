@@ -25,9 +25,9 @@
 
 #import "PDFPluginIdentifier.h"
 #import "SameDocumentNavigationType.h"
-#import "WKShareSheet.h"
-#import "WKWebViewConfiguration.h"
-#import "WKWebViewPrivate.h"
+#import <WebKit/WKShareSheet.h>
+#import <WebKit/WKWebViewConfiguration.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import "_WKAttachmentInternal.h"
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <wtf/CompletionHandler.h>

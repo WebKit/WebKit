@@ -34,7 +34,7 @@
 #import "APIUIClient.h"
 #import "Logging.h"
 #import "SOAuthorizationLoadPolicy.h"
-#import "WKUIDelegatePrivate.h"
+#import <WebKit/WKUIDelegatePrivate.h>
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import "WebsiteDataStore.h"

@@ -30,7 +30,7 @@
 
 #import "ImageOptions.h"
 #import "WKAPICast.h"
-#import "WKView.h"
+#import <WebKit/WKView.h>
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"

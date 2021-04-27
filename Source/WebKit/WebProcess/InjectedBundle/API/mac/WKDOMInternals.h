@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKDOMNode.h"
-#import "WKDOMRange.h"
 #import <WebCore/Node.h>
 #import <WebCore/Range.h>
+#import <WebKit/WKDOMNode.h>
+#import <WebKit/WKDOMRange.h>
 #import <wtf/HashMap.h>
 
 namespace WebCore {

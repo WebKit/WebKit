@@ -28,14 +28,14 @@
 #import "NSAttributedStringPrivate.h"
 
 #import "WKErrorInternal.h"
-#import "WKNavigationActionPrivate.h"
-#import "WKNavigationDelegate.h"
-#import "WKPreferences.h"
-#import "WKProcessPoolPrivate.h"
-#import "WKWebViewConfigurationPrivate.h"
-#import "WKWebViewPrivate.h"
-#import "WKWebsiteDataStore.h"
-#import "_WKProcessPoolConfiguration.h"
+#import <WebKit/WKNavigationActionPrivate.h>
+#import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKPreferences.h>
+#import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebsiteDataStore.h>
+#import <WebKit/_WKProcessPoolConfiguration.h>
 #import <wtf/Deque.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/RetainPtr.h>

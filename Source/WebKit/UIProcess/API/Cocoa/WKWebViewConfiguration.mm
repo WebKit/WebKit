@@ -28,12 +28,12 @@
 
 #import "APIPageConfiguration.h"
 #import "UserInterfaceIdiom.h"
-#import "WKPreferences.h"
-#import "WKProcessPool.h"
-#import "WKRetainPtr.h"
-#import "WKUserContentController.h"
+#import <WebKit/WKPreferences.h>
+#import <WebKit/WKProcessPool.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKUserContentController.h>
 #import "WKWebpagePreferencesInternal.h"
-#import "WKWebView.h"
+#import <WebKit/WKWebView.h>
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebKit2Initialize.h"
 #import "WebPreferencesDefaultValues.h"

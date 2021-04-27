@@ -1,5 +1,28 @@
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
+        Consistently include headers with <Framework/Header.h>
+        https://bugs.webkit.org/show_bug.cgi?id=225067
+
+        Reviewed by Alexey Proskuryakov.
+
+        When building with CMake, if a header is included as <Framework/Header.h> in some files
+        and "Header.h" in others, when compiling a cpp file in the same directory as Header.h, 
+        there doesn't seem to be a way to tell it to include from the Framework directory before
+        searching the same directory as the cpp file.  To solve this, we use consistent include style
+        for each header.
+
+        * editing/cocoa/DictionaryLookup.mm:
+        * platform/graphics/avfoundation/objc/AVOutputDeviceMenuControllerTargetPicker.mm:
+        * platform/graphics/avfoundation/objc/AVRoutePickerViewTargetPicker.mm:
+        * platform/graphics/avfoundation/objc/MediaPlaybackTargetPickerMac.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        * platform/graphics/cocoa/IOSurface.mm:
+        * platform/mac/PlatformScreenMac.mm:
+        * testing/Internals.cpp:
+
+2021-04-26  Alex Christensen  <achristensen@webkit.org>
+
         Update Mac-specific CMake files
         https://bugs.webkit.org/show_bug.cgi?id=225064
 

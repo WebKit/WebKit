@@ -70,7 +70,7 @@
 #import "WKLayoutMode.h"
 #import "WKNSData.h"
 #import "WKNSURLExtras.h"
-#import "WKNavigationDelegate.h"
+#import <WebKit/WKNavigationDelegate.h>
 #import "WKNavigationInternal.h"
 #import "WKPDFConfiguration.h"
 #import "WKPreferencesInternal.h"
@@ -78,8 +78,8 @@
 #import "WKSafeBrowsingWarning.h"
 #import "WKSharedAPICast.h"
 #import "WKSnapshotConfiguration.h"
-#import "WKUIDelegate.h"
-#import "WKUIDelegatePrivate.h"
+#import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import "WKUserContentControllerInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"

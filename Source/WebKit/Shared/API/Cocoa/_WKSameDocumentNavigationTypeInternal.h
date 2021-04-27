@@ -24,7 +24,7 @@
  */
 
 #import "SameDocumentNavigationType.h"
-#import "_WKSameDocumentNavigationType.h"
+#import <WebKit/_WKSameDocumentNavigationType.h>
 
 namespace WebKit {
 

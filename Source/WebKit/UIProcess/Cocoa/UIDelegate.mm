@@ -45,7 +45,7 @@
 #import "WKOpenPanelParametersInternal.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKStorageAccessAlert.h"
-#import "WKUIDelegatePrivate.h"
+#import <WebKit/WKUIDelegatePrivate.h>
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"

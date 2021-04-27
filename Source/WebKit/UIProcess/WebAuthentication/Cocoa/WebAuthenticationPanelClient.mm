@@ -33,7 +33,7 @@
 #import "CompletionHandlerCallChecker.h"
 #import "WKNSArray.h"
 #import "_WKWebAuthenticationAssertionResponseInternal.h"
-#import "_WKWebAuthenticationPanel.h"
+#import <WebKit/_WKWebAuthenticationPanel.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import "_WKWebAuthenticationPanel.h"
+#import <WebKit/_WKWebAuthenticationPanel.h>
 
 namespace WebCore {
 struct PublicKeyCredentialCreationOptions;

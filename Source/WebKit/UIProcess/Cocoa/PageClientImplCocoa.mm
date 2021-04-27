@@ -26,10 +26,10 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
-#import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
-#import "WKWebViewPrivateForTesting.h"
 #import <WebCore/AlternativeTextUIController.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>

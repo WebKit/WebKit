@@ -67,11 +67,12 @@
 #import "WKPDFHUDView.h"
 #import "WKPrintingView.h"
 #import "WKSafeBrowsingWarning.h"
-#import "WKShareSheet.h"
+#import <WebKit/WKShareSheet.h>
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
 #import "WKWebViewInternal.h"
-#import "WKWebViewPrivate.h"
+#import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WebBackForwardList.h>
 #import "WebBackForwardList.h"
 #import "WebEditCommandProxy.h"
 #import "WebEventFactory.h"
@@ -138,7 +139,7 @@
 #import <wtf/text/StringConcatenate.h>
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-#include <WebKit/MediaSessionCoordinatorProxyPrivate.h>
+#include "MediaSessionCoordinatorProxyPrivate.h"
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)
