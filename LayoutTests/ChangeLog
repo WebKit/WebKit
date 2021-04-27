@@ -1,3 +1,14 @@
+2021-04-26  ChangSeok Oh  <changseok@webkit.org>
+
+        Enable AVIF tests for glib platforms
+        https://bugs.webkit.org/show_bug.cgi?id=225039
+
+        Reviewed by Philippe Normand.
+
+        This change enables avif tests for glib based platforms.
+
+        * platform/glib/TestExpectations:
+
 2021-04-26  Zalan Bujtas  <zalan@apple.com>
 
         [ Win ] fast/text/line-break-with-locale.html is failing on Windows
