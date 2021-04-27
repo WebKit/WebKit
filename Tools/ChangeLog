@@ -1,5 +1,58 @@
 2021-04-27  Sam Sneddon  <gsnedders@apple.com>
 
+        Make TestInput immutable
+        https://bugs.webkit.org/show_bug.cgi?id=224989
+
+        Reviewed by Jonathan Bedard.
+
+        The main point here is moving computing reference_files and
+        should_run_pixel_test to when we initially construct TestInput, as at
+        this point this happens in the some process and thread (since bug
+        221577), hence there's no real reason for it to happen later.
+
+        In doing this, I've eliminated Port.should_run_as_pixel_test on the
+        basis that no port actually overrode this to apply any different logic,
+        especially given it seems unlikely that any port would want to use
+        different logic here. (Note that ports still have some control through
+        Port.default_pixel_tests.)
+
+        With this done, it should then be possible to make TestInput immutable,
+        which should help make things easier to understand.
+
+        Expect, as it happens, there was a reason for it to happen later: we
+        previously generated all the TestInputs twice, once to find out how
+        many workers we need and then another time to actually run them (plus
+        potentially a third time for retries!). There's no actual reason to do
+        this, so move the creation to Manager.run and pass that list around
+        instead of the Tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests): Don't update TestInput.
+        (LayoutTestRunner._update_test_input): Deleted.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._test_input_for_file): Moved from _update_test_input and
+        Port.should_run_as_pixel_test.
+        (Manager._get_test_inputs): Deleted.
+        (Manager._multiply_test_inputs): Simplify code used to generated
+        repeated/rerun test inputs.
+        (Manager._update_worker_count): Don't create TestInputs; take
+        test_inputs as arg.
+        (Manager._set_up_run): Rename test_names to test_inputs.
+        (Manager.run): Create TestInput objects here.
+        (Manager._run_test_subset): Take TestInputs not Tests, generate new
+        TestInputs for retry if needed.
+        (Manager._run_tests): Don't create TestInputs; take test_inputs as arg.
+        * Scripts/webkitpy/layout_tests/models/test.py: Fly-by: use __slots__.
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        (TestInput): Migrate to attrs.
+        (TestInput.__init__): Deleted.
+        (TestInput.__repr__): Deleted.
+        * Scripts/webkitpy/port/base.py:
+        (Port.should_run_as_pixel_test): Deleted.
+        (Port._should_run_as_pixel_test): Deleted.
+
+2021-04-27  Sam Sneddon  <gsnedders@apple.com>
+
         Optimize Port._expected_baselines_for_suffixes
         https://bugs.webkit.org/show_bug.cgi?id=225115
 

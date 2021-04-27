@@ -94,10 +94,7 @@ class LayoutTestRunner(object):
 
     def run_tests(self, expectations, test_inputs, num_workers, retrying, device_type=None):
         self._expectations = expectations
-        self._test_inputs = []
-        for test_input in test_inputs:
-            self._update_test_input(test_input, device_type)
-            self._test_inputs.append(test_input)
+        self._test_inputs = list(test_inputs)
 
         self._retrying = retrying
 
@@ -135,15 +132,6 @@ class LayoutTestRunner(object):
             raise
 
         return run_results
-
-    def _update_test_input(self, test_input, device_type=None):
-        if test_input.reference_files is None:
-            # Lazy initialization.
-            test_input.reference_files = self._port.reference_files(test_input.test_name, device_type=device_type)
-        if test_input.reference_files:
-            test_input.should_run_pixel_test = True
-        else:
-            test_input.should_run_pixel_test = self._port.should_run_as_pixel_test(test_input)
 
     def _worker_factory(self, worker_connection):
         results_directory = self._results_directory

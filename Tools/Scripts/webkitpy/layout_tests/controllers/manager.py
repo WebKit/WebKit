@@ -215,11 +215,40 @@ class Manager(object):
         return tests_to_run
 
     def _test_input_for_file(self, test_file, device_type):
+        reference_files = self._port.reference_files(
+            test_file.test_path, device_type=device_type
+        )
+        timeout = (
+            self._options.slow_time_out_ms
+            if self._test_is_slow(test_file.test_path, device_type=device_type)
+            else self._options.time_out_ms
+        )
+        should_dump_jsconsolelog_in_stderr = (
+            self._test_should_dump_jsconsolelog_in_stderr(
+                test_file.test_path, device_type=device_type
+            )
+        )
+
+        if reference_files:
+            should_run_pixel_test = True
+        elif not self._options.pixel_tests:
+            should_run_pixel_test = False
+        elif self._options.pixel_test_directories:
+            should_run_pixel_test = any(
+                test_file.test_path.startswith(directory)
+                for directory in self._options.pixel_test_directories
+            )
+        else:
+            should_run_pixel_test = True
+
         return TestInput(
             test_file,
-            self._options.slow_time_out_ms if self._test_is_slow(test_file.test_path, device_type=device_type) else self._options.time_out_ms,
-            test_file.needs_any_server,
-            should_dump_jsconsolelog_in_stderr=self._test_should_dump_jsconsolelog_in_stderr(test_file.test_path, device_type=device_type))
+            timeout=timeout,
+            needs_servers=test_file.needs_any_server,
+            should_dump_jsconsolelog_in_stderr=should_dump_jsconsolelog_in_stderr,
+            reference_files=reference_files,
+            should_run_pixel_test=should_run_pixel_test,
+        )
 
     def _test_is_slow(self, test_file, device_type):
         if self._expectations[device_type].model().has_modifier(test_file, test_expectations.SLOW):
@@ -229,27 +258,29 @@ class Manager(object):
     def _test_should_dump_jsconsolelog_in_stderr(self, test_file, device_type):
         return self._expectations[device_type].model().has_modifier(test_file, test_expectations.DUMPJSCONSOLELOGINSTDERR)
 
-    def _get_test_inputs(self, tests_to_run, repeat_each, iterations, device_type):
-        test_inputs = []
-        for _ in range(iterations):
-            for test in tests_to_run:
-                for _ in range(repeat_each):
-                    test_inputs.append(self._test_input_for_file(test, device_type=device_type))
-        return test_inputs
+    def _multiply_test_inputs(self, test_inputs, repeat_each, iterations):
+        if repeat_each == 1:
+            per_iteration = list(test_inputs)[:]
+        else:
+            per_iteration = []
+            for test_input in test_inputs:
+                per_iteration.extend([test_input] * repeat_each)
 
-    def _update_worker_count(self, test_names, device_type):
-        test_inputs = self._get_test_inputs(test_names, self._options.repeat_each, self._options.iterations, device_type=device_type)
-        worker_count = self._runner.get_worker_count(test_inputs, int(self._options.child_processes))
+        return per_iteration * iterations
+
+    def _update_worker_count(self, test_inputs):
+        new_test_inputs = self._multiply_test_inputs(test_inputs, self._options.repeat_each, self._options.iterations)
+        worker_count = self._runner.get_worker_count(new_test_inputs, int(self._options.child_processes))
         self._options.child_processes = worker_count
 
-    def _set_up_run(self, test_names, device_type):
+    def _set_up_run(self, test_inputs, device_type):
         # This must be started before we check the system dependencies,
         # since the helper may do things to make the setup correct.
         self._printer.write_update("Starting helper ...")
         if not self._port.start_helper(pixel_tests=self._options.pixel_tests, prefer_integrated_gpu=self._options.prefer_integrated_gpu):
             return False
 
-        self._update_worker_count(test_names, device_type=device_type)
+        self._update_worker_count(test_inputs)
         self._port.reset_preferences()
 
         # Check that the system dependencies (themes, fonts, ...) are correct.
@@ -353,13 +384,17 @@ class Manager(object):
             start_time_for_device = time.time()
             if not tests_to_run_by_device[device_type]:
                 continue
-            if not self._set_up_run(tests_to_run_by_device[device_type], device_type=device_type):
+
+            test_inputs = [self._test_input_for_file(test, device_type=device_type)
+                           for test in tests_to_run_by_device[device_type]]
+
+            if not self._set_up_run(test_inputs, device_type=device_type):
                 return test_run_results.RunDetails(exit_code=-1)
 
             configuration = self._port.configuration_for_upload(self._port.target_host(0))
             if not configuration.get('flavor', None):  # The --result-report-flavor argument should override wk1/wk2
                 configuration['flavor'] = 'wk2' if self._options.webkit_test_runner else 'wk1'
-            temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(tests_to_run_by_device[device_type], device_type=device_type)
+            temp_initial_results, temp_retry_results, temp_enabled_pixel_tests_in_retry = self._run_test_subset(test_inputs, device_type=device_type)
 
             skipped_results = TestRunResults(self._expectations[device_type], len(aggregate_tests_to_skip))
             for skipped_test in set(aggregate_tests_to_skip):
@@ -428,23 +463,31 @@ class Manager(object):
         return result
 
     def _run_test_subset(self,
-                         tests_to_run,  # type: List[Test]
+                         test_inputs,  # type: List[TestInput]
                          device_type,  # type: Optional[DeviceType]
                          ):
         try:
             enabled_pixel_tests_in_retry = False
-            initial_results = self._run_tests(tests_to_run, self._options.repeat_each, self._options.iterations, int(self._options.child_processes), retrying=False, device_type=device_type)
+            initial_results = self._run_tests(test_inputs, self._options.repeat_each, self._options.iterations, int(self._options.child_processes), retrying=False, device_type=device_type)
 
             tests_to_retry = self._tests_to_retry(initial_results, include_crashes=self._port.should_retry_crashes())
             # Don't retry failures when interrupted by user or failures limit exception.
             retry_failures = self._options.retry_failures and not (initial_results.interrupted or initial_results.keyboard_interrupted)
             if retry_failures and tests_to_retry:
                 enabled_pixel_tests_in_retry = self._force_pixel_tests_if_needed()
+                if enabled_pixel_tests_in_retry:
+                    retry_test_inputs = [self._test_input_for_file(test_input.test, device_type=device_type)
+                                         for test_input in test_inputs
+                                         if test_input.test.test_path in tests_to_retry]
+                else:
+                    retry_test_inputs = [test_input
+                                         for test_input in test_inputs
+                                         if test_input.test.test_path in tests_to_retry]
 
                 _log.info('')
                 _log.info("Retrying %s ..." % pluralize(len(tests_to_retry), "unexpected failure"))
                 _log.info('')
-                retry_results = self._run_tests([test for test in tests_to_run if test.test_path in tests_to_retry],
+                retry_results = self._run_tests(retry_test_inputs,
                                                 repeat_each=1,
                                                 iterations=1,
                                                 num_workers=1,
@@ -494,17 +537,17 @@ class Manager(object):
         return test_run_results.RunDetails(exit_code, summarized_results, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
     def _run_tests(self,
-                   tests_to_run,  # type: List[Test]
+                   test_inputs,  # type: List[TestInput]
                    repeat_each,  # type: int
                    iterations,  # type: int
                    num_workers,  # type: int
                    retrying,  # type: bool
                    device_type,  # type: Optional[DeviceType]
                    ):
-        test_inputs = self._get_test_inputs(tests_to_run, repeat_each, iterations, device_type=device_type)
+        new_test_inputs = self._multiply_test_inputs(test_inputs, repeat_each, iterations)
 
         assert self._runner is not None
-        return self._runner.run_tests(self._expectations[device_type], test_inputs, num_workers, retrying, device_type)
+        return self._runner.run_tests(self._expectations[device_type], new_test_inputs, num_workers, retrying, device_type)
 
     def _clean_up_run(self):
         _log.debug("Flushing stdout")

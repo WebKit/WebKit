@@ -30,7 +30,7 @@
 import attr
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, slots=True)
 class Test(object):
     """Data about a test and its expectations.
 

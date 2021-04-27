@@ -1361,18 +1361,6 @@ class Port(object):
     def sample_process(self, name, pid, target_host=None):
         pass
 
-    def should_run_as_pixel_test(self, test_input):
-        if not self._options.pixel_tests:
-            return False
-        if self._options.pixel_test_directories:
-            return any(test_input.test_name.startswith(directory) for directory in self._options.pixel_test_directories)
-        return self._should_run_as_pixel_test(test_input)
-
-    def _should_run_as_pixel_test(self, test_input):
-        # Default behavior is to allow all test to run as pixel tests if --pixel-tests is on and
-        # --pixel-test-directory is not specified.
-        return True
-
     def _in_flatpak_sandbox(self):
         return self._filesystem.exists("/.flatpak-info")
 
