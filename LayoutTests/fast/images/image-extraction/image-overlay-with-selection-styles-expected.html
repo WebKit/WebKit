@@ -20,11 +20,19 @@ addEventListener("load", () => {
     const image = document.querySelector("img");
     internals.installImageOverlay(image, [
         {
-            text : "hello",
             topLeft : new DOMPointReadOnly(0, 0),
             topRight : new DOMPointReadOnly(1, 0),
             bottomRight : new DOMPointReadOnly(1, 0.5),
             bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "hello",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                }
+            ],
         }
     ]);
 

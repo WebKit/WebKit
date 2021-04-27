@@ -12,13 +12,23 @@ img {
 <script>
 addEventListener("load", () => {
     let image = document.querySelector("img");
-    internals.installImageOverlay(image, [{
-        text : "Hello",
-        topLeft : new DOMPointReadOnly(0.5, 0.5),
-        topRight : new DOMPointReadOnly(1, 0.5),
-        bottomRight : new DOMPointReadOnly(1, 1),
-        bottomLeft : new DOMPointReadOnly(0.5, 1),
-    }]);
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0.5, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0.5, 1),
+            children: [
+                {
+                    text : "Hello",
+                    topLeft : new DOMPointReadOnly(0.5, 0.5),
+                    topRight : new DOMPointReadOnly(1, 0.5),
+                    bottomRight : new DOMPointReadOnly(1, 1),
+                    bottomLeft : new DOMPointReadOnly(0.5, 1),
+                }
+            ],
+        }
+    ]);
     internals.shadowRoot(image).getElementById("image-overlay").style.color = "black";
 });
 </script>

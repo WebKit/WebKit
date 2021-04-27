@@ -875,7 +875,17 @@ public:
 
         ~ImageOverlayText();
     };
-    void installImageOverlay(Element&, Vector<ImageOverlayText>&&);
+
+    struct ImageOverlayLine {
+        RefPtr<DOMPointReadOnly> topLeft;
+        RefPtr<DOMPointReadOnly> topRight;
+        RefPtr<DOMPointReadOnly> bottomRight;
+        RefPtr<DOMPointReadOnly> bottomLeft;
+        Vector<ImageOverlayText> children;
+
+        ~ImageOverlayLine();
+    };
+    void installImageOverlay(Element&, Vector<ImageOverlayLine>&&);
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;

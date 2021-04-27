@@ -266,6 +266,17 @@ enum TreeType {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageOverlayLine {
+    required DOMPointReadOnly topLeft;
+    required DOMPointReadOnly topRight;
+    required DOMPointReadOnly bottomRight;
+    required DOMPointReadOnly bottomLeft;
+    sequence<ImageOverlayText> children;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     LegacyNoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
@@ -896,7 +907,7 @@ enum TreeType {
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
 
-    undefined installImageOverlay(Element element, sequence<ImageOverlayText> allTextInfo);
+    undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines);
 
     boolean usingAppleInternalSDK();
     boolean usingGStreamer();

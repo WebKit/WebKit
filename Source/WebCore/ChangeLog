@@ -1,3 +1,65 @@
+2021-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Subdivide image overlay text into one or more elements per line
+        https://bugs.webkit.org/show_bug.cgi?id=225038
+        rdar://75505043
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Refactor some image extraction and image overlay code to allow for multiple elements containing text per line.
+        See comments below for more details.
+
+        Changes covered by augmenting existing layout tests.
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithImageExtractionResult):
+
+        The crux of this change is in this method. Currently, an image overlay has one or more `div` elements underneath
+        the root container element, each of which represents a single line (i.e. contains a text node and a line break).
+        Instead, we make each of these line container `div`s contain one or more `div` elements that represent further
+        subdivided text within each line.
+
+        See the corresponding additions patch for more details.
+
+        * html/shadow/imageOverlay.css:
+        (div#image-overlay):
+        (div.image-overlay-line, .image-overlay-text):
+        (.image-overlay-text::selection):
+
+        Adjust UA stylesheet to account for the changes in `updateWithImageExtractionResult`.
+
+        (div.image-overlay-text): Deleted.
+        (div.image-overlay-text::selection): Deleted.
+        * platform/ImageExtractionResult.h:
+        (WebCore::ImageExtractionTextData::ImageExtractionTextData):
+        (WebCore::ImageExtractionLineData::ImageExtractionLineData):
+        (WebCore::ImageExtractionLineData::encode const):
+        (WebCore::ImageExtractionLineData::decode):
+
+        Refactor this data structure, by splitting it into `ImageExtractionLineData` and `ImageExtractionTextData`.
+
+        (WebCore::ImageExtractionResult::isEmpty const):
+        (WebCore::ImageExtractionResult::encode const):
+        (WebCore::ImageExtractionResult::decode):
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::rotate):
+
+        Add a helper method to rotate a 2D `FloatPoint` by a given angle, about a given point.
+
+        * platform/graphics/GeometryUtilities.cpp:
+        (WebCore::rotatedBoundingRectWithMinimumAngleOfRotation):
+        (WebCore::rotatedBoundingRect): Deleted.
+        * platform/graphics/GeometryUtilities.h:
+        * testing/Internals.cpp:
+        (WebCore::getQuad):
+        (WebCore::makeDataForLine):
+        (WebCore::Internals::installImageOverlay):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
+        Adjust this internal testing hook to accept a list of `ImageOverlayLine` dictionaries, each of which contains a
+        list of `ImageOverlayText` dictionaries.
+
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Consistently include headers with <Framework/Header.h>

@@ -18,11 +18,19 @@ addEventListener("load", () => {
         return;
 
     internals.installImageOverlay(document.querySelector("img"), [{
-        text : "foobar",
         topLeft : new DOMPointReadOnly(0, 0),
         topRight : new DOMPointReadOnly(1, 0),
         bottomRight : new DOMPointReadOnly(1, 0.5),
         bottomLeft : new DOMPointReadOnly(0, 0.5),
+        children: [
+            {
+                text : "foobar",
+                topLeft : new DOMPointReadOnly(0, 0),
+                topRight : new DOMPointReadOnly(1, 0),
+                bottomRight : new DOMPointReadOnly(1, 0.5),
+                bottomLeft : new DOMPointReadOnly(0, 0.5),
+            }
+        ]
     }]);
 });
 </script>

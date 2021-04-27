@@ -32,6 +32,24 @@ addEventListener("load", async () => {
 
     internals.installImageOverlay(document.querySelector("img"), [
         {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.25),
+            bottomLeft : new DOMPointReadOnly(0, 0.25),
+            children: [
+                {
+                    text : "hello",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.25),
+                    bottomLeft : new DOMPointReadOnly(0, 0.25),
+                }
+            ],
+        }
+    ]);
+
+    internals.installImageOverlay(document.querySelector("img"), [
+        {
             text : "hello",
             topLeft : new DOMPointReadOnly(0, 0),
             topRight : new DOMPointReadOnly(1, 0),

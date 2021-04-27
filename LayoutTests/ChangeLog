@@ -1,3 +1,31 @@
+2021-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Subdivide image overlay text into one or more elements per line
+        https://bugs.webkit.org/show_bug.cgi?id=225038
+        rdar://75505043
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Adjust several existing layout tests after changing `internals.installImageOverlay`. See WebCore ChangeLog for
+        more details.
+
+        * fast/images/image-extraction/basic-image-overlay.html:
+        * fast/images/image-extraction/click-link-with-image-overlay.html:
+        * fast/images/image-extraction/image-overlay-creation-is-idempotent.html:
+        * fast/images/image-extraction/image-overlay-in-image-with-zero-font-size.html:
+        * fast/images/image-extraction/image-overlay-with-selection-styles-expected.html:
+        * fast/images/image-extraction/image-overlay-with-selection-styles.html:
+        * fast/images/image-extraction/ios/reselect-word-in-image-overlay.html:
+        * fast/images/image-extraction/ios/select-word-in-image-overlay-inside-link.html:
+        * fast/images/image-extraction/ios/select-word-in-image-overlay.html:
+        * fast/images/image-extraction/ios/selection-rects-in-image-overlay.html:
+        * fast/images/image-extraction/mac/copy-image-overlay-text-with-context-menu.html:
+        * fast/images/image-extraction/mac/select-image-overlay-in-link-with-mouse-drag.html:
+        * fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-does-not-fire-click.html:
+        * fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag.html:
+        * fast/images/image-extraction/mac/select-word-in-draggable-image-overlay.html:
+        * fast/images/image-extraction/mac/select-word-in-transparent-image-overlay.html:
+
 2021-04-26  ChangSeok Oh  <changseok@webkit.org>
 
         Enable AVIF tests for glib platforms

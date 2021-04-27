@@ -5597,26 +5597,47 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
 }
 #endif
 
+Internals::ImageOverlayLine::~ImageOverlayLine() = default;
 Internals::ImageOverlayText::~ImageOverlayText() = default;
 
-void Internals::installImageOverlay(Element& element, Vector<ImageOverlayText>&& allTextInfo)
+#if ENABLE(IMAGE_EXTRACTION)
+
+template<typename T>
+static FloatQuad getQuad(const T& overlayTextOrLine)
+{
+    return {
+        FloatPoint(overlayTextOrLine.topLeft->x(), overlayTextOrLine.topLeft->y()),
+        FloatPoint(overlayTextOrLine.topRight->x(), overlayTextOrLine.topRight->y()),
+        FloatPoint(overlayTextOrLine.bottomRight->x(), overlayTextOrLine.bottomRight->y()),
+        FloatPoint(overlayTextOrLine.bottomLeft->x(), overlayTextOrLine.bottomLeft->y()),
+    };
+}
+
+static ImageExtractionLineData makeDataForLine(const Internals::ImageOverlayLine& line)
+{
+    return {
+        getQuad<Internals::ImageOverlayLine>(line),
+        line.children.map([](auto& textChild) -> ImageExtractionTextData {
+            return { textChild.text, getQuad<Internals::ImageOverlayText>(textChild) };
+        })
+    };
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
+
+void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines)
 {
     if (!is<HTMLElement>(element))
         return;
 
 #if ENABLE(IMAGE_EXTRACTION)
     downcast<HTMLElement>(element).updateWithImageExtractionResult(ImageExtractionResult {
-        allTextInfo.map([] (auto& textInfo) -> ImageExtractionTextData {
-            return { textInfo.text, {
-                FloatPoint(textInfo.topLeft->x(), textInfo.topLeft->y()),
-                FloatPoint(textInfo.topRight->x(), textInfo.topRight->y()),
-                FloatPoint(textInfo.bottomRight->x(), textInfo.bottomRight->y()),
-                FloatPoint(textInfo.bottomLeft->x(), textInfo.bottomLeft->y()),
-            }};
+        lines.map([] (auto& line) -> ImageExtractionLineData {
+            return makeDataForLine(line);
         })
     });
 #else
-    UNUSED_PARAM(allTextInfo);
+    UNUSED_PARAM(lines);
 #endif
 }
 

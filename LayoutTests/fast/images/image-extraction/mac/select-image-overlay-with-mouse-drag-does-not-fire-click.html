@@ -15,13 +15,23 @@ img {
 <script>
 addEventListener("load", () => {
     let image = document.querySelector("img");
-    internals.installImageOverlay(image, [{
-        text : "hello",
-        topLeft : new DOMPointReadOnly(0, 0.5),
-        topRight : new DOMPointReadOnly(1, 0.5),
-        bottomRight : new DOMPointReadOnly(1, 1),
-        bottomLeft : new DOMPointReadOnly(0, 1),
-    }]);
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0.5),
+            topRight : new DOMPointReadOnly(1, 0.5),
+            bottomRight : new DOMPointReadOnly(1, 1),
+            bottomLeft : new DOMPointReadOnly(0, 1),
+            children: [
+                {
+                    text : "hello",
+                    topLeft : new DOMPointReadOnly(0, 0.5),
+                    topRight : new DOMPointReadOnly(1, 0.5),
+                    bottomRight : new DOMPointReadOnly(1, 1),
+                    bottomLeft : new DOMPointReadOnly(0, 1),
+                }
+            ]
+        }
+    ]);
 
     image.addEventListener("click", event => {
         testFailed("Observed click.");

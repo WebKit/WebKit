@@ -68,6 +68,6 @@ struct RotatedRect {
     float angleInRadians;
 };
 
-WEBCORE_EXPORT RotatedRect rotatedBoundingRect(const FloatQuad&, Optional<float> minRotationInRadians = WTF::nullopt);
+WEBCORE_EXPORT RotatedRect rotatedBoundingRectWithMinimumAngleOfRotation(const FloatQuad&, Optional<float> minRotationInRadians = WTF::nullopt);
 
 }

@@ -20,13 +20,23 @@ div[contenteditable] {
 <script>
 addEventListener("load", () => {
     let image = document.querySelector("img");
-    internals.installImageOverlay(image, [{
-        text : "foobar",
-        topLeft : new DOMPointReadOnly(0, 0),
-        topRight : new DOMPointReadOnly(1, 0),
-        bottomRight : new DOMPointReadOnly(1, 0.5),
-        bottomLeft : new DOMPointReadOnly(0, 0.5),
-    }]);
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "foobar",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                }
+            ]
+        }
+    ]);
 
     eventSender.mouseMoveTo(50, 150);
 

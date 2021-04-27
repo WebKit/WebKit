@@ -31,15 +31,15 @@ div#image-overlay {
     white-space: nowrap;
     line-height: 100%;
     font-family: system-ui;
-    font-size: 16px;
+    font-size: 1024px; /* This large font size is chosen to minimize gaps when painting selection quads. */
 }
 
-div.image-overlay-text {
+div.image-overlay-line, .image-overlay-text {
     position: absolute;
     overflow: hidden;
 }
 
-div.image-overlay-text::selection {
+.image-overlay-text::selection {
     color: transparent;
     background-color: highlight;
 }

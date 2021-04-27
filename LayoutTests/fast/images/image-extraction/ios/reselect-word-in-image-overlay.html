@@ -19,11 +19,19 @@ addEventListener("load", async () => {
     let image = document.querySelector("img");
     internals.installImageOverlay(image, [
         {
-            text : "foo",
             topLeft : new DOMPointReadOnly(0, 0),
             topRight : new DOMPointReadOnly(1, 0),
             bottomRight : new DOMPointReadOnly(1, 0.5),
             bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "foo",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                }
+            ],
         }
     ]);
     await UIHelper.longPressAtPoint(200, 100);

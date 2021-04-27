@@ -1,3 +1,18 @@
+2021-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Subdivide image overlay text into one or more elements per line
+        https://bugs.webkit.org/show_bug.cgi?id=225038
+        rdar://75505043
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Adjust several existing layout tests after changing `internals.installImageOverlay`. See WebCore ChangeLog for
+        more details. Additionally, rename a WebCore geometry helper method.
+
+        * TestWebKitAPI/Tests/WebCore/FloatQuadTests.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/simple-image-overlay.html:
+
 2021-04-26  Kate Cheney  <katherine_cheney@apple.com>
 
         ResourceLoadStatisticsDatabaseStore::aggregatedThirdPartyData() hangs for a long time

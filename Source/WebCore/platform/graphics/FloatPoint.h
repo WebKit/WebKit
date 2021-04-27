@@ -135,6 +135,17 @@ public:
         return { m_x * scaleX, m_y * scaleY };
     }
 
+    void rotate(double angleInRadians, const FloatPoint& aboutPoint = { })
+    {
+        auto sinAngle = sin(angleInRadians);
+        auto cosAngle = cos(angleInRadians);
+        m_x -= aboutPoint.x();
+        m_y -= aboutPoint.y();
+        auto newX = m_x * cosAngle - m_y * sinAngle + aboutPoint.x();
+        m_y = m_x * sinAngle + m_y * cosAngle + aboutPoint.y();
+        m_x = newX;
+    }
+
     WEBCORE_EXPORT void normalize();
 
     float dot(const FloatPoint& a) const
