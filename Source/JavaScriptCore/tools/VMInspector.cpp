@@ -467,7 +467,7 @@ void VMInspector::dumpRegisters(CallFrame* callFrame)
         end = it; // Stop the dump
     } else {
         end = bitwise_cast<const Register*>(nextCallFrame);
-        RELEASE_ASSERT(it - end < codeBlock->numCalleeLocals() - codeBlock->numVars());
+        RELEASE_ASSERT(static_cast<unsigned>(it - end) < codeBlock->numCalleeLocals() - codeBlock->numVars());
     }
 
     if (it != end) {

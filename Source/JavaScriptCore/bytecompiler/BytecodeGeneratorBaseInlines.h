@@ -161,9 +161,10 @@ template<typename Traits>
 RegisterID* BytecodeGeneratorBase<Traits>::newRegister()
 {
     m_calleeLocals.append(virtualRegisterForLocal(m_calleeLocals.size()));
-    int numCalleeLocals = std::max<int>(m_codeBlock->numCalleeLocals(), m_calleeLocals.size());
+    size_t numCalleeLocals = std::max<size_t>(m_codeBlock->numCalleeLocals(), m_calleeLocals.size());
     numCalleeLocals = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), numCalleeLocals);
-    m_codeBlock->setNumCalleeLocals(numCalleeLocals);
+    m_codeBlock->setNumCalleeLocals(static_cast<unsigned>(numCalleeLocals));
+    RELEASE_ASSERT(numCalleeLocals == m_codeBlock->numCalleeLocals());
     return &m_calleeLocals.last();
 }
 

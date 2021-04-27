@@ -57,8 +57,8 @@ public:
     EvalContextType evalContextType() const { return m_codeBlock->evalContextType(); }
     bool isArrowFunctionContext() const { return m_codeBlock->isArrowFunctionContext(); }
     bool isClassContext() const { return m_codeBlock->isClassContext(); }
-    int numCalleeLocals() const { return m_codeBlock->m_numCalleeLocals; }
-    int numVars() const { return m_codeBlock->m_numVars; }
+    unsigned numCalleeLocals() const { return m_codeBlock->m_numCalleeLocals; }
+    unsigned numVars() const { return m_codeBlock->m_numVars; }
     unsigned numParameters() const { return m_codeBlock->numParameters(); }
     VirtualRegister thisRegister() const { return m_codeBlock->thisRegister(); }
     VirtualRegister scopeRegister() const { return m_codeBlock->scopeRegister(); }
@@ -69,11 +69,11 @@ public:
     // Updating UnlinkedCodeBlock.
     void setHasCheckpoints() { m_codeBlock->setHasCheckpoints(); }
     void setHasTailCalls() { m_codeBlock->setHasTailCalls(); }
-    void setNumCalleeLocals(int numCalleeLocals) { m_codeBlock->m_numCalleeLocals = numCalleeLocals; }
-    void setNumVars(int numVars) { m_codeBlock->m_numVars = numVars; }
+    void setNumCalleeLocals(unsigned numCalleeLocals) { m_codeBlock->m_numCalleeLocals = numCalleeLocals; }
+    void setNumVars(unsigned numVars) { m_codeBlock->m_numVars = numVars; }
     void setThisRegister(VirtualRegister thisRegister) { m_codeBlock->setThisRegister(thisRegister); }
     void setScopeRegister(VirtualRegister thisRegister) { m_codeBlock->setScopeRegister(thisRegister); }
-    void setNumParameters(int newValue) { m_codeBlock->setNumParameters(newValue); }
+    void setNumParameters(unsigned newValue) { m_codeBlock->setNumParameters(newValue); }
 
     UnlinkedMetadataTable& metadata() { return m_codeBlock->metadata(); }
     void addExpressionInfo(unsigned instructionOffset, int divot, int startOffset, int endOffset, unsigned line, unsigned column);

@@ -180,8 +180,8 @@ public:
 
     const InstructionStream& instructions() const;
 
-    int numCalleeLocals() const { return m_numCalleeLocals; }
-    int numVars() const { return m_numVars; }
+    unsigned numCalleeLocals() const { return m_numCalleeLocals; }
+    unsigned numVars() const { return m_numVars; }
 
     // Jump Tables
 
@@ -360,9 +360,9 @@ private:
     unsigned m_lineCount { 0 };
     unsigned m_endColumn { UINT_MAX };
 
-    int m_numVars { 0 };
-    int m_numCalleeLocals { 0 };
-    int m_numParameters { 0 };
+    unsigned m_numVars { 0 };
+    unsigned m_numCalleeLocals { 0 };
+    unsigned m_numParameters { 0 };
 
     PackedRefPtr<StringImpl> m_sourceURLDirective;
     PackedRefPtr<StringImpl> m_sourceMappingURLDirective;

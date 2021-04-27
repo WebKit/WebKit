@@ -2079,7 +2079,7 @@ void SpeculativeJIT::checkArgumentTypes()
     m_origin = NodeOrigin(CodeOrigin(BytecodeIndex(0)), CodeOrigin(BytecodeIndex(0)), true);
 
     auto& arguments = m_jit.graph().m_rootToArguments.find(m_jit.graph().block(0))->value;
-    for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
+    for (unsigned i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
         Node* node = arguments[i];
         if (!node) {
             // The argument is dead. We don't do any checks for such arguments.

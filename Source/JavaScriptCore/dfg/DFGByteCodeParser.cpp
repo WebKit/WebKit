@@ -1495,7 +1495,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
 
             // Some code may statically use the argument count from the InlineCallFrame, so it would be invalid to loop back if it does not match.
             // We "continue" instead of returning false in case another stack entry further on the stack has the right number of arguments.
-            if (argumentCountIncludingThis != static_cast<int>(callFrame->argumentCountIncludingThis))
+            if (argumentCountIncludingThis != callFrame->argumentCountIncludingThis)
                 continue;
             // If the target InlineCallFrame is Varargs, we do not know how many arguments are actually filled by LoadVarargs. Varargs InlineCallFrame's
             // argumentCountIncludingThis is maximum number of potentially filled arguments by xkLoadVarargs. We "continue" to the upper frame which may be
@@ -1505,7 +1505,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         } else {
             // We are in the machine code entry (i.e. the original caller).
             // If we have more arguments than the number of parameters to the function, it is not clear where we could put them on the stack.
-            if (argumentCountIncludingThis > m_codeBlock->numParameters())
+            if (static_cast<unsigned>(argumentCountIncludingThis) > m_codeBlock->numParameters())
                 return false;
         }
 
@@ -1531,8 +1531,8 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         // We must set the arguments to the right values
         if (!stackEntry->m_inlineCallFrame)
             addToGraph(SetArgumentCountIncludingThis, OpInfo(argumentCountIncludingThis));
-        int argIndex = 0;
-        for (; argIndex < argumentCountIncludingThis; ++argIndex) {
+        unsigned argIndex = 0;
+        for (; argIndex < static_cast<unsigned>(argumentCountIncludingThis); ++argIndex) {
             Node* value = get(virtualRegisterForArgumentIncludingThis(argIndex, registerOffset));
             setDirect(stackEntry->remapOperand(virtualRegisterForArgumentIncludingThis(argIndex)), value, NormalSet);
         }
@@ -1542,7 +1542,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
 
         // We must repeat the work of op_enter here as we will jump right after it.
         // We jump right after it and not before it, because of some invariant saying that a CFG root cannot have predecessors in the IR.
-        for (int i = 0; i < stackEntry->m_codeBlock->numVars(); ++i)
+        for (unsigned i = 0; i < stackEntry->m_codeBlock->numVars(); ++i)
             setDirect(stackEntry->remapOperand(virtualRegisterForLocal(i)), undefined, NormalSet);
 
         // We want to emit the SetLocals with an exit origin that points to the place we are jumping to.
@@ -1598,7 +1598,7 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     }
 
     if (!Options::useArityFixupInlining()) {
-        if (codeBlock->numParameters() > argumentCountIncludingThis) {
+        if (codeBlock->numParameters() > static_cast<unsigned>(argumentCountIncludingThis)) {
             VERBOSE_LOG("    Failing because of arity mismatch.\n");
             return UINT_MAX;
         }
@@ -5370,7 +5370,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_enter: {
             Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
             // Initialize all locals to undefined.
-            for (int i = 0; i < m_inlineStackTop->m_codeBlock->numVars(); ++i)
+            for (unsigned i = 0; i < m_inlineStackTop->m_codeBlock->numVars(); ++i)
                 set(virtualRegisterForLocal(i), undefined, ImmediateNakedSet);
 
             NEXT_OPCODE(op_enter);
