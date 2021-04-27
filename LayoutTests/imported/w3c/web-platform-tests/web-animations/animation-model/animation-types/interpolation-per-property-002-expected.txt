@@ -78,17 +78,17 @@ PASS overflow-y uses discrete animation when animating between "visible" and "hi
 PASS overflow-y uses discrete animation when animating between "visible" and "hidden" with effect easing
 PASS overflow-y uses discrete animation when animating between "visible" and "hidden" with keyframe easing
 PASS page-break-after (type: discrete) has testInterpolation function
-FAIL page-break-after uses discrete animation when animating between "always" and "auto" with linear easing assert_equals: The value should be always at 0ms expected "always" but got "auto"
-FAIL page-break-after uses discrete animation when animating between "always" and "auto" with effect easing assert_equals: The value should be always at 0ms expected "always" but got "auto"
-FAIL page-break-after uses discrete animation when animating between "always" and "auto" with keyframe easing assert_equals: The value should be always at 0ms expected "always" but got "auto"
+PASS page-break-after uses discrete animation when animating between "always" and "auto" with linear easing
+PASS page-break-after uses discrete animation when animating between "always" and "auto" with effect easing
+PASS page-break-after uses discrete animation when animating between "always" and "auto" with keyframe easing
 PASS page-break-before (type: discrete) has testInterpolation function
-FAIL page-break-before uses discrete animation when animating between "always" and "auto" with linear easing assert_equals: The value should be always at 0ms expected "always" but got "auto"
-FAIL page-break-before uses discrete animation when animating between "always" and "auto" with effect easing assert_equals: The value should be always at 0ms expected "always" but got "auto"
-FAIL page-break-before uses discrete animation when animating between "always" and "auto" with keyframe easing assert_equals: The value should be always at 0ms expected "always" but got "auto"
+PASS page-break-before uses discrete animation when animating between "always" and "auto" with linear easing
+PASS page-break-before uses discrete animation when animating between "always" and "auto" with effect easing
+PASS page-break-before uses discrete animation when animating between "always" and "auto" with keyframe easing
 PASS page-break-inside (type: discrete) has testInterpolation function
-FAIL page-break-inside uses discrete animation when animating between "auto" and "avoid" with linear easing assert_equals: The value should be avoid at 500ms expected "avoid" but got "auto"
-FAIL page-break-inside uses discrete animation when animating between "auto" and "avoid" with effect easing assert_equals: The value should be avoid at 960ms expected "avoid" but got "auto"
-FAIL page-break-inside uses discrete animation when animating between "auto" and "avoid" with keyframe easing assert_equals: The value should be avoid at 960ms expected "avoid" but got "auto"
+PASS page-break-inside uses discrete animation when animating between "auto" and "avoid" with linear easing
+PASS page-break-inside uses discrete animation when animating between "auto" and "avoid" with effect easing
+PASS page-break-inside uses discrete animation when animating between "auto" and "avoid" with keyframe easing
 PASS paint-order (type: discrete) has testInterpolation function
 PASS paint-order uses discrete animation when animating between "fill" and "stroke" with linear easing
 PASS paint-order uses discrete animation when animating between "fill" and "stroke" with effect easing

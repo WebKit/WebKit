@@ -66,12 +66,12 @@ PASS overflow-y: "hidden" onto "visible"
 PASS overflow-y: "visible" onto "hidden"
 PASS page-break-after (type: discrete) has testAddition function
 PASS page-break-after: "auto" onto "always"
-FAIL page-break-after: "always" onto "auto" assert_equals: The value should be always at 0ms expected "always" but got "auto"
+PASS page-break-after: "always" onto "auto"
 PASS page-break-before (type: discrete) has testAddition function
 PASS page-break-before: "auto" onto "always"
-FAIL page-break-before: "always" onto "auto" assert_equals: The value should be always at 0ms expected "always" but got "auto"
+PASS page-break-before: "always" onto "auto"
 PASS page-break-inside (type: discrete) has testAddition function
-FAIL page-break-inside: "avoid" onto "auto" assert_equals: The value should be avoid at 0ms expected "avoid" but got "auto"
+PASS page-break-inside: "avoid" onto "auto"
 PASS page-break-inside: "auto" onto "avoid"
 PASS paint-order (type: discrete) has testAddition function
 PASS paint-order: "stroke" onto "fill"

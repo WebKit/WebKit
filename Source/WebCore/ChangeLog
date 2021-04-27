@@ -1,3 +1,15 @@
+2021-04-27  Antoine Quint  <graouts@webkit.org>
+
+        Correctly specify interpolation of page-break-* properties
+        https://bugs.webkit.org/show_bug.cgi?id=225098
+
+        Reviewed by Antti Koivisto.
+
+        As it turns out the page-break-* properties are shorthands of the break-* properties.
+
+        * animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+
 2021-04-27  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] ASSERTION FAILED: ancestor->style().columnSpan() != ColumnSpan::All || !isValidColumnSpanner(fragmentedFlow, *ancestor) in WebCore::isValidColumnSpanner
