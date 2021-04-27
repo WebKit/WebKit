@@ -83,9 +83,9 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         || style.display() == DisplayType::TableHeaderGroup || style.display() == DisplayType::TableFooterGroup
         || style.display() == DisplayType::TableRow || style.display() == DisplayType::TableColumnGroup || style.display() == DisplayType::TableColumn
         || style.display() == DisplayType::TableCell || style.display() == DisplayType::TableCaption)
-        style.setDisplay(DisplayType::InlineBlock);
+        style.setEffectiveDisplay(DisplayType::InlineBlock);
     else if (style.display() == DisplayType::ListItem || style.display() == DisplayType::Table)
-        style.setDisplay(DisplayType::Block);
+        style.setEffectiveDisplay(DisplayType::Block);
 
     if (userAgentAppearanceStyle && isControlStyled(style, *userAgentAppearanceStyle)) {
         switch (part) {

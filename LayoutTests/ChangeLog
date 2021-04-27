@@ -1,3 +1,62 @@
+2021-04-27  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r274170. rdar://problem/77194450
+
+    REGRESSION (r273003): Animated style may lose original display property value
+    https://bugs.webkit.org/show_bug.cgi?id=222979
+    rdar://75056684
+    
+    Reviewed by Zalan Bujtas.
+    
+    Source/WebCore:
+    
+    Test: fast/animation/animation-display-style-adjustment.html
+    
+    The original (non-blockified) display property value is saved in the beginning of Style::Adjuster::adjust.
+    It is needed to implement absolute positioning correctly in some situations. However with animations
+    the style adjustment code may run twice on the same style and the second run will clobber the saved original value.
+    
+    * rendering/RenderTheme.cpp:
+    (WebCore::RenderTheme::adjustStyle):
+    * rendering/style/RenderStyle.h:
+    (WebCore::RenderStyle::setDisplay):
+    
+    Always save the original value when setting the property normally.
+    
+    (WebCore::RenderStyle::setEffectiveDisplay):
+    (WebCore::RenderStyle::setOriginalDisplay): Deleted.
+    
+    Add setEffectiveDisplay that doesn't affect the original value for adjuster use.
+    
+    * style/StyleAdjuster.cpp:
+    (WebCore::Style::Adjuster::adjust const):
+    
+    Remove the saving of the original value.
+    Use setEffectiveDisplay in all adjuster code, preserving the original value.
+    
+    (WebCore::Style::Adjuster::adjustDisplayContentsStyle const):
+    (WebCore::Style::Adjuster::adjustSVGElementStyle):
+    (WebCore::Style::Adjuster::adjustForSiteSpecificQuirks const):
+    
+    LayoutTests:
+    
+    * fast/animation/animation-display-style-adjustment-expected.html: Added.
+    * fast/animation/animation-display-style-adjustment.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274170 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-09  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (r273003): Animated style may lose original display property value
+            https://bugs.webkit.org/show_bug.cgi?id=222979
+            rdar://75056684
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/animation/animation-display-style-adjustment-expected.html: Added.
+            * fast/animation/animation-display-style-adjustment.html: Added.
+
 2021-04-21  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r276193. rdar://problem/76962916

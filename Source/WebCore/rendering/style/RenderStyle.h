@@ -835,8 +835,12 @@ public:
 
 // attribute setter methods
 
-    void setDisplay(DisplayType v) { m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(v); }
-    void setOriginalDisplay(DisplayType v) { m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(v); }
+    void setDisplay(DisplayType value)
+    {
+        m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(value);
+        m_nonInheritedFlags.effectiveDisplay = m_nonInheritedFlags.originalDisplay;
+    }
+    void setEffectiveDisplay(DisplayType v) { m_nonInheritedFlags.effectiveDisplay = static_cast<unsigned>(v); }
     void setPosition(PositionType v) { m_nonInheritedFlags.position = static_cast<unsigned>(v); }
     void setFloating(Float v) { m_nonInheritedFlags.floating = static_cast<unsigned>(v); }
 
