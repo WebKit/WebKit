@@ -1,3 +1,17 @@
+2021-04-27  Per Arne  <pvollan@apple.com>
+
+        Enforce IOKit filtering
+        https://bugs.webkit.org/show_bug.cgi?id=223937
+        <rdar://problem/76271551>
+
+        Reviewed by Brent Fulgham.
+
+        Enforce IOKit method filtering based on telemetry. This patch also adds IOKit method telemetry for some Apple Silicion
+        IOKit classes, which were overlooked in the first telemetry phase.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
         Don't keep local storage data in memory in the NetworkProcess
