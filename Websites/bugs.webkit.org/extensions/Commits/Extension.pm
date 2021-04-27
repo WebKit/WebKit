@@ -34,15 +34,16 @@ sub bug_format_comment {
     my $regexes = $args->{'regexes'};
 
     # Should match "r12345" and "trac.webkit.org/r12345" but not "https://trac.webkit.org/r12345"
-    push(@$regexes, { match => qr/(?<!\/)\b((r[[:digit:]]{5,}))\b/, replace => \&_replace_revision });
-    push(@$regexes, { match => qr/(?<!\/)(trac.webkit.org\/(r[[:digit:]]{5,}))\b/, replace => \&_replace_revision });
+    push(@$regexes, { match => qr/(?<!\/)\b((r[[:digit:]]{5,}))\b/, replace => \&_replace_reference });
+    push(@$regexes, { match => qr/(?<!\/)(trac.webkit.org\/(r[[:digit:]]{5,}))\b/, replace => \&_replace_reference });
+    push(@$regexes, { match => qr/(?<!\/)\b((\d*\.?\d+@\S+))\b/, replace => \&_replace_reference });
 }
 
-sub _replace_revision {
+sub _replace_reference {
     my $args = shift;
     my $text = $args->{matches}->[0];
-    my $revision = $args->{matches}->[1];
-    return qq{<a href="https://commits.webkit.org/$revision">$text</a>};
+    my $reference = $args->{matches}->[1];
+    return qq{<a href="https://commits.webkit.org/$reference">$text</a>};
 };
 
 # This must be the last line of your extension.
