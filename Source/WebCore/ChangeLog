@@ -1,3 +1,19 @@
+2021-04-27  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] ASSERTION FAILED: ancestor->style().columnSpan() != ColumnSpan::All || !isValidColumnSpanner(fragmentedFlow, *ancestor) in WebCore::isValidColumnSpanner
+        https://bugs.webkit.org/show_bug.cgi?id=225078
+        <rdar://76127681>
+
+        Reviewed by Antti Koivisto.
+
+        MultiColumnBuilder::multiColumnDescendantInserted() expects up-to-date fragmentedFlowState on the newly inserted renderer.
+
+        Test: fast/multicol/nested-spanner-assert.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::normalizeTreeAfterStyleChange):
+        (WebCore::RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock):
+
 2021-04-21  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] percent children don't resolve against the flex basis on a fully inflexible item with fixed flex-basis

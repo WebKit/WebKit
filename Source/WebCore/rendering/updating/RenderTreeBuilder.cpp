@@ -642,8 +642,8 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
             return false;
         }();
         if (movingIntoMulticolumn) {
-            multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), renderer);
             renderer.initializeFragmentedFlowStateOnInsertion();
+            multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), renderer);
             return;
         }
         auto movingOutOfMulticolumn = !wasOutOfFlowPositioned && isOutOfFlowPositioned;
@@ -766,8 +766,8 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
             };
             if (auto* newEnclosingMultiColumn = newMultiColumnForChildRenderer()) {
                 // Let the fragmented flow know that it has a new in-flow descendant.
-                multiColumnBuilder().multiColumnDescendantInserted(*newEnclosingMultiColumn, child);
                 child.initializeFragmentedFlowStateOnInsertion();
+                multiColumnBuilder().multiColumnDescendantInserted(*newEnclosingMultiColumn, child);
             }
         }
     } else {
