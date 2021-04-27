@@ -425,6 +425,8 @@ public:
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
+        size_t sizeInBytes(const AbstractLocker&) const;
+
         FixedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
         // Jump Tables

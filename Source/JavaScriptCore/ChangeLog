@@ -1,3 +1,21 @@
+2021-04-26  Keith Miller  <keith_miller@apple.com>
+
+        UnlinkedCodeBlock should have better accounting for extra memory
+        https://bugs.webkit.org/show_bug.cgi?id=225080
+
+        Reviewed by Mark Lam.
+
+        Right now we aren't telling the JS GC about the extra memory
+        attached to UnlinkedCodeBlocks. It looks like on at least some sites this
+        can be a fairly large percentage of the total memory retained by
+        the JS object graph. This is very similar to the change we made for
+        CodeBlocks in r276610.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildrenImpl):
+        (JSC::UnlinkedCodeBlock::RareData::sizeInBytes const):
+        * bytecode/UnlinkedCodeBlock.h:
+
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Update Mac-specific CMake files
