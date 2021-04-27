@@ -1,3 +1,39 @@
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Copy-on-write semantics should be an internal implementation detail of StorageMap
+        https://bugs.webkit.org/show_bug.cgi?id=225108
+
+        Reviewed by Alex Christensen.
+
+        Instead of making the StorageMap RefCounted and requiring the client to potentially
+        replace its StorageMap whenever it calls functions that modify the StorageMap, the
+        copy-on-write semantics in now an internal implementation detail of StorageMap.
+
+        To achieve this, the following changes were made:
+        - StorageMap is no longer RefCounted. Instead, it has an internal Impl data member
+          that is RefCounted.
+        - The internal Impl data member is the one that gets copied on write.
+        - Functions that modify the StorageMap no longer need to return a StorageMap.
+        - Add a clear() function for convenience.
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::StorageMap):
+        (WebCore::StorageMap::invalidateIterator):
+        (WebCore::StorageMap::setIteratorToIndex):
+        (WebCore::StorageMap::length const):
+        (WebCore::StorageMap::key):
+        (WebCore::StorageMap::getItem const):
+        (WebCore::StorageMap::setItem):
+        (WebCore::StorageMap::setItemIgnoringQuota):
+        (WebCore::StorageMap::removeItem):
+        (WebCore::StorageMap::clear):
+        (WebCore::StorageMap::contains const):
+        (WebCore::StorageMap::importItems):
+        (WebCore::StorageMap::Impl::copy const):
+        * storage/StorageMap.h:
+        (WebCore::StorageMap::items const):
+        (WebCore::StorageMap::Impl::create):
+
 2021-04-27  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Add borders for better control visibility

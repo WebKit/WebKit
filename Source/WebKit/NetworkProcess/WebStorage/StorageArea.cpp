@@ -30,8 +30,6 @@
 #include "LocalStorageNamespace.h"
 #include "StorageAreaMapMessages.h"
 #include "StorageManager.h"
-#include <WebCore/StorageMap.h>
-#include <wtf/Scope.h>
 
 namespace WebKit {
 
@@ -46,7 +44,7 @@ StorageArea::StorageArea(LocalStorageNamespace* localStorageNamespace, const Sec
 {
     ASSERT(!RunLoop::isMain());
     if (isEphemeral())
-        m_storageMap = StorageMap::create(m_quotaInBytes);
+        m_sessionStorageMap = makeUnique<StorageMap>(m_quotaInBytes);
 }
 
 StorageArea::~StorageArea()
@@ -92,7 +90,7 @@ std::unique_ptr<StorageArea> StorageArea::clone() const
     ASSERT(!m_localStorageNamespace);
 
     auto storageArea = makeUnique<StorageArea>(nullptr, m_securityOrigin, m_quotaInBytes, m_queue.copyRef());
-    storageArea->m_storageMap = m_storageMap;
+    *storageArea->m_sessionStorageMap = *m_sessionStorageMap;
 
     return storageArea;
 }
@@ -102,11 +100,9 @@ void StorageArea::setItem(IPC::Connection::UniqueID sourceConnection, StorageAre
     ASSERT(!RunLoop::isMain());
 
     String oldValue;
-    if (isEphemeral()) {
-        auto newStorageMap = m_storageMap->setItem(key, value, oldValue, quotaException);
-        if (newStorageMap)
-            m_storageMap = WTFMove(newStorageMap);
-    } else
+    if (isEphemeral())
+        m_sessionStorageMap->setItem(key, value, oldValue, quotaException);
+    else
         ensureDatabase().setItem(key, value, oldValue, quotaException);
 
     if (quotaException)
@@ -120,11 +116,9 @@ void StorageArea::removeItem(IPC::Connection::UniqueID sourceConnection, Storage
     ASSERT(!RunLoop::isMain());
 
     String oldValue;
-    if (isEphemeral()) {
-        auto newStorageMap = m_storageMap->removeItem(key, oldValue);
-        if (newStorageMap)
-            m_storageMap = WTFMove(newStorageMap);
-    } else
+    if (isEphemeral())
+        m_sessionStorageMap->removeItem(key, oldValue);
+    else
         ensureDatabase().removeItem(key, oldValue);
     if (oldValue.isNull())
         return;
@@ -137,10 +131,9 @@ void StorageArea::clear(IPC::Connection::UniqueID sourceConnection, StorageAreaI
     ASSERT(!RunLoop::isMain());
 
     if (isEphemeral()) {
-        if (!m_storageMap->length())
+        if (!m_sessionStorageMap->length())
             return;
-        if (auto newStorageMap = m_storageMap->clear())
-            m_storageMap = WTFMove(newStorageMap);
+        m_sessionStorageMap->clear();
     } else {
         if (!ensureDatabase().clear())
             return;
@@ -153,7 +146,7 @@ HashMap<String, String> StorageArea::items() const
 {
     ASSERT(!RunLoop::isMain());
     if (isEphemeral())
-        return m_storageMap->items();
+        return m_sessionStorageMap->items();
 
     return ensureDatabase().items();
 }
@@ -161,10 +154,9 @@ HashMap<String, String> StorageArea::items() const
 void StorageArea::clear()
 {
     ASSERT(!RunLoop::isMain());
-    if (isEphemeral()) {
-        if (auto newStorageMap = m_storageMap->clear())
-            m_storageMap = WTFMove(newStorageMap);
-    } else {
+    if (isEphemeral())
+        m_sessionStorageMap->clear();
+    else {
         if (m_localStorageDatabase) {
             m_localStorageDatabase->close();
             m_localStorageDatabase = nullptr;

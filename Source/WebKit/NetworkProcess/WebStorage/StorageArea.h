@@ -29,6 +29,7 @@
 #include "StorageAreaIdentifier.h"
 #include "StorageAreaImplIdentifier.h"
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/StorageMap.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
@@ -84,7 +85,7 @@ private:
     WebCore::SecurityOriginData m_securityOrigin;
     unsigned m_quotaInBytes { 0 };
 
-    RefPtr<WebCore::StorageMap> m_storageMap;
+    mutable std::unique_ptr<WebCore::StorageMap> m_sessionStorageMap;
     HashSet<IPC::Connection::UniqueID> m_eventListeners;
 
     Identifier m_identifier;

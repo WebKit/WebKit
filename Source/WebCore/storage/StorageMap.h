@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,41 +32,52 @@
 
 namespace WebCore {
 
-class StorageMap : public RefCounted<StorageMap> {
+// This class uses copy-on-write semantics.
+class StorageMap {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     // Quota size measured in bytes.
-    WEBCORE_EXPORT static Ref<StorageMap> create(unsigned quotaSize);
+    WEBCORE_EXPORT explicit StorageMap(unsigned quotaSize);
 
     WEBCORE_EXPORT unsigned length() const;
     WEBCORE_EXPORT String key(unsigned index);
     WEBCORE_EXPORT String getItem(const String&) const;
-    WEBCORE_EXPORT RefPtr<StorageMap> setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
-    WEBCORE_EXPORT RefPtr<StorageMap> setItemIgnoringQuota(const String& key, const String& value);
-    WEBCORE_EXPORT RefPtr<StorageMap> removeItem(const String&, String& oldValue);
-    WEBCORE_EXPORT RefPtr<StorageMap> clear();
+    WEBCORE_EXPORT void setItem(const String& key, const String& value, String& oldValue, bool& quotaException);
+    WEBCORE_EXPORT void setItemIgnoringQuota(const String& key, const String& value);
+    WEBCORE_EXPORT void removeItem(const String&, String& oldValue);
+    WEBCORE_EXPORT void clear();
 
     WEBCORE_EXPORT bool contains(const String& key) const;
 
     WEBCORE_EXPORT void importItems(HashMap<String, String>&&);
-    const HashMap<String, String>& items() const { return m_map; }
+    const HashMap<String, String>& items() const { return m_impl->map; }
 
     unsigned quota() const { return m_quotaSize; }
 
-    WEBCORE_EXPORT Ref<StorageMap> copy();
+    bool isShared() const { return !m_impl->hasOneRef(); }
 
-    static const constexpr unsigned noQuota = UINT_MAX;
+    static constexpr unsigned noQuota = UINT_MAX;
 
 private:
-    explicit StorageMap(unsigned quota);
     void invalidateIterator();
     void setIteratorToIndex(unsigned);
 
-    HashMap<String, String> m_map;
-    HashMap<String, String>::iterator m_iterator;
-    unsigned m_iteratorIndex { std::numeric_limits<unsigned>::max() };
+    struct Impl : public RefCounted<Impl> {
+        static Ref<Impl> create()
+        {
+            return adoptRef(*new Impl);
+        }
 
-    unsigned m_quotaSize; // Measured in bytes.
-    unsigned m_currentLength { 0 }; // Measured in UChars.
+        Ref<Impl> copy() const;
+
+        HashMap<String, String> map;
+        HashMap<String, String>::iterator iterator { map.end() };
+        unsigned iteratorIndex { std::numeric_limits<unsigned>::max() };
+        unsigned currentLength { 0 }; // Measured in UChars.
+    };
+
+    Ref<Impl> m_impl;
+    unsigned m_quotaSize { noQuota }; // Measured in bytes.
 };
 
 } // namespace WebCore

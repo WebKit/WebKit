@@ -27,6 +27,7 @@
 
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/StorageArea.h>
+#include <WebCore/StorageMap.h>
 #include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -85,7 +86,7 @@ private:
 
     WebCore::StorageType m_storageType;
     WebCore::SecurityOriginData m_securityOrigin;
-    RefPtr<WebCore::StorageMap> m_storageMap;
+    WebCore::StorageMap m_storageMap;
 
     RefPtr<StorageAreaSync> m_storageAreaSync;
     RefPtr<WebCore::StorageSyncManager> m_storageSyncManager;

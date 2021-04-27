@@ -1,5 +1,28 @@
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
+        Copy-on-write semantics should be an internal implementation detail of StorageMap
+        https://bugs.webkit.org/show_bug.cgi?id=225108
+
+        Reviewed by Alex Christensen.
+
+        Update StorageAreaImpl due to StorageMap API changes.
+
+        * Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        (WebKit::StorageAreaImpl::length):
+        (WebKit::StorageAreaImpl::key):
+        (WebKit::StorageAreaImpl::item):
+        (WebKit::StorageAreaImpl::setItem):
+        (WebKit::StorageAreaImpl::removeItem):
+        (WebKit::StorageAreaImpl::clear):
+        (WebKit::StorageAreaImpl::contains):
+        (WebKit::StorageAreaImpl::importItems):
+        (WebKit::StorageAreaImpl::clearForOriginDeletion):
+        (WebKit::StorageAreaImpl::sessionChanged):
+        * Storage/StorageAreaImpl.h:
+
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
         Don't keep local storage data in memory in the NetworkProcess
         https://bugs.webkit.org/show_bug.cgi?id=225065
 
