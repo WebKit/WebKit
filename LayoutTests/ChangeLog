@@ -1,5 +1,45 @@
 2021-04-27  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r276357. rdar://problem/77211423
+
+    REGRESSION(r256107): Text moves around when selecting at https://www.tokyo-sports.co.jp/entame/news/2834187/
+    https://bugs.webkit.org/show_bug.cgi?id=224839
+    <rdar://74958484>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Pass in locale information when constructing the text iterator for the content (locale affects soft wrap opportunities).
+    
+    Test: fast/text/line-break-with-locale.html
+    
+    * layout/inlineformatting/InlineTextItem.cpp:
+    (WebCore::Layout::InlineTextItem::createAndAppendTextItems):
+    * layout/inlineformatting/text/TextUtil.cpp: In addition to locale, add missing line breaking mode.
+    (WebCore::Layout::TextUtil::lineBreakIteratorMode):
+    * layout/inlineformatting/text/TextUtil.h:
+    
+    LayoutTests:
+    
+    * fast/text/line-break-with-locale-expected.html: Added.
+    * fast/text/line-break-with-locale.html: Added.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276357 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-21  Zalan Bujtas  <zalan@apple.com>
+
+            REGRESSION(r256107): Text moves around when selecting at https://www.tokyo-sports.co.jp/entame/news/2834187/
+            https://bugs.webkit.org/show_bug.cgi?id=224839
+            <rdar://74958484>
+
+            Reviewed by Darin Adler.
+
+            * fast/text/line-break-with-locale-expected.html: Added.
+            * fast/text/line-break-with-locale.html: Added.
+
+2021-04-27  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r276012. rdar://problem/77211405
 
     REGRESSION(Safari 14): iframe with blob url does not work with sandboxing

@@ -164,6 +164,24 @@ bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
     return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
 }
 
+LineBreakIteratorMode TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
+{
+    switch (lineBreak) {
+    case LineBreak::Auto:
+    case LineBreak::AfterWhiteSpace:
+    case LineBreak::Anywhere:
+        return LineBreakIteratorMode::Default;
+    case LineBreak::Loose:
+        return LineBreakIteratorMode::Loose;
+    case LineBreak::Normal:
+        return LineBreakIteratorMode::Normal;
+    case LineBreak::Strict:
+        return LineBreakIteratorMode::Strict;
+    }
+    ASSERT_NOT_REACHED();
+    return LineBreakIteratorMode::Default;
+}
+
 }
 }
 #endif

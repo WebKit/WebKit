@@ -3496,3 +3496,4 @@ fast/text/system-font-width-9.html [ ImageOnlyFailure ]
 
 # Not all OSes support the same set of emoji.
 fast/text/mending-heart.html [ Failure ] 
+fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
