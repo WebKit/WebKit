@@ -1,3 +1,13 @@
+2021-04-27  Rob Buis  <rbuis@igalia.com>
+
+        Check globalObject for null
+        https://bugs.webkit.org/show_bug.cgi?id=223793
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/webrtc/sframe-transform-write-expected.txt: Added.
+        * http/tests/webrtc/sframe-transform-write.html: Added.
+
 2021-04-27  Frédéric Wang  <fwang@igalia.com>
 
         [MathML] Assertion failure in RenderTreeNeedsLayoutChecker

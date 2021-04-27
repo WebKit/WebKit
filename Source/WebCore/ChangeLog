@@ -1,3 +1,18 @@
+2021-04-27  Rob Buis  <rbuis@igalia.com>
+
+        Check globalObject for null
+        https://bugs.webkit.org/show_bug.cgi?id=223793
+
+        Reviewed by Youenn Fablet.
+
+        Check globalObject for null in RTCRtpSFrameTransform::createStreams
+        before deferencing.
+
+        Test: http/tests/webrtc/sframe-transform-write.html
+
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::RTCRtpSFrameTransform::createStreams):
+
 2021-04-27  Frédéric Wang  <fwang@igalia.com>
 
         [MathML] Assertion failure in RenderTreeNeedsLayoutChecker

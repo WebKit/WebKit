@@ -171,6 +171,8 @@ void RTCRtpSFrameTransform::createStreams(JSC::JSGlobalObject& globalObject)
         return;
 
     auto writable = WritableStream::create(globalObject, SimpleWritableStreamSink::create([transformer = m_transformer, readableStreamSource = m_readableStreamSource](auto& context, auto value) -> ExceptionOr<void> {
+        if (!context.globalObject())
+            return Exception { InvalidStateError };
         auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
         auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
 
