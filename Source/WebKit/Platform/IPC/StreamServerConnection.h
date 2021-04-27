@@ -53,7 +53,7 @@ public:
     virtual DispatchResult dispatchStreamMessages(size_t messageLimit) = 0;
 
     template<typename T, typename... Arguments>
-    void sendSyncReply(uint64_t syncRequestID, Arguments&&...);
+    void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
 
 protected:
     StreamServerConnectionBase(IPC::Connection&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
@@ -102,7 +102,7 @@ protected:
 };
 
 template<typename T, typename... Arguments>
-void StreamServerConnectionBase::sendSyncReply(uint64_t syncRequestID, Arguments&&... arguments)
+void StreamServerConnectionBase::sendSyncReply(Connection::SyncRequestID syncRequestID, Arguments&&... arguments)
 {
     if constexpr(T::isReplyStreamEncodable) {
         if (m_isDispatchingStreamMessage) {
@@ -115,7 +115,7 @@ void StreamServerConnectionBase::sendSyncReply(uint64_t syncRequestID, Arguments
             StreamConnectionEncoder outOfStreamEncoder { MessageName::ProcessOutOfStreamMessage, span.data, span.size };
         }
     }
-    auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID);
+    auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());
 
     (encoder.get() << ... << arguments);
     m_connection->sendSyncReply(WTFMove(encoder));

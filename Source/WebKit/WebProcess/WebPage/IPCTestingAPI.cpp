@@ -737,7 +737,7 @@ JSValueRef JSIPC::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef
 
     // FIXME: Support the options.
 
-    uint64_t syncRequestID = 0;
+    IPC::Connection::SyncRequestID syncRequestID;
     auto messageName = static_cast<IPC::MessageName>(*messageID);
     auto encoder = connection->createSyncMessageEncoder(messageName, *destinationID, syncRequestID);
 
@@ -970,8 +970,9 @@ JSC::JSObject* JSMessageListener::jsDescriptionFromDecoder(JSC::JSGlobalObject* 
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (decoder.isSyncMessage()) {
-        if (uint64_t syncRequestID = 0; decoder.decode(syncRequestID)) {
-            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"), JSC::JSValue(syncRequestID));
+        IPC::Connection::SyncRequestID syncRequestID;
+        if (decoder.decode(syncRequestID)) {
+            jsResult->putDirect(vm, JSC::Identifier::fromString(vm, "syncRequestID"), JSC::JSValue(syncRequestID.toUInt64()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
     } else if (messageReplyArgumentDescriptions(decoder.messageName())) {

@@ -106,6 +106,9 @@ class UnixMessage;
 
 class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop> {
 public:
+    enum SyncRequestIDType { };
+    using SyncRequestID = ObjectIdentifier<SyncRequestIDType>;
+
     class Client : public MessageReceiver {
     public:
         virtual void didClose(Connection&) = 0;
@@ -276,8 +279,8 @@ public:
     }
 
     bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption> sendOptions);
-    UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, uint64_t& syncRequestID);
-    std::unique_ptr<Decoder> sendSyncMessage(uint64_t syncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
+    UniqueRef<Encoder> createSyncMessageEncoder(MessageName, uint64_t destinationID, SyncRequestID&);
+    std::unique_ptr<Decoder> sendSyncMessage(SyncRequestID, UniqueRef<Encoder>&&, Timeout, OptionSet<SendSyncOption> sendSyncOptions);
     bool sendSyncReply(UniqueRef<Encoder>&&);
 
     void wakeUpRunLoop();
@@ -324,10 +327,11 @@ private:
     bool isIncomingMessagesThrottlingEnabled() const { return !!m_incomingMessagesThrottler; }
     
     std::unique_ptr<Decoder> waitForMessage(MessageName, uint64_t destinationID, Timeout, OptionSet<WaitForOption>);
-    uint64_t makeSyncRequestID() { return ++m_syncRequestID; }
-    bool pushPendingSyncRequestID(uint64_t syncRequestID);
-    void popPendingSyncRequestID(uint64_t syncRequestID);
-    std::unique_ptr<Decoder> waitForSyncReply(uint64_t syncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
+
+    SyncRequestID makeSyncRequestID() { return SyncRequestID::generateThreadSafe(); }
+    bool pushPendingSyncRequestID(SyncRequestID);
+    void popPendingSyncRequestID(SyncRequestID);
+    std::unique_ptr<Decoder> waitForSyncReply(SyncRequestID, MessageName, Timeout, OptionSet<SendSyncOption>);
 
     void enqueueMatchingMessagesToMessageReceiveQueue(Locker<Lock>& incomingMessagesLocker, MessageReceiveQueue&, ReceiverName, uint64_t destinationID);
 
@@ -382,7 +386,6 @@ private:
     UniqueID m_uniqueID;
     bool m_isServer;
     std::atomic<bool> m_isValid { true };
-    std::atomic<uint64_t> m_syncRequestID;
 
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage;
     bool m_shouldExitOnSyncMessageSendFailure;
@@ -558,7 +561,7 @@ template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message
     COMPILE_ASSERT(T::isSync, SyncMessageExpected);
     RELEASE_ASSERT(RunLoop::isMain());
 
-    uint64_t syncRequestID = 0;
+    SyncRequestID syncRequestID;
     auto encoder = createSyncMessageEncoder(T::name(), destinationID, syncRequestID);
 
     if (sendSyncOptions.contains(SendSyncOption::UseFullySynchronousModeForTesting)) {

@@ -1,3 +1,17 @@
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
+        IPC::decoder::decode() should mark decoder as invalid when failing
+        https://bugs.webkit.org/show_bug.cgi?id=225117
+
+        Reviewed by Darin Adler.
+
+        IPC::decoder::decode() should mark decoder as invalid when failing, instead of relying
+        on individual type decoders to do so. This makes type decoders a bit simpler and less
+        error-prone.
+
+        * Modules/highlight/AppHighlight.h:
+        (WebCore::AppHighlight::decode):
+
 2021-04-27  Alex Christensen  <achristensen@webkit.org>
 
         charset in contentType used in Blob.prototype.slice(start, end, contentType) is lost

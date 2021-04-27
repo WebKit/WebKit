@@ -70,10 +70,8 @@ Optional<AppHighlight> AppHighlight::decode(Decoder& decoder)
     if (!length)
         return WTF::nullopt;
 
-    if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(length.value())) {
-        decoder.markInvalid();
+    if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(length.value()))
         return WTF::nullopt;
-    }
 
     Vector<uint8_t> highlight;
     highlight.grow(*length);
