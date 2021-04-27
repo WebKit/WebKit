@@ -31,7 +31,6 @@ depends:
 - sdk/gtk+-3.bst
 - sdk/gtk.bst
 - sdk/icecc.bst
-- sdk/intltool.bst
 - sdk/krb5.bst
 - sdk/libavif.bst
 - sdk/libcap-ng.bst

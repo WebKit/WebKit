@@ -1,3 +1,14 @@
+2021-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Direct AVIF loading does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=222867
+
+        Reviewed by Michael Catanzaro.
+
+        * elements/sdk-platform.bst:
+        * elements/sdk/intltool.bst: Removed.
+        * elements/sdk/shared-mime-info.bst: Bump to version 2.1 which has support for detecting AVIF bitstreams.
+
 2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.4

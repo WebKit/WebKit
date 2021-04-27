@@ -1403,11 +1403,12 @@ void NetworkDataTaskSoup::didGetFileInfo(GFileInfo* info)
         m_response.setMimeType("text/html");
         m_response.setExpectedContentLength(-1);
     } else {
-        const gchar* contentType = g_file_info_get_content_type(info);
-        m_response.setMimeType(extractMIMETypeFromMediaType(contentType));
-        m_response.setTextEncodingName(extractCharsetFromMediaType(contentType));
-        if (m_response.mimeType().isEmpty())
-            m_response.setMimeType(MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString()));
+        // Guess mime-type from URL path and fall-back to mime-type detected by Gio/shared-mime-info otherwise.
+        auto mimeType = MIMETypeRegistry::mimeTypeForPath(m_response.url().path().toString());
+        if (mimeType == defaultMIMEType())
+            mimeType = extractMIMETypeFromMediaType(g_file_info_get_content_type(info));
+
+        m_response.setMimeType(mimeType);
         m_response.setExpectedContentLength(g_file_info_get_size(info));
     }
 }

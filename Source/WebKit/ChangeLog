@@ -1,3 +1,14 @@
+2021-04-27  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Direct AVIF loading does not work.
+        https://bugs.webkit.org/show_bug.cgi?id=222867
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::didGetFileInfo): Use mime-type reported for local files by gio
+        only as a last resort. Our MIMETypeRegistry is more reliable in these cases.
+
 2021-04-27  Youenn Fablet  <youenn@apple.com>
 
         Add memory allocation checks in more realtime audio capture/rendering places

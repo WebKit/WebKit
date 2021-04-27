@@ -1,22 +1,25 @@
-kind: autotools
+kind: meson
 
 build-depends:
-- freedesktop-sdk.bst:public-stacks/buildsystem-autotools.bst
+- freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
+- freedesktop-sdk.bst:components/docbook-xsl.bst
 - freedesktop-sdk.bst:components/itstool.bst
-- sdk/intltool.bst
-- freedesktop-sdk.bst:components/perl-xml-parser.bst
+- freedesktop-sdk.bst:components/xmlto.bst
 
 depends:
 - sdk/glib.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
 - freedesktop-sdk.bst:components/libxml2.bst
+
 sources:
-- kind: tar
-  url: https://gitlab.freedesktop.org/xdg/shared-mime-info/uploads/6a226038bf42dae45a049a6b8e729abc/shared-mime-info-1.10.tar.xz
-  ref: c625a83b4838befc8cafcd54e3619946515d9e44d63d61c4adf7f5513ddfbebf
-variables:
-  notparallel: True
+- kind: git_tag
+  url: gitlab_freedesktop_org:xdg/shared-mime-info
+  track: '2.1'
+  ref: 2.1-0-g18e558fa1c8b90b86757ade09a4ba4d6a6cf8f70
 public:
   bst:
     overlap-whitelist:
     - '**'
+    integration-commands:
+    - |
+      PKGSYSTEM_ENABLE_FSYNC=0 update-mime-database "%{datadir}/mime"
