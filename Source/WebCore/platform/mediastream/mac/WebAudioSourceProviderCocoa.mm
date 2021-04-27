@@ -100,6 +100,8 @@ void WebAudioSourceProviderCocoa::provideInput(AudioBus* bus, size_t framesToPro
 
 void WebAudioSourceProviderCocoa::prepare(const AudioStreamBasicDescription& format)
 {
+    DisableMallocRestrictionsForCurrentThreadScope scope;
+
     auto locker = holdLock(m_lock);
 
     LOG(Media, "WebAudioSourceProviderCocoa::prepare(%p)", this);

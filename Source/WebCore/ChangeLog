@@ -1,3 +1,40 @@
+2021-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Add memory allocation checks in more realtime audio capture/rendering places
+        https://bugs.webkit.org/show_bug.cgi?id=224750
+
+        Reviewed by Eric Carlson.
+
+        Add FastMalloc macros to catch memory allocation in audio sensitive threads.
+        Update LibWebRTCAudioModule and RealtimeIncomingAudioSourceCocoa to not rely on Function creation but rely on Timer for large audio gap logging.
+        Update BaseAudioSharedUnit to not allocate a vector each time an audio sample is captured.
+
+        Covered by existing tests.
+
+        * platform/mediastream/RealtimeIncomingAudioSource.h:
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp:
+        (WebCore::LibWebRTCAudioModule::LibWebRTCAudioModule):
+        (WebCore::LibWebRTCAudioModule::StartPlayout):
+        (WebCore::LibWebRTCAudioModule::StopPlayout):
+        (WebCore::LibWebRTCAudioModule::logTimerFired):
+        (WebCore::LibWebRTCAudioModule::computeDelayUntilNextPolling):
+        (WebCore::LibWebRTCAudioModule::pollAudioData):
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.h:
+        * platform/mediastream/mac/AudioMediaStreamTrackRendererCocoa.cpp:
+        (WebCore::AudioMediaStreamTrackRendererCocoa::pushSamples):
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::addClient):
+        (WebCore::BaseAudioSharedUnit::removeClient):
+        (WebCore::BaseAudioSharedUnit::audioSamplesAvailable):
+        * platform/mediastream/mac/BaseAudioSharedUnit.h:
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.cpp:
+        (WebCore::RealtimeIncomingAudioSourceCocoa::RealtimeIncomingAudioSourceCocoa):
+        (WebCore::RealtimeIncomingAudioSourceCocoa::startProducingData):
+        (WebCore::RealtimeIncomingAudioSourceCocoa::stopProducingData):
+        (WebCore::RealtimeIncomingAudioSourceCocoa::logTimerFired):
+        (WebCore::RealtimeIncomingAudioSourceCocoa::OnData):
+        * platform/mediastream/mac/RealtimeIncomingAudioSourceCocoa.h:
+
 2021-04-27  Rob Buis  <rbuis@igalia.com>
 
         Check globalObject for null

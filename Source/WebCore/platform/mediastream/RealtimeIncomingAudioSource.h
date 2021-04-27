@@ -61,16 +61,16 @@ protected:
     const char* logClassName() const final { return "RealtimeIncomingAudioSource"; }
 #endif
 
+    // RealtimeMediaSource API
+    void startProducingData() override;
+    void stopProducingData()  override;
+
 private:
     // webrtc::AudioTrackSinkInterface API
-    virtual void OnData(const void* /* audioData */, int /* bitsPerSample */, int /* sampleRate */, size_t /* numberOfChannels */, size_t /* numberOfFrames */) { };
+    void OnData(const void* /* audioData */, int /* bitsPerSample */, int /* sampleRate */, size_t /* numberOfChannels */, size_t /* numberOfFrames */) override { };
 
     // webrtc::ObserverInterface API
     void OnChanged() final;
-
-    // RealtimeMediaSource API
-    void startProducingData() final;
-    void stopProducingData()  final;
 
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
