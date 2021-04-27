@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -234,36 +234,6 @@ static const Vector<ASCIILiteral>& nonBrowserServices()
     });
     return services;
 }
-
-static const Vector<ASCIILiteral>& agxCompilerClasses()
-{
-    ASSERT(isMainRunLoop());
-    static const auto iokitClasses = makeNeverDestroyed(Vector<ASCIILiteral> {
-        "AGXCommandQueue"_s,
-        "AGXDevice"_s,
-        "AGXSharedUserClient"_s,
-        "IOAccelContext"_s,
-        "IOAccelContext2"_s,
-        "IOAccelDevice"_s,
-        "IOAccelDevice2"_s,
-        "IOAccelSharedUserClient"_s,
-        "IOAccelSharedUserClient2"_s,
-        "IOAccelSubmitter2"_s,
-    });
-    return iokitClasses;
-}
-#endif
-
-#if PLATFORM(IOS)
-static const Vector<ASCIILiteral>& agxCompilerServices()
-{
-    ASSERT(isMainRunLoop());
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-        "com.apple.AGXCompilerService"_s,
-        "com.apple.AGXCompilerService-S2A8"_s
-    });
-    return services;
-}
 #endif
 
 static const Vector<ASCIILiteral>& diagnosticServices()
@@ -403,7 +373,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
     
 #if PLATFORM(IOS)
     if (WebCore::deviceHasAGXCompilerService())
-        parameters.compilerServiceExtensionHandles = SandboxExtension::createHandlesForMachLookup(agxCompilerServices(), WTF::nullopt);
+        parameters.compilerServiceExtensionHandles = SandboxExtension::createHandlesForMachLookup(WebCore::agxCompilerServices(), WTF::nullopt);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -411,7 +381,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
         parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), WTF::nullopt);
 
     if (WebCore::deviceHasAGXCompilerService())
-        parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(agxCompilerClasses(), WTF::nullopt);
+        parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(WebCore::agxCompilerClasses(), WTF::nullopt);
 #endif
 
     if (isInternalInstall())

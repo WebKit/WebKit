@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2019 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2021 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -257,12 +257,12 @@
 ;;; Declare that the application uses the OpenGL, Metal, and CoreML hardware & frameworks.
 ;;;
 (define-once (opengl)
-    (allow iokit-open
+    ;; Items not seen in testing
+    (deny iokit-open (with telemetry)
            (iokit-connection "IOGPU")
            (iokit-user-client-class
                 "AGXCommandQueue"
                 "AGXDevice"
-                "AGXDeviceUserClient"
                 "AGXSharedUserClient"
                 "IOAccelContext"
                 "IOAccelDevice"
@@ -271,6 +271,11 @@
                 "IOAccelContext2"
                 "IOAccelDevice2"
                 "IOAccelSharedUserClient2"))
+
+    (allow iokit-open
+           (iokit-connection "IOGPU")
+           (iokit-user-client-class
+                "AGXDeviceUserClient"))
 
     (allow iokit-get-properties
         (iokit-property "IOGLBundleName")
@@ -283,9 +288,6 @@
 
     (allow sysctl-read
            (sysctl-name #"kern.bootsessionuuid"))
-
-    (allow mach-lookup (with report) (with telemetry)
-        (xpc-service-name-prefix "com.apple.AGXCompilerService"))
 
     (allow mach-lookup
        ;; <rdar://problem/47268166>
@@ -940,6 +942,24 @@
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
 )
 
+(allow iokit-open
+    (require-all
+        (extension "com.apple.webkit.extension.iokit")
+        (iokit-user-client-class
+            "AGXCommandQueue"
+            "AGXDevice"
+            "AGXSharedUserClient"
+            "IOAccelContext"
+            "IOAccelDevice"
+            "IOAccelSharedUserClient"
+            "IOAccelSubmitter2"
+            "IOAccelContext2"
+            "IOAccelDevice2"
+            "IOAccelSharedUserClient2"
+        )
+    )
+)
+
 (deny mach-lookup (with no-log)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
@@ -947,7 +967,12 @@
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
-        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd" "com.apple.AGXCompilerService")))
+        (global-name "com.apple.iphone.axserver-systemwide" "com.apple.tccd")))
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (xpc-service-name-prefix "com.apple.AGXCompilerService")))
 
 (media-capture-support)
 

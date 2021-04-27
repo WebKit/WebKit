@@ -1,3 +1,24 @@
+2021-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] [GPU] The UI process should issue the mach sandbox extension to 'com.apple.AGXCompilerService' 
+        https://bugs.webkit.org/show_bug.cgi?id=225004
+        <rdar://problem/68362930>
+
+        Reviewed by Darin Adler.
+
+        In Bug 203915 and Bug 210616 we did work to only extend access to AGX-related graphics facilities on relevant hardware. This was
+        lost in the transition to the GPU Process and should be added back.
+
+        This change moves the definition of the AGX-related services and IOKit classes to the AGXCompilerService compilation unit so that
+        it can be shared by the WebContent and GPUProcess code paths.
+
+        Tested by existing graphics tests.
+
+        * platform/cocoa/AGXCompilerService.cpp:
+        (WebCore::agxCompilerServices):
+        (WebCore::agxCompilerClasses):
+        * platform/cocoa/AGXCompilerService.h:
+
 2021-04-27  Antoine Quint  <graouts@webkit.org>
 
         Correctly interpolate stroke-dasharray in the discrete case

@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2020 Apple Inc. All rights reserved.
+* Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions
@@ -29,7 +29,9 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include <sys/utsname.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Optional.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore {
 
@@ -55,6 +57,34 @@ bool deviceHasAGXCompilerService()
             hasAGXCompilerService = false;
     }
     return *hasAGXCompilerService;
+}
+
+const Vector<ASCIILiteral>& agxCompilerServices()
+{
+    ASSERT(isMainRunLoop());
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.AGXCompilerService"_s,
+        "com.apple.AGXCompilerService-S2A8"_s
+    });
+    return services;
+}
+
+const Vector<ASCIILiteral>& agxCompilerClasses()
+{
+    ASSERT(isMainRunLoop());
+    static const auto iokitClasses = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "AGXCommandQueue"_s,
+        "AGXDevice"_s,
+        "AGXSharedUserClient"_s,
+        "IOAccelContext"_s,
+        "IOAccelContext2"_s,
+        "IOAccelDevice"_s,
+        "IOAccelDevice2"_s,
+        "IOAccelSharedUserClient"_s,
+        "IOAccelSharedUserClient2"_s,
+        "IOAccelSubmitter2"_s,
+    });
+    return iokitClasses;
 }
 
 }

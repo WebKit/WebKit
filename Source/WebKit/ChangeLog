@@ -1,3 +1,41 @@
+2021-04-27  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] [GPU] The UI process should issue the mach sandbox extension to 'com.apple.AGXCompilerService' 
+        https://bugs.webkit.org/show_bug.cgi?id=225004
+        <rdar://problem/68362930>
+
+        Reviewed by Darin Adler.
+
+        In Bug 203915 and Bug 210616 we did work to only extend access to AGX-related graphics facilities on relevant hardware. This was
+        lost in the transition to the GPU Process and should be added back.
+
+        This change does the following:
+        1. Adds sandbox extension handles for the AGX-related compiler services and IOKit classes to the GPUProcess creation parameters.
+        2. Updates the GPUProcessProxy to extend AGX features when warranted and add them to the creation parameter structure.
+        3. Updates the GPUProcess to consume the extensions (when granted).
+        4. Updates the WebProcessPool to use the WebCore version of the 'agxCompilerClasses' and 'agxCompilerServices' functions.
+        5. Moves the 'agxCompilerClasses' and 'agxCompilerServices' functions to WebCore, alongside the other AGX functions.
+
+        It also corrects the sandbox rule for the AGXCompilerService in the GPU Process sandbox, which incorrectly called it a 'global-name',
+        when it is an xpc-service.
+
+        Tested by existing graphics tests.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb: Correct AGX compiler service type.
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::nonBrowserServices):
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::agxCompilerClasses): Deleted.
+        (WebKit::agxCompilerServices): Deleted.
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+
 2021-04-27  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Smart invert>Safari>images & other colors improperly invert
