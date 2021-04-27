@@ -107,9 +107,9 @@ FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLa
 #endif
 
     if (!hasFixedPositionStep() && !hasTransformStep() && !hasNonUniformStep() && (!container || (m_mapping.size() && container == m_mapping[0].m_renderer))) {
-        result = p + roundedIntSize(m_accumulatedOffset);
-        // Should convert to a LayoutPoint because of the uniqueness of LayoutUnit::round
-        ASSERT(m_accumulatedOffsetMightBeSaturated || roundedIntPoint(LayoutPoint(rendererMappedResult)) == result);
+        result = p;
+        result.move(m_accumulatedOffset);
+        ASSERT(m_accumulatedOffsetMightBeSaturated || areEssentiallyEqual(rendererMappedResult, result));
     } else {
         TransformState transformState(TransformState::ApplyTransformDirection, p);
         mapToContainer(transformState, container);

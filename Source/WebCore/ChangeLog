@@ -1,3 +1,21 @@
+2021-04-26  Rob Buis  <rbuis@igalia.com>
+
+        Remove rounding logic in RenderGeometryMap::mapContainer
+        https://bugs.webkit.org/show_bug.cgi?id=218577
+
+        Reviewed by Simon Fraser.
+
+        Remove rounding logic in RenderGeometryMap::mapContainer and
+        add the LayoutSize to FloatPoint using FloatPoint::move() to
+        match what is done in TransformState::translateMappedCoordinates.
+
+        Test: fast/layers/geometry-map-accumulated-offset-assert.html
+
+        * platform/graphics/transforms/TransformState.cpp:
+        (WebCore::TransformState::translateMappedCoordinates):
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::mapToContainer const):
+
 2021-04-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         REGRESSION (r276264): Reproducible crash in WebCore::UserActionElementSet::clearFlags
