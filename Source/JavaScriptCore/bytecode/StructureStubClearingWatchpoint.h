@@ -104,13 +104,15 @@ public:
     StructureStubInfo* stubInfo() const { return m_stubInfo; }
 
     bool isValid() const;
+
+    size_t extraMemoryInBytes() const;
     
 private:
     CodeBlock* m_codeBlock;
     StructureStubInfo* m_stubInfo;
     // FIXME: use less memory for the entries in this Bag:
     // https://bugs.webkit.org/show_bug.cgi?id=202380
-    Bag<WTF::Variant<StructureTransitionStructureStubClearingWatchpoint, AdaptiveValueStructureStubClearingWatchpoint>> m_watchpoints;
+    Bag<Node> m_watchpoints;
 };
 
 } // namespace JSC

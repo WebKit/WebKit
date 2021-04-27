@@ -1,3 +1,23 @@
+2021-04-27  Keith Miller  <keith_miller@apple.com>
+
+        StructureStubInfo and PolymorphicAccess should account for their non-GC memory
+        https://bugs.webkit.org/show_bug.cgi?id=225113
+
+        Reviewed by Mark Lam.
+
+        We don't pass the ConcurrentJSLocker to the helper methods here since the
+        DECLARE_VISIT_AGGREGATE macro does not allow for extra parameters to be passed.
+        I filed https://bugs.webkit.org/show_bug.cgi?id=225114 to track that.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::JITData::size const):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::extraMemoryInBytes const):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::extraMemoryInBytes):
+        * bytecode/StructureStubInfo.h:
+
 2021-04-26  Keith Miller  <keith_miller@apple.com>
 
         UnlinkedCodeBlock should have better accounting for extra memory

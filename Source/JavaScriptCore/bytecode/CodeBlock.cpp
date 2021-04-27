@@ -1034,6 +1034,8 @@ size_t CodeBlock::JITData::size(const ConcurrentJSLocker&) const
 {
     size_t size = sizeof(JITData);
     size += m_stubInfos.estimatedAllocationSizeInBytes();
+    for (StructureStubInfo* stub : m_stubInfos)
+        size += stub->extraMemoryInBytes();
     size += m_addICs.estimatedAllocationSizeInBytes();
     size += m_mulICs.estimatedAllocationSizeInBytes();
     size += m_negICs.estimatedAllocationSizeInBytes();
