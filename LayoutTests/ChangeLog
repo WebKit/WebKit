@@ -1,3 +1,15 @@
+2021-04-27  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Default Audits script are minified in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=225009
+
+        Reviewed by BJ Burg.
+
+        Added test to check that whitespace is preserved in default audits.
+
+        * inspector/audit/non-minified-default-audits-expected.txt: Added.
+        * inspector/audit/non-minified-default-audits.html: Added.
+
 2021-04-27  Alex Christensen  <achristensen@webkit.org>
 
         charset in contentType used in Blob.prototype.slice(start, end, contentType) is lost

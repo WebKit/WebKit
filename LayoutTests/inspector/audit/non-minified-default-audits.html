@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Audit.NonMinifiedDefaultAudits");
+
+    suite.addTestCase({
+        name: "Audit.NonMinifiedDefaultAudits.IndentationPreserved",
+        description: "Ensure that indentation is preserved in default audit function source.",
+        async test() {
+            InspectorTest.expectTrue(WI.DefaultAudits, "Expect that default audits source is present.");
+
+            const expectedLevelPassString = `function () {\n    return {level: "pass"};\n}`;
+            InspectorTest.expectEqual(WI.DefaultAudits.levelPass.toString(), expectedLevelPassString, "Expect that the testPass test case has correct number of spaces and indentation.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests to make sure that default audits are not minified.</p>
+</body>
+</html>

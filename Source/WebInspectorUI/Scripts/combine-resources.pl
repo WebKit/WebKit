@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+# Copyright (C) 2015-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@ our $htmlDirectory;
 our $htmlFile;
 our $strip;
 our $verbose;
+our $skipConcatenateTag;
 
 GetOptions('output-dir=s' => \$outputDirectory,
            'output-script-name=s' => \$outputScriptName,
@@ -47,10 +48,11 @@ GetOptions('output-dir=s' => \$outputDirectory,
            'input-html-dir=s' => \$htmlDirectory,
            'input-html=s' => \$htmlFile,
            'verbose' => \$verbose,
-           'strip' => \$strip);
+           'strip' => \$strip,
+           'skip-concatenate-tag' => \$skipConcatenateTag);
 
 unless (defined $htmlFile and defined $derivedSourcesDirectory and defined $outputDirectory and (defined $strip or defined $outputScriptName or defined $outputStylesheetName)) {
-    print "Usage: $0 --input-html <path> --derived-sources-dir <path> --output-dir <path> [--output-script-name <name>] [--output-style-name <name>] [--strip]\n";
+    print "Usage: $0 --input-html <path> --derived-sources-dir <path> --output-dir <path> [--output-script-name <name>] [--output-style-name <name>] [--strip] [--skip-concatenate-tag]\n";
     exit;
 }
 
@@ -118,15 +120,15 @@ sub stripIncludedFilesMatchingPattern($)
     $headContents =~ s/$whitespaceConsumingTagPattern//gi;
 }
 
-my $inputDirectoryPattern = "(?!WebKitAdditions\/)(?!External\/)(?!Workers\/)[^\"]*";
+my $inputDirectoryPattern = "(?!WebKitAdditions\/)(?!External\/)(?!Workers\/)(?!NonMinified\/)[^\"]*";
 $inputDirectoryPattern = $inputDirectory . "\/[^\"]*" if $inputDirectory;
 
 if (defined($strip)) {
     stripIncludedFilesMatchingPattern("<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">");
     stripIncludedFilesMatchingPattern("<script src=\"($inputDirectoryPattern)\"><\/script>");
 } else {
-    concatenateIncludedFilesMatchingPattern($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">") if defined $outputStylesheetName;
-    concatenateIncludedFilesMatchingPattern($outputScriptName, "<script src=\"($inputDirectoryPattern)\"><\/script>", "<script src=\"$outputScriptName\"></script>") if defined $outputScriptName;
+    concatenateIncludedFilesMatchingPattern($outputStylesheetName, "<link rel=\"stylesheet\" href=\"($inputDirectoryPattern)\">", defined $skipConcatenateTag ? "" : "<link rel=\"stylesheet\" href=\"$outputStylesheetName\">") if defined $outputStylesheetName;
+    concatenateIncludedFilesMatchingPattern($outputScriptName, "<script src=\"($inputDirectoryPattern)\"><\/script>", defined $skipConcatenateTag ? "" : "<script src=\"$outputScriptName\"></script>") if defined $outputScriptName;
 }
 
 $htmlContents =~ s/<head>.*<\/head>/<head>$headContents<\/head>/si;
