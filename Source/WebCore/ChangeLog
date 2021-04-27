@@ -1,3 +1,27 @@
+2021-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        charset in contentType used in Blob.prototype.slice(start, end, contentType) is lost
+        https://bugs.webkit.org/show_bug.cgi?id=225057
+
+        Reviewed by Chris Dumez.
+
+        When calling Blob.slice, use the content type from the call, not from the sliced-from blob.
+        This matches Chrome and Firefox.
+
+        When no content type is given, browsers disagree on what happens, so keep existing behavior in that case.
+
+        Test: fast/files/blob-content-type.html
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/ThreadableBlobRegistry.cpp:
+        (WebCore::ThreadableBlobRegistry::registerBlobURLForSlice):
+        * fileapi/ThreadableBlobRegistry.h:
+        * platform/network/BlobRegistry.h:
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::registerBlobURLForSlice):
+        * platform/network/BlobRegistryImpl.h:
+
 2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] Remove defaultValue() from the method table

@@ -59,7 +59,7 @@ public:
     virtual void registerBlobURLOptionallyFileBacked(const URL&, const URL& srcURL, RefPtr<BlobDataFileReference>&&, const String& contentType) = 0;
 
     // Negative start and end values select from the end.
-    virtual void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end) = 0;
+    virtual void registerBlobURLForSlice(const URL&, const URL& srcURL, long long start, long long end, const String& contentType) = 0;
 
     virtual void unregisterBlobURL(const URL&) = 0;
 

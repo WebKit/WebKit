@@ -1,5 +1,14 @@
 2021-04-27  Alex Christensen  <achristensen@webkit.org>
 
+        charset in contentType used in Blob.prototype.slice(start, end, contentType) is lost
+        https://bugs.webkit.org/show_bug.cgi?id=225057
+
+        Reviewed by Chris Dumez.
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+
+2021-04-27  Alex Christensen  <achristensen@webkit.org>
+
         Unreviewed, reverting r275912.
         rdar://77179042
 

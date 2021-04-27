@@ -178,7 +178,7 @@ void BlobRegistryImpl::registerBlobURLOptionallyFileBacked(const URL& url, const
     m_blobs.set(url.string(), WTFMove(backingFile));
 }
 
-void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end)
+void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL, long long start, long long end, const String& contentType)
 {
     ASSERT(isMainThread());
     BlobData* originalData = getBlobDataFromURL(srcURL);
@@ -207,7 +207,7 @@ void BlobRegistryImpl::registerBlobURLForSlice(const URL& url, const URL& srcURL
         end = originalSize;
 
     unsigned long long newLength = end - start;
-    auto newData = BlobData::create(originalData->contentType());
+    auto newData = BlobData::create(contentType.isEmpty() ? originalData->contentType() : contentType);
 
     appendStorageItems(newData.ptr(), originalData->items(), start, newLength);
 

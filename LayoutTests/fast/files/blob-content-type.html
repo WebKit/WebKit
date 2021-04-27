@@ -1,0 +1,28 @@
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+
+    const blob = new Blob(['<style></style>'], { type: 'text/original-blob-content-type;' });
+
+    promise_test(async () => {
+        const slice = blob.slice(0, blob.size, 'text/html2;charset=utf-8');
+        const url = URL.createObjectURL(slice);
+        const response = await fetch(url);
+        assert_equals(response.headers.get('content-type'), 'text/html2;charset=utf-8')
+    }, 'blob.slice content type used')
+
+    promise_test(async () => {
+        const slice = blob.slice(0, blob.size);
+        const url = URL.createObjectURL(slice);
+        const response = await fetch(url);
+        assert_equals(response.headers.get('content-type'), 'text/original-blob-content-type;')
+    }, 'sliced-from content type used when none specified in blob.slice')
+
+    promise_test(async () => {
+        const slice = blob.slice(0, blob.size, "");
+        const url = URL.createObjectURL(slice);
+        const response = await fetch(url);
+        assert_equals(response.headers.get('content-type'), 'text/original-blob-content-type;')
+    }, 'sliced-from content type used when empty string content type specified in blob.slice')
+
+</script>

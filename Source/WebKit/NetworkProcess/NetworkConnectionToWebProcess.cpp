@@ -838,13 +838,13 @@ void NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked(const UR
     session->blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end)
+void NetworkConnectionToWebProcess::registerBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, const String& contentType)
 {
     auto* session = networkSession();
     if (!session)
         return;
 
-    session->blobRegistry().registerBlobURLForSlice(url, srcURL, start, end);
+    session->blobRegistry().registerBlobURLForSlice(url, srcURL, start, end, contentType);
 }
 
 void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
