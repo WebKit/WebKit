@@ -2016,6 +2016,7 @@
 		FEF5B4272628ABD90016E776 /* JSWeakMapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4262628ABD90016E776 /* JSWeakMapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF5B4292628B5240016E776 /* JSSetInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B4282628B5240016E776 /* JSSetInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEF5B42C2628CBC80016E776 /* VMTrapsInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FEF5B430262A338B0016E776 /* ExceptionExpectation.h in Headers */ = {isa = PBXBuildFile; fileRef = FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEFD6FC61D5E7992008F2F0B /* JSStringInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -5427,6 +5428,7 @@
 		FEF5B4262628ABD90016E776 /* JSWeakMapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWeakMapInlines.h; sourceTree = "<group>"; };
 		FEF5B4282628B5240016E776 /* JSSetInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSetInlines.h; sourceTree = "<group>"; };
 		FEF5B42B2628CBC80016E776 /* VMTrapsInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTrapsInlines.h; sourceTree = "<group>"; };
+		FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionExpectation.h; sourceTree = "<group>"; };
 		FEFD6FC51D5E7970008F2F0B /* JSStringInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStringInlines.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -7345,6 +7347,7 @@
 				FE1C0FFC1B193E9800B53FCA /* Exception.h */,
 				FE80C19A1D7768FD008510C0 /* ExceptionEventLocation.cpp */,
 				FE6029D81D6E1E330030204D /* ExceptionEventLocation.h */,
+				FEF5B42F262A338B0016E776 /* ExceptionExpectation.h */,
 				0F12DE0D1979D5FD0006FF4E /* ExceptionFuzz.cpp */,
 				0F12DE0E1979D5FD0006FF4E /* ExceptionFuzz.h */,
 				1429D8770ED21ACD00B89619 /* ExceptionHelpers.cpp */,
@@ -10744,6 +10747,7 @@
 				ADE8029A1E08F1DE0058DE78 /* WebAssemblyLinkErrorConstructor.h in Headers */,
 				ADE8029C1E08F1DE0058DE78 /* WebAssemblyLinkErrorPrototype.h in Headers */,
 				AD2FCBF51DB58DAD00B3E736 /* WebAssemblyMemoryConstructor.h in Headers */,
+				FEF5B430262A338B0016E776 /* ExceptionExpectation.h in Headers */,
 				AD2FCC1A1DB59CB200B3E736 /* WebAssemblyMemoryConstructor.lut.h in Headers */,
 				AD2FCBF71DB58DAD00B3E736 /* WebAssemblyMemoryPrototype.h in Headers */,
 				AD2FCC1B1DB59CB200B3E736 /* WebAssemblyMemoryPrototype.lut.h in Headers */,

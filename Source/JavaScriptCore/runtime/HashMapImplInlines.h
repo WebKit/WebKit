@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionExpectation.h"
 #include "HashMapImpl.h"
 #include "JSCJSValueInlines.h"
 #include "VMTrapsInlines.h"
@@ -96,7 +97,7 @@ ALWAYS_INLINE uint32_t jsMapHashImpl(JSGlobalObject* globalObject, VM& vm, JSVal
         if constexpr (expection == ExceptionExpectation::CanThrow)
             RETURN_IF_EXCEPTION(scope, UINT_MAX);
         else
-            EXCEPTION_ASSERT(!scope.exception());
+            EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
         return wtfString.impl()->hash();
     }
 

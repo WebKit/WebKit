@@ -36,11 +36,6 @@
 
 namespace JSC {
 
-enum class ExceptionExpectation {
-    CanThrow,
-    ShouldNotThrow
-};
-
 typedef JSObject* (*ErrorFactory)(JSGlobalObject*, const String&, ErrorInstance::SourceAppender);
 
 String defaultSourceAppender(const String&, const String&, RuntimeType, ErrorInstance::SourceTextWhereErrorOccurred);

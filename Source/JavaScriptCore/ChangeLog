@@ -1,3 +1,22 @@
+2021-04-27  Mark Lam  <mark.lam@apple.com>
+
+        Move ExceptionExpectation into its own .h file.
+        https://bugs.webkit.org/show_bug.cgi?id=225124
+
+        Reviewed by Robin Morisset.
+
+        Also fixed some compiler warnings.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/ExceptionExpectation.h: Added.
+        * runtime/ExceptionHelpers.h:
+        * runtime/HashMapImplInlines.h:
+        (JSC::jsMapHashImpl):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::setWithSpecificType):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+
 2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [JSC] Remove defaultValue() from the method table
