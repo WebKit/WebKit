@@ -424,10 +424,8 @@ static inline Vector<SVGLengthValue> blendFunc(const Vector<SVGLengthValue>& fro
 {
     size_t fromLength = from.size();
     size_t toLength = to.size();
-    if (!fromLength)
-        return !context.progress ? from : to;
-    if (!toLength)
-        return context.progress == 1 ? from : to;
+    if (!fromLength || !toLength)
+        return context.progress < 0.5 ? from : to;
     size_t resultLength = fromLength;
     if (fromLength != toLength) {
         if (!remainder(std::max(fromLength, toLength), std::min(fromLength, toLength)))
