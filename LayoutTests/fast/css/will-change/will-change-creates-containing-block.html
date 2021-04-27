@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        .container {
+            height: 200px;
+            width: 200px;
+            margin: 40px;
+            border: 5px solid blue;
+        }
+        .absolute {
+            position: absolute;
+            background-color: green;
+            left: 50px;
+            top: 50px;
+            height: 100px;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="position: relative;">
+        <div class="absolute"></div>
+    </div>
+
+    <div class="container" style="will-change: position;">
+        <div class="absolute"></div>
+    </div>
+</body>
+</html>

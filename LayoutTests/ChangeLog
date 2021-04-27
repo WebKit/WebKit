@@ -1,3 +1,21 @@
+2021-04-26  Tim Nguyen  <ntim@apple.com>
+
+        Create a containing block when relevant properties are set in the current element will-change
+        https://bugs.webkit.org/show_bug.cgi?id=167868
+
+        Reviewed by Alan Bujtas.
+
+        Per spec, any CSS property that is susceptible to create a containing block should create one when put on the
+        current element's will-change.
+
+        Relevant WPT are enabled.
+
+        Test: fast/css/will-change/will-change-creates-containing-block.html
+
+        * TestExpectations:
+        * fast/css/will-change/will-change-creates-containing-block-expected.html: Added.
+        * fast/css/will-change/will-change-creates-containing-block.html: Added.
+
 2021-04-26  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Subdivide image overlay text into one or more elements per line
