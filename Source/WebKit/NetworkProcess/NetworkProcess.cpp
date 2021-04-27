@@ -274,7 +274,8 @@ void NetworkProcess::didClose(IPC::Connection&)
     });
 
     // Make sure references to NetworkProcess in spaceRequester and closeHandler is removed.
-    for (auto& server : m_webIDBServers.values())
+    auto servers = std::exchange(m_webIDBServers, { });
+    for (auto& server : servers.values())
         server->close();
 }
 
