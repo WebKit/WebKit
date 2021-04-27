@@ -33,9 +33,11 @@ namespace WebKit {
 class DisplayListWriterHandle : public SharedDisplayListHandle {
     WTF_MAKE_NONCOPYABLE(DisplayListWriterHandle); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<DisplayListWriterHandle> create(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
+    static RefPtr<DisplayListWriterHandle> create(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
     {
-        return adoptRef(*new DisplayListWriterHandle(identifier, WTFMove(sharedMemory)));
+        if (sharedMemory->size() <= headerSize())
+            return nullptr;
+        return adoptRef(new DisplayListWriterHandle(identifier, WTFMove(sharedMemory)));
     }
 
     size_t writableOffset() const { return m_writableOffset; }

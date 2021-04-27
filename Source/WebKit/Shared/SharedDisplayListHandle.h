@@ -33,6 +33,7 @@
 
 namespace WebKit {
 
+// This is a skeleton only used by the DisplayListWriterHandle & DisplayListReaderHandle subclasses.
 class SharedDisplayListHandle : public RefCounted<SharedDisplayListHandle> {
 public:
     virtual ~SharedDisplayListHandle() = default;

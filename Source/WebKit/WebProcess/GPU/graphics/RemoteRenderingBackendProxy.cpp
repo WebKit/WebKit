@@ -405,6 +405,7 @@ DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size
     send(Messages::RemoteRenderingBackend::DidCreateSharedDisplayListHandle(identifier, { WTFMove(sharedMemoryHandle), sharedMemory->size() }, destinationBufferIdentifier), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
     auto newHandle = DisplayListWriterHandle::create(identifier, sharedMemory.releaseNonNull());
+    RELEASE_ASSERT(newHandle, "There must be enough space to create the handle.");
     auto displayListHandle = newHandle->createHandle();
 
     m_identifiersOfReusableHandles.prepend(identifier);
