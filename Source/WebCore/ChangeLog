@@ -1,3 +1,17 @@
+2021-04-27  Youenn Fablet  <youenn@apple.com>
+
+        SWContextManager::postMessageToServiceWorker should check for valid service worker
+        https://bugs.webkit.org/show_bug.cgi?id=225096
+        <rdar://76718162>
+
+        Reviewed by Chris Dumez.
+
+        There is no guarantee that serviceWorker is not null.
+        For instance UIProcess may ask WebProcess to terminate all service workers in parallel to network process sending a message to it.
+
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::postMessageToServiceWorker):
+
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
         Ask LocalStorage database to free as much memory as possible on memory pressure

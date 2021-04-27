@@ -84,8 +84,8 @@ ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWork
 void SWContextManager::postMessageToServiceWorker(ServiceWorkerIdentifier destination, MessageWithMessagePorts&& message, ServiceWorkerOrClientData&& sourceData)
 {
     auto* serviceWorker = m_workerMap.get(destination);
-    ASSERT(serviceWorker);
-    ASSERT(!serviceWorker->isTerminatingOrTerminated());
+    if (!serviceWorker)
+        return;
 
     // FIXME: We should pass valid MessagePortChannels.
     serviceWorker->postMessageToServiceWorker(WTFMove(message), WTFMove(sourceData));
