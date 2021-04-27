@@ -57,6 +57,7 @@ public:
     void addConnection(IPC::Connection&);
     void removeConnection(IPC::Connection&);
 
+    void handleLowMemoryWarning();
     void waitUntilTasksFinished();
     void waitUntilSyncingLocalStorageFinished();
     void suspend(CompletionHandler<void()>&&);

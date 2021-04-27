@@ -635,4 +635,12 @@ void SQLiteDatabase::removeCollationFunction(const String& collationName)
     sqlite3_create_collation_v2(m_db, collationName.utf8().data(), SQLITE_UTF8, nullptr, nullptr, nullptr);
 }
 
+void SQLiteDatabase::releaseMemory()
+{
+    if (!m_db)
+        return;
+
+    sqlite3_db_release_memory(m_db);
+}
+
 } // namespace WebCore

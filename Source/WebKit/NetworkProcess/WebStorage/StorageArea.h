@@ -73,6 +73,8 @@ public:
     void syncToDatabase();
     void close();
 
+    void handleLowMemoryWarning();
+
 private:
     void dispatchEvents(IPC::Connection::UniqueID sourceConnection, StorageAreaImplIdentifier, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 

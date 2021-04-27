@@ -1,3 +1,17 @@
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Ask LocalStorage database to free as much memory as possible on memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=225109
+
+        Reviewed by Geoffrey Garen.
+
+        Add releaseMemory() function to SQLiteDatabase that calls sqlite3_db_release_memory()
+        to free as much memory as possible.
+
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::releaseMemory):
+        * platform/sql/SQLiteDatabase.h:
+
 2021-04-27  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] [GPU] The UI process should issue the mach sandbox extension to 'com.apple.AGXCompilerService' 

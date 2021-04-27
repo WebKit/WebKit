@@ -227,4 +227,10 @@ void StorageArea::close()
     m_localStorageDatabase->close();
 }
 
+void StorageArea::handleLowMemoryWarning()
+{
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->handleLowMemoryWarning();
+}
+
 } // namespace WebKit

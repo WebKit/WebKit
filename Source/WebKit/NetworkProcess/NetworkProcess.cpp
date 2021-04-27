@@ -309,6 +309,8 @@ void NetworkProcess::lowMemoryHandler(Critical critical)
         networkSession.clearPrefetchCache();
     });
 
+    m_storageManagerSet->handleLowMemoryWarning();
+
 #if ENABLE(SERVICE_WORKER)
     for (auto& swServer : m_swServers.values())
         swServer->handleLowMemoryWarning();

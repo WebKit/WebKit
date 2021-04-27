@@ -129,6 +129,15 @@ void StorageManagerSet::removeConnection(IPC::Connection& connection)
     });
 }
 
+void StorageManagerSet::handleLowMemoryWarning()
+{
+    ASSERT(RunLoop::isMain());
+    m_queue->dispatch([this, protectedThis = makeRef(*this)] {
+        for (auto& storageArea : m_storageAreas.values())
+            storageArea->handleLowMemoryWarning();
+    });
+}
+
 void StorageManagerSet::waitUntilTasksFinished()
 {
     ASSERT(RunLoop::isMain());

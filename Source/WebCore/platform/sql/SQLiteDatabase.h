@@ -146,6 +146,8 @@ public:
 
     WEBCORE_EXPORT static void setIsDatabaseOpeningForbidden(bool);
 
+    WEBCORE_EXPORT void releaseMemory();
+
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);
 

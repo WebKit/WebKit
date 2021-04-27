@@ -362,4 +362,10 @@ bool LocalStorageDatabase::databaseIsEmpty()
     return !query.getColumnInt(0);
 }
 
+void LocalStorageDatabase::handleLowMemoryWarning()
+{
+    if (m_database.isOpen())
+        m_database.releaseMemory();
+}
+
 } // namespace WebKit

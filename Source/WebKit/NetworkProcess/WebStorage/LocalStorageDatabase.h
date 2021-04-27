@@ -59,6 +59,8 @@ public:
     // Will block until all pending changes have been written to disk.
     void close();
 
+    void handleLowMemoryWarning();
+
 private:
     LocalStorageDatabase(Ref<WorkQueue>&&, Ref<LocalStorageDatabaseTracker>&&, const WebCore::SecurityOriginData&);
 

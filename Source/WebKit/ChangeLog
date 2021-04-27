@@ -1,3 +1,30 @@
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Ask LocalStorage database to free as much memory as possible on memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=225109
+
+        Reviewed by Geoffrey Garen.
+
+        Ask LocalStorage database to free as much memory as possible on memory pressure.
+        Some of the strings in the database can be large and we don't want SQLite to be
+        holding on to those for performance reason when we are under memory pressure.
+
+        This seems to be a ~1.75% improvement on PLUM/nytimes-home and a ~1% improvement
+        on PLUM/wikipedia, sadly not enough to show an impact on the overal PLUM score.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::lowMemoryHandler):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::handleLowMemoryWarning):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h:
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::handleLowMemoryWarning):
+        * NetworkProcess/WebStorage/StorageArea.h:
+        * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+        (WebKit::StorageManagerSet::handleLowMemoryWarning):
+        * NetworkProcess/WebStorage/StorageManagerSet.h:
+
 2021-04-27  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Don't use FORWARDING_HEADERS_DIR for GTK WebKit headers
