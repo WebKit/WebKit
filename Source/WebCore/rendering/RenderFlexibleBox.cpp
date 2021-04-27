@@ -1241,14 +1241,24 @@ bool RenderFlexibleBox::useChildOverridingCrossSizeForPercentageResolution(const
     return child.hasOverridingLogicalHeight();
 }
 
+// This method is only called whenever a descendant of a flex item wants to resolve a percentage in its
+// block axis (logical height). The key here is that percentages should be generally resolved before the
+// flex item is flexed, meaning that they shouldn't be recomputed once the flex item has been flexed. There
+// are some exceptions though that are implemented here, like the case of fully inflexible items with
+// definite flex-basis, or whenever the flex container has a definite main size. See
+// https://drafts.csswg.org/css-flexbox/#definite-sizes for additional details.
 bool RenderFlexibleBox::useChildOverridingMainSizeForPercentageResolution(const RenderBox& child)
 {
     ASSERT(!mainAxisIsChildInlineAxis(child));
+
+    // The main size of a fully inflexible item with a definite flex basis is, by definition, definite.
+    if (child.style().flexGrow() == 0.0 && child.style().flexShrink() == 0.0 && childMainSizeIsDefinite(child, flexBasisForChild(child)))
+        return child.hasOverridingLogicalHeight();
+
     // This function implements section 9.8. Definite and Indefinite Sizes, case 2) of the flexbox spec.
     // If the flex container has a definite main size the flex item post-flexing main size is also treated
     // as definite. We make up a percentage to check whether we have a definite size.
-    auto updateDescendants = m_inLayout ? UpdatePercentageHeightDescendants::Yes : UpdatePercentageHeightDescendants::No;
-    if (!canComputePercentageFlexBasis(child, Length(0, LengthType::Percent), updateDescendants))
+    if (!canComputePercentageFlexBasis(child, Length(0, LengthType::Percent), UpdatePercentageHeightDescendants::Yes))
         return false;
 
     return child.hasOverridingLogicalHeight();

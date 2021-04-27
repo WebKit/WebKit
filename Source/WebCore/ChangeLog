@@ -1,3 +1,21 @@
+2021-04-21  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] percent children don't resolve against the flex basis on a fully inflexible item with fixed flex-basis
+        https://bugs.webkit.org/show_bug.cgi?id=210478
+
+        Reviewed by Darin Adler.
+
+        Flexbox spec defines some additional cases where sizes could be considered definite despite they are
+        actually indefinite. One of those cases is whenever we have a fully inflexible item with a definite
+        flex-basis. In that case we should allow desdendants of flex item to resolve against the post-flexing
+        size of the flex item which is basically the value of the definite flex-basis. Note that in the majority
+        of cases those percentages are resolved before flexing the item and not recomputed after that.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::useChildOverridingMainSizeForPercentageResolution): let descendants of
+        fully inflexible flex items with definite flex-basis to resolve against the post-flexing size. Also added
+        some documentation because that part of the code is far from obvious for the casual reader.
+
 2021-04-27  Youenn Fablet  <youenn@apple.com>
 
         Add memory allocation checks in more realtime audio capture/rendering places
