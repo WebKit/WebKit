@@ -1,3 +1,18 @@
+2021-04-27  Cameron McCormack  <heycam@apple.com>
+
+        Associate a picture element with an img only if the img is a direct child.
+        https://bugs.webkit.org/show_bug.cgi?id=225044
+
+        Reviewed by Ryosuke Niwa.
+
+        Test: imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/img-picture-ancestor.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::insertedIntoAncestor):
+        (WebCore::HTMLImageElement::removedFromAncestor):
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface):
+
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
         IPC::decoder::decode() should mark decoder as invalid when failing

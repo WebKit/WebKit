@@ -695,7 +695,9 @@ RefPtr<Element> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterf
 
     // FIXME: This is a hack to connect images to pictures before the image has
     // been inserted into the document. It can be removed once asynchronous image
-    // loading is working.
+    // loading is working. When this hack is removed, the assertion just before
+    // the setPictureElement() call in HTMLImageElement::insertedIntoAncestor
+    // can be simplified.
     if (is<HTMLPictureElement>(currentNode()) && is<HTMLImageElement>(*element))
         downcast<HTMLImageElement>(*element).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
 

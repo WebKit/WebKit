@@ -1,3 +1,13 @@
+2021-04-27  Cameron McCormack  <heycam@apple.com>
+
+        Associate a picture element with an img only if the img is a direct child.
+        https://bugs.webkit.org/show_bug.cgi?id=225044
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/img-picture-ancestor-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/img-picture-ancestor.html: Added.
+
 2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] `window.CSS` should be non-callable object with correct Symbol.toStringTag

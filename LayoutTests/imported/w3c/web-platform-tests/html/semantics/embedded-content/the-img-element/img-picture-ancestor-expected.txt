@@ -1,0 +1,8 @@
+
+
+
+PASS currentSrc of img in normally parented picture is correct
+PASS currentSrc of img in nested picture element is correct
+PASS currentSrc of img with picture ancestor but non-picture parent is correct
+PASS currentSrc of img in nested picture element remains correct when the inner picture is removed from the document
+
