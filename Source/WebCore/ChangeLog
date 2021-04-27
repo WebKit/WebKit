@@ -1,3 +1,19 @@
+2021-04-27  Frédéric Wang  <fwang@igalia.com>
+
+        [MathML] Assertion failure in RenderTreeNeedsLayoutChecker
+        https://bugs.webkit.org/show_bug.cgi?id=224903
+
+        Reviewed by Alan Bujtas.
+
+        After r226180, RenderMathMLRow no longer performs layout of its "embellished operator"
+        children only its core <mo> descendant, which is causing dirty layout.
+
+        Test: mathml/vertical-embellished-op-dirty-layout.html
+
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren): always layout the
+        "embellished operator" child, after its core <mo>.
+
 2021-04-26  Rob Buis  <rbuis@igalia.com>
 
         Remove rounding logic in RenderGeometryMap::mapContainer
