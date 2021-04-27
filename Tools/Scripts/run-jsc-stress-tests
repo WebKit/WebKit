@@ -134,6 +134,7 @@ $forceCollectContinuously = false
 $reportExecutionTime = false
 $ldd = nil
 $artifact_exec_wrapper = nil
+$numChildProcessesSetByUser = false
 
 def usage
     puts "run-jsc-stress-tests -j <shell path> <collections path> [<collections path> ...]"
@@ -264,6 +265,7 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $reportExecutionTime = true
     when '--child-processes'
         $numChildProcesses = arg.to_i
+        $numChildProcessesSetByUser = true
     when '--filter'
         $filter = Regexp.new(arg)
     when '--arch'
@@ -2315,6 +2317,7 @@ $runnerDir = $outputDir + ".runner"
 if !$numChildProcesses
     if ENV["WEBKIT_TEST_CHILD_PROCESSES"]
         $numChildProcesses = ENV["WEBKIT_TEST_CHILD_PROCESSES"].to_i
+        $numChildProcessesSetByUser = true
     else
         $numChildProcesses = numberOfProcessors
     end
@@ -2499,11 +2502,12 @@ def runGnuParallelRunner(inputs, options={})
     if ENV["JSCTEST_timeout"]
         timeout = ENV["JSCTEST_timeout"].to_f.ceil.to_i
     end
-    # We add 1 to make sure we always have waiting jobs and
-    # don't run into stalls due to ssh latency. However, we
-    # want to respect numChildProcesses, so we don't just use
-    # the -j +1 GNU parallel idiom.
-    parallelJobsOnEachHost = $numChildProcesses + 1
+    # Keep ncpus + 1 jobs running by default to avoid any stalls due
+    # to ssh latency.
+    parallelJobsOnEachHost = "+1"
+    if $numChildProcessesSetByUser
+        parallelJobsOnEachHost = $numChildProcesses
+    end
     if options[:parallelJobsOnEachHost]
       parallelJobsOnEachHost = options[:parallelJobsOnEachHost]
     end

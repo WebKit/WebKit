@@ -1,3 +1,20 @@
+2021-04-27  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Autoscale jobs for remote boards
+        https://bugs.webkit.org/show_bug.cgi?id=225100
+
+        Reviewed by Mark Lam.
+
+        When using --gnu-parallel-runner, let GNU parallel handle the number of jobs
+        unless the user has explicitly requested a specific number of remote processes.
+
+        Previously, run-jsc-stress-tests would set numChildProcesses by querying the
+        first remote, under the assumption that the remotes are homogeneous. The number
+        of jobs inferred by looking at the CPUs of the first remote may be
+        inappropriate for the rest of the remotes.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-04-27  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Don't use FORWARDING_HEADERS_DIR for GTK WebKit headers
