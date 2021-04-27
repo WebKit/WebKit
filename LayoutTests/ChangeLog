@@ -1,3 +1,21 @@
+2021-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        fast/events/ios/dragstart-on-image-by-long-pressing.html sometimes fails with a text diff
+        https://bugs.webkit.org/show_bug.cgi?id=225107
+        rdar://77048635
+
+        Reviewed by Darin Adler.
+
+        For some reason, when running this layout test in a newly created simulator, the drag cancel preview animation
+        will finish animating *just* before the "dragend" event is dispatched, which causes the test to fail with a text
+        diff due to the missing `PASS Ended drag` output.
+
+        Address this by making the test robust in both cases (where the animation ends before the page receives
+        "dragend" and vice versa) by only finishing the test when we've met both conditions.
+
+        * fast/events/ios/dragstart-on-image-by-long-pressing-expected.txt:
+        * fast/events/ios/dragstart-on-image-by-long-pressing.html:
+
 2021-04-27  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] ASSERTION FAILED: ancestor->style().columnSpan() != ColumnSpan::All || !isValidColumnSpanner(fragmentedFlow, *ancestor) in WebCore::isValidColumnSpanner
