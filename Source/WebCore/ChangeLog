@@ -1,3 +1,36 @@
+2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fine-tune some more selection behaviors in image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=225121
+
+        Reviewed by Tim Horton.
+
+        Make some additional minor refinements to selection behaviors in image overlays.
+
+        Test:   fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-2.html
+                DragAndDropTests.DragSelectedTextInImageOverlay
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithImageExtractionResult):
+
+        Unless `-webkit-user-select: none;` is explicitly set, make each of the text containers under each line have
+        `-webkit-user-select: all;`, so that text selection snaps to the boundaries of each piece of text.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
+        Drive-by fix: avoid dragging image overlay text out as rich text.
+
+        * page/EventHandler.cpp:
+        (WebCore::nodeToSelectOnMouseDownForNode):
+
+        Make an exception for image overlay text, such that we don't select text upon handling a "mousedown" event, even
+        though the text has `-webkit-user-select: all;`. Also, deploy `RefPtr` in a few places while I'm here.
+
+        (WebCore::expandSelectionToRespectSelectOnMouseDown):
+
+        Drive-by fix: deploy `RefPtr` in a few places.
+
 2021-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to query whether a URL would be upgraded to HTTPS

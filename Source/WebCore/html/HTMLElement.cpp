@@ -1339,6 +1339,7 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
     static MainThreadNeverDestroyed<const AtomString> imageOverlayLineClass("image-overlay-line", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> imageOverlayTextClass("image-overlay-text", AtomString::ConstructFromLiteral);
 
+    bool hasUserSelectNone = renderer() && renderer()->style().userSelect() == UserSelect::None;
     IntSize containerSize { offsetWidth(), offsetHeight() };
     for (auto& line : result.lines) {
         auto lineQuad = line.normalizedQuad;
@@ -1431,6 +1432,9 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
                 (targetSize.height() - sizeBeforeTransform.height()) / 2, "px) "_s,
                 "scale("_s, targetSize.width() / sizeBeforeTransform.width(), ", "_s, targetSize.height() / sizeBeforeTransform.height(), ") "_s
             ));
+
+            if (!hasUserSelectNone || document().isImageDocument())
+                textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueAll);
         }
 
         lineContainer->appendChild(HTMLBRElement::create(document()));

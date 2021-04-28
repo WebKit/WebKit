@@ -33,6 +33,7 @@
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WebArchive.h>
+#import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -399,6 +400,36 @@ TEST(DragAndDropTests, DragElementWithImageOverlay)
 
     [simulator runFrom:NSMakePoint(150, 200) to:NSMakePoint(300, 200)];
     EXPECT_TRUE([simulator containsDraggedType:(__bridge NSString *)kUTTypeJPEG]);
+}
+
+TEST(DragAndDropTests, DragSelectedTextInImageOverlay)
+{
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]);
+    [[configuration preferences] _setLargeImageAsyncDecodingEnabled:NO];
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    [[simulator webView] synchronouslyLoadTestPageNamed:@"simple-image-overlay"];
+    [[simulator webView] stringByEvaluatingJavaScript:@"selectImageOverlay()"];
+    [[simulator webView] waitForNextPresentationUpdate];
+
+    [simulator runFrom:NSMakePoint(150, 40) to:NSMakePoint(300, 300)];
+
+    EXPECT_TRUE([simulator containsDraggedType:(__bridge NSString *)kUTTypeUTF8PlainText]);
+    EXPECT_FALSE([simulator containsDraggedType:(__bridge NSString *)kUTTypeHTML]);
+    EXPECT_FALSE([simulator containsDraggedType:(__bridge NSString *)kUTTypeRTF]);
+
+    RetainPtr<NSString> draggedText;
+#if USE(APPKIT)
+    draggedText = [[simulator draggingInfo].draggingPasteboard stringForType:(__bridge NSString *)kUTTypeUTF8PlainText];
+#else
+    bool doneLoadingString = false;
+    [[simulator sourceItemProviders].firstObject loadObjectOfClass:NSString.class completionHandler:[&](NSString *string, NSError *error) {
+        draggedText = adoptNS([string copy]);
+        doneLoadingString = true;
+    }];
+    TestWebKitAPI::Util::run(&doneLoadingString);
+#endif
+    EXPECT_WK_STREQ(draggedText.get(), "foobar");
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)

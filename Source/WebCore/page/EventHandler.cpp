@@ -436,8 +436,11 @@ static inline bool dispatchSelectStart(Node* node)
 
 static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 {
-    if (Node* rootUserSelectAll = Position::rootUserSelectAllForNode(&targetNode))
-        return rootUserSelectAll;
+    if (HTMLElement::isInsideImageOverlay(targetNode))
+        return nullptr;
+
+    if (auto rootUserSelectAll = makeRefPtr(Position::rootUserSelectAllForNode(&targetNode)))
+        return rootUserSelectAll.get();
 
     if (targetNode.shouldSelectOnMouseDown())
         return &targetNode;
@@ -447,13 +450,13 @@ static Node* nodeToSelectOnMouseDownForNode(Node& targetNode)
 
 static VisibleSelection expandSelectionToRespectSelectOnMouseDown(Node& targetNode, const VisibleSelection& selection)
 {
-    Node* nodeToSelect = nodeToSelectOnMouseDownForNode(targetNode);
+    auto nodeToSelect = makeRefPtr(nodeToSelectOnMouseDownForNode(targetNode));
     if (!nodeToSelect)
         return selection;
 
     VisibleSelection newSelection(selection);
-    newSelection.setBase(positionBeforeNode(nodeToSelect).upstream(CanCrossEditingBoundary));
-    newSelection.setExtent(positionAfterNode(nodeToSelect).downstream(CanCrossEditingBoundary));
+    newSelection.setBase(positionBeforeNode(nodeToSelect.get()).upstream(CanCrossEditingBoundary));
+    newSelection.setExtent(positionAfterNode(nodeToSelect.get()).downstream(CanCrossEditingBoundary));
 
     return newSelection;
 }

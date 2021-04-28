@@ -1020,8 +1020,12 @@ bool DragController::startDrag(Frame& src, const DragState& state, OptionSet<Dra
             ASSERT(selectionRange);
 
             src.editor().willWriteSelectionToPasteboard(*selectionRange);
+            auto selection = src.selection().selection();
+            bool shouldDragAsPlainText = enclosingTextFormControl(selection.start());
+            if (auto range = selection.range(); range && HTMLElement::isInsideImageOverlay(*range))
+                shouldDragAsPlainText = true;
 
-            if (enclosingTextFormControl(src.selection().selection().start())) {
+            if (shouldDragAsPlainText) {
                 if (mustUseLegacyDragClient)
                     dataTransfer.pasteboard().writePlainText(src.editor().selectedTextForDataTransfer(), Pasteboard::CannotSmartReplace);
                 else {

@@ -1,3 +1,16 @@
+2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fine-tune some more selection behaviors in image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=225121
+
+        Reviewed by Tim Horton.
+
+        Add an API test to verify that selected text inside image overlays is dragged out as plain text only.
+
+        * TestWebKitAPI/Tests/WebKit/simple-image-overlay.html:
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        (TEST):
+
 2021-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI to query whether a URL would be upgraded to HTTPS
