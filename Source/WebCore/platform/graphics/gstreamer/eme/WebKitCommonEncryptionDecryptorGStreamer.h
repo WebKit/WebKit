@@ -47,7 +47,6 @@ typedef struct _WebKitMediaCommonEncryptionDecryptPrivate WebKitMediaCommonEncry
 GType webkit_media_common_encryption_decrypt_get_type(void);
 
 bool webKitMediaCommonEncryptionDecryptIsFlushing(WebKitMediaCommonEncryptionDecrypt*);
-WeakPtr<WebCore::CDMProxyDecryptionClient> webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(WebKitMediaCommonEncryptionDecrypt*);
 
 struct _WebKitMediaCommonEncryptionDecrypt {
     GstBaseTransform parent;
@@ -64,5 +63,9 @@ struct _WebKitMediaCommonEncryptionDecryptClass {
 };
 
 G_END_DECLS
+
+// This function returns a C++ type. It's internal to the decryptors so it is safe to move it here to avoid the C++ return warning because of the C only linkage
+// area.
+WeakPtr<WebCore::CDMProxyDecryptionClient> webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(WebKitMediaCommonEncryptionDecrypt*);
 
 #endif // ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
