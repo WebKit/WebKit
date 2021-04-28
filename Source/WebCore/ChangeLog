@@ -1,3 +1,18 @@
+2021-04-28  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [clang] Remove implicit cast related warnings
+        https://bugs.webkit.org/show_bug.cgi?id=225139
+
+        Reviewed by Darin Adler.
+
+        Added explicit cast to suppress warning.
+        Behavior is not changed from implicit cast.
+
+        No new tests because there's no behavior change.
+
+        * layout/inlineformatting/InlineLine.cpp:
+        (WebCore::Layout::Line::Run::removeTrailingLetterSpacing):
+
 2021-04-28  Mark Lam  <mark.lam@apple.com>
 
         Fix exception assertions in light of the TerminationException.

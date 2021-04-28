@@ -487,7 +487,7 @@ void Line::Run::removeTrailingLetterSpacing()
 {
     ASSERT(hasTrailingLetterSpacing());
     shrinkHorizontally(trailingLetterSpacing());
-    ASSERT(logicalWidth() > 0 || (!logicalWidth() && style().letterSpacing() >= intMaxForLayoutUnit));
+    ASSERT(logicalWidth() > 0 || (!logicalWidth() && style().letterSpacing() >= static_cast<float>(intMaxForLayoutUnit)));
 }
 
 void Line::Run::removeTrailingWhitespace()
