@@ -1,3 +1,17 @@
+2021-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Stop building libANGLE.a
+        https://bugs.webkit.org/show_bug.cgi?id=225162
+        <rdar://problem/57349384>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Now that everyone's linking against the dylib, we don't need to build the static library any more.
+
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Configurations/ANGLE-dynamic.xcconfig:
+        * src/empty.cpp: Removed.
+
 2021-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE should be compiled with thread-safe statics
