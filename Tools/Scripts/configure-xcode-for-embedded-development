@@ -74,18 +74,63 @@ if int(xcode_version.split('.')[0]) >= 12:
 else:
     mac_xcspec_location = 'Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications'
 
-XCSPEC_INFO = [
-    {
-        "id":       "com.apple.package-type.mach-o-executable",
-        "source":   f"{mac_xcspec_location}/MacOSX Package Types.xcspec",
-        "dest":     "../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec"
-    },
-    {
-        "id":       "com.apple.product-type.tool",
-        "source":   f"{mac_xcspec_location}/MacOSX Product Types.xcspec",
-        "dest":     "../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec"
-    },
-]
+XCSPEC_INFO = [dict(
+    id='com.apple.product-type.tool',
+    dest='../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
+    content='''
+    // Tool (normal Unix command-line executable)
+    {   Type = ProductType;
+        Identifier = com.apple.product-type.tool;
+        Class = PBXToolProductType;
+        Name = "Command-line Tool";
+        Description = "Standalone command-line tool";
+        IconNamePrefix = "TargetExecutable";
+        DefaultTargetName = "Command-line Tool";
+        DefaultBuildProperties = {
+            FULL_PRODUCT_NAME = "$(EXECUTABLE_NAME)";
+            MACH_O_TYPE = "mh_execute";
+            EXECUTABLE_PREFIX = "";
+            EXECUTABLE_SUFFIX = "";
+            REZ_EXECUTABLE = YES;
+            INSTALL_PATH = "/usr/local/bin";
+            FRAMEWORK_FLAG_PREFIX = "-framework";
+            LIBRARY_FLAG_PREFIX = "-l";
+            LIBRARY_FLAG_NOSPACE = YES;
+            GCC_DYNAMIC_NO_PIC = NO;
+            GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+            GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+            STRIP_STYLE = "all";
+            CODE_SIGNING_ALLOWED = YES;
+        };
+        PackageTypes = (
+            com.apple.package-type.mach-o-executable   // default
+        );
+        WantsSigningEditing = YES;
+        WantsBundleIdentifierEditing = YES;
+    }
+''',
+), dict(
+    id='com.apple.package-type.mach-o-executable',
+    dest='../PlugIns/IDEiOSSupportCore.ideplugin/Contents/Resources/Embedded-Shared.xcspec',
+    content='''
+    {   Type = PackageType;
+        Identifier = com.apple.package-type.mach-o-executable;
+        Name = "Mach-O Executable";
+        Description = "Mach-O executable";
+        DefaultBuildSettings = {
+            EXECUTABLE_PREFIX = "";
+            EXECUTABLE_SUFFIX = "";
+            EXECUTABLE_NAME = "$(EXECUTABLE_PREFIX)$(PRODUCT_NAME)$(EXECUTABLE_VARIANT_SUFFIX)$(EXECUTABLE_SUFFIX)";
+            EXECUTABLE_PATH = "$(EXECUTABLE_NAME)";
+        };
+        ProductReference = {
+            FileType = compiled.mach-o.executable;
+            Name = "$(EXECUTABLE_NAME)";
+            IsLaunchable = YES;
+        };
+    }
+''',
+)]
 
 AVAILABILITY_FILE = pathlib.Path("usr/local/include/AvailabilityProhibitedInternal.h")
 AVAILABILTY_TEXT = """\
@@ -223,64 +268,41 @@ def patch_tbd_architecture(framework_path):
 # it to the embedded files.
 
 def update_xcspec_files():
-
-    def read_spec(spec_path):
-        """Read a .xcspec file and return its contents as an XML DOM object."""
-
-        result = subprocess.run(
-            [PLIST_BUDDY_PATH, "-x", "-c", "Print", spec_path],
-            capture_output=True, encoding="utf-8", check=True,
-        )
-        return ET.fromstring(result.stdout.strip())
-
-    def find_spec_entry_index(spec, identifier):
-        """Given an XML DOM object representing an .xcspec file, look for an
-        entry that has a key of "Identifier" and a value equal to the given
-        value. If found, return its index in the array of such entries."""
-
-        for index, spec_entry in enumerate(spec.findall("./array/dict")):
-            spec_entry_iter = iter(spec_entry)
-            for key, value in zip(spec_entry_iter, spec_entry_iter):
-                if key.tag == "key" and key.text == "Identifier" and value.tag == "string" and value.text == identifier:
-                    return index
-        return None
-
     for spec_info in XCSPEC_INFO:
-        identifier = spec_info["id"]
-        source_spec_path = xcode_developer_dir() / spec_info["source"]
-        dest_spec_path = xcode_developer_dir() / spec_info["dest"]
-
-        for path in [source_spec_path, dest_spec_path]:
-            if not path.exists():
-                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
-
-        source_spec_entry_index = find_spec_entry_index(read_spec(source_spec_path), identifier)
-        dest_spec_entry_index = find_spec_entry_index(read_spec(dest_spec_path), identifier)
-
-        if source_spec_entry_index is None:
-            raise RuntimeError(f"Unable to find xcspec entry for {identifier} in {source_spec_path}")
-
-        if dest_spec_entry_index is not None:
-            print(f"xcspec entry for {identifier} already exists in {dest_spec_path}, skipping")
-            return
+        dest_spec_path = xcode_developer_dir() / spec_info['dest']
+        if not dest_spec_path.exists():
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
         result = subprocess.run(
-            [PLIST_BUDDY_PATH, "-x", "-c", f"Print {source_spec_entry_index}", source_spec_path],
-            capture_output=True, encoding="utf-8", check=True,
+            [PLIST_BUDDY_PATH, '-x', '-c', 'Print', dest_spec_path],
+            capture_output=True, encoding='utf-8', check=True,
         )
-        spec_as_xml_snippet = result.stdout.strip()
+        if result.returncode != 0:
+            raise OSError(f'Failed to convert {dest_spec_path} to XML')
+
+        found = False
+        for topLevel in ET.fromstring(result.stdout.strip()):
+            for element in topLevel:
+                for key in element:
+                    if key.tag == 'string' and key.text == spec_info['id']:
+                        found = True
+                        break
+                if found:
+                    break
+            if found:
+                break
+        if found:
+            print(f'{spec_info["id"]} alread in {dest_spec_path}')
+            continue
 
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8") as temp:
-            temp.write(spec_as_xml_snippet)
-            temp.flush() # It's amazing how important this line is.
-            if not dest_spec_path.exists():
-                print(f"Creating: {dest_spec_path}")
-                subprocess.run([PLIST_BUDDY_PATH, "-c", "clear array", dest_spec_path], capture_output=True, check=True)
-            print(f"Copying:  {identifier}")
-            print(f"From:     {source_spec_path}")
-            print(f"To:       {dest_spec_path}")
-            subprocess.run([PLIST_BUDDY_PATH, "-c", "add 0 dict", dest_spec_path], capture_output=True, check=True)
-            subprocess.run([PLIST_BUDDY_PATH, "-c", f"merge {temp.name} 0", dest_spec_path], capture_output=True, check=True)
+            temp.write(spec_info['content'])
+            temp.flush()
+
+            print(f'Inserting:  {spec_info["id"]}')
+            print(f'To:         {dest_spec_path}')
+            subprocess.run([PLIST_BUDDY_PATH, '-c', 'add 0 dict', dest_spec_path], capture_output=True, check=True)
+            subprocess.run([PLIST_BUDDY_PATH, '-c', f'merge {temp.name} 0', dest_spec_path], capture_output=True, check=True)
 
 
 def copy_missing_headers(source_sdk, dest_sdk):
