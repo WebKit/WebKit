@@ -94,7 +94,6 @@ HTMLImageElement::~HTMLImageElement()
 
     if (m_form)
         m_form->removeImgElement(this);
-    setPictureElement(nullptr);
 }
 
 Ref<HTMLImageElement> HTMLImageElement::createForLegacyFactoryFunction(Document& document, Optional<unsigned> width, Optional<unsigned> height)
@@ -386,16 +385,8 @@ Node::InsertedIntoAncestorResult HTMLImageElement::insertedIntoAncestor(Insertio
         // FIXME: When the hack in HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface to eagerly call setPictureElement is removed, we can just assert !pictureElement().
         ASSERT(!pictureElement() || pictureElement() == &parentOfInsertedTree);
         setPictureElement(&downcast<HTMLPictureElement>(parentOfInsertedTree));
-        // FIXME: We should unconditionally call selectImageSource so that source selection is performed even for <img> elements outside the document.
-        if (insertionType.connectedToDocument) {
-            selectImageSource(RelevantMutation::Yes);
-            return insertNotificationRequest;
-        }
-        auto candidate = bestFitSourceFromPictureElement();
-        if (!candidate.isEmpty()) {
-            setBestFitURLAndDPRFromImageCandidate(candidate);
-            m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
-        }
+        selectImageSource(RelevantMutation::Yes);
+        return insertNotificationRequest;
     }
 
     // If we have been inserted from a renderer-less document,
@@ -417,8 +408,7 @@ void HTMLImageElement::removedFromAncestor(RemovalType removalType, ContainerNod
     if (is<HTMLPictureElement>(oldParentOfRemovedTree) && !parentElement()) {
         ASSERT(pictureElement() == &oldParentOfRemovedTree);
         setPictureElement(nullptr);
-        // FIXME: We should call selectImageSource so that source selection is performed, now that we no longer have a <picture> context.
-        m_imageLoader->updateFromElementIgnoringPreviousError(RelevantMutation::Yes);
+        selectImageSource(RelevantMutation::Yes);
     }
 
     m_form = nullptr;

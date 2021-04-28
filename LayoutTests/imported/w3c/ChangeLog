@@ -1,3 +1,13 @@
+2021-04-28  Cameron McCormack  <heycam@apple.com>
+
+        Make img elements perform source selection even when not in the document.
+        https://bugs.webkit.org/show_bug.cgi?id=222801
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc-expected.txt: Added.
+        * web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html: Added.
+
 2021-04-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Fix expectations of a WPT test that works fine
