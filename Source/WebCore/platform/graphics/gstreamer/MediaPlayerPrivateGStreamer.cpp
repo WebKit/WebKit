@@ -2550,19 +2550,28 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
 
 void MediaPlayerPrivateGStreamer::didEnd()
 {
-    GST_INFO_OBJECT(pipeline(), "Playback ended");
-
-    // Synchronize position and duration values to not confuse the
-    // HTMLMediaElement. In some cases like reverse playback the
-    // position is not always reported as 0 for instance.
     m_cachedPosition = MediaTime::invalidTime();
     MediaTime now = currentMediaTime();
-    if (now > MediaTime::zeroTime() && !m_isSeeking) {
+    GST_INFO_OBJECT(pipeline(), "Playback ended, currentMediaTime = %s, duration = %s", now.toString().utf8().data(), durationMediaTime().toString().utf8().data());
+    m_isEndReached = true;
+
+    if (!durationMediaTime().isFinite()) {
+        // From the HTMLMediaElement spec.
+        // If an "infinite" stream ends for some reason, then the duration would change from positive Infinity to the
+        // time of the last frame or sample in the stream, and the durationchange event would be fired.
+        GST_DEBUG_OBJECT(pipeline(), "HTMLMediaElement duration previously infinite or unknown (e.g. live stream), setting it to current position.");
         m_cachedDuration = now;
         m_player->durationChanged();
     }
 
-    m_isEndReached = true;
+    // Synchronize position and duration values to not confuse the
+    // HTMLMediaElement. In some cases like reverse playback the
+    // position is not always reported as 0 for instance.
+    if (!m_isSeeking) {
+        m_cachedPosition = m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
+        GST_DEBUG("Position adjusted: %s", currentMediaTime().toString().utf8().data());
+    }
+
     // Now that playback has ended it's NOT a safe time to send a SELECT_STREAMS event. In fact, as of GStreamer 1.16,
     // playbin3 will crash on a GStreamer assertion (combine->sinkpad being unexpectedly null) if we try. Instead, wait
     // until we get the initial STREAMS_SELECTED message one more time.
