@@ -1,3 +1,30 @@
+2021-04-27  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r276590. rdar://problem/77235569
+
+    [iOS] Update sandbox message filter syntax
+    https://bugs.webkit.org/show_bug.cgi?id=223384
+    
+    Reviewed by Brent Fulgham.
+    
+    Update sandbox message filter syntax on iOS. The previous syntax should also still be supported.
+    
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276590 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-26  Per Arne Vollan  <pvollan@apple.com>
+
+            [iOS] Update sandbox message filter syntax
+            https://bugs.webkit.org/show_bug.cgi?id=223384
+
+            Reviewed by Brent Fulgham.
+
+            Update sandbox message filter syntax on iOS. The previous syntax should also still be supported.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-04-25  Devin Rousso  <drousso@apple.com>
 
         Add `ALWAYS_LOG_WITH_STREAM` macro for easier development/debugging
