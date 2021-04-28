@@ -1,3 +1,31 @@
+2021-04-28  Zalan Bujtas  <zalan@apple.com>
+
+        Remove unused RenderObject::isOutOfFlowRenderFragmentedFlow
+        https://bugs.webkit.org/show_bug.cgi?id=225133
+
+        Reviewed by Simon Fraser.
+
+        Out-of-flow fragmented flows were originally added for CSS regions (r91760) to provide
+        an anonymous container for the region content. This is not to be confused with a multi-column box with
+        "position: absolute/fixed" (such content would still generate an in-flow fragment container).
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeVisibleRectInContainer const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint const):
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::canContainFixedPositionObjects const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::hitTestContents const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::isRenderFragmentedFlow const):
+        (WebCore::RenderLayer::isOutOfFlowRenderFragmentedFlow const): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isInFlowRenderFragmentedFlow const):
+        (WebCore::RenderObject::isOutOfFlowRenderFragmentedFlow const): Deleted.
+
 2021-04-28  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed, fixing GTK and WPE build with external holepunch enabled after r269907.

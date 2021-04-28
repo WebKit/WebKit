@@ -431,8 +431,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
         // FIXME: will-change should create containing blocks on inline boxes (bug 225035)
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned())
         || isSVGForeignObject()
-        || shouldApplyLayoutContainment(*this)
-        || isOutOfFlowRenderFragmentedFlow();
+        || shouldApplyLayoutContainment(*this);
 }
 
 inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
