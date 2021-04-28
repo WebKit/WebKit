@@ -1,3 +1,13 @@
+2021-04-07  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] webkit://gpu should print runtime libwpe and wpebackend-fdo versions
+        https://bugs.webkit.org/show_bug.cgi?id=224298
+
+        Reviewed by Adrian Perez de Castro.
+
+        * UIProcess/API/glib/WebKitProtocolHandler.cpp:
+        (WebKit::WebKitProtocolHandler::handleGPU):
+
 2021-03-26  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed. Update OptionsWPE.cmake and NEWS for the 2.32.0 release
