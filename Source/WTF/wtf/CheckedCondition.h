@@ -31,6 +31,7 @@
 namespace WTF {
 
 // A condition variable type for CheckedLock.
+// For predicates that access the guarded variables, use assertIsHeld(lock).
 class CheckedCondition final {
     WTF_MAKE_NONCOPYABLE(CheckedCondition);
     WTF_MAKE_FAST_ALLOCATED;
@@ -57,7 +58,7 @@ public:
     }
     void wait(CheckedLock& lock) WTF_REQUIRES_LOCK(lock)
     {
-        return m_condition.wait(uncheckedCast(lock));
+        m_condition.wait(uncheckedCast(lock));
     }
     template<typename Functor>
     void wait(CheckedLock& lock, const Functor& predicate) WTF_REQUIRES_LOCK(lock)

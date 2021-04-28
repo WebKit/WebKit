@@ -265,6 +265,7 @@ set(WTF_PUBLIC_HEADERS
     SystemFree.h
     SystemTracing.h
     TaggedArrayStoragePtr.h
+    ThreadAssertions.h
     ThreadGroup.h
     ThreadMessage.h
     ThreadSafetyAnalysis.h

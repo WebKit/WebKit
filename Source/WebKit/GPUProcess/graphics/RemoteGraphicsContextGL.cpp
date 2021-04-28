@@ -69,18 +69,20 @@ RemoteGraphicsContextGL::RemoteGraphicsContextGL(GPUConnectionToWebProcess& gpuC
     , m_renderingBackend(makeRef(renderingBackend))
     , m_renderingResourcesRequest(ScopedWebGLRenderingResourcesRequest::acquire())
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainRunLoop();
 }
 
 RemoteGraphicsContextGL::~RemoteGraphicsContextGL()
 {
     ASSERT(!m_streamConnection);
     ASSERT(!m_context);
+    // Might be destroyed on main thread or stream processing thread.
+    m_streamThread.reset();
 }
 
 void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attributes)
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainRunLoop();
     remoteGraphicsContextGLStreamWorkQueue().dispatch([attributes = WTFMove(attributes), protectedThis = makeRef(*this)]() mutable {
         protectedThis->workQueueInitialize(WTFMove(attributes));
     });
@@ -89,7 +91,7 @@ void RemoteGraphicsContextGL::initialize(GraphicsContextGLAttributes&& attribute
 
 void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&& refFromConnection)
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainRunLoop();
     m_streamConnection->stopReceivingMessages(Messages::RemoteGraphicsContextGL::messageReceiverName(), m_graphicsContextGLIdentifier.toUInt64());
     remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = WTFMove(refFromConnection)]() {
         protectedThis->workQueueUninitialize();
@@ -100,7 +102,9 @@ void RemoteGraphicsContextGL::stopListeningForIPC(Ref<RemoteGraphicsContextGL>&&
 #if PLATFORM(MAC)
 void RemoteGraphicsContextGL::displayWasReconfigured()
 {
+    assertIsMainRunLoop();
     remoteGraphicsContextGLStreamWorkQueue().dispatch([protectedThis = makeRef(*this)]() {
+        assertIsCurrent(protectedThis->m_streamThread);
         protectedThis->m_context->displayWasReconfigured();
     });
 }
@@ -108,6 +112,8 @@ void RemoteGraphicsContextGL::displayWasReconfigured()
 
 void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
+    m_streamThread.reset();
+    assertIsCurrent(m_streamThread);
     platformWorkQueueInitialize(WTFMove(attributes));
     if (m_context) {
         m_context->addClient(*this);
@@ -120,16 +126,19 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
 
 void RemoteGraphicsContextGL::workQueueUninitialize()
 {
+    assertIsCurrent(m_streamThread);
     m_context = nullptr;
     m_streamConnection = nullptr;
 }
 
 void RemoteGraphicsContextGL::didComposite()
 {
+    assertIsCurrent(m_streamThread);
 }
 
 void RemoteGraphicsContextGL::forceContextLost()
 {
+    assertIsCurrent(m_streamThread);
     send(Messages::RemoteGraphicsContextGLProxy::WasLost());
 }
 
@@ -140,11 +149,13 @@ void RemoteGraphicsContextGL::recycleContext()
 
 void RemoteGraphicsContextGL::dispatchContextChangedNotification()
 {
+    assertIsCurrent(m_streamThread);
     send(Messages::RemoteGraphicsContextGLProxy::WasChanged());
 }
 
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
 {
+    assertIsCurrent(m_streamThread);
     if (width && height)
         m_context->reshape(width, height);
     else
@@ -154,6 +165,7 @@ void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
 #if !PLATFORM(COCOA) && !PLATFORM(WIN)
 void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& completionHandler)
 {
+    assertIsCurrent(m_streamThread);
     notImplemented();
     completionHandler();
 }
@@ -161,47 +173,54 @@ void RemoteGraphicsContextGL::prepareForDisplay(CompletionHandler<void()>&& comp
 
 void RemoteGraphicsContextGL::synthesizeGLError(uint32_t error)
 {
+    assertIsCurrent(m_streamThread);
     m_context->synthesizeGLError(static_cast<GCGLenum>(error));
 }
 
 void RemoteGraphicsContextGL::getError(CompletionHandler<void(uint32_t)>&& completionHandler)
 {
+    assertIsCurrent(m_streamThread);
     completionHandler(static_cast<uint32_t>(m_context->getError()));
 }
 
 void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
 {
+    assertIsCurrent(m_streamThread);
     m_context->getExtensions().ensureEnabled(extension);
 }
 
 void RemoteGraphicsContextGL::notifyMarkContextChanged()
 {
+    assertIsCurrent(m_streamThread);
     m_context->markContextChanged();
 }
 
 void RemoteGraphicsContextGL::paintRenderingResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
 {
+    assertIsCurrent(m_streamThread);
     paintImageDataToImageBuffer(m_context->readRenderingResultsForPainting(), imageBuffer, WTFMove(completionHandler));
 }
 
 void RemoteGraphicsContextGL::paintCompositedResultsToCanvas(WebCore::RenderingResourceIdentifier imageBuffer, CompletionHandler<void()>&& completionHandler)
 {
+    assertIsCurrent(m_streamThread);
     paintImageDataToImageBuffer(m_context->readCompositedResultsForPainting(), imageBuffer, WTFMove(completionHandler));
 }
 
 void RemoteGraphicsContextGL::paintImageDataToImageBuffer(RefPtr<WebCore::ImageData>&& imageData, WebCore::RenderingResourceIdentifier target, CompletionHandler<void()>&& completionHandler)
 {
+    assertIsCurrent(m_streamThread);
     // FIXME: We do not have functioning read/write fences in RemoteRenderingBackend. Thus this is synchronous,
     // as are the messages that call these.
     Lock mutex;
     Condition conditionVariable;
     bool isFinished = false;
-    m_renderingBackend->dispatch([&]() mutable {
+    m_renderingBackend->dispatch([&, contextAttributes = m_context->contextAttributes()]() mutable {
         if (auto imageBuffer = m_renderingBackend->remoteResourceCache().cachedImageBuffer(target)) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
             // image buffers and there's no good way to add display lists.
             if (imageData)
-                GraphicsContextGLOpenGL::paintToCanvas(m_context->contextAttributes(), imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
+                GraphicsContextGLOpenGL::paintToCanvas(contextAttributes, imageData.releaseNonNull(), imageBuffer->backendSize(), imageBuffer->context());
             else
                 imageBuffer->context().clearRect({ IntPoint(), imageBuffer->backendSize() });
             // Unfortunately "flush" implementation in RemoteRenderingBackend overloads ordering and effects.
@@ -220,6 +239,7 @@ void RemoteGraphicsContextGL::paintImageDataToImageBuffer(RefPtr<WebCore::ImageD
 
 void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifier mediaPlayerIdentifier, uint32_t texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY, CompletionHandler<void(bool)>&& completionHandler)
 {
+    assertIsCurrent(m_streamThread);
 #if USE(AVFOUNDATION)
     UNUSED_VARIABLE(premultiplyAlpha);
     ASSERT_UNUSED(target, target == GraphicsContextGL::TEXTURE_2D);
@@ -265,6 +285,7 @@ void RemoteGraphicsContextGL::copyTextureFromMedia(WebCore::MediaPlayerIdentifie
 
 void RemoteGraphicsContextGL::simulateEventForTesting(WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting event)
 {
+    assertIsCurrent(m_streamThread);
     // FIXME: only run this in testing mode. https://bugs.webkit.org/show_bug.cgi?id=222544
     if (event == WebCore::GraphicsContextGLOpenGL::SimulatedEventForTesting::Timeout) {
         // Simulate the timeout by just discarding the context. The subsequent messages act like

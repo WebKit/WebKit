@@ -46,7 +46,7 @@ public:
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
     void prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&&) final;
 private:
-    WebCore::GraphicsContextGLIOSurfaceSwapChain m_swapChain;
+    WebCore::GraphicsContextGLIOSurfaceSwapChain m_swapChain WTF_GUARDED_BY_LOCK(m_streamThread);
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY)
     task_id_token_t m_webProcessIdentityToken;
 #endif
@@ -72,11 +72,13 @@ RemoteGraphicsContextGLCocoa::RemoteGraphicsContextGLCocoa(GPUConnectionToWebPro
 
 void RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
+    assertIsCurrent(m_streamThread);
     m_context = GraphicsContextGLOpenGL::createForGPUProcess(WTFMove(attributes), &m_swapChain);
 }
 
 void RemoteGraphicsContextGLCocoa::prepareForDisplay(CompletionHandler<void(WTF::MachSendRight&&)>&& completionHandler)
 {
+    assertIsCurrent(m_streamThread);
     m_context->prepareForDisplay();
     MachSendRight sendRight;
     if (auto* surface = m_swapChain.displayBuffer().surface.get()) {

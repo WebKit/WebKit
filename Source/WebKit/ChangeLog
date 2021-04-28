@@ -1,3 +1,41 @@
+2021-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Asserting that function or variable is accessed in a certain thread should be simpler and more robust
+        https://bugs.webkit.org/show_bug.cgi?id=224971
+
+        Reviewed by Darin Adler.
+
+        Use ThreadAssertions in RemoteGraphicsContextGL implementations
+        as an example.
+
+        * GPUProcess/graphics/RemoteGraphicsContextGL.cpp:
+        (WebKit::RemoteGraphicsContextGL::RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::~RemoteGraphicsContextGL):
+        (WebKit::RemoteGraphicsContextGL::initialize):
+        (WebKit::RemoteGraphicsContextGL::stopListeningForIPC):
+        (WebKit::RemoteGraphicsContextGL::displayWasReconfigured):
+        (WebKit::RemoteGraphicsContextGL::workQueueInitialize):
+        (WebKit::RemoteGraphicsContextGL::workQueueUninitialize):
+        (WebKit::RemoteGraphicsContextGL::didComposite):
+        (WebKit::RemoteGraphicsContextGL::forceContextLost):
+        (WebKit::RemoteGraphicsContextGL::dispatchContextChangedNotification):
+        (WebKit::RemoteGraphicsContextGL::reshape):
+        (WebKit::RemoteGraphicsContextGL::prepareForDisplay):
+        (WebKit::RemoteGraphicsContextGL::synthesizeGLError):
+        (WebKit::RemoteGraphicsContextGL::getError):
+        (WebKit::RemoteGraphicsContextGL::ensureExtensionEnabled):
+        (WebKit::RemoteGraphicsContextGL::notifyMarkContextChanged):
+        (WebKit::RemoteGraphicsContextGL::paintRenderingResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGL::paintCompositedResultsToCanvas):
+        (WebKit::RemoteGraphicsContextGL::paintImageDataToImageBuffer):
+        (WebKit::RemoteGraphicsContextGL::copyTextureFromMedia):
+        (WebKit::RemoteGraphicsContextGL::simulateEventForTesting):
+        * GPUProcess/graphics/RemoteGraphicsContextGL.h:
+        * GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp:
+        (WebKit::RemoteGraphicsContextGLCocoa::platformWorkQueueInitialize):
+        (WebKit::RemoteGraphicsContextGLCocoa::prepareForDisplay):
+        * GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h:
+
 2021-04-27  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Suppress warnings for %llu format specifier for uint64_t.

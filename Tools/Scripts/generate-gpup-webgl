@@ -737,6 +737,7 @@ class webkit_ipc_cpp_impl(object):
         self.process_call()
 
     def process_call(self):
+        self.call_stmts += [ "assertIsCurrent(m_streamThread);" ]
         ext = "getExtensions()." if self.is_extension else ""
 
         in_exprs = ", ".join(str(e) for e in self.in_exprs)

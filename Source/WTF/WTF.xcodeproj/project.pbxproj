@@ -457,6 +457,7 @@
 		7B2739DC2624DAAA0040F182 /* ThreadSafetyAnalysis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSafetyAnalysis.h; sourceTree = "<group>"; };
 		7B2739DD2624DAC30040F182 /* CheckedLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckedLock.h; sourceTree = "<group>"; };
 		7B2739F0263179C30040F182 /* CheckedCondition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckedCondition.h; sourceTree = "<group>"; };
+		7B2739F12632A8940040F182 /* ThreadAssertions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadAssertions.h; sourceTree = "<group>"; };
 		7C137941222326C700D7A824 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
 		7C137942222326D500D7A824 /* ieee.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ieee.h; sourceTree = "<group>"; };
 		7C137943222326D500D7A824 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1283,6 +1284,7 @@
 				E3E158251EADA53C004A079D /* SystemFree.h */,
 				0FB317C31C488001007E395A /* SystemTracing.h */,
 				DEF7FE5F22581AC800C15129 /* TaggedArrayStoragePtr.h */,
+				7B2739F12632A8940040F182 /* ThreadAssertions.h */,
 				E311FB151F0A568B003C08DE /* ThreadGroup.cpp */,
 				E311FB161F0A568B003C08DE /* ThreadGroup.h */,
 				A8A47332151A825B004123FF /* Threading.cpp */,

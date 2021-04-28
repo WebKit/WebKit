@@ -70,6 +70,11 @@ public:
     friend class CheckedCondition;
 };
 
+// Asserts that the lock is held.
+// This can be used in cases where the annotations cannot be added to the function
+// declaration.
+inline void assertIsHeld(const CheckedLock& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock) { ASSERT_UNUSED(lock, lock.isHeld()); }
+
 using AdoptLockTag = std::adopt_lock_t;
 
 // Locker specialization to use with CheckedLock.
@@ -102,5 +107,6 @@ Locker(AdoptLockTag, CheckedLock&) -> Locker<CheckedLock>;
 
 } // namespace WTF
 
+using WTF::assertIsHeld;
 using WTF::CheckedLock;
 using WTF::AdoptLockTag;

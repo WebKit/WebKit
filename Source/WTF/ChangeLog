@@ -1,3 +1,41 @@
+2021-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Asserting that function or variable is accessed in a certain thread should be simpler and more robust
+        https://bugs.webkit.org/show_bug.cgi?id=224971
+
+        Reviewed by Darin Adler.
+
+        Adds support for more fine-grained thread assertion than
+        ASSERT(isMainThread()) / ASSERT(!isMainThread())
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Compiler.h:
+        Add NO_UNIQUE_ADDRESS which can be used to declare members that are empty in
+        RELEASE builds. The declaration avoids increasing the size of the enclosing type.
+        This should be used with ThreadAssertion:
+        class MyThreadAware {
+            ....
+            NO_UNIQUE_ADDRESS ThreadAssertion m_ownerThread;
+        };
+
+        * wtf/ThreadAssertions.h: Added.
+        Add ThreadAssertion class that can be held as a member of a type.
+        This allows consistent assertions that the code in the type
+        runs in the expected thread.
+
+        Add NamedAssertion& WTF::mainThread.
+        Add NamedAssertion& WTF::mainRunLoop.
+        These are only to be used in thread safety analysis phase. These are undefined
+        symbols, it is an error to reference them.
+
+        Adds functions assertIsMainThread() and assertIsMainRunLoop() to replace
+        patterns of  ASSERT(isMainThread()), ASSERT(isMainRunLoop().
+        In addition to behaving as the direct ASSERT behaves, the functions
+        enable compile-time thread safety analysis to know that the calling
+        scope has the assertions. These can be optionally then used in the
+        function and member signatures to require the assertions.
+
 2021-04-28  Daniel Kolesa  <dkolesa@igalia.com>
 
         [WPE][GTK] More correct fixes for stack size issues on musl libc
