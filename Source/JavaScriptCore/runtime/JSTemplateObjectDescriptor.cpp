@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,12 +78,12 @@ JSArray* JSTemplateObjectDescriptor::createTemplateObject(JSGlobalObject* global
     }
 
     objectConstructorFreeze(globalObject, rawObject);
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     templateObject->putDirect(vm, vm.propertyNames->raw, rawObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
 
     objectConstructorFreeze(globalObject, templateObject);
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
 
     return templateObject;
 }

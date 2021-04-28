@@ -49,6 +49,7 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "VMInspector.h"
+#include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
 #include <unicode/uversion.h>
 #include <wtf/Atomics.h>
@@ -3091,6 +3092,7 @@ JSC_DEFINE_HOST_FUNCTION(functionShadowChickenFunctionsOnStack, (JSGlobalObject*
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (auto* shadowChicken = vm.shadowChicken()) {
         scope.release();

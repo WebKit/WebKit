@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3474,7 +3474,7 @@ private:
             JSValue result = JSC::JSWebAssemblyModule::createStub(m_lexicalGlobalObject->vm(), m_lexicalGlobalObject, m_globalObject->webAssemblyModuleStructure(), m_wasmModules->at(index));
             // Since we are cloning a JSWebAssemblyModule, it's impossible for that
             // module to not have been a valid module. Therefore, createStub should
-            // not trow.
+            // not throw.
             scope.releaseAssertNoException();
             m_gcBuffer.appendWithCrashOnOverflow(result);
             return result;
@@ -3496,7 +3496,7 @@ private:
             JSWebAssemblyMemory* result = JSC::JSWebAssemblyMemory::tryCreate(m_lexicalGlobalObject, vm, m_globalObject->webAssemblyMemoryStructure());
             // Since we are cloning a JSWebAssemblyMemory, it's impossible for that
             // module to not have been a valid module. Therefore, createStub should
-            // not trow.
+            // not throw.
             scope.releaseAssertNoException();
             Ref<Wasm::Memory> memory = Wasm::Memory::create(handle.releaseNonNull(),
                 [&vm] (Wasm::Memory::NotifyPressure) { vm.heap.collectAsync(CollectionScope::Full); },

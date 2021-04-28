@@ -1,3 +1,13 @@
+2021-04-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception assertions in light of the TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=225128
+        rdar://76694909
+
+        Reviewed by Robin Morisset.
+
+        * stress/suppress-TerminationException-in-JSFunction-prototypeForConstruction.js: Added.
+
 2021-04-27  Angelos Oikonomopoulos  <angelos@igalia.com>
 
         [JSC] Skip tests failing on Loongson 3A4000

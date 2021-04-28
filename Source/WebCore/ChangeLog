@@ -1,3 +1,83 @@
+2021-04-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception assertions in light of the TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=225128
+        rdar://76694909
+
+        Reviewed by Robin Morisset.
+
+        A few changes plus rebasing bindings test results.
+
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::propagateExceptionSlowPath):
+        (WebCore::throwNotSupportedError):
+        (WebCore::throwInvalidStateError):
+        (WebCore::throwSecurityError):
+        (WebCore::throwDOMSyntaxError):
+        (WebCore::throwDataCloneError):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSC_DEFINE_HOST_FUNCTION):
+        * bindings/js/JSDOMGlobalObjectTask.cpp:
+        * bindings/js/JSDOMMapLike.cpp:
+        (WebCore::getBackingMap):
+        * bindings/js/JSDOMSetLike.cpp:
+        (WebCore::getBackingSet):
+        * bindings/js/JSMicrotaskCallback.h:
+        (WebCore::JSMicrotaskCallback::call):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal):
+        * bindings/js/WritableStream.cpp:
+        (WebCore::WritableStreamInternal::callFunction):
+        (WebCore::WritableStream::lock):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePut):
+        (GeneratePutByIndex):
+        (GenerateDefineOwnProperty):
+
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::put):
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::putByIndex):
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::put):
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::putByIndex):
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::put):
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::putByIndex):
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedSetterNoIdentifier::put):
+        (WebCore::JSTestNamedSetterNoIdentifier::putByIndex):
+        (WebCore::JSTestNamedSetterNoIdentifier::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedSetterThrowingException::put):
+        (WebCore::JSTestNamedSetterThrowingException::putByIndex):
+        (WebCore::JSTestNamedSetterThrowingException::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedSetterWithIdentifier::put):
+        (WebCore::JSTestNamedSetterWithIdentifier::putByIndex):
+        (WebCore::JSTestNamedSetterWithIdentifier::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetter::put):
+        (WebCore::JSTestNamedSetterWithIndexedGetter::putByIndex):
+        (WebCore::JSTestNamedSetterWithIndexedGetter::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::put):
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::putByIndex):
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::defineOwnProperty):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.cpp:
+        (WebCore::JSTestNamedSetterWithLegacyUnforgeableProperties::put):
+        (WebCore::JSTestNamedSetterWithLegacyUnforgeableProperties::putByIndex):
+        (WebCore::JSTestNamedSetterWithLegacyUnforgeableProperties::defineOwnProperty):
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+        (WebCore::HTMLMediaElement::getCurrentMediaControlsStatus):
+
 2021-04-28  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant RenderObject::isInFlowRenderFragmentedFlow

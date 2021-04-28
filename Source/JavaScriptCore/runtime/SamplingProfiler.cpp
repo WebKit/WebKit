@@ -40,6 +40,7 @@
 #include "MarkedBlockSet.h"
 #include "NativeExecutable.h"
 #include "VM.h"
+#include "VMTrapsInlines.h"
 #include "WasmCallee.h"
 #include "WasmCalleeRegistry.h"
 #include "WasmCapabilities.h"
@@ -729,6 +730,7 @@ String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
     if (!callee)
         return String();
 
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSGlobalObject* globalObject = callee->globalObject(vm);
     auto getPropertyIfPureOperation = [&] (const Identifier& ident) -> String {

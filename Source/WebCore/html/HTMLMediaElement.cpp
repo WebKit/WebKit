@@ -7331,18 +7331,19 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
         argList.append(mediaControlsHostJSWrapper);
         ASSERT(!argList.hasOverflowed());
 
-        auto* function = functionValue.toObject(&lexicalGlobalObject);
-        scope.assertNoException();
-        auto callData = JSC::getCallData(vm, function);
-        if (callData.type == JSC::CallData::Type::None)
-            return false;
-
         auto reportExceptionAndReturnFalse = [&] () -> bool {
             auto* exception = scope.exception();
             scope.clearException();
             reportException(&globalObject, exception);
             return false;
         };
+
+        auto* function = functionValue.toObject(&lexicalGlobalObject);
+        RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
+        auto callData = JSC::getCallData(vm, function);
+        if (callData.type == JSC::CallData::Type::None)
+            return false;
+
 
         auto controllerValue = JSC::call(&lexicalGlobalObject, function, callData, &globalObject, argList);
         RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
@@ -7353,7 +7354,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
         // Connect the Media, MediaControllerHost, and Controller so the GC knows about their relationship
         auto* mediaJSWrapperObject = mediaJSWrapper.toObject(&lexicalGlobalObject);
-        scope.assertNoException();
+        RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
         auto controlsHost = JSC::Identifier::fromString(vm, "controlsHost");
 
         ASSERT(!mediaJSWrapperObject->hasProperty(&lexicalGlobalObject, controlsHost));
@@ -7415,7 +7416,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
             return false;
 
         auto* function = functionValue.toObject(&lexicalGlobalObject);
-        scope.assertNoException();
+        RETURN_IF_EXCEPTION(scope, false);
         auto callData = JSC::getCallData(vm, function);
         if (callData.type == JSC::CallData::Type::None)
             return false;
@@ -7459,7 +7460,7 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
             return false;
 
         auto* function = functionValue.toObject(&lexicalGlobalObject);
-        scope.assertNoException();
+        RETURN_IF_EXCEPTION(scope, false);
         auto callData = JSC::getCallData(vm, function);
         JSC::MarkedArgumentBuffer argList;
         ASSERT(!argList.hasOverflowed());

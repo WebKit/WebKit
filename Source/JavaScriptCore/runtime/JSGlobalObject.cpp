@@ -549,6 +549,7 @@ static ObjectPropertyCondition setupAdaptiveWatchpoint(JSGlobalObject* globalObj
 {
     // Performing these gets should not throw.
     VM& vm = globalObject->vm();
+    DeferTermination deferScope(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
     PropertySlot slot(base, PropertySlot::InternalMethodType::Get);
     bool result = base->getOwnPropertySlot(base, globalObject, ident, slot);
@@ -598,6 +599,7 @@ SUPPRESS_ASAN inline void JSGlobalObject::initStaticGlobals(VM& vm)
 
 void JSGlobalObject::init(VM& vm)
 {
+    ASSERT(vm.traps().isDeferringTermination());
     ASSERT(vm.currentThreadIsHoldingAPILock());
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 
@@ -1517,7 +1519,7 @@ bool JSGlobalObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalO
             bool putResult = false;
             if (symbolTablePutTouchWatchpointSet(thisObject, globalObject, propertyName, descriptor.value(), shouldThrow, ignoreReadOnlyErrors, putResult))
                 ASSERT(putResult);
-            scope.assertNoException();
+            RETURN_IF_EXCEPTION(scope, false);
         }
         if (descriptor.writablePresent() && !descriptor.writable() && !entry.isReadOnly()) {
             entry.setReadOnly();
@@ -2188,6 +2190,7 @@ void JSGlobalObject::tryInstallSpeciesWatchpoint(JSObject* prototype, JSObject* 
     RELEASE_ASSERT(!speciesWatchpoint);
 
     VM& vm = this->vm();
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // First we need to make sure that the %prototype%.constructor property points to a %constructor%

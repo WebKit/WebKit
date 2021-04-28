@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "Nodes.h"
+#include "VMTrapsInlines.h"
 
 namespace JSC {
 
@@ -83,6 +84,7 @@ const Identifier& IdentifierArena::makeBigIntDecimalIdentifier(VM& vm, const Ide
     if (radix == 10)
         return identifier;
 
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_CATCH_SCOPE(vm);
     JSValue bigInt = JSBigInt::parseInt(nullptr, vm, identifier.string(), radix, JSBigInt::ErrorParseMode::ThrowExceptions, JSBigInt::ParseIntSign::Unsigned);
     scope.assertNoException();

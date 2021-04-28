@@ -1,3 +1,104 @@
+2021-04-28  Mark Lam  <mark.lam@apple.com>
+
+        Fix exception assertions in light of the TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=225128
+        rdar://76694909
+
+        Reviewed by Robin Morisset.
+
+        Some pre-existing functions assertNoException() or releaseAssertNoException().
+        These assertion may not be valid anymore in light of the TerminationException, and
+        require some fix up:
+
+        1. If it makes sense to convert the assertion into an exception check, then do so.
+
+           For example, see objectPrototypeToString(), slow_path_create_this().
+
+        2. If the assertion is at the end of a function just before it returns, or if the
+           remaining code in the function will not be affected by the pending exception,
+           then we can replace the assertion as follows:
+
+               assertNoException() => assertNoExceptionExceptTermination()
+               releaseAssertNoException() => releaseAssertNoExceptionExceptTermination()
+
+           For example, see objectPrototypeHasOwnProperty(), JSObject::getOwnNonIndexPropertyNames().
+
+        3. If the assertion is in a function where perf is not absolutely critical, and the
+           function isn't calling any other functions that will re-enter the VM or potentially
+           get stuck in an infinite loop, then we can use a DeferTermination scope to defer
+           termination.
+
+           For example, see Debugger::pauseIfNeeded(), SamplingProfiler::StackFrame::nameFromCallee().
+
+        4. If the assertion is in an initializer function is only run once and adding
+           exception checks would complicate the code more than it's worth (an engineering
+           judgement), then use a DeferTermination scope.
+
+           For example, see ProgramExecutable::initializeGlobalProperties(), setupAdaptiveWatchpoint().
+
+           Some leaf (or near-leaf) functions that currently DECLARE_CATCH_SCOPE() may also
+           fall under this category.
+
+           For example, see JSFunction::prototypeForConstruction().
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addBigIntConstant):
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::pauseIfNeeded):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * interpreter/Interpreter.cpp:
+        (JSC::notifyDebuggerOfUnwinding):
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::debug):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::functionsOnStack):
+        * jsc.cpp:
+        (runWithOptions):
+        * parser/ParserArena.cpp:
+        (JSC::IdentifierArena::makeBigIntDecimalIdentifier):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::finishCreation):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::sanitizedMessageString):
+        (JSC::ErrorInstance::sanitizedNameString):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::assertNoExceptionExceptTermination):
+        (JSC::ExceptionScope::releaseAssertNoExceptionExceptTermination):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::prototypeForConstruction):
+        * runtime/JSGenericTypedArrayViewPrototypeFunctions.h:
+        (JSC::genericTypedArrayViewProtoFuncIncludes):
+        (JSC::genericTypedArrayViewProtoFuncIndexOf):
+        (JSC::genericTypedArrayViewProtoFuncLastIndexOf):
+        (JSC::genericTypedArrayViewPrivateFuncSubarrayCreate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::setupAdaptiveWatchpoint):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::defineOwnProperty):
+        (JSC::JSGlobalObject::tryInstallSpeciesWatchpoint):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::printableModuleKey):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ordinaryToPrimitive const):
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        * runtime/JSTemplateObjectDescriptor.cpp:
+        (JSC::JSTemplateObjectDescriptor::createTemplateObject):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectPrototypeHasOwnProperty):
+        (JSC::objectPrototypeToString):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+
 2021-04-28  Daniel Kolesa  <dkolesa@igalia.com>
 
         [WPE][GTK] More correct fixes for stack size issues on musl libc

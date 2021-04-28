@@ -3008,7 +3008,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
                 // If the passed file isn't an absolute path append "./" so the module loader doesn't think this is a bare-name specifier.
                 fileName = fileName.startsWith('/') ? fileName : makeString("./", fileName);
                 promise = loadAndEvaluateModule(globalObject, fileName, jsUndefined(), jsUndefined());
-                scope.releaseAssertNoException();
+                RETURN_IF_EXCEPTION(scope, void());
             } else {
                 if (!fetchScriptFromLocalFileSystem(fileName, scriptBuffer)) {
                     success = false; // fail early so we can catch missing files
@@ -3042,7 +3042,7 @@ static void runWithOptions(GlobalObject* globalObject, CommandLine& options, boo
             });
 
             promise->then(globalObject, fulfillHandler, rejectHandler);
-            scope.releaseAssertNoException();
+            scope.releaseAssertNoExceptionExceptTermination();
             vm.drainMicrotasks();
         } else {
             NakedPtr<Exception> evaluationException;

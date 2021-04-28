@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,7 +44,7 @@ static inline JSC::JSValue callFunction(JSC::JSGlobalObject& lexicalGlobalObject
     auto callData = JSC::getCallData(vm, jsFunction);
     ASSERT(callData.type != JSC::CallData::Type::None);
     auto result = call(&lexicalGlobalObject, jsFunction, callData, thisValue, arguments);
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
     return result;
 }
 }
@@ -102,7 +102,7 @@ void WritableStream::lock()
     ASSERT(!args.hasOverflowed());
 
     JSC::construct(&lexicalGlobalObject, constructor, constructData, args);
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
 }
 
 bool WritableStream::isLocked() const

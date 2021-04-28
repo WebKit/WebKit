@@ -78,7 +78,7 @@ void JSModuleNamespaceObject::finishCreation(JSGlobalObject* globalObject, Abstr
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-isextensible
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-preventextensions
     methodTable(vm)->preventExtensions(this, globalObject);
-    scope.assertNoException();
+    scope.assertNoExceptionExceptTermination();
 }
 
 void JSModuleNamespaceObject::destroy(JSCell* cell)
