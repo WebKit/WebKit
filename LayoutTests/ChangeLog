@@ -1,3 +1,9 @@
+2021-04-27  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html is failing after r276635.
+
+        * platform/glib/TestExpectations:
+
 2021-04-27  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Default Audits script are minified in release builds
