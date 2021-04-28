@@ -1,3 +1,28 @@
+2021-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Using a modifier key on an element makes it stop matching :focus-visible
+        https://bugs.webkit.org/show_bug.cgi?id=225075
+
+        Reviewed by Ryosuke Niwa.
+
+        When we used a modifier key on a element that was matching :focus-visible, we stopped matching :focus-visible.
+        That was wrong, we shouldn't just start matching :focus-visible when a modifier key is used but not the other way around.
+
+        This patches fixed that without doing any work if the element is already matching :focus-visible when the user type a key.
+
+        Test: imported/w3c/web-platform-tests/css/selectors/focus-visible-021.html
+
+        * dom/Element.cpp:
+        (WebCore::shouldAlwaysHaveFocusVisibleWhenFocused): Helper method for inputs and content editable elements.
+        (WebCore::Element::setFocus): Use the new helper method.
+        (WebCore::Element::setHasFocusVisible): Add asserts to avoid setting/unsetting :focus-visible flag wrongly.
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable const): Just mark as const.
+        (WebCore::Node::isContentRichlyEditable const): Ditto.
+        * dom/Node.h: Ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::internalKeyEvent): Don't do anything regarding :focus-visible flag if the element already matches :focus-visible.
+
 2021-04-28  Cameron McCormack  <heycam@apple.com>
 
         Make img elements perform source selection even when not in the document.

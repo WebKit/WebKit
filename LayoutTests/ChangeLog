@@ -1,3 +1,12 @@
+2021-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Using a modifier key on an element makes it stop matching :focus-visible
+        https://bugs.webkit.org/show_bug.cgi?id=225075
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/ios/TestExpectations: Skip new test.
+
 2021-04-28  Cameron McCormack  <heycam@apple.com>
 
         Fix some test typos.
