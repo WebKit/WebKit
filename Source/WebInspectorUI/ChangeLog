@@ -1,3 +1,35 @@
+2021-04-28  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: CSS Grid - measure usage of grid overlay options
+        https://bugs.webkit.org/show_bug.cgi?id=225060
+        <rdar://75843294>
+
+        Reviewed by BJ Burg.
+
+        Add telemetry instrumentation to track grid overlay configurations and time spent using them.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Controllers/GridOverlayConfigurationDiagnosticEventRecorder.js: Added.
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.get eventSamplingInterval):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.setup):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.teardown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleGridOverlayShown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleGridOverlayHidden):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype.handleEvent):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._startEventSamplingTimer):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._stopEventSamplingTimer):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._sampleCurrentOverlayConfiguration):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._didObserveUserInteraction):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleWindowFocus):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleWindowBlur):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleWindowKeyDown):
+        (WI.GridOverlayConfigurationDiagnosticEventRecorder.prototype._handleWindowMouseDown):
+        * UserInterface/Controllers/OverlayManager.js:
+        (WI.OverlayManager.prototype.hasVisibleGridOverlays):
+        * UserInterface/Main.html:
+
 2021-04-27  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Rename "Open in New Tab" context menu item to "Open in New Window"

@@ -590,8 +590,10 @@ WI.contentLoaded = function()
         WI.diagnosticController.addRecorder(new WI.TabActivityDiagnosticEventRecorder(WI.diagnosticController));
         WI.diagnosticController.addRecorder(new WI.TabNavigationDiagnosticEventRecorder(WI.diagnosticController));
 
-        if (InspectorBackend.hasCommand("DOM.showGridOverlay"))
+        if (InspectorBackend.hasCommand("DOM.showGridOverlay")) {
             WI.diagnosticController.addRecorder(new WI.GridOverlayDiagnosticEventRecorder(WI.diagnosticController));
+            WI.diagnosticController.addRecorder(new WI.GridOverlayConfigurationDiagnosticEventRecorder(WI.diagnosticController));
+        }
     }
 };
 
