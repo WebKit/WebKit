@@ -848,6 +848,7 @@ runtime/IntlSegmenterConstructor.cpp
 runtime/IntlSegmenterPrototype.cpp
 runtime/IntlSegments.cpp
 runtime/IntlSegmentsPrototype.cpp
+runtime/IntlWorkaround.cpp @no-unify // Confine U_HIDE_DRAFT_API's effect to this file.
 runtime/IteratorOperations.cpp
 runtime/IteratorPrototype.cpp
 runtime/JSArray.cpp

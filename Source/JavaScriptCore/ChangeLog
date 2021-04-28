@@ -1,3 +1,30 @@
+2021-04-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        ICU 69 deprecates ubrk_safeClone in favor of ubrk_clone
+        https://bugs.webkit.org/show_bug.cgi?id=224093
+
+        Reviewed by Yusuke Suzuki.
+
+        In a shining example of "disappointing library practices", ICU 69 deprecates ubrk_safeClone in favor of
+        a new *draft* API ubrk_clone, meaning that no function with this functionality is exposed by default.
+
+        This patch introduces a function cloneUBreakIterator to abstract over this change; however, since we need to:
+
+          1. confine the effects of disabling U_HIDE_DRAFT_API to a non-unified implementation file
+          2. still be able to include ubrk.h from IntlSegmenter.h to instantiate ICUDeleter<ubrk_close> (*not* `clone`!)
+
+        ...the new helper function is introduced in a *headerless* implementation file, IntlWorkaround.cpp.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/IntlSegmenter.cpp:
+        (JSC::IntlSegmenter::segment const):
+        * runtime/IntlSegmenter.h:
+        * runtime/IntlSegments.cpp:
+        (JSC::IntlSegments::createSegmentIterator):
+        * runtime/IntlWorkaround.cpp: Added.
+        (JSC::cloneUBreakIterator):
+
 2021-03-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] JSC crashes if a function expects a parameter but doesn't receive any
