@@ -1,3 +1,18 @@
+2021-04-28  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Accurize expected result to 0.5 pixel for some contentSpaceAround tests in abspos
+        https://bugs.webkit.org/show_bug.cgi?id=225145
+
+        Reviewed by Manuel Rego Casasnovas.
+        
+        There is a 0.5 pixel difference on expected data width for some contentSpaceAround tests in grid
+        among platforms. This change is to sync the change in WPT and update expectation files.
+
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-001-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-001.html:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-rtl-001-expected.txt:
+        * web-platform-tests/css/css-grid/abspos/grid-positioned-items-content-alignment-rtl-001.html:
+
 2021-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Using a modifier key on an element makes it stop matching :focus-visible
