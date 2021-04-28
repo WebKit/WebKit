@@ -258,7 +258,7 @@
             (apply-message-filter
                 (deny (with telemetry)
                     iokit-external-trap)
-                (deny (with telemetry) (with message "AGXDeviceUserClient")
+                (allow (with telemetry) (with message "AGXDeviceUserClient")
                     iokit-async-external-method
                     iokit-external-method
                 )
@@ -432,7 +432,7 @@
             (deny (with telemetry)
                 iokit-async-external-method
                 iokit-external-trap)
-            (deny (with telemetry) (with message "IOSurfaceRootUserClient")
+            (allow (with telemetry) (with message "IOSurfaceRootUserClient")
                 iokit-external-method)
             (allow iokit-external-method
                 (iokit-method-number
@@ -444,7 +444,6 @@
                     9
                     10
                     11
-                    12
                     13
                     14
                     15
@@ -496,7 +495,7 @@
                 (deny (with telemetry)
                     iokit-async-external-method
                     iokit-external-trap)
-                (deny (with telemetry) (with message "IOSurfaceAcceleratorClient")
+                (allow (with telemetry) (with message "IOSurfaceAcceleratorClient")
                     iokit-external-method)
                 (allow iokit-external-method
                     (iokit-method-number
