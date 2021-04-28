@@ -1,3 +1,13 @@
+2021-04-12  Philippe Normand  <pnormand@igalia.com>
+
+        [MSE][GStreamer] Crash in WebCore::PlaybackPipeline::addSourceBuffer when setting duration and preload is set to none
+        https://bugs.webkit.org/show_bug.cgi?id=224260
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * media/media-source/media-source-no-preload-set-duration-crash-expected.txt: Added.
+        * media/media-source/media-source-no-preload-set-duration-crash.html: Added.
+
 2021-03-24  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r274870) fast/canvas/webgl/texImage2D-mse-flipY-true.html and fast/canvas/webgl/texImage2D-mse-flipY-false.html are crashing

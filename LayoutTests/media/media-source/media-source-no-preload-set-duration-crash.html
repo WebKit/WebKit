@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-no-preload-set-duration-crash</title>
+    <script src="media-source-loader.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    var loader;
+    var source;
+
+    function runTest() {
+        findMediaElement();
+
+        loader = new MediaSourceLoader('content/test-fragmented-manifest.json');
+        loader.onload = mediaDataLoaded;
+    }
+
+    function mediaDataLoaded() {
+        source = new MediaSource();
+        waitForEvent('sourceopen', sourceOpen, false, false, source);
+        run('video.src = URL.createObjectURL(source)');
+    }
+
+    function sourceOpen() {
+        consoleWrite('Setting duration when preload is disabled should trigger no crash.');
+        run('source.duration = 42');
+        consoleWrite('Adding a SourceBuffer when preload is disabled should trigger no crash.');
+        run('sourceBuffer = source.addSourceBuffer(loader.type())');
+        endTest();
+    }
+    </script>
+</head>
+<body onload="runTest()">
+    <video preload="none"></video>
+</body>
+</html>
