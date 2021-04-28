@@ -1,3 +1,23 @@
+2021-04-28  Youenn Fablet  <youenn@apple.com>
+
+        Set audio transceiver nMax to 1
+        https://bugs.webkit.org/show_bug.cgi?id=225149
+        <rdar://75956639>
+
+        Reviewed by Alex Christensen.
+
+        Implement step 8.4 of https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection-addtransceiver and set nMax for audio to 1.
+
+        Test: webrtc/audio-addTransceiver.html
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::createTransceiverBackends):
+        (WebCore::LibWebRTCMediaEndpoint::addTransceiver):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.cpp:
+        (WebCore::fromRtpTransceiverInit):
+        * Modules/mediastream/libwebrtc/LibWebRTCUtils.h:
+
 2021-04-28  Chris Dumez  <cdumez@apple.com>
 
         Drop ModernUnprefixedWebAudio & AudioWorklet experimental feature flags

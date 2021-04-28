@@ -317,14 +317,20 @@ webrtc::RtpTransceiverDirection fromRTCRtpTransceiverDirection(RTCRtpTransceiver
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& init)
+webrtc::RtpTransceiverInit fromRtpTransceiverInit(const RTCRtpTransceiverInit& init, cricket::MediaType type)
 {
     webrtc::RtpTransceiverInit rtcInit;
     rtcInit.direction = fromRTCRtpTransceiverDirection(init.direction);
     for (auto& stream : init.streams)
         rtcInit.stream_ids.push_back(stream->id().utf8().data());
-    for (auto& encoding : init.sendEncodings)
-        rtcInit.send_encodings.push_back(fromRTCEncodingParameters(encoding));
+
+    if (type == cricket::MediaType::MEDIA_TYPE_AUDIO) {
+        if (!init.sendEncodings.isEmpty())
+            rtcInit.send_encodings.push_back(fromRTCEncodingParameters(init.sendEncodings[0]));
+    } else {
+        for (auto& encoding : init.sendEncodings)
+            rtcInit.send_encodings.push_back(fromRTCEncodingParameters(encoding));
+    }
     return rtcInit;
 }
 

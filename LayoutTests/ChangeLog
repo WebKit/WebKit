@@ -1,3 +1,14 @@
+2021-04-28  Youenn Fablet  <youenn@apple.com>
+
+        Set audio transceiver nMax to 1
+        https://bugs.webkit.org/show_bug.cgi?id=225149
+        <rdar://75956639>
+
+        Reviewed by Alex Christensen.
+
+        * webrtc/audio-addTransceiver-expected.txt: Added.
+        * webrtc/audio-addTransceiver.html: Added.
+
 2021-04-28  Tim Nguyen  <ntim@apple.com>
 
         Use will-change: opacity instead of will-change: transform in fixed-inside-sticky-no-stacking-context-2.html
