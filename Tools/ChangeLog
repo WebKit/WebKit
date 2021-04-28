@@ -1,3 +1,12 @@
+2021-04-27  Aakash Jain  <aakash_jain@apple.com>
+
+        Delete unused iExploder
+        https://bugs.webkit.org/show_bug.cgi?id=225118
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * iExploder: Removed.
+
 2021-04-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Add a Condition type that supports thread safety analysis
