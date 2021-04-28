@@ -1,3 +1,15 @@
+2021-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to query whether a URL would be upgraded to HTTPS
+        https://bugs.webkit.org/show_bug.cgi?id=225154
+        <rdar://77269904>
+
+        Reviewed by Geoff Garen.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (+[WKWebView _shouldUpgradeToHTTPS:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2021-04-28  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] [GPU] The UI process should issue mach sandbox extensions to 'iconservices'

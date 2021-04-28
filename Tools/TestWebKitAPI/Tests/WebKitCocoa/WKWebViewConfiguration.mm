@@ -143,4 +143,9 @@ TEST(WebKit, ConfigurationHTTPSUpgrade)
     checkRequestBytesStartsWith("CONNECT www.opengl.org:443 HTTP/1.1\r\n");
     runTest(false);
     checkRequestBytesStartsWith("GET http://www.opengl.org/ HTTP/1.1\r\n");
+    
+    EXPECT_TRUE([WKWebView _willUpgradeToHTTPS:[NSURL URLWithString:@"http://www.opengl.org/"]]);
+    EXPECT_FALSE([WKWebView _willUpgradeToHTTPS:[NSURL URLWithString:@"https://www.opengl.org/"]]);
+    EXPECT_FALSE([WKWebView _willUpgradeToHTTPS:[NSURL URLWithString:@"custom-scheme://www.opengl.org/"]]);
+    EXPECT_FALSE([WKWebView _willUpgradeToHTTPS:[NSURL URLWithString:@"http://example.com/"]]);
 }

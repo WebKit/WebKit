@@ -124,6 +124,7 @@
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
+#import <WebCore/ContentExtensionsBackend.h>
 #import <WebCore/ElementContext.h>
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/JSDOMExceptionHandling.h>
@@ -2515,6 +2516,11 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 + (BOOL)_handlesSafeBrowsing
 {
     return true;
+}
+
++ (BOOL)_willUpgradeToHTTPS:(NSURL *)url
+{
+    return WebCore::ContentExtensions::ContentExtensionsBackend::shouldBeMadeSecure(url);
 }
 
 - (void)_showSafeBrowsingWarningWithTitle:(NSString *)title warning:(NSString *)warning details:(NSAttributedString *)details completionHandler:(void(^)(BOOL))completionHandler

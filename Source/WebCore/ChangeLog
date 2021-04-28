@@ -1,3 +1,17 @@
+2021-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI to query whether a URL would be upgraded to HTTPS
+        https://bugs.webkit.org/show_bug.cgi?id=225154
+        <rdar://77269904>
+
+        Reviewed by Geoff Garen.
+
+        Covered by API tests.
+
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::shouldBeMadeSecure):
+        * contentextensions/ContentExtensionsBackend.h:
+
 2021-04-28  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [clang] Remove implicit cast related warnings
