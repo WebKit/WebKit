@@ -1,3 +1,15 @@
+2021-04-28  Chris Gambrell  <cgambrell@apple.com>
+
+        [ Win ] 4 http/tests/security/contentSecurityPolicy/ tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=225071
+        <rdar://problem/77172923>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/resources/redirect.py:
+        (add_cache_control):
+        (addCacheControl): Deleted.
+
 2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fine-tune some more selection behaviors in image overlays
