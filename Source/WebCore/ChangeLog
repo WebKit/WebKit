@@ -1,3 +1,24 @@
+2021-04-27  Chris Dumez  <cdumez@apple.com>
+
+        Improve local storage size estimation for quota limitation
+        https://bugs.webkit.org/show_bug.cgi?id=225123
+
+        Reviewed by Alex Christensen.
+
+        Improve local storage size estimation for quota limitation:
+        - Rely on String::sizeInBytes() to compute the String size, instead of using
+          String::length() * sizeof(UChar)
+        - Make estimation consistent between StorageMap & LocalStorageDatabase
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::setItem):
+        (WebCore::StorageMap::setItemIgnoringQuota):
+        (WebCore::StorageMap::removeItem):
+        (WebCore::StorageMap::clear):
+        (WebCore::StorageMap::importItems):
+        (WebCore::StorageMap::Impl::copy const):
+        * storage/StorageMap.h:
+
 2021-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd

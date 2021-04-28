@@ -75,10 +75,10 @@ private:
 
     String m_databasePath;
     mutable WebCore::SQLiteDatabase m_database;
-    unsigned m_quotaInBytes { 0 };
+    const unsigned m_quotaInBytes { 0 };
     bool m_failedToOpenDatabase { false };
     bool m_isClosed { false };
-    Optional<uint64_t> m_databaseSize;
+    Optional<unsigned> m_databaseSize;
 
     std::unique_ptr<WebCore::SuddenTerminationDisabler> m_disableSuddenTerminationWhileWritingToLocalStorage;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_clearStatement;

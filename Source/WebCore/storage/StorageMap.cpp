@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageMap.h"
 
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {
@@ -93,26 +94,19 @@ void StorageMap::setItem(const String& key, const String& value, String& oldValu
     if (m_impl->refCount() > 1)
         m_impl = m_impl->copy();
 
-    // Quota tracking.  This is done in a couple of steps to keep the overflow tracking simple.
-    unsigned newLength = m_impl->currentLength;
-    bool overflow = newLength + value.length() < newLength;
-    newLength += value.length();
-
     oldValue = m_impl->map.get(key);
-    overflow |= newLength - oldValue.length() > newLength;
-    newLength -= oldValue.length();
 
-    unsigned adjustedKeyLength = oldValue.isNull() ? key.length() : 0;
-    overflow |= newLength + adjustedKeyLength < newLength;
-    newLength += adjustedKeyLength;
-
-    ASSERT(!overflow);  // Overflow is bad...even if quotas are off.
-    bool overQuota = newLength > m_quotaSize / sizeof(UChar);
-    if (m_quotaSize != noQuota && (overflow || overQuota)) {
+    // Quota tracking. This is done in a couple of steps to keep the overflow tracking simple.
+    CheckedUint32 newSize = m_impl->currentSize;
+    newSize -= oldValue.sizeInBytes();
+    newSize += value.sizeInBytes();
+    if (oldValue.isNull())
+        newSize += key.sizeInBytes();
+    if (m_quotaSize != noQuota && (newSize.hasOverflowed() || newSize.unsafeGet() > m_quotaSize)) {
         quotaException = true;
         return;
     }
-    m_impl->currentLength = newLength;
+    m_impl->currentSize = newSize.unsafeGet();
 
     HashMap<String, String>::AddResult addResult = m_impl->map.add(key, value);
     if (!addResult.isNewEntry)
@@ -123,7 +117,7 @@ void StorageMap::setItem(const String& key, const String& value, String& oldValu
 
 void StorageMap::setItemIgnoringQuota(const String& key, const String& value)
 {
-    SetForScope<unsigned> quotaSizeChange(m_quotaSize, static_cast<unsigned>(noQuota));
+    SetForScope<unsigned> quotaSizeChange(m_quotaSize, noQuota);
 
     String oldValue;
     bool quotaException;
@@ -138,13 +132,14 @@ void StorageMap::removeItem(const String& key, String& oldValue)
         m_impl = m_impl->copy();
 
     oldValue = m_impl->map.take(key);
-    if (!oldValue.isNull()) {
-        invalidateIterator();
-        ASSERT(m_impl->currentLength - key.length() <= m_impl->currentLength);
-        m_impl->currentLength -= key.length();
-    }
-    ASSERT(m_impl->currentLength - oldValue.length() <= m_impl->currentLength);
-    m_impl->currentLength -= oldValue.length();
+    if (oldValue.isNull())
+        return;
+
+    invalidateIterator();
+    ASSERT(m_impl->currentSize - key.sizeInBytes() <= m_impl->currentSize);
+    m_impl->currentSize -= key.sizeInBytes();
+    ASSERT(m_impl->currentSize - oldValue.sizeInBytes() <= m_impl->currentSize);
+    m_impl->currentSize -= oldValue.sizeInBytes();
 }
 
 void StorageMap::clear()
@@ -154,7 +149,7 @@ void StorageMap::clear()
         return;
     }
     m_impl->map.clear();
-    m_impl->currentLength = 0;
+    m_impl->currentSize = 0;
 }
 
 bool StorageMap::contains(const String& key) const
@@ -168,8 +163,8 @@ void StorageMap::importItems(HashMap<String, String>&& items)
         // Fast path.
         m_impl->map = WTFMove(items);
         for (auto& pair : m_impl->map) {
-            ASSERT(m_impl->currentLength + pair.key.length() + pair.value.length() >= m_impl->currentLength);
-            m_impl->currentLength += (pair.key.length() + pair.value.length());
+            ASSERT(m_impl->currentSize + pair.key.sizeInBytes() + pair.value.sizeInBytes() >= m_impl->currentSize);
+            m_impl->currentSize += (pair.key.sizeInBytes() + pair.value.sizeInBytes());
         }
         return;
     }
@@ -178,9 +173,9 @@ void StorageMap::importItems(HashMap<String, String>&& items)
         auto& key = item.key;
         auto& value = item.value;
 
-        ASSERT(m_impl->currentLength + key.length() + value.length() >= m_impl->currentLength);
-        m_impl->currentLength += (key.length() + value.length());
-        
+        ASSERT(m_impl->currentSize + key.sizeInBytes() + value.sizeInBytes() >= m_impl->currentSize);
+        m_impl->currentSize += (key.sizeInBytes() + value.sizeInBytes());
+
         auto result = m_impl->map.add(WTFMove(key), WTFMove(value));
         ASSERT_UNUSED(result, result.isNewEntry); // True if the key didn't exist previously.
     }
@@ -190,7 +185,7 @@ Ref<StorageMap::Impl> StorageMap::Impl::copy() const
 {
     auto copy = Impl::create();
     copy->map = map;
-    copy->currentLength = currentLength;
+    copy->currentSize = currentSize;
     return copy;
 }
 
