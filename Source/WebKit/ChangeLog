@@ -1,3 +1,75 @@
+2021-04-28  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Suppress warnings for %{private}s format specifier
+        https://bugs.webkit.org/show_bug.cgi?id=225137
+
+        Reviewed by Alex Christensen.
+
+        Add PRIVATE_LOG_STRING macro which is defined depending on if
+        os_log() is used or rather old printf().
+        See also: https://bugs.webkit.org/show_bug.cgi?id=207478
+
+        * NetworkProcess/Classifier/ResourceLoadStatisticsDatabaseStore.cpp:
+        (WebKit::ResourceLoadStatisticsDatabaseStore::openITPDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::enableForeignKeys):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::columnsForTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingColumnsToTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::renameColumnInTable):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isEmpty const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertObservedDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::relationshipExists const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainID const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertDomainRelationshipList):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::populateFromMemoryStore):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistic):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::mergeStatistics):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::incrementRecordsDeletedCountForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::recursivelyFindNonPrevalentDomainsThatRedirectedToThisDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAsPrevalentIfHasRedirectedToPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::requestStorageAccessUnderOpener):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::grandfatherDataForDomains):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensurePrevalentResourcesForDebugMode):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::hasHadUserInteraction):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setDomainsAsPrevalent):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::predicateValueForDomain const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrevalentResource):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setGrandfathered):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::setIsScheduledForAllButCookieDataRemoval):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getMostRecentlyUpdatedTimestamp const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::ensureResourceStatisticsForRegistrableDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearDatabaseContents):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::removeDataForDomain):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::cookieAccess):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearGrandfathering):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::pruneStatisticsIfNeeded):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateLastSeen):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateDataRecordsRemoved):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::isCorrectSubStatisticsCount):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::getDomainStringFromDomainID const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::appendSubStatisticList const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::resourceToString const):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::domainIDExistsInDatabase):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::updateOperatingDatesParameters):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::includeTodayAsOperatingDateIfNecessary):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertExpiredStatisticForTesting):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::findPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::insertPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAllUnattributedPrivateClickMeasurementAsExpiredForTesting):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::removeUnattributed):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::allAttributedPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearExpiredPrivateClickMeasurement):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::privateClickMeasurementToString):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::clearSentAttribution):
+        (WebKit::ResourceLoadStatisticsDatabaseStore::markAttributedPrivateClickMeasurementsAsExpiredForTesting):
+
 2021-04-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         When IPC testing API is enabled, GPU process shouldn't kill Web Process

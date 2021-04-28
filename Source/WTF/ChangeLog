@@ -1,3 +1,16 @@
+2021-04-28  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Suppress warnings for %{private}s format specifier
+        https://bugs.webkit.org/show_bug.cgi?id=225137
+
+        Reviewed by Alex Christensen.
+
+        Add PRIVATE_LOG_STRING macro which is defined depending on if
+        os_log() is used or rather old printf().
+        See also: https://bugs.webkit.org/show_bug.cgi?id=207478
+
+        * wtf/Assertions.h:
+
 2021-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Remove support for NPAPI plugins in WebView
