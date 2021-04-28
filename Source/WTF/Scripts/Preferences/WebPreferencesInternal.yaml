@@ -536,6 +536,16 @@ MouseEventsSimulationEnabled:
     WebKit:
       default: false
 
+NPAPIPlugInsEnabledForTestingInWebKitLegacy:
+  type: bool
+  humanReadableName: "NPAPI Plug-Ins Enabled In WebKitLegacy"
+  humanReadableDescription: "Enable NPAPI Plug-Ins for testing"
+  webcoreBinding: none
+  exposed: [ WebKitLegacy ]
+  defaultValue:
+    WebKitLegacy:
+      default: false
+
 OffscreenCanvasEnabled:
   type: bool
   humanReadableName: "OffscreenCanvas"

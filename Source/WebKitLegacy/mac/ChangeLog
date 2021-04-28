@@ -1,3 +1,17 @@
+2021-04-28  Alex Christensen  <achristensen@webkit.org>
+
+        Remove support for NPAPI plugins in WebView
+        https://bugs.webkit.org/show_bug.cgi?id=224449
+
+        Reviewed by Geoffrey Garen.
+
+        In r275912 I turned off all plugin support in WebView after looking into use of NP_Initialize, the entry point for NPAPI plugins.
+        That was too aggressive, as we found some use of the older WebKit plugin entry point, plugInViewWithArguments, and reverted in r276652.
+        This cuts out only support for NPAPI plugins for now.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin):
+
 2021-04-28  Chris Dumez  <cdumez@apple.com>
 
         Drop ModernUnprefixedWebAudio & AudioWorklet experimental feature flags

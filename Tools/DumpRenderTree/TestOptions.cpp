@@ -89,6 +89,7 @@ const TestFeatures& TestOptions::defaults()
             { "MediaDevicesEnabled", true },
             { "MediaPreloadingEnabled", true },
             { "MockScrollbarsEnabled", true },
+            { "NPAPIPlugInsEnabledForTestingInWebKitLegacy", true },
             { "NeedsStorageAccessFromFileURLsQuirk", false },
             { "OfflineWebApplicationCacheEnabled", true },
             { "RequiresUserGestureForAudioPlayback", false },
