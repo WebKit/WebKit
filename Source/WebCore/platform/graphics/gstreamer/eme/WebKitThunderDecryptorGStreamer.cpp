@@ -162,7 +162,7 @@ static bool decrypt(WebKitMediaCommonEncryptionDecrypt* decryptor, GstBuffer* iv
     context.dataBuffer = buffer;
     context.numSubsamples = subsampleCount;
     context.subsamplesBuffer = subsampleCount ? subsamplesBuffer : nullptr;
-    context.cdmProxyDecryptionClient = webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(self);
+    context.cdmProxyDecryptionClient = webKitMediaCommonEncryptionDecryptGetCDMProxyDecryptionClient(decryptor);
     bool result = priv->cdmProxy->decrypt(context);
 
     return result;
