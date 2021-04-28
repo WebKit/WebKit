@@ -71,11 +71,17 @@ void JITCompiler::linkOSRExits()
         for (unsigned i = 0; i < m_osrExit.size(); ++i) {
             OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
             Vector<Label> labels;
+
+            auto appendLabel = [&] (Label label) {
+                RELEASE_ASSERT(label.isSet());
+                labels.append(label);
+            };
+            
             if (!info.m_failureJumps.empty()) {
                 for (unsigned j = 0; j < info.m_failureJumps.jumps().size(); ++j)
-                    labels.append(info.m_failureJumps.jumps()[j].label());
-            } else
-                labels.append(info.m_replacementSource);
+                    appendLabel(info.m_failureJumps.jumps()[j].label());
+            } else if (info.m_replacementSource.isSet())
+                appendLabel(info.m_replacementSource);
             m_exitSiteLabels.append(labels);
         }
     }

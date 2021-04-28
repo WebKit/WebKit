@@ -334,7 +334,7 @@ void SpeculativeJIT::emitInvalidationPoint(Node* node)
         UncountableInvalidation, JSValueSource(), MethodOfGettingAValueProfile(),
         this, m_stream->size()));
     info.m_replacementSource = m_jit.watchpointLabel();
-    ASSERT(info.m_replacementSource.isSet());
+    RELEASE_ASSERT(info.m_replacementSource.isSet());
     noResult(node);
 }
 
