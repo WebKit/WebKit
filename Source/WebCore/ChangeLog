@@ -1,3 +1,32 @@
+2021-04-28  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant RenderObject::isInFlowRenderFragmentedFlow
+        https://bugs.webkit.org/show_bug.cgi?id=225152
+
+        Reviewed by Antti Koivisto.
+
+        Now that RenderObject::isOutOfFlowRenderFragmentedFlow() is gone (r276707), isInFlowRenderFragmentedFlow() is really just a isRenderFragmentedFlow() check.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::isChildHitTestCandidate):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::updateStylesForColumnChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::skipContainingBlockForPercentHeightCalculation const):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::canHaveOutsideFragmentRange const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeNormalFlowOnly const):
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updatePagination):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderGrid const):
+        (WebCore::RenderObject::isInFlowRenderFragmentedFlow const): Deleted.
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::multiColumnDescendantInserted):
+
 2021-04-28  Youenn Fablet  <youenn@apple.com>
 
         Set audio transceiver nMax to 1

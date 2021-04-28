@@ -278,7 +278,7 @@ static bool gShiftingSpanner = false;
 
 void RenderTreeBuilder::MultiColumn::multiColumnDescendantInserted(RenderMultiColumnFlow& flow, RenderObject& newDescendant)
 {
-    if (gShiftingSpanner || newDescendant.isInFlowRenderFragmentedFlow())
+    if (gShiftingSpanner || newDescendant.isRenderFragmentedFlow())
         return;
 
     auto* subtreeRoot = &newDescendant;
