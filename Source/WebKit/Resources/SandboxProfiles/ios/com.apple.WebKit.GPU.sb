@@ -403,10 +403,6 @@
         "com.apple.mt"
         "com.apple.preferences.sounds")
 
-    (allow mach-lookup (with report) (with telemetry)
-        (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
-    )
-
     (allow mach-lookup
         (global-name "com.apple.CARenderServer"))
 
@@ -724,9 +720,6 @@
 ;; <rdar://problem/7344719&26323449> LaunchServices app icons
 (allow file-read*
     (well-known-system-group-container-subpath "/systemgroup.com.apple.lsd.iconscache"))
-(allow mach-lookup (with report) (with telemetry)
-    (xpc-service-name "com.apple.iconservices")
-    (global-name "com.apple.iconservices"))
 
 (allow-preferences-common)
 
@@ -925,8 +918,7 @@
 (media-accessibility-support)
 
 ;; Various services required by CFNetwork and other frameworks
-(allow mach-lookup
-    (global-name "com.apple.PowerManagement.control")
+(allow mach-lookup (with telemetry-backtrace)
     (global-name "com.apple.analyticsd"))
 
 (deny file-write-create (vnode-type SYMLINK))
@@ -940,6 +932,17 @@
 
 (allow file-read-data
     (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
+)
+
+(allow mach-lookup
+    (require-all
+        (extension "com.apple.webkit.extension.mach")
+        (global-name
+            "com.apple.PowerManagement.control"
+            "com.apple.frontboard.systemappservices"
+            "com.apple.iconservices"
+        )
+    )
 )
 
 (allow iokit-open
@@ -963,6 +966,16 @@
 (deny mach-lookup (with no-log)
     (xpc-service-name "com.apple.audio.toolbox.reporting.service")
 )
+
+(deny mach-lookup (with telemetry-backtrace)
+    (xpc-service-name "com.apple.iconservices")
+    (global-name
+        "com.apple.PowerManagement.control"
+        "com.apple.iconservices"
+        "com.apple.frontboard.systemappservices"
+    )
+)
+
 
 (allow mach-lookup
     (require-all

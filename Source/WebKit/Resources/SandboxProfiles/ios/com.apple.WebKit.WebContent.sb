@@ -1159,7 +1159,7 @@
             ;;; FIXME(207716): End services to remove.
 )))
 
-(allow mach-lookup (with telemetry-backtrace)
+(allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
         (global-name

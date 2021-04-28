@@ -107,6 +107,19 @@ static bool shouldCreateAppleCameraServiceSandboxExtension()
 }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+static const Vector<ASCIILiteral>& nonBrowserServices()
+{
+    ASSERT(isMainRunLoop());
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.iconservices"_s,
+        "com.apple.PowerManagement.control"_s,
+        "com.apple.frontboard.systemappservices"_s
+    });
+    return services;
+}
+#endif
+
 static WeakPtr<GPUProcessProxy>& singleton()
 {
     static NeverDestroyed<WeakPtr<GPUProcessProxy>> singleton;
@@ -194,6 +207,9 @@ GPUProcessProxy::GPUProcessProxy()
         parameters.compilerServiceExtensionHandles = SandboxExtension::createHandlesForMachLookup(WebCore::agxCompilerServices(), WTF::nullopt);
         parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(WebCore::agxCompilerClasses(), WTF::nullopt);
     }
+
+    if (!WebCore::IOSApplication::isMobileSafari())
+        parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), WTF::nullopt);
 #endif
 
     // Initialize the GPU process.

@@ -1,3 +1,36 @@
+2021-04-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] [GPU] The UI process should issue mach sandbox extensions to 'iconservices'
+        https://bugs.webkit.org/show_bug.cgi?id=225111
+        <rdar://problem/68366888>
+
+        Reviewed by Per Arne Vollan.
+
+        In Bug 205443 we did work to extend access to non-web-browsing services to the WebContent process only when
+        needed. This was lost in the transition to the GPU Process, and should be added back.
+
+        This change does the following:
+        1. Adds sandbox extension handles for the iconservices (and related) services to the GPU process creation parameters.
+        2. Updates the GPUProcessProxy to extend iconservices when waranted, and add them to the creation parameter structure.
+        3. Updates the GPUProcess to consume the extensions (when granted).
+        4. Makes a GPU process-specific version of the 'nonBrowserServices' static function for use by GPUProcessProxy. This is needed
+           because fewer services are needed in the GPU process than in the WebContent process.
+        5. Removes unused telemetry from the WebContent process sandbox.
+        6. Switches the GPU process sandbox to deny iconservices (and related) by default, and to consume the extensions instead.
+
+        Tested by exisiting TestWebKitAPI tests.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+
 2021-04-28  Chris Dumez  <cdumez@apple.com>
 
         Crash under GPUProcessProxy::getGPUProcessConnection()

@@ -223,6 +223,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::consumePermanently(parameters.compilerServiceExtensionHandles);
     SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
+    SandboxExtension::consumePermanently(parameters.dynamicMachExtensionHandles);
 #endif
 
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)

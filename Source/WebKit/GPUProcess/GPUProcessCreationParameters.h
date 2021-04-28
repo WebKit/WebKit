@@ -62,6 +62,7 @@ struct GPUProcessCreationParameters {
 #if PLATFORM(IOS_FAMILY)
     SandboxExtension::HandleArray compilerServiceExtensionHandles;
     SandboxExtension::HandleArray dynamicIOKitExtensionHandles;
+    SandboxExtension::HandleArray dynamicMachExtensionHandles;
 #endif
 
     void encode(IPC::Encoder&) const;
