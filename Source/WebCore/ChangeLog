@@ -1,3 +1,20 @@
+2021-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we invalidate the iterator in StorageMap::clear()
+        https://bugs.webkit.org/show_bug.cgi?id=225164
+
+        Reviewed by Alex Christensen.
+
+        I recently introduced StorageMap::clear() but failed to call invalidateIterator()
+        like we do in other StorageMap functions that modify the internal HashMap. Since
+        we cleared the HashMap, we don't want to be keeping a HashMap iterator around.
+        Looking at the code, I do not think this can cause crashes because the
+        `index >= length()` check would fail in StorageMap::key(unsigned). That said, it
+        is best not to keep a bad iterator around.
+
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::clear):
+
 2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fine-tune some more selection behaviors in image overlays

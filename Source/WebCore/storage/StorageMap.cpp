@@ -150,6 +150,7 @@ void StorageMap::clear()
     }
     m_impl->map.clear();
     m_impl->currentSize = 0;
+    invalidateIterator();
 }
 
 bool StorageMap::contains(const String& key) const
