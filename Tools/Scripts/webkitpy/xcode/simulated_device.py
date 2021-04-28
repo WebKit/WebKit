@@ -250,7 +250,10 @@ class SimulatedDeviceManager(object):
 
     @staticmethod
     def _get_device_identifier_for_type(device_type):
-        type_name_for_request = u'{} {}'.format(device_type.hardware_family.lower(), device_type.standardized_hardware_type.lower())
+        type_name_for_request = u'{}{}'.format(
+            device_type.hardware_family.lower(),
+            ' {}'.format(device_type.standardized_hardware_type.lower()) if device_type.standardized_hardware_type else '',
+        )
         for type_id, type_name in SimulatedDeviceManager._device_identifier_to_name.items():
             if type_name.lower() == type_name_for_request:
                 return type_id
@@ -525,6 +528,11 @@ class SimulatedDevice(object):
         'SHUTTING DOWN',
     ]
 
+    UI_MANAGER_SERVICE = {
+        'iOS': 'com.apple.springboard.services',
+        'watchOS': 'com.apple.carousel.sessionservice',
+    }
+
     def __init__(self, name, udid, host, device_type, build_version):
         assert device_type.software_version
 
@@ -562,16 +570,13 @@ class SimulatedDevice(object):
         if self.state(force_update=force_update) != SimulatedDevice.DeviceState.BOOTED:
             return False
 
-        if self.device_type.software_variant == 'iOS':
-            home_screen_service = 'com.apple.springboard.services'
-        elif self.device_type.software_variant == 'watchOS':
-            home_screen_service = 'com.apple.carousel.sessionservice'
-        else:
+        service = self.UI_MANAGER_SERVICE.get(self.device_type.software_variant)
+        if service:
             _log.debug(u'{} has no service to check if the device is usable'.format(self.device_type.software_variant))
             return True
 
         system_processes = self.executive.run_command([SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'print', 'system'], decode_output=True, return_stderr=False)
-        if re.search(r'"{}"'.format(home_screen_service), system_processes) or re.search(r'A\s+{}'.format(home_screen_service), system_processes):
+        if re.search(r'"{}"'.format(service), system_processes) or re.search(r'A\s+{}'.format(service), system_processes):
             return True
         return False
 
