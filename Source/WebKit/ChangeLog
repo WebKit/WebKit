@@ -1,3 +1,16 @@
+2021-04-27  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Suppress warnings for %llu format specifier for uint64_t.
+        https://bugs.webkit.org/show_bug.cgi?id=225138
+
+        Reviewed by Darin Adler.
+
+        PRIu64 from <cstdint> should be use to format uint64_t value in printf.
+
+        * NetworkProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::createFetchTask):
+        (WebKit::WebSWServerConnection::startFetch):
+
 2021-04-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Add a Condition type that supports thread safety analysis

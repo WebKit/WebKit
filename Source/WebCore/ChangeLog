@@ -1,3 +1,17 @@
+2021-04-27  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Suppress warnings for %llu format specifier for uint64_t.
+        https://bugs.webkit.org/show_bug.cgi?id=225138
+
+        Reviewed by Darin Adler.
+
+        PRIu64 from <cstdint> should be use to format uint64_t value in printf.
+
+        No new tests because there's no behavior change.
+
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::startTermination):
+
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
         Improve local storage size estimation for quota limitation

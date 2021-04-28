@@ -32,6 +32,7 @@
 #include "SWServer.h"
 #include "SWServerRegistration.h"
 #include "SWServerToContextConnection.h"
+#include <cstdint>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -116,7 +117,7 @@ void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
     auto* contextConnection = this->contextConnection();
     ASSERT(contextConnection);
     if (!contextConnection) {
-        RELEASE_LOG_ERROR(ServiceWorker, "Request to terminate a worker %llu whose context connection does not exist", identifier().toUInt64());
+        RELEASE_LOG_ERROR(ServiceWorker, "Request to terminate a worker %" PRIu64 " whose context connection does not exist", identifier().toUInt64());
         setState(State::NotRunning);
         callback();
         m_server->workerContextTerminated(*this);
