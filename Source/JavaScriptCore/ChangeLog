@@ -1,3 +1,20 @@
+2021-04-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move cloneUBreakIterator declaration to IntlWorkaround.h
+        https://bugs.webkit.org/show_bug.cgi?id=224511
+
+        Reviewed by Yusuke Suzuki.
+
+        Follow up to r275856. There's ultimately no reason IntlWorkaround.cpp needs to be headerless;
+        this was tied to some confusion about how to successfully include ubrk.h in two different ways.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/IntlSegmenter.cpp:
+        * runtime/IntlSegmenter.h:
+        * runtime/IntlSegments.cpp:
+        * runtime/IntlWorkaround.cpp:
+        * runtime/IntlWorkaround.h: Added.
+
 2021-04-12  Ross Kirsling  <ross.kirsling@sony.com>
 
         ICU 69 deprecates ubrk_safeClone in favor of ubrk_clone

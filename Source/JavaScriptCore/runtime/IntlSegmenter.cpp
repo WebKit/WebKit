@@ -28,6 +28,7 @@
 
 #include "IntlObjectInlines.h"
 #include "IntlSegments.h"
+#include "IntlWorkaround.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 
