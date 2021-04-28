@@ -1,5 +1,18 @@
 2021-04-28  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION(r275267) Network process crashes in Data::adoptMap
+        https://bugs.webkit.org/show_bug.cgi?id=225159
+        <rdar://77066555>
+
+        Reviewed by Geoffrey Garen.
+
+        There was a missing check to see if mapping was successful.
+
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+        (WebKit::NetworkCache::Data::mapToFile const):
+
+2021-04-28  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI to query whether a URL would be upgraded to HTTPS
         https://bugs.webkit.org/show_bug.cgi?id=225154
         <rdar://77269904>

@@ -44,6 +44,8 @@ Data Data::mapToFile(const String& path) const
     FileSystem::PlatformFileHandle handle;
     auto applyData = [&](const Function<bool(const uint8_t*, size_t)>& applier) { apply(applier); };
     auto mappedFile = FileSystem::mapToFile(path, size(), WTFMove(applyData), &handle);
+    if (!mappedFile)
+        return { };
     return Data::adoptMap(WTFMove(mappedFile), handle);
 }
 
