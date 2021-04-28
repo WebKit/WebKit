@@ -52,6 +52,18 @@ URL BlobURL::createInternalURL()
     return createBlobURL("blobinternal://");
 }
 
+static const Document* blobOwner(const SecurityOrigin& blobOrigin)
+{
+    if (!isMainThread())
+        return nullptr;
+
+    for (const auto* document : Document::allDocuments()) {
+        if (&document->securityOrigin() == &blobOrigin)
+            return document;
+    }
+    return nullptr;
+}
+
 String BlobURL::getOrigin(const URL& url)
 {
     ASSERT(url.protocolIs(kBlobProtocol));
