@@ -300,12 +300,13 @@ void ScriptExecutionContext::resumeActiveDOMObjects(ReasonForSuspension why)
 
     if (m_reasonForSuspendingActiveDOMObjects != why)
         return;
-    m_activeDOMObjectsAreSuspended = false;
 
     forEachActiveDOMObject([](auto& activeDOMObject) {
         activeDOMObject.resume();
         return ShouldContinue::Yes;
     });
+
+    m_activeDOMObjectsAreSuspended = false;
 }
 
 void ScriptExecutionContext::stopActiveDOMObjects()

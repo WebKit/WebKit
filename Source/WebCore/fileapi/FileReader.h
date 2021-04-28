@@ -36,6 +36,7 @@
 #include "FileError.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
+#include <wtf/UniqueRef.h>
 
 namespace JSC {
 class ArrayBuffer;
@@ -44,6 +45,7 @@ class ArrayBuffer;
 namespace WebCore {
 
 class Blob;
+class SuspendableTaskQueue;
 
 class FileReader final : public RefCounted<FileReader>, public ActiveDOMObject, public EventTargetWithInlineData, private FileReaderLoaderClient {
 public:
@@ -72,6 +74,9 @@ public:
 
     using RefCounted::ref;
     using RefCounted::deref;
+
+    // ActiveDOMObject
+    bool hasPendingActivity() const final;
 
 private:
     explicit FileReader(ScriptExecutionContext&);
@@ -102,6 +107,7 @@ private:
     std::unique_ptr<FileReaderLoader> m_loader;
     RefPtr<FileError> m_error;
     MonotonicTime m_lastProgressNotificationTime { MonotonicTime::nan() };
+    UniqueRef<SuspendableTaskQueue> m_taskQueue;
 };
 
 } // namespace WebCore

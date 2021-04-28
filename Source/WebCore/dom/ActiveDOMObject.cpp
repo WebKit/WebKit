@@ -113,4 +113,9 @@ bool ActiveDOMObject::isContextStopped() const
     return !scriptExecutionContext() || scriptExecutionContext()->activeDOMObjectsAreStopped();
 }
 
+bool ActiveDOMObject::isAllowedToRunScript() const
+{
+    return scriptExecutionContext() && !scriptExecutionContext()->activeDOMObjectsAreStopped() && !scriptExecutionContext()->activeDOMObjectsAreSuspended();
+}
+
 } // namespace WebCore
