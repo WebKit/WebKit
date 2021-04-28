@@ -29,7 +29,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface AudioBufferSourceNode : AudioScheduledSourceNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional AudioBufferSourceOptions options);
+    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional AudioBufferSourceOptions options);
 
     attribute AudioBuffer? buffer;
 

@@ -1,3 +1,23 @@
+2021-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Drop ModernUnprefixedWebAudio & AudioWorklet experimental feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=225130
+
+        Reviewed by Eric Carlson.
+
+        Drop ModernUnprefixedWebAudio & AudioWorklet experimental feature flags now that
+        these features have shipped. It also doesn't make sense to disable them given
+        that the prefixed WebAudio API is no longer exposed and there is no feature flag
+        to turn the legacy prefixed API back on.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences modernUnprefixedWebAudioEnabled]): Deleted.
+        (-[WebPreferences setModernUnprefixedWebAudioEnabled:]): Deleted.
+        (-[WebPreferences audioWorkletEnabled]): Deleted.
+        (-[WebPreferences setAudioWorkletEnabled:]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+
 2021-04-27  Alex Christensen  <achristensen@webkit.org>
 
         charset in contentType used in Blob.prototype.slice(start, end, contentType) is lost

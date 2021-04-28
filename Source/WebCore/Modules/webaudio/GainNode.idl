@@ -27,7 +27,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface GainNode : AudioNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional GainOptions options);
+    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional GainOptions options);
 
     readonly attribute AudioParam gain;
 };

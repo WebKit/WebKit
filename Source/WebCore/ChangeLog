@@ -1,3 +1,45 @@
+2021-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Drop ModernUnprefixedWebAudio & AudioWorklet experimental feature flags
+        https://bugs.webkit.org/show_bug.cgi?id=225130
+
+        Reviewed by Eric Carlson.
+
+        Drop ModernUnprefixedWebAudio & AudioWorklet experimental feature flags now that
+        these features have shipped. It also doesn't make sense to disable them given
+        that the prefixed WebAudio API is no longer exposed and there is no feature flag
+        to turn the legacy prefixed API back on.
+
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioBuffer.idl:
+        * Modules/webaudio/AudioBufferSourceNode.idl:
+        * Modules/webaudio/AudioContext.idl:
+        * Modules/webaudio/AudioParamMap.idl:
+        * Modules/webaudio/AudioProcessingEvent.idl:
+        * Modules/webaudio/AudioWorklet.idl:
+        * Modules/webaudio/AudioWorkletNode.idl:
+        * Modules/webaudio/AudioWorkletNodeOptions.idl:
+        * Modules/webaudio/BaseAudioContext.idl:
+        * Modules/webaudio/BiquadFilterNode.idl:
+        * Modules/webaudio/ChannelMergerNode.idl:
+        * Modules/webaudio/ChannelSplitterNode.idl:
+        * Modules/webaudio/ConstantSourceNode.idl:
+        * Modules/webaudio/ConstantSourceOptions.idl:
+        * Modules/webaudio/ConvolverNode.idl:
+        * Modules/webaudio/DelayNode.idl:
+        * Modules/webaudio/DynamicsCompressorNode.idl:
+        * Modules/webaudio/GainNode.idl:
+        * Modules/webaudio/IIRFilterNode.idl:
+        * Modules/webaudio/MediaElementAudioSourceNode.idl:
+        * Modules/webaudio/MediaStreamAudioDestinationNode.idl:
+        * Modules/webaudio/MediaStreamAudioSourceNode.idl:
+        * Modules/webaudio/OfflineAudioContext.idl:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/webaudio/PannerNode.idl:
+        * Modules/webaudio/PeriodicWave.idl:
+        * Modules/webaudio/StereoPannerNode.idl:
+        * Modules/webaudio/WaveShaperNode.idl:
+
 2021-04-28  Zalan Bujtas  <zalan@apple.com>
 
         Remove unused RenderObject::isOutOfFlowRenderFragmentedFlow

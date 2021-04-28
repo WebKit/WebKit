@@ -28,7 +28,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface BiquadFilterNode : AudioNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional BiquadFilterOptions options);
+    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional BiquadFilterOptions options);
 
     attribute BiquadFilterType type;
     

@@ -28,5 +28,5 @@
     ImplementationLacksVTable,
     Exposed=Window
 ] interface PeriodicWave {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor(BaseAudioContext context, optional PeriodicWaveOptions options);
+    [EnabledBySetting=WebAudio] constructor(BaseAudioContext context, optional PeriodicWaveOptions options);
 };

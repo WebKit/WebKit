@@ -3075,26 +3075,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitUserGesturePromisePropagationEnabledPreferenceKey];
 }
 
-- (BOOL)modernUnprefixedWebAudioEnabled
-{
-    return [self _boolValueForKey:WebKitModernUnprefixedWebAudioEnabledPreferenceKey];
-}
-
-- (void)setModernUnprefixedWebAudioEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitModernUnprefixedWebAudioEnabledPreferenceKey];
-}
-
-- (BOOL)audioWorkletEnabled
-{
-    return [self _boolValueForKey:WebKitAudioWorkletEnabledPreferenceKey];
-}
-
-- (void)setAudioWorkletEnabled:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitAudioWorkletEnabledPreferenceKey];
-}
-
 - (BOOL)requestIdleCallbackEnabled
 {
     return [self _boolValueForKey:WebKitRequestIdleCallbackEnabledPreferenceKey];

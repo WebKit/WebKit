@@ -326,8 +326,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 // FIXME: If these are not used anywhere, we should remove them and only use WebFeature mechanism for the preference.
 @interface WebPreferences (WebPrivatePreferencesConvertedToWebFeature)
 @property (nonatomic) BOOL userGesturePromisePropagationEnabled;
-@property (nonatomic) BOOL modernUnprefixedWebAudioEnabled;
-@property (nonatomic) BOOL audioWorkletEnabled;
 @property (nonatomic) BOOL requestIdleCallbackEnabled;
 @property (nonatomic) BOOL highlightAPIEnabled;
 @property (nonatomic) BOOL asyncClipboardAPIEnabled;

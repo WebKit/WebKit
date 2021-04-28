@@ -27,7 +27,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface DelayNode : AudioNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional DelayOptions options);
+    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional DelayOptions options);
 
     readonly attribute AudioParam delayTime;
 };

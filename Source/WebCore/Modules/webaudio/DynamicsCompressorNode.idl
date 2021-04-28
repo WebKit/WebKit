@@ -28,7 +28,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface DynamicsCompressorNode : AudioNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional DynamicsCompressorOptions options);
+    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional DynamicsCompressorOptions options);
 
     readonly attribute AudioParam threshold; // in Decibels
     readonly attribute AudioParam knee; // in Decibels

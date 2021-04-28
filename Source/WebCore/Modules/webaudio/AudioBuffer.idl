@@ -34,7 +34,7 @@
     ReportExtraMemoryCost,
     Exposed=Window
 ] interface AudioBuffer {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor(AudioBufferOptions options);
+    [EnabledBySetting=WebAudio] constructor(AudioBufferOptions options);
     [ImplementedAs=originalLength] readonly attribute unsigned long length; // in sample-frames
     [ImplementedAs=originalDuration] readonly attribute double duration; // in seconds
     readonly attribute float sampleRate; // in sample-frames per second
@@ -42,6 +42,6 @@
 
     // Channel access
     [CallWith=GlobalObject] any getChannelData(unsigned long channelIndex);
-    [EnabledBySetting=ModernUnprefixedWebAudio] undefined copyFromChannel(Float32Array destination, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
-    [EnabledBySetting=ModernUnprefixedWebAudio] undefined copyToChannel(Float32Array source, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
+    undefined copyFromChannel(Float32Array destination, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
+    undefined copyToChannel(Float32Array source, unsigned long channelNumber, optional unsigned long bufferOffset = 0);
 };

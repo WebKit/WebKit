@@ -27,7 +27,7 @@
     JSGenerateToJSObject,
     Exposed=Window
 ] interface AnalyserNode : AudioNode {
-    [EnabledBySetting=ModernUnprefixedWebAudio] constructor (BaseAudioContext context, optional AnalyserOptions options);
+    [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional AnalyserOptions options);
 
     attribute unsigned long fftSize;
     readonly attribute unsigned long frequencyBinCount;
@@ -45,6 +45,6 @@
     undefined getByteFrequencyData(Uint8Array array);
 
     // Real-time waveform data
-    [EnabledBySetting=ModernUnprefixedWebAudio] undefined getFloatTimeDomainData(Float32Array array);
+    undefined getFloatTimeDomainData(Float32Array array);
     undefined getByteTimeDomainData(Uint8Array array);
 };

@@ -75,20 +75,6 @@ AsyncClipboardAPIEnabled:
     WebCore:
       default: false
 
-AudioWorkletEnabled:
-  type: bool
-  humanReadableName: "WebAudio AudioWorklet API"
-  humanReadableDescription: "WebAudio AudioWorklet API"
-  condition: ENABLE(WEB_AUDIO)
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)" : true
-      default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: false
-
 BlankAnchorTargetImpliesNoOpenerEnabled:
   type: bool
   humanReadableName: "Blank anchor target implies rel=noopener"
@@ -706,20 +692,6 @@ ModelElementEnabled:
     WebKit:
       "ENABLE(SEPARATED_MODEL)": true
       default: false
-    WebCore:
-      default: false
-
-ModernUnprefixedWebAudioEnabled:
-  type: bool
-  humanReadableName: "Modern WebAudio API"
-  humanReadableDescription: "Modern and unprefixed WebAudio API"
-  condition: ENABLE(WEB_AUDIO)
-  defaultValue:
-    WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)" : true
-      default: false
-    WebKit:
-      default: true
     WebCore:
       default: false
 

@@ -5536,7 +5536,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 #if ENABLE(WEB_AUDIO)
     settings.setWebAudioEnabled(true);
     settings.setPrefixedWebAudioEnabled(false);
-    settings.setModernUnprefixedWebAudioEnabled(true);
 #endif // ENABLE(WEB_AUDIO)
 
 #if ENABLE(WEBGL)
