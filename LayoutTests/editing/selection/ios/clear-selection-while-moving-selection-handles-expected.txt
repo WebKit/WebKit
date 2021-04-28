@@ -1,0 +1,6 @@
+PASS Did not crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumyeirmodtempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+This test verifies that programmatically clearing the text selection while interacting with selection handles does not cause a crash.

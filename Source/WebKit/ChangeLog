@@ -1,3 +1,18 @@
+2021-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd
+        https://bugs.webkit.org/show_bug.cgi?id=225072
+        rdar://77159489
+
+        Reviewed by Darin Adler.
+
+        Make `rangeForPointInRootViewCoordinates` robust in the case where the original selection may have become
+        orphaned or null, by checking that the `targetNode` and existing `selectionStart` or `selectionEnd` are in a
+        tree scope before accessing `treeScope()`.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::rangeForPointInRootViewCoordinates):
+
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
         IPC::decoder::decode() should mark decoder as invalid when failing

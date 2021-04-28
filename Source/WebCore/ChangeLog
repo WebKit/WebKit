@@ -1,3 +1,19 @@
+2021-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd
+        https://bugs.webkit.org/show_bug.cgi?id=225072
+        rdar://77159489
+
+        Reviewed by Darin Adler.
+
+        Add a helper method to check whether or not the given `Position` is in a tree scope. See WebKit/ChangeLog for
+        more details.
+
+        Test: editing/selection/ios/clear-selection-while-moving-selection-handles.html
+
+        * dom/Position.h:
+        (WebCore::Position::isInTreeScope const):
+
 2021-04-27  Cameron McCormack  <heycam@apple.com>
 
         Associate a picture element with an img only if the img is a direct child.

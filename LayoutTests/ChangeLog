@@ -1,3 +1,17 @@
+2021-04-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd
+        https://bugs.webkit.org/show_bug.cgi?id=225072
+        rdar://77159489
+
+        Reviewed by Darin Adler.
+
+        Add a layout test that programmatically clears the selection in the middle of changing it by moving selection
+        handles.
+
+        * editing/selection/ios/clear-selection-while-moving-selection-handles-expected.txt: Added.
+        * editing/selection/ios/clear-selection-while-moving-selection-handles.html: Added.
+
 2021-04-27  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html is failing after r276635.
