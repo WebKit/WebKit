@@ -71,18 +71,6 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
 // On instantiation of the first VM instance, the Options will be write protected
 // and cannot be modified thereafter.
 
-#if OS(LINUX) && !defined(__BIONIC__) && !defined(__GLIBC__)
-// non-glibc/non-android options on linux ( musl )
-constexpr unsigned jscMaxPerThreadStack = 128 * KB;
-constexpr unsigned jscSoftReservedZoneSize = 32 * KB;
-constexpr unsigned jscReservedZoneSize = 16 * KB;
-#else
-// default
-constexpr unsigned jscMaxPerThreadStack = 5 * MB;
-constexpr unsigned jscSoftReservedZoneSize = 128 * KB;
-constexpr unsigned jscReservedZoneSize = 64 * KB;
-#endif
-
 #define FOR_EACH_JSC_OPTION(v)                                          \
     v(Bool, useKernTCSM, defaultTCSMValue(), Normal, "Note: this needs to go before other options since they depend on this value.") \
     v(Bool, validateOptions, false, Normal, "crashes if mis-typed JSC options were passed to the VM") \
@@ -98,9 +86,9 @@ constexpr unsigned jscReservedZoneSize = 64 * KB;
     \
     v(Bool, reportMustSucceedExecutableAllocations, false, Normal, nullptr) \
     \
-    v(Unsigned, maxPerThreadStackUsage, jscMaxPerThreadStack, Normal, "Max allowed stack usage by the VM") \
-    v(Unsigned, softReservedZoneSize, jscSoftReservedZoneSize, Normal, "A buffer greater than reservedZoneSize that reserves space for stringifying exceptions.") \
-    v(Unsigned, reservedZoneSize, jscReservedZoneSize, Normal, "The amount of stack space we guarantee to our clients (and to interal VM code that does not call out to clients).") \
+    v(Unsigned, maxPerThreadStackUsage, 5 * MB, Normal, "Max allowed stack usage by the VM") \
+    v(Unsigned, softReservedZoneSize, 128 * KB, Normal, "A buffer greater than reservedZoneSize that reserves space for stringifying exceptions.") \
+    v(Unsigned, reservedZoneSize, 64 * KB, Normal, "The amount of stack space we guarantee to our clients (and to interal VM code that does not call out to clients).") \
     \
     v(Bool, crashOnDisallowedVMEntry, ASSERT_ENABLED, Normal, "Forces a crash if we attempt to enter the VM when disallowed") \
     v(Bool, crashIfCantAllocateJITMemory, false, Normal, nullptr) \

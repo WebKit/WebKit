@@ -1,3 +1,22 @@
+2021-04-28  Daniel Kolesa  <dkolesa@igalia.com>
+
+        [WPE][GTK] More correct fixes for stack size issues on musl libc
+        https://bugs.webkit.org/show_bug.cgi?id=225099
+
+        Reviewed by Adrian Perez de Castro.
+
+        Partial revert https://bugs.webkit.org/show_bug.cgi?id=210068
+
+        After fixing the thread stack issues in WTF properly, we can revert
+        the JSC options changes, which are actually harmful since they result
+        in JSC being unstable. Previously, softReservedZoneSize was causing a
+        crash when set to 128K because of the main thread stack bounds, and
+        this is now fixed. We can keep the maxPerThreadStackUsage at 5M as
+        well; there is no fundamental difference from how things are done on
+        glibc anymore.
+
+        * runtime/OptionsList.h:
+
 2021-04-27  Filip Pizlo  <fpizlo@apple.com>
 
         Get the bytecode profiler working again
