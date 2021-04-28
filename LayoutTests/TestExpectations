@@ -1196,7 +1196,6 @@ webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-order.html [ ImageOnlyF
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap-reverse.html [ ImageOnlyFailure ]
 webkit.org/b/136754 css3/flexbox/csswg/ttwf-reftest-flex-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/canvas-dynamic-change-001.html [ Failure ]
-webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/css-flexbox-img-expand-evenly.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-015.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox-safe-overflow-position-001.html [ ImageOnlyFailure ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/percentage-max-height-002.html [ ImageOnlyFailure ]
