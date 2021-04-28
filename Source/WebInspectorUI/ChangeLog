@@ -1,5 +1,19 @@
 2021-04-27  Patrick Angle  <pangle@apple.com>
 
+        Web Inspector: Rename "Open in New Tab" context menu item to "Open in New Window"
+        https://bugs.webkit.org/show_bug.cgi?id=225125
+
+        Reviewed by BJ Burg.
+
+        Update the context menu item label, as the "Open in..." context menu item opens the target item in a new window,
+        not a new tab.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForURL):
+
+2021-04-27  Patrick Angle  <pangle@apple.com>
+
         Web Inspector: Default Audits script are minified in release builds
         https://bugs.webkit.org/show_bug.cgi?id=225009
 

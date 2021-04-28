@@ -1021,7 +1021,8 @@ localizedStrings["Online"] = "Online";
 localizedStrings["Only show resources with issues"] = "Only show resources with issues";
 localizedStrings["Only show visual actions"] = "Only show visual actions";
 localizedStrings["Open"] = "Open";
-localizedStrings["Open in New Tab"] = "Open in New Tab";
+/* Context menu item for opening the target item in a new window. */
+localizedStrings["Open in New Window @ Context Menu Item"] = "Open in New Window";
 localizedStrings["Option-click to show source"] = "Option-click to show source";
 localizedStrings["Options"] = "Options";
 /* Property value for `font-variant-numeric: ordinal`. */
