@@ -1,3 +1,9 @@
+2021-04-28  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed, fixing GTK and WPE build with external holepunch enabled after r269907.
+
+        * platform/graphics/holepunch/MediaPlayerPrivateHolePunch.h: update signature of load method.
+
 2021-04-28  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [selectors] Using a modifier key on an element makes it stop matching :focus-visible
