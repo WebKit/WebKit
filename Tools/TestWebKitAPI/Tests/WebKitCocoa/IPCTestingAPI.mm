@@ -122,7 +122,7 @@ TEST(IPCTestingAPI, AlertIsSyncMessage)
     EXPECT_STREQ([alertMessage UTF8String], "true");
 }
 
-TEST(IPCTestingAPI, CanSendInvalidAsyncMessageWithoutTermination)
+TEST(IPCTestingAPI, CanSendInvalidAsyncMessageToUIProcessWithoutTermination)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
@@ -138,7 +138,7 @@ TEST(IPCTestingAPI, CanSendInvalidAsyncMessageWithoutTermination)
     EXPECT_STREQ([alertMessage UTF8String], "hi");
 }
 
-TEST(IPCTestingAPI, CanSendInvalidMessageWithoutTermination)
+TEST(IPCTestingAPI, CanSendInvalidSyncMessageToUIProcessWithoutTermination)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
@@ -153,6 +153,63 @@ TEST(IPCTestingAPI, CanSendInvalidMessageWithoutTermination)
 
     EXPECT_STREQ([alertMessage UTF8String], "hi");
 }
+
+#if ENABLE(GPU_PROCESS)
+TEST(IPCTestingAPI, CanSendSyncMessageToGPUProcess)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>"
+        "result = !!IPC.sendSyncMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_EnsureAudioSession.name, 100, []);"
+        "alert(result)</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([alertMessage boolValue]);
+}
+
+TEST(IPCTestingAPI, CanSendAsyncMessageToGPUProcess)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(async function test() {"
+        "window.result = await IPC.sendMessage('GPU', 0, IPC.messages.RemoteAudioDestinationManager_StartAudioDestination.name, [{type: 'uint64_t', value: 12345}]);"
+        "alert(!!result)"
+        "})();</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([alertMessage boolValue]);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"result.arguments[0].type"].UTF8String, "bool");
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"result.arguments[0].value"].boolValue);
+}
+
+TEST(IPCTestingAPI, CanSendInvalidAsyncMessageToGPUProcessWithoutTermination)
+{
+    auto webView = createWebViewWithIPCTestingAPI();
+
+    auto delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    done = false;
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>(async function test() {"
+        "IPC.sendMessage('GPU', 0, IPC.messages.GPUConnectionToWebProcess_CreateRenderingBackend.name, []);"
+        "window.result = await IPC.sendMessage('GPU', 0, IPC.messages.RemoteAudioDestinationManager_StartAudioDestination.name, [{type: 'uint64_t', value: 12345}]);"
+        "alert(!!result)"
+        "})();</script>"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([alertMessage boolValue]);
+    EXPECT_STREQ([webView stringByEvaluatingJavaScript:@"result.arguments[0].type"].UTF8String, "bool");
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"result.arguments[0].value"].boolValue);
+}
+#endif
 
 TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
 {

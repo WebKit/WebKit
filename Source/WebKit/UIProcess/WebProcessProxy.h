@@ -395,6 +395,7 @@ public:
 #endif
 
 #if ENABLE(IPC_TESTING_API)
+    bool ignoreInvalidMessageForTesting() const { return m_ignoreInvalidMessageForTesting; }
     void setIgnoreInvalidMessageForTesting();
 #endif
 

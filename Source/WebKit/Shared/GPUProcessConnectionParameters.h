@@ -36,6 +36,9 @@ struct GPUProcessConnectionParameters {
     MachSendRight webProcessIdentityToken;
 #endif
     Vector<String> overrideLanguages;
+#if ENABLE(IPC_TESTING_API)
+    bool ignoreInvalidMessageForTesting { false };
+#endif
 
     void encode(IPC::Encoder& encoder) const
     {
@@ -43,6 +46,9 @@ struct GPUProcessConnectionParameters {
         encoder << webProcessIdentityToken;
 #endif
         encoder << overrideLanguages;
+#if ENABLE(IPC_TESTING_API)
+        encoder << ignoreInvalidMessageForTesting;
+#endif
     }
 
     static Optional<GPUProcessConnectionParameters> decode(IPC::Decoder& decoder)
@@ -59,11 +65,21 @@ struct GPUProcessConnectionParameters {
         if (!overrideLanguages)
             return WTF::nullopt;
 
+#if ENABLE(IPC_TESTING_API)
+        Optional<bool> ignoreInvalidMessageForTesting;
+        decoder >> ignoreInvalidMessageForTesting;
+        if (!ignoreInvalidMessageForTesting)
+            return WTF::nullopt;
+#endif
+
         return GPUProcessConnectionParameters {
 #if HAVE(TASK_IDENTITY_TOKEN)
             WTFMove(*webProcessIdentityToken),
 #endif
             WTFMove(*overrideLanguages),
+#if ENABLE(IPC_TESTING_API)
+            *ignoreInvalidMessageForTesting,
+#endif
         };
     }
 };

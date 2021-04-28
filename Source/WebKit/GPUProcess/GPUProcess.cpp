@@ -109,6 +109,11 @@ void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, P
     newConnection->setOrientationForMediaCapture(m_orientation);
 #endif
 
+#if ENABLE(IPC_TESTING_API)
+    if (parameters.ignoreInvalidMessageForTesting)
+        newConnection->connection().setIgnoreInvalidMessageForTesting();
+#endif
+
     ASSERT(!m_webProcessConnections.contains(identifier));
     m_webProcessConnections.add(identifier, WTFMove(newConnection));
 
