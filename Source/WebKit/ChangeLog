@@ -1,3 +1,30 @@
+2021-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Crash under GPUProcessProxy::getGPUProcessConnection()
+        https://bugs.webkit.org/show_bug.cgi?id=224017
+        <rdar://75146104>
+
+        Reviewed by Darin Adler.
+
+        The crash would happen when replyToPendingMessages() get called in the AuxiliaryProcessProxy
+        destructor and there would be a pending getGPUProcessConnection() IPC. The lambda in
+        WebProcessPool::getGPUProcessConnection() would check if a WeakPtr to the WebProcessPool is
+        valid before calling `ensureGPUProcess().getGPUProcessConnection()`. However, at this point, 
+        the WebProcessPool destructor is still running so the WeakPtr is still valid but 
+        `ensureGPUProcess().getGPUProcessConnection()` will crash because the GPUProcessProxy
+        destructor has already run.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::~WebProcessPool):
+        Drop code that was causing the GPUProcessProxy to reply to all its pending IPC messages whenenever
+        a WebProcessPool gets destroyed. This is incorrect since a GPUProcessProxy may be shared by several
+        WebProcessPool objects. Note that the AuxiliaryProcessProxy destructor already takes care of
+        calling replyToPendingMessages().
+
+        (WebKit::WebProcessPool::getGPUProcessConnection):
+        Protect the WebProcessPool is the lambda to prevent the case where this lambda gets called and the
+        WebProcessPool & GPUProcessProxy are in the middle of destruction.
+
 2021-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Asserting that function or variable is accessed in a certain thread should be simpler and more robust

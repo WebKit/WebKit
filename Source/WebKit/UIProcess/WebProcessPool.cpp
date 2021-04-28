@@ -360,11 +360,6 @@ WebProcessPool::~WebProcessPool()
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 #endif
 
-#if ENABLE(GPU_PROCESS)
-    if (m_gpuProcess)
-        m_gpuProcess->replyToPendingMessages();
-#endif
-
     // Only remaining processes should be pre-warmed ones as other keep the process pool alive.
     while (!m_processes.isEmpty()) {
         auto& process = m_processes.first();
@@ -529,8 +524,8 @@ void WebProcessPool::gpuProcessExited(ProcessID identifier, GPUProcessTerminatio
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, GPUProcessConnectionParameters&& parameters, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
-    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, weakThis = makeWeakPtr(*this), parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
-        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy && weakThis)) {
+    ensureGPUProcess().getGPUProcessConnection(webProcessProxy, parameters, [this, protectedThis = makeRef(*this), parameters, webProcessProxy = makeWeakPtr(webProcessProxy), reply = WTFMove(reply)] (auto& connectionInfo) mutable {
+        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()) && webProcessProxy)) {
             WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "getGPUProcessConnection: Failed first attempt, retrying");
             ensureGPUProcess().getGPUProcessConnection(*webProcessProxy, parameters, WTFMove(reply));
             return;
