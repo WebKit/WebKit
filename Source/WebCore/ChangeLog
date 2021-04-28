@@ -1,3 +1,19 @@
+2021-04-28  Ian Gilbert  <iang@apple.com>
+
+        Use a WeakHashSet for Document::m_mediaElements
+        https://bugs.webkit.org/show_bug.cgi?id=225082
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring to use weak pointer instead of raw pointer.
+        No observable change of behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::registerMediaElement):
+        (WebCore::Document::unregisterMediaElement):
+        (WebCore::Document::forEachMediaElement):
+        * dom/Document.h:
+
 2021-04-27  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         [PlayStation] Suppress warnings for %llu format specifier for uint64_t.
