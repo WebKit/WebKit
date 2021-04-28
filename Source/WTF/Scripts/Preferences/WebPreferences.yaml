@@ -1721,7 +1721,7 @@ PluginsEnabled:
   webcoreOnChange: pluginsEnabledChanged
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
       default: false
     WebCore:
