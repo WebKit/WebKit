@@ -1,3 +1,17 @@
+2021-04-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE should be compiled with thread-safe statics
+        https://bugs.webkit.org/show_bug.cgi?id=224854
+
+        Reviewed by Kenneth Russell.
+
+        Compile ANGLE with normal thread-safe c++ local statics.
+        No known threading failures. Based on ad-hoc risk vs benefit
+        evaluation of today and after future merges, it appears
+        better to err in the side of caution.
+
+        * Configurations/Base.xcconfig:
+
 2021-04-26  Alex Christensen  <achristensen@webkit.org>
 
         Update Mac-specific CMake files
