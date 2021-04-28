@@ -53,13 +53,14 @@ public:
         GstBuffer* dataBuffer;
         GstBuffer* subsamplesBuffer;
         size_t numSubsamples;
+        WeakPtr<CDMProxyDecryptionClient> cdmProxyDecryptionClient;
     };
 
     bool decrypt(DecryptionContext&);
     const String& keySystem() { return m_keySystem; }
 
 private:
-    BoxPtr<OpenCDMSession> getDecryptionSession(const DecryptionContext&) const;
+    BoxPtr<OpenCDMSession> getDecryptionSession(DecryptionContext&) const;
     String m_keySystem;
 };
 

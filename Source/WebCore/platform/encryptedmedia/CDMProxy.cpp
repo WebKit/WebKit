@@ -271,7 +271,13 @@ void CDMProxy::stoppedWaitingForKey() const
     m_instance->stoppedWaitingForKey();
 }
 
-Optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& keyID) const
+void CDMProxy::abortWaitingForKey() const
+{
+    LOG(EME, "EME - CDMProxy - abort waiting for key ID");
+    m_keysCondition.notifyAll();
+}
+
+Optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
     startedWaitingForKey();
     // Unconditionally saying we have stopped waiting for a key means that decryptors only get
@@ -281,21 +287,25 @@ Optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& keyID) c
         stoppedWaitingForKey();
     });
     LOG(EME, "EME - CDMProxy - trying to wait for key ID %s", vectorToHexString(keyID).ascii().data());
-    bool wasKeyReceived = false;
+    bool wasKeyAvailable = false;
     {
         auto locker = holdLock(m_keysMutex);
-        wasKeyReceived = m_keysCondition.waitFor(m_keysMutex, CDMProxy::MaxKeyWaitTimeSeconds, [&, this, keyID]() {
-            return keyAvailableUnlocked(keyID);
+
+        m_keysCondition.waitFor(m_keysMutex, CDMProxy::MaxKeyWaitTimeSeconds, [this, keyID, client = WTFMove(client), &wasKeyAvailable]() {
+            if (!client || client->isAborting())
+                return true;
+            wasKeyAvailable = keyAvailableUnlocked(keyID);
+            return wasKeyAvailable;
         });
     }
 
-    if (wasKeyReceived) {
-        LOG(EME, "EME - CDMProxy - successfully waited for key ID %s", vectorToHexString(keyID).ascii().data());
+    if (wasKeyAvailable) {
         RefPtr<KeyHandle> handle = keyHandle(keyID);
+        LOG(EME, "EME - CDMProxy - successfully waited for key ID %s", vectorToHexString(keyID).ascii().data());
         return makeOptional(handle.releaseNonNull());
     }
-    
-    LOG(EME, "EME - CDMProxy - key ID %s not available", vectorToHexString(keyID).ascii().data());
+
+    LOG(EME, "EME - CDMProxy - key ID %s not available or operation aborted", vectorToHexString(keyID).ascii().data());
     return WTF::nullopt;
 }
 
@@ -310,20 +320,20 @@ bool CDMProxy::keyAvailable(const KeyIDType& keyID) const
     return keyAvailableUnlocked(keyID);
 }
 
-Optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID) const
+Optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
     if (!keyAvailable(keyID)) {
         LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).ascii().data());
-        return tryWaitForKeyHandle(keyID);
+        return tryWaitForKeyHandle(keyID, WTFMove(client));
     }
 
     RefPtr<KeyHandle> handle = keyHandle(keyID);
     return makeOptional(handle.releaseNonNull());
 }
 
-Optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDType& keyID) const
+Optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
-    if (auto keyHandle = getOrWaitForKeyHandle(keyID))
+    if (auto keyHandle = getOrWaitForKeyHandle(keyID, WTFMove(client)))
         return makeOptional((*keyHandle)->value());
     return WTF::nullopt;
 }
