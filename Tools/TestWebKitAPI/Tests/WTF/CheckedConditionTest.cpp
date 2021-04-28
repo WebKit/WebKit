@@ -24,44 +24,17 @@
  */
 
 #include "config.h"
-#include <wtf/CheckedLock.h>
+#include <wtf/CheckedCondition.h>
 
 namespace TestWebKitAPI {
 
-namespace {
-class MyValue {
-public:
-    void setValue(int value)
-    {
-        Locker holdLock { m_lock };
-        m_value = value;
-    }
-    void maybeSetOtherValue(int value)
-    {
-        if (!m_otherLock.tryLock())
-            return;
-        Locker holdLock { AdoptLockTag { }, m_otherLock };
-        m_otherValue = value;
-    }
-    // This function can be used to manually check that compile fails.
-    template<typename T> void shouldFailCompile(T t)
-    {
-        m_value = t;
-    }
-    private:
-    CheckedLock m_lock;
-    int m_value WTF_GUARDED_BY_LOCK(m_lock) { 77 };
-    CheckedLock m_otherLock;
-    int m_otherValue WTF_GUARDED_BY_LOCK(m_otherLock) { 88 };
-};
-
-}
-
-TEST(WTF_CheckedLock, CheckedLockCompiles)
+TEST(WTF_CheckedLock, CheckedConditionCompiles)
 {
-    MyValue v;
-    v.setValue(7);
-    v.maybeSetOtherValue(34);
+    CheckedLock lock;
+    CheckedCondition condition;
+    Locker locker { lock }; // Comment this to ensure that thread safety analysis creates a compile error.
+    bool result = condition.waitFor(lock, 0_s);
+    EXPECT_FALSE(result);
 }
 
 } // namespace TestWebKitAPI

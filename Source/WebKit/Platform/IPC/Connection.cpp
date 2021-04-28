@@ -520,7 +520,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
     WaitForMessageState waitingForMessage(messageName, destinationID, waitForOptions);
 
     {
-        auto locker = holdLock(m_waitForMessageMutex);
+        Locker locker { m_waitForMessageMutex };
 
         // We don't support having multiple clients waiting for messages.
         ASSERT(!m_waitingForMessage);
@@ -569,7 +569,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
         // Handle any messages that are blocked on a response from us.
         SyncMessageState::singleton().dispatchMessages();
 
-        std::unique_lock<Lock> lock(m_waitForMessageMutex);
+        Locker lock { m_waitForMessageMutex };
 
         if (m_waitingForMessage->decoder) {
             auto decoder = WTFMove(m_waitingForMessage->decoder);
@@ -578,7 +578,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
         }
 
         // Now we wait.
-        bool didTimeout = !m_waitForMessageCondition.waitUntil(lock, timeout.deadline());
+        bool didTimeout = !m_waitForMessageCondition.waitUntil(m_waitForMessageMutex, timeout.deadline());
         // We timed out, lost our connection, or a sync message came in with InterruptWaitingIfSyncMessageArrives, so stop waiting.
         if (didTimeout || m_waitingForMessage->messageWaitingInterrupted) {
             m_waitingForMessage = nullptr;
@@ -748,7 +748,7 @@ void Connection::processIncomingMessage(std::unique_ptr<Decoder> message)
     }
 
     // FIXME: These are practically the same mutex, so maybe they could be merged.
-    auto waitForMessagesLocker = holdLock(m_waitForMessageMutex);
+    Locker waitForMessagesLocker { m_waitForMessageMutex };
 
     auto incomingMessagesLocker = holdLock(m_incomingMessagesMutex);
     if (auto* receiveQueue = m_receiveQueues.get(*message)) {
@@ -866,7 +866,7 @@ void Connection::connectionDidClose()
     }
 
     {
-        auto locker = holdLock(m_waitForMessageMutex);
+        Locker locker { m_waitForMessageMutex };
 
         ASSERT(m_shouldWaitForMessages);
         m_shouldWaitForMessages = false;

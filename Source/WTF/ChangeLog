@@ -1,3 +1,18 @@
+2021-04-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add a Condition type that supports thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=224970
+
+        Reviewed by Darin Adler.
+
+        Add CheckedCondition, a condition variable to be used with CheckedLock.
+        Use thread safety analysis annotations for CheckedCondition.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CheckedCondition.h: Added.
+        * wtf/CheckedLock.h:
+
 2021-04-27  Ben Nham  <nham@apple.com>
 
         Memory pressure events should be logged to com.apple.WebKit subsystem

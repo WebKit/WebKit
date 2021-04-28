@@ -1,3 +1,41 @@
+2021-04-27  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Add a Condition type that supports thread safety analysis
+        https://bugs.webkit.org/show_bug.cgi?id=224970
+
+        Reviewed by Darin Adler.
+
+        Use CheckedCondition and CheckedLock as an example of the
+        added implementations.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForMessage):
+        (IPC::Connection::processIncomingMessage):
+        (IPC::Connection::connectionDidClose):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::WTF_GUARDED_BY_LOCK):
+        Use CheckedCondition (as an example).
+
+        Mark up variables protected by
+        IPC::Connection::m_waitForMessageMutex
+        to use thread safety analysis.
+
+        * Shared/mac/MediaFormatReader/MediaTrackReader.cpp:
+        (WebKit::MediaTrackReader::greatestPresentationTime const):
+        Fix unlocked access.
+
+        (WebKit::MediaTrackReader::addSample):
+        (WebKit::MediaTrackReader::waitForSample const):
+        (WebKit::MediaTrackReader::finishParsing):
+        (WebKit::MediaTrackReader::copyProperty):
+        (WebKit::MediaTrackReader::finalize):
+        * Shared/mac/MediaFormatReader/MediaTrackReader.h:
+        Use CheckedCondition (as an example).
+
+        Mark up variables protected by
+        MediaTrackReader::m_sampleStorageLock
+        to use thread safety analysis.
+
 2021-04-27  Chris Dumez  <cdumez@apple.com>
 
         Improve local storage size estimation for quota limitation

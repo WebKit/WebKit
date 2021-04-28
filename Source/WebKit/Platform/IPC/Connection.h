@@ -33,8 +33,9 @@
 #include "MessageReceiveQueueMap.h"
 #include "MessageReceiver.h"
 #include "Timeout.h"
+#include <wtf/CheckedCondition.h>
+#include <wtf/CheckedLock.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Condition.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -411,18 +412,18 @@ private:
     // Outgoing messages.
     Lock m_outgoingMessagesMutex;
     Deque<UniqueRef<Encoder>> m_outgoingMessages;
-    
-    Condition m_waitForMessageCondition;
-    Lock m_waitForMessageMutex;
+
+    CheckedCondition m_waitForMessageCondition;
+    CheckedLock m_waitForMessageMutex;
 
     struct WaitForMessageState;
-    WaitForMessageState* m_waitingForMessage { nullptr };
+    WaitForMessageState* m_waitingForMessage WTF_GUARDED_BY_LOCK(m_waitForMessageMutex) { nullptr }; // NOLINT
 
     class SyncMessageState;
 
     Lock m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
-    bool m_shouldWaitForMessages;
+    bool m_shouldWaitForMessages WTF_GUARDED_BY_LOCK(m_waitForMessageMutex);
     struct PendingSyncReply;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 

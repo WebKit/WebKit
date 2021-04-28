@@ -28,6 +28,7 @@ set(WTF_PUBLIC_HEADERS
     CallbackAggregator.h
     CheckedArithmetic.h
     CheckedBoolean.h
+    CheckedCondition.h
     CheckedLock.h
     ClockType.h
     CommaPrinter.h

@@ -67,6 +67,7 @@ public:
     void safepoint() { Lock::safepoint(); }
     bool isHeld() const { return Lock::isHeld(); }
     bool isLocked() const { return Lock::isLocked(); }
+    friend class CheckedCondition;
 };
 
 using AdoptLockTag = std::adopt_lock_t;

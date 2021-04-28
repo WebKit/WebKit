@@ -87,6 +87,7 @@ MediaTrackReader::MediaTrackReader(Allocator&& allocator, const MediaFormatReade
 
 MediaTime MediaTrackReader::greatestPresentationTime() const
 {
+    Locker locker { m_sampleStorageLock };
     auto& sampleMap = m_sampleStorage->sampleMap;
     if (sampleMap.empty())
         return MediaTime::invalidTime();
@@ -98,7 +99,7 @@ MediaTime MediaTrackReader::greatestPresentationTime() const
 void MediaTrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRef byteSource)
 {
     ASSERT(!isMainRunLoop());
-    auto locker = holdLock(m_sampleStorageLock);
+    Locker locker { m_sampleStorageLock };
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
 
@@ -116,10 +117,11 @@ void MediaTrackReader::addSample(Ref<MediaSample>&& sample, MTPluginByteSourceRe
 
 void MediaTrackReader::waitForSample(Function<bool(SampleMap&, bool)>&& predicate) const
 {
-    auto locker = holdLock(m_sampleStorageLock);
+    Locker locker { m_sampleStorageLock };
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
     m_sampleStorageCondition.wait(m_sampleStorageLock, [predicate = WTFMove(predicate), this] {
+        assertIsHeld(m_sampleStorageLock);
         return predicate(m_sampleStorage->sampleMap, m_sampleStorage->hasAllSamples);
     });
 }
@@ -129,7 +131,7 @@ void MediaTrackReader::finishParsing()
     ASSERT(!isMainRunLoop());
 
     ALWAYS_LOG(LOGIDENTIFIER);
-    auto locker = holdLock(m_sampleStorageLock);
+    Locker locker { m_sampleStorageLock };
     if (!m_sampleStorage)
         m_sampleStorage = makeUnique<SampleStorage>();
     m_sampleStorage->hasAllSamples = true;
@@ -165,8 +167,9 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
         return noErr;
     }
 
-    auto locker = holdLock(m_sampleStorageLock);
+    Locker locker { m_sampleStorageLock };
     m_sampleStorageCondition.wait(m_sampleStorageLock, [&] {
+        assertIsHeld(m_sampleStorageLock);
         return !!m_sampleStorage;
     });
 
@@ -198,7 +201,7 @@ OSStatus MediaTrackReader::copyProperty(CFStringRef key, CFAllocatorRef allocato
 
 void MediaTrackReader::finalize()
 {
-    auto locker = holdLock(m_sampleStorageLock);
+    Locker locker { m_sampleStorageLock };
     storageQueue().dispatch([sampleStorage = std::exchange(m_sampleStorage, nullptr)]() mutable {
         sampleStorage = nullptr;
     });
