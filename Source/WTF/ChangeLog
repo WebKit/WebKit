@@ -1,3 +1,16 @@
+2021-04-28  Kate Cheney  <katherine_cheney@apple.com>
+
+        Disable App Bound Requests on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=225155
+        <rdar://problem/77288787>
+
+        App-bound requests is causing potential performance issues on macOS.
+        We should disable it while we investigate further.
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-04-28  Basuke Suzuki  <basuke.suzuki@sony.com>
 
         Suppress warnings for %{private}s format specifier
