@@ -314,7 +314,7 @@ void AudioParam::calculateFinalValues(float* values, unsigned numberOfValues, bo
     ASSERT(numberOfValues <= AudioUtilities::renderQuantumSize);
     m_summingBus->setChannelMemory(0, values, sampleAccurate ? numberOfValues : 1);
 
-    for (auto* output : renderingOutputs()) {
+    for (auto& output : m_renderingOutputs) {
         ASSERT(output);
 
         // Render audio from this output.

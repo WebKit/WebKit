@@ -54,7 +54,13 @@ void AudioNodeInput::connect(AudioNodeOutput* output)
     if (!output || !node())
         return;
 
-    if (addOutput(*output))
+    auto addPotentiallyDisabledOutput = [this](AudioNodeOutput& output) {
+        if (output.isEnabled())
+            return addOutput(output);
+        return m_disabledOutputs.add(&output).isNewEntry;
+    };
+
+    if (addPotentiallyDisabledOutput(*output))
         output->addInput(this);
 }
 
@@ -72,24 +78,60 @@ void AudioNodeInput::disconnect(AudioNodeOutput* output)
         output->removeInput(this); // Note: it's important to return immediately after this since the node may be deleted.
         return;
     }
+    
+    // Otherwise, try to disconnect from disabled connections.
+    if (m_disabledOutputs.remove(output)) {
+        output->removeInput(this); // Note: it's important to return immediately after this since the node may be deleted.
+        return;
+    }
 
     ASSERT_NOT_REACHED();
 }
 
-void AudioNodeInput::outputEnabledStateChanged(AudioNodeOutput& output)
+void AudioNodeInput::disable(AudioNodeOutput* output)
 {
     ASSERT(context());
     ASSERT(context()->isGraphOwner());
-    AudioSummingJunction::outputEnabledStateChanged(output);
+
+    ASSERT(output && node());
+    if (!output || !node())
+        return;
+
+    {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+        m_disabledOutputs.add(output);
+        bool wasRemoved = removeOutput(*output);
+        ASSERT_UNUSED(wasRemoved, wasRemoved);
+    }
 
     // Propagate disabled state to outputs.
-    ASSERT(node());
-    if (!node())
+    node()->disableOutputsIfNecessary();
+}
+
+void AudioNodeInput::enable(AudioNodeOutput* output)
+{
+    ASSERT(context());
+    ASSERT(context()->isGraphOwner());
+
+    ASSERT(output && node());
+    if (!output || !node())
         return;
-    if (output.isEnabled())
-        node()->enableOutputsIfNecessary();
-    else
-        node()->disableOutputsIfNecessary();
+
+    ASSERT(m_disabledOutputs.contains(output));
+
+    // Move output from disabled list to active list.
+    {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+        addOutput(*output);
+    }
+    m_disabledOutputs.remove(output);
+
+    // Propagate enabled state to outputs.
+    node()->enableOutputsIfNecessary();
 }
 
 void AudioNodeInput::didUpdate()
@@ -135,7 +177,7 @@ AudioBus* AudioNodeInput::bus()
 
     // Handle single connection specially to allow for in-place processing.
     if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max)
-        return (*renderingOutputs().begin())->bus();
+        return renderingOutput(0)->bus();
 
     // Multiple connections case or complex ChannelCountMode (or no connections).
     return internalSummingBus();
@@ -165,7 +207,7 @@ void AudioNodeInput::sumAllConnections(AudioBus* summingBus, size_t framesToProc
 
     auto interpretation = node()->channelInterpretation();
 
-    for (auto* output : renderingOutputs()) {
+    for (auto& output : m_renderingOutputs) {
         ASSERT(output);
 
         // Render audio from this output.
@@ -181,17 +223,16 @@ AudioBus* AudioNodeInput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
     ASSERT(context());
     ASSERT(context()->isAudioThread());
 
-    auto numberOfRenderingConnections = this->numberOfRenderingConnections();
     // Handle single connection case.
-    if (numberOfRenderingConnections == 1 && node()->channelCountMode() == ChannelCountMode::Max) {
+    if (numberOfRenderingConnections() == 1 && node()->channelCountMode() == ChannelCountMode::Max) {
         // The output will optimize processing using inPlaceBus if it's able.
-        AudioNodeOutput* output = *renderingOutputs().begin();
+        AudioNodeOutput* output = this->renderingOutput(0);
         return output->pull(inPlaceBus, framesToProcess);
     }
 
     AudioBus* internalSummingBus = this->internalSummingBus();
 
-    if (!numberOfRenderingConnections) {
+    if (!numberOfRenderingConnections()) {
         // At least, generate silence if we're not connected to anything.
         // FIXME: if we wanted to get fancy, we could propagate a 'silent hint' here to optimize the downstream graph processing.
         internalSummingBus->zero();

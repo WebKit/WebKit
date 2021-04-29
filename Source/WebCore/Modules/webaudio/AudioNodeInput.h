@@ -55,8 +55,11 @@ public:
     void connect(AudioNodeOutput*);
     void disconnect(AudioNodeOutput*);
 
+    // disable() will take the output out of the active connections list and set aside in a disabled list.
+    // enable() will put the output back into the active connections list.
     // Must be called with the context's graph lock.
-    void outputEnabledStateChanged(AudioNodeOutput&) final;
+    void enable(AudioNodeOutput*);
+    void disable(AudioNodeOutput*);
 
     // pull() processes all of the AudioNodes connected to us.
     // In the case of multiple connections it sums the result into an internal summing bus.
@@ -78,6 +81,11 @@ public:
     
 private:
     AudioNode* m_node;
+
+    // m_disabledOutputs contains the AudioNodeOutputs which are disabled (will not be processed) by the audio graph rendering.
+    // But, from JavaScript's perspective, these outputs are still connected to us.
+    // Generally, these represent disabled connections from "notes" which have finished playing but are not yet garbage collected.
+    HashSet<AudioNodeOutput*> m_disabledOutputs;
 
     // Called from context's audio thread.
     AudioBus* internalSummingBus();

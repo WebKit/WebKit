@@ -1,3 +1,38 @@
+2021-04-28  Chris Dumez  <cdumez@apple.com>
+
+        Crash under WebCore::AudioNodeOutput::pull(WebCore::AudioBus*, unsigned long)
+        https://bugs.webkit.org/show_bug.cgi?id=225174
+        <rdar://77270701>
+
+        Unreviewed, revert r274767 as it introduced this crash.
+
+        * Modules/webaudio/AudioNodeInput.cpp:
+        (WebCore::AudioNodeInput::connect):
+        (WebCore::AudioNodeInput::disconnect):
+        (WebCore::AudioNodeInput::disable):
+        (WebCore::AudioNodeInput::enable):
+        (WebCore::AudioNodeInput::bus):
+        (WebCore::AudioNodeInput::sumAllConnections):
+        (WebCore::AudioNodeInput::pull):
+        * Modules/webaudio/AudioNodeInput.h:
+        * Modules/webaudio/AudioNodeOutput.cpp:
+        (WebCore::AudioNodeOutput::disable):
+        (WebCore::AudioNodeOutput::enable):
+        * Modules/webaudio/AudioParam.cpp:
+        (WebCore::AudioParam::calculateFinalValues):
+        * Modules/webaudio/AudioSummingJunction.cpp:
+        (WebCore::AudioSummingJunction::addOutput):
+        (WebCore::AudioSummingJunction::removeOutput):
+        (WebCore::AudioSummingJunction::updateRenderingState):
+        (WebCore::AudioSummingJunction::maximumNumberOfChannels const):
+        * Modules/webaudio/AudioSummingJunction.h:
+        (WebCore::AudioSummingJunction::renderingOutput):
+        (WebCore::AudioSummingJunction::renderingOutput const):
+        (WebCore::AudioSummingJunction::isConnected const):
+        (WebCore::AudioSummingJunction::numberOfConnections const):
+        * Modules/webaudio/WebKitAudioPannerNode.cpp:
+        (WebCore::WebKitAudioPannerNode::notifyAudioSourcesConnectedToNode):
+
 2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Coalesce adjacent selection geometries when rendering individual selection quads

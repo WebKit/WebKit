@@ -25,7 +25,6 @@
 #pragma once
 
 #include "AudioBus.h"
-#include <iterator>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -50,76 +49,11 @@ public:
     // This must be called when we own the context's graph lock in the audio thread at the very start or end of the render quantum.
     void updateRenderingState();
 
-    class RenderingOutputCollection {
-    public:
-        RenderingOutputCollection() = default;
-        RenderingOutputCollection(const HashSet<AudioNodeOutput*>& outputs)
-            : m_outputs(copyToVectorOf<RenderingOutput>(outputs))
-        {
-        }
-
-        bool isEmpty() const { return begin() == end(); }
-        size_t size() const { return std::distance(begin(), end()); }
-
-        void append(AudioNodeOutput& output) { m_outputs.append(&output); }
-        bool remove(AudioNodeOutput& output) { return m_outputs.removeFirst(&output); }
-        void updatedEnabledState(AudioNodeOutput&);
-
-        struct RenderingOutput {
-            RenderingOutput(AudioNodeOutput*);
-            bool operator==(const AudioNodeOutput* other) const { return output == other; }
-            AudioNodeOutput* output;
-            bool isEnabled;
-        };
-
-        class ConstIterator {
-        public:
-            using difference_type = size_t;
-            using value_type = AudioNodeOutput*;
-            using pointer = AudioNodeOutput**;
-            using reference = AudioNodeOutput*&;
-            using iterator_category = std::forward_iterator_tag;
-
-            ConstIterator(const Vector<RenderingOutput>& outputs, Vector<RenderingOutput>::const_iterator position)
-                : m_position(position)
-                , m_end(outputs.end())
-            {
-                skipDisabledOutputs();
-            }
-
-            AudioNodeOutput* operator*() const { return m_position->output; }
-            constexpr bool operator==(const ConstIterator& other) const { return m_position == other.m_position; }
-            constexpr bool operator!=(const ConstIterator& other) const { return !(*this == other); }
-            ConstIterator& operator++()
-            {
-                ASSERT(m_position != m_end);
-                ++m_position;
-                skipDisabledOutputs();
-                return *this;
-            }
-
-        private:
-            void skipDisabledOutputs()
-            {
-                while (m_position != m_end && !m_position->isEnabled)
-                    ++m_position;
-            }
-
-            Vector<RenderingOutput>::const_iterator m_position;
-            Vector<RenderingOutput>::const_iterator m_end;
-        };
-
-        ConstIterator begin() const { return ConstIterator { m_outputs, m_outputs.begin() }; }
-        ConstIterator end() const { return ConstIterator { m_outputs, m_outputs.end() }; }
-
-    private:
-        Vector<RenderingOutput> m_outputs;
-    };
-
     // Rendering code accesses its version of the current connections here.
-    const RenderingOutputCollection& renderingOutputs() const { return m_renderingOutputs; }
     unsigned numberOfRenderingConnections() const { return m_renderingOutputs.size(); }
-    bool isConnected() const { return !m_renderingOutputs.isEmpty(); }
+    AudioNodeOutput* renderingOutput(unsigned i) { return m_renderingOutputs[i]; }
+    const AudioNodeOutput* renderingOutput(unsigned i) const { return m_renderingOutputs[i]; }
+    bool isConnected() const { return numberOfRenderingConnections() > 0; }
 
     virtual bool canUpdateState() = 0;
     virtual void didUpdate() = 0;
@@ -129,27 +63,29 @@ public:
 
     void markRenderingStateAsDirty();
 
-    virtual void outputEnabledStateChanged(AudioNodeOutput&);
-
 protected:
-    unsigned maximumNumberOfChannels() const;
-
-private:
     WeakPtr<BaseAudioContext> m_context;
+
+    // numberOfConnections() should never be called from the audio rendering thread.
+    // Instead numberOfRenderingConnections() and renderingOutput() should be used.
+    unsigned numberOfConnections() const { return m_outputs.size(); }
+
+    unsigned maximumNumberOfChannels() const;
 
     // m_renderingOutputs is a copy of m_outputs which will never be modified during the graph rendering on the audio thread.
     // This is the list which is used by the rendering code.
     // Whenever m_outputs is modified, the context is told so it can later update m_renderingOutputs from m_outputs at a safe time.
     // Most of the time, m_renderingOutputs is identical to m_outputs.
-    RenderingOutputCollection m_renderingOutputs;
+    Vector<AudioNodeOutput*> m_renderingOutputs;
 
     // m_renderingStateNeedUpdating keeps track if m_outputs is modified.
     bool m_renderingStateNeedUpdating { false };
 
+private:
     // m_outputs contains the AudioNodeOutputs representing current connections which are not disabled.
     // The rendering code should never use this directly, but instead uses m_renderingOutputs.
     HashSet<AudioNodeOutput*> m_outputs;
-    Optional<RenderingOutputCollection> m_pendingRenderingOutputs;
+    Vector<AudioNodeOutput*> m_pendingRenderingOutputs;
 };
 
 } // namespace WebCore
