@@ -52,6 +52,8 @@ static Optional<size_t> stackSize(ThreadType threadType)
 #elif OS(DARWIN) && ASAN_ENABLED
     if (threadType == ThreadType::Compiler)
         return 1 * MB; // ASan needs more stack space (especially on Debug builds).
+#elif OS(LINUX) && !defined(__BIONIC__) && !defined(__GLIBC__) // MUSL default thread stack size.
+        return 128 * KB;
 #else
     UNUSED_PARAM(threadType);
 #endif

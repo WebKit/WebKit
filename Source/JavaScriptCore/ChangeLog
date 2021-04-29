@@ -1,3 +1,23 @@
+2021-04-08  Khem Raj  <raj.khem@gmail.com>
+
+        [WPE] Build fixes for musl C library on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=210068
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Use OS(LINUX) to include musl in platform test
+        for linux and consolidate all linux platfrom
+        under same test. Use smaller limits for JSC
+        stack size per thread and reserved zone size.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::stackPointerImpl):
+        (JSC::MachineContext::framePointerImpl):
+        (JSC::MachineContext::instructionPointerImpl):
+        (JSC::MachineContext::argumentPointer<1>):
+        (JSC::MachineContext::llintInstructionPointer):
+        * runtime/OptionsList.h:
+
 2021-04-13  Ross Kirsling  <ross.kirsling@sony.com>
 
         Move cloneUBreakIterator declaration to IntlWorkaround.h
