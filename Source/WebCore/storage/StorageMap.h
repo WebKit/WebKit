@@ -56,7 +56,7 @@ public:
 
     bool isShared() const { return !m_impl->hasOneRef(); }
 
-    static constexpr unsigned noQuota = UINT_MAX;
+    static constexpr unsigned noQuota = std::numeric_limits<unsigned>::max();
 
 private:
     void invalidateIterator();
@@ -73,7 +73,7 @@ private:
         HashMap<String, String> map;
         HashMap<String, String>::iterator iterator { map.end() };
         unsigned iteratorIndex { std::numeric_limits<unsigned>::max() };
-        unsigned currentLength { 0 }; // Measured in UChars.
+        unsigned currentSize { 0 };
     };
 
     Ref<Impl> m_impl;

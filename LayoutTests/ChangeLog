@@ -1,3 +1,18 @@
+2021-04-29  Chris Dumez  <cdumez@apple.com>
+
+        Improve local storage size estimation for quota limitation
+        https://bugs.webkit.org/show_bug.cgi?id=225123
+        <rdar://problem/77248111>
+
+        Reviewed by Alex Christensen.
+
+        Update tests to use unicode in the Strings so that the file reaches the quota without
+        changing the test too much. The test was using ASCII and was thus able to store all
+        the strings without reaching the quota due to our updated String size calculation.
+
+        * platform/ios/ios/storage/domstorage/5mb-quota.html:
+        * storage/domstorage/quota.html:
+
 2021-04-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r276689, r276736, and r276737.
