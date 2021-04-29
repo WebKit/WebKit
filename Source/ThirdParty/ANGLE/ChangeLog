@@ -1,3 +1,23 @@
+2021-04-29  Kyle Piddington  <kpiddington@apple.com>
+
+        [ANGLE-Metal] Fix 17 textureshadow tests
+        https://bugs.webkit.org/show_bug.cgi?id=224965
+        <rdar://77053085> 
+
+        Depth24Stencil8 copies were being incorrectly managed when dealing with D24S8 emulation.
+        Fix conversion functions 
+
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/mtl_format_utils.h:
+        * src/libANGLE/renderer/metal/mtl_format_utils.mm:
+        (rx::mtl::priv::OffsetDataPointer):
+        (rx::mtl::LoadS8D24S8ToD32FX24S8):
+        (rx::mtl::DEPTH24_STENCIL8_to_D32_FLOAT_X24S8_UINT):
+        (rx::mtl::GetLoadFunctionsMap):
+        (rx::mtl::FormatTable::initialize):
+        (): Deleted.
+
 2021-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Stop building libANGLE.a
