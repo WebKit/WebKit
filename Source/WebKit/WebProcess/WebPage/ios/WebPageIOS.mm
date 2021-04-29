@@ -1526,15 +1526,15 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
     if (baseIsStart) {
         if (result <= selectionStart)
             result = selectionStart.next();
-        else if (auto containerNode = makeRefPtr(selectionStart.deepEquivalent().containerNode()); containerNode && targetNode && &containerNode->treeScope() != &targetNode->treeScope())
-            result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), containerNode.get());
+        else if (targetNode && targetNode->isInTreeScope() && selectionStart.deepEquivalent().isInTreeScope() && selectionStart.deepEquivalent().treeScope() != &targetNode->treeScope())
+            result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), selectionStart.deepEquivalent().containerNode());
 
         range = makeSimpleRange(selectionStart, result);
     } else {
         if (selectionEnd <= result)
             result = selectionEnd.previous();
-        else if (auto containerNode = makeRefPtr(selectionEnd.deepEquivalent().containerNode()); containerNode && targetNode && &containerNode->treeScope() != &targetNode->treeScope())
-            result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), containerNode.get());
+        else if (targetNode && targetNode->isInTreeScope() && selectionEnd.deepEquivalent().isInTreeScope() && selectionEnd.deepEquivalent().treeScope() != &targetNode->treeScope())
+            result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), selectionEnd.deepEquivalent().containerNode());
 
         range = makeSimpleRange(result, selectionEnd);
     }
