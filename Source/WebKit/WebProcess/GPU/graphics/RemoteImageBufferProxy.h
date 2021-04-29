@@ -152,7 +152,7 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
 
-        ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+        ASSERT(WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
         return m_remoteRenderingBackendProxy->getDataURLForImageBuffer(mimeType, quality, preserveResolution, m_renderingResourceIdentifier);
     }
 
@@ -161,7 +161,7 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
 
-        ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+        ASSERT(WebCore::MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
         return m_remoteRenderingBackendProxy->getDataForImageBuffer(mimeType, quality, m_renderingResourceIdentifier);
     }
 
