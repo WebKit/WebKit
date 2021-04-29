@@ -1872,8 +1872,7 @@ void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& func
 {
     ASSERT(!m_mediaElements.hasNullReferences());
     m_mediaElements.forEach([&](auto& element) {
-        auto protectedElement = makeRef(element);
-        function(element);
+        function(makeRef(element));
     });
 }
 
