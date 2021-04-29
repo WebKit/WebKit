@@ -1,3 +1,15 @@
+2021-04-29  Roy Reapor  <rreapor@apple.com>
+
+        [webkitcorepy] Allow user to specify interpreter used by autoinstall.py to install imported dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=225172
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Version bump.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Version bump.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/autoinstall.py:
+        (Package.install): AUTOINSTALL_PYTHON_EXECUTABLE environment variable can override python interpreter used by this module.
+
 2021-04-29  Aakash Jain  <aakash_jain@apple.com>
 
         [webkitpy] Remove deprecated slave-config-json-path parameter in perftestsrunner.py
