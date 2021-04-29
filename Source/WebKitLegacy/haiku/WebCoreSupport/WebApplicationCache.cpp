@@ -27,8 +27,8 @@
 
 #include <wtf/RetainPtr.h>
 #include <ApplicationCache.h>
-#include <ApplicationCacheStorage.h>
-#include "SecurityOrigin.h"
+#include "WebCore/ApplicationCacheStorage.h"
+#include "WebCore/SecurityOrigin.h"
 
 #include <FindDirectory.h>
 #include <Path.h>

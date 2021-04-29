@@ -24,9 +24,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
-#include "ColorChooser.h"
 
-#include "ColorChooserClient.h"
+#include "WebCore/ColorChooser.h"
+#include "WebCore/ColorChooserClient.h"
 
 #include <Button.h>
 #include <ColorControl.h>

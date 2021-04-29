@@ -31,10 +31,10 @@
 #include "FrameNetworkingContextHaiku.h"
 
 #include "NetworkStorageSessionMap.h"
-#include "NetworkStorageSession.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "ResourceHandle.h"
+#include "WebCore/NetworkStorageSession.h"
+#include "WebCore/NotImplemented.h"
+#include "WebCore/Page.h"
+#include "WebCore/ResourceHandle.h"
 
 #include <UrlContext.h>
 #include <wtf/NeverDestroyed.h>

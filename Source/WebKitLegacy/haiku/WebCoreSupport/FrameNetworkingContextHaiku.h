@@ -29,7 +29,7 @@
 #ifndef FrameNetworkingContextHaiku_h
 #define FrameNetworkingContextHaiku_h
 
-#include "FrameNetworkingContext.h"
+#include "WebCore/FrameNetworkingContext.h"
 
 #include <support/Locker.h>
 #include <Referenceable.h>

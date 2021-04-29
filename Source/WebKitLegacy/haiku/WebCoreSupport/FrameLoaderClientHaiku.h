@@ -31,10 +31,9 @@
 #ifndef FrameLoaderClientHaiku_h
 #define FrameLoaderClientHaiku_h
 
-#include "FrameLoader.h"
-#include "FrameLoaderClient.h"
+#include <WebCore/FrameLoader.h>
+#include <WebCore/FrameLoaderClient.h>
 #include "wtf/URL.h"
-#include "ResourceResponse.h"
 #include <Messenger.h>
 #include <unicode/uidna.h>
 #include <wtf/Forward.h>
@@ -52,6 +51,7 @@ class FrameView;
 class HistoryItem;
 class NavigationAction;
 class ResourceLoader;
+class ResourceResponse;
 
 struct LoadErrorResetToken;
 

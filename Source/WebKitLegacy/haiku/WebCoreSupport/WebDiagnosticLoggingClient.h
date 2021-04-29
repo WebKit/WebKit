@@ -26,7 +26,7 @@
 #ifndef WebDiagnosticLoggingClient_h
 #define WebDiagnosticLoggingClient_h
 
-#include "DiagnosticLoggingClient.h"
+#include "WebCore/DiagnosticLoggingClient.h"
 #include <wtf/Forward.h>
 
 namespace WebKit {
@@ -43,7 +43,8 @@ private:
     void logDiagnosticMessageWithResult(const String& message, const String& description, WebCore::DiagnosticLoggingResultType, WebCore::ShouldSample) override;
     void logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample) override;
     void logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, WebCore::ShouldSample) override;
-	void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, WebCore::ShouldSample) override;
+    void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const ValueDictionary&, WebCore::ShouldSample) override;
+    void logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain) override;
 };
 
 }

@@ -33,20 +33,21 @@
 #include "config.h"
 #include "EditorClientHaiku.h"
 
-#include "Document.h"
-#include "Editor.h"
-#include "FocusController.h"
-#include "Frame.h"
-#include "FrameSelection.h"
-#include "KeyboardEvent.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PlatformKeyboardEvent.h"
-#include "Settings.h"
+#include <WebCore/Document.h>
+#include <WebCore/Editor.h>
+#include <WebCore/FocusController.h>
+#include <WebCore/Frame.h>
+#include <WebCore/FrameSelection.h>
+#include <WebCore/KeyboardEvent.h>
+#include <WebCore/NotImplemented.h>
+#include <WebCore/Page.h>
+#include <WebCore/PlatformKeyboardEvent.h>
+#include <WebCore/Settings.h>
+#include <WebCore/WindowsKeyboardCodes.h>
+
 #include "WebFrame.h"
 #include "WebViewConstants.h"
 #include "WebPage.h"
-#include "WindowsKeyboardCodes.h"
 
 namespace WebCore {
 

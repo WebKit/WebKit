@@ -79,7 +79,6 @@ ENDIF ()
 add_definitions("-include WebKitPrefix.h")
 
 LIST(APPEND WebKitLegacy_SOURCES
-    haiku/WebCoreSupport/AcceleratedCompositingContext.cpp
 	haiku/WebCoreSupport/BackForwardList.cpp
     haiku/WebCoreSupport/ChromeClientHaiku.cpp
     haiku/WebCoreSupport/ContextMenuClientHaiku.cpp

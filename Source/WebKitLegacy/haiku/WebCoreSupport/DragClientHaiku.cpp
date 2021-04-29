@@ -27,7 +27,7 @@
 #include "config.h"
 #include "DragClientHaiku.h"
 
-#include "NotImplemented.h"
+#include <WebCore/NotImplemented.h>
 #include "WebView.h"
 
 

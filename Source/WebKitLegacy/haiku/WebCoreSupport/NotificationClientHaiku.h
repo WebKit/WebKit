@@ -28,9 +28,10 @@
 #ifndef NotificationClientHaiku_h
 #define NotificationClientHaiku_h
 
-#include "NotificationClient.h"
-#include "Notification.h"
-#include "NotificationPermissionCallback.h"
+#include "WebCore/Notification.h"
+#include "WebCore/NotificationClient.h"
+#include "WebCore/NotificationPermissionCallback.h"
+
 #include <support/Locker.h>
 #include <app/Notification.h>
 

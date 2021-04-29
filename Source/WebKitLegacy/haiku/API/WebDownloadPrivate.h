@@ -28,8 +28,8 @@
 #ifndef WebDownload_h
 #define WebDownload_h
 
-#include "ResourceHandle.h"
-#include "ResourceHandleClient.h"
+#include "WebCore/ResourceHandle.h"
+#include "WebCore/ResourceHandleClient.h"
 #include <File.h>
 #include <Messenger.h>
 #include <Path.h>

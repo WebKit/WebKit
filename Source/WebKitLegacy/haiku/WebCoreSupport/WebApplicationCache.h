@@ -26,7 +26,7 @@
 #ifndef WebApplicationCache_h
 #define WebApplicationCache_h
 
-#include <ApplicationCacheStorage.h>
+#include "WebCore/ApplicationCacheStorage.h"
 
 namespace WebCore {
 class ApplicationCacheStorage;

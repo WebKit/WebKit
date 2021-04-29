@@ -332,6 +332,9 @@ if (ENABLE_ACCESSIBILITY)
 endif ()
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/haiku/PopupMenuHaiku.h
+    platform/haiku/SearchPopupMenuHaiku.h
+
     platform/network/haiku/AuthenticationChallenge.h
     platform/network/haiku/CertificateInfo.h
     platform/network/haiku/HaikuFormDataStream.h
@@ -343,6 +346,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/InputTypeNames.h
     platform/DateTimeChooser.h
     platform/DateTimeChooserClient.h
+    platform/DateTimeChooserParameters.h
 
     platform/graphics/haiku/ImageBufferDataHaiku.h
     platform/graphics/Image.h

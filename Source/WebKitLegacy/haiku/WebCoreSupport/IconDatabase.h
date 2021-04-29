@@ -26,8 +26,7 @@
 
 #pragma once
 
-#include "NativeImage.h"
-
+#include "WebCore/NativeImage.h"
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/SQLiteDatabase.h>
 

@@ -20,14 +20,13 @@
 #ifndef PlatformStrategiesHaiku_h
 #define PlatformStrategiesHaiku_h
 
-#include "LoaderStrategy.h"
-#include "NetworkStorageSession.h"
-#include "PasteboardStrategy.h"
-#include "PlatformStrategies.h"
+#include "WebCore/LoaderStrategy.h"
+#include "WebCore/NetworkStorageSession.h"
+#include "WebCore/PasteboardStrategy.h"
+#include "WebCore/PageIdentifier.h"
+#include "WebCore/PlatformStrategies.h"
 
 #include <wtf/Forward.h>
-
-#include "WebCore/PageIdentifier.h"
 
 class PlatformStrategiesHaiku : public WebCore::PlatformStrategies {
 public:

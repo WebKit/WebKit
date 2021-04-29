@@ -34,17 +34,17 @@
 #include <Bitmap.h>
 #include "WebCore/DocumentLoader.h"
 #include "WebCore/Document.h"
-#include "DOMWindow.h"
-#include "FocusController.h"
-#include "Frame.h"
+#include "WebCore/DOMWindow.h"
+#include "WebCore/FocusController.h"
+#include "WebCore/Frame.h"
 #include "WebCore/FrameLoader.h"
-#include "FrameView.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PageGroup.h"
-#include <WebCore/ScriptController.h>
+#include "WebCore/FrameView.h"
+#include "WebCore/NotImplemented.h"
+#include "WebCore/Page.h"
+#include "WebCore/PageGroup.h"
+#include "WebCore/ScriptController.h"
 #include "WebCore/Settings.h"
-#include "UserContentTypes.h"
+#include "WebCore/UserContentTypes.h"
 
 #include "WebCore/Editor.h"
 

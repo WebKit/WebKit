@@ -29,9 +29,9 @@
 #ifndef ChromeClientHaiku_h
 #define ChromeClientHaiku_h
 
-#include "ChromeClient.h"
-#include "FloatRect.h"
-#include "NotImplemented.h"
+#include <WebCore/ChromeClient.h>
+#include <WebCore/FloatRect.h>
+#include <WebCore/NotImplemented.h>
 #include "wtf/URL.h"
 
 #include <Entry.h>

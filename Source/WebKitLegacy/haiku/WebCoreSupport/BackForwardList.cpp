@@ -26,12 +26,11 @@
 
 #include "BackForwardList.h"
 
-#include "Frame.h"
+#include "WebCore/Frame.h"
 #include "WebCore/FrameLoader.h"
 #include "WebCore/FrameLoaderClient.h"
-#include <WebCore/SerializedScriptValue.h>
-
 #include "WebCore/HistoryItem.h"
+#include "WebCore/SerializedScriptValue.h"
 
 static const unsigned DefaultCapacity = 100;
 static const unsigned NoCurrentItemIndex = UINT_MAX;

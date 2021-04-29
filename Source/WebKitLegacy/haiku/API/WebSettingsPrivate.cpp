@@ -28,7 +28,7 @@
 #include <config.h>
 #include "WebSettingsPrivate.h"
 
-#include "Settings.h"
+#include "WebCore/Settings.h"
 #include "WebSettings.h"
 
 #include <Font.h>

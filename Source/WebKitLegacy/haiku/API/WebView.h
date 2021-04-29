@@ -149,9 +149,6 @@ private:
             BBitmap*            fOffscreenBitmap;
             BView*              fOffscreenView;
 
-            std::unique_ptr<WebCore::AcceleratedCompositingContext>
-                                fCompositor;
-
 			BWebPage*			fWebPage;
 
 			UserData*			fUserData;

@@ -28,15 +28,16 @@
 #include "config.h"
 #include "WebSettings.h"
 
-#include "ApplicationCacheStorage.h"
-#include "BitmapImage.h"
-#include "DatabaseTracker.h"
-#include "FontPlatformData.h"
 #include "FrameNetworkingContextHaiku.h"
 #include "IconDatabase.h"
-#include "Image.h"
-#include "IntSize.h"
-#include "Settings.h"
+
+#include "WebCore/ApplicationCacheStorage.h"
+#include "WebCore/BitmapImage.h"
+#include "WebCore/DatabaseTracker.h"
+#include "WebCore/FontPlatformData.h"
+#include "WebCore/Image.h"
+#include "WebCore/IntSize.h"
+#include "WebCore/Settings.h"
 #include "WebSettingsPrivate.h"
 #include <Application.h>
 #include <Bitmap.h>

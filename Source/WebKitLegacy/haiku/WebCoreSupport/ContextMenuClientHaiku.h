@@ -28,7 +28,7 @@
 #ifndef ContextMenuClientHaiku_h
 #define ContextMenuClientHaiku_h
 
-#include "ContextMenuClient.h"
+#include <WebCore/ContextMenuClient.h>
 
 class BWebPage;
 

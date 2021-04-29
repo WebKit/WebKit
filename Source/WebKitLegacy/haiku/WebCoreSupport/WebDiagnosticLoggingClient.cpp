@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "WebDiagnosticLoggingClient.h"
 
-#include <WebCore/Settings.h>
+#include "WebCore/Settings.h"
+#include "WebDiagnosticLoggingClient.h"
 
 namespace WebKit {
 using namespace WebCore;
@@ -79,6 +79,11 @@ void WebDiagnosticLoggingClient::logDiagnosticMessageWithValueDictionary(
         return;
 
 	fprintf(stderr, "%s: %s\n", message.utf8().data(), description.utf8().data());
+}
+
+void WebDiagnosticLoggingClient::logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain)
+{
+	fprintf(stderr, "%s\n", message.utf8().data());
 }
 
 } // namespace WebKit

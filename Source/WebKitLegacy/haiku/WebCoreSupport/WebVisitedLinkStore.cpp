@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebVisitedLinkStore.h"
 
-#include "NotImplemented.h"
+#include "WebCore/NotImplemented.h"
 #include "WebView.h"
 #include <wtf/NeverDestroyed.h>
 

@@ -30,25 +30,26 @@
 #include "config.h"	// WebCore/config.h
 #include "ChromeClientHaiku.h"
 
+#include "WebCore/FileChooser.h"
+#include "WebCore/Frame.h"
+#include "WebCore/FrameLoader.h"
+#include "WebCore/FrameLoadRequest.h"
+#include "WebCore/FrameView.h"
+#include "WebCore/HitTestResult.h"
+#include "WebCore/Icon.h"
+#include "WebCore/NotImplemented.h"
+#include "WebCore/Page.h"
+#include "WebCore/PopupMenuHaiku.h"
+#include "WebCore/SearchPopupMenuHaiku.h"
+#include "WebCore/WindowFeatures.h"
+
 #include "ColorChooserHaiku.h"
 #include "DateTimeChooserHaiku.h"
-#include "FileChooser.h"
 #include "FileIconLoader.h"
-#include "Frame.h"
-#include "FrameLoadRequest.h"
-#include "FrameLoader.h"
 #include "FrameLoaderClientHaiku.h"
-#include "FrameView.h"
-#include "HitTestResult.h"
-#include "Icon.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PopupMenuHaiku.h"
-#include "SearchPopupMenuHaiku.h"
 #include "WebFrame.h"
 #include "WebView.h"
 #include "WebWindow.h"
-#include "WindowFeatures.h"
 
 #include <Alert.h>
 #include <FilePanel.h>

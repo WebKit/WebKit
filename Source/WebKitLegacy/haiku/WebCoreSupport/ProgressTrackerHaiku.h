@@ -30,7 +30,7 @@
 #ifndef ProgressTrackerClientHaiku_h
 #define ProgressTrackerClientHaiku_h
 
-#include "ProgressTrackerClient.h"
+#include "WebCore/ProgressTrackerClient.h"
 
 #include <Messenger.h>
 

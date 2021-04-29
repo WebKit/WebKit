@@ -30,7 +30,7 @@
 #include "config.h"
 #include "InspectorClientHaiku.h"
 
-#include "NotImplemented.h"
+#include "WebCore/NotImplemented.h"
 
 
 namespace WebCore {

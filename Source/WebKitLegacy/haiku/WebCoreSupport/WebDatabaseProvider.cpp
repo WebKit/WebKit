@@ -29,7 +29,6 @@
 #include <storage/Path.h>
 
 
-#if ENABLE(INDEXED_DATABASE)
 String WebDatabaseProvider::indexedDatabaseDirectoryPath()
 {
 	BPath storagePath;
@@ -38,4 +37,3 @@ String WebDatabaseProvider::indexedDatabaseDirectoryPath()
 
 	return storagePath.Path();
 }
-#endif

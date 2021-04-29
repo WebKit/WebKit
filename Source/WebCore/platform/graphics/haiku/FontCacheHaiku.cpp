@@ -118,9 +118,9 @@ Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamil
 }
 
 
-const AtomString& FontCache::platformAlternateFamilyName(const AtomString& familyName)
+Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& familyName)
 {
-    return nullAtom();
+    return Optional<ASCIILiteral>();
 }
 
 

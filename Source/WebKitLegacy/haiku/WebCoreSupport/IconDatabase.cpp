@@ -27,14 +27,16 @@
 #include "config.h"
 #include "IconDatabase.h"
 
+#include "WebCore/BitmapImage.h"
+#include "WebCore/Image.h"
+#include "WebCore/Logging.h"
+#include "WebCore/SharedBuffer.h"
+#include "WebCore/SQLiteStatement.h"
+#include "WebCore/SQLiteTransaction.h"
+
 #include "pal/ExportMacros.h"
-#include "Logging.h"
-#include "BitmapImage.h"
+
 #include <wtf/FileSystem.h>
-#include "Image.h"
-#include <WebCore/SQLiteStatement.h>
-#include <WebCore/SQLiteTransaction.h>
-#include "SharedBuffer.h"
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/URL.h>
 #include <wtf/MainThread.h>

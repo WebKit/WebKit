@@ -24,7 +24,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DragClient.h"
+#include <WebCore/DragClient.h>
 
 class BWebView;
 

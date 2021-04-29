@@ -29,16 +29,15 @@
 #include <config.h>
 #include "WebView.h"
 
-#include "AcceleratedCompositingContext.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "GraphicsContext.h"
-#include "InspectorController.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PointerLockController.h"
-#include "ScrollableArea.h"
-#include "Scrollbar.h"
+#include "WebCore/Frame.h"
+#include "WebCore/FrameView.h"
+#include "WebCore/GraphicsContext.h"
+#include "WebCore/InspectorController.h"
+#include "WebCore/NotImplemented.h"
+#include "WebCore/Page.h"
+#include "WebCore/PointerLockController.h"
+#include "WebCore/ScrollableArea.h"
+#include "WebCore/Scrollbar.h"
 #include "WebPage.h"
 #include "WebViewConstants.h"
 
@@ -74,10 +73,6 @@ BWebView::BWebView(const char* name, BPrivate::Network::BUrlContext* urlContext)
     , fWebPage(new BWebPage(this, urlContext))
     , fUserData(nullptr)
 {
-#if USE(TEXTURE_MAPPER)
-    fCompositor = std::make_unique<WebCore::AcceleratedCompositingContext>(this);
-#endif
-
     fWebPage->Init();
 
     // TODO: Should add this to the "current" looper, but that looper needs to
@@ -99,10 +94,6 @@ BWebView::~BWebView()
 {
     delete fWebPage;
     fWebPage = nullptr;
-
-#if USE(TEXTURE_MAPPER)
-    fCompositor = nullptr;
-#endif
 
     if (fOffscreenBitmap) {
         fOffscreenBitmap->Lock();
@@ -510,9 +501,6 @@ BWebView* BWebView::GetInspectorView()
 
 void BWebView::SetRootLayer(WebCore::GraphicsLayer* layer)
 {
-#if USE(TEXTURE_MAPPER)
-    fCompositor->setRootGraphicsLayer(layer);
-#endif
 }
 
 
@@ -520,11 +508,6 @@ void BWebView::SetRootLayer(WebCore::GraphicsLayer* layer)
 
 void BWebView::SetOffscreenViewClean(BRect cleanRect, bool immediate)
 {
-#if USE(TEXTURE_MAPPER)
-    if (IsComposited())
-        fCompositor->flushAndRenderLayers();
-#endif
-
     if (LockLooper()) {
         if (immediate)
             Draw(cleanRect);
@@ -537,11 +520,7 @@ void BWebView::SetOffscreenViewClean(BRect cleanRect, bool immediate)
 
 bool BWebView::IsComposited()
 {
-#if USE(TEXTURE_MAPPER)
-    return fCompositor->isValid();
-#else
     return false;
-#endif
 }
 
 // #pragma mark - private

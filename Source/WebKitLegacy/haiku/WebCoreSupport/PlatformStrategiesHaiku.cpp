@@ -26,14 +26,14 @@
 #include "config.h"
 #include "PlatformStrategiesHaiku.h"
 
-#include <WebCore/MediaStrategy.h>
+#include "WebCore/BlobRegistryImpl.h"
+#include "WebCore/MediaStrategy.h"
+#include "WebCore/NetworkStorageSession.h"
+#include "WebCore/NotImplemented.h"
+#include "WebCore/Page.h"
+#include "WebCore/PageGroup.h"
 
-#include "BlobRegistryImpl.h"
-#include "NetworkStorageSession.h"
 #include "wtf/NeverDestroyed.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PageGroup.h"
 #include "WebResourceLoadScheduler.h"
 
 
