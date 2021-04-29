@@ -258,6 +258,7 @@ RefPtr<ImageData> GraphicsContextGLOpenGL::readCompositedResults()
 }
 #endif
 
+#if ENABLE(VIDEO)
 bool GraphicsContextGLOpenGL::copyTextureFromMedia(MediaPlayer& player, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
 {
 #if USE(AVFOUNDATION)
@@ -276,6 +277,7 @@ bool GraphicsContextGLOpenGL::copyTextureFromMedia(MediaPlayer& player, Platform
     return player.copyVideoTextureToPlatformTexture(this, outputTexture, outputTarget, level, internalFormat, format, type, premultiplyAlpha, flipY);
 #endif
 }
+#endif
 
 } // namespace WebCore
 

@@ -516,7 +516,9 @@ public:
     void setContentfulPaintDetected() { m_contenfulPaintDetected = true; }
     bool contenfulPaintDetected() const { return m_contenfulPaintDetected; }
 
+#if ENABLE(VIDEO)
     WEBCORE_EXPORT void paintFrameForMedia(MediaPlayer&, const FloatRect& destination);
+#endif
 
 #if OS(WINDOWS)
     HDC getWindowsContext(const IntRect&, bool supportAlphaBlend); // The passed in rect is used to create a bitmap for compositing inside transparency layers.

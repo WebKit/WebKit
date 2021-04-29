@@ -289,8 +289,10 @@ void DisplayList::append(ItemHandle item)
         return append<MetaCommandChangeItemBuffer>(item.get<MetaCommandChangeItemBuffer>());
     case ItemType::PutImageData:
         return append<PutImageData>(item.get<PutImageData>());
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return append<PaintFrameForMedia>(item.get<PaintFrameForMedia>());
+#endif
     case ItemType::StrokeRect:
         return append<StrokeRect>(item.get<StrokeRect>());
     case ItemType::StrokeLine:

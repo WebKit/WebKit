@@ -1148,8 +1148,10 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
 
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load.
     // FIXME: This code should be shared across all ports. <http://webkit.org/b/48762>.
+#if ENABLE(VIDEO)
     if (is<MediaDocument>(m_frame->coreFrame()->document()))
         loader->cancelMainResourceLoad(pluginWillHandleLoadError(loader->response()));
+#endif
 
     // Calling commitData did not create the plug-in view.
     if (!m_pluginView)

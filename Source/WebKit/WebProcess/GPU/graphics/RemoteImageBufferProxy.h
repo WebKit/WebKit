@@ -361,7 +361,9 @@ protected:
         case WebCore::DisplayList::ItemType::FlushContext:
         case WebCore::DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer:
         case WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer:
+#if ENABLE(VIDEO)
         case WebCore::DisplayList::ItemType::PaintFrameForMedia:
+#endif
         case WebCore::DisplayList::ItemType::Restore:
         case WebCore::DisplayList::ItemType::Rotate:
         case WebCore::DisplayList::ItemType::Save:

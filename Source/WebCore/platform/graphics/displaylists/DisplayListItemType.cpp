@@ -134,8 +134,10 @@ static size_t sizeOfItemInBytes(ItemType type)
         return sizeof(MetaCommandChangeItemBuffer);
     case ItemType::PutImageData:
         return sizeof(PutImageData);
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return sizeof(PaintFrameForMedia);
+#endif
     case ItemType::StrokeRect:
         return sizeof(StrokeRect);
     case ItemType::StrokeLine:
@@ -229,7 +231,9 @@ bool isDrawingItem(ItemType type)
     case ItemType::FillRectWithGradient:
     case ItemType::FillRectWithRoundedHole:
     case ItemType::FillRoundedRect:
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
+#endif
     case ItemType::PutImageData:
     case ItemType::StrokeEllipse:
 #if ENABLE(INLINE_PATH_DATA)
@@ -300,7 +304,9 @@ bool isInlineItem(ItemType type)
     case ItemType::FlushContext:
     case ItemType::MetaCommandChangeDestinationImageBuffer:
     case ItemType::MetaCommandChangeItemBuffer:
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
+#endif
     case ItemType::Restore:
     case ItemType::Rotate:
     case ItemType::Save:

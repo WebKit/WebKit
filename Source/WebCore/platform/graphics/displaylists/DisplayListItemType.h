@@ -80,7 +80,9 @@ enum class ItemType : uint8_t {
     MetaCommandChangeDestinationImageBuffer,
     MetaCommandChangeItemBuffer,
     PutImageData,
+#if ENABLE(VIDEO)
     PaintFrameForMedia,
+#endif
     StrokeRect,
     StrokeLine,
 #if ENABLE(INLINE_PATH_DATA)

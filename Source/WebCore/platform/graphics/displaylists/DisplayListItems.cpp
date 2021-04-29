@@ -803,6 +803,7 @@ static TextStream& operator<<(TextStream& ts, const PutImageData& item)
     return ts;
 }
 
+#if ENABLE(VIDEO)
 PaintFrameForMedia::PaintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
     : m_identifier(player.identifier())
     , m_destination(destination)
@@ -820,6 +821,7 @@ static TextStream& operator<<(TextStream& ts, const PaintFrameForMedia& item)
     ts.dumpProperty("destination", item.destination());
     return ts;
 }
+#endif
 
 Optional<FloatRect> StrokeRect::localBounds(const GraphicsContext&) const
 {
@@ -1062,7 +1064,9 @@ static TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::MetaCommandChangeDestinationImageBuffer: ts << "meta-command-change-destination-image-buffer"; break;
     case ItemType::MetaCommandChangeItemBuffer: ts << "meta-command-change-item-buffer"; break;
     case ItemType::PutImageData: ts << "put-image-data"; break;
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia: ts << "paint-frame-for-media"; break;
+#endif
     case ItemType::StrokeRect: ts << "stroke-rect"; break;
     case ItemType::StrokeLine: ts << "stroke-line"; break;
 #if ENABLE(INLINE_PATH_DATA)
@@ -1228,9 +1232,11 @@ TextStream& operator<<(TextStream& ts, ItemHandle item)
     case ItemType::PutImageData:
         ts << item.get<PutImageData>();
         break;
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         ts << item.get<PaintFrameForMedia>();
         break;
+#endif
     case ItemType::StrokeRect:
         ts << item.get<StrokeRect>();
         break;
