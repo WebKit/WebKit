@@ -543,6 +543,10 @@ struct evp_cipher_ctx_st {
 
   // block_mask contains |cipher->block_size| minus one. (The block size
   // assumed to be a power of two.)
+  //
+  // TODO(davidben): This is redundant with |cipher->block_size| and constant
+  // for the whole |EVP_CIPHER|. Move it there, or possibly even remove it and
+  // do the subtraction on demand.
   int block_mask;
 
   uint8_t final[EVP_MAX_BLOCK_LENGTH];  // possible final block

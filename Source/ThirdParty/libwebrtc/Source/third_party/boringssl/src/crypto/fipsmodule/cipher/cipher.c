@@ -57,6 +57,7 @@
 #include <openssl/cipher.h>
 
 #include <assert.h>
+#include <limits.h>
 #include <string.h>
 
 #include <openssl/err.h>
@@ -240,14 +241,20 @@ int EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
 
 int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
                       const uint8_t *in, int in_len) {
-  int i, j, bl;
+  // Ciphers that use blocks may write up to |bl| extra bytes. Ensure the output
+  // does not overflow |*out_len|.
+  int bl = ctx->cipher->block_size;
+  if (bl > 1 && in_len > INT_MAX - bl) {
+    OPENSSL_PUT_ERROR(CIPHER, ERR_R_OVERFLOW);
+    return 0;
+  }
 
   if (ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) {
-    i = ctx->cipher->cipher(ctx, out, in, in_len);
-    if (i < 0) {
+    int ret = ctx->cipher->cipher(ctx, out, in, in_len);
+    if (ret < 0) {
       return 0;
     } else {
-      *out_len = i;
+      *out_len = ret;
     }
     return 1;
   }
@@ -267,8 +274,7 @@ int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
     }
   }
 
-  i = ctx->buf_len;
-  bl = ctx->cipher->block_size;
+  int i = ctx->buf_len;
   assert(bl <= (int)sizeof(ctx->buf));
   if (i != 0) {
     if (bl - i > in_len) {
@@ -277,7 +283,7 @@ int EVP_EncryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
       *out_len = 0;
       return 1;
     } else {
-      j = bl - i;
+      int j = bl - i;
       OPENSSL_memcpy(&ctx->buf[i], in, j);
       if (!ctx->cipher->cipher(ctx, out, ctx->buf, bl)) {
         return 0;
@@ -353,8 +359,13 @@ int EVP_EncryptFinal_ex(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len) {
 
 int EVP_DecryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
                       const uint8_t *in, int in_len) {
-  int fix_len;
-  unsigned int b;
+  // Ciphers that use blocks may write up to |bl| extra bytes. Ensure the output
+  // does not overflow |*out_len|.
+  unsigned int b = ctx->cipher->block_size;
+  if (b > 1 && in_len > INT_MAX - (int)b) {
+    OPENSSL_PUT_ERROR(CIPHER, ERR_R_OVERFLOW);
+    return 0;
+  }
 
   if (ctx->cipher->flags & EVP_CIPH_FLAG_CUSTOM_CIPHER) {
     int r = ctx->cipher->cipher(ctx, out, in, in_len);
@@ -376,15 +387,12 @@ int EVP_DecryptUpdate(EVP_CIPHER_CTX *ctx, uint8_t *out, int *out_len,
     return EVP_EncryptUpdate(ctx, out, out_len, in, in_len);
   }
 
-  b = ctx->cipher->block_size;
   assert(b <= sizeof(ctx->final));
-
+  int fix_len = 0;
   if (ctx->final_used) {
     OPENSSL_memcpy(out, ctx->final, b);
     out += b;
     fix_len = 1;
-  } else {
-    fix_len = 0;
   }
 
   if (!EVP_EncryptUpdate(ctx, out, out_len, in, in_len)) {
