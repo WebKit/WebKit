@@ -1,3 +1,19 @@
+2021-04-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Remove unused logd-diagnostic-client rules
+        https://bugs.webkit.org/show_bug.cgi?id=225214
+        <rdar://problem/66587621>
+
+        Reviewed by Per Arne Vollan.
+
+        WebKit does not have either of the two entitlements required to use the 'log-diagnostic-client' rules.
+        We should remove these rules from the sandbox to reduce attack surface, since they provide no benefit.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2021-04-29  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Two message loops between WebContent process and GPU process to enable/select audio/video tracks
