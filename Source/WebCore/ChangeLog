@@ -1,3 +1,15 @@
+2021-04-29  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Wpessimizing-move warnings in LocaleICU.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=225205
+
+        Reviewed by Sam Weinig.
+
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::createLabelVector):
+        (WebCore::createFallbackMonthLabels):
+        (WebCore::createFallbackAMPMLabels):
+
 2021-04-29  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         [WebIDL] Remove [Reflect] support for constants
