@@ -1,3 +1,14 @@
+2021-04-29  Ben Nham  <nham@apple.com>
+
+        Reduce memory footprint for background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=225007
+
+        Reviewed by Chris Dumez.
+
+        Add an option to slim background tabs by proactively calling WebCore::releaseMemory on Macs.
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-04-29  Darin Adler  <darin@apple.com>
 
         Extend SortedArrayMap further to work on case-folded strings, use in MIMETypeRegistry

@@ -230,7 +230,13 @@
 static const Seconds plugInAutoStartExpirationTimeUpdateThreshold { 29 * 24 * 60 * 60 };
 
 // This should be greater than tileRevalidationTimeout in TileController.
-static const Seconds nonVisibleProcessCleanupDelay { 10_s };
+static const Seconds nonVisibleProcessGraphicsCleanupDelay { 10_s };
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+// This should be long enough to support a workload where a user is actively switching between multiple tabs,
+// since our memory cleanup routine could potentially delete a good amount of JIT code.
+static const Seconds nonVisibleProcessMemoryCleanupDelay { 120_s };
+#endif
 
 namespace WebKit {
 using namespace JSC;
@@ -265,7 +271,10 @@ WebProcess::WebProcess()
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #endif
-    , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
+    , m_nonVisibleProcessGraphicsCleanupTimer(*this, &WebProcess::nonVisibleProcessGraphicsCleanupTimerFired)
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+    , m_nonVisibleProcessMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessMemoryCleanupTimerFired)
+#endif
 #if PLATFORM(IOS_FAMILY)
     , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
 #endif
@@ -1554,18 +1563,29 @@ void WebProcess::sendPrewarmInformation(const URL& url)
 void WebProcess::pageDidEnterWindow(PageIdentifier pageID)
 {
     m_pagesInWindows.add(pageID);
-    m_nonVisibleProcessCleanupTimer.stop();
+    m_nonVisibleProcessGraphicsCleanupTimer.stop();
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+    m_nonVisibleProcessMemoryCleanupTimer.stop();
+#endif
 }
 
 void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
 {
     m_pagesInWindows.remove(pageID);
 
-    if (m_pagesInWindows.isEmpty() && !m_nonVisibleProcessCleanupTimer.isActive())
-        m_nonVisibleProcessCleanupTimer.startOneShot(nonVisibleProcessCleanupDelay);
+    if (m_pagesInWindows.isEmpty()) {
+        if (!m_nonVisibleProcessGraphicsCleanupTimer.isActive())
+            m_nonVisibleProcessGraphicsCleanupTimer.startOneShot(nonVisibleProcessGraphicsCleanupDelay);
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+        if (!m_nonVisibleProcessMemoryCleanupTimer.isActive())
+            m_nonVisibleProcessMemoryCleanupTimer.startOneShot(nonVisibleProcessMemoryCleanupDelay);
+#endif
+    }
 }
     
-void WebProcess::nonVisibleProcessCleanupTimerFired()
+void WebProcess::nonVisibleProcessGraphicsCleanupTimerFired()
 {
     ASSERT(m_pagesInWindows.isEmpty());
     if (!m_pagesInWindows.isEmpty())
@@ -1575,6 +1595,23 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
     destroyRenderingResources();
 #endif
 }
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+void WebProcess::nonVisibleProcessMemoryCleanupTimerFired()
+{
+    ASSERT(m_pagesInWindows.isEmpty());
+    if (!m_pagesInWindows.isEmpty())
+        return;
+
+    // If this is a process that we keep around for performance, then don't proactively slim it down until absolutely necessary (in the memory pressure handler).
+    if (m_processType == ProcessType::CachedWebContent || areAllPagesSuspended())
+        return;
+
+    WebCore::releaseMemory(Critical::Yes, Synchronous::No, MaintainBackForwardCache::Yes, MaintainMemoryCache::No);
+    for (auto& page : m_pageMap.values())
+        page->releaseMemory(Critical::Yes);
+}
+#endif
 
 void WebProcess::registerStorageAreaMap(StorageAreaMap& storageAreaMap)
 {
