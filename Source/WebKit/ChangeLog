@@ -1,3 +1,19 @@
+2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Coalesce adjacent selection geometries when rendering individual selection quads
+        https://bugs.webkit.org/show_bug.cgi?id=225054
+
+        Reviewed by Tim Horton.
+
+        Make some further minor adjustments to selection behavior in image overlays on iOS. In particular, when using
+        selection handles to modify the selected range, shift the start and end of the selected range so that they're at
+        the beginning and end of text runs, respectively.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::insideImageOverlay):
+        (WebKit::expandForImageOverlay):
+        (WebKit::rangeForPointInRootViewCoordinates):
+
 2021-04-28  Devin Rousso  <drousso@apple.com>
 
         experiment with averaging sampling colors across the top of the page as the scroll area background

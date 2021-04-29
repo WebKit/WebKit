@@ -1340,6 +1340,34 @@ static IntPoint constrainPoint(const IntPoint& point, const Frame& frame, const 
     return constrainedPoint;
 }
 
+static bool insideImageOverlay(const VisiblePosition& position)
+{
+    auto container = makeRefPtr(position.deepEquivalent().containerNode());
+    return container && HTMLElement::isInsideImageOverlay(*container);
+}
+
+static Optional<SimpleRange> expandForImageOverlay(const SimpleRange& range)
+{
+    VisiblePosition expandedStart(makeContainerOffsetPosition(&range.startContainer(), range.startOffset()));
+    VisiblePosition expandedEnd(makeContainerOffsetPosition(&range.endContainer(), range.endOffset()));
+
+    for (auto start = expandedStart; insideImageOverlay(start); start = start.previous()) {
+        if (auto container = makeRefPtr(start.deepEquivalent().containerNode()); is<Text>(container)) {
+            expandedStart = firstPositionInNode(container.get()).downstream();
+            break;
+        }
+    }
+
+    for (auto end = expandedEnd; insideImageOverlay(end); end = end.next()) {
+        if (auto container = makeRefPtr(end.deepEquivalent().containerNode()); is<Text>(container)) {
+            expandedEnd = lastPositionInNode(container.get()).upstream();
+            break;
+        }
+    }
+
+    return makeSimpleRange({ expandedStart, expandedEnd });
+}
+
 void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, GestureRecognizerState gestureState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&& completionHandler)
 {
     if (static_cast<GestureRecognizerState>(gestureState) == GestureRecognizerState::Began)
@@ -1537,6 +1565,9 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
         range = makeSimpleRange(result, selectionEnd);
     }
     
+    if (range && HTMLElement::isInsideImageOverlay(*range))
+        return expandForImageOverlay(*range);
+
     return range;
 }
 

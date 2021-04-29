@@ -1,3 +1,15 @@
+2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Coalesce adjacent selection geometries when rendering individual selection quads
+        https://bugs.webkit.org/show_bug.cgi?id=225054
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test to verify that adjacent selection rects rotated by the same amount can be coalesced.
+
+        * fast/images/image-extraction/ios/coalesce-selection-rects-in-image-overlay-expected.txt: Added.
+        * fast/images/image-extraction/ios/coalesce-selection-rects-in-image-overlay.html: Added.
+
 2021-04-28  Robert Jenner  <jenner@apple.com>
 
         [ iOS wk2 EWS ] imported/w3c/web-platform-tests/workers/interfaces/DedicatedWorkerGlobalScope/postMessage/structured-clone-message.html is flaky crash

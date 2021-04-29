@@ -1,3 +1,42 @@
+2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Coalesce adjacent selection geometries when rendering individual selection quads
+        https://bugs.webkit.org/show_bug.cgi?id=225054
+
+        Reviewed by Tim Horton.
+
+        Add a heuristic to coalesce adjacent selection geometries when `SelectionRenderingBehavior::UseIndividualQuads`
+        is active. Currently, we pass them directly through to the list of coalesced geometries inside
+        `RenderObject::collectSelectionGeometries`, but this can lead to almost perfectly adjacent selection quads
+        showing a narrow gap in between their selection views.
+
+        Instead, we can detect this case where neighboring quads can be united into a single quad without significantly
+        changing the geometry. Rather than append the new selection geometry in this case, we simply adjust the last
+        selection geometry's quad so that it encompasses the new selection geometry as well, by extending the top right
+        and bottom right extent points of the last selection quad to the new selection quad's extent points.
+
+        See below for more details.
+
+        Test: fast/images/image-extraction/ios/coalesce-selection-rects-in-image-overlay.html
+
+        * html/HTMLElement.h: `WEBCORE_EXPORT` a couple of helper methods.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::collectSelectionGeometriesInternal):
+
+        Avoid sorting selection geometries by bounding rect `logicalLeft` in the case where we're not coalescing
+        bounding rects (and also update the preceding comment accordingly).
+
+        (WebCore::coalesceSelectionGeometryWithAdjacentQuadsIfPossible):
+
+        Add a new helper to unite neighboring quads if: (1) the top right and bottom right of the current quad are very
+        close to the top left and bottom left of the next quad (respectively), and (2) the angle of rotation of the
+        bounding rect of the current quad is very close to that of the next quad.
+
+        (WebCore::RenderObject::collectSelectionGeometries):
+
+        Use the above helper method to either coalesce or append selection geometries to the final vector of coalesced
+        geometries.
+
 2021-04-28  Rob Buis  <rbuis@igalia.com>
 
         [aspect-ratio] Treat border/padding correctly for box-sizing: border-box
