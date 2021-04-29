@@ -1,3 +1,34 @@
+2021-04-29  Saam Barati  <sbarati@apple.com>
+
+        Sampling profiler should dump a tier breakdown, and add ability to see time spent in C code with sampleCCode=0, and fix bugs with frames having the wrong jitType if they're inlined
+        https://bugs.webkit.org/show_bug.cgi?id=225116
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes it so we also dump time spent in each tier when dumping top
+        bytecodes. This can be helpful info when analyzing benchmarks.
+        
+        This patch also makes it so we know when we're in C/C++ code when we're not
+        using the sampleCCode=true option. I found some weird performance pathologies
+        with that option that cause us to not sample code at all. I was seeing ~50
+        samples taken for ~7 seconds of code running time. It's worth figuring out
+        what's going on there eventually. But for now, I've made it so that we
+        recognize that the top frame is C/C++ when using the collectExtraSamplingProfilerData=1
+        option.
+        
+        This patch also fixes a bug where we mis-attribute JITTypes for inline
+        frames. We'd attribute it to whatever the CodeBlock was compiled as, instead
+        of using the machine frame's JITType.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+        * runtime/OptionsList.h:
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+
 2021-04-28  Mark Lam  <mark.lam@apple.com>
 
         Fix exception assertions in light of the TerminationException.

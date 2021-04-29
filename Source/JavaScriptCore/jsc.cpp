@@ -3299,7 +3299,7 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
         if (!strcmp(arg, "--sample")) {
             JSC::Options::useSamplingProfiler() = true;
-            JSC::Options::collectSamplingProfilerDataForJSCShell() = true;
+            JSC::Options::collectExtraSamplingProfilerData() = true;
             m_dumpSamplingProfilerData = true;
             continue;
         }

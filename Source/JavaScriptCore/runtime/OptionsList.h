@@ -361,7 +361,7 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     \
     v(Bool, useSamplingProfiler, false, Normal, nullptr) \
     v(Unsigned, sampleInterval, 1000, Normal, "Time between stack traces in microseconds.") \
-    v(Bool, collectSamplingProfilerDataForJSCShell, false, Normal, "This corresponds to the JSC shell's --sample option.") \
+    v(Bool, collectExtraSamplingProfilerData, false, Normal, "This corresponds to the JSC shell's --sample option, or if we're wanting to use the sampling profiler via the Debug menu in the browser.") \
     v(Unsigned, samplingProfilerTopFunctionsCount, 12, Normal, "Number of top functions to report when using the command line interface.") \
     v(Unsigned, samplingProfilerTopBytecodesCount, 40, Normal, "Number of top bytecodes to report when using the command line interface.") \
     v(OptionString, samplingProfilerPath, nullptr, Normal, "The path to the directory to write sampiling profiler output to. This probably will not work with WK2 unless the path is in the sandbox.") \
