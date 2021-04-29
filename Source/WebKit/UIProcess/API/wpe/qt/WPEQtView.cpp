@@ -79,7 +79,11 @@ void WPEQtView::configureWindow()
         return;
 
     win->setSurfaceType(QWindow::OpenGLSurface);
-    connect(win, &QQuickWindow::sceneGraphInitialized, this, &WPEQtView::createWebView);
+
+    if (win->isSceneGraphInitialized())
+        createWebView();
+    else
+        connect(win, &QQuickWindow::sceneGraphInitialized, this, &WPEQtView::createWebView);
 }
 
 void WPEQtView::createWebView()
