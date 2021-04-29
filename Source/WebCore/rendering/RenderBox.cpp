@@ -2942,11 +2942,16 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             // translate this to a nullopt intrinsic height for further logical height computations.
             Optional<LayoutUnit> intrinsicHeight;
             if (computedValues.m_extent != LayoutUnit::max())
-                intrinsicHeight = computedValues.m_extent - borderAndPaddingLogicalHeight();
-            if (shouldComputeLogicalHeightFromAspectRatio())
+                intrinsicHeight = computedValues.m_extent;
+            if (shouldComputeLogicalHeightFromAspectRatio()) {
+                if (intrinsicHeight && style().boxSizingForAspectRatio() == BoxSizing::ContentBox)
+                    *intrinsicHeight -= borderAndPaddingLogicalHeight();
                 heightResult = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit(style().logicalAspectRatio()), style().boxSizingForAspectRatio(), logicalWidth());
-            else
+            } else {
+                if (intrinsicHeight)
+                    *intrinsicHeight -= borderAndPaddingLogicalHeight();
                 heightResult = computeLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight(), intrinsicHeight).valueOr(computedValues.m_extent);
+            }
             heightResult = constrainLogicalHeightByMinMax(heightResult, intrinsicHeight);
         } else {
             ASSERT(h.isFixed());

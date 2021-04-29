@@ -1,3 +1,21 @@
+2021-04-28  Rob Buis  <rbuis@igalia.com>
+
+        [aspect-ratio] Treat border/padding correctly for box-sizing: border-box
+        https://bugs.webkit.org/show_bug.cgi?id=225015
+
+        Reviewed by Darin Adler.
+
+        When computing logical height in aspect-ratio case, to compute the automatic
+        minimum size [1] for min-height: auto, the padding was always subtracted,
+        however it should only be subtracted in the box-sizing: content-box case.
+
+        Test: imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-035.html
+
+        [1] https://www.w3.org/TR/css-sizing-4/#aspect-ratio-minimum
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalHeight const):
+
 2021-04-28  Devin Rousso  <drousso@apple.com>
 
         experiment with averaging sampling colors across the top of the page as the scroll area background

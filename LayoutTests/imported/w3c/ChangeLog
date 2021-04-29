@@ -1,3 +1,15 @@
+2021-04-28  Rob Buis  <rbuis@igalia.com>
+
+        [aspect-ratio] Treat border/padding correctly for box-sizing: border-box
+        https://bugs.webkit.org/show_bug.cgi?id=225015
+
+        Reviewed by Darin Adler.
+
+        Import WPT test for this.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-035-expected.xht: Added.
+        * web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-035.html: Added.
+
 2021-04-28  Ziran Sun  <zsun@igalia.com>
 
         [css-grid] Accurize expected result to 0.5 pixel for some contentSpaceAround tests in abspos
