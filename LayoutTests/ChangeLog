@@ -1,3 +1,17 @@
+2021-04-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION: media/modern-media-controls/media-controller/ios/media-controller-ios-do-not-hide-controls-when-tapping-button.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=225163
+        <rdar://problem/77041676>
+
+        Reviewed by Devin Rousso.
+
+        * media/modern-media-controls/media-controller/ios/media-controller-ios-do-not-hide-controls-when-tapping-button.html:
+
+        Increase the width of the <video> element to ensure that the skip back
+        button is visible. The button is no longer visible at smaller widths,
+        and is unable to be tapped, causing the test to timeout.
+
 2021-04-29  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Two message loops between WebContent process and GPU process to enable/select audio/video tracks
