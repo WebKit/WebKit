@@ -62,6 +62,7 @@ using VectorMalloc = FastMalloc;
 template<typename> struct DefaultRefDerefTraits;
 
 template<typename> class CompletionHandler;
+template<typename> class FixedVector;
 template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename, typename = AnyThreadsAccessTraits> class NeverDestroyed;
@@ -118,6 +119,7 @@ using WTF::AtomStringImpl;
 using WTF::BinarySemaphore;
 using WTF::CString;
 using WTF::CompletionHandler;
+using WTF::FixedVector;
 using WTF::Function;
 using WTF::FunctionDispatcher;
 using WTF::HashCountedSet;

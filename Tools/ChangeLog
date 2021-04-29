@@ -1,3 +1,15 @@
+2021-04-29  Darin Adler  <darin@apple.com>
+
+        Extend SortedArrayMap further to work on case-folded strings, use in MIMETypeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=224968
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added SortedArrayMap.cpp,
+        and removed references to non-existent FullscreenRemoveNodeBeforeEnter.h and
+        FloatQuadTests.h.
+        * TestWebKitAPI/Tests/WTF/SortedArrayMap.cpp: Added.
+
 2021-04-29  Roy Reapor  <rreapor@apple.com>
 
         [webkitcorepy] Allow user to specify interpreter used by autoinstall.py to install imported dependencies

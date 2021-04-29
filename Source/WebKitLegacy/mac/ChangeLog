@@ -1,3 +1,19 @@
+2021-04-29  Darin Adler  <darin@apple.com>
+
+        Extend SortedArrayMap further to work on case-folded strings, use in MIMETypeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=224968
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebHTMLRepresentation.mm:
+        (createNSArray): Renamed from newArrayWithStrings so this overloads the createNSArray
+        function from VectorCocoa.h so we can use the two interchangably and handle both FixedVector
+        and HashSet with the smae code.
+        (+[WebHTMLRepresentation supportedMediaMIMETypes]): Updated for name change.
+        (+[WebHTMLRepresentation supportedNonImageMIMETypes]): Ditto.
+        (+[WebHTMLRepresentation supportedImageMIMETypes]): Ditto.
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]): Ditto.
+
 2021-04-28  Alex Christensen  <achristensen@webkit.org>
 
         Remove support for NPAPI plugins in WebView

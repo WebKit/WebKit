@@ -1,3 +1,49 @@
+2021-04-29  Darin Adler  <darin@apple.com>
+
+        Extend SortedArrayMap further to work on case-folded strings, use in MIMETypeRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=224968
+
+        Reviewed by Sam Weinig.
+
+        Using fewer HashSet in MIMETypeRegistry saves code size and reduces memory use.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::supportedImageMIMETypes): Deleted. Replaced
+        this function with a constexpr array, eliminating the use of HashSet.
+        (WebCore::makeFixedVector): Added. Helper function used below for the repeated patttern
+        of converting a constexpr array into a FixedVector<const char*>.
+        (WebCore::supportedJavaScriptMIMETypes): Deleted.
+        (WebCore::MIMETypeRegistry::supportedNonImageMIMETypes): Update since
+        supportedJavaScriptMIMETypeArray is now an array, not a HashSet.
+        (WebCore::MIMETypeRegistry::pdfMIMETypes): Rewrote to return a FixedVector<const char*>
+        instead of a HashSet. The only caller makes an NSArray<NSString *>, so there is no need
+        to involve a hash table or a WTF::String.
+        (WebCore::MIMETypeRegistry::unsupportedTextMIMETypes): Ditto.
+        (WebCore::commonMediaTypes): Deleted, merging into the function below.
+        (WebCore::commonMimeTypesMap): Moved the commonMediaTypes data in here
+        and use a constexpr array instead of an initializer_list.
+        (WebCore::MIMETypeRegistry::isSupportedImageMIMEType): Use SortedArraySet
+        instead of a HashSet for the core supported images types. Moved the code
+        that checks this against defaultSupportedImageTypes here.
+        (WebCore::MIMETypeRegistry::isSupportedJavaScriptMIMEType): Use SortedArraySet.
+        (WebCore::MIMETypeRegistry::isUnsupportedTextMIMEType): Ditto.
+        (WebCore::MIMETypeRegistry::isPDFMIMEType): Ditto.
+        (WebCore::MIMETypeRegistry::isPostScriptMIMEType): Use equalLettersIgnoringASCIICase.
+        For some reason this was the single case-sensitive function in this whole class!
+        (WebCore::MIMETypeRegistry::isSystemPreviewMIMEType): Use SortedArraySet.
+        (WebCore::MIMETypeRegistry::systemPreviewMIMETypes): Return a FixedVector.
+        (WebCore::normalizedImageMIMEType): Renamed this from its old name,
+        MIMETypeRegistry::normalizedMIMEType, to better reflect that it's only used in
+        one place. Also added comments to clarify that it's CURL-only and suggest it be
+        removed eventually.
+
+        * platform/MIMETypeRegistry.h: Changed supportedImageMIMETypes, pdfMIMETypes,
+        unsupportedTextMIMETypes, and systemPreviewMIMETypes to return FixedVector instead
+        of HashSet. Also removed normalizedMIMEType.
+
+        * svg/SVGTransformValue.h: Removed unneeded include of HashMap.h.
+        * testing/TypeConversions.h: Ditto.
+
 2021-04-29  Sam Weinig  <weinig@apple.com>
 
         Add support for CanvasRenderingContext2DSettings

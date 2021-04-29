@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,16 +40,17 @@
 namespace WTF {
 
 template<typename CharacterType> constexpr bool isASCII(CharacterType);
-template<typename CharacterType> bool isASCIIAlpha(CharacterType);
-template<typename CharacterType> bool isASCIIAlphanumeric(CharacterType);
-template<typename CharacterType> bool isASCIIBinaryDigit(CharacterType);
-template<typename CharacterType> bool isASCIIDigit(CharacterType);
-template<typename CharacterType> bool isASCIIHexDigit(CharacterType);
-template<typename CharacterType> bool isASCIILower(CharacterType);
-template<typename CharacterType> bool isASCIIOctalDigit(CharacterType);
-template<typename CharacterType> bool isASCIIPrintable(CharacterType);
-template<typename CharacterType> bool isASCIISpace(CharacterType);
-template<typename CharacterType> bool isASCIIUpper(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIAlpha(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIAlphanumeric(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIBinaryDigit(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIDigit(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIDigitOrPunctuation(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIHexDigit(CharacterType);
+template<typename CharacterType> constexpr bool isASCIILower(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIOctalDigit(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType);
+template<typename CharacterType> constexpr bool isASCIISpace(CharacterType);
+template<typename CharacterType> constexpr bool isASCIIUpper(CharacterType);
 
 template<typename CharacterType> CharacterType toASCIILower(CharacterType);
 template<typename CharacterType> CharacterType toASCIIUpper(CharacterType);
@@ -57,18 +58,18 @@ template<typename CharacterType> CharacterType toASCIIUpper(CharacterType);
 template<typename CharacterType> uint8_t toASCIIHexValue(CharacterType);
 template<typename CharacterType> uint8_t toASCIIHexValue(CharacterType firstCharacter, CharacterType secondCharacter);
 
-char lowerNibbleToASCIIHexDigit(uint8_t);
-char upperNibbleToASCIIHexDigit(uint8_t);
-char lowerNibbleToLowercaseASCIIHexDigit(uint8_t);
-char upperNibbleToLowercaseASCIIHexDigit(uint8_t);
+constexpr char lowerNibbleToASCIIHexDigit(uint8_t);
+constexpr char upperNibbleToASCIIHexDigit(uint8_t);
+constexpr char lowerNibbleToLowercaseASCIIHexDigit(uint8_t);
+constexpr char upperNibbleToLowercaseASCIIHexDigit(uint8_t);
 
-template<typename CharacterType> bool isASCIIAlphaCaselessEqual(CharacterType, char expectedASCIILowercaseLetter);
+template<typename CharacterType> constexpr bool isASCIIAlphaCaselessEqual(CharacterType, char expectedASCIILowercaseLetter);
 
 // The toASCIILowerUnchecked function can be used for comparing any input character
 // to a lowercase English character. The isASCIIAlphaCaselessEqual function should
 // be used for regular comparison of ASCII alpha characters, but switch statements
 // in the CSS tokenizer, for example, instead make direct use toASCIILowerUnchecked.
-template<typename CharacterType> CharacterType toASCIILowerUnchecked(CharacterType);
+template<typename CharacterType> constexpr CharacterType toASCIILowerUnchecked(CharacterType);
 
 extern WTF_EXPORT_PRIVATE const unsigned char asciiCaseFoldTable[256];
 
@@ -77,12 +78,12 @@ template<typename CharacterType> constexpr bool isASCII(CharacterType character)
     return !(character & ~0x7F);
 }
 
-template<typename CharacterType> inline bool isASCIILower(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIILower(CharacterType character)
 {
     return character >= 'a' && character <= 'z';
 }
 
-template<typename CharacterType> inline CharacterType toASCIILowerUnchecked(CharacterType character)
+template<typename CharacterType> constexpr CharacterType toASCIILowerUnchecked(CharacterType character)
 {
     // This function can be used for comparing any input character
     // to a lowercase English character. The isASCIIAlphaCaselessEqual
@@ -92,37 +93,37 @@ template<typename CharacterType> inline CharacterType toASCIILowerUnchecked(Char
     return character | 0x20;
 }
 
-template<typename CharacterType> inline bool isASCIIAlpha(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIAlpha(CharacterType character)
 {
     return isASCIILower(toASCIILowerUnchecked(character));
 }
 
-template<typename CharacterType> inline bool isASCIIDigit(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIDigit(CharacterType character)
 {
     return character >= '0' && character <= '9';
 }
 
-template<typename CharacterType> inline bool isASCIIAlphanumeric(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIAlphanumeric(CharacterType character)
 {
     return isASCIIDigit(character) || isASCIIAlpha(character);
 }
 
-template<typename CharacterType> inline bool isASCIIHexDigit(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIHexDigit(CharacterType character)
 {
     return isASCIIDigit(character) || (toASCIILowerUnchecked(character) >= 'a' && toASCIILowerUnchecked(character) <= 'f');
 }
 
-template<typename CharacterType> inline bool isASCIIBinaryDigit(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIBinaryDigit(CharacterType character)
 {
     return character == '0' || character == '1';
 }
 
-template<typename CharacterType> inline bool isASCIIOctalDigit(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIOctalDigit(CharacterType character)
 {
     return character >= '0' && character <= '7';
 }
 
-template<typename CharacterType> inline bool isASCIIPrintable(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIPrintable(CharacterType character)
 {
     return character >= ' ' && character <= '~';
 }
@@ -143,12 +144,12 @@ template<typename CharacterType> inline bool isASCIIPrintable(CharacterType char
     Because of those, we first check to quickly return false for non-control characters,
     then check for space itself to quickly return true for that case, then do the rest.
 */
-template<typename CharacterType> inline bool isASCIISpace(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIISpace(CharacterType character)
 {
     return character <= ' ' && (character == ' ' || (character <= 0xD && character >= 0x9));
 }
 
-template<typename CharacterType> inline bool isASCIIUpper(CharacterType character)
+template<typename CharacterType> constexpr bool isASCIIUpper(CharacterType character)
 {
     return character >= 'A' && character <= 'Z';
 }
@@ -184,31 +185,31 @@ template<typename CharacterType> inline uint8_t toASCIIHexValue(CharacterType fi
     return toASCIIHexValue(firstCharacter) << 4 | toASCIIHexValue(secondCharacter);
 }
 
-inline char lowerNibbleToASCIIHexDigit(uint8_t value)
+constexpr char lowerNibbleToASCIIHexDigit(uint8_t value)
 {
     uint8_t nibble = value & 0xF;
     return nibble + (nibble < 10 ? '0' : 'A' - 10);
 }
 
-inline char upperNibbleToASCIIHexDigit(uint8_t value)
+constexpr char upperNibbleToASCIIHexDigit(uint8_t value)
 {
     uint8_t nibble = value >> 4;
     return nibble + (nibble < 10 ? '0' : 'A' - 10);
 }
 
-inline char lowerNibbleToLowercaseASCIIHexDigit(uint8_t value)
+constexpr char lowerNibbleToLowercaseASCIIHexDigit(uint8_t value)
 {
     uint8_t nibble = value & 0xF;
     return nibble + (nibble < 10 ? '0' : 'a' - 10);
 }
 
-inline char upperNibbleToLowercaseASCIIHexDigit(uint8_t value)
+constexpr char upperNibbleToLowercaseASCIIHexDigit(uint8_t value)
 {
     uint8_t nibble = value >> 4;
     return nibble + (nibble < 10 ? '0' : 'a' - 10);
 }
 
-template<typename CharacterType> inline bool isASCIIAlphaCaselessEqual(CharacterType inputCharacter, char expectedASCIILowercaseLetter)
+template<typename CharacterType> constexpr bool isASCIIAlphaCaselessEqual(CharacterType inputCharacter, char expectedASCIILowercaseLetter)
 {
     // Name of this argument says this must be a lowercase letter, but it can actually be:
     //   - a lowercase letter
@@ -225,9 +226,9 @@ template<typename CharacterType> inline bool isASCIIAlphaCaselessEqual(Character
     return LIKELY(toASCIILowerUnchecked(inputCharacter) == expectedASCIILowercaseLetter);
 }
 
-template<typename CharacterType> inline bool isASCIIDigitOrPunctuation(CharacterType charCode)
+template<typename CharacterType> constexpr bool isASCIIDigitOrPunctuation(CharacterType character)
 {
-    return (charCode >= '!' && charCode <= '@') || (charCode >= '[' && charCode <= '`') || (charCode >= '{' && charCode <= '~');
+    return (character >= '!' && character <= '@') || (character >= '[' && character <= '`') || (character >= '{' && character <= '~');
 }
 
 }

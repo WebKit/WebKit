@@ -34,10 +34,10 @@
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/MIMETypeRegistry.h>
+#import <wtf/FixedVector.h>
 #import <wtf/HashCountedSet.h>
 #import <wtf/HashMap.h>
 #import <wtf/text/StringHash.h>
-#import <wtf/text/WTFString.h>
 
 @implementation WKWebViewContentProviderRegistry {
     HashMap<String, Class <WKWebViewContentProvider>, ASCIICaseInsensitiveHash> _contentProviderForMIMEType;
@@ -50,14 +50,14 @@
         return nil;
 
 #if ENABLE(WKPDFVIEW)
-    for (auto& mimeType : WebCore::MIMETypeRegistry::pdfMIMETypes())
-        [self registerProvider:[WKPDFView class] forMIMEType:mimeType];
+    for (auto& type : WebCore::MIMETypeRegistry::pdfMIMETypes())
+        [self registerProvider:[WKPDFView class] forMIMEType:@(type)];
 #endif
 
 #if USE(SYSTEM_PREVIEW)
     if (configuration._systemPreviewEnabled) {
-        for (auto& mimeType : WebCore::MIMETypeRegistry::systemPreviewMIMETypes())
-            [self registerProvider:[WKSystemPreviewView class] forMIMEType:mimeType];
+        for (auto& type : WebCore::MIMETypeRegistry::systemPreviewMIMETypes())
+            [self registerProvider:[WKSystemPreviewView class] forMIMEType:@(type)];
     }
 #endif
 
