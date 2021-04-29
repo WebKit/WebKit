@@ -2809,10 +2809,10 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url, const String&
         // the image-orientation tag.
         GstElement* videoFlip = gst_element_factory_make("videoflip", nullptr);
         if (videoFlip) {
-            g_object_set(videoFlip, "method", 8, nullptr);
+            gst_util_set_object_arg(G_OBJECT(videoFlip), "method", "automatic");
             g_object_set(m_pipeline.get(), "video-filter", videoFlip, nullptr);
         } else
-            GST_WARNING("The videoflip element is missing, video rotation support is now disabled. Please check your gst-plugins-good installation.");
+            m_shouldHandleOrientationTags = true;
     }
 
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
@@ -2986,7 +2986,7 @@ static ImageOrientation getVideoOrientation(GstElement* sink)
     GRefPtr<GstEvent> tagsEvent = adoptGRef(gst_pad_get_sticky_event(pad.get(), GST_EVENT_TAG, 0));
     if (!tagsEvent) {
         GST_DEBUG_OBJECT(pad.get(), "No sticky tag event, applying no rotation.");
-        return ImageOrientation::OriginTopLeft;
+        return ImageOrientation::None;
     }
 
     GstTagList* tagList;
@@ -2995,18 +2995,27 @@ static ImageOrientation getVideoOrientation(GstElement* sink)
     GUniqueOutPtr<gchar> tag;
     if (!gst_tag_list_get_string(tagList, GST_TAG_IMAGE_ORIENTATION, &tag.outPtr())) {
         GST_DEBUG_OBJECT(pad.get(), "No image_orientation tag, applying no rotation.");
-        return ImageOrientation::OriginTopLeft;
+        return ImageOrientation::None;
     }
 
     GST_DEBUG_OBJECT(pad.get(), "Found image_orientation tag: %s", tag.get());
-    if (!g_strcmp0(tag.get(), "rotate-90"))
-        return ImageOrientation::OriginRightTop;
+    if (!g_strcmp0(tag.get(), "flip-rotate-0"))
+        return ImageOrientation::OriginTopRight;
     if (!g_strcmp0(tag.get(), "rotate-180"))
         return ImageOrientation::OriginBottomRight;
+    if (!g_strcmp0(tag.get(), "flip-rotate-180"))
+        return ImageOrientation::OriginBottomLeft;
+    if (!g_strcmp0(tag.get(), "flip-rotate-270"))
+        return ImageOrientation::OriginLeftTop;
+    if (!g_strcmp0(tag.get(), "rotate-90"))
+        return ImageOrientation::OriginRightTop;
+    if (!g_strcmp0(tag.get(), "flip-rotate-90"))
+        return ImageOrientation::OriginRightBottom;
     if (!g_strcmp0(tag.get(), "rotate-270"))
         return ImageOrientation::OriginLeftBottom;
+
     // Default rotation.
-    return ImageOrientation::OriginTopLeft;
+    return ImageOrientation::None;
 }
 
 void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const GstCaps* caps)
@@ -3026,7 +3035,8 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
         return;
     }
 
-    setVideoSourceOrientation(getVideoOrientation(m_videoSink.get()));
+    if (m_shouldHandleOrientationTags)
+        setVideoSourceOrientation(getVideoOrientation(m_videoSink.get()));
 
 #if USE(TEXTURE_MAPPER_GL)
     // When using accelerated compositing, if the video is tagged as rotated 90 or 270 degrees, swap width and height.

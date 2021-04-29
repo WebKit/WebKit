@@ -1,3 +1,12 @@
+2021-04-02  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r268176): [GStreamer] media/video-orientation-canvas.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=223850
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/gtk/TestExpectations: Unflag now-passing test.
+
 2021-04-12  Philippe Normand  <pnormand@igalia.com>
 
         [MSE][GStreamer] Crash in WebCore::PlaybackPipeline::addSourceBuffer when setting duration and preload is set to none
