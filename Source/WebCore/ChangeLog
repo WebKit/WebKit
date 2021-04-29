@@ -1,3 +1,21 @@
+2021-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][IFC] Incorrect middle alignment for inline boxes when line-height is present
+        https://bugs.webkit.org/show_bug.cgi?id=225166
+        <rdar://77272112>
+
+        Reviewed by Simon Fraser.
+
+        Let's use the layout bounds instead of the baseline when computing the inline box's baseline offset from the root inline box's baseline.
+        The difference here is that the layout bounds (per spec) is adjusted with the line-height value.
+        These two values (layout bounds's ascent and the inline box's baseline) resolve to the same value as long as the line-height property is not set.
+
+        Tests: fast/inline/incorrect-middle-alignment-with-line-height.html
+               fast/inline/incorrect-middle-baseline-alignment-with-line-height.html
+
+        * layout/inlineformatting/InlineFormattingContextGeometry.cpp:
+        (WebCore::Layout::LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically):
+
 2021-04-29  Said Abou-Hallawa  <said@apple.com>
 
         [GPU Process] REGRESSION(r272888): Don't assert the validity of the dataURL mimeType inside GPU Process

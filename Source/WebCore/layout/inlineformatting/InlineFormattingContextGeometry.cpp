@@ -503,12 +503,12 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
                     break;
                 case VerticalAlign::Middle: {
                     auto logicalTopOffsetFromParentBaseline = (inlineLevelBox.layoutBounds().height() / 2 + parentInlineBox.style().fontMetrics().xHeight() / 2);
-                    baselineOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline - inlineLevelBox.baseline();
+                    baselineOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline - inlineLevelBox.layoutBounds().ascent;
                     break;
                 }
                 case VerticalAlign::BaselineMiddle: {
                     auto logicalTopOffsetFromParentBaseline = inlineLevelBox.layoutBounds().height() / 2;
-                    baselineOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline - inlineLevelBox.baseline();
+                    baselineOffsetFromParentBaseline = logicalTopOffsetFromParentBaseline - inlineLevelBox.layoutBounds().ascent;
                     break;
                 }
                 case VerticalAlign::Length: {
