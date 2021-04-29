@@ -4890,8 +4890,7 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
         if (!layer)
             continue;
 
-        auto scrollingScope = relevantScrollingScope(renderer, *layer);
-        if (scrollingScope != rootScrollingScope) {
+        if (auto scrollingScope = relevantScrollingScope(renderer, *layer); scrollingScope && scrollingScope != rootScrollingScope) {
             auto enclosingScrollingNodeID = asyncScrollableContainerNodeID(renderer);
             ASSERT(enclosingScrollingNodeID);
             
