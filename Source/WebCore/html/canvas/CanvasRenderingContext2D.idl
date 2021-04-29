@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@
 ] interface CanvasRenderingContext2D {
     // back-reference to the canvas
     readonly attribute HTMLCanvasElement canvas;
+
+    CanvasRenderingContext2DSettings getContextAttributes();
 
     // Non-standard legacy aliases (Compositing).
     [ImplementedAs=setGlobalAlpha] undefined setAlpha(optional unrestricted float alpha = NaN);

@@ -3718,7 +3718,7 @@ PASS CanvasRenderingContext2D interface: existence and properties of interface p
 PASS CanvasRenderingContext2D interface: existence and properties of interface prototype object's "constructor" property
 PASS CanvasRenderingContext2D interface: existence and properties of interface prototype object's @@unscopables property
 PASS CanvasRenderingContext2D interface: attribute canvas
-FAIL CanvasRenderingContext2D interface: operation getContextAttributes() assert_own_property: interface prototype object missing non-static operation expected property "getContextAttributes" missing
+PASS CanvasRenderingContext2D interface: operation getContextAttributes()
 PASS CanvasRenderingContext2D interface: operation save()
 PASS CanvasRenderingContext2D interface: operation restore()
 PASS CanvasRenderingContext2D interface: operation scale(unrestricted double, unrestricted double)
@@ -3795,7 +3795,7 @@ PASS CanvasRenderingContext2D interface: operation ellipse(unrestricted double, 
 PASS CanvasRenderingContext2D must be primary interface of document.createElement("canvas").getContext("2d")
 PASS Stringification of document.createElement("canvas").getContext("2d")
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "canvas" with the proper type
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getContextAttributes()" with the proper type assert_inherits: property "getContextAttributes" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getContextAttributes()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "save()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "restore()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "scale(unrestricted double, unrestricted double)" with the proper type

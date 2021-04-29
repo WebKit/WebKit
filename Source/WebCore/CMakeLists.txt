@@ -1051,6 +1051,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/CanvasPattern.idl
     html/canvas/CanvasRect.idl
     html/canvas/CanvasRenderingContext2D.idl
+    html/canvas/CanvasRenderingContext2DSettings.idl
     html/canvas/CanvasShadowStyles.idl
     html/canvas/CanvasState.idl
     html/canvas/CanvasText.idl

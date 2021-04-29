@@ -361,6 +361,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasRect.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasRect.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasRenderingContext2D.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasRenderingContext2D.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasRenderingContext2DSettings.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasRenderingContext2DSettings.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasShadowStyles.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasShadowStyles.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasState.cpp

@@ -1,3 +1,50 @@
+2021-04-29  Sam Weinig  <weinig@apple.com>
+
+        Add support for CanvasRenderingContext2DSettings
+        https://bugs.webkit.org/show_bug.cgi?id=225173
+
+        Reviewed by Chris Dumez.
+
+        Plumb infrastructure for passing a CanvasRenderingContext2DSettings to CanvasRenderingContext2D.
+
+        This change only adds the 'desynchronized' flag, which is only a hint, so ignoring
+        it is an exceptable implementation. 
+
+            "When a CanvasRenderingContext2D object's desynchronized is true, then the user
+             agent may optimize the rendering of the canvas to reduce the latency."
+            - https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-desynchronized
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::createContext2d):
+        (WebCore::HTMLCanvasElement::getContext2d):
+        Pipe CanvasRenderingContext2DSettings to CanvasRenderingContext2D.
+        * html/HTMLCanvasElement.h:
+        Forward declare ImageBitmapRenderingContextSettings and remove default values
+        from functions taking a ImageBitmapRenderingContextSettings. There are few
+        callers and this allows us to remove an include.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::create):
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        * html/canvas/CanvasRenderingContext2D.h:
+        Store settings. It is not currently used for anything but returning
+        itself but will have other state in the future.
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+        Add getContextAttributes() operation from https://html.spec.whatwg.org/multipage/canvas.html#canvasrenderingcontext2d
+
+        * html/canvas/CanvasRenderingContext2DSettings.h: Added.
+        * html/canvas/CanvasRenderingContext2DSettings.idl: Added.
+
 2021-04-29  Chris Dumez  <cdumez@apple.com>
 
         Improve local storage size estimation for quota limitation

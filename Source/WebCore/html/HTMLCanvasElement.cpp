@@ -33,6 +33,7 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
+#include "CanvasRenderingContext2DSettings.h"
 #include "DisplayListDrawingContext.h"
 #include "Document.h"
 #include "EventNames.h"
@@ -44,6 +45,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "ImageBitmapRenderingContext.h"
+#include "ImageBitmapRenderingContextSettings.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InMemoryDisplayList.h"
@@ -279,7 +281,11 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
     }
 
     if (is2dType(contextId)) {
-        auto context = createContext2d(contextId);
+        auto scope = DECLARE_THROW_SCOPE(state.vm());
+        auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
+        RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
+
+        auto context = createContext2d(contextId, WTFMove(settings));
         if (!context)
             return Optional<RenderingContext> { WTF::nullopt };
         return Optional<RenderingContext> { RefPtr<CanvasRenderingContext2D> { context } };
@@ -287,10 +293,10 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
 
     if (isBitmapRendererType(contextId)) {
         auto scope = DECLARE_THROW_SCOPE(state.vm());
-        auto attributes = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
+        auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, !arguments.isEmpty() ? arguments[0].get() : JSC::jsUndefined());
         RETURN_IF_EXCEPTION(scope, Exception { ExistingExceptionError });
 
-        auto context = createContextBitmapRenderer(contextId, WTFMove(attributes));
+        auto context = createContextBitmapRenderer(contextId, WTFMove(settings));
         if (!context)
             return Optional<RenderingContext> { WTF::nullopt };
         return Optional<RenderingContext> { RefPtr<ImageBitmapRenderingContext> { context } };
@@ -330,10 +336,10 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
 {
     if (HTMLCanvasElement::is2dType(type))
-        return getContext2d(type);
+        return getContext2d(type, { });
 
     if (HTMLCanvasElement::isBitmapRendererType(type))
-        return getContextBitmapRenderer(type);
+        return getContextBitmapRenderer(type, { });
 
 #if ENABLE(WEBGL)
     if (HTMLCanvasElement::isWebGLType(type))
@@ -353,7 +359,7 @@ bool HTMLCanvasElement::is2dType(const String& type)
     return type == "2d";
 }
 
-CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type)
+CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
 {
     ASSERT_UNUSED(HTMLCanvasElement::is2dType(type), type);
     ASSERT(!m_context);
@@ -369,7 +375,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type)
         return nullptr;
     }
 
-    m_context = CanvasRenderingContext2D::create(*this, document().inQuirksMode());
+    m_context = CanvasRenderingContext2D::create(*this, WTFMove(settings), document().inQuirksMode());
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
     // Need to make sure a RenderLayer and compositing layer get created for the Canvas.
@@ -379,7 +385,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::createContext2d(const String& type)
     return static_cast<CanvasRenderingContext2D*>(m_context.get());
 }
 
-CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type)
+CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type, CanvasRenderingContext2DSettings&& settings)
 {
     ASSERT_UNUSED(HTMLCanvasElement::is2dType(type), type);
 
@@ -387,7 +393,7 @@ CanvasRenderingContext2D* HTMLCanvasElement::getContext2d(const String& type)
         return nullptr;
 
     if (!m_context)
-        return createContext2d(type);
+        return createContext2d(type, WTFMove(settings));
     return static_cast<CanvasRenderingContext2D*>(m_context.get());
 }
 

@@ -2877,6 +2877,7 @@ JSCanvasPathDrawingStyles.cpp
 JSCanvasPattern.cpp
 JSCanvasRect.cpp
 JSCanvasRenderingContext2D.cpp
+JSCanvasRenderingContext2DSettings.cpp
 JSCanvasShadowStyles.cpp
 JSCanvasState.cpp
 JSCanvasText.cpp
