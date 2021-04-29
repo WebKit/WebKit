@@ -38,7 +38,6 @@ static Vector<size_t> copyBusData(AudioBus& bus, GstBuffer* buffer, bool isMuted
         return offsets;
     }
 
-    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     offsets.reserveInitialCapacity(sizeof(size_t) * bus.numberOfChannels());
     size_t size = mappedBuffer.size() / bus.numberOfChannels();
     for (size_t channelIndex = 0; channelIndex < bus.numberOfChannels(); ++channelIndex) {
