@@ -33,8 +33,10 @@
 
 namespace WebCore {
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, const CryptoKeyRSAComponents&, bool extractable, CryptoKeyUsageBitmap)
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::create(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier, bool hasHash, const CryptoKeyRSAComponents&, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(hasHash);
+    UNUSED_PARAM(extractable);
     notImplemented();
     return nullptr;
 }
@@ -51,19 +53,26 @@ size_t CryptoKeyRSA::keySizeInBits() const
     return 0;
 }
 
-void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier hash, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap, KeyPairCallback&&, VoidCallback&& failureCallback, ScriptExecutionContext*)
+void CryptoKeyRSA::generatePair(CryptoAlgorithmIdentifier, CryptoAlgorithmIdentifier, bool hasHash, unsigned modulusLength, const Vector<uint8_t>& publicExponent, bool extractable, CryptoKeyUsageBitmap, KeyPairCallback&&, VoidCallback&& failureCallback, ScriptExecutionContext*)
 {
+    UNUSED_PARAM(hasHash);
+    UNUSED_PARAM(modulusLength);
+    UNUSED_PARAM(publicExponent);
+    UNUSED_PARAM(extractable);
+    UNUSED_PARAM(failureCallback);
     notImplemented();
 }
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier, Optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&&, bool extractable, CryptoKeyUsageBitmap)
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier, Optional<CryptoAlgorithmIdentifier>, Vector<uint8_t>&&, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(extractable);
     notImplemented();
     return nullptr;
 }
 
-RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier, Optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&&, bool extractable, CryptoKeyUsageBitmap)
+RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier, Optional<CryptoAlgorithmIdentifier>, Vector<uint8_t>&&, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(extractable);
     notImplemented();
     return nullptr;
 }

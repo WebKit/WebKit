@@ -46,36 +46,50 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve)
 
 Optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(extractable);
     notImplemented();
     return { };
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(keyData);
+    UNUSED_PARAM(extractable);
     notImplemented();
     return nullptr;
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPublic(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(x);
+    UNUSED_PARAM(y);
+    UNUSED_PARAM(extractable);
     notImplemented();
     return nullptr;
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, Vector<uint8_t>&& d, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(x);
+    UNUSED_PARAM(y);
+    UNUSED_PARAM(d);
+    UNUSED_PARAM(extractable);
     notImplemented();
     return nullptr;
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(keyData);
+    UNUSED_PARAM(extractable);
     notImplemented();
     return nullptr;
 }
 
 RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap)
 {
+    UNUSED_PARAM(keyData);
+    UNUSED_PARAM(extractable);
     notImplemented();
     return nullptr;
 }
