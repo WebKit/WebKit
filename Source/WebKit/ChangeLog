@@ -1,3 +1,42 @@
+2021-04-29  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276618. rdar://problem/77326484
+
+    Handle warning-level memory notifications more aggressively
+    https://bugs.webkit.org/show_bug.cgi?id=225008
+    
+    Reviewed by Chris Dumez.
+    
+    We've found that in some workloads, the critical-level memory pressure handler releases
+    significantly more memory than the warning-level memory pressure handler. On Macs, it is
+    likely that the memory pressure coincides with swapping. So when we get even a warning-level
+    notification from the OS, we should err on the side of releasing more memory to help relieve
+    the swapping state. To do this, treat warning level notifications the same as critical level
+    notifications on Mac if the WebProcess is in the background.
+    
+    * WebProcess/WebProcess.cpp:
+    (WebKit::WebProcess::initializeWebProcess):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276618 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-26  Ben Nham  <nham@apple.com>
+
+            Handle warning-level memory notifications more aggressively
+            https://bugs.webkit.org/show_bug.cgi?id=225008
+
+            Reviewed by Chris Dumez.
+
+            We've found that in some workloads, the critical-level memory pressure handler releases
+            significantly more memory than the warning-level memory pressure handler. On Macs, it is
+            likely that the memory pressure coincides with swapping. So when we get even a warning-level
+            notification from the OS, we should err on the side of releasing more memory to help relieve
+            the swapping state. To do this, treat warning level notifications the same as critical level
+            notifications on Mac if the WebProcess is in the background.
+
+            * WebProcess/WebProcess.cpp:
+            (WebKit::WebProcess::initializeWebProcess):
+
 2021-04-23  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276324. rdar://problem/77086404
