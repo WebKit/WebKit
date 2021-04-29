@@ -2076,17 +2076,15 @@ static RefPtr<CSSValue> consumeRotate(CSSParserTokenRange& range, CSSParserMode 
         } else if (!x && y && !z) {
             list = CSSValueList::createSpaceSeparated();
             list->append(CSSPrimitiveValue::createIdentifier(CSSValueY));
-        } else if (!x && !y && z) {
+        } else if (!x && !y && z)
             list = CSSValueList::createSpaceSeparated();
-            list->append(CSSPrimitiveValue::createIdentifier(CSSValueZ));
-        }
 
         // Finally, we must append the angle.
         list->append(*angle);
     } else if (!list->length()) {
         // The second valid case is if we have no item in the list, meaning we have either an optional rotation axis
         // using an identifier. In that case, we must add the axis identifier is specified and then add the angle.
-        if (axisIdentifier)
+        if (is<CSSPrimitiveValue>(axisIdentifier) && downcast<CSSPrimitiveValue>(*axisIdentifier).valueID() != CSSValueZ)
             list->append(*axisIdentifier);
         list->append(*angle);
     } else

@@ -1,3 +1,18 @@
+2021-04-29  Antoine Quint  <graouts@webkit.org>
+
+        Rotation axis parallel to the z axis should not serialize using the "z" keyword for the rotate property
+        https://bugs.webkit.org/show_bug.cgi?id=225101
+
+        Reviewed by Antti Koivisto.
+
+        The CSS spec has changed to drop the "z" keyword or any other axis parallel to the z axis when parsing the
+        rotate property in https://github.com/w3c/csswg-drafts/pull/6147.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedRotate):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeRotate):
+
 2021-04-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][IFC] Incorrect middle alignment for inline boxes when line-height is present

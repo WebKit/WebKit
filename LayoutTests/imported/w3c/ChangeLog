@@ -1,3 +1,18 @@
+2021-04-29  Antoine Quint  <graouts@webkit.org>
+
+        Rotation axis parallel to the z axis should not serialize using the "z" keyword for the rotate property
+        https://bugs.webkit.org/show_bug.cgi?id=225101
+
+        Reviewed by Antti Koivisto.
+
+        Update the tests per https://github.com/web-platform-tests/wpt/pull/28712 as well as their expectations.
+
+        * web-platform-tests/css/css-transforms/animation/rotate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation.html:
+        * web-platform-tests/css/css-transforms/parsing/rotate-parsing-valid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/rotate-parsing-valid.html:
+
 2021-04-28  Rob Buis  <rbuis@igalia.com>
 
         [aspect-ratio] Treat border/padding correctly for box-sizing: border-box
