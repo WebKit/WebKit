@@ -2891,7 +2891,6 @@ begin
                  ['--remote', GetoptLong::REQUIRED_ARGUMENT],
                  ['--local', GetoptLong::NO_ARGUMENT],
                  ['--ssh-options', GetoptLong::REQUIRED_ARGUMENT],
-                 ['--slave', GetoptLong::NO_ARGUMENT],
                  ['--prepare-only', GetoptLong::NO_ARGUMENT],
                  ['--analyze', GetoptLong::REQUIRED_ARGUMENT],
                  ['--vms', GetoptLong::REQUIRED_ARGUMENT],
