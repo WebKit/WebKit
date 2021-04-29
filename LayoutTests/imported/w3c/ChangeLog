@@ -1,3 +1,49 @@
+2021-04-29  Sam Weinig  <weinig@apple.com>
+
+        Update WPT tests in html/canvas/element/wide-gamut-canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225177
+
+        Reviewed by Darin Adler.
+
+        Update to the latest version of the tests.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.p3.html: Added.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.to.srgb.html: Added.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.p3.canvas.html: Added.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toBlob.with.putImageData.html: Added.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.p3.canvas.html: Added.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.space.p3.toDataURL.with.putImageData.html: Added.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/ImageData-fidelity-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/ImageData-fidelity.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-colorManaged-convertToBlob-roundtrip-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-colorManaged-convertToBlob-roundtrip.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-colorManaged-toBlob-toDataURL-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-colorManaged-toBlob-toDataURL.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-colorspace-arguments-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-colorspace-arguments.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-createImageBitmap-e_srgb-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-createPutGetImageData-colorManaged-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-createPutGetImageData-colorManaged.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-draw-high-bit-depth-images-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-draw-high-bit-depth-images.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-drawImage-e_srgb-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-drawImage-e_srgb.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-drawImage-offscreenCanvas-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-drawImage-offscreenCanvas.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-getImageData-e_srgb-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/canvas-getImageData-e_srgb.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/imageData-colorManagedBehavior-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/imageData-colorManagedBehavior.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/imageData-colorSpace-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/imageData-colorSpace.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/imagedata-no-color-settings-crash-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/imagedata-no-color-settings-crash.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/transferFromImageBitmap-expected.txt: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/transferFromImageBitmap.html: Removed.
+        * web-platform-tests/html/canvas/element/wide-gamut-canvas/w3c-import.log:
+
 2021-04-29  Rob Buis  <rbuis@igalia.com>
 
         Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream

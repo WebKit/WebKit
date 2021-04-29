@@ -1,8 +1,0 @@
-
-FAIL Test default context creation parameters: srgb/uint8 ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
-FAIL Test CanvasColorSpace value srgb ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
-FAIL Test CanvasPixelFormat value uint8 ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
-FAIL Test CanvasPixelFormat value float16 ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
-FAIL Test supported color settings srgb/uint8 ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
-FAIL Test supported color settings srgb/float16 ctx.getContextAttributes is not a function. (In 'ctx.getContextAttributes()', 'ctx.getContextAttributes' is undefined)
-

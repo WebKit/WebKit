@@ -244,6 +244,7 @@
     "web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html": "skip", 
     "web-platform-tests/html/canvas": "import", 
     "web-platform-tests/html/canvas/element": "import", 
+    "web-platform-tests/html/canvas/element/wide-gamut-canvas": "import", 
     "web-platform-tests/html/canvas/offscreen": "import", 
     "web-platform-tests/html/canvas/resources": "import", 
     "web-platform-tests/html/canvas/tools": "import", 
