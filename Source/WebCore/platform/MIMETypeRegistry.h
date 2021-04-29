@@ -71,7 +71,7 @@ public:
     WEBCORE_EXPORT static bool isSupportedImageVideoOrSVGMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being encoded.
-    static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a JavaScript or JSON resource.
     WEBCORE_EXPORT static bool isSupportedJavaScriptMIMEType(const String& mimeType);

@@ -35,6 +35,7 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DisplayListReplayer.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 #include <wtf/SystemTracing.h>
@@ -151,6 +152,7 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
 
+        ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
         return m_remoteRenderingBackendProxy->getDataURLForImageBuffer(mimeType, quality, preserveResolution, m_renderingResourceIdentifier);
     }
 
@@ -159,6 +161,7 @@ protected:
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
 
+        ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
         return m_remoteRenderingBackendProxy->getDataForImageBuffer(mimeType, quality, m_renderingResourceIdentifier);
     }
 

@@ -34,6 +34,7 @@
 #include "ImageData.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
+#include "RuntimeApplicationChecks.h"
 
 #if USE(ACCELERATE)
 #include <Accelerate/Accelerate.h>
@@ -173,7 +174,11 @@ void ImageBufferCGBackend::clipToMask(GraphicsContext& destContext, const FloatR
 
 RetainPtr<CFDataRef> ImageBufferCGBackend::toCFData(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
 {
+#if ENABLE(GPU_PROCESS)
+    ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+#else
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+#endif
 
     auto uti = utiFromImageBufferMIMEType(mimeType);
     ASSERT(uti);
