@@ -1,3 +1,17 @@
+2021-04-29  Ben Nham  <nham@apple.com>
+
+        Unreviewed, reverting r276619.
+
+        Causes multiple regressions on perf bots, as multiple tests test hot page loads in
+        WebContent processes that are in the process cache. Dropping the memory cache in those
+        processes caused multiple benchmarks to regress.
+
+        Reverted changeset:
+
+        "Reduce memory footprint for background tabs"
+        https://bugs.webkit.org/show_bug.cgi?id=225007
+        https://commits.webkit.org/r276619
+
 2021-04-29  Chris Dumez  <cdumez@apple.com>
 
         Improve local storage size estimation for quota limitation

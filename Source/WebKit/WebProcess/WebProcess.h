@@ -265,11 +265,7 @@ public:
     void pageDidEnterWindow(WebCore::PageIdentifier);
     void pageWillLeaveWindow(WebCore::PageIdentifier);
 
-    void nonVisibleProcessGraphicsCleanupTimerFired();
-
-#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
-    void nonVisibleProcessMemoryCleanupTimerFired();
-#endif
+    void nonVisibleProcessCleanupTimerFired();
 
     void registerStorageAreaMap(StorageAreaMap&);
     void unregisterStorageAreaMap(StorageAreaMap&);
@@ -666,11 +662,7 @@ private:
     bool m_processIsSuspended { false };
 
     HashSet<WebCore::PageIdentifier> m_pagesInWindows;
-    WebCore::Timer m_nonVisibleProcessGraphicsCleanupTimer;
-
-#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
-    WebCore::Timer m_nonVisibleProcessMemoryCleanupTimer;
-#endif
+    WebCore::Timer m_nonVisibleProcessCleanupTimer;
 
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 

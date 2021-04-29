@@ -1,3 +1,15 @@
+2021-04-29  Ben Nham  <nham@apple.com>
+
+        Unreviewed, reverting r276619.
+
+        Causes multiple regressions on perf bots.
+
+        Reverted changeset:
+
+        "Reduce memory footprint for background tabs"
+        https://bugs.webkit.org/show_bug.cgi?id=225007
+        https://commits.webkit.org/r276619
+
 2021-04-28  Devin Rousso  <drousso@apple.com>
 
         experiment with averaging sampling colors across the top of the page as the scroll area background
