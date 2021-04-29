@@ -36,6 +36,12 @@
 #include <pthread_np.h>
 #endif
 
+#if OS(LINUX)
+#include <sys/resource.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#endif
+
 #endif
 
 namespace WTF {
@@ -107,7 +113,25 @@ StackBounds StackBounds::newThreadStackBounds(PlatformThreadHandle thread)
 
 StackBounds StackBounds::currentThreadStackBoundsInternal()
 {
-    return newThreadStackBounds(pthread_self());
+    auto ret = newThreadStackBounds(pthread_self());
+#if OS(LINUX)
+    // on glibc, pthread_attr_getstack will generally return the limit size (minus a guard page)
+    // for the main thread; this is however not necessarily always true on every libc - for example
+    // on musl, it will return the currently reserved size - since the stack bounds are expected to
+    // be constant (and they are for every thread except main, which is allowed to grow), check
+    // resource limits and use that as the boundary instead (and prevent stack overflows in JSC)
+    if (getpid() == static_cast<pid_t>(syscall(SYS_gettid))) {
+        void* origin = ret.origin();
+        rlimit limit;
+        getrlimit(RLIMIT_STACK, &limit);
+        rlim_t size = limit.rlim_cur;
+        // account for a guard page
+        size -= static_cast<rlim_t>(sysconf(_SC_PAGESIZE));
+        void* bound = static_cast<char*>(origin) - size;
+        return StackBounds { origin, bound };
+    }
+#endif
+    return ret;
 }
 
 #elif OS(WINDOWS)

@@ -1,3 +1,41 @@
+2021-04-28  Daniel Kolesa  <dkolesa@igalia.com>
+
+        [WPE][GTK] More correct fixes for stack size issues on musl libc
+        https://bugs.webkit.org/show_bug.cgi?id=225099
+
+        Reviewed by Adrian Perez de Castro.
+
+        Partial revert https://bugs.webkit.org/show_bug.cgi?id=210068
+
+        While the changes in r236306 stopped JSC from crashing outright,
+        they are not correct, since they also make it rather unstable.
+
+        To counter this, increase stack size for threads on Linux with
+        non-glibc/bionic libcs to 1 megabyte, which is a robust enough
+        value that should always be sufficient.
+
+        While at it, the previous approach to musl thread stack size was
+        breaking use of DEFAULT_THREAD_STACK_SIZE_IN_KB (if defined) as
+        well as not properly taking care of the unused parameter. Move
+        the code to a more appropriate place, which solves these problems.
+
+        All this is however not enough, since there is still the main thread;
+        using pthread_attr_getstack on a main thread is not reliable since main
+        thread stacks are allowed to grow, and we expect the bounds to always
+        be constant. On glibc, this already behaved right, but e.g. on musl
+        (and possibly other C libraries) this is not necessarily the case - at
+        the point of the check, it was returning 128k (since that's the initial
+        size reserved by the kernel). Therefore, do the same thing as on Darwin
+        and use process resource limits to get the boundary on Linux as well.
+
+        This results in JavaScriptCore behaving correctly on musl libc and
+        allows us to drop the options special-casing that was in place.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::currentThreadStackBoundsInternal):
+        * wtf/Threading.cpp:
+        (WTF::stackSize):
+
 2021-04-08  Khem Raj  <raj.khem@gmail.com>
 
         [WPE] Build fixes for musl C library on Linux
