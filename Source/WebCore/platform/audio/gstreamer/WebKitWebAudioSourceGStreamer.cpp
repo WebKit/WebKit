@@ -33,6 +33,7 @@
 #include <gst/pbutils/missing-plugins.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/Scope.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -337,6 +338,16 @@ static void webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>&& element, 
     auto* src = WEBKIT_WEB_AUDIO_SRC(element.get());
     auto* priv = src->priv;
 
+    auto notifyDispatchOnExit = makeScopeExit([priv] {
+        LockHolder lock(priv->dispatchLock);
+        priv->dispatchDone = true;
+        priv->dispatchCondition.notifyOne();
+    });
+
+    GST_TRACE_OBJECT(element.get(), "Playing: %d", priv->destination->isPlaying());
+    if (priv->hasRenderedAudibleFrame && !priv->destination->isPlaying())
+        return;
+
     ASSERT(channelBufferList.size() == priv->sources.size());
 
     GstClockTime timestamp = gst_util_uint64_scale(priv->numberOfSamples, GST_SECOND, priv->sampleRate);
@@ -380,12 +391,6 @@ static void webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>&& element, 
             gst_task_stop(priv->task.get());
             failed = true;
         }
-    }
-
-    {
-        LockHolder lock(priv->dispatchLock);
-        priv->dispatchDone = true;
-        priv->dispatchCondition.notifyOne();
     }
 }
 
@@ -469,6 +474,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
 
         gst_buffer_pool_set_active(priv->pool.get(), FALSE);
         priv->pool = nullptr;
+        priv->hasRenderedAudibleFrame = false;
         break;
     default:
         break;
