@@ -1,3 +1,16 @@
+2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd
+        https://bugs.webkit.org/show_bug.cgi?id=225072
+        rdar://77159489
+
+        Reviewed by Darin Adler.
+
+        Remove a helper method that was added in r276688, which we no longer need.
+
+        * dom/Position.h:
+        (WebCore::Position::isInTreeScope const): Deleted.
+
 2021-04-28  Cameron McCormack  <heycam@apple.com>
 
         Don't create custom scrollbars for fullscreen placeholders.
