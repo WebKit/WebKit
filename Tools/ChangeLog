@@ -1,5 +1,17 @@
 2021-04-29  Aakash Jain  <aakash_jain@apple.com>
 
+        [webkitpy] Remove deprecated slave-config-json-path parameter in perftestsrunner.py
+        https://bugs.webkit.org/show_bug.cgi?id=225106
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_parse_deprecated_args): Deleted.
+
+2021-04-29  Aakash Jain  <aakash_jain@apple.com>
+
         Remove unused slave parameter from run-jsc-benchmarks script
         https://bugs.webkit.org/show_bug.cgi?id=225153
 
