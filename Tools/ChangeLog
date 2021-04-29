@@ -1,3 +1,55 @@
+2021-04-29  Sam Sneddon  <gsnedders@apple.com>
+
+        Make sure webkitpy tests pass on Linux and on more Python versions
+        https://bugs.webkit.org/show_bug.cgi?id=225157
+
+        Reviewed by Jonathan Bedard.
+
+        This gets us passing the webkitpy tests, run under pytest, on Linux,
+        under Python 2.7, 3.6, 3.7, 3.8, 3.9, and alpha 3.10.
+
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py:
+        Conditionally install setuptools 56 on Python 3, keep setuptools
+        44.1.1 on Python 2. (44.1.1 is the last release supporting Python 2,
+        but due to removals doesn't install on Python 3.10.)
+        * Scripts/webkitpy/browserperfdash/browserperfdash_unittest.py:
+        (FakeBrowserDriver): Implement a FakeBrowserDriver which does nothing.
+        (FakeBrowserDriver.__init__):
+        (FakeBrowserDriver.prepare_env):
+        (FakeBrowserDriver.prepare_initial_env):
+        (FakeBrowserDriver.restore_env):
+        (FakeBrowserDriver.restore_env_after_all_testing):
+        (FakeBrowserDriver.close_browsers):
+        (FakeBrowserDriver.launch_url):
+        (FakeBrowserDriver.launch_webdriver):
+        (BrowserPerfDashRunnerTest.test_can_construct_runner_object_minimum_parameters):
+        Use the FakeBrowserRunner rather than the platform/browser
+        default. (This fixes this test on Linux when no minibrowser-gtk is
+        available.)
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (GitTest.setUp): Set user.name/user.email to ensure they're set.
+        (GitSVNTest._setup_git_checkout): Set user.name/user.email to ensure
+        they're set.
+        * Scripts/webkitpy/common/net/credentials.py: Conditionally import
+        keyring; the rest of the code already supports keyring being
+        None. (keyring doesn't have any release supporting both Python 2 and
+        3.10, but updating keyring pulls in new dependencies and is left as
+        future work.)
+        * Scripts/webkitpy/common/prettypatch_unittest.py:
+        (PrettyPatchTest.check_ruby): Also check Ruby version.
+        (test_pretty_diff_encodings): Explicitly skip; don't just return.
+        (test_pretty_print_empty_string): Explicitly skip; don't just return.
+        * Scripts/webkitpy/common/system/logtesting.py:
+        (TestLogStream.write): Python 3.6's logging appears to put new lines
+        following a message in a new message, which breaks many tests.
+        * Scripts/webkitpy/pytest.ini: Broaden ignored warnings.
+        * Scripts/webkitpy/results/upload_unittest.py:
+        (UploadTest.normalize): collections -> collections.abc for Py3.10
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._create_device_with_runtime): Use modern
+        plistlib API.
+        (SimulatedDevice.state): Use modern plistlib API.
+
 2021-04-28  Devin Rousso  <drousso@apple.com>
 
         experiment with averaging sampling colors across the top of the page as the scroll area background

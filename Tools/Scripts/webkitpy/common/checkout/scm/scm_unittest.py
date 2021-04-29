@@ -1022,6 +1022,8 @@ class GitTest(SCMTest):
         run_command(['git', 'init', self.untracking_checkout_path])
 
         os.chdir(self.untracking_checkout_path)
+        run_command(['git', 'config', 'user.name', 'scm_unittest'])
+        run_command(['git', 'config', 'user.email', 'scm_unittest@example.com'])
         write_into_file_at_path('foo_file', 'foo')
         run_command(['git', 'add', 'foo_file'])
         write_into_file_at_path('.gitignore', '*.pyc')
@@ -1032,6 +1034,8 @@ class GitTest(SCMTest):
         self.tracking_git_checkout_path = tempfile.mkdtemp(suffix="git_test_checkout")
         run_command(['git', 'clone', '--quiet', self.untracking_checkout_path, self.tracking_git_checkout_path])
         os.chdir(self.tracking_git_checkout_path)
+        run_command(['git', 'config', 'user.name', 'scm_unittest'])
+        run_command(['git', 'config', 'user.email', 'scm_unittest@example.com'])
         self.tracking_scm = detect_scm_system(self.tracking_git_checkout_path)
 
     def tearDown(self):
@@ -1174,6 +1178,8 @@ class GitSVNTest(SCMTest):
         # --quiet doesn't make git svn silent, so we use run_silent to redirect output
         run_silent(['git', 'svn', 'clone', '-T', 'trunk', '--prefix', '', self.svn_repo_url, self.git_checkout_path])
         os.chdir(self.git_checkout_path)
+        run_command(['git', 'config', 'user.name', 'scm_unittest'])
+        run_command(['git', 'config', 'user.email', 'scm_unittest@example.com'])
         run_silent(['git', 'branch', '-m', 'trunk'])
 
     def _tear_down_git_checkout(self):

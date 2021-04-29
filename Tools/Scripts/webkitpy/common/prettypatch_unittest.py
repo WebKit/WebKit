@@ -29,6 +29,7 @@
 import os.path
 import sys
 import unittest
+from distutils.version import StrictVersion
 
 from webkitpy.common.system.executive import Executive
 from webkitpy.common.prettypatch import PrettyPatch
@@ -38,10 +39,11 @@ class PrettyPatchTest(unittest.TestCase):
     def check_ruby(self):
         executive = Executive()
         try:
-            result = executive.run_command(['ruby', '--version'])
+            result = executive.run_command(['ruby', '-e', 'print(RUBY_VERSION)'])
         except OSError as e:
             return False
-        return True
+        # PrettyPatch relies on WEBrick, which was removed from the Ruby stdlib in 3
+        return StrictVersion(result) < StrictVersion("3.0.0")
 
     _diff_with_multiple_encodings = """
 Index: utf8_test
@@ -68,10 +70,11 @@ Index: latin1_test
 
     def test_pretty_diff_encodings(self):
         if not self.check_ruby():
+            self.skipTest("no/unsupported Ruby")
             return
 
         if sys.platform.startswith('win'):
-            # FIXME: disabled due to https://bugs.webkit.org/show_bug.cgi?id=93192
+            self.skipTest("FIXME: disabled due to https://bugs.webkit.org/show_bug.cgi?id=93192")
             return
 
         pretty_patch = PrettyPatch(Executive(), self._webkit_root())
@@ -81,6 +84,7 @@ Index: latin1_test
 
     def test_pretty_print_empty_string(self):
         if not self.check_ruby():
+            self.skipTest("no/unsupported Ruby")
             return
 
         # Make sure that an empty diff does not hang the process.
