@@ -352,7 +352,8 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
                 sibling->setNeedsLayoutAndPrefWidthsRecalc();
                 sibling = next;
             }
-        }
+        } else
+            m_builder.setHasBrokenContinuation();
 
         // Keep walking up the chain.
         currentChild = current;

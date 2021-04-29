@@ -24,7 +24,6 @@
 #include "config.h"
 #include "JSObject.h"
 
-#include "ArrayConstructor.h"
 #include "CatchScope.h"
 #include "CustomGetterSetter.h"
 #include "Exception.h"
@@ -44,10 +43,6 @@
 #include "TypeError.h"
 #include "VMInlines.h"
 #include <wtf/Assertions.h>
-
-#if PLATFORM(IOS)
-#include <wtf/spi/darwin/dyldSPI.h>
-#endif
 
 namespace JSC {
 
@@ -485,46 +480,6 @@ void JSFinalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSFinalObject);
 
-String JSObject::className(const JSObject* object, VM& vm)
-{
-    const ClassInfo* info = object->classInfo(vm);
-    ASSERT(info);
-    return info->className;
-}
-
-#if PLATFORM(IOS)
-inline static bool isPokerBros()
-{
-    auto bundleID = CFBundleGetIdentifier(CFBundleGetMainBundle());
-    return bundleID
-        && CFEqual(bundleID, CFSTR("com.kpgame.PokerBros"))
-        && dyld_get_program_sdk_version() < DYLD_IOS_VERSION_14_0;
-}
-#endif
-
-String JSObject::toStringName(const JSObject* object, JSGlobalObject* globalObject)
-{
-    VM& vm = globalObject->vm();
-#if PLATFORM(IOS)
-    static bool needsOldStringName = isPokerBros();
-    if (UNLIKELY(needsOldStringName)) {
-        const ClassInfo* info = object->classInfo(vm);
-        ASSERT(info);
-        return info->className;
-    }
-#endif
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    bool objectIsArray = isArray(globalObject, object);
-    RETURN_IF_EXCEPTION(scope, String());
-    if (objectIsArray)
-        return "Array"_s;
-    if (TypeInfo::isArgumentsType(object->type()))
-        return "Arguments"_s;
-    if (const_cast<JSObject*>(object)->isCallable(vm))
-        return "Function"_s;
-    return "Object"_s;
-}
-
 String JSObject::calculatedClassName(JSObject* object)
 {
     String constructorFunctionName;
@@ -580,9 +535,22 @@ String JSObject::calculatedClassName(JSObject* object)
         scope.clearException();
 
     if (constructorFunctionName.isNull() || constructorFunctionName == "Object") {
-        String tableClassName = object->methodTable(vm)->className(object, vm);
-        if (!tableClassName.isNull() && tableClassName != "Object")
-            return tableClassName;
+        PropertySlot slot(object, PropertySlot::InternalMethodType::VMInquiry, &vm);
+        if (object->getPropertySlot(globalObject, vm.propertyNames->toStringTagSymbol, slot)) {
+            EXCEPTION_ASSERT(!scope.exception());
+            if (slot.isValue()) {
+                JSValue value = slot.getValue(globalObject, vm.propertyNames->toStringTagSymbol);
+                if (value.isString()) {
+                    String tag = asString(value)->value(globalObject);
+                    if (UNLIKELY(scope.exception()))
+                        scope.clearException();
+                    return tag;
+                }
+            }
+        }
+
+        if (UNLIKELY(scope.exception()))
+            scope.clearException();
 
         String classInfoName = object->classInfo(vm)->className;
         if (!classInfoName.isNull())

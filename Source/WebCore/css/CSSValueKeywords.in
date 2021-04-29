@@ -276,10 +276,10 @@ windowtext
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
 -apple-system-indigo
 -apple-system-teal
--apple-system-fill
--apple-system-secondary-fill
--apple-system-secondary-fill-disabled
--apple-system-tertiary-fill
+-apple-system-opaque-fill
+-apple-system-opaque-secondary-fill
+-apple-system-opaque-secondary-fill-disabled
+-apple-system-opaque-tertiary-fill
 -apple-system-opaque-separator
 #endif
 -webkit-focus-ring-color

@@ -1212,15 +1212,13 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 
 @interface _UIContextMenuStyle : NSObject <NSCopying>
 @property (nonatomic) _UIContextMenuLayout preferredLayout;
+@property (nonatomic) UIEdgeInsets preferredEdgeInsets;
 @property (nonatomic) BOOL hasInteractivePreview;
+@property (nonatomic, strong) NSArray *preferredBackgroundEffects;
 + (instancetype)defaultStyle;
 @end
 
 #if USE(UICONTEXTMENU)
-@interface UITargetedPreview ()
-@property (nonatomic, strong, setter=_setOverridePositionTrackingView:) UIView *overridePositionTrackingView;
-@end
-
 @interface UIContextMenuInteraction ()
 @property (nonatomic, readonly) UIGestureRecognizer *gestureRecognizerForFailureRelationships;
 - (void)_presentMenuAtLocation:(CGPoint)location;

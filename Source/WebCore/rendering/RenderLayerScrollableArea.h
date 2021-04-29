@@ -231,6 +231,7 @@ public:
     bool scrollingMayRevealBackground() const;
 
     void computeScrollDimensions();
+    void computeScrollOrigin();
     void computeHasCompositedScrollableOverflow();
 
     bool hasHorizontalOverflow() const;

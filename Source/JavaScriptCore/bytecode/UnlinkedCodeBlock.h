@@ -42,8 +42,8 @@
 #include "VirtualRegister.h"
 #include <algorithm>
 #include <wtf/BitVector.h>
-#include <wtf/HashSet.h>
-#include <wtf/RefCountedArray.h>
+#include <wtf/FixedVector.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
 #include <wtf/text/UniquedStringImpl.h>
@@ -80,7 +80,7 @@ struct UnlinkedStringJumpTable {
         int32_t branchOffset;
     };
 
-    typedef HashMap<RefPtr<StringImpl>, OffsetLocation> StringOffsetTable;
+    using StringOffsetTable = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, OffsetLocation>;
     StringOffsetTable offsetTable;
 
     inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset)
@@ -95,7 +95,7 @@ struct UnlinkedStringJumpTable {
 };
 
 struct UnlinkedSimpleJumpTable {
-    RefCountedArray<int32_t> branchOffsets;
+    FixedVector<int32_t> branchOffsets;
     int32_t min;
 
     int32_t offsetForValue(int32_t value, int32_t defaultOffset);
@@ -135,7 +135,7 @@ public:
     bool allowDirectEvalCache() const { return !(m_features & NoEvalCacheFeature); }
 
     bool hasExpressionInfo() { return m_expressionInfo.size(); }
-    const RefCountedArray<ExpressionRangeInfo>& expressionInfo() { return m_expressionInfo; }
+    const FixedVector<ExpressionRangeInfo>& expressionInfo() { return m_expressionInfo; }
 
     bool hasCheckpoints() const { return m_hasCheckpoints; }
     void setHasCheckpoints() { m_hasCheckpoints = true; }
@@ -152,17 +152,17 @@ public:
 
     size_t numberOfIdentifiers() const { return m_identifiers.size(); }
     const Identifier& identifier(int index) const { return m_identifiers[index]; }
-    const RefCountedArray<Identifier>& identifiers() const { return m_identifiers; }
+    const FixedVector<Identifier>& identifiers() const { return m_identifiers; }
 
     BitVector& bitVector(size_t i) { ASSERT(m_rareData); return m_rareData->m_bitVectors[i]; }
 
-    const RefCountedArray<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
+    const FixedVector<WriteBarrier<Unknown>>& constantRegisters() { return m_constantRegisters; }
     const WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()]; }
     ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
-    const RefCountedArray<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
+    const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation() { return m_constantsSourceCodeRepresentation; }
 
     unsigned numberOfConstantIdentifierSets() const { return m_rareData ? m_rareData->m_constantIdentifierSets.size() : 0; }
-    const RefCountedArray<IdentifierSet>& constantIdentifierSets() { ASSERT(m_rareData); return m_rareData->m_constantIdentifierSets; }
+    const FixedVector<IdentifierSet>& constantIdentifierSets() { ASSERT(m_rareData); return m_rareData->m_constantIdentifierSets; }
 
     // Jumps
     size_t numberOfJumpTargets() const { return m_jumpTargets.size(); }
@@ -234,7 +234,7 @@ public:
     ALWAYS_INLINE unsigned startColumn() const { return 0; }
     unsigned endColumn() const { return m_endColumn; }
 
-    const RefCountedArray<InstructionStream::Offset>& opProfileControlFlowBytecodeOffsets() const
+    const FixedVector<InstructionStream::Offset>& opProfileControlFlowBytecodeOffsets() const
     {
         ASSERT(m_rareData);
         return m_rareData->m_opProfileControlFlowBytecodeOffsets;
@@ -374,7 +374,7 @@ private:
     PackedRefPtr<StringImpl> m_sourceURLDirective;
     PackedRefPtr<StringImpl> m_sourceMappingURLDirective;
 
-    RefCountedArray<InstructionStream::Offset> m_jumpTargets;
+    FixedVector<InstructionStream::Offset> m_jumpTargets;
     Ref<UnlinkedMetadataTable> m_metadata;
     std::unique_ptr<InstructionStream> m_instructions;
     std::unique_ptr<BytecodeLivenessAnalysis> m_liveness;
@@ -385,10 +385,10 @@ private:
 #endif
 
     // Constant Pools
-    RefCountedArray<Identifier> m_identifiers;
-    RefCountedArray<WriteBarrier<Unknown>> m_constantRegisters;
-    RefCountedArray<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
-    using FunctionExpressionVector = RefCountedArray<WriteBarrier<UnlinkedFunctionExecutable>>;
+    FixedVector<Identifier> m_identifiers;
+    FixedVector<WriteBarrier<Unknown>> m_constantRegisters;
+    FixedVector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
+    using FunctionExpressionVector = FixedVector<WriteBarrier<UnlinkedFunctionExecutable>>;
     FunctionExpressionVector m_functionDecls;
     FunctionExpressionVector m_functionExprs;
 
@@ -396,22 +396,22 @@ public:
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-        RefCountedArray<UnlinkedHandlerInfo> m_exceptionHandlers;
+        FixedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
 
         // Jump Tables
-        RefCountedArray<UnlinkedSimpleJumpTable> m_switchJumpTables;
-        RefCountedArray<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
+        FixedVector<UnlinkedSimpleJumpTable> m_switchJumpTables;
+        FixedVector<UnlinkedStringJumpTable> m_stringSwitchJumpTables;
 
-        RefCountedArray<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
+        FixedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
 
         struct TypeProfilerExpressionRange {
             unsigned m_startDivot;
             unsigned m_endDivot;
         };
         HashMap<unsigned, TypeProfilerExpressionRange> m_typeProfilerInfoMap;
-        RefCountedArray<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
-        RefCountedArray<BitVector> m_bitVectors;
-        RefCountedArray<IdentifierSet> m_constantIdentifierSets;
+        FixedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;
+        FixedVector<BitVector> m_bitVectors;
+        FixedVector<IdentifierSet> m_constantIdentifierSets;
 
         unsigned m_needsClassFieldInitializer : 1;
         unsigned m_privateBrandRequirement : 1;
@@ -428,7 +428,7 @@ private:
 
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     std::unique_ptr<RareData> m_rareData;
-    RefCountedArray<ExpressionRangeInfo> m_expressionInfo;
+    FixedVector<ExpressionRangeInfo> m_expressionInfo;
 
 protected:
     DECLARE_VISIT_CHILDREN;

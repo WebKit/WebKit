@@ -548,6 +548,13 @@ void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encode
 {
     auto requestToSerialize = retainPtr(resourceRequest.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
 
+    if (Class requestClass = [requestToSerialize class]; UNLIKELY(requestClass != [NSURLRequest class] && requestClass != [NSMutableURLRequest class])) {
+        WebCore::ResourceRequest request(requestToSerialize.get());
+        request.replacePlatformRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+        requestToSerialize = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
+    }
+    ASSERT([requestToSerialize class] == [NSURLRequest class] || [requestToSerialize class] == [NSMutableURLRequest class]);
+
     bool requestIsPresent = requestToSerialize;
     encoder << requestIsPresent;
 

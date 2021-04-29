@@ -101,17 +101,17 @@ Vector<Ref<NetworkProcessProxy>> NetworkProcessProxy::allNetworkProcesses()
     return processes;
 }
 
-static RefPtr<NetworkProcessProxy>& defaultProcess()
+RefPtr<NetworkProcessProxy>& NetworkProcessProxy::defaultNetworkProcess()
 {
     static NeverDestroyed<RefPtr<NetworkProcessProxy>> process;
     return process.get();
 }
 
-Ref<NetworkProcessProxy> NetworkProcessProxy::defaultNetworkProcess()
+Ref<NetworkProcessProxy> NetworkProcessProxy::ensureDefaultNetworkProcess()
 {
-    if (!defaultProcess())
-        defaultProcess() = NetworkProcessProxy::create();
-    return *defaultProcess();
+    if (!defaultNetworkProcess())
+        defaultNetworkProcess() = NetworkProcessProxy::create();
+    return *defaultNetworkProcess();
 }
 
 void NetworkProcessProxy::terminate()
@@ -310,8 +310,8 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
 
     m_uploadActivity = WTF::nullopt;
 
-    if (defaultProcess() == this)
-        defaultProcess() = nullptr;
+    if (defaultNetworkProcess() == this)
+        defaultNetworkProcess() = nullptr;
 
     Ref<NetworkProcessProxy> protectedThis(*this);
     for (auto* processPool : WebProcessPool::allProcessPools())
@@ -336,8 +336,14 @@ bool NetworkProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC
     return didReceiveSyncNetworkProcessProxyMessage(connection, decoder, replyEncoder);
 }
 
-void NetworkProcessProxy::didClose(IPC::Connection&)
+void NetworkProcessProxy::didClose(IPC::Connection& connection)
 {
+#if OS(DARWIN)
+    RELEASE_LOG_ERROR(Process, "%p - NetworkProcessProxy::didClose (Network Process %d crash)", this, connection.remoteProcessID());
+#else
+    RELEASE_LOG_ERROR(Process, "%p - NetworkProcessProxy::didClose (Network Process crash)", this);
+#endif
+
     // This will cause us to be deleted.
     networkProcessDidTerminate(TerminationReason::Crash);
 }
@@ -409,10 +415,10 @@ void NetworkProcessProxy::negotiatedLegacyTLS(WebPageProxyIdentifier pageID)
         page->negotiatedLegacyTLS();
 }
 
-void NetworkProcessProxy::didNegotiateModernTLS(WebPageProxyIdentifier pageID, const WebCore::AuthenticationChallenge& challenge)
+void NetworkProcessProxy::didNegotiateModernTLS(WebPageProxyIdentifier pageID, const URL& url)
 {
     if (auto* page = pageID ? WebProcessProxy::webPage(pageID) : nullptr)
-        page->didNegotiateModernTLS(challenge);
+        page->didNegotiateModernTLS(url);
 }
 
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
@@ -1279,6 +1285,9 @@ void NetworkProcessProxy::removeSession(WebsiteDataStore& websiteDataStore)
 
     if (canSendMessage())
         send(Messages::NetworkProcess::DestroySession { websiteDataStore.sessionID() }, 0);
+
+    if (m_websiteDataStores.computesEmpty())
+        defaultNetworkProcess() = nullptr;
 }
 
 WebsiteDataStore* NetworkProcessProxy::websiteDataStoreFromSessionID(PAL::SessionID sessionID)
@@ -1534,11 +1543,6 @@ void NetworkProcessProxy::updateProcessAssertion()
 void NetworkProcessProxy::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::NetworkProcess::ResetQuota(sessionID), WTFMove(completionHandler));
-}
-
-void NetworkProcessProxy::setQuotaLoggingEnabled(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
-{
-    sendWithAsyncReply(Messages::NetworkProcess::SetQuotaLoggingEnabled(sessionID, enabled), WTFMove(completionHandler));
 }
 
 #if ENABLE(APP_BOUND_DOMAINS)

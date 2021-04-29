@@ -349,11 +349,9 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
         if (!at(i).visitWeak(vm))
             return false;
     }
-    if (Vector<WriteBarrier<JSCell>>* weakReferences = m_weakReferences.get()) {
-        for (WriteBarrier<JSCell>& weakReference : *weakReferences) {
-            if (!vm.heap.isMarked(weakReference.get()))
-                return false;
-        }
+    for (const WriteBarrier<JSCell>& weakReference : m_weakReferences) {
+        if (!vm.heap.isMarked(weakReference.get()))
+            return false;
     }
     return true;
 }
@@ -749,10 +747,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     
     m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, WTFMove(state.m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
     m_watchpoints = WTFMove(state.watchpoints);
-    if (!state.weakReferences.isEmpty()) {
-        state.weakReferences.shrinkToFit();
-        m_weakReferences = makeUnique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));
-    }
+    if (!state.weakReferences.isEmpty())
+        m_weakReferences = FixedVector<WriteBarrier<JSCell>>(WTFMove(state.weakReferences));
     if (PolymorphicAccessInternal::verbose)
         dataLog("Returning: ", code.code(), "\n");
     

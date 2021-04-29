@@ -515,7 +515,7 @@ IsNSURLSessionWebSocketEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
 
 # FIXME: The 'Is' prefix is inconsistent with most other preferences and should be removed.
 IsSameSiteStrictEnforcementEnabled:

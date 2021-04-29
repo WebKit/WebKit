@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -607,7 +607,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = nullptr;
-    UnwindFunctor functor(vm, callFrame, isTerminatedExecutionException(vm, exception), codeBlock, handler);
+    UnwindFunctor functor(vm, callFrame, vm.isTerminationException(exception), codeBlock, handler);
     StackVisitor::visit<StackVisitor::TerminateIfTopEntryFrameIsEmpty>(callFrame, vm, functor);
     if (vm.hasCheckpointOSRSideState())
         vm.popAllCheckpointOSRSideStateUntil(callFrame);
@@ -620,6 +620,8 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
 
 void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* globalObject, CallFrame* callFrame, Exception* exception)
 {
+    ASSERT(!vm.isTerminationException(exception));
+
     Debugger* debugger = globalObject->debugger();
     if (debugger && debugger->needsExceptionCallbacks() && !exception->didNotifyInspectorOfThrow()) {
         // This code assumes that if the debugger is enabled then there is no inlining.
@@ -627,17 +629,11 @@ void Interpreter::notifyDebuggerOfExceptionToBeThrown(VM& vm, JSGlobalObject* gl
         // frames.
         // https://bugs.webkit.org/show_bug.cgi?id=121754
 
-        bool hasCatchHandler;
-        bool isTermination = isTerminatedExecutionException(vm, exception);
-        if (isTermination)
-            hasCatchHandler = false;
-        else {
-            GetCatchHandlerFunctor functor;
-            StackVisitor::visit(callFrame, vm, functor);
-            HandlerInfo* handler = functor.handler();
-            ASSERT(!handler || handler->isCatchHandler());
-            hasCatchHandler = !!handler;
-        }
+        GetCatchHandlerFunctor functor;
+        StackVisitor::visit(callFrame, vm, functor);
+        HandlerInfo* handler = functor.handler();
+        ASSERT(!handler || handler->isCatchHandler());
+        bool hasCatchHandler = !!handler;
 
         debugger->exception(globalObject, callFrame, exception->value(), hasCatchHandler);
     }
@@ -805,10 +801,9 @@ failedJSONP:
     if (UNLIKELY(error))
         return checkedReturn(throwException(globalObject, throwScope, error));
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return throwScope.exception();
     }
 
     if (scope->structure(vm)->isUncacheableDictionary())
@@ -872,10 +867,9 @@ JSValue Interpreter::executeCall(JSGlobalObject* lexicalGlobalObject, JSObject* 
     if (UNLIKELY(!vm.isSafeToRecurseSoft() || args.size() > maxArguments))
         return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return throwScope.exception();
     }
 
     CodeBlock* newCodeBlock = nullptr;
@@ -951,10 +945,9 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
         return nullptr;
     }
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, nullptr);
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return nullptr;
     }
 
     CodeBlock* newCodeBlock = nullptr;
@@ -1066,10 +1059,9 @@ JSValue Interpreter::execute(EvalExecutable* eval, JSGlobalObject* lexicalGlobal
         }
     }
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return throwScope.exception();
     }
 
     auto loadCodeBlock = [&](Exception*& compileError) -> EvalCodeBlock* {
@@ -1224,10 +1216,9 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
     if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return checkedReturn(throwStackOverflowError(globalObject, throwScope));
 
-    constexpr auto trapsMask = VMTraps::interruptingTraps();
-    if (UNLIKELY(vm.needTrapHandling(trapsMask))) {
-        vm.handleTraps(globalObject, vm.topCallFrame, trapsMask);
-        RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+    if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
+        if (vm.hasExceptionsAfterHandlingTraps())
+            return throwScope.exception();
     }
 
     if (scope->structure(vm)->isUncacheableDictionary())

@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -2039,9 +2039,10 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     addp t3, t2
     bineq t1, Int32Tag, .opSwitchImmNotInt
     subi SimpleJumpTable::min[t2], t0
-    biaeq t0, SimpleJumpTable::branchOffsets + VectorSizeOffset[t2], .opSwitchImmFallThrough
-    loadp SimpleJumpTable::branchOffsets + VectorBufferOffset[t2], t3
-    loadi [t3, t0, 4], t1
+    loadp SimpleJumpTable::branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    btpz t2, .opSwitchImmFallThrough
+    biaeq t0, RefCountedArrayStorageNonNullSizeOffset[t2], .opSwitchImmFallThrough
+    loadi [t2, t0, 4], t1
     btiz t1, .opSwitchImmFallThrough
     dispatchIndirect(t1)
 
@@ -2078,8 +2079,9 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     loadb [t0], t0
 .opSwitchCharReady:
     subi SimpleJumpTable::min[t2], t0
-    biaeq t0, SimpleJumpTable::branchOffsets + VectorSizeOffset[t2], .opSwitchCharFallThrough
-    loadp SimpleJumpTable::branchOffsets + VectorBufferOffset[t2], t2
+    loadp SimpleJumpTable::branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    btpz t2, .opSwitchCharFallThrough
+    biaeq t0, RefCountedArrayStorageNonNullSizeOffset[t2], .opSwitchCharFallThrough
     loadi [t2, t0, 4], t1
     btiz t1, .opSwitchCharFallThrough
     dispatchIndirect(t1)
@@ -2213,16 +2215,12 @@ commonOp(llint_op_catch, macro() end, macro (size)
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
 
-    callSlowPath(_llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler)
-    bpeq r1, 0, .isCatchableException
+    callSlowPath(_llint_slow_path_retrieve_and_clear_exception_if_catchable)
+    bpneq r1, 0, .isCatchableException
     jmp _llint_throw_from_slow_path_trampoline
 
 .isCatchableException:
-    loadp CodeBlock[cfr], t3
-    loadp CodeBlock::m_vm[t3], t3
-
-    loadp VM::m_exception[t3], t0
-    storep 0, VM::m_exception[t3]
+    move r1, t0
     get(size, OpCatch, m_exception, t2)
     storei t0, PayloadOffset[cfr, t2, 8]
     storei CellTag, TagOffset[cfr, t2, 8]

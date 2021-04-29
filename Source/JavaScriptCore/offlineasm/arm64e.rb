@@ -146,6 +146,9 @@ class Instruction
         when "untagArrayPtr"
             raise if operands.size != 2 or not operands.each { |operand| operand.is_a? RegisterID or operand.is_a? Tmp }
             emitARM64("autdb ", operands, :ptr)
+        when "removeArrayPtrTag"
+            raise unless operands[0].is_a? RegisterID
+            emitARM64Unflipped("xpacd ", operands, :ptr)
         when "ret"
             $asm.puts "retab"
         else

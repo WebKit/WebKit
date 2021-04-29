@@ -141,7 +141,7 @@ JSC_DEFINE_HOST_FUNCTION(makeDOMExceptionForBuiltins, (JSGlobalObject* globalObj
         code = AbortError;
     auto value = createDOMException(globalObject, code, message);
 
-    EXCEPTION_ASSERT(!scope.exception() || isTerminatedExecutionException(vm, scope.exception()));
+    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()));
 
     return JSValue::encode(value);
 }
@@ -410,7 +410,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
                 auto scope = DECLARE_THROW_SCOPE(vm);
                 auto error = createDOMException(*globalObject, WTFMove(exception));
                 if (UNLIKELY(scope.exception())) {
-                    ASSERT(isTerminatedExecutionException(vm, scope.exception()));
+                    ASSERT(vm.isTerminationException(scope.exception()));
                     compiler->cancel();
                     return;
                 }

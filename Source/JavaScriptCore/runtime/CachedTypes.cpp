@@ -43,6 +43,7 @@
 #include <wtf/MallocPtr.h>
 #include <wtf/Optional.h>
 #include <wtf/Packed.h>
+#include <wtf/RobinHoodHashMap.h>
 #include <wtf/UUID.h>
 #include <wtf/text/AtomStringImpl.h>
 
@@ -602,7 +603,8 @@ ptrdiff_t CachedWriteBarrierOffsets::ptrOffset()
 template<typename T, size_t InlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, typename Malloc = WTF::VectorMalloc>
 class CachedVector : public VariableLengthObject<Vector<SourceType<T>, InlineCapacity, OverflowHandler, 16, Malloc>> {
 public:
-    void encode(Encoder& encoder, const Vector<SourceType<T>, InlineCapacity, OverflowHandler, 16, Malloc>& vector)
+    template<typename VectorContainer>
+    void encode(Encoder& encoder, const VectorContainer& vector)
     {
         m_size = vector.size();
         if (!m_size)
@@ -612,38 +614,16 @@ public:
             ::JSC::encode(encoder, buffer[i], vector[i]);
     }
 
-    void encode(Encoder& encoder, const RefCountedArray<SourceType<T>>& vector)
-    {
-        m_size = vector.size();
-        if (!m_size)
-            return;
-        T* buffer = this->template allocate<T>(encoder, m_size);
-        for (unsigned i = 0; i < m_size; ++i)
-            ::JSC::encode(encoder, buffer[i], vector[i]);
-    }
-
-    template<typename... Args>
-    void decode(Decoder& decoder, Vector<SourceType<T>, InlineCapacity, OverflowHandler, 16, Malloc>& vector, Args... args) const
+    template<typename... Args, typename VectorContainer>
+    void decode(Decoder& decoder, VectorContainer& vector, Args... args) const
     {
         if (!m_size)
             return;
-        vector.resizeToFit(m_size);
+        vector = VectorContainer(m_size);
         const T* buffer = this->template buffer<T>();
         for (unsigned i = 0; i < m_size; ++i)
             ::JSC::decode(decoder, buffer[i], vector[i], args...);
     }
-
-    template<typename... Args>
-    void decode(Decoder& decoder, RefCountedArray<SourceType<T>>& vector, Args... args) const
-    {
-        if (!m_size)
-            return;
-        vector = RefCountedArray<SourceType<T>>(m_size);
-        const T* buffer = this->template buffer<T>();
-        for (unsigned i = 0; i < m_size; ++i)
-            ::JSC::decode(decoder, buffer[i], vector[i], args...);
-    }
-
 
 private:
     unsigned m_size;
@@ -669,10 +649,10 @@ private:
     Second m_second;
 };
 
-template<typename Key, typename Value, typename HashArg = DefaultHash<SourceType<Key>>, typename KeyTraitsArg = HashTraits<SourceType<Key>>, typename MappedTraitsArg = HashTraits<SourceType<Value>>>
-class CachedHashMap : public VariableLengthObject<HashMap<SourceType<Key>, SourceType<Value>, HashArg, KeyTraitsArg, MappedTraitsArg>> {
+template<typename Key, typename Value, typename HashArg = DefaultHash<SourceType<Key>>, typename KeyTraitsArg = HashTraits<SourceType<Key>>, typename MappedTraitsArg = HashTraits<SourceType<Value>>, typename TableTraits = WTF::HashTableTraits>
+class CachedHashMap : public VariableLengthObject<HashMap<SourceType<Key>, SourceType<Value>, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>> {
     template<typename K, typename V>
-    using Map = HashMap<K, V, HashArg, KeyTraitsArg, MappedTraitsArg>;
+    using Map = HashMap<K, V, HashArg, KeyTraitsArg, MappedTraitsArg, TableTraits>;
 
 public:
     void encode(Encoder& encoder, const Map<SourceType<Key>, SourceType<Value>>& map)
@@ -695,6 +675,9 @@ public:
 private:
     CachedVector<CachedPair<Key, Value>> m_entries;
 };
+
+template<typename Key, typename Value, typename HashArg = DefaultHash<SourceType<Key>>, typename KeyTraitsArg = HashTraits<SourceType<Key>>, typename MappedTraitsArg = HashTraits<SourceType<Value>>>
+using CachedMemoryCompactLookupOnlyRobinHoodHashMap = CachedHashMap<Key, Value, HashArg, KeyTraitsArg, MappedTraitsArg, WTF::MemoryCompactLookupOnlyRobinHoodHashTableTraits>;
 
 template<typename T>
 class CachedUniquedStringImplBase : public VariableLengthObject<T> {
@@ -910,7 +893,7 @@ public:
     }
 
 private:
-    CachedHashMap<CachedRefPtr<CachedStringImpl>, UnlinkedStringJumpTable:: OffsetLocation> m_offsetTable;
+    CachedMemoryCompactLookupOnlyRobinHoodHashMap<CachedRefPtr<CachedStringImpl>, UnlinkedStringJumpTable::OffsetLocation> m_offsetTable;
 };
 
 class CachedBitVector : public VariableLengthObject<BitVector> {
@@ -1776,6 +1759,7 @@ public:
     {
         m_classSource.encode(encoder, rareData.m_classSource);
         m_parentScopeTDZVariables.encode(encoder, rareData.m_parentScopeTDZVariables);
+        m_classFieldLocations.encode(encoder, rareData.m_classFieldLocations);
         m_parentPrivateNameEnvironment.encode(encoder, rareData.m_parentPrivateNameEnvironment);
     }
 
@@ -1784,6 +1768,7 @@ public:
         UnlinkedFunctionExecutable::RareData* rareData = new UnlinkedFunctionExecutable::RareData { };
         m_classSource.decode(decoder, rareData->m_classSource);
         m_parentScopeTDZVariables.decode(decoder, rareData->m_parentScopeTDZVariables);
+        m_classFieldLocations.decode(decoder, rareData->m_classFieldLocations);
         m_parentPrivateNameEnvironment.decode(decoder, rareData->m_parentPrivateNameEnvironment);
         return rareData;
     }
@@ -1791,6 +1776,7 @@ public:
 private:
     CachedSourceCodeWithoutProvider m_classSource;
     CachedRefPtr<CachedTDZEnvironmentLink> m_parentScopeTDZVariables;
+    CachedVector<JSTextPosition> m_classFieldLocations;
     CachedPrivateNameEnvironment m_parentPrivateNameEnvironment;
 };
 

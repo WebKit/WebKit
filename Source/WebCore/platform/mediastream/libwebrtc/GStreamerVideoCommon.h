@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-std::vector<webrtc::SdpVideoFormat> supportedH264Formats();
+std::vector<webrtc::SdpVideoFormat> gstreamerSupportedH264Codecs();
 
 } // namespace WebCore
 

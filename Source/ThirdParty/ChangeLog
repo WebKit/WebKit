@@ -1,3 +1,39 @@
+2021-04-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Do not include <any> in gtest because it requires RTTI
+        https://bugs.webkit.org/show_bug.cgi?id=224281
+
+        Reviewed by Ross Kirsling.
+
+        To determine platform capabilities gtest looks to see if a platform is using a minimum
+        C++ version and whether it has a required header. In the PlayStation's case it sees that
+        the <any> header is present with the requisite version of C++ so it defines support for it
+        and includes the header. However in the PlayStation's case to use <any> RTTI must be
+        enabled and if it isn't an error is generated.
+
+        This patch adds a way to short circuit GTEST_INTERNAL values for ports. An upstream fix is
+        in review at https://github.com/google/googletest/pull/3345 and if landed then the next
+        update to gtest can remove this patch.
+
+        * gtest/PlatformPlayStation.cmake:
+        * gtest/README.WebKit: Added.
+        * gtest/include/gtest/internal/gtest-port.h:
+
+2021-04-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add WebKit::gtest target
+        https://bugs.webkit.org/show_bug.cgi?id=224203
+
+        Reviewed by Adrian Perez de Castro.
+
+        Create a WebKit::gtest target that propagates the include directories and required
+        preprocessor directives to dependencies.
+
+        Use Modern CMake functions for describing the target.
+
+        * gtest/CMakeLists.txt:
+        * gtest/PlatformPlayStation.cmake:
+
 2021-03-23  Ross Kirsling  <ross.kirsling@sony.com>
 
         Update googletest to 1a8ecf1

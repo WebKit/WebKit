@@ -275,3 +275,5 @@ namespace WTF {
 using WTF::DefaultHash;
 using WTF::IntHash;
 using WTF::PtrHash;
+using WTF::intHash;
+using WTF::pairIntHash;

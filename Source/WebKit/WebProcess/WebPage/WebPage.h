@@ -182,6 +182,7 @@ class Frame;
 class FrameSelection;
 class FrameView;
 class GraphicsContext;
+class HTMLElement;
 class HTMLImageElement;
 class HTMLMenuElement;
 class HTMLMenuItemElement;
@@ -630,6 +631,8 @@ public:
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);
+
+    void didUpdateRendering();
     
     void setUseSystemAppearance(bool);
 
@@ -1280,10 +1283,11 @@ public:
     void didReceiveWebPageMessage(IPC::Connection&, IPC::Decoder&);
 
     template<typename T>
-    SendSyncResult sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply)
+    SendSyncResult sendSyncWithDelayedReply(T&& message, typename T::Reply&& reply, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
         cancelGesturesBlockedOnSynchronousReplies();
-        return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+        sendSyncOptions = sendSyncOptions | IPC::SendSyncOption::InformPlatformProcessWillSuspend;
+        return sendSync(WTFMove(message), WTFMove(reply), Seconds::infinity(), sendSyncOptions);
     }
 
     WebCore::DOMPasteAccessResponse requestDOMPasteAccess(const String& originIdentifier);
@@ -1378,7 +1382,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(WebCore::Element&);
+    void requestImageExtraction(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&&);
     void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool)>&&);
 #endif
 
@@ -1420,6 +1424,10 @@ public:
     void lastNavigationWasAppBound(CompletionHandler<void(bool)>&&);
 
     bool isParentProcessAWebBrowser() const;
+
+#if ENABLE(TEXT_AUTOSIZING)
+    void textAutosizingUsesIdempotentModeChanged();
+#endif
     
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -1651,6 +1659,8 @@ private:
     void drawPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, const WebCore::IntRect&);
     void drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t first, uint32_t count);
 #endif
+
+    void endPrintingImmediately();
 
 #if HAVE(APP_ACCENT_COLORS)
     void setAccentColor(WebCore::Color);
@@ -2028,6 +2038,31 @@ private:
 #endif
 
     std::unique_ptr<WebCore::PrintContext> m_printContext;
+    bool m_inActivePrintContextAccessScope { false };
+    bool m_shouldEndPrintingImmediately { false };
+
+    class PrintContextAccessScope {
+    public:
+        PrintContextAccessScope(WebPage& webPage)
+            : m_webPage { webPage }
+            , m_wasInActivePrintContextAccessScope { webPage.m_inActivePrintContextAccessScope }
+        {
+            m_webPage->m_inActivePrintContextAccessScope = true;
+        }
+
+        ~PrintContextAccessScope()
+        {
+            m_webPage->m_inActivePrintContextAccessScope = m_wasInActivePrintContextAccessScope;
+            if (!m_wasInActivePrintContextAccessScope && m_webPage->m_shouldEndPrintingImmediately)
+                m_webPage->endPrintingImmediately();
+        }
+    private:
+        Ref<WebPage> m_webPage;
+        const bool m_wasInActivePrintContextAccessScope;
+    };
+
+    friend class PrintContextAccessScope;
+
 #if PLATFORM(GTK)
     RefPtr<WebPrintOperationGtk> m_printOperation;
 #endif
@@ -2251,6 +2286,10 @@ private:
 
     bool m_canUseCredentialStorage { true };
 
+#if PLATFORM(MAC)
+    bool m_didUpdateRenderingAfterCommittingLoad { false };
+#endif
+
     Vector<String> m_corsDisablingPatterns;
 
 #if ENABLE(IPC_TESTING_API)
@@ -2268,7 +2307,8 @@ private:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    WeakHashSet<WebCore::Element> m_elementsWithExtractedImages;
+    Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingImageExtraction;
+    WeakHashSet<WebCore::HTMLElement> m_elementsWithExtractedImages;
 #endif
 };
 

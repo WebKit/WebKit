@@ -102,8 +102,7 @@ void ScrollingCoordinatorMac::wheelEventWasProcessedByMainThread(const PlatformW
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()
 {
-    // FIXME: This one needs work.
-    m_page->scheduleRenderingUpdate(RenderingUpdateStep::ScrollingTreeUpdate);
+    scheduleRenderingUpdate();
 }
 
 void ScrollingCoordinatorMac::commitTreeStateIfNeeded()

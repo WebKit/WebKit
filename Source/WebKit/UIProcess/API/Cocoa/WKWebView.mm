@@ -2234,6 +2234,18 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         _page->switchFromStaticFontRegistryToUserFontRegistry();
 }
 
+- (void)_appBoundNavigationDataForDomain:(NSString *)domain completionHandler:(void (^)(NSString * context))completionHandler
+{
+    _page->appBoundNavigationData([registrableDomain = WebCore::RegistrableDomain::uncheckedCreateFromHost(domain), completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) mutable {
+        if (!appBoundData.contextData.contains(registrableDomain)) {
+            completionHandler(nil);
+            return;
+        }
+
+        completionHandler(appBoundData.contextData.get(registrableDomain).string());
+    });
+}
+
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())

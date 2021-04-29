@@ -41,6 +41,11 @@ bool InByIdStatus::appendVariant(const InByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
+void InByIdStatus::shrinkToFit()
+{
+    m_variants.shrinkToFit();
+}
+
 #if ENABLE(JIT)
 InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit)
 {
@@ -200,6 +205,7 @@ InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const Concu
             }
         }
 
+        result.shrinkToFit();
         return result;
     }
 
@@ -233,6 +239,7 @@ void InByIdStatus::merge(const InByIdStatus& other)
                 return;
             }
         }
+        shrinkToFit();
         return;
         
     case TakesSlowPath:

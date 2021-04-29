@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderButton {BUTTON} at (2,2) size 83x20 [color=#007AFF] [bgcolor=#78788029]
+      RenderButton {BUTTON} at (2,2) size 83x20 [color=#007AFF] [bgcolor=#E9E9EA]
         RenderBlock (anonymous) at (11,3) size 61x14
           RenderText {#text} at (0,0) size 61x14
             text run at (0,0) width 61: "Test Button"
       RenderText {#text} at (86,1) size 5x19
         text run at (86,1) width 5: " "
-      RenderButton {BUTTON} at (92,2) size 83x20 [color=#FF0000] [bgcolor=#78788029]
+      RenderButton {BUTTON} at (92,2) size 83x20 [color=#FF0000] [bgcolor=#E9E9EA]
         RenderBlock (anonymous) at (11,3) size 61x14
           RenderText {#text} at (0,0) size 61x14
             text run at (0,0) width 61: "Test Button"
@@ -27,13 +27,13 @@ layer at (0,0) size 800x600
             text run at (0,0) width 61: "Test Button"
       RenderText {#text} at (356,1) size 5x19
         text run at (356,1) width 5: " "
-      RenderButton {INPUT} at (362,2) size 83x20 [color=#007AFF] [bgcolor=#78788029]
+      RenderButton {INPUT} at (362,2) size 83x20 [color=#007AFF] [bgcolor=#E9E9EA]
         RenderBlock (anonymous) at (11,3) size 61x14
           RenderText at (0,0) size 61x14
             text run at (0,0) width 61: "Test Button"
       RenderText {#text} at (446,1) size 5x19
         text run at (446,1) width 5: " "
-      RenderButton {INPUT} at (452,2) size 84x20 [color=#FF0000] [bgcolor=#78788029]
+      RenderButton {INPUT} at (452,2) size 84x20 [color=#FF0000] [bgcolor=#E9E9EA]
         RenderBlock (anonymous) at (11,3) size 61x14
           RenderText at (0,0) size 61x14
             text run at (0,0) width 61: "Test Button"

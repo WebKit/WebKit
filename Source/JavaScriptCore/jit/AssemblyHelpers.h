@@ -1595,9 +1595,9 @@ public:
     {
         if (!inlineCallFrame)
             return VirtualRegister(CallFrame::argumentOffset(0));
-        if (inlineCallFrame->argumentsWithFixup.size() <= 1)
+        if (inlineCallFrame->m_argumentsWithFixup.size() <= 1)
             return virtualRegisterForLocal(0);
-        ValueRecovery recovery = inlineCallFrame->argumentsWithFixup[1];
+        ValueRecovery recovery = inlineCallFrame->m_argumentsWithFixup[1];
         RELEASE_ASSERT(recovery.technique() == DisplacedInJSStack);
         return recovery.virtualRegister();
     }

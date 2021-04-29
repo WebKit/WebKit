@@ -144,11 +144,6 @@ void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidt
     minLogicalWidth += scrollbarWidth;
 }
 
-static LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
-{
-    return direction == HorizontalLine ? box.size().height() : box.size().width();
-}
-
 LayoutUnit RenderFlexibleBox::baselinePosition(FontBaseline, bool, LineDirectionMode direction, LinePositionMode) const
 {
     auto baseline = firstLineBaseline();
@@ -484,7 +479,7 @@ LayoutUnit RenderFlexibleBox::childIntrinsicLogicalHeight(const RenderBox& child
     return child.logicalHeight();
 }
 
-LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child) const
+LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child)
 {
     // This should only be called if the logical width is the cross size
     ASSERT(!mainAxisIsChildInlineAxis(child));
@@ -504,7 +499,7 @@ LayoutUnit RenderFlexibleBox::childIntrinsicLogicalWidth(const RenderBox& child)
     return values.m_extent;
 }
 
-LayoutUnit RenderFlexibleBox::crossAxisIntrinsicExtentForChild(const RenderBox& child) const
+LayoutUnit RenderFlexibleBox::crossAxisIntrinsicExtentForChild(const RenderBox& child)
 {
     return mainAxisIsChildInlineAxis(child) ? childIntrinsicLogicalHeight(child) : childIntrinsicLogicalWidth(child);
 }
@@ -773,7 +768,7 @@ Length RenderFlexibleBox::mainSizeLengthForChild(SizeType sizeType, const Render
     return { };
 }
 
-bool RenderFlexibleBox::useChildAspectRatio(const RenderBox& child) const
+bool RenderFlexibleBox::useChildAspectRatio(const RenderBox& child)
 {
     if (!childHasAspectRatio(child))
         return false;
@@ -838,7 +833,7 @@ void RenderFlexibleBox::setFlowAwareLocationForChild(RenderBox& child, const Lay
         child.setLocation(location.transposedPoint());
 }
     
-bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Length& flexBasis) const
+bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Length& flexBasis)
 {
     if (flexBasis.isAuto())
         return false;
@@ -883,7 +878,7 @@ bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBo
     return false;
 }
 
-bool RenderFlexibleBox::childCrossSizeIsDefinite(const RenderBox& child, const Length& length) const
+bool RenderFlexibleBox::childCrossSizeIsDefinite(const RenderBox& child, const Length& length)
 {
     if (length.isAuto())
         return false;
@@ -1617,7 +1612,7 @@ bool RenderFlexibleBox::needToStretchChildLogicalHeight(const RenderBox& child) 
     return child.style().logicalHeight().isAuto();
 }
 
-bool RenderFlexibleBox::childHasIntrinsicMainAxisSize(const RenderBox& child) const
+bool RenderFlexibleBox::childHasIntrinsicMainAxisSize(const RenderBox& child)
 {
     if (mainAxisIsChildInlineAxis(child))
         return false;

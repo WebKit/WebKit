@@ -225,9 +225,7 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
 
 int32_t LibWebRTCCodecs::releaseDecoder(Decoder& decoder)
 {
-    LockHolder holder(decoder.decodedImageCallbackLock);
-    decoder.decodedImageCallback = nullptr;
-
+    ASSERT(!decoder.decodedImageCallback);
     dispatchToThread([this, decoderIdentifier = decoder.identifier] {
         ASSERT(m_decoders.contains(decoderIdentifier));
         if (auto decoder = m_decoders.take(decoderIdentifier))
@@ -348,9 +346,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
 
 int32_t LibWebRTCCodecs::releaseEncoder(Encoder& encoder)
 {
-    LockHolder holder(encoder.encodedImageCallbackLock);
-    encoder.encodedImageCallback = nullptr;
-
+    ASSERT(!encoder.encodedImageCallback);
     dispatchToThread([this, encoderIdentifier = encoder.identifier] {
         ASSERT(m_encoders.contains(encoderIdentifier));
         auto encoder = m_encoders.take(encoderIdentifier);

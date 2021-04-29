@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DisplayListReaderHandle.h"
 
+#include <wtf/CheckedArithmetic.h>
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -39,6 +41,10 @@ Optional<size_t> DisplayListReaderHandle::advance(size_t amount)
 
 std::unique_ptr<DisplayList::DisplayList> DisplayListReaderHandle::displayListForReading(size_t offset, size_t capacity, DisplayList::ItemBufferReadingClient& client) const
 {
+    auto checkedExtent = checkedSum<size_t>(offset, capacity);
+    if (UNLIKELY(checkedExtent.hasOverflowed() || checkedExtent > sharedMemory().size()))
+        return nullptr;
+
     auto displayList = makeUnique<DisplayList::DisplayList>(DisplayList::ItemBufferHandles {{ identifier(), data() + offset, capacity }});
     displayList->setItemBufferReadingClient(&client);
     return displayList;

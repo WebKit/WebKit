@@ -101,7 +101,7 @@ if (Cairo_LIBRARY AND NOT TARGET Cairo::Cairo)
     )
 endif ()
 
-mark_as_advanced(Cairo_INCLUDE_DIR Cairo_LIBRARIES)
+mark_as_advanced(Cairo_INCLUDE_DIR Cairo_LIBRARY)
 
 if (Cairo_FOUND)
     set(Cairo_LIBRARIES ${Cairo_LIBRARY})

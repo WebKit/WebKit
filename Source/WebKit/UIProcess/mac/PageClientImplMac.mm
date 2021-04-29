@@ -488,6 +488,11 @@ void PageClientImpl::requestImageExtraction(const URL& imageURL, const Shareable
     m_impl->requestImageExtraction(imageURL, imageData, WTFMove(completion));
 }
 
+void PageClientImpl::computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+{
+    m_impl->computeCanRevealImage(imageURL, imageBitmap, WTFMove(completion));
+}
+
 #endif
 
 RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy& page)
@@ -995,6 +1000,12 @@ void PageClientImpl::takeFocus(WebCore::FocusDirection direction)
 void PageClientImpl::requestDOMPasteAccess(const WebCore::IntRect& elementRect, const String& originIdentifier, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&& completion)
 {
     m_impl->requestDOMPasteAccess(elementRect, originIdentifier, WTFMove(completion));
+}
+
+
+void PageClientImpl::makeViewBlank(bool makeBlank)
+{
+    m_impl->acceleratedCompositingRootLayer().opacity = makeBlank ? 0 : 1;
 }
 
 #if HAVE(APP_ACCENT_COLORS)

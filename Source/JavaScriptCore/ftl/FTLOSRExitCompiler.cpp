@@ -102,7 +102,7 @@ static void reboxAccordingToFormat(
 
 static void compileRecovery(
     CCallHelpers& jit, const ExitValue& value,
-    Vector<B3::ValueRep>& valueReps,
+    const FixedVector<B3::ValueRep>& valueReps,
     char* registerScratch,
     const HashMap<ExitTimeObjectMaterialization*, EncodedJSValue*>& materializationToPointer)
 {

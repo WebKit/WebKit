@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,8 +211,10 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         }
 
         ResourceLoader::willSendRequestInternal(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), redirectResponse] (ResourceRequest&& request) mutable {
-            if (reachedTerminalState())
+            if (reachedTerminalState()) {
+                RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: reached terminal state; calling completion handler");
                 return completionHandler(WTFMove(request));
+            }
 
             if (request.isNull()) {
                 RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: resource load canceled because request is NULL (2)");
@@ -303,7 +305,6 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: redirect response is NULL");
     continueWillSendRequest(WTFMove(completionHandler), WTFMove(newRequest));
 }
 
@@ -749,6 +750,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
         RELEASE_LOG_IF_ALLOWED("didFinishLoading: reached terminal state");
         return;
     }
+    RELEASE_LOG_IF_ALLOWED("didFinishLoading: Did not reach terminal state");
     releaseResources();
 }
 
@@ -847,10 +849,15 @@ void SubresourceLoader::notifyDone(LoadCompletionType type)
 #endif
     if (m_documentLoader)
         m_documentLoader->cachedResourceLoader().loadDone(type, shouldPerformPostLoadActions);
+    else
+        RELEASE_LOG_ERROR_IF_ALLOWED("notifyDone: document loader is null. Could not call loadDone()");
+
     if (reachedTerminalState())
         return;
     if (m_documentLoader)
         m_documentLoader->removeSubresourceLoader(type, this);
+    else
+        RELEASE_LOG_ERROR_IF_ALLOWED("notifyDone: document loader is null. Could not call removeSubresourceLoader()");
 }
 
 void SubresourceLoader::releaseResources()

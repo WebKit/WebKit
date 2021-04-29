@@ -50,7 +50,7 @@ void TestWithIfMessage::didReceiveMessage(IPC::Connection& connection, IPC::Deco
 #endif
     UNUSED_PARAM(connection);
     UNUSED_PARAM(decoder);
-    ASSERT_NOT_REACHED();
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %llu", description(decoder.messageName()), decoder.destinationID());
 }
 
 } // namespace WebKit

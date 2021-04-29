@@ -85,10 +85,10 @@ layer at (0,0) size 800x600
                       text run at (111,36) width 48: "Click Here!"
                 RenderBR {BR} at (158,32) size 1x18
               RenderTableCell {TD} at (436,121) size 161x18 [r=2 c=2 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 132x18 [color=#0000EE]
-                  RenderInline {FONT} at (0,0) size 132x15 [color=#0066FF]
-                    RenderText {#text} at (14,0) size 132x17
-                      text run at (14,1) width 132: "Hassle-Free Upgrades"
+                RenderInline {A} at (0,0) size 132x19 [color=#0000EE]
+                  RenderInline {FONT} at (0,0) size 132x16 [color=#0066FF]
+                    RenderText {#text} at (14,1) size 132x16
+                      text run at (14,2) width 132: "Hassle-Free Upgrades"
                 RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,157) size 600x20
               RenderTableCell {TD} at (2,157) size 595x20 [r=3 c=0 rs=1 cs=3]
@@ -128,7 +128,7 @@ layer at (0,0) size 800x600
                   RenderInline {A} at (0,0) size 80x15 [color=#0000EE]
                     RenderText {#text} at (493,3) size 80x15
                       text run at (493,3) width 80: "WebMail< /A>"
-                RenderInline {A} at (0,0) size 1x18 [color=#0000EE]
+                RenderInline {A} at (0,0) size 0x18 [color=#0000EE]
                   RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,179) size 600x3
               RenderTableCell {TD} at (2,179) size 597x3 [bgcolor=#99CCCC] [r=4 c=0 rs=1 cs=4]

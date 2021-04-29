@@ -51,6 +51,7 @@ private:
 };
 
 JS_EXPORT_PRIVATE JSC_DECLARE_HOST_FUNCTION(objectProtoFuncToString);
+JSString* objectPrototypeToString(JSGlobalObject*, JSValue thisValue);
 bool objectPrototypeHasOwnProperty(JSGlobalObject*, JSValue base, const Identifier& property);
 
 } // namespace JSC

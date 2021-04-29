@@ -34,6 +34,7 @@
 #include "JSImmutableButterfly.h"
 #include "JSStringJoiner.h"
 #include "ObjectConstructor.h"
+#include "ObjectPrototype.h"
 #include "StringRecursionChecker.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
@@ -612,19 +613,13 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
     Integrity::auditStructureID(vm, thisObject->structureID());
     if (!canUseDefaultArrayJoinForToString(vm, thisObject)) {
         // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
-        JSValue function = JSValue(thisObject).get(globalObject, vm.propertyNames->join);
+        JSValue function = thisObject->get(globalObject, vm.propertyNames->join);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         // 3. If IsCallable(func) is false, then let func be the standard built-in method Object.prototype.toString (15.2.4.2).
-        bool customJoinCase = false;
-        if (!function.isCell())
-            customJoinCase = true;
         auto callData = getCallData(vm, function);
-        if (callData.type == CallData::Type::None)
-            customJoinCase = true;
-
-        if (UNLIKELY(customJoinCase))
-            RELEASE_AND_RETURN(scope, JSValue::encode(jsMakeNontrivialString(globalObject, "[object ", thisObject->methodTable(vm)->className(thisObject, vm), "]")));
+        if (UNLIKELY(callData.type == CallData::Type::None))
+            RELEASE_AND_RETURN(scope, JSValue::encode(objectPrototypeToString(globalObject, thisObject)));
 
         // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
         if (!isJSArray(thisObject) || callData.type != CallData::Type::Native || callData.native.function != arrayProtoFuncJoin)

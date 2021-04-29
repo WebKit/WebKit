@@ -107,6 +107,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-029-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-030-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-030.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-031-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-031.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/block-aspect-ratio-with-margin-collapsing-002-expected.xht
@@ -307,6 +309,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-032.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-033-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-033.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/small-aspect-ratio-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/table-element-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/table-element-001.html

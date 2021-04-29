@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,6 +100,19 @@ VMEntryScope::~VMEntryScope()
     for (auto& listener : m_didPopListeners)
         listener();
 
+    // If the trap bit is still set at this point, then it means that VMTraps::handleTraps()
+    // has not yet been called for this termination request. As a result, we've not thrown a
+    // TerminationException yet. Some client code relies on detecting the presence of the
+    // TerminationException in order to signal that a termination was requested. As a result,
+    // we want to stay in the TerminationInProgress state until VMTraps::handleTraps() (which
+    // clears the trap bit) gets called, and the TerminationException gets thrown.
+    //
+    // Note: perhaps there's a better way for the client to know that a termination was
+    // requested (after all, the request came from the client). However, this is how the
+    // client code currently works. Changing that will take some significant effort to hunt
+    // down all the places in client code that currently rely on this behavior.
+    if (!m_vm.traps().needHandling(VMTraps::NeedTermination))
+        m_vm.setTerminationInProgress(false);
     m_vm.clearScratchBuffers();
 }
 

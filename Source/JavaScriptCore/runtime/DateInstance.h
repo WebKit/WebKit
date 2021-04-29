@@ -54,7 +54,6 @@ public:
         return instance;
     }
 
-    static String toStringName(const JSObject*, JSGlobalObject*);
     double internalNumber() const { return m_internalNumber; }
     void setInternalNumber(double value) { m_internalNumber = value; }
 

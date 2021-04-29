@@ -103,10 +103,14 @@ enum class ViewStabilityFlag : uint8_t;
 #endif
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-- (void)_processDidCreateContextForVisibilityPropagation;
+- (void)_webProcessDidCreateContextForVisibilityPropagation;
+#if ENABLE(GPU_PROCESS)
 - (void)_gpuProcessDidCreateContextForVisibilityPropagation;
-#endif
+#endif // ENABLE(GPU_PROCESS)
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
+
 - (void)_setAcceleratedCompositingRootView:(UIView *)rootView;
 
 - (void)_showInspectorHighlight:(const WebCore::InspectorOverlay::Highlight&)highlight;

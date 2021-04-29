@@ -37,6 +37,7 @@
 #include <WebCore/SWContextManager.h>
 #include <WebCore/ServiceWorkerClientData.h>
 #include <WebCore/ServiceWorkerTypes.h>
+#include <wtf/URLHash.h>
 
 namespace IPC {
 class FormDataReference;

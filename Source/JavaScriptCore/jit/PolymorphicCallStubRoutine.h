@@ -109,7 +109,7 @@ private:
     void markRequiredObjectsInternal(AbstractSlotVisitor&) final;
     void markRequiredObjectsInternal(SlotVisitor&) final;
 
-    Vector<WriteBarrier<JSCell>, 2> m_variants;
+    FixedVector<WriteBarrier<JSCell>> m_variants;
     UniqueArray<uint32_t> m_fastCounts;
     Bag<PolymorphicCallNode> m_callNodes;
 };

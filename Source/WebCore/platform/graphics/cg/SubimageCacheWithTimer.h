@@ -53,7 +53,7 @@ public:
         MonotonicTime lastAccessTime;
     };
 
-    struct SubimageCacheEntryTraits : WTF::GenericHashTraits<SubimageCacheEntry> {
+    struct SubimageCacheEntryTraits : HashTraits<SubimageCacheEntry> {
         typedef HashTraits<RetainPtr<CGImageRef>> ImageTraits;
 
         static const bool emptyValueIsZero = true;

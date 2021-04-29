@@ -144,8 +144,8 @@ private:
     bool isRenderFragmentContainer() const final { return true; }
     const char* renderName() const override { return "RenderFragmentContainer"; }
 
-    void insertedIntoTree() override;
-    void willBeRemovedFromTree() override;
+    void insertedIntoTree(IsInternalMove) override;
+    void willBeRemovedFromTree(IsInternalMove) override;
 
     virtual void installFragmentedFlow();
 

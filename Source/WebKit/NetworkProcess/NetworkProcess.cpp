@@ -2397,20 +2397,6 @@ void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void
     completionHandler();
 }
 
-void NetworkProcess::setQuotaLoggingEnabled(PAL::SessionID sessionID, bool enabled, CompletionHandler<void()>&& completionHandler)
-{
-    if (m_quotaLoggingEnabled == enabled)
-        return completionHandler();
-    m_quotaLoggingEnabled = enabled;
-
-    LockHolder locker(m_sessionStorageQuotaManagersLock);
-    if (auto* sessionStorageQuotaManager = m_sessionStorageQuotaManagers.get(sessionID)) {
-        for (auto storageQuotaManager : sessionStorageQuotaManager->existingStorageQuotaManagers())
-            storageQuotaManager->setLoggingEnabled(m_quotaLoggingEnabled);
-    }
-    completionHandler();
-}
-
 void NetworkProcess::renameOriginInWebsiteData(PAL::SessionID sessionID, const URL& oldName, const URL& newName, OptionSet<WebsiteDataType> dataTypes, CompletionHandler<void()>&& completionHandler)
 {
     auto aggregator = CallbackAggregator::create(WTFMove(completionHandler));
@@ -2514,16 +2500,10 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
         return nullptr;
 
     String idbRootPath = sessionStorageQuotaManager->idbRootPath();
-    StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()](StorageQuotaManager::ShouldPrintUsageDetail shouldPrintUsageDetail) {
+    StorageQuotaManager::UsageGetter usageGetter = [cacheRootPath = sessionStorageQuotaManager->cacheRootPath().isolatedCopy(), idbRootPath = idbRootPath.isolatedCopy(), origin = origin.isolatedCopy()]() {
         ASSERT(!isMainRunLoop());
 
-        uint64_t cacheUsage = CacheStorage::Engine::diskUsage(cacheRootPath, origin);
-        uint64_t usage = cacheUsage + IDBServer::IDBServer::diskUsage(idbRootPath, origin, shouldPrintUsageDetail);
-
-        if (shouldPrintUsageDetail == StorageQuotaManager::ShouldPrintUsageDetail::Yes)
-            WTFLogAlways("StorageQuotaManager::UsageGetter Cache usage %" PRIu64 ", IDB usage %" PRIu64, cacheUsage, usage - cacheUsage);
-
-        return usage;
+        return CacheStorage::Engine::diskUsage(cacheRootPath, origin) + IDBServer::IDBServer::diskUsage(idbRootPath, origin);
     };
     StorageQuotaManager::QuotaIncreaseRequester quotaIncreaseRequester = [this, weakThis = makeWeakPtr(*this), sessionID, origin] (uint64_t currentQuota, uint64_t currentSpace, uint64_t requestedIncrease, auto&& callback) {
         ASSERT(isMainRunLoop());
@@ -2533,7 +2513,6 @@ RefPtr<StorageQuotaManager> NetworkProcess::storageQuotaManager(PAL::SessionID s
     };
 
     auto originStorageQuotaManager = sessionStorageQuotaManager->ensureOriginStorageQuotaManager(origin, sessionStorageQuotaManager->defaultQuota(origin), WTFMove(usageGetter), WTFMove(quotaIncreaseRequester)).ptr();
-    originStorageQuotaManager->setLoggingEnabled(m_quotaLoggingEnabled);
     return originStorageQuotaManager;
 }
 

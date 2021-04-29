@@ -165,7 +165,7 @@ private:
 
     bool isTableSection() const override { return true; }
 
-    void willBeRemovedFromTree() override;
+    void willBeRemovedFromTree(IsInternalMove) override;
 
     void layout() override;
 

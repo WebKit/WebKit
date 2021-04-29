@@ -32,4 +32,4 @@ layer at (0,0) size 800x600
             text run at (130,60) width 73: "\x{BB} Scotland "
             text run at (202,60) width 77: "\x{BB} Germany "
             text run at (278,60) width 60: "\x{BB} France "
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (337,60) size 1x19

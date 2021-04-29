@@ -58,6 +58,16 @@ WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
     return toAPI(&preferences.leakRef());
 }
 
+void WKPreferencesStartBatchingUpdates(WKPreferencesRef preferencesRef)
+{
+    toImpl(preferencesRef)->startBatchingUpdates();
+}
+
+void WKPreferencesEndBatchingUpdates(WKPreferencesRef preferencesRef)
+{
+    toImpl(preferencesRef)->endBatchingUpdates();
+}
+
 void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef preferencesRef)
 {
     toImpl(preferencesRef)->enableAllExperimentalFeatures();

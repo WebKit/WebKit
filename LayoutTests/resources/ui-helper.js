@@ -370,6 +370,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static isAnimatingDragCancel()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`uiController.isAnimatingDragCancel`, result => resolve(result === "true"));
+        });
+    }
+
     static ensurePresentationUpdate()
     {
         if (!this.isWebKit2()) {
@@ -807,6 +814,15 @@ window.UIHelper = class UIHelper {
                     uiController.uiScriptComplete(JSON.stringify(uiController.selectionEndGrabberViewRect));
                 });
             })()`, jsonString => {
+                resolve(JSON.parse(jsonString));
+            });
+        });
+    }
+
+    static tapHighlightViewRect()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("JSON.stringify(uiController.tapHighlightViewRect)", jsonString => {
                 resolve(JSON.parse(jsonString));
             });
         });

@@ -50,11 +50,9 @@ namespace WebKit {
 using namespace WebCore;
 
 namespace {
-static bool isWebBrowser()
+inline bool isWebBrowser()
 {
-    if (auto* connection = WebProcess::singleton().parentProcessConnection())
-        return isParentProcessAFullWebBrowser(connection->getAuditToken());
-    return false;
+    return isParentProcessAFullWebBrowser(WebProcess::singleton());
 }
 }
 

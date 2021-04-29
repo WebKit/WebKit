@@ -91,6 +91,7 @@ private:
 
     String label() const final;
     void didRemoveFromUndoManager() final { }
+    bool areRootEditabledElementsConnected();
 
     RefPtr<Document> m_document;
     VisibleSelection m_startingSelection;

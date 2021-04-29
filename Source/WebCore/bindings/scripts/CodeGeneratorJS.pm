@@ -167,6 +167,7 @@ sub GenerateInterface
     AddMapLikeAttributesAndOperationIfNeeded($interface);
     AddSetLikeAttributesAndOperationIfNeeded($interface);
     AddStringifierOperationIfNeeded($interface);
+    AddSharedSyntheticAttributesIfNeeded($interface);
 
     if ($interface->isCallback) {
         $object->GenerateCallbackInterfaceHeader($interface, $enumerations, $dictionaries);
@@ -1840,6 +1841,7 @@ sub GetAttributeGetterName
 {
     my ($interface, $className, $attribute) = @_;
 
+    return GetAttributeGetterName($interface, $className, GetSharedSyntheticAttribute($interface, $attribute)) if $attribute->extendedAttributes->{DelegateToSharedSyntheticAttribute};
     return GetJSBuiltinFunctionName($className, $attribute) if IsJSBuiltin($interface, $attribute);
     return $codeGenerator->WK_lcfirst($className) . "Constructor" . MangleAttributeOrFunctionName($attribute->name) if $attribute->isStatic;
     return $codeGenerator->WK_lcfirst($className) . MangleAttributeOrFunctionName($attribute->name) . "Constructor" if $codeGenerator->IsConstructorType($attribute->type);
@@ -1850,6 +1852,7 @@ sub GetAttributeSetterName
 {
     my ($interface, $className, $attribute) = @_;
 
+    return GetAttributeSetterName($interface, $className, GetSharedSyntheticAttribute($interface, $attribute)) if $attribute->extendedAttributes->{DelegateToSharedSyntheticAttribute};
     return "set" . $codeGenerator->WK_ucfirst(GetJSBuiltinFunctionName($className, $attribute)) if IsJSBuiltin($interface, $attribute);
     return "set" . $codeGenerator->WK_ucfirst($className) . "Constructor" . MangleAttributeOrFunctionName($attribute->name) if $attribute->isStatic;
     return "set" . $codeGenerator->WK_ucfirst($className) . MangleAttributeOrFunctionName($attribute->name);
@@ -4280,24 +4283,8 @@ sub GenerateImplementation
             push(@implContent, "static JSC_DECLARE_CUSTOM_GETTER(${constructorGetter});\n");
         }
 
-        foreach my $attribute (@{$interface->attributes}) {
-            next if IsJSBuiltin($interface, $attribute);
-
-            my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
-            push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $getter = GetAttributeGetterName($interface, $className, $attribute);
-            push(@implContent, "static JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
-            unless (IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type)) {
-                my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
-                if ($readWriteConditional) {
-                    my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
-                    push(@implContent, "#if ${readWriteConditionalString}\n");
-                }
-                my $setter = GetAttributeSetterName($interface, $className, $attribute);
-                push(@implContent, "static JSC_DECLARE_CUSTOM_SETTER(${setter});\n");
-                push(@implContent, "#endif\n") if $readWriteConditional;
-            }
-            push(@implContent, "#endif\n") if $conditionalString;
+        foreach my $attribute (@{$interface->extendedAttributes->{SyntheticIDLAttributes}}, @{$interface->attributes}) {
+            GenerateAttributeGetterAndSetterDeclaration(\@implContent, $interface, $className, $attribute);
         }
 
         push(@implContent, "\n");
@@ -4876,7 +4863,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    foreach my $attribute (@{$interface->attributes}) {
+    foreach my $attribute (@{$interface->extendedAttributes->{SyntheticIDLAttributes}}, @{$interface->attributes}) {
         GenerateAttributeGetterDefinition(\@implContent, $interface, $className, $attribute);
         GenerateAttributeSetterDefinition(\@implContent, $interface, $className, $attribute);
     }
@@ -5200,6 +5187,30 @@ END
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
+sub GenerateAttributeGetterAndSetterDeclaration
+{
+    my ($outputArray, $interface, $className, $attribute) = @_;
+
+    return if IsJSBuiltin($interface, $attribute);
+    return if $attribute->extendedAttributes->{DelegateToSharedSyntheticAttribute};
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
+    push(@$outputArray, "#if ${conditionalString}\n") if $conditionalString;
+    my $getter = GetAttributeGetterName($interface, $className, $attribute);
+    push(@$outputArray, "static JSC_DECLARE_CUSTOM_GETTER(${getter});\n");
+    unless (IsReadonly($attribute) || $codeGenerator->IsConstructorType($attribute->type)) {
+        my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
+        if ($readWriteConditional) {
+            my $readWriteConditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($readWriteConditional);
+            push(@$outputArray, "#if ${readWriteConditionalString}\n");
+        }
+        my $setter = GetAttributeSetterName($interface, $className, $attribute);
+        push(@$outputArray, "static JSC_DECLARE_CUSTOM_SETTER(${setter});\n");
+        push(@$outputArray, "#endif\n") if $readWriteConditional;
+    }
+    push(@$outputArray, "#endif\n") if $conditionalString;
+}
+
 sub GenerateAttributeGetterBodyDefinition
 {
     my ($outputArray, $interface, $className, $attribute, $attributeGetterBodyName, $conditional) = @_;
@@ -5207,7 +5218,8 @@ sub GenerateAttributeGetterBodyDefinition
     my @signatureArguments = ();
     push(@signatureArguments, "JSGlobalObject& lexicalGlobalObject");
     push(@signatureArguments, "${className}& thisObject") if !$attribute->isStatic;
-    
+    push(@signatureArguments, "PropertyName propertyName") if $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{CallWith}, "PropertyName");
+
     my $needSecurityCheck = $interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnGetter};
     my $hasCustomGetter = HasCustomGetter($attribute);
     my $isEventHandler = $attribute->type->name eq "EventHandler";
@@ -5269,13 +5281,6 @@ sub GenerateAttributeGetterBodyDefinition
         } else {
             push(@$outputArray, "    return JS" . $constructorType . "::${constructorGetter}(JSC::getVM(&lexicalGlobalObject), thisObject.globalObject());\n");
         }
-    } elsif ($attribute->extendedAttributes->{CSSProperty}) {
-        $implIncludes{"CSSPropertyNames.h"} = 1;
-        my $propertyID = $attribute->extendedAttributes->{CSSProperty};
-
-        my $toJSExpression = NativeToJSValueUsingReferences($attribute, $interface, "impl.getPropertyValueInternal(CSSProperty${propertyID})", "*thisObject.globalObject()");
-        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
-        push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, (${toJSExpression}));\n");
     } else {
         if ($attribute->extendedAttributes->{CachedAttribute}) {
             push(@$outputArray, "    if (JSValue cachedValue = thisObject.m_" . $attribute->name . ".get())\n");
@@ -5324,7 +5329,8 @@ sub GenerateAttributeGetterTrampolineDefinition
     
     my $callAttributeGetterName = "get";
     $callAttributeGetterName .= "Static" if $attribute->isStatic;
-    
+    $callAttributeGetterName .= "PassingPropertyName" if $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{CallWith}, "PropertyName");
+
     my @templateParameters = ();
     push(@templateParameters, $attributeGetterBodyName);
     if ($attribute->extendedAttributes->{LegacyLenientThis}) {
@@ -5346,6 +5352,7 @@ sub GenerateAttributeGetterDefinition
     my ($outputArray, $interface, $className, $attribute) = @_;
 
     return if IsJSBuiltin($interface, $attribute);
+    return if $attribute->extendedAttributes->{DelegateToSharedSyntheticAttribute};
 
     my $attributeGetterName = GetAttributeGetterName($interface, $className, $attribute);
     my $attributeGetterBodyName = $attributeGetterName . "Getter";
@@ -5370,6 +5377,7 @@ sub GenerateAttributeSetterBodyDefinition
     push(@signatureArguments, "JSGlobalObject& lexicalGlobalObject");
     push(@signatureArguments, "${className}& thisObject") if !$attribute->isStatic;
     push(@signatureArguments, "JSValue value");
+    push(@signatureArguments, "PropertyName propertyName") if $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{CallWith}, "PropertyName");
 
     my $needSecurityCheck = $interface->extendedAttributes->{CheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurity} && !$attribute->extendedAttributes->{DoNotCheckSecurityOnSetter};
     my $hasCustomSetter = HasCustomSetter($attribute);
@@ -5418,21 +5426,6 @@ sub GenerateAttributeSetterBodyDefinition
         }
         push(@$outputArray, "    vm.heap.writeBarrier(&thisObject, value);\n");
         push(@$outputArray, "    ensureStillAliveHere(value);\n\n");
-        push(@$outputArray, "    return true;\n");
-    } elsif ($attribute->extendedAttributes->{CSSProperty}) {
-        $implIncludes{"CSSPropertyNames.h"} = 1;
-
-        my $propertyID = $attribute->extendedAttributes->{CSSProperty};
-
-        my $exceptionThrower = GetAttributeExceptionThrower($interface, $attribute);
-        my $toNativeExpression = JSValueToNative($interface, $attribute, "value", $attribute->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "thisObject", "*thisObject.globalObject()", $exceptionThrower);
-
-        push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
-        push(@$outputArray, "    auto nativeValue = ${toNativeExpression};\n");
-        push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, false);\n");
-        push(@$outputArray, "    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {\n");
-        push(@$outputArray, "        return impl.setPropertyInternal(CSSProperty${propertyID}, WTFMove(nativeValue), false);\n");
-        push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");
     } elsif ($isReplaceable) {
         my $id = $attribute->name;
@@ -5521,7 +5514,8 @@ sub GenerateAttributeSetterTrampolineDefinition
     
     my $callAttributeSetterName = "set";
     $callAttributeSetterName .= "Static" if $attribute->isStatic;
-    
+    $callAttributeSetterName .= "PassingPropertyName" if $codeGenerator->ExtendedAttributeContains($attribute->extendedAttributes->{CallWith}, "PropertyName");
+
     my @templateParameters = ();
     push(@templateParameters, $attributeSetterBodyName);
     push(@templateParameters, "CastedThisErrorBehavior::ReturnEarly") if $attribute->extendedAttributes->{LegacyLenientThis};
@@ -5539,7 +5533,8 @@ sub GenerateAttributeSetterDefinition
     return if IsReadonly($attribute);
     return if $codeGenerator->IsConstructorType($attribute->type);
     return if IsJSBuiltin($interface, $attribute);
-    
+    return if $attribute->extendedAttributes->{DelegateToSharedSyntheticAttribute};
+
     my $conditional = $attribute->extendedAttributes->{Conditional};
     if ($conditional) {
         my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
@@ -6002,6 +5997,10 @@ sub GenerateCallWith
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "World")) {
         push(@callWithArgs, "worldForDOMObject(${thisReference})");
+    }
+    if ($codeGenerator->ExtendedAttributeContains($callWith, "PropertyName")) {
+        AddToImplIncludes("JSDOMConvertStrings.h");
+        push(@callWithArgs, "propertyNameToAtomString(propertyName)");
     }
 
     return @callWithArgs;
@@ -8043,6 +8042,58 @@ sub GenerateCustomElementReactionsStackIfNeeded
     } else {
         push(@$outputArray, "    CustomElementReactionStack customElementReactionStack($stateVariable);\n");
     }
+}
+
+sub MakeSharedSyntheticAttribute
+{
+    my ($name, $baseAttribute) = @_;
+
+    my $sharedAttribute = IDLAttribute->new();
+    $sharedAttribute->name($name);
+    $sharedAttribute->type(IDLParser::cloneType($baseAttribute->type));
+    IDLParser::copyExtendedAttributes($sharedAttribute->extendedAttributes, $baseAttribute->extendedAttributes);
+
+    # Replace "DelegateToSharedSyntheticAttribute" extended attribute with "IsSharedSyntheticAttribute" extended attribute to
+    # that this is the real synthesized attribute.
+    delete $sharedAttribute->extendedAttributes->{DelegateToSharedSyntheticAttribute};
+    $sharedAttribute->extendedAttributes->{IsSharedSyntheticAttribute} = 1;
+
+    return $sharedAttribute;
+}
+
+sub AddSharedSyntheticAttributesIfNeeded
+{
+    my $interface = shift;
+
+    # Use a fake extended attribute, SyntheticIDLAttributes, to store the new attributes
+    if (not exists $interface->extendedAttributes->{SyntheticIDLAttributes}) {
+        my %syntheticIDLAttributes = ( );
+        my @attributes = ();
+        foreach my $attribute (@{$interface->attributes}) {
+            if ($attribute->extendedAttributes->{DelegateToSharedSyntheticAttribute}) {
+                my $name = $attribute->extendedAttributes->{DelegateToSharedSyntheticAttribute};
+                if (not $syntheticIDLAttributes{$name}) {
+                    my $syntheticAttribute = MakeSharedSyntheticAttribute($name, $attribute);
+                    $syntheticIDLAttributes{$name} = 1;
+                    push(@attributes, $syntheticAttribute);
+                }
+            }
+        }
+        $interface->extendedAttributes->{SyntheticIDLAttributes} = \@attributes;
+    }
+}
+
+sub GetSharedSyntheticAttribute
+{
+    my ($interface, $attribute) = @_;
+
+    foreach my $syntheticAttribute (@{$interface->extendedAttributes->{SyntheticIDLAttributes}}) {
+        if ($attribute->extendedAttributes->{DelegateToSharedSyntheticAttribute} eq $syntheticAttribute->name()) {
+            return $syntheticAttribute;
+        }
+    }
+    
+    return undef;
 }
 
 1;

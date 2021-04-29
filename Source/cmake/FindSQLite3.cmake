@@ -96,7 +96,7 @@ if (SQLite3_LIBRARY AND NOT TARGET SQLite::SQLite3)
     )
 endif ()
 
-mark_as_advanced(SQLite3_INCLUDE_DIR SQLite3_LIBRARIES)
+mark_as_advanced(SQLite3_INCLUDE_DIR SQLite3_LIBRARY)
 
 if (SQLite3_FOUND)
     set(SQLite3_LIBRARIES ${SQLite3_LIBRARY})

@@ -57,7 +57,9 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationController)
 #endif
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierAndDomain, void, (NSString *identifier, NSString *domain, PKCanMakePaymentsCompletion completion), (identifier, domain, completion))
+#define PKCanMakePaymentsWithMerchantIdentifierAndDomain PAL::softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierAndDomain
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKDrawApplePayButtonWithCornerRadius, void, (CGContextRef context, CGRect drawRect, CGFloat scale, CGFloat cornerRadius, PKPaymentButtonType type, PKPaymentButtonStyle style, NSString *languageCode), (context, drawRect, scale, cornerRadius, type, style, languageCode))
+#define PKDrawApplePayButtonWithCornerRadius PAL::softLink_PassKit_PKDrawApplePayButtonWithCornerRadius
 
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, PKPaymentAuthorizationResult)
@@ -77,6 +79,7 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorDomain, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, PassKit, PKPaymentErrorPostalAddressUserInfoKey, PKPaymentErrorKey)
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, PassKit, PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication, void, (NSString *identifier, NSString *domain, NSString *sourceApplicationSecondaryIdentifier, PKCanMakePaymentsCompletion completion), (identifier, domain, sourceApplicationSecondaryIdentifier, completion))
+#define PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication PAL::softLink_PassKit_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/PassKitSoftLinkAdditions.h>

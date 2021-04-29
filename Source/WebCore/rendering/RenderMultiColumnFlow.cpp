@@ -147,14 +147,14 @@ void RenderMultiColumnFlow::addFragmentToThread(RenderFragmentContainer* fragmen
     fragmentContainer->setIsValid(true);
 }
 
-void RenderMultiColumnFlow::willBeRemovedFromTree()
+void RenderMultiColumnFlow::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
     // Detach all column sets from the flow thread. Cannot destroy them at this point, since they
     // are siblings of this object, and there may be pointers to this object's sibling somewhere
     // further up on the call stack.
     for (RenderMultiColumnSet* columnSet = firstMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet())
         columnSet->detachFragment();
-    RenderFragmentedFlow::willBeRemovedFromTree();
+    RenderFragmentedFlow::willBeRemovedFromTree(isInternalMove);
 }
 
 void RenderMultiColumnFlow::fragmentedFlowDescendantBoxLaidOut(RenderBox* descendant)

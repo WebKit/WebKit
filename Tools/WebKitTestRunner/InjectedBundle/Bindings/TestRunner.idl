@@ -131,7 +131,6 @@ interface TestRunner {
     // Local storage API
     undefined clearAllDatabases();
     undefined setDatabaseQuota(unsigned long long quota);
-    undefined setQuotaLoggingEnabled(boolean enabled);
     DOMString pathToLocalResource(DOMString url);
     undefined syncLocalStorage();
 
@@ -385,6 +384,7 @@ interface TestRunner {
     boolean hasAppBoundSession();
     undefined clearAppBoundSession();
     undefined setAppBoundDomains(object originsArray, object callback);
+    undefined appBoundRequestContextDataForDomain(DOMString domain, object callback);
 
     undefined injectUserScript(DOMString string);
     readonly attribute unsigned long userScriptInjectedCount;

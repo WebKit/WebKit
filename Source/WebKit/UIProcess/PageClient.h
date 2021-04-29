@@ -335,8 +335,10 @@ public:
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    virtual void didCreateContextForVisibilityPropagation(LayerHostingContextID) { }
+    virtual void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID) { }
+#if ENABLE(GPU_PROCESS)
     virtual void didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID) { }
+#endif
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -519,12 +521,15 @@ public:
 
     virtual void setMouseEventPolicy(WebCore::MouseEventPolicy) { }
 
+    virtual void makeViewBlank(bool) { }
+
 #if HAVE(PASTEBOARD_DATA_OWNER)
     virtual WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const { return WebCore::DataOwnerType::Undefined; }
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
     virtual void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completion) { completion({ }); }
+    virtual void computeCanRevealImage(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&& completion) { completion(false); }
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)

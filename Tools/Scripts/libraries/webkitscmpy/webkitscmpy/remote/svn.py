@@ -242,7 +242,7 @@ class Svn(Scm):
             if response.status_code != 200:
                 raise self.Exception("Failed to construct branch history for '{}'".format(branch))
 
-            was_last_on_default = False
+            default_count = 0
             for line in response.iter_lines():
                 match = self.HISTORY_RE.match(line)
                 if not match:
@@ -259,13 +259,16 @@ class Svn(Scm):
                     break
                 if not is_default_branch:
                     if revision in self._metadata_cache[self.default_branch]:
-                        if was_last_on_default:
+                        # Only handle 2 sequential cross-branch commits
+                        if default_count > 2:
                             break
-                        was_last_on_default = True
+                        default_count += 1
                     else:
-                        was_last_on_default = False
+                        default_count = 0
                 self._metadata_cache[branch].insert(pos, revision)
 
+        if default_count:
+            self._metadata_cache[branch] = self._metadata_cache[branch][default_count - 1:]
         if self._metadata_cache[self.default_branch][0] == [0]:
             self._metadata_cache['identifier'] = len(self._metadata_cache[branch])
 

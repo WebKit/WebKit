@@ -40,11 +40,23 @@
             navigator.mediaSession.metadata = new MediaMetadata(data);
             postMessage('set metadata')
         }
+        
+        function joinSession()
+        {
+            let promise = navigator.mediaSession.coordinator.join();
+            postPromise("join", promise);
+        }
+
+        function callMethod(method, args)
+        {
+            let code = `navigator.mediaSession.coordinator.${method}(${args})`;
+            let promise = eval(code);
+            postPromise(method, promise);
+        }
 
         function setPlaylistMetadata(index)
         {
             setMetadata(playlist.metadata[index]);
-        
         }
 
         function clearActionHandlers()
@@ -56,17 +68,11 @@
         {
             const actions = {
                 'play' : () => { postMessage('play handler'); },
-
                 'pause' : () => { postMessage('pause handler') },
-                
                 'seekto' : (details) => { postMessage('seekto handler') },
-
                 'seekforward' : (details) => { postMessage('seekforward handler') },
-
-                'seekbackward' : (details) => { postMessage('seekbackward handler') }, 
-
-                'previoustrack' : () => { postMessage('previoustrack handler') }, 
-
+                'seekbackward' : (details) => { postMessage('seekbackward handler') },
+                'previoustrack' : () => { postMessage('previoustrack handler') },
                 'nexttrack' : () => { postMessage('nexttrack handler') }, 
             };
 
@@ -95,6 +101,15 @@
             postMessage(`${evt.type} event`);
         }
         
+        async function postPromise(type, promise)
+        {
+            log(`waiting for ${type} promise`);
+            await promise
+                .then(  () => { postMessage(`${type} resolved`); } )
+                .catch( () => { postMessage(`${type} rejected`); } );
+            log(`${type} promise settled`);
+        }
+        
         function load()
         {
             let src = playlist.metadata[0].url;
@@ -112,13 +127,15 @@
             eventLog.insertBefore(note, eventLog.firstChild);
         }
 
-        
+        const session = navigator.mediaSession;
+
         window.addEventListener("load", evt => {
             audio = document.getElementsByTagName('audio')[0];
             audio.addEventListener('canplaythrough', postEvent);
             audio.addEventListener('play', postEvent);
             audio.addEventListener('pause', postEvent);
             audio.addEventListener('seeked', postEvent);
+            navigator.mediaSession.addEventListener('coordinatorchange', postEvent);
         }, false);
 
     </script>

@@ -63,42 +63,42 @@
         function() {
             consoleWrite('Unloaded video elements should not be considered main content.');
             video = createVideo();
-            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+            testExpected('internals.bestMediaElementForRemoteControls("ControlsManager")', null)
         },
 
         async function() {
             consoleWrite('Large, autoplay videos with video and audio should be considered main content.')
             run('video = createVideo({autoplay: true, type: "audio+video", size: "large"})');
             await waitFor(video, 'playing');
-            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', video)
+            testExpected('internals.bestMediaElementForRemoteControls("ControlsManager")', video)
         },
 
         async function() {
             consoleWrite('Small, autoplay videos with video and audio should be considered main content.')
             run('video = createVideo({autoplay: true, type: "audio+video", size: "small"})');
             await waitFor(video, 'playing');
-            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+            testExpected('internals.bestMediaElementForRemoteControls("ControlsManager")', null)
         },
 
         async function() {
             consoleWrite('Muted autoplay videos should not be considered main content.')
             run('video = createVideo({autoplay: true, muted: true, type: "audio+video", size: "large"})');
             await waitFor(video, 'playing');
-            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+            testExpected('internals.bestMediaElementForRemoteControls("ControlsManager")', null)
         },
 
         async function() {
             consoleWrite('Video-only autoplay videos should not be considered main content.')
             run('video = createVideo({autoplay: true, type: "video", size: "large"})');
             await waitFor(video, 'playing');
-            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+            testExpected('internals.bestMediaElementForRemoteControls("ControlsManager")', null)
         },
 
         async function() {
             consoleWrite('Non-playing videos should not be considered main content.')
             run('video = createVideo({type: "audio+video", size: "large"})');
             await waitFor(video, 'canplaythrough');
-            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null)
+            testExpected('internals.bestMediaElementForRemoteControls("ControlsManager")', null)
         },
 
         async function() {
@@ -106,7 +106,7 @@
             run('video = createVideo({autoplay: true, muted: true, type: "audio+video", size: "large"})');
             await waitFor(video, 'playing');
             await enterFullscreen('#fullscreen');
-            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', null);
+            testExpected('internals.bestMediaElementForRemoteControls("ControlsManager")', null);
             await exitFullscreen();
         },
 
@@ -115,7 +115,7 @@
             run('video = createVideo({autoplay: true, type: "audio+video", size: "large"})');
             await waitFor(video, 'playing');
             await enterFullscreen('#target');
-            testExpected('internals.bestMediaElementForShowingPlaybackControlsManager("ControlsManager")', video);
+            testExpected('internals.bestMediaElementForRemoteControls("ControlsManager")', video);
             await exitFullscreen();
         },
     ];

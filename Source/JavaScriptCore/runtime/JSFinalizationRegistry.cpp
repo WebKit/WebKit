@@ -239,11 +239,6 @@ size_t JSFinalizationRegistry::deadCount(const Locker<JSCellLock>&)
     return count;
 }
 
-String JSFinalizationRegistry::toStringName(const JSC::JSObject*, JSGlobalObject*)
-{
-    return "Object"_s;
-}
-
 }
 
 

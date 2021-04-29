@@ -32,6 +32,7 @@
 #include "JSFunctionInlines.h"
 #include "MacroAssembler.h"
 #include "ScratchRegisterAllocator.h"
+#include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -187,7 +188,7 @@ private:
     ListType m_list;
     RefPtr<JITStubRoutine> m_stubRoutine;
     std::unique_ptr<WatchpointsOnStructureStubInfo> m_watchpoints;
-    std::unique_ptr<Vector<WriteBarrier<JSCell>>> m_weakReferences;
+    FixedVector<WriteBarrier<JSCell>> m_weakReferences;
 };
 
 struct AccessGenerationState {

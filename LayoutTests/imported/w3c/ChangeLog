@@ -1,3 +1,141 @@
+2021-04-11  Sam Weinig  <weinig@apple.com>
+
+        Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior
+        https://bugs.webkit.org/show_bug.cgi?id=222518
+        <rdar://problem/75136887>
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/cssom/cssstyledeclaration-properties-expected.txt:
+        Update test result now that it is passing.
+
+2021-04-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223966
+        <rdar://problem/76028345>
+
+        Reviewed by Darin Adler.
+
+        Update test as per:
+        - https://github.com/web-platform-tests/wpt/pull/28428
+
+        Make sure subtests are run one after another, not in parallel, so that PASS lines are printed out in a
+        consistent order.
+
+        * web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html:
+
+2021-04-09  Antoine Quint  <graouts@webkit.org>
+
+        calc() simplification for a multiplication should apply the multiplication to each value of an addition
+        https://bugs.webkit.org/show_bug.cgi?id=224376
+
+        Reviewed by Simon Fraser.
+
+        Mark 99 WPT progressions.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-margin-003-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-008-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-009-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-006-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2021-04-08  Antoine Quint  <graouts@webkit.org>
+
+        calc() values resulting from blending mixed type lengths should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=224322
+
+        Reviewed by Sam Weinig.
+
+        Mark 84 WPT progressions.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation-expected.txt:
+        * web-platform-tests/css/css-values/animations/calc-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2021-04-09  Ziran Sun  <zsun@igalia.com>
+
+        [css-flexbox] max-height percentages are wrongly resolved for replaced grid items in nested percentage flexboxes
+        https://bugs.webkit.org/show_bug.cgi?id=223931
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-flexbox/percentage-max-height-004-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-max-height-004.html: Added.
+
+2021-04-09  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Fix min/max widths of grid affected by ancestor
+        https://bugs.webkit.org/show_bug.cgi?id=222100
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-lr-002-expected.txt:
+        * web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-vertical-rl-002-expected.txt:
+
+2021-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Streams: new test failure for canceling the branches of an errored tee'd stream
+        https://bugs.webkit.org/show_bug.cgi?id=223558
+        <rdar://problem/75924807>
+
+        Reviewed by Alex Christensen.
+
+        Rebased from WPT ToT.
+
+        * web-platform-tests/streams/readable-streams/tee.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/tee.any.js:
+        (promise_test.async const):
+        (promise_test):
+        (promise_test.async t):
+        * web-platform-tests/streams/readable-streams/tee.any.worker-expected.txt:
+
+2021-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable inline box support (RenderInline)
+        https://bugs.webkit.org/show_bug.cgi?id=220148
+        <rdar://problem/72768785>
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/css/css-flexbox/orthogonal-flex-item-crash-expected.txt:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007-expected.html:
+        * web-platform-tests/css/css-text/word-break/word-break-break-all-inline-007.html:
+        * web-platform-tests/html/dom/elements/the-innertext-idl-attribute/getter-expected.txt:
+        * web-platform-tests/innerText/getter-expected.txt:
+
+2021-04-06  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=222266
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream 8837d4e994.
+
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-025.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-003.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-dynamic-aspect-ratio.html:
+        * web-platform-tests/css/css-sizing/aspect-ratio/w3c-import.log:
+
 2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Remove [Replaceable] extended attribute from `document.all`

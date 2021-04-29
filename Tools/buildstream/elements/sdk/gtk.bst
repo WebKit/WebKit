@@ -5,9 +5,7 @@ sources:
   url: gitlab_gnome_org:GNOME/gtk.git
   track: master
   track-tags: true
-  ref: 4.0.0-0-g591c2f05956935adbebed5fc345a309dde2d449c
-- kind: patch
-  path: patches/gtk-clipboard-Fix-a-crash-when-GdkContentProviderUnion-d.patch
+  ref: 4.2.0-0-gccbbc2f2babcfaee88d8d8040938ca6bf39d05b6
 build-depends:
 - sdk-build-depends/sassc.bst
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst

@@ -39,6 +39,7 @@
 #include "Timer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
+#include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

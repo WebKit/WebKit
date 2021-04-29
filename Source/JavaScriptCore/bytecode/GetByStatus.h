@@ -123,6 +123,7 @@ public:
     bool finalize(VM&); // Return true if this gets to live.
 
     bool appendVariant(const GetByIdVariant&);
+    void shrinkToFit();
 
     void dump(PrintStream&) const;
 

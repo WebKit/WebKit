@@ -323,7 +323,7 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
     auto font = WebCore::InspectorOverlay::fontForLayoutLabel();
 
     constexpr auto padding = 4;
-    constexpr auto arrowSize = 4;
+    constexpr auto arrowSize = 6;
     float textHeight = font.fontMetrics().floatHeight();
 
     float textWidth = font.width(WebCore::TextRun(label));
@@ -400,7 +400,7 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
         }
         break;
     case WebCore::InspectorOverlay::LabelArrowDirection::None:
-        textPosition = WebCore::FloatPoint(padding + (textWidth / 2), padding + (textHeight / 2));
+        // Text position will remain (0, 0).
         break;
     }
 
@@ -461,7 +461,7 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
         [layer addSublayer:areaLayer];
     }
 
-    constexpr auto translucentLabelBackgroundColor = WebCore::Color::white.colorWithAlphaByte(153);
+    constexpr auto translucentLabelBackgroundColor = WebCore::Color::white.colorWithAlphaByte(230);
 
     for (auto area : overlay.areas)
         [layer addSublayer:createLayoutLabelLayer(area.name, area.quad.p1(), WebCore::InspectorOverlay::LabelArrowDirection::None, WebCore::InspectorOverlay::LabelArrowEdgePosition::None, translucentLabelBackgroundColor, overlay.color, scale, area.quad.boundingBox().width())];

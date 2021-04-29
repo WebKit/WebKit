@@ -171,9 +171,7 @@ SVGElement::~SVGElement()
     if (m_svgRareData) {
         for (SVGElement* instance : m_svgRareData->instances())
             instance->m_svgRareData->setCorrespondingElement(nullptr);
-        if (auto correspondingElement = makeRefPtr(m_svgRareData->correspondingElement()))
-            correspondingElement->m_svgRareData->instances().remove(this);
-
+        RELEASE_ASSERT(!m_svgRareData->correspondingElement());
         m_svgRareData = nullptr;
     }
     document().accessSVGExtensions().rebuildAllElementReferencesForTarget(*this);
@@ -253,6 +251,9 @@ void SVGElement::removedFromAncestor(RemovalType removalType, ContainerNode& old
         document().accessSVGExtensions().removeAllElementReferencesForTarget(*this);
     }
     invalidateInstances();
+
+    if (removalType.treeScopeChanged && oldParentOfRemovedTree.isUserAgentShadowRoot())
+        setCorrespondingElement(nullptr);
 }
 
 SVGSVGElement* SVGElement::ownerSVGElement() const
@@ -375,6 +376,7 @@ bool SVGElement::addEventListener(const AtomString& eventType, Ref<EventListener
     ASSERT(!instanceUpdatesBlocked());
     for (auto* instance : instances()) {
         ASSERT(instance->correspondingElement() == this);
+        ASSERT(instance->isInUserAgentShadowTree());
         bool result = instance->Node::addEventListener(eventType, listener.copyRef(), options);
         ASSERT_UNUSED(result, result);
     }
@@ -402,6 +404,7 @@ bool SVGElement::removeEventListener(const AtomString& eventType, EventListener&
     ASSERT(!instanceUpdatesBlocked());
     for (auto& instance : instances()) {
         ASSERT(instance->correspondingElement() == this);
+        ASSERT(instance->isInUserAgentShadowTree());
 
         if (instance->Node::removeEventListener(eventType, listener, options))
             continue;

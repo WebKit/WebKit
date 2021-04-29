@@ -45,6 +45,7 @@
 namespace WebCore {
 
 class Document;
+class HTMLMediaElement;
 class MediaMetadata;
 class MediaSessionCoordinator;
 class Navigator;
@@ -84,11 +85,8 @@ public:
     ExceptionOr<void> setPlaylist(ScriptExecutionContext&, Vector<RefPtr<MediaMetadata>>&&);
 #endif
 
-    bool hasActionHandler(MediaSessionAction) const;
-    WEBCORE_EXPORT RefPtr<MediaSessionActionHandler> handlerForAction(MediaSessionAction) const;
     bool hasActiveActionHandlers() const { return !m_actionHandlers.isEmpty(); }
-
-    void callActionHandler(const MediaSessionActionDetails&);
+    WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&);
 
     const Logger& logger() const { return *m_logger.get(); }
 
@@ -133,6 +131,8 @@ private:
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "MediaSession"; }
     bool virtualHasPendingActivity() const final;
+
+    RefPtr<HTMLMediaElement> activeMediaElement() const;
 
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;

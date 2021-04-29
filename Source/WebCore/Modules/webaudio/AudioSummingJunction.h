@@ -28,6 +28,7 @@
 #include <iterator>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -42,8 +43,8 @@ public:
     virtual ~AudioSummingJunction();
 
     // Can be called from any thread.
-    BaseAudioContext& context() { return m_context; }
-    const BaseAudioContext& context() const { return m_context; }
+    BaseAudioContext* context() { return m_context.get(); }
+    const BaseAudioContext* context() const { return m_context.get(); }
 
     // This copies m_outputs to m_renderingOutputs. Please see comments for these lists below.
     // This must be called when we own the context's graph lock in the audio thread at the very start or end of the render quantum.
@@ -134,7 +135,7 @@ protected:
     unsigned maximumNumberOfChannels() const;
 
 private:
-    Ref<BaseAudioContext> m_context;
+    WeakPtr<BaseAudioContext> m_context;
 
     // m_renderingOutputs is a copy of m_outputs which will never be modified during the graph rendering on the audio thread.
     // This is the list which is used by the rendering code.

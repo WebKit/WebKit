@@ -22,15 +22,15 @@
 #pragma once
 
 #include <unicode/uchar.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
 enum BidiEmbeddingSource { FromStyleOrDOM, FromUnicode };
 
 // Used to keep track of explicit embeddings.
-class BidiContext : public RefCounted<BidiContext> {
+class BidiContext : public ThreadSafeRefCounted<BidiContext> {
 public:
     WEBCORE_EXPORT static Ref<BidiContext> create(unsigned char level, UCharDirection, bool override = false, BidiEmbeddingSource = FromStyleOrDOM, BidiContext* parent = nullptr);
 

@@ -50,6 +50,11 @@ class RefCountedArray {
     enum CommonCopyConstructorTag { CommonCopyConstructor };
 
 public:
+    using iterator = T*;
+    using const_iterator = const T*;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
     RefCountedArray() = default;
     
     RefCountedArray(const RefCountedArray& other)
@@ -59,6 +64,10 @@ public:
     template<typename OtherTraits>
     RefCountedArray(const RefCountedArray<T, OtherTraits>& other)
         : RefCountedArray(CommonCopyConstructor, other)
+    { }
+
+    RefCountedArray(RefCountedArray&& other)
+        : m_data(PtrTraits::exchange(other.m_data, nullptr))
     { }
 
     explicit RefCountedArray(size_t size)
@@ -169,8 +178,8 @@ public:
     size_t byteSize() const { return size() * sizeof(T); }
     
     T* data() { return PtrTraits::unwrap(m_data); }
-    T* begin() { return data(); }
-    T* end()
+    iterator begin() { return data(); }
+    iterator end()
     {
         if (!m_data)
             return 0;
@@ -179,8 +188,13 @@ public:
     }
     
     const T* data() const { return const_cast<RefCountedArray*>(this)->data(); }
-    const T* begin() const { return const_cast<RefCountedArray*>(this)->begin(); }
-    const T* end() const { return const_cast<RefCountedArray*>(this)->end(); }
+    const_iterator begin() const { return const_cast<RefCountedArray*>(this)->begin(); }
+    const_iterator end() const { return const_cast<RefCountedArray*>(this)->end(); }
+
+    reverse_iterator rbegin() { return reverse_iterator(end()); }
+    reverse_iterator rend() { return reverse_iterator(begin()); }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+    const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
     
     T& at(size_t i)
     {
@@ -201,6 +215,16 @@ public:
     const T& first() const { return (*this)[0]; }
     T& last() { return (*this)[size() - 1]; }
     const T& last() const { return (*this)[size() - 1]; }
+
+    void fill(const T& val)
+    {
+        std::fill(begin(), end(), val);
+    }
+
+    void swap(RefCountedArray& other)
+    {
+        PtrTraits::swap(m_data, other.m_data);
+    }
 
     template<typename OtherTraits = PtrTraits>
     bool operator==(const RefCountedArray<T, OtherTraits>& other) const
@@ -247,10 +271,12 @@ private:
         unsigned refCount;
         unsigned length;
         
-        static size_t size()
+        static constexpr size_t size()
         {
             return (sizeof(Header) + 7) & ~7;
         }
+
+        static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(Header, length); }
         
         T* payload()
         {

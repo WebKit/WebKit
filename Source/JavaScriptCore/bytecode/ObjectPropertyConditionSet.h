@@ -27,6 +27,7 @@
 
 #include "ObjectPropertyCondition.h"
 #include <wtf/FastMalloc.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -50,25 +51,25 @@ public:
         return result;
     }
     
-    static ObjectPropertyConditionSet create(const Vector<ObjectPropertyCondition>& vector)
+    static ObjectPropertyConditionSet create(Vector<ObjectPropertyCondition>&& vector)
     {
         if (vector.isEmpty())
             return ObjectPropertyConditionSet();
         
         ObjectPropertyConditionSet result;
         result.m_data = adoptRef(new Data());
-        result.m_data->vector = vector;
+        result.m_data->m_vector = FixedVector<ObjectPropertyCondition>(WTFMove(vector));
         return result;
     }
     
     bool isValid() const
     {
-        return !m_data || !m_data->vector.isEmpty();
+        return !m_data || !m_data->m_vector.isEmpty();
     }
 
     bool isValidAndWatchable() const;
 
-    size_t size() const { return m_data ? m_data->vector.size() : 0; }
+    size_t size() const { return m_data ? m_data->m_vector.size() : 0; }
     bool isEmpty() const
     {
         return !m_data;
@@ -80,13 +81,13 @@ public:
     {
         if (!m_data)
             return nullptr;
-        return m_data->vector.begin();
+        return m_data->m_vector.begin();
     }
     iterator end() const
     {
         if (!m_data)
             return nullptr;
-        return m_data->vector.end();
+        return m_data->m_vector.end();
     }
     
     ObjectPropertyCondition forObject(JSObject*) const;
@@ -157,7 +158,7 @@ public:
     public:
         Data() { }
         
-        Vector<ObjectPropertyCondition> vector;
+        FixedVector<ObjectPropertyCondition> m_vector;
     };
     
 private:

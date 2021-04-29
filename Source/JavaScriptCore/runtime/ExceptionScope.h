@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,7 +50,7 @@ class ExceptionScope {
 public:
     VM& vm() const { return m_vm; }
     unsigned recursionDepth() const { return m_recursionDepth; }
-    Exception* exception() { return m_vm.exception(); }
+    Exception* exception() const { return m_vm.exception(); }
 
     ALWAYS_INLINE void assertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT_WITH_MESSAGE(!exception(), "%s", unexpectedExceptionMessage().data()); }
@@ -84,7 +84,7 @@ protected:
 class ExceptionScope {
 public:
     ALWAYS_INLINE VM& vm() const { return m_vm; }
-    ALWAYS_INLINE Exception* exception() { return m_vm.exception(); }
+    ALWAYS_INLINE Exception* exception() const { return m_vm.exception(); }
 
     ALWAYS_INLINE void assertNoException() { ASSERT(!exception()); }
     ALWAYS_INLINE void releaseAssertNoException() { RELEASE_ASSERT(!exception()); }
@@ -104,8 +104,12 @@ protected:
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 
 #define RETURN_IF_EXCEPTION(scope__, value__) do { \
-        if (UNLIKELY((scope__).exception())) \
-            return value__; \
+        JSC::VM& vm = (scope__).vm(); \
+        ASSERT(!!(scope__).exception() == vm.traps().needHandling(JSC::VMTraps::NeedExceptionHandling)); \
+        if (UNLIKELY(vm.traps().needHandling(JSC::VMTraps::NonDebuggerEvents))) { \
+            if (vm.hasExceptionsAfterHandlingTraps()) \
+                return value__; \
+        } \
     } while (false)
 
 #define RELEASE_AND_RETURN(scope__, expression__) do { \

@@ -8,7 +8,7 @@ layer at (0,0) size 800x93
           RenderBlock {FORM} at (0,0) size 744x25
             RenderBlock {P} at (0,0) size 744x25
               RenderListMarker at (-18,1) size 7x19: bullet
-              RenderTextControl {INPUT} at (2,2) size 295x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+              RenderTextControl {INPUT} at (2,2) size 295x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
               RenderText {#text} at (0,0) size 0x0
           RenderBlock {P} at (0,41) size 744x20
             RenderText {#text} at (0,0) size 340x19

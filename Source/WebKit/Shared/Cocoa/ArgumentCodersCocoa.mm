@@ -264,7 +264,7 @@ static Optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder, NSArray<Cla
     auto array = adoptNS([[NSMutableArray alloc] init]);
     for (uint64_t i = 0; i < size; ++i) {
         auto value = decodeObject(decoder, allowedClasses);
-        if (!value)
+        if (!value || !value.value())
             return WTF::nullopt;
         [array addObject:value.value().get()];
     }

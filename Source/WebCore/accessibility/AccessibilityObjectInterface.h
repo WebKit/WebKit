@@ -1222,7 +1222,6 @@ public:
     virtual void decrement() = 0;
 
     virtual void childrenChanged() = 0;
-    virtual void textChanged() = 0;
     virtual void updateAccessibilityRole() = 0;
 
     virtual const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) = 0;

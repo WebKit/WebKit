@@ -133,8 +133,8 @@ my %nativeArchitectureMap = ();
 my $asanIsEnabled;
 my $tsanIsEnabled;
 my $ubsanIsEnabled;
-my $forceOptimizationLevel;
 my $coverageIsEnabled;
+my $forceOptimizationLevel;
 my $ltoMode;
 my $numberOfCPUs;
 my $maxCPULoad;
@@ -938,6 +938,12 @@ sub ubsanIsEnabled()
 {
     determineUBSanIsEnabled();
     return $ubsanIsEnabled;
+}
+
+sub coverageIsEnabled()
+{
+    determineCoverageIsEnabled();
+    return $coverageIsEnabled;
 }
 
 sub forceOptimizationLevel()

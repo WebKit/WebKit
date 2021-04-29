@@ -201,13 +201,13 @@ Vector<String> WebProcessProxy::mediaMIMETypes() const
 void WebProcessProxy::requestHighPerformanceGPU()
 {
     LOG(WebGL, "WebProcessProxy::requestHighPerformanceGPU()");
-    HighPerformanceGPUManager::singleton().addProcessRequiringHighPerformance(this);
+    HighPerformanceGPUManager::singleton().addProcessRequiringHighPerformance(*this);
 }
 
 void WebProcessProxy::releaseHighPerformanceGPU()
 {
     LOG(WebGL, "WebProcessProxy::releaseHighPerformanceGPU()");
-    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(this);
+    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(*this);
 }
 #endif
 
@@ -296,7 +296,7 @@ void WebProcessProxy::sendAudioComponentRegistrations()
         if (noErr != AudioComponentFetchServerRegistrations(&registrations) || !registrations)
             return;
 
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), registrations = retainPtr(registrations)] () mutable {
+        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), registrations = adoptCF(registrations)] () mutable {
             auto registrationData = SharedBuffer::create(registrations.get());
             protectedThis->send(Messages::WebProcess::ConsumeAudioComponentRegistrations({ registrationData }), 0);
         });

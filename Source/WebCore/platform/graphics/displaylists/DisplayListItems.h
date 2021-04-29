@@ -26,11 +26,14 @@
 #pragma once
 
 #include "AlphaPremultiplication.h"
-#include "DisplayList.h"
+#include "DisplayListFlushIdentifier.h"
+#include "DisplayListItemBufferIdentifier.h"
+#include "DisplayListItemType.h"
 #include "FloatRoundedRect.h"
 #include "Font.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"
+#include "GraphicsContext.h"
 #include "Image.h"
 #include "ImageData.h"
 #include "MediaPlayerIdentifier.h"
@@ -38,6 +41,7 @@
 #include "RenderingResourceIdentifier.h"
 #include "SharedBuffer.h"
 #include <wtf/TypeCasts.h>
+#include <wtf/Variant.h>
 
 namespace WTF {
 class TextStream;
@@ -50,6 +54,8 @@ class MediaPlayer;
 struct ImagePaintingOptions;
 
 namespace DisplayList {
+
+struct ItemHandle;
 
 /* isInlineItem indicates whether the object needs to be passed through IPC::Encoder in order to serialize,
  * or whether we can just use placement new and be done.
@@ -914,7 +920,7 @@ public:
     RenderingResourceIdentifier fontIdentifier() { return m_fontIdentifier; }
     const FloatPoint& localAnchor() const { return m_localAnchor; }
     FloatPoint anchorPoint() const { return m_localAnchor; }
-    const Vector<GlyphBufferGlyph, 128>& glyphs() const { return m_glyphs; }
+    const Vector<GlyphBufferGlyph, 16>& glyphs() const { return m_glyphs; }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<DrawGlyphs> decode(Decoder&);
@@ -931,8 +937,8 @@ private:
     void computeBounds(const Font&);
 
     RenderingResourceIdentifier m_fontIdentifier;
-    Vector<GlyphBufferGlyph, 128> m_glyphs;
-    Vector<GlyphBufferAdvance, 128> m_advances;
+    Vector<GlyphBufferGlyph, 16> m_glyphs;
+    Vector<GlyphBufferAdvance, 16> m_advances;
     FloatRect m_bounds;
     FloatPoint m_localAnchor;
     FontSmoothingMode m_smoothingMode;
@@ -1985,6 +1991,7 @@ Optional<PutImageData> PutImageData::decode(Decoder& decoder)
     return {{ *inputFormat, WTFMove(*imageData), *srcRect, *destPoint, *destFormat }};
 }
 
+#if ENABLE(VIDEO)
 class PaintFrameForMedia {
 public:
     static constexpr ItemType itemType = ItemType::PaintFrameForMedia;
@@ -2007,6 +2014,7 @@ private:
     MediaPlayerIdentifier m_identifier;
     FloatRect m_destination;
 };
+#endif
 
 class StrokeRect {
 public:
@@ -2336,7 +2344,9 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::MetaCommandChangeItemBuffer,
     WebCore::DisplayList::ItemType::GetImageData,
     WebCore::DisplayList::ItemType::PutImageData,
+#if ENABLE(VIDEO)
     WebCore::DisplayList::ItemType::PaintFrameForMedia,
+#endif
     WebCore::DisplayList::ItemType::StrokeRect,
     WebCore::DisplayList::ItemType::StrokeLine,
 #if ENABLE(INLINE_PATH_DATA)

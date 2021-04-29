@@ -38,8 +38,8 @@ namespace WebCore {
 namespace Layout {
 
 using InlineItems = Vector<InlineItem>;
-using InlineLines = Vector<InlineLineGeometry, 10>;
-using InlineLineBoxes = Vector<LineBox, 10>;
+using InlineLines = Vector<InlineLineGeometry>;
+using InlineLineBoxes = Vector<LineBox>;
 using InlineLineRuns = Vector<LineRun>;
 
 // InlineFormattingState holds the state for a particular inline formatting context tree.
@@ -95,6 +95,7 @@ inline void InlineFormattingState::clearLineAndRuns()
 
 inline void InlineFormattingState::shrinkToFit()
 {
+    m_inlineItems.shrinkToFit();
     m_lines.shrinkToFit();
     m_lineBoxes.shrinkToFit();
     m_lineRuns.shrinkToFit();

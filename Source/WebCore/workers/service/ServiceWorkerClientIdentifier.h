@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #include "DocumentIdentifier.h"
 #include "ServiceWorkerTypes.h"
+#include <wtf/Hasher.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -87,16 +88,12 @@ Optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(De
     if (!contextIdentifier)
         return WTF::nullopt;
 
-    return { { WTFMove(*serverConnectionIdentifier), WTFMove(*contextIdentifier) } };
+    return { { *serverConnectionIdentifier, *contextIdentifier } };
 }
 
 inline unsigned ServiceWorkerClientIdentifier::hash() const
 {
-    unsigned hashes[2];
-    hashes[0] = WTF::intHash(serverConnectionIdentifier.toUInt64());
-    hashes[1] = WTF::intHash(contextIdentifier.toUInt64());
-
-    return StringHasher::hashMemory(hashes, sizeof(hashes));
+    return computeHash(serverConnectionIdentifier, contextIdentifier);
 }
 
 } // namespace WebCore

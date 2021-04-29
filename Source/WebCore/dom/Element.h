@@ -63,12 +63,14 @@ class RenderTreePosition;
 class StylePropertyMap;
 class WebAnimation;
 
+enum class AnimationImpact;
+enum class EventProcessing : uint8_t;
+enum class SelectionRestorationMode : uint8_t;
+
 struct GetAnimationsOptions;
 struct KeyframeAnimationOptions;
 struct ScrollIntoViewOptions;
 struct ScrollToOptions;
-
-enum class EventProcessing : uint8_t;
 
 #if ENABLE(INTERSECTION_OBSERVER)
 struct IntersectionObserverData;
@@ -81,8 +83,6 @@ struct ResizeObserverData;
 namespace Style {
 struct ElementStyle;
 }
-
-enum class AnimationImpact;
 
 class Element : public ContainerNode {
     WTF_MAKE_ISO_ALLOCATED(Element);
@@ -405,7 +405,7 @@ public:
 
     static AXTextStateChangeIntent defaultFocusTextStateChangeIntent() { return AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, true }); }
     virtual void focus(const FocusOptions& = { });
-    void revealFocusedElement(SelectionRestorationMode);
+    void findTargetAndUpdateFocusAppearance(SelectionRestorationMode, SelectionRevealMode = SelectionRevealMode::Reveal);
     virtual RefPtr<Element> focusAppearanceUpdateTarget();
     virtual void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode = SelectionRevealMode::Reveal);
     virtual void blur();

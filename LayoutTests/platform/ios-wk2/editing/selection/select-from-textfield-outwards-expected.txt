@@ -23,7 +23,7 @@ layer at (0,0) size 800x600
           text run at (0,20) width 771: "nulla non nisi molestie accumsan. Etiam tellus urna, laoreet ac, laoreet non, suscipit sed, sapien. Phasellus vehicula, sem"
           text run at (0,40) width 569: "at posuere vehicula, augue nibh molestie nisl, nec ullamcorper lacus ante vulputate pede."
       RenderBlock (anonymous) at (0,150) size 784x91
-        RenderTextControl {INPUT} at (20,20) size 319x51 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+        RenderTextControl {INPUT} at (20,20) size 319x51 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,257) size 784x80
         RenderText {#text} at (0,0) size 772x79

@@ -153,6 +153,11 @@ inline ShadowRoot* Node::shadowRoot() const
     return downcast<Element>(*this).shadowRoot();
 }
 
+inline bool Node::isUserAgentShadowRoot() const
+{
+    return isShadowRoot() && downcast<ShadowRoot>(*this).mode() == ShadowRootMode::UserAgent;
+}
+
 inline ContainerNode* Node::parentOrShadowHostNode() const
 {
     ASSERT(isMainThreadOrGCThread());

@@ -25,7 +25,9 @@
 
 #pragma once
 
+#include "DisplayListItemBufferIdentifier.h"
 #include "DisplayListItemType.h"
+#include "DisplayListItems.h"
 #include "SharedBuffer.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/ObjectIdentifier.h>
@@ -37,9 +39,6 @@ class GraphicsContext;
 namespace DisplayList {
 
 class DisplayList;
-
-enum ItemBufferIdentifierType { };
-using ItemBufferIdentifier = ObjectIdentifier<ItemBufferIdentifierType>;
 
 // An ItemBufferHandle wraps a pointer to a buffer that contains display list item data.
 struct ItemBufferHandle {
@@ -151,6 +150,7 @@ public:
     }
 
     void clear();
+    void shrinkToFit();
 
     bool isEmpty() const
     {

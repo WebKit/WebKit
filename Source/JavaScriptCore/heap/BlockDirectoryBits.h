@@ -222,7 +222,7 @@ public:
     }
 
 private:
-    Vector<Segment> m_segments;
+    Vector<Segment, 0, CrashOnOverflow, 2> m_segments;
     unsigned m_numBits { 0 };
 };
 

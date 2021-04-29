@@ -130,7 +130,6 @@ class LineLoopLastSegmentHelper
         mContextMtl = mtl::GetImpl(context);
 
         indexBufferPool->releaseInFlightBuffers(mContextMtl);
-
         ANGLE_TRY(indexBufferPool->allocate(mContextMtl, 2 * sizeof(uint32_t), nullptr,
                                             &mLineLoopIndexBuffer, nullptr, nullptr));
 
@@ -2213,8 +2212,16 @@ angle::Result ContextMtl::setupDraw(const gl::Context *context,
         changedPipeline = true;
     }
 
-    ANGLE_TRY(mProgram->setupDraw(context, &mRenderEncoder, mRenderPipelineDesc, changedPipeline,
-                                  textureChanged, uniformBuffersDirty, transformFeedbackDraw));
+    ANGLE_TRY(mProgram->setupDraw(context, &mRenderEncoder, mRenderPipelineDesc,
+                                  changedPipeline, textureChanged,
+                                  uniformBuffersDirty, transformFeedbackDraw));
+
+    // Setting up the draw required us to call a command buffer flush, re-run setupDraw with state invaliated to restart the command buffer from the current draw with previously set state
+    if (!mCmdBuffer.valid())
+    {
+        invalidateState(context);
+        ANGLE_TRY(setupDraw(context, mode, firstVertex, vertexOrIndexCount, instances, indexTypeOrNone, indices, transformFeedbackDraw));
+    }
 
     return angle::Result::Continue;
 }

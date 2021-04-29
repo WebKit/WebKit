@@ -35,18 +35,28 @@
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 
 namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create()
+std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create(WebPage& webPage)
 {
-    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy());
+    return std::unique_ptr<RemoteRenderingBackendProxy>(new RemoteRenderingBackendProxy(webPage));
 }
 
-RemoteRenderingBackendProxy::RemoteRenderingBackendProxy()
+RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(WebPage& webPage)
+    : m_parameters {
+        RenderingBackendIdentifier::generate(),
+        IPC::Semaphore { },
+        webPage.webPageProxyIdentifier(),
+        webPage.identifier(),
+#if PLATFORM(IOS_FAMILY)
+        webPage.canShowWhileLocked()
+#endif
+    }
 {
     connectToGPUProcess();
 }
@@ -58,15 +68,15 @@ RemoteRenderingBackendProxy::~RemoteRenderingBackendProxy()
     messageReceiverMap.removeMessageReceiver(*this);
 
     // Release the RemoteRenderingBackend.
-    send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(m_renderingBackendIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(renderingBackendIdentifier()), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteRenderingBackendProxy::connectToGPUProcess()
 {
     auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
     connection.addClient(*this);
-    connection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), m_renderingBackendIdentifier.toUInt64(), *this);
-    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_renderingBackendIdentifier, m_resumeDisplayListSemaphore), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    connection.messageReceiverMap().addMessageReceiver(Messages::RemoteRenderingBackendProxy::messageReceiverName(), renderingBackendIdentifier().toUInt64(), *this);
+    send(Messages::GPUConnectionToWebProcess::CreateRenderingBackend(m_parameters), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
@@ -76,7 +86,7 @@ void RemoteRenderingBackendProxy::reestablishGPUProcessConnection()
     for (auto& imageBuffer : m_remoteResourceCacheProxy.imageBuffers().values()) {
         if (!imageBuffer)
             continue;
-        send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer->logicalSize(), imageBuffer->renderingMode(), imageBuffer->resolutionScale(), imageBuffer->colorSpace(), imageBuffer->pixelFormat(), imageBuffer->renderingResourceIdentifier()), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        send(Messages::RemoteRenderingBackend::CreateImageBuffer(imageBuffer->logicalSize(), imageBuffer->renderingMode(), imageBuffer->resolutionScale(), imageBuffer->colorSpace(), imageBuffer->pixelFormat(), imageBuffer->renderingResourceIdentifier()), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         imageBuffer->clearBackend();
     }
 }
@@ -101,13 +111,13 @@ IPC::Connection* RemoteRenderingBackendProxy::messageSenderConnection() const
 
 uint64_t RemoteRenderingBackendProxy::messageSenderDestinationID() const
 {
-    return m_renderingBackendIdentifier.toUInt64();
+    return renderingBackendIdentifier().toUInt64();
 }
 
 RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
 {
     Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-    if (!connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives))
+    if (!connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives))
         return DidReceiveBackendCreationResult::TimeoutOrIPCFailure;
     return DidReceiveBackendCreationResult::ReceivedAnyResponse;
 }
@@ -115,7 +125,7 @@ RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBack
 bool RemoteRenderingBackendProxy::waitForDidFlush()
 {
     Ref<IPC::Connection> connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(m_renderingBackendIdentifier, 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    return connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidFlush>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
 }
 
 RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, float resolutionScale, DestinationColorSpace colorSpace, PixelFormat pixelFormat)
@@ -136,7 +146,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
         imageBuffer = UnacceleratedRemoteImageBufferProxy::create(size, resolutionScale, colorSpace, pixelFormat, *this);
 
     if (imageBuffer) {
-        send(Messages::RemoteRenderingBackend::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat, imageBuffer->renderingResourceIdentifier()), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        send(Messages::RemoteRenderingBackend::CreateImageBuffer(size, renderingMode, resolutionScale, colorSpace, pixelFormat, imageBuffer->renderingResourceIdentifier()), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         return imageBuffer;
     }
 
@@ -157,11 +167,11 @@ SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetImageData(size_t da
     IPC::Semaphore semaphore;
 
     if (needsSharedMemory && needsSemaphore)
-        sendSync(Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetImageData(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetImageData::Reply(handle, semaphore), m_renderingBackendIdentifier, timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
+        sendSync(Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetImageData(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryAndSemaphoreForGetImageData::Reply(handle, semaphore), renderingBackendIdentifier(), timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
     else if (needsSharedMemory)
-        sendSync(Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetImageData(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetImageData::Reply(handle), m_renderingBackendIdentifier, timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
+        sendSync(Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetImageData(dataSize), Messages::RemoteRenderingBackend::UpdateSharedMemoryForGetImageData::Reply(handle), renderingBackendIdentifier(), timeout, IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
     else if (needsSemaphore)
-        sendSync(Messages::RemoteRenderingBackend::SemaphoreForGetImageData(), Messages::RemoteRenderingBackend::SemaphoreForGetImageData::Reply(semaphore), m_renderingBackendIdentifier, timeout);
+        sendSync(Messages::RemoteRenderingBackend::SemaphoreForGetImageData(), Messages::RemoteRenderingBackend::SemaphoreForGetImageData::Reply(semaphore), renderingBackendIdentifier(), timeout);
 
     if (!handle.handle.isNull()) {
         m_getImageDataSharedMemory = SharedMemory::map(handle.handle, SharedMemory::Protection::ReadOnly);
@@ -180,17 +190,13 @@ SharedMemory* RemoteRenderingBackendProxy::sharedMemoryForGetImageData(size_t da
 bool RemoteRenderingBackendProxy::waitForGetImageDataToComplete(IPC::Timeout timeout)
 {
     ASSERT(m_getImageDataSemaphore);
-#if OS(DARWIN)
     return m_getImageDataSemaphore->waitFor(timeout);
-#else
-    return true;
-#endif
 }
 
 void RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory()
 {
     m_getImageDataSharedMemory = nullptr;
-    send(Messages::RemoteRenderingBackend::DestroyGetImageDataSharedMemory(), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::RemoteRenderingBackend::DestroyGetImageDataSharedMemory(), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 String RemoteRenderingBackendProxy::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution, RenderingResourceIdentifier renderingResourceIdentifier)
@@ -198,7 +204,7 @@ String RemoteRenderingBackendProxy::getDataURLForImageBuffer(const String& mimeT
     sendDeferredWakeupMessageIfNeeded();
 
     String urlString;
-    sendSync(Messages::RemoteRenderingBackend::GetDataURLForImageBuffer(mimeType, quality, preserveResolution, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataURLForImageBuffer::Reply(urlString), m_renderingBackendIdentifier, 1_s);
+    sendSync(Messages::RemoteRenderingBackend::GetDataURLForImageBuffer(mimeType, quality, preserveResolution, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataURLForImageBuffer::Reply(urlString), renderingBackendIdentifier(), 1_s);
     return urlString;
 }
 
@@ -207,7 +213,7 @@ Vector<uint8_t> RemoteRenderingBackendProxy::getDataForImageBuffer(const String&
     sendDeferredWakeupMessageIfNeeded();
 
     Vector<uint8_t> data;
-    sendSync(Messages::RemoteRenderingBackend::GetDataForImageBuffer(mimeType, quality, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataForImageBuffer::Reply(data), m_renderingBackendIdentifier, 1_s);
+    sendSync(Messages::RemoteRenderingBackend::GetDataForImageBuffer(mimeType, quality, renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetDataForImageBuffer::Reply(data), renderingBackendIdentifier(), 1_s);
     return data;
 }
 
@@ -216,7 +222,7 @@ Vector<uint8_t> RemoteRenderingBackendProxy::getBGRADataForImageBuffer(Rendering
     sendDeferredWakeupMessageIfNeeded();
 
     Vector<uint8_t> data;
-    sendSync(Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer(renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer::Reply(data), m_renderingBackendIdentifier, 1_s);
+    sendSync(Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer(renderingResourceIdentifier), Messages::RemoteRenderingBackend::GetBGRADataForImageBuffer::Reply(data), renderingBackendIdentifier(), 1_s);
     return data;
 }
 
@@ -225,7 +231,7 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
     sendDeferredWakeupMessageIfNeeded();
 
     ShareableBitmap::Handle handle;
-    auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution), Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer::Reply(handle), m_renderingBackendIdentifier, 1_s);
+    auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution), Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer::Reply(handle), renderingBackendIdentifier(), 1_s);
     if (handle.isNull())
         return { };
     ASSERT_UNUSED(sendResult, sendResult);
@@ -234,17 +240,17 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
 
 void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteRenderingBackendProxy::cacheFont(Ref<WebCore::Font>&& font)
 {
-    send(Messages::RemoteRenderingBackend::CacheFont(WTFMove(font)), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::RemoteRenderingBackend::CacheFont(WTFMove(font)), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteRenderingBackendProxy::deleteAllFonts()
 {
-    send(Messages::RemoteRenderingBackend::DeleteAllFonts(), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::RemoteRenderingBackend::DeleteAllFonts(), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
@@ -252,7 +258,7 @@ void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentif
     if (renderingResourceIdentifier == m_currentDestinationImageBufferIdentifier)
         m_currentDestinationImageBufferIdentifier = WTF::nullopt;
 
-    send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackendHandle handle, RenderingResourceIdentifier renderingResourceIdentifier)
@@ -303,7 +309,7 @@ void RemoteRenderingBackendProxy::willAppendItem(RenderingResourceIdentifier new
 
 void RemoteRenderingBackendProxy::sendWakeupMessage(const GPUProcessWakeupMessageArguments& arguments)
 {
-    send(Messages::RemoteRenderingBackend::WakeUpAndApplyDisplayList(arguments), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::RemoteRenderingBackend::WakeUpAndApplyDisplayList(arguments), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void RemoteRenderingBackendProxy::sendDeferredWakeupMessageIfNeeded()
@@ -326,9 +332,7 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
     if (!wasEmpty || didChangeItemBuffer == DisplayList::DidChangeItemBuffer::Yes) {
         if (m_deferredWakeupMessageArguments) {
             if (sharedHandle->tryToResume({ m_deferredWakeupMessageArguments->offset, m_deferredWakeupMessageArguments->destinationImageBufferIdentifier.toUInt64() })) {
-#if PLATFORM(COCOA)
-                m_resumeDisplayListSemaphore.signal();
-#endif
+                m_parameters.resumeDisplayListSemaphore.signal();
                 m_deferredWakeupMessageArguments = WTF::nullopt;
                 m_remainingItemsToAppendBeforeSendingWakeup = 0;
             } else if (!--m_remainingItemsToAppendBeforeSendingWakeup) {
@@ -343,9 +347,7 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
 
     auto offsetToRead = sharedHandle->writableOffset() - numberOfBytes;
     if (sharedHandle->tryToResume({ offsetToRead, destinationImageBuffer.toUInt64() })) {
-#if PLATFORM(COCOA)
-        m_resumeDisplayListSemaphore.signal();
-#endif
+        m_parameters.resumeDisplayListSemaphore.signal();
         return;
     }
 
@@ -404,7 +406,7 @@ DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size
     sharedMemory->createHandle(sharedMemoryHandle, SharedMemory::Protection::ReadWrite);
 
     auto identifier = DisplayList::ItemBufferIdentifier::generate();
-    send(Messages::RemoteRenderingBackend::DidCreateSharedDisplayListHandle(identifier, { WTFMove(sharedMemoryHandle), sharedMemory->size() }, destinationBufferIdentifier), m_renderingBackendIdentifier, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    send(Messages::RemoteRenderingBackend::DidCreateSharedDisplayListHandle(identifier, { WTFMove(sharedMemoryHandle), sharedMemory->size() }, destinationBufferIdentifier), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 
     auto newHandle = DisplayListWriterHandle::create(identifier, sharedMemory.releaseNonNull());
     auto displayListHandle = newHandle->createHandle();
@@ -413,6 +415,11 @@ DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size
     m_sharedDisplayListHandles.set(identifier, WTFMove(newHandle));
 
     return displayListHandle;
+}
+
+RenderingBackendIdentifier RemoteRenderingBackendProxy::renderingBackendIdentifier() const
+{
+    return m_parameters.identifier;
 }
 
 } // namespace WebKit

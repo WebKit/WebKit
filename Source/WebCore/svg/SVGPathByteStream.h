@@ -97,6 +97,7 @@ public:
     void clear() { m_data.clear(); }
     bool isEmpty() const { return m_data.isEmpty(); }
     unsigned size() const { return m_data.size(); }
+    void shrinkToFit() { m_data.shrinkToFit(); }
 
 private:
     Data m_data;

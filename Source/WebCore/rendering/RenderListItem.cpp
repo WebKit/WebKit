@@ -83,18 +83,20 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     return markerStyle;
 }
 
-void RenderListItem::insertedIntoTree()
+void RenderListItem::insertedIntoTree(IsInternalMove isInternalMove)
 {
-    RenderBlockFlow::insertedIntoTree();
+    RenderBlockFlow::insertedIntoTree(isInternalMove);
 
-    updateListMarkerNumbers();
+    if (isInternalMove == IsInternalMove::No)
+        updateListMarkerNumbers();
 }
 
-void RenderListItem::willBeRemovedFromTree()
+void RenderListItem::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
-    RenderBlockFlow::willBeRemovedFromTree();
+    RenderBlockFlow::willBeRemovedFromTree(isInternalMove);
 
-    updateListMarkerNumbers();
+    if (isInternalMove == IsInternalMove::No)
+        updateListMarkerNumbers();
 }
 
 bool isHTMLListElement(const Node& node)

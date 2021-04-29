@@ -47,10 +47,4 @@ void SymbolObject::finishCreation(VM& vm, Symbol* symbol)
     setInternalValue(vm, symbol);
 }
 
-JSValue SymbolObject::defaultValue(const JSObject* object, JSGlobalObject*, PreferredPrimitiveType)
-{
-    const SymbolObject* symbolObject = jsCast<const SymbolObject*>(object);
-    return symbolObject->internalValue();
-}
-
 } // namespace JSC

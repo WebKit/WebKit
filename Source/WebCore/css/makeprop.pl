@@ -1409,8 +1409,6 @@ typedef USVString CSSOMString;
 
 partial interface CSSStyleDeclaration {
 
-#if defined(ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION) && ENABLE_ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION
-
 EOF
 
 print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL << "EOF";
@@ -1427,7 +1425,7 @@ foreach my $nameOrAlias (@namesAndAliases) {
     my $name = $namesAndAliasesToName{$nameOrAlias};
     my $propertyId = $nameToId{$namesAndAliasesToName{$name}};
 
-    my @extendedAttributeValues = ("CSSProperty=${propertyId}");
+    my @extendedAttributeValues = ("DelegateToSharedSyntheticAttribute=propertyValueForCamelCasedIDLAttribute", "CallWith=PropertyName");
     push(@extendedAttributeValues, "EnabledBySetting=${settingsFlags{$name}}") if $settingsFlags{$name};
     push(@extendedAttributeValues, "EnabledAtRuntime=${runtimeFlags{$name}}") if $runtimeFlags{$name};
     my $extendedAttributes = join(", ", @extendedAttributeValues);
@@ -1450,7 +1448,7 @@ foreach my $nameOrAlias (grep { $_ =~ /^\-webkit\-/ } @namesAndAliases) {
     my $name = $namesAndAliasesToName{$nameOrAlias};
     my $propertyId = $nameToId{$namesAndAliasesToName{$name}};
 
-    my @extendedAttributeValues = ("CSSProperty=${propertyId}");
+    my @extendedAttributeValues = ("DelegateToSharedSyntheticAttribute=propertyValueForWebKitCasedIDLAttribute", "CallWith=PropertyName");
     push(@extendedAttributeValues, "EnabledBySetting=${settingsFlags{$name}}") if $settingsFlags{$name};
     push(@extendedAttributeValues, "EnabledAtRuntime=${runtimeFlags{$name}}") if $runtimeFlags{$name};
     my $extendedAttributes = join(", ", @extendedAttributeValues);
@@ -1472,7 +1470,7 @@ foreach my $nameOrAlias (grep { $_ =~ /\-/ } @namesAndAliases) {
     my $name = $namesAndAliasesToName{$nameOrAlias};
     my $propertyId = $nameToId{$namesAndAliasesToName{$name}};
 
-    my @extendedAttributeValues = ("CSSProperty=${propertyId}");
+    my @extendedAttributeValues = ("DelegateToSharedSyntheticAttribute=propertyValueForDashedIDLAttribute", "CallWith=PropertyName");
     push(@extendedAttributeValues, "EnabledBySetting=${settingsFlags{$name}}") if $settingsFlags{$name};
     push(@extendedAttributeValues, "EnabledAtRuntime=${runtimeFlags{$name}}") if $runtimeFlags{$name};
     my $extendedAttributes = join(", ", @extendedAttributeValues);
@@ -1494,7 +1492,7 @@ foreach my $nameOrAlias (grep { $_ =~ /^\-epub\-/ } @namesAndAliases) {
     my $name = $namesAndAliasesToName{$nameOrAlias};
     my $propertyId = $nameToId{$namesAndAliasesToName{$name}};
 
-    my @extendedAttributeValues = ("CSSProperty=${propertyId}");
+    my @extendedAttributeValues = ("DelegateToSharedSyntheticAttribute=propertyValueForEpubCasedIDLAttribute", "CallWith=PropertyName");
     push(@extendedAttributeValues, "EnabledBySetting=${settingsFlags{$name}}") if $settingsFlags{$name};
     push(@extendedAttributeValues, "EnabledAtRuntime=${runtimeFlags{$name}}") if $runtimeFlags{$name};
     my $extendedAttributes = join(", ", @extendedAttributeValues);
@@ -1503,8 +1501,6 @@ foreach my $nameOrAlias (grep { $_ =~ /^\-epub\-/ } @namesAndAliases) {
 }
 
 print CSS_STYLE_DECLARATION_PROPERTY_NAMES_IDL << "EOF";
-
-#endif
 };
 
 EOF

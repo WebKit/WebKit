@@ -141,7 +141,6 @@ public:
     // Local storage
     void clearAllDatabases();
     void setDatabaseQuota(uint64_t);
-    void setQuotaLoggingEnabled(bool);
     JSRetainPtr<JSStringRef> pathToLocalResource(JSStringRef);
     void syncLocalStorage();
 
@@ -493,6 +492,8 @@ public:
     void clearAppBoundSession();
     void setAppBoundDomains(JSValueRef originArray, JSValueRef callback);
     void didSetAppBoundDomainsCallback();
+    void appBoundRequestContextDataForDomain(JSStringRef, JSValueRef);
+    void callDidReceiveAppBoundRequestContextDataForDomainCallback(String&&);
 
     size_t userScriptInjectedCount() const;
     void injectUserScript(JSStringRef);

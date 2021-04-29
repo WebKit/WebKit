@@ -36,7 +36,6 @@ from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.port.config import clear_cached_configuration
 from webkitpy.port.gtk import GtkPort
-from webkitpy.port.pulseaudio_sanitizer_mock import PulseAudioSanitizerMock
 from webkitpy.port import port_testcase
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions
@@ -47,12 +46,6 @@ from webkitcorepy import OutputCapture
 class GtkPortTest(port_testcase.PortTestCase):
     port_name = 'gtk'
     port_maker = GtkPort
-
-    # Additionally mocks out the PulseAudioSanitizer methods.
-    def make_port(self, host=None, port_name=None, options=None, os_name=None, os_version=None, **kwargs):
-        port = super(GtkPortTest, self).make_port(host, port_name, options, os_name, os_version, **kwargs)
-        port._pulseaudio_sanitizer = PulseAudioSanitizerMock()
-        return port
 
     def test_default_baseline_search_path(self):
         port = self.make_port()

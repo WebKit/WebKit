@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -108,29 +108,35 @@ Expected<JSValue, NakedPtr<Exception>> ScriptFunctionCall::call()
 
     VM& vm = m_globalObject->vm();
     JSLockHolder lock(vm);
-    auto scope = DECLARE_THROW_SCOPE(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto makeExceptionResult = [&] (Exception* exception) -> Expected<JSValue, NakedPtr<Exception>> {
+        // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.
+        if (!vm.isTerminationException(exception))
+            return makeUnexpected(exception);
+        return { };
+    };
 
     JSValue function = thisObject->get(m_globalObject, Identifier::fromString(vm, m_name));
-    if (UNLIKELY(scope.exception()))
-        return makeUnexpected(scope.exception());
+    Exception* exception = scope.exception();
+    if (UNLIKELY(exception)) {
+        scope.clearException();
+        return makeExceptionResult(exception);
+    }
 
     auto callData = getCallData(vm, function);
     if (callData.type == CallData::Type::None)
         return { };
 
     JSValue result;
-    NakedPtr<Exception> exception;
+    NakedPtr<Exception> uncaughtException;
     if (m_callHandler)
-        result = m_callHandler(m_globalObject, function, callData, thisObject, m_arguments, exception);
+        result = m_callHandler(m_globalObject, function, callData, thisObject, m_arguments, uncaughtException);
     else
-        result = JSC::call(m_globalObject, function, callData, thisObject, m_arguments, exception);
+        result = JSC::call(m_globalObject, function, callData, thisObject, m_arguments, uncaughtException);
 
-    if (exception) {
-        // Do not treat a terminated execution exception as having an exception. Just treat it as an empty result.
-        if (!isTerminatedExecutionException(vm, exception))
-            return makeUnexpected(exception);
-        return { };
-    }
+    if (uncaughtException)
+        return makeExceptionResult(uncaughtException);
 
     return result;
 }

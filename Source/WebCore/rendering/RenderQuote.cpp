@@ -47,16 +47,16 @@ RenderQuote::~RenderQuote()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderQuote::insertedIntoTree()
+void RenderQuote::insertedIntoTree(IsInternalMove isInternalMove)
 {
-    RenderInline::insertedIntoTree();
+    RenderInline::insertedIntoTree(isInternalMove);
     view().setHasQuotesNeedingUpdate(true);
 }
 
-void RenderQuote::willBeRemovedFromTree()
+void RenderQuote::willBeRemovedFromTree(IsInternalMove isInternalMove)
 {
     view().setHasQuotesNeedingUpdate(true);
-    RenderInline::willBeRemovedFromTree();
+    RenderInline::willBeRemovedFromTree(isInternalMove);
 }
 
 void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

@@ -298,6 +298,8 @@ enum class ProceedWithImageExtraction : bool {
     RetainPtr<UIWebFormAccessory> _formAccessoryView;
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
+    RetainPtr<UIView> _targetedPreviewViewsContainerView;
+    WeakObjCPtr<UIScrollView> _scrollViewForTargetedPreview;
     RetainPtr<UIView> _contextMenuHintContainerView;
     RetainPtr<UIView> _dragPreviewContainerView;
     RetainPtr<UIView> _dropPreviewContainerView;
@@ -376,6 +378,8 @@ enum class ProceedWithImageExtraction : bool {
 
     RetainPtr<WKKeyboardScrollViewAnimator> _keyboardScrollingAnimator;
 
+    Vector<BlockPtr<void()>> _actionsToPerformAfterEditorStateUpdate;
+
 #if ENABLE(DATALIST_ELEMENT)
     RetainPtr<UIView <WKFormControl>> _dataListTextSuggestionsInputView;
     RetainPtr<NSArray<UITextSuggestion *>> _dataListTextSuggestions;
@@ -386,6 +390,7 @@ enum class ProceedWithImageExtraction : bool {
     BOOL _showingTextStyleOptions;
     BOOL _hasValidPositionInformation;
     BOOL _isTapHighlightIDValid;
+    BOOL _isTapHighlightFading;
     BOOL _potentialTapInProgress;
     BOOL _isDoubleTapPending;
     BOOL _longPressCanClick;
@@ -438,6 +443,7 @@ enum class ProceedWithImageExtraction : bool {
     WebKit::DragDropInteractionState _dragDropInteractionState;
     RetainPtr<UIDragInteraction> _dragInteraction;
     RetainPtr<UIDropInteraction> _dropInteraction;
+    BOOL _isAnimatingDragCancel;
     BOOL _shouldRestoreCalloutBarAfterDrop;
     RetainPtr<UIView> _visibleContentViewSnapshot;
     RetainPtr<UIView> _unselectedContentSnapshot;
@@ -516,6 +522,7 @@ enum class ProceedWithImageExtraction : bool {
 @property (nonatomic, readonly) UIWebTouchEventsGestureRecognizer *touchEventGestureRecognizer;
 @property (nonatomic, readonly) NSArray<WKDeferringGestureRecognizer *> *deferringGestures;
 @property (nonatomic, readonly) WebKit::GestureRecognizerConsistencyEnforcer& gestureRecognizerConsistencyEnforcer;
+@property (nonatomic, readonly) CGRect tapHighlightViewRect;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;
@@ -524,6 +531,7 @@ enum class ProceedWithImageExtraction : bool {
 
 - (void)setUpInteraction;
 - (void)cleanUpInteraction;
+- (void)cleanUpRelatedViews;
 
 - (void)scrollViewWillStartPanOrPinchGesture;
 
@@ -638,6 +646,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)doAfterPositionInformationUpdate:(void (^)(WebKit::InteractionInformationAtPosition))action forRequest:(WebKit::InteractionInformationRequest)request;
 - (BOOL)ensurePositionInformationIsUpToDate:(WebKit::InteractionInformationRequest)request;
 
+- (void)doAfterEditorStateUpdateAfterFocusingElement:(dispatch_block_t)block;
+
 #if ENABLE(DRAG_SUPPORT)
 - (void)_didChangeDragInteractionPolicy;
 - (void)_didPerformDragOperation:(BOOL)handled;
@@ -674,6 +684,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled;
 
 #if USE(UICONTEXTMENU)
+- (UIView *)textEffectsWindow;
+
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement;
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible;
 - (void)_removeContextMenuViewIfPossible;
@@ -728,6 +740,8 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 #if ENABLE(DATALIST_ELEMENT)
 - (void)_selectDataListOption:(NSInteger)optionIndex;
 - (void)_setDataListSuggestionsControl:(WKDataListSuggestionsControl *)control;
+
+@property (nonatomic, readonly) BOOL isShowingDataListSuggestions;
 #endif
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
@@ -735,6 +749,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) NSString *formInputLabel;
 @property (nonatomic, readonly) WKDateTimeInputControl *dateTimeInputControl;
 @property (nonatomic, readonly) WKFormSelectControl *selectControl;
+#if ENABLE(DRAG_SUPPORT)
+@property (nonatomic, readonly, getter=isAnimatingDragCancel) BOOL animatingDragCancel;
+#endif
 
 @end
 

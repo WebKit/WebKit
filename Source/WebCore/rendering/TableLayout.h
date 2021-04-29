@@ -28,6 +28,8 @@ namespace WebCore {
 
 class RenderTable;
 
+enum class TableIntrinsics : uint8_t;
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TableLayout);
 class TableLayout {
     WTF_MAKE_NONCOPYABLE(TableLayout);
@@ -40,7 +42,7 @@ public:
 
     virtual ~TableLayout() = default;
 
-    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth) = 0;
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth, TableIntrinsics) = 0;
     virtual LayoutUnit scaledWidthFromPercentColumns() const { return 0_lu; }
     virtual void applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const = 0;
     virtual void layout() = 0;

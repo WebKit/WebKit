@@ -87,12 +87,20 @@ extern const char * const _xpc_error_key_description;
 #endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 
 #if USE(APPLE_INTERNAL_SDK)
+#include <os/transaction_private.h>
 #include <xpc/private.h>
 #else
+
+#if OS_OBJECT_USE_OBJC
+OS_OBJECT_DECL(os_transaction);
+#else
+typedef struct os_transaction_s *os_transaction_t;
+#endif
+
 enum {
     DISPATCH_MACH_SEND_POSSIBLE = 0x8,
 };
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
 
 #if !defined(XPC_NOESCAPE)
 #define XPC_NOESCAPE
@@ -148,8 +156,7 @@ void xpc_dictionary_set_value(xpc_object_t, const char* key, xpc_object_t value)
 xpc_type_t xpc_get_type(xpc_object_t);
 void xpc_main(xpc_connection_handler_t);
 const char* xpc_string_get_string_ptr(xpc_object_t);
-void xpc_transaction_begin(void);
-void xpc_transaction_end(void);
+os_transaction_t os_transaction_create(const char *description);
 void xpc_transaction_exit_clean(void);
 void xpc_track_activity(void);
 

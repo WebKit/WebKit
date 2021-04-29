@@ -26,7 +26,6 @@
 #include "GStreamerVideoCommon.h"
 #include "GStreamerVideoEncoder.h"
 #include "GStreamerVideoFrameLibWebRTC.h"
-#include "LibWebRTCWebKitMacros.h"
 #include "webrtc/common_video/h264/h264_common.h"
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
 #include "webrtc/modules/video_coding/codecs/vp8/include/vp8.h"
@@ -375,7 +374,7 @@ public:
 
     std::vector<webrtc::SdpVideoFormat> ConfigureSupportedCodec() final
     {
-        return supportedH264Formats();
+        return gstreamerSupportedH264Codecs();
     }
 
     const gchar* Caps() final { return "video/x-h264"; }
@@ -433,15 +432,8 @@ std::unique_ptr<webrtc::VideoEncoder> GStreamerVideoEncoderFactory::CreateVideoE
         return makeUniqueWithoutFastMallocCheck<webrtc::LibvpxVp8Encoder>(webrtc::LibvpxInterface::CreateEncoder(), webrtc::VP8Encoder::Settings());
     }
 
-    if (format.name == cricket::kH264CodecName) {
-#if WEBKIT_LIBWEBRTC_OPENH264_ENCODER
-        GST_INFO("Using OpenH264 libwebrtc encoder.");
-        return webrtc::H264Encoder::Create(cricket::VideoCodec(format));
-#else
-        GST_INFO("Using H264 GStreamer encoder.");
+    if (format.name == cricket::kH264CodecName)
         return makeUnique<GStreamerH264Encoder>(format);
-#endif
-    }
 
     return nullptr;
 }
@@ -464,14 +456,7 @@ std::vector<webrtc::SdpVideoFormat> GStreamerVideoEncoderFactory::GetSupportedFo
     std::vector<webrtc::SdpVideoFormat> supportedCodecs;
 
     supportedCodecs.push_back(webrtc::SdpVideoFormat(cricket::kVp8CodecName));
-
-    // If OpenH264 is present, prefer it over the GStreamer encoders (x264enc, usually).
-#if WEBKIT_LIBWEBRTC_OPENH264_ENCODER
-    auto formats = supportedH264Formats();
-    supportedCodecs.insert(supportedCodecs.end(), formats.begin(), formats.end());
-#else
     GStreamerH264Encoder().AddCodecIfSupported(supportedCodecs);
-#endif
 
     return supportedCodecs;
 }

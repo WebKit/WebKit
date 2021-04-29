@@ -26,7 +26,7 @@ import time
 from fakeredis import FakeStrictRedis
 from redis import StrictRedis
 from resultsdbpy.model.cassandra_context import CassandraContext
-from resultsdbpy.model.ci_context import BuildbotURLFactory, BuildbotEightURLFactory
+from resultsdbpy.model.ci_context import BuildbotURLFactory
 from resultsdbpy.controller.configuration import Configuration
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
@@ -241,19 +241,6 @@ class URLFactoryTest(WaitForDockerTestCase):
             self.assertEqual('https://build.webkit.org/#/builders/1', factory.url(builder_name='Mojave-Release-Builder', worker_name='builder1', should_fetch=True))
             self.assertEqual('https://build.webkit.org/#/builders/1/builds/1', factory.url(builder_name='Mojave-Release-Builder', build_number=1, worker_name='builder1', should_fetch=True))
             self.assertEqual('https://build.webkit.org/#/workers/1', factory.url(build_number=1, worker_name='builder1', should_fetch=True))
-
-    def test_old_builder_url(self):
-        factory = BuildbotEightURLFactory(master='build.webkit.org')
-        self.assertIsNone(factory.url())
-        self.assertEqual('https://build.webkit.org/builders/Apple%20Mojave%20Release%20WK2%20%28Tests%29', factory.url(builder_name='Apple Mojave Release WK2 (Tests)'))
-        self.assertEqual('https://build.webkit.org/builders/Apple%20Mojave%20Release%20%28Build%29', factory.url(builder_name='Apple Mojave Release (Build)'))
-        self.assertEqual('https://build.webkit.org/builders/Apple%20Mojave%20Release%20%28Build%29/builds/7170', factory.url(builder_name='Apple Mojave Release (Build)', build_number=7170))
-
-    def test_old_worker_url(self):
-        factory = BuildbotEightURLFactory(master='build.webkit.org')
-        self.assertEqual('https://build.webkit.org/buildslaves/bot610', factory.url(worker_name='bot610'))
-        self.assertEqual('https://build.webkit.org/buildslaves/bot611', factory.url(worker_name='bot611'))
-        self.assertEqual('https://build.webkit.org/builders/Apple%20Mojave%20Release%20WK2%20%28Tests%29', factory.url(builder_name='Apple Mojave Release WK2 (Tests)', worker_name='bot610'))
 
 
 class CIContextTest(WaitForDockerTestCase):

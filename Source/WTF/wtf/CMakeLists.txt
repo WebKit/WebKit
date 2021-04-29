@@ -69,6 +69,7 @@ set(WTF_PUBLIC_HEADERS
     FileMetadata.h
     FilePrintStream.h
     FileSystem.h
+    FixedVector.h
     FlipBytes.h
     ForbidHeapAllocation.h
     Forward.h

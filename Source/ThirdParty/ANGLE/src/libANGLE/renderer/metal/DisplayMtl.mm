@@ -132,29 +132,12 @@ angle::Result DisplayMtl::initializeImpl(egl::Display *display)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
-#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
-        const std::string anglePreferredDevice = angle::GetEnvironmentVar(kANGLEPreferredDeviceEnv);
-        if (anglePreferredDevice != "")
+        mMetalDevice = [getMetalDeviceMatchingAttribute(display->getAttributeMap()) ANGLE_MTL_AUTORELEASE];
+        //If we can't create a device, fail initialization.
+        if(!mMetalDevice.get())
         {
-            NSArray<id<MTLDevice>> *devices = [MTLCopyAllDevices() ANGLE_MTL_AUTORELEASE];
-            for (id<MTLDevice> device in devices)
-            {
-                if ([device.name.lowercaseString
-                        containsString:[NSString stringWithUTF8String:anglePreferredDevice.c_str()]
-                                           .lowercaseString])
-                {
-                    NSLog(@"Using Metal Device: %@", [device name]);
-                    mMetalDevice = [device ANGLE_MTL_AUTORELEASE];
-                    break;
-                }
-            }
+            return angle::Result::Stop;
         }
-#endif
-        if (!mMetalDevice)
-        {
-            mMetalDevice = [MTLCreateSystemDefaultDevice() ANGLE_MTL_AUTORELEASE];
-        }
-
         mMetalDeviceVendorId = mtl::GetDeviceVendorId(mMetalDevice);
 
         mCmdQueue.set([[mMetalDevice.get() newCommandQueue] ANGLE_MTL_AUTORELEASE]);
@@ -252,6 +235,68 @@ egl::Error DisplayMtl::validateClientBuffer(const egl::Config *configuration,
     // TODO: Fill out properly
     return egl::NoError();
 }
+
+
+id<MTLDevice> DisplayMtl::getMetalDeviceMatchingAttribute(const egl::AttributeMap &attribs)
+{
+#if defined(ANGLE_PLATFORM_MACOS) || defined(ANGLE_PLATFORM_MACCATALYST)
+    const std::string anglePreferredDevice = angle::GetEnvironmentVar(kANGLEPreferredDeviceEnv);
+    NSArray<id<MTLDevice>> *deviceList = MTLCopyAllDevices();
+    if (anglePreferredDevice != "")
+    {
+        for (id<MTLDevice> device in deviceList)
+        {
+            if ([device.name.lowercaseString
+                    containsString:[NSString stringWithUTF8String:anglePreferredDevice.c_str()]
+                                       .lowercaseString])
+            {
+                NSLog(@"Using Metal Device: %@", [device name]);
+                return  device;
+                break;
+            }
+        }
+    }
+
+    NSMutableArray<id<MTLDevice>> *externalGPUs = [[NSMutableArray alloc] init];
+    NSMutableArray<id<MTLDevice>> *integratedGPUs = [[NSMutableArray alloc] init];
+    NSMutableArray<id<MTLDevice>> *discreteGPUs = [[NSMutableArray alloc] init];
+    for (id <MTLDevice> device in deviceList) {
+        if (device.removable)
+        {
+            [externalGPUs addObject:device];
+        }
+        else if (device.lowPower)
+        {
+            [integratedGPUs addObject:device];
+        }
+        else
+        {
+            [discreteGPUs addObject:device];
+        }
+    }
+    //TODO: External GPU support. Do we prefer high power / low bandwidth for general WebGL applications?
+    //      Can we support hot-swapping in GPU's?
+    if (attribs.get(EGL_POWER_PREFERENCE_ANGLE, EGL_LOW_POWER_ANGLE) == EGL_HIGH_POWER_ANGLE)
+    {
+        //Search for a discrete GPU first.
+        for (id<MTLDevice> device in discreteGPUs) {
+            if(![device isHeadless])
+                return device;
+        }
+    }
+    //If we've selected a low power device, look through integrated devices.
+    for (id<MTLDevice> device in integratedGPUs) {
+        if(![device isHeadless])
+            return device;
+    }
+    //If we selected a low power device and there's no low-power devices avaialble, return the first (default) device.
+    if(deviceList.count > 0)
+        return deviceList[0];
+#endif
+    //If we can't find anything, or are on a platform that doesn't support power options, create a default device.
+    return MTLCreateSystemDefaultDevice();
+}
+
 
 egl::Error DisplayMtl::waitNative(const gl::Context *context, EGLint engine)
 {
@@ -384,6 +429,7 @@ void DisplayMtl::generateExtensions(egl::DisplayExtensions *outExtensions) const
     // this extension so that ANGLE can be initialized in Chrome. WebGL will fail to use
     // this extension (anglebug.com/4929)
     outExtensions->robustResourceInitialization = true;
+    outExtensions->powerPreference = true;
 }
 
 void DisplayMtl::generateCaps(egl::Caps *outCaps) const {}

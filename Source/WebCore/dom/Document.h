@@ -291,12 +291,6 @@ enum class DocumentCompatibilityMode : unsigned char {
 
 enum DimensionsCheck { WidthDimensionsCheck = 1 << 0, HeightDimensionsCheck = 1 << 1, AllDimensionsCheck = 1 << 2 };
 
-enum class SelectionRestorationMode : uint8_t {
-    RestoreOrSelectAll,
-    SelectAll,
-    PlaceCaretAtStart,
-};
-
 enum class HttpEquivPolicy {
     Enabled,
     DisabledBySettings,
@@ -1807,8 +1801,6 @@ private:
     const std::unique_ptr<DocumentMarkerController> m_markers;
     
     Timer m_styleRecalcTimer;
-
-    std::unique_ptr<Style::Update> m_pendingRenderTreeTextUpdate;
 
     Element* m_cssTarget { nullptr };
 

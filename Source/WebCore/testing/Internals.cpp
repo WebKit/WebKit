@@ -1595,6 +1595,12 @@ void Internals::setWebRTCVP9VTBSupport(bool value)
 #endif
 }
 
+void Internals::setSFrameCounter(RTCRtpSFrameTransform& transform, const String& counter)
+{
+    if (auto value = StringView(counter).toUInt64Strict())
+        transform.setCounterForTesting(*value);
+}
+
 uint64_t Internals::sframeCounter(const RTCRtpSFrameTransform& transform)
 {
     return transform.counterForTesting();
@@ -2649,6 +2655,19 @@ unsigned Internals::referencingNodeCount(const Document& document) const
 {
     return document.referencingNodeCount();
 }
+
+#if ENABLE(WEB_AUDIO)
+uint64_t Internals::baseAudioContextIdentifier(const BaseAudioContext& context)
+{
+    return context.contextID();
+}
+
+bool Internals::isBaseAudioContextAlive(uint64_t contextID)
+{
+    ASSERT(contextID);
+    return BaseAudioContext::isContextAlive(contextID);
+}
+#endif // ENABLE(WEB_AUDIO)
 
 #if ENABLE(INTERSECTION_OBSERVER)
 unsigned Internals::numberOfIntersectionObservers(const Document& document) const
@@ -4408,9 +4427,9 @@ ExceptionOr<Internals::NowPlayingState> Internals::nowPlayingState() const
 }
 
 #if ENABLE(VIDEO)
-RefPtr<HTMLMediaElement> Internals::bestMediaElementForShowingPlaybackControlsManager(Internals::PlaybackControlsPurpose purpose)
+RefPtr<HTMLMediaElement> Internals::bestMediaElementForRemoteControls(Internals::PlaybackControlsPurpose purpose)
 {
-    return HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(purpose);
+    return HTMLMediaElement::bestMediaElementForRemoteControls(purpose);
 }
 
 Internals::MediaSessionState Internals::mediaSessionState(HTMLMediaElement& element)
@@ -6106,10 +6125,9 @@ ExceptionOr<double> Internals::currentMediaSessionPosition(const MediaSession& s
 
 ExceptionOr<void> Internals::sendMediaSessionAction(MediaSession& session, const MediaSessionActionDetails& actionDetails)
 {
-    if (auto handler = session.handlerForAction(actionDetails.action)) {
-        handler->handleEvent(actionDetails);
+    if (session.callActionHandler(actionDetails))
         return { };
-    }
+
     return Exception { InvalidStateError };
 }
 

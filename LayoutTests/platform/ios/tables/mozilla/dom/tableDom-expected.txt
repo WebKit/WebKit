@@ -4,28 +4,28 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {FORM} at (0,0) size 784x25
-        RenderMenuList {SELECT} at (2,2) size 83x20 [color=#007AFF] [bgcolor=#78788029]
+        RenderMenuList {SELECT} at (2,2) size 83x20 [color=#007AFF] [bgcolor=#E9E9EA]
           RenderBlock (anonymous) at (5,3) size 73x14
             RenderText at (0,0) size 61x14
               text run at (0,0) width 61: "append cell"
         RenderText {#text} at (87,1) size 53x19
           text run at (87,1) width 53: "   tbody "
-        RenderTextControl {INPUT} at (141,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+        RenderTextControl {INPUT} at (141,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
         RenderText {#text} at (193,1) size 42x19
           text run at (193,1) width 42: "   row "
-        RenderTextControl {INPUT} at (236,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+        RenderTextControl {INPUT} at (236,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
         RenderText {#text} at (288,1) size 36x19
           text run at (288,1) width 36: "   col "
-        RenderTextControl {INPUT} at (325,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+        RenderTextControl {INPUT} at (325,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
         RenderText {#text} at (377,1) size 75x19
           text run at (377,1) width 75: "   row span "
-        RenderTextControl {INPUT} at (453,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+        RenderTextControl {INPUT} at (453,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
         RenderText {#text} at (505,1) size 70x19
           text run at (505,1) width 70: "   col span "
-        RenderTextControl {INPUT} at (576,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+        RenderTextControl {INPUT} at (576,2) size 51x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
         RenderText {#text} at (628,1) size 21x19
           text run at (628,1) width 21: "     "
-        RenderButton {INPUT} at (650,2) size 48x20 [color=#007AFF] [bgcolor=#78788029]
+        RenderButton {INPUT} at (650,2) size 48x20 [color=#007AFF] [bgcolor=#E9E9EA]
           RenderBlock (anonymous) at (11,3) size 25x14
             RenderText at (0,0) size 25x14
               text run at (0,0) width 25: "Do It"

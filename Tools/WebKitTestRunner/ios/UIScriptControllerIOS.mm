@@ -1115,12 +1115,8 @@ void UIScriptControllerIOS::activateDataListSuggestion(unsigned index, JSValueRe
 bool UIScriptControllerIOS::isShowingDataListSuggestions() const
 {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    UIViewController *presentedViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:webView()];
-    Class suggestionsViewControllerClass = NSClassFromString(@"WKDataListSuggestionsViewController");
-    if ([presentedViewController isKindOfClass:suggestionsViewControllerClass])
-        return true;
-#endif
-
+    return [webView() _isShowingDataListSuggestions];
+#else
     Class remoteKeyboardWindowClass = NSClassFromString(@"UIRemoteKeyboardWindow");
     Class suggestionsPickerViewClass = NSClassFromString(@"WKDataListSuggestionsPickerView");
     UIWindow *remoteInputHostingWindow = nil;
@@ -1141,6 +1137,7 @@ bool UIScriptControllerIOS::isShowingDataListSuggestions() const
         *stop = YES;
     });
     return foundDataListSuggestionsPickerView;
+#endif
 }
 
 void UIScriptControllerIOS::setSelectedColorForColorPicker(double red, double green, double blue)
@@ -1168,6 +1165,16 @@ void UIScriptControllerIOS::toggleCapsLock(JSValueRef callback)
 bool UIScriptControllerIOS::keyboardIsAutomaticallyShifted() const
 {
     return UIKeyboardImpl.activeInstance.isAutoShifted;
+}
+
+bool UIScriptControllerIOS::isAnimatingDragCancel() const
+{
+    return webView()._animatingDragCancel;
+}
+
+JSObjectRef UIScriptControllerIOS::tapHighlightViewRect() const
+{
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(webView()._tapHighlightViewRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
 }
 
 JSObjectRef UIScriptControllerIOS::attachmentInfo(JSStringRef jsAttachmentIdentifier)

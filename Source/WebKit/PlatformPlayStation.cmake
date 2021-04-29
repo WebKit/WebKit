@@ -52,6 +52,7 @@ list(APPEND WebKit_SOURCES
 
     Platform/IPC/unix/AttachmentUnix.cpp
     Platform/IPC/unix/ConnectionUnix.cpp
+    Platform/IPC/unix/IPCSemaphoreUnix.cpp
 
     Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 

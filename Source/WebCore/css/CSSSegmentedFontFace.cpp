@@ -108,35 +108,38 @@ static void appendFont(FontRanges& ranges, Ref<FontAccessor>&& fontAccessor, con
 
 FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescription)
 {
+    auto addResult = m_cache.add(FontDescriptionKey(fontDescription), FontRanges());
+    auto& ranges = addResult.iterator->value;
+
+    if (!addResult.isNewEntry)
+        return ranges;
+
     auto desiredRequest = fontDescription.fontSelectionRequest();
 
-    auto addResult = m_cache.add(FontDescriptionKey(fontDescription), FontRanges());
-    auto& result = addResult.iterator->value;
+    for (auto& face : m_fontFaces) {
+        if (face->computeFailureState())
+            continue;
 
-    if (addResult.isNewEntry) {
-        for (auto& face : m_fontFaces) {
-            if (face->computeFailureState())
-                continue;
+        auto selectionCapabilitiesWrapped = face->fontSelectionCapabilities();
+        ASSERT(selectionCapabilitiesWrapped.hasValue());
+        auto selectionCapabilities = selectionCapabilitiesWrapped.value();
 
-            auto selectionCapabilitiesWrapped = face->fontSelectionCapabilities();
-            ASSERT(selectionCapabilitiesWrapped.hasValue());
-            auto selectionCapabilities = selectionCapabilitiesWrapped.value();
+        bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && !isFontWeightBold(selectionCapabilities.weight.maximum) && isFontWeightBold(desiredRequest.weight);
+        bool syntheticItalic = (fontDescription.fontSynthesis() & FontSynthesisStyle) && !isItalic(selectionCapabilities.slope.maximum) && isItalic(desiredRequest.slope);
 
-            bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && !isFontWeightBold(selectionCapabilities.weight.maximum) && isFontWeightBold(desiredRequest.weight);
-            bool syntheticItalic = (fontDescription.fontSynthesis() & FontSynthesisStyle) && !isItalic(selectionCapabilities.slope.maximum) && isItalic(desiredRequest.slope);
-
-            // Metrics used for layout come from FontRanges::fontForFirstRange(), which assumes that the first font is non-null.
-            auto fontAccessor = CSSFontAccessor::create(face, fontDescription, syntheticBold, syntheticItalic);
-            if (result.isNull() && !fontAccessor->font(ExternalResourceDownloadPolicy::Forbid))
-                continue;
-            
-            auto faceRangesWrapped = face->ranges();
-            ASSERT(faceRangesWrapped.hasValue());
-            auto faceRanges = faceRangesWrapped.value();
-            appendFont(result, WTFMove(fontAccessor), faceRanges);
-        }
+        // Metrics used for layout come from FontRanges::fontForFirstRange(), which assumes that the first font is non-null.
+        auto fontAccessor = CSSFontAccessor::create(face, fontDescription, syntheticBold, syntheticItalic);
+        if (ranges.isNull() && !fontAccessor->font(ExternalResourceDownloadPolicy::Forbid))
+            continue;
+        
+        auto faceRangesWrapped = face->ranges();
+        ASSERT(faceRangesWrapped.hasValue());
+        auto faceRanges = faceRangesWrapped.value();
+        appendFont(ranges, WTFMove(fontAccessor), faceRanges);
     }
-    return result;
+    
+    ranges.shrinkToFit();
+    return ranges;
 }
 
 }

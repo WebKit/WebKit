@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (2,2) size 167x33
                           RenderTableRow {TR} at (0,2) size 167x29
                             RenderTableCell {TD} at (2,2) size 163x29 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                              RenderTextControl {INPUT} at (4,4) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+                              RenderTextControl {INPUT} at (4,4) size 155x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
                               RenderText {#text} at (0,0) size 0x0
                       RenderTable {TABLE} at (2,39) size 189x52 [border: (2px solid #FF0000)]
                         RenderTableSection {TBODY} at (2,2) size 185x48
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
                         RenderTableSection {TBODY} at (2,2) size 185x32
                           RenderTableRow {TR} at (0,2) size 185x28
                             RenderTableCell {TD} at (2,2) size 181x28 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
-                              RenderMenuList {SELECT} at (4,4) size 173x20 [color=#007AFF] [bgcolor=#78788029]
+                              RenderMenuList {SELECT} at (4,4) size 173x20 [color=#007AFF] [bgcolor=#E9E9EA]
                                 RenderBlock (anonymous) at (5,3) size 163x14
                                   RenderText at (0,0) size 152x14
                                     text run at (0,0) width 152: "USE THIS JAVASCRIPT HERE"

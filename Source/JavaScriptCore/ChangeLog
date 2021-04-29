@@ -1,3 +1,1023 @@
+2021-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] B3 reduce-double-to-float should reduce only when constant double is canonical one to reduced float value
+        https://bugs.webkit.org/show_bug.cgi?id=224403
+        <rdar://problem/76259599>
+
+        Reviewed by Mark Lam.
+
+        When reducing double-constant value to float in B3, we should check whether the double value is a canonical one
+        which can be converted back from the reduced float value. For example, double 1.1 is not the one since it is truncated
+        into float 1.1 by removing some bits.
+
+            static_cast<double>(static_cast<float>(1.1)) != 1.1
+
+        Reducing such a double to float changes the semantics.
+
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::dumpMeta const):
+        * b3/B3ConstFloatValue.cpp:
+        (JSC::B3::ConstFloatValue::dumpMeta const):
+        * b3/B3ReduceDoubleToFloat.cpp:
+        * b3/B3ReduceStrength.cpp:
+        * b3/testb3.h:
+        (populateWithInterestingValues):
+        * b3/testb3_1.cpp:
+        (run):
+        * b3/testb3_3.cpp:
+        (testConvertDoubleToFloatToDouble):
+        (testConvertDoubleToFloatEqual):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::JSC_DEFINE_JIT_OPERATION_WITH_ATTRIBUTES):
+        (JSC::FTL::DFG::LowerDFGToB3::crash):
+        (JSC::FTL::DFG::ftlUnreachable): Deleted.
+
+2021-04-10  Mark Lam  <mark.lam@apple.com>
+
+        Enable VMTraps checks in RETURN_IF_EXCEPTION.
+        https://bugs.webkit.org/show_bug.cgi?id=224078
+        rdar://75037057
+
+        Reviewed by Keith Miller.
+
+        In pre-existing code, termination of a VM's execution can already be requested
+        asynchronously (with respect to the mutator thread).  For example, sources of such
+        a request can be a watchdog timer firing, or a request to stop execution issued
+        from a main web thread to a worker thread.
+
+        This request is made by firing the VMTraps::NeedTermination event on VMTraps.
+        Firing the event here only means setting a flag to indicate the presence of the
+        request.  We still have to wait till the mutator thread reaches one of the
+        pre-designated polling check points to call VMTraps::handleTraps() in order to
+        service the request.  As a result of this need to wait for a polling check point,
+        if the mutator is executing in a long running C++ loop, then a termination request
+        may not be serviced for a long time.
+
+        However, we observed that a lot of our C++ loops already have RETURN_IF_EXCEPTION
+        checks.  Hence, if we can check VMTraps::needHandling() there, we can service the
+        VMTraps events more frequently even in a lot of C++ loops, and get a better response.
+
+        Full details of what this patch changes:
+
+        1. Shorten some type and methods names in the VMTraps class to make code easier to
+           read e.g. EventType => Event, needTrapHandling => needHandling.
+
+        2. Remove the VMTraps::Mask class.  Mask was introduced so that we can express a
+           concatenation of multiple VMTraps events to form a bit mask in a simple way.
+           In the end, it isn't flexible enough but makes the code more complicated than
+           necessary.  It is now replaced by the simpler solution of using macros to define
+           the Events as bit fields.  Having Events as bit fields intrinsically make them
+           easy to concatenate (bitwise or) or filter (bitwise and).
+
+           Also removed the unused VMTraps::Error class.
+
+        3. Make VMTraps::BitField a uint32_t.  There was always unused padding in VMTraps
+           to allow for this.  So, we'll just extend it to a full 32-bit to make it easier
+           to add more events in the future for other uses.
+
+        4. Add NeedExceptionHandling as a VMTrap::Event.
+
+        5. Make VMTraps::m_trapBits Atomic.  This makes it easier to set and clear the
+           NeedExceptionHandling bit from the mutator without a lock.
+
+        6. RETURN_IF_EXCEPTION now checks VMTraps::m_trapBits (via VMTraps::needHandling())
+           instead of checking VM::m_exception.  If the VMTraps::m_trapBits is non-null,
+           the macro will call VM:hasExceptionsAfterHandlingTraps() to service VMTraps
+           events as appropriate before returning whether an exception is being thrown.
+           The result of VM:hasExceptionsAfterHandlingTraps() will determine if
+           RETURN_IF_EXCEPTION returns or not.
+
+           VM:hasExceptionsAfterHandlingTraps() is intentionally designed to take a minimum
+           of arguments (just the VM as this pointer).  This is because RETURN_IF_EXCEPTION
+           is called from many places, and we would like to minimize code size bloating
+           from this change.
+
+        7. Simplify paramaters of VMTraps::handleTraps().
+
+           NeedDebuggerBreak's callFrame argument was always vm.topCallFrame anyway.
+           So, the patch makes it explicit, and removes the callFrame parameter.
+
+           NeedWatchdogCheck's globalObject argument should have always been
+           vm.entryScope->globalObject(), and we can remove the globalObject parameter.
+
+           Before this, we pass in whichever globalObject was convenient to grab hold of.
+           However, the idea of the watchdog is to time out the current script executing
+           on the stack.  Hence, it makes sense to identify thay script by the globalObject
+           in use at VM entry.
+
+           So far, the only clients that uses the watchdog mechanism only operates in
+           scenarios with only one globalObject anyway.  So this formalization to use
+           VMEntryScope's globalObject does not change the expected behavior.
+
+        8. Make the execution of termination more robust.  Before reading this, please
+           read the description of the Events in VMTraps.h first, especially the section
+           on NeedTermination.
+
+           Here's the life cycle of a termination:
+
+           a. a client requests termination of the current execution stack by calling
+              VM::notifyNeedTermination().  notifyNeedTermination() does 2 things:
+
+               i. fire the NeedTermination event on VMTraps.
+              ii. set the VM::m_terminationInProgress flag.
+
+           b. Firing the NeedTermination event on VMTraps means setting the NeedTermination
+              bit on VMTraps::m_trapBits.  This bit will be polled by the mutator thread
+              later at various designated points (including RETURN_IF_EXCEPTION, which we
+              added in this patch).
+
+              Once the mutator sees the NeedTermination bit is set, it will clear the bit
+              and throw the TerminationException (see VMTraps::handleTraps()).  This is
+              unless the mutator thread is currently in a DeferTermination scope (see (8)
+              below).  If in a DeferTermination scope, then it will not throw the
+              TerminationException.
+
+              Since the NeedTermination bit is cleared, the VM will no longer call
+              VMTraps::handleTraps() to service the event.  If the mutator thread is in
+              a DeferTermination scope, then on exiting the scope (at scope destruction),
+              the scope will see that VM::m_terminationInProgress is set, and throw the
+              deferred TerminationException then.
+
+           c. The TerminationException will trigger unwinding out of the current stack
+              until we get to the outermost VMEntryScope.
+
+           d. At the the outermost VMEntryScope, we will clear VM::m_terminationInProgress
+              if the NeedTermination bit in VMtraps::m_trapBits is cleared.
+
+              If the NeedTermination bit is set, then that means we haven't thrown the
+              TerminationException yet.  Currently, clients expect that we must throw the
+              TerminationException if NeedTermination was requested (again, read comments
+              at the top of VMTraps.h).
+
+              If the NeedTermination bit is set, we'll leave VM::m_terminationInProgress
+              set until the next time we re-enter the VM and exit to the outermost
+              VMEntryScope.
+
+           e. The purpose of VM::m_terminationInProgress is to provide a summary of the
+              fact that the VM is in a state of trying to terminate the current stack.
+
+              Note that this state is first indicated by the NeedTermination bit being set
+              in VMTraps::m_trapBits.  Then, in VMTraps::handleTraps(), the state is
+              handed of with the NeedTermination bit being cleared, and the
+              TerminationException being thrown.
+
+              While the VM is in this termination state, we need to prevent new DFG/FTL
+              JIT code from being compiled and run.  The reason is the firing of the
+              NeedTermination event has invalidated DFG/FTL code on the stack, thereby
+              allowing their baseline / LLInt versions which have VMTraps polling checks
+              to run.  We don't want to compile new DFG / FTL code and possibly get stuck
+              in loops in there before the termination is complete.
+
+              In operationOptimize(), we check if VM::m_terminationInProgress is set, and
+              prevent new DFG (and therefore FTL) code from being compiled if needed.
+              Note: it is easier to check a single flag, VM::m_terminationInProgress,
+              then to check both if the NeedTermination bit is set or if the
+              TerminationException is being being thrown.
+
+        9. One complication of being able to service VMTraps in RETURN_IF_EXCEPTION checks
+           is that some of our code (usually for lengthier initializations and bootstrapping)
+           currently does not handle exceptions well, e.g. JSGlobalObject::init().  They
+           rely on the code crashing if an exception is thrown while still initializing.
+
+           However, for a worker thread, a TerminationException (requested by the main
+           thread) may arrive before the initialization is complete.  This can lead to
+           crashes because part of the initialization may be aborted in the presence of
+           an exception, while other parts still expect everything prior to have been
+           initialized correctly.  For resource exhaustion cases (which is abnormal), it
+           is OK to crash.  For the TerminationException (which can be part of normal
+           operation), we should not be crashing.
+
+           To work around this, we introduce a DeferTermination RAII scope object that we
+           deploy in this type of initialization code.  With the scope in effect,
+
+           a. if a TerminationException arrives but hasn't been thrown yet, it will be
+              deferred till the scope ends before being thrown.
+           b. if a TerminationException has already been thrown, the scope will stash
+              the exception, clear it from the VM so that the initialization code can
+              run to completion, and then re-throw the exception when the scope ends.
+
+           Currently, we only need to use the DeferTermination scope in a few places
+           where we know that initialization code will only run for a short period of time.
+
+           DeferTermination should not be used for code that can block waiting on an
+           external event for a long time.  Obviously, doing so will prevent the VM
+           termination mechanism from working.
+
+       10. Replaced llint_slow_path_check_if_exception_is_uncatchable_and_notify_profiler
+           and operationCheckIfExceptionIsUncatchableAndNotifyProfiler with
+           llint_slow_path_retrieve_and_clear_exception_if_catchable and
+           operationRetrieveAndClearExceptionIfCatchable.
+
+           The 2 runtime functions doesn't actually do anything to notify a profiler.
+           So, we drop that part of the name.
+
+           After returning from these runtime functions respectively, the previous LLInt
+           and JIT code, which calls these runtimes functions, would go on to load
+           VM::m_exception, and then store a nullptr there to clear it.  This is wasteful.
+
+           This patch changes the runtime function to clear and return the Exception
+           instead.  As a result, the calling LLInt and JIT code is simplified a bit.
+
+           Note also that clearing an exception now also entails clearing the
+           NeedExceptionHandling bit in VMTraps::m_trapBits in an atomic way.  The above
+           change makes it easy to do this clearing with C++ code.
+
+       11. Fix ScriptFunctionCall::call() to handle exceptions correctly.  Previously,
+           it had one case where it propagates an exception, while another eats it.
+           Change this function to eat the exception in both cases.  This is approproiate
+           because ScriptFunctionCall is only used to execute some Inspector instrumentation
+           calls.  It doesn't make sense to propagate the exception back to user code.
+
+       12. Fix the lazy initialization of JSGlobalObject::m_defaultCollator to be able to
+           handle the TerminationException.
+
+       13. Not related to TerminationException, but this patch also fixes
+           MarkedArgumentBuffer::expandCapacity() to use Gigacage::tryMalloc() instead of
+           Gigacage::malloc().  This is needed as one of the fixes to make the
+           accompanying test case work.
+
+        This patch increases code size by 320K (144K for JSC, 176K for WebCore) measured
+        on x86_64.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::branchTest32):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchTest32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchTest32):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckTraps):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckTraps):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * interpreter/InterpreterInlines.h:
+        (JSC::Interpreter::execute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_check_traps):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::expandCapacity):
+        * runtime/DeferTermination.h: Added.
+        (JSC::DeferTermination::DeferTermination):
+        (JSC::DeferTermination::~DeferTermination):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::exception const):
+        (JSC::ExceptionScope::exception): Deleted.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::finishCreation):
+        * runtime/LazyPropertyInlines.h:
+        (JSC::ElementType>::callFunc):
+        * runtime/StringPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/VM.cpp:
+        (JSC::VM::hasExceptionsAfterHandlingTraps):
+        (JSC::VM::clearException):
+        (JSC::VM::setException):
+        (JSC::VM::throwTerminationException):
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::terminationInProgress const):
+        (JSC::VM::setTerminationInProgress):
+        (JSC::VM::notifyNeedTermination):
+        (JSC::VM::DeferExceptionScope::DeferExceptionScope):
+        (JSC::VM::DeferExceptionScope::~DeferExceptionScope):
+        (JSC::VM::handleTraps): Deleted.
+        (JSC::VM::needTrapHandling): Deleted.
+        (JSC::VM::needTrapHandlingAddress): Deleted.
+        (JSC::VM::setException): Deleted.
+        (JSC::VM::clearException): Deleted.
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::~VMEntryScope):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::tryInstallTrapBreakpoints):
+        (JSC::VMTraps::fireTrap):
+        (JSC::VMTraps::handleTraps):
+        (JSC::VMTraps::takeTopPriorityTrap):
+        (JSC::VMTraps::deferTermination):
+        (JSC::VMTraps::undoDeferTermination):
+        * runtime/VMTraps.h:
+        (JSC::VMTraps::onlyContainsAsyncEvents):
+        (JSC::VMTraps::needHandling const):
+        (JSC::VMTraps::trapBitsAddress):
+        (JSC::VMTraps::isDeferringTermination const):
+        (JSC::VMTraps::notifyGrabAllLocks):
+        (JSC::VMTraps::hasTrapBit):
+        (JSC::VMTraps::clearTrapBit):
+        (JSC::VMTraps::setTrapBit):
+        (JSC::VMTraps::Mask::Mask): Deleted.
+        (JSC::VMTraps::Mask::allEventTypes): Deleted.
+        (JSC::VMTraps::Mask::bits const): Deleted.
+        (JSC::VMTraps::Mask::init): Deleted.
+        (JSC::VMTraps::interruptingTraps): Deleted.
+        (JSC::VMTraps::needTrapHandling): Deleted.
+        (JSC::VMTraps::needTrapHandlingAddress): Deleted.
+        (JSC::VMTraps::hasTrapForEvent): Deleted.
+        (JSC::VMTraps::setTrapForEvent): Deleted.
+        (JSC::VMTraps::clearTrapForEvent): Deleted.
+
+2021-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove className() and toStringName() from the method table
+        https://bugs.webkit.org/show_bug.cgi?id=224247
+
+        Reviewed by Darin Adler.
+
+        ES6 introduced Symbol.toStringTag to customize Object.prototype.toString return value.
+        It was adopted by WebIDL spec, Chrome's DevTools, Node.js etc. There is no reason to
+        keep 2 method table methods, each with only 1 call site, instead of using the symbol.
+
+        Also, it's a bit confusing that for some objects, method table's className() returns
+        different result than JSCell::className(VM&).
+
+        This change:
+
+        1. Removes JSProxy's className() / toStringName() methods because its target() is a
+           global object that never has these overrides and uses Symbol.toStringTag instead.
+
+        2. Removes DebuggerScope's className() / toStringName() overrides because its objectAtScope()
+           has these methods extremely rarely (e.g. `with (new Date) {}`), and its not displayed
+           by Web Inspector.
+
+        3. Merges JSCallbackObject's className() / toStringName() methods into Symbol.toStringTag
+           branch of getOwnPropertySlot(), with permissive property attributes. To avoid any possible
+           breakage, we make sure that it will be shadowed by a structure property.
+
+        4. Reworks JSObject::calculatedClassName() to rely on Symbol.toStringTag, matching Chrome's
+           DevTools behavior. On its own, it's a nice change for Web Inspector. We make sure to
+           lookup Symbol.toStringTag if `constructor.name` inference fails to avoid confusion when
+           extending builtins.
+
+        5. Removes now unused className() from the method table.
+
+        6. Removes toStringName() override from JSFinalizationRegistry because its builtin tag [1]
+           is already "Object".
+
+        7. Introduces BooleanObjectType for Boolean wrapper object, and Boolean.prototype as it's
+           also required to have a [[BooleanData]] internal slot [2].
+
+        8. Reworks Object.prototype.toString to determine builtin tag [1] based on JSType rather than
+           performing method table call. It's guaranteed that a) the set of types we are checking
+           against won't be expanded, and b) objects with these types have correct `className`.
+
+        9. Removes now unused toStringTag() from the method table.
+
+        This patch is performance-neutral and carefully preserves current behavior for API objects,
+        including isPokerBros() hack.
+
+        [1]: https://tc39.es/ecma262/#sec-object.prototype.tostring (steps 5-14)
+        [2]: https://tc39.es/ecma262/#sec-properties-of-the-boolean-prototype-object
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnPropertySlot):
+        (JSC::JSCallbackObject<Parent>::className): Deleted.
+        (JSC::JSCallbackObject<Parent>::toStringName): Deleted.
+        * API/tests/testapiScripts/testapi.js:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::className): Deleted.
+        (JSC::DebuggerScope::toStringName): Deleted.
+        * debugger/DebuggerScope.h:
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::toStringName): Deleted.
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/BooleanPrototype.h:
+        * runtime/ClassInfo.h:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::toStringName): Deleted.
+        * runtime/DateInstance.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::toStringName): Deleted.
+        * runtime/ErrorInstance.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::className): Deleted.
+        (JSC::JSCell::toStringName): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSFinalizationRegistry.cpp:
+        (JSC::JSFinalizationRegistry::toStringName): Deleted.
+        * runtime/JSFinalizationRegistry.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+        (JSC::JSObject::className): Deleted.
+        (JSC::isPokerBros): Deleted.
+        (JSC::JSObject::toStringName): Deleted.
+        * runtime/JSObject.h:
+        * runtime/JSProxy.cpp:
+        (JSC::JSProxy::className): Deleted.
+        (JSC::JSProxy::toStringName): Deleted.
+        * runtime/JSProxy.h:
+        * runtime/JSType.cpp:
+        (WTF::printInternal):
+        * runtime/JSType.h:
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::toStringName): Deleted.
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::isPokerBros):
+        (JSC::inferBuiltinTag):
+        (JSC::objectPrototypeToString):
+        1. Removes jsNontrivialString() because it's assertion may fail in case of iOS hack.
+        2. Utilizes AtomStringImpl to avoid allocating StringImpl for a small fixed set of strings.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::toStringName): Deleted.
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::toStringName): Deleted.
+        * runtime/StringObject.h:
+
+2021-04-08  Khem Raj  <raj.khem@gmail.com>
+
+        [WPE] Build fixes for musl C library on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=210068
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Use OS(LINUX) to include musl in platform test
+        for linux and consolidate all linux platfrom
+        under same test. Use smaller limits for JSC
+        stack size per thread and reserved zone size.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::stackPointerImpl):
+        (JSC::MachineContext::framePointerImpl):
+        (JSC::MachineContext::instructionPointerImpl):
+        (JSC::MachineContext::argumentPointer<1>):
+        (JSC::MachineContext::llintInstructionPointer):
+        * runtime/OptionsList.h:
+
+2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DUCET level-1 weighs are equal if characters are alphabets
+        https://bugs.webkit.org/show_bug.cgi?id=224047
+
+        Reviewed by Saam Barati and Mark Lam.
+
+        ASCII comparison optimization was based on that DUCET level-1 weights are all different (except for 0000 case), but this was wrong.
+        If we have the same latin letters with different capitalization, then they have the same level-1 weight ('A' v.s. 'a').
+        In this patch,
+
+            1. If we found that the result of level-1 weight comparison is equal, and characters are not equal, then we do level-3 weight comparison.
+               We do not perform level-2 since they are all the same weight in ASCII (excluding control characters) region.
+            2. We do not perform level-4 weight comparison since level-1 and level-3 comparison must distinguish the strings. Level-1 weights are equal
+               only when characters are the same latin letters. And level-3 weight puts different weights for capital latin letters. Since we already know
+               that these strings are different while they are equal in level-1 weight comparison, the only case is that they have same latin letters in
+               the same position. In that case, level-3 weight must say different results for these characters so that we never meet "equal" status in
+               level-3 weight comparison if characters are different.
+
+        * runtime/IntlObject.cpp:
+        * runtime/IntlObject.h:
+        * runtime/IntlObjectInlines.h:
+        (JSC::canUseASCIIUCADUCETComparison):
+        (JSC::compareASCIIWithUCADUCETLevel3):
+        (JSC::compareASCIIWithUCADUCET):
+
+2021-04-02  Darin Adler  <darin@apple.com>
+
+        Use Hasher more, remove IntegerHasher, fix hashing-related mistakes
+        https://bugs.webkit.org/show_bug.cgi?id=224138
+
+        Reviewed by Chris Dumez.
+
+        * bytecode/BytecodeIndex.h:
+        (JSC::BytecodeIndex::hash const): Remove unneeded WTF prefix on call
+        to intHash.
+
+        * ftl/FTLAbstractHeap.h: Use HashTraits instead of WTF::GenericHashTraits.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::validateAIState): Remove unneeded WTF
+        prefix on call to intHash.
+
+        * wasm/WasmLLIntGenerator.cpp: Use HashTraits instead of WTF::GenericHashTraits.
+
+2021-04-07  Mark Lam  <mark.lam@apple.com>
+
+        Rename and make the TerminationException a singleton.
+        https://bugs.webkit.org/show_bug.cgi?id=224295
+
+        Reviewed by Keith Miller.
+
+        We previously call it the TerminatedExecutionException, which is a mouthful but
+        adds no meaningful information.  It's now renamed to TerminationException.
+
+        We can make it a singleton because the TerminationException is just a VM internal
+        mechanism for implementing the termination of the current execution stack.  It
+        should never be exposed to user JS code, and therefore, there is no value in
+        making it a JS object.  Making it a singleton simplifies the code.
+
+        A TerminationException is now implemented as an Exception cell which holds a
+        Symbol with the name "TerminationError".  The TerminationException is only created
+        if needed e.g. if the JSC watchdog is created, or if the VM is for a Worker thread
+        which needs to be able to handle termination requests.
+
+        We'll also stop notifying the debugger when we throw the TerminationException.
+        This is because the TerminationException is not like ordinary exceptions that
+        should be reported to the debugger. The fact that the TerminationException uses
+        the exception handling mechanism is just a VM internal implementation detail.
+        It is not meaningful to report it to the debugger as an exception.
+
+        * API/JSContext.mm:
+        (-[JSContext evaluateJSScript:]):
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (testExecutionTimeLimit):
+        * bindings/ScriptFunctionCall.cpp:
+        (Deprecated::ScriptFunctionCall::call):
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * inspector/InjectedScriptManager.cpp:
+        (Inspector::InjectedScriptManager::injectedScriptFor):
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::reportAPIException):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::notifyDebuggerOfExceptionToBeThrown):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jsc.cpp:
+        (checkException):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::TerminatedExecutionError::defaultValue): Deleted.
+        (JSC::createTerminatedExecutionException): Deleted.
+        (JSC::isTerminatedExecutionException): Deleted.
+        (JSC::throwTerminatedExecutionException): Deleted.
+        * runtime/ExceptionHelpers.h:
+        (): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::get const):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::rejectWithCaughtException):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::ensureWatchdog):
+        (JSC::VM::ensureTerminationException):
+        (JSC::VM::throwTerminationException):
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::terminationException const):
+        (JSC::VM::isTerminationException const):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::handleTraps):
+
+2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector more in bytecode dir and JumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=224275
+
+        Reviewed by Michael Saboff and Mark Lam.
+
+        1. Use FixedVector more in bytecode/ directory's long-living data structures.
+        2. Use FixedVector in SimpleJumpTable. This involves LLInt changes because we need to access FixedVector data from LLInt.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::dumpInContext const):
+        * bytecode/InlineCallFrame.h:
+        * bytecode/JumpTable.h:
+        (JSC::SimpleJumpTable::clear):
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::ObjectPropertyConditionSet::mergedWith const):
+        (JSC::ObjectPropertyConditionSet::dumpInContext const):
+        (JSC::ObjectPropertyConditionSet::isValidAndWatchable const):
+        * bytecode/ObjectPropertyConditionSet.h:
+        (JSC::ObjectPropertyConditionSet::create):
+        (JSC::ObjectPropertyConditionSet::isValid const):
+        (JSC::ObjectPropertyConditionSet::size const):
+        (JSC::ObjectPropertyConditionSet::begin const):
+        (JSC::ObjectPropertyConditionSet::end const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+        (JSC::DFG::ByteCodeParser::flushImpl):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::validateReferences):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::argumentsStart):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createWithInlineFrame):
+
+2021-04-07  Mark Lam  <mark.lam@apple.com>
+
+        Fix a typo in JITUncoughtExceptionAfterCall.
+        https://bugs.webkit.org/show_bug.cgi?id=224290
+
+        Reviewed by Keith Miller.
+
+        * assembler/AbortReason.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::jitReleaseAssertNoException):
+
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] WasmMemory caging should care about nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=224268
+        <rdar://problem/74654838>
+
+        Reviewed by Mark Lam.
+
+        1. Fix Wasm::MemoryHandle::boundsCheckingSize. We should just return m_mappedCapacity here since UINT32_MAX is not 4GB.
+           This checking size can include redzone for fast-memory, but this is OK: bounds-check pass in LLInt (in upper tiers, we
+           do not use bounds-check for fast-memory), and access to redzone, then fault occurs and signal handler can make it error
+           since signal handler is checking whether the access is within Memory::fastMappedBytes which includes redzone.
+        2. Fix caging of wasm memory-base pointer in LLInt. We should use pointer sized length since it can be larger than 4GB.
+           And we should handle nullptr case correctly: Wasm::MemoryHandle's memory can be nullptr when mapped size is zero.
+           caging needs to handle this case as we do in CagedPtr::getMayBeNull.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::untagArrayPtrLength32):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::cageTypedArrayStorage):
+        * llint/LowLevelInterpreter64.asm:
+        * llint/WebAssembly.asm:
+        * offlineasm/arm64e.rb:
+        * offlineasm/ast.rb:
+        * offlineasm/instructions.rb:
+        * runtime/CagedBarrierPtr.h:
+        (JSC::CagedBarrierPtr::CagedBarrierPtr):
+        (JSC::CagedBarrierPtr::set):
+        (JSC::CagedBarrierPtr::get const):
+        (JSC::CagedBarrierPtr::getMayBeNull const):
+        (JSC::CagedBarrierPtr::at const):
+        (JSC::CagedBarrierPtr::setWithoutBarrier):
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::updateCachedMemory):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::MemoryHandle::MemoryHandle):
+        * wasm/WasmMemory.h:
+
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector more in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=224255
+
+        Reviewed by Mark Lam.
+
+        Use FixedVector more aggressively. This reduces sizeof(Holder) since sizeof(FixedVector) is 8
+        while sizeof(Vector) is 16. And since this allocates just-fit size, this does not waste memory.
+
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::computeFullLiveness):
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/FullBytecodeLiveness.h:
+        (JSC::FullBytecodeLiveness::FullBytecodeLiveness):
+        * bytecode/UnlinkedEvalCodeBlock.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::livenessFor):
+        * ftl/FTLForOSREntryJITCode.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::compileRecovery):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::sweepPreciseAllocations):
+        * jit/RegisterAtOffsetList.cpp:
+        (JSC::RegisterAtOffsetList::RegisterAtOffsetList):
+        * jit/RegisterAtOffsetList.h:
+        (JSC::RegisterAtOffsetList::begin const):
+        (JSC::RegisterAtOffsetList::end const):
+        (JSC::RegisterAtOffsetList::clear): Deleted.
+        * runtime/JSGlobalObject.h:
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        * runtime/JSModuleNamespaceObject.h:
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::resetForReparsing):
+
+2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Symbol and BigInt wrapper objects should perform OrdinaryToPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=224208
+
+        Reviewed by Yusuke Suzuki.
+
+        ES6 introduced Symbol.toPrimitive as the only way to override ToPrimitive;
+        if it's nullish, OrdinaryToPrimitive [1] is performed unconditionally.
+
+        This patch removes two redundant defaultValue() overrides, fixing JSC to call
+        (possibly userland) toString() / valueOf() methods of a) Symbol objects whose
+        Symbol.toPrimitive was removed, and b) BigInt wrapper objects.
+
+        Aligns JSC with V8 and SpiderMonkey. Coercion of primitives is unaffected.
+        Also, removes dummy BigIntObject::internalValue() override.
+
+        [1]: https://tc39.es/ecma262/#sec-toprimitive (step 2.d)
+
+        * runtime/BigIntObject.cpp:
+        (JSC::BigIntObject::defaultValue): Deleted.
+        * runtime/BigIntObject.h:
+        * runtime/SymbolObject.cpp:
+        (JSC::SymbolObject::defaultValue): Deleted.
+        * runtime/SymbolObject.h:
+
+2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array's toString() is incorrect if join() is non-callable
+        https://bugs.webkit.org/show_bug.cgi?id=224215
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch exposes objectPrototypeToString() to be used by Array.prototype.toString
+        if "join" lookup doesn't return a callable value [1].
+
+        Fixes Array's toString() to return the correct tag instead of internal `className`,
+        perform Symbol.toStringTag lookup, and throw for revoked Proxy objects.
+        Aligns JSC with V8 and SpiderMonkey.
+
+        Also, a few objectPrototypeToString() tweaks: a bit nicer `undefined` / `null`
+        checks and simpler toObject() exception handling.
+
+        [1]: https://tc39.es/ecma262/#sec-array.prototype.tostring (step 3)
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectPrototypeToString):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/ObjectPrototype.h:
+
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Introduce FixedVector and use it for FixedOperands
+        https://bugs.webkit.org/show_bug.cgi?id=224171
+
+        Reviewed by Mark Lam.
+
+        Define FixedOperands<T> which uses FixedVector for its storage. We use FixedOperands in FTL::OSRExitDescriptor.
+        We also replace RefCountedArray<T> with FixedVector<T> if they are not requiring RefCountedArray<T>'s ref-counting
+        semantics.
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::setRareCaseProfiles):
+        (JSC::CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler):
+        * bytecode/CodeBlock.h:
+        * bytecode/Operands.h:
+        (JSC::Operands::Operands):
+        * bytecode/OperandsInlines.h:
+        (JSC::U>::dumpInContext const):
+        (JSC::U>::dump const):
+        (JSC::Operands<T>::dumpInContext const): Deleted.
+        (JSC::Operands<T>::dump const): Deleted.
+        * bytecode/PolyProtoAccessChain.h:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::dumpExpressionRangeInfo):
+        (JSC::UnlinkedCodeBlock::expressionRangeForBytecodeIndex const):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::expressionInfo):
+        (JSC::UnlinkedCodeBlock::identifiers const):
+        (JSC::UnlinkedCodeBlock::constantRegisters):
+        (JSC::UnlinkedCodeBlock::constantsSourceCodeRepresentation):
+        (JSC::UnlinkedCodeBlock::constantIdentifierSets):
+        (JSC::UnlinkedCodeBlock::opProfileControlFlowBytecodeOffsets const):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::prepareJumpTableForSwitch):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::tierUpInLoopHierarchy):
+        * ftl/FTLOSRExit.h:
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/PolymorphicCallStubRoutine.h:
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseClassFieldInitializerSourceElements):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedVector::encode):
+        (JSC::CachedVector::decode const):
+        * wasm/js/JSWebAssemblyInstance.h:
+
+2021-04-05  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Shrink some of Vectors in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=224162
+
+        Reviewed by Simon Fraser.
+
+        1. Add XXXStatus::shrinkToFit to shrink underlying dynamic Vectors.
+        2. Replace tierUpInLoopHierarchy's Vector with RefCountedArray since it is constructed-once-lookup-only data.
+        3. Use MemoryCompactLookupOnlyRobinHoodHashSet for StringTables since this is constructed-once-lookup-only data. We also add
+           MemoryCompactLookupOnlyRobinHoodHashSet support for CachedTypes.
+        4. Use resizeToFit for StringSwitchJumpTables and SwitchJumpTables.
+        5. JITStubRoutineSet's Vector should be shrunk.
+        6. BlockDirectoryBits's Vector's initial size should be small.
+        7. Make PolyProtoAccessChain RefCounted, and use RefCountedArray for its Vector<StructureID>. And remove PolyProtoAccessChain::clone.
+           Just having Ref is enough since this is immutable data.
+        8. Use RefCountedArray for UnlinkedFunctionExecutable's m_classFieldLocations.
+        9. Use RefCountedArray for JSWebAssemblyInstance.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::AccessCase):
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::createTransition):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::AccessCase): Deleted.
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::setFrameShuffleData):
+        * bytecode/CheckPrivateBrandStatus.cpp:
+        (JSC::CheckPrivateBrandStatus::shrinkToFit):
+        (JSC::CheckPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::CheckPrivateBrandStatus::merge):
+        * bytecode/CheckPrivateBrandStatus.h:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecode/DeleteByStatus.cpp:
+        (JSC::DeleteByStatus::shrinkToFit):
+        (JSC::DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::DeleteByStatus::merge):
+        * bytecode/DeleteByStatus.h:
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::shrinkToFit):
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByStatus::computeFor):
+        (JSC::GetByStatus::merge):
+        * bytecode/GetByStatus.h:
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::GetterSetterAccessCase):
+        (JSC::GetterSetterAccessCase::create):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/InByIdStatus.cpp:
+        (JSC::InByIdStatus::shrinkToFit):
+        (JSC::InByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::InByIdStatus::merge):
+        * bytecode/InByIdStatus.h:
+        * bytecode/InstanceOfStatus.cpp:
+        (JSC::InstanceOfStatus::shrinkToFit):
+        (JSC::InstanceOfStatus::computeForStubInfo):
+        * bytecode/InstanceOfStatus.h:
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::IntrinsicGetterAccessCase):
+        (JSC::IntrinsicGetterAccessCase::create):
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * bytecode/JumpTable.h:
+        * bytecode/PolyProtoAccessChain.cpp:
+        (JSC::PolyProtoAccessChain::tryCreate):
+        (JSC::PolyProtoAccessChain::create): Deleted.
+        * bytecode/PolyProtoAccessChain.h:
+        (JSC::PolyProtoAccessChain::clone): Deleted.
+        (JSC::PolyProtoAccessChain::chain const): Deleted.
+        (JSC::PolyProtoAccessChain::operator!= const): Deleted.
+        (JSC::PolyProtoAccessChain::forEach const): Deleted.
+        (JSC::PolyProtoAccessChain::slotBaseStructure const): Deleted.
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::visitWeak const):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::ProxyableAccessCase):
+        (JSC::ProxyableAccessCase::create):
+        * bytecode/ProxyableAccessCase.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::shrinkToFit):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::merge):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/SetPrivateBrandStatus.cpp:
+        (JSC::SetPrivateBrandStatus::shrinkToFit):
+        (JSC::SetPrivateBrandStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::SetPrivateBrandStatus::merge):
+        * bytecode/SetPrivateBrandStatus.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * dfg/DFGJITCode.h:
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::tierUpInLoopHierarchy):
+        * dfg/DFGTierUpCheckInjectionPhase.cpp:
+        (JSC::DFG::TierUpCheckInjectionPhase::run):
+        * heap/BlockDirectoryBits.h:
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * jit/CallFrameShuffleData.h:
+        (JSC::CallFrameShuffleData::shrinkToFit):
+        * jit/GCAwareJITStubRoutine.h:
+        * jit/PolymorphicCallStubRoutine.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetBy):
+        (JSC::tryCachePutByID):
+        (JSC::tryCacheInByID):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseClassFieldInitializerSourceElements):
+        * parser/Parser.h:
+        (JSC::Parser<LexerType>::parse):
+        (JSC::parse):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedFunctionExecutableRareData::encode):
+        (JSC::CachedFunctionExecutableRareData::decode const):
+        * runtime/VM.cpp:
+        (JSC::VM::popAllCheckpointOSRSideStateUntil):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::visitChildrenImpl):
+        * wasm/js/JSWebAssemblyInstance.h:
+
+2021-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=224084
+
+        Reviewed by Tim Horton.
+
+        * PlatformMac.cmake:
+
+2021-04-05  Keith Miller  <keith_miller@apple.com>
+
+        DFG arity fixup nodes should exit to the caller's call opcode
+        https://bugs.webkit.org/show_bug.cgi?id=223278
+
+        Reviewed by Saam Barati.
+
+        Right now when we do arity fixup in the DFG we model it in the
+        same way that it executes, which means all the nodes are part of
+        the callee. Unfortunately, this causes PhantomInsertionPhase to
+        think those nodes could be replacing previously defined
+        VirtualRegisters as they are part of the callee's header (always
+        alive). When PhantomInsertionPhase then inserts a Phantom it will
+        put that node in the caller's frame as that's the first ExitOK
+        node. The caller however may have no knowledge of that
+        VirtualRegister though. For example:
+
+        --> foo: loc10 is a local in foo.
+            ...
+            1: MovHint(loc10)
+            2: SetLocal(loc10)
+        <-- foo // loc10 ten is now out of scope for the InlineCallFrame of the caller.
+        ...
+        // Phantom will be inserted here refering to loc10, which doesn't make sense.
+        --> bar // loc10 is an argument to bar and needs arity fixup.
+            ... // All of these nodes are ExitInvalid
+            3: MovHint(loc10, ExitInvalid)
+            4: SetLocal(loc10, ExitInvalid)
+            ...
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::currentNodeOrigin):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+
 2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Reduce bytecode instruction count emitted for `class extends`

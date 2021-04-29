@@ -50,5 +50,5 @@ void WEBCONTENT_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t in
     InitWebCoreThreadSystemInterface();
 #endif // PLATFORM(IOS_FAMILY)
 
-    WebKit::XPCServiceInitializer<WebKit::WebProcess, WebKit::XPCServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
+    WebKit::XPCServiceInitializer<WebKit::WebProcess, WebKit::XPCServiceInitializerDelegate>(connection, initializerMessage, priorityBoostMessage);
 }

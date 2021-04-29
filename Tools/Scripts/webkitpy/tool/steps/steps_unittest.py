@@ -84,6 +84,7 @@ class StepsTest(unittest.TestCase):
         options = self._step_options()
         options.git_commit = None
         options.description = None
+        options.fast_cq = False
         options.comment = None
         options.review = True
         options.request_commit = False

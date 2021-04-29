@@ -235,6 +235,8 @@ std::unique_ptr<DisplayList::InMemoryDisplayList> FontCascade::displayListForTex
     
     FloatPoint startPoint = toFloatPoint(WebCore::size(glyphBuffer.initialAdvance()));
     drawGlyphBuffer(recordingContext, glyphBuffer, startPoint, customFontNotReadyAction);
+    
+    displayList->shrinkToFit();
     return displayList;
 }
     

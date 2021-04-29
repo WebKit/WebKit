@@ -1,3 +1,35 @@
+2021-04-06  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: remove duplicate Box Model section from Layout panel in Elements Tab
+        https://bugs.webkit.org/show_bug.cgi?id=224206
+        <rdar://problem/76235731>
+
+        Reviewed by Devin Rousso.
+
+        For now, remove it from Layout panel. It may go back there
+        when it is able to show used values. It currently only shows computed.
+
+        * UserInterface/Views/LayoutDetailsSidebarPanel.js:
+        (WI.LayoutDetailsSidebarPanel.prototype.initialLayout):
+        (WI.LayoutDetailsSidebarPanel.prototype.layout):
+        (WI.LayoutDetailsSidebarPanel.prototype.get minimumWidth): Deleted.
+
+2021-04-06  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Layout sidebar grid overlay color swatch tooltip shouldn't include "switch format" hint
+        https://bugs.webkit.org/show_bug.cgi?id=223418
+        <rdar://problem/75825793>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/CSSGridSection.js:
+        (WI.CSSGridSection.prototype.layout):
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        (WI.InlineSwatch.prototype.set shiftClickColorEnabled):
+        (WI.InlineSwatch.prototype._updateSwatch):
+        (WI.InlineSwatch.prototype._allowChangingColorFormats):
+
 2021-03-31  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Regression (r270134) Timeline recordings 2 and beyond do not show a timescale.

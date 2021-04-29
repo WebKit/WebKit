@@ -35,6 +35,9 @@
 #include "MediaSession.h"
 #include "MediaSessionCoordinatorPrivate.h"
 #include <wtf/Logger.h>
+#include <wtf/Seconds.h>
+
+static const Seconds CommandTimeTolerance = 50_ms;
 
 namespace WebCore {
 
@@ -296,14 +299,18 @@ void MediaSessionCoordinator::seekSessionToTime(double time, CompletionHandler<v
     completionHandler(true);
 }
 
-void MediaSessionCoordinator::playSession(CompletionHandler<void(bool)>&& completionHandler)
+void MediaSessionCoordinator::playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&& completionHandler)
 {
+    UNUSED_PARAM(hostTime);
     ALWAYS_LOG(LOGIDENTIFIER, m_state);
 
     if (m_state != MediaSessionCoordinatorState::Joined) {
         completionHandler(false);
         return;
     }
+
+    if (atTime && !currentPositionApproximatelyEqualTo(*atTime))
+        m_session->callActionHandler({ .action = MediaSessionAction::Seekto, .seekTime = *atTime });
 
     m_session->callActionHandler({ .action = MediaSessionAction::Play });
     completionHandler(true);
@@ -333,6 +340,19 @@ void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHan
 
     m_session->callActionHandler({ .action = MediaSessionAction::Settrack, .trackIdentifier = track });
     completionHandler(true);
+}
+
+bool MediaSessionCoordinator::currentPositionApproximatelyEqualTo(double time) const
+{
+    if (!m_session)
+        return false;
+
+    auto currentPosition = m_session->currentPosition();
+    if (!currentPosition)
+        return false;
+
+    auto delta = Seconds(abs(*currentPosition - time));
+    return delta <= CommandTimeTolerance;
 }
 
 WTFLogChannel& MediaSessionCoordinator::logChannel()

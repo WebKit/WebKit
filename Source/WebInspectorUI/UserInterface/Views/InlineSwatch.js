@@ -66,6 +66,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
                 break;
 
             case WI.InlineSwatch.Type.Color:
+                this._shiftClickColorEnabled = true;
                 // Handled later by _updateSwatch.
                 break;
 
@@ -121,6 +122,12 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
     set value(value)
     {
         this._value = value;
+        this._updateSwatch(true);
+    }
+
+    set shiftClickColorEnabled(value)
+    {
+        this._shiftClickColorEnabled = !!value;
         this._updateSwatch(true);
     }
 
@@ -180,7 +187,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this._swatchInnerElement.style.setProperty("background-image", `url(${value.src})`);
 
         if (this._type === WI.InlineSwatch.Type.Color) {
-            if (this._allowShiftClickColor())
+            if (this._allowChangingColorFormats())
                 this._swatchElement.title = WI.UIString("Click to select a color\nShift-click to switch color formats");
             else
                 this._swatchElement.title = WI.UIString("Click to select a color");
@@ -190,9 +197,9 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
             this.dispatchEventToListeners(WI.InlineSwatch.Event.ValueChanged, {value});
     }
 
-    _allowShiftClickColor()
+    _allowChangingColorFormats()
     {
-        return !this._readOnly && !this.value.isOutsideSRGB();
+        return this._shiftClickColorEnabled && !this._readOnly && !this.value.isOutsideSRGB();
     }
 
     _swatchElementClicked(event)
@@ -203,7 +210,7 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
 
         if (event.shiftKey && value) {
             if (this._type === WI.InlineSwatch.Type.Color) {
-                if (!this._allowShiftClickColor()) {
+                if (!this._allowChangingColorFormats()) {
                     InspectorFrontendHost.beep();
                     return;
                 }

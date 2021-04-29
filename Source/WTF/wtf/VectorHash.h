@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,28 +26,14 @@
 #pragma once
 
 #include "HashFunctions.h"
-#include "HashTraits.h"
 #include "Hasher.h"
 
 namespace WTF {
 
-template<typename T, size_t inlineCapacity>
-struct VectorHash {
-    static unsigned hash(const Vector<T, inlineCapacity>& vector)
-    {
-        IntegerHasher hasher;
-        for (const auto& value : vector)
-            hasher.add(DefaultHash<T>::hash(value));
-        return hasher.hash();
-    }
-    static bool equal(const Vector<T, inlineCapacity>& a, const Vector<T, inlineCapacity>& b)
-    {
-        return a == b;
-    }
+template<typename T, size_t inlineCapacity> struct DefaultHash<Vector<T, inlineCapacity>> {
+    static unsigned hash(const Vector<T, inlineCapacity>& vector) { return computeHash(vector); }
+    static bool equal(const Vector<T, inlineCapacity>& a, const Vector<T, inlineCapacity>& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
-
-template<typename T, size_t inlineCapacity>
-struct DefaultHash<Vector<T, inlineCapacity>> : VectorHash<T, inlineCapacity> { };
 
 }

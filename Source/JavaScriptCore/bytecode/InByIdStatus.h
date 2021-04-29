@@ -116,6 +116,7 @@ private:
     static InByIdStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM&, StructureStubInfo*, UniquedStringImpl* uid);
 #endif
     bool appendVariant(const InByIdVariant&);
+    void shrinkToFit();
 
     State m_state { NoInformation };
     Vector<InByIdVariant, 1> m_variants;

@@ -36,7 +36,7 @@ public:
     using Base = CagedPtr<kind, T, shouldTag>;
     CagedUniquePtr() = default;
 
-    CagedUniquePtr(T* ptr, unsigned size)
+    CagedUniquePtr(T* ptr, size_t size)
         : Base(ptr, size)
     { }
 
@@ -47,7 +47,7 @@ public:
     CagedUniquePtr(const CagedUniquePtr&) = delete;
     
     template<typename... Arguments>
-    static CagedUniquePtr create(unsigned length, Arguments&&... arguments)
+    static CagedUniquePtr create(size_t length, Arguments&&... arguments)
     {
         T* result = static_cast<T*>(Gigacage::malloc(kind, sizeof(T) * length));
         while (length--)
@@ -56,7 +56,7 @@ public:
     }
 
     template<typename... Arguments>
-    static CagedUniquePtr tryCreate(unsigned length, Arguments&&... arguments)
+    static CagedUniquePtr tryCreate(size_t length, Arguments&&... arguments)
     {
         T* result = static_cast<T*>(Gigacage::tryMalloc(kind, sizeof(T) * length));
         if (!result)

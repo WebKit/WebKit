@@ -1746,23 +1746,36 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
         // Check if original image data is compressed:
         if (mFormat.intendedAngleFormat().isBlock)
         {
-            ASSERT(loadFunctionInfo.loadFunction);
+            if(mFormat.intendedFormatId != mFormat.actualFormatId)
+            {
+                ASSERT(loadFunctionInfo.loadFunction);
 
-            // Need to create a buffer to hold entire decompressed image.
-            const size_t dstDepthPitch = dstRowPitch * mtlArea.size.height;
-            angle::MemoryBuffer decompressBuf;
-            ANGLE_CHECK_GL_ALLOC(contextMtl,
-                                 decompressBuf.resize(dstDepthPitch * mtlArea.size.depth));
+                // Need to create a buffer to hold entire decompressed image.
+                const size_t dstDepthPitch = dstRowPitch * mtlArea.size.height;
+                angle::MemoryBuffer decompressBuf;
+                ANGLE_CHECK_GL_ALLOC(contextMtl,
+                                     decompressBuf.resize(dstDepthPitch * mtlArea.size.depth));
 
-            // Decompress
-            loadFunctionInfo.loadFunction(
-                mtlArea.size.width, mtlArea.size.height, mtlArea.size.depth, pixels, pixelsRowPitch,
-                pixelsDepthPitch, decompressBuf.data(), dstRowPitch, dstDepthPitch);
+                // Decompress
+                loadFunctionInfo.loadFunction(
+                    mtlArea.size.width, mtlArea.size.height, mtlArea.size.depth, pixels, pixelsRowPitch,
+                    pixelsDepthPitch, decompressBuf.data(), dstRowPitch, dstDepthPitch);
 
-            // Upload to texture
-            ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlArea, mtl::kZeroNativeMipLevel,
-                                            slice, decompressBuf.data(), dstRowPitch, dstDepthPitch,
-                                            image));
+                // Upload to texture
+                ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlArea, mtl::kZeroNativeMipLevel,
+                                                slice, decompressBuf.data(), dstRowPitch, dstDepthPitch,
+                                                image));
+            }
+            else
+            {
+                //Assert that we're filling the level in it's entierety.
+                ASSERT(mtlArea.size.width == image->sizeAt0().width);
+                ASSERT(mtlArea.size.height == image->sizeAt0().height);
+                const size_t dstDepthPitch = dstRowPitch * mtlArea.size.height;
+                ANGLE_TRY(UploadTextureContents(context, dstFormat, mtlArea, mtl::kZeroNativeMipLevel,
+                                                slice, pixels, dstRowPitch, dstDepthPitch,
+                                                image));
+            }
         }  // if (mFormat.intendedAngleFormat().isBlock)
         else
         {

@@ -258,6 +258,9 @@ void MediaSessionManagerCocoa::removeSupportedCommand(PlatformMediaSession::Remo
 
 void MediaSessionManagerCocoa::clearNowPlayingInfo()
 {
+    if (!isMediaRemoteFrameworkAvailable())
+        return;
+
     if (canLoad_MediaRemote_MRMediaRemoteSetNowPlayingVisibility())
         MRMediaRemoteSetNowPlayingVisibility(MRMediaRemoteGetLocalOrigin(), MRNowPlayingClientVisibilityNeverVisible);
 
@@ -275,6 +278,9 @@ void MediaSessionManagerCocoa::clearNowPlayingInfo()
 
 void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication, const NowPlayingInfo& nowPlayingInfo)
 {
+    if (!isMediaRemoteFrameworkAvailable())
+        return;
+
     if (setAsNowPlayingApplication)
         MRMediaRemoteSetCanBeNowPlayingApplication(true);
 
@@ -333,7 +339,7 @@ void MediaSessionManagerCocoa::setNowPlayingInfo(bool setAsNowPlayingApplication
 PlatformMediaSession* MediaSessionManagerCocoa::nowPlayingEligibleSession()
 {
     // FIXME: Fix this layering violation.
-    if (auto element = HTMLMediaElement::bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose::NowPlaying))
+    if (auto element = HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::NowPlaying))
         return &element->mediaSession();
 
     return nullptr;

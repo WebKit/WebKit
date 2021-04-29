@@ -216,6 +216,7 @@ public:
     bool isTreeScope() const { return hasNodeFlag(NodeFlag::IsDocumentNode) || hasNodeFlag(NodeFlag::IsShadowRoot); }
     bool isDocumentFragment() const { return hasNodeFlag(NodeFlag::IsDocumentFragment); }
     bool isShadowRoot() const { return hasNodeFlag(NodeFlag::IsShadowRoot); }
+    bool isUserAgentShadowRoot() const; // Defined in ShadowRoot.h
 
     bool hasCustomStyleResolveCallbacks() const { return hasNodeFlag(NodeFlag::HasCustomStyleResolveCallbacks); }
 
@@ -225,7 +226,7 @@ public:
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
     ShadowRoot* containingShadowRoot() const;
-    ShadowRoot* shadowRoot() const;
+    ShadowRoot* shadowRoot() const; // Defined in ShadowRoot.h
     bool isClosedShadowHidden(const Node&) const;
 
     HTMLSlotElement* assignedSlot() const;
@@ -240,7 +241,7 @@ public:
     Node* nonBoundaryShadowTreeRootNode();
 
     // Node's parent or shadow tree host.
-    ContainerNode* parentOrShadowHostNode() const;
+    ContainerNode* parentOrShadowHostNode() const; // Defined in ShadowRoot.h
     ContainerNode* parentInComposedTree() const;
     Element* parentElementInComposedTree() const;
     Element* parentOrShadowHostElement() const;

@@ -97,6 +97,12 @@ class WPEPort(Port):
                              'PLUGIN_SCANNER', 'PLUGIN_PATH', 'PLUGIN_SYSTEM_PATH', 'REGISTRY',
                              'PLUGIN_PATH_1_0'):
             self._copy_value_from_environ_if_set(environment, 'GST_%s' % gst_variable)
+
+        gst_feature_rank_override = environment.get('GST_PLUGIN_FEATURE_RANK')
+        environment['GST_PLUGIN_FEATURE_RANK'] = 'fakeaudiosink:max'
+        if gst_feature_rank_override:
+            environment['GST_PLUGIN_FEATURE_RANK'] += ',%s' % gst_feature_rank_override
+
         return environment
 
     def show_results_html_file(self, results_filename):
@@ -151,7 +157,9 @@ class WPEPort(Port):
             env = os.environ.copy()
             env.update({'WEBKIT_EXEC_PATH': self._build_path('bin'),
                         'WEBKIT_INJECTED_BUNDLE_PATH': self._build_path('lib')})
-            args = ['-P', 'fdo'] + args
+            has_platform_arg = any((a == "-P" or a.startswith("--platform=") for a in args))
+            if not has_platform_arg:
+                args.insert(0, "--platform=gtk4")
         else:
             print("Cog not found 😢. If you wish to enable it, rebuild with `-DENABLE_COG=ON`. Falling back to good old MiniBrowser")
             miniBrowser = self._build_path('bin', 'MiniBrowser')

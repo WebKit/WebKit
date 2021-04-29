@@ -66,7 +66,7 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
         if (&quote == lastQuote)
             return;
     }
-    ASSERT(!lastQuote);
+    ASSERT(!lastQuote || m_updater.m_builder.hasBrokenContinuation());
 }
 
 static bool elementIsTargetedByKeyframeEffectRequiringPseudoElement(const Element* element, PseudoId pseudoId)

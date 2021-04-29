@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../resources/audiocontext-leak-test.js"></script>
+<script>
+description("Makes sure that the OfflineAudioContext objects are not leaking after rendering.");
+jsTestIsAsync = true;
+
+const instancesToCreate = 100;
+let renderingPromises = [];
+for (let i = 0; i < instancesToCreate; i++) {
+    let context = new OfflineAudioContext(2, 1, 44100);
+    trackContextForLeaks(context);
+    renderingPromises.push(context.startRendering());
+}
+Promise.all(renderingPromises).then((values) => {
+    gcAndCheckForContextLeaks();
+});
+</script>
+</body>
+</html>

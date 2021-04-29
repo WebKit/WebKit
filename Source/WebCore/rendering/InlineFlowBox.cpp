@@ -499,7 +499,7 @@ static bool verticalAlignApplies(const RenderObject& renderer)
     return (parentRenderer.isInline() && parentRenderer.style().display() != DisplayType::InlineBlock) || parentRenderer.isTableCell();
 }
 
-void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent, int maxPositionTop, int maxPositionBottom)
+void InlineFlowBox::adjustMaxAscentAndDescent(LayoutUnit& maxAscent, LayoutUnit& maxDescent, LayoutUnit maxPositionTop, LayoutUnit maxPositionBottom)
 {
     for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         // The computed lineheight needs to be extended for the
@@ -528,7 +528,7 @@ void InlineFlowBox::adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent, i
 }
 
 void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit& maxPositionTop, LayoutUnit& maxPositionBottom,
-    int& maxAscent, int& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
+    LayoutUnit& maxAscent, LayoutUnit& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
     bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap,
     FontBaseline baselineType, VerticalPositionCache& verticalPositionCache)
 {
@@ -553,8 +553,8 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
     
     if (isRootInlineBox()) {
         // Examine our root box.
-        int ascent = 0;
-        int descent = 0;
+        LayoutUnit ascent;
+        LayoutUnit descent;
         rootBox.ascentAndDescentForBox(rootBox, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
         if (strictMode || hasTextChildren() || (!checkChildren && hasTextDescendants())) {
             if (maxAscent < ascent || !setMaxAscent) {
@@ -586,8 +586,8 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
         // root box's baseline, and it is positive if the child box's baseline is below the root box's baseline.
         child->setLogicalTop(rootBox.verticalPositionForBox(child, verticalPositionCache));
         
-        int ascent = 0;
-        int descent = 0;
+        LayoutUnit ascent;
+        LayoutUnit descent;
         rootBox.ascentAndDescentForBox(*child, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
 
         LayoutUnit boxHeight = ascent + descent;

@@ -186,7 +186,7 @@ TriState ConstFloatValue::equalOrUnorderedConstant(const Value* other) const
 void ConstFloatValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {
     out.print(comma);
-    out.printf("%le", m_value);
+    out.printf("%le(%u)", m_value, bitwise_cast<uint32_t>(m_value));
 }
 
 } } // namespace JSC::B3

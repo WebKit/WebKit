@@ -132,6 +132,7 @@ private:
 
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&) override;
+    void computeCanRevealImage(const URL&, ShareableBitmap&, CompletionHandler<void(bool)>&&) override;
 #endif
 
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
@@ -226,6 +227,8 @@ private:
     void didRemoveNavigationGestureSnapshot() override;
 
     void requestDOMPasteAccess(const WebCore::IntRect&, const String&, CompletionHandler<void(WebCore::DOMPasteAccessResponse)>&&) final;
+
+    void makeViewBlank(bool) final;
 
     NSView *activeView() const;
     NSWindow *activeWindow() const;

@@ -330,9 +330,6 @@ fast/writing-mode/japanese-lr-text.html [ Failure ]
 fast/writing-mode/japanese-rl-selection.html [ Failure ]
 fast/writing-mode/japanese-rl-text.html [ Failure ]
 
-# <rdar://problem/11187491> storage/websql/quota-tracking.html is failing on Mountain Lion
-storage/websql/quota-tracking.html
-
 # <rdar://problem/11229810> SVG square caps on zero-length paths draw incorrectly on Mountain Lion
 svg/W3C-SVG-1.1-SE/painting-control-04-f.svg [ Failure ]
 svg/custom/zero-path-square-cap-rendering.svg [ Failure ]
@@ -853,9 +850,6 @@ fast/dom/Geolocation/requestQueuingForHiddenPage.html [ Skip ]
 # This test fails in compositing mode, so pre-Yosemite failures are WK2 only, and now it fails on WK1 too.
 webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFailure ]
 
-# FIXME: Needs bugzilla (<rdar://problem/18273139>)
-storage/websql/sql-error-codes.html [ Failure ]
-
 webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
 # These tests fail on machines with AMD (ATI) graphics cards - that is, on EWS and locally.
@@ -1051,9 +1045,6 @@ fast/css/appearance-apple-pay-button.html [ Pass ]
 fast/css/appearance-apple-pay-button-border-radius.html [ Pass ]
 fast/css/appearance-apple-pay-button-default-corners.html [ Pass ]
 fast/css/getComputedStyle/computed-style-apple-pay-button.html [ Pass ]
-
-# <rdar://problem/23500327> storage/websql/alter-to-info-table.html
-storage/websql/alter-to-info-table.html [ Pass Failure ]
 
 # <rdar://problem/23504749> imported/w3c/web-platform-tests/xhr/response-method.htm failing
 imported/w3c/web-platform-tests/xhr/response-method.htm [ Pass Failure ]
@@ -1370,8 +1361,6 @@ webkit.org/b/180260 http/wpt/resource-timing/rt-resources-per-worker.html [ Pass
 
 webkit.org/b/181830 [ Debug ] media/video-main-content-allow-then-deny.html [ Pass Failure ]
 
-webkit.org/b/173928 storage/websql/database-lock-after-reload.html [ Pass Failure ]
-
 webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-a-bitrate.html [ Pass Failure ]
 webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-bitrate.html [ Pass Failure ]
 webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-v-framesize.html [ Pass Failure ]
@@ -1416,8 +1405,8 @@ http/tests/cookies/same-site [ Pass ]
 http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
 
 # FIXME: Mark as Pass once the fix for <rdar://problem/42255251> is shipped.
-http/tests/cookies/same-site/set-first-party-cross-site-cookies.php [ Skip ]
-http/tests/cookies/same-site/set-first-party-same-site-cookies.php [ Skip ]
+http/tests/cookies/same-site/set-first-party-cross-site-cookies.py [ Skip ]
+http/tests/cookies/same-site/set-first-party-same-site-cookies.py [ Skip ]
 
 # <rdar://problem/40498290> REGRESSION (Mojave): HTMLMeterElement LayoutTests failing
 fast/dom/HTMLMeterElement/meter-boundary-values.html [ Failure ]
@@ -1559,9 +1548,6 @@ webkit.org/b/212172 [ Catalina ] fast/text/font-collection.html [ ImageOnlyFailu
 [ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-element.html [ Pass Failure ]
 [ Catalina+ ] http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html [ Pass Failure ]
 
-# <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
-[ Catalina+ ] storage/websql/test-authorizer.html [ Failure ]
-
 # These tests require the design system ui fonts to be installed.
 [ Catalina+ ] fast/text/design-system-ui-11.html [ Pass ]
 [ Catalina+ ] fast/text/design-system-ui-12.html [ Pass ]
@@ -1671,8 +1657,6 @@ webkit.org/b/206883 [ Mojave ] imported/w3c/web-platform-tests/css/css-fonts/var
 
 webkit.org/b/205729 webrtc/captureCanvas-webrtc.html [ Pass Failure ]
 
-webkit.org/b/207010 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
-
 webkit.org/b/201481 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
 
 webkit.org/b/206604 animations/animation-welcome-safari.html [ Pass Failure ]
@@ -1704,8 +1688,6 @@ webkit.org/b/207392 [ Debug ] imported/w3c/web-platform-tests/workers/WorkerGlob
 webkit.org/b/207461 imported/w3c/web-platform-tests/wasm/jsapi/constructor/instantiate-bad-imports.any.worker.html [ Pass Failure ]
 
 webkit.org/b/207463 inspector/runtime/getCollectionEntries.html [ Pass Failure ]
-
-webkit.org/b/194162 storage/websql/read-transactions-running-concurrently.html [ Pass Failure ]
 
 webkit.org/b/207046 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/seeking/seek-to-currentTime.html [ Pass Failure ]
 
@@ -1864,9 +1846,6 @@ imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-com
 # rdar://66910555 ([ Layout Tests ] REGRESSION (r264345): [ macOS ] 2 media-source/mediasource-changetype-play are a flaky failure)
 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Pass Failure ]
 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Failure ]
-
-# <rdar://problem/56545293> REGRESSION (r250936?): http/tests/IndexedDB/storage-limit-1.https.html is a Flaky Failure
-[ Catalina Release ] http/tests/IndexedDB/storage-limit-1.https.html [ Pass Failure ]
 
 # <rdar://problem/60376665> [ macOS ] svg/custom/glyph-selection-arabic-forms.svg is failing since around r252706
 [ Mojave ] svg/custom/glyph-selection-arabic-forms.svg [ Failure ]
@@ -2291,8 +2270,6 @@ webkit.org/b/222748 [ Debug ] http/tests/security/contentSecurityPolicy/frame-sr
 
 webkit.org/b/223949 crypto/crypto-random-values-oom.html [ Pass Timeout ]
 
-webkit.org/b/223966 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html [ Pass Failure ]
-
 webkit.org/b/223973 [ Debug ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.worker.html [ Pass Failure ]
 
 webkit.org/b/223975 inspector/protocol/condition.html [ Pass Timeout ]
@@ -2306,3 +2283,11 @@ webkit.org/b/224033 imported/w3c/web-platform-tests/custom-elements/reactions/HT
 webkit.org/b/222750 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html [ Pass Failure Crash ]
 
 webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html [ Pass Failure ]
+
+webkit.org/b/224212 [ arm64 ] compositing/background-color/no-composited-background-color-when-perspective.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/215397 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Pass Failure ]
+
+webkit.org/b/224297 media/modern-media-controls/seek-forward-support/seek-forward-support.html [ Pass Timeout ]
+
+webkit.org/b/224396 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Pass Timeout ]

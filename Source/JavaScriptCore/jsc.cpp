@@ -2940,7 +2940,21 @@ static void checkException(GlobalObject* globalObject, bool isLastFile, bool has
 {
     VM& vm = globalObject->vm();
 
-    if (options.m_treatWatchdogExceptionAsSuccess && value.inherits<TerminatedExecutionError>(vm)) {
+    auto isTerminationException = [&] (JSValue value) {
+        if (!value.isCell())
+            return false;
+
+        JSCell* valueCell = value.asCell();
+        vm.ensureTerminationException();
+        Exception* terminationException = vm.terminationException();
+        Exception* exception = jsDynamicCast<Exception*>(vm, valueCell);
+        if (exception)
+            return vm.isTerminationException(exception);
+        JSCell* terminationError = terminationException->value().asCell();
+        return valueCell == terminationError;
+    };
+
+    if (options.m_treatWatchdogExceptionAsSuccess && isTerminationException(value)) {
         ASSERT(hasException);
         return;
     }

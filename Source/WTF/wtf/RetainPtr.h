@@ -402,6 +402,8 @@ template<typename T> T* dynamic_objc_cast(id object)
 using WTF::RetainPtr;
 using WTF::adoptCF;
 using WTF::retainPtr;
+using WTF::safeCFEqual;
+using WTF::safeCFHash;
 
 #ifdef __OBJC__
 using WTF::adoptNS;

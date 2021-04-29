@@ -90,6 +90,9 @@ interface UIScriptController {
     undefined rawKeyDown(DOMString key);
     undefined rawKeyUp(DOMString key);
 
+    readonly attribute boolean isAnimatingDragCancel;
+    readonly attribute object tapHighlightViewRect;
+
     // eventsJSON describes a series of user events in JSON form. For the keys, see HIDEventGenerator.mm.
     // For example, this JSON describes a touch down followed by a touch up (i.e. a single tap).
     //  {

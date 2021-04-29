@@ -100,9 +100,13 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 #if HAVE(UIDATEPICKER_STYLE)
 - (UIDatePickerStyle)datePickerStyle
 {
-    if ([_view focusedElementInformation].elementType == WebKit::InputType::Month)
+    switch (_view.focusedElementInformation.elementType) {
+    case WebKit::InputType::Month:
+    case WebKit::InputType::Time:
         return UIDatePickerStyleWheels;
-    return UIDatePickerStyleInline;
+    default:
+        return UIDatePickerStyleInline;
+    }
 }
 #endif
 
@@ -159,6 +163,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
 {
     _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
     style.hasInteractivePreview = YES;
+    style.preferredBackgroundEffects = @[ [UIVisualEffect emptyEffect] ];
     style.preferredLayout = _UIContextMenuLayoutAutomatic;
     return style;
 }

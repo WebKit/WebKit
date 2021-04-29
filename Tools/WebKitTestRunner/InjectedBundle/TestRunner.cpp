@@ -383,11 +383,6 @@ void TestRunner::setDatabaseQuota(uint64_t quota)
     return WKBundleSetDatabaseQuota(InjectedBundle::singleton().bundle(), quota);
 }
 
-void TestRunner::setQuotaLoggingEnabled(bool enabled)
-{
-    postSynchronousPageMessage("SetQuotaLoggingEnabled", enabled);
-}
-
 void TestRunner::syncLocalStorage()
 {
     postSynchronousMessage("SyncLocalStorage", true);
@@ -651,6 +646,7 @@ enum {
     DidSetAppBoundDomainsCallbackID,
     EnterFullscreenForElementCallbackID,
     ExitFullscreenForElementCallbackID,
+    AppBoundRequestContextDataForDomainCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -2107,6 +2103,18 @@ void TestRunner::setAppBoundDomains(JSValueRef originArray, JSValueRef completio
 void TestRunner::didSetAppBoundDomainsCallback()
 {
     callTestRunnerCallback(DidSetAppBoundDomainsCallbackID);
+}
+
+void TestRunner::appBoundRequestContextDataForDomain(JSStringRef domain, JSValueRef callback)
+{
+    cacheTestRunnerCallback(AppBoundRequestContextDataForDomainCallbackID, callback);
+    postMessage("AppBoundRequestContextDataForDomain", domain);
+}
+
+void TestRunner::callDidReceiveAppBoundRequestContextDataForDomainCallback(String&& contextDomain)
+{
+    JSValueRef resultValue = JSValueMakeString(mainFrameJSContext(), createJSString(contextDomain.utf8().data()).get());
+    callTestRunnerCallback(AppBoundRequestContextDataForDomainCallbackID, 1, &resultValue);
 }
 
 void TestRunner::setIsSpeechRecognitionPermissionGranted(bool granted)

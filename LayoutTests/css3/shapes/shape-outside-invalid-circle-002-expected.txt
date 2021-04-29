@@ -1,3 +1,0 @@
-
-PASS CSS Shapes Test - Circle - invalid cy value
-

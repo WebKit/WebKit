@@ -41,6 +41,12 @@ ScriptBuffer::ScriptBuffer(const String& string)
     m_buffer = SharedBuffer::create(utf8.data(), utf8.length());
 }
 
+ScriptBuffer ScriptBuffer::empty()
+{
+    return ScriptBuffer { SharedBuffer::create() };
+}
+
+
 String ScriptBuffer::toString() const
 {
     if (!m_buffer)
@@ -57,6 +63,14 @@ bool ScriptBuffer::containsSingleFileMappedSegment() const
     return m_buffer && m_buffer->hasOneSegment() && m_buffer->begin()->segment->containsMappedFileData();
 }
 
+void ScriptBuffer::append(const String& string)
+{
+    if (!m_buffer)
+        m_buffer = SharedBuffer::create();
+    auto utf8 = string.utf8();
+    m_buffer->append(utf8.data(), utf8.length());
+}
+
 bool operator==(const ScriptBuffer& a, const ScriptBuffer& b)
 {
     if (a.buffer() == b.buffer())
@@ -64,6 +78,11 @@ bool operator==(const ScriptBuffer& a, const ScriptBuffer& b)
     if (!a.buffer() || !b.buffer())
         return false;
     return *a.buffer() == *b.buffer();
+}
+
+bool operator!=(const ScriptBuffer& a, const ScriptBuffer& b)
+{
+    return !(a == b);
 }
 
 } // namespace WebCore

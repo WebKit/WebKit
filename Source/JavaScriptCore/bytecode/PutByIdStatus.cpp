@@ -43,6 +43,11 @@ bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
     return appendICStatusVariant(m_variants, variant);
 }
 
+void PutByIdStatus::shrinkToFit()
+{
+    m_variants.shrinkToFit();
+}
+
 PutByIdStatus PutByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid)
 {
     VM& vm = profiledBlock->vm();
@@ -229,6 +234,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(
                 return PutByIdStatus(JSC::slowVersion(summary));
         }
         
+        result.shrinkToFit();
         return result;
     }
         
@@ -371,6 +377,7 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
             return PutByIdStatus(TakesSlowPath);
     }
     
+    result.shrinkToFit();
     return result;
 }
 #endif
@@ -437,6 +444,7 @@ void PutByIdStatus::merge(const PutByIdStatus& other)
             if (!appendVariant(other))
                 return mergeSlow();
         }
+        shrinkToFit();
         return;
         
     case TakesSlowPath:

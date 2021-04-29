@@ -1,3 +1,95 @@
+2021-04-10  Mark Lam  <mark.lam@apple.com>
+
+        Enable VMTraps checks in RETURN_IF_EXCEPTION.
+        https://bugs.webkit.org/show_bug.cgi?id=224078
+        rdar://75037057
+
+        Reviewed by Keith Miller.
+
+        * stress/watchdog-fire-while-in-forEachInIterable.js: Added.
+
+2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DUCET level-1 weighs are equal if characters are alphabets
+        https://bugs.webkit.org/show_bug.cgi?id=224047
+
+        Reviewed by Saam Barati and Mark Lam.
+
+        * stress/ducet-level-3-or-4-comparison.js: Added.
+        (shouldBe):
+
+2021-04-07  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Update test262
+        https://bugs.webkit.org/show_bug.cgi?id=224272
+
+        Reviewed by Ross Kirsling.
+
+        * test262/latest-changes-summary.txt:
+        * test262/test/intl402/DisplayNames/options-getoptionsobject.js: Added.
+        * test262/test/intl402/ListFormat/constructor/constructor/options-getoptionsobject.js: Renamed from JSTests/test262/test/intl402/ListFormat/constructor/constructor/options-toobject.js.
+        * test262/test/intl402/ListFormat/constructor/constructor/options-toobject-prototype.js: Removed.
+        * test262/test/intl402/Segmenter/constructor/constructor/options-getoptionsobject.js: Added.
+        * test262/test/intl402/Segmenter/constructor/constructor/options-toobject-prototype.js: Removed.
+        * test262/test/intl402/Segmenter/constructor/constructor/options-toobject.js: Removed.
+        * test262/test/language/expressions/in/rhs-yield-absent-non-strict.js: Added.
+        * test262/test/language/expressions/in/rhs-yield-absent-strict.js: Added.
+        * test262/test/language/expressions/in/rhs-yield-present.js: Added.
+        (isNameIn):
+        * test262/test262-Revision.txt:
+
+2021-04-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] WasmMemory caging should care about nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=224268
+        <rdar://problem/74654838>
+
+        Reviewed by Mark Lam.
+
+        * wasm/stress/4g-memory-cage.js: Added.
+        (async test):
+        * wasm/stress/more-than-4g-offset-access-oom.js: Added.
+        (async test):
+        * wasm/stress/null-memory-cage-explicit.js: Added.
+        (async test):
+        * wasm/stress/null-memory-cage.js: Added.
+        (async test):
+
+2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Symbol and BigInt wrapper objects should perform OrdinaryToPrimitive
+        https://bugs.webkit.org/show_bug.cgi?id=224208
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/bigint-object-ordinary-toprimitive.js: Added.
+        * stress/symbol-object-ordinary-toprimitive.js: Added.
+
+2021-04-06  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Array's toString() is incorrect if join() is non-callable
+        https://bugs.webkit.org/show_bug.cgi?id=224215
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/array-toString-non-callable-join.js: Added.
+
+2021-04-05  Keith Miller  <keith_miller@apple.com>
+
+        DFG arity fixup nodes should exit to the caller's call opcode
+        https://bugs.webkit.org/show_bug.cgi?id=223278
+
+        Reviewed by Saam Barati.
+
+        * stress/dfg-arity-fixup-uses-callers-exit-origin.js: Added.
+        (main.v22):
+        (main.v30):
+        (main.try.v40):
+        (main.try.v47):
+        (main.try.v56):
+        (main.):
+        (main):
+
 2021-04-02  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Reduce bytecode instruction count emitted for `class extends`

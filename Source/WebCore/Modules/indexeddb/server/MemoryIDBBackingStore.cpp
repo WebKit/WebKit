@@ -63,6 +63,11 @@ IDBError MemoryIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     return IDBError { };
 }
 
+uint64_t MemoryIDBBackingStore::databaseVersion()
+{
+    return m_databaseInfo ? m_databaseInfo->version() : 0;
+}
+
 void MemoryIDBBackingStore::setDatabaseInfo(const IDBDatabaseInfo& info)
 {
     // It is not valid to directly set database info on a backing store that hasn't already set its own database info.

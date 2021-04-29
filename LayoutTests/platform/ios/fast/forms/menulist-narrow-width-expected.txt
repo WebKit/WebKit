@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 510x19
         text run at (0,0) width 510: "This tests that select elements with a narrow width (1px) are rendered correctly."
       RenderBR {BR} at (509,0) size 1x19
-      RenderMenuList {SELECT} at (0,22) size 10x20 [color=#007AFF] [bgcolor=#78788029]
+      RenderMenuList {SELECT} at (0,22) size 10x20 [color=#007AFF] [bgcolor=#E9E9EA]
         RenderBlock (anonymous) at (5,3) size 11x14
           RenderText at (0,0) size 21x14
             text run at (0,0) width 21: "test"

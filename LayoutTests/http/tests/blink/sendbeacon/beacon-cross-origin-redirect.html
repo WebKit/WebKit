@@ -13,7 +13,7 @@ function test() {
         //testRunner.dumpPingLoaderCallbacks();
     }
 
-    shouldBeTrue('navigator.sendBeacon("http://127.0.0.1:8080/navigation/resources/redirection-response.php?status=302&target=/non-existent.php", "CrossOrigin");');
+    shouldBeTrue('navigator.sendBeacon("http://127.0.0.1:8080/navigation/resources/redirection-response.py?status=302&target=/non-existent.php", "CrossOrigin");');
     // Wait a while for the redirect response handling to happen before finishing up.
     setTimeout(finishJSTest, 200);
 }

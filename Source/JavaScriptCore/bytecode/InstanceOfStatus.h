@@ -106,6 +106,7 @@ public:
 
 private:
     void appendVariant(const InstanceOfVariant&);
+    void shrinkToFit();
     
     State m_state;
     Vector<InstanceOfVariant, 2> m_variants;

@@ -8,10 +8,10 @@
 <script>
     test(function() {
         function transitioned() {
-            style = document.createElement('p').style;
+            dataset = document.createElement('p').dataset;
             for(var i = 0; i < 20; i++)
-                style['p'+i] = i;
-            return style;
+                dataset['p'+i] = i;
+            return dataset;
         }
 
         function putter(o) {

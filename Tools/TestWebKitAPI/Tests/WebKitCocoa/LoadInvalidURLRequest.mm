@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
+#import "TestURLSchemeHandler.h"
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKWebView.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
@@ -62,6 +63,23 @@ static NSURL *literalURL(const char* literal)
     didFinishTest = true;
 }
 
+@end
+
+@interface TestURLRequest : NSURLRequest
+- (instancetype)initWithURL:(NSURL *)URL;
+@end
+
+@implementation TestURLRequest
+- (instancetype)initWithURL:(NSURL *)URL
+{
+    if (!(self = [super initWithURL:URL]))
+        return nil;
+    return self;
+}
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    EXPECT_TRUE(false);
+}
 @end
 
 namespace TestWebKitAPI {
@@ -103,6 +121,20 @@ TEST(WebKit, LoadInvalidURLRequestNonASCII)
     [request _setProperty:request.URL forKey:@"_kCFHTTPCookiePolicyPropertySiteForCookies"];
     [webView loadRequest:request];
     Util::run(&done);
+}
+
+TEST(WebKit, LoadNSURLRequestSubclass)
+{
+    auto request = adoptNS([[TestURLRequest alloc] initWithURL:[NSURL URLWithString:@"test:///"]]);
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    handler.get().startURLSchemeTaskHandler = ^(WKWebView *, id<WKURLSchemeTask> task) {
+        respond(task, "hi");
+    };
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+    [webView loadRequest:request.get()];
+    [webView _test_waitForDidFinishNavigation];
 }
 
 } // namespace TestWebKitAPI

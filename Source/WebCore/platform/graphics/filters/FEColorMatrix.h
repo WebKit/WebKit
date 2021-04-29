@@ -38,7 +38,7 @@ enum ColorMatrixType {
 
 class FEColorMatrix : public FilterEffect {
 public:
-    static Ref<FEColorMatrix> create(Filter&, ColorMatrixType, const Vector<float>&);
+    static Ref<FEColorMatrix> create(Filter&, ColorMatrixType, Vector<float>&&);
 
     ColorMatrixType type() const { return m_type; }
     bool setType(ColorMatrixType);
@@ -50,7 +50,7 @@ public:
     static inline void calculateHueRotateComponents(float* components, float value);
 
 private:
-    FEColorMatrix(Filter&, ColorMatrixType, const Vector<float>&);
+    FEColorMatrix(Filter&, ColorMatrixType, Vector<float>&&);
 
     const char* filterName() const final { return "FEColorMatrix"; }
 

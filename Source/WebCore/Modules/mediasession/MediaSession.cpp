@@ -30,6 +30,7 @@
 
 #include "DOMWindow.h"
 #include "EventNames.h"
+#include "HTMLMediaElement.h"
 #include "JSMediaPositionState.h"
 #include "JSMediaSessionAction.h"
 #include "JSMediaSessionPlaybackState.h"
@@ -74,6 +75,53 @@ static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSes
         return it->value;
 
     return PlatformMediaSession::NoCommand;
+}
+
+static Optional<std::pair<PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument>> platformCommandForMediaSessionAction(const MediaSessionActionDetails& actionDetails)
+{
+    PlatformMediaSession::RemoteControlCommandType command = PlatformMediaSession::NoCommand;
+    PlatformMediaSession::RemoteCommandArgument argument;
+
+    switch (actionDetails.action) {
+    case MediaSessionAction::Play:
+        command = PlatformMediaSession::PlayCommand;
+        break;
+    case MediaSessionAction::Pause:
+        command = PlatformMediaSession::PauseCommand;
+        break;
+    case MediaSessionAction::Seekbackward:
+        command = PlatformMediaSession::SkipBackwardCommand;
+        argument.time = actionDetails.seekOffset;
+        break;
+    case MediaSessionAction::Seekforward:
+        command = PlatformMediaSession::SkipForwardCommand;
+        argument.time = actionDetails.seekOffset;
+        break;
+    case MediaSessionAction::Previoustrack:
+        command = PlatformMediaSession::PreviousTrackCommand;
+        break;
+    case MediaSessionAction::Nexttrack:
+        command = PlatformMediaSession::NextTrackCommand;
+        break;
+    case MediaSessionAction::Skipad:
+        // Not supported at present.
+        break;
+    case MediaSessionAction::Stop:
+        command = PlatformMediaSession::StopCommand;
+        break;
+    case MediaSessionAction::Seekto:
+        command = PlatformMediaSession::SeekToPlaybackPositionCommand;
+        argument.time = actionDetails.seekTime;
+        argument.fastSeek = actionDetails.fastSeek;
+        break;
+    case MediaSessionAction::Settrack:
+        // Not supported at present.
+        break;
+    }
+    if (command == PlatformMediaSession::NoCommand)
+        return { };
+
+    return std::make_pair(command, argument);
 }
 
 Ref<MediaSession> MediaSession::create(Navigator& navigator)
@@ -199,20 +247,21 @@ void MediaSession::setActionHandler(MediaSessionAction action, RefPtr<MediaSessi
     notifyActionHandlerObservers();
 }
 
-bool MediaSession::hasActionHandler(MediaSessionAction action) const
+bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails)
 {
-    return m_actionHandlers.contains(action);
-}
-
-RefPtr<MediaSessionActionHandler> MediaSession::handlerForAction(MediaSessionAction action) const
-{
-    return m_actionHandlers.get(action);
-}
-
-void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails)
-{
-    if (auto handler = m_actionHandlers.get(actionDetails.action))
+    if (auto handler = m_actionHandlers.get(actionDetails.action)) {
         handler->handleEvent(actionDetails);
+        return true;
+    }
+    auto element = activeMediaElement();
+    if (!element)
+        return false;
+
+    auto platformCommand = platformCommandForMediaSessionAction(actionDetails);
+    if (!platformCommand)
+        return false;
+    element->didReceiveRemoteControlCommand(platformCommand->first, platformCommand->second);
+    return true;
 }
 
 ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& state)
@@ -312,6 +361,15 @@ void MediaSession::notifyActionHandlerObservers()
     forEachObserver([](auto& observer) {
         observer.actionHandlersChanged();
     });
+}
+
+RefPtr<HTMLMediaElement> MediaSession::activeMediaElement() const
+{
+    auto* doc = document();
+    if (!doc)
+        return nullptr;
+
+    return HTMLMediaElement::bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose::MediaSession, doc);
 }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

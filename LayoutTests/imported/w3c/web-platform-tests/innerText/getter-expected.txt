@@ -36,7 +36,7 @@ FAIL \r converted to newline ("<div style='white-space:pre-line'>abc\rdef") asse
 PASS \t converted to space ("<div style='white-space:pre-line'>abc\tdef")
 PASS Whitespace collapses across element boundaries ("<div><span>abc </span> def")
 PASS Whitespace collapses across element boundaries ("<div><span>abc </span><span></span> def")
-FAIL Whitespace collapses across element boundaries ("<div><span>abc </span><span style='white-space:pre'></span> def") assert_equals: expected "abc def" but got "abc  def"
+PASS Whitespace collapses across element boundaries ("<div><span>abc </span><span style='white-space:pre'></span> def")
 PASS Soft line breaks ignored ("<div style='width:0'>abc def")
 FAIL ::first-line styles applied ("<div class='first-line-uppercase' style='width:0'>abc def") assert_equals: expected "ABC def" but got "abc def"
 PASS ::first-letter styles applied ("<div class='first-letter-uppercase' style='width:0'>abc def")

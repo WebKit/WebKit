@@ -11,7 +11,7 @@ layer at (0,0) size 800x1387
         RenderInline {FONT} at (0,0) size 470x74 [color=#FF0000]
           RenderText {#text} at (0,1) size 294x36
             text run at (0,1) width 294: "Acceptance Test Case"
-          RenderBR {BR} at (293,0) size 1x36
+          RenderBR {BR} at (293,1) size 1x36
           RenderText {#text} at (0,39) size 470x36
             text run at (0,39) width 470: "Web Browser: Web View (HTML)"
       RenderBlock {P} at (0,138) size 784x31
@@ -134,7 +134,7 @@ layer at (0,0) size 800x1387
           RenderTableSection {TBODY} at (1,1) size 782x62
             RenderTableRow {TR} at (0,2) size 782x58
               RenderTableCell {TH} at (2,2) size 778x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 0x19
                 RenderText {#text} at (22,11) size 95x19
                   text run at (22,11) width 95: "Test Case #1: "
                 RenderInline {FONT} at (0,0) size 602x19 [color=#0000FF]
@@ -180,7 +180,7 @@ layer at (0,0) size 800x1387
           RenderTableSection {TBODY} at (1,1) size 782x62
             RenderTableRow {TR} at (0,2) size 782x58
               RenderTableCell {TH} at (2,2) size 778x58 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {A} at (0,0) size 0x0
+                RenderInline {A} at (0,0) size 0x19
                 RenderText {#text} at (12,11) size 95x19
                   text run at (12,11) width 95: "Test Case #2: "
                 RenderInline {FONT} at (0,0) size 595x19 [color=#0000FF]

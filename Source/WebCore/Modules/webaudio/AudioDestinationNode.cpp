@@ -146,6 +146,16 @@ void AudioDestinationNode::updateIsEffectivelyPlayingAudio()
     context().isPlayingAudioDidChange();
 }
 
+void AudioDestinationNode::ref()
+{
+    context().ref();
+}
+
+void AudioDestinationNode::deref()
+{
+    context().deref();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

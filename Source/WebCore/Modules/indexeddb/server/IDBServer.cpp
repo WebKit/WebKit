@@ -758,14 +758,13 @@ StorageQuotaManager::Decision IDBServer::requestSpace(const ClientOrigin& origin
     return result;
 }
 
-uint64_t IDBServer::diskUsage(const String& rootDirectory, const ClientOrigin& origin, StorageQuotaManager::ShouldPrintUsageDetail shouldPrintUsageDetail)
+uint64_t IDBServer::diskUsage(const String& rootDirectory, const ClientOrigin& origin)
 {
     ASSERT(!isMainThread());
 
     auto oldVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v0"_str);
     auto newVersionOriginDirectory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin.topOrigin, origin.clientOrigin, rootDirectory, "v1"_str);
-    bool shouldPrintUsageDetailForDirectory = shouldPrintUsageDetail == StorageQuotaManager::ShouldPrintUsageDetail::Yes;
-    return SQLiteIDBBackingStore::databasesSizeForDirectory(oldVersionOriginDirectory, shouldPrintUsageDetailForDirectory) + SQLiteIDBBackingStore::databasesSizeForDirectory(newVersionOriginDirectory, shouldPrintUsageDetailForDirectory);
+    return SQLiteIDBBackingStore::databasesSizeForDirectory(oldVersionOriginDirectory) + SQLiteIDBBackingStore::databasesSizeForDirectory(newVersionOriginDirectory);
 }
 
 void IDBServer::upgradeFilesIfNecessary()

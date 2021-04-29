@@ -1,3 +1,1748 @@
+2021-04-11  Cameron McCormack  <heycam@apple.com>
+
+        Fix initial horizontal scrollbar position when vertical scrollbar is on the left.
+        https://bugs.webkit.org/show_bug.cgi?id=224409
+
+        Reviewed by Darin Adler.
+
+        * fast/scrolling/rtl-scrollbars-initial-position-dynamic-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-initial-position-dynamic.html: Added.
+        * fast/scrolling/rtl-scrollbars-initial-position-expected.html: Added.
+        * fast/scrolling/rtl-scrollbars-initial-position.html: Added.
+
+2021-04-11  Sam Weinig  <weinig@apple.com>
+
+        Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior
+        https://bugs.webkit.org/show_bug.cgi?id=222518
+        <rdar://problem/75136887>
+
+        Reviewed by Darin Adler.
+
+        * fast/css/style-enumerate-properties-expected.txt:
+        * fast/css/style-enumerate-properties.html:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/domListEnumeration.html:
+        Remove existing tests for iteration order, which is not standardized, and not consistent among
+        browsers. Adds a new one that checks invariants of the 4 groupings of properties which we currently
+        expect to hold, at least in our implementation.
+
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor-expected.txt:
+        * fast/dom/CSSStyleDeclaration/cssstyledeclaration-properties-descriptor.html:
+        Update now that the properties are proper attributes on the prototype.
+
+        * js/dom/put-override-should-not-use-ic.html:
+        Switch to using a DOMStringList as the object that overrides put, since CSSStyleDeclaration no longer does.
+
+        * transitions/transitions-parsing-expected.txt:
+        * transitions/transitions-parsing.html:
+        Remove Object.keys() aspect of the test, which is no longer meaningful since the
+        properties should no longer exist in the result set.
+
+2021-04-10  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r275668) Potential null pointer deref in AudioParam::exponentialRampToValueAtTime(float, double)
+        https://bugs.webkit.org/show_bug.cgi?id=224400
+        <rdar://76450376>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage.
+
+        * webaudio/AudioParam/audioparam-exponentialRampToValueAtTime-nocontext-crash-expected.txt: Added.
+        * webaudio/AudioParam/audioparam-exponentialRampToValueAtTime-nocontext-crash.html: Added.
+
+2021-04-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=223966
+        <rdar://problem/76028345>
+
+        Reviewed by Darin Adler.
+
+        Unskip test that should no longer be flaky.
+
+        * platform/mac/TestExpectations:
+
+2021-04-10  Chris Dumez  <cdumez@apple.com>
+
+        [ macOS ] 3 webaudio/OfflineAudioContext/ layout-tests are flakey text failures
+        https://bugs.webkit.org/show_bug.cgi?id=224387
+        <rdar://problem/76468058>
+
+        Reviewed by Eric Carlson.
+
+        Update OfflineAudioContext leak tests to use the new test infrastructure. They are no longer impacted
+        by tests running before them or in parallel to them.
+
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-expected.txt:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering.html:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-expected.txt:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended-expected.txt:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended.html:
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak.html:
+        * webaudio/resources/audiocontext-leak-test.js: Added.
+        (didGCAtLeastOneContext):
+        (gcAndCheckForContextLeaks):
+
+2021-04-09  Antoine Quint  <graouts@webkit.org>
+
+        calc() simplification for a multiplication should apply the multiplication to each value of an addition
+        https://bugs.webkit.org/show_bug.cgi?id=224376
+
+        Reviewed by Simon Fraser.
+
+        Rebase some non-WPT tests to account for new results.
+
+        * css3/calc/simplification-expected.txt:
+        * transitions/background-position-transitions-expected.txt:
+        * transitions/background-position-transitions.html:
+
+2021-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r271660): Tap highlight no longer shows when tapping clickable elements without touch event listeners
+        https://bugs.webkit.org/show_bug.cgi?id=224385
+        <rdar://problem/76462370>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test that exercises 3 scenarios, using the new testing SPI:
+
+        1.  Tapping on a `button` that prevents the "touchend" event (and therefore prevents clicking) should cause
+            the tap highlight to not show up.
+        2.  Tapping on a `button` that has a "touchend" event listener and does not prevent default should cause the tap
+            highlight to show up.
+        3.  Tapping on a `button` with no event listeners should cause the tap highlight to show up.
+
+        * fast/events/touch/ios/tap-highlight-during-synthetic-click-expected.txt: Added.
+        * fast/events/touch/ios/tap-highlight-during-synthetic-click.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.tapHighlightViewRect):
+
+2021-04-09  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Remove className() and toStringName() from the method table
+        https://bugs.webkit.org/show_bug.cgi?id=224247
+
+        Reviewed by Darin Adler.
+
+        * inspector/model/remote-object-get-properties-expected.txt:
+        * inspector/model/remote-object-get-properties.html:
+
+2021-04-09  Jean-Yves Avenard  <jya@apple.com>
+
+        Media Session action should default to the MediaElement's default when no MediaSession handler are set
+        https://bugs.webkit.org/show_bug.cgi?id=224278
+        <rdar://problem/76339841>
+
+        Reviewed by Youenn Fablet .
+
+        * media/audio-background-playback-playlist-expected.txt: Renamed method
+        * media/audio-background-playback-playlist.html: Renamed method
+        * media/media-session/default-actionHandlers-expected.txt: Added.
+        * media/media-session/default-actionHandlers.html: Added.
+        * platform/mac/media/video-best-element-for-playback-controls-purpose-expected.txt: Renamed method
+        * platform/mac/media/video-best-element-for-playback-controls-purpose.html: Renamed method
+
+2021-04-09  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=224396
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations to Pass Timeout while test is reviewed.
+
+2021-04-09  Antoine Quint  <graouts@webkit.org>
+
+        Remove tests under css3/shapes which are superseded by tests at imported/w3c/web-platform-tests/css/css-shapes
+        https://bugs.webkit.org/show_bug.cgi?id=224378
+
+        Reviewed by Dean Jackson.
+
+        * TestExpectations:
+        * css3/shapes/shape-outside-invalid-001-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-001.html: Removed.
+        * css3/shapes/shape-outside-invalid-circle-000-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-circle-000.html: Removed.
+        * css3/shapes/shape-outside-invalid-circle-001-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-circle-001.html: Removed.
+        * css3/shapes/shape-outside-invalid-circle-002-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-circle-002.html: Removed.
+        * css3/shapes/shape-outside-invalid-circle-003-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-circle-003.html: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-001-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-001.html: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-002-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-002.html: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-003-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-003.html: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-004-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-004.html: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-005-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-005.html: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-006-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-ellipse-006.html: Removed.
+        * css3/shapes/shape-outside-invalid-inset-001-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-inset-001.html: Removed.
+        * css3/shapes/shape-outside-invalid-inset-002-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-inset-002.html: Removed.
+        * css3/shapes/shape-outside-invalid-inset-003-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-inset-003.html: Removed.
+        * css3/shapes/shape-outside-invalid-inset-004-expected.txt: Removed.
+        * css3/shapes/shape-outside-invalid-inset-004.html: Removed.
+        * css3/shapes/shape-outside-path-no-crash-expected.txt: Removed.
+        * css3/shapes/shape-outside-path-no-crash.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-002-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-002.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-003-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-003.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-004-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-004.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-006-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-006.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-007-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-007.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-008-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-box/shape-outside-box-008.html: Removed.
+        * css3/shapes/shape-outside/shape-box/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-004-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-004.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-001.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002-expected.txt: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-002.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003-expected.txt: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-003.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004-expected.txt: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/shape-outside-radial-gradient-004.html: Removed.
+        * css3/shapes/shape-outside/shape-image/gradients/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-000-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-000.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-001-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-001.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-002-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-002.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-003-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-003.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-004-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-004.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-005-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-005.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-006-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-006.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-007-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-007.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-008-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-008.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-009-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-009.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-010-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-010.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-011-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-011.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-012-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-012.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-013-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-013.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-014-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-014.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-015-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-015.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-016-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-016.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-017-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-017.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-018-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-018.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-019-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-019.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-020-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-020.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-021-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-021.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-022-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-022.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-023-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-023.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-024-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-024.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-025-expected.html: Removed.
+        * css3/shapes/shape-outside/shape-image/shape-image-025.html: Removed.
+        * css3/shapes/shape-outside/shape-image/support/animated.gif: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle-20.png: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle-20.svg: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle-50.png: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle-50.svg: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle-70.png: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle-70.svg: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle.jpg: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle.png: Removed.
+        * css3/shapes/shape-outside/shape-image/support/left-half-rectangle.svg: Removed.
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle-20.png: Removed.
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle-50.png: Removed.
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle-70.png: Removed.
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle-70.svg: Removed.
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle.gif: Removed.
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle.jpg: Removed.
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle.png: Removed.
+        * css3/shapes/shape-outside/shape-image/support/right-half-rectangle.svg: Removed.
+        * css3/shapes/shape-outside/shape-image/support/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/shape-image/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-013-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-013.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-014-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-014.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-015-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-015.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-016-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-016.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-017-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-017.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-018-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-018.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-019-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-019.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-020-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-020.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-021-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-021.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-022-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-022.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-024-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-024.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-025-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-025.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-026-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-026.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-028-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-028.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-029-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-029.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-030-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-030.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-031-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-031.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/circle/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-013-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-013.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-014-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-014.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-016-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-016.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-018-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-018.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-019-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-019.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-020-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-020.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-021-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-021.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-022-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-022.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-023-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-023.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-024-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-024.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-025-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-025.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-030-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-030.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-031-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-031.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/ellipse/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-010-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-010.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-011-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-011.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-012-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-012.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-013-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-013.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-014-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-014.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-015-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-015.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/inset/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-007-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-007.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-008-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-008.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-009-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-009.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-010-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-010.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-011-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-011.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-012-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-012.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-013-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-013.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-014-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-014.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-015-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-015.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-016-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-016.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-017-expected.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-017.html: Removed.
+        * css3/shapes/shape-outside/supported-shapes/polygon/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/supported-shapes/support/rounded-rectangle.js: Removed.
+        * css3/shapes/shape-outside/supported-shapes/support/subpixel-utils.js: Removed.
+        * css3/shapes/shape-outside/supported-shapes/support/test-utils.js: Removed.
+        * css3/shapes/shape-outside/supported-shapes/support/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/values/shape-image-threshold-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-image-threshold-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-image-threshold-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-image-threshold-001.html: Removed.
+        * css3/shapes/shape-outside/values/shape-image-threshold-002-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-image-threshold-002.html: Removed.
+        * css3/shapes/shape-outside/values/shape-image-threshold-003-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-image-threshold-003.html: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-001.html: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-002-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-002.html: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-003-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-003.html: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-004-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-004.html: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-005-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-margin-005.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-box-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-box-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-001.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-002-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-002.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-003-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-003.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-004-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-004.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-005-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-005.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-006-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-006.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-007-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-007.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-008-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-008.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-009-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-009.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-010-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-010.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-011-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-circle-011.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-computed-shape-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-computed-shape-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-computed-shape-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-computed-shape-001.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-002-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-002.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-003-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-003.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-004-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-004.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-006-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-006.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-007-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-007.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-008-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-008.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-009-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-ellipse-009.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-001.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-002-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-002.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-003-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-003.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-004-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-004.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-005-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-005.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-006-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-006.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-007-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-007.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-008-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-008.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-009-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-inset-009.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-001.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-002-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-002.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-003-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-003.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-004-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-004.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-005-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-005.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-006-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-polygon-006.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-arguments-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-arguments-001-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-arguments-001.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-box-pair-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-box-pair-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-inherit-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-inherit-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-initial-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-initial-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-none-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-none-000.html: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-notation-000-expected.txt: Removed.
+        * css3/shapes/shape-outside/values/shape-outside-shape-notation-000.html: Removed.
+        * css3/shapes/shape-outside/values/support/parsing-utils.js: Removed.
+        * css3/shapes/shape-outside/values/support/w3c-import.log: Removed.
+        * css3/shapes/shape-outside/values/w3c-import.log: Removed.
+        * css3/shapes/spec-examples/shape-outside-001-expected.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-001.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-002-expected.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-002.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-003-expected.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-003.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-004-expected.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-004.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-005-expected.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-005.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-006-expected.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-006.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-007-expected.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-007.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-008-expected.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-008.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-010-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-010.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-011-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-011.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-012-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-012.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-013-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-013.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-014-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-014.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-015-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-015.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-016-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-016.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-017-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-017.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-018-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-018.html: Removed.
+        * css3/shapes/spec-examples/shape-outside-019-expected.txt: Removed.
+        * css3/shapes/spec-examples/shape-outside-019.html: Removed.
+        * css3/shapes/spec-examples/support/circle-no-shadow.png: Removed.
+        * css3/shapes/spec-examples/support/circle-shadow.png: Removed.
+        * css3/shapes/spec-examples/support/rounded-triangle.svg: Removed.
+        * css3/shapes/spec-examples/support/spec-example-utils.js: Removed.
+        * css3/shapes/spec-examples/support/w3c-import.log: Removed.
+        * css3/shapes/spec-examples/w3c-import.log: Removed.
+        * css3/shapes/w3c-import.log: Removed.
+        * platform/glib/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2021-04-09  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Set hasIntrinsicWidth & hasIntrinsicHeight properties for SVG element's intrinsic size
+        https://bugs.webkit.org/show_bug.cgi?id=223504
+
+        Reviewed by Javier Fernandez.
+
+        Enable 4 tests that pass now.
+
+        * TestExpectations:
+
+2021-04-09  Said Abou-Hallawa  <said@apple.com>
+
+        [ macOS wk2 ARM64 ] fast/images/async-image-background-change.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=223469
+
+        Reviewed by Darin Adler.
+
+        If the event 'webkitImageFrameReady' fires before registering its listener,
+        the test will timeout.
+
+        Make sure the event listener is registered  before changing the background
+        of the element.
+
+        * fast/images/async-image-background-change.html:
+        * platform/mac-wk2/TestExpectations:
+
+2021-04-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r273154): 3 layout tests in editing/selection/ios are consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=224375
+        <rdar://problem/76420167>
+
+        Reviewed by Tim Horton.
+
+        Rebaseline some layout tests after enabling form control refresh on iOS.
+
+        * editing/selection/ios/do-not-hide-selection-in-visible-field-expected.txt:
+        * editing/selection/ios/do-not-hide-selection-in-visible-field.html:
+        * editing/selection/ios/show-selection-in-transformed-container-2-expected.txt:
+        * editing/selection/ios/show-selection-in-transformed-container-2.html:
+        * editing/selection/ios/show-selection-in-transformed-container-expected.txt:
+        * editing/selection/ios/show-selection-in-transformed-container.html:
+
+2021-04-08  Antoine Quint  <graouts@webkit.org>
+
+        calc() values resulting from blending mixed type lengths should be simplified
+        https://bugs.webkit.org/show_bug.cgi?id=224322
+
+        Reviewed by Sam Weinig.
+
+        Modify a few tests to account for the correct serialization.
+
+        * fast/css/object-position/parsing-object-position-expected.txt:
+        * fast/css/object-position/parsing-object-position.html:
+        * fast/shapes/shape-outside-floats/shape-outside-animation-expected.txt:
+        * fast/shapes/shape-outside-floats/shape-outside-animation.html:
+        * transitions/background-position-transitions.html:
+        * transitions/background-position-transitions-expected.txt:
+        * transitions/resources/transition-test-helpers.js: set computedValue such that
+        failures print out the actual value instead of "undefined".
+
+2021-04-09  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/cookies convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223891
+        <rdar://problem/75965634>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/cookies/multiple-redirect-and-set-cookie.php: Removed.
+        * http/tests/cookies/multiple-redirect-and-set-cookie.py: Added.
+        (redirect_url):
+        (redirect_to_step):
+        (step0):
+        (step2):
+        * http/tests/cookies/resources/cookie-utilities.php: Removed.
+        * http/tests/cookies/resources/cookie_utilities.py: Added.
+        (hostname_is_equal_to_string):
+        (reset_cookies_for_current_origin):
+        (reset_cookies):
+        (should_reset_cookies):
+        (wk_set_cookie):
+        * http/tests/cookies/same-site/set-first-party-cross-site-cookies.php: Removed.
+        * http/tests/cookies/same-site/set-first-party-cross-site-cookies.py: Added.
+        * http/tests/cookies/same-site/set-first-party-same-site-cookies.php: Removed.
+        * http/tests/cookies/same-site/set-first-party-same-site-cookies.py: Added.
+        * http/tests/cookies/same-site/user-load-cross-site-redirect.php: Removed.
+        * http/tests/cookies/same-site/user-load-cross-site-redirect.py: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2021-04-09  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] fast/canvas/canvas-createPattern-video-loading.html is failing since r218170
+        https://bugs.webkit.org/show_bug.cgi?id=173410
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/gtk/TestExpectations: Unflag now-passing test.
+
+2021-04-09  Antoine Quint  <graouts@webkit.org>
+
+        [ Mac WK2 ] compositing/animation/keyframe-order.html is a flakey image failure
+        https://bugs.webkit.org/show_bug.cgi?id=221359
+
+        Reviewed by Dean Jackson.
+
+        Attempt to make this test more stable by awaiting the resolution of the animation.ready
+        promise as well as UIHelper.renderingUpdate() to ensure the animation has been committed.
+
+        * compositing/animation/keyframe-order.html:
+
+2021-04-09  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        ServiceWorker should save module scripts
+        https://bugs.webkit.org/show_bug.cgi?id=224356
+        <rdar://problem/75634897>
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/service-workers/persistent-modules-expected.txt: Added.
+        * http/wpt/service-workers/persistent-modules.html: Added.
+        * http/wpt/service-workers/resources/persistent-imported-module-script.py: Added.
+        (main):
+        * http/wpt/service-workers/resources/persistent-module-worker.js: Added.
+
+2021-04-08  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Write more blinded secret tests
+        https://bugs.webkit.org/show_bug.cgi?id=222018
+        <rdar://problem/74674160>
+
+        Reviewed by John Wilander.
+
+        * http/tests/privateClickMeasurement/store-private-click-measurement-with-source-nonce.html:
+
+2021-04-08  Kate Cheney  <katherine_cheney@apple.com>
+
+        Add test infrastructure for app bound request context string
+        https://bugs.webkit.org/show_bug.cgi?id=224311
+        <rdar://problem/76229003>
+
+        Reviewed by Brent Fulgham.
+
+        Test coverage.
+
+        * http/tests/in-app-browser-privacy/context-string-for-subframe-expected.txt: Added.
+        * http/tests/in-app-browser-privacy/context-string-for-subframe.html: Added.
+        * http/tests/in-app-browser-privacy/resources/basic-iframe.html: Added.
+        * platform/ios-wk2/TestExpectations:
+
+2021-04-08  Chris Dumez  <cdumez@apple.com>
+
+        Suspended OfflineAudioContext objects are leaking
+        https://bugs.webkit.org/show_bug.cgi?id=224333
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-while-suspended.html: Added.
+
+2021-04-08  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/navigation convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222418
+        <rdar://problem/74744523>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-blob-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-blob.html:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect-expected.txt:
+        * http/tests/blink/sendbeacon/beacon-cross-origin-redirect.html:
+        * http/tests/navigation/image-load-in-pagehide-handler-expected.txt:
+        * http/tests/navigation/image-load-in-pagehide-handler.html:
+        * http/tests/navigation/image-load-in-unload-handler-expected.txt:
+        * http/tests/navigation/image-load-in-unload-handler.html:
+        * http/tests/navigation/no-referrer-reset-expected.txt:
+        * http/tests/navigation/no-referrer-reset.html:
+        * http/tests/navigation/no-referrer-same-window.html:
+        * http/tests/navigation/no-referrer-subframe.html:
+        * http/tests/navigation/no-referrer-target-blank.html:
+        * http/tests/navigation/ping-attribute/anchor-cookie-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-cookie.html:
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-from-https-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-cross-origin-from-https.html:
+        * http/tests/navigation/ping-attribute/anchor-cross-origin.html:
+        * http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html:
+        * http/tests/navigation/ping-attribute/anchor-same-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/anchor-same-origin.html:
+        * http/tests/navigation/ping-attribute/area-cookie-expected.txt:
+        * http/tests/navigation/ping-attribute/area-cookie.html:
+        * http/tests/navigation/ping-attribute/area-cross-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/area-cross-origin-from-https-expected.txt:
+        * http/tests/navigation/ping-attribute/area-cross-origin-from-https.html:
+        * http/tests/navigation/ping-attribute/area-cross-origin.html:
+        * http/tests/navigation/ping-attribute/area-same-origin-expected.txt:
+        * http/tests/navigation/ping-attribute/area-same-origin.html:
+        * http/tests/navigation/ping-attribute/resources/utilities.js:
+        (clearLastPingResultAndRunTest):
+        * http/tests/navigation/post-301-response.html:
+        * http/tests/navigation/post-302-response.html:
+        * http/tests/navigation/post-303-response.html:
+        * http/tests/navigation/post-307-response.html:
+        * http/tests/navigation/post-308-response.html:
+        * http/tests/navigation/resources/check-ping.php: Removed.
+        * http/tests/navigation/resources/check-ping.py: Added.
+        * http/tests/navigation/resources/delete-ping.php: Removed.
+        * http/tests/navigation/resources/delete-ping.py: Added.
+        * http/tests/navigation/resources/image-load-in-pagehide-handler-2.html:
+        * http/tests/navigation/resources/image-load-in-unload-handler-2.html:
+        * http/tests/navigation/resources/no-referrer-helper.php: Removed.
+        * http/tests/navigation/resources/no-referrer-helper.py: Added.
+        * http/tests/navigation/resources/no-referrer-reset-helper.php: Removed.
+        * http/tests/navigation/resources/no-referrer-reset-helper.py: Added.
+        * http/tests/navigation/resources/no-referrer-same-window-helper.php: Removed.
+        * http/tests/navigation/resources/no-referrer-same-window-helper.py: Added.
+        * http/tests/navigation/resources/ping-file-path.php: Removed.
+        * http/tests/navigation/resources/ping_file_path.py: Added.
+        * http/tests/navigation/resources/redirected-post-request-contents.php: Removed.
+        * http/tests/navigation/resources/redirected-post-request-contents.py: Added.
+        (check_header):
+        * http/tests/navigation/resources/redirection-response.php: Removed.
+        * http/tests/navigation/resources/redirection-response.py: Added.
+        * http/tests/navigation/resources/save-Ping.php: Removed.
+        * http/tests/navigation/resources/save-ping-and-redirect-to-save-ping.php: Removed.
+        * http/tests/navigation/resources/save-ping-and-redirect-to-save-ping.py: Added.
+        * http/tests/navigation/resources/save-ping.py: Added.
+        * http/tests/navigation/resources/save_ping.py: Added.
+        (not_being_called):
+        (save_ping):
+        * http/tests/security/contentSecurityPolicy/1.1/form-action-src-redirect-blocked.html:
+
+2021-04-08  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/workers convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=223522
+        <rdar://problem/75624689>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/workers/resources/worker-encoded.py:
+        * http/tests/workers/resources/xhr-response.php: Removed.
+
+2021-04-08  Chris Dumez  <cdumez@apple.com>
+
+        OfflineAudioContext objects are leaking
+        https://bugs.webkit.org/show_bug.cgi?id=224279
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-after-rendering.html: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak-expected.txt: Added.
+        * webaudio/OfflineAudioContext/offlineaudiocontext-leak.html: Added.
+
+2021-04-08  Andres Gonzalez  <andresg_22@apple.com>
+
+        VoiceOver does not echo text insertions and deletions when a contenteditable div has a non editable descendant element with a content editable child
+        https://bugs.webkit.org/show_bug.cgi?id=223818
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/nested-textareas-value-changed-notifications-expected.txt: Added.
+        * accessibility/nested-textareas-value-changed-notifications.html: Added.
+
+2021-04-08  Sihui Liu  <sihui_liu@apple.com>
+
+        Remove logging for investigating http/tests/IndexedDB/storage-limit-1.html failure
+        https://bugs.webkit.org/show_bug.cgi?id=223086
+        <rdar://problem/75591816>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/IndexedDB/storage-limit-1.https.html:
+        * http/tests/IndexedDB/storage-limit-2.https.html:
+        * http/tests/IndexedDB/storage-limit.https.html:
+
+2021-04-08  Antti Koivisto  <antti@apple.com>
+
+        Revert r273621 because iPhone PLT regression
+        https://bugs.webkit.org/show_bug.cgi?id=224323
+
+        Unreviewed.
+
+        * fast/text/splitText-dirty-lines-expected.txt:
+        * fast/text/text-combine-surroundContents-crash-expected.txt:
+        * imported/blink/fast/css/first-letter-range-insert-expected.txt:
+
+2021-04-08  Youenn Fablet  <youenn@apple.com>
+
+        Update SFrame implementation to latest version
+        https://bugs.webkit.org/show_bug.cgi?id=224276
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/sframe-test-vectors-expected.txt: Added.
+        * webrtc/sframe-test-vectors.html: Added.
+
+2021-04-07  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Nullptr dereference in ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline
+        https://bugs.webkit.org/show_bug.cgi?id=224259
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test to catch the editing crash fixed here; thanks to Tuomas Karkkainen
+        for its basic structure.
+
+        * editing/inserting/insert-display-contents-crash-expected.txt: Added.
+        * editing/inserting/insert-display-contents-crash.html: Added.
+
+2021-04-07  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] media/modern-media-controls/seek-forward-support/seek-forward-support.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=224297
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updating test expectations to Pass Timeout.
+
+2021-04-07  Robert Jenner  <jenner@apple.com>
+
+        [ BigSur wk2 Debug x86_64 ] inspector/indexeddb/requestDatabaseNames.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=224294
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Updating test expectations to Pass Failure.
+
+2021-04-07  Zalan Bujtas  <zalan@apple.com>
+
+        REGRESSION (r270849): Button content fails to render on apple.com "Blood Oxygen"/"ECG"
+        https://bugs.webkit.org/show_bug.cgi?id=224261
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/text-repaint-when-pointer-event-property-changes-expected.html: Added.
+        * fast/text/text-repaint-when-pointer-event-property-changes.html: Added.
+
+2021-04-07  Rob Buis  <rbuis@igalia.com>
+
+        Ignore non-null lastQuote ASSERT when continuation is broken
+        https://bugs.webkit.org/show_bug.cgi?id=218576
+
+        Reviewed by Zalan Bujtas.
+
+        Add test for this.
+
+        * fast/dom/quotes-continuation-crash-expected.txt: Added.
+        * fast/dom/quotes-continuation-crash.html: Added.
+
+2021-04-07  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK][WPE] Wrong frame scrolled when view is horizontally scrolled with async scrolling enabled
+        https://bugs.webkit.org/show_bug.cgi?id=222900
+
+        Reviewed by Žan Doberšek.
+
+        Add test for the use case.
+
+        * fast/scrolling/scrolling-inside-scrolled-overflowarea-expected.txt: Added.
+        * fast/scrolling/scrolling-inside-scrolled-overflowarea.html: Added.
+        * platform/ios/TestExpectations: The test uses mouseMoveTo and it is not supported in IOS.
+
+2021-04-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r274812): Release assert in Document::updateLayout() after calling focus({preventScroll: true}) on a textarea
+        https://bugs.webkit.org/show_bug.cgi?id=224262
+
+        Reviewed by Antti Koivisto.
+
+        Added a regression test.
+
+        * fast/forms/textarea/textarea-focus-prevent-scroll-crash-expected.txt: Added.
+        * fast/forms/textarea/textarea-focus-prevent-scroll-crash.html: Added.
+
+2021-04-06  Sihui Liu  <sihui_liu@apple.com>
+
+        [ Catalina WK2 Release ] http/tests/IndexedDB/storage-limit-1.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=213292
+        <rdar://problem/64447734>
+
+        Reviewed by Geoffrey Garen.
+
+        Test http/tests/IndexedDB/collect-IDB-objects.https.html, which runs right before 
+        http/tests/IndexedDB/storage-limit-1.https.html, will delete databases after test completetion. During deletion, 
+        we create a new database if it does not exist, extract database version from it, and then delete database files.
+        This creation can happen during storage-limit-1.https.html run and interrupt testing for quota. To fix the 
+        flakiness and make the deletion more efficient, let's not create a new database during deletion if database
+        does not exist.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2021-04-06  Robert Jenner  <jenner@apple.com>
+
+        [ macOS wk2 ] webrtc/libwebrtc/release-while-creating-offer.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=224256
+
+        Unreviewed test gardneing.
+
+        * platform/mac-wk2/TestExpectations: Updated test expectations to Pass Failure while test is reviewed.
+
+2021-04-06  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=215397
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Removed prior test expectations from mac-wk1, and added them just to mac since test is flakey across mac, and not just in wk1. 
+
+2021-04-06  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/misc convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221981
+        <rdar://problem/74399686>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/misc/prefetch-purpose-expected.txt:
+        * http/tests/misc/prefetch-purpose.html:
+        * http/tests/misc/resources/check-query-param.php: Removed.
+        * http/tests/misc/resources/check-query-param.py: Added.
+        * http/tests/misc/resources/prefetch-purpose.php: Removed.
+        * http/tests/misc/resources/prefetch-purpose.py: Added.
+        * http/tests/misc/resources/redirect-to-http-url.php: Removed.
+        * http/tests/misc/resources/redirect-to-http-url.py: Added.
+        * http/tests/misc/submit-get-in-utf16be.html:
+        * http/tests/misc/submit-get-in-utf16le.html:
+        * http/tests/misc/submit-post-in-utf16be.html:
+        * http/tests/misc/submit-post-in-utf16le.html:
+        * http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt:
+        * http/tests/misc/will-send-request-returns-null-on-redirect.html:
+        * platform/wk2/http/tests/misc/will-send-request-returns-null-on-redirect-expected.txt:
+
+2021-04-06  Robert Jenner  <jenner@apple.com>
+
+        [ macOS wk2] media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-drag-is-prevented-over-button.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=224135
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: updated test expectations to Pass Timeout while test is reviewed.
+
+2021-04-06  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur Wk1] transforms/2d* and transforms/hittest-translated-content-off-to-infinity-and-back.html are flaky image failures
+        https://bugs.webkit.org/show_bug.cgi?id=223904
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
+2021-04-06  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ARM64 ] compositing/background-color/no-composited-background-color-when-perspective.html is a flakey Image failure (4 pixels)
+        https://bugs.webkit.org/show_bug.cgi?id=224212
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations: Updated test expectations to Pass ImageOnlyFailure while test is reviewed.
+
+2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [ wk2 ] 4 storage/websql/test-authorizer.html and constantly timing out
+        https://bugs.webkit.org/show_bug.cgi?id=224245
+        <rdar://problem/76281408>
+
+        Unreviewed. Updated the test expectations to not unskip some tests in various ports that only run tests in WK2.
+
+        * platform/gtk/TestExpectations:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * platform/wk2/TestExpectations:
+
+2021-04-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r274610): Unable to drag images when image extraction is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224211
+        <rdar://problem/76229563>
+
+        Reviewed by Tim Horton.
+
+        Add a new layout test that initiates dragging on an image using a synthesized event stream, and verifies that
+        "dragstart" and "dragend" events are dispatched on the image.
+
+        * fast/events/ios/dragstart-on-image-by-long-pressing-expected.txt: Added.
+        * fast/events/ios/dragstart-on-image-by-long-pressing.html: Added.
+        * resources/ui-helper.js:
+        (window.UIHelper.isAnimatingDragCancel):
+
+        Add a `UIHelper` method that returns whether or not the dragging animation is being cancelled. The new test uses
+        this hook to wait for the drag cancel animation to end before proceeding to the next test.
+
+2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assert failure in isCloneInShadowTreeOfSVGUseElement
+        https://bugs.webkit.org/show_bug.cgi?id=224174
+
+        Reviewed by Darin Adler and Antti Koivisto.
+
+        Added tests for mutating nodes which is later inserted into a shadow tree during execCommand
+        as well as forcing a SVG use element to update its shadow tree by mutating the corresponding
+        element tree during execCommand.
+
+        * fast/shadow-dom/mutation-event-in-shadow-tree-expected.txt: Added.
+        * fast/shadow-dom/mutation-event-in-shadow-tree.html: Added.
+        * svg/dom/mutate-symbol-subtree-referenced-by-use-during-execCommand-expected.txt: Added.
+        * svg/dom/mutate-symbol-subtree-referenced-by-use-during-execCommand.html: Added.
+        * svg/dom/update-svg-use-shadow-tree-with-execCommand-expected.txt: Added.
+        * svg/dom/update-svg-use-shadow-tree-with-execCommand.html: Added.
+
+2021-04-06  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WebCrypto in Safari will not AES-GCM encrypt 0 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224083
+        <rdar://75093377>
+
+        Reviewed by Youenn Fablet.
+
+        * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text-expected.txt: Added.
+        * crypto/subtle/aes-gcm-generate-key-encrypt-decrypt-null-plain-text.html: Added.
+
+2021-04-06  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/loading convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=222198
+        <rdar://problem/74536576>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/loading/redirect-methods-expected.txt:
+        * http/tests/loading/resources/redirect-methods-form.html:
+        * http/tests/loading/resources/redirect-methods-result.php: Removed.
+        * http/tests/loading/resources/redirect-methods-result.py: Added.
+
+2021-04-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [ macOS Wk2 ] media/media-fragments/TC0051.html is flakey crashing
+        https://bugs.webkit.org/show_bug.cgi?id=222277
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations: Skip this test directory to
+        suppress this crash on EWS & trunk bots.
+
+2021-04-06  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Use opaque system colors for control backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=224131
+        <rdar://problem/75975709>
+
+        Reviewed by Tim Horton.
+
+        Rebaselined tests to account for changes in color.
+
+        * fast/forms/date/date-input-rendering-basic-expected.txt:
+        * fast/forms/date/date-pseudo-elements-expected.txt:
+        * fast/forms/time/time-input-rendering-basic-expected.txt:
+        * platform/ios-simulator/fast/forms/auto-fill-button/hide-auto-fill-strong-password-viewable-treatment-when-form-is-reset-expected.txt:
+        * platform/ios-simulator/fast/forms/auto-fill-button/input-credit-card-auto-fill-button-expected.txt:
+        * platform/ios-simulator/fast/forms/auto-fill-button/input-strong-password-viewable-expected.txt:
+        * platform/ios-simulator/fast/forms/datalist/datalist-searchinput-appearance-expected.txt:
+        * platform/ios-simulator/fast/forms/datalist/datalist-textinput-appearance-expected.txt:
+        * platform/ios-wk2/editing/input/caret-at-the-edge-of-input-expected.txt:
+        * platform/ios-wk2/editing/input/reveal-caret-of-multiline-input-expected.txt:
+        * platform/ios-wk2/editing/inserting/4960120-1-expected.txt:
+        * platform/ios-wk2/editing/inserting/before-after-input-element-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4641033-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4944770-1-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4944770-2-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/input-field-1-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/pasting-tabs-expected.txt:
+        * platform/ios-wk2/editing/selection/4895428-3-expected.txt:
+        * platform/ios-wk2/editing/selection/caret-before-select-expected.txt:
+        * platform/ios-wk2/editing/selection/drag-select-1-expected.txt:
+        * platform/ios-wk2/editing/selection/select-from-textfield-outwards-expected.txt:
+        * platform/ios-wk2/fast/block/float/overhanging-tall-block-expected.txt:
+        * platform/ios-wk2/fast/block/margin-collapse/103-expected.txt:
+        * platform/ios-wk2/fast/dynamic/008-expected.txt:
+        * platform/ios-wk2/fast/forms/basic-buttons-expected.txt:
+        * platform/ios-wk2/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/ios-wk2/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/ios-wk2/fast/forms/input-text-click-outside-expected.txt:
+        * platform/ios-wk2/fast/forms/input-text-double-click-expected.txt:
+        * platform/ios-wk2/fast/forms/input-text-drag-down-expected.txt:
+        * platform/ios-wk2/fast/forms/input-text-option-delete-expected.txt:
+        * platform/ios-wk2/fast/forms/textAreaLineHeight-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-align-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-placeholder-visibility-1-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-placeholder-visibility-2-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-scroll-height-expected.txt:
+        * platform/ios-wk2/fast/forms/textarea-setinnerhtml-expected.txt:
+        * platform/ios-wk2/fast/hidpi/resize-corner-hidpi-expected.txt:
+        * platform/ios-wk2/fast/overflow/scroll-nested-positioned-layer-in-overflow-expected.txt:
+        * platform/ios-wk2/fast/overflow/scrollRevealButton-expected.txt:
+        * platform/ios-wk2/fast/parser/document-write-option-expected.txt:
+        * platform/ios-wk2/fast/parser/entity-comment-in-textarea-expected.txt:
+        * platform/ios-wk2/fast/parser/open-comment-in-textarea-expected.txt:
+        * platform/ios-wk2/fast/spatial-navigation/snav-multiple-select-focusring-expected.txt:
+        * platform/ios-wk2/fast/text/international/rtl-white-space-pre-wrap-expected.txt:
+        * platform/ios-wk2/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/ios-wk2/fast/transforms/transformed-focused-text-input-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-pseudo/file-chooser-button-display-toggle-crash.tentative-expected.txt:
+        * platform/ios/css3/flexbox/button-expected.txt:
+        * platform/ios/editing/pasteboard/4806874-expected.txt:
+        * platform/ios/editing/selection/3690703-2-expected.txt:
+        * platform/ios/editing/selection/3690703-expected.txt:
+        * platform/ios/editing/selection/3690719-expected.txt:
+        * platform/ios/editing/selection/4397952-expected.txt:
+        * platform/ios/editing/selection/4975120-expected.txt:
+        * platform/ios/editing/selection/5240265-expected.txt:
+        * platform/ios/editing/selection/replaced-boundaries-3-expected.txt:
+        * platform/ios/editing/selection/select-box-expected.txt:
+        * platform/ios/editing/selection/select-element-paragraph-boundary-expected.txt:
+        * platform/ios/editing/selection/selection-button-text-expected.txt:
+        * platform/ios/fast/block/float/032-expected.txt:
+        * platform/ios/fast/block/float/float-avoidance-expected.txt:
+        * platform/ios/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/ios/fast/css/continuationCrash-expected.txt:
+        * platform/ios/fast/css/focus-ring-exists-for-search-field-expected.txt:
+        * platform/ios/fast/css/input-search-padding-expected.txt:
+        * platform/ios/fast/css/line-height-expected.txt:
+        * platform/ios/fast/css/rtl-ordering-expected.txt:
+        * platform/ios/fast/css/text-overflow-input-expected.txt:
+        * platform/ios/fast/css/text-transform-select-expected.txt:
+        * platform/ios/fast/dom/HTMLTableColElement/resize-table-using-col-width-expected.txt:
+        * platform/ios/fast/dom/HTMLTextAreaElement/reset-textarea-expected.txt:
+        * platform/ios/fast/dynamic/positioned-movement-with-positioned-children-expected.txt:
+        * platform/ios/fast/events/context-no-deselect-expected.txt:
+        * platform/ios/fast/forms/001-expected.txt:
+        * platform/ios/fast/forms/003-expected.txt:
+        * platform/ios/fast/forms/004-expected.txt:
+        * platform/ios/fast/forms/auto-fill-button/input-auto-fill-button-expected.txt:
+        * platform/ios/fast/forms/auto-fill-button/input-contacts-auto-fill-button-expected.txt:
+        * platform/ios/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+        * platform/ios/fast/forms/basic-inputs-expected.txt:
+        * platform/ios/fast/forms/basic-selects-expected.txt:
+        * platform/ios/fast/forms/basic-textareas-expected.txt:
+        * platform/ios/fast/forms/blankbuttons-expected.txt:
+        * platform/ios/fast/forms/box-shadow-override-expected.txt:
+        * platform/ios/fast/forms/button-align-expected.txt:
+        * platform/ios/fast/forms/button-cannot-be-nested-expected.txt:
+        * platform/ios/fast/forms/button-generated-content-expected.txt:
+        * platform/ios/fast/forms/button-positioned-expected.txt:
+        * platform/ios/fast/forms/button-sizes-expected.txt:
+        * platform/ios/fast/forms/button-style-color-expected.txt:
+        * platform/ios/fast/forms/button-table-styles-expected.txt:
+        * platform/ios/fast/forms/button-text-transform-expected.txt:
+        * platform/ios/fast/forms/button-white-space-expected.txt:
+        * platform/ios/fast/forms/control-clip-expected.txt:
+        * platform/ios/fast/forms/control-clip-overflow-expected.txt:
+        * platform/ios/fast/forms/control-restrict-line-height-expected.txt:
+        * platform/ios/fast/forms/disabled-select-change-index-expected.txt:
+        * platform/ios/fast/forms/encoding-test-expected.txt:
+        * platform/ios/fast/forms/fieldset-align-expected.txt:
+        * platform/ios/fast/forms/file/file-input-direction-expected.txt:
+        * platform/ios/fast/forms/file/file-input-disabled-expected.txt:
+        * platform/ios/fast/forms/floating-textfield-relayout-expected.txt:
+        * platform/ios/fast/forms/form-element-geometry-expected.txt:
+        * platform/ios/fast/forms/hidden-listbox-expected.txt:
+        * platform/ios/fast/forms/input-align-expected.txt:
+        * platform/ios/fast/forms/input-appearance-bkcolor-expected.txt:
+        * platform/ios/fast/forms/input-appearance-default-bkcolor-expected.txt:
+        * platform/ios/fast/forms/input-appearance-disabled-expected.txt:
+        * platform/ios/fast/forms/input-appearance-focus-expected.txt:
+        * platform/ios/fast/forms/input-appearance-height-expected.txt:
+        * platform/ios/fast/forms/input-appearance-selection-expected.txt:
+        * platform/ios/fast/forms/input-appearance-visibility-expected.txt:
+        * platform/ios/fast/forms/input-appearance-width-expected.txt:
+        * platform/ios/fast/forms/input-button-sizes-expected.txt:
+        * platform/ios/fast/forms/input-disabled-color-expected.txt:
+        * platform/ios/fast/forms/input-double-click-selection-gap-bug-expected.txt:
+        * platform/ios/fast/forms/input-field-text-truncated-expected.txt:
+        * platform/ios/fast/forms/input-placeholder-visibility-1-expected.txt:
+        * platform/ios/fast/forms/input-placeholder-visibility-3-expected.txt:
+        * platform/ios/fast/forms/input-spaces-expected.txt:
+        * platform/ios/fast/forms/input-table-expected.txt:
+        * platform/ios/fast/forms/input-text-click-inside-expected.txt:
+        * platform/ios/fast/forms/input-text-scroll-left-on-blur-expected.txt:
+        * platform/ios/fast/forms/input-text-self-emptying-click-expected.txt:
+        * platform/ios/fast/forms/input-type-text-min-width-expected.txt:
+        * platform/ios/fast/forms/input-value-expected.txt:
+        * platform/ios/fast/forms/input-width-expected.txt:
+        * platform/ios/fast/forms/listbox-bidi-align-expected.txt:
+        * platform/ios/fast/forms/listbox-hit-test-zoomed-expected.txt:
+        * platform/ios/fast/forms/listbox-scrollbar-incremental-load-expected.txt:
+        * platform/ios/fast/forms/listbox-width-change-expected.txt:
+        * platform/ios/fast/forms/menulist-clip-expected.txt:
+        * platform/ios/fast/forms/menulist-deselect-update-expected.txt:
+        * platform/ios/fast/forms/menulist-narrow-width-expected.txt:
+        * platform/ios/fast/forms/menulist-no-overflow-expected.txt:
+        * platform/ios/fast/forms/menulist-option-wrap-expected.txt:
+        * platform/ios/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/ios/fast/forms/menulist-style-color-expected.txt:
+        * platform/ios/fast/forms/menulist-width-change-expected.txt:
+        * platform/ios/fast/forms/minWidthPercent-expected.txt:
+        * platform/ios/fast/forms/number/number-appearance-rtl-expected.txt:
+        * platform/ios/fast/forms/number/number-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/ios/fast/forms/number/number-appearance-spinbutton-layer-expected.txt:
+        * platform/ios/fast/forms/option-script-expected.txt:
+        * platform/ios/fast/forms/option-strip-whitespace-expected.txt:
+        * platform/ios/fast/forms/option-text-clip-expected.txt:
+        * platform/ios/fast/forms/placeholder-pseudo-style-expected.txt:
+        * platform/ios/fast/forms/plaintext-mode-2-expected.txt:
+        * platform/ios/fast/forms/search-cancel-button-style-sharing-expected.txt:
+        * platform/ios/fast/forms/search-display-none-cancel-button-expected.txt:
+        * platform/ios/fast/forms/search-input-rtl-expected.txt:
+        * platform/ios/fast/forms/select-align-expected.txt:
+        * platform/ios/fast/forms/select-baseline-expected.txt:
+        * platform/ios/fast/forms/select-block-background-expected.txt:
+        * platform/ios/fast/forms/select-change-listbox-size-expected.txt:
+        * platform/ios/fast/forms/select-change-listbox-to-popup-expected.txt:
+        * platform/ios/fast/forms/select-change-popup-to-listbox-expected.txt:
+        * platform/ios/fast/forms/select-dirty-parent-pref-widths-expected.txt:
+        * platform/ios/fast/forms/select-disabled-appearance-expected.txt:
+        * platform/ios/fast/forms/select-element-focus-ring-expected.txt:
+        * platform/ios/fast/forms/select-empty-option-height-expected.txt:
+        * platform/ios/fast/forms/select-initial-position-expected.txt:
+        * platform/ios/fast/forms/select-item-background-clip-expected.txt:
+        * platform/ios/fast/forms/select-list-box-with-height-expected.txt:
+        * platform/ios/fast/forms/select-non-native-rendering-direction-expected.txt:
+        * platform/ios/fast/forms/select-selected-expected.txt:
+        * platform/ios/fast/forms/select-style-expected.txt:
+        * platform/ios/fast/forms/select-visual-hebrew-expected.txt:
+        * platform/ios/fast/forms/select-writing-direction-natural-expected.txt:
+        * platform/ios/fast/forms/select/optgroup-rendering-expected.txt:
+        * platform/ios/fast/forms/selectlist-minsize-expected.txt:
+        * platform/ios/fast/forms/stuff-on-my-optgroup-expected.txt:
+        * platform/ios/fast/forms/tabbing-input-iframe-expected.txt:
+        * platform/ios/fast/forms/textarea-placeholder-pseudo-style-expected.txt:
+        * platform/ios/fast/forms/textarea-scrollbar-expected.txt:
+        * platform/ios/fast/forms/textarea-scrolled-type-expected.txt:
+        * platform/ios/fast/forms/textarea-width-expected.txt:
+        * platform/ios/fast/forms/textfield-focus-ring-expected.txt:
+        * platform/ios/fast/forms/textfield-overflow-expected.txt:
+        * platform/ios/fast/frames/take-focus-from-iframe-expected.txt:
+        * platform/ios/fast/html/details-no-summary4-expected.txt:
+        * platform/ios/fast/html/details-open-javascript-expected.txt:
+        * platform/ios/fast/html/details-open2-expected.txt:
+        * platform/ios/fast/html/details-open4-expected.txt:
+        * platform/ios/fast/html/details-replace-summary-child-expected.txt:
+        * platform/ios/fast/html/details-replace-text-expected.txt:
+        * platform/ios/fast/html/keygen-expected.txt:
+        * platform/ios/fast/invalid/014-expected.txt:
+        * platform/ios/fast/lists/dynamic-marker-crash-expected.txt:
+        * platform/ios/fast/overflow/overflow-x-y-expected.txt:
+        * platform/ios/fast/replaced/replaced-breaking-expected.txt:
+        * platform/ios/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/ios/fast/replaced/three-selects-break-expected.txt:
+        * platform/ios/fast/replaced/width100percent-button-expected.txt:
+        * platform/ios/fast/replaced/width100percent-menulist-expected.txt:
+        * platform/ios/fast/replaced/width100percent-searchfield-expected.txt:
+        * platform/ios/fast/replaced/width100percent-textarea-expected.txt:
+        * platform/ios/fast/replaced/width100percent-textfield-expected.txt:
+        * platform/ios/fast/selectors/064-expected.txt:
+        * platform/ios/fast/table/append-cells2-expected.txt:
+        * platform/ios/fast/table/colspanMinWidth-expected.txt:
+        * platform/ios/fast/table/remove-td-display-none-expected.txt:
+        * platform/ios/fast/table/spanOverlapRepaint-expected.txt:
+        * platform/ios/fast/table/text-field-baseline-expected.txt:
+        * platform/ios/fast/text/drawBidiText-expected.txt:
+        * platform/ios/fast/text/international/bidi-listbox-atsui-expected.txt:
+        * platform/ios/fast/text/international/bidi-listbox-expected.txt:
+        * platform/ios/fast/text/international/bidi-menulist-expected.txt:
+        * platform/ios/fast/text/international/hindi-spacing-expected.txt:
+        * platform/ios/fast/text/international/pop-up-button-text-alignment-and-direction-expected.txt:
+        * platform/ios/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash-expected.txt:
+        * platform/ios/svg/custom/foreign-object-skew-expected.txt:
+        * platform/ios/svg/custom/inline-svg-in-xhtml-expected.txt:
+        * platform/ios/svg/hixie/mixed/003-expected.txt:
+        * platform/ios/tables/mozilla/bugs/45621-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug12384-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug194024-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug24200-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug2479-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug2479-3-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug26178-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug28928-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug29326-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug30559-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug30692-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug33855-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4382-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug44505-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug46368-1-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug46368-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug51037-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug51727-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug52505-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug52506-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug55545-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug60749-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug68912-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug92647-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug96334-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug99948-expected.txt:
+        * platform/ios/tables/mozilla/collapsing_borders/bug41262-4-expected.txt:
+        * platform/ios/tables/mozilla/core/margins-expected.txt:
+        * platform/ios/tables/mozilla/dom/tableDom-expected.txt:
+        * platform/ios/tables/mozilla/other/move_row-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug58402-2-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug92647-1-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/collapsing_borders/bug41262-5-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/collapsing_borders/bug41262-6-expected.txt:
+        * platform/ios/transforms/2d/zoom-menulist-expected.txt:
+        * platform/ios/transforms/3d/general/perspective-non-layer-expected.txt:
+
+2021-04-06  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Handle OOM in ScriptExecutionContext::reportUnhandledPromiseRejection
+        https://bugs.webkit.org/show_bug.cgi?id=223777
+        <rdar://66271491>
+
+        Reviewed by Yusuke Suzuki.
+
+        * js/dom/Promise-reject-large-string-expected.txt: Added.
+        * js/dom/Promise-reject-large-string.html: Added.
+
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r274358) [GStreamer] http/tests/images/mp4-partial-load.html is flaky crashing inside GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=223636
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/glib/TestExpectations: Update tests expectations.
+        * platform/gtk/TestExpectations: Ditto.
+
+2021-04-06  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][Integration] Enable inline box support (RenderInline)
+        https://bugs.webkit.org/show_bug.cgi?id=220148
+        <rdar://problem/72768785>
+
+        Reviewed by Antti Koivisto.
+
+        - correctness progressions
+        - output progressions 
+        - 1px rounding diffs
+        - misc
+
+        * editing/execCommand/delete-hidden-crash.html:
+        * fast/css/empty-inline-003-quirksmode-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position-expected.txt:
+        * fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html:
+        * fast/invalid/018-expected.txt:
+        * fast/text/line-break-between-text-nodes-latin1-expected.html:
+        * imported/blink/fast/css/first-letter-all-inherit-td-crash-expected.html: Removed.
+        * imported/blink/fast/css/first-letter-all-inherit-td-crash-expected.txt: Added.
+        * imported/blink/fast/css/first-letter-all-inherit-td-crash.html:
+        * platform/ios-wk2/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/css/css-flexbox/orthogonal-flex-item-crash-expected.txt:
+        * platform/ios/css1/box_properties/border-expected.txt:
+        * platform/ios/css1/box_properties/width-expected.txt:
+        * platform/ios/css1/text_properties/text_decoration-expected.txt:
+        * platform/ios/css1/text_properties/vertical_align-expected.txt:
+        * platform/ios/css1/text_properties/word_spacing-expected.txt:
+        * platform/ios/css2.1/t0803-c5505-mrgn-00-b-ag-expected.txt:
+        * platform/ios/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/ios/fast/block/basic/014-expected.txt:
+        * platform/ios/fast/block/margin-collapse/block-inside-inline/001-expected.txt:
+        * platform/ios/fast/block/margin-collapse/block-inside-inline/005-expected.txt:
+        * platform/ios/fast/block/positioning/057-expected.txt:
+        * platform/ios/fast/body-propagation/background-image/010-expected.txt:
+        * platform/ios/fast/body-propagation/background-image/010-xhtml-expected.txt:
+        * platform/ios/fast/css-generated-content/after-duplicated-after-split-expected.txt:
+        * platform/ios/fast/css/child-style-can-override-visited-style-expected.txt:
+        * platform/ios/fast/css/empty-inline-003-quirksmode-expected.txt:
+        * platform/ios/fast/css/inline-element-line-break-expected.txt:
+        * platform/ios/fast/css/word-space-extra-expected.txt:
+        * platform/ios/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/ios/fast/forms/select-change-listbox-size-expected.txt:
+        * platform/ios/fast/images/image-map-anchor-children-expected.txt:
+        * platform/ios/fast/inline-block/003-expected.txt:
+        * platform/ios/fast/inline/002-expected.txt:
+        * platform/ios/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/ios/fast/invalid/003-expected.txt:
+        * platform/ios/fast/lists/marker-before-empty-inline-expected.txt:
+        * platform/ios/fast/selectors/visited-descendant-expected.txt:
+        * platform/ios/fast/table/border-collapsing/004-expected.txt:
+        * platform/ios/fast/table/frame-and-rules-expected.txt:
+        * platform/ios/fast/table/table-display-types-strict-expected.txt:
+        * platform/ios/fast/text/basic/007-expected.txt:
+        * platform/ios/fast/text/basic/012-expected.txt:
+        * platform/ios/fast/text/whitespace/018-expected.txt:
+        * platform/ios/fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt:
+        * platform/ios/fonts/sans-serif-expected.txt:
+        * platform/ios/fonts/serif-expected.txt:
+        * platform/ios/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/ios/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/ios/svg/hixie/processing-model/003-expected.txt:
+        * platform/ios/svg/hixie/processing-model/004-expected.txt:
+        * platform/ios/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug113235-3-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug113424-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug126742-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug14323-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug22513-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug2267-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug38916-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug4849-2-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug57300-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/ios/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/ios/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/ios/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/ios/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/ios/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+        * platform/mac-catalina/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/mac-catalina/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac-catalina/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac-catalina/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/mac-wk1/fast/inline-block/003-expected.txt:
+        * platform/mac/css1/box_properties/width-expected.txt:
+        * platform/mac/css1/text_properties/vertical_align-expected.txt:
+        * platform/mac/css1/text_properties/word_spacing-expected.txt:
+        * platform/mac/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/mac/editing/selection/previous-line-position-expected.txt:
+        * platform/mac/fast/block/basic/014-expected.txt:
+        * platform/mac/fast/block/margin-collapse/block-inside-inline/001-expected.txt:
+        * platform/mac/fast/block/margin-collapse/block-inside-inline/005-expected.txt:
+        * platform/mac/fast/block/positioning/057-expected.txt:
+        * platform/mac/fast/css-generated-content/after-duplicated-after-split-expected.txt:
+        * platform/mac/fast/css/child-style-can-override-visited-style-expected.txt:
+        * platform/mac/fast/css/inline-element-line-break-expected.txt:
+        * platform/mac/fast/css/resize-corner-tracking-transformed-expected.txt:
+        * platform/mac/fast/css/word-space-extra-expected.txt:
+        * platform/mac/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/mac/fast/encoding/utf-16-big-endian-expected.txt:
+        * platform/mac/fast/encoding/utf-16-little-endian-expected.txt:
+        * platform/mac/fast/images/image-map-anchor-children-expected.txt:
+        * platform/mac/fast/inline-block/003-expected.txt:
+        * platform/mac/fast/inline/002-expected.txt:
+        * platform/mac/fast/inline/drawStyledEmptyInlines-expected.txt:
+        * platform/mac/fast/invalid/003-expected.txt:
+        * platform/mac/fast/invalid/missing-end-tag-expected.txt:
+        * platform/mac/fast/lists/marker-before-empty-inline-expected.txt:
+        * platform/mac/fast/parser/nofoo-tags-inside-paragraph-expected.txt:
+        * platform/mac/fast/parser/xhtml-alternate-entities-expected.txt:
+        * platform/mac/fast/selectors/visited-descendant-expected.txt:
+        * platform/mac/fast/table/frame-and-rules-expected.txt:
+        * platform/mac/fast/table/table-display-types-strict-expected.txt:
+        * platform/mac/fast/text/basic/007-expected.txt:
+        * platform/mac/fast/text/basic/012-expected.txt:
+        * platform/mac/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/mac/fast/text/text-letter-spacing-expected.txt:
+        * platform/mac/fast/text/textIteratorNilRenderer-expected.txt:
+        * platform/mac/fast/text/wbr-expected.txt:
+        * platform/mac/fast/text/whitespace/018-expected.txt:
+        * platform/mac/fast/text/whitespace/span-in-word-space-causes-overflow-expected.txt:
+        * platform/mac/fonts/sans-serif-expected.txt:
+        * platform/mac/fonts/serif-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-word-spacing-expected.txt:
+        * platform/mac/svg/hixie/processing-model/003-expected.txt:
+        * platform/mac/svg/hixie/processing-model/004-expected.txt:
+        * platform/mac/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-1-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113235-3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug113424-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1188-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug126742-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug14323-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug18359-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug22513-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2267-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug38916-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug4849-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug57300-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug57828-2-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug59354-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug60804-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug60807-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug7342-expected.txt:
+        * platform/mac/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_thtd_rowspan-expected.txt:
+        * platform/mac/tables/mozilla/other/wa_table_tr_align-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][WebRTC] Audio is not played from an audio element when the srcObject object has unstarted video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=209163
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/glib/TestExpectations: Unflag now-passing test.
+
+2021-04-06  Keith Miller  <keith_miller@apple.com>
+
+        CloneDeserializer should use ArrayBuffer::tryCreate
+        https://bugs.webkit.org/show_bug.cgi?id=224218
+
+        Reviewed by Antti Koivisto.
+
+        This test was generated by a fuzzer so it allocates a large Array backing store
+        by doing Object.defineProperty on a large offset. That said, I chose to leave it
+        because it's sometimes useful to do things in different ways for testing.
+
+        Also, skip the test on windows because we seem to throw a stack overflow error.
+        Not sure why this happens but it's not super important that this particular
+        test runs on all ports as we're mostly trying to just unblock the fuzzer.
+
+        * fast/dom/Window/post-message-large-array-buffer-should-not-crash-expected.txt: Added.
+        * fast/dom/Window/post-message-large-array-buffer-should-not-crash.html: Added.
+        * platform/win/TestExpectations:
+
+2021-04-06  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer][MediaStream] Unreviewed micro-gardening
+        https://bugs.webkit.org/show_bug.cgi?id=224233
+
+        * platform/glib/TestExpectations:
+
+2021-04-06  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL conformance tests are missing files due to too widely matching .gitignore
+        https://bugs.webkit.org/show_bug.cgi?id=223988
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add the missing tests that were hidden by the .gitignore.
+
+        * webgl/1.0.x/conformance/ogles/GL/build/*: Added.
+        * webgl/2.0.y/conformance/ogles/GL/build/*: Added.
+        * webgl/resources/webgl_test_files/conformance/ogles/GL/build/*: Added.
+
+2021-04-06  Ian Gilbert  <iang@apple.com>
+
+        IPC::decodeObject null dereference in decodeArrayInternal()
+        https://bugs.webkit.org/show_bug.cgi?id=224214
+
+        Reviewed by Ryosuke Niwa.
+
+        Add null pointer check to decodeArrayInternal.
+
+        * ipc/decode-object-array-crash-expected.txt: Added.
+        * ipc/decode-object-array-crash.html: Added.
+
+2021-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable WebSQL in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=224144
+
+        Reviewed by Sihui Liu.
+
+        Skipped various WebSQL tests on WebKit2 and removed references to openDatabase in some tests.
+
+        * fast/dom/Window/resources/WindowProperties.js: Removed openDatabase from the list of properties to test.
+        * fast/dom/Window/window-function-frame-getter-precedence-expected.txt:
+        * fast/dom/Window/window-function-name-getter-precedence-expected.txt:
+        * fast/frames/resources/sandboxed-iframe-storage-allowed.html: Ditto.
+        * fast/frames/resources/sandboxed-iframe-storage-disallowed.html: Ditto.
+        * fast/frames/sandboxed-iframe-storage-expected.txt:
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html: Ditto.
+        * inspector/runtime/CommandLineAPI-inspect-expected.txt:
+        * inspector/runtime/CommandLineAPI-inspect.html: Ditto.
+        * js/dom/callback-function-with-handle-event-expected.txt:
+        * js/dom/callback-function-with-handle-event.html: Use requestAnimationFrame instead of openDatabase.
+        * js/dom/exceptions-thrown-in-callbacks-expected.txt:
+        * js/dom/exceptions-thrown-in-callbacks.html: Ditto and use geolocation.getCurrentLocation.
+        * platform/glib/TestExpectations: Removed entries under storage/websql since they're all skipped now.
+        * platform/gtk/TestExpectations: Ditto.
+        * platform/ios-wk2/TestExpectations: Ditto.
+        * platform/mac-wk1/TestExpectations: Moved flaky timeout expectation on a test here from mac-wk2.
+        * platform/mac-wk2/TestExpectations: Removed an entry to skip storage/websql as it's now skipped for all WK2 ports.
+        * platform/mac/TestExpectations: Removed flaky timeout expectation since this will force the test to run
+        in WebKitTestRunner, which isn't what we want to do.
+        * platform/wincairo/TestExpectations: Removed entries under storage/websql since they're all skipped now.
+        * platform/wk2/TestExpectations: Skip all the tests for WebSQL.
+        * platform/wpe/TestExpectations: Removed entries under storage/websql since they're all skipped now.
+
+2021-04-06  Frédéric Wang  <fwang@igalia.com>
+
+        Nullptr crash in EventPath::eventTargetRespectingTargetRules
+        https://bugs.webkit.org/show_bug.cgi?id=222718
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * editing/undo/undo-with-disconnected-editable-element-crash-expected.txt: Added.
+        * editing/undo/undo-with-disconnected-editable-element-crash.html: Added.
+        * editing/undo/undo-with-disconnected-editable-element-crash.js: Added.
+        (runTests.window.parent.onwebkitanimationiteration):
+        (runTests):
+
+2021-04-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION: ASSERTION FAILED: settings().textAutosizingEnabled() && settings().textAutosizingUsesIdempotentMode() on various tests
+        https://bugs.webkit.org/show_bug.cgi?id=209450
+        <rdar://problem/60799255>
+
+        Reviewed by Tim Horton.
+
+        Remove crashing expectations for several tests that previously hit this assertion, due to running immediately
+        after some layout tests in `fast/text-autosizing` that enable idempotent text autosizing.
+
+        * platform/ios-wk2/TestExpectations:
+
+2021-04-05  Chris Gambrell  <cgambrell@apple.com>
+
+        REGRESSION (r275332?): [ EWS macOS iOS wk2 ] http/tests/appcache/fail-on-update.html is a flakey timeout
+        https://bugs.webkit.org/show_bug.cgi?id=224120
+        <rdar://problem/76157112>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/appcache/fail-on-update-2.html:
+        * http/tests/appcache/fail-on-update.html:
+
+2021-04-05  Philippe Normand  <pnormand@igalia.com>
+
+        [ macOS ] media/webaudio-background-playback.html is a flakey text failure
+        https://bugs.webkit.org/show_bug.cgi?id=221935
+        <rdar://problem/74370844>
+
+        Reviewed by Eric Carlson.
+
+        The test was flaky because it was checking if the destination had processed new buffers
+        immediately after an asynchronous state change. The proposed solution is to monitor the
+        statechange event and do the actual test after another additional 100 milli-seconds have
+        passed.
+
+        * media/webaudio-background-playback.html:
+
+2021-04-05  Saam Barati  <sbarati@apple.com>
+
+        Enable QuotaExceededError on non GSTREAMER platforms
+        https://bugs.webkit.org/show_bug.cgi?id=224136
+        <rdar://71219720>
+
+        Reviewed by Jer Noble.
+
+        * platform/mac/media/media-source/media-source-append-before-last-range-no-quota-exceeded-expected.txt:
+
+2021-04-05  Cameron McCormack  <heycam@apple.com>
+
+        Fix max-content on tables with percentage cell widths.
+        https://bugs.webkit.org/show_bug.cgi?id=221165
+
+        Reviewed by Zalan Bujtas.
+
+        Fix max-content on tables with percentage cell widths.
+
+        * fast/table/percent-width-max-content-expected.html: Added.
+        * fast/table/percent-width-max-content.html: Added.
+
 2021-04-05  Devin Rousso  <drousso@apple.com>
 
         REGRESSION (r275358): [ iOS wk2 ] media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls.html is a constant text failure
@@ -72,6 +1817,26 @@
 
         * fast/replaced/infinite-recursion-with-intrinsic-width-expected.txt: Added.
         * fast/replaced/infinite-recursion-with-intrinsic-width.html: Added.
+
+2021-04-02  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] Convert http/tests/misc convert PHP to Python
+        https://bugs.webkit.org/show_bug.cgi?id=221981
+        <rdar://problem/74399686>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/misc/prefetch-purpose-expected.txt:
+        * http/tests/misc/prefetch-purpose.html:
+        * http/tests/misc/resources/check-query-param.php: Removed.
+        * http/tests/misc/resources/check-query-param.py: Added.
+        * http/tests/misc/resources/prefetch-purpose.php: Removed.
+        * http/tests/misc/resources/prefetch-purpose.py: Added.
+        * http/tests/misc/resources/redirect-to-http-url.py: Added.
+        * http/tests/misc/submit-get-in-utf16be.html:
+        * http/tests/misc/submit-get-in-utf16le.html:
+        * http/tests/misc/submit-post-in-utf16be.html:
+        * http/tests/misc/submit-post-in-utf16le.html:
 
 2021-04-02  Chris Gambrell  <cgambrell@apple.com>
 

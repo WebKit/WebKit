@@ -50,12 +50,14 @@ public:
         if (!isActive())
             return false;
 
+        if (!m_isRepeating)
+            deactivate();
+
+        if (isActive())
+            updateReadyTime();
+
         m_function();
 
-        if (!m_isRepeating)
-            return false;
-
-        updateReadyTime();
         return isActive();
     }
 
@@ -296,7 +298,7 @@ bool RunLoop::TimerBase::isActive() const
 
 bool RunLoop::TimerBase::isActive(const AbstractLocker&) const
 {
-    return m_scheduledTask;
+    return m_scheduledTask && m_scheduledTask->isActive();
 }
 
 Seconds RunLoop::TimerBase::secondsUntilFire() const

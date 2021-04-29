@@ -29,6 +29,7 @@
 
 #include "RegisterAtOffset.h"
 #include "RegisterSet.h"
+#include <wtf/FixedVector.h>
 
 namespace JSC {
 
@@ -42,11 +43,6 @@ public:
     explicit RegisterAtOffsetList(RegisterSet, OffsetBaseType = FramePointerBased);
 
     void dump(PrintStream&) const;
-
-    void clear()
-    {
-        m_registers.clear();
-    }
 
     size_t size() const
     {
@@ -66,13 +62,13 @@ public:
     RegisterAtOffset* find(Reg) const;
     unsigned indexOf(Reg) const; // Returns UINT_MAX if not found.
 
-    Vector<RegisterAtOffset>::const_iterator begin() const { return m_registers.begin(); }
-    Vector<RegisterAtOffset>::const_iterator end() const { return m_registers.end(); }
+    FixedVector<RegisterAtOffset>::const_iterator begin() const { return m_registers.begin(); }
+    FixedVector<RegisterAtOffset>::const_iterator end() const { return m_registers.end(); }
 
     static const RegisterAtOffsetList& llintBaselineCalleeSaveRegisters(); // Registers and Offsets saved and used by the LLInt.
 
 private:
-    Vector<RegisterAtOffset> m_registers;
+    FixedVector<RegisterAtOffset> m_registers;
 };
 
 } // namespace JSC

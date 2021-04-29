@@ -216,6 +216,7 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
+#undef RELEASE_LOG_IF_ALLOWED
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
@@ -1110,6 +1111,12 @@ void WebProcess::logDiagnosticMessageForNetworkProcessCrash()
 
 void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connection)
 {
+#if OS(DARWIN)
+    RELEASE_LOG_IF_ALLOWED(Loading, "networkProcessConnectionClosed: NetworkProcess (%d) closed its connection (Crashed)", connection ? connection->connection().remoteProcessID() : 0);
+#else
+    RELEASE_LOG_IF_ALLOWED(Loading, "networkProcessConnectionClosed: NetworkProcess closed its connection (Crashed)");
+#endif
+
     ASSERT(m_networkProcessConnection);
     ASSERT_UNUSED(connection, m_networkProcessConnection == connection);
 

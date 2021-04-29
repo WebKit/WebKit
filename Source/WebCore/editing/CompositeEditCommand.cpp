@@ -209,11 +209,25 @@ EditCommandComposition::EditCommandComposition(Document& document, const Visible
     m_replacedText.configureRangeDeletedByReapplyWithStartingSelection(startingSelection);
 }
 
+bool EditCommandComposition::areRootEditabledElementsConnected()
+{
+    if (m_startingRootEditableElement && !m_startingRootEditableElement->isConnected())
+        return false;
+
+    if (m_endingRootEditableElement && !m_endingRootEditableElement->isConnected())
+        return false;
+
+    return true;
+}
+
 void EditCommandComposition::unapply()
 {
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
     if (!frame)
+        return;
+
+    if (!areRootEditabledElementsConnected())
         return;
 
     m_replacedText.captureTextForUnapply();
@@ -252,6 +266,9 @@ void EditCommandComposition::reapply()
     ASSERT(m_document);
     RefPtr<Frame> frame = m_document->frame();
     if (!frame)
+        return;
+
+    if (!areRootEditabledElementsConnected())
         return;
 
     m_replacedText.captureTextForReapply();
@@ -1061,10 +1078,6 @@ void CompositeEditCommand::deleteInsignificantText(const Position& start, const 
         int startOffset = textNode.ptr() == start.deprecatedNode() ? start.deprecatedEditingOffset() : 0;
         int endOffset = textNode.ptr() == end.deprecatedNode() ? end.deprecatedEditingOffset() : static_cast<int>(textNode->length());
         deleteInsignificantText(textNode, startOffset, endOffset);
-    }
-    if (!nodes.isEmpty()) {
-        // Callers expect render tree to be in sync.
-        document().updateLayoutIgnorePendingStylesheets();
     }
 }
 

@@ -298,6 +298,14 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #include "RemoteMediaSessionCoordinatorProxy.h"
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKCoordinatorAdditions.h>
+#else
+#define WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
+#define WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
+#define WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
+#endif
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -558,6 +566,9 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
         process.setIgnoreInvalidMessageForTesting();
 #endif
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    WEBPAGEPROXY_CONSTRUCTOR_WKCOORDINATOR_ADDITIONS
+#endif
 }
 
 WebPageProxy::~WebPageProxy()
@@ -593,6 +604,10 @@ WebPageProxy::~WebPageProxy()
     
     for (auto& callback : m_nextActivityStateChangeCallbacks)
         callback();
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
+#endif
 }
 
 // FIXME: Should return a const PageClient& and add a separate non-const
@@ -921,7 +936,10 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     m_websiteDataStore = m_process->websiteDataStore();
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    m_contextIDForVisibilityPropagation = provisionalPage->contextIDForVisibilityPropagation();
+    m_contextIDForVisibilityPropagationInWebProcess = provisionalPage->contextIDForVisibilityPropagationInWebProcess();
+#if ENABLE(GPU_PROCESS)
+    m_contextIDForVisibilityPropagationInGPUProcess = provisionalPage->contextIDForVisibilityPropagationInGPUProcess();
+#endif
 #endif
 
     if (m_logger)
@@ -2442,6 +2460,31 @@ void WebPageProxy::layerTreeCommitComplete()
 {
 }
 #endif
+
+void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate()
+{
+#if PLATFORM(COCOA)
+    ASSERT(m_hasUpdatedRenderingAfterDidCommitLoad);
+    RELEASE_LOG_IF_ALLOWED(Process, "stopMakingViewBlankDueToLackOfRenderingUpdate:");
+    pageClient().makeViewBlank(false);
+#endif
+}
+
+// If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
+// Displaying a JS prompt for the new page with the old page behind would be confusing so we make the view blank
+// until the next paint in such case.
+void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
+{
+#if PLATFORM(COCOA)
+    if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
+        static bool shouldMakeViewBlank = linkedOnOrAfter(WebCore::SDKVersion::FirstWithBlankViewOnJSPrompt);
+        if (shouldMakeViewBlank) {
+            RELEASE_LOG_IF_ALLOWED(Process, "makeViewBlankIfUnpaintedSinceLastLoadCommit: Making the view blank because of a JS prompt before the first paint for its page");
+            pageClient().makeViewBlank(true);
+        }
+    }
+#endif
+}
 
 void WebPageProxy::discardQueuedMouseEvents()
 {
@@ -4633,10 +4676,12 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     if (frame->isMainFrame()) {
-        m_hasReceivedLayerTreeTransactionAfterDidCommitLoad = false;
+        m_hasUpdatedRenderingAfterDidCommitLoad = false;
+#if PLATFORM(IOS_FAMILY)
         m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
+#endif
     }
 #endif
 
@@ -4722,6 +4767,10 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #if ENABLE(REMOTE_INSPECTOR)
     if (frame->isMainFrame())
         remoteInspectorInformationDidChange();
+#endif
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS
 #endif
 }
 
@@ -7446,7 +7495,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     if (resetStateReason != ResetStateReason::NavigationSwap)
-        m_contextIDForVisibilityPropagation = 0;
+        m_contextIDForVisibilityPropagationInWebProcess = 0;
 #endif
 
     if (m_openPanelResultListener) {
@@ -7729,6 +7778,14 @@ static const Vector<ASCIILiteral>& mediaRelatedIOKitClasses()
     });
     return services;
 }
+
+static const Vector<ASCIILiteral>& temporaryMachServices()
+{
+    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
+        "com.apple.coremedia.routingcontext.xpc"_s // Remove after <rdar://76403302> is fixed.
+    });
+    return services;
+}
 #endif
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
@@ -7824,6 +7881,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         // FIXME(207716): The following should be removed when the GPU process is complete.
         parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
         parameters.mediaIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(mediaRelatedIOKitClasses(), WTF::nullopt);
+    } else {
+        // FIXME(224327): Remove this else clause once <rdar://76403302> is fixed.
+        parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(temporaryMachServices(), WTF::nullopt);
     }
 
     if (!preferences().useGPUProcessForMediaEnabled()
@@ -8015,9 +8075,9 @@ void WebPageProxy::negotiatedLegacyTLS()
     m_pageLoadState.negotiatedLegacyTLS(transaction);
 }
 
-void WebPageProxy::didNegotiateModernTLS(const WebCore::AuthenticationChallenge& challenge)
+void WebPageProxy::didNegotiateModernTLS(const URL& url)
 {
-    m_navigationClient->didNegotiateModernTLS(challenge);
+    m_navigationClient->didNegotiateModernTLS(url);
 }
 
 void WebPageProxy::exceededDatabaseQuota(FrameIdentifier frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, Messages::WebPageProxy::ExceededDatabaseQuota::DelayedReply&& reply)
@@ -8229,6 +8289,11 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 void WebPageProxy::requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completionHandler)
 {
     pageClient().requestImageExtraction(imageURL, imageData, WTFMove(completionHandler));
+}
+
+void WebPageProxy::computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+{
+    pageClient().computeCanRevealImage(imageURL, imageBitmap, WTFMove(completion));
 }
 
 void WebPageProxy::updateWithImageExtractionResult(ImageExtractionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&& completionHandler)
@@ -10270,6 +10335,10 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 #if ENABLE(GPU_PROCESS)
 void WebPageProxy::gpuProcessCrashed()
 {
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextIDForVisibilityPropagationInGPUProcess = 0;
+#endif
+
     pageClient().gpuProcessCrashed();
 
 #if ENABLE(MEDIA_STREAM)
@@ -10371,19 +10440,19 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(WeakPtr<RemoteMediaSessionCoordinatorProxy>)>&& completionHandler)
+void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(!m_mediaSessionCoordinatorProxy);
 
     sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = makeWeakPtr(*this), privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
 
         if (!weakThis || !success) {
-            completionHandler({ });
+            completionHandler(false);
             return;
         }
 
         weakThis->m_mediaSessionCoordinatorProxy = RemoteMediaSessionCoordinatorProxy::create(*weakThis, WTFMove(privateCoordinator));
-        completionHandler(makeWeakPtr(weakThis->m_mediaSessionCoordinatorProxy.get()));
+        completionHandler(true);
     });
 }
 #endif

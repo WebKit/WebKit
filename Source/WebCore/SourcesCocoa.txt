@@ -380,7 +380,6 @@ platform/graphics/cocoa/WebCoreCALayerExtras.mm
 platform/graphics/cocoa/WebCoreDecompressionSession.mm
 platform/graphics/cocoa/WebGLLayer.mm
 platform/graphics/cocoa/WebGPULayer.mm
-platform/graphics/cocoa/WebMUtilitiesCocoa.mm @no-unify
 platform/graphics/cocoa/VideoTrackPrivateWebM.cpp
 platform/graphics/coretext/FontCascadeCoreText.cpp
 platform/graphics/coretext/FontCoreText.cpp
@@ -589,7 +588,7 @@ platform/network/mac/UTIUtilities.mm
 platform/network/mac/WebCoreURLResponse.mm
 platform/text/cf/HyphenationCF.cpp
 platform/text/cocoa/LocaleCocoa.mm
-platform/text/ios/LocalizedDateCache.mm
+platform/text/cocoa/LocalizedDateCache.mm
 platform/text/ios/TextEncodingRegistryIOS.mm
 platform/text/mac/TextBoundaries.mm
 platform/text/mac/TextCheckingMac.mm

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -188,7 +188,7 @@ InjectedScript InjectedScriptManager::injectedScriptFor(JSGlobalObject* globalOb
         auto& error = createResult.error();
         ASSERT(error);
 
-        if (isTerminatedExecutionException(globalObject->vm(), error))
+        if (globalObject->vm().isTerminationException(error))
             return InjectedScript();
 
         unsigned line = 0;

@@ -84,7 +84,10 @@ class Info(Command):
 
         if commit.message:
             print(u'Title: {}'.format(commit.message.splitlines()[0]))
-        print(u'Author: {}'.format(commit.author))
+        try:
+            print(u'Author: {}'.format(commit.author))
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            print('Error: Unable to  print commit author name, please file a bug if seeing this locally.')
         print(datetime.fromtimestamp(commit.timestamp).strftime('Date: %a %b %d %H:%M:%S %Y'))
         if args.verbose > 0 or commit.revision:
             print('Revision: {}'.format(commit.revision or 'N/A'))

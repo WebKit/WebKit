@@ -246,8 +246,8 @@ end
 
 macro reloadMemoryRegistersFromInstance(instance, scratch1, scratch2)
     loadp Wasm::Instance::m_cachedMemory[instance], memoryBase
-    loadi Wasm::Instance::m_cachedBoundsCheckingSize[instance], boundsCheckingSize
-    cagedPrimitive(memoryBase, boundsCheckingSize, scratch1, scratch2)
+    loadp Wasm::Instance::m_cachedBoundsCheckingSize[instance], boundsCheckingSize
+    cagedPrimitiveMayBeNull(memoryBase, boundsCheckingSize, scratch1, scratch2) # If boundsCheckingSize is 0, pointer can be a nullptr.
 end
 
 macro throwException(exception)

@@ -39,7 +39,7 @@ static webrtc::SdpVideoFormat createH264Format(webrtc::H264::Profile profile, we
             { cricket::kH264FmtpPacketizationMode, packetizationMode } });
 }
 
-std::vector<webrtc::SdpVideoFormat> supportedH264Formats()
+std::vector<webrtc::SdpVideoFormat> gstreamerSupportedH264Codecs()
 {
     // @TODO Create from encoder src pad caps template
     //

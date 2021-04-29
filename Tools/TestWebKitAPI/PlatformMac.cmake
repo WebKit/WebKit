@@ -6,7 +6,6 @@ add_definitions(-DJSC_API_AVAILABLE\\\(...\\\)=)
 add_definitions(-DJSC_CLASS_AVAILABLE\\\(...\\\)=)
 
 include_directories(
-    "${FORWARDING_HEADERS_DIR}"
     "${ICU_INCLUDE_DIRS}"
 )
 

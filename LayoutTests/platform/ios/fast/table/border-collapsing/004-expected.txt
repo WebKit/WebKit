@@ -87,7 +87,7 @@ layer at (0,0) size 800x1553
                 text run at (118,26) width 82: "This margin "
                 text run at (199,26) width 12: "is"
                 text run at (5,46) width 125: "measured from the "
-              RenderInline {EM} at (0,0) size 44x19
+              RenderInline {EM} at (0,0) size 44x20
                 RenderText {#text} at (129,46) size 44x19
                   text run at (129,46) width 44: "middle"
               RenderText {#text} at (173,46) size 205x39

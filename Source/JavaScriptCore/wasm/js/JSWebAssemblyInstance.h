@@ -34,6 +34,7 @@
 #include "JSWebAssemblyTable.h"
 #include "WasmCreationMode.h"
 #include "WasmInstance.h"
+#include <wtf/FixedVector.h>
 #include <wtf/Ref.h>
 
 namespace JSC {
@@ -115,7 +116,7 @@ private:
     WriteBarrier<JSWebAssemblyCodeBlock> m_codeBlock;
     WriteBarrier<WebAssemblyModuleRecord> m_moduleRecord;
     WriteBarrier<JSWebAssemblyMemory> m_memory;
-    Vector<WriteBarrier<JSWebAssemblyTable>> m_tables;
+    FixedVector<WriteBarrier<JSWebAssemblyTable>> m_tables;
 };
 
 } // namespace JSC

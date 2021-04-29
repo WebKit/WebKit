@@ -931,18 +931,14 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
 
     addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
-    callOperationNoExceptionCheck(operationCheckIfExceptionIsUncatchableAndNotifyProfiler, TrustedImmPtr(&vm()));
-    Jump isCatchableException = branchTest32(Zero, returnValueGPR);
+    callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, TrustedImmPtr(&vm()));
+    Jump isCatchableException = branchTest32(NonZero, returnValueGPR);
     jumpToExceptionHandler(vm());
     isCatchableException.link(this);
 
-    move(TrustedImmPtr(m_vm), regT3);
-
     // Now store the exception returned by operationThrow.
-    load32(Address(regT3, VM::exceptionOffset()), regT2);
+    move(returnValueGPR, regT2);
     move(TrustedImm32(JSValue::CellTag), regT1);
-
-    store32(TrustedImm32(0), Address(regT3, VM::exceptionOffset()));
 
     emitStore(bytecode.m_exception, regT1, regT2);
 

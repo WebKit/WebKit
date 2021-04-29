@@ -535,9 +535,6 @@ void TestController::initialize(int argc, const char* argv[])
     m_allowAnyHTTPSCertificateForAllowedHosts = options.allowAnyHTTPSCertificateForAllowedHosts;
     m_globalFeatures = std::move(options.features);
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    m_accessibilityIsolatedTreeMode = options.accessibilityIsolatedTreeMode;
-#endif
     m_usingServerMode = (m_paths.size() == 1 && m_paths[0] == "-");
     if (m_usingServerMode)
         m_printSeparators = true;
@@ -875,86 +872,35 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         TestInvocation::dumpWebProcessUnresponsiveness("<unknown> - TestController::run - Failed to reset state to consistent values\n");
 }
 
+template<typename F> static void batchUpdatePreferences(WKPreferencesRef preferences, F&& functor)
+{
+    WKPreferencesStartBatchingUpdates(preferences);
+    functor(preferences);
+    WKPreferencesEndBatchingUpdates(preferences);
+}
+
 void TestController::resetPreferencesToConsistentValues(const TestOptions& options)
 {
-    // Reset preferences
-    WKPreferencesRef preferences = platformPreferences();
-    WKPreferencesResetTestRunnerOverrides(preferences);
+    batchUpdatePreferences(platformPreferences(), [options] (auto preferences) {
+        WKPreferencesResetTestRunnerOverrides(preferences);
 
-    WKPreferencesEnableAllExperimentalFeatures(preferences);
-    WKPreferencesResetAllInternalDebugFeatures(preferences);
+        WKPreferencesEnableAllExperimentalFeatures(preferences);
 
-    // FIXME: Convert these to default values for TestOptions.
-    WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
-    WKPreferencesSetOfflineWebApplicationCacheEnabled(preferences, true);
-    WKPreferencesSetSubpixelAntialiasedLayerTextEnabled(preferences, false);
-    WKPreferencesSetWebAudioEnabled(preferences, true);
-    WKPreferencesSetMediaDevicesEnabled(preferences, true);
-    WKPreferencesSetWebRTCMDNSICECandidatesEnabled(preferences, false);
-    WKPreferencesSetDeveloperExtrasEnabled(preferences, true);
-    WKPreferencesSetJavaScriptRuntimeFlags(preferences, kWKJavaScriptRuntimeFlagsAllEnabled);
-    WKPreferencesSetFullScreenEnabled(preferences, true);
-    WKPreferencesSetAsynchronousPluginInitializationEnabled(preferences, false);
-    WKPreferencesSetAsynchronousPluginInitializationEnabledForAllPlugins(preferences, false);
-    WKPreferencesSetArtificialPluginInitializationDelayEnabled(preferences, false);
-    WKPreferencesSetTabsToLinks(preferences, false);
-    WKPreferencesSetInteractiveFormValidationEnabled(preferences, true);
-    WKPreferencesSetDataTransferItemsEnabled(preferences, true);
-    WKPreferencesSetCustomPasteboardDataEnabled(preferences, true);
-    WKPreferencesSetDialogElementEnabled(preferences, true);
-    WKPreferencesSetDefaultTextEncodingName(preferences, toWK("ISO-8859-1").get());
-    WKPreferencesSetMinimumFontSize(preferences, 0);
-    WKPreferencesSetStandardFontFamily(preferences, toWK("Times").get());
-    WKPreferencesSetCursiveFontFamily(preferences, toWK("Apple Chancery").get());
-    WKPreferencesSetFantasyFontFamily(preferences, toWK("Papyrus").get());
-    WKPreferencesSetFixedFontFamily(preferences, toWK("Courier").get());
-    WKPreferencesSetPictographFontFamily(preferences, toWK("Apple Color Emoji").get());
-    WKPreferencesSetSansSerifFontFamily(preferences, toWK("Helvetica").get());
-    WKPreferencesSetSerifFontFamily(preferences, toWK("Times").get());
-    WKPreferencesSetAsynchronousSpellCheckingEnabled(preferences, false);
-    WKPreferencesSetMediaSourceEnabled(preferences, true);
-    WKPreferencesSetSourceBufferChangeTypeEnabled(preferences, true);
-    WKPreferencesSetHighlightAPIEnabled(preferences, true);
-    WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(preferences, false);
-    WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(preferences, false);
-    WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
-    WKPreferencesSetFetchAPIKeepAliveEnabled(preferences, true);
-    WKPreferencesSetMediaPreloadingEnabled(preferences, true);
-    WKPreferencesSetExposeSpeakersEnabled(preferences, true);
-    WKPreferencesSetMediaPlaybackAllowsInline(preferences, true);
-    WKPreferencesSetInlineMediaPlaybackRequiresPlaysInlineAttribute(preferences, false);
-    WKPreferencesSetRemotePlaybackEnabled(preferences, true);
-    WKPreferencesSetBeaconAPIEnabled(preferences, true);
-    WKPreferencesSetDirectoryUploadEnabled(preferences, true);
-    WKPreferencesSetMockCaptureDevicesEnabled(preferences, true);
-    WKPreferencesSetLargeImageAsyncDecodingEnabled(preferences, false);
-    WKPreferencesSetStorageAccessAPIEnabled(preferences, true);
-    WKPreferencesSetAccessibilityObjectModelEnabled(preferences, true);
-    WKPreferencesSetCSSOMViewScrollingAPIEnabled(preferences, true);
-    WKPreferencesSetMediaCapabilitiesEnabled(preferences, true);
-    WKPreferencesSetRestrictedHTTPResponseAccess(preferences, true);
-    WKPreferencesSetServerTimingEnabled(preferences, true);
-    WKPreferencesSetWebSQLDisabled(preferences, false);
-    WKPreferencesSetMediaPlaybackRequiresUserGesture(preferences, false);
-    WKPreferencesSetVideoPlaybackRequiresUserGesture(preferences, false);
-    WKPreferencesSetAudioPlaybackRequiresUserGesture(preferences, false);
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    WKPreferencesSetIsAccessibilityIsolatedTreeEnabled(preferences, accessibilityIsolatedTreeMode());
-#endif
+        WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
+        WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
+    
+        for (const auto& [key, value] : options.boolWebPreferenceFeatures())
+            WKPreferencesSetBoolValueForKeyForTesting(preferences, value, toWK(key).get());
 
-    platformResetPreferencesToConsistentValues();
+        for (const auto& [key, value] : options.doubleWebPreferenceFeatures())
+            WKPreferencesSetDoubleValueForKeyForTesting(preferences, value, toWK(key).get());
 
-    for (const auto& [key, value] : options.boolWebPreferenceFeatures())
-        WKPreferencesSetBoolValueForKeyForTesting(preferences, value, toWK(key).get());
+        for (const auto& [key, value] : options.uint32WebPreferenceFeatures())
+            WKPreferencesSetUInt32ValueForKeyForTesting(preferences, value, toWK(key).get());
 
-    for (const auto& [key, value] : options.doubleWebPreferenceFeatures())
-        WKPreferencesSetDoubleValueForKeyForTesting(preferences, value, toWK(key).get());
-
-    for (const auto& [key, value] : options.uint32WebPreferenceFeatures())
-        WKPreferencesSetUInt32ValueForKeyForTesting(preferences, value, toWK(key).get());
-
-    for (const auto& [key, value] : options.stringWebPreferenceFeatures())
-        WKPreferencesSetStringValueForKeyForTesting(preferences, toWK(value).get(), toWK(key).get());
+        for (const auto& [key, value] : options.stringWebPreferenceFeatures())
+            WKPreferencesSetStringValueForKeyForTesting(preferences, toWK(value).get(), toWK(key).get());
+    });
 }
 
 bool TestController::resetStateToConsistentValues(const TestOptions& options, ResetStage resetStage)
@@ -979,7 +925,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     setValue(resetMessageBody, "AllowedHosts", allowedHostsValue);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    setValue(resetMessageBody, "AccessibilityIsolatedTree", m_accessibilityIsolatedTreeMode);
+    setValue(resetMessageBody, "AccessibilityIsolatedTree", options.accessibilityIsolatedTreeMode());
 #endif
 
     auto jscOptions = options.jscOptions();
@@ -2724,6 +2670,10 @@ void TestController::removeAllSessionCredentials()
 {
 }
 
+void TestController::appBoundRequestContextDataForDomain(WKStringRef)
+{
+}
+
 struct GetAllStorageAccessEntriesCallbackContext {
     GetAllStorageAccessEntriesCallbackContext(TestController& controller, CompletionHandler<void(Vector<String>&&)>&& handler)
         : testController(controller)
@@ -2908,13 +2858,6 @@ void TestController::resetQuota()
 {
     StorageVoidCallbackContext context(*this);
     WKWebsiteDataStoreResetQuota(TestController::websiteDataStore(), &context, StorageVoidCallback);
-    runUntil(context.done, noTimeout);
-}
-
-void TestController::setQuotaLoggingEnabled(bool enabled)
-{
-    StorageVoidCallbackContext context(*this);
-    WKWebsiteDataStoreSetQuotaLoggingEnabled(TestController::websiteDataStore(), enabled, &context, StorageVoidCallback);
     runUntil(context.done, noTimeout);
 }
 

@@ -81,12 +81,6 @@ struct MethodTable {
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnPropertyNames);
     GetOwnPropertyNamesFunctionPtr METHOD_TABLE_ENTRY(getOwnSpecialPropertyNames);
 
-    using ClassNameFunctionPtr = String (*)(const JSObject*, VM&);
-    ClassNameFunctionPtr METHOD_TABLE_ENTRY(className);
-
-    using ToStringNameFunctionPtr = String (*)(const JSObject*, JSGlobalObject*);
-    ToStringNameFunctionPtr METHOD_TABLE_ENTRY(toStringName);
-
     using CustomHasInstanceFunctionPtr = bool (*)(JSObject*, JSGlobalObject*, JSValue);
     CustomHasInstanceFunctionPtr METHOD_TABLE_ENTRY(customHasInstance);
 
@@ -169,8 +163,6 @@ struct MethodTable {
         &ClassName::defaultValue, \
         &ClassName::getOwnPropertyNames, \
         &ClassName::getOwnSpecialPropertyNames, \
-        &ClassName::className, \
-        &ClassName::toStringName, \
         &ClassName::customHasInstance, \
         &ClassName::defineOwnProperty, \
         &ClassName::preventExtensions, \

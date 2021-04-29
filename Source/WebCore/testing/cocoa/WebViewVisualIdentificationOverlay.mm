@@ -33,7 +33,9 @@
 #import <CoreText/CoreText.h>
 #import <wtf/WeakObjCPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
+#endif
 
 static void *boundsObservationContext = &boundsObservationContext;
 

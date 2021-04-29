@@ -75,6 +75,11 @@ void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, Optional<uint64_t> 
     promise.settle(m_transformer->setEncryptionKey(rawKey.key(), keyId));
 }
 
+void RTCRtpSFrameTransform::setCounterForTesting(uint64_t counter)
+{
+    m_transformer->setCounter(counter);
+}
+
 uint64_t RTCRtpSFrameTransform::counterForTesting() const
 {
     return m_transformer->counter();

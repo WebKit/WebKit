@@ -74,7 +74,7 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
 
     if ((mTexture == nullptr || !mTexture->valid()) && (width != 0 && height != 0))
     {
-        if (actualSamples == 1 || (mFormat.hasDepthAndStencilBits() && mFormat.getCaps().resolve))
+        if (actualSamples == 1 || (mFormat.getCaps().resolve))
         {
             ANGLE_TRY(mtl::Texture::Make2DTexture(contextMtl, mFormat, static_cast<uint32_t>(width),
                                                   static_cast<uint32_t>(height), 1,

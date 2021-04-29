@@ -68,6 +68,7 @@ private:
     public:
         void respondToNodeInsertion(Node*);
         void willRemoveNodePreservingChildren(Node*);
+        void willRemovePossibleAncestorNode(Node*);
         void willRemoveNode(Node*);
         void didReplaceNode(Node*, Node* newNode);
 

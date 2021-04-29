@@ -26,6 +26,7 @@
 
 #include "FileChooser.h"
 #include "HTMLTextFormControlElement.h"
+#include "SelectionRestorationMode.h"
 #include <memory>
 #include <wtf/WeakPtr.h>
 

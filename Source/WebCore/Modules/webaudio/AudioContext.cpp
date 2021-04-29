@@ -152,15 +152,11 @@ double AudioContext::baseLatency()
 {
     lazyInitialize();
 
-    auto* destination = this->destination();
-    return destination ? static_cast<double>(destination->framesPerBuffer()) / sampleRate() : 0.;
+    return static_cast<double>(destination().framesPerBuffer()) / sampleRate();
 }
 
 AudioTimestamp AudioContext::getOutputTimestamp(DOMWindow& window)
 {
-    if (!destination())
-        return { 0, 0 };
-
     auto& performance = window.performance();
 
     auto position = outputPosition();
@@ -182,7 +178,7 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    if (state() == State::Closed || !destinationNode()) {
+    if (state() == State::Closed) {
         promise.resolve();
         return;
     }
@@ -191,15 +187,20 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 
     lazyInitialize();
 
-    destinationNode()->close([this, protectedThis = makeRef(*this)] {
+    destination().close([this, activity = makePendingActivity(*this)] {
         setState(State::Closed);
         uninitialize();
     });
 }
 
-DefaultAudioDestinationNode* AudioContext::destination()
+DefaultAudioDestinationNode& AudioContext::destination()
 {
-    return static_cast<DefaultAudioDestinationNode*>(BaseAudioContext::destination());
+    return static_cast<DefaultAudioDestinationNode&>(BaseAudioContext::destination());
+}
+
+const DefaultAudioDestinationNode& AudioContext::destination() const
+{
+    return static_cast<const DefaultAudioDestinationNode&>(BaseAudioContext::destination());
 }
 
 void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
@@ -209,7 +210,7 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    if (isStopped() || state() == State::Closed || !destinationNode()) {
+    if (isStopped() || state() == State::Closed) {
         promise.reject(Exception { InvalidStateError, "Context is closed"_s });
         return;
     }
@@ -223,7 +224,7 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 
     lazyInitialize();
 
-    destinationNode()->suspend([this, protectedThis = makeRef(*this), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
+    destination().suspend([this, activity = makePendingActivity(*this), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
         if (exception) {
             promise.reject(WTFMove(*exception));
             return;
@@ -240,7 +241,7 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    if (isStopped() || state() == State::Closed || !destinationNode()) {
+    if (isStopped() || state() == State::Closed) {
         promise.reject(Exception { InvalidStateError, "Context is closed"_s });
         return;
     }
@@ -254,7 +255,7 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 
     lazyInitialize();
 
-    destinationNode()->resume([this, protectedThis = makeRef(*this), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
+    destination().resume([this, activity = makePendingActivity(*this), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
         if (exception) {
             promise.reject(WTFMove(*exception));
             return;
@@ -293,10 +294,10 @@ void AudioContext::startRendering()
     if (isStopped() || !willBeginPlayback() || m_wasSuspendedByScript)
         return;
 
-    makePendingActivity();
+    setPendingActivity();
 
     lazyInitialize();
-    destination()->startRendering([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+    destination().startRendering([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
         if (!exception)
             setState(State::Running);
     });
@@ -309,7 +310,7 @@ void AudioContext::lazyInitialize()
 
     BaseAudioContext::lazyInitialize();
     if (isInitialized()) {
-        if (destinationNode() && state() != State::Running) {
+        if (state() != State::Running) {
             // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
             // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
             // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
@@ -346,7 +347,7 @@ bool AudioContext::willPausePlayback()
 
 MediaProducer::MediaStateFlags AudioContext::mediaState() const
 {
-    if (!isStopped() && destinationNode() && destinationNode()->isPlayingAudio())
+    if (!isStopped() && destination().isPlayingAudio())
         return MediaProducer::IsPlayingAudio;
 
     return MediaProducer::IsNotPlaying;
@@ -354,7 +355,7 @@ MediaProducer::MediaStateFlags AudioContext::mediaState() const
 
 void AudioContext::mayResumePlayback(bool shouldResume)
 {
-    if (!destinationNode() || state() == State::Closed || state() == State::Running)
+    if (state() == State::Closed || !isInitialized() || state() == State::Running)
         return;
 
     if (!shouldResume) {
@@ -367,7 +368,7 @@ void AudioContext::mayResumePlayback(bool shouldResume)
 
     lazyInitialize();
 
-    destinationNode()->resume([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+    destination().resume([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
         setState(exception ? State::Suspended : State::Running);
     });
 }
@@ -441,12 +442,12 @@ void AudioContext::resume()
 
 void AudioContext::suspendPlayback()
 {
-    if (!destinationNode() || state() == State::Closed)
+    if (state() == State::Closed || !isInitialized())
         return;
 
     lazyInitialize();
 
-    destinationNode()->suspend([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+    destination().suspend([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
         if (exception)
             return;
 
@@ -468,8 +469,8 @@ bool AudioContext::isSuspended() const
 
 void AudioContext::pageMutedStateDidChange()
 {
-    if (destinationNode() && document() && document()->page())
-        destinationNode()->setMuted(document()->page()->isAudioMuted());
+    if (document() && document()->page())
+        destination().setMuted(document()->page()->isAudioMuted());
 }
 
 void AudioContext::mediaCanStart(Document& document)

@@ -1494,7 +1494,7 @@ void RenderObject::willBeDestroyed()
     removeRareData();
 }
 
-void RenderObject::insertedIntoTree()
+void RenderObject::insertedIntoTree(IsInternalMove)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))
@@ -1506,7 +1506,7 @@ void RenderObject::insertedIntoTree()
         parent()->dirtyLinesFromChangedChild(*this);
 }
 
-void RenderObject::willBeRemovedFromTree()
+void RenderObject::willBeRemovedFromTree(IsInternalMove)
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* container = LayoutIntegration::LineLayout::blockContainer(*this))

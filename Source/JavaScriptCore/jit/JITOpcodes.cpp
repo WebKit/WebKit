@@ -842,14 +842,12 @@ void JIT::emit_op_catch(const Instruction* currentInstruction)
 
     addPtr(TrustedImm32(stackPointerOffsetFor(codeBlock()) * sizeof(Register)), callFrameRegister, stackPointerRegister);
 
-    callOperationNoExceptionCheck(operationCheckIfExceptionIsUncatchableAndNotifyProfiler, TrustedImmPtr(&vm()));
-    Jump isCatchableException = branchTest32(Zero, returnValueGPR);
+    callOperationNoExceptionCheck(operationRetrieveAndClearExceptionIfCatchable, TrustedImmPtr(&vm()));
+    Jump isCatchableException = branchTest32(NonZero, returnValueGPR);
     jumpToExceptionHandler(vm());
     isCatchableException.link(this);
 
-    move(TrustedImmPtr(m_vm), regT3);
-    load64(Address(regT3, VM::exceptionOffset()), regT0);
-    store64(TrustedImm64(JSValue::encode(JSValue())), Address(regT3, VM::exceptionOffset()));
+    move(returnValueGPR, regT0);
     emitPutVirtualRegister(bytecode.m_exception);
 
     load64(Address(regT0, Exception::valueOffset()), regT0);
@@ -1218,7 +1216,7 @@ void JIT::emitSlow_op_loop_hint(const Instruction* currentInstruction, Vector<Sl
 
 void JIT::emit_op_check_traps(const Instruction*)
 {
-    addSlowCase(branchTest8(NonZero, AbsoluteAddress(m_vm->needTrapHandlingAddress())));
+    addSlowCase(branchTest32(NonZero, AbsoluteAddress(m_vm->traps().trapBitsAddress()), TrustedImm32(VMTraps::AsyncEvents)));
 }
 
 void JIT::emit_op_nop(const Instruction*)

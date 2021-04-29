@@ -449,10 +449,8 @@ bool RenderStyle::descendantAffectingNonInheritedPropertiesEqual(const RenderSty
 
 static inline unsigned computeFontHash(const FontCascade& font)
 {
-    IntegerHasher hasher;
-    hasher.add(ASCIICaseInsensitiveHash::hash(font.fontDescription().firstFamily()));
-    hasher.add(font.fontDescription().specifiedSize());
-    return hasher.hash();
+    // FIXME: Would be better to hash the family name rather than hashing a hash of the family name. Also, should this use FontCascadeDescription::familyNameHash?
+    return computeHash(ASCIICaseInsensitiveHash::hash(font.fontDescription().firstFamily()), font.fontDescription().specifiedSize());
 }
 
 unsigned RenderStyle::hashForTextAutosizing() const
@@ -1215,11 +1213,14 @@ StyleDifference RenderStyle::diff(const RenderStyle& other, OptionSet<StyleDiffe
     if (changeRequiresRepaint(other, changedContextSensitiveProperties))
         return StyleDifference::Repaint;
 
-    if (changeRequiresRecompositeLayer(other, changedContextSensitiveProperties))
-        return StyleDifference::RecompositeLayer;
-
     if (changeRequiresRepaintIfTextOrBorderOrOutline(other, changedContextSensitiveProperties))
         return StyleDifference::RepaintIfTextOrBorderOrOutline;
+
+    // FIXME: RecompositeLayer should also behave as a priority bit (e.g when the style change requires layout, we know that
+    // the content also needs repaint and it will eventually get repainted,
+    // but a repaint type of change (e.g. color change) does not necessarily trigger recomposition). 
+    if (changeRequiresRecompositeLayer(other, changedContextSensitiveProperties))
+        return StyleDifference::RecompositeLayer;
 
     // Cursors are not checked, since they will be set appropriately in response to mouse events,
     // so they don't need to cause any repaint or layout.

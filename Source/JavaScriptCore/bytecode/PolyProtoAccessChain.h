@@ -27,6 +27,7 @@
 
 #include "StructureIDTable.h"
 #include "VM.h"
+#include <wtf/FixedVector.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -37,22 +38,13 @@ class JSObject;
 class PropertySlot;
 class Structure;
 
-class PolyProtoAccessChain {
-    WTF_MAKE_FAST_ALLOCATED;
-
+class PolyProtoAccessChain final : public ThreadSafeRefCounted<PolyProtoAccessChain> {
 public:
-    PolyProtoAccessChain(PolyProtoAccessChain&) = default;
-
     // Returns nullptr when invalid.
-    static std::unique_ptr<PolyProtoAccessChain> create(JSGlobalObject*, JSCell* base, const PropertySlot&);
-    static std::unique_ptr<PolyProtoAccessChain> create(JSGlobalObject*, JSCell* base, JSObject* target);
+    static RefPtr<PolyProtoAccessChain> tryCreate(JSGlobalObject*, JSCell* base, const PropertySlot&);
+    static RefPtr<PolyProtoAccessChain> tryCreate(JSGlobalObject*, JSCell* base, JSObject* target);
 
-    std::unique_ptr<PolyProtoAccessChain> clone()
-    {
-        return makeUnique<PolyProtoAccessChain>(*this);
-    }
-
-    const Vector<StructureID>& chain() const { return m_chain; }
+    const FixedVector<StructureID>& chain() const { return m_chain; }
 
     void dump(Structure* baseStructure, PrintStream& out) const;
 
@@ -83,11 +75,14 @@ public:
     }
 
 private:
-    PolyProtoAccessChain() = default;
+    explicit PolyProtoAccessChain(Vector<StructureID>&& chain)
+        : m_chain(WTFMove(chain))
+    {
+    }
 
     // This does not include the base. We rely on AccessCase providing it for us. That said, this data
     // structure is tied to the base that it was created with.
-    Vector<StructureID> m_chain; 
+    FixedVector<StructureID> m_chain;
 };
 
 }

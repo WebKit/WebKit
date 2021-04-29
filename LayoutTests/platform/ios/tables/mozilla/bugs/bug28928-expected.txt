@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 196x63
             RenderTableCell {TD} at (2,2) size 192x63 [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (1,1) size 190x45
-                RenderTextControl {INPUT} at (2,2) size 106x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+                RenderTextControl {INPUT} at (2,2) size 106x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
                 RenderText {#text} at (109,1) size 5x19
                   text run at (109,1) width 5: " "
                 RenderButton {INPUT} at (115,2) size 45x20 [color=#FFFFFF] [bgcolor=#007AFF]
@@ -33,7 +33,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,2) size 196x63
             RenderTableCell {TD} at (2,2) size 192x63 [r=0 c=0 rs=1 cs=1]
               RenderBlock {FORM} at (1,1) size 190x45
-                RenderTextControl {INPUT} at (2,2) size 106x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+                RenderTextControl {INPUT} at (2,2) size 106x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
                 RenderText {#text} at (109,1) size 5x19
                   text run at (109,1) width 5: " "
                 RenderButton {INPUT} at (115,2) size 45x20 [color=#FFFFFF] [bgcolor=#007AFF]

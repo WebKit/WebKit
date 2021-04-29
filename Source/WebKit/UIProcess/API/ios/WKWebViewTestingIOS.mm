@@ -179,6 +179,15 @@
 #endif
 }
 
+- (BOOL)_isShowingDataListSuggestions
+{
+#if ENABLE(DATALIST_ELEMENT)
+    return [_contentView isShowingDataListSuggestions];
+#else
+    return NO;
+#endif
+}
+
 - (NSString *)textContentTypeForTesting
 {
     return [_contentView textContentTypeForTesting];
@@ -313,6 +322,20 @@
 #endif
 }
 
+- (BOOL)_isAnimatingDragCancel
+{
+#if ENABLE(DRAG_SUPPORT)
+    return [_contentView isAnimatingDragCancel];
+#else
+    return NO;
+#endif
+}
+
+- (CGRect)_tapHighlightViewRect
+{
+    return [_contentView tapHighlightViewRect];
+}
+
 - (void)_simulateElementAction:(_WKElementActionType)actionType atLocation:(CGPoint)location
 {
     [_contentView _simulateElementAction:actionType atLocation:location];
@@ -359,6 +382,28 @@
     if (_page)
         _page->setDeviceHasAGXCompilerServiceForTesting();
 }
+
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+- (void)_setUIEventAttributionForTesting:(UIEventAttribution *)attribution withNonce:(NSString *)nonce
+{
+#if HAVE(UI_EVENT_ATTRIBUTION)
+    if (attribution) {
+        WebCore::PrivateClickMeasurement measurement(
+            WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
+            WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
+            WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
+            attribution.sourceDescription,
+            attribution.purchaser
+        );
+        measurement.setEphemeralSourceNonce({ nonce });
+
+        _page->setPrivateClickMeasurement(WTFMove(measurement));
+    } else
+        _page->setPrivateClickMeasurement(WTF::nullopt);
+#endif
+}
+#endif
+
 
 @end
 

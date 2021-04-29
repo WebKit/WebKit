@@ -64,6 +64,8 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
 {
     static NeverDestroyed<OSObjectPtr<xpc_object_t>> priorityBoostMessage;
 
+    OSObjectPtr<xpc_connection_t> retainedPeerConnection(peer);
+
     xpc_connection_set_target_queue(peer, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     xpc_connection_set_event_handler(peer, ^(xpc_object_t event) {
         xpc_type_t type = xpc_get_type(event);
@@ -117,8 +119,8 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 if (fd != -1)
                     dup2(fd, STDERR_FILENO);
 
-                WorkQueue::main().dispatchSync([&] {
-                    initializerFunctionPtr(peer, event, priorityBoostMessage.get().get());
+                WorkQueue::main().dispatchSync([initializerFunctionPtr, event = OSObjectPtr<xpc_object_t>(event), retainedPeerConnection] {
+                    initializerFunctionPtr(retainedPeerConnection.get(), event.get(), priorityBoostMessage.get().get());
 
                     setAppleLanguagesPreference();
                 });

@@ -362,7 +362,7 @@ public:
 
     std::vector<webrtc::SdpVideoFormat> ConfigureSupportedDecoder() final
     {
-        return supportedH264Formats();
+        return gstreamerSupportedH264Codecs();
     }
 };
 

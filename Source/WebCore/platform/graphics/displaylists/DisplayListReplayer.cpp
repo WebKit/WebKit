@@ -188,28 +188,30 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
     size_t i = 0;
 #endif
     ReplayResult result;
-    for (auto [item, extent, itemSizeInBuffer] : m_displayList) {
+    for (auto displayListItem : m_displayList) {
+        if (!displayListItem) {
+            result.reasonForStopping = StopReplayReason::InvalidItemOrExtent;
+            break;
+        }
+
+        auto [item, extent, itemSizeInBuffer] = displayListItem.value();
+
         if (!initialClip.isZero() && extent && !extent->intersects(initialClip)) {
             LOG_WITH_STREAM(DisplayLists, stream << "skipping " << i++ << " " << item);
             result.numberOfBytesRead += itemSizeInBuffer;
             continue;
         }
 
-        if (!item) {
-            result.reasonForStopping = StopReplayReason::InvalidItemOrExtent;
-            break;
-        }
-
         LOG_WITH_STREAM(DisplayLists, stream << "applying " << i++ << " " << item);
 
-        if (item->is<MetaCommandChangeDestinationImageBuffer>()) {
+        if (item.is<MetaCommandChangeDestinationImageBuffer>()) {
             result.numberOfBytesRead += itemSizeInBuffer;
             result.reasonForStopping = StopReplayReason::ChangeDestinationImageBuffer;
-            result.nextDestinationImageBuffer = item->get<MetaCommandChangeDestinationImageBuffer>().identifier();
+            result.nextDestinationImageBuffer = item.get<MetaCommandChangeDestinationImageBuffer>().identifier();
             break;
         }
 
-        if (auto [reasonForStopping, missingCachedResourceIdentifier] = applyItem(*item); reasonForStopping) {
+        if (auto [reasonForStopping, missingCachedResourceIdentifier] = applyItem(item); reasonForStopping) {
             result.reasonForStopping = *reasonForStopping;
             result.missingCachedResourceIdentifier = WTFMove(missingCachedResourceIdentifier);
             break;
@@ -218,8 +220,8 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
         result.numberOfBytesRead += itemSizeInBuffer;
 
         if (UNLIKELY(trackReplayList)) {
-            replayList->append(*item);
-            if (item->isDrawingItem())
+            replayList->append(item);
+            if (item.isDrawingItem())
                 replayList->addDrawingItemExtent(WTFMove(extent));
         }
     }

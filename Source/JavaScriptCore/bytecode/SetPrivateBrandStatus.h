@@ -88,6 +88,7 @@ public:
     bool finalize(VM&);
 
     bool appendVariant(const SetPrivateBrandVariant&);
+    void shrinkToFit();
 
     void dump(PrintStream&) const;
 

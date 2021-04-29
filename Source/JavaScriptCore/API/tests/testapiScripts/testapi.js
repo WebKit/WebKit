@@ -198,6 +198,16 @@ shouldBe("MyObject.nullGetSet", 1);
 shouldThrow("MyObject.nullCall()");
 shouldThrow("MyObject.hasPropertyLie");
 
+var symbolToStringTagDescriptor = Object.getOwnPropertyDescriptor(MyObject, Symbol.toStringTag);
+shouldBe("typeof symbolToStringTagDescriptor", "object");
+shouldBe("symbolToStringTagDescriptor.value", "MyObject");
+shouldBe("symbolToStringTagDescriptor.writable", true);
+shouldBe("symbolToStringTagDescriptor.enumerable", false);
+shouldBe("symbolToStringTagDescriptor.configurable", true);
+
+MyObject[Symbol.toStringTag] = "Foo";
+shouldBe("Object.prototype.toString.call(MyObject)", "[object Foo]");
+
 derived = new Derived();
 
 shouldBe("derived instanceof Derived", true);
@@ -281,6 +291,16 @@ shouldBe("console", "[object console]");
 shouldBe("typeof console.log", "function");
 
 shouldBe("EmptyObject", "[object CallbackObject]");
+
+var symbolToStringTagDescriptor = Object.getOwnPropertyDescriptor(EmptyObject, Symbol.toStringTag);
+shouldBe("typeof symbolToStringTagDescriptor", "object");
+shouldBe("symbolToStringTagDescriptor.value", "CallbackObject");
+shouldBe("symbolToStringTagDescriptor.writable", true);
+shouldBe("symbolToStringTagDescriptor.enumerable", false);
+shouldBe("symbolToStringTagDescriptor.configurable", true);
+
+EmptyObject[Symbol.toStringTag] = "Foo";
+shouldBe("Object.prototype.toString.call(EmptyObject)", "[object Foo]");
 
 for (var i = 0; i < 6; ++i)
     PropertyCatchalls.x = i;

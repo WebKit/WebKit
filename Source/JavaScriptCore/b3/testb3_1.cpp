@@ -309,7 +309,9 @@ void run(const char* filter)
     RUN_UNARY(testConvertFloatToDoubleArg, floatingPointOperands<float>());
     RUN_UNARY(testConvertFloatToDoubleImm, floatingPointOperands<float>());
     RUN_UNARY(testConvertFloatToDoubleMem, floatingPointOperands<float>());
+    RUN_UNARY(testConvertDoubleToFloatToDouble, floatingPointOperands<double>());
     RUN_UNARY(testConvertDoubleToFloatToDoubleToFloat, floatingPointOperands<double>());
+    RUN_UNARY(testConvertDoubleToFloatEqual, floatingPointOperands<double>());
     RUN_UNARY(testStoreFloat, floatingPointOperands<double>());
     RUN_UNARY(testStoreDoubleConstantAsFloat, floatingPointOperands<double>());
     RUN_UNARY(testLoadFloatConvertDoubleConvertFloatStoreFloat, floatingPointOperands<float>());

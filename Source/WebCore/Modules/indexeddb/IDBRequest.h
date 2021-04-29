@@ -126,23 +126,17 @@ public:
     void setTransactionOperationID(uint64_t transactionOperationID) { m_currentTransactionOperationID = transactionOperationID; }
 
 protected:
-    IDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&);
+    IDBRequest(ScriptExecutionContext&, IDBClient::IDBConnectionProxy&, IndexedDB::RequestType);
 
     void enqueueEvent(Ref<Event>&&);
     void dispatchEvent(Event&) override;
 
     void setResult(Ref<IDBDatabase>&&);
+    void setReadyState(ReadyState state) { m_readyState = state; }
+    
+    void setShouldExposeTransactionToDOM(bool shouldExposeTransactionToDOM) { m_shouldExposeTransactionToDOM = shouldExposeTransactionToDOM; }
 
     IDBClient::IDBConnectionProxy& connectionProxy() { return m_connectionProxy.get(); }
-
-    // FIXME: Protected data members aren't great for maintainability.
-    // Consider adding protected helper functions and making these private.
-    ReadyState m_readyState { ReadyState::Pending };
-    RefPtr<IDBTransaction> m_transaction;
-    bool m_shouldExposeTransactionToDOM { true };
-    RefPtr<DOMException> m_domError;
-    IndexedDB::RequestType m_requestType { IndexedDB::RequestType::Other };
-    Event* m_openDatabaseSuccessEvent { nullptr };
 
 private:
     IDBRequest(ScriptExecutionContext&, IDBObjectStore&, IDBTransaction&);
@@ -171,6 +165,14 @@ private:
 
     void clearWrappers();
 
+protected:
+    // FIXME: Protected data members aren't great for maintainability.
+    // Consider adding protected helper functions and making these private.
+    RefPtr<IDBTransaction> m_transaction;
+    RefPtr<DOMException> m_domError;
+    Event* m_openDatabaseSuccessEvent { nullptr };
+
+private:
     IDBCursor* resultCursor();
 
     IDBError m_idbError;
@@ -178,21 +180,24 @@ private:
 
     JSValueInWrappedObject m_resultWrapper;
     JSValueInWrappedObject m_cursorWrapper;
+
+    uint64_t m_currentTransactionOperationID { 0 };
+
     Result m_result;
     Optional<Source> m_source;
 
-    bool m_hasPendingActivity { true };
+    RefPtr<IDBCursor> m_pendingCursor;
+    Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
+
+    ReadyState m_readyState { ReadyState::Pending };
+    IndexedDB::RequestType m_requestType { IndexedDB::RequestType::Other };
     IndexedDB::ObjectStoreRecordType m_requestedObjectStoreRecordType { IndexedDB::ObjectStoreRecordType::ValueOnly };
     IndexedDB::IndexRecordType m_requestedIndexRecordType { IndexedDB::IndexRecordType::Key };
 
-    RefPtr<IDBCursor> m_pendingCursor;
-
-    Ref<IDBClient::IDBConnectionProxy> m_connectionProxy;
-
+    bool m_shouldExposeTransactionToDOM { true };
+    bool m_hasPendingActivity { true };
     bool m_dispatchingEvent { false };
     bool m_hasUncaughtException { false };
-
-    uint64_t m_currentTransactionOperationID { 0 };
 };
 
 } // namespace WebCore

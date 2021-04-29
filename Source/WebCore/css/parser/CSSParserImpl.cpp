@@ -251,6 +251,7 @@ void CSSParserImpl::parseStyleSheet(const String& string, const CSSParserContext
         styleSheet->parserAppendRule(rule.releaseNonNull());
     });
     styleSheet->setHasSyntacticallyValidCSSHeader(firstRuleValid);
+    styleSheet->shrinkToFit();
     parser.adoptTokenizerEscapedStrings();
 }
 
@@ -629,6 +630,8 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefix
 
     // FIXME-NEWPARSER: Find out why this is done. Behavior difference when prefixed?
     // keyframeRule->setVendorPrefixed(webkitPrefixed);
+    
+    keyframeRule->shrinkToFit();
     return keyframeRule;
 }
 
@@ -845,8 +848,12 @@ Vector<double> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)
             result.append(1);
         else
             return { }; // Parser error, invalid value in keyframe selector
-        if (range.atEnd())
+
+        if (range.atEnd()) {
+            result.shrinkToFit();
             return result;
+        }
+
         if (range.consume().type() != CommaToken)
             return { }; // Parser error
     }

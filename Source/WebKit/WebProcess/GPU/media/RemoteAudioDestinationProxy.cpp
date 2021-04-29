@@ -74,7 +74,6 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 
 void RemoteAudioDestinationProxy::startRenderingThread()
 {
-#if PLATFORM(COCOA)
     ASSERT(!m_renderThread);
 
     auto offThreadRendering = [this]() mutable {
@@ -87,12 +86,10 @@ void RemoteAudioDestinationProxy::startRenderingThread()
         } while (!m_shouldStopThread);
     };
     m_renderThread = Thread::create("RemoteAudioDestinationProxy render thread", WTFMove(offThreadRendering), ThreadType::Audio, Thread::QOS::UserInteractive);
-#endif
 }
 
 void RemoteAudioDestinationProxy::stopRenderingThread()
 {
-#if PLATFORM(COCOA)
     if (!m_renderThread)
         return;
 
@@ -100,7 +97,6 @@ void RemoteAudioDestinationProxy::stopRenderingThread()
     m_renderSemaphore.signal();
     m_renderThread->waitForCompletion();
     m_renderThread = nullptr;
-#endif
 }
 
 void RemoteAudioDestinationProxy::connectToGPUProcess()

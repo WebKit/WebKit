@@ -30,10 +30,12 @@
 
 #include "DisplayListReaderHandle.h"
 #include "GPUConnectionToWebProcess.h"
+#include "LayerHostingContext.h"
 #include "Logging.h"
 #include "PlatformRemoteImageBuffer.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
+#include "RemoteRenderingBackendCreationParameters.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -63,20 +65,28 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
+Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters)
 {
-    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, identifier, WTFMove(resumeDisplayListSemaphore)));
+    auto instance = adoptRef(*new RemoteRenderingBackend(gpuConnectionToWebProcess, WTFMove(creationParameters)));
     instance->startListeningForIPC();
     return instance;
 }
 
-RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RenderingBackendIdentifier identifier, IPC::Semaphore&& resumeDisplayListSemaphore)
+RemoteRenderingBackend::RemoteRenderingBackend(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters)
     : m_workQueue(WorkQueue::create("RemoteRenderingBackend work queue", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
     , m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
-    , m_renderingBackendIdentifier(identifier)
-    , m_resumeDisplayListSemaphore(WTFMove(resumeDisplayListSemaphore))
+    , m_renderingBackendIdentifier(creationParameters.identifier)
+    , m_resumeDisplayListSemaphore(WTFMove(creationParameters.resumeDisplayListSemaphore))
 {
     ASSERT(RunLoop::isMain());
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    m_contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({
+        creationParameters.canShowWhileLocked
+    });
+    RELEASE_LOG(Process, "RemoteRenderingBackend: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
+    m_gpuConnectionToWebProcess->gpuProcess().send(Messages::GPUProcessProxy::DidCreateContextForVisibilityPropagation(creationParameters.pageProxyID, creationParameters.pageID, m_contextForVisibilityPropagation->contextID()));
+#endif
 }
 
 void RemoteRenderingBackend::startListeningForIPC()
@@ -247,11 +257,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
                 break;
 
             handle.startWaiting();
-#if PLATFORM(COCOA)
             m_resumeDisplayListSemaphore.waitFor(30_us);
-#else
-            sleep(30_us);
-#endif
 
             auto resumeReadingInfo = handle.stopWaiting();
             if (!resumeReadingInfo)
@@ -376,9 +382,7 @@ void RemoteRenderingBackend::populateGetImageDataSharedMemory(WebCore::ImageData
     } else
         memset(m_getImageDataSharedMemory->data(), 0, m_getImageDataSharedMemory->size());
 
-#if OS(DARWIN)
     m_getImageDataSemaphore.signal();
-#endif
 }
 
 void RemoteRenderingBackend::getDataURLForImageBuffer(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution, WebCore::RenderingResourceIdentifier renderingResourceIdentifier, CompletionHandler<void(String&&)>&& completionHandler)
@@ -561,7 +565,9 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::FlushContext:
     case DisplayList::ItemType::MetaCommandChangeDestinationImageBuffer:
     case DisplayList::ItemType::MetaCommandChangeItemBuffer:
+#if ENABLE(VIDEO)
     case DisplayList::ItemType::PaintFrameForMedia:
+#endif
     case DisplayList::ItemType::Restore:
     case DisplayList::ItemType::Rotate:
     case DisplayList::ItemType::Save:

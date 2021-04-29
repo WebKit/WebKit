@@ -29,6 +29,7 @@
 #if TARGET_OS_IPHONE
 
 @class _WKTextInputContext;
+@class UIEventAttribution;
 @class UIWKDocumentContext;
 @class UIWKDocumentRequest;
 
@@ -42,6 +43,8 @@
 @property (nonatomic, readonly) NSString *_scrollingTreeAsText;
 @property (nonatomic, readonly) NSNumber *_stableStateOverride;
 @property (nonatomic, readonly) CGRect _dragCaretRect;
+@property (nonatomic, readonly, getter=_isAnimatingDragCancel) BOOL _animatingDragCancel;
+@property (nonatomic, readonly) CGRect _tapHighlightViewRect;
 
 - (void)keyboardAccessoryBarNext;
 - (void)keyboardAccessoryBarPrevious;
@@ -52,6 +55,7 @@
 - (BOOL)selectFormAccessoryHasCheckedItemAtRow:(long)rowIndex;
 - (void)setSelectedColorForColorPicker:(UIColor *)color;
 - (void)_selectDataListOption:(int)optionIndex;
+- (BOOL)_isShowingDataListSuggestions;
 
 - (BOOL)_mayContainEditableElementsInRect:(CGRect)rect;
 - (void)_requestTextInputContextsInRect:(CGRect)rect completionHandler:(void (^)(NSArray<_WKTextInputContext *> *))completionHandler;
@@ -81,6 +85,10 @@
 - (void)_setDeviceOrientationUserPermissionHandlerForTesting:(BOOL (^)(void))handler;
 
 - (void)_setDeviceHasAGXCompilerServiceForTesting;
+
+#if !TARGET_OS_TV && !TARGET_OS_WATCH
+- (void)_setUIEventAttributionForTesting:(UIEventAttribution *)attribution withNonce:(NSString *)nonce;
+#endif
 
 @end
 

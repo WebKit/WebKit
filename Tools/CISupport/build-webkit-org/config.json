@@ -27,7 +27,7 @@
                     { "name": "bot1026", "platform": "mac-bigsur" },
                     { "name": "bot1027", "platform": "mac-bigsur" },
 
-                    { "name": "bot187", "platform": "mac-catalina" },
+                    { "name": "bot178", "platform": "mac-catalina" },
                     { "name": "bot205", "platform": "mac-catalina" },
                     { "name": "bot241", "platform": "mac-catalina" },
                     { "name": "bot242", "platform": "mac-catalina" },
@@ -46,7 +46,7 @@
                     { "name": "bot688", "platform": "mac-catalina" },
 
 
-                    { "name": "bot178", "platform": "*" },
+                    { "name": "bot187", "platform": "*" },
                     { "name": "bot179", "platform": "*" },
                     { "name": "bot183", "platform": "*" },
                     { "name": "bot184", "platform": "*" },
@@ -253,7 +253,7 @@
                     },
                     { "name": "Apple-Catalina-LLINT-CLoop-BuildAndTest", "factory": "BuildAndTestLLINTCLoopFactory", "builddir": "catalina-cloop-debug",
                       "platform": "mac-catalina", "configuration": "debug", "architectures": ["x86_64"],
-                      "workernames": ["bot187"]
+                      "workernames": ["bot178"]
                     },
                     {
                       "name": "Apple-Catalina-Release-WK2-Perf", "factory": "DownloadAndPerfTestFactory", "builddir": "catalina-release-perf-tests",

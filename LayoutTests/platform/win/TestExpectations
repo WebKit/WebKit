@@ -2881,6 +2881,9 @@ fast/text/arabic-zwj-and-zwnj.html [ ImageOnlyFailure ]
 ######################### End list of UNREVIEWED failures ##########################
 ################################################################################
 
+# For some reason this test causes a stack overflow on windows but it's not important to test on every platform anyway.
+fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Skip ]
+
 # This feature is only enabled on Mac and iOS right now
 contentfiltering [ Skip ]
 http/tests/contentfiltering [ Skip ]
@@ -3447,6 +3450,7 @@ accessibility/generated-content-with-display-table-crash.html [ Failure ]
 accessibility/image-with-alt-and-map.html [ Skip ]
 accessibility/inline-continuations.html [ Skip ]
 accessibility/list-detection.html [ Skip ]
+accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 accessibility/minimal-table-with-aria-is-data-table.html [ Failure ]
 accessibility/presentation-role-iframe.html [ Failure ]
 accessibility/separator-values.html [ Failure ]

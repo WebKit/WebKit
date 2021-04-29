@@ -1,3 +1,95 @@
+2021-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump libsoup3 version to 2.99.3
+        https://bugs.webkit.org/show_bug.cgi?id=224362
+
+        Reviewed by Žan Doberšek.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-04-07  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] webkit://gpu should print runtime libwpe and wpebackend-fdo versions
+        https://bugs.webkit.org/show_bug.cgi?id=224298
+
+        Reviewed by Adrian Perez de Castro.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-04-07  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Mark _LIBRARY not _LIBRARIES in find modules
+        https://bugs.webkit.org/show_bug.cgi?id=224283
+
+        Reviewed by Michael Catanzaro.
+
+        A few find modules are erroniously sending _LIBRARIES to mark_as_advanced rather than
+        _LIBRARY. The former is created from the _LIBRARY value so it isn't valid at that point.
+
+        * Source/cmake/FindCairo.cmake:
+        * Source/cmake/FindFontconfig.cmake:
+        * Source/cmake/FindSQLite3.cmake:
+
+2021-04-07  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        .gitignore contains 'build/' which causes all directories named 'build/' to be ignored
+        https://bugs.webkit.org/show_bug.cgi?id=224227
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove 'build/' from .gitignore, it was causing errors by hiding files.
+        WebGL conformance test suite files have directiories with 'build/' in its path.
+
+        Most likely '/build/' is not a common build directory, since the scripts
+        seem to default to '/WebKitBuild/'.
+
+        * .gitignore:
+
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r275275): Broke some build configs lacking openh264
+        https://bugs.webkit.org/show_bug.cgi?id=224244
+
+        Unreviewed, manual revert of r275275 and r275409.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/GStreamerChecks.cmake:
+
+2021-04-06  Mark Lam  <mark.lam@apple.com>
+
+        Speculative build fix for Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=224243
+        rdar://75883248
+
+        Reviewed by Saam Barati.
+
+        Source/cmake/tools/scripts/auto-version.pl was limiting our `minor` and `micro`
+        version to only 2 decimal digits only.  In practice, we can use up to 3 digits.
+
+        * Source/cmake/tools/scripts/auto-version.pl:
+        (packTwoValues):
+
+2021-04-05  Alex Christensen  <achristensen@webkit.org>
+
+        Resurrect Mac CMake build
+        https://bugs.webkit.org/show_bug.cgi?id=224084
+
+        Reviewed by Tim Horton.
+
+        * Source/cmake/OptionsMac.cmake:
+
+2021-04-05  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Document how to use logging in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=224152
+
+        Reviewed by Simon Fraser.
+
+        Add documentation about how to use logging in WebKit.
+
+        * Introduction.md:
+
 2021-03-28  David Kilzer  <ddkilzer@apple.com>
 
         Compile WebKit with UBSan

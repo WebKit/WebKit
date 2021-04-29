@@ -32,7 +32,13 @@
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebCore {
+struct ExceptionData;
+}
+
 namespace WebKit {
+
+using MediaSessionCommandCompletionHandler = CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>;
 
 class MediaSessionCoordinatorProxyPrivate
     : public CanMakeWeakPtr<MediaSessionCoordinatorProxyPrivate>
@@ -42,12 +48,12 @@ public:
 
     virtual String identifier() const = 0;
 
-    virtual void join(CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
+    virtual void join(MediaSessionCommandCompletionHandler&&) = 0;
     virtual void leave() = 0;
-    virtual void seekTo(double, CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
-    virtual void play(CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
-    virtual void pause(CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
-    virtual void setTrack(const String&, CompletionHandler<void(Optional<WebCore::ExceptionData>&&)>&&) = 0;
+    virtual void seekTo(double, MediaSessionCommandCompletionHandler&&) = 0;
+    virtual void play(MediaSessionCommandCompletionHandler&&) = 0;
+    virtual void pause(MediaSessionCommandCompletionHandler&&) = 0;
+    virtual void setTrack(const String&, MediaSessionCommandCompletionHandler&&) = 0;
 
     virtual void positionStateChanged(const Optional<WebCore::MediaPositionState>&) = 0;
     virtual void readyStateChanged(WebCore::MediaSessionReadyState) = 0;

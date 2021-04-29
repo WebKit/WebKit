@@ -270,7 +270,7 @@ sub originalFile($$$$)
         } else {
             $command .= "HEAD";
         }
-        $command .= ":$file";
+        $command .= ":'$file'";
     }
 
     return $command;

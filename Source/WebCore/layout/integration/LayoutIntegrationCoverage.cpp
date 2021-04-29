@@ -50,7 +50,7 @@
 #define ALLOW_IMAGES 1
 #define ALLOW_ALL_REPLACED 1
 #define ALLOW_INLINE_BLOCK 1
-#define ALLOW_INLINES 0
+#define ALLOW_INLINES 1
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
@@ -598,7 +598,7 @@ static OptionSet<AvoidanceReason> canUseForStyle(const RenderStyle& style, Inclu
     return reasons;
 }
 
-static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
     if (child.selectionState() != RenderObject::HighlightState::None)
@@ -610,6 +610,11 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (renderText.textNode() && !renderText.document().markers().markersFor(*renderText.textNode()).isEmpty())
             SET_REASON_AND_RETURN_IF_NEEDED(FlowIncludesDocumentMarkers, reasons, includeReasons);
         return reasons;
+    }
+    
+    if (flow.containsFloats()) {
+        // Non-text content may stretch the line and we don't yet have support for dynamic float avoiding (as the line grows).
+        SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
     }
 
     if (is<RenderLineBreak>(child))
@@ -687,6 +692,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
             SET_REASON_AND_RETURN_IF_NEEDED(ContentIsRuby, reasons, includeReasons);
         if (renderInline.requiresLayer())
             SET_REASON_AND_RETURN_IF_NEEDED(InlineBoxNeedsLayer, reasons, includeReasons)
+        if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow)
+            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNonSupportedChild, reasons, includeReasons);
 
         auto& style = renderInline.style();
         if (!isSupportedStyle(style))
@@ -796,13 +803,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
     // This currently covers <blockflow>#text</blockflow>, <blockflow>#text<br></blockflow> and mutiple (sibling) RenderText cases.
     // The <blockflow><inline>#text</inline></blockflow> case is also popular and should be relatively easy to cover.
     for (auto walker = InlineWalker(const_cast<RenderBlockFlow&>(flow)); !walker.atEnd(); walker.advance()) {
-        auto& child = *walker.current();
-        if (!is<RenderText>(child) && flow.containsFloats()) {
-            // Non-text content may stretch the line and we don't yet have support for dynamic float avoiding (as the line grows).
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
-        }
-        auto childReasons = canUseForChild(child, includeReasons);
-        if (childReasons)
+        if (auto childReasons = canUseForChild(flow, *walker.current(), includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
     }
     auto styleReasons = canUseForStyle(flow.style(), includeReasons);

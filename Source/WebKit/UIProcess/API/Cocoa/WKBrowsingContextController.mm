@@ -459,27 +459,21 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     WKPageSetPageNavigationClient(toAPI(&page), &loaderClient.base);
 }
 
-static WKPolicyDecisionHandler makePolicyDecisionBlock(WKFramePolicyListenerRef listener)
+static BlockPtr<void(WKPolicyDecision)> makePolicyDecisionBlock(WKFramePolicyListenerRef listener)
 {
-    WKRetain(listener); // Released in the decision handler below.
-
-    return adoptNS([^(WKPolicyDecision decision) {
+    return makeBlockPtr([listener = retainWK(listener)](WKPolicyDecision decision) {
         switch (decision) {
         case WKPolicyDecisionCancel:
-            WKFramePolicyListenerIgnore(listener);                    
+            WKFramePolicyListenerIgnore(listener.get());
             break;
-        
         case WKPolicyDecisionAllow:
-            WKFramePolicyListenerUse(listener);
+            WKFramePolicyListenerUse(listener.get());
             break;
-        
         case WKPolicyDecisionBecomeDownload:
-            WKFramePolicyListenerDownload(listener);
+            WKFramePolicyListenerDownload(listener.get());
             break;
         };
-
-        WKRelease(listener); // Retained in the context above.
-    } copy]).autorelease();
+    });
 }
 
 static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, WebKit::WebPageProxy& page)
@@ -512,7 +506,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
                 [(NSMutableDictionary *)actionDictionary.get() setObject:[NSURL _web_URLWithWTFString:WebKit::toImpl(originatingFrame)->url().string()] forKey:WKActionOriginatingFrameURLKey];
             }
             
-            [policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary.get() decisionHandler:makePolicyDecisionBlock(listener)];
+            [policyDelegate browsingContextController:browsingContext decidePolicyForNavigationAction:actionDictionary.get() decisionHandler:makePolicyDecisionBlock(listener).get()];
         } else
             WKFramePolicyListenerUse(listener);
     };
@@ -534,7 +528,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
                 WKActionFrameNameKey: WebKit::toImpl(frameName)->wrapper()
             };
             
-            [policyDelegate browsingContextController:browsingContext decidePolicyForNewWindowAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
+            [policyDelegate browsingContextController:browsingContext decidePolicyForNewWindowAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener).get()];
         } else
             WKFramePolicyListenerUse(listener);
     };
@@ -554,7 +548,7 @@ static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, 
                 WKActionCanShowMIMETypeKey: @(canShowMIMEType),
             };
 
-            [policyDelegate browsingContextController:browsingContext decidePolicyForResponseAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener)];
+            [policyDelegate browsingContextController:browsingContext decidePolicyForResponseAction:actionDictionary decisionHandler:makePolicyDecisionBlock(listener).get()];
         } else
             WKFramePolicyListenerUse(listener);
     };

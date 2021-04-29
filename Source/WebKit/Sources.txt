@@ -146,7 +146,6 @@ Platform/IPC/Attachment.cpp @no-unify
 Platform/IPC/Connection.cpp @no-unify
 Platform/IPC/Decoder.cpp @no-unify
 Platform/IPC/Encoder.cpp @no-unify
-Platform/IPC/IPCSemaphore.cpp @no-unify
 Platform/IPC/JSIPCBinding.cpp @no-unify
 Platform/IPC/MessageReceiveQueueMap.cpp @no-unify
 Platform/IPC/MessageReceiverMap.cpp @no-unify
@@ -469,6 +468,7 @@ UIProcess/Inspector/Agents/InspectorBrowserAgent.cpp
 
 UIProcess/Media/AudioSessionRoutingArbitratorProxy.cpp
 UIProcess/Media/MediaUsageManager.cpp
+UIProcess/Media/RemoteMediaSessionCoordinatorProxy.cpp
 
 UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp
 UIProcess/Notifications/WebNotification.cpp
@@ -580,6 +580,8 @@ WebProcess/Inspector/WebInspectorUIExtensionController.cpp
 WebProcess/Inspector/WebPageInspectorTarget.cpp
 WebProcess/Inspector/WebPageInspectorTargetController.cpp
 WebProcess/Inspector/WebPageInspectorTargetFrontendChannel.cpp
+
+WebProcess/MediaSession/RemoteMediaSessionCoordinator.cpp
 
 WebProcess/MediaStream/MediaDeviceSandboxExtensions.cpp
 WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp

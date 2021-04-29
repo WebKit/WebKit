@@ -126,10 +126,6 @@ public:
 
     void simulateWebNotificationClick(uint64_t notificationID);
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    bool accessibilityIsolatedTreeMode() const { return m_accessibilityIsolatedTreeMode; }
-#endif
-    
     // Geolocation.
     void setGeolocationPermission(bool);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy, Optional<double> altitude, Optional<double> altitudeAccuracy, Optional<double> heading, Optional<double> speed, Optional<double> floorLevel);
@@ -266,6 +262,8 @@ public:
     void clearLoadedSubresourceDomains();
     void clearAppBoundSession();
     void reinitializeAppBoundDomains();
+    void appBoundRequestContextDataForDomain(WKStringRef);
+
     void updateBundleIdentifierInNetworkProcess(const std::string& bundleIdentifier);
     void clearBundleIdentifierInNetworkProcess();
 
@@ -281,7 +279,6 @@ public:
     void terminateServiceWorkers();
 
     void resetQuota();
-    void setQuotaLoggingEnabled(bool);
 
     void removeAllSessionCredentials();
 
@@ -385,9 +382,10 @@ private:
     void platformInitializeContext();
     void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
     static PlatformWebView* platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions&);
-    void platformResetPreferencesToConsistentValues();
+
     // Returns false if the reset timed out.
     bool platformResetStateToConsistentValues(const TestOptions&);
+
 #if PLATFORM(COCOA)
     void cocoaPlatformInitialize();
     void cocoaResetStateToConsistentValues(const TestOptions&);
@@ -613,10 +611,6 @@ private:
 
     bool m_allowAnyHTTPSCertificateForAllowedHosts { false };
 
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    bool m_accessibilityIsolatedTreeMode { false };
-#endif
-    
     bool m_shouldDecideNavigationPolicyAfterDelay { false };
     bool m_shouldDecideResponsePolicyAfterDelay { false };
 

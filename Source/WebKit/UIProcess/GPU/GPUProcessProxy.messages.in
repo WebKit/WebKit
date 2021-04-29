@@ -25,7 +25,7 @@
 messages -> GPUProcessProxy NotRefCounted {
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    DidCreateContextForVisibilityPropagation(WebKit::LayerHostingContextID contextID)
+    DidCreateContextForVisibilityPropagation(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, WebKit::LayerHostingContextID contextID)
 #endif
 
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)

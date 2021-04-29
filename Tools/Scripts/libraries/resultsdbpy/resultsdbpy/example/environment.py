@@ -31,7 +31,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.casserole import CasseroleNodes, CasseroleRedis
-from resultsdbpy.model.ci_context import BuildbotURLFactory, BuildbotEightURLFactory
+from resultsdbpy.model.ci_context import BuildbotURLFactory
 from resultsdbpy.model.mock_cassandra_context import MockCassandraContext
 from resultsdbpy.model.model import Model
 from resultsdbpy.model.repository import WebKitRepository

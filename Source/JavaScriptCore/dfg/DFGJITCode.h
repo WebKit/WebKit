@@ -151,7 +151,7 @@ public:
     //
     // The key may not always be a target for OSR Entry but the list in the value is guaranteed
     // to be usable for OSR Entry.
-    HashMap<BytecodeIndex, Vector<BytecodeIndex>> tierUpInLoopHierarchy;
+    HashMap<BytecodeIndex, FixedVector<BytecodeIndex>> tierUpInLoopHierarchy;
 
     // Map each bytecode of CheckTierUpAndOSREnter to its stream index.
     HashMap<BytecodeIndex, unsigned> bytecodeIndexToStreamIndex;

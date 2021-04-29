@@ -42,6 +42,7 @@
 #include "PlatformStrategies.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerClientIdentifier.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "Settings.h"
 #include "WorkerGlobalScope.h"
 #include <wtf/MainThread.h>

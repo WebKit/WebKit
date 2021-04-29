@@ -427,7 +427,7 @@ void RenderTreeBuilder::attachToRenderElement(RenderElement& parent, RenderPtr<R
     parent.didAttachChild(newChild, beforeChild);
 }
 
-void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild, ReinsertAfterMove reinsertAfterMove)
+void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild, RenderObject::IsInternalMove isInternalMove)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
     ASSERT(parent.canHaveChildren() || parent.canHaveGeneratedChildren());
@@ -445,9 +445,9 @@ void RenderTreeBuilder::attachToRenderElementInternal(RenderElement& parent, Ren
 
     newChild->initializeFragmentedFlowStateOnInsertion();
     if (!parent.renderTreeBeingDestroyed()) {
-        newChild->insertedIntoTree();
+        newChild->insertedIntoTree(isInternalMove);
 
-        auto needsStateReset = reinsertAfterMove == ReinsertAfterMove::No;
+        auto needsStateReset = isInternalMove == RenderObject::IsInternalMove::No;
         if (needsStateReset) {
             if (auto* fragmentedFlow = newChild->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(fragmentedFlow))
                 multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *newChild);
@@ -483,8 +483,14 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
         auto childToMove = detachFromRenderElement(from, child);
         attach(to, WTFMove(childToMove), beforeChild);
     } else {
-        auto childToMove = detachFromRenderElement(from, child);
-        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild, ReinsertAfterMove::Yes);
+        auto childToMove = detachFromRenderElement(from, child, WillBeDestroyed::No, RenderObject::IsInternalMove::Yes);
+        attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild, RenderObject::IsInternalMove::Yes);
+    }
+    if (is<RenderInline>(child)) {
+        // When moving a subtree out of a BFC we need to make sure that the line boxes generated for the inline tree are not accessible anymore from the renderers.
+        // They eventually get destroyed during the inline layout of the original BFC.
+        for (auto& descendant : descendantsOfType<RenderBox>(downcast<RenderInline>(child)))
+            descendant.setInlineBoxWrapper(nullptr);
     }
 }
 
@@ -883,7 +889,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderGrid(RenderGrid& pare
     return takenChild;
 }
 
-RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed)
+RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement& parent, RenderObject& child, WillBeDestroyed willBeDestroyed, RenderObject::IsInternalMove isInternalMove)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!parent.view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
 
@@ -924,7 +930,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::detachFromRenderElement(RenderElement
     child.resetFragmentedFlowStateOnRemoval();
 
     if (!parent.renderTreeBeingDestroyed())
-        child.willBeRemovedFromTree();
+        child.willBeRemovedFromTree(isInternalMove);
 
     // WARNING: There should be no code running between willBeRemovedFromTree() and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree() would dirty the tree's structure

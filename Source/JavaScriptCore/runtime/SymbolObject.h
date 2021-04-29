@@ -60,8 +60,6 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
-    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
-
 private:
     JS_EXPORT_PRIVATE void finishCreation(VM&, Symbol*);
     JS_EXPORT_PRIVATE SymbolObject(VM&, Structure*);

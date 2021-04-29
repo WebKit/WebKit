@@ -31,6 +31,7 @@
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerRegistration.h"
 #include "WorkerGlobalScope.h"
+#include <wtf/URLHash.h>
 
 namespace WebCore {
 

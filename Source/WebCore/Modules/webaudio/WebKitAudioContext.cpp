@@ -200,7 +200,7 @@ void WebKitAudioContext::close(DOMPromiseDeferred<void>&& promise)
         return;
     }
 
-    if (state() == State::Closed || !destinationNode()) {
+    if (state() == State::Closed) {
         promise.resolve();
         return;
     }
@@ -209,7 +209,7 @@ void WebKitAudioContext::close(DOMPromiseDeferred<void>&& promise)
 
     lazyInitialize();
 
-    destinationNode()->close([this, protectedThis = makeRef(*this)] {
+    destination().close([this, protectedThis = makeRef(*this)] {
         setState(State::Closed);
         uninitialize();
     });

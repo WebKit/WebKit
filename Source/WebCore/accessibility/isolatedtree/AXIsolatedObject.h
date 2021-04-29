@@ -587,7 +587,6 @@ private:
     ScrollView* scrollView() const override;
     ScrollView* scrollViewAncestor() const override;
     void childrenChanged() override;
-    void textChanged() override;
     void updateAccessibilityRole() override;
     void addChildren() override;
     void addChild(AXCoreObject*) override;

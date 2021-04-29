@@ -29,6 +29,7 @@
 
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "ResourceError.h"
+#include "ScriptBuffer.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
 
@@ -37,7 +38,7 @@ namespace WebCore {
 struct ServiceWorkerFetchResult {
     ServiceWorkerJobDataIdentifier jobDataIdentifier;
     ServiceWorkerRegistrationKey registrationKey;
-    String script;
+    ScriptBuffer script;
     CertificateInfo certificateInfo;
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     String referrerPolicy;

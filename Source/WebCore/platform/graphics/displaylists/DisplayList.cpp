@@ -114,13 +114,14 @@ bool DisplayList::shouldDumpForFlags(AsTextFlags flags, ItemHandle item)
 String DisplayList::asText(AsTextFlags flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
-    for (auto [item, extent, itemSizeInBuffer] : *this) {
-        if (!shouldDumpForFlags(flags, *item))
+    for (auto displayListItem : *this) {
+        auto [item, extent, itemSizeInBuffer] = displayListItem.value();
+        if (!shouldDumpForFlags(flags, item))
             continue;
 
         TextStream::GroupScope group(stream);
         stream << item;
-        if (item->isDrawingItem())
+        if (item.isDrawingItem())
             stream << " extent " << extent;
     }
     return stream.release();
@@ -131,10 +132,11 @@ void DisplayList::dump(TextStream& ts) const
     TextStream::GroupScope group(ts);
     ts << "display list";
 
-    for (auto [item, extent, itemSizeInBuffer] : *this) {
+    for (auto displayListItem : *this) {
+        auto [item, extent, itemSizeInBuffer] = displayListItem.value();
         TextStream::GroupScope group(ts);
         ts << item;
-        if (item->isDrawingItem())
+        if (item.isDrawingItem())
             ts << " extent " << extent;
     }
     ts.startGroup();
@@ -157,6 +159,14 @@ ItemBuffer& DisplayList::itemBuffer()
     if (!m_items)
         m_items = makeUnique<ItemBuffer>();
     return *m_items;
+}
+
+void DisplayList::shrinkToFit()
+{
+    if (auto* itemBuffer = itemBufferIfExists())
+        itemBuffer->shrinkToFit();
+
+    m_drawingItemExtents.shrinkToFit();
 }
 
 void DisplayList::setItemBufferReadingClient(ItemBufferReadingClient* client)
@@ -291,8 +301,10 @@ void DisplayList::append(ItemHandle item)
         return append<GetImageData>(item.get<GetImageData>());
     case ItemType::PutImageData:
         return append<PutImageData>(item.get<PutImageData>());
+#if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
         return append<PaintFrameForMedia>(item.get<PaintFrameForMedia>());
+#endif
     case ItemType::StrokeRect:
         return append<StrokeRect>(item.get<StrokeRect>());
     case ItemType::StrokeLine:

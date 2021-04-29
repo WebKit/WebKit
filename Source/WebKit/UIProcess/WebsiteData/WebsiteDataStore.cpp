@@ -200,7 +200,7 @@ static Ref<NetworkProcessProxy> networkProcessForSession(PAL::SessionID sessionI
     return NetworkProcessProxy::create();
 #else
     UNUSED_PARAM(sessionID);
-    return NetworkProcessProxy::defaultNetworkProcess();
+    return NetworkProcessProxy::ensureDefaultNetworkProcess();
 #endif
 }
 
@@ -2072,12 +2072,6 @@ void WebsiteDataStore::resetQuota(CompletionHandler<void()>&& completionHandler)
 {
     auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     networkProcess().resetQuota(m_sessionID, [callbackAggregator] { });
-}
-
-void WebsiteDataStore::setQuotaLoggingEnabled(bool enabled, CompletionHandler<void()>&& completionHandler)
-{
-    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
-    networkProcess().setQuotaLoggingEnabled(m_sessionID, enabled, [callbackAggregator] { });
 }
 
 #if !PLATFORM(COCOA)

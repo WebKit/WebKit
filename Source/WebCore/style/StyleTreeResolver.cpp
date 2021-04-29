@@ -63,9 +63,8 @@ namespace Style {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(TreeResolverScope);
 
-TreeResolver::TreeResolver(Document& document, std::unique_ptr<Update> update)
+TreeResolver::TreeResolver(Document& document)
     : m_document(document)
-    , m_update(WTFMove(update))
 {
 }
 
@@ -584,12 +583,11 @@ std::unique_ptr<Update> TreeResolver::resolve()
         return nullptr;
     }
     if (!documentElement->childNeedsStyleRecalc() && !documentElement->needsStyleRecalc())
-        return WTFMove(m_update);
+        return nullptr;
 
     m_didSeePendingStylesheet = m_document.styleScope().hasPendingSheetsBeforeBody();
 
-    if (!m_update)
-        m_update = makeUnique<Update>(m_document);
+    m_update = makeUnique<Update>(m_document);
     m_scopeStack.append(adoptRef(*new Scope(m_document)));
     m_parentStack.append(Parent(m_document));
 

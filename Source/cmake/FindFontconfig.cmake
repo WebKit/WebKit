@@ -103,7 +103,7 @@ if (Fontconfig_LIBRARY AND NOT TARGET Fontconfig::Fontconfig)
     )
 endif ()
 
-mark_as_advanced(Fontconfig_INCLUDE_DIR Fontconfig_LIBRARIES)
+mark_as_advanced(Fontconfig_INCLUDE_DIR Fontconfig_LIBRARY)
 
 if (Fontconfig_FOUND)
     set(Fontconfig_LIBRARIES ${Fontconfig_LIBRARY})

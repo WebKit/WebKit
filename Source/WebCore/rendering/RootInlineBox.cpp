@@ -47,10 +47,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RootInlineBox);
 
 struct SameSizeAsRootInlineBox : public InlineFlowBox, public CanMakeWeakPtr<RootInlineBox> {
     unsigned variables[7];
-    void* pointers[3];
+    WeakPtr<RenderObject> lineBreakObj;
+    void* pointers[2];
 };
 
 COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInlineBox_should_stay_small);
+#if !ASSERT_ENABLED
+COMPILE_ASSERT(sizeof(WeakPtr<RenderObject>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
+#endif
 
 typedef WTF::HashMap<const RootInlineBox*, std::unique_ptr<EllipsisBox>> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap;
@@ -245,8 +249,8 @@ LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, G
 
     LayoutUnit maxPositionTop;
     LayoutUnit maxPositionBottom;
-    int maxAscent = 0;
-    int maxDescent = 0;
+    LayoutUnit maxAscent;
+    LayoutUnit maxDescent;
     bool setMaxAscent = false;
     bool setMaxDescent = false;
 
@@ -766,7 +770,7 @@ LayoutRect RootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) const
     return lineLayoutOverflow;
 }
 
-static void setAscentAndDescent(int& ascent, int& descent, int newAscent, int newDescent, bool& ascentDescentSet)
+static void setAscentAndDescent(LayoutUnit& ascent, LayoutUnit& descent, LayoutUnit newAscent, LayoutUnit newDescent, bool& ascentDescentSet)
 {
     if (!ascentDescentSet) {
         ascentDescentSet = true;
@@ -778,7 +782,7 @@ static void setAscentAndDescent(int& ascent, int& descent, int newAscent, int ne
     }
 }
 
-void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, int& ascent, int& descent,
+void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutUnit& ascent, LayoutUnit& descent,
                                            bool& affectsAscent, bool& affectsDescent) const
 {
     bool ascentDescentSet = false;
@@ -816,11 +820,11 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
         usedFonts->append(&boxLineStyle.fontCascade().primaryFont());
         for (auto& font : *usedFonts) {
             auto& fontMetrics = font->fontMetrics();
-            int usedFontAscent = fontMetrics.ascent(baselineType());
-            int usedFontDescent = fontMetrics.descent(baselineType());
-            int halfLeading = (fontMetrics.lineSpacing() - fontMetrics.height()) / 2;
-            int usedFontAscentAndLeading = usedFontAscent + halfLeading;
-            int usedFontDescentAndLeading = fontMetrics.lineSpacing() - usedFontAscentAndLeading;
+            LayoutUnit usedFontAscent { fontMetrics.ascent(baselineType()) };
+            LayoutUnit usedFontDescent { fontMetrics.descent(baselineType()) };
+            LayoutUnit halfLeading { (fontMetrics.lineSpacing() - fontMetrics.height()) / 2 };
+            LayoutUnit usedFontAscentAndLeading { usedFontAscent + halfLeading };
+            LayoutUnit usedFontDescentAndLeading { fontMetrics.lineSpacing() - usedFontAscentAndLeading };
             if (includeFont) {
                 setAscentAndDescent(ascent, descent, usedFontAscent, usedFontDescent, ascentDescentSet);
                 setUsedFont = true;
@@ -838,8 +842,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
 
     // If leading is included for the box, then we compute that box.
     if (includeLeading && !setUsedFontWithLeading) {
-        int ascentWithLeading = box.baselinePosition(baselineType());
-        int descentWithLeading = box.lineHeight() - ascentWithLeading;
+        LayoutUnit ascentWithLeading { box.baselinePosition(baselineType()) };
+        LayoutUnit descentWithLeading { box.lineHeight() - ascentWithLeading };
         setAscentAndDescent(ascent, descent, ascentWithLeading, descentWithLeading, ascentDescentSet);
         
         // Examine the font box for inline flows and text boxes to see if any part of it is above the baseline.
@@ -851,8 +855,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
     }
     
     if (includeFontForBox(box) && !setUsedFont) {
-        int fontAscent = boxLineStyle.fontMetrics().ascent(baselineType());
-        int fontDescent = boxLineStyle.fontMetrics().descent(baselineType());
+        LayoutUnit fontAscent { boxLineStyle.fontMetrics().ascent(baselineType()) };
+        LayoutUnit fontDescent { boxLineStyle.fontMetrics().descent(baselineType()) };
         setAscentAndDescent(ascent, descent, fontAscent, fontDescent, ascentDescentSet);
         affectsAscent = fontAscent - box.logicalTop() > 0;
         affectsDescent = fontDescent + box.logicalTop() > 0;
@@ -868,8 +872,8 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
     
     if (includeInitialLetterForBox(box)) {
         bool canUseGlyphs = glyphOverflow && glyphOverflow->computeBounds;
-        int letterAscent = baselineType() == AlphabeticBaseline ? boxLineStyle.fontMetrics().capHeight() : (canUseGlyphs ? glyphOverflow->top : boxLineStyle.fontMetrics().ascent(baselineType()));
-        int letterDescent = canUseGlyphs ? glyphOverflow->bottom : (box.isRootInlineBox() ? 0 : boxLineStyle.fontMetrics().descent(baselineType()));
+        LayoutUnit letterAscent { baselineType() == AlphabeticBaseline ? boxLineStyle.fontMetrics().capHeight() : (canUseGlyphs ? glyphOverflow->top : boxLineStyle.fontMetrics().ascent(baselineType())) };
+        LayoutUnit letterDescent { canUseGlyphs ? glyphOverflow->bottom : (box.isRootInlineBox() ? 0 : boxLineStyle.fontMetrics().descent(baselineType())) };
         setAscentAndDescent(ascent, descent, letterAscent, letterDescent, ascentDescentSet);
         affectsAscent = letterAscent - box.logicalTop() > 0;
         affectsDescent = letterDescent + box.logicalTop() > 0;

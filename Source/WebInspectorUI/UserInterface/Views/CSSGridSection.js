@@ -136,6 +136,7 @@ WI.CSSGridSection = class CSSGridSection extends WI.View
 
             let gridColor = WI.overlayManager.getGridColorForNode(domNode);
             let swatch = new WI.InlineSwatch(WI.InlineSwatch.Type.Color, gridColor);
+            swatch.shiftClickColorEnabled = false;
             itemContainerElement.append(swatch.element);
 
             swatch.addEventListener(WI.InlineSwatch.Event.ValueChanged, (event) => {

@@ -60,6 +60,8 @@ public:
 
     Ref<StyleRuleKeyframes> copy() const { return adoptRef(*new StyleRuleKeyframes(*this)); }
 
+    void shrinkToFit();
+
 private:
     explicit StyleRuleKeyframes(const AtomString&);
     StyleRuleKeyframes(const AtomString&, std::unique_ptr<DeferredStyleGroupRuleList>&&);

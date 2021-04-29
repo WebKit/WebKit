@@ -83,9 +83,7 @@ ServiceWorkerContainer::ServiceWorkerContainer(ScriptExecutionContext* context, 
 
 ServiceWorkerContainer::~ServiceWorkerContainer()
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
 }
 
 void ServiceWorkerContainer::refEventTarget()
@@ -234,10 +232,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
 
 void ServiceWorkerContainer::scheduleJob(std::unique_ptr<ServiceWorkerJob>&& job)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
-
     ASSERT(m_swConnection);
     ASSERT(!isStopped());
 
@@ -328,10 +323,7 @@ void ServiceWorkerContainer::startMessages()
 
 void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const Exception& exception)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
-
     ASSERT_WITH_MESSAGE(job.hasPromise() || job.data().type == ServiceWorkerJobType::Update, "Only soft updates have no promise");
 
     auto guard = WTF::makeScopeExit([this, &job] {
@@ -351,9 +343,7 @@ void ServiceWorkerContainer::jobFailedWithException(ServiceWorkerJob& job, const
 
 void ServiceWorkerContainer::queueTaskToFireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
 
     if (auto* registration = m_registrations.get(identifier))
         registration->queueTaskToFireUpdateFoundEvent();
@@ -361,9 +351,7 @@ void ServiceWorkerContainer::queueTaskToFireUpdateFoundEvent(ServiceWorkerRegist
 
 void ServiceWorkerContainer::jobResolvedWithRegistration(ServiceWorkerJob& job, ServiceWorkerRegistrationData&& data, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
     ASSERT_WITH_MESSAGE(job.hasPromise() || job.data().type == ServiceWorkerJobType::Update, "Only soft updates have no promise");
 
     if (job.data().type == ServiceWorkerJobType::Register)
@@ -432,10 +420,7 @@ void ServiceWorkerContainer::notifyRegistrationIsSettled(const ServiceWorkerRegi
 
 void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJob& job, bool unregistrationResult)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
-
     ASSERT(job.hasPromise());
 
     auto guard = WTF::makeScopeExit([this, &job] {
@@ -457,9 +442,7 @@ void ServiceWorkerContainer::jobResolvedWithUnregistrationResult(ServiceWorkerJo
 
 void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, FetchOptions::Cache cachePolicy)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
 
     CONTAINER_RELEASE_LOG_IF_ALLOWED("startScriptFetchForJob: Starting script fetch for job %" PRIu64, job.identifier().toUInt64());
 
@@ -474,11 +457,9 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     job.fetchScriptWithContext(*context, cachePolicy);
 }
 
-void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy)
+void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const ScriptBuffer& script, const CertificateInfo& certificateInfo, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, const String& referrerPolicy)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
 
     CONTAINER_RELEASE_LOG_IF_ALLOWED("jobFinishedLoadingScript: Successfuly finished fetching script for job %" PRIu64, job.identifier().toUInt64());
 
@@ -487,9 +468,7 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
 
 void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const ResourceError& error, Exception&& exception)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
     ASSERT_WITH_MESSAGE(job.hasPromise() || job.data().type == ServiceWorkerJobType::Update, "Only soft updates have no promise");
 
     CONTAINER_RELEASE_LOG_ERROR_IF_ALLOWED("jobFinishedLoadingScript: Failed to fetch script for job %" PRIu64 ", error: %s", job.identifier().toUInt64(), error.localizedDescription().utf8().data());
@@ -511,10 +490,7 @@ void ServiceWorkerContainer::notifyFailedFetchingScript(ServiceWorkerJob& job, c
 
 void ServiceWorkerContainer::destroyJob(ServiceWorkerJob& job)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
-
     ASSERT(m_jobMap.contains(job.identifier()));
     m_jobMap.remove(job.identifier());
 }
@@ -539,9 +515,7 @@ SWClientConnection& ServiceWorkerContainer::ensureSWClientConnection()
 
 void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registration)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
 
     ensureSWClientConnection().addServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.add(registration.identifier(), &registration);
@@ -549,9 +523,7 @@ void ServiceWorkerContainer::addRegistration(ServiceWorkerRegistration& registra
 
 void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& registration)
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
 
     m_swConnection->removeServiceWorkerRegistrationInServer(registration.identifier());
     m_registrations.remove(registration.identifier());
@@ -559,9 +531,7 @@ void ServiceWorkerContainer::removeRegistration(ServiceWorkerRegistration& regis
 
 void ServiceWorkerContainer::queueTaskToDispatchControllerChangeEvent()
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
 
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().controllerchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
@@ -584,10 +554,7 @@ void ServiceWorkerContainer::stop()
 
 DocumentOrWorkerIdentifier ServiceWorkerContainer::contextIdentifier()
 {
-#ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
-#endif
-
     ASSERT(scriptExecutionContext());
     if (is<ServiceWorkerGlobalScope>(*scriptExecutionContext()))
         return downcast<ServiceWorkerGlobalScope>(*scriptExecutionContext()).thread().identifier();

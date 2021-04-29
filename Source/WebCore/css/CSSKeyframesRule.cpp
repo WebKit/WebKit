@@ -118,6 +118,11 @@ Optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
     return WTF::nullopt;
 }
 
+void StyleRuleKeyframes::shrinkToFit()
+{
+    m_keyframes.shrinkToFit();
+}
+
 CSSKeyframesRule::CSSKeyframesRule(StyleRuleKeyframes& keyframesRule, CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_keyframesRule(keyframesRule)

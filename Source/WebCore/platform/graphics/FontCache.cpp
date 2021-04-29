@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,88 +47,69 @@
 #endif
 
 namespace WebCore {
-using namespace WTF;
+
+FontFamilyName::FontFamilyName() = default;
+
+inline FontFamilyName::FontFamilyName(const AtomString& name)
+    : m_name { name }
+{
+}
+
+inline const AtomString& FontFamilyName::string() const
+{
+    return m_name;
+}
+
+inline void add(Hasher& hasher, const FontFamilyName& name)
+{
+    // FIXME: Would be better to hash the characters in the name instead of hashing a hash.
+    if (!name.string().isNull())
+        add(hasher, FontCascadeDescription::familyNameHash(name.string()));
+}
+
+inline bool operator==(const FontFamilyName& a, const FontFamilyName& b)
+{
+    return (a.string().isNull() || b.string().isNull()) ? a.string() == b.string() : FontCascadeDescription::familyNamesAreEqual(a.string(), b.string());
+}
+
+inline bool operator!=(const FontFamilyName& a, const FontFamilyName& b)
+{
+    return !(a == b);
+}
 
 struct FontPlatformDataCacheKey {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    FontPlatformDataCacheKey() { }
-    FontPlatformDataCacheKey(const AtomString& family, const FontDescription& description, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
-        : m_fontDescriptionKey(description)
-        , m_family(family)
-        , m_fontFaceFeatures(fontFaceFeatures ? *fontFaceFeatures : FontFeatureSettings())
-        , m_fontFaceCapabilities(fontFaceCapabilities)
-    { }
-
-    explicit FontPlatformDataCacheKey(HashTableDeletedValueType t)
-        : m_fontDescriptionKey(t)
-    { }
-
-    bool isHashTableDeletedValue() const { return m_fontDescriptionKey.isHashTableDeletedValue(); }
-    bool operator==(const FontPlatformDataCacheKey& other) const
-    {
-        if (m_fontDescriptionKey != other.m_fontDescriptionKey
-            || m_fontFaceFeatures != other.m_fontFaceFeatures
-            || m_fontFaceCapabilities != other.m_fontFaceCapabilities)
-            return false;
-        if (m_family.impl() == other.m_family.impl())
-            return true;
-        if (m_family.isNull() || other.m_family.isNull())
-            return false;
-        return FontCascadeDescription::familyNamesAreEqual(m_family, other.m_family);
-    }
-
-    FontDescriptionKey m_fontDescriptionKey;
-    AtomString m_family;
-    FontFeatureSettings m_fontFaceFeatures;
-    FontSelectionSpecifiedCapabilities m_fontFaceCapabilities;
+    FontDescriptionKey descriptionKey;
+    FontFamilyName family;
+    FontFeatureSettings features;
+    FontSelectionSpecifiedCapabilities capabilities;
 };
 
+static bool operator==(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
+{
+    return a.descriptionKey == b.descriptionKey && a.family == b.family && a.features == b.features && a.capabilities == b.capabilities;
+}
+
 struct FontPlatformDataCacheKeyHash {
-    static unsigned hash(const FontPlatformDataCacheKey& fontKey)
-    {
-        IntegerHasher hasher;
-        hasher.add(FontCascadeDescription::familyNameHash(fontKey.m_family));
-        hasher.add(fontKey.m_fontDescriptionKey.computeHash());
-        hasher.add(fontKey.m_fontFaceFeatures.hash());
-        if (auto weight = fontKey.m_fontFaceCapabilities.weight)
-            hasher.add(weight->uniqueValue());
-        else
-            hasher.add(std::numeric_limits<unsigned>::max());
-        if (auto width = fontKey.m_fontFaceCapabilities.weight)
-            hasher.add(width->uniqueValue());
-        else
-            hasher.add(std::numeric_limits<unsigned>::max());
-        if (auto slope = fontKey.m_fontFaceCapabilities.weight)
-            hasher.add(slope->uniqueValue());
-        else
-            hasher.add(std::numeric_limits<unsigned>::max());
-        return hasher.hash();
-    }
-
-    static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b)
-    {
-        return a == b;
-    }
-
+    static unsigned hash(const FontPlatformDataCacheKey& key) { return computeHash(key.descriptionKey, key.family, key.features, key.capabilities.tied()); }
+    static bool equal(const FontPlatformDataCacheKey& a, const FontPlatformDataCacheKey& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
 struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPlatformDataCacheKey> {
     static constexpr bool emptyValueIsZero = false;
+    static void constructDeletedValue(FontPlatformDataCacheKey& slot)
+    {
+        new (NotNull, &slot) FontPlatformDataCacheKey { FontDescriptionKey { WTF::HashTableDeletedValue }, { }, { }, { } };
+    }
+    static bool isDeletedValue(const FontPlatformDataCacheKey& key)
+    {
+        return key.descriptionKey.isHashTableDeletedValue();
+    }
 };
 
 struct FontDataCacheKeyHash {
-    static unsigned hash(const FontPlatformData& platformData)
-    {
-        return platformData.hash();
-    }
-
-    static bool equal(const FontPlatformData& a, const FontPlatformData& b)
-    {
-        return a == b;
-    }
-
+    static unsigned hash(const FontPlatformData& data) { return data.hash(); }
+    static bool equal(const FontPlatformData& a, const FontPlatformData& b) { return a == b; }
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
@@ -141,7 +122,7 @@ struct FontDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformData> {
     }
     static void constructDeletedValue(FontPlatformData& slot)
     {
-        new (NotNull, &slot) FontPlatformData(HashTableDeletedValue);
+        new (NotNull, &slot) FontPlatformData(WTF::HashTableDeletedValue);
     }
     static bool isDeletedValue(const FontPlatformData& value)
     {
@@ -177,13 +158,13 @@ FontCache& FontCache::singleton()
     return globalFontCache;
 }
 
-FontCache::~FontCache() = default;
-
 FontCache::FontCache()
     : m_purgeTimer(*this, &FontCache::purgeInactiveFontDataIfNeeded)
     , m_fontDataCaches(makeUniqueRef<FontDataCaches>())
 {
 }
+
+FontCache::~FontCache() = default;
 
 Optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyName)
 {
@@ -225,8 +206,8 @@ Optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyName)
     return WTF::nullopt;
 }
 
-FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName,
-    const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
+FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName,
+    const FontFeatureSettings* features, FontSelectionSpecifiedCapabilities capabilities, bool checkingAlternateName)
 {
 #if PLATFORM(IOS_FAMILY)
     auto locker = holdLock(m_fontLock);
@@ -246,24 +227,23 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
         platformInit();
     });
 
-    FontPlatformDataCacheKey key(familyName, fontDescription, fontFaceFeatures, fontFaceCapabilities);
+    FontPlatformDataCacheKey key { fontDescription, { familyName }, features ? *features : FontFeatureSettings { }, capabilities };
 
     auto addResult = m_fontDataCaches->platformData.add(key, nullptr);
     FontPlatformDataCache::iterator it = addResult.iterator;
     if (addResult.isNewEntry) {
-        it->value = createFontPlatformData(fontDescription, familyName, fontFaceFeatures, fontFaceCapabilities);
-
+        it->value = createFontPlatformData(fontDescription, familyName, features, capabilities);
         if (!it->value && !checkingAlternateName) {
-            // We were unable to find a font.  We have a small set of fonts that we alias to other names,
-            // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
+            // We were unable to find a font. We have a small set of fonts that we alias to other names,
+            // e.g., Arial/Helvetica, Courier/Courier New, etc. Try looking up the font under the aliased name.
             if (auto alternateName = alternateFamilyName(familyName)) {
-                auto* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, *alternateName, fontFaceFeatures, fontFaceCapabilities, true);
-                // Lookup the key in the hash table again as the previous iterator may have
-                // been invalidated by the recursive call to getCachedFontPlatformData().
+                auto* alternateData = cachedFontPlatformData(fontDescription, *alternateName, features, capabilities, true);
+                // Look up the key in the hash table again as the previous iterator may have
+                // been invalidated by the recursive call to cachedFontPlatformData().
                 it = m_fontDataCaches->platformData.find(key);
                 ASSERT(it != m_fontDataCaches->platformData.end());
-                if (fontPlatformDataForAlternateName)
-                    it->value = makeUnique<FontPlatformData>(*fontPlatformDataForAlternateName);
+                if (alternateData)
+                    it->value = makeUnique<FontPlatformData>(*alternateData);
             }
         }
     }
@@ -282,12 +262,12 @@ const unsigned cTargetInactiveFontData = 200;
 const unsigned cMaxUnderMemoryPressureInactiveFontData = 50;
 const unsigned cTargetUnderMemoryPressureInactiveFontData = 30;
 
-RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontFeatureSettings* fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities, bool checkingAlternateName)
+RefPtr<Font> FontCache::fontForFamily(const FontDescription& fontDescription, const String& family, const FontFeatureSettings* features, FontSelectionSpecifiedCapabilities capabilities, bool checkingAlternateName)
 {
     if (!m_purgeTimer.isActive())
         m_purgeTimer.startOneShot(0_s);
 
-    if (auto* platformData = getCachedFontPlatformData(fontDescription, family, fontFaceFeatures, fontFaceCapabilities, checkingAlternateName))
+    if (auto* platformData = cachedFontPlatformData(fontDescription, family, features, capabilities, checkingAlternateName))
         return fontForPlatformData(*platformData);
 
     return nullptr;
@@ -375,30 +355,15 @@ void FontCache::purgeInactiveFontData(unsigned purgeCount)
 
 bool operator==(const FontCascadeCacheKey& a, const FontCascadeCacheKey& b)
 {
-    if (a.fontDescriptionKey != b.fontDescriptionKey)
-        return false;
-    if (a.fontSelectorId != b.fontSelectorId || a.fontSelectorVersion != b.fontSelectorVersion)
-        return false;
-    unsigned size = a.families.size();
-    if (size != b.families.size())
-        return false;
-    for (unsigned i = 0; i < size; ++i) {
-        if (!FontCascadeDescription::familyNamesAreEqual(a.families[i], b.families[i]))
-            return false;
-    }
-    return true;
+    return a.fontDescriptionKey == b.fontDescriptionKey
+        && a.fontSelectorId == b.fontSelectorId
+        && a.fontSelectorVersion == b.fontSelectorVersion
+        && a.families == b.families;
 }
 
 unsigned FontCascadeCacheKeyHash::hash(const FontCascadeCacheKey& key)
 {
-    // FIXME: Should hash the key and the family name characters rather than making a hash out of other hashes.
-    Hasher hasher;
-    add(hasher, key.fontDescriptionKey.computeHash());
-    add(hasher, key.fontSelectorId);
-    add(hasher, key.fontSelectorVersion);
-    for (auto& family : key.families)
-        add(hasher, family.isNull() ? 0 : WebCore::FontCascadeDescription::familyNameHash(family));
-    return hasher.hash();
+    return computeHash(key.fontDescriptionKey, key.fontSelectorId, key.fontSelectorVersion, key.families);
 }
 
 void FontCache::invalidateFontCascadeCache()
@@ -456,11 +421,11 @@ Ref<FontCascadeFonts> FontCache::retrieveOrAddCachedFonts(const FontCascadeDescr
         return addResult.iterator->value->fonts.get();
 
     auto& newEntry = addResult.iterator->value;
-    newEntry = makeUnique<FontCascadeCacheEntry>(WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)));
+    newEntry = makeUnique<FontCascadeCacheEntry>(FontCascadeCacheEntry { WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)) });
     Ref<FontCascadeFonts> glyphs = newEntry->fonts.get();
 
-    static const unsigned unreferencedPruneInterval = 50;
-    static const int maximumEntries = 400;
+    static constexpr unsigned unreferencedPruneInterval = 50;
+    static constexpr int maximumEntries = 400;
     static unsigned pruneCounter;
     // Referenced FontCascadeFonts would exist anyway so pruning them saves little memory.
     if (!(++pruneCounter % unreferencedPruneInterval))
@@ -515,15 +480,10 @@ void FontCache::invalidate()
 #endif
     invalidateFontCascadeCache();
 
-    m_generation++;
+    ++m_generation;
 
-    Vector<Ref<FontSelector>> clients;
-    clients.reserveInitialCapacity(m_clients.size());
-    for (auto it = m_clients.begin(), end = m_clients.end(); it != end; ++it)
-        clients.uncheckedAppend(**it);
-
-    for (unsigned i = 0; i < clients.size(); ++i)
-        clients[i]->fontCacheInvalidated();
+    for (auto& client : copyToVectorOf<RefPtr<FontSelector>>(m_clients))
+        client->fontCacheInvalidated();
 
     purgeInactiveFontData();
 }

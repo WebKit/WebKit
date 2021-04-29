@@ -560,7 +560,11 @@ public:
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    virtual void requestImageExtraction(Element&) { }
+    virtual void requestImageExtraction(Element&, CompletionHandler<void(RefPtr<Element>&&)>&& completion = { })
+    {
+        if (completion)
+            completion({ });
+    }
 #endif
     virtual bool needsImageOverlayControllerForSelectionPainting() const { return false; }
 
@@ -570,6 +574,10 @@ public:
 
 #if ENABLE(WEBXR)
     virtual void enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&& completionHandler) { PlatformXR::Instance::singleton().enumerateImmersiveXRDevices(WTFMove(completionHandler)); }
+#endif
+
+#if ENABLE(TEXT_AUTOSIZING)
+    virtual void textAutosizingUsesIdempotentModeChanged() { }
 #endif
 
 protected:

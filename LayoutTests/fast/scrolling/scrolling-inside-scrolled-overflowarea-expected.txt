@@ -1,0 +1,41 @@
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+    content
+
+Sending mouse events
+PASS: scrolled happened in the bottom div
+

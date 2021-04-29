@@ -120,6 +120,10 @@ void SlotAssignment::addSlotElementByName(const AtomString& name, HTMLSlotElemen
         return makeUnique<Slot>();
     });
     auto& slot = *addResult.iterator->value;
+
+    if (!m_slotAssignmentsIsValid)
+        assignSlots(shadowRoot);
+
     bool needsSlotchangeEvent = shadowRoot.shouldFireSlotchangeEvent() && hasAssignedNodes(shadowRoot, slot);
 
     slot.elementCount++;
@@ -292,7 +296,9 @@ void SlotAssignment::didChangeSlot(const AtomString& slotAttrValue, ShadowRoot& 
     auto* slot = m_slots.get(slotName);
     if (!slot)
         return;
-    
+
+    RenderTreeUpdater::tearDownRenderers(*shadowRoot.host());
+
     slot->assignedNodes.clear();
     m_slotAssignmentsIsValid = false;
 

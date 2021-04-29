@@ -19,11 +19,11 @@ layer at (0,0) size 800x600
                       text run at (45,5) width 128: "Search the Web with"
                 RenderText {#text} at (172,2) size 5x19
                   text run at (172,2) width 5: " "
-                RenderMenuList {SELECT} at (178,3) size 72x20 [color=#007AFF] [bgcolor=#78788029]
+                RenderMenuList {SELECT} at (178,3) size 72x20 [color=#007AFF] [bgcolor=#E9E9EA]
                   RenderBlock (anonymous) at (5,3) size 61x14
                     RenderText at (0,0) size 50x14
                       text run at (0,0) width 50: "Netscape"
-                RenderTextControl {INPUT} at (253,3) size 225x22 [bgcolor=#FFFFFF] [border: (1px solid #78788033)]
+                RenderTextControl {INPUT} at (253,3) size 225x22 [bgcolor=#FFFFFF] [border: (1px solid #E4E4E5)]
                 RenderText {#text} at (479,2) size 5x19
                   text run at (479,2) width 5: " "
                 RenderButton {INPUT} at (485,3) size 62x20 [color=#FFFFFF] [bgcolor=#007AFF]
@@ -128,7 +128,7 @@ layer at (0,0) size 800x600
                   RenderInline {A} at (0,0) size 80x15 [color=#0000EE]
                     RenderText {#text} at (493,4) size 80x15
                       text run at (493,4) width 80: "WebMail< /A>"
-                RenderInline {A} at (0,0) size 1x19 [color=#0000EE]
+                RenderInline {A} at (0,0) size 0x19 [color=#0000EE]
                   RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,181) size 600x3
               RenderTableCell {TD} at (2,181) size 597x3 [bgcolor=#99CCCC] [r=4 c=0 rs=1 cs=4]

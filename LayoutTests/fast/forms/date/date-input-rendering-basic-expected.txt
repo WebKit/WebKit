@@ -7,12 +7,12 @@ layer at (0,0) size 800x600
         text run at (84,1) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (10,10) size 80x20
-  RenderFlexibleBox {INPUT} at (2,2) size 80x20 [color=#007AFF] [bgcolor=#78788029]
+  RenderFlexibleBox {INPUT} at (2,2) size 80x20 [color=#007AFF] [bgcolor=#E9E9EA]
     RenderBlock {DIV} at (5,3) size 70x14
       RenderText {#text} at (5,0) size 60x14
         text run at (5,0) width 60: "Apr 1, 1976"
 layer at (98,10) size 80x20
-  RenderFlexibleBox {INPUT} at (90,2) size 80x20 [color=#007AFF] [bgcolor=#78788029]
+  RenderFlexibleBox {INPUT} at (90,2) size 80x20 [color=#007AFF] [bgcolor=#E9E9EA]
     RenderBlock {DIV} at (5,3) size 70x14
       RenderText {#text} at (5,0) size 60x14
         text run at (5,0) width 60: "Apr 1, 1976"

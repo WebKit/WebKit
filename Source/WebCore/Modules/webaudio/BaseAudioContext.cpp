@@ -115,7 +115,21 @@ bool BaseAudioContext::isSupportedSampleRate(float sampleRate)
     return sampleRate >= 3000 && sampleRate <= 384000;
 }
 
-unsigned BaseAudioContext::s_hardwareContextCount = 0;
+unsigned BaseAudioContext::s_hardwareContextCount;
+
+static uint64_t generateAudioContextID()
+{
+    ASSERT(isMainThread());
+    static uint64_t contextIDSeed = 0;
+    return ++contextIDSeed;
+}
+
+static HashSet<uint64_t>& liveAudioContexts()
+{
+    ASSERT(isMainThread());
+    static NeverDestroyed<HashSet<uint64_t>> contexts;
+    return contexts;
+}
 
 // Constructor for rendering to the audio hardware.
 BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContext isLegacyWebKitAudioContext, const AudioContextOptions& contextOptions)
@@ -124,16 +138,18 @@ BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContex
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
+    , m_contextID(generateAudioContextID())
     , m_worklet(AudioWorklet::create(*this))
+    , m_destinationNode(makeUniqueRef<DefaultAudioDestinationNode>(*this, contextOptions.sampleRate))
     , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
 {
+    liveAudioContexts().add(m_contextID);
+
     // According to spec AudioContext must die only after page navigate.
     // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
-    makePendingActivity();
+    setPendingActivity();
 
     FFTFrame::initialize();
-
-    m_destinationNode = DefaultAudioDestinationNode::create(*this, contextOptions.sampleRate);
 
     // Unlike OfflineAudioContext, AudioContext does not require calling resume() to start rendering.
     // Lazy initialization starts rendering so we schedule a task here to make sure lazy initialization
@@ -153,24 +169,23 @@ BaseAudioContext::BaseAudioContext(Document& document, IsLegacyWebKitAudioContex
     , m_logger(document.logger())
     , m_logIdentifier(uniqueLogIdentifier())
 #endif
+    , m_contextID(generateAudioContextID())
     , m_worklet(AudioWorklet::create(*this))
     , m_isOfflineContext(true)
     , m_renderTarget(WTFMove(renderTarget))
+    , m_destinationNode(makeUniqueRef<OfflineAudioDestinationNode>(*this, numberOfChannels, sampleRate, m_renderTarget.copyRef()))
     , m_listener(isLegacyWebKitAudioContext == IsLegacyWebKitAudioContext::Yes ? Ref<AudioListener>(WebKitAudioListener::create(*this)) : AudioListener::create(*this))
 {
+    liveAudioContexts().add(m_contextID);
     FFTFrame::initialize();
-
-    // Create a new destination for offline rendering.
-    m_destinationNode = OfflineAudioDestinationNode::create(*this, numberOfChannels, sampleRate, m_renderTarget.copyRef());
 }
 
 BaseAudioContext::~BaseAudioContext()
 {
+    liveAudioContexts().remove(m_contextID);
 #if DEBUG_AUDIONODE_REFERENCES
     fprintf(stderr, "%p: BaseAudioContext::~AudioContext()\n", this);
 #endif
-    ASSERT(!m_isInitialized);
-    ASSERT(m_isStopScheduled);
     ASSERT(m_nodesToDelete.isEmpty());
     ASSERT(m_referencedSourceNodes.isEmpty());
     ASSERT(m_automaticPullNodes.isEmpty());
@@ -178,6 +193,11 @@ BaseAudioContext::~BaseAudioContext()
         m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
     ASSERT(m_renderingAutomaticPullNodes.isEmpty());
     // FIXME: Can we assert that m_deferredBreakConnectionList is empty?
+}
+
+bool BaseAudioContext::isContextAlive(uint64_t contextID)
+{
+    return liveAudioContexts().contains(contextID);
 }
 
 void BaseAudioContext::lazyInitialize()
@@ -193,8 +213,7 @@ void BaseAudioContext::lazyInitialize()
     if (m_isAudioThreadFinished)
         return;
 
-    if (m_destinationNode)
-        m_destinationNode->initialize();
+    m_destinationNode->initialize();
 
     m_isInitialized = true;
 }
@@ -202,10 +221,6 @@ void BaseAudioContext::lazyInitialize()
 void BaseAudioContext::clear()
 {
     auto protectedThis = makeRef(*this);
-
-    // We have to release our reference to the destination node before the context will ever be deleted since the destination node holds a reference to the context.
-    if (m_destinationNode)
-        m_destinationNode = nullptr;
 
     // Audio thread is dead. Nobody will schedule node deletion action. Let's do it ourselves.
     do {
@@ -226,8 +241,7 @@ void BaseAudioContext::uninitialize()
         return;
 
     // This stops the audio thread and all audio rendering.
-    if (m_destinationNode)
-        m_destinationNode->uninitialize();
+    m_destinationNode->uninitialize();
 
     // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
     m_isAudioThreadFinished = true;
@@ -292,6 +306,7 @@ void BaseAudioContext::stop()
     ALWAYS_LOG(LOGIDENTIFIER);
     
     ASSERT(isMainThread());
+    auto protectedThis = makeRef(*this);
 
     // Usually ScriptExecutionContext calls stop twice.
     if (m_isStopScheduled)
@@ -317,7 +332,7 @@ Document* BaseAudioContext::document() const
 
 float BaseAudioContext::sampleRate() const
 {
-    return m_destinationNode ? m_destinationNode->sampleRate() : AudioDestination::hardwareSampleRate();
+    return m_destinationNode->sampleRate();
 }
 
 bool BaseAudioContext::wouldTaintOrigin(const URL& url) const
@@ -346,7 +361,7 @@ void BaseAudioContext::decodeAudioData(Ref<ArrayBuffer>&& audioData, RefPtr<Audi
     if (!m_audioDecoder)
         m_audioDecoder = makeUnique<AsyncAudioDecoder>();
 
-    m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate(), [this, activity = ActiveDOMObject::makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)](ExceptionOr<Ref<AudioBuffer>>&& result) mutable {
+    m_audioDecoder->decodeAsync(WTFMove(audioData), sampleRate(), [this, activity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise)](ExceptionOr<Ref<AudioBuffer>>&& result) mutable {
         queueTaskKeepingObjectAlive(*this, TaskSource::InternalAsyncTask, [successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback), promise = WTFMove(promise), result = WTFMove(result)]() mutable {
             if (result.hasException()) {
                 if (promise)
@@ -759,6 +774,7 @@ void BaseAudioContext::handleDeferredDecrementConnectionCounts()
 void BaseAudioContext::markForDeletion(AudioNode& node)
 {
     ASSERT(isGraphOwner());
+    ASSERT_WITH_MESSAGE(node.nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
 
     if (isAudioThreadFinished())
         m_nodesToDelete.append(&node);
@@ -820,6 +836,8 @@ void BaseAudioContext::deleteMarkedNodes()
             unsigned numberOfOutputs = node->numberOfOutputs();
             for (unsigned i = 0; i < numberOfOutputs; ++i)
                 m_dirtyAudioNodeOutputs.remove(node->output(i));
+
+            ASSERT_WITH_MESSAGE(node->nodeType() != AudioNode::NodeTypeDestination, "Destination node is owned by the BaseAudioContext");
 
             // Finally, delete it.
             delete node;
@@ -1028,10 +1046,10 @@ void BaseAudioContext::clearPendingActivity()
     m_pendingActivity = nullptr;
 }
 
-void BaseAudioContext::makePendingActivity()
+void BaseAudioContext::setPendingActivity()
 {
     if (!m_pendingActivity)
-        m_pendingActivity = ActiveDOMObject::makePendingActivity(*this);
+        m_pendingActivity = makePendingActivity(*this);
 }
 
 PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
@@ -1087,8 +1105,7 @@ void BaseAudioContext::workletIsReady()
 
     // If we're already rendering when the worklet becomes ready, we need to restart
     // rendering in order to switch to the audio worklet thread.
-    if (m_destinationNode)
-        m_destinationNode->restartRendering();
+    m_destinationNode->restartRendering();
 }
 
 #if !RELEASE_LOG_DISABLED

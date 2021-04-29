@@ -37,9 +37,9 @@ sys.stdout.write(
 
 # Test how XHR decodes its response text. Should be UTF8 or a charset from http header.
 sys.stdout.write(
-    'var xhr = new XMLHttpRequest(); xhr.open(\'GET\', \'xhr-response.php\', false);'
+    'var xhr = new XMLHttpRequest(); xhr.open(\'GET\', \'xhr-response.py\', false);'
     'xhr.send(); postMessage(xhr.responseText);'
-    'var xhr = new XMLHttpRequest(); xhr.open(\'GET\', \'xhr-response.php?charset=koi8-r\', false);'
+    'var xhr = new XMLHttpRequest(); xhr.open(\'GET\', \'xhr-response.py?charset=koi8-r\', false);'
     'xhr.send(); postMessage(xhr.responseText);'
 )
 

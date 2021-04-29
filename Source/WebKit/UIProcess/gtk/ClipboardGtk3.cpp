@@ -35,6 +35,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <gtk/gtk.h>
 #include <wtf/SetForScope.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
 

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "Document.h"
 #include "FocusDirection.h"
+#include "SelectionRestorationMode.h"
 
 namespace WebCore {
 

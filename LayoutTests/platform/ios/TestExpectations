@@ -230,7 +230,6 @@ storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
 storage/storagequota-query-usage.html
 storage/storagequota-request-quota.html
-storage/websql/quota-tracking.html
 
 # iOS doesn't have a local inspector
 inspector/ [ Skip ]
@@ -1055,6 +1054,7 @@ fast/frames/flattening/scrolling-in-object.html [ Skip ]
 fast/media/video-element-in-details-collapse.html [ Skip ]
 fast/frames/user-gesture-timestamp-propagation.html [ Failure ]
 fast/events/mouse-click-different-mouseDown-mouseUp-nodes.html [ Skip ]
+fast/scrolling/scrolling-inside-scrolled-overflowarea.html [ Skip ]
 
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]
@@ -1267,35 +1267,6 @@ webkit.org/b/178588 fast/css/negative-text-indent-in-inline-block.html [ ImageOn
 webkit.org/b/178588 fast/css/object-fit/object-fit-input-image.html [ ImageOnlyFailure ]
 webkit.org/b/178588 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 webkit.org/b/178588 fast/css/vertical-align-block-elements.html [ ImageOnlyFailure ]
-
-webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-002.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-003.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-004.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-006.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-007.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-box/shape-outside-box-008.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-image/shape-image-000.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-image/shape-image-004.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-image/shape-image-009.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-image/shape-image-013.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-image/shape-image-015.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-image/shape-image-016.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-017.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-010.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-011.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-012.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-013.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-014.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/supported-shapes/inset/shape-outside-inset-015.html [ ImageOnlyFailure ]
-webkit.org/b/178729 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
-webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
-webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
-webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
-webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
-webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
-webkit.org/b/178729 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
 
 webkit.org/b/178955 fast/css/font-shorthand-line-height.html [ Failure ]
 webkit.org/b/178957 fast/css/getComputedStyle/computed-style-font.html [ Failure ]
@@ -1930,9 +1901,6 @@ editing/undo/undo-forward-delete.html [ Pass Failure ]
 # selectionBounds() doesn't work.
 webkit.org/b/212033 editing/selection/block-cursor-overtype-mode.html [ Failure ]
 webkit.org/b/212033 editing/selection/selection-bounds-fractional-containing-blocks.html [ Failure ]
-
-# storage tests that fail:
-storage/websql/sql-error-codes.html [ Failure ]
 
 # iOS-specific tests that fail:
 platform/ios/ios/compositing/overlap-page-scale.html [ Failure ]
@@ -2911,8 +2879,6 @@ webkit.org/b/182850 editing/pasteboard/data-transfer-set-data-sanitizes-html-whe
 
 webkit.org/b/183219 editing/pasteboard/data-transfer-get-data-on-pasting-html-uses-blob-url.html [ Skip ]
 
-webkit.org/b/173928 storage/websql/database-lock-after-reload.html [ Pass Failure ]
-
 [ Debug ] imported/w3c/web-platform-tests/hr-time/idlharness.any.html [ Slow ]
 
 webkit.org/b/183388 fast/scrolling/scroll-to-focused-element-asynchronously.html [ Pass Failure ]
@@ -3143,9 +3109,6 @@ platform/ipad/fast/viewport/viewport-unchanged-by-minimum-effective-width-if-not
 
 # <rdar://problem/52594556> REGRESSION: Layout test fast/text/international/system-language/han-quotes.html is failing
 fast/text/international/system-language/han-quotes.html [ ImageOnlyFailure ]
-
-# <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
-storage/websql/test-authorizer.html [ Failure ]
 
 # Skip until we have the fixes for <rdar://problem/53613454> and <rdar://problem/54001139>.
 fast/events/ios/multiple-key-press-and-release-ordering.html [ Skip ]

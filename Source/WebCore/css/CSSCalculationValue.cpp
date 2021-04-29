@@ -835,7 +835,7 @@ private:
     };
     static void buildCSSTextRecursive(const CSSCalcExpressionNode&, StringBuilder&, GroupingParens = GroupingParens::Include);
 
-    const CalcOperator m_operator;
+    CalcOperator m_operator;
     Vector<Ref<CSSCalcExpressionNode>> m_children;
 };
 
@@ -1119,17 +1119,39 @@ void CSSCalcOperationNode::combineChildren()
         // which is a Sum whose children are all numeric values, multiply all of the Sum’s children by the number, then
         // return the Sum.
         // The Sum's children simplification will have happened already.
-        bool didMultipy = false;
+        bool didMultiply = false;
         if (leadingNumberNodeCount && m_children.size() - leadingNumberNodeCount == 1) {
             auto multiplicandCategory = calcUnitCategory(primitiveTypeForCombination(m_children.last().get()));
             if (multiplicandCategory != CalculationCategory::Other) {
                 newChildren.uncheckedAppend(m_children.last().copyRef());
                 downcast<CSSCalcPrimitiveValueNode>(newChildren[0].get()).multiply(multiplier);
-                didMultipy = true;
+                didMultiply = true;
+            } else if (is<CSSCalcOperationNode>(m_children.last().get()) && downcast<CSSCalcOperationNode>(m_children.last().get()).calcOperator() == CalcOperator::Add) {
+                // If we're multiplying with another operation that is an addition and all the added children
+                // are percentages or dimensions, we should multiply each child and make this expression an
+                // addition.
+                auto allChildrenArePrimitiveValues = [](const Vector<Ref<CSSCalcExpressionNode>>& children) -> bool
+                {
+                    for (auto& child : children) {
+                        if (!is<CSSCalcPrimitiveValueNode>(child.get()))
+                            return false;
+                    }
+                    return true;
+                };
+
+                auto& children = downcast<CSSCalcOperationNode>(m_children.last().get()).children();
+                if (allChildrenArePrimitiveValues(children)) {
+                    for (auto& child : children) {
+                        newChildren.uncheckedAppend(child.copyRef());
+                        downcast<CSSCalcPrimitiveValueNode>(newChildren.last().get()).multiply(multiplier);
+                    }
+                    m_operator = CalcOperator::Add;
+                    didMultiply = true;
+                }
             }
         }
-        
-        if (!didMultipy) {
+
+        if (!didMultiply) {
             if (leadingNumberNodeCount) {
                 auto multiplierNode = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(multiplier, CSSUnitType::CSS_NUMBER));
                 newChildren.uncheckedAppend(WTFMove(multiplierNode));
@@ -2118,7 +2140,10 @@ RefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const R
     auto expression = createCSS(value.expression(), style);
     if (!expression)
         return nullptr;
-    auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), value.shouldClampToNonNegative()));
+
+    auto simplifiedExpression = CSSCalcOperationNode::simplify(expression.releaseNonNull());
+
+    auto result = adoptRef(new CSSCalcValue(WTFMove(simplifiedExpression), value.shouldClampToNonNegative()));
     LOG_WITH_STREAM(Calc, stream << "CSSCalcValue::create from CalculationValue: " << *result);
     return result;
 }

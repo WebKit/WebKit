@@ -41,15 +41,15 @@ class HighPerformanceGPUManager {
 public:
     static HighPerformanceGPUManager& singleton();
 
-    void addProcessRequiringHighPerformance(WebProcessProxy*);
-    void removeProcessRequiringHighPerformance(WebProcessProxy*);
+    void addProcessRequiringHighPerformance(WebProcessProxy&);
+    void removeProcessRequiringHighPerformance(WebProcessProxy&);
 
 private:
     HighPerformanceGPUManager();
     ~HighPerformanceGPUManager();
     void updateState();
 
-    HashSet<WebProcessProxy*> m_processesRequiringHighPerformance;
+    WeakHashSet<WebProcessProxy> m_processesRequiringHighPerformance;
     CGLPixelFormatObj m_pixelFormatObj { nullptr };
     WebCore::Timer m_updateStateTimer;
 };

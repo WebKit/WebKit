@@ -44,14 +44,10 @@ public:
 
     DECLARE_EXPORT_INFO;
 
-    JSValue internalValue() const { return JSWrapperObject::internalValue(); }
-
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
-
-    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
 
 private:
     JS_EXPORT_PRIVATE void finishCreation(VM&, JSValue);

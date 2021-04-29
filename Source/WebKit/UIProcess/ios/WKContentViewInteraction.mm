@@ -681,6 +681,16 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self setEnabled:YES];
 }
 
+- (BOOL)_wk_isTapAndAHalf
+{
+    static dispatch_once_t onceToken;
+    static Class tapAndAHalfGestureRecognizerClass;
+    dispatch_once(&onceToken, ^{
+        tapAndAHalfGestureRecognizerClass = NSClassFromString(@"UITapAndAHalfRecognizer");
+    });
+    return [self isKindOfClass:tapAndAHalfGestureRecognizerClass];
+}
+
 @end
 
 @interface WKContentView (WKInteractionPrivate)
@@ -1036,6 +1046,10 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     _layerTreeTransactionIdAtLastInteractionStart = { };
 
+#if USE(UICONTEXTMENU)
+    [self _removeContextMenuViewIfPossible];
+#endif // USE(UICONTEXTMENU)
+
 #if ENABLE(DRAG_SUPPORT)
     [existingLocalDragSessionContext(_dragDropInteractionState.dragSession()) cleanUpTemporaryDirectories];
     [self teardownDragAndDropInteractions];
@@ -1090,6 +1104,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _tearDownImageExtraction];
 #endif
 
+    [std::exchange(_targetedPreviewViewsContainerView, nil) removeFromSuperview];
+
     _hasSetUpInteractions = NO;
     _suppressSelectionAssistantReasons = { };
 
@@ -1098,6 +1114,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [self _cancelPendingKeyEventHandler];
 
     _cachedSelectedTextRange = nil;
+}
+
+- (void)cleanUpRelatedViews
+{
+    [std::exchange(_targetedPreviewViewsContainerView, nil) removeFromSuperview];
 }
 
 - (void)_cancelPendingKeyEventHandler
@@ -1888,6 +1909,11 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     ]];
 }
 
+- (CGRect)tapHighlightViewRect
+{
+    return [_highlightView frame];
+}
+
 - (void)_showTapHighlight
 {
     auto shouldPaintTapHighlight = [&](const WebCore::FloatRect& rect) {
@@ -2022,6 +2048,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_didScroll
 {
+    [self _updateTargetedPreviewViewsContainerViewFrameIfNeeded];
+
     [self _cancelLongPressGestureRecognizer];
     [self _cancelInteraction];
 }
@@ -2226,16 +2254,6 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     return (a == x && b == y) || (b == x && a == y);
 }
 
-static Class tapAndAHalfRecognizerClass()
-{
-    static dispatch_once_t onceToken;
-    static Class theClass;
-    dispatch_once(&onceToken, ^{
-        theClass = NSClassFromString(@"UITapAndAHalfRecognizer");
-    });
-    return theClass;
-}
-
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer*)otherGestureRecognizer
 {
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {
@@ -2245,6 +2263,14 @@ static Class tapAndAHalfRecognizerClass()
 
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class] && [otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return YES;
+
+#if ENABLE(IMAGE_EXTRACTION)
+    if (gestureRecognizer == _imageExtractionDeferringGestureRecognizer)
+        return ![self shouldDeferGestureDueToImageExtraction:otherGestureRecognizer];
+
+    if (otherGestureRecognizer == _imageExtractionDeferringGestureRecognizer)
+        return ![self shouldDeferGestureDueToImageExtraction:gestureRecognizer];
+#endif
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
         return YES;
@@ -2274,7 +2300,7 @@ static Class tapAndAHalfRecognizerClass()
         if (gestureRecognizer == loupeGesture || otherGestureRecognizer == loupeGesture)
             return YES;
 
-        if ([gestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()] || [otherGestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()])
+        if (gestureRecognizer._wk_isTapAndAHalf || otherGestureRecognizer._wk_isTapAndAHalf)
             return YES;
     }
 
@@ -2653,15 +2679,25 @@ static Class tapAndAHalfRecognizerClass()
 - (void)_finishInteraction
 {
     _isTapHighlightIDValid = NO;
+    [self _fadeTapHighlightViewIfNeeded];
+}
+
+- (void)_fadeTapHighlightViewIfNeeded
+{
+    if (![_highlightView superview] || _isTapHighlightFading)
+        return;
+
+    _isTapHighlightFading = YES;
     CGFloat tapHighlightFadeDuration = _showDebugTapHighlightsForFastClicking ? 0.25 : 0.1;
     [UIView animateWithDuration:tapHighlightFadeDuration
-                     animations:^{
-                         [_highlightView layer].opacity = 0;
-                     }
-                     completion:^(BOOL finished){
-                         if (finished)
-                             [_highlightView removeFromSuperview];
-                     }];
+        animations:^{
+            [_highlightView layer].opacity = 0;
+        }
+        completion:^(BOOL finished) {
+            if (finished)
+                [_highlightView removeFromSuperview];
+            _isTapHighlightFading = NO;
+        }];
 }
 
 - (BOOL)canShowNonEmptySelectionView
@@ -2932,7 +2968,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     for (const auto& action : actionsToPerform)
         action();
 
-    [self _finishInteraction];
+    if (!_isTapHighlightIDValid)
+        [self _fadeTapHighlightViewIfNeeded];
 }
 
 - (void)_doubleTapDidFail:(UITapGestureRecognizer *)gestureRecognizer
@@ -6440,6 +6477,16 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     [UIMenuController.sharedMenuController showMenuFromView:self rect:menuControllerRect];
 }
 
+- (void)doAfterEditorStateUpdateAfterFocusingElement:(dispatch_block_t)block
+{
+    if (!_page->waitingForPostLayoutEditorStateUpdateAfterFocusingElement()) {
+        block();
+        return;
+    }
+
+    _actionsToPerformAfterEditorStateUpdate.append(makeBlockPtr(block));
+}
+
 - (void)_didUpdateEditorState
 {
     [self _updateInitialWritingDirectionIfNecessary];
@@ -6450,6 +6497,9 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
         [self _zoomToRevealFocusedElement];
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
+
+    for (auto block : std::exchange(_actionsToPerformAfterEditorStateUpdate, { }))
+        block();
 }
 
 - (void)_updateInitialWritingDirectionIfNecessary
@@ -7513,6 +7563,15 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     return WebCore::IOSApplication::isDataActivation();
 }
 
+#if ENABLE(IMAGE_EXTRACTION)
+
+- (BOOL)shouldDeferGestureDueToImageExtraction:(UIGestureRecognizer *)gesture
+{
+    return gesture == [_textInteractionAssistant loupeGesture] || gesture._wk_isTapAndAHalf || gesture == [_textInteractionAssistant forcePressGesture];
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
+
 #if HAVE(PASTEBOARD_DATA_OWNER)
 
 static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
@@ -7550,12 +7609,25 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 #endif // HAVE(PASTEBOARD_DATA_OWNER)
 
+- (UIView *)textEffectsWindow
+{
+    return [UITextEffectsWindow sharedTextEffectsWindowForWindowScene:self.window.windowScene];
+}
+
 - (RetainPtr<UIView>)_createPreviewContainerWithLayerName:(NSString *)layerName
 {
+    if (!_targetedPreviewViewsContainerView) {
+        _targetedPreviewViewsContainerView = adoptNS([[UIView alloc] init]);
+        [_targetedPreviewViewsContainerView layer].name = @"Preview Views Container";
+        [_targetedPreviewViewsContainerView layer].anchorPoint = CGPointZero;
+        [self _updateTargetedPreviewViewsContainerViewFrameIfNeeded];
+        [self.textEffectsWindow addSubview:_targetedPreviewViewsContainerView.get()];
+    }
+
     auto container = adoptNS([[UIView alloc] init]);
     [container layer].anchorPoint = CGPointZero;
     [container layer].name = layerName;
-    [_interactionViewsContainerView addSubview:container.get()];
+    [_targetedPreviewViewsContainerView addSubview:container.get()];
     return container;
 }
 
@@ -7563,6 +7635,8 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 {
     if (!_dropPreviewContainerView)
         _dropPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drop Preview Container"];
+
+    [_targetedPreviewViewsContainerView setHidden:NO];
 
     ASSERT([_dropPreviewContainerView superview]);
     [_dropPreviewContainerView setHidden:NO];
@@ -7574,6 +7648,8 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (!_dragPreviewContainerView)
         _dragPreviewContainerView = [self _createPreviewContainerWithLayerName:@"Drag Preview Container"];
 
+    [_targetedPreviewViewsContainerView setHidden:NO];
+
     ASSERT([_dragPreviewContainerView superview]);
     [_dragPreviewContainerView setHidden:NO];
     return _dragPreviewContainerView.get();
@@ -7584,6 +7660,8 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (!_contextMenuHintContainerView)
         _contextMenuHintContainerView = [self _createPreviewContainerWithLayerName:@"Context Menu Hint Preview Container"];
 
+    [_targetedPreviewViewsContainerView setHidden:NO];
+
     ASSERT([_contextMenuHintContainerView superview]);
     [_contextMenuHintContainerView setHidden:NO];
     return _contextMenuHintContainerView.get();
@@ -7591,9 +7669,45 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 
 - (void)_hideTargetedPreviewContainerViews
 {
+    [_targetedPreviewViewsContainerView setHidden:YES];
     [_dropPreviewContainerView setHidden:YES];
     [_dragPreviewContainerView setHidden:YES];
     [_contextMenuHintContainerView setHidden:YES];
+}
+
+- (void)_updateTargetedPreviewViewsContainerViewFrameIfNeeded
+{
+    if (!_targetedPreviewViewsContainerView || [_targetedPreviewViewsContainerView isHidden])
+        return;
+
+    auto scrollView = _scrollViewForTargetedPreview.get() ?: retainPtr(self._scroller);
+
+    CGRect frame = [_targetedPreviewViewsContainerView frame];
+    frame.origin = [scrollView convertPoint:CGPointZero toView:[_targetedPreviewViewsContainerView superview]];
+    [_targetedPreviewViewsContainerView setFrame:frame];
+}
+
+- (void)_removeTargetedPreviewViewsContainerViewIfPossible
+{
+    if (!_targetedPreviewViewsContainerView || [_targetedPreviewViewsContainerView subviews].count)
+        return;
+
+    [std::exchange(_targetedPreviewViewsContainerView, nil) removeFromSuperview];
+    _scrollViewForTargetedPreview = nil;
+}
+
+- (void)_updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
+{
+    if (scrollingNodeID) {
+        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy()) {
+            if (UIScrollView *scrollViewForScrollingNode = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID)) {
+                _scrollViewForTargetedPreview = scrollViewForScrollingNode;
+                return;
+            }
+        }
+    }
+
+    _scrollViewForTargetedPreview = self.webView.scrollView;
 }
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
@@ -7659,12 +7773,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (gestureRecognizer == _touchEventGestureRecognizer)
         return NO;
 
-    BOOL isLoupeGesture = gestureRecognizer == [_textInteractionAssistant loupeGesture];
-    BOOL isTapAndAHalfGesture = [gestureRecognizer isKindOfClass:tapAndAHalfRecognizerClass()];
-
 #if ENABLE(IMAGE_EXTRACTION)
     if (deferringGestureRecognizer == _imageExtractionDeferringGestureRecognizer)
-        return isLoupeGesture || isTapAndAHalfGesture || gestureRecognizer == [_textInteractionAssistant forcePressGesture];
+        return [self shouldDeferGestureDueToImageExtraction:gestureRecognizer];
 #endif
 
     auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
@@ -7678,10 +7789,10 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
             return YES;
 #endif
 
-        if (isTapAndAHalfGesture)
+        if (gestureRecognizer._wk_isTapAndAHalf)
             return YES;
 
-        if (isLoupeGesture)
+        if (gestureRecognizer == [_textInteractionAssistant loupeGesture])
             return YES;
 
         if ([gesture isKindOfClass:UITapGestureRecognizer.class]) {
@@ -7918,6 +8029,7 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
     [self _restoreCalloutBarIfNeeded];
 
     [std::exchange(_dragPreviewContainerView, nil) removeFromSuperview];
+    [self _removeTargetedPreviewViewsContainerViewIfPossible];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [_editDropCaretView remove];
     _editDropCaretView = nil;
@@ -8171,11 +8283,6 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     [[_textInteractionAssistant forcePressGesture] _wk_cancel];
 }
 
-- (UIView *)textEffectsWindow
-{
-    return [UITextEffectsWindow sharedTextEffectsWindowForWindowScene:self.window.windowScene];
-}
-
 - (NSDictionary *)_autofillContext
 {
     if (!self._hasFocusedElement)
@@ -8271,24 +8378,11 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
 }
 
-- (void)overridePositionTrackingViewForTargetedPreviewIfNecessary:(UITargetedPreview *)targetedPreview containerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
-{
-    if (!scrollingNodeID)
-        return;
-
-    UIScrollView *positionTrackingView = self.webView.scrollView;
-    if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
-        positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID);
-
-    if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
-        [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
-}
-
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement
 {
     RetainPtr<UITargetedPreview> targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect);
 
-    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
+    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
@@ -8311,7 +8405,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (!targetedPreview)
         targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds);
 
-    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_positionInformation.containerScrollingNodeID];
+    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_positionInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
@@ -8342,6 +8436,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         return;
     
     [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
+    [self _removeTargetedPreviewViewsContainerViewIfPossible];
 }
 
 #endif // USE(UICONTEXTMENU)
@@ -8685,13 +8780,15 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 - (void)dragInteraction:(UIDragInteraction *)interaction item:(UIDragItem *)item willAnimateCancelWithAnimator:(id <UIDragAnimating>)animator
 {
+    _isAnimatingDragCancel = YES;
     RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator");
     [animator addCompletion:[protectedSelf = retainPtr(self), page = _page] (UIViewAnimatingPosition finalPosition) {
         RELEASE_LOG(DragAndDrop, "Drag interaction willAnimateCancelWithAnimator (animation completion block fired)");
         page->dragCancelled();
         if (auto completion = protectedSelf->_dragDropInteractionState.takeDragCancelSetDownBlock()) {
-            page->callAfterNextPresentationUpdate([completion] (WebKit::CallbackBase::Error) {
+            page->callAfterNextPresentationUpdate([completion, protectedSelf] (WebKit::CallbackBase::Error) {
                 completion();
+                protectedSelf->_isAnimatingDragCancel = NO;
             });
         }
     }];
@@ -8837,6 +8934,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 - (void)dropInteraction:(UIDropInteraction *)interaction concludeDrop:(id <UIDropSession>)session
 {
     [std::exchange(_dropPreviewContainerView, nil) removeFromSuperview];
+    [self _removeTargetedPreviewViewsContainerViewIfPossible];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [std::exchange(_unselectedContentSnapshot, nil) removeFromSuperview];
     _dragDropInteractionState.clearAllDelayedItemPreviewProviders();
@@ -9543,6 +9641,15 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
     return nil;
 }
 
+#if ENABLE(DRAG_SUPPORT)
+
+- (BOOL)isAnimatingDragCancel
+{
+    return _isAnimatingDragCancel;
+}
+
+#endif // ENABLE(DRAG_SUPPORT)
+
 - (void)_simulateTextEntered:(NSString *)text
 {
 #if HAVE(PEPPER_UI_CORE)
@@ -9713,12 +9820,17 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 #if ENABLE(DATALIST_ELEMENT)
 - (void)_selectDataListOption:(NSInteger)optionIndex
 {
-    [_dataListSuggestionsControl.getAutoreleased() didSelectOptionAtIndex:optionIndex];
+    [_dataListSuggestionsControl didSelectOptionAtIndex:optionIndex];
 }
 
 - (void)_setDataListSuggestionsControl:(WKDataListSuggestionsControl *)control
 {
     _dataListSuggestionsControl = control;
+}
+
+- (BOOL)isShowingDataListSuggestions
+{
+    return [_dataListSuggestionsControl isShowingSuggestions];
 }
 #endif
 

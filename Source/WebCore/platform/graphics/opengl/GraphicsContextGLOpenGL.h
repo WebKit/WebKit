@@ -116,6 +116,7 @@ public:
     static GCGLenum drawingBufferTextureTargetQuery();
     static GCGLint EGLDrawingBufferTextureTarget();
 #else
+    static Ref<GraphicsContextGLOpenGL> createForGPUProcess(const GraphicsContextGLAttributes&);
     PlatformLayer* platformLayer() const final;
 #endif
 #if USE(ANGLE)
@@ -473,7 +474,9 @@ public:
     RefPtr<ImageData> readRenderingResultsForPainting();
     RefPtr<ImageData> readCompositedResultsForPainting();
 
+#if ENABLE(VIDEO)
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
+#endif
 
 #if USE(OPENGL) && ENABLE(WEBGL2)
     void primitiveRestartIndex(GCGLuint);

@@ -458,7 +458,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(HWND hwnd, UINT message
     WebEvent::Type type = keyboardEventTypeForEvent(message);
     String text = textFromEvent(wparam, type);
     String unmodifiedText = unmodifiedTextFromEvent(wparam, type);
-    String key = message == WM_CHAR ? windowsKeyNames().domKeyFromChar(wparam) : windowsKeyNames().domKeyFromLParam(lparam);
+    String key = message == WM_CHAR ? windowsKeyNames().domKeyFromChar(wparam) : windowsKeyNames().domKeyFromParams(wparam, lparam);
     String code = windowsKeyNames().domCodeFromLParam(lparam);
     String keyIdentifier = keyIdentifierFromEvent(wparam, type);
     int windowsVirtualKeyCode = static_cast<int>(wparam);

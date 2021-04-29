@@ -50,6 +50,7 @@ public:
     ScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }
 
     void scrollingStateTreePropertiesChanged();
+    void scrollingThreadAddedPendingUpdate();
 
     void applyPendingScrollUpdates();
 
@@ -87,6 +88,7 @@ protected:
     WEBCORE_EXPORT String scrollingTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const override;
     WEBCORE_EXPORT void willCommitTree() override;
     void synchronizeStateFromScrollingTree();
+    void scheduleRenderingUpdate();
 
     bool eventTrackingRegionsDirty() const { return m_eventTrackingRegionsDirty; }
 

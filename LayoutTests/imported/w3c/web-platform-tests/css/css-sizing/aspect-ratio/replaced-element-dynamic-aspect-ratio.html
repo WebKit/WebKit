@@ -4,15 +4,15 @@
 <link rel="match" href="../../reference/ref-filled-green-100px-square.xht" />
 
 <style>
-.applyAspectRatio {
+body.changed img {
     aspect-ratio: 1/1;
 }
 </style>
 
-<body onload="aspectRatio.classList.add('applyAspectRatio')">
+<body onload="document.body.classList.add('changed')">
 
 <p>Test passes if there is a filled green square and <strong>no red</strong>.</p>
 
-<img id="aspectRatio" src="support/20x50-green.png" style="width: 100px">
+<img src="support/20x50-green.png" style="width: 100px">
 
 </body>

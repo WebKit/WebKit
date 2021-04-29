@@ -36,6 +36,7 @@
 #include "GPUProcessProxyMessages.h"
 #include "GPUProcessSessionParameters.h"
 #include "Logging.h"
+#include "ProvisionalPageProxy.h"
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -259,12 +260,6 @@ void GPUProcessProxy::processWillShutDown(IPC::Connection& connection)
 void GPUProcessProxy::getGPUProcessConnection(WebProcessProxy& webProcessProxy, const GPUProcessConnectionParameters& parameters, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
 {
     addSession(webProcessProxy.websiteDataStore());
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    if (m_contextIDForVisibilityPropagation)
-        webProcessProxy.didCreateContextInGPUProcessForVisibilityPropagation(m_contextIDForVisibilityPropagation);
-    else
-        m_processesPendingVisibilityPropagationNotification.append(makeWeakPtr(webProcessProxy));
-#endif
 
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
     sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [this, weakThis = makeWeakPtr(*this), reply = WTFMove(reply)](auto&& identifier) mutable {
@@ -423,20 +418,24 @@ void GPUProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProcessI
 }
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
-void GPUProcessProxy::didCreateContextForVisibilityPropagation(LayerHostingContextID contextID)
+void GPUProcessProxy::didCreateContextForVisibilityPropagation(WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, LayerHostingContextID contextID)
 {
-    m_contextIDForVisibilityPropagation = contextID;
-
-    auto processes = WTFMove(m_processesPendingVisibilityPropagationNotification);
-    for (auto& process : processes) {
-        if (process)
-            process->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
+    RELEASE_LOG(Process, "GPUProcessProxy::didCreateContextForVisibilityPropagation: webPageProxyID: %" PRIu64 ", pagePID: %" PRIu64 ", contextID: %d", webPageProxyID.toUInt64(), pageID.toUInt64(), contextID);
+    auto* page = WebProcessProxy::webPage(webPageProxyID);
+    if (!page) {
+        RELEASE_LOG(Process, "GPUProcessProxy::didCreateContextForVisibilityPropagation() No WebPageProxy with this identifier");
+        return;
     }
-}
-
-LayerHostingContextID GPUProcessProxy::contextIDForVisibilityPropagation() const
-{
-    return m_contextIDForVisibilityPropagation;
+    if (page->webPageID() == pageID) {
+        page->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
+        return;
+    }
+    auto* provisionalPage = page->provisionalPageProxy();
+    if (provisionalPage && provisionalPage->webPageID() == pageID) {
+        provisionalPage->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
+        return;
+    }
+    RELEASE_LOG(Process, "GPUProcessProxy::didCreateContextForVisibilityPropagation() There was a WebPageProxy for this identifier, but it had the wrong WebPage identifier.");
 }
 #endif
 

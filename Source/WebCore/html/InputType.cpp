@@ -64,6 +64,7 @@
 #include "ResetInputType.h"
 #include "ScopedEventQueue.h"
 #include "SearchInputType.h"
+#include "SelectionRestorationMode.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "StepRange.h"
@@ -929,8 +930,9 @@ ExceptionOr<void> InputType::applyStep(int count, AnyStepHandling anyStepHandlin
     if (newValue > stepRange.maximum())
         newValue = stepRange.maximum();
 
+    auto protectedThis = makeRef(*this);
     auto result = setValueAsDecimal(newValue, eventBehavior);
-    if (result.hasException())
+    if (result.hasException() || !element())
         return result;
 
     if (AXObjectCache* cache = element()->document().existingAXObjectCache())

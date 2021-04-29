@@ -131,26 +131,6 @@ void JSCallbackObject<Parent>::init(JSGlobalObject* globalObject)
 }
 
 template <class Parent>
-String JSCallbackObject<Parent>::className(const JSObject* object, VM& vm)
-{
-    const JSCallbackObject* thisObject = jsCast<const JSCallbackObject*>(object);
-    String thisClassName = thisObject->classRef()->className();
-    if (!thisClassName.isEmpty())
-        return thisClassName;
-    
-    return Parent::className(object, vm);
-}
-
-template <class Parent>
-String JSCallbackObject<Parent>::toStringName(const JSObject* object, JSGlobalObject* globalObject)
-{
-    VM& vm = getVM(globalObject);
-    const ClassInfo* info = object->classInfo(vm);
-    ASSERT(info);
-    return info->methodTable.className(object, vm);
-}
-
-template <class Parent>
 bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject, PropertyName propertyName, PropertySlot& slot)
 {
     VM& vm = getVM(globalObject);
@@ -213,7 +193,20 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, JSGlobalObje
         }
     }
 
-    RELEASE_AND_RETURN(scope, Parent::getOwnPropertySlot(thisObject, globalObject, propertyName, slot));
+    bool found = Parent::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (found)
+        return true;
+
+    if (propertyName.uid() == vm.propertyNames->toStringTagSymbol.impl()) {
+        String className = thisObject->classRef()->className();
+        if (className.isEmpty())
+            className = thisObject->className(vm);
+        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), jsString(vm, WTFMove(className)));
+        return true;
+    }
+
+    return false;
 }
 
 template <class Parent>

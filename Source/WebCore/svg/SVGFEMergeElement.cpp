@@ -47,7 +47,7 @@ Ref<SVGFEMergeElement> SVGFEMergeElement::create(const QualifiedName& tagName, D
 RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, Filter& filter) const
 {
     auto effect = FEMerge::create(filter);
-    FilterEffectVector& mergeInputs = effect->inputEffects();
+    auto& mergeInputs = effect->inputEffects();
 
     for (auto& mergeNode : childrenOfType<SVGFEMergeNodeElement>(*this)) {
         auto mergeEffect = filterBuilder->getEffectById(mergeNode.in1());
@@ -55,6 +55,8 @@ RefPtr<FilterEffect> SVGFEMergeElement::build(SVGFilterBuilder* filterBuilder, F
             return nullptr;
         mergeInputs.append(WTFMove(mergeEffect));
     }
+
+    mergeInputs.shrinkToFit();
 
     if (mergeInputs.isEmpty())
         return nullptr;

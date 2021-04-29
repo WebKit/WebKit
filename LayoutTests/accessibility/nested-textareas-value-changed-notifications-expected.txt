@@ -1,0 +1,41 @@
+aabc
+xyz
+dgef
+This tests that the correct AXValueChanged notifications are posted when editing nested text areas with an intermediate non-editable text area.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+outer_editable original AXValue: abc
+xyz
+def
+
+1 AXValueChanged for element  with AXRole: AXWebArea
+AXValue:
+2 AXValueChanged for element outer_editable with AXRole: AXTextArea
+AXValue: aabc
+xyz
+def
+
+3 AXValueChanged for element outer_editable with AXRole: AXTextArea
+AXValue: aabc
+xyz
+def
+
+4 AXValueChanged for element  with AXRole: AXWebArea
+AXValue:
+5 AXValueChanged for element  with AXRole: AXWebArea
+AXValue:
+6 AXValueChanged for element outer_editable with AXRole: AXTextArea
+AXValue: aabc
+xyz
+dgef
+
+7 AXValueChanged for element inner_editable with AXRole: AXTextArea
+AXValue: dgef
+8 AXValueChanged for element inner_editable with AXRole: AXTextArea
+AXValue: dgef
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

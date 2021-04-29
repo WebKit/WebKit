@@ -55,7 +55,7 @@ addEventListener("load", async () => {
     shouldBe("caretBefore.left", "20");
     shouldBe("caretBefore.top", "14");
     shouldBe("caretBefore.width", "2");
-    shouldBe("caretBefore.height", "23");
+    shouldBe("caretBefore.height", "24");
 
     // Translate the body, tap the input again, and wait for the caret.
     await UIHelper.activateElement(transformButton);
@@ -65,7 +65,7 @@ addEventListener("load", async () => {
     shouldBe("caretAfter.left", "20");
     shouldBe("caretAfter.top", "14");
     shouldBe("caretAfter.width", "2");
-    shouldBe("caretAfter.height", "23");
+    shouldBe("caretAfter.height", "24");
 
     document.activeElement.blur();
     await UIHelper.waitForKeyboardToHide();

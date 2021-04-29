@@ -183,7 +183,7 @@ public:
 
     private:
         WeakPtr<RenderView> m_rootView;
-        bool m_wasAccumulatingRepaintRegion;
+        bool m_wasAccumulatingRepaintRegion { false };
     };
 
     void scheduleLazyRepaint(RenderBox&);

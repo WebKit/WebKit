@@ -38,8 +38,8 @@ inline void Operand::dump(PrintStream& out) const
         out.print(virtualRegister());
 }
 
-template<typename T>
-void Operands<T>::dumpInContext(PrintStream& out, DumpContext* context) const
+template<typename T, typename U>
+void Operands<T, U>::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     CommaPrinter comma(" ");
     for (size_t argumentIndex = numberOfArguments(); argumentIndex--;) {
@@ -59,8 +59,8 @@ void Operands<T>::dumpInContext(PrintStream& out, DumpContext* context) const
     }
 }
 
-template<typename T>
-void Operands<T>::dump(PrintStream& out) const
+template<typename T, typename U>
+void Operands<T, U>::dump(PrintStream& out) const
 {
     CommaPrinter comma(" ");
     for (size_t argumentIndex = numberOfArguments(); argumentIndex--;) {

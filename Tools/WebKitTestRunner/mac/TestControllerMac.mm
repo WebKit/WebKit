@@ -155,10 +155,6 @@ void TestController::initializeTestPluginDirectory()
     m_testPluginDirectory.adopt(WKStringCreateWithCFString((__bridge CFStringRef)[[NSBundle mainBundle] bundlePath]));
 }
 
-void TestController::platformResetPreferencesToConsistentValues()
-{
-}
-
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
     [LayoutTestSpellChecker uninstallAndReset];

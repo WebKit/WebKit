@@ -35,20 +35,38 @@ namespace WebCore {
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeSaltKey(const Vector<uint8_t>& rawKey)
 {
-    uint8_t usage[] = "SFrameSaltKey";
-    return deriveHDKFSHA256Bits(rawKey.data(), 16, rawKey.data() + 16, rawKey.size() - 16, usage, sizeof(usage) - 1, 128);
+    uint8_t usage[] = "SFrame10";
+    uint8_t info[] = "salt";
+    return deriveHDKFSHA256Bits(rawKey.data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 96);
+}
+
+static ExceptionOr<Vector<uint8_t>> createBaseSFrameKey(const Vector<uint8_t>& rawKey)
+{
+    uint8_t usage[] = "SFrame10";
+    uint8_t info[] = "key";
+    return deriveHDKFSHA256Bits(rawKey.data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 128);
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeAuthenticationKey(const Vector<uint8_t>& rawKey)
 {
-    uint8_t usage[] = "SFrameAuthenticationKey";
-    return deriveHDKFSHA256Bits(rawKey.data(), 16, rawKey.data() + 16, rawKey.size() - 16, usage, sizeof(usage) - 1, 256);
+    auto key = createBaseSFrameKey(rawKey);
+    if (key.hasException())
+        return key;
+
+    uint8_t usage[] = "SFrame10 AES CM AEAD";
+    uint8_t info[] = "auth";
+    return deriveHDKFSHA256Bits(key.returnValue().data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 256);
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::computeEncryptionKey(const Vector<uint8_t>& rawKey)
 {
-    uint8_t usage[] = "SFrameEncryptionKey";
-    return deriveHDKFSHA256Bits(rawKey.data(), 16, rawKey.data() + 16, rawKey.size() - 16, usage, sizeof(usage) - 1, 128);
+    auto key = createBaseSFrameKey(rawKey);
+    if (key.hasException())
+        return key;
+
+    uint8_t usage[] = "SFrame10 AES CM AEAD";
+    uint8_t info[] = "enc";
+    return deriveHDKFSHA256Bits(key.returnValue().data(), 16, usage, sizeof(usage) - 1, info, sizeof(info) - 1, 128);
 }
 
 ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::decryptData(const uint8_t* data, size_t size, const Vector<uint8_t>& iv, const Vector<uint8_t>& key)
@@ -61,9 +79,32 @@ ExceptionOr<Vector<uint8_t>> RTCRtpSFrameTransformer::encryptData(const uint8_t*
     return transformAES_CTR(kCCEncrypt, iv, iv.size(), key, data, size);
 }
 
-Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const uint8_t* data, size_t size, const Vector<uint8_t>& key)
+static inline Vector<uint8_t, 8> encodeBigEndian(uint64_t value)
 {
-    return calculateSHA256Signature(key, data, size);
+    Vector<uint8_t, 8> result(8);
+    for (int i = 7; i >= 0; --i) {
+        result.data()[i] = value & 0xff;
+        value = value >> 8;
+    }
+    return result;
+}
+
+Vector<uint8_t> RTCRtpSFrameTransformer::computeEncryptedDataSignature(const Vector<uint8_t>& nonce, const uint8_t* header, size_t headerSize, const uint8_t* data, size_t dataSize, const Vector<uint8_t>& key)
+{
+    auto headerLength = encodeBigEndian(headerSize);
+    auto dataLength = encodeBigEndian(dataSize);
+
+    Vector<uint8_t> result(CC_SHA256_DIGEST_LENGTH);
+    CCHmacContext context;
+    CCHmacInit(&context, kCCHmacAlgSHA256, key.data(), key.size());
+    CCHmacUpdate(&context, headerLength.data(), headerLength.size());
+    CCHmacUpdate(&context, dataLength.data(), dataLength.size());
+    CCHmacUpdate(&context, nonce.data(), 12);
+    CCHmacUpdate(&context, header, headerSize);
+    CCHmacUpdate(&context, data, dataSize);
+    CCHmacFinal(&context, result.data());
+
+    return result;
 }
 
 void RTCRtpSFrameTransformer::updateAuthenticationSize()

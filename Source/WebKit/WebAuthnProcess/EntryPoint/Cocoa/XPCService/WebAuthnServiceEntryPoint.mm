@@ -59,6 +59,6 @@ void WEBAUTHN_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t init
     WTF::initializeMainThread();
 
 #if ENABLE(WEB_AUTHN)
-    WebKit::XPCServiceInitializer<WebKit::WebAuthnProcess, WebKit::WebAuthnServiceInitializerDelegate>(adoptOSObject(connection), initializerMessage, priorityBoostMessage);
+    WebKit::XPCServiceInitializer<WebKit::WebAuthnProcess, WebKit::WebAuthnServiceInitializerDelegate>(connection, initializerMessage, priorityBoostMessage);
 #endif // ENABLE(WEB_AUTHN)
 }

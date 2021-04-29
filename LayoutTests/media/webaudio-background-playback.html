@@ -82,12 +82,15 @@ promise_test(async (test) => {
 
     assert_true(onProcessCount == oldOnProcessCount, "audio playback suspended in background");
 
+    // Context state changes are asynchronous, so delay the test to until the context has restarted + 100 additional milli-seconds.
+    context.onstatechange = () => {
+        setTimeout(() => {
+             assert_true(onProcessCount > oldOnProcessCount, "audio resumed playing in the foreground");
+        }, 100);
+    };
+
     if (window.internals)
         internals.applicationWillEnterForeground();
-    oldOnProcessCount = onProcessCount;
-    await new Promise(resolve => setTimeout(resolve, 100));
-    assert_true(onProcessCount > oldOnProcessCount, "audio resumed playing in the foreground");
-
 
 }, "Ensure WebAudio stops playing in the background when the 'BackgroundProcessPlaybackRestricted' restriction is set");
 

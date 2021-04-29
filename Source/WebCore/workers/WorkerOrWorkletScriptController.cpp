@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  * Copyright (C) 2011, 2012 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@
 #include "WorkerModuleScriptLoader.h"
 #include "WorkerScriptFetcher.h"
 #include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/DeferTermination.h>
 #include <JavaScriptCore/DeferredWorkTimer.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/ExceptionHelpers.h>
@@ -67,6 +68,11 @@ WorkerOrWorkletScriptController::WorkerOrWorkletScriptController(WorkerThreadTyp
     , m_globalScopeWrapper(*m_vm)
 {
     m_vm->heap.acquireAccess(); // It's not clear that we have good discipline for heap access, so turn it on permanently.
+    {
+        JSLockHolder lock(m_vm.get());
+        m_vm->ensureTerminationException();
+    }
+
     JSVMClientData::initNormalWorld(m_vm.get(), type);
 }
 
@@ -197,11 +203,16 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
     if (isExecutionForbidden())
         return;
 
-    NakedPtr<JSC::Exception> exception;
-    evaluate(sourceCode, exception, returnedExceptionMessage);
-    if (exception) {
-        JSLockHolder lock(vm());
-        reportException(m_globalScopeWrapper.get(), exception);
+    VM& vm = this->vm();
+    NakedPtr<JSC::Exception> uncaughtException;
+    evaluate(sourceCode, uncaughtException, returnedExceptionMessage);
+    if ((uncaughtException && vm.isTerminationException(uncaughtException)) || isTerminatingExecution()) {
+        forbidExecution();
+        return;
+    }
+    if (uncaughtException) {
+        JSLockHolder lock(vm);
+        reportException(m_globalScopeWrapper.get(), uncaughtException);
     }
 }
 
@@ -218,7 +229,7 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
 
     JSExecState::profiledEvaluate(&globalObject, JSC::ProfilingReason::Other, sourceCode.jsSourceCode(), m_globalScopeWrapper->globalThis(), returnedException);
 
-    if ((returnedException && isTerminatedExecutionException(vm, returnedException)) || isTerminatingExecution()) {
+    if ((returnedException && vm.isTerminationException(returnedException)) || isTerminatingExecution()) {
         forbidExecution();
         return;
     }
@@ -351,7 +362,7 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
 
     NakedPtr<JSC::Exception> returnedException;
     JSExecState::linkAndEvaluateModule(globalObject, Identifier::fromUid(vm, scriptFetcher.moduleKey()), jsUndefined(), returnedException);
-    if ((returnedException && isTerminatedExecutionException(vm, returnedException)) || isTerminatingExecution()) {
+    if ((returnedException && vm.isTerminationException(returnedException)) || isTerminatingExecution()) {
         forbidExecution();
         return;
     }
@@ -409,7 +420,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
 
             NakedPtr<JSC::Exception> returnedException;
             JSExecState::linkAndEvaluateModule(*globalObject, moduleKey, jsUndefined(), returnedException);
-            if ((returnedException && isTerminatedExecutionException(vm, returnedException)) || context->script()->isTerminatingExecution()) {
+            if ((returnedException && vm.isTerminationException(returnedException)) || context->script()->isTerminatingExecution()) {
                 if (context->script())
                     context->script()->forbidExecution();
                 task->run(WTF::nullopt);
@@ -512,6 +523,9 @@ void WorkerOrWorkletScriptController::initScriptWithSubclass()
 
 void WorkerOrWorkletScriptController::initScript()
 {
+    ASSERT(m_vm.get());
+    JSC::DeferTermination deferTermination(*m_vm.get());
+
     if (is<DedicatedWorkerGlobalScope>(m_globalScope)) {
         initScriptWithSubclass<JSDedicatedWorkerGlobalScopePrototype, JSDedicatedWorkerGlobalScope, DedicatedWorkerGlobalScope>();
         return;

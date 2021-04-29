@@ -24,6 +24,7 @@
 #pragma once
 
 #include "HTMLTextFormControlElement.h"
+#include "SelectionRestorationMode.h"
 
 namespace WebCore {
 

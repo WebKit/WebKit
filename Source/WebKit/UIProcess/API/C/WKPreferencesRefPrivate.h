@@ -50,6 +50,9 @@ typedef unsigned WKJavaScriptRuntimeFlagSet;
 // Creates a copy with no identifier.
 WK_EXPORT WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef);
 
+WK_EXPORT void WKPreferencesStartBatchingUpdates(WKPreferencesRef);
+WK_EXPORT void WKPreferencesEndBatchingUpdates(WKPreferencesRef);
+
 WK_EXPORT void WKPreferencesEnableAllExperimentalFeatures(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetExperimentalFeatureForKey(WKPreferencesRef, bool, WKStringRef);
 WK_EXPORT void WKPreferencesResetAllInternalDebugFeatures(WKPreferencesRef);

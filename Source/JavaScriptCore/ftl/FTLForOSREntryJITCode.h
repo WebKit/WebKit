@@ -28,6 +28,7 @@
 #if ENABLE(FTL_JIT)
 
 #include "FTLJITCode.h"
+#include <wtf/FixedVector.h>
 
 namespace JSC { namespace FTL {
 
@@ -55,10 +56,15 @@ public:
     unsigned entryFailureCount() const { return m_entryFailureCount; }
     
     ForOSREntryJITCode* ftlForOSREntry() final;
-    Vector<DFG::FlushFormat>& argumentFlushFormats() { return m_argumentFlushFormats; }
+
+    void setArgumentFlushFormats(FixedVector<DFG::FlushFormat>&& argumentFlushFormats)
+    {
+        m_argumentFlushFormats = WTFMove(argumentFlushFormats);
+    }
+    const FixedVector<DFG::FlushFormat>& argumentFlushFormats() { return m_argumentFlushFormats; }
 
 private:
-    Vector<DFG::FlushFormat> m_argumentFlushFormats;
+    FixedVector<DFG::FlushFormat> m_argumentFlushFormats;
     ScratchBuffer* m_entryBuffer; // Only for OSR entry code blocks.
     BytecodeIndex m_bytecodeIndex;
     unsigned m_entryFailureCount;

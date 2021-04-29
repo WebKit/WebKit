@@ -36,6 +36,7 @@
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Optional.h>
 #include <wtf/Variant.h>
+#include <wtf/text/StringParsingBuffer.h>
 
 namespace WebCore {
 
@@ -217,61 +218,112 @@ const Settings* CSSStyleDeclaration::settings() const
     return parentElement() ? &parentElement()->document().settings() : nullptr;
 }
 
-#if !ENABLE(ATTRIBUTE_BASED_PROPERTIES_FOR_CSS_STYLE_DECLARATION)
+enum class CSSPropertyLookupMode { ConvertUsingDashPrefix, ConvertUsingNoDashPrefix, NoConversion };
 
-Optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomString& propertyName)
+template<CSSPropertyLookupMode mode> static CSSPropertyID lookupCSSPropertyFromIDLAttribute(const AtomString& attribute)
 {
-    // FIXME: This is going to return incorrect results for css properties disabled by Settings if settings() returns nullptr.
-    auto propertyID = propertyIDFromJavaScriptCSSPropertyName(propertyName, settings());
-    if (!propertyID)
-        return WTF::nullopt;
+    static NeverDestroyed<HashMap<AtomString, CSSPropertyID>> cache;
 
-    if (auto value = getPropertyCSSValueInternal(propertyID))
-        return Variant<String, double> { value->cssText() };
+    if (auto id = cache.get().get(attribute))
+        return id;
 
-    // If the property is a shorthand property (such as "padding"), it can only be accessed using getPropertyValueInternal.
-    return Variant<String, double> { getPropertyValueInternal(propertyID) };
-}
+    char outputBuffer[maxCSSPropertyNameLength + 1];
+    char* outputBufferCurrent = outputBuffer;
+    const char* outputBufferStart = outputBufferCurrent;
 
-ExceptionOr<void> CSSStyleDeclaration::setNamedItem(const AtomString& propertyName, String value, bool& propertySupported)
-{
-    // FIXME: This is going to return incorrect results for css properties disabled by Settings if settings() returns nullptr.
-    auto propertyID = propertyIDFromJavaScriptCSSPropertyName(propertyName, settings());
-    if (!propertyID) {
-        propertySupported = false;
-        return { };
+    if constexpr (mode == CSSPropertyLookupMode::ConvertUsingDashPrefix || mode == CSSPropertyLookupMode::ConvertUsingNoDashPrefix) {
+        // Conversion is implementing the "IDL attribute to CSS property algorithm"
+        // from https://drafts.csswg.org/cssom/#idl-attribute-to-css-property.
+
+        if constexpr (mode == CSSPropertyLookupMode::ConvertUsingDashPrefix)
+            *outputBufferCurrent++ = '-';
+
+        readCharactersForParsing(attribute, [&](auto buffer) {
+            while (buffer.hasCharactersRemaining()) {
+                auto c = *buffer++;
+                ASSERT_WITH_MESSAGE(isASCII(c), "Invalid property name: %s", attribute.string().utf8().data());
+                if (isASCIIUpper(c)) {
+                    *outputBufferCurrent++ = '-';
+                    *outputBufferCurrent++ = toASCIILowerUnchecked(c);
+                } else
+                    *outputBufferCurrent++ = c;
+            }
+        });
+        *outputBufferCurrent = '\0';
+    } else {
+        readCharactersForParsing(attribute, [&](auto buffer) {
+            while (buffer.hasCharactersRemaining()) {
+                auto c = *buffer++;
+                ASSERT_WITH_MESSAGE(c == '-' || isASCIILower(c), "Invalid property name: %s", attribute.string().utf8().data());
+                *outputBufferCurrent++ = c;
+            }
+        });
+        *outputBufferCurrent = '\0';
     }
 
-    propertySupported = true;
-    return setPropertyInternal(propertyID, WTFMove(value), false);
+    auto hashTableEntry = findProperty(outputBufferStart, outputBufferCurrent - outputBuffer);
+    ASSERT_WITH_MESSAGE(hashTableEntry, "Invalid property name: %s", attribute.string().utf8().data());
+
+    auto id = static_cast<CSSPropertyID>(hashTableEntry->id);
+    cache.get().add(attribute, id);
+    return id;
 }
 
-Vector<AtomString> CSSStyleDeclaration::supportedPropertyNames() const
+String CSSStyleDeclaration::propertyValueForCamelCasedIDLAttribute(const AtomString& attribute)
 {
-    static unsigned numNames = 0;
-    static const AtomString* const cssPropertyNames = [this] {
-        String names[numCSSProperties];
-        for (int i = 0; i < numCSSProperties; ++i) {
-            CSSPropertyID id = static_cast<CSSPropertyID>(firstCSSProperty + i);
-            if (isEnabledCSSProperty(id) && isCSSPropertyEnabledBySettings(id, settings()))
-                names[numNames++] = getJSPropertyName(id);
-        }
-        std::sort(&names[0], &names[numNames], WTF::codePointCompareLessThan);
-        auto* identifiers = new AtomString[numNames];
-        for (unsigned i = 0; i < numNames; ++i)
-            identifiers[i] = names[i];
-        return identifiers;
-    }();
-
-    Vector<AtomString> result;
-    result.reserveInitialCapacity(numNames);
-
-    for (unsigned i = 0; i < numNames; ++i)
-        result.uncheckedAppend(cssPropertyNames[i]);
-
-    return result;
+    auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingNoDashPrefix>(attribute);
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
+    return getPropertyValueInternal(propertyID);
 }
-#endif
+
+ExceptionOr<void> CSSStyleDeclaration::setPropertyValueForCamelCasedIDLAttribute(const AtomString& attribute, const String& value)
+{
+    auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingNoDashPrefix>(attribute);
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
+    return setPropertyInternal(propertyID, value, false);
+}
+
+String CSSStyleDeclaration::propertyValueForWebKitCasedIDLAttribute(const AtomString& attribute)
+{
+    auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
+    return getPropertyValueInternal(propertyID);
+}
+
+ExceptionOr<void> CSSStyleDeclaration::setPropertyValueForWebKitCasedIDLAttribute(const AtomString& attribute, const String& value)
+{
+    auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
+    return setPropertyInternal(propertyID, value, false);
+}
+
+String CSSStyleDeclaration::propertyValueForDashedIDLAttribute(const AtomString& attribute)
+{
+    auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::NoConversion>(attribute);
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
+    return getPropertyValueInternal(propertyID);
+}
+
+ExceptionOr<void> CSSStyleDeclaration::setPropertyValueForDashedIDLAttribute(const AtomString& attribute, const String& value)
+{
+    auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::NoConversion>(attribute);
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
+    return setPropertyInternal(propertyID, value, false);
+}
+
+String CSSStyleDeclaration::propertyValueForEpubCasedIDLAttribute(const AtomString& attribute)
+{
+    auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
+    return getPropertyValueInternal(propertyID);
+}
+
+ExceptionOr<void> CSSStyleDeclaration::setPropertyValueForEpubCasedIDLAttribute(const AtomString& attribute, const String& value)
+{
+    auto propertyID = lookupCSSPropertyFromIDLAttribute<CSSPropertyLookupMode::ConvertUsingDashPrefix>(attribute);
+    ASSERT_WITH_MESSAGE(propertyID != CSSPropertyInvalid, "Invalid attribute: %s", attribute.string().utf8().data());
+    return setPropertyInternal(propertyID, value, false);
+}
 
 String CSSStyleDeclaration::cssFloat()
 {

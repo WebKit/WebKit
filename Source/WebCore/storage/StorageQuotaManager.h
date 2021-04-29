@@ -37,8 +37,7 @@ namespace WebCore {
 class StorageQuotaManager : public ThreadSafeRefCounted<StorageQuotaManager>, public CanMakeWeakPtr<StorageQuotaManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class ShouldPrintUsageDetail { No, Yes };
-    using UsageGetter = Function<uint64_t(ShouldPrintUsageDetail)>;
+    using UsageGetter = Function<uint64_t()>;
     using QuotaIncreaseRequester = Function<void(uint64_t currentQuota, uint64_t currentUsage, uint64_t requestedIncrease, CompletionHandler<void(Optional<uint64_t>)>&&)>;
     WEBCORE_EXPORT static Ref<StorageQuotaManager> create(uint64_t quota, UsageGetter&&, QuotaIncreaseRequester&&);
 
@@ -53,8 +52,6 @@ public:
 
     WEBCORE_EXPORT void resetQuotaUpdatedBasedOnUsageForTesting();
     WEBCORE_EXPORT void resetQuotaForTesting();
-    WEBCORE_EXPORT void setLoggingEnabled(bool);
-
 private:
     StorageQuotaManager(uint64_t quota, UsageGetter&&, QuotaIncreaseRequester&&);
     bool tryGrantRequest(uint64_t);
@@ -75,7 +72,6 @@ private:
 
     // Test only.
     uint64_t m_initialQuota { 0 };
-    bool m_loggingEnabled { false };
 };
 
 } // namespace WebCore

@@ -7,14 +7,14 @@ layer at (0,0) size 800x62
         RenderText {#text} at (619,0) size 165x19
           text run at (619,0) width 9 RTL: ": "
           text run at (627,0) width 157: "right to left search fields"
-        RenderTextControl {INPUT} at (455,2) size 163x20 [bgcolor=#7676801F]
+        RenderTextControl {INPUT} at (455,2) size 163x20 [bgcolor=#EEEEEF]
           RenderFlexibleBox {DIV} at (5,2) size 152x15
             RenderBlock {DIV} at (139,1) size 12x12
             RenderBlock {DIV} at (0,0) size 136x14
             RenderBlock {DIV} at (0,7) size 0x0
         RenderText {#text} at (449,0) size 5x19
           text run at (449,0) width 5 RTL: " "
-        RenderTextControl {INPUT} at (285,2) size 163x20 [bgcolor=#7676801F]
+        RenderTextControl {INPUT} at (285,2) size 163x20 [bgcolor=#EEEEEF]
           RenderFlexibleBox {DIV} at (5,2) size 152x15
             RenderBlock {DIV} at (139,1) size 12x12
             RenderBlock {DIV} at (0,0) size 136x14
@@ -23,14 +23,14 @@ layer at (0,0) size 800x62
       RenderBlock {DIV} at (0,23) size 784x23
         RenderText {#text} at (0,0) size 165x19
           text run at (0,0) width 165: "left to right search fields: "
-        RenderTextControl {INPUT} at (166,2) size 165x20 [bgcolor=#7676801F]
+        RenderTextControl {INPUT} at (166,2) size 165x20 [bgcolor=#EEEEEF]
           RenderFlexibleBox {DIV} at (5,2) size 154x15
             RenderBlock {DIV} at (0,1) size 11x12
             RenderBlock {DIV} at (15,0) size 138x14
             RenderBlock {DIV} at (152,7) size 0x0
         RenderText {#text} at (332,0) size 5x19
           text run at (332,0) width 5: " "
-        RenderTextControl {INPUT} at (338,2) size 165x20 [bgcolor=#7676801F]
+        RenderTextControl {INPUT} at (338,2) size 165x20 [bgcolor=#EEEEEF]
           RenderFlexibleBox {DIV} at (5,2) size 154x15
             RenderBlock {DIV} at (0,1) size 11x12
             RenderBlock {DIV} at (15,0) size 138x14

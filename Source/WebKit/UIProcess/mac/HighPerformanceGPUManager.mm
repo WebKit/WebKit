@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #include "Logging.h"
+#include "WebProcessProxy.h"
 #include <WebCore/GraphicsChecksMac.h>
 #include <WebCore/OpenGLSoftLinkCocoa.h>
 
@@ -51,40 +52,40 @@ HighPerformanceGPUManager::HighPerformanceGPUManager()
 
 HighPerformanceGPUManager::~HighPerformanceGPUManager() = default;
 
-void HighPerformanceGPUManager::addProcessRequiringHighPerformance(WebProcessProxy* process)
+void HighPerformanceGPUManager::addProcessRequiringHighPerformance(WebProcessProxy& process)
 {
     if (!WebCore::hasLowAndHighPowerGPUs())
         return;
 
     if (m_processesRequiringHighPerformance.add(process)) {
-        LOG(WebGL, "HighPerformanceGPUManager::addProcessRequiringHighPerformance() - adding process %p", process);
+        LOG(WebGL, "HighPerformanceGPUManager::addProcessRequiringHighPerformance() - adding process %p", &process);
         updateState();
         return;
     }
 
-    LOG(WebGL, "HighPerformanceGPUManager::addProcessRequiringHighPerformance() - process %p was already requesting high performance", process);
+    LOG(WebGL, "HighPerformanceGPUManager::addProcessRequiringHighPerformance() - process %p was already requesting high performance", &process);
 }
 
-void HighPerformanceGPUManager::removeProcessRequiringHighPerformance(WebProcessProxy* process)
+void HighPerformanceGPUManager::removeProcessRequiringHighPerformance(WebProcessProxy& process)
 {
     if (!WebCore::hasLowAndHighPowerGPUs())
         return;
 
     if (m_processesRequiringHighPerformance.remove(process)) {
-        LOG(WebGL, "HighPerformanceGPUManager::removeProcessRequiringHighPerformance() - removing process %p", process);
+        LOG(WebGL, "HighPerformanceGPUManager::removeProcessRequiringHighPerformance() - removing process %p", &process);
         static const Seconds timeToKeepHighPerformanceGPUAlive { 10_s };
         m_updateStateTimer.startOneShot(timeToKeepHighPerformanceGPUAlive);
         return;
     }
 
-    LOG(WebGL, "HighPerformanceGPUManager::removeProcessRequiringHighPerformance() - process %p was not requesting high performance", process);
+    LOG(WebGL, "HighPerformanceGPUManager::removeProcessRequiringHighPerformance() - process %p was not requesting high performance", &process);
 }
 
 void HighPerformanceGPUManager::updateState()
 {
     if (m_updateStateTimer.isActive())
         m_updateStateTimer.stop();
-    if (m_processesRequiringHighPerformance.size()) {
+    if (m_processesRequiringHighPerformance.computeSize()) {
         if (!m_pixelFormatObj) {
             LOG(WebGL, "HighPerformanceGPUManager - turning on high-performance GPU.");
 

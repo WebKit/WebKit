@@ -456,7 +456,7 @@ override;
 
     Optional<LayoutUnit> computePercentageLogicalHeight(const Length& height) const;
 
-    virtual LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
+    LayoutUnit availableLogicalWidth() const { return contentLogicalWidth(); }
     virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const;
     LayoutUnit availableLogicalHeightUsing(const Length&, AvailableLogicalHeightType) const;
     
@@ -751,6 +751,10 @@ private:
     LayoutUnit fillAvailableMeasure(LayoutUnit availableLogicalWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const;
 
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
+    virtual void computeIntrinsicKeywordLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+    {
+        computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+    }
 
     // This function calculates the minimum and maximum preferred widths for an object.
     // These values are used in shrink-to-fit layout systems.
@@ -846,6 +850,8 @@ inline void RenderBox::setInlineBoxWrapper(InlineElementBox* boxWrapper)
 
     m_inlineBoxWrapper = boxWrapper;
 }
+
+LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox&, LineDirectionMode);
 
 } // namespace WebCore
 

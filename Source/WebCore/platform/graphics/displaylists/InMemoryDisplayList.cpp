@@ -61,11 +61,12 @@ InMemoryDisplayList::InMemoryDisplayList()
 InMemoryDisplayList::~InMemoryDisplayList()
 {
     auto end = this->end();
-    for (auto [item, extent, size] : *this) {
+    for (auto displayListItem : *this) {
+        auto item = displayListItem->item;
         ASSERT(item);
         if (!item)
             break;
-        item->destroy();
+        item.destroy();
     }
 }
 

@@ -142,16 +142,14 @@ void TestController::configureContentExtensionForTest(const TestInvocation&)
 {
 }
 
-void TestController::platformResetPreferencesToConsistentValues()
+static _WKDragInteractionPolicy dragInteractionPolicy(const TestOptions& options)
 {
-    WKPreferencesRef preferences = platformPreferences();
-    WKPreferencesSetTextAutosizingEnabled(preferences, false);
-    WKPreferencesSetTextAutosizingUsesIdempotentMode(preferences, false);
-    WKPreferencesSetContentChangeObserverEnabled(preferences, false);
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-    WKPreferencesSetVP9DecoderEnabled(preferences, false);
-    WKPreferencesSetMediaSourceEnabled(preferences, false);
-#endif
+    auto policy = options.dragInteractionPolicy();
+    if (policy == "always-enable")
+        return _WKDragInteractionPolicyAlwaysEnable;
+    if (policy == "always-disable")
+        return _WKDragInteractionPolicyAlwaysDisable;
+    return _WKDragInteractionPolicyDefault;
 }
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
@@ -212,6 +210,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [webView _clearInterfaceOrientationOverride];
         [webView resetCustomMenuAction];
         [webView setAllowedMenuActions:nil];
+        webView._dragInteractionPolicy = dragInteractionPolicy(options);
 
         UIScrollView *scrollView = webView.scrollView;
         [scrollView _removeAllAnimations:YES];
@@ -255,7 +254,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         }
         
         if (hasPresentedViewController) {
-            TestInvocation::dumpWebProcessUnresponsiveness("TestController::platformResetPreferencesToConsistentValues - Failed to remove presented view controller\n");
+            TestInvocation::dumpWebProcessUnresponsiveness("TestController::platformResetStateToConsistentValues - Failed to remove presented view controller\n");
             return false;
         }
     }

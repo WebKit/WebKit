@@ -416,7 +416,7 @@ private:
         int* jumpTarget;
     };
 
-    struct ConstantMapHashTraits : WTF::GenericHashTraits<EncodedJSValue> {
+    struct ConstantMapHashTraits : HashTraits<EncodedJSValue> {
         static constexpr bool emptyValueIsZero = true;
         static void constructDeletedValue(EncodedJSValue& slot) { slot = JSValue::encode(jsNull()); }
         static bool isDeletedValue(EncodedJSValue value) { return value == JSValue::encode(jsNull()); }

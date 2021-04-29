@@ -154,7 +154,7 @@ private:
     size_t m_elementSize;
     std::array<AbstractHeap, 16> m_smallIndices;
     
-    struct WithoutZeroOrOneHashTraits : WTF::GenericHashTraits<ptrdiff_t> {
+    struct WithoutZeroOrOneHashTraits : HashTraits<ptrdiff_t> {
         static void constructDeletedValue(ptrdiff_t& slot) { slot = 1; }
         static bool isDeletedValue(ptrdiff_t value) { return value == 1; }
     };

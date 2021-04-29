@@ -147,7 +147,7 @@ public:
             }
 
             if (!tierUpCandidates.isEmpty())
-                m_graph.m_plan.tierUpInLoopHierarchy().add(entry.key, WTFMove(tierUpCandidates));
+                m_graph.m_plan.tierUpInLoopHierarchy().add(entry.key, tierUpCandidates);
         }
         m_graph.m_plan.setWillTryToTierUp(true);
         return true;

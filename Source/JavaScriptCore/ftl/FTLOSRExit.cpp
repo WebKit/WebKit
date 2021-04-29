@@ -86,9 +86,9 @@ Ref<OSRExitHandle> OSRExitDescriptor::prepareOSRExitHandle(
     OSRExit& exit = state.jitCode->osrExit.alloc(
         this, exitKind, nodeOrigin.forExit, nodeOrigin.semantic, nodeOrigin.wasHoisted, dfgNodeIndex);
     Ref<OSRExitHandle> handle = adoptRef(*new OSRExitHandle(index, exit));
-    for (unsigned i = offset; i < params.size(); ++i)
-        exit.m_valueReps.append(params[i]);
-    exit.m_valueReps.shrinkToFit();
+    exit.m_valueReps = FixedVector<B3::ValueRep>(params.size() - offset);
+    for (unsigned i = offset, indexInValueReps = 0; i < params.size(); ++i, ++indexInValueReps)
+        exit.m_valueReps[indexInValueReps] = params[i];
     return handle;
 }
 

@@ -151,7 +151,6 @@ public:
     void setSelectedRows(AccessibilityChildrenVector&) override;
     AccessibilityOrientation orientation() const override;
 
-    void textChanged() override;
     void addChildren() override;
     bool canHaveChildren() const override;
     bool canHaveSelectedChildren() const override;

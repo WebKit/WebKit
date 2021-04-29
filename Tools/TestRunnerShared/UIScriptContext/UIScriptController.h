@@ -176,6 +176,18 @@ public:
         return false;
     }
 
+    virtual bool isAnimatingDragCancel() const
+    {
+        notImplemented();
+        return false;
+    }
+
+    virtual JSObjectRef tapHighlightViewRect() const
+    {
+        notImplemented();
+        return nullptr;
+    }
+
     virtual void rawKeyDown(JSStringRef) { notImplemented(); }
     virtual void rawKeyUp(JSStringRef) { notImplemented(); }
 

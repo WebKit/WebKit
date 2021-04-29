@@ -91,6 +91,19 @@ class Rewriter : public TIntermRebuild
         : TIntermRebuild(compiler, false, true), mSymbolEnv(symbolEnv)
     {}
 
+    static bool argAlreadyProcessed(TIntermTyped *arg)
+    {
+        if (arg->getAsAggregate())
+        {
+            const TFunction *func = arg->getAsAggregate()->getFunction();
+            if (func && func->symbolType() == SymbolType::AngleInternal && func->name() == "swizzle_ref")
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     PostResult visitAggregatePost(TIntermAggregate &aggregateNode) override
     {
         ASSERT(mVarBuffer.empty());
@@ -161,25 +174,28 @@ class Rewriter : public TIntermRebuild
             {
                 TIntermTyped *arg = args[i]->getAsTyped();
                 ASSERT(arg);
-                const TVariable *var       = GetVariable(*arg);
-                const TQualifier paramQual = getParamQualifier(i);
-
-                if (hasIndeterminateVar || mVarBuffer.multiplicity(var) > 1)
+                if (!argAlreadyProcessed(arg))
                 {
-                    switch (paramQual)
+                    const TVariable *var       = GetVariable(*arg);
+                    const TQualifier paramQual = getParamQualifier(i);
+
+                    if (hasIndeterminateVar || mVarBuffer.multiplicity(var) > 1)
                     {
-                        case TQualifier::EvqOut:
-                            args[i] = &mSymbolEnv.callFunctionOverload(Name("out"), arg->getType(),
-                                                                       *new TIntermSequence{arg});
-                            break;
+                        switch (paramQual)
+                        {
+                            case TQualifier::EvqOut:
+                                args[i] = &mSymbolEnv.callFunctionOverload(Name("out"), arg->getType(),
+                                                                           *new TIntermSequence{arg});
+                                break;
 
-                        case TQualifier::EvqInOut:
-                            args[i] = &mSymbolEnv.callFunctionOverload(
-                                Name("inout"), arg->getType(), *new TIntermSequence{arg});
-                            break;
+                            case TQualifier::EvqInOut:
+                                args[i] = &mSymbolEnv.callFunctionOverload(
+                                    Name("inout"), arg->getType(), *new TIntermSequence{arg});
+                                break;
 
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }

@@ -1,3 +1,57 @@
+2021-04-09  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update to libsoup 2.99.3
+        https://bugs.webkit.org/show_bug.cgi?id=224361
+
+        Reviewed by Carlos Garcia Campos.
+
+        * elements/sdk/libsoup3.bst:
+
+2021-04-07  Lauro Moura  <lmoura@igalia.com>
+
+        [Flatpak SDK] Bump GTK4 to 4.2
+        https://bugs.webkit.org/show_bug.cgi?id=224263
+
+        Reviewed by Carlos Garcia Campos.
+
+        * elements/sdk/gtk.bst: Bump and remove merged patch.
+        * patches/gtk-clipboard-Fix-a-crash-when-GdkContentProviderUnion-d.patch: Removed.
+
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Enable high bit depth in libvpx
+        https://bugs.webkit.org/show_bug.cgi?id=224049
+
+        Reviewed by Adrian Perez de Castro.
+
+        10 and 12-bit formats are needed for profile 2 and 3 VP9 decoding.
+
+        * elements/freedesktop-sdk.bst:
+        * patches/fdo-0001-libvpx-Enable-high-bit-depth-support.patch: Added.
+
+2021-04-05  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update dav1d and libavif
+        https://bugs.webkit.org/show_bug.cgi?id=224177
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/freedesktop-sdk.bst: Update dav1d to version 0.8.2.
+        * elements/sdk/libavif.bst: Update to version 0.9.0.
+        * patches/fdo-0001-dav1d-Bump-to-version-0.8.2.patch: Added.
+
+2021-04-05  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Backport GStreamer fakeaudiosink
+        https://bugs.webkit.org/show_bug.cgi?id=224053
+
+        Reviewed by Adrian Perez de Castro.
+
+        This audio sink will be used for the media layout and API tests.
+        
+        * elements/sdk/gst-plugins-bad.bst:
+        * patches/gst-plugins-bad-0001-debugutils-Add-fakeaudiosink-element.patch: Added.
+
 2021-03-27  Lauro Moura  <lmoura@igalia.com>
 
         [Flatpak SDK] Backport GTK4 Clipboard fix for GdkContentProviderUnion

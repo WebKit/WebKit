@@ -400,8 +400,34 @@ inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNodePreservingChil
     }
 }
 
+inline void ReplaceSelectionCommand::InsertedNodes::willRemovePossibleAncestorNode(Node* node)
+{
+    bool containsFirstNode = node->contains(m_firstNodeInserted.get());
+    bool containsLastNode = node->contains(m_lastNodeInserted.get());
+    if (containsFirstNode && containsLastNode) {
+        m_firstNodeInserted = nullptr;
+        m_lastNodeInserted = nullptr;
+        return;
+    }
+
+    if (containsLastNode)
+        m_lastNodeInserted = NodeTraversal::previousSkippingChildren(*node);
+    else if (containsFirstNode)
+        m_firstNodeInserted = NodeTraversal::nextSkippingChildren(*node);
+
+    if (!m_lastNodeInserted)
+        m_lastNodeInserted = m_firstNodeInserted;
+    else if (!m_firstNodeInserted)
+        m_firstNodeInserted = m_lastNodeInserted;
+    else if (m_firstNodeInserted->isDescendantOf(m_lastNodeInserted.get()))
+        std::swap(m_firstNodeInserted, m_lastNodeInserted);
+}
+
 inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
 {
+    ASSERT(!m_firstNodeInserted || !m_firstNodeInserted->isDescendantOf(node));
+    ASSERT(!m_lastNodeInserted || !m_lastNodeInserted->isDescendantOf(node));
+
     if (m_firstNodeInserted == node && m_lastNodeInserted == node) {
         m_firstNodeInserted = nullptr;
         m_lastNodeInserted = nullptr;
@@ -1303,10 +1329,13 @@ void ReplaceSelectionCommand::doApply()
         removeNode(*endBR);
         document().updateLayoutIgnorePendingStylesheets();
         if (auto nodeToRemove = makeRefPtr(highestNodeToRemoveInPruning(parent.get()))) {
-            insertedNodes.willRemoveNode(nodeToRemove.get());
+            insertedNodes.willRemovePossibleAncestorNode(nodeToRemove.get());
             removeNode(*nodeToRemove);
         }
     }
+
+    if (insertedNodes.isEmpty())
+        return;
 
     makeInsertedContentRoundTrippableWithHTMLTreeBuilder(insertedNodes);
     if (insertedNodes.isEmpty())

@@ -1104,8 +1104,6 @@ webkit.org/b/192045 css3/filters/blur-filter-page-scroll-parents.html
 webkit.org/b/192045 css3/filters/blur-filter-page-scroll-self.html
 webkit.org/b/192045 css3/filters/blur-filter-page-scroll.html
 
-webkit.org/b/159379 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Failure ]
-
 webkit.org/b/159840 http/tests/cache/disk-cache/disk-cache-request-max-stale.html [ Pass Timeout ]
 
 webkit.org/b/159881 [ Release ] fast/shapes/shape-outside-floats/shape-outside-big-box-border-radius-002.html [ Pass ImageOnlyFailure ]
@@ -1317,8 +1315,6 @@ webkit.org/b/206630 [ Debug ] fast/forms/validationMessage.html [ Pass Timeout ]
 webkit.org/b/206687 imported/w3c/web-platform-tests/beacon/idlharness.any.html [ Pass Timeout ]
 
 webkit.org/b/207156 [ Release ] http/tests/websocket/tests/hybi/workers/close.html [ Pass Failure ]
-
-webkit.org/b/206627 storage/websql [ Skip ]
 
 webkit.org/b/207386 imported/w3c/web-platform-tests/css/css-transitions/properties-value-002.html [ Pass Failure ]
 
@@ -1724,8 +1720,6 @@ imported/w3c/web-platform-tests/html/canvas/element/building-paths/canvas_comple
 
 webkit.org/b/209446 imported/w3c/web-platform-tests/navigation-timing/test_timing_attributes_order.html [ Pass Failure ]
 
-webkit.org/b/209450 [ Debug ] fast/text/control-characters/visible-control-characters-1.html [ Pass ImageOnlyFailure Crash ]
-
 webkit.org/b/209512 http/tests/cache/disk-cache/disk-cache-vary-cookie-private.html [ Pass Timeout ]
 
 webkit.org/b/209520 http/wpt/fetch/dnt-header-after-redirection.html [ Pass Timeout ]
@@ -1739,8 +1733,6 @@ webkit.org/b/209908 svg/custom/animate-initial-pause-unpause.html [ Pass Timeout
 webkit.org/b/206750 http/tests/security/appcache-in-private-browsing.html [ Pass Timeout ]
 
 webkit.org/b/210201 [ Debug ] editing/editability/empty-document-delete.html [ Pass Crash ]
-
-webkit.org/b/210205 [ Debug ] fast/text/firstline/001.html [ Pass Crash ]
 
 webkit.org/b/210219 [ Debug ] http/tests/IndexedDB/collect-IDB-objects.https.html [ Pass Crash ]
 
@@ -1769,8 +1761,6 @@ webkit.org/b/214084 webrtc/libwebrtc/descriptionGetters.html [ Pass Failure ]
 
 webkit.org/b/214322 [ Debug ] http/tests/workers/worker-importScripts-banned-mimetype.html [ Pass Crash ]
 
-webkit.org/b/214363 [ Debug ] fast/text-indicator/text-indicator-empty-link.html [ Pass Crash ]
-
 webkit.org/b/214382 [ Release ] imported/w3c/web-platform-tests/websockets/remove-own-iframe-during-onerror.window.html [ Pass Failure ]
 
 webkit.org/b/214468 imported/w3c/web-platform-tests/css/css-backgrounds/background-position-subpixel-at-border.tentative.html [ ImageOnlyFailure ]
@@ -1795,6 +1785,9 @@ webkit.org/b/214598 fast/scrolling/ios/autoscroll-input-when-very-zoomed.html [ 
 
 http/tests/in-app-browser-privacy/ [ Pass ]
 
+# Some In-App Browser Privacy tests rely on functions in WebKitAdditions.
+http/tests/in-app-browser-privacy/context-string-for-subframe.html [ Skip ]
+
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 
 webkit.org/b/215110 [ Release ] imported/w3c/web-platform-tests/css/css-animations/webkit-writing-mode-crash.html [ Pass Failure ]
@@ -1808,8 +1801,6 @@ webkit.org/b/215185 [ Release ] imported/w3c/web-platform-tests/IndexedDB/struct
 webkit.org/b/215192 imported/w3c/web-platform-tests/preload/single-download-preload.html [ Pass Failure ]
 
 webkit.org/b/215204 imported/w3c/web-platform-tests/svg/import/linking-a-10-f-manual.svg [ Pass Failure ]
-
-webkit.org/b/215226 [ Debug ] fast/text/basic/001.html [ Pass Crash ]
 
 webkit.org/b/215268 http/wpt/resource-timing/rt-revalidate-requests-3.html [ Pass Failure ]
 

@@ -1300,6 +1300,7 @@ void GraphicsContext::addDestinationAtPoint(const String&, const FloatPoint&)
 
 #endif
 
+#if ENABLE(VIDEO)
 void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& destination)
 {
     if (paintingDisabled())
@@ -1312,5 +1313,6 @@ void GraphicsContext::paintFrameForMedia(MediaPlayer& player, const FloatRect& d
 
     player.playerPrivate()->paintCurrentFrameInContext(*this, destination);
 }
+#endif
 
 }

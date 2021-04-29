@@ -169,6 +169,18 @@ class CheckOutSpecificRevision(shell.ShellCommand):
         return shell.ShellCommand.start(self)
 
 
+class GitResetHard(shell.ShellCommand):
+    name = 'git-reset-hard'
+    descriptionDone = ['Performed git reset --hard']
+
+    def __init__(self, **kwargs):
+        super(GitResetHard, self).__init__(logEnviron=False, **kwargs)
+
+    def start(self):
+        self.setCommand(['git', 'reset', 'HEAD~10', '--hard'])
+        return shell.ShellCommand.start(self)
+
+
 class FetchBranches(shell.ShellCommand):
     name = 'fetch-branch-references'
     descriptionDone = ['Updated branch information']
@@ -560,7 +572,11 @@ class BugzillaMixin(object):
         patch = self.fetch_data_from_url_with_authentication(patch_url)
         if not patch:
             return None
-        patch_json = patch.json().get('attachments')
+        try:
+            patch_json = patch.json().get('attachments')
+        except Exception as e:
+            print('Failed to fetch patch json from {}, error: {}'.format(patch_url, e))
+            return None
         if not patch_json or len(patch_json) == 0:
             return None
         return patch_json.get(str(patch_id))
@@ -570,7 +586,11 @@ class BugzillaMixin(object):
         bug = self.fetch_data_from_url_with_authentication(bug_url)
         if not bug:
             return None
-        bugs_json = bug.json().get('bugs')
+        try:
+            bugs_json = bug.json().get('bugs')
+        except Exception as e:
+            print('Failed to fetch bug json from {}, error: {}'.format(bug_url, e))
+            return None
         if not bugs_json or len(bugs_json) == 0:
             return None
         return bugs_json[0]
@@ -1575,6 +1595,10 @@ class CompileWebKit(shell.Compile):
     def getResultSummary(self):
         if self.results == FAILURE:
             return {'step': 'Failed to compile WebKit'}
+        if self.results == SKIPPED:
+            if self.getProperty('fast_commit_queue'):
+                return {'step': 'Skipped compiling WebKit in fast-cq mode'}
+            return {'step': 'Skipped compiling WebKit'}
         return shell.Compile.getResultSummary(self)
 
 
@@ -3260,17 +3284,18 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
         if rc == SUCCESS:
             log_text = self.log_observer.getStdout() + self.log_observer.getStderr()
             svn_revision = self.svn_revision_from_commit_text(log_text)
-            self.setProperty('bugzilla_comment_text', self.comment_text_for_bug(svn_revision))
-            commit_summary = 'Committed r{}'.format(svn_revision)
+            identifier = self.identifier_for_revision(svn_revision)
+            self.setProperty('bugzilla_comment_text', self.comment_text_for_bug(svn_revision, identifier))
+            commit_summary = 'Committed {}'.format(identifier)
             self.descriptionDone = commit_summary
-            self.setProperty('build_summary', 'Committed r{}'.format(svn_revision))
+            self.setProperty('build_summary', commit_summary)
             self.build.addStepsAfterCurrentStep([CommentOnBug(), RemoveFlagsOnPatch(), CloseBug()])
-            self.addURL('r{}'.format(svn_revision), self.url_for_revision(svn_revision))
+            self.addURL(identifier, self.url_for_identifier(identifier))
         else:
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
                 self.setProperty('retry_count', retry_count + 1)
-                self.build.addStepsAfterCurrentStep([CheckOutSource(), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
+                self.build.addStepsAfterCurrentStep([GitResetHard(), CheckOutSource(), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
                 return rc
 
             self.setProperty('bugzilla_comment_text', self.comment_text_for_bug())
@@ -3278,16 +3303,33 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             self.build.addStepsAfterCurrentStep([CommentOnBug(), SetCommitQueueMinusFlagOnPatch()])
         return rc
 
-    def url_for_revision(self, revision):
-        return 'https://commits.webkit.org/r{}'.format(revision)
+    def url_for_revision_details(self, revision):
+        return '{}r{}/json'.format(COMMITS_INFO_URL, revision)
 
-    def comment_text_for_bug(self, svn_revision=None):
+    def url_for_identifier(self, identifier):
+        return '{}{}'.format(COMMITS_INFO_URL, identifier)
+
+    def identifier_for_revision(self, revision):
+        try:
+            response = requests.get(self.url_for_revision_details(revision), timeout=60)
+            if response and response.status_code == 200:
+                return response.json().get('identifier', 'r{}'.format(revision))
+            else:
+                print('Non-200 status code received from {}: {}'.format(COMMITS_INFO_URL, response.status_code))
+                print(response.text)
+        except Exception as e:
+            print(e)
+        return 'r{}'.format(revision)
+
+    def comment_text_for_bug(self, svn_revision=None, identifier=None):
         patch_id = self.getProperty('patch_id', '')
         if not svn_revision:
             comment = 'commit-queue failed to commit attachment {} to WebKit repository.'.format(patch_id)
             comment += ' To retry, please set cq+ flag again.'
             return comment
-        comment = 'Committed r{}: <{}>'.format(svn_revision, self.url_for_revision(svn_revision))
+
+        identifier_str = identifier if identifier and '@' in identifier else '?'
+        comment = 'Committed r{} ({}): <{}>'.format(svn_revision, identifier_str, self.url_for_identifier(identifier))
         comment += '\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment {}.'.format(patch_id)
         return comment
 

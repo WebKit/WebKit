@@ -1,7 +1,7 @@
 prefix=@CMAKE_BINARY_DIR@
 exec_prefix=${prefix}
 libdir=${prefix}/lib
-includedir=${prefix}/DerivedSources
+includedir=${prefix}
 
 Name: WPE WebKit
 Description: Embeddable Web content engine
@@ -9,4 +9,4 @@ URL: https://wpewebkit.org
 Version: @PROJECT_VERSION@
 Requires: glib-2.0 libsoup-@SOUP_API_VERSION@ wpe-1.0
 Libs: -L${libdir} -lWPEWebKit-@WPE_API_VERSION@
-Cflags: -I${includedir}/ForwardingHeaders/wpe -I${includedir}/WebKit/ -I${includedir}/ForwardingHeaders/wpe-jsc -I${includedir}/JavaScriptCore/javascriptcorewpe/
+Cflags: -I${includedir}/DerivedSources/ForwardingHeaders/wpe -I${includedir}/DerivedSources/WebKit/ -I${includedir}/DerivedSources/ForwardingHeaders/wpe-jsc -I${includedir}/JavaScriptCore/DerivedSources/javascriptcorewpe/

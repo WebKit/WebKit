@@ -125,7 +125,7 @@ void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines()
         }
         routine.routine->deleteFromGC();
     }
-    m_routines.shrink(dstIndex);
+    m_routines.shrinkCapacity(dstIndex);
 }
 
 template<typename Visitor>

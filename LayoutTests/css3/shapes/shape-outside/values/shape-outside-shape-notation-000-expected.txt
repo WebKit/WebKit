@@ -1,6 +1,0 @@
-
-PASS No whitespace - inline
-PASS Extra whitespace - inline
-PASS No whitespace - computed
-PASS Extra whitespace - computed
-

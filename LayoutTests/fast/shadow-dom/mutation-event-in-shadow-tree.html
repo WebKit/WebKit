@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests mutating shadow tree inside execCommand. WebKit should not dispach DOM mutation events.');
+
+function mutationEventsWith(testFunction)
+{
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const shadowRoot = host.attachShadow({mode: 'closed'});
+    shadowRoot.innerHTML = '<div id="editor" contenteditable>hello <span></span>world</div>';
+    const editor = shadowRoot.getElementById('editor');
+    const iframe = shadowRoot.querySelector('span').appendChild(document.createElement('iframe'));
+
+    editor.focus();
+    document.execCommand('selectAll');
+
+    const events = [];
+    const eventTypes = ['DOMSubtreeModified', 'DOMNodeInserted', 'DOMNodeInsertedIntoDocument', 'DOMNodeRemoved', 'DOMNodeRemovedFromDocument', 'DOMCharacterDataModified'];
+    iframe.contentWindow.onunload = () => {
+        const div = document.createElement('div');
+        for (const type of eventTypes)
+            div.addEventListener(type, (event) => { events.push(event.type); }, {once: true});
+        testFunction(div);
+        shadowRoot.appendChild(div);
+    };
+
+    document.execCommand('delete', false, null);
+    host.remove();
+
+    return JSON.stringify(events);
+}
+
+shouldBeEqualToString(`mutationEventsWith((element) => element.setAttribute('class', 'foo'))`, `[]`);
+shouldBeEqualToString(`mutationEventsWith((element) => element.appendChild(document.createElement('span')))`, `[]`);
+shouldBeEqualToString(`mutationEventsWith((element) => { element.textContent = 'hello'; element.firstChild.appendData(' world') })`, `[]`);
+shouldBeEqualToString(`mutationEventsWith((element) => element.appendChild(element.appendChild(document.createElement('span'))))`, `[]`);
+
+</script>
+</body>
+</html>

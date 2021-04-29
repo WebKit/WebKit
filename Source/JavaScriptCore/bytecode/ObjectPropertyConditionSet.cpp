@@ -105,7 +105,7 @@ ObjectPropertyConditionSet ObjectPropertyConditionSet::mergedWith(
     Vector<ObjectPropertyCondition> result;
     
     if (!isEmpty())
-        result.appendVector(m_data->vector);
+        result.append(m_data->m_vector.begin(), m_data->m_vector.size());
     
     for (const ObjectPropertyCondition& newCondition : other) {
         bool foundMatch = false;
@@ -121,7 +121,7 @@ ObjectPropertyConditionSet ObjectPropertyConditionSet::mergedWith(
             result.append(newCondition);
     }
 
-    return create(result);
+    return create(WTFMove(result));
 }
 
 bool ObjectPropertyConditionSet::structuresEnsureValidity() const
@@ -175,7 +175,7 @@ void ObjectPropertyConditionSet::dumpInContext(PrintStream& out, DumpContext* co
     
     out.print("[");
     if (m_data)
-        out.print(listDumpInContext(m_data->vector, context));
+        out.print(listDumpInContext(m_data->m_vector, context));
     out.print("]");
 }
 
@@ -189,7 +189,7 @@ bool ObjectPropertyConditionSet::isValidAndWatchable() const
     if (!isValid())
         return false;
 
-    for (ObjectPropertyCondition condition : m_data->vector) {
+    for (auto& condition : m_data->m_vector) {
         if (!condition.isWatchable())
             return false;
     }
@@ -329,7 +329,7 @@ ObjectPropertyConditionSet generateConditions(
 
     if (ObjectPropertyConditionSetInternal::verbose)
         dataLog("Returning conditions: ", listDump(conditions), "\n");
-    return ObjectPropertyConditionSet::create(conditions);
+    return ObjectPropertyConditionSet::create(WTFMove(conditions));
 }
 
 } // anonymous namespace

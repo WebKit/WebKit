@@ -234,6 +234,7 @@
 #include <WebCore/SWClientConnection.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityPolicy.h>
+#include <WebCore/SelectionRestorationMode.h>
 #include <WebCore/SerializedScriptValue.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
@@ -376,6 +377,7 @@ static const Seconds pageScrollHysteresisDuration { 300_ms };
 static const Seconds initialLayerVolatilityTimerInterval { 20_ms };
 static const Seconds maximumLayerVolatilityTimerInterval { 2_s };
 
+#undef RELEASE_LOG_IF_ALLOWED
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
@@ -845,8 +847,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({
         m_canShowWhileLocked
     });
-    RELEASE_LOG_IF_ALLOWED(Process, "WebPage: Created context with ID %d for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
-    send(Messages::WebPageProxy::DidCreateContextForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
+    RELEASE_LOG_IF_ALLOWED(Process, "WebPage: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
+    send(Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -3652,7 +3654,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
 void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&& completionHandler)
 {
-    auto* webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame();
+    auto webFrame = makeRefPtr(frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame());
 
     if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
         auto& coreWorld = newWorld->coreWorld();
@@ -3660,7 +3662,7 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
             frame->loader().client().dispatchGlobalObjectAvailable(coreWorld);
     }
 
-    runJavaScript(webFrame, WTFMove(parameters), worldData.first, WTFMove(completionHandler));
+    runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, WTFMove(completionHandler));
 }
 
 void WebPage::getContentsAsString(ContentAsStringIncludesChildFrames includeChildFrames, CompletionHandler<void(const String&)>&& callback)
@@ -3826,8 +3828,7 @@ void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 bool WebPage::isParentProcessAWebBrowser() const
 {
 #if HAVE(AUDIT_TOKEN)
-    if (auto* connection = WebProcess::singleton().parentProcessConnection())
-        return isParentProcessAFullWebBrowser(connection->getAuditToken());
+    return isParentProcessAFullWebBrowser(WebProcess::singleton());
 #endif
     return false;
 }
@@ -3926,11 +3927,19 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     WebProcess::singleton().supplement<RemoteImageDecoderAVFManager>()->setUseGPUProcess(m_shouldPlayMediaInGPUProcess);
 #endif
     WebProcess::singleton().setUseGPUProcessForCanvasRendering(m_shouldRenderCanvasInGPUProcess);
-    WebProcess::singleton().setUseGPUProcessForDOMRendering(m_shouldRenderDOMInGPUProcess && DrawingArea::supportsGPUProcessRendering(m_drawingAreaType));
+    bool usingGPUProcessForDOMRendering = m_shouldRenderDOMInGPUProcess && DrawingArea::supportsGPUProcessRendering(m_drawingAreaType);
+    WebProcess::singleton().setUseGPUProcessForDOMRendering(usingGPUProcessForDOMRendering);
     WebProcess::singleton().setUseGPUProcessForMedia(m_shouldPlayMediaInGPUProcess);
 #if ENABLE(WEBGL)
     WebProcess::singleton().setUseGPUProcessForWebGL(m_shouldRenderWebGLInGPUProcess);
 #endif
+
+    // FIXME: This will no longer be needed once we use the GPUProcess for DOM rendering.
+    // For now, it is possible to use the GPUProcess for media playback only. Because media does not
+    // use the RemoteRenderingBackend, we need to force the creation of a RemoteRenderingBackend in
+    // the GPUProcess so that the page gets a visibility propagation view.
+    if (m_shouldPlayMediaInGPUProcess && !usingGPUProcessForDOMRendering)
+        ensureRemoteRenderingBackendProxy();
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -5094,6 +5103,8 @@ void WebPage::unfreezeLayerTreeDueToSwipeAnimation()
 
 void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 {
+    PrintContextAccessScope scope { *this };
+
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame)
         return;
@@ -5115,6 +5126,7 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
     freezeLayerTree(LayerTreeFreezeReason::Printing);
 
     auto computedPageSize = m_printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
+
     m_printContext->begin(computedPageSize.width(), computedPageSize.height());
 
     // PrintContext::begin() performed a synchronous layout which might have executed a
@@ -5136,6 +5148,18 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 
 void WebPage::endPrinting()
 {
+    if (m_inActivePrintContextAccessScope) {
+        m_shouldEndPrintingImmediately = true;
+        return;
+    }
+    endPrintingImmediately();
+}
+
+void WebPage::endPrintingImmediately()
+{
+    RELEASE_ASSERT(!m_inActivePrintContextAccessScope);
+    m_shouldEndPrintingImmediately = false;
+
     unfreezeLayerTree(LayerTreeFreezeReason::Printing);
 
     if (m_printContext) {
@@ -5146,6 +5170,7 @@ void WebPage::endPrinting()
 
 void WebPage::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& completionHandler)
 {
+    PrintContextAccessScope scope { *this };
     Vector<IntRect> resultPageRects;
     double resultTotalScaleFactorForPrinting = 1;
     auto computedPageMargin = printInfo.margin;
@@ -5160,6 +5185,7 @@ void WebPage::computePagesForPrintingImpl(FrameIdentifier frameID, const PrintIn
     beginPrinting(frameID, printInfo);
 
     if (m_printContext) {
+        PrintContextAccessScope scope { *this };
         resultPageRects = m_printContext->pageRects();
         computedPageMargin = m_printContext->computedPageMargin(printInfo.margin);
         auto computedPageSize = m_printContext->computedPageSize(FloatSize(printInfo.availablePaperWidth, printInfo.availablePaperHeight), printInfo.margin);
@@ -5206,6 +5232,7 @@ void WebPage::drawToPDF(FrameIdentifier frameID, const Optional<FloatRect>& rect
 
 void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
 {
+    PrintContextAccessScope scope { *this };
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
     Frame* coreFrame = frame ? frame->coreFrame() : 0;
 
@@ -5256,6 +5283,7 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
 
 void WebPage::drawPagesToPDF(FrameIdentifier frameID, const PrintInfo& printInfo, uint32_t first, uint32_t count, CompletionHandler<void(const IPC::DataReference&)>&& callback)
 {
+    PrintContextAccessScope scope { *this };
     RetainPtr<CFMutableDataRef> pdfPageData;
     drawPagesToPDFImpl(frameID, printInfo, first, count, pdfPageData);
     callback({ CFDataGetBytePtr(pdfPageData.get()), static_cast<size_t>(CFDataGetLength(pdfPageData.get())) });
@@ -6163,6 +6191,11 @@ void WebPage::didCommitLoad(WebFrame* frame)
     unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 
 #if ENABLE(IMAGE_EXTRACTION)
+    for (auto& [element, completionHandlers] : m_elementsPendingImageExtraction) {
+        for (auto& completionHandler : completionHandlers)
+            completionHandler({ });
+    }
+    m_elementsPendingImageExtraction.clear();
     m_elementsWithExtractedImages.clear();
 #endif
 
@@ -6194,6 +6227,9 @@ void WebPage::didCommitLoad(WebFrame* frame)
             scalePage(1, IntPoint());
     }
 
+#if PLATFORM(MAC)
+    m_didUpdateRenderingAfterCommittingLoad = false;
+#endif
 #if PLATFORM(IOS_FAMILY)
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_hasRestoredExposedContentRectAfterDidCommitLoad = false;
@@ -6725,6 +6761,7 @@ void WebPage::stopAllURLSchemeTasks()
 
 void WebPage::registerURLSchemeHandler(uint64_t handlerIdentifier, const String& scheme)
 {
+    RELEASE_LOG_IF_ALLOWED(Process, "registerURLSchemeHandler: Registered handler %" PRIu64 " for the '%s' scheme", handlerIdentifier, scheme.utf8().data());
     WebCore::LegacySchemeRegistry::registerURLSchemeAsHandledBySchemeHandler(scheme);
     WebCore::LegacySchemeRegistry::registerURLSchemeAsCORSEnabled(scheme);
     auto schemeResult = m_schemeToURLSchemeHandlerProxyMap.add(scheme, WebURLSchemeHandlerProxy::create(*this, handlerIdentifier));
@@ -7185,7 +7222,13 @@ void WebPage::textAutoSizingAdjustmentTimerFired()
 {
     m_page->recomputeTextAutoSizingInAllFrames();
 }
-#endif
+
+void WebPage::textAutosizingUsesIdempotentModeChanged()
+{
+    if (!m_page->settings().textAutosizingUsesIdempotentMode())
+        m_textAutoSizingAdjustmentTimer.stop();
+}
+#endif // ENABLE(TEXT_AUTOSIZING)
 
 void WebPage::setOverriddenMediaType(const String& mediaType)
 {
@@ -7232,36 +7275,99 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
 
 #if ENABLE(IMAGE_EXTRACTION)
 
-void WebPage::requestImageExtraction(WebCore::Element& element)
+void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& completion)
 {
-    if (!is<HTMLElement>(element))
+    if (!is<HTMLElement>(element)) {
+        if (completion)
+            completion({ });
         return;
+    }
 
-    if (m_elementsWithExtractedImages.contains(element))
+    if (m_elementsWithExtractedImages.contains(element)) {
+        if (completion) {
+            ASSERT(is<HTMLElement>(element));
+            RefPtr<Element> imageOverlayHost;
+            if (is<HTMLElement>(element) && downcast<HTMLElement>(element).hasImageOverlay())
+                imageOverlayHost = makeRefPtr(element);
+            completion(WTFMove(imageOverlayHost));
+        }
         return;
+    }
+
+    auto matchIndex = m_elementsPendingImageExtraction.findMatching([&] (auto& elementAndCompletionHandlers) {
+        return elementAndCompletionHandlers.first == &element;
+    });
+
+    if (matchIndex != notFound) {
+        if (completion)
+            m_elementsPendingImageExtraction[matchIndex].second.append(WTFMove(completion));
+        return;
+    }
 
     auto* renderer = element.renderer();
-    if (!is<RenderImage>(renderer))
+    if (!is<RenderImage>(renderer)) {
+        if (completion)
+            completion({ });
         return;
+    }
 
     auto& renderImage = downcast<RenderImage>(*renderer);
-
-    m_elementsWithExtractedImages.add(element);
-
     auto bitmap = createShareableBitmap(renderImage);
-    if (!bitmap)
+    if (!bitmap) {
+        if (completion)
+            completion({ });
         return;
+    }
 
     ShareableBitmap::Handle bitmapHandle;
     bitmap->createHandle(bitmapHandle);
-    if (bitmapHandle.isNull())
+    if (bitmapHandle.isNull()) {
+        if (completion)
+            completion({ });
         return;
+    }
+
+    Vector<CompletionHandler<void(RefPtr<Element>&&)>> completionHandlers;
+    if (completion)
+        completionHandlers.append(WTFMove(completion));
+    m_elementsPendingImageExtraction.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
 
     auto imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
+    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
+        auto protectedPage = makeRefPtr(webPage.get());
+        if (!protectedPage)
+            return;
 
-    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(imageURL), WTFMove(bitmapHandle)), [weakElement = makeWeakPtr(element)] (ImageExtractionResult&& result) {
-        if (auto element = weakElement.get(); is<HTMLElement>(element))
-            downcast<HTMLElement>(*element).updateWithImageExtractionResult(WTFMove(result));
+        protectedPage->m_elementsPendingImageExtraction.removeAllMatching([&] (auto& elementAndCompletionHandlers) {
+            auto& [element, completionHandlers] = elementAndCompletionHandlers;
+            if (element)
+                return false;
+
+            for (auto& completionHandler : completionHandlers)
+                completionHandler({ });
+            return true;
+        });
+
+        auto protectedElement = makeRefPtr(weakElement.get());
+        if (!protectedElement)
+            return;
+
+        auto& htmlElement = downcast<HTMLElement>(*protectedElement);
+        htmlElement.updateWithImageExtractionResult(WTFMove(result));
+        protectedPage->m_elementsWithExtractedImages.add(htmlElement);
+
+        auto matchIndex = protectedPage->m_elementsPendingImageExtraction.findMatching([&] (auto& elementAndCompletionHandlers) {
+            return elementAndCompletionHandlers.first == &htmlElement;
+        });
+
+        if (matchIndex == notFound)
+            return;
+
+        auto imageOverlayHost = htmlElement.hasImageOverlay() ? makeRefPtr(htmlElement) : nullptr;
+        for (auto& completionHandler : protectedPage->m_elementsPendingImageExtraction[matchIndex].second)
+            completionHandler(imageOverlayHost.copyRef());
+
+        protectedPage->m_elementsPendingImageExtraction.remove(matchIndex);
     });
 }
 
@@ -7325,7 +7431,7 @@ void WebPage::notifyPageOfAppBoundBehavior()
 RemoteRenderingBackendProxy& WebPage::ensureRemoteRenderingBackendProxy()
 {
     if (!m_remoteRenderingBackendProxy)
-        m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create();
+        m_remoteRenderingBackendProxy = RemoteRenderingBackendProxy::create(*this);
     return *m_remoteRenderingBackendProxy;
 }
 #endif

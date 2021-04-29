@@ -44,6 +44,7 @@
 #include "RenderBox.h"
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
+#include "SelectionRestorationMode.h"
 #include "Settings.h"
 #include "StyleTreeResolver.h"
 #include "ValidationMessage.h"

@@ -432,11 +432,16 @@ const LocaleSet& intlAvailableLocales()
 //     3. If an input is an ASCII string, no multiple character collation elements exist. So no special handling in UCA step-2 is required. For example, "L·" is not ASCII.
 //     4. UCA step-3 handles 0000 weighted characters specially. And ASCII contains these characters. But 0000 elements are used only for rare control characters.
 //        We can ignore this special handling if ASCII strings do not include control characters.
-//     5. Except 0000 cases, all characters' level-1 weights are different. And level-2 weights are always 0020, which is lower than any level-1 weights.
-//        This means that binary comparison in UCA step-4 do not need to check level 2~ weights.
+//     5. Level-1 weights are different except for 0000 cases and capital / lower ASCII characters. All non-0000 elements are larger than 0000.
+//     6. Level-2 weights are always 0020 except for 0000 cases. So if we include 0000 characters, we do not need to perform level-2 weight comparison.
+//     7. In all levels, characters have non-0000 weights if it does not have 0000 weight in level-1.
+//     8. In level-1, weights are the same only when characters are the same latin letters ('A' v.s. 'a'). If level-1 weight comparison says EQUAL, and if characters are not binary-equal,
+//        then, the only case is they are including the same latin letters with different capitalization at the same position. Level-3 weight comparison must distinguish them since level-3
+//        weight is set only for latin capital letters. Thus, we do not need to perform level-4 weight comparison.
 //
-//  Based on the above observation, our fast path handles ASCII strings excluding control characters. The following weight is recomputed weights from level-1 weights.
-const uint8_t ducetWeights[128] = {
+//  Based on the above observation, our fast path handles ASCII strings excluding control characters. We first compare strings with level-1 weights. And then,
+//  if we found they are the same and if we found they are not binary-equal strings, then we perform comparison with level-3 and level-4 weights.
+const uint8_t ducetLevel1Weights[128] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 2, 3, 4, 5, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -445,14 +450,35 @@ const uint8_t ducetWeights[128] = {
     17, 18, 24, 32, 9, 8, 14, 25,
     39, 40, 41, 42, 43, 44, 45, 46,
     47, 48, 11, 10, 33, 34, 35, 13,
-    23, 50, 52, 54, 56, 58, 60, 62,
-    64, 66, 68, 70, 72, 74, 76, 78,
-    80, 82, 84, 86, 88, 90, 92, 94,
-    96, 98, 100, 19, 26, 20, 31, 7,
-    30, 49, 51, 53, 55, 57, 59, 61,
-    63, 65, 67, 69, 71, 73, 75, 77,
-    79, 81, 83, 85, 87, 89, 91, 93,
-    95, 97, 99, 21, 36, 22, 37, 0,
+    23, 49, 50, 51, 52, 53, 54, 55,
+    56, 57, 58, 59, 60, 61, 62, 63,
+    64, 65, 66, 67, 68, 69, 70, 71,
+    72, 73, 74, 19, 26, 20, 31, 7,
+    30, 49, 50, 51, 52, 53, 54, 55,
+    56, 57, 58, 59, 60, 61, 62, 63,
+    64, 65, 66, 67, 68, 69, 70, 71,
+    72, 73, 74, 21, 36, 22, 37, 0,
+};
+
+// Level 2 are all zeros.
+
+const uint8_t ducetLevel3Weights[128] = {
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 const LocaleSet& intlCollatorAvailableLocales()

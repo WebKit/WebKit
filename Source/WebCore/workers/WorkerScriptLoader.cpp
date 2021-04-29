@@ -44,7 +44,10 @@
 
 namespace WebCore {
 
-WorkerScriptLoader::WorkerScriptLoader() = default;
+WorkerScriptLoader::WorkerScriptLoader()
+    : m_script(ScriptBuffer::empty())
+{
+}
 
 WorkerScriptLoader::~WorkerScriptLoader() = default;
 
@@ -61,7 +64,7 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
 
     if (isServiceWorkerGlobalScope) {
         if (auto* scriptResource = downcast<ServiceWorkerGlobalScope>(workerGlobalScope).scriptResource(url)) {
-            m_script.append(scriptResource->script.toString());
+            m_script = scriptResource->script;
             m_responseURL = scriptResource->responseURL;
             m_responseMIMEType = scriptResource->mimeType;
             return WTF::nullopt;
@@ -102,7 +105,7 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
         if (!MIMETypeRegistry::isSupportedJavaScriptMIMEType(responseMIMEType()))
             return Exception { NetworkError, "mime type is not a supported JavaScript mime type"_s };
 
-        downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { ScriptBuffer { script() }, m_responseURL, m_responseMIMEType });
+        downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
     }
 #endif
     return WTF::nullopt;
@@ -211,7 +214,7 @@ void WorkerScriptLoader::didReceiveData(const char* data, int len)
     
     if (len == -1)
         len = strlen(data);
-    
+
     m_script.append(m_decoder->decode(data, len));
 }
 
@@ -241,11 +244,6 @@ void WorkerScriptLoader::notifyError()
     if (m_error.isNull())
         m_error = ResourceError { errorDomainWebKitInternal, 0, url(), "Failed to load script", ResourceError::Type::General };
     notifyFinished();
-}
-
-String WorkerScriptLoader::script()
-{
-    return m_script.toString();
 }
 
 void WorkerScriptLoader::notifyFinished()

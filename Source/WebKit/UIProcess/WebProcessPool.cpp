@@ -356,7 +356,7 @@ WebProcessPool::~WebProcessPool()
 #endif
 
 #if ENABLE(GAMEPAD)
-    if (!m_processesUsingGamepads.isEmpty())
+    if (!m_processesUsingGamepads.computesEmpty())
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 #endif
 
@@ -376,6 +376,9 @@ WebProcessPool::~WebProcessPool()
 
         process->shutDown();
     }
+
+    if (processPools().isEmpty() && !!NetworkProcessProxy::defaultNetworkProcess())
+        NetworkProcessProxy::defaultNetworkProcess() = nullptr;
 }
 
 void WebProcessPool::initializeClient(const WKContextClientBase* client)
@@ -898,16 +901,17 @@ void WebProcessPool::prewarmProcess()
 void WebProcessPool::enableProcessTermination()
 {
     m_processTerminationEnabled = true;
+    // FIXME: m_processes should be Vector<Ref<WebProcessProxy>>
     Vector<RefPtr<WebProcessProxy>> processes = m_processes;
     for (size_t i = 0; i < processes.size(); ++i) {
-        if (shouldTerminate(processes[i].get()))
+        if (shouldTerminate(*processes[i]))
             processes[i]->terminate();
     }
 }
 
-bool WebProcessPool::shouldTerminate(WebProcessProxy* process)
+bool WebProcessPool::shouldTerminate(WebProcessProxy& process)
 {
-    ASSERT(m_processes.contains(process));
+    ASSERT(m_processes.contains(&process));
 
     if (!m_processTerminationEnabled || m_configuration->alwaysKeepAndReuseSwappedProcesses())
         return false;
@@ -944,39 +948,39 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
     m_connectionClient.didCreateConnection(this, process->webConnection());
 }
 
-void WebProcessPool::disconnectProcess(WebProcessProxy* process)
+void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 {
-    ASSERT(m_processes.contains(process));
+    ASSERT(m_processes.contains(&process));
 
-    if (m_prewarmedProcess == process) {
+    if (m_prewarmedProcess == &process) {
         ASSERT(m_prewarmedProcess->isPrewarmed());
         m_prewarmedProcess = nullptr;
-    } else if (process->isDummyProcessProxy()) {
-        auto removedProcess = m_dummyProcessProxies.take(process->sessionID());
-        ASSERT_UNUSED(removedProcess, removedProcess == process);
+    } else if (process.isDummyProcessProxy()) {
+        auto removedProcess = m_dummyProcessProxies.take(process.sessionID());
+        ASSERT_UNUSED(removedProcess, removedProcess == &process);
     }
 
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> Some of the invalidation calls of the other supplements are still necessary in multi-process mode, but they should only affect data structures pertaining to the process being disconnected.
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
-    RefPtr<WebProcessProxy> protect(process);
+    Ref<WebProcessProxy> protectedProcess(process);
 
-    m_backForwardCache->removeEntriesForProcess(*process);
+    m_backForwardCache->removeEntriesForProcess(process);
 
 #if ENABLE(SERVICE_WORKER)
-    if (process->isRunningServiceWorkers())
-        removeFromServiceWorkerProcesses(*process);
+    if (process.isRunningServiceWorkers())
+        removeFromServiceWorkerProcesses(process);
 #endif
 
-    static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(process);
+    static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(&process);
 
-    m_processes.removeFirst(process);
+    m_processes.removeFirst(&process);
 
 #if ENABLE(GAMEPAD)
     if (m_processesUsingGamepads.contains(process))
-        processStoppedUsingGamepads(*process);
+        processStoppedUsingGamepads(process);
 #endif
 
-    removeProcessFromOriginCacheSet(*process);
+    removeProcessFromOriginCacheSet(process);
 }
 
 Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, WebPageProxy* page, const RegistrableDomain& registrableDomain)
@@ -1592,9 +1596,9 @@ void WebProcessPool::startedUsingGamepads(IPC::Connection& connection)
     if (!proxy)
         return;
 
-    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.isEmpty();
+    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.computesEmpty();
 
-    ASSERT(!m_processesUsingGamepads.contains(proxy));
+    ASSERT(!m_processesUsingGamepads.contains(*proxy));
     m_processesUsingGamepads.add(proxy);
 
     if (!wereAnyProcessesUsingGamepads)
@@ -1609,31 +1613,31 @@ void WebProcessPool::stoppedUsingGamepads(IPC::Connection& connection)
     if (!proxy)
         return;
 
-    ASSERT(m_processesUsingGamepads.contains(proxy));
+    ASSERT(m_processesUsingGamepads.contains(*proxy));
     processStoppedUsingGamepads(*proxy);
 }
 
 void WebProcessPool::processStoppedUsingGamepads(WebProcessProxy& process)
 {
-    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.isEmpty();
+    bool wereAnyProcessesUsingGamepads = !m_processesUsingGamepads.computesEmpty();
 
-    ASSERT(m_processesUsingGamepads.contains(&process));
-    m_processesUsingGamepads.remove(&process);
+    ASSERT(m_processesUsingGamepads.contains(process));
+    m_processesUsingGamepads.remove(process);
 
-    if (wereAnyProcessesUsingGamepads && m_processesUsingGamepads.isEmpty())
+    if (wereAnyProcessesUsingGamepads && m_processesUsingGamepads.computesEmpty())
         UIGamepadProvider::singleton().processPoolStoppedUsingGamepads(*this);
 }
 
 void WebProcessPool::gamepadConnected(const UIGamepad& gamepad, EventMakesGamepadsVisible eventVisibility)
 {
     for (auto& process : m_processesUsingGamepads)
-        process->send(Messages::WebProcess::GamepadConnected(gamepad.gamepadData(), eventVisibility), 0);
+        process.send(Messages::WebProcess::GamepadConnected(gamepad.gamepadData(), eventVisibility), 0);
 }
 
 void WebProcessPool::gamepadDisconnected(const UIGamepad& gamepad)
 {
     for (auto& process : m_processesUsingGamepads)
-        process->send(Messages::WebProcess::GamepadDisconnected(gamepad.index()), 0);
+        process.send(Messages::WebProcess::GamepadDisconnected(gamepad.index()), 0);
 }
 
 #endif // ENABLE(GAMEPAD)

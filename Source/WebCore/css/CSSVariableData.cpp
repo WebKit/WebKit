@@ -75,6 +75,8 @@ CSSVariableData::CSSVariableData(const CSSParserTokenRange& range)
         updateTokens<LChar>(range);
     else
         updateTokens<UChar>(range);
+
+    m_tokens.shrinkToFit();
 }
 
 } // namespace WebCore

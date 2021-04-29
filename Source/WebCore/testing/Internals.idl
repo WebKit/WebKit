@@ -544,6 +544,10 @@ enum TreeType {
     undefined closeDummyInspectorFrontend();
     undefined setInspectorIsUnderTest(boolean isUnderTest);
 
+    // BaseAudioContext lifetime testing.
+    [Conditional=WEB_AUDIO] unsigned long long baseAudioContextIdentifier(BaseAudioContext context);
+    [Conditional=WEB_AUDIO] boolean isBaseAudioContextAlive(unsigned long long contextID);
+
     DOMString counterValue(Element element);
     long pageNumber(Element element, optional unrestricted float pageWidth = 800, optional unrestricted float pageHeight = 600);
     sequence<DOMString> shortcutIconURLs();
@@ -825,6 +829,7 @@ enum TreeType {
     [Conditional=WEB_RTC] undefined setWebRTCH265Support(boolean allowed);
     [Conditional=WEB_RTC] undefined setWebRTCVP9Support(boolean supportVP9Profile0, boolean supportVP9Profile2);
     [Conditional=WEB_RTC] undefined setWebRTCVP9VTBSupport(boolean allowed);
+    [Conditional=WEB_RTC] undefined setSFrameCounter(RTCRtpSFrameTransform transform, DOMString counter);
     [Conditional=WEB_RTC] unsigned long long sframeCounter(RTCRtpSFrameTransform transform);
     [Conditional=WEB_RTC] unsigned long long sframeKeyId(RTCRtpSFrameTransform transform);
 
@@ -903,7 +908,7 @@ enum TreeType {
 
     [Conditional=VIDEO] readonly attribute NowPlayingState nowPlayingState;
 
-    [Conditional=VIDEO] HTMLMediaElement bestMediaElementForShowingPlaybackControlsManager(PlaybackControlsPurpose purpose);
+    [Conditional=VIDEO] HTMLMediaElement bestMediaElementForRemoteControls(PlaybackControlsPurpose purpose);
     [Conditional=VIDEO] MediaSessionState mediaSessionState(HTMLMediaElement element);
 
     [Conditional=VIDEO] MediaUsageState mediaUsageState(HTMLMediaElement element);

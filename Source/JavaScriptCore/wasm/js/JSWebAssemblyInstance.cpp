@@ -84,8 +84,8 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_codeBlock);
     visitor.append(thisObject->m_moduleRecord);
     visitor.append(thisObject->m_memory);
-    for (unsigned i = 0; i < thisObject->instance().module().moduleInformation().tableCount(); ++i)
-        visitor.append(thisObject->m_tables[i]);
+    for (auto& table : thisObject->m_tables)
+        visitor.append(table);
     visitor.reportExtraMemoryVisited(thisObject->m_instance->extraMemoryAllocated());
     for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)
         visitor.append(*thisObject->instance().importFunction<WriteBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.

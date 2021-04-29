@@ -27,50 +27,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import attr
+
+
+@attr.s(frozen=True)
 class Test(object):
     """Data about a test and its expectations.
 
     Note that this is inherently platform specific, as expectations are platform specific."""
-
-    def __init__(
-        self,
-        test_path,
-        expected_text_path=None,
-        expected_image_path=None,
-        expected_checksum_path=None,
-        expected_audio_path=None,
-        reference_files=None,
-    ):
-        self.test_path = test_path
-        self.expected_text_path = expected_text_path
-        self.expected_image_path = expected_image_path
-        self.expected_checksum_path = expected_checksum_path
-        self.expected_audio_path = expected_audio_path
-        self.reference_files = reference_files
-
-    def __repr__(self):
-        return (
-            "Test(%r, "
-            "expected_text_path=%r, "
-            "expected_image_path=%r, "
-            "expected_checksum_path=%r, "
-            "expected_audio_path=%r, "
-            "reference_files=%r)"
-        ) % (
-            self.test_path,
-            self.expected_text_path,
-            self.expected_image_path,
-            self.expected_checksum_path,
-            self.expected_audio_path,
-            self.reference_files,
-        )
-
-    def __eq__(self, other):
-        return (
-            self.test_path == other.test_path
-            and self.expected_text_path == other.expected_text_path
-            and self.expected_image_path == other.expected_image_path
-            and self.expected_checksum_path == other.expected_checksum_path
-            and self.expected_audio_path == other.expected_audio_path
-            and self.reference_files == other.reference_files
-        )
+    test_path = attr.ib(type=str)
+    expected_text_path = attr.ib(default=None, type=str)
+    expected_image_path = attr.ib(default=None, type=str)
+    expected_checksum_path = attr.ib(default=None, type=str)
+    expected_audio_path = attr.ib(default=None, type=str)
+    reference_files = attr.ib(default=None, type=list)

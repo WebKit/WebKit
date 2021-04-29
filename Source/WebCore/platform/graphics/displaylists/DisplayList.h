@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,8 @@ public:
     WEBCORE_EXPORT void setItemBufferWritingClient(ItemBufferWritingClient*);
     WEBCORE_EXPORT void prepareToAppend(ItemBufferHandle&&);
 
+    void shrinkToFit();
+
 #if !defined(NDEBUG) || !LOG_DISABLED
     WTF::CString description() const;
     WEBCORE_EXPORT void dump() const;
@@ -118,18 +120,20 @@ public:
         void operator++() { advance(); }
 
         struct Value {
-            Optional<ItemHandle> item;
+            ItemHandle item;
             Optional<FloatRect> extent;
             size_t itemSizeInBuffer { 0 };
         };
 
-        Value operator*() const
+        Optional<Value> operator*() const
         {
-            return {
-                m_isValid ? makeOptional(ItemHandle { m_currentBufferForItem }) : WTF::nullopt,
+            if (!m_isValid)
+                return WTF::nullopt;
+            return {{
+                ItemHandle { m_currentBufferForItem },
                 m_currentExtent,
                 m_currentItemSizeInBuffer,
-            };
+            }};
         }
 
     private:

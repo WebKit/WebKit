@@ -113,6 +113,10 @@ private:
         GRefPtr<GInputStream> m_memoryStream;
         GRefPtr<GstElement> m_decodebin;
         RunLoop& m_runLoop;
+
+        Condition m_messageCondition;
+        Lock m_messageLock;
+        bool m_messageDispatched { false };
     };
 
     void handleSample(GRefPtr<GstSample>&&);

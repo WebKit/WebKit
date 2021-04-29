@@ -260,7 +260,7 @@ WebProcessProxy::~WebProcessProxy()
         WebCore::enableSuddenTermination();
 
 #if PLATFORM(MAC)
-    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(this);
+    HighPerformanceGPUManager::singleton().removeProcessRequiringHighPerformance(*this);
 #endif
 
     platformDestroy();
@@ -480,7 +480,7 @@ void WebProcessProxy::shutDown()
     m_routingArbitrator->processDidTerminate();
 #endif
 
-    m_processPool->disconnectProcess(this);
+    m_processPool->disconnectProcess(*this);
 }
 
 WebPageProxy* WebProcessProxy::webPage(WebPageProxyIdentifier pageID)
@@ -845,9 +845,14 @@ bool WebProcessProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::De
     return false;
 }
 
-void WebProcessProxy::didClose(IPC::Connection&)
+void WebProcessProxy::didClose(IPC::Connection& connection)
 {
+#if OS(DARWIN)
+    RELEASE_LOG_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy didClose (web process %d crash)", this, connection.remoteProcessID());
+#else
     RELEASE_LOG_IF(isReleaseLoggingAllowed(), Process, "%p - WebProcessProxy didClose (web process crash)", this);
+#endif
+
     processDidTerminateOrFailedToLaunch(ProcessTerminationReason::Crash);
 }
 
@@ -1144,7 +1149,7 @@ void WebProcessProxy::maybeShutDown()
 {
     if (isDummyProcessProxy() && m_pageMap.isEmpty()) {
         ASSERT(state() == State::Terminated);
-        m_processPool->disconnectProcess(this);
+        m_processPool->disconnectProcess(*this);
         return;
     }
 
@@ -1165,7 +1170,7 @@ bool WebProcessProxy::canTerminateAuxiliaryProcess()
     if (isRunningServiceWorkers())
         return false;
 
-    if (!m_processPool->shouldTerminate(this))
+    if (!m_processPool->shouldTerminate(*this))
         return false;
 
     return true;
@@ -1951,14 +1956,6 @@ void WebProcessProxy::enableServiceWorkers(const UserContentControllerIdentifier
     updateServiceWorkerProcessAssertion();
 #endif
 }
-
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-void WebProcessProxy::didCreateContextInGPUProcessForVisibilityPropagation(LayerHostingContextID contextID)
-{
-    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
-        page->didCreateContextInGPUProcessForVisibilityPropagation(contextID);
-}
-#endif
 
 void WebProcessProxy::didCreateSleepDisabler(SleepDisablerIdentifier identifier, const String& reason, bool display)
 {

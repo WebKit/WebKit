@@ -338,8 +338,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
 
     if (hfont) {
         if (!familyName.isEmpty()) {
-            FontPlatformData* result = getCachedFontPlatformData(description, familyName);
-            if (result)
+            if (auto result = cachedFontPlatformData(description, familyName))
                 fontData = fontForPlatformData(*result);
         }
 

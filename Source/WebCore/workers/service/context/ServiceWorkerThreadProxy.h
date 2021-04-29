@@ -39,6 +39,7 @@
 #include "WorkerDebuggerProxy.h"
 #include "WorkerLoaderProxy.h"
 #include <wtf/HashMap.h>
+#include <wtf/URLHash.h>
 
 namespace WebCore {
 

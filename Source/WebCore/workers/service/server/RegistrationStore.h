@@ -34,6 +34,7 @@
 #include "Timer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>
+#include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

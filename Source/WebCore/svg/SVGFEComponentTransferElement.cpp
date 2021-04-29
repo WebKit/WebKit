@@ -86,7 +86,7 @@ RefPtr<FilterEffect> SVGFEComponentTransferElement::build(SVGFilterBuilder* filt
     }
     
     auto effect = FEComponentTransfer::create(filter, red, green, blue, alpha);
-    effect->inputEffects().append(input1);
+    effect->inputEffects() = { input1 };
     return effect;
 }
 

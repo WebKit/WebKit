@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2021 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@ import shutil
 import tempfile
 import unittest
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from webkitcorepy import OutputCapture
 from webkitscmpy import local, mocks, remote
 
@@ -263,7 +263,7 @@ class TestRemoteSvn(unittest.TestCase):
         with mocks.remote.Svn():
             self.assertDictEqual({
                 'Last Changed Author': 'jbedard@apple.com',
-                'Last Changed Date': datetime.fromtimestamp(1601665100).strftime('%Y-%m-%d %H:%M:%S'),
+                'Last Changed Date': datetime.utcfromtimestamp(1601665100 - timedelta(hours=7).seconds).strftime('%Y-%m-%d %H:%M:%S'),
                 'Last Changed Rev': '6',
                 'Revision': 10,
             }, remote.Svn(self.remote).info())

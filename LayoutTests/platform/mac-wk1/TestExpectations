@@ -266,6 +266,21 @@ webkit.org/b/152789 webarchive/adopt-attribute-styled-body-webarchive.html [ Pas
 
 webkit.org/b/155196 security/contentSecurityPolicy/video-with-blob-url-allowed-by-media-src-star.html [ Skip ]
 
+# <rdar://problem/23500327> storage/websql/alter-to-info-table.html
+storage/websql/alter-to-info-table.html [ Pass Failure ]
+
+# FIXME: Needs bugzilla (<rdar://problem/18273139>)
+storage/websql/sql-error-codes.html [ Failure ]
+
+# <rdar://problem/52689856> storage/websql/test-authorizer.html is failing
+[ Catalina+ ] storage/websql/test-authorizer.html [ Failure ]
+
+# <rdar://problem/11187491> storage/websql/quota-tracking.html is failing on Mountain Lion
+storage/websql/quota-tracking.html
+
+webkit.org/b/173928 storage/websql/database-lock-after-reload.html [ Pass Failure ]
+webkit.org/b/194162 storage/websql/read-transactions-running-concurrently.html [ Pass Failure ]
+
 webkit.org/b/155067 storage/indexeddb/transaction-abort-private.html [ Pass Crash ]
 
 webkit.org/b/172092 [ Debug ] fast/parser/adoption-agency-unload-iframe-4.html [ Pass Timeout ]
@@ -875,6 +890,8 @@ webkit.org/b/206071 editing/spelling/retro-correction-spelling-markers.html [ Pa
 
 webkit.org/b/199117 [ Debug ] storage/indexeddb/modern/objectstore-autoincrement-types.html [ Timeout ]
 
+webkit.org/b/207010 fast/history/page-cache-webdatabase-pending-transaction.html [ Pass Timeout ]
+
 webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Failure Timeout ]
 
 webkit.org/b/206684 [ Debug ] inspector/heap/tracking.html [ Pass Failure ]
@@ -963,6 +980,7 @@ accessibility/aria-sort-changed-notification.html [ Skip ]
 accessibility/aria-sort.html [ Skip ]
 accessibility/mac/aria-details.html [ Skip ]
 accessibility/mac/aria-errormessage.html [ Skip ]
+accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 
 # <rdar://problem/61066929> [ Stress GC ] flaky JSC::ExceptionScope::assertNoException crash under WebCore::ReadableStreamDefaultController
 webkit.org/b/211923 imported/w3c/web-platform-tests/fetch/api/basic/stream-safe-creation.any.html [ Pass Crash ]
@@ -1022,8 +1040,6 @@ webkit.org/b/215392 webaudio/oscillator-sawtooth.html [ Pass Failure ]
 
 # This test is failing on WK1 only with a NotSupportedError.
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Failure ]
-
-webkit.org/b/215397 media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.html [ Pass Failure ]
 
 webkit.org/b/215452 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-percentage-paddings-002.html [ Pass Failure ]
 
@@ -1275,3 +1291,14 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/223904 Updating test expectations for 9 tests
+[ BigSur ] transforms/2d/preserve3d-not-fixed-container.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/scale-change-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/scale-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/translate-change-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/translate-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/hittest-translated-content-off-to-infinity-and-back.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/perspective-not-fixed-container.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/rotate-change-composited.html [ Pass ImageOnlyFailure ]
+[ BigSur ] transforms/2d/rotate-composited.html [ Pass ImageOnlyFailure ]

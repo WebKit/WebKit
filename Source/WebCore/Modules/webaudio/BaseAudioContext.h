@@ -107,15 +107,21 @@ public:
     using ThreadSafeRefCounted::ref;
     using ThreadSafeRefCounted::deref;
 
+    // This is used for lifetime testing.
+    WEBCORE_EXPORT static bool isContextAlive(uint64_t contextID);
+    uint64_t contextID() const { return m_contextID; }
+
     Document* document() const;
     bool isInitialized() const;
     
     bool isOfflineContext() const { return m_isOfflineContext; }
     virtual bool isWebKitAudioContext() const { return false; }
 
-    AudioDestinationNode* destination() { return m_destinationNode.get(); }
-    size_t currentSampleFrame() const { return m_destinationNode ? m_destinationNode->currentSampleFrame() : 0; }
-    double currentTime() const { return m_destinationNode ? m_destinationNode->currentTime() : 0.; }
+    AudioDestinationNode& destination() { return m_destinationNode.get(); }
+    const AudioDestinationNode& destination() const { return m_destinationNode.get(); }
+
+    size_t currentSampleFrame() const { return m_destinationNode->currentSampleFrame(); }
+    double currentTime() const { return m_destinationNode->currentTime(); }
     float sampleRate() const;
     unsigned long activeSourceCount() const { return static_cast<unsigned long>(m_activeSourceCount); }
 
@@ -296,11 +302,9 @@ protected:
     BaseAudioContext(Document&, IsLegacyWebKitAudioContext, unsigned numberOfChannels, float sampleRate, RefPtr<AudioBuffer>&& renderTarget);
     
     void clearPendingActivity();
-    void makePendingActivity();
+    void setPendingActivity();
 
     void lockInternal(bool& mustReleaseLock);
-
-    AudioDestinationNode* destinationNode() const { return m_destinationNode.get(); }
 
     virtual void uninitialize();
 
@@ -349,6 +353,8 @@ private:
     uint64_t m_nextAudioParameterIdentifier { 0 };
 #endif
 
+    uint64_t m_contextID;
+
     Ref<AudioWorklet> m_worklet;
 
     // Either accessed when the graph lock is held, or on the main thread when the audio thread has finished.
@@ -383,7 +389,7 @@ private:
     Vector<Vector<DOMPromiseDeferred<void>>> m_stateReactions;
 
     RefPtr<AudioBuffer> m_renderTarget;
-    RefPtr<AudioDestinationNode> m_destinationNode;
+    UniqueRef<AudioDestinationNode> m_destinationNode;
     Ref<AudioListener> m_listener;
 
     unsigned m_connectionCount { 0 };

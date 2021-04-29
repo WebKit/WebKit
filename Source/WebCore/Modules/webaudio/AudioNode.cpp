@@ -99,9 +99,17 @@ String convertEnumerationToString(AudioNode::NodeType enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
+auto AudioNode::toWeakOrStrongContext(BaseAudioContext& context, NodeType nodeType) -> WeakOrStrongContext
+{
+    // Destination nodes are owned by the BaseAudioContext so we use WeakPtr to avoid a retain cycle.
+    if (nodeType == AudioNode::NodeTypeDestination)
+        return makeWeakPtr(context, EnableWeakPtrThreadingAssertions::No); // WebAudio code uses locking when accessing the context.
+    return makeRef(context);
+}
+
 AudioNode::AudioNode(BaseAudioContext& context, NodeType type)
     : m_nodeType(type)
-    , m_context(context)
+    , m_context(toWeakOrStrongContext(context, type))
 #if !RELEASE_LOG_DISABLED
     , m_logger(context.logger())
     , m_logIdentifier(context.nextAudioNodeLogIdentifier())
@@ -215,7 +223,7 @@ ExceptionOr<void> AudioNode::connect(AudioParam& param, unsigned outputIndex)
     if (outputIndex >= numberOfOutputs())
         return Exception { IndexSizeError, "Output index exceeds number of outputs"_s };
 
-    if (&context() != &param.context())
+    if (&context() != param.context())
         return Exception { SyntaxError, "Node and AudioParam belong to different audio contexts"_s };
 
     auto* output = this->output(outputIndex);
@@ -367,7 +375,7 @@ ExceptionOr<void> AudioNode::disconnect(AudioParam& destinationParam, unsigned o
 
 float AudioNode::sampleRate() const
 {
-    return m_context->sampleRate();
+    return context().sampleRate();
 }
 
 ExceptionOr<void> AudioNode::setChannelCount(unsigned channelCount)
@@ -625,6 +633,10 @@ void AudioNode::markNodeForDeletionIfNecessary()
     if (m_connectionRefCount || m_normalRefCount || m_isMarkedForDeletion)
         return;
 
+    // AudioDestinationNodes are owned by their BaseAudioContext so there is no need to mark them for deletion.
+    if (nodeType() == NodeTypeDestination)
+        return;
+
     // All references are gone - we need to go away.
     for (auto& output : m_outputs)
         output->disconnectAll(); // This will deref() nodes we're connected to.
@@ -661,11 +673,12 @@ void AudioNode::deref()
         context().deleteMarkedNodes();
 }
 
-Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> AudioNode::contextForBindings() const
+Variant<RefPtr<BaseAudioContext>, RefPtr<WebKitAudioContext>> AudioNode::contextForBindings()
 {
-    if (m_context->isWebKitAudioContext())
-        return makeRefPtr(static_cast<WebKitAudioContext&>(m_context.get()));
-    return makeRefPtr(m_context.get());
+    auto& context = this->context();
+    if (context.isWebKitAudioContext())
+        return makeRefPtr(static_cast<WebKitAudioContext&>(context));
+    return makeRefPtr(context);
 }
 
 void AudioNode::derefWithLock()
@@ -697,6 +710,24 @@ ExceptionOr<void> AudioNode::handleAudioNodeOptions(const AudioNodeOptions& opti
         return result.releaseException();
 
     return { };
+}
+
+BaseAudioContext& AudioNode::context()
+{
+    return WTF::switchOn(m_context, [](Ref<BaseAudioContext>& context) -> BaseAudioContext& {
+        return context.get();
+    }, [](WeakPtr<BaseAudioContext>& context) -> BaseAudioContext& {
+        return *context;
+    });
+}
+
+const BaseAudioContext& AudioNode::context() const
+{
+    return WTF::switchOn(m_context, [](const Ref<BaseAudioContext>& context) -> const BaseAudioContext& {
+        return context.get();
+    }, [](const WeakPtr<BaseAudioContext>& context) -> const BaseAudioContext& {
+        return *context;
+    });
 }
 
 #if DEBUG_AUDIONODE_REFERENCES

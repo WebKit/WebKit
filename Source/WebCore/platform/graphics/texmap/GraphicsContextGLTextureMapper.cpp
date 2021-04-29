@@ -95,6 +95,11 @@ RefPtr<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::create(GraphicsContextG
     return context;
 }
 
+Ref<GraphicsContextGLOpenGL> GraphicsContextGLOpenGL::createForGPUProcess(const GraphicsContextGLAttributes& attributes)
+{
+    return adoptRef(*new GraphicsContextGLOpenGL(attributes, nullptr));
+}
+
 #if USE(ANGLE)
 GraphicsContextGLOpenGL::GraphicsContextGLOpenGL(GraphicsContextGLAttributes attributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext)
     : GraphicsContextGL(attributes, sharedContext)
