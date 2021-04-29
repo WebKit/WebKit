@@ -123,8 +123,6 @@ public:
         return container ? container->rootEditableElement() : nullptr;
     }
 
-    bool isInTreeScope() const { return m_anchorNode && m_anchorNode->isInTreeScope(); }
-
     // These should only be used for PositionIsOffsetInAnchor positions, unless
     // the position is a legacy editing position.
     void moveToPosition(Node* anchorNode, unsigned offset);

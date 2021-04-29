@@ -1,5 +1,55 @@
 2021-04-29  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r276742. rdar://problem/77326513
+
+    [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd
+    https://bugs.webkit.org/show_bug.cgi?id=225072
+    rdar://77159489
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Remove a helper method that was added in r276688, which we no longer need.
+    
+    * dom/Position.h:
+    (WebCore::Position::isInTreeScope const): Deleted.
+    
+    Source/WebKit:
+    
+    The fix for this crash that I landed in r276688 was based on a misunderstanding that accessing `treeScope()`
+    would trigger a null pointer deref if `isInTreeScope()` is `false`. This is not the case, since the `treeScope`
+    of a `Node` is a separate notion from whether that `Node` is connected to said tree scope.
+    
+    Since this crash is really due to dereferencing a null container node in the case where `selectionStart` or
+    `selectionEnd` are null, a better fix is to just check the nullity of the container node.
+    
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::rangeForPointInRootViewCoordinates):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276742 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd
+            https://bugs.webkit.org/show_bug.cgi?id=225072
+            rdar://77159489
+
+            Reviewed by Darin Adler.
+
+            The fix for this crash that I landed in r276688 was based on a misunderstanding that accessing `treeScope()`
+            would trigger a null pointer deref if `isInTreeScope()` is `false`. This is not the case, since the `treeScope`
+            of a `Node` is a separate notion from whether that `Node` is connected to said tree scope.
+
+            Since this crash is really due to dereferencing a null container node in the case where `selectionStart` or
+            `selectionEnd` are null, a better fix is to just check the nullity of the container node.
+
+            * WebProcess/WebPage/ios/WebPageIOS.mm:
+            (WebKit::rangeForPointInRootViewCoordinates):
+
+2021-04-29  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r276688. rdar://problem/77326513
 
     [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd
