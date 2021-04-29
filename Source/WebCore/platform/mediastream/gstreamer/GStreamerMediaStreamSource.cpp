@@ -558,15 +558,18 @@ static void webkitMediaStreamSrcPostStreamCollection(WebKitMediaStreamSrc* self)
     auto* priv = self->priv;
 
     GST_OBJECT_LOCK(self);
-    String upstreamId;
-    if (priv->stream)
-        upstreamId = priv->stream->id();
-    else
-        upstreamId = createCanonicalUUIDString();
+    if (priv->stream && (!priv->stream->active() || !priv->stream->hasTracks())) {
+        GST_OBJECT_UNLOCK(self);
+        return;
+    }
 
+    auto upstreamId = priv->stream ? priv->stream->id() : createCanonicalUUIDString();
     priv->streamCollection = adoptGRef(gst_stream_collection_new(upstreamId.ascii().data()));
-    for (auto& track : priv->tracks)
+    for (auto& track : priv->tracks) {
+        if (!track->isActive())
+            continue;
         gst_stream_collection_add_stream(priv->streamCollection.get(), webkitMediaStreamNew(track.get()));
+    }
 
     GST_OBJECT_UNLOCK(self);
 
@@ -599,7 +602,7 @@ static void webkitMediaStreamSrcRemoveTrackByType(WebKitMediaStreamSrc* self, Re
         GST_INFO_OBJECT(self, "Unsupported track type: %d", static_cast<int>(trackType));
 }
 
-void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivate* stream)
+void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivate* stream, bool isVideoPlayer)
 {
     ASSERT(WEBKIT_IS_MEDIA_STREAM_SRC(self));
     ASSERT(!self->priv->stream);
@@ -608,9 +611,11 @@ void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivat
     self->priv->stream->addObserver(*self->priv->mediaStreamObserver.get());
     auto tracks = stream->tracks();
     bool onlyTrack = tracks.size() == 1;
-    for (auto& track : tracks)
+    for (auto& track : tracks) {
+        if (!isVideoPlayer && track->type() == RealtimeMediaSource::Type::Video)
+            continue;
         webkitMediaStreamSrcAddTrack(self, track.get(), onlyTrack);
-
+    }
     webkitMediaStreamSrcPostStreamCollection(self);
     gst_element_no_more_pads(GST_ELEMENT_CAST(self));
 }

@@ -882,7 +882,7 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
     } else if (WEBKIT_IS_MEDIA_STREAM_SRC(sourceElement)) {
         auto stream = m_streamPrivate.get();
         ASSERT(stream);
-        webkitMediaStreamSrcSetStream(WEBKIT_MEDIA_STREAM_SRC(sourceElement), stream);
+        webkitMediaStreamSrcSetStream(WEBKIT_MEDIA_STREAM_SRC(sourceElement), stream, m_player->isVideoPlayer());
 #endif
     }
 }
@@ -1043,6 +1043,11 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 
     m_player->mediaEngineUpdated();
 }
+bool MediaPlayerPrivateGStreamer::hasFirstVideoSampleReachedSink() const
+{
+    auto sampleLocker = holdLock(m_sampleMutex);
+    return !!m_sample;
+}
 
 void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
 {
@@ -1055,14 +1060,7 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
     ASSERT(!isMainThread());
     GST_DEBUG_OBJECT(videoSinkPad, "Received new caps: %" GST_PTR_FORMAT, caps.get());
 
-    bool hasFirstSampleReachedSink;
-    // This actually lacks contention since both notify::caps and triggerRepaint() are both run in the same streaming thread.
-    {
-        auto sampleLocker = holdLock(m_sampleMutex);
-        hasFirstSampleReachedSink = !!m_sample;
-    }
-
-    if (!hasFirstSampleReachedSink) {
+    if (!hasFirstVideoSampleReachedSink()) {
         // We want to wait for the sink to receive the first buffer before emitting dimensions, since only by then we
         // are guaranteed that any potential tag event with a rotation has been handled.
         GST_DEBUG_OBJECT(videoSinkPad, "Ignoring notify::caps until the first buffer reaches the sink.");
@@ -1351,6 +1349,12 @@ GstElement* MediaPlayerPrivateGStreamer::audioSink() const
 MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
 {
     GST_TRACE_OBJECT(pipeline(), "isEndReached: %s, seeking: %s, seekTime: %s", boolForPrinting(m_isEndReached), boolForPrinting(m_isSeeking), m_seekTime.toString().utf8().data());
+
+#if ENABLE(MEDIA_STREAM)
+    if (m_streamPrivate && m_player->isVideoPlayer() && !hasFirstVideoSampleReachedSink())
+        return MediaTime::zeroTime();
+#endif
+
     if (m_isSeeking)
         return m_seekTime;
     if (m_isEndReached)
@@ -1494,7 +1498,6 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
     unsigned textTrackIndex = 0;
 
 #define CREATE_TRACK(type, Type) G_STMT_START {                         \
-        m_has##Type = true;                                             \
         if (!useMediaSource) {                                          \
             RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), type##TrackIndex, stream); \
             auto trackId = track->id();                                 \
@@ -1518,7 +1521,7 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
 
         if (type & GST_STREAM_TYPE_AUDIO)
             CREATE_TRACK(audio, Audio);
-        else if (type & GST_STREAM_TYPE_VIDEO)
+        else if (type & GST_STREAM_TYPE_VIDEO && m_player->isVideoPlayer())
             CREATE_TRACK(video, Video);
         else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource) {
             auto track = InbandTextTrackPrivateGStreamer::create(textTrackIndex++, stream);
@@ -1528,10 +1531,13 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
             GST_WARNING("Unknown track type found for stream %s", streamId.utf8().data());
     }
 
+    m_hasAudio = !m_audioTracks.isEmpty();
+    m_hasVideo = !m_videoTracks.isEmpty();
+
     if (oldHasVideo != m_hasVideo || oldHasAudio != m_hasAudio)
         m_player->characteristicChanged();
 
-    if (m_hasVideo)
+    if (!oldHasVideo && m_hasVideo)
         m_player->sizeChanged();
 
     m_player->mediaEngineUpdated();
