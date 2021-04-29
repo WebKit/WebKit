@@ -45,5 +45,5 @@
     [ResultField=nodes] sequence<Node> mixinResultFieldOperation();
 
     const unsigned short MIXIN_CONSTANT = 1;
-    [Reflect=CONST_IMPL] const unsigned short MIXIN_REFLECTED_CONSTANT = 2;
+    [ImplementedAs=CONST_IMPL] const unsigned short MIXIN_REFLECTED_CONSTANT = 2;
 };

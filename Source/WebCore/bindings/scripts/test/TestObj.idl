@@ -372,7 +372,7 @@ enum TestConfidence { "high", "kinda-low" };
     const unsigned short CONST_VALUE_12 = 0x01;
     const unsigned short CONST_VALUE_13 = 0X20;
     const unsigned short CONST_VALUE_14 = 0x1abc;
-    [Reflect=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
+    [ImplementedAs=CONST_IMPL] const unsigned short CONST_JAVASCRIPT = 15;
 
     [Replaceable] readonly attribute long replaceableAttribute;
 

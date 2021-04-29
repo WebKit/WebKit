@@ -1,3 +1,28 @@
+2021-04-29  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] Remove [Reflect] support for constants
+        https://bugs.webkit.org/show_bug.cgi?id=225119
+
+        Reviewed by Sam Weinig.
+
+        While reflection of content attributes [1] is a well-known concept, using [Reflect] for
+        constants doesn't make much sense (as there is no HTML attribute involved) and introduces
+        conflicting semantics for its value: C++ enum identifier vs. HTML attribute name.
+
+        [ImplementedAs] extended attribute is a perfect fit for customizing C++ identifier;
+        this change expands it to constants. Using ERROR as enum identifier still breaks
+        Windows build due to #define conflict.
+
+        No new tests, no behavior change.
+
+        [1] https://html.spec.whatwg.org/multipage/common-dom-interfaces.html#reflecting-content-attributes-in-idl-attributes
+
+        * bindings/scripts/CodeGenerator.pm:
+        (GenerateCompileTimeCheckForEnumsIfNeeded):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/test/*: Updated.
+        * html/HTMLTrackElement.idl:
+
 2021-04-29  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION (r275431): [iOS] fast/events/touch/ios/mouse-events-dispatch-with-touch.html is timing out
