@@ -1,3 +1,14 @@
+2021-04-29  Devin Rousso  <drousso@apple.com>
+
+        Unreviewed, fix crashloop after r276744
+        <rdar://problem/77333886>
+
+        * dom/Document.cpp:
+        (WebCore::Document::determineSampledPageTopColor):
+        Don't attempt to get the value from the `Optional<Lab<float>>` unless we know for sure that
+        it's valid. This amounts to always making sure we either `continue` (or `return` if that
+        snapshot is not an outlier) instead of only doing it if the snapshot is an outlier.
+
 2021-04-29  Darin Adler  <darin@apple.com>
 
         Extend SortedArrayMap further to work on case-folded strings, use in MIMETypeRegistry
