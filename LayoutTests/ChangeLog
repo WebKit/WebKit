@@ -1,3 +1,13 @@
+2021-04-29  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Two message loops between WebContent process and GPU process to enable/select audio/video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=225193
+
+        Reviewed by Eric Carlson.
+
+        * media/media-video-audio-track-expected.txt: Added.
+        * media/media-video-audio-track.html: Added.
+
 2021-04-29  Sam Weinig  <weinig@apple.com>
 
         Add support for CanvasRenderingContext2DSettings

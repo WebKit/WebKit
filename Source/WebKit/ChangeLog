@@ -1,3 +1,48 @@
+2021-04-29  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Two message loops between WebContent process and GPU process to enable/select audio/video tracks
+        https://bugs.webkit.org/show_bug.cgi?id=225193
+
+        Reviewed by Eric Carlson.
+
+        The current implementation has two message loops between Web process
+        and GPU process related to enable/select audio/video tracks.
+
+        For audio, the message loop is:
+        Web Process -> GPU process: RemoteMediaPlayerProxy::audioTrackSetEnabled
+        GPU Process -> Web Process: MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged
+
+        The message loop will lead to the following function call loop:
+
+        AudioTrackPrivateRemote::updateConfiguration()
+        AudioTrackPrivateRemote::setEnabled()
+        RemoteMediaPlayerProxy::audioTrackSetEnabled()
+        RemoteAudioTrackProxy::setEnabled()
+        AudioTrackPrivateAVFObjC::setEnabled()
+        AudioTrackPrivate::setEnabled()
+        RemoteAudioTrackProxy::enabledChanged()
+        RemoteAudioTrackProxy::configurationChanged()
+        MediaPlayerPrivateRemote::remoteAudioTrackConfigurationChanged()
+        again, AudioTrackPrivateRemote::updateConfiguration(), and repeat ...
+
+        The loop for video tracks is similar.
+
+        The loop is bad but normally does not impact a media player's functionality.
+
+        However, if a page disables and enables an audio track of a media element with HLS stream
+        in one run loop, the loop will disable and enable the track repeatedly, as a result,
+        CoreMedia's HLS player will disable/enable audio segments and send/cancel download
+        requests repeatedly. Eventually the player won't play audio.
+
+        This patch fixes these two message loops.
+
+        Test: media/media-video-audio-track.html
+
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.cpp:
+        (WebKit::AudioTrackPrivateRemote::updateConfiguration):
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.cpp:
+        (WebKit::VideoTrackPrivateRemote::updateConfiguration):
+
 2021-04-29  Alex Christensen  <achristensen@webkit.org>
 
         Make URLSchemeTask destruction more straightforward

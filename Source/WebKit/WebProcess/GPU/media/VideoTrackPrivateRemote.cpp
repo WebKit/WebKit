@@ -80,7 +80,7 @@ void VideoTrackPrivateRemote::updateConfiguration(TrackPrivateRemoteConfiguratio
     m_trackIndex = configuration.trackIndex;
     m_startTimeVariance = configuration.startTimeVariance;
     m_kind = configuration.videoKind;
-    setSelected(configuration.selected);
+    VideoTrackPrivate::setSelected(configuration.selected);
 }
 
 } // namespace WebKit
