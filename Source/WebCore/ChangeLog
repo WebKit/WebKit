@@ -1,3 +1,24 @@
+2021-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        Floating object are not removed from the initial containing block
+        https://bugs.webkit.org/show_bug.cgi?id=225198
+        <rdar://77236776>
+
+        Reviewed by Antti Koivisto.
+
+        outermostBlockContainingFloatingObject is supposed to find the top most ancestor for an intruding float. Now when the <html> is float positioned,
+        the initial containing block (RenderView) is the outermost containing block that has reference to this float (see FloatingObject).
+        removeFloatingOrPositionedChildFromBlockLists() calls outermostBlockContainingFloatingObject() to get the top most renderer where the float cleanup
+        is supposed to be initiated at. We call this function during style and tree mutation.
+        These float lists are getting invalidated during layout as well, with a simple call to m_floatingObjects->clear(). It unconditionally takes care of all the floats including
+        the ones on the initial containing block.
+        The bug only shows when we try to access the floating list between the style/tree mutation and the subsequent layout.
+
+        Test: fast/block/fail-to-remove-float-from-initial-containing-block.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::outermostBlockContainingFloatingObject):
+
 2021-04-29  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         -Wpessimizing-move warnings in LocaleICU.cpp

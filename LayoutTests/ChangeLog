@@ -1,3 +1,14 @@
+2021-04-29  Zalan Bujtas  <zalan@apple.com>
+
+        Floating object are not removed from the initial containing block
+        https://bugs.webkit.org/show_bug.cgi?id=225198
+        <rdar://77236776>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/block/fail-to-remove-float-from-initial-containing-block-expected.txt: Added.
+        * fast/block/fail-to-remove-float-from-initial-containing-block.html: Added.
+
 2021-04-29  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION: media/modern-media-controls/media-controller/ios/media-controller-ios-do-not-hide-controls-when-tapping-button.html is timing out

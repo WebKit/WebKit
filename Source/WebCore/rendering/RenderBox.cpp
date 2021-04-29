@@ -227,8 +227,6 @@ static RenderBlockFlow* outermostBlockContainingFloatingObject(RenderBox& box)
     ASSERT(box.isFloating());
     RenderBlockFlow* parentBlock = nullptr;
     for (auto& ancestor : ancestorsOfType<RenderBlockFlow>(box)) {
-        if (ancestor.isRenderView())
-            break;
         if (!parentBlock || ancestor.containsFloat(box))
             parentBlock = &ancestor;
     }
