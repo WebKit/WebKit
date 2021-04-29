@@ -1,3 +1,17 @@
+2021-04-29  Brent Fulgham  <bfulgham@apple.com>
+
+        [iOS] Reduce logging for uninteresting sandbox violations
+        https://bugs.webkit.org/show_bug.cgi?id=225197
+        <rdar://problem/77321299>
+
+        Reviewed by Per Arne Vollan.
+
+        CFPreferences needs to read from .GlobalPreferences.plist and .GlobalPreferences_m.plist on iOS, just like it
+        does on macOS. We should unblock these so we stop getting useless telemetry about the violations, and avoid
+        preference problems on iOS.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb:
+
 2021-04-29  Darin Adler  <darin@apple.com>
 
         Extend SortedArrayMap further to work on case-folded strings, use in MIMETypeRegistry
