@@ -1,3 +1,25 @@
+2021-04-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION (r275431): [iOS] fast/events/touch/ios/mouse-events-dispatch-with-touch.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=225208
+        <rdar://problem/77042369>
+
+        Reviewed by Devin Rousso.
+
+        * page/Quirks.cpp:
+        (WebCore::Quirks::simulatedMouseEventTypeForTarget const):
+
+        Remove the `!needsQuirks()` check added in r275431 to restore the
+        original test behavior.
+
+        Note that the test overrides `MouseEventsSimulationEnabled`, which
+        forces `Quirks::shouldDispatchSimulatedMouseEvents` to return true
+        regardless of `!needsQuirks()`. Furthermore, `NeedsSiteSpecificQuirks`
+        defaults to false in WebCore.
+
+        This change is safe, since `shouldDispatchSimulatedMouseEvents` still
+        checks `!needsQuirks()` when `MouseEventsSimulationEnabled` is false.
+
 2021-04-29  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, fix crashloop after r276744
