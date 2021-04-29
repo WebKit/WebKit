@@ -360,12 +360,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     if (!m_suppressMemoryPressureHandler) {
         auto& memoryPressureHandler = MemoryPressureHandler::singleton();
         memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous synchronous) {
-            // If this process contains only non-visible content (e.g. only contains background
-            // tabs), then treat the memory warning as if it was a critical warning to maximize the
-            // amount of memory released for foreground apps to use.
-            if (m_pagesInWindows.isEmpty() && critical == Critical::No)
-                critical = Critical::Yes;
-
 #if PLATFORM(MAC)
             // If this is a process we keep around for performance, kill it on memory pressure instead of trying to free up its memory.
             if (m_processType == ProcessType::CachedWebContent || m_processType == ProcessType::PrewarmedWebContent || areAllPagesSuspended()) {
