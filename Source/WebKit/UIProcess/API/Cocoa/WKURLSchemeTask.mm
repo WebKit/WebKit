@@ -77,12 +77,9 @@ static void raiseExceptionIfNecessary(WebKit::WebURLSchemeTask::ExceptionType ex
 
 - (void)dealloc
 {
-    auto func = [task = WTFMove(_urlSchemeTask)] () mutable {
-        task->API::URLSchemeTask::~URLSchemeTask();
-    };
-
-    ensureOnMainRunLoop(WTFMove(func));
-
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKURLSchemeTaskImpl.class, self))
+        return;
+    _urlSchemeTask->API::URLSchemeTask::~URLSchemeTask();
     [super dealloc];
 }
 

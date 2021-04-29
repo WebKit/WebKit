@@ -71,9 +71,7 @@ void WebURLSchemeHandlerCocoa::platformStopTask(WebPageProxy& page, WebURLScheme
 
 void WebURLSchemeHandlerCocoa::platformTaskCompleted(WebURLSchemeTask& task)
 {
-    // Release the last reference to this API task on the next spin of the runloop.
-    RunLoop::main().dispatch([takenTask = m_apiTasks.take(task.identifier())] {
-    });
+    m_apiTasks.remove(task.identifier());
 }
 
 } // namespace WebKit

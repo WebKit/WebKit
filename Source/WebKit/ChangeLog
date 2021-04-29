@@ -1,3 +1,19 @@
+2021-04-29  Alex Christensen  <achristensen@webkit.org>
+
+        Make URLSchemeTask destruction more straightforward
+        https://bugs.webkit.org/show_bug.cgi?id=225195
+        <rdar://77310818>
+
+        Reviewed by Chris Dumez.
+
+        There's a seemingly-new crash in the lambda of WebURLSchemeHandlerCocoa::platformTaskCompleted
+        That labmda doesn't need to exist.  We should do our object destruction like the rest of our objects.
+
+        * UIProcess/API/Cocoa/WKURLSchemeTask.mm:
+        (-[WKURLSchemeTaskImpl dealloc]):
+        * UIProcess/Cocoa/WebURLSchemeHandlerCocoa.mm:
+        (WebKit::WebURLSchemeHandlerCocoa::platformTaskCompleted):
+
 2021-04-29  Ben Nham  <nham@apple.com>
 
         Reduce memory footprint for background tabs
