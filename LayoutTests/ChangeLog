@@ -1,3 +1,50 @@
+2021-04-29  Aditya Keerthi  <akeerthi@apple.com>
+
+        REGRESSION: [iOS] 6 media/modern-media-controls/tracks-support/ tests timing out
+        https://bugs.webkit.org/show_bug.cgi?id=225202
+        <rdar://problem/77041631>
+
+        Reviewed by Devin Rousso.
+
+        The six tests modified in this patch were failing for two reasons:
+
+        1. The media controls logic was modified to hide certain controls at
+        smaller widths. To ensure the tracks button was visible, the width
+        of the <video> element was increased. However, on iOS, this led to the
+        tracks button being positioned outside the viewport. Consequently, any
+        attempts to tap the button and wait for a context menu to show up
+        would fail, causing the tests to timeout waiting for a context menu.
+
+        To fix (1), call Element.scrollIntoViewIfNeeded before attempting to
+        tap on the tracks button, ensuring it is visible in the viewport. Then,
+        use window coordinates to tap at the right position. To ensure the
+        viewport is actually scrollable on iOS, "useFlexibleViewport" and the
+        viewport meta tag were added to failing tests.
+
+        2. Even after fixing (1), the tests continued to timeout. Note that
+        both the pressOnElement() and getTracksContextMenu() helper methods
+        in "media-controls-utils.js" call into UIScriptController, and are
+        called in succession in the failing tests. Both methods add callbacks
+        to the test runner. However, pressOnElement() is not an async method,
+        which lead to getTracksContextMenu() getting called before the tap
+        actually completed. UIScriptController clears all callbacks after one
+        callback completes, so when the tap callback was completed, the context
+        menu callback was removed. Then, the tests get stuck waiting on the
+        context menu callback to get invoked.
+
+        To fix (2), make pressOnElement() return a promise if a continuation
+        function is not provided. Then, getTracksContextMenu() can be called
+        after the promise is resolved.
+
+        * media/modern-media-controls/resources/media-controls-utils.js:
+        (pressOnElement):
+        * media/modern-media-controls/tracks-support/auto-text-track.html:
+        * media/modern-media-controls/tracks-support/click-track-in-contextmenu.html:
+        * media/modern-media-controls/tracks-support/hidden-tracks.html:
+        * media/modern-media-controls/tracks-support/off-text-track.html:
+        * media/modern-media-controls/tracks-support/show-contextmenu-then-double-click-on-tracks-button.html:
+        * media/modern-media-controls/tracks-support/text-track-selected-via-media-api.html:
+
 2021-04-29  Zalan Bujtas  <zalan@apple.com>
 
         Floating object are not removed from the initial containing block

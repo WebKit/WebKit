@@ -48,21 +48,25 @@ function shouldBeEqualToRGBAColor(expr, expectedColor)
 
 function pressOnElement(element, continuation)
 {
-    if (typeof continuation !== "function")
-        continuation = new Function;
+    let promise = null;
+    if (typeof continuation !== "function") {
+        promise = new Promise((resolve, reject) => {
+            continuation = resolve;
+        });
+    }
+
+    element.scrollIntoViewIfNeeded(false);
 
     const bounds = element.getBoundingClientRect();
     if (bounds.width === 0 || bounds.height === 0)
         return false;
 
-    const centerX = bounds.left + bounds.width / 2;
-    const centerY = bounds.top + bounds.height / 2;
-
-    // debug(`Trying to press on &lt;${element.localName} class="${element.className}"> at ${centerX}x${centerY}.`);
+    const centerX = window.scrollX + bounds.left + bounds.width / 2;
+    const centerY = window.scrollY + bounds.top + bounds.height / 2;
 
     pressAtPoint(centerX, centerY, continuation);
 
-    return true;
+    return promise || true;
 }
 
 function pressAtPoint(x, y, continuation)
