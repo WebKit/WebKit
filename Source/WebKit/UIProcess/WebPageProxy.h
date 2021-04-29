@@ -665,6 +665,8 @@ public:
     // the message entirely.
     WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
 
+    WebCore::Color sampledPageTopColor() const { return m_sampledPageTopColor; }
+
     WebCore::Color scrollAreaBackgroundColor() const;
 
     void viewWillStartLiveResize();
@@ -2096,6 +2098,7 @@ private:
     void didChangePageCount(unsigned);
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
+    void didSamplePageTopColor(const WebCore::Color&);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString);
     void didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured);
@@ -2641,6 +2644,7 @@ private:
     WebCore::Color m_themeColor;
     WebCore::Color m_underlayColor;
     WebCore::Color m_pageExtendedBackgroundColor;
+    WebCore::Color m_sampledPageTopColor;
 
     bool m_useFixedLayout { false };
     WebCore::IntSize m_fixedLayoutSize;

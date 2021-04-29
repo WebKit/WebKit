@@ -743,6 +743,8 @@ public:
 
     const Color& themeColor() const { return m_metaElementThemeColor.isValid() ? m_metaElementThemeColor : m_applicationManifestThemeColor; }
 
+    const Color& sampledPageTopColor() const { return m_sampledPageTopColor; }
+
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
 
@@ -1566,6 +1568,7 @@ public:
 
     WEBCORE_EXPORT bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
+    bool isHitTestLocationThirdPartyFrame(const HitTestLocation&);
 #if ASSERT_ENABLED
     bool inHitTesting() const { return m_inHitTesting; }
 #endif
@@ -1676,6 +1679,8 @@ private:
     void updateBaseURL();
 
     void themeColorChanged();
+
+    void determineSampledPageTopColor();
 
     void invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
@@ -1799,6 +1804,8 @@ private:
 
     Color m_metaElementThemeColor;
     Color m_applicationManifestThemeColor;
+
+    Color m_sampledPageTopColor;
 
     Color m_textColor { Color::black };
     Color m_linkColor;

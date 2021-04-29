@@ -233,6 +233,7 @@ public:
 
     virtual void themeColorChanged() const { }
     virtual void pageExtendedBackgroundColorDidChange() const { }
+    virtual void didSamplePageTopColor() const { }
 
     virtual void exceededDatabaseQuota(Frame&, const String& databaseName, DatabaseDetails) = 0;
 

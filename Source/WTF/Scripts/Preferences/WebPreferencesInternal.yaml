@@ -760,6 +760,18 @@ UseGPUProcessForWebGLEnabled:
     WebKit:
       default: defaultUseGPUProcessForWebGLEnabled()
 
+UseSampledPageTopColorForScrollAreaBackgroundColor:
+  type: bool
+  humanReadableName: "Use sampled page top color for scroll area background color"
+  humanReadableDescription: "Use sampled page top color for scroll area background color"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UseThemeColorForScrollAreaBackgroundColor:
   type: bool
   humanReadableName: "Use theme-color for scroll area background color"

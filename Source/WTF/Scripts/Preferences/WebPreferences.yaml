@@ -1823,6 +1823,16 @@ SafeBrowsingEnabled:
     WebKit:
       default: true
 
+SampledPageTopColorMaxDifference:
+  type: double
+  defaultValue:
+    WebKitLegacy:
+      default: 0
+    WebKit:
+      default: 0
+    WebCore:
+      default: 0
+
 SansSerifFontFamily:
   type: String
   webKitLegacyPreferenceKey: WebKitSansSerifFont

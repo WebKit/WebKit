@@ -1917,6 +1917,9 @@ Color WebPageProxy::scrollAreaBackgroundColor() const
     if (m_preferences->useThemeColorForScrollAreaBackgroundColor() && m_themeColor.isValid())
         return m_themeColor;
 
+    if (m_preferences->useSampledPageTopColorForScrollAreaBackgroundColor() && m_sampledPageTopColor.isValid())
+        return m_sampledPageTopColor;
+
     return m_pageExtendedBackgroundColor;
 }
 
@@ -8522,6 +8525,16 @@ void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& pageExtende
     pageClient().pageExtendedBackgroundColorWillChange();
     m_pageExtendedBackgroundColor = pageExtendedBackgroundColor;
     pageClient().pageExtendedBackgroundColorDidChange();
+}
+
+void WebPageProxy::didSamplePageTopColor(const Color& sampledPageTopColor)
+{
+    if (m_sampledPageTopColor == sampledPageTopColor)
+        return;
+
+    pageClient().sampledPageTopColorWillChange();
+    m_sampledPageTopColor = sampledPageTopColor;
+    pageClient().sampledPageTopColorDidChange();
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)

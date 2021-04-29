@@ -1,3 +1,32 @@
+2021-04-28  Devin Rousso  <drousso@apple.com>
+
+        experiment with averaging sampling colors across the top of the page as the scroll area background
+        https://bugs.webkit.org/show_bug.cgi?id=224987
+        <rdar://problem/76251889>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm: Added.
+        (-[TestKVOWrapper initWithObservable:keyPath:callback:]):
+        (-[TestKVOWrapper dealloc]):
+        (-[TestKVOWrapper observeValueForKeyPath:ofObject:change:context:]):
+        (createWebViewWithSampledPageTopColorMaxDifference):
+        (waitForSampledPageTopColorToChangeForHTML):
+        (createHTMLGradientWithColorStops):
+        (TEST.SampledPageTopColor.ZeroMaxDifference):
+        (TEST.SampledPageTopColor.NegativeMaxDifference):
+        (TEST.SampledPageTopColor.SolidColor):
+        (TEST.SampledPageTopColor.DifferentColorsWithoutOutlierBelowMaxDifference):
+        (TEST.SampledPageTopColor.DifferentColorsWithLeftOutlierAboveMaxDifference):
+        (TEST.SampledPageTopColor.DifferentColorsWithMiddleOutlierAboveMaxDifference):
+        (TEST.SampledPageTopColor.DifferentColorsWithRightOutlierAboveMaxDifference):
+        (TEST.SampledPageTopColor.DifferentColorsIndividuallyAboveMaxDifference):
+        (TEST.SampledPageTopColor.DifferentColorsCumulativelyAboveMaxDifference):
+        (TEST.SampledPageTopColor.DisplayP3):
+        (TEST.SampledPageTopColor.ExperimentalUseSampledPageTopColorForScrollAreaBackgroundColor):
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
 2021-04-28  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Refactor SimulatorDevice

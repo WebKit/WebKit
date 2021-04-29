@@ -1,3 +1,50 @@
+2021-04-28  Devin Rousso  <drousso@apple.com>
+
+        experiment with averaging sampling colors across the top of the page as the scroll area background
+        https://bugs.webkit.org/show_bug.cgi?id=224987
+        <rdar://problem/76251889>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didSamplePageTopColor const): Added.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didSamplePageTopColor): Added.
+        Pass along the `sampledPageTopColor` to the UIProcess.
+
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::sampledPageTopColor): Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scrollAreaBackgroundColor const):
+        (WebKit::WebPageProxy::didSamplePageTopColor): Added.
+        Use the `sampledPageTopColor` if the `UseSampledPageTopColorForScrollAreaBackgroundColor`
+        internal preference is enabled instead of the CSS `background-color` of the `<html>`/`<body>`.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::sampledPageTopColorWillChange): Added.
+        (WebKit::PageClient::sampledPageTopColorDidChange): Added.
+        * UIProcess/Cocoa/PageClientImplCocoa.h:
+        * UIProcess/Cocoa/PageClientImplCocoa.mm:
+        (WebKit::PageClientImplCocoa::sampledPageTopColorWillChange): Added.
+        (WebKit::PageClientImplCocoa::sampledPageTopColorDidChange): Added.
+        Add ObjC KVO support for `-[WKWebView _sampledPageTopColor]`.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _setupPageConfiguration:]):
+        (-[WKWebView _sampledPageTopColor]): Added.
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _setSampledPageTopColorMaxDifference:]): Added.
+        (-[WKWebViewConfiguration _sampledPageTopColorMaxDifference]): Added.
+        Provide SPI to configure the `SampledPageTopColorMaxDifference` preference when
+        creating the `WKWebView`. Expose the result as `_sampledPageTopColor` SPI.
+
 2021-04-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Web content process occasionally crashes under VisibleSelection::adjustPositionForEnd
