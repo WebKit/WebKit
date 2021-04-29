@@ -1,5 +1,15 @@
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
+        REGRESSION(r274358) [GStreamer] http/tests/images/mp4-partial-load.html is flaky crashing inside GStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=223636
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/glib/TestExpectations: Update tests expectations.
+        * platform/gtk/TestExpectations: Ditto.
+
+2021-04-06  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer][WebRTC] Audio is not played from an audio element when the srcObject object has unstarted video tracks
         https://bugs.webkit.org/show_bug.cgi?id=209163
 

@@ -33,6 +33,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/Optional.h>
+#include <wtf/Scope.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
@@ -302,6 +303,14 @@ void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
 {
     ASSERT(&m_runLoop == &RunLoop::current());
 
+    auto scopeExit = makeScopeExit([protectedThis = makeWeakPtr(this)] {
+        if (!protectedThis)
+            return;
+        LockHolder lock(protectedThis->m_messageLock);
+        protectedThis->m_messageDispatched = true;
+        protectedThis->m_messageCondition.notifyOne();
+    });
+
     GUniqueOutPtr<GError> error;
     GUniqueOutPtr<gchar> debug;
 
@@ -321,7 +330,7 @@ void ImageDecoderGStreamer::InnerDecoder::handleMessage(GstMessage* message)
     case GST_MESSAGE_STREAM_COLLECTION: {
         GRefPtr<GstStreamCollection> collection;
         gst_message_parse_stream_collection(message, &collection.outPtr());
-        if (collection) {
+        if (collection && GST_MESSAGE_SRC(message) == GST_OBJECT_CAST(m_decodebin.get())) {
             unsigned size = gst_stream_collection_get_size(collection.get());
             GList* streams = nullptr;
             for (unsigned i = 0 ; i < size; i++) {
@@ -354,6 +363,12 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
 
     gst_bus_set_sync_handler(bus.get(), [](GstBus*, GstMessage* message, gpointer userData) {
         auto& decoder = *static_cast<ImageDecoderGStreamer::InnerDecoder*>(userData);
+
+        {
+            LockHolder lock(decoder.m_messageLock);
+            decoder.m_messageDispatched = false;
+            decoder.m_messageCondition.notifyOne();
+        }
         if (&decoder.m_runLoop == &RunLoop::current())
             decoder.handleMessage(message);
         else {
@@ -363,6 +378,10 @@ void ImageDecoderGStreamer::InnerDecoder::preparePipeline()
                 if (weakThis)
                     weakThis->handleMessage(protectedMessage.get());
             });
+        }
+        if (!decoder.m_messageDispatched) {
+            LockHolder lock(decoder.m_messageLock);
+            decoder.m_messageCondition.wait(decoder.m_messageLock);
         }
         gst_message_unref(message);
         return GST_BUS_DROP;
