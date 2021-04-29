@@ -47,6 +47,14 @@ using namespace WebCore;
 
 static const char getItemsQueryString[] = "SELECT key, value FROM ItemTable";
 
+static CheckedUint64 estimateEntrySize(const String& key, const String& value)
+{
+    CheckedUint64 entrySize;
+    entrySize += key.length() * sizeof(UChar);
+    entrySize += value.length() * sizeof(UChar);
+    return entrySize;
+}
+
 Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<WorkQueue>&& queue, Ref<LocalStorageDatabaseTracker>&& tracker, const SecurityOriginData& securityOrigin, unsigned quotaInBytes)
 {
     return adoptRef(*new LocalStorageDatabase(WTFMove(queue), WTFMove(tracker), securityOrigin, quotaInBytes));
@@ -209,11 +217,11 @@ void LocalStorageDatabase::removeItem(const String& key, String& oldValue)
     }
 
     if (m_databaseSize) {
-        auto sizeDecrease = key.sizeInBytes() + oldValue.sizeInBytes();
-        if (sizeDecrease >= *m_databaseSize)
+        CheckedUint64 entrySize = estimateEntrySize(key, oldValue);
+        if (entrySize.hasOverflowed() || entrySize.unsafeGet() >= *m_databaseSize)
             *m_databaseSize = 0;
         else
-            *m_databaseSize -= sizeDecrease;
+            *m_databaseSize -= entrySize.unsafeGet();
     }
 }
 
@@ -246,22 +254,23 @@ void LocalStorageDatabase::setItem(const String& key, const String& value, Strin
     if (!m_database.isOpen())
         return;
 
-    oldValue = item(key);
-
     if (m_quotaInBytes != WebCore::StorageMap::noQuota) {
         if (!m_databaseSize)
             m_databaseSize = SQLiteFileSystem::getDatabaseFileSize(m_databasePath);
-        CheckedUint32 newDatabaseSize = *m_databaseSize;
-        newDatabaseSize -= oldValue.sizeInBytes();
-        newDatabaseSize += value.sizeInBytes();
-        if (oldValue.isNull())
-            newDatabaseSize += key.sizeInBytes();
+        if (*m_databaseSize >= m_quotaInBytes) {
+            quotaException = true;
+            return;
+        }
+        CheckedUint64 newDatabaseSize = *m_databaseSize;
+        newDatabaseSize += estimateEntrySize(key, value);
         if (newDatabaseSize.hasOverflowed() || newDatabaseSize.unsafeGet() > m_quotaInBytes) {
             quotaException = true;
             return;
         }
         m_databaseSize = newDatabaseSize.unsafeGet();
     }
+
+    oldValue = item(key);
 
     auto insertStatement = scopedStatement(m_insertStatement, "INSERT INTO ItemTable VALUES (?, ?)"_s);
     if (!insertStatement) {

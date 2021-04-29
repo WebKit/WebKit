@@ -1,3 +1,26 @@
+2021-04-29  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276689, r276736, and r276737.
+        https://bugs.webkit.org/show_bug.cgi?id=225188
+
+        Broke platform/ios/ios/storage/domstorage/5mb-quota.html
+
+        Reverted changesets:
+
+        "Improve local storage size estimation for quota limitation"
+        https://bugs.webkit.org/show_bug.cgi?id=225123
+        https://trac.webkit.org/changeset/276689
+
+        "REGRESSION(r276689): [ iOS wk2 ]
+        platform/ios/ios/storage/domstorage/5mb-quota.html is a
+        constant text failure"
+        https://bugs.webkit.org/show_bug.cgi?id=225160
+        https://trac.webkit.org/changeset/276736
+
+        "Make sure we invalidate the iterator in StorageMap::clear()"
+        https://bugs.webkit.org/show_bug.cgi?id=225164
+        https://trac.webkit.org/changeset/276737
+
 2021-04-29  Antoine Quint  <graouts@webkit.org>
 
         Rotation axis parallel to the z axis should not serialize using the "z" keyword for the rotate property

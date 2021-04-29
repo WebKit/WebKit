@@ -22,7 +22,7 @@ function testQuota(storageString)
     shouldBe("storage.length", "0");
 
     debug("Creating 'data' which contains 64K of data");
-    data = "\u03BB";
+    data = "X";
     for (var i=0; i<16; i++)
         data += data;
     shouldBe("data.length", "65536");
