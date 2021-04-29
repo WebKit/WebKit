@@ -1,3 +1,14 @@
+2021-04-29  Rob Buis  <rbuis@igalia.com>
+
+        Resync web-platform-tests/css/css-sizing/aspect-ratio from upstream
+        https://bugs.webkit.org/show_bug.cgi?id=225182
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Adapt platform test expectations.
+
+        * TestExpectations:
+
 2021-04-29  Chris Dumez  <cdumez@apple.com>
 
         Improve local storage size estimation for quota limitation
