@@ -7672,7 +7672,14 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
     if (!isPlaying())
         return state;
 
-    if (hasAudio && !muted() && volume())
+    // For GStreamer ports the semantics of IsPlayingAudio slightly differ from Apple ports. The
+    // webkit_web_view_is_playing_audio() API is expected to return true if a page is producing
+    // audio even though it might be muted.
+    bool isPlayingAudio = hasAudio && volume();
+#if !USE(GSTREAMER)
+    isPlayingAudio = isPlayingAudio && !muted();
+#endif
+    if (isPlayingAudio)
         state |= IsPlayingAudio;
 
     if (hasActiveVideo)
@@ -7729,9 +7736,10 @@ void HTMLMediaElement::setAutoplayEventPlaybackState(AutoplayEventPlaybackState 
 
 void HTMLMediaElement::pageMutedStateDidChange()
 {
-    updateVolume();
-
     if (Page* page = document().page()) {
+        // Propagate the new state to the platform player.
+        if (m_player)
+            m_player->setMuted(page->isAudioMuted());
         if (hasAudio() && !muted() && page->isAudioMuted())
             userDidInterfereWithAutoplay();
     }
