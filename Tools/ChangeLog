@@ -1,3 +1,24 @@
+2021-04-30  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Properly recover from unresponsive web processes
+        https://bugs.webkit.org/show_bug.cgi?id=224533
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add unit tests for the new webkit_web_view_terminate_web_process GLib API method. Also move
+        the methods used to wait for responsiveness changes to WebViewTest, as they are used by more
+        than a single test.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (testWebViewIsWebProcessResponsive):
+        (testWebViewTerminateWebProcess):
+        (testWebViewTerminateUnresponsiveWebProcess):
+        (beforeAll):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.cpp:
+        (isWebProcessResponsiveChanged):
+        (WebViewTest::waitUntilIsWebProcessResponsiveChanged):
+        * TestWebKitAPI/glib/WebKitGLib/WebViewTest.h:
+
 2021-04-30  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Support pickling platforminfo

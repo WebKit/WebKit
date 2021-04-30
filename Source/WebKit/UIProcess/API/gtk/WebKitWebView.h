@@ -193,6 +193,7 @@ typedef enum {
  * WebKitWebProcessTerminationReason:
  * @WEBKIT_WEB_PROCESS_CRASHED: the web process crashed.
  * @WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT: the web process exceeded the memory limit.
+ * @WEBKIT_WEB_PROCESS_TERMINATED_BY_API: the web process termination was requested by an API call. Since: 2.34
  *
  * Enum values used to specify the reason why the web process terminated abnormally.
  *
@@ -200,7 +201,8 @@ typedef enum {
  */
 typedef enum {
     WEBKIT_WEB_PROCESS_CRASHED,
-    WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT
+    WEBKIT_WEB_PROCESS_EXCEEDED_MEMORY_LIMIT,
+    WEBKIT_WEB_PROCESS_TERMINATED_BY_API
 } WebKitWebProcessTerminationReason;
 
 struct _WebKitWebView {
@@ -591,6 +593,9 @@ webkit_web_view_get_website_policies                 (WebKitWebView             
 
 WEBKIT_API gboolean
 webkit_web_view_get_is_web_process_responsive        (WebKitWebView             *web_view);
+
+WEBKIT_API void
+webkit_web_view_terminate_web_process                (WebKitWebView             *web_view);
 
 G_END_DECLS
 
