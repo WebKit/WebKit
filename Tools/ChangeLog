@@ -1,3 +1,17 @@
+2021-04-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Always extend access to local process HTTP/3 cache directory
+        https://bugs.webkit.org/show_bug.cgi?id=225171
+        <rdar://problem/76287224>
+
+        Reviewed by Alex Christensen.
+
+        Since we always create the directory (even if HTTP/3 is turned off) we should expect that it is
+        created after loading a page.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST):
+
 2021-04-30  Kyle Piddington  <kpiddington@apple.com>
 
         Add kpiddington to commiters list
