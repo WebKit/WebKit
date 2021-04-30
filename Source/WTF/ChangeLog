@@ -1,3 +1,19 @@
+2021-04-30  Darin Adler  <darin@apple.com>
+
+        Optimize SortedArrayMap by using linear search for small arrays
+        https://bugs.webkit.org/show_bug.cgi?id=225223
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/SortedArrayMap.h: Added a base class SortedArrayBase that contains a constant
+        for the cutoff between linear and binary search. Based on a quick empirical test,
+        it seems faster to do linear search for arrays that have less then 20 elements.
+        While doing this also switched from tryBinarySearch to std::find/find_if/lower_bound
+        because the standard library function templates should be excellent for this purpose,
+        and there's no reason to use our own. Also filled out the operations for the
+        ComparableASCIILiteral family so that the "<" operator works in either direction,
+        since that's needed for compatibility with standard library algorithms.
+
 2021-04-29  Ben Nham  <nham@apple.com>
 
         Reduce memory footprint for background tabs

@@ -35,7 +35,17 @@ namespace WTF {
 // The array passed to the constructor has std::pair elements: keys first and values second.
 // The array and the SortedArrayMap should typically both be global constant expressions.
 
-template<typename ArrayType> class SortedArrayMap {
+class SortedArrayBase {
+protected:
+    // Some informal empirical tests indicate that arrays shorter than this are faster to
+    // search with linear search than with binary search. Even if we don't get this threshold
+    // exactly right, it's helpful for both performance and code size to use linear search at
+    // least for very small arrays, and important for performance to make sure that we use
+    // binary search for much larger ones.
+    static constexpr size_t binarySearchThreshold = 20;
+};
+
+template<typename ArrayType> class SortedArrayMap : public SortedArrayBase {
 public:
     using ElementType = typename std::remove_extent_t<ArrayType>;
     using ValueType = typename ElementType::second_type;
@@ -52,7 +62,7 @@ private:
     const ArrayType& m_array;
 };
 
-template<typename ArrayType> class SortedArraySet {
+template<typename ArrayType> class SortedArraySet : public SortedArrayBase {
 public:
     constexpr SortedArraySet(const ArrayType&);
     template<typename KeyArgument> bool contains(const KeyArgument&) const;
@@ -88,6 +98,9 @@ bool operator==(ComparableStringView, ComparableLettersLiteral);
 bool operator<(ComparableStringView, ComparableASCIILiteral);
 bool operator<(ComparableStringView, ComparableCaseFoldingASCIILiteral);
 bool operator<(ComparableStringView, ComparableLettersLiteral);
+bool operator<(ComparableASCIILiteral, ComparableStringView);
+bool operator<(ComparableCaseFoldingASCIILiteral, ComparableStringView);
+bool operator<(ComparableLettersLiteral, ComparableStringView);
 
 template<typename OtherType> bool operator==(OtherType, ComparableStringView);
 template<typename OtherType> bool operator!=(ComparableStringView, OtherType);
@@ -128,12 +141,21 @@ template<typename ArrayType> template<typename KeyArgument> inline auto SortedAr
     auto parsedKey = ElementType::first_type::parse(key);
     if (!parsedKey)
         return nullptr;
-    // FIXME: We should enhance tryBinarySearch so it can deduce ElementType.
-    // FIXME: If the array's size is small enough, should do linear search since it is more efficient than binary search.
-    auto element = tryBinarySearch<ElementType>(m_array, std::size(m_array), *parsedKey, [] (auto* element) {
-        return element->first;
-    });
-    return element ? &element->second : nullptr;
+    decltype(std::begin(m_array)) iterator;
+    if (std::size(m_array) < binarySearchThreshold) {
+        iterator = std::find_if(std::begin(m_array), std::end(m_array), [&parsedKey] (auto& pair) {
+            return pair.first == *parsedKey;
+        });
+        if (iterator == std::end(m_array))
+            return nullptr;
+    } else {
+        iterator = std::lower_bound(std::begin(m_array), std::end(m_array), *parsedKey, [] (auto& pair, auto& value) {
+            return pair.first < value;
+        });
+        if (iterator == std::end(m_array) || !(iterator->first == *parsedKey))
+            return nullptr;
+    }
+    return &iterator->second;
 }
 
 template<typename ArrayType> template<typename KeyArgument> inline auto SortedArrayMap<ArrayType>::get(const KeyArgument& key, const ValueType& defaultValue) const -> ValueType
@@ -152,11 +174,10 @@ template<typename ArrayType> template<typename KeyArgument> inline bool SortedAr
 {
     using ElementType = typename std::remove_extent_t<ArrayType>;
     auto parsedKey = ElementType::parse(key);
-    // FIXME: We should enhance tryBinarySearch so it can deduce ElementType.
-    // FIXME: If the array's size is small enough, should do linear search since it is more efficient than binary search.
-    return parsedKey && tryBinarySearch<ElementType>(m_array, std::size(m_array), *parsedKey, [] (auto* element) {
-        return *element;
-    });
+    if (std::size(m_array) < binarySearchThreshold)
+        return std::find(std::begin(m_array), std::end(m_array), *parsedKey) != std::end(m_array);
+    auto iterator = std::lower_bound(std::begin(m_array), std::end(m_array), *parsedKey);
+    return iterator != std::end(m_array) && *iterator == *parsedKey;
 }
 
 constexpr int strcmpConstExpr(const char* a, const char* b)
@@ -173,8 +194,7 @@ template<typename CharacterType> inline bool lessThanASCIICaseFolding(const Char
     for (unsigned i = 0; i < length; ++i) {
         if (!literalWithNoUppercase[i])
             return false;
-        auto character = toASCIILower(characters[i]);
-        if (character != literalWithNoUppercase[i])
+        if (auto character = toASCIILower(characters[i]); character != literalWithNoUppercase[i])
             return character < literalWithNoUppercase[i];
     }
     return true;
@@ -185,6 +205,24 @@ inline bool lessThanASCIICaseFolding(StringView string, const char* literalWithN
     if (string.is8Bit())
         return lessThanASCIICaseFolding(string.characters8(), string.length(), literalWithNoUppercase);
     return lessThanASCIICaseFolding(string.characters16(), string.length(), literalWithNoUppercase);
+}
+
+template<typename CharacterType> inline bool lessThanASCIICaseFolding(const char* literalWithNoUppercase, const CharacterType* characters, unsigned length)
+{
+    for (unsigned i = 0; i < length; ++i) {
+        if (!literalWithNoUppercase[i])
+            return true;
+        if (auto character = toASCIILower(characters[i]); character != literalWithNoUppercase[i])
+            return literalWithNoUppercase[i] < character;
+    }
+    return false;
+}
+
+inline bool lessThanASCIICaseFolding(const char* literalWithNoUppercase, StringView string)
+{
+    if (string.is8Bit())
+        return lessThanASCIICaseFolding(literalWithNoUppercase, string.characters8(), string.length());
+    return lessThanASCIICaseFolding(literalWithNoUppercase, string.characters16(), string.length());
 }
 
 template<ASCIISubset subset> constexpr bool operator==(ComparableASCIISubsetLiteral<subset> a, ComparableASCIISubsetLiteral<subset> b)
@@ -207,6 +245,11 @@ inline bool operator<(ComparableStringView a, ComparableASCIILiteral b)
     return codePointCompare(a.string, b.literal.characters()) < 0;
 }
 
+inline bool operator<(ComparableASCIILiteral a, ComparableStringView b)
+{
+    return codePointCompare(a.literal.characters(), b.string) < 0;
+}
+
 inline bool operator==(ComparableStringView a, ComparableLettersLiteral b)
 {
     return equalLettersIgnoringASCIICaseCommonWithoutLength(a.string, b.literal);
@@ -217,6 +260,11 @@ inline bool operator<(ComparableStringView a, ComparableLettersLiteral b)
     return lessThanASCIICaseFolding(a.string, b.literal);
 }
 
+inline bool operator<(ComparableLettersLiteral a, ComparableStringView b)
+{
+    return lessThanASCIICaseFolding(a.literal, b.string);
+}
+
 inline bool operator==(ComparableStringView a, ComparableCaseFoldingASCIILiteral b)
 {
     return equalIgnoringASCIICase(a.string, b.literal);
@@ -225,6 +273,11 @@ inline bool operator==(ComparableStringView a, ComparableCaseFoldingASCIILiteral
 inline bool operator<(ComparableStringView a, ComparableCaseFoldingASCIILiteral b)
 {
     return lessThanASCIICaseFolding(a.string, b.literal);
+}
+
+inline bool operator<(ComparableCaseFoldingASCIILiteral a, ComparableStringView b)
+{
+    return lessThanASCIICaseFolding(a.literal, b.string);
 }
 
 template<typename OtherType> inline bool operator==(OtherType a, ComparableStringView b)
