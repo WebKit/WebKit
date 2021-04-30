@@ -164,6 +164,7 @@ public:
 #endif
     virtual RetainPtr<NSArray> actionsForElement(_WKActivatedElementInfo *, RetainPtr<NSArray> defaultActions) { return defaultActions; }
     virtual void didNotHandleTapAsClick(const WebCore::IntPoint&) { }
+    virtual void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&) { }
     virtual UIViewController *presentingViewController() { return nullptr; }
 #endif
 #if PLATFORM(COCOA)

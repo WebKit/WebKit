@@ -834,6 +834,25 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
     m_pendingSyntheticClickPointerId = 0;
 }
 
+static bool isProbablyMeaningfulClick(Node& clickNode)
+{
+    auto frame = makeRefPtr(clickNode.document().frame());
+    if (!is<Element>(clickNode) || !clickNode.isConnected() || !frame)
+        return true;
+
+    if (is<HTMLBodyElement>(clickNode))
+        return false;
+
+    if (auto view = makeRefPtr(frame->mainFrame().view())) {
+        auto elementBounds = WebPage::rootViewBoundsForElement(downcast<Element>(clickNode));
+        auto unobscuredRect = view->unobscuredContentRect();
+        if (elementBounds.width() >= unobscuredRect.width() / 2 && elementBounds.height() >= unobscuredRect.height() / 2)
+            return false;
+    }
+
+    return true;
+}
+
 void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebEvent::Modifier> modifiers, SyntheticClickType syntheticClickType, WebCore::PointerID pointerId)
 {
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
@@ -852,6 +871,8 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     bool ctrlKey = modifiers.contains(WebEvent::Modifier::ControlKey);
     bool altKey = modifiers.contains(WebEvent::Modifier::AltKey);
     bool metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
+
+    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = false;
 
     tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId));
     if (m_isClosed)
@@ -879,8 +900,13 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (m_isClosed)
         return;
 
+    if (!m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick && !isProbablyMeaningfulClick(nodeRespondingToClick))
+        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(roundedIntPoint(location)));
+
     if (!tapWasHandled || !nodeRespondingToClick.isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
+
+    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = false;
     
     send(Messages::WebPageProxy::DidCompleteSyntheticClick());
 }
@@ -892,12 +918,18 @@ void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEvent::M
     Frame* frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
     IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
-    if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
+    if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()) {
+        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
-    else if (m_interactionNode == nodeRespondingToClick)
+    } else if (m_interactionNode == nodeRespondingToClick)
         completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::OneFingerTap);
     else
         handleSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers);
+}
+
+void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent()
+{
+    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = true;
 }
 
 void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, TransactionID lastLayerTreeTransactionId)
@@ -1094,7 +1126,9 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
     FloatPoint adjustedPoint;
     Node* nodeRespondingToClick = m_page->mainFrame().nodeRespondingToClickEvents(point, adjustedPoint);
     if (!nodeRespondingToClick || !nodeRespondingToClick->renderer()) {
-        send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(adjustedPoint)));
+        auto adjustedIntPoint = roundedIntPoint(adjustedPoint);
+        send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+        send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
         return;
     }
     sendTapHighlightForNodeIfNecessary(requestID, nodeRespondingToClick);
@@ -1169,7 +1203,10 @@ void WebPage::commitPotentialTapFailed()
         clearSelection();
 
     send(Messages::WebPageProxy::CommitPotentialTapFailed());
-    send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
+
+    auto adjustedIntPoint = roundedIntPoint(m_potentialTapLocation);
+    send(Messages::WebPageProxy::DidNotHandleTapAsMeaningfulClickAtPoint(adjustedIntPoint));
+    send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
 }
 
 void WebPage::cancelPotentialTap()

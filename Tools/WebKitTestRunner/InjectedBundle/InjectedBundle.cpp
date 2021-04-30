@@ -275,6 +275,11 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "CallDidNotHandleTapAsMeaningfulClickCallback")) {
+        m_testRunner->callDidNotHandleTapAsMeaningfulClickCallback();
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "CallDidBeginSwipeCallback")) {
         m_testRunner->callDidBeginSwipeCallback();
         return;

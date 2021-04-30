@@ -1,3 +1,67 @@
+2021-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a heuristic to determine whether a synthetic click triggered any meaningful changes
+        https://bugs.webkit.org/show_bug.cgi?id=225240
+        rdar://77221196
+
+        Reviewed by Tim Horton.
+
+        Add a simple heuristic to inform WKWebView iOS clients when a tap either failed to result in a synthetic click,
+        or resulted in a synthetic click that (probably) didn't have any "meaningful side effects". While this notion of
+        "meaningfulness" isn't well defined, the idea behind the heuristic is that it should distinguish between taps on
+        clickable elements like buttons or links that trigger some noticable change on the page, vs. taps on both
+        clickable or non-clickable elements that do not trigger any changes on the page.
+
+        For instance on a news-article-like page, this delegate method should be invoked when tapping on paragraph text
+        in the article, even if there is a click handler over the entire article or even body element. However, tapping
+        a link or a button on the same page should not cause this delegate method to be invoked. Additionally, if the
+        page explicitly prevents default behavior during a synthetic mouse event, this method should also *not* be
+        invoked.
+
+        This behavior is roughly similar to the existing delegate method `-_webView:didNotHandleTapAsClickAtPoint:`,
+        except that this variant allows for more wiggle room around what constitutes a "meaningful" interaction with the
+        page.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didNotHandleTapAsMeaningfulClickAtPoint):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+        * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+        (-[WKWebView _didNotHandleTapAsMeaningfulClickAtPoint:]):
+
+        See Tools/ChangeLog for more details about this testing hook.
+
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::didNotHandleTapAsMeaningfulClickAtPoint):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didNotHandleTapAsMeaningfulClickAtPoint):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didNotHandleTapAsMeaningfulClickAtPoint):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::didHandleOrPreventMouseDownOrMouseUpEvent):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::isProbablyMeaningfulClick):
+
+        Implement the core of the heuristic here. For now, it just examines the size of the click target. This isn't
+        going to satisfy the case where a page installs a click event handler on the body element (or a similar
+        element that encapsulates most of the page) and then performs hit-testing in their script, but it's somewhere to
+        start.
+
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::attemptSyntheticClick):
+        (WebKit::WebPage::didHandleOrPreventMouseDownOrMouseUpEvent):
+        (WebKit::WebPage::handleTwoFingerTapAtPoint):
+        (WebKit::WebPage::commitPotentialTapFailed):
+
 2021-04-30  Per Arne Vollan  <pvollan@apple.com>
 
         prefers-reduced-motion is not reactive on iOS

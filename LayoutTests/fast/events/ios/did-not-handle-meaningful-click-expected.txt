@@ -1,0 +1,13 @@
+This test is intended to exercise the 'meaningful click' heuristic, and requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS didNotHandleTapAsMeaningfulClickCallback is true
+PASS clicked on button
+PASS didNotHandleTapAsMeaningfulClickCallback is false
+PASS didNotHandleTapAsMeaningfulClickCallback is true
+PASS didNotHandleTapAsMeaningfulClickCallback is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

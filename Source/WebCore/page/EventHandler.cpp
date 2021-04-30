@@ -1773,6 +1773,8 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
     m_frame.selection().setCaretBlinkingSuspended(true);
 
     bool swallowEvent = !dispatchMouseEvent(eventNames().mousedownEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
+    if (auto page = m_frame.page(); page && swallowEvent)
+        page->chrome().client().didHandleOrPreventMouseDownOrMouseUpEvent();
     m_capturesDragging = !swallowEvent || mouseEvent.scrollbar();
 
     // If the hit testing originally determined the event was in a scrollbar, refetch the MouseEventWithHitTestResults
@@ -1835,6 +1837,8 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& platfor
 
     m_clickCount = platformMouseEvent.clickCount();
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
+    if (auto page = m_frame.page(); page && swallowMouseUpEvent)
+        page->chrome().client().didHandleOrPreventMouseDownOrMouseUpEvent();
 
     bool swallowClickEvent = platformMouseEvent.button() != RightButton && mouseEvent.targetNode() == m_clickNode && !dispatchMouseEvent(eventNames().clickEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::Yes);
 
@@ -2139,6 +2143,8 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& platformMou
         return true;
 
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mouseEvent.targetNode(), m_clickCount, platformMouseEvent, FireMouseOverOut::No);
+    if (auto page = m_frame.page(); page && swallowMouseUpEvent)
+        page->chrome().client().didHandleOrPreventMouseDownOrMouseUpEvent();
 
     bool contextMenuEvent = platformMouseEvent.button() == RightButton;
 

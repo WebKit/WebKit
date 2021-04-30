@@ -1,3 +1,23 @@
+2021-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Add a heuristic to determine whether a synthetic click triggered any meaningful changes
+        https://bugs.webkit.org/show_bug.cgi?id=225240
+        rdar://77221196
+
+        Reviewed by Tim Horton.
+
+        Add plumbing for a `ChromeClient` hook that's called when a mousedown or mouseup event is either prevented by
+        the page, or handled with a default event handler on the element (e.g. when clicking a link).
+
+        Test: fast/events/ios/did-not-handle-meaningful-click.html
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+
 2021-04-30  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (iOS 14.5): PWA's / Home Screen Apps with Service Workers intermittenly fail to open offline

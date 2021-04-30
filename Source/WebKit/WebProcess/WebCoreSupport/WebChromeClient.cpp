@@ -1485,4 +1485,9 @@ void WebChromeClient::enumerateImmersiveXRDevices(CompletionHandler<void(const P
 }
 #endif
 
+void WebChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent()
+{
+    m_page.didHandleOrPreventMouseDownOrMouseUpEvent();
+}
+
 } // namespace WebKit

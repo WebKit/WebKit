@@ -1439,6 +1439,11 @@ void TestInvocation::outputText(const WTF::String& text)
     m_textOutput.append(text);
 }
 
+void TestInvocation::didNotHandleTapAsMeaningfulClick()
+{
+    postPageMessage("CallDidNotHandleTapAsMeaningfulClickCallback");
+}
+
 void TestInvocation::didBeginSwipe()
 {
     postPageMessage("CallDidBeginSwipeCallback");
