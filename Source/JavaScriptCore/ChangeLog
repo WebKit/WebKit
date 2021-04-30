@@ -1,5 +1,20 @@
 2021-04-29  Saam Barati  <sbarati@apple.com>
 
+        Inlining property accesses inside constant folding should check Options::useAccessInlining
+        https://bugs.webkit.org/show_bug.cgi?id=225194
+
+        Reviewed by Mark Lam.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::tryFoldAsPutByOffset):
+
+2021-04-29  Saam Barati  <sbarati@apple.com>
+
         Sampling profiler should dump a tier breakdown, and add ability to see time spent in C code with sampleCCode=0, and fix bugs with frames having the wrong jitType if they're inlined
         https://bugs.webkit.org/show_bug.cgi?id=225116
 
