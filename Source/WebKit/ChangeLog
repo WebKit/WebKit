@@ -1,3 +1,20 @@
+2021-04-30  Peng Liu  <peng.liu6@apple.com>
+
+        ASSERTION FAILED: Unhandled message RemoteRemoteCommandListenerProxy_UpdateSupportedCommands
+        https://bugs.webkit.org/show_bug.cgi?id=225234
+
+        Reviewed by Darin Adler.
+
+        We need to keep dispatching (and ignoring) messages for `RemoteRemoteCommandListenerProxy`
+        after the object is destroyed. That could happen because other web processes may still have
+        active `RemoteRemoteCommandListener` after `GPUConnectionToWebProcess::m_remoteRemoteCommandListener`
+        is destroyed.
+
+        No new tests. Fix an assertion failure in tests.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+
 2021-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a heuristic to determine whether a synthetic click triggered any meaningful changes

@@ -658,8 +658,9 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
     }
 #endif
 
-    if (m_remoteRemoteCommandListener && decoder.messageReceiverName() == Messages::RemoteRemoteCommandListenerProxy::messageReceiverName()) {
-        m_remoteRemoteCommandListener->didReceiveMessage(connection, decoder);
+    if (decoder.messageReceiverName() == Messages::RemoteRemoteCommandListenerProxy::messageReceiverName()) {
+        if (m_remoteRemoteCommandListener)
+            m_remoteRemoteCommandListener->didReceiveMessage(connection, decoder);
         return true;
     }
 
