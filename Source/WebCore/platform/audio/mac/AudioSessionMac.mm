@@ -48,7 +48,10 @@ static AudioDeviceID defaultDevice()
     AudioObjectPropertyAddress defaultOutputDeviceAddress = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster };
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
     OSStatus result = AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceAddress, 0, 0, &infoSize, (void*)&deviceID);
     if (result)
         return 0; // error
@@ -66,7 +69,9 @@ static float defaultDeviceTransportIsBluetooth()
     static const AudioObjectPropertyAddress audioDeviceTransportTypeProperty = {
         kAudioDevicePropertyTransportType,
         kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster,
+        ALLOW_DEPRECATED_DECLARATIONS_END
     };
     UInt32 transportType = kAudioDeviceTransportTypeUnknown;
     UInt32 transportSize = sizeof(transportType);
@@ -109,7 +114,13 @@ void AudioSessionPrivate::addSampleRateObserverIfNeeded()
         return;
     hasSampleRateObserver = true;
 
-    AudioObjectPropertyAddress nominalSampleRateAddress = { kAudioDevicePropertyNominalSampleRate, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+    AudioObjectPropertyAddress nominalSampleRateAddress = {
+        kAudioDevicePropertyNominalSampleRate,
+        kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
     AudioObjectAddPropertyListener(defaultDevice(), &nominalSampleRateAddress, handleSampleRateChange, this);
 }
 
@@ -136,7 +147,13 @@ void AudioSessionPrivate::addBufferSizeObserverIfNeeded()
     if (hasBufferSizeObserver)
         return;
 
-    AudioObjectPropertyAddress bufferSizeAddress = { kAudioDevicePropertyBufferFrameSize, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+    AudioObjectPropertyAddress bufferSizeAddress = {
+        kAudioDevicePropertyBufferFrameSize,
+        kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
     AudioObjectAddPropertyListener(defaultDevice(), &bufferSizeAddress, handleBufferSizeChange, this);
 }
 
@@ -262,7 +279,9 @@ float AudioSession::sampleRate() const
         AudioObjectPropertyAddress nominalSampleRateAddress = {
             kAudioDevicePropertyNominalSampleRate,
             kAudioObjectPropertyScopeGlobal,
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             kAudioObjectPropertyElementMaster
+            ALLOW_DEPRECATED_DECLARATIONS_END
         };
         OSStatus result = AudioObjectGetPropertyData(defaultDevice(), &nominalSampleRateAddress, 0, 0, &nominalSampleRateSize, (void*)&nominalSampleRate);
         if (result != noErr) {
@@ -292,7 +311,10 @@ size_t AudioSession::bufferSize() const
     AudioObjectPropertyAddress bufferSizeAddress = {
         kAudioDevicePropertyBufferFrameSize,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster };
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
     OSStatus result = AudioObjectGetPropertyData(defaultDevice(), &bufferSizeAddress, 0, 0, &bufferSizeSize, &bufferSize);
 
     if (result)
@@ -314,7 +336,9 @@ size_t AudioSession::maximumNumberOfOutputChannels() const
     AudioObjectPropertyAddress sizeAddress = {
         kAudioDevicePropertyStreamConfiguration,
         kAudioObjectPropertyScopeOutput,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     UInt32 size = 0;
@@ -366,7 +390,9 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
     AudioObjectPropertyAddress bufferSizeRangeAddress = {
         kAudioDevicePropertyBufferFrameSizeRange,
         kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
     };
     OSStatus result = AudioObjectGetPropertyData(defaultDevice(), &bufferSizeRangeAddress, 0, 0, &bufferSizeRangeSize, &bufferSizeRange);
     if (result)
@@ -379,7 +405,10 @@ void AudioSession::setPreferredBufferSize(size_t bufferSize)
     AudioObjectPropertyAddress preferredBufferSizeAddress = {
         kAudioDevicePropertyBufferFrameSize,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster };
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
 
     result = AudioObjectSetPropertyData(defaultDevice(), &preferredBufferSizeAddress, 0, 0, sizeof(bufferSizeOut), (void*)&bufferSizeOut);
 
@@ -398,7 +427,13 @@ bool AudioSession::isMuted() const
 {
     UInt32 mute = 0;
     UInt32 muteSize = sizeof(mute);
-    AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
+    AudioObjectPropertyAddress muteAddress = {
+        kAudioDevicePropertyMute,
+        kAudioDevicePropertyScopeOutput,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
     AudioObjectGetPropertyData(defaultDevice(), &muteAddress, 0, nullptr, &muteSize, &mute);
     
     switch (mute) {
@@ -442,14 +477,26 @@ void AudioSession::addMutedStateObserver(MutedStateObserver* observer)
     if (m_observers.size() > 1)
         return;
 
-    AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
+    AudioObjectPropertyAddress muteAddress = {
+        kAudioDevicePropertyMute,
+        kAudioDevicePropertyScopeOutput,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
     AudioObjectAddPropertyListener(defaultDevice(), &muteAddress, handleMutePropertyChange, this);
 }
 
 void AudioSession::removeMutedStateObserver(MutedStateObserver* observer)
 {
     if (m_observers.size() == 1) {
-        AudioObjectPropertyAddress muteAddress = { kAudioDevicePropertyMute, kAudioDevicePropertyScopeOutput, kAudioObjectPropertyElementMaster };
+        AudioObjectPropertyAddress muteAddress = {
+            kAudioDevicePropertyMute,
+            kAudioDevicePropertyScopeOutput,
+            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+            kAudioObjectPropertyElementMaster
+            ALLOW_DEPRECATED_DECLARATIONS_END
+        };
         AudioObjectRemovePropertyListener(defaultDevice(), &muteAddress, handleMutePropertyChange, this);
     }
 

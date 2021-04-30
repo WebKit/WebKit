@@ -29,9 +29,9 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 #import "AVOutputDeviceMenuControllerTargetPicker.h"
+#import "FloatRect.h"
 #import "Logging.h"
-#import <WebCore/FloatRect.h>
-#import <WebCore/MediaPlaybackTargetCocoa.h>
+#import "MediaPlaybackTargetCocoa.h"
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>

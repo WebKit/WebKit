@@ -145,7 +145,7 @@ Builder.prototype = {
             }
 
             if (layoutTestStep.results[0] === 4) {
-                // This build step was interrupted (perhaps due to the build slave restarting).
+                // This build step was interrupted (perhaps due to the build worker restarting).
                 PersistentCache.set(cacheKey, result);
                 callback(result.failureCount, result.tooManyFailures);
                 return;

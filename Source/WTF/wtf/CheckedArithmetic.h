@@ -703,7 +703,7 @@ public:
         m_value = static_cast<T>(rhs.m_value);
     }
     
-    const Checked& operator=(Checked rhs)
+    Checked& operator=(Checked rhs)
     {
         this->clearOverflow();
         if (rhs.hasOverflowed())
@@ -712,18 +712,18 @@ public:
         return *this;
     }
     
-    template <typename U> const Checked& operator=(U value)
+    template <typename U> Checked& operator=(U value)
     {
         return *this = Checked(value);
     }
     
-    template <typename U, typename V> const Checked& operator=(const Checked<U, V>& rhs)
+    template <typename U, typename V> Checked& operator=(const Checked<U, V>& rhs)
     {
         return *this = Checked(rhs);
     }
     
     // prefix
-    const Checked& operator++()
+    Checked& operator++()
     {
         if (m_value == std::numeric_limits<T>::max())
             this->overflowed();
@@ -731,7 +731,7 @@ public:
         return *this;
     }
     
-    const Checked& operator--()
+    Checked& operator--()
     {
         if (m_value == std::numeric_limits<T>::min())
             this->overflowed();
@@ -740,14 +740,14 @@ public:
     }
     
     // postfix operators
-    const Checked operator++(int)
+    Checked operator++(int)
     {
         if (m_value == std::numeric_limits<T>::max())
             this->overflowed();
         return Checked(m_value++);
     }
     
-    const Checked operator--(int)
+    Checked operator--(int)
     {
         if (m_value == std::numeric_limits<T>::min())
             this->overflowed();
@@ -787,83 +787,49 @@ public:
     }
 
     // Mutating assignment
-    template <typename U> const Checked operator+=(U rhs)
+    template <typename U> Checked& operator+=(U rhs)
     {
         if (!safeAdd<OverflowHandler>(m_value, rhs, m_value))
             this->overflowed();
         return *this;
     }
 
-    template <typename U> const Checked operator-=(U rhs)
+    template <typename U> Checked& operator-=(U rhs)
     {
         if (!safeSub<OverflowHandler>(m_value, rhs, m_value))
             this->overflowed();
         return *this;
     }
 
-    template <typename U> const Checked operator*=(U rhs)
+    template <typename U> Checked& operator*=(U rhs)
     {
         if (!safeMultiply<OverflowHandler>(m_value, rhs, m_value))
             this->overflowed();
         return *this;
     }
 
-    template <typename U> const Checked operator/=(U rhs)
+    template <typename U> Checked& operator/=(U rhs)
     {
         if (!safeDivide<OverflowHandler>(m_value, rhs, m_value))
             this->overflowed();
         return *this;
     }
 
-    const Checked operator*=(double rhs)
-    {
-        double result = rhs * m_value;
-        // Handle +/- infinity and NaN
-        if (!(std::numeric_limits<T>::min() <= result && std::numeric_limits<T>::max() >= result))
-            this->overflowed();
-        m_value = (T)result;
-        return *this;
-    }
-
-    const Checked operator/=(double rhs)
-    {
-        if (!rhs) {
-            this->overflowed();
-            return *this;
-        }
-        double result = m_value / rhs;
-        // Handle +/- infinity and NaN
-        if (!(std::numeric_limits<T>::min() <= result && std::numeric_limits<T>::max() >= result))
-            this->overflowed();
-        m_value = (T)result;
-        return *this;
-    }
-
-    const Checked operator*=(float rhs)
-    {
-        return *this *= (double)rhs;
-    }
-
-    const Checked operator/=(float rhs)
-    {
-        return *this /= (double)rhs;
-    }
-    
-    template <typename U, typename V> const Checked operator+=(Checked<U, V> rhs)
+    template <typename U, typename V> Checked& operator+=(Checked<U, V> rhs)
     {
         if (rhs.hasOverflowed())
             this->overflowed();
         return *this += rhs.m_value;
     }
 
-    template <typename U, typename V> const Checked operator-=(Checked<U, V> rhs)
+    template <typename U, typename V> Checked& operator-=(Checked<U, V> rhs)
     {
         if (rhs.hasOverflowed())
             this->overflowed();
         return *this -= rhs.m_value;
     }
 
-    template <typename U, typename V> const Checked operator*=(Checked<U, V> rhs)
+    template <typename U, typename V> Checked& operator*=(Checked<U, V> rhs)
     {
         if (rhs.hasOverflowed())
             this->overflowed();
@@ -883,7 +849,7 @@ public:
         return safeEquals(m_value, rhs);
     }
     
-    template <typename U, typename V> const Checked operator==(Checked<U, V> rhs)
+    template <typename U, typename V> bool operator==(Checked<U, V> rhs)
     {
         return unsafeGet() == Checked(rhs.unsafeGet());
     }

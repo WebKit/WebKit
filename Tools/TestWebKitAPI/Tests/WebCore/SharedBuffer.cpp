@@ -207,14 +207,14 @@ TEST_F(SharedBufferTest, isEqualTo)
         return buffer;
     };
     auto buffer1 = makeBuffer({{'a', 'b', 'c', 'd'}});
-    EXPECT_EQ(buffer1, buffer1);
+    EXPECT_EQ(buffer1.get(), buffer1.get());
 
     buffer1->append(Vector<char>({'a', 'b', 'c', 'd'}));
-    EXPECT_EQ(buffer1, makeBuffer({{'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'}}));
-    EXPECT_EQ(makeBuffer({{'a'}, {'b', 'c'}, {'d'}}), makeBuffer({{'a', 'b'}, {'c', 'd'}}));
-    EXPECT_NE(makeBuffer({{'a', 'b'}}), makeBuffer({{'a', 'b', 'c'}}));
-    EXPECT_NE(makeBuffer({{'a', 'b'}}), makeBuffer({{'b', 'c'}}));
-    EXPECT_NE(makeBuffer({{'a'}, {'b'}}), makeBuffer({{'a'}, {'a'}}));
+    EXPECT_EQ(buffer1.get(), makeBuffer({{'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'}}).get());
+    EXPECT_EQ(makeBuffer({{'a'}, {'b', 'c'}, {'d'}}).get(), makeBuffer({{'a', 'b'}, {'c', 'd'}}).get());
+    EXPECT_NE(makeBuffer({{'a', 'b'}}).get(), makeBuffer({{'a', 'b', 'c'}}).get());
+    EXPECT_NE(makeBuffer({{'a', 'b'}}).get(), makeBuffer({{'b', 'c'}}).get());
+    EXPECT_NE(makeBuffer({{'a'}, {'b'}}).get(), makeBuffer({{'a'}, {'a'}}).get());
 }
 
 TEST_F(SharedBufferTest, toHexString)

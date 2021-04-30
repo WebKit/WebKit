@@ -30,6 +30,8 @@ import steps
 
 
 class TestCase(unittest.TestCase):
+    maxDiff = None
+
     def assertBuildSteps(self, actual_steps, expected_steps):
         assert all([isinstance(step, _BuildStepFactory) for step in actual_steps])
         assert all([isinstance(step, _BuildStepFactory) for step in expected_steps])
@@ -411,7 +413,8 @@ class TestCommitQueueFactory(TestCase):
             _BuildStepFactory(steps.ValidatePatch, verifycqplus=True),
             _BuildStepFactory(steps.ValidateCommiterAndReviewer),
             _BuildStepFactory(steps.PrintConfiguration),
-            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CleanGitRepo),
+            _BuildStepFactory(steps.CheckOutSource, repourl='https://git.webkit.org/git/WebKit-https'),
             _BuildStepFactory(steps.FetchBranches),
             _BuildStepFactory(steps.ShowIdentifier),
             _BuildStepFactory(steps.UpdateWorkingDirectory),
@@ -425,7 +428,7 @@ class TestCommitQueueFactory(TestCase):
             _BuildStepFactory(steps.CheckPatchStatusOnEWSQueues),
             _BuildStepFactory(steps.RunWebKitTests),
             _BuildStepFactory(steps.ValidatePatch, addURLs=False, verifycqplus=True),
-            _BuildStepFactory(steps.CheckOutSource),
+            _BuildStepFactory(steps.CheckOutSource, repourl='https://git.webkit.org/git/WebKit-https'),
             _BuildStepFactory(steps.ShowIdentifier),
             _BuildStepFactory(steps.UpdateWorkingDirectory),
             _BuildStepFactory(steps.ApplyPatch),

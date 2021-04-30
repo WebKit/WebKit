@@ -121,6 +121,7 @@ public:
     virtual PlatformCALayer* superlayer() const = 0;
     virtual void removeFromSuperlayer() = 0;
     virtual void setSublayers(const PlatformCALayerList&) = 0;
+    virtual PlatformCALayerList sublayersForLogging() const = 0;
     virtual void removeAllSublayers() = 0;
     virtual void appendSublayer(PlatformCALayer&) = 0;
     virtual void insertSublayer(PlatformCALayer&, size_t index) = 0;
@@ -299,6 +300,8 @@ public:
     static CGRect frameForLayer(const PlatformLayer*);
 
     void moveToLayerPool();
+    
+    virtual void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
 protected:
     PlatformCALayer(LayerType, PlatformCALayerClient* owner);

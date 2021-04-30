@@ -421,6 +421,14 @@ public:
     ExceptionOr<uint64_t> layerIDForElement(Element&);
     ExceptionOr<String> repaintRectsAsText() const;
 
+    enum {
+        // Values need to be kept in sync with Internals.idl.
+        PLATFORM_LAYER_TREE_DEBUG = 1,
+        PLATFORM_LAYER_TREE_IGNORES_CHILDREN = 2,
+        PLATFORM_LAYER_TREE_INCLUDE_MODELS = 4,
+    };
+    ExceptionOr<String> platformLayerTreeAsText(Element&, unsigned short flags) const;
+
     ExceptionOr<String> scrollbarOverlayStyle(Node*) const;
     ExceptionOr<bool> scrollbarUsingDarkAppearance(Node*) const;
 
@@ -675,7 +683,7 @@ public:
     WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
     using BufferedSamplesPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
     void bufferedSamplesForTrackId(SourceBuffer&, const AtomString&, BufferedSamplesPromise&&);
-    Vector<String> enqueuedSamplesForTrackID(SourceBuffer&, const AtomString&);
+    void enqueuedSamplesForTrackID(SourceBuffer&, const AtomString&, BufferedSamplesPromise&&);
     double minimumUpcomingPresentationTimeForTrackID(SourceBuffer&, const AtomString&);
     void setShouldGenerateTimestamps(SourceBuffer&, bool);
     void setMaximumQueueDepthForTrackID(SourceBuffer&, const AtomString&, size_t);
@@ -867,7 +875,17 @@ public:
 
         ~ImageOverlayText();
     };
-    void installImageOverlay(Element&, Vector<ImageOverlayText>&&);
+
+    struct ImageOverlayLine {
+        RefPtr<DOMPointReadOnly> topLeft;
+        RefPtr<DOMPointReadOnly> topRight;
+        RefPtr<DOMPointReadOnly> bottomRight;
+        RefPtr<DOMPointReadOnly> bottomLeft;
+        Vector<ImageOverlayText> children;
+
+        ~ImageOverlayLine();
+    };
+    void installImageOverlay(Element&, Vector<ImageOverlayLine>&&);
 
     bool isSystemPreviewLink(Element&) const;
     bool isSystemPreviewImage(Element&) const;

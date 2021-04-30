@@ -1,3 +1,5 @@
+inbandTrack1 = null;
+
 function testTrackListContainsTrack(listStr, trackStr)
 {
     var list = eval(listStr);
@@ -60,13 +62,27 @@ function testAttribute(uri, type, attribute, values)
 
 function testCuesAddedOnce(uri, kind)
 {
+
     var seekedCount = 0;
     var cuesStarts = [];
+    var intervalId = null;
+    inbandTrack1 = null;
 
     function pollProgress()
     {
         if (video.currentTime < 2)
             return;
+
+        if (!inbandTrack1) {
+            failTest("No text track of kind '" + kind + "'");
+            clearInterval(intervalId);
+            return;
+        }
+        if (!inbandTrack1.cues) {
+            failTest("No text track of kind '" + kind + "'");
+            clearInterval(intervalId);
+            return;
+        }
 
         testExpected("inbandTrack1.cues.length", 0, ">");
 
@@ -93,9 +109,11 @@ function testCuesAddedOnce(uri, kind)
                     success = false;
                 }
             }
+            clearInterval(intervalId);
             logResult(success, "Test all cues are equal");
             endTest();
         } catch (e) {
+            clearInterval(intervalId);
             failTest(e);
         }
     }
@@ -103,15 +121,18 @@ function testCuesAddedOnce(uri, kind)
     function canplaythrough()
     {
         waitForEvent('seeked', function() { ++seekedCount; });
-        setInterval(pollProgress, 100);
+        intervalId = setInterval(pollProgress, 100);
 
         consoleWrite("<br><i>** Setting track 1 to showing</i>");
+        inbandTrack1 = null;
         for (var i = 0; i < video.textTracks.length; ++i) {
             if (video.textTracks[i].kind == kind) {
                 inbandTrack1 = video.textTracks[i];
                 break;
             }
         }
+        if (!inbandTrack1)
+            failTest("No text track of kind '" + kind + "'");
         run("inbandTrack1.mode = 'showing'");
         run("video.play()");
     }

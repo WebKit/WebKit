@@ -1,4 +1,3 @@
-//@ skip if ["arm", "mips"].include?($architecture) # Due to ICU version. MIPS and ARMv7 maintainer can look into the results and update.
 
 function shouldBe(actual, expected) {
     if (actual !== expected)

@@ -133,6 +133,13 @@ void RTPSenderVideoFrameTransformerDelegate::OnTransformedFrame(
   // alive, it's safe to post.
   if (!sender_)
     return;
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+  // In case we recreate webrtc streams, the new delegate may be requested to process frames from the previous delegate.
+  if (!encoder_queue_)
+    return;
+#endif
+
   rtc::scoped_refptr<RTPSenderVideoFrameTransformerDelegate> delegate = this;
   encoder_queue_->PostTask(ToQueuedTask(
       [delegate = std::move(delegate), frame = std::move(frame)]() mutable {

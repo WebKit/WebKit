@@ -74,12 +74,17 @@
 #include "markup.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Range.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 #if ENABLE(IMAGE_EXTRACTION)
 #include "ImageExtractionResult.h"
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
@@ -1267,6 +1272,11 @@ bool HTMLElement::isInsideImageOverlay(const Node& node)
     return host->userAgentShadowRoot()->contains(node);
 }
 
+bool HTMLElement::isImageOverlayText(const Node* node)
+{
+    return node && isImageOverlayText(*node);
+}
+
 bool HTMLElement::isImageOverlayText(const Node& node)
 {
     auto host = imageOverlayHost(node);
@@ -1323,39 +1333,110 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         container->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
     shadowRoot->appendChild(container);
 
+    if (document().quirks().needsToForceUserSelectWhenInstallingImageOverlay())
+        setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
+
+    static MainThreadNeverDestroyed<const AtomString> imageOverlayLineClass("image-overlay-line", AtomString::ConstructFromLiteral);
     static MainThreadNeverDestroyed<const AtomString> imageOverlayTextClass("image-overlay-text", AtomString::ConstructFromLiteral);
 
     IntSize containerSize { offsetWidth(), offsetHeight() };
-    for (auto& data : result.textData) {
-        auto child = HTMLDivElement::create(document());
-        child->classList().add(imageOverlayTextClass);
-
-        container->appendChild(child);
-        child->appendChild(Text::create(document(), makeString('\n', data.text)));
-        child->appendChild(HTMLBRElement::create(document()));
-
-        IntSize originalSize { child->offsetWidth(), child->offsetHeight() };
-        if (originalSize.isEmpty())
+    for (auto& line : result.lines) {
+        auto lineQuad = line.normalizedQuad;
+        if (lineQuad.isEmpty())
             continue;
 
-        auto targetQuad = data.normalizedQuad;
-        targetQuad.scale(containerSize.width(), containerSize.height());
+        lineQuad.scale(containerSize.width(), containerSize.height());
 
-        auto rotatedRect = rotatedBoundingRect(targetQuad, 0.01);
-        auto scale = rotatedRect.size / originalSize;
-        String rotationTransformationAsText;
-        if (rotatedRect.angleInRadians)
-            rotationTransformationAsText = makeString("rotate(", rotatedRect.angleInRadians, "rad) "_s);
+        auto lineContainer = HTMLDivElement::create(document());
+        lineContainer->classList().add(imageOverlayLineClass);
+        container->appendChild(lineContainer);
 
-        auto offset = roundedIntPoint(rotatedRect.center - (originalSize / 2));
-        child->setInlineStyleProperty(CSSPropertyTransform, makeString(
-            "translate("_s, offset.x(), "px, "_s, offset.y(), "px) "_s,
-            rotationTransformationAsText,
-            "scale("_s, scale.width(), ", "_s, scale.height(), ") "_s
+        auto lineBounds = rotatedBoundingRectWithMinimumAngleOfRotation(lineQuad, 0.01);
+        lineContainer->setInlineStyleProperty(CSSPropertyWidth, lineBounds.size.width(), CSSUnitType::CSS_PX);
+        lineContainer->setInlineStyleProperty(CSSPropertyHeight, lineBounds.size.height(), CSSUnitType::CSS_PX);
+        lineContainer->setInlineStyleProperty(CSSPropertyTransform, makeString(
+            "translate("_s,
+            std::round(lineBounds.center.x() - (lineBounds.size.width() / 2)), "px, "_s,
+            std::round(lineBounds.center.y() - (lineBounds.size.height() / 2)), "px) "_s,
+            lineBounds.angleInRadians ? makeString("rotate("_s, lineBounds.angleInRadians, "rad) "_s) : emptyString()
         ));
 
+        auto offsetAlongHorizontalAxis = [&](const FloatPoint& quadPoint1, const FloatPoint& quadPoint2) {
+            auto intervalLength = lineBounds.size.width();
+            auto mid = midPoint(quadPoint1, quadPoint2);
+            mid.moveBy(-lineBounds.center);
+            mid.rotate(-lineBounds.angleInRadians);
+            return intervalLength * clampTo<float>(0.5 + mid.x() / intervalLength, 0, 1);
+        };
+
+        auto offsetsAlongHorizontalAxis = line.children.map([&](auto& child) -> WTF::Range<float> {
+            auto textQuad = child.normalizedQuad;
+            textQuad.scale(containerSize.width(), containerSize.height());
+            return {
+                offsetAlongHorizontalAxis(textQuad.p1(), textQuad.p4()),
+                offsetAlongHorizontalAxis(textQuad.p2(), textQuad.p3())
+            };
+        });
+
+        for (size_t childIndex = 0; childIndex < line.children.size(); ++childIndex) {
+            auto& child = line.children[childIndex];
+            if (child.normalizedQuad.isEmpty())
+                continue;
+
+            constexpr float horizontalMarginToMinimizeSelectionGaps = 0.125;
+            float horizontalOffset = -horizontalMarginToMinimizeSelectionGaps;
+            float horizontalExtent = horizontalMarginToMinimizeSelectionGaps;
+
+            if (line.children.size() == 1) {
+                horizontalOffset += offsetsAlongHorizontalAxis[childIndex].begin();
+                horizontalExtent += offsetsAlongHorizontalAxis[childIndex].end();
+            } else if (!childIndex) {
+                horizontalOffset += offsetsAlongHorizontalAxis[childIndex].begin();
+                horizontalExtent += (offsetsAlongHorizontalAxis[childIndex].end() + offsetsAlongHorizontalAxis[childIndex + 1].begin()) / 2;
+            } else if (childIndex == line.children.size() - 1) {
+                horizontalOffset += (offsetsAlongHorizontalAxis[childIndex - 1].end() + offsetsAlongHorizontalAxis[childIndex].begin()) / 2;
+                horizontalExtent += offsetsAlongHorizontalAxis[childIndex].end();
+            } else {
+                horizontalOffset += (offsetsAlongHorizontalAxis[childIndex - 1].end() + offsetsAlongHorizontalAxis[childIndex].begin()) / 2;
+                horizontalExtent += (offsetsAlongHorizontalAxis[childIndex].end() + offsetsAlongHorizontalAxis[childIndex + 1].begin()) / 2;
+            }
+
+            FloatSize targetSize { horizontalExtent - horizontalOffset, lineBounds.size.height() };
+            if (targetSize.isEmpty())
+                continue;
+
+            auto textContainer = HTMLDivElement::create(document());
+            textContainer->classList().add(imageOverlayTextClass);
+            lineContainer->appendChild(textContainer);
+            textContainer->appendChild(Text::create(document(), makeString('\n', child.text)));
+
+            document().updateLayoutIfDimensionsOutOfDate(textContainer);
+
+            FloatSize sizeBeforeTransform;
+            if (auto* renderer = textContainer->renderBoxModelObject()) {
+                sizeBeforeTransform = {
+                    adjustLayoutUnitForAbsoluteZoom(renderer->offsetWidth(), *renderer).toFloat(),
+                    adjustLayoutUnitForAbsoluteZoom(renderer->offsetHeight(), *renderer).toFloat(),
+                };
+            }
+
+            if (sizeBeforeTransform.isEmpty()) {
+                textContainer->remove();
+                continue;
+            }
+
+            textContainer->setInlineStyleProperty(CSSPropertyTransform, makeString(
+                "translate("_s,
+                horizontalOffset + (targetSize.width() - sizeBeforeTransform.width()) / 2, "px, "_s,
+                (targetSize.height() - sizeBeforeTransform.height()) / 2, "px) "_s,
+                "scale("_s, targetSize.width() / sizeBeforeTransform.width(), ", "_s, targetSize.height() / sizeBeforeTransform.height(), ") "_s
+            ));
+        }
+
+        lineContainer->appendChild(HTMLBRElement::create(document()));
+
         if (document().isImageDocument())
-            child->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);
+            lineContainer->setInlineStyleProperty(CSSPropertyCursor, CSSValueText);
     }
 
     if (auto frame = makeRefPtr(document().frame()))
@@ -1363,6 +1444,15 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)
+
+#if PLATFORM(IOS_FAMILY)
+
+SelectionRenderingBehavior HTMLElement::selectionRenderingBehavior(const Node* node)
+{
+    return isImageOverlayText(node) ? SelectionRenderingBehavior::UseIndividualQuads : SelectionRenderingBehavior::CoalesceBoundingRects;
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 } // namespace WebCore
 

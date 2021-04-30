@@ -16,14 +16,14 @@ layer at (0,0) size 800x420
         RenderText {#text} at (0,0) size 466x19
           text run at (0,0) width 369: "This paragraph should be justified (the right and left margins "
           text run at (368,0) width 98: "should line up). "
-        RenderInline {SPAN} at (0,0) size 785x259 [color=#C0C0C0]
-          RenderText {#text} at (465,0) size 785x259
-            text run at (465,0) width 320: "This is just lovely dummy text. Dummy text. Dummy"
+        RenderInline {SPAN} at (0,0) size 784x259 [color=#C0C0C0]
+          RenderText {#text} at (465,0) size 784x259
+            text run at (465,0) width 319: "This is just lovely dummy text. Dummy text. Dummy"
             text run at (0,20) width 491: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
             text run at (490,20) width 294: "This is just lovely dummy text. This is just lovely"
             text run at (0,40) width 218: "dummy text. Dummy text. Dummy "
             text run at (217,40) width 502: "text. This is just lovely dummy text. This is just lovely dummy text. Dummy text. "
-            text run at (718,40) width 67: "This is just"
+            text run at (718,40) width 66: "This is just"
             text run at (0,60) width 453: "lovely dummy text. This is just lovely dummy text. Dummy text. Dummy "
             text run at (452,60) width 332: "text. This is just lovely dummy text. This is just lovely"
             text run at (0,80) width 165: "dummy text. Dummy text. "

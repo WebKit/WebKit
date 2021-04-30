@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
 ] dictionary XRReferenceSpaceEventInit : EventInit {
     required WebXRReferenceSpace referenceSpace;
@@ -32,7 +32,7 @@
 };
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window

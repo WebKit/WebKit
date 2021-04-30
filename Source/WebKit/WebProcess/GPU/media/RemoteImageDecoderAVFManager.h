@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
 #include "Connection.h"
+#include "GPUProcessConnection.h"
 #include "MessageReceiver.h"
 #include "WebProcessSupplement.h"
 #include <WebCore/ImageDecoderIdentifier.h>
@@ -38,12 +39,12 @@
 
 namespace WebKit {
 
-class GPUProcessConnection;
 class RemoteImageDecoderAVF;
 class WebProcess;
 
-class RemoteImageDecoderAVFManager
+class RemoteImageDecoderAVFManager final
     : public WebProcessSupplement
+    , private GPUProcessConnection::Client
     , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -55,10 +56,13 @@ public:
     static const char* supplementName();
 
     void setUseGPUProcess(bool);
-    GPUProcessConnection& gpuProcessConnection() const;
+    GPUProcessConnection& ensureGPUProcessConnection();
 
 private:
     RefPtr<RemoteImageDecoderAVF> createImageDecoder(WebCore::SharedBuffer& data, const String& mimeType, WebCore::AlphaOption, WebCore::GammaAndColorProfileOption);
+
+    // GPUProcessConnection::Client.
+    void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void encodedDataStatusChanged(const WebCore::ImageDecoderIdentifier&, size_t frameCount, const WebCore::IntSize&, bool hasTrack);
@@ -66,7 +70,7 @@ private:
     HashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders;
 
     WebProcess& m_process;
-    bool m_messageReceiverInitialized { false };
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 }

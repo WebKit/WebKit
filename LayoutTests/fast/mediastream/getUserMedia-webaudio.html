@@ -91,7 +91,7 @@ async function checkForNoise(stream, counter)
 {
     if (!counter)
         counter = 1;
-    else if (++counter > 4)
+    else if (++counter > 50)
         return Promise.resolve(false);
     results = await analyseAudio(stream, 100, context);
     if (results.heardNoise)

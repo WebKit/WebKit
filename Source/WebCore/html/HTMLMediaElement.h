@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -490,7 +490,7 @@ public:
     RefPtr<VideoPlaybackQuality> getVideoPlaybackQuality();
 
     MediaPlayer::Preload preloadValue() const { return m_preload; }
-    MediaElementSession& mediaSession() const { return *m_mediaSession; }
+    WEBCORE_EXPORT MediaElementSession& mediaSession() const;
 
     void pageScaleFactorChanged();
     void userInterfaceLayoutDirectionChanged();
@@ -578,7 +578,6 @@ public:
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
-    virtual void finishInitialization();
     virtual ~HTMLMediaElement();
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
@@ -726,6 +725,8 @@ private:
     String mediaPlayerSourceApplicationIdentifier() const override { return sourceApplicationIdentifier(); }
     Vector<String> mediaPlayerPreferredAudioCharacteristics() const override;
 
+    String mediaPlayerElementId() const override { return m_id; }
+
 #if PLATFORM(IOS_FAMILY)
     String mediaPlayerNetworkInterfaceName() const override;
     void mediaPlayerGetRawCookies(const URL&, MediaPlayerClient::GetRawCookiesCallback&&) const final;
@@ -739,6 +740,7 @@ private:
     bool mediaPlayerShouldDisableSleep() const final { return shouldDisableSleep() == SleepType::Display; }
     bool mediaPlayerShouldCheckHardwareSupport() const final;
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const final;
+    void mediaPlayerBufferedTimeRangesChanged() final;
 
 #if USE(GSTREAMER)
     void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback&) final;
@@ -890,6 +892,8 @@ private:
     void registerWithDocument(Document&);
     void unregisterWithDocument(Document&);
 
+    void initializeMediaSession();
+
     void updateCaptionContainer();
     void ensureMediaControlsShadowRoot();
 
@@ -948,6 +952,7 @@ private:
     DeferrableTask<Timer> m_resumeTaskQueue;
     DeferrableTask<Timer> m_seekTaskQueue;
     DeferrableTask<Timer> m_playbackControlsManagerBehaviorRestrictionsQueue;
+    DeferrableTask<Timer> m_bufferedTimeRangesChangedQueue;
     GenericTaskQueue<Timer> m_promiseTaskQueue;
     GenericTaskQueue<Timer> m_pauseAfterDetachedTaskQueue;
     GenericTaskQueue<Timer> m_resourceSelectionTaskQueue;
@@ -1103,6 +1108,8 @@ private:
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
+    bool m_shouldAudioPlaybackRequireUserGesture : 1;
+    bool m_shouldVideoPlaybackRequireUserGesture : 1;
 
     AutoplayEventPlaybackState m_autoplayEventPlaybackState { AutoplayEventPlaybackState::None };
 
@@ -1194,6 +1201,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     String m_audioOutputHashedDeviceId;
 #endif
+    String m_id;
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

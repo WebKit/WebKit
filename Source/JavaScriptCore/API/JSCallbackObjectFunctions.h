@@ -112,13 +112,23 @@ template <class Parent>
 void JSCallbackObject<Parent>::init(JSGlobalObject* globalObject)
 {
     ASSERT(globalObject);
+    VM& vm = getVM(globalObject);
     
+    bool hasConvertToType = false;
     Vector<JSObjectInitializeCallback, 16> initRoutines;
     JSClassRef jsClass = classRef();
     do {
+        if (jsClass->convertToType)
+            hasConvertToType = true;
         if (JSObjectInitializeCallback initialize = jsClass->initialize)
             initRoutines.append(initialize);
     } while ((jsClass = jsClass->parentClass));
+
+    if (hasConvertToType) {
+        this->putDirect(vm, vm.propertyNames->toPrimitiveSymbol,
+            JSFunction::create(vm, globalObject, 1, "[Symbol.toPrimitive]"_s, customToPrimitive),
+            static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
     
     // initialize from base to derived
     for (int i = static_cast<int>(initRoutines.size()) - 1; i >= 0; i--) {
@@ -217,12 +227,17 @@ bool JSCallbackObject<Parent>::getOwnPropertySlotByIndex(JSObject* object, JSGlo
 }
 
 template <class Parent>
-JSValue JSCallbackObject<Parent>::defaultValue(const JSObject* object, JSGlobalObject* globalObject, PreferredPrimitiveType hint)
+EncodedJSValue JSCallbackObject<Parent>::customToPrimitive(JSGlobalObject* globalObject, CallFrame* callFrame)
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    const JSCallbackObject* thisObject = jsCast<const JSCallbackObject*>(object);
+    JSCallbackObject* thisObject = jsDynamicCast<JSCallbackObject*>(vm, callFrame->thisValue());
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope, "JSCallbackObject[Symbol.toPrimitive] method called on incompatible |this| value."_s);
+    PreferredPrimitiveType hint = toPreferredPrimitiveType(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+
     JSContextRef ctx = toRef(globalObject);
     JSObjectRef thisRef = toRef(jsCast<const JSObject*>(thisObject));
     ::JSType jsHint = hint == PreferString ? kJSTypeString : kJSTypeNumber;
@@ -231,16 +246,18 @@ JSValue JSCallbackObject<Parent>::defaultValue(const JSObject* object, JSGlobalO
         if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
             JSValueRef exception = nullptr;
             JSValueRef result = convertToType(ctx, thisRef, jsHint, &exception);
-            if (exception) {
-                throwException(globalObject, scope, toJS(globalObject, exception));
-                return jsUndefined();
+            if (exception)
+                return throwVMError(globalObject, scope, toJS(globalObject, exception));
+            if (result) {
+                JSValue jsResult = toJS(globalObject, result);
+                if (UNLIKELY(jsResult.isObject()))
+                    return JSValue::encode(asObject(jsResult)->ordinaryToPrimitive(globalObject, hint));
+                return JSValue::encode(jsResult);
             }
-            if (result)
-                return toJS(globalObject, result);
         }
     }
     
-    RELEASE_AND_RETURN(scope, Parent::defaultValue(object, globalObject, hint));
+    RELEASE_AND_RETURN(scope, JSValue::encode(thisObject->ordinaryToPrimitive(globalObject, hint)));
 }
 
 template <class Parent>
@@ -254,6 +271,9 @@ bool JSCallbackObject<Parent>::put(JSCell* cell, JSGlobalObject* globalObject, P
     JSObjectRef thisRef = toRef(jsCast<JSObject*>(thisObject));
     RefPtr<OpaqueJSString> propertyNameRef;
     JSValueRef valueRef = toRef(globalObject, value);
+
+    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+        RELEASE_AND_RETURN(scope, Parent::put(thisObject, globalObject, propertyName, value, slot));
     
     if (StringImpl* name = propertyName.uid()) {
         for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {

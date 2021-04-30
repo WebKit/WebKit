@@ -26,7 +26,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementedAs=WebGPURenderPassColorAttachmentDescriptor
 ] dictionary GPURenderPassColorAttachmentDescriptor {
     required WebGPUTextureView attachment;
@@ -39,7 +39,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementedAs=WebGPURenderPassDepthStencilAttachmentDescriptor
 ] dictionary GPURenderPassDepthStencilAttachmentDescriptor {
     required WebGPUTextureView attachment;
@@ -57,7 +57,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary WebGPURenderPassDescriptor {
     required sequence<GPURenderPassColorAttachmentDescriptor> colorAttachments;
     GPURenderPassDepthStencilAttachmentDescriptor? depthStencilAttachment = null;

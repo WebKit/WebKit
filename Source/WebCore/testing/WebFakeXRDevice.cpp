@@ -106,6 +106,19 @@ void SimulatedXRDevice::initializeTrackingAndRendering(PlatformXR::SessionMode)
     attributes.stencil = false;
     attributes.antialias = false;
     m_gl = GraphicsContextGL::create(attributes, nullptr);
+
+    if (m_trackingAndRenderingClient) {
+        // WebXR FakeDevice waits for simulateInputConnection calls to add input sources-
+        // There is no way to know how many simulateInputConnection calls will the device receive,
+        // so notify the input sources have been initialized with an empty list. This is not a problem because
+        // WPT tests rely on requestAnimationFrame updates to test the input sources.
+        callOnMainThread([this, weakThis = makeWeakPtr(*this)]() {
+            if (!weakThis)
+                return;
+            if (m_trackingAndRenderingClient)
+                m_trackingAndRenderingClient->sessionDidInitializeInputSources({ });
+        });
+    }
 }
 
 void SimulatedXRDevice::shutDownTrackingAndRendering()
@@ -133,6 +146,11 @@ void SimulatedXRDevice::frameTimerFired()
 
     for (auto& layer : m_layers)
         data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
+
+    for (auto& input : m_inputConnections) {
+        if (input->isConnected())
+            data.inputSources.append(input->getFrameData());
+    }
 
     if (m_FrameCallback)
         m_FrameCallback(WTFMove(data));
@@ -239,9 +257,12 @@ void WebFakeXRDevice::simulateResetPose()
 {
 }
 
-Ref<WebFakeXRInputController> WebFakeXRDevice::simulateInputSourceConnection(FakeXRInputSourceInit)
+Ref<WebFakeXRInputController> WebFakeXRDevice::simulateInputSourceConnection(const FakeXRInputSourceInit& init)
 {
-    return WebFakeXRInputController::create();
+    auto handle = ++mInputSourceHandleIndex;
+    auto input = WebFakeXRInputController::create(handle, init);
+    m_device.addInputConnection(input.copyRef());
+    return input;
 }
 
 ExceptionOr<PlatformXR::Device::FrameData::Pose> WebFakeXRDevice::parseRigidTransform(const FakeXRRigidTransformInit& init)

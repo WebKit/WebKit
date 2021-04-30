@@ -36,6 +36,7 @@
 #include "ScriptController.h"
 #include "ScriptModuleLoader.h"
 #include "ScriptSourceCode.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "WorkerScriptFetcher.h"
 #include "WorkerScriptLoader.h"
 

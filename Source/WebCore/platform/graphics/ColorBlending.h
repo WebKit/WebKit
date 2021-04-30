@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+struct BlendingContext;
 class Color;
 
 // NOTE: These functions do a lossy conversion to 8-bit sRGBA before blending.
@@ -37,7 +38,7 @@ Color blendSourceOver(const Color&, const Color&);
 // Bespoke "whitening" algorithm used by RenderTheme::transformSelectionBackgroundColor.
 Color blendWithWhite(const Color&);
 
-Color blend(const Color& from, const Color& to, double progress);
-Color blendWithoutPremultiply(const Color& from, const Color& to, double progress);
+Color blend(const Color& from, const Color& to, const BlendingContext&);
+Color blendWithoutPremultiply(const Color& from, const Color& to, const BlendingContext&);
 
 }

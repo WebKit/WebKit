@@ -89,7 +89,7 @@ struct CSSValueKeyHash {
 
 template<> struct HashTraits<WebCore::CSSValueKey> : GenericHashTraits<WebCore::CSSValueKey> {
     static WebCore::CSSValueKey emptyValue() { return WebCore::CSSValueKey { WebCore::CSSValueInvalid, false, false}; }
-    static void constructDeletedValue(WebCore::CSSValueKey& slot) { slot = WebCore::CSSValueKey { WebCore::CSSValueInvalid, true, true};}
+    static void constructDeletedValue(WebCore::CSSValueKey& slot) { new (NotNull, &slot) WebCore::CSSValueKey { WebCore::CSSValueInvalid, true, true}; }
     static bool isDeletedValue(const WebCore::CSSValueKey& slot) { return slot.cssValueID == WebCore::CSSValueInvalid && slot.useDarkAppearance && slot.useElevatedUserInterfaceLevel; }
 };
 

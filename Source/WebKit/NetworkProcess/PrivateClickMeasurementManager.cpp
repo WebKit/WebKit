@@ -145,7 +145,6 @@ void PrivateClickMeasurementManager::getTokenPublicKey(PrivateClickMeasurement&&
         if (attributionReportEndpoint == PrivateClickMeasurement::AttributionReportEndpoint::Destination)
             return;
         tokenPublicKeyURL = *m_tokenPublicKeyURLForTesting;
-        pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
     }
 
     if (tokenPublicKeyURL.isEmpty() || !tokenPublicKeyURL.isValid())
@@ -183,10 +182,8 @@ void PrivateClickMeasurementManager::getSignedUnlinkableToken(PrivateClickMeasur
     // This is guaranteed to be close in time to the navigational click which makes it likely to be personally identifiable.
     auto pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::PersonallyIdentifiable;
     auto tokenSignatureURL = attribution.tokenSignatureURL();
-    if (m_tokenSignatureURLForTesting) {
+    if (m_tokenSignatureURLForTesting)
         tokenSignatureURL = *m_tokenSignatureURLForTesting;
-        pcmDataCarried = PrivateClickMeasurement::PcmDataCarried::NonPersonallyIdentifiable;
-    }
 
     if (tokenSignatureURL.isEmpty() || !tokenSignatureURL.isValid())
         return;
@@ -398,8 +395,8 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
                 if (hasSentAttribution) {
                     // We've already sent an attribution this round. We should send additional overdue attributions at
                     // a random time between 15 and 30 minutes to avoid a burst of simultaneous attributions. If debug
-                    // mode is enabled, this should be every minute for easy testing.
-                    auto interval = debugModeEnabled() ? 1_min : 15_min + Seconds(cryptographicallyRandomNumber() % 900);
+                    // mode is enabled, this should be much shorter for easy testing.
+                    auto interval = debugModeEnabled() ? debugModeSecondsUntilSend : 15_min + Seconds(cryptographicallyRandomNumber() % 900);
                     startTimer(interval);
                     return;
                 }
@@ -410,8 +407,9 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
                 hasSentAttribution = true;
 
                 // Update nextTimeToFire in case the later report time for this attribution is sooner than the scheduled next time to fire.
+                // Or, if debug mode is enabled, we should send the second report on a much shorter delay for easy testing.
                 if (laterTimeToSend)
-                    nextTimeToFire = std::min(nextTimeToFire, laterTimeToSend.value().secondsSinceEpoch());
+                    nextTimeToFire = debugModeEnabled() ? debugModeSecondsUntilSend : std::min(nextTimeToFire, laterTimeToSend.value().secondsSinceEpoch());
 
                 continue;
             }

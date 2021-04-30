@@ -27,6 +27,7 @@
 #include "AppendNodeCommand.h"
 
 #include "AXObjectCache.h"
+#include "CompositeEditCommand.h"
 #include "Document.h"
 #include "Editing.h"
 #include "RenderElement.h"

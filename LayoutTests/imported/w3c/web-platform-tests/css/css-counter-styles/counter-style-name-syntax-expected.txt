@@ -1,5 +1,5 @@
 
-FAIL @counter-style name foo is valid assert_not_equals: got disallowed value undefined
+PASS @counter-style name foo is valid
 PASS @counter-style name  is invalid
 PASS @counter-style name none is invalid
 PASS @counter-style name initial is invalid

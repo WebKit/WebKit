@@ -27,12 +27,28 @@ enum RTCEncodedVideoFrameType { "empty", "key", "delta" };
 
 [
     Conditional=WEB_RTC,
+    JSGenerateToJSObject,
+]
+dictionary RTCEncodedVideoFrameMetadata {
+    long long frameId;
+    sequence<long long> dependencies;
+    unsigned short width;
+    unsigned short height;
+    long spatialIndex;
+    long temporalIndex;
+    unsigned long synchronizationSource;
+    // FIXME: http://webkit.org/b/224443
+    // sequence<unsigned long> contributingSources;
+};
+
+[
+    Conditional=WEB_RTC,
     EnabledBySetting=WebRTCInsertableStreams,
     Exposed=DedicatedWorker,
     ImplementationLacksVTable,
 ] interface RTCEncodedVideoFrame {
     readonly attribute RTCEncodedVideoFrameType type;
-    // readonly attribute unsigned long long timestamp;
+    readonly attribute unsigned long long timestamp;
     attribute ArrayBuffer data;
-    // RTCVideoFrameMetadata getMetadata();
+    RTCEncodedVideoFrameMetadata getMetadata();
 };

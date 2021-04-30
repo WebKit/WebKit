@@ -43,10 +43,6 @@ namespace WebCore {
 
 struct Cookie {
     Cookie() = default;
-    Cookie(WTF::HashTableDeletedValueType)
-        : name(WTF::HashTableDeletedValue)
-    {
-    }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<Cookie> decode(Decoder&);
@@ -173,7 +169,7 @@ namespace WTF {
     template<> struct DefaultHash<WebCore::Cookie> : WebCore::CookieHash { };
     template<> struct HashTraits<WebCore::Cookie> : GenericHashTraits<WebCore::Cookie> {
         static WebCore::Cookie emptyValue() { return { }; }
-        static void constructDeletedValue(WebCore::Cookie& slot) { slot = WebCore::Cookie(WTF::HashTableDeletedValue); }
+        static void constructDeletedValue(WebCore::Cookie& slot) { new (NotNull, &slot.name) String(WTF::HashTableDeletedValue); }
         static bool isDeletedValue(const WebCore::Cookie& slot) { return slot.name.isHashTableDeletedValue(); }
 
         static const bool hasIsEmptyValueFunction = true;

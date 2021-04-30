@@ -30,7 +30,11 @@
 #include "DFGOperations.h"
 #include "FTLExitTimeObjectMaterialization.h"
 
-namespace JSC { namespace FTL {
+namespace JSC {
+
+struct UnlinkedStringJumpTable;
+
+namespace FTL {
 
 class LazySlowPath;
 
@@ -40,7 +44,7 @@ JSC_DECLARE_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject*, 
 
 JSC_DECLARE_JIT_OPERATION(operationCompileFTLLazySlowPath, void*, (CallFrame*, unsigned));
 
-JSC_DECLARE_JIT_OPERATION(operationSwitchStringAndGetBranchOffset, int32_t, (JSGlobalObject*, size_t tableIndex, JSString*));
+JSC_DECLARE_JIT_OPERATION(operationSwitchStringAndGetIndex, unsigned, (JSGlobalObject*, const UnlinkedStringJumpTable*, JSString*));
 JSC_DECLARE_JIT_OPERATION(operationTypeOfObjectAsTypeofType, int32_t, (JSGlobalObject*, JSCell*));
 
 JSC_DECLARE_JIT_OPERATION(operationReportBoundsCheckEliminationErrorAndCrash, void, (intptr_t codeBlockAsIntPtr, int32_t, int32_t, int32_t, int32_t, int32_t));

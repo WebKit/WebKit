@@ -46,6 +46,7 @@ COMPILE_ASSERT(StyleRuleType::Page == static_cast<StyleRuleType>(CSSRule::Type::
 COMPILE_ASSERT(StyleRuleType::Keyframes == static_cast<StyleRuleType>(CSSRule::Type::KEYFRAMES_RULE), enums_should_match);
 COMPILE_ASSERT(StyleRuleType::Keyframe == static_cast<StyleRuleType>(CSSRule::Type::KEYFRAME_RULE), enums_should_match);
 COMPILE_ASSERT(StyleRuleType::Namespace == static_cast<StyleRuleType>(CSSRule::Type::NAMESPACE_RULE), enums_should_match);
+COMPILE_ASSERT(StyleRuleType::CounterStyle == static_cast<StyleRuleType>(CSSRule::Type::COUNTER_STYLE_RULE), enums_should_match);
 COMPILE_ASSERT(StyleRuleType::Supports == static_cast<StyleRuleType>(CSSRule::Type::SUPPORTS_RULE), enums_should_match);
 
 ExceptionOr<void> CSSRule::setCssText(const String&)

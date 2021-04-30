@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSCustomSetterFunction.h"
 
+#include "IdentifierInlines.h"
 #include "JSCJSValueInlines.h"
 
 namespace JSC {

@@ -33,7 +33,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary GPURequestAdapterOptions {
     GPUPowerPreference? powerPreference;
 };

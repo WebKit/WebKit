@@ -81,7 +81,7 @@ private:
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(GPU_PROCESS)
-    void gpuProcessCrashed() override;
+    void gpuProcessDidExit() override;
 #endif
     void preferencesDidChange() override;
     void toolTipChanged(const String&, const String&) override;

@@ -200,6 +200,10 @@ WTF_EXTERN_C_END
 - (BOOL)_appAdoptsUISceneLifecycle;
 @end
 
+@interface UIColor ()
++ (UIColor *)systemBackgroundColor;
+@end
+
 typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
     UIDatePickerModeYearAndMonth = 4269,
 };
@@ -215,6 +219,7 @@ typedef NS_ENUM(NSInteger, UIDatePickerStyle) {
 #if HAVE(UIDATEPICKER_STYLE)
 @property (nonatomic, readwrite, assign) UIDatePickerStyle preferredDatePickerStyle;
 #endif
+- (UIEdgeInsets)_appliedInsetsToEdgeOfContent;
 @end
 
 @interface UIDevice ()
@@ -618,12 +623,6 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
     _UIBackdropMaskViewAll = _UIBackdropMaskViewGrayscaleTint | _UIBackdropMaskViewColorTint | _UIBackdropMaskViewFilters,
 };
 
-#if PLATFORM(MACCATALYST)
-typedef NS_ENUM(NSUInteger, UIFocusRingType) {
-    UIFocusRingTypeNone = 1,
-};
-#endif
-
 @interface UIView ()
 + (BOOL)_isInAnimationBlock;
 - (CGSize)size;
@@ -639,9 +638,6 @@ typedef NS_ENUM(NSUInteger, UIFocusRingType) {
 - (void)_removeAllAnimations:(BOOL)includeSubviews;
 - (UIColor *)_inheritedInteractionTintColor;
 - (NSString *)recursiveDescription;
-#if PLATFORM(MACCATALYST)
-@property (nonatomic, getter=_focusRingType, setter=_setFocusRingType:) UIFocusRingType focusRingType;
-#endif
 @end
 
 @protocol UISelectionInteractionAssistant
@@ -1206,6 +1202,7 @@ typedef NS_OPTIONS(NSInteger, UIWKDocumentRequestFlags) {
 
 typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
     _UIContextMenuLayoutActionsOnly = 1,
+    _UIContextMenuLayoutPreviewOnly = 2,
     _UIContextMenuLayoutCompactMenu = 3,
     _UIContextMenuLayoutAutomatic = 100,
 };
@@ -1214,11 +1211,17 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic) _UIContextMenuLayout preferredLayout;
 @property (nonatomic) UIEdgeInsets preferredEdgeInsets;
 @property (nonatomic) BOOL hasInteractivePreview;
+@property (nonatomic) BOOL prefersCenteredPreviewWhenActionsAreAbsent;
+@property (nonatomic) BOOL ignoresDefaultSizingRules;
 @property (nonatomic, strong) NSArray *preferredBackgroundEffects;
 + (instancetype)defaultStyle;
 @end
 
 #if USE(UICONTEXTMENU)
+@interface UITargetedPreview ()
+@property (nonatomic, strong, setter=_setOverridePositionTrackingView:) UIView *overridePositionTrackingView;
+@end
+
 @interface UIContextMenuInteraction ()
 @property (nonatomic, readonly) UIGestureRecognizer *gestureRecognizerForFailureRelationships;
 - (void)_presentMenuAtLocation:(CGPoint)location;
@@ -1438,6 +1441,14 @@ typedef NS_ENUM(NSUInteger, _UIContextMenuLayout) {
 @property (nonatomic, copy, setter=_setSuggestedColors:) NSArray<UIColor *> *_suggestedColors;
 @end
 
+#if HAVE(UI_FOCUS_EFFECT)
+@class UIFocusEffect;
+
+@interface UIView (Staging_75759822)
+@property (nonatomic, readwrite, copy) UIFocusEffect *focusEffect;
+@end
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);
@@ -1488,6 +1499,7 @@ extern NSString * const UIPreviewDataAttachmentListIsContentManaged;
 #endif
 
 UIEdgeInsets UIEdgeInsetsAdd(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
+UIEdgeInsets UIEdgeInsetsSubtract(UIEdgeInsets lhs, UIEdgeInsets rhs, UIRectEdge);
 
 extern NSString *const UIBacklightLevelChangedNotification;
 

@@ -63,7 +63,7 @@ static void webkitTextSinkHandleSample(WebKitTextSink* self, GRefPtr<GstSample>&
     if (priv->streamId) {
         // As the mediaPlayerPrivate WeakPtr is constructed from the main thread, we have to use it
         // from the main thread as well.
-        callOnMainThreadAndWait([priv, sample = WTFMove(sample)] {
+        callOnMainThread([priv, sample = WTFMove(sample)] {
             priv->mediaPlayerPrivate->handleTextSample(sample.get(), priv->streamId);
         });
         return;

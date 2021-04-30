@@ -453,6 +453,7 @@ fast/events/click-focus-control.html [ Skip ]
 fast/events/click-range-slider.html [ Skip ]
 fast/events/clientXY-in-zoom-and-scroll.html [ Skip ]
 fast/events/context-onmousedown-event.html [ Skip ]
+fast/events/contextmenu-actions-in-selected-text.html [ Skip ]
 fast/events/contextmenu-scrolled-page-with-frame.html [ Skip ]
 fast/events/data-transfer-files-attribute-identity.html [ Skip ]
 fast/events/dblclick-addEventListener.html [ Skip ]
@@ -1060,6 +1061,7 @@ fast/scrolling/scrolling-inside-scrolled-overflowarea.html [ Skip ]
 fast/attachment/attachment-type-attribute.html [ Skip ]
 
 # RTL Scrollbars are only implemented on certain versions of OS X
+css3/flexbox/child-overflow.html [ Skip ]
 fast/scrolling/rtl-scrollbars-iframe-scrolled.html [ Skip ]
 fast/scrolling/rtl-scrollbars-listbox-scroll.html [ Skip ]
 fast/scrolling/rtl-scrollbars-listbox-select-left.html [ Skip ]
@@ -1067,6 +1069,9 @@ fast/scrolling/rtl-scrollbars-position-absolute.html [ Skip ]
 fast/scrolling/rtl-scrollbars-position-fixed.html [ Skip ]
 fast/scrolling/rtl-scrollbars-text-selection-scrolled.html [ Skip ]
 fast/scrolling/rtl-scrollbars-text-selection.html [ Skip ]
+fast/scrolling/v-rl-scrollbars-initial-position-dynamic.html [ Skip ]
+fast/scrolling/v-rl-scrollbars-initial-position.html [ Skip ]
+fast/scrolling/vertical-scrollbar-position.html [ Skip ]
 
 # This is specific to extensions on macOS
 webkit.org/b/167795 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
@@ -1132,7 +1137,6 @@ fast/backgrounds/gradient-background-on-subpixel-position.html [ ImageOnlyFailur
 
 # Difference of less 0.03% between images.
 svg/as-image/svg-image-with-data-uri-from-canvas.html [ ImageOnlyFailure ]
-svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
 svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 
 # SVG
@@ -3080,9 +3084,6 @@ media/video-played-reset.html [ Failure ]
 # <rdar://problem/50892567> REGRESSION (iOS 13): CrashTracer: com.apple.WebKit.WebContent.Development at com.apple.WebKit: _ZN6WebKit19fallbackIconForFileEP5NSURL
 fast/forms/file/file-reset-in-change-using-open-panel-with-icon.html [ Skip ]
 
-# <rdar://problem/47907453>
-webgl/2.0.0/conformance/context/context-hidden-alpha.html [ Failure ]
-
 # <rdar://problem/51751386> REGRESSION (iOS 13?): fast/inline/hidpi-outline-auto-* layout tests failing with 0.01% diffs
 fast/inline/hidpi-outline-auto-negative-offset-with-border-radius.html [ ImageOnlyFailure ]
 fast/inline/hidpi-outline-auto-with-border-radius-horizontal-ltr.html [ ImageOnlyFailure ]
@@ -3272,6 +3273,8 @@ webkit.org/b/209250 imported/w3c/web-platform-tests/css/css-text/line-break/line
 webkit.org/b/207858 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-001.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-005.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-006.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-007.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-008.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-009.html [ Skip ]
@@ -3279,6 +3282,16 @@ webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-012.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-013.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-004.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-005.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-012.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-013.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-014.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-015.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-016.tentative.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-017.tentative.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-018.html [ Skip ]
+webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/focus-visible-script-focus-019.html [ Skip ]
 webkit.org/b/209734 imported/w3c/web-platform-tests/css/selectors/hover-002.html [ Skip ]
 
 # Certain versions of iOS use different text security characters.
@@ -3397,3 +3410,5 @@ webkit.org/b/222844 fast/canvas/webgl/match-page-color-space.html [ Pass ImageOn
 webkit.org/b/222844 imported/blink/compositing/draws-content/webgl-simple-background.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/222239 webgl/conformance/extensions/khr-parallel-shader-compile.html [ Skip ]
+
+fast/text/line-break-with-locale.html [ ImageOnlyFailure ]

@@ -35,7 +35,6 @@
 #import "FontInfo.h"
 #import "FrameInfoData.h"
 #import "InjectedBundleHitTestResult.h"
-#import "PDFKitSoftLink.h"
 #import "PDFPlugin.h"
 #import "PageBanner.h"
 #import "PluginView.h"
@@ -96,11 +95,15 @@
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/SetForScope.h>
+#import <wtf/SortedArrayMap.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #import <WebCore/MediaPlaybackTargetCocoa.h>
+#import <WebCore/MediaPlaybackTargetContext.h>
 #import <WebCore/MediaPlaybackTargetMock.h>
 #endif
+
+#import "PDFKitSoftLink.h"
 
 namespace WebKit {
 using namespace WebCore;
@@ -205,32 +208,22 @@ bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) con
                 && (path.endsWithIgnoringASCIICase(".pdf") || path.endsWithIgnoringASCIICase(".ps"))));
 }
 
-typedef HashMap<String, String> SelectorNameMap;
-
-// Map selectors into Editor command names.
-// This is not needed for any selectors that have the same name as the Editor command.
-static const SelectorNameMap* createSelectorExceptionMap()
-{
-    SelectorNameMap* map = new HashMap<String, String>;
-
-    map->add("insertNewlineIgnoringFieldEditor:", "InsertNewline");
-    map->add("insertParagraphSeparator:", "InsertNewline");
-    map->add("insertTabIgnoringFieldEditor:", "InsertTab");
-    map->add("pageDown:", "MovePageDown");
-    map->add("pageDownAndModifySelection:", "MovePageDownAndModifySelection");
-    map->add("pageUp:", "MovePageUp");
-    map->add("pageUpAndModifySelection:", "MovePageUpAndModifySelection");
-
-    return map;
-}
-
 static String commandNameForSelectorName(const String& selectorName)
 {
-    // Check the exception map first.
-    static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
-    SelectorNameMap::const_iterator it = exceptionMap->find(selectorName);
-    if (it != exceptionMap->end())
-        return it->value;
+    // Map selectors into Editor command names.
+    // This is not needed for any selectors that have the same name as the Editor command.
+    static constexpr std::pair<ComparableASCIILiteral, ASCIILiteral> selectorExceptions[] = {
+        { "insertNewlineIgnoringFieldEditor:", "InsertNewline"_s },
+        { "insertParagraphSeparator:", "InsertNewline"_s },
+        { "insertTabIgnoringFieldEditor:", "InsertTab"_s },
+        { "pageDown:", "MovePageDown"_s },
+        { "pageDownAndModifySelection:", "MovePageDownAndModifySelection"_s },
+        { "pageUp:", "MovePageUp"_s },
+        { "pageUpAndModifySelection:", "MovePageUpAndModifySelection"_s },
+    };
+    static constexpr SortedArrayMap map { selectorExceptions };
+    if (auto commandName = map.tryGet(selectorName))
+        return *commandName;
 
     // Remove the trailing colon.
     // No need to capitalize the command name since Editor command names are not case sensitive.
@@ -382,7 +375,7 @@ void WebPage::fontAtSelection(CompletionHandler<void(const FontInfo&, double, bo
         return;
     }
 
-    auto* font = frame.editor().fontForSelection(selectionHasMultipleFonts);
+    auto font = frame.editor().fontForSelection(selectionHasMultipleFonts);
     if (!font) {
         completionHandler({ }, 0, false);
         return;
@@ -1032,26 +1025,18 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo&, Mon
 {
 }
 
-void WebPage::didUpdateRendering()
-{
-    if (m_didUpdateRenderingAfterCommittingLoad)
-        return;
-
-    m_didUpdateRenderingAfterCommittingLoad = true;
-    send(Messages::WebPageProxy::DidUpdateRenderingAfterCommittingLoad());
-}
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier contextId, const WebCore::MediaPlaybackTargetContext& targetContext) const
+void WebPage::playbackTargetSelected(PlaybackTargetClientContextIdentifier contextId, WebCore::MediaPlaybackTargetContext&& targetContext) const
 {
     switch (targetContext.type()) {
-    case MediaPlaybackTargetContext::AVOutputContextType:
-        m_page->setPlaybackTarget(contextId, WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext()));
+    case MediaPlaybackTargetContext::Type::AVOutputContext:
+    case MediaPlaybackTargetContext::Type::SerializedAVOutputContext:
+        m_page->setPlaybackTarget(contextId, MediaPlaybackTargetCocoa::create(WTFMove(targetContext)));
         break;
-    case MediaPlaybackTargetContext::MockType:
-        m_page->setPlaybackTarget(contextId, WebCore::MediaPlaybackTargetMock::create(targetContext.mockDeviceName(), targetContext.mockState()));
+    case MediaPlaybackTargetContext::Type::Mock:
+        m_page->setPlaybackTarget(contextId, MediaPlaybackTargetMock::create(targetContext.deviceName(), targetContext.mockState()));
         break;
-    case MediaPlaybackTargetContext::None:
+    case MediaPlaybackTargetContext::Type::None:
         ASSERT_NOT_REACHED();
         break;
     }

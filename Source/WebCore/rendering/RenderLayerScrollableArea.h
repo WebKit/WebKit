@@ -167,7 +167,7 @@ public:
     bool usesCompositedScrolling() const final;
     bool usesAsyncScrolling() const final;
 
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const final;
+    bool shouldPlaceVerticalScrollbarOnLeft() const final;
 
     bool isRenderLayer() const final { return true; }
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;

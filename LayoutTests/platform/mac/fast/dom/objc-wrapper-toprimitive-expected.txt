@@ -1,0 +1,65 @@
+This tests ToPrimitive performed on Objective-C wrapper object.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+RuntimeObject
+
+PASS '' + objCController is '<ObjCController>'
+PASS +objCController is 0
+PASS `${objCController}` is '<ObjCController>'
+
+PASS objCController[Symbol.toPrimitive].length is 1
+PASS objCController[Symbol.toPrimitive]('default') is '<ObjCController>'
+PASS objCController[Symbol.toPrimitive]('number') is 0
+PASS objCController[Symbol.toPrimitive]('string') is '<ObjCController>'
+PASS objCController[Symbol.toPrimitive]('foo') threw exception TypeError: Expected primitive hint to match one of 'default', 'number', 'string'..
+PASS objCController[Symbol.toPrimitive].call({}, 'default') threw exception TypeError: RuntimeObject[Symbol.toPrimitive] method called on incompatible |this| value..
+PASS (0, objCController[Symbol.toPrimitive])() threw exception TypeError: RuntimeObject[Symbol.toPrimitive] method called on incompatible |this| value..
+
+RuntimeObject (redefined Symbol.toPrimitive)
+
+PASS typeof symbolToPrimitiveDescriptor is 'object'
+PASS symbolToPrimitiveDescriptor.value is object[Symbol.toPrimitive]
+PASS symbolToPrimitiveDescriptor.writable is true
+PASS symbolToPrimitiveDescriptor.enumerable is false
+PASS symbolToPrimitiveDescriptor.configurable is true
+
+PASS object[Symbol.toPrimitive]() is 'bar'
+PASS typeof symbolToPrimitiveDescriptor is 'object'
+PASS symbolToPrimitiveDescriptor.value is newToPrimitive
+PASS symbolToPrimitiveDescriptor.writable is false
+PASS symbolToPrimitiveDescriptor.enumerable is true
+PASS symbolToPrimitiveDescriptor.configurable is true
+
+PASS object[Symbol.toPrimitive] is 123
+
+ObjcFallbackObjectImp
+
+PASS '' + fallbackObject is 'undefined'
+PASS +fallbackObject is NaN
+PASS `${fallbackObject}` is 'undefined'
+
+PASS fallbackObject[Symbol.toPrimitive].length is 0
+PASS fallbackObject[Symbol.toPrimitive]() is undefined
+PASS fallbackObject[Symbol.toPrimitive]('foo') is undefined
+PASS fallbackObject[Symbol.toPrimitive].call({}) threw exception TypeError: ObjcFallbackObject[Symbol.toPrimitive] method called on incompatible |this| value..
+PASS (0, fallbackObject[Symbol.toPrimitive])() threw exception TypeError: ObjcFallbackObject[Symbol.toPrimitive] method called on incompatible |this| value..
+
+ObjcFallbackObjectImp (redefined Symbol.toPrimitive)
+
+PASS typeof symbolToPrimitiveDescriptor is 'object'
+PASS symbolToPrimitiveDescriptor.value is object[Symbol.toPrimitive]
+PASS symbolToPrimitiveDescriptor.writable is true
+PASS symbolToPrimitiveDescriptor.enumerable is false
+PASS symbolToPrimitiveDescriptor.configurable is true
+
+PASS object[Symbol.toPrimitive]() is 'bar'
+PASS typeof symbolToPrimitiveDescriptor is 'object'
+PASS symbolToPrimitiveDescriptor.value is newToPrimitive
+PASS symbolToPrimitiveDescriptor.writable is false
+PASS symbolToPrimitiveDescriptor.enumerable is true
+PASS symbolToPrimitiveDescriptor.configurable is true
+
+PASS object[Symbol.toPrimitive] is 123
+

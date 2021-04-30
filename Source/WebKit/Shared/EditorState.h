@@ -34,7 +34,7 @@
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include <WebCore/SelectionRect.h>
+#include <WebCore/SelectionGeometry.h>
 #endif
 
 #if USE(DICTATION_ALTERNATIVES)
@@ -97,8 +97,8 @@ struct EditorState {
 #if PLATFORM(IOS_FAMILY)
         WebCore::IntRect selectionClipRect;
         WebCore::IntRect caretRectAtEnd;
-        Vector<WebCore::SelectionRect> selectionRects;
-        Vector<WebCore::SelectionRect> markedTextRects;
+        Vector<WebCore::SelectionGeometry> selectionGeometries;
+        Vector<WebCore::SelectionGeometry> markedTextRects;
         String markedText;
         WebCore::IntRect markedTextCaretRectAtStart;
         WebCore::IntRect markedTextCaretRectAtEnd;

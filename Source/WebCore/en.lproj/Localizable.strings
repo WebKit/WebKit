@@ -331,7 +331,7 @@
 /* Label for the donate with Apple Pay button. */
 "Donate with Apple Pay" = "Donate with Apple Pay";
 
-/* Title of the Done button for zoomed form controls. */
+/* Title of the Done button for form controls. */
 "Done" = "Done";
 
 /* Disallow button title in geolocation prompt */
@@ -585,9 +585,6 @@
 
 /* Option in segmented control for inserting a numbered list in text editing */
 "Numbered list" = "Numbered list";
-
-/* Title of the OK button in date/time form controls. */
-"OK (OK button title in date/time picker)" = "OK";
 
 /* Title of the OK button for the number pad in zoomed form controls. */
 "OK (OK button title in extra zoomed number pad)" = "OK";

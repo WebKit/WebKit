@@ -28,14 +28,14 @@ if command == 'reset':
         os.remove(tmp_file)
     sys.stdout.write('Content-Type: text/html\r\n\r\n')
 elif command == 'delete':
-    set_state('Deleted', tmp_file)
+    set_state(tmp_file, 'Deleted')
     sys.stdout.write('Content-Type: text/html\r\n\r\n')
 elif state == 'Uninitialized':
     sys.stdout.write(
         'Content-Type: text/cache-manifest\r\n\r\n'
         'CACHE MANIFEST\n'
         'NETWORK:\n'
-        'remove-cache.py?command=\n"'
+        'remove-cache.py?command=\n'
     )
 elif state == 'Deleted':
     sys.stdout.write(

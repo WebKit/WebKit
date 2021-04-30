@@ -22,6 +22,8 @@
 #include "config.h"
 #include "BidiContext.h"
 
+#include <mutex>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

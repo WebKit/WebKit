@@ -86,13 +86,10 @@ AudioSourceProviderAVFObjC::AudioSourceProviderAVFObjC(AVPlayerItem *item)
 
 AudioSourceProviderAVFObjC::~AudioSourceProviderAVFObjC()
 {
+    // FIXME: this is not correct, as this indicates that there might be simultaneous calls
+    // to the destructor and a member function. This undefined behavior will be addressed in the future
+    // commits. https://bugs.webkit.org/show_bug.cgi?id=224480
     setClient(nullptr);
-    if (m_tapStorage) {
-        auto locker = holdLock(m_tapStorage->lock);
-        m_tapStorage->_this = nullptr;
-    }
-
-    m_tapStorage = nullptr;
 }
 
 void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProcess)
@@ -113,8 +110,7 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
 
     uint64_t startFrame = 0;
     uint64_t endFrame = 0;
-    uint64_t seekTo = m_seekTo.exchange(NoSeek);
-    uint64_t writeAheadCount = m_writeAheadCount.load();
+    uint64_t seekTo = std::exchange(m_seekTo, NoSeek);
     if (seekTo != NoSeek)
         m_readCount = seekTo;
 
@@ -123,7 +119,7 @@ void AudioSourceProviderAVFObjC::provideInput(AudioBus* bus, size_t framesToProc
     if (!m_readCount || m_readCount == seekTo) {
         // We have not started rendering yet. If there aren't enough frames in the buffer, then output
         // silence until there is.
-        if (endFrame <= m_readCount + writeAheadCount + framesToProcess) {
+        if (endFrame <= m_readCount + m_writeAheadCount + framesToProcess) {
             bus->zero();
             return;
         }
@@ -158,64 +154,62 @@ void AudioSourceProviderAVFObjC::setClient(AudioSourceProviderClient* client)
 {
     if (m_client == client)
         return;
-
-    if (m_avAudioMix)
-        destroyMix();
-
+    destroyMixIfNeeded();
     m_client = client;
-
-    if (m_client && m_avPlayerItem)
-        createMix();
+    createMixIfNeeded();
 }
 
 void AudioSourceProviderAVFObjC::setPlayerItem(AVPlayerItem *avPlayerItem)
 {
     if (m_avPlayerItem == avPlayerItem)
         return;
-
-    if (m_avAudioMix)
-        destroyMix();
-
+    destroyMixIfNeeded();
     m_avPlayerItem = avPlayerItem;
-
-    if (m_client && m_avPlayerItem && m_avAssetTrack)
-        createMix();
+    createMixIfNeeded();
 }
 
 void AudioSourceProviderAVFObjC::setAudioTrack(AVAssetTrack *avAssetTrack)
 {
     if (m_avAssetTrack == avAssetTrack)
         return;
-
-    if (m_avAudioMix)
-        destroyMix();
-
+    destroyMixIfNeeded();
     m_avAssetTrack = avAssetTrack;
-
-    if (m_client && m_avPlayerItem && m_avAssetTrack)
-        createMix();
+    createMixIfNeeded();
 }
 
-void AudioSourceProviderAVFObjC::destroyMix()
+void AudioSourceProviderAVFObjC::destroyMixIfNeeded()
 {
+    if (!m_avAudioMix)
+        return;
+    ASSERT(m_tapStorage);
+    auto locker = holdLock(m_tapStorage->lock);
     if (m_avPlayerItem)
         [m_avPlayerItem setAudioMix:nil];
     [m_avAudioMix setInputParameters:@[ ]];
     m_avAudioMix.clear();
     m_tap.clear();
+    m_tapStorage->_this = nullptr;
+    m_tapStorage = nullptr;
+    // Call unprepare, since Tap cannot call it after clear.
+    unprepare();
+    m_weakFactory.revokeAll();
 }
 
-void AudioSourceProviderAVFObjC::createMix()
+void AudioSourceProviderAVFObjC::createMixIfNeeded()
 {
-    ASSERT(!m_avAudioMix);
-    ASSERT(m_avPlayerItem);
-    ASSERT(m_client);
+    if (!m_client || !m_avPlayerItem || !m_avAssetTrack)
+        return;
 
-    m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstance() init]);
+    ASSERT(!m_avAudioMix);
+    ASSERT(!m_tapStorage);
+    ASSERT(!m_tap);
+
+    auto tapStorage = adoptRef(new TapStorage(this));
+    auto locker = holdLock(tapStorage->lock);
 
     MTAudioProcessingTapCallbacks callbacks = {
         0,
-        this,
+        tapStorage.get(),
         initCallback,
         finalizeCallback,
         prepareCallback,
@@ -225,12 +219,14 @@ void AudioSourceProviderAVFObjC::createMix()
 
     MTAudioProcessingTapRef tap = nullptr;
     OSStatus status = MTAudioProcessingTapCreate(kCFAllocatorDefault, &callbacks, 1, &tap);
-    ASSERT(tap);
-    ASSERT(m_tap == tap);
     if (status != noErr) {
-        m_tap = nullptr;
+        if (tap)
+            CFRelease(tap);
         return;
     }
+    m_tap = adoptCF(tap);
+    m_tapStorage = WTFMove(tapStorage);
+    m_avAudioMix = adoptNS([PAL::allocAVMutableAudioMixInstance() init]);
 
     RetainPtr<AVMutableAudioMixInputParameters> parameters = adoptNS([PAL::allocAVMutableAudioMixInputParametersInstance() init]);
     [parameters setAudioTapProcessor:m_tap.get()];
@@ -240,31 +236,22 @@ void AudioSourceProviderAVFObjC::createMix()
     
     [m_avAudioMix setInputParameters:@[parameters.get()]];
     [m_avPlayerItem setAudioMix:m_avAudioMix.get()];
+    m_weakFactory.initializeIfNeeded(*this);
 }
 
 void AudioSourceProviderAVFObjC::initCallback(MTAudioProcessingTapRef tap, void* clientInfo, void** tapStorageOut)
 {
-    ASSERT(tap);
-    AudioSourceProviderAVFObjC* _this = static_cast<AudioSourceProviderAVFObjC*>(clientInfo);
-    _this->m_tap = adoptCF(tap);
-    _this->m_tapStorage = adoptRef(new TapStorage(_this));
-    _this->init(clientInfo, tapStorageOut);
-    *tapStorageOut = _this->m_tapStorage.get();
-
+    ASSERT_UNUSED(tap, tap);
+    TapStorage* tapStorage = static_cast<TapStorage*>(clientInfo);
+    *tapStorageOut = tapStorage;
     // ref balanced by deref in finalizeCallback:
-    _this->m_tapStorage->ref();
+    tapStorage->ref();
 }
 
 void AudioSourceProviderAVFObjC::finalizeCallback(MTAudioProcessingTapRef tap)
 {
     ASSERT(tap);
     TapStorage* tapStorage = static_cast<TapStorage*>(MTAudioProcessingTapGetStorage(tap));
-
-    {
-        auto locker = holdLock(tapStorage->lock);
-        if (tapStorage->_this)
-            tapStorage->_this->finalize();
-    }
     tapStorage->deref();
 }
 
@@ -299,21 +286,6 @@ void AudioSourceProviderAVFObjC::processCallback(MTAudioProcessingTapRef tap, CM
 
     if (tapStorage->_this)
         tapStorage->_this->process(tap, numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut);
-}
-
-void AudioSourceProviderAVFObjC::init(void* clientInfo, void** tapStorageOut)
-{
-    ASSERT(clientInfo == this);
-    UNUSED_PARAM(clientInfo);
-    *tapStorageOut = this;
-}
-
-void AudioSourceProviderAVFObjC::finalize()
-{
-    if (m_tapStorage) {
-        m_tapStorage->_this = nullptr;
-        m_tapStorage = nullptr;
-    }
 }
 
 void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStreamBasicDescription *processingFormat)
@@ -357,8 +329,10 @@ void AudioSourceProviderAVFObjC::prepare(CMItemCount maxFrames, const AudioStrea
     memset(m_list.get(), 0, bufferListSize);
     m_list->mNumberBuffers = numberOfChannels;
 
-    callOnMainThread([protectedThis = makeRef(*this), numberOfChannels, sampleRate] {
-        protectedThis->m_client->setFormat(numberOfChannels, sampleRate);
+    callOnMainThread([weakThis = m_weakFactory.createWeakPtr(*this), numberOfChannels, sampleRate] {
+        auto* self = weakThis.get();
+        if (self && self->m_client)
+            self->m_client->setFormat(numberOfChannels, sampleRate);
     });
 }
 
@@ -401,7 +375,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
         // Only check the write-ahead time when playback begins.
         m_paused = false;
         MediaTime earlyBy = rangeStart - currentTime;
-        m_writeAheadCount.store(m_tapDescription->mSampleRate * earlyBy.toDouble());
+        m_writeAheadCount = m_tapDescription->mSampleRate * earlyBy.toDouble();
     }
 
     uint64_t startFrame = 0;
@@ -411,7 +385,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     // Check to see if the underlying media has seeked, which would require us to "flush"
     // our outstanding buffers.
     if (rangeStart != m_endTimeAtLastProcess)
-        m_seekTo.store(endFrame);
+        m_seekTo = endFrame;
 
     m_startTimeAtLastProcess = rangeStart;
     m_endTimeAtLastProcess = rangeStart + rangeDuration;
@@ -419,7 +393,7 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     // StartOfStream indicates a discontinuity, such as when an AVPlayerItem is re-added
     // to an AVPlayer, so "flush" outstanding buffers.
     if (flagsOut && *flagsOut & kMTAudioProcessingTapFlag_StartOfStream)
-        m_seekTo.store(endFrame);
+        m_seekTo = endFrame;
 
     m_ringBuffer->store(bufferListInOut, itemCount, endFrame);
 

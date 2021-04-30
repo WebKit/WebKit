@@ -28,9 +28,9 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && HAVE(AVROUTEPICKERVIEW)
 
+#import "FloatRect.h"
 #import "Logging.h"
 #import <AVFoundation/AVRouteDetector.h>
-#import <WebCore/FloatRect.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/MainThread.h>

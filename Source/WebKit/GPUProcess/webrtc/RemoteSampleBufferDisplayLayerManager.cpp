@@ -103,6 +103,11 @@ void RemoteSampleBufferDisplayLayerManager::releaseLayer(SampleBufferDisplayLaye
     });
 }
 
+bool RemoteSampleBufferDisplayLayerManager::allowsExitUnderMemoryPressure() const
+{
+    return m_layers.isEmpty();
+}
+
 }
 
 #endif // PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)

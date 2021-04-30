@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,12 +81,10 @@ public:
     bool bufferIsLargeEnoughToContain(size_t numElements) const
     {
         static_assert(std::is_arithmetic<T>::value, "Type T must have a fixed, known encoded size!");
-
-        if (numElements > std::numeric_limits<size_t>::max() / sizeof(T))
-            return false;
-
-        return bufferIsLargeEnoughToContain(numElements * sizeof(T));
+        return numElements <= std::numeric_limits<size_t>::max() / sizeof(T) && bufferIsLargeEnoughToContain(numElements * sizeof(T));
     }
+
+    WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN const uint8_t* bufferPointerForDirectRead(size_t numBytes);
 
     static constexpr bool isIPCDecoder = false;
 
@@ -103,4 +101,3 @@ private:
 
 } 
 }
-

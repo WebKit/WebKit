@@ -234,7 +234,7 @@ static KeyframeEffect* keyframeEffectForElementAndProperty(const Styleable& styl
 static bool propertyInStyleMatchesValueForTransitionInMap(CSSPropertyID property, const RenderStyle& style, PropertyToTransitionMap& transitions)
 {
     if (auto* transition = transitions.get(property)) {
-        if (CSSPropertyAnimation::propertiesEqual(property, &style, &transition->targetStyle()))
+        if (CSSPropertyAnimation::propertiesEqual(property, style, transition->targetStyle()))
             return true;
     }
     return false;
@@ -356,8 +356,8 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
     }();
 
     if (!styleable.hasRunningTransitionForProperty(property)
-        && !CSSPropertyAnimation::propertiesEqual(property, &beforeChangeStyle, &afterChangeStyle)
-        && CSSPropertyAnimation::canPropertyBeInterpolated(property, &beforeChangeStyle, &afterChangeStyle)
+        && !CSSPropertyAnimation::propertiesEqual(property, beforeChangeStyle, afterChangeStyle)
+        && CSSPropertyAnimation::canPropertyBeInterpolated(property, beforeChangeStyle, afterChangeStyle)
         && !propertyInStyleMatchesValueForTransitionInMap(property, afterChangeStyle, styleable.ensureCompletedTransitionsByProperty())
         && matchingBackingAnimation && transitionCombinedDuration(matchingBackingAnimation) > 0) {
         // 1. If all of the following are true:
@@ -403,15 +403,15 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
         auto& previouslyRunningTransitionCurrentStyle = previouslyRunningTransition->currentStyle();
         // 4. If the element has a running transition for the property, there is a matching transition-property value, and the end value of the running
         //    transition is not equal to the value of the property in the after-change style, then:
-        if (CSSPropertyAnimation::propertiesEqual(property, &previouslyRunningTransitionCurrentStyle, &afterChangeStyle) || !CSSPropertyAnimation::canPropertyBeInterpolated(property, &currentStyle, &afterChangeStyle)) {
+        if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransitionCurrentStyle, afterChangeStyle) || !CSSPropertyAnimation::canPropertyBeInterpolated(property, currentStyle, afterChangeStyle)) {
             // 1. If the current value of the property in the running transition is equal to the value of the property in the after-change style,
             //    or if these two values cannot be interpolated, then implementations must cancel the running transition.
             previouslyRunningTransition->cancelFromStyle();
-        } else if (transitionCombinedDuration(matchingBackingAnimation) <= 0.0 || !CSSPropertyAnimation::canPropertyBeInterpolated(property, &previouslyRunningTransitionCurrentStyle, &afterChangeStyle)) {
+        } else if (transitionCombinedDuration(matchingBackingAnimation) <= 0.0 || !CSSPropertyAnimation::canPropertyBeInterpolated(property, previouslyRunningTransitionCurrentStyle, afterChangeStyle)) {
             // 2. Otherwise, if the combined duration is less than or equal to 0s, or if the current value of the property in the running transition
             //    cannot be interpolated with the value of the property in the after-change style, then implementations must cancel the running transition.
             previouslyRunningTransition->cancelFromStyle();
-        } else if (CSSPropertyAnimation::propertiesEqual(property, &previouslyRunningTransition->reversingAdjustedStartStyle(), &afterChangeStyle)) {
+        } else if (CSSPropertyAnimation::propertiesEqual(property, previouslyRunningTransition->reversingAdjustedStartStyle(), afterChangeStyle)) {
             // 3. Otherwise, if the reversing-adjusted start value of the running transition is the same as the value of the property in the after-change
             //    style (see the section on reversing of transitions for why these case exists), implementations must cancel the running transition
             previouslyRunningTransition->cancelFromStyle();

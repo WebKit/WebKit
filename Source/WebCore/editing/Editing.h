@@ -118,9 +118,6 @@ Position previousCandidate(const Position&);
 Position nextVisuallyDistinctCandidate(const Position&);
 Position previousVisuallyDistinctCandidate(const Position&);
 
-Position positionBeforeContainingSpecialElement(const Position&, HTMLElement** containingSpecialElement = nullptr);
-Position positionAfterContainingSpecialElement(const Position&, HTMLElement** containingSpecialElement = nullptr);
-
 Position firstPositionInOrBeforeNode(Node*);
 Position lastPositionInOrAfterNode(Node*);
 

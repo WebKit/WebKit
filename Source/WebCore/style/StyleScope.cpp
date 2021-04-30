@@ -94,7 +94,7 @@ Resolver& Scope::resolver()
     if (!m_resolver) {
         SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
 
-        m_resolver = makeUnique<Resolver>(m_document);
+        m_resolver = Resolver::create(m_document);
 
         if (!m_shadowRoot) {
             m_document.fontSelector().buildStarted();

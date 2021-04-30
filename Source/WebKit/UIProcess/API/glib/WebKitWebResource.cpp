@@ -61,11 +61,12 @@ enum {
 
 enum {
     PROP_0,
-
     PROP_URI,
-    PROP_RESPONSE
+    PROP_RESPONSE,
+    N_PROPERTIES,
 };
 
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 struct _WebKitWebResourcePrivate {
     RefPtr<WebFrameProxy> frame;
@@ -105,26 +106,28 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
      * The current active URI of the #WebKitWebResource.
      * See webkit_web_resource_get_uri() for more details.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_URI,
-                                    g_param_spec_string("uri",
-                                                        _("URI"),
-                                                        _("The current active URI of the resource"),
-                                                        0,
-                                                        WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_URI] =
+        g_param_spec_string(
+            "uri",
+            _("URI"),
+            _("The current active URI of the resource"),
+            nullptr,
+            WEBKIT_PARAM_READABLE);
 
     /**
      * WebKitWebResource:response:
      *
      * The #WebKitURIResponse associated with this resource.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_RESPONSE,
-                                    g_param_spec_object("response",
-                                                        _("Response"),
-                                                        _("The response of the resource"),
-                                                        WEBKIT_TYPE_URI_RESPONSE,
-                                                        WEBKIT_PARAM_READABLE));
+    sObjProperties[PROP_RESPONSE] =
+        g_param_spec_object(
+            "response",
+            _("Response"),
+            _("The response of the resource"),
+            WEBKIT_TYPE_URI_RESPONSE,
+            WEBKIT_PARAM_READABLE);
+
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 
     /**
      * WebKitWebResource::sent-request:
@@ -228,7 +231,7 @@ static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CStrin
         return;
 
     resource->priv->uri = requestURI;
-    g_object_notify(G_OBJECT(resource), "uri");
+    g_object_notify_by_pspec(G_OBJECT(resource), sObjProperties[PROP_URI]);
 }
 
 WebKitWebResource* webkitWebResourceCreate(WebFrameProxy& frame, WebKitURIRequest* request, bool isMainResource)
@@ -249,7 +252,7 @@ void webkitWebResourceSentRequest(WebKitWebResource* resource, WebKitURIRequest*
 void webkitWebResourceSetResponse(WebKitWebResource* resource, WebKitURIResponse* response)
 {
     resource->priv->response = response;
-    g_object_notify(G_OBJECT(resource), "response");
+    g_object_notify_by_pspec(G_OBJECT(resource), sObjProperties[PROP_RESPONSE]);
 }
 
 void webkitWebResourceNotifyProgress(WebKitWebResource* resource, guint64 bytesReceived)

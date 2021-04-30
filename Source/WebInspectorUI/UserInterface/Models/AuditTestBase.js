@@ -121,7 +121,6 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
     set setup(setup)
     {
         console.assert(this.editable);
-        console.assert(WI.auditManager.editing);
         console.assert(typeof setup === "string", setup);
 
         if (setup === this._setup)

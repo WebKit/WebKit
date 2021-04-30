@@ -262,6 +262,7 @@ webkit_web_view_send_message_to_page_finish
 webkit_web_view_set_input_method_context
 webkit_web_view_get_input_method_context
 webkit_web_view_get_website_policies
+webkit_web_view_get_is_web_process_responsive
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult

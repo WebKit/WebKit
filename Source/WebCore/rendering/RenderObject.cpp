@@ -79,7 +79,7 @@
 #include <wtf/text/TextStream.h>
 
 #if PLATFORM(IOS_FAMILY)
-#include "SelectionRect.h"
+#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
@@ -502,6 +502,9 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (object->isTextControl())
         return true;
 
+    if (shouldApplyLayoutContainment(*object))
+        return true;
+
     if (object->isSVGRoot())
         return true;
 
@@ -714,13 +717,13 @@ void RenderObject::addPDFURLRect(PaintInfo& paintInfo, const LayoutPoint& paintO
 // which are annotated with additional state which helps iOS draw selections in its unique way.
 // No annotations are added in this class.
 // FIXME: Move to RenderText with absoluteRectsForRange()?
-void RenderObject::collectSelectionRects(Vector<SelectionRect>& rects, unsigned start, unsigned end)
+void RenderObject::collectSelectionGeometries(Vector<SelectionGeometry>& geometries, unsigned start, unsigned end)
 {
     Vector<FloatQuad> quads;
 
     if (!firstChildSlow()) {
         // FIXME: WebKit's position for an empty span after a BR is incorrect, so we can't trust 
-        // quads for them. We don't need selection rects for those anyway though, since they 
+        // quads for them. We don't need selection geometries for those anyway though, since they 
         // are just empty containers. See <https://bugs.webkit.org/show_bug.cgi?id=49358>.
         RenderObject* previous = previousSibling();
         Node* node = this->node();
@@ -734,9 +737,8 @@ void RenderObject::collectSelectionRects(Vector<SelectionRect>& rects, unsigned 
             child->absoluteQuads(quads);
     }
 
-    unsigned numberOfQuads = quads.size();
-    for (unsigned i = 0; i < numberOfQuads; ++i)
-        rects.append(SelectionRect(quads[i].enclosingBoundingBox(), isHorizontalWritingMode(), view().pageNumberForBlockProgressionOffset(quads[i].enclosingBoundingBox().x())));
+    for (auto& quad : quads)
+        geometries.append(SelectionGeometry(quad, HTMLElement::selectionRenderingBehavior(node()), isHorizontalWritingMode(), view().pageNumberForBlockProgressionOffset(quad.enclosingBoundingBox().x())));
 }
 #endif
 
@@ -2114,22 +2116,24 @@ static bool intervalsSufficientlyOverlap(int startA, int endA, int startB, int e
     return minEnd - maxStart >= sufficientOverlap * std::min(lengthA, lengthB);
 }
 
-static inline void adjustLineHeightOfSelectionRects(Vector<SelectionRect>& rects, size_t numberOfRects, int lineNumber, int lineTop, int lineHeight)
+static inline void adjustLineHeightOfSelectionGeometries(Vector<SelectionGeometry>& geometries, size_t numberOfGeometries, int lineNumber, int lineTop, int lineHeight)
 {
-    ASSERT(rects.size() >= numberOfRects);
-    for (size_t i = numberOfRects; i; ) {
+    ASSERT(geometries.size() >= numberOfGeometries);
+    for (size_t i = numberOfGeometries; i; ) {
         --i;
-        if (rects[i].lineNumber())
+        if (geometries[i].lineNumber())
             break;
-        rects[i].setLineNumber(lineNumber);
-        rects[i].setLogicalTop(lineTop);
-        rects[i].setLogicalHeight(lineHeight);
+        if (geometries[i].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+            continue;
+        geometries[i].setLineNumber(lineNumber);
+        geometries[i].setLogicalTop(lineTop);
+        geometries[i].setLogicalHeight(lineHeight);
     }
 }
 
-static SelectionRect coalesceSelectionRects(const SelectionRect& original, const SelectionRect& previous)
+static SelectionGeometry coalesceSelectionGeometries(const SelectionGeometry& original, const SelectionGeometry& previous)
 {
-    SelectionRect result(unionRect(previous.rect(), original.rect()), original.isHorizontal(), original.pageNumber());
+    SelectionGeometry result({ unionRect(previous.rect(), original.rect()) }, SelectionRenderingBehavior::CoalesceBoundingRects, original.isHorizontal(), original.pageNumber());
     result.setDirection(original.containsStart() || original.containsEnd() ? original.direction() : previous.direction());
     result.setContainsStart(previous.containsStart() || original.containsStart());
     result.setContainsEnd(previous.containsEnd() || original.containsEnd());
@@ -2138,15 +2142,15 @@ static SelectionRect coalesceSelectionRects(const SelectionRect& original, const
     return result;
 }
 
-Vector<SelectionRect> RenderObject::collectSelectionRectsWithoutUnionInteriorLines(const SimpleRange& range)
+Vector<SelectionGeometry> RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(const SimpleRange& range)
 {
-    return collectSelectionRectsInternal(range).rects;
+    return collectSelectionGeometriesInternal(range).geometries;
 }
 
-auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> SelectionRects
+auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) -> SelectionGeometries
 {
-    Vector<SelectionRect> rects;
-    Vector<SelectionRect> newRects;
+    Vector<SelectionGeometry> geometries;
+    Vector<SelectionGeometry> newGeometries;
     bool hasFlippedWritingMode = range.start.container->renderer() && range.start.container->renderer()->style().isFlippedBlocksWritingMode();
     bool containsDifferentWritingModes = false;
     for (auto& node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
@@ -2160,21 +2164,21 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
             // FIXME: Sending 0 for the startOffset is a weird way of telling the renderer that the selection
             // doesn't start inside it, since we'll also send 0 if the selection *does* start in it, at offset 0.
             //
-            // FIXME: Selection endpoints aren't always inside leaves, and we only build SelectionRects for leaves,
-            // so we can't accurately determine which SelectionRects contain the selection start and end using
+            // FIXME: Selection endpoints aren't always inside leaves, and we only build SelectionGeometries for leaves,
+            // so we can't accurately determine which SelectionGeometries contain the selection start and end using
             // only the offsets of the start and end. We need to pass the whole Range.
             int beginSelectionOffset = isStartNode ? range.start.offset : 0;
             int endSelectionOffset = isEndNode ? range.end.offset : std::numeric_limits<int>::max();
-            renderer->collectSelectionRects(newRects, beginSelectionOffset, endSelectionOffset);
-            for (auto& selectionRect : newRects) {
-                if (selectionRect.containsStart() && !isStartNode)
-                    selectionRect.setContainsStart(false);
-                if (selectionRect.containsEnd() && !isEndNode)
-                    selectionRect.setContainsEnd(false);
-                if (selectionRect.logicalWidth() || selectionRect.logicalHeight())
-                    rects.append(selectionRect);
+            renderer->collectSelectionGeometries(newGeometries, beginSelectionOffset, endSelectionOffset);
+            for (auto& selectionGeometry : newGeometries) {
+                if (selectionGeometry.containsStart() && !isStartNode)
+                    selectionGeometry.setContainsStart(false);
+                if (selectionGeometry.containsEnd() && !isEndNode)
+                    selectionGeometry.setContainsEnd(false);
+                if (selectionGeometry.logicalWidth() || selectionGeometry.logicalHeight())
+                    geometries.append(selectionGeometry);
             }
-            newRects.shrink(0);
+            newGeometries.shrink(0);
         }
     }
 
@@ -2185,16 +2189,16 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
             hasFlippedWritingMode = ancestor->renderer()->style().isFlippedBlocksWritingMode();
     }
 
-    auto numberOfRects = rects.size();
+    auto numberOfGeometries = geometries.size();
 
     // If the selection ends in a BR, then add the line break bit to the last rect we have.
     // This will cause its selection rect to extend to the end of the line.
-    if (numberOfRects) {
+    if (numberOfGeometries) {
         // Only set the line break bit if the end of the range actually
         // extends all the way to include the <br>. VisiblePosition helps to
         // figure this out.
         if (is<HTMLBRElement>(VisiblePosition(makeContainerOffsetPosition(range.end)).deepEquivalent().firstNode()))
-            rects.last().setIsLineBreak(true);
+            geometries.last().setIsLineBreak(true);
     }
 
     int lineTop = std::numeric_limits<int>::max();
@@ -2203,12 +2207,12 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
     int lastLineBottom = lineBottom;
     int lineNumber = 0;
 
-    for (size_t i = 0; i < numberOfRects; ++i) {
-        int currentRectTop = rects[i].logicalTop();
-        int currentRectBottom = currentRectTop + rects[i].logicalHeight();
+    for (size_t i = 0; i < numberOfGeometries; ++i) {
+        int currentRectTop = geometries[i].logicalTop();
+        int currentRectBottom = currentRectTop + geometries[i].logicalHeight();
 
         // We don't want to count the ruby text as a separate line.
-        if (intervalsSufficientlyOverlap(currentRectTop, currentRectBottom, lineTop, lineBottom) || (i && rects[i].isRubyText())) {
+        if (intervalsSufficientlyOverlap(currentRectTop, currentRectBottom, lineTop, lineBottom) || (i && geometries[i].isRubyText())) {
             // Grow the current line bounds.
             lineTop = std::min(lineTop, currentRectTop);
             lineBottom = std::max(lineBottom, currentRectBottom);
@@ -2218,7 +2222,7 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
             else
                 lineBottom = std::min(lastLineTop, lineBottom);
         } else {
-            adjustLineHeightOfSelectionRects(rects, i, lineNumber, lineTop, lineBottom - lineTop);
+            adjustLineHeightOfSelectionGeometries(geometries, i, lineNumber, lineTop, lineBottom - lineTop);
             if (!hasFlippedWritingMode) {
                 lastLineTop = lineTop;
                 if (currentRectBottom >= lastLineTop) {
@@ -2231,7 +2235,7 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
                 lineBottom = currentRectBottom;
             } else {
                 lastLineBottom = lineBottom;
-                if (currentRectTop <= lastLineBottom && i && rects[i].pageNumber() == rects[i - 1].pageNumber()) {
+                if (currentRectTop <= lastLineBottom && i && geometries[i].pageNumber() == geometries[i - 1].pageNumber()) {
                     lastLineTop = lineTop;
                     lineBottom = lastLineTop;
                 } else {
@@ -2245,35 +2249,37 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
     }
 
     // Adjust line height.
-    adjustLineHeightOfSelectionRects(rects, numberOfRects, lineNumber, lineTop, lineBottom - lineTop);
+    adjustLineHeightOfSelectionGeometries(geometries, numberOfGeometries, lineNumber, lineTop, lineBottom - lineTop);
 
     // Sort the rectangles and make sure there are no gaps. The rectangles could be unsorted when
     // there is ruby text and we could have gaps on the line when adjacent elements on the line
     // have a different orientation.
     size_t firstRectWithCurrentLineNumber = 0;
-    for (size_t currentRect = 1; currentRect < numberOfRects; ++currentRect) {
-        if (rects[currentRect].lineNumber() != rects[currentRect - 1].lineNumber()) {
+    for (size_t currentRect = 1; currentRect < numberOfGeometries; ++currentRect) {
+        if (geometries[currentRect].lineNumber() != geometries[currentRect - 1].lineNumber()) {
             firstRectWithCurrentLineNumber = currentRect;
             continue;
         }
-        if (rects[currentRect].logicalLeft() >= rects[currentRect - 1].logicalLeft())
+        if (geometries[currentRect].logicalLeft() >= geometries[currentRect - 1].logicalLeft())
             continue;
 
-        SelectionRect selectionRect = rects[currentRect];
+        auto selectionRect = geometries[currentRect];
         size_t i;
-        for (i = currentRect; i > firstRectWithCurrentLineNumber && selectionRect.logicalLeft() < rects[i - 1].logicalLeft(); --i)
-            rects[i] = rects[i - 1];
-        rects[i] = selectionRect;
+        for (i = currentRect; i > firstRectWithCurrentLineNumber && selectionRect.logicalLeft() < geometries[i - 1].logicalLeft(); --i)
+            geometries[i] = geometries[i - 1];
+        geometries[i] = selectionRect;
     }
 
-    for (size_t j = 1; j < numberOfRects; ++j) {
-        if (rects[j].lineNumber() != rects[j - 1].lineNumber())
+    for (size_t j = 1; j < numberOfGeometries; ++j) {
+        if (geometries[j].lineNumber() != geometries[j - 1].lineNumber())
             continue;
-        SelectionRect& previousRect = rects[j - 1];
+        if (geometries[j].behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+            continue;
+        auto& previousRect = geometries[j - 1];
         bool previousRectMayNotReachRightEdge = (previousRect.direction() == TextDirection::LTR && previousRect.containsEnd()) || (previousRect.direction() == TextDirection::RTL && previousRect.containsStart());
         if (previousRectMayNotReachRightEdge)
             continue;
-        int adjustedWidth = rects[j].logicalLeft() - previousRect.logicalLeft();
+        int adjustedWidth = geometries[j].logicalLeft() - previousRect.logicalLeft();
         if (adjustedWidth > previousRect.logicalWidth())
             previousRect.setLogicalWidth(adjustedWidth);
     }
@@ -2281,78 +2287,89 @@ auto RenderObject::collectSelectionRectsInternal(const SimpleRange& range) -> Se
     int maxLineNumber = lineNumber;
 
     // Extend rects out to edges as needed.
-    for (size_t i = 0; i < numberOfRects; ++i) {
-        SelectionRect& selectionRect = rects[i];
-        if (!selectionRect.isLineBreak() && selectionRect.lineNumber() >= maxLineNumber)
+    for (size_t i = 0; i < numberOfGeometries; ++i) {
+        auto& selectionGeometry = geometries[i];
+        if (!selectionGeometry.isLineBreak() && selectionGeometry.lineNumber() >= maxLineNumber)
             continue;
-        if (selectionRect.direction() == TextDirection::RTL && selectionRect.isFirstOnLine()) {
-            selectionRect.setLogicalWidth(selectionRect.logicalWidth() + selectionRect.logicalLeft() - selectionRect.minX());
-            selectionRect.setLogicalLeft(selectionRect.minX());
-        } else if (selectionRect.direction() == TextDirection::LTR && selectionRect.isLastOnLine())
-            selectionRect.setLogicalWidth(selectionRect.maxX() - selectionRect.logicalLeft());
+        if (selectionGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads)
+            continue;
+        if (selectionGeometry.direction() == TextDirection::RTL && selectionGeometry.isFirstOnLine()) {
+            selectionGeometry.setLogicalWidth(selectionGeometry.logicalWidth() + selectionGeometry.logicalLeft() - selectionGeometry.minX());
+            selectionGeometry.setLogicalLeft(selectionGeometry.minX());
+        } else if (selectionGeometry.direction() == TextDirection::LTR && selectionGeometry.isLastOnLine())
+            selectionGeometry.setLogicalWidth(selectionGeometry.maxX() - selectionGeometry.logicalLeft());
     }
 
-    return { WTFMove(rects), maxLineNumber };
+    return { WTFMove(geometries), maxLineNumber };
 }
 
-Vector<SelectionRect> RenderObject::collectSelectionRects(const SimpleRange& range)
+Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleRange& range)
 {
-    auto result = RenderObject::collectSelectionRectsInternal(range);
-    auto numberOfRects = result.rects.size();
+    auto result = RenderObject::collectSelectionGeometriesInternal(range);
+    auto numberOfGeometries = result.geometries.size();
 
     // Union all the rectangles on interior lines (i.e. not first or last).
     // On first and last lines, just avoid having overlaps by merging intersecting rectangles.
-    Vector<SelectionRect> unionedRects;
+    Vector<SelectionGeometry> coalescedGeometries;
     IntRect interiorUnionRect;
-    for (size_t i = 0; i < numberOfRects; ++i) {
-        SelectionRect& currentRect = result.rects[i];
-        if (currentRect.lineNumber() == 1) {
+    for (size_t i = 0; i < numberOfGeometries; ++i) {
+        auto& currentGeometry = result.geometries[i];
+        if (currentGeometry.behavior() == SelectionRenderingBehavior::UseIndividualQuads) {
+            // FIXME: We still probably want some way to coalesce quads, probably by projecting them onto rotated bounding rects
+            // and then checking whether the rotated bounding rects are overlapping and share the same rotation angle. Until then,
+            // we simply append all non-empty quads.
+            if (!currentGeometry.quad().isEmpty())
+                coalescedGeometries.append(currentGeometry);
+            continue;
+        }
+
+        if (currentGeometry.lineNumber() == 1) {
             ASSERT(interiorUnionRect.isEmpty());
-            if (!unionedRects.isEmpty()) {
-                SelectionRect& previousRect = unionedRects.last();
-                if (previousRect.rect().intersects(currentRect.rect())) {
-                    previousRect = coalesceSelectionRects(currentRect, previousRect);
+            if (!coalescedGeometries.isEmpty()) {
+                auto& previousRect = coalescedGeometries.last();
+                if (previousRect.rect().intersects(currentGeometry.rect())) {
+                    previousRect = coalesceSelectionGeometries(currentGeometry, previousRect);
                     continue;
                 }
             }
             // Couldn't merge with previous rect, so just appending.
-            unionedRects.append(currentRect);
-        } else if (currentRect.lineNumber() < result.maxLineNumber) {
+            coalescedGeometries.append(currentGeometry);
+        } else if (currentGeometry.lineNumber() < result.maxLineNumber) {
             if (interiorUnionRect.isEmpty()) {
                 // Start collecting interior rects.
-                interiorUnionRect = currentRect.rect();
-            } else if (interiorUnionRect.intersects(currentRect.rect())
-                || interiorUnionRect.maxX() == currentRect.rect().x()
-                || interiorUnionRect.maxY() == currentRect.rect().y()
-                || interiorUnionRect.x() == currentRect.rect().maxX()
-                || interiorUnionRect.y() == currentRect.rect().maxY()) {
+                interiorUnionRect = currentGeometry.rect();
+            } else if (interiorUnionRect.intersects(currentGeometry.rect())
+                || interiorUnionRect.maxX() == currentGeometry.rect().x()
+                || interiorUnionRect.maxY() == currentGeometry.rect().y()
+                || interiorUnionRect.x() == currentGeometry.rect().maxX()
+                || interiorUnionRect.y() == currentGeometry.rect().maxY()) {
                 // Only union the lines that are attached.
                 // For iBooks, the interior lines may cross multiple horizontal pages.
-                interiorUnionRect.unite(currentRect.rect());
+                interiorUnionRect.unite(currentGeometry.rect());
             } else {
-                unionedRects.append(SelectionRect(interiorUnionRect, currentRect.isHorizontal(), currentRect.pageNumber()));
-                interiorUnionRect = currentRect.rect();
+                coalescedGeometries.append(SelectionGeometry({ interiorUnionRect }, SelectionRenderingBehavior::CoalesceBoundingRects, currentGeometry.isHorizontal(), currentGeometry.pageNumber()));
+                interiorUnionRect = currentGeometry.rect();
             }
         } else {
             // Processing last line.
             if (!interiorUnionRect.isEmpty()) {
-                unionedRects.append(SelectionRect(interiorUnionRect, currentRect.isHorizontal(), currentRect.pageNumber()));
+                coalescedGeometries.append(SelectionGeometry({ interiorUnionRect }, SelectionRenderingBehavior::CoalesceBoundingRects, currentGeometry.isHorizontal(), currentGeometry.pageNumber()));
                 interiorUnionRect = IntRect();
             }
 
-            ASSERT(!unionedRects.isEmpty());
-            SelectionRect& previousRect = unionedRects.last();
-            if (previousRect.logicalTop() == currentRect.logicalTop() && previousRect.rect().intersects(currentRect.rect())) {
+            ASSERT(!coalescedGeometries.isEmpty());
+            auto& previousGeometry = coalescedGeometries.last();
+            if (previousGeometry.logicalTop() == currentGeometry.logicalTop() && previousGeometry.rect().intersects(currentGeometry.rect())) {
                 // previousRect is also on the last line, and intersects the current one.
-                previousRect = coalesceSelectionRects(currentRect, previousRect);
+                previousGeometry = coalesceSelectionGeometries(currentGeometry, previousGeometry);
                 continue;
             }
             // Couldn't merge with previous rect, so just appending.
-            unionedRects.append(currentRect);
+            coalescedGeometries.append(currentGeometry);
         }
     }
 
-    return unionedRects;
+    return coalescedGeometries;
 }
 
 #endif
@@ -2440,3 +2457,8 @@ void showRenderTree(const WebCore::RenderObject* object)
 }
 
 #endif
+
+bool WebCore::shouldApplyLayoutContainment(const WebCore::RenderObject& renderer)
+{
+    return renderer.style().containsLayout() && (!renderer.isInline() || renderer.isAtomicInlineLevelBox()) && !renderer.isRubyText() && (!renderer.isTablePart() || renderer.isRenderBlockFlow());
+}

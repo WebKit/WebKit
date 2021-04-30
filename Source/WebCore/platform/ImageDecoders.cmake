@@ -1,5 +1,6 @@
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/image-decoders"
+    "${WEBCORE_DIR}/platform/image-decoders/avif"
     "${WEBCORE_DIR}/platform/image-decoders/bmp"
     "${WEBCORE_DIR}/platform/image-decoders/gif"
     "${WEBCORE_DIR}/platform/image-decoders/ico"
@@ -12,6 +13,9 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     platform/image-decoders/ScalableImageDecoder.cpp
     platform/image-decoders/ScalableImageDecoderFrame.cpp
+
+    platform/image-decoders/avif/AVIFImageDecoder.cpp
+    platform/image-decoders/avif/AVIFImageReader.cpp
 
     platform/image-decoders/bmp/BMPImageDecoder.cpp
     platform/image-decoders/bmp/BMPImageReader.cpp
@@ -50,4 +54,11 @@ if (USE_CAIRO)
     list(APPEND WebCore_SOURCES
         platform/image-decoders/cairo/ImageBackingStoreCairo.cpp
     )
+endif ()
+
+if (USE_AVIF)
+    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+        platform/image-decoders/avif/AVIFUniquePtr.h
+    )
+    list(APPEND WebCore_LIBRARIES AVIF::AVIF)
 endif ()

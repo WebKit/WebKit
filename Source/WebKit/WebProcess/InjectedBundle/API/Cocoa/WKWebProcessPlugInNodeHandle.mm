@@ -29,10 +29,10 @@
 #import "CocoaImage.h"
 #import "WKSharedAPICast.h"
 #import "WKWebProcessPlugInFrameInternal.h"
+#import "WebImage.h"
 #import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebKit/WebImage.h>
 
 @implementation WKWebProcessPlugInNodeHandle {
     API::ObjectStorage<WebKit::InjectedBundleNodeHandle> _nodeHandle;

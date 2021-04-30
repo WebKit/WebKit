@@ -367,22 +367,15 @@ for this property.
 - (void)_didDisableBrowserExtensions:(NSSet<NSString *> *)extensionIDs WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, weak, setter=_setAppHighlightDelegate:) id <_WKAppHighlightDelegate> _appHighlightDelegate WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_restoreAppHighlights:(NSArray<NSData *> *)data WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_restoreAppHighlights:(NSArray<NSData *> *)highlights WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_restoreAndScrollToAppHighlight:(NSData *)highlight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_addAppHighlight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-/*! @abstract The theme color of the active page.
- @discussion This is the value of the most recently created or modified
- @textblock
-    <meta name="theme-color" contents="...">
- @/textblock
- in the current page.
- @link WKWebView @/link is key-value observing (KVO) compliant for this
- property.
- */
+// FIXME: Remove old `-[WKWebView _themeColor]` SPI <rdar://76662644>
 #if TARGET_OS_IPHONE
-@property (nonatomic, readonly) UIColor *_themeColor WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, readonly) UIColor *_themeColor WK_API_DEPRECATED_WITH_REPLACEMENT("themeColor", ios(WK_IOS_TBA, WK_IOS_TBA));
 #else
-@property (nonatomic, readonly) NSColor *_themeColor WK_API_AVAILABLE(macos(WK_MAC_TBA));
+@property (nonatomic, readonly) NSColor *_themeColor WK_API_DEPRECATED_WITH_REPLACEMENT("themeColor", macos(WK_MAC_TBA, WK_MAC_TBA));
 #endif
 
 #if TARGET_OS_IPHONE

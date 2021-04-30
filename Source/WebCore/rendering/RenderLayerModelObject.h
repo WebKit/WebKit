@@ -56,7 +56,7 @@ public:
 
     virtual bool isScrollableOrRubberbandableBox() const { return false; }
 
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
+    bool shouldPlaceVerticalScrollbarOnLeft() const;
 
     Optional<LayerRepaintRects> layerRepaintRects() const;
 

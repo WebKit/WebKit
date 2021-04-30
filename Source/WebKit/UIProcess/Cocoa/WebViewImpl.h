@@ -31,13 +31,13 @@
 #include "PluginComplexTextInputState.h"
 #include "ShareableBitmap.h"
 #include "WKLayoutMode.h"
-#include "_WKOverlayScrollbarStyle.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <WebKit/WKDragDestinationAction.h>
+#include <WebKit/_WKOverlayScrollbarStyle.h>
 #include <pal/spi/cocoa/AVKitSPI.h>
 #include <wtf/BlockPtr.h>
 #include <wtf/CompletionHandler.h>
@@ -54,6 +54,7 @@ OBJC_CLASS NSImmediateActionGestureRecognizer;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
+OBJC_CLASS QLPreviewPanel;
 OBJC_CLASS WKAccessibilitySettingsObserver;
 OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKDOMPasteMenuDelegate;
@@ -589,6 +590,10 @@ public:
     void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
     void computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
+
+    bool acceptsPreviewPanelControl(QLPreviewPanel *);
+    void beginPreviewPanelControl(QLPreviewPanel *);
+    void endPreviewPanelControl(QLPreviewPanel *);
 
     bool windowIsFrontWindowUnderMouse(NSEvent *);
 

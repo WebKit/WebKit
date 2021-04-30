@@ -74,7 +74,9 @@
 #include <WebCore/JSRange.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
+#include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderTreeAsText.h>
+#include <WebCore/RenderView.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SubresourceLoader.h>
@@ -501,7 +503,7 @@ String WebFrame::layerTreeAsText() const
     if (!m_coreFrame)
         return "";
 
-    return m_coreFrame->layerTreeAsText(0);
+    return m_coreFrame->contentRenderer()->compositor().layerTreeAsText();
 }
 
 unsigned WebFrame::pendingUnloadCount() const

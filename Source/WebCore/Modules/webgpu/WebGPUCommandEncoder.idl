@@ -29,7 +29,7 @@ typedef unsigned long long u64;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementedAs=WebGPUBufferCopyView
 ] dictionary GPUBufferCopyView {
     required WebGPUBuffer buffer;
@@ -40,7 +40,7 @@ typedef unsigned long long u64;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementedAs=WebGPUTextureCopyView
 ] dictionary GPUTextureCopyView {
     required WebGPUTexture texture;
@@ -51,7 +51,7 @@ typedef unsigned long long u64;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementationLacksVTable,
     InterfaceName=GPUCommandEncoder,
     Exposed=Window

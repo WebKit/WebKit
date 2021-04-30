@@ -49,7 +49,7 @@ TEST(Copying, WKPreferences)
     EXPECT_EQ([a javaScriptCanOpenWindowsAutomatically], [b javaScriptCanOpenWindowsAutomatically]);
 #if PLATFORM(MAC)
     EXPECT_EQ([a javaEnabled], [b javaEnabled]);
-    EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
+    EXPECT_EQ([a plugInsEnabled], NO);
     EXPECT_EQ([a tabFocusesLinks], [b tabFocusesLinks]);
 #endif
 
@@ -71,7 +71,7 @@ TEST(Copying, WKPreferences)
     EXPECT_NE([a javaScriptCanOpenWindowsAutomatically], [b javaScriptCanOpenWindowsAutomatically]);
 #if PLATFORM(MAC)
     EXPECT_NE([a javaEnabled], [b javaEnabled]);
-    EXPECT_NE([a plugInsEnabled], [b plugInsEnabled]);
+    EXPECT_EQ([a plugInsEnabled], [b plugInsEnabled]);
     EXPECT_NE([a tabFocusesLinks], [b tabFocusesLinks]);
 #endif
 

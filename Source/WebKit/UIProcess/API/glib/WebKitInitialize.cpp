@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebKitInitialize.h"
 
+#include "WebKit2Initialize.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
-#include <WebKit/Shared/WebKit2Initialize.h>
 #include <mutex>
 #include <wtf/glib/GUniquePtr.h>
 

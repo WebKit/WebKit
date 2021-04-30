@@ -164,7 +164,7 @@ private:
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
-    std::unique_ptr<Resolver> m_resolver;
+    RefPtr<Resolver> m_resolver;
 
     Vector<RefPtr<StyleSheet>> m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet>> m_activeStyleSheets;
@@ -178,7 +178,6 @@ private:
     HashSet<const ProcessingInstruction*> m_processingInstructionsWithPendingSheets;
     HashSet<const Element*> m_elementsInHeadWithPendingSheets;
     HashSet<const Element*> m_elementsInBodyWithPendingSheets;
-
 
     ListHashSet<Node*> m_styleSheetCandidateNodes;
 

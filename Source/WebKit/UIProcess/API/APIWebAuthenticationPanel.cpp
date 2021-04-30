@@ -37,9 +37,9 @@ namespace API {
 using namespace WebCore;
 using namespace WebKit;
 
-Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type)
+Ref<WebAuthenticationPanel> WebAuthenticationPanel::create(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
 {
-    return adoptRef(*new WebAuthenticationPanel(manager, rpId, transports, type));
+    return adoptRef(*new WebAuthenticationPanel(manager, rpId, transports, type, userName));
 }
 
 WebAuthenticationPanel::WebAuthenticationPanel()
@@ -49,11 +49,12 @@ WebAuthenticationPanel::WebAuthenticationPanel()
     m_manager->enableNativeSupport();
 }
 
-WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type)
+WebAuthenticationPanel::WebAuthenticationPanel(const AuthenticatorManager& manager, const WTF::String& rpId, const TransportSet& transports, ClientDataType type, const WTF::String& userName)
     : m_client(makeUniqueRef<WebAuthenticationPanelClient>())
     , m_weakManager(makeWeakPtr(manager))
     , m_rpId(rpId)
     , m_clientDataType(type)
+    , m_userName(userName)
 {
     m_transports = Vector<AuthenticatorTransport>();
     m_transports.reserveInitialCapacity(AuthenticatorManager::maxTransportNumber);

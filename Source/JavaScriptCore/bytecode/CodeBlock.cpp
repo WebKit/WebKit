@@ -296,7 +296,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_vm(other.m_vm)
     , m_instructionsRawPointer(other.m_instructionsRawPointer)
     , m_constantRegisters(other.m_constantRegisters)
-    , m_constantsSourceCodeRepresentation(other.m_constantsSourceCodeRepresentation)
     , m_functionDecls(other.m_functionDecls)
     , m_functionExprs(other.m_functionExprs)
     , m_osrExitCounter(0)
@@ -324,10 +323,7 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
 
     if (other.m_rareData) {
         createRareDataIfNecessary();
-        
         m_rareData->m_exceptionHandlers = other.m_rareData->m_exceptionHandlers;
-        m_rareData->m_switchJumpTables = other.m_rareData->m_switchJumpTables;
-        m_rareData->m_stringSwitchJumpTables = other.m_rareData->m_stringSwitchJumpTables;
     }
 }
 
@@ -419,7 +415,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         m_functionExprs[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), WTF::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
     }
 
-    if (unlinkedCodeBlock->hasRareData()) {
+    if (unlinkedCodeBlock->numberOfExceptionHandlers()) {
         createRareDataIfNecessary();
 
         if (size_t count = unlinkedCodeBlock->numberOfExceptionHandlers()) {
@@ -433,29 +429,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 #else
                 handler.initialize(unlinkedHandler);
 #endif
-            }
-        }
-
-        if (size_t count = unlinkedCodeBlock->numberOfStringSwitchJumpTables()) {
-            m_rareData->m_stringSwitchJumpTables.resizeToFit(count);
-            for (size_t i = 0; i < count; i++) {
-                UnlinkedStringJumpTable::StringOffsetTable::iterator ptr = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.begin();
-                UnlinkedStringJumpTable::StringOffsetTable::iterator end = unlinkedCodeBlock->stringSwitchJumpTable(i).offsetTable.end();
-                for (; ptr != end; ++ptr) {
-                    OffsetLocation offset;
-                    offset.branchOffset = ptr->value.branchOffset;
-                    m_rareData->m_stringSwitchJumpTables[i].offsetTable.add(ptr->key, offset);
-                }
-            }
-        }
-
-        if (size_t count = unlinkedCodeBlock->numberOfSwitchJumpTables()) {
-            m_rareData->m_switchJumpTables.resizeToFit(count);
-            for (size_t i = 0; i < count; i++) {
-                UnlinkedSimpleJumpTable& sourceTable = unlinkedCodeBlock->switchJumpTable(i);
-                SimpleJumpTable& destTable = m_rareData->m_switchJumpTables[i];
-                destTable.branchOffsets = sourceTable.branchOffsets;
-                destTable.min = sourceTable.min;
             }
         }
     }
@@ -832,6 +805,15 @@ CodeBlock::~CodeBlock()
         }
     }
 
+    if (JITCode::isBaselineCode(jitType())) {
+        if (m_metadata) {
+            m_metadata->forEach<OpCatch>([&](auto& metadata) {
+                if (metadata.m_buffer)
+                    ValueProfileAndVirtualRegisterBuffer::destroy(std::exchange(metadata.m_buffer, nullptr));
+            });
+        }
+    }
+
 #if ENABLE(DFG_JIT)
     // The JITCode (and its corresponding DFG::CommonData) may outlive the CodeBlock by
     // a short amount of time after the CodeBlock is destructed. For example, the
@@ -897,12 +879,10 @@ void CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& c
     {
         ConcurrentJSLocker locker(m_lock);
         m_constantRegisters.resizeToFit(count);
-        m_constantsSourceCodeRepresentation.resizeToFit(count);
     }
     for (size_t i = 0; i < count; i++) {
         JSValue constant = constants[i].get();
         SourceCodeRepresentation representation = constantsSourceCodeRepresentation[i];
-        m_constantsSourceCodeRepresentation[i] = representation;
         switch (representation) {
         case SourceCodeRepresentation::LinkTimeConstant:
             constant = globalObject->linkTimeConstant(static_cast<LinkTimeConstant>(constant.asInt32AsAnyInt()));
@@ -944,7 +924,7 @@ void CodeBlock::setAlternative(VM& vm, CodeBlock* alternative)
     m_alternative.set(vm, this, alternative);
 }
 
-void CodeBlock::setNumParameters(int newValue)
+void CodeBlock::setNumParameters(unsigned newValue)
 {
     m_numParameters = newValue;
 
@@ -1004,6 +984,14 @@ void CodeBlock::visitChildren(Visitor& visitor)
         extraMemory += m_metadata->sizeInBytes();
     if (m_jitCode && !m_jitCode->isShared())
         extraMemory += m_jitCode->size();
+#if ENABLE(JIT)
+    if (m_jitData)
+        extraMemory += m_jitData->size(locker);
+#endif
+    extraMemory += m_argumentValueProfiles.size() * sizeof(ValueProfile);
+    extraMemory += m_functionDecls.size() * sizeof(decltype(*m_functionDecls.data()));
+    extraMemory += m_functionExprs.size() * sizeof(decltype(*m_functionExprs.data()));
+
     visitor.reportExtraMemoryVisited(extraMemory);
 
     stronglyVisitStrongReferences(locker, visitor);
@@ -1040,6 +1028,31 @@ bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker& locker, Visitor& v
 
 template bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker&, AbstractSlotVisitor&);
 template bool CodeBlock::shouldVisitStrongly(const ConcurrentJSLocker&, SlotVisitor&);
+
+#if ENABLE(JIT)
+size_t CodeBlock::JITData::size(const ConcurrentJSLocker&) const
+{
+    size_t size = sizeof(JITData);
+    size += m_stubInfos.estimatedAllocationSizeInBytes();
+    for (StructureStubInfo* stub : m_stubInfos)
+        size += stub->extraMemoryInBytes();
+    size += m_addICs.estimatedAllocationSizeInBytes();
+    size += m_mulICs.estimatedAllocationSizeInBytes();
+    size += m_negICs.estimatedAllocationSizeInBytes();
+    size += m_subICs.estimatedAllocationSizeInBytes();
+    size += m_byValInfos.estimatedAllocationSizeInBytes();
+    size += m_callLinkInfos.estimatedAllocationSizeInBytes();
+    size += m_rareCaseProfiles.size() * sizeof(decltype(*m_rareCaseProfiles.data()));
+    size += m_switchJumpTables.size() * sizeof(decltype(*m_switchJumpTables.data()));
+    size += m_stringSwitchJumpTables.size() * sizeof(decltype(*m_stringSwitchJumpTables.data()));
+    // FIXME: account for m_calleeSaveRegisters but it's not a big deal since it's a fixed size and small.
+    if (m_pcToCodeOriginMap)
+        size += m_pcToCodeOriginMap->memorySize();
+    if (m_jitCodeMap)
+        size += m_jitCodeMap.memorySize();
+    return size;
+}
+#endif
 
 bool CodeBlock::shouldJettisonDueToWeakReference(VM& vm)
 {
@@ -1193,10 +1206,10 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, Visitor& visitor
         
         dfgCommon->recordedStatuses.markIfCheap(visitor);
         
-        for (StructureID structureID : dfgCommon->weakStructureReferences)
+        for (StructureID structureID : dfgCommon->m_weakStructureReferences)
             vm.getStructure(structureID)->markIfCheap(visitor);
 
-        for (auto& transition : dfgCommon->transitions) {
+        for (auto& transition : dfgCommon->m_transitions) {
             if (shouldMarkTransition(visitor, transition)) {
                 // If the following three things are live, then the target of the
                 // transition is also live:
@@ -1248,8 +1261,8 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, Visitor& visitor)
     // have proved liveness and so we scan our strong references. If at end of
     // GC we still have not proved liveness, then this code block is toast.
     bool allAreLiveSoFar = true;
-    for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
-        JSCell* reference = dfgCommon->weakReferences[i].get();
+    for (unsigned i = 0; i < dfgCommon->m_weakReferences.size(); ++i) {
+        JSCell* reference = dfgCommon->m_weakReferences[i].get();
         ASSERT(!jsDynamicCast<CodeBlock*>(vm, reference));
         if (!visitor.isMarked(reference)) {
             allAreLiveSoFar = false;
@@ -1257,7 +1270,7 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, Visitor& visitor)
         }
     }
     if (allAreLiveSoFar) {
-        for (StructureID structureID : dfgCommon->weakStructureReferences) {
+        for (StructureID structureID : dfgCommon->m_weakStructureReferences) {
             Structure* structure = vm.getStructure(structureID);
             if (!visitor.isMarked(structure)) {
                 allAreLiveSoFar = false;
@@ -1889,20 +1902,18 @@ void CodeBlock::stronglyVisitWeakReferences(const ConcurrentJSLocker&, Visitor& 
     
     DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
 
-    for (auto& transition : dfgCommon->transitions) {
+    for (auto& transition : dfgCommon->m_transitions) {
         if (!!transition.m_codeOrigin)
             visitor.append(transition.m_codeOrigin); // Almost certainly not necessary, since the code origin should also be a weak reference. Better to be safe, though.
         visitor.append(transition.m_from);
         visitor.append(transition.m_to);
     }
 
-    for (auto& weakReference : dfgCommon->weakReferences)
+    for (auto& weakReference : dfgCommon->m_weakReferences)
         visitor.append(weakReference);
 
-    for (StructureID structureID : dfgCommon->weakStructureReferences)
+    for (StructureID structureID : dfgCommon->m_weakStructureReferences)
         visitor.appendUnbarriered(visitor.vm().getStructure(structureID));
-
-    dfgCommon->livenessHasBeenProved = true;
 #endif    
 }
 
@@ -2010,25 +2021,12 @@ DisposableCallSiteIndex CodeBlock::newExceptionHandlingCallSiteIndex(CallSiteInd
 
 void CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
+    ASSERT(JITCode::isBaselineCode(jitType()));
     auto& instruction = instructions().at(bytecodeIndex);
     OpCatch op = instruction->as<OpCatch>();
     auto& metadata = op.metadata(this);
-    if (!!metadata.m_buffer) {
-#if ASSERT_ENABLED
-        ConcurrentJSLocker locker(m_lock);
-        bool found = false;
-        auto* rareData = m_rareData.get();
-        ASSERT(rareData);
-        for (auto& profile : rareData->m_catchProfiles) {
-            if (profile.get() == metadata.m_buffer) {
-                found = true;
-                break;
-            }
-        }
-        ASSERT(found);
-#endif // ASSERT_ENABLED
+    if (!!metadata.m_buffer)
         return;
-    }
 
     ensureCatchLivenessIsComputedForBytecodeIndexSlow(op, bytecodeIndex);
 }
@@ -2050,26 +2048,22 @@ void CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow(const OpCatch&
         liveOperands.append(virtualRegisterForLocal(liveLocal));
     });
 
-    for (int i = 0; i < numParameters(); ++i)
+    for (unsigned i = 0; i < numParameters(); ++i)
         liveOperands.append(virtualRegisterForArgumentIncludingThis(i));
 
-    auto profiles = makeUnique<ValueProfileAndVirtualRegisterBuffer>(liveOperands.size());
-    RELEASE_ASSERT(profiles->m_size == liveOperands.size());
-    for (unsigned i = 0; i < profiles->m_size; ++i)
-        profiles->m_buffer.get()[i].m_operand = liveOperands[i];
+    auto* profiles = ValueProfileAndVirtualRegisterBuffer::create(liveOperands.size());
+    RELEASE_ASSERT(profiles->size() == liveOperands.size());
+    for (unsigned i = 0; i < profiles->size(); ++i)
+        profiles->data()[i].m_operand = liveOperands[i];
 
     createRareDataIfNecessary();
 
     // The compiler thread will read this pointer value and then proceed to dereference it
     // if it is not null. We need to make sure all above stores happen before this store so
     // the compiler thread reads fully initialized data.
-    WTF::storeStoreFence(); 
+    WTF::storeStoreFence();
 
-    op.metadata(this).m_buffer = profiles.get();
-    {
-        ConcurrentJSLocker locker(m_lock);
-        m_rareData->m_catchProfiles.append(WTFMove(profiles));
-    }
+    op.metadata(this).m_buffer = profiles;
 }
 
 void CodeBlock::removeExceptionHandlerForCallSite(DisposableCallSiteIndex callSiteIndex)
@@ -2136,16 +2130,9 @@ void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
     if (shrinkMode == ShrinkMode::EarlyShrink)
         m_constantRegisters.shrinkToFit();
 #else
+    UNUSED_PARAM(shrinkMode);
     m_constantRegisters.shrinkToFit();
 #endif
-    m_constantsSourceCodeRepresentation.shrinkToFit();
-
-    if (shrinkMode == ShrinkMode::EarlyShrink) {
-        if (m_rareData) {
-            m_rareData->m_switchJumpTables.shrinkToFit();
-            m_rareData->m_stringSwitchJumpTables.shrinkToFit();
-        }
-    } // else don't shrink these, because we would have already pointed pointers into these tables.
 }
 
 #if ENABLE(JIT)
@@ -2271,7 +2258,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         if (DFG::shouldDumpDisassembly()) {
             dataLog(*this, " will be jettisoned because of the following dead references:\n");
             DFG::CommonData* dfgCommon = m_jitCode->dfgCommon();
-            for (auto& transition : dfgCommon->transitions) {
+            for (auto& transition : dfgCommon->m_transitions) {
                 JSCell* origin = transition.m_codeOrigin.get();
                 JSCell* from = transition.m_from.get();
                 JSCell* to = transition.m_to.get();
@@ -2279,8 +2266,8 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
                     continue;
                 dataLog("    Transition under ", RawPointer(origin), ", ", RawPointer(from), " -> ", RawPointer(to), ".\n");
             }
-            for (unsigned i = 0; i < dfgCommon->weakReferences.size(); ++i) {
-                JSCell* weak = dfgCommon->weakReferences[i].get();
+            for (unsigned i = 0; i < dfgCommon->m_weakReferences.size(); ++i) {
+                JSCell* weak = dfgCommon->m_weakReferences[i].get();
                 if (vm.heap.isMarked(weak))
                     continue;
                 dataLog("    Weak reference ", RawPointer(weak), ".\n");
@@ -2900,7 +2887,7 @@ size_t CodeBlock::numberOfDFGIdentifiers() const
     if (!JITCode::isOptimizingJIT(jitType()))
         return 0;
     
-    return m_jitCode->dfgCommon()->dfgIdentifiers.size();
+    return m_jitCode->dfgCommon()->m_dfgIdentifiers.size();
 }
 
 const Identifier& CodeBlock::identifier(int index) const
@@ -2909,7 +2896,7 @@ const Identifier& CodeBlock::identifier(int index) const
     if (static_cast<unsigned>(index) < unlinkedIdentifiers)
         return m_unlinkedCode->identifier(index);
     ASSERT(JITCode::isOptimizingJIT(jitType()));
-    return m_jitCode->dfgCommon()->dfgIdentifiers[index - unlinkedIdentifiers];
+    return m_jitCode->dfgCommon()->m_dfgIdentifiers[index - unlinkedIdentifiers];
 }
 #endif // ENABLE(DFG_JIT)
 
@@ -2935,14 +2922,16 @@ void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(unsigned& numbe
         profile.computeUpdatedPrediction(locker);
     });
 
-    if (auto* rareData = m_rareData.get()) {
-        for (auto& profileBucket : rareData->m_catchProfiles) {
-            profileBucket->forEach([&] (ValueProfileAndVirtualRegister& profile) {
-                profile.computeUpdatedPrediction(locker);
-            });
-        }
+    if (m_metadata) {
+        m_metadata->forEach<OpCatch>([&](auto& metadata) {
+            if (metadata.m_buffer) {
+                metadata.m_buffer->forEach([&](ValueProfileAndVirtualRegister& profile) {
+                    profile.computeUpdatedPrediction(locker);
+                });
+            }
+        });
     }
-    
+
 #if ENABLE(DFG_JIT)
     lazyOperandValueProfiles(locker).computeUpdatedPredictions(locker);
 #endif
@@ -3017,21 +3006,19 @@ void CodeBlock::tallyFrequentExitSites()
     switch (jitType()) {
     case JITType::DFGJIT: {
         DFG::JITCode* jitCode = m_jitCode->dfg();
-        for (auto& exit : jitCode->osrExit)
+        for (auto& exit : jitCode->m_osrExit)
             exit.considerAddingAsFrequentExitSite(profiledBlock);
         break;
     }
 
 #if ENABLE(FTL_JIT)
     case JITType::FTLJIT: {
-        // There is no easy way to avoid duplicating this code since the FTL::JITCode::osrExit
+        // There is no easy way to avoid duplicating this code since the FTL::JITCode::m_osrExit
         // vector contains a totally different type, that just so happens to behave like
-        // DFG::JITCode::osrExit.
+        // DFG::JITCode::m_osrExit.
         FTL::JITCode* jitCode = m_jitCode->ftl();
-        for (unsigned i = 0; i < jitCode->osrExit.size(); ++i) {
-            FTL::OSRExit& exit = jitCode->osrExit[i];
+        for (auto& exit : jitCode->m_osrExit)
             exit.considerAddingAsFrequentExitSite(profiledBlock);
-        }
         break;
     }
 #endif

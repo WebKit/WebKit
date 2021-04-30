@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollView.h"
 
+#include "FloatQuad.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "HostWindow.h"
@@ -422,7 +423,7 @@ ScrollPosition ScrollView::adjustScrollPositionWithinRange(const ScrollPosition&
 ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
 {
     return scrollPosition() - IntSize(
-        shouldPlaceBlockDirectionScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
+        shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
         headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
 }
 
@@ -732,7 +733,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     if (m_horizontalScrollbar) {
         int clientWidth = visibleWidth();
         IntRect oldRect(m_horizontalScrollbar->frameRect());
-        IntRect hBarRect(shouldPlaceBlockDirectionScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
+        IntRect hBarRect(shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
             height() - m_horizontalScrollbar->height(),
             width() - (m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0),
             m_horizontalScrollbar->height());
@@ -751,7 +752,7 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     if (m_verticalScrollbar) {
         int clientHeight = visibleHeight();
         IntRect oldRect(m_verticalScrollbar->frameRect());
-        IntRect vBarRect(shouldPlaceBlockDirectionScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
+        IntRect vBarRect(shouldPlaceVerticalScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
             topContentInset(),
             m_verticalScrollbar->width(),
             height() - topContentInset() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0));
@@ -984,6 +985,30 @@ FloatRect ScrollView::contentsToRootView(const FloatRect& contentsRect) const
     return convertToRootView(contentsToView(contentsRect));
 }
 
+FloatQuad ScrollView::rootViewToContents(const FloatQuad& quad) const
+{
+    // FIXME: This could be optimized by adding and adopting a version of rootViewToContents() that
+    // maps multiple FloatPoints to content coordinates at the same time.
+    auto result = quad;
+    result.setP1(rootViewToContents(result.p1()));
+    result.setP2(rootViewToContents(result.p2()));
+    result.setP3(rootViewToContents(result.p3()));
+    result.setP4(rootViewToContents(result.p4()));
+    return result;
+}
+
+FloatQuad ScrollView::contentsToRootView(const FloatQuad& quad) const
+{
+    // FIXME: This could be optimized by adding and adopting a version of contentsToRootView() that
+    // maps multiple FloatPoints to root view coordinates at the same time.
+    auto result = quad;
+    result.setP1(contentsToRootView(result.p1()));
+    result.setP2(contentsToRootView(result.p2()));
+    result.setP3(contentsToRootView(result.p3()));
+    result.setP4(contentsToRootView(result.p4()));
+    return result;
+}
+
 IntPoint ScrollView::rootViewToTotalContents(const IntPoint& rootViewPoint) const
 {
     if (delegatesScrolling())
@@ -1179,14 +1204,14 @@ IntRect ScrollView::scrollCornerRect() const
     int heightTrackedByScrollbar = height() - topContentInset();
 
     if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
-        cornerRect.unite(IntRect(shouldPlaceBlockDirectionScrollbarOnLeft() ? 0 : m_horizontalScrollbar->width(),
+        cornerRect.unite(IntRect(shouldPlaceVerticalScrollbarOnLeft() ? 0 : m_horizontalScrollbar->width(),
             height() - m_horizontalScrollbar->height(),
             width() - m_horizontalScrollbar->width(),
             m_horizontalScrollbar->height()));
     }
 
     if (m_verticalScrollbar && heightTrackedByScrollbar - m_verticalScrollbar->height() > 0) {
-        cornerRect.unite(IntRect(shouldPlaceBlockDirectionScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
+        cornerRect.unite(IntRect(shouldPlaceVerticalScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
             m_verticalScrollbar->height() + topContentInset(),
             m_verticalScrollbar->width(),
             heightTrackedByScrollbar - m_verticalScrollbar->height()));
@@ -1538,7 +1563,7 @@ void ScrollView::styleAndRenderTreeDidChange()
 IntPoint ScrollView::locationOfContents() const
 {
     IntPoint result = location();
-    if (shouldPlaceBlockDirectionScrollbarOnLeft() && m_verticalScrollbar)
+    if (shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar)
         result.move(m_verticalScrollbar->occupiedWidth(), 0);
     return result;
 }

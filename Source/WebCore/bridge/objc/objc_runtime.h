@@ -91,7 +91,7 @@ private:
 class ObjcFallbackObjectImp final : public JSDestructibleObject {
 public:
     using Base = JSDestructibleObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData | OverridesPut;
     static constexpr bool needsDestruction = true;
 
     template<typename CellType, JSC::SubspaceAccess>
@@ -124,6 +124,8 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
+    ObjcInstance* getInternalObjCInstance() const { return _instance.get(); }
+
 private:
     ObjcFallbackObjectImp(JSGlobalObject*, Structure*, ObjcInstance*, const String& propertyName);
     void finishCreation(JSGlobalObject*);
@@ -133,7 +135,6 @@ private:
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static CallData getCallData(JSCell*);
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
-    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
 
     bool toBoolean(JSGlobalObject*) const; // FIXME: Currently this is broken because none of the superclasses are marked virtual. We need to solve this in the longer term.
 

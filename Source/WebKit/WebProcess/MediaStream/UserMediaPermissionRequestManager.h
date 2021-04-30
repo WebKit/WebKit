@@ -24,6 +24,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/MediaCanStartListener.h>
 #include <WebCore/MediaConstraints.h>
+#include <WebCore/RealtimeMediaSourceCenter.h>
 #include <WebCore/UserMediaClient.h>
 #include <WebCore/UserMediaRequest.h>
 #include <wtf/HashMap.h>
@@ -34,9 +35,16 @@ namespace WebKit {
 
 class WebPage;
 
-class UserMediaPermissionRequestManager : private WebCore::MediaCanStartListener {
+class UserMediaPermissionRequestManager : public WebCore::MediaCanStartListener
+#if USE(GSTREAMER)
+                                        , public WebCore::RealtimeMediaSourceCenter::Observer
+#endif
+{
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using WebCore::MediaCanStartListener::weakPtrFactory;
+    using WeakValueType = WebCore::MediaCanStartListener::WeakValueType;
+
     explicit UserMediaPermissionRequestManager(WebPage&);
     ~UserMediaPermissionRequestManager() = default;
 
@@ -53,6 +61,11 @@ public:
     void captureDevicesChanged();
 
 private:
+#if USE(GSTREAMER)
+    // WebCore::RealtimeMediaSourceCenter::Observer
+    void devicesChanged() final;
+#endif
+
     void sendUserMediaRequest(WebCore::UserMediaRequest&);
 
     // WebCore::MediaCanStartListener
@@ -65,6 +78,13 @@ private:
 
     HashMap<WebCore::UserMediaClient::DeviceChangeObserverToken, Function<void()>> m_deviceChangeObserverMap;
     bool m_monitoringDeviceChange { false };
+
+#if USE(GSTREAMER)
+    enum class ShouldNotify : bool { No, Yes };
+    void updateCaptureDevices(ShouldNotify);
+
+    Vector<WebCore::CaptureDevice> m_captureDevices;
+#endif
 };
 
 } // namespace WebKit

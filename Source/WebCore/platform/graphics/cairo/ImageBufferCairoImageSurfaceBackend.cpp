@@ -3,7 +3,7 @@
  * Copyright (C) 2007 Holger Hans Peter Freyther <zecke@selfish.org>
  * Copyright (C) 2008, 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Torch Mobile (Beijing) Co. Ltd. All rights reserved.
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,14 +41,38 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCairoImageSurfaceBackend);
 
+IntSize ImageBufferCairoImageSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
+{
+    IntSize backendSize = calculateBackendSize(parameters);
+    if (backendSize.isEmpty())
+        return { };
+
+    if (backendSize.width() > cairoMaxImageSize || backendSize.height() > cairoMaxImageSize)
+        return { };
+
+    return backendSize;
+}
+
+unsigned ImageBufferCairoImageSurfaceBackend::calculateBytesPerRow(const IntSize& backendSize)
+{
+    ASSERT(!backendSize.isEmpty());
+    return cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, backendSize.width());
+}
+
+size_t ImageBufferCairoImageSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
+{
+    IntSize backendSize = calculateBackendSize(parameters);
+    return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
+}
+
 std::unique_ptr<ImageBufferCairoImageSurfaceBackend> ImageBufferCairoImageSurfaceBackend::create(const Parameters& parameters, const HostWindow*)
 {
     ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
 
     static cairo_user_data_key_t s_surfaceDataKey;
 
-    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
-    if (backendSize.isEmpty() || backendSize.width() > cairoMaxImageSize || backendSize.height() > cairoMaxImageSize)
+    IntSize backendSize = calculateSafeBackendSize(parameters);
+    if (backendSize.isEmpty())
         return nullptr;
 
     int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, backendSize.width());
@@ -75,6 +99,12 @@ ImageBufferCairoImageSurfaceBackend::ImageBufferCairoImageSurfaceBackend(const P
     : ImageBufferCairoSurfaceBackend(parameters, WTFMove(surface))
 {
     ASSERT(cairo_surface_get_type(m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
+}
+
+unsigned ImageBufferCairoImageSurfaceBackend::bytesPerRow() const
+{
+    IntSize backendSize = calculateBackendSize(m_parameters);
+    return calculateBytesPerRow(backendSize);
 }
 
 void ImageBufferCairoImageSurfaceBackend::platformTransformColorSpace(const std::array<uint8_t, 256>& lookUpTable)

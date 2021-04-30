@@ -451,12 +451,6 @@ GraphicsLayerCA::~GraphicsLayerCA()
     if (UNLIKELY(isTrackingDisplayListReplay()))
         layerDisplayListMap().remove(this);
 
-    // Do cleanup while we can still safely call methods on the derived class.
-    willBeDestroyed();
-}
-
-void GraphicsLayerCA::willBeDestroyed()
-{
     // We release our references to the PlatformCALayers here, but do not actively unparent them,
     // since that will cause a commit and break our batched commit model. The layers will
     // get released when the rootmost modified GraphicsLayerCA rebuilds its child layers.
@@ -488,7 +482,10 @@ void GraphicsLayerCA::willBeDestroyed()
 
     removeCloneLayers();
 
-    GraphicsLayer::willBeDestroyed();
+    if (m_parent)
+        downcast<GraphicsLayerCA>(*m_parent).noteSublayersChanged();
+
+    willBeDestroyed();
 }
 
 void GraphicsLayerCA::setName(const String& name)
@@ -1242,6 +1239,8 @@ void GraphicsLayerCA::setContentsToModel(RefPtr<Model>&& model)
 
     if (contentsLayerChanged)
         noteSublayersChanged();
+
+    noteLayerPropertyChanged(ContentsRectsChanged | OpacityChanged);
 }
 #endif
 
@@ -1249,9 +1248,6 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
 {
     if (m_contentsLayer && platformLayer == m_contentsLayer->platformLayer())
         return;
-
-    if (m_contentsClippingLayer && m_contentsLayer)
-        m_contentsLayer->removeFromSuperlayer();
 
     // FIXME: The passed in layer might be a raw layer or an externally created
     // PlatformCALayer. To determine this we attempt to get the
@@ -1270,9 +1266,6 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
         m_contentsLayer = nullptr;
 
     m_contentsLayerPurpose = platformLayer ? purpose : ContentsLayerPurpose::None;
-
-    if (m_contentsClippingLayer && m_contentsLayer)
-        m_contentsClippingLayer->appendSublayer(*m_contentsLayer);
 
     noteSublayersChanged();
     noteLayerPropertyChanged(ContentsPlatformLayerChanged);
@@ -2031,24 +2024,24 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
         list.append(m_layer);
     };
 
-    auto appendClippingLayers = [&](PlatformCALayerList& list) {
-        if (!m_contentsVisible)
-            return;
-
-        if (m_contentsClippingLayer) {
-            list.append(m_contentsClippingLayer);
-            return;
-        }
-
-        if (m_contentsLayer)
+    auto appendContentsLayer = [&](PlatformCALayerList& list) {
+        if (m_contentsVisible && m_contentsLayer)
             list.append(m_contentsLayer);
+    };
+
+    auto appendClippingLayers = [&](PlatformCALayerList& list) {
+        if (m_contentsVisible && m_contentsClippingLayer)
+            list.append(m_contentsClippingLayer);
     };
 
     auto appendCustomAndClippingLayers = [&](PlatformCALayerList& list) {
         if (auto* customSublayers = m_layer->customSublayers())
             list.appendVector(*customSublayers);
 
-        appendClippingLayers(list);
+        if (m_contentsClippingLayer)
+            appendClippingLayers(list);
+        else
+            appendContentsLayer(list);
     };
 
     auto appendLayersFromChildren = [&](PlatformCALayerList& list) {
@@ -2077,9 +2070,11 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
     appendCustomAndClippingLayers(primaryLayerChildren);
 
     bool clippingLayerHostsChildren = m_contentsRectClipsDescendants && m_contentsClippingLayer;
-    if (clippingLayerHostsChildren) {
+    if (m_contentsClippingLayer) {
         PlatformCALayerList clippingChildren;
-        buildChildLayerList(clippingChildren);
+        if (clippingLayerHostsChildren)
+            buildChildLayerList(clippingChildren);
+        appendContentsLayer(clippingChildren);
         m_contentsClippingLayer->setSublayers(clippingChildren);
     }
 
@@ -3931,18 +3926,82 @@ void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
     GraphicsLayer::getDebugBorderInfo(color, width);
 }
 
-static void dumpInnerLayer(TextStream& textStream, String label, PlatformCALayer* layer, LayerTreeAsTextBehavior behavior)
+const char* GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) const
+{
+    if (&layer == m_structuralLayer.get())
+        return "structural layer";
+    if (&layer == m_contentsClippingLayer.get())
+        return "contents clipping layer";
+    if (&layer == m_shapeMaskLayer.get())
+        return "shape mask layer";
+    if (&layer == m_backdropClippingLayer.get())
+        return "backdrop clipping layer";
+    if (&layer == m_contentsLayer.get()) {
+        switch (m_contentsLayerPurpose) {
+        case ContentsLayerPurpose::None:
+            return "contents layer (none)";
+        case ContentsLayerPurpose::Image:
+            return "contents layer (image)";
+        case ContentsLayerPurpose::Media:
+            return "contents layer (media)";
+        case ContentsLayerPurpose::Canvas:
+            return "contents layer (canvas)";
+        case ContentsLayerPurpose::BackgroundColor:
+            return "contents layer (background color)";
+        case ContentsLayerPurpose::Plugin:
+            return "contents layer (plugin)";
+        case ContentsLayerPurpose::Model:
+            return "contents layer (model)";
+        }
+    }
+    if (&layer == m_contentsShapeMaskLayer.get())
+        return "contents shape mask layer";
+    if (&layer == m_backdropLayer.get())
+        return "backdrop layer";
+    return "platform layer";
+}
+
+void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, OptionSet<PlatformLayerTreeAsTextFlags> flags) const
 {
     if (!layer)
         return;
 
-    textStream << indent << "(" << label << " ";
-    if (behavior & LayerTreeAsTextDebug)
-        textStream << "id=" << layer->layerID() << " ";
-    textStream << layer->position().x() << ", " << layer->position().y() << " " << layer->bounds().width() << " x " << layer->bounds().height();
-    if (layer->isHidden())
-        textStream << " hidden";
-    textStream << ")\n";
+    ts << indent << "(" << purposeNameForInnerLayer(*layer) << "\n";
+
+    {
+        TextStream::IndentScope indentScope(ts);
+
+        if (flags.contains(PlatformLayerTreeAsTextFlags::Debug))
+            ts << indent << "(id " << layer->layerID() << ")\n";
+
+        ts << indent << "(position " << layer->position().x() << " " << layer->position().y() << ")\n";
+        ts << indent << "(bounds " << layer->bounds().width() << " " << layer->bounds().height() << ")\n";
+        
+        if (layer->opacity() != 1)
+            ts << indent << "(opacity " << layer->opacity() << ")\n";
+
+        if (layer->isHidden())
+            ts << indent << "(hidden)\n";
+
+        layer->dumpAdditionalProperties(ts, flags);
+
+        if (!flags.contains(PlatformLayerTreeAsTextFlags::IgnoreChildren)) {
+            auto sublayers = layer->sublayersForLogging();
+            if (sublayers.size()) {
+                ts << indent << "(children " << "\n";
+
+                {
+                    TextStream::IndentScope indentScope(ts);
+                    for (auto& child : sublayers)
+                        dumpInnerLayer(ts, child.get(), flags);
+                }
+
+                ts << indent << ")\n";
+            }
+        }
+    }
+
+    ts << indent << ")\n";
 }
 
 void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTreeAsTextBehavior behavior) const
@@ -3974,19 +4033,29 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, LayerTree
         textStream << indent << "(deep color 1)\n";
 
     if (behavior & LayerTreeAsTextIncludeContentLayers) {
-        dumpInnerLayer(textStream, "structural layer", m_structuralLayer.get(), behavior);
-        dumpInnerLayer(textStream, "contents clipping layer", m_contentsClippingLayer.get(), behavior);
-        dumpInnerLayer(textStream, "shape mask layer", m_shapeMaskLayer.get(), behavior);
-        dumpInnerLayer(textStream, "backdrop clipping layer", m_backdropClippingLayer.get(), behavior);
-        dumpInnerLayer(textStream, "contents layer", m_contentsLayer.get(), behavior);
-        dumpInnerLayer(textStream, "contents shape mask layer", m_contentsShapeMaskLayer.get(), behavior);
-        dumpInnerLayer(textStream, "backdrop layer", m_backdropLayer.get(), behavior);
+        OptionSet<PlatformLayerTreeAsTextFlags> platformFlags = { PlatformLayerTreeAsTextFlags::IgnoreChildren };
+        if (behavior & LayerTreeAsTextDebug)
+            platformFlags.add(PlatformLayerTreeAsTextFlags::Debug);
+        dumpInnerLayer(textStream, m_structuralLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_contentsClippingLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_shapeMaskLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_backdropClippingLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_contentsLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_contentsShapeMaskLayer.get(), platformFlags);
+        dumpInnerLayer(textStream, m_backdropLayer.get(), platformFlags);
     }
 
     if (behavior & LayerTreeAsTextDebug) {
         if (m_usesDisplayListDrawing)
             textStream << indent << "(uses display-list drawing " << m_usesDisplayListDrawing << ")\n";
     }
+}
+
+String GraphicsLayerCA::platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags> flags) const
+{
+    TextStream ts(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
+    dumpInnerLayer(ts, primaryLayer(), flags);
+    return ts.release();
 }
 
 void GraphicsLayerCA::setDebugBorder(const Color& color, float borderWidth)
@@ -4326,27 +4395,6 @@ Ref<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, CloneLe
     return newLayer;
 }
 
-void GraphicsLayerCA::setOpacityInternal(float accumulatedOpacity)
-{
-    LayerMap* layerCloneMap = nullptr;
-    
-    if (preserves3D()) {
-        m_layer->setOpacity(accumulatedOpacity);
-        layerCloneMap = m_layerClones ? &m_layerClones->primaryLayerClones : nullptr;
-    } else {
-        primaryLayer()->setOpacity(accumulatedOpacity);
-        layerCloneMap = primaryLayerClones();
-    }
-
-    if (layerCloneMap) {
-        for (auto& clone : *layerCloneMap) {
-            if (m_replicaLayer && isReplicatedRootClone(clone.key))
-                continue;
-            clone.value->setOpacity(m_opacity);
-        }
-    }
-}
-
 void GraphicsLayerCA::updateOpacityOnLayer()
 {
     primaryLayer()->setOpacity(m_opacity);
@@ -4359,6 +4407,11 @@ void GraphicsLayerCA::updateOpacityOnLayer()
             clone.value->setOpacity(m_opacity);
         }
     }
+
+#if ENABLE(MODEL_ELEMENT)
+    if (m_contentsLayer && m_contentsLayerPurpose == ContentsLayerPurpose::Model)
+        m_contentsLayer->setOpacity(m_opacity);
+#endif
 }
 
 void GraphicsLayerCA::deviceOrPageScaleFactorChanged()

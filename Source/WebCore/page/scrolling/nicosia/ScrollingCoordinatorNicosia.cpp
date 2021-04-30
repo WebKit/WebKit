@@ -42,7 +42,6 @@ Ref<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 ScrollingCoordinatorNicosia::ScrollingCoordinatorNicosia(Page* page)
     : AsyncScrollingCoordinator(page)
-    , m_scrollingStateTreeCommitterTimer(RunLoop::main(), this, &ScrollingCoordinatorNicosia::commitTreeState)
 {
     setScrollingTree(ScrollingTreeNicosia::create(*this));
 }
@@ -56,8 +55,6 @@ void ScrollingCoordinatorNicosia::pageDestroyed()
 {
     AsyncScrollingCoordinator::pageDestroyed();
 
-    m_scrollingStateTreeCommitterTimer.stop();
-
     // Invalidating the scrolling tree will break the reference cycle between the ScrollingCoordinator and ScrollingTree objects.
     RefPtr<ThreadedScrollingTree> scrollingTree = static_pointer_cast<ThreadedScrollingTree>(releaseScrollingTree());
     ScrollingThread::dispatch([scrollingTree] { scrollingTree->invalidate(); });
@@ -65,8 +62,13 @@ void ScrollingCoordinatorNicosia::pageDestroyed()
 
 void ScrollingCoordinatorNicosia::commitTreeStateIfNeeded()
 {
-    commitTreeState();
-    m_scrollingStateTreeCommitterTimer.stop();
+    willCommitTree();
+
+    if (!scrollingStateTree()->hasChangedProperties())
+        return;
+
+    auto stateTree = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
+    scrollingTree()->commitTreeState(WTFMove(stateTree));
 }
 
 bool ScrollingCoordinatorNicosia::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNode, Optional<WheelScrollGestureState> gestureState)
@@ -89,20 +91,15 @@ void ScrollingCoordinatorNicosia::wheelEventWasProcessedByMainThread(const Platf
 
 void ScrollingCoordinatorNicosia::scheduleTreeStateCommit()
 {
-    // FIXME: This should probably just call scheduleRenderingUpdate().
-    if (!m_scrollingStateTreeCommitterTimer.isActive())
-        m_scrollingStateTreeCommitterTimer.startOneShot(0_s);
+    scheduleRenderingUpdate();
 }
 
-void ScrollingCoordinatorNicosia::commitTreeState()
+void ScrollingCoordinatorNicosia::willStartRenderingUpdate()
 {
-    willCommitTree();
-
-    if (!scrollingStateTree()->hasChangedProperties())
-        return;
-
-    auto stateTree = scrollingStateTree()->commit(LayerRepresentation::PlatformLayerRepresentation);
-    scrollingTree()->commitTreeState(WTFMove(stateTree));
+    RefPtr<ThreadedScrollingTree> threadedScrollingTree = downcast<ThreadedScrollingTree>(scrollingTree());
+    threadedScrollingTree->willStartRenderingUpdate();
+    commitTreeStateIfNeeded();
+    synchronizeStateFromScrollingTree();
 }
 
 } // namespace WebCore

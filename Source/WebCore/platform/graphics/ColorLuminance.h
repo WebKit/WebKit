@@ -29,7 +29,9 @@
 
 namespace WebCore {
 
-template<typename ColorType> inline float relativeLuminance(const ColorType& color)
+class Color;
+
+template<typename ColorType> inline double relativeLuminance(const ColorType& color)
 {
     // https://en.wikipedia.org/wiki/Relative_luminance
 
@@ -46,7 +48,7 @@ template<typename ColorType> inline float relativeLuminance(const ColorType& col
     return convertColor<XYZA<float, WhitePoint::D65>>(color).y;
 }
 
-inline float contrastRatio(float relativeLuminanceA, float relativeLuminanceB)
+inline double contrastRatio(double relativeLuminanceA, double relativeLuminanceB)
 {
     // Uses the WCAG 2.0 definition of contrast ratio.
     // https://www.w3.org/TR/WCAG20/#contrast-ratiodef
@@ -59,9 +61,11 @@ inline float contrastRatio(float relativeLuminanceA, float relativeLuminanceB)
     return (lighterLuminance + 0.05) / (darkerLuminance + 0.05);
 }
 
-template<typename ColorTypeA, typename ColorTypeB> inline float contrastRatio(const ColorTypeA& colorA, const ColorTypeB& colorB)
+template<typename ColorTypeA, typename ColorTypeB> inline double contrastRatio(const ColorTypeA& colorA, const ColorTypeB& colorB)
 {
     return contrastRatio(relativeLuminance(colorA), relativeLuminance(colorB));
 }
+
+double contrastRatio(const Color&, const Color&);
 
 }

@@ -248,8 +248,8 @@ WI.TreeElement = class TreeElement extends WI.Object
     _attach()
     {
         if (!this._listItemNode || this.parent._shouldRefreshChildren) {
-            if (this._listItemNode && this._listItemNode.parentNode)
-                this._listItemNode.parentNode.removeChild(this._listItemNode);
+            if (this.parent._shouldRefreshChildren)
+                this._detach();
 
             this._listItemNode = this.treeOutline._childrenListNode.ownerDocument.createElement("li");
             this._listItemNode.treeElement = this;
@@ -290,7 +290,7 @@ WI.TreeElement = class TreeElement extends WI.Object
 
     _detach()
     {
-        if (this.ondetach)
+        if (this.ondetach && this._listItemNode)
             this.ondetach(this);
         if (this._listItemNode && this._listItemNode.parentNode)
             this._listItemNode.parentNode.removeChild(this._listItemNode);

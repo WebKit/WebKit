@@ -128,7 +128,6 @@ WI.runBootstrapOperations = function() {
     ]);
     WI.tabBar.addNavigationItemAfter(groupNavigationItem);
 
-
     function setFocusDebugOutline() {
         document.body.classList.toggle("focus-debug", WI.settings.debugOutlineFocusedElement.value);
     }

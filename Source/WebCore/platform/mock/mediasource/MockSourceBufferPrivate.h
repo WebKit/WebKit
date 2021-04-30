@@ -70,7 +70,7 @@ private:
     void setActive(bool) final;
     bool isActive() const final;
 
-    Vector<String> enqueuedSamplesForTrackID(const AtomString&) final;
+    void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&) final;
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;
     void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) final;
 

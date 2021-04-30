@@ -497,7 +497,7 @@ GPUCanvasContext* HTMLCanvasElement::createContextWebGPU(const String& type)
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
     ASSERT(!m_context);
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
+    if (!document().settings().webGPUEnabled())
         return nullptr;
 
     m_context = GPUCanvasContext::create(*this);
@@ -513,7 +513,7 @@ GPUCanvasContext* HTMLCanvasElement::getContextWebGPU(const String& type)
 {
     ASSERT_UNUSED(type, HTMLCanvasElement::isWebGPUType(type));
 
-    if (!RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
+    if (!document().settings().webGPUEnabled())
         return nullptr;
 
     if (m_context && !m_context->isWebGPU())

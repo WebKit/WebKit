@@ -43,7 +43,9 @@ WI.LocalJSONContentView = class LocalJSONContentView extends WI.LocalRemoteObjec
 
     renderRemoteObject(remoteObject)
     {
-        let objectTree = new WI.ObjectTreeView(remoteObject);
+        const propertyPath = null;
+        const forceExpanding = true;
+        let objectTree = new WI.ObjectTreeView(remoteObject, WI.ObjectTreeView.Mode.Properties, propertyPath, forceExpanding);
         objectTree.showOnlyJSON();
         objectTree.expand();
 

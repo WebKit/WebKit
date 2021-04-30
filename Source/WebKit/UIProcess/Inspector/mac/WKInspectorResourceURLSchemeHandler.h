@@ -33,6 +33,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface WKInspectorResourceURLSchemeHandler : NSObject <WKURLSchemeHandler>
+@property (nonatomic, copy, nullable) NSSet<NSString *> *allowedURLSchemesForCSP;
 @end
 
 NS_ASSUME_NONNULL_END

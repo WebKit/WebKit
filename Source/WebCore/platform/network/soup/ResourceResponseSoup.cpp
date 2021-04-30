@@ -47,13 +47,18 @@ ResourceResponse::ResourceResponse(SoupMessage* soupMessage, const CString& snif
     case SOUP_HTTP_1_1:
         m_httpVersion = AtomString("HTTP/1.1", AtomString::ConstructFromLiteral);
         break;
+#if SOUP_CHECK_VERSION(2, 99, 3)
+    case SOUP_HTTP_2_0:
+        m_httpVersion = AtomString("HTTP/2", AtomString::ConstructFromLiteral);
+        break;
+#endif
     }
 
     m_httpStatusCode = soup_message_get_status(soupMessage);
     setHTTPStatusText(soup_message_get_reason_phrase(soupMessage));
 
-    m_certificate = soup_message_get_tls_certificate(soupMessage);
-    m_tlsErrors = soup_message_get_tls_certificate_errors(soupMessage);
+    m_certificate = soup_message_get_tls_peer_certificate(soupMessage);
+    m_tlsErrors = soup_message_get_tls_peer_certificate_errors(soupMessage);
 
     auto* responseHeaders = soup_message_get_response_headers(soupMessage);
     updateFromSoupMessageHeaders(responseHeaders);

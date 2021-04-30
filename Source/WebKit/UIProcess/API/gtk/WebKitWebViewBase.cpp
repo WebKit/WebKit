@@ -283,6 +283,7 @@ struct _WebKitWebViewBasePrivate {
     TouchEventsMap touchEvents;
     IntSize contentsSize;
     Optional<MotionEvent> lastMotionEvent;
+    bool isBlank;
 
     GtkWindow* toplevelOnScreenWindow { nullptr };
 #if USE(GTK4)
@@ -745,8 +746,10 @@ static void webkitWebViewBaseSnapshot(GtkWidget* widget, GtkSnapshot* snapshot)
     if (!drawingArea)
         return;
 
-    ASSERT(drawingArea->isInAcceleratedCompositingMode());
-    webViewBase->priv->acceleratedBackingStore->snapshot(snapshot);
+    if (!webViewBase->priv->isBlank) {
+        ASSERT(drawingArea->isInAcceleratedCompositingMode());
+        webViewBase->priv->acceleratedBackingStore->snapshot(snapshot);
+    }
 
     if (webViewBase->priv->inspectorView)
         gtk_widget_snapshot_child(widget, webViewBase->priv->inspectorView, snapshot);
@@ -766,22 +769,24 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-    bool showingNavigationSnapshot = webViewBase->priv->pageProxy->isShowingNavigationGestureSnapshot();
-    if (showingNavigationSnapshot)
-        cairo_push_group(cr);
+    if (!webViewBase->priv->isBlank) {
+        bool showingNavigationSnapshot = webViewBase->priv->pageProxy->isShowingNavigationGestureSnapshot();
+        if (showingNavigationSnapshot)
+            cairo_push_group(cr);
 
-    if (drawingArea->isInAcceleratedCompositingMode()) {
-        ASSERT(webViewBase->priv->acceleratedBackingStore);
-        webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
-    } else {
-        WebCore::Region unpaintedRegion; // This is simply unused.
-        drawingArea->paint(cr, clipRect, unpaintedRegion);
-    }
+        if (drawingArea->isInAcceleratedCompositingMode()) {
+            ASSERT(webViewBase->priv->acceleratedBackingStore);
+            webViewBase->priv->acceleratedBackingStore->paint(cr, clipRect);
+        } else {
+            WebCore::Region unpaintedRegion; // This is simply unused.
+            drawingArea->paint(cr, clipRect, unpaintedRegion);
+        }
 
-    if (showingNavigationSnapshot) {
-        RefPtr<cairo_pattern_t> group = adoptRef(cairo_pop_group(cr));
-        if (auto* controller = webkitWebViewBaseViewGestureController(webViewBase))
-            controller->draw(cr, group.get());
+        if (showingNavigationSnapshot) {
+            RefPtr<cairo_pattern_t> group = adoptRef(cairo_pop_group(cr));
+            if (auto* controller = webkitWebViewBaseViewGestureController(webViewBase))
+                controller->draw(cr, group.get());
+        }
     }
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->draw(widget, cr);
@@ -2776,4 +2781,14 @@ void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase* webViewBase, doubl
 
     priv->pageProxy->handleWheelEvent(NativeWebWheelEvent({ x, y }, widgetRootCoords(GTK_WIDGET(webViewBase), x, y),
         delta, wheelTicks, toWebKitWheelEventPhase(phase), toWebKitWheelEventPhase(momentumPhase)));
+}
+
+void webkitWebViewBaseMakeBlank(WebKitWebViewBase* webViewBase, bool makeBlank)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->isBlank == makeBlank)
+        return;
+
+    priv->isBlank = makeBlank;
+    gtk_widget_queue_draw(GTK_WIDGET(webViewBase));
 }

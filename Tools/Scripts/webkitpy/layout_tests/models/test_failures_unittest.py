@@ -30,12 +30,17 @@ import unittest
 
 from webkitpy.layout_tests.models.test_failures import *
 
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 
 class TestFailuresTest(unittest.TestCase):
-    def assert_loads(self, cls):
+    def assert_pickle_roundtrip(self, cls):
         failure_obj = cls()
-        s = failure_obj.dumps()
-        new_failure_obj = TestFailure.loads(s)
+        s = pickle.dumps(failure_obj)  # multiprocessing uses the default protocol version
+        new_failure_obj = pickle.loads(s)
         self.assertIsInstance(new_failure_obj, cls)
 
         self.assertEqual(failure_obj, new_failure_obj)
@@ -55,9 +60,9 @@ class TestFailuresTest(unittest.TestCase):
         failure_obj = TestFailure()
         self.assertRaises(NotImplementedError, failure_obj.message)
 
-    def test_loads(self):
+    def test_pickle_roundtrip(self):
         for c in ALL_FAILURE_CLASSES:
-            self.assert_loads(c)
+            self.assert_pickle_roundtrip(c)
 
     def test_all_failure_classes(self):
         failure_classes = (

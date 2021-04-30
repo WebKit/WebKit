@@ -1,3 +1,251 @@
+2021-04-27  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Skip tests failing on Loongson 3A4000
+        https://bugs.webkit.org/show_bug.cgi?id=225091
+
+        Reviewed by Yusuke Suzuki.
+
+        This new hardware is much faster when it comes to running JSC tests (and
+        hopefully more reliable than the ci20 boards currently in use), so skip the
+        couple of tests that fail, so that we can test the Loongson box in production.
+
+        * ChakraCore.yaml:
+        * stress/arguments-properties-order.js:
+
+2021-04-26  Mark Lam  <mark.lam@apple.com>
+
+        %TypedArray%.prototype.sort() should not use a regular array as a temp buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=225062
+        rdar://77021547
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/typedarray-sort-should-not-use-a-regular-array-as-temp-buffer.js: Added.
+
+2021-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] OrdinarySet should invoke custom [[Set]] methods
+        https://bugs.webkit.org/show_bug.cgi?id=217916
+
+        Reviewed by Yusuke Suzuki.
+
+        * microbenchmarks/put-slow-no-cache-array.js: Added.
+        * microbenchmarks/put-slow-no-cache-function.js: Added.
+        * microbenchmarks/put-slow-no-cache-js-proxy.js: Added.
+        * microbenchmarks/put-slow-no-cache-long-prototype-chain.js: Added.
+        * microbenchmarks/put-slow-no-cache.js: Added.
+        * microbenchmarks/reflect-set-with-receiver.js: Added.
+        * stress/custom-get-set-proto-chain-put.js:
+        * stress/module-namespace-access-set-fails.js: Added.
+        * stress/put-non-reified-static-accessor-or-custom.js: Added.
+        * stress/put-non-reified-static-function-or-custom.js: Added.
+        * stress/put-to-primitive-non-reified-static-custom.js: Added.
+        * stress/put-to-primitive.js: Added.
+        * stress/put-to-proto-chain-overrides-put.js: Added.
+        * stress/typed-array-canonical-numeric-index-string-set.js: Added.
+
+2021-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Baseline should have fast path for switch_imm
+        https://bugs.webkit.org/show_bug.cgi?id=224521
+
+        Reviewed by Tadeu Zagallo.
+
+        * stress/switch-imm-baseline.js: Added.
+        (shouldBe):
+        (test):
+
+2021-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG / FTL should inline switch_string
+        https://bugs.webkit.org/show_bug.cgi?id=224578
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/switch-inlining.js: Added.
+        (inner):
+        (outer):
+        * stress/switch-inlining-nested.js: Added.
+        (shouldBe):
+        (inner):
+        (outer):
+
+2021-04-21  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] Unskip some tests for ARMv7 and MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=224813
+
+        Unreviewed test gardening.
+
+        * stress/has-own-property-name-cache-symbols-and-strings.js:
+        * stress/incremental-marking-should-not-dead-lock-in-new-property-transition.js:
+
+2021-04-20  Paulo Matos  <pmatos@igalia.com>
+
+        Unskip couple of tests for armv7l and mips
+        https://bugs.webkit.org/show_bug.cgi?id=224607
+
+        Unreviewed gardening.
+
+        * stress/check-stack-overflow-before-value-profiling-arguments.js:
+        (fullGC):
+        * stress/intl-suppored-locales-of.js:
+
+2021-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Limit memory allocation size of JSTests/stress/early-return-from-builtin.js
+        https://bugs.webkit.org/show_bug.cgi?id=224803
+        <rdar://problem/75597901>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add limit to JSTests/stress/early-return-from-builtin.js to avoid infinite allocation.
+
+        * stress/early-return-from-builtin.js:
+        (let.iter.Symbol.iterator):
+
+2021-04-19  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Rebaseline test results for new ICU
+        https://bugs.webkit.org/show_bug.cgi?id=224792
+
+        Reviewed by Mark Lam.
+
+        This patch updates some intl- tests' expectation since it is changed because of ICU CLDR data change.
+
+        * stress/intl-datetimeformat-formatrange-relevant-extensions-ja.js:
+        (shouldBeOneOfThem):
+        (vm.icuVersion):
+        * stress/intl-datetimeformat-formatrange-relevant-extensions.js:
+        (shouldBeOneOfThem):
+        * stress/intl-datetimeformat-formatrange-should-not-handle-gregorian-change-date.js:
+        (shouldBe):
+        (vm.icuHeaderVersion):
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions-ja.js:
+        (normalize):
+        (shouldBe):
+        (compareParts):
+        (shouldBeOneOfParts):
+        (shouldBeParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt5.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.vm.icuVersion):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt7.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt9.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt11.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt13.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeParts.fmt13.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt14.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt15.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.shouldBeOneOfParts.fmt16.formatRangeToParts):
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt1.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt2.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt3.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt4.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt5.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt6.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt7.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt8.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt9.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt10.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt11.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt12.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt13.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt14.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt15.formatRangeToParts): Deleted.
+        (Intl.DateTimeFormat.prototype.formatRangeToParts.compareParts.fmt16.formatRangeToParts): Deleted.
+        * stress/intl-datetimeformat-formatrangetoparts-relevant-extensions.js:
+        (normalize):
+        (shouldBe):
+        (compareParts):
+        (shouldBeOneOfParts):
+        (shouldBeParts):
+        * stress/intl-datetimeformat-formatrangetoparts-should-not-handle-gregorian-change-date.js:
+        (shouldBe):
+        * stress/intl-datetimeformat.js:
+        (shouldBeOneOfThem):
+
+2021-04-16  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Unskip stress/intl-parse-unicode-subtags.js on arm
+        https://bugs.webkit.org/show_bug.cgi?id=224679
+
+        Unreviewed test gardening.
+
+        * stress/intl-parse-unicode-subtags.js: Unskipped, as it passes fine
+        now.
+
+2021-04-16  Xan Lopez  <xan@igalia.com>
+
+        [JSC][ARMv7] Unskip stress/put-direct-index-broken-2.js
+        https://bugs.webkit.org/show_bug.cgi?id=224661
+
+        Unreviewed test gardening.
+
+        * stress/put-direct-index-broken-2.js: unskip on ARMv7, could not
+        reproduce locally the crash we saw earlier.
+
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
+        HashMapImpl::rehash() should use a version of jsMapHash that cannot throw.
+        https://bugs.webkit.org/show_bug.cgi?id=224610
+        rdar://76698910
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/suppress-TerminationException-in-HashMapImpl-rehash.js: Added.
+
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception check in operationGetPrivateNameOptimize().
+        https://bugs.webkit.org/show_bug.cgi?id=224592
+        rdar://76645873
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/suppress-TerminationException-in-operationGetPrivateNameOptimize.js: Added.
+
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Defer TerminationExceptions when evaluating ASSERT in HashMapIml::addNormalized().
+        https://bugs.webkit.org/show_bug.cgi?id=224565
+        rdar://76645980
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/suppress-TerrminationException-in-ASSERT-in-HashMapImpl-addNormalized.js: Added.
+
+2021-04-14  Guillaume Emont  <guijemont@igalia.com>
+
+        [JSC] Unskip stress/intl-segmenter.js
+        https://bugs.webkit.org/show_bug.cgi?id=224553
+
+        Unreviewed test gardening.
+
+        It shouldn't fail any more on our bots now that our handling of libicu
+        is more robust.
+
+        * stress/intl-segmenter.js:
+
+2021-04-14  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Unskip typedarray-functions-with-neutered.js on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=224428
+
+        Unreviewed test gardening.
+
+        This appears to no longer fail.
+
+        * stress/typedarray-functions-with-neutered.js:
+
+2021-04-13  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        [JSC] Unskip stress/intl-displaynames.js on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=224427
+
+        Unreviewed test gardening.
+
+        * stress/intl-displaynames.js:
+
 2021-04-10  Mark Lam  <mark.lam@apple.com>
 
         Enable VMTraps checks in RETURN_IF_EXCEPTION.

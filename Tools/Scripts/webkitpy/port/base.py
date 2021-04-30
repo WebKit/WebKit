@@ -384,12 +384,15 @@ class Port(object):
 
     def _expected_baselines_for_suffixes(self, test_name, suffixes, all_baselines=False, device_type=None):
         baseline_search_path = self.baseline_search_path(device_type=device_type) + [self.layout_tests_dir()]
+        fs = self._filesystem
+        baseline_name_root = fs.splitext(test_name)[0] + '-expected'
 
         baselines = []
         for platform_dir in baseline_search_path:
+            unsuffixed = fs.join(platform_dir, baseline_name_root)
             for suffix in suffixes:
-                baseline_filename = self._filesystem.splitext(test_name)[0] + '-expected' + suffix
-                if self._filesystem.exists(self._filesystem.join(platform_dir, baseline_filename)):
+                if fs.exists(unsuffixed + suffix):
+                    baseline_filename = baseline_name_root + suffix
                     baselines.append((platform_dir, baseline_filename))
 
             if not all_baselines and baselines:
@@ -399,7 +402,7 @@ class Port(object):
             return baselines
 
         for suffix in suffixes:
-            baselines.append((None, self._filesystem.splitext(test_name)[0] + '-expected' + suffix))
+            baselines.append((None, baseline_name_root + suffix))
         return baselines
 
     def expected_baselines(self, test_name, suffix, all_baselines=False, device_type=None):
@@ -1364,18 +1367,6 @@ class Port(object):
     def sample_process(self, name, pid, target_host=None):
         pass
 
-    def should_run_as_pixel_test(self, test_input):
-        if not self._options.pixel_tests:
-            return False
-        if self._options.pixel_test_directories:
-            return any(test_input.test_name.startswith(directory) for directory in self._options.pixel_test_directories)
-        return self._should_run_as_pixel_test(test_input)
-
-    def _should_run_as_pixel_test(self, test_input):
-        # Default behavior is to allow all test to run as pixel tests if --pixel-tests is on and
-        # --pixel-test-directory is not specified.
-        return True
-
     def _in_flatpak_sandbox(self):
         return self._filesystem.exists("/.flatpak-info")
 
@@ -1533,16 +1524,20 @@ class Port(object):
 
         commits = []
         for repo_id, repo in repos.items():
-            commit = repo.commit(include_log=False, include_identifier=False)
+            if repo.is_git:
+                # Git commits are completely defined locally, so upload the fully defined commit.
+                commit = repo.commit()
+                commit = commit.Encoder().default(commit)
+                commit['repository_id'] = repo_id
+                commits.append(commit)
 
-            # Special case for WebKit since we have multiple representations at the moment
-            branch = commit.branch
-            if repo_id == 'webkit' and branch in repo.DEFAULT_BRANCHES:
-                branch = 'trunk'
-
-            commits.append(Upload.create_commit(
-                repository_id=repo_id,
-                id=str(commit.revision or commit.hash),
-                branch=branch,
-            ))
+            else:
+                # Subversion commits require network requests to become fully defined, so provide partial commits
+                # and let the backend handle them.
+                commit = repo.commit(include_log=False, include_identifier=False)
+                commits.append(Upload.create_commit(
+                    repository_id=repo_id,
+                    id=str(commit.revision or commit.hash),
+                    branch=commit.branch,
+                ))
         return commits

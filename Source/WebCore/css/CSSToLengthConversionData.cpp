@@ -38,15 +38,15 @@ namespace WebCore {
 
 float CSSToLengthConversionData::zoom() const
 {
-    if (m_useEffectiveZoom)
+    if (!m_zoom)
         return m_style ? m_style->effectiveZoom() : 1;
-    return m_zoom;
+    return *m_zoom;
 }
 
 double CSSToLengthConversionData::viewportWidthFactor() const
 {
-    if (m_style && !computingFontSize())
-        const_cast<RenderStyle*>(m_style)->setHasViewportUnits();
+    if (m_viewportDependencyDetectionStyle)
+        m_viewportDependencyDetectionStyle->setHasViewportUnits();
 
     if (!m_renderView)
         return 0;
@@ -56,8 +56,8 @@ double CSSToLengthConversionData::viewportWidthFactor() const
 
 double CSSToLengthConversionData::viewportHeightFactor() const
 {
-    if (m_style && !computingFontSize())
-        const_cast<RenderStyle*>(m_style)->setHasViewportUnits();
+    if (m_viewportDependencyDetectionStyle)
+        m_viewportDependencyDetectionStyle->setHasViewportUnits();
 
     if (!m_renderView)
         return 0;
@@ -67,8 +67,8 @@ double CSSToLengthConversionData::viewportHeightFactor() const
 
 double CSSToLengthConversionData::viewportMinFactor() const
 {
-    if (m_style && !computingFontSize())
-        const_cast<RenderStyle*>(m_style)->setHasViewportUnits();
+    if (m_viewportDependencyDetectionStyle)
+        m_viewportDependencyDetectionStyle->setHasViewportUnits();
 
     if (!m_renderView)
         return 0;
@@ -79,8 +79,8 @@ double CSSToLengthConversionData::viewportMinFactor() const
 
 double CSSToLengthConversionData::viewportMaxFactor() const
 {
-    if (m_style && !computingFontSize())
-        const_cast<RenderStyle*>(m_style)->setHasViewportUnits();
+    if (m_viewportDependencyDetectionStyle)
+        m_viewportDependencyDetectionStyle->setHasViewportUnits();
 
     if (!m_renderView)
         return 0;

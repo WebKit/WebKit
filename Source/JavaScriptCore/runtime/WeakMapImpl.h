@@ -50,17 +50,8 @@ struct WeakMapBucketDataKeyValue {
 };
 static_assert(sizeof(WeakMapBucketDataKeyValue) == 16, "");
 
-ALWAYS_INLINE uint32_t jsWeakMapHash(JSObject* key)
-{
-    return wangsInt64Hash(JSValue::encode(key));
-}
-
-ALWAYS_INLINE uint32_t nextCapacityAfterBatchRemoval(uint32_t capacity, uint32_t keyCount)
-{
-    while (shouldShrink(capacity, keyCount))
-        capacity = nextCapacity(capacity, keyCount);
-    return capacity;
-}
+ALWAYS_INLINE uint32_t jsWeakMapHash(JSObject* key);
+ALWAYS_INLINE uint32_t nextCapacityAfterBatchRemoval(uint32_t capacity, uint32_t keyCount);
 
 template <typename Data>
 class WeakMapBucket {
@@ -241,21 +232,8 @@ public:
         return !!findBucket(key);
     }
 
-    ALWAYS_INLINE void add(VM& vm, JSObject* key, JSValue value = JSValue())
-    {
-        DisallowGC disallowGC;
-        add(vm, key, value, jsWeakMapHash(key));
-    }
-
-    ALWAYS_INLINE void add(VM& vm, JSObject* key, JSValue value, uint32_t hash)
-    {
-        DisallowGC disallowGC;
-        ASSERT_WITH_MESSAGE(jsWeakMapHash(key) == hash, "We expect hash value is what we expect.");
-
-        addInternal(vm, key, value, hash);
-        if (shouldRehashAfterAdd())
-            rehash();
-    }
+    ALWAYS_INLINE void add(VM&, JSObject* key, JSValue = JSValue());
+    ALWAYS_INLINE void add(VM&, JSObject* key, JSValue, uint32_t hash);
 
     ALWAYS_INLINE bool remove(JSObject* key)
     {
@@ -347,10 +325,7 @@ private:
         }
     }
 
-    ALWAYS_INLINE uint32_t shouldRehashAfterAdd() const
-    {
-        return JSC::shouldRehashAfterAdd(m_capacity, m_keyCount, m_deleteCount);
-    }
+    ALWAYS_INLINE uint32_t shouldRehashAfterAdd() const;
 
     ALWAYS_INLINE uint32_t shouldShrink() const
     {
@@ -403,47 +378,7 @@ private:
     }
 
     enum class RehashMode { Normal, RemoveBatching };
-    void rehash(RehashMode mode = RehashMode::Normal)
-    {
-        // Since shrinking is done just after GC runs (finalizeUnconditionally), WeakMapImpl::rehash()
-        // function must not touch any GC related features. This is why we do not allocate WeakMapBuffer
-        // in auxiliary buffer.
-
-        // This rehash modifies m_buffer which is not GC-managed buffer. But m_buffer can be touched in
-        // visitOutputConstraints. Thus, we should guard it with cellLock.
-        auto locker = holdLock(cellLock());
-
-        uint32_t oldCapacity = m_capacity;
-        MallocPtr<WeakMapBufferType, JSValueMalloc> oldBuffer = WTFMove(m_buffer);
-
-        uint32_t capacity = m_capacity;
-        if (mode == RehashMode::RemoveBatching) {
-            ASSERT(shouldShrink());
-            capacity = nextCapacityAfterBatchRemoval(capacity, m_keyCount);
-        } else
-            capacity = nextCapacity(capacity, m_keyCount);
-        makeAndSetNewBuffer(locker, capacity);
-
-        auto* buffer = this->buffer();
-        const uint32_t mask = m_capacity - 1;
-        for (uint32_t oldIndex = 0; oldIndex < oldCapacity; ++oldIndex) {
-            auto* entry = oldBuffer->buffer() + oldIndex;
-            if (entry->isEmpty() || entry->isDeleted())
-                continue;
-
-            uint32_t index = jsWeakMapHash(entry->key()) & mask;
-            WeakMapBucketType* bucket = buffer + index;
-            while (!bucket->isEmpty()) {
-                index = (index + 1) & mask;
-                bucket = buffer + index;
-            }
-            bucket->copyFrom(*entry);
-        }
-
-        m_deleteCount = 0;
-
-        checkConsistency();
-    }
+    void rehash(RehashMode = RehashMode::Normal);
 
     ALWAYS_INLINE void checkConsistency() const
     {

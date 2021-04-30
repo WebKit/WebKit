@@ -44,12 +44,14 @@ class SerializedScriptValue;
 class SimpleReadableStreamSource;
 class WritableStream;
 
+struct MessageWithMessagePorts;
+
 class RTCRtpScriptTransformer
     : public RefCounted<RTCRtpScriptTransformer>
     , public ActiveDOMObject
     , public CanMakeWeakPtr<RTCRtpScriptTransformer> {
 public:
-    static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Ref<MessagePort>&&);
+    static ExceptionOr<Ref<RTCRtpScriptTransformer>> create(ScriptExecutionContext&, MessageWithMessagePorts&&);
     ~RTCRtpScriptTransformer();
 
     ReadableStream& readable();
@@ -57,22 +59,24 @@ public:
     JSC::JSValue options(JSC::JSGlobalObject&);
 
     ExceptionOr<void> requestKeyFrame();
-    MessagePort& port() { return m_port.get(); }
 
     void startPendingActivity() { m_pendingActivity = makePendingActivity(*this); }
     void start(Ref<RTCRtpTransformBackend>&&);
-    void clear();
+
+    enum class ClearCallback { No, Yes};
+    void clear(ClearCallback);
 
 private:
-    RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Ref<MessagePort>&&, Ref<ReadableStream>&&, Ref<SimpleReadableStreamSource>&&);
+    RTCRtpScriptTransformer(ScriptExecutionContext&, Ref<SerializedScriptValue>&&, Vector<RefPtr<MessagePort>>&&, Ref<ReadableStream>&&, Ref<SimpleReadableStreamSource>&&);
 
     // ActiveDOMObject
-    const char* activeDOMObjectName() const { return "RTCRtpScriptTransformer"; }
+    const char* activeDOMObjectName() const final { return "RTCRtpScriptTransformer"; }
     void stop() final { stopPendingActivity(); }
+
     void stopPendingActivity() { auto pendingActivity = WTFMove(m_pendingActivity); }
 
     Ref<SerializedScriptValue> m_options;
-    Ref<MessagePort> m_port;
+    Vector<RefPtr<MessagePort>> m_ports;
 
     Ref<SimpleReadableStreamSource> m_readableSource;
     Ref<ReadableStream> m_readable;

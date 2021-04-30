@@ -513,7 +513,7 @@ class SimulatedDeviceTest(unittest.TestCase):
         SimulatedDeviceManager.AVAILABLE_RUNTIMES = []
         SimulatedDeviceManager.AVAILABLE_DEVICES = []
         SimulatedDeviceManager.INITIALIZED_DEVICES = None
-        SimulatedDeviceManager._device_identifier_to_name = False
+        SimulatedDeviceManager._device_identifier_to_name = {}
         SimulatedDeviceManager._managing_simulator_app = False
 
     def tearDown(self):

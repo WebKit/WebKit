@@ -112,8 +112,10 @@ void StringBuilder::allocateBuffer(const LChar* currentCharacters, unsigned requ
     auto buffer = StringImpl::tryCreateUninitialized(requiredLength, m_bufferCharacters8);
     if (UNLIKELY(!buffer))
         return didOverflow();
-    std::memcpy(m_bufferCharacters8, currentCharacters, m_length.unsafeGet());
-    
+
+    if (m_length)
+        std::memcpy(m_bufferCharacters8, currentCharacters, m_length.unsafeGet());
+
     // Update the builder state.
     m_buffer = WTFMove(buffer);
     m_string = String();

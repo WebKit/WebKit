@@ -106,6 +106,11 @@ Watchpoint* WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
     return &WTF::get<StructureTransitionStructureStubClearingWatchpoint>(holderRef->addWatchpoint(ObjectPropertyCondition()));
 }
 
+size_t WatchpointsOnStructureStubInfo::extraMemoryInBytes() const
+{
+    return m_watchpoints.estimatedAllocationSizeInBytes();
+}
+
 void AdaptiveValueStructureStubClearingWatchpoint::handleFire(VM&, const FireDetail&)
 {
     if (!m_holder->isValid())

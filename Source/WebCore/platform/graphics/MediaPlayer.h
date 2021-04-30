@@ -258,6 +258,8 @@ public:
 
     virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
 
+    virtual String mediaPlayerElementId() const { return emptyString(); }
+
     virtual void mediaPlayerEngineFailedToLoad() const { }
 
     virtual double mediaPlayerRequestedPlaybackRate() const { return 0; }
@@ -548,6 +550,8 @@ public:
 
     String engineDescription() const;
     long platformErrorCode() const;
+
+    String elementId() const;
 
     CachedResourceLoader* cachedResourceLoader();
     RefPtr<PlatformMediaResourceLoader> createResourceLoader();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #include "BuiltinNames.h"
 #include "JSCInlines.h"
-#include "JSMap.h"
+#include "JSMapInlines.h"
 #include "JSMapIterator.h"
 
 #include "MapPrototype.lut.h"

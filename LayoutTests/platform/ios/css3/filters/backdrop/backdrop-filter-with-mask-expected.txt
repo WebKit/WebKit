@@ -17,8 +17,14 @@ bar
               (bounds 120.00 120.00)
               (drawsContent 1)
             )
-          (structural layer 68.00, 88.00 120.00 x 120.00)
-          (backdrop layer 0.00, 0.00 120.00 x 120.00)
+          (structural layer
+            (position 68.00 88.00)
+            (bounds 120.00 120.00)
+          )
+          (backdrop layer
+            (position 0.00 0.00)
+            (bounds 120.00 120.00)
+          )
         )
       )
     )

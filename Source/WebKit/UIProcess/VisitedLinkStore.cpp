@@ -95,7 +95,7 @@ void VisitedLinkStore::removeAll()
     m_linkHashStore.clear();
 
     for (auto& process : m_processes) {
-        ASSERT(process.processPool().processes().contains(&process));
+        ASSERT(process.processPool().processes().contains(process));
         process.send(Messages::VisitedLinkTableController::RemoveAllVisitedLinks(), identifier());
     }
 }
@@ -112,7 +112,7 @@ void VisitedLinkStore::addVisitedLinkHashFromPage(WebPageProxyIdentifier pagePro
 
 void VisitedLinkStore::sendStoreHandleToProcess(WebProcessProxy& process)
 {
-    ASSERT(process.processPool().processes().contains(&process));
+    ASSERT(process.processPool().processes().contains(process));
 
     SharedMemory::Handle handle;
     if (!m_linkHashStore.createSharedMemoryHandle(handle))
@@ -138,7 +138,7 @@ void VisitedLinkStore::didUpdateSharedStringHashes(const Vector<WebCore::SharedS
     ASSERT(!addedHashes.isEmpty() || !removedHashes.isEmpty());
 
     for (auto& process : m_processes) {
-        ASSERT(process.processPool().processes().contains(&process));
+        ASSERT(process.processPool().processes().contains(process));
 
         if (addedHashes.size() > 20 || !removedHashes.isEmpty())
             process.send(Messages::VisitedLinkTableController::AllVisitedLinkStateChanged(), identifier());

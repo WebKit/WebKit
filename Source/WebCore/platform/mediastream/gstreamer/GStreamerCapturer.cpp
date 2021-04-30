@@ -108,6 +108,7 @@ void GStreamerCapturer::setupPipeline()
     GRefPtr<GstElement> source = createSource();
     GRefPtr<GstElement> converter = createConverter();
 
+    m_valve = makeElement("valve");
     m_capsfilter = makeElement("capsfilter");
     m_tee = makeElement("tee");
     m_sink = makeElement("appsink");
@@ -115,8 +116,8 @@ void GStreamerCapturer::setupPipeline()
     gst_app_sink_set_emit_signals(GST_APP_SINK(m_sink.get()), TRUE);
     g_object_set(m_capsfilter.get(), "caps", m_caps.get(), nullptr);
 
-    gst_bin_add_many(GST_BIN(m_pipeline.get()), source.get(), converter.get(), m_capsfilter.get(), m_tee.get(), nullptr);
-    gst_element_link_many(source.get(), converter.get(), m_capsfilter.get(), m_tee.get(), nullptr);
+    gst_bin_add_many(GST_BIN(m_pipeline.get()), source.get(), converter.get(), m_capsfilter.get(), m_valve.get(), m_tee.get(), nullptr);
+    gst_element_link_many(source.get(), converter.get(), m_capsfilter.get(), m_valve.get(), m_tee.get(), nullptr);
 
     addSink(m_sink.get());
 
@@ -180,6 +181,18 @@ void GStreamerCapturer::stop()
     gst_bus_set_sync_handler(bus.get(), nullptr, nullptr, nullptr);
 
     gst_element_set_state(pipeline(), GST_STATE_NULL);
+}
+
+bool GStreamerCapturer::isInterrupted() const
+{
+    gboolean isInterrupted;
+    g_object_get(m_valve.get(), "drop", &isInterrupted, nullptr);
+    return isInterrupted;
+}
+
+void GStreamerCapturer::setInterrupted(bool isInterrupted)
+{
+    g_object_set(m_valve.get(), "drop", isInterrupted, nullptr);
 }
 
 } // namespace WebCore

@@ -28,9 +28,11 @@
 
 enum {
     PROP_0,
-
-    PROP_URI
+    PROP_URI,
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 using namespace WebCore;
 
@@ -91,12 +93,15 @@ static void webkit_uri_request_class_init(WebKitURIRequestClass* requestClass)
      *
      * The URI to which the request will be made.
      */
-    g_object_class_install_property(objectClass, PROP_URI,
-                                    g_param_spec_string("uri",
-                                                        _("URI"),
-                                                        _("The URI to which the request will be made."),
-                                                        "about:blank",
-                                                        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
+    sObjProperties[PROP_URI] =
+        g_param_spec_string(
+            "uri",
+            _("URI"),
+            _("The URI to which the request will be made."),
+            "about:blank",
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 }
 
 /**
@@ -145,7 +150,7 @@ void webkit_uri_request_set_uri(WebKitURIRequest* request, const char* uri)
         return;
 
     request->priv->resourceRequest.setURL(url);
-    g_object_notify(G_OBJECT(request), "uri");
+    g_object_notify_by_pspec(G_OBJECT(request), sObjProperties[PROP_URI]);
 }
 
 /**

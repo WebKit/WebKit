@@ -83,6 +83,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedSetterThrowingExceptionPrototype,
 
 using JSTestNamedSetterThrowingExceptionDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedSetterThrowingException>;
 
+template<> const ClassInfo JSTestNamedSetterThrowingExceptionDOMConstructor::s_info = { "TestNamedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterThrowingExceptionDOMConstructor) };
+
 template<> JSValue JSTestNamedSetterThrowingExceptionDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -95,8 +97,6 @@ template<> void JSTestNamedSetterThrowingExceptionDOMConstructor::initializeProp
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedSetterThrowingException"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestNamedSetterThrowingExceptionDOMConstructor::s_info = { "TestNamedSetterThrowingException", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterThrowingExceptionDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -204,6 +204,8 @@ bool JSTestNamedSetterThrowingException::put(JSCell* cell, JSGlobalObject* lexic
     auto* thisObject = jsCast<JSTestNamedSetterThrowingException*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
+    if (UNLIKELY(thisObject != putPropertySlot.thisValue()))
+        return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
 
     if (!propertyName.isSymbol()) {

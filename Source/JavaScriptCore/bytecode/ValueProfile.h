@@ -180,8 +180,37 @@ struct ValueProfileAndVirtualRegister : public ValueProfile {
     VirtualRegister m_operand;
 };
 
-struct ValueProfileAndVirtualRegisterBuffer {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+static_assert(sizeof(ValueProfileAndVirtualRegister) >= sizeof(unsigned));
+class alignas(ValueProfileAndVirtualRegister) ValueProfileAndVirtualRegisterBuffer final {
+    WTF_MAKE_NONCOPYABLE(ValueProfileAndVirtualRegisterBuffer);
+public:
+
+    static ValueProfileAndVirtualRegisterBuffer* create(unsigned size)
+    {
+        void* buffer = VMMalloc::malloc(sizeof(ValueProfileAndVirtualRegisterBuffer) + size * sizeof(ValueProfileAndVirtualRegister));
+        return new (buffer) ValueProfileAndVirtualRegisterBuffer(size);
+    }
+
+    static void destroy(ValueProfileAndVirtualRegisterBuffer* buffer)
+    {
+        buffer->~ValueProfileAndVirtualRegisterBuffer();
+        VMMalloc::free(buffer);
+    }
+
+    template <typename Function>
+    void forEach(Function function)
+    {
+        for (unsigned i = 0; i < m_size; ++i)
+            function(data()[i]);
+    }
+
+    unsigned size() const { return m_size; }
+    ValueProfileAndVirtualRegister* data() const
+    {
+        return bitwise_cast<ValueProfileAndVirtualRegister*>(this + 1);
+    }
+
+private:
 
     ValueProfileAndVirtualRegisterBuffer(unsigned size)
         : m_size(size)
@@ -189,26 +218,17 @@ struct ValueProfileAndVirtualRegisterBuffer {
         // FIXME: ValueProfile has more stuff than we need. We could optimize these value profiles
         // to be more space efficient.
         // https://bugs.webkit.org/show_bug.cgi?id=175413
-        m_buffer = MallocPtr<ValueProfileAndVirtualRegister, VMMalloc>::malloc(m_size * sizeof(ValueProfileAndVirtualRegister));
         for (unsigned i = 0; i < m_size; ++i)
-            new (&m_buffer.get()[i]) ValueProfileAndVirtualRegister();
+            new (&data()[i]) ValueProfileAndVirtualRegister();
     }
 
     ~ValueProfileAndVirtualRegisterBuffer()
     {
         for (unsigned i = 0; i < m_size; ++i)
-            m_buffer.get()[i].~ValueProfileAndVirtualRegister();
-    }
-
-    template <typename Function>
-    void forEach(Function function)
-    {
-        for (unsigned i = 0; i < m_size; ++i)
-            function(m_buffer.get()[i]);
+            data()[i].~ValueProfileAndVirtualRegister();
     }
 
     unsigned m_size;
-    MallocPtr<ValueProfileAndVirtualRegister, VMMalloc> m_buffer;
 };
 
 } // namespace JSC

@@ -10,7 +10,7 @@
         function prepareAudio() {
             // Global variables used from video-test.js.
             video = document.getElementById('audio');
-            video.src="http://127.0.0.1:8000/media/resources/serve-video.php?content-length=no"
+            video.src="http://127.0.0.1:8000/media/resources/serve_video.py?content-length=no"
                 + "&name=hls/english/description.aac&type=audio/aac&stallOffset=512&stallDuration=2";
             mediaElement = video;
             video.play();

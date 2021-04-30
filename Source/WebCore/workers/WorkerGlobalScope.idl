@@ -48,3 +48,4 @@
 };
 
 WorkerGlobalScope includes WindowOrWorkerGlobalScope;
+WorkerGlobalScope includes FontFaceSource;

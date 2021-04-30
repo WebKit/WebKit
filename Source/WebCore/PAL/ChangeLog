@@ -1,3 +1,72 @@
+2021-04-26  Alex Christensen  <achristensen@webkit.org>
+
+        Add missing SPI declarations
+        https://bugs.webkit.org/show_bug.cgi?id=225061
+
+        Reviewed by Alexey Proskuryakov.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/cocoa/CryptoKitCBridgingSoftLink.h:
+        * pal/spi/cocoa/CryptoKitCBridgingSPI.h: Added.
+        * pal/spi/mac/DataDetectorsSPI.h:
+
+2021-04-26  Alex Christensen  <achristensen@webkit.org>
+
+        Update Mac-specific CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=225064
+
+        Rubber-stamped by Tim Horton.
+
+        * pal/PlatformMac.cmake:
+
+2021-04-25  Devin Rousso  <drousso@apple.com>
+
+        Add `ALWAYS_LOG_WITH_STREAM` macro for easier development/debugging
+        https://bugs.webkit.org/show_bug.cgi?id=224959
+
+        Reviewed by Darin Adler.
+
+        It's often very helpful to use existing `operator<<` defined on objects, but annoying to
+        have to copypaste the boilerplate code that creates a `WTF::TextStream` and uses it in a
+        `WTFLogAlways` or wait for a debug build to enable existing `LOG_WITH_STREAM`.
+
+        * pal/LogMacros.h: Removed.
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/CMakeLists.txt:
+        Move contents of `pal/LogMacros.h` to `wtf/Assertions.h`.
+
+2021-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Improve our constructDeletedValue() template specializations
+        https://bugs.webkit.org/show_bug.cgi?id=224889
+
+        Reviewed by Darin Adler.
+
+        * pal/SessionID.h:
+        (WTF::HashTraits<PAL::SessionID>::constructDeletedValue):
+
+2021-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Prevent GPU and WebContent processes from attempting to connect to the AppSSO service 
+        https://bugs.webkit.org/show_bug.cgi?id=224834
+        <rdar://problem/72157514>
+
+        Reviewed by Jiewen Tan.
+
+        * pal/spi/cf/CFNetworkSPI.h: Add declaration for 'skipAppSSO' version of NSURLProtocol method.
+
+2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
+        https://bugs.webkit.org/show_bug.cgi?id=221614
+        <rdar://problem/74396781>
+
+        Reviewed by David Kilzer.
+
+        Add -Wthread-safety to compile flags.
+
+        * Configurations/Base.xcconfig:
+
 2021-04-09  Jer Noble  <jer.noble@apple.com>
 
         WTF SoftLinking macros can cause collisions with their target functions

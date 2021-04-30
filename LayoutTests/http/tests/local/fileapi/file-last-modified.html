@@ -13,7 +13,7 @@ description("Test File.lastModifiedDate.");
 function onFileDrop(file, filePath)
 {
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://127.0.0.1:8000/resources/file-last-modified.php?path=../local/fileapi/" + filePath, false);
+    xhr.open("GET", "http://127.0.0.1:8000/resources/file-last-modified.py?path=../local/fileapi/" + filePath, false);
     xhr.send();
     var expectedDate = new Date(parseInt(xhr.responseText) * 1000);
     var actualDate = file.lastModified;

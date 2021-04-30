@@ -282,5 +282,24 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<char>& sfnt)
 
     return sfnt.size() == totalSfntSize;
 }
-    
+
+bool convertWOFFToSfntIfNecessary(RefPtr<SharedBuffer>& buffer)
+{
+#if PLATFORM(COCOA)
+    UNUSED_PARAM(buffer);
+    return false;
+#else
+    if (!buffer || !isWOFF(*buffer))
+        return false;
+
+    Vector<char> convertedFont;
+    if (convertWOFFToSfnt(*buffer, convertedFont))
+        buffer = SharedBuffer::create(WTFMove(convertedFont));
+    else
+        buffer = nullptr;
+
+    return true;
+#endif
+}
+
 } // namespace WebCore

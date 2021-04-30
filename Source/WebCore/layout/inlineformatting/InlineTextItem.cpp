@@ -80,8 +80,8 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
     auto& style = inlineTextBox.style();
     auto& font = style.fontCascade();
     auto whitespaceContentIsTreatedAsSingleSpace = !TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
-    auto shouldPreseveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
-    LazyLineBreakIterator lineBreakIterator(text);
+    auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
+    auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
     unsigned currentPosition = 0;
 
     auto inlineItemWidth = [&](auto startPosition, auto length) -> Optional<InlineLayoutUnit> {
@@ -96,13 +96,13 @@ void InlineTextItem::createAndAppendTextItems(InlineItems& inlineContent, const 
         };
 
         // Segment breaks with preserve new line style (white-space: pre, pre-wrap, break-spaces and pre-line) compute to forced line break.
-        if (isSegmentBreakCandidate(text[currentPosition]) && shouldPreseveNewline) {
+        if (isSegmentBreakCandidate(text[currentPosition]) && shouldPreserveNewline) {
             inlineContent.append(InlineSoftLineBreakItem::createSoftLineBreakItem(inlineTextBox, currentPosition));
             ++currentPosition;
             continue;
         }
 
-        if (auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreseveNewline, !whitespaceContentIsTreatedAsSingleSpace)) {
+        if (auto whitespaceContent = moveToNextNonWhitespacePosition(text, currentPosition, shouldPreserveNewline, !whitespaceContentIsTreatedAsSingleSpace)) {
             ASSERT(whitespaceContent->length);
             auto appendWhitespaceItem = [&] (auto startPosition, auto itemLength) {
                 auto simpleSingleWhitespaceContent = inlineTextBox.canUseSimplifiedContentMeasuring() && (itemLength == 1 || whitespaceContentIsTreatedAsSingleSpace);

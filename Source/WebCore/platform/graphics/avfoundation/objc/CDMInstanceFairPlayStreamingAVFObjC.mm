@@ -585,10 +585,12 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
             continue;
 
         auto sessionKeys = sessionInterface->keyIDs();
-        if (anyOf(sessionKeys, [&](auto& sessionKey) {
-            return keyIDs.contains(sessionKey);
+        if (anyOf(sessionKeys, [&](const Ref<SharedBuffer>& sessionKey) {
+            return keyIDs.findMatching([&](const Ref<SharedBuffer>& keyID) {
+                return keyID.get() == sessionKey.get();
+            }) != notFound;
         }))
-            return sessionInterface.get();
+        return sessionInterface.get();
     }
     return nullptr;
 }
@@ -854,7 +856,9 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             auto keyID = SharedBuffer::create(WTFMove(keyIDVector));
             auto foundIndex = m_currentRequest.value().requests.findMatching([&] (auto& request) {
                 auto keyIDs = keyIDsForRequest(request.get());
-                return keyIDs.contains(keyID);
+                return keyIDs.findMatching([&](const Ref<SharedBuffer>& id) {
+                    return id.get() == keyID.get();
+                }) != notFound;
             });
             if (foundIndex == notFound)
                 return false;

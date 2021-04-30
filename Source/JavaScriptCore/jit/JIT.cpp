@@ -714,6 +714,14 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
         break;
     }
 
+    if (m_codeBlock->numberOfUnlinkedSwitchJumpTables() || m_codeBlock->numberOfUnlinkedStringSwitchJumpTables()) {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        if (m_codeBlock->numberOfUnlinkedSwitchJumpTables())
+            m_codeBlock->ensureJITData(locker).m_switchJumpTables = FixedVector<SimpleJumpTable>(m_codeBlock->numberOfUnlinkedSwitchJumpTables());
+        if (m_codeBlock->numberOfUnlinkedStringSwitchJumpTables())
+            m_codeBlock->ensureJITData(locker).m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+    }
+
     if (UNLIKELY(Options::dumpDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler())))
         m_disassembler = makeUnique<JITDisassembler>(m_codeBlock);
     if (UNLIKELY(m_vm->m_perBytecodeProfiler)) {
@@ -761,7 +769,7 @@ void JIT::compileWithoutLinking(JITCompilationEffort effort)
     if (m_codeBlock->codeType() == FunctionCode) {
         ASSERT(!m_bytecodeIndex);
         if (shouldEmitProfiling()) {
-            for (int argument = 0; argument < m_codeBlock->numParameters(); ++argument) {
+            for (unsigned argument = 0; argument < m_codeBlock->numParameters(); ++argument) {
                 // If this is a constructor, then we want to put in a dummy profiling site (to
                 // keep things consistent) but we don't actually want to record the dummy value.
                 if (m_codeBlock->isConstructor() && !argument)
@@ -860,33 +868,36 @@ CompilationResult JIT::link()
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (auto& record : m_switches) {
         unsigned bytecodeOffset = record.bytecodeIndex.offset();
+        unsigned tableIndex = record.tableIndex;
 
-        if (record.type != SwitchRecord::String) {
-            ASSERT(record.type == SwitchRecord::Immediate || record.type == SwitchRecord::Character); 
-            ASSERT(record.jumpTable.simpleJumpTable->branchOffsets.size() == record.jumpTable.simpleJumpTable->ctiOffsets.size());
-
-            auto* simpleJumpTable = record.jumpTable.simpleJumpTable;
-            simpleJumpTable->ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
-
-            for (unsigned j = 0; j < record.jumpTable.simpleJumpTable->branchOffsets.size(); ++j) {
-                unsigned offset = record.jumpTable.simpleJumpTable->branchOffsets[j];
-                simpleJumpTable->ctiOffsets[j] = offset
+        switch (record.type) {
+        case SwitchRecord::Immediate:
+        case SwitchRecord::Character: {
+            const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
+            SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
+            linkedTable.m_ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
+            for (unsigned j = 0; j < unlinkedTable.m_branchOffsets.size(); ++j) {
+                unsigned offset = unlinkedTable.m_branchOffsets[j];
+                linkedTable.m_ctiOffsets[j] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
-                    : simpleJumpTable->ctiDefault;
+                    : linkedTable.m_ctiDefault;
             }
-        } else {
-            ASSERT(record.type == SwitchRecord::String);
+            break;
+        }
 
-            auto* stringJumpTable = record.jumpTable.stringJumpTable;
-            stringJumpTable->ctiDefault =
-                patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
-
-            for (auto& location : stringJumpTable->offsetTable.values()) {
-                unsigned offset = location.branchOffset;
-                location.ctiOffset = offset
+        case SwitchRecord::String: {
+            const UnlinkedStringJumpTable& unlinkedTable = m_codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
+            StringJumpTable& linkedTable = m_codeBlock->stringSwitchJumpTable(tableIndex);
+            auto ctiDefault = patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + record.defaultOffset]);
+            for (auto& location : unlinkedTable.m_offsetTable.values()) {
+                unsigned offset = location.m_branchOffset;
+                linkedTable.m_ctiOffsets[location.m_indexInTable] = offset
                     ? patchBuffer.locationOf<JSSwitchPtrTag>(m_labels[bytecodeOffset + offset])
-                    : stringJumpTable->ctiDefault;
+                    : ctiDefault;
             }
+            linkedTable.m_ctiOffsets[unlinkedTable.m_offsetTable.size()] = ctiDefault;
+            break;
+        }
         }
     }
 

@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #ifndef PlatformUtilities_h
 #define PlatformUtilities_h
 

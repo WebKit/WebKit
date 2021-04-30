@@ -337,14 +337,14 @@ bool GraphicsContextGLOpenGL::precisionsMatch(PlatformGLObject vertexShader, Pla
     HashMap<String, sh::GLenum> vertexSymbolPrecisionMap;
 
     for (const auto& entry : vertexEntry.uniformMap) {
-        const std::string& mappedName = entry.value.mappedName;
-        vertexSymbolPrecisionMap.add(String(mappedName.c_str(), mappedName.length()), entry.value.precision);
+        const std::string& mappedName = entry.value.get().mappedName;
+        vertexSymbolPrecisionMap.add(String(mappedName.c_str(), mappedName.length()), entry.value.get().precision);
     }
 
     for (const auto& entry : fragmentEntry.uniformMap) {
-        const std::string& mappedName = entry.value.mappedName;
+        const std::string& mappedName = entry.value.get().mappedName;
         const auto& vertexSymbol = vertexSymbolPrecisionMap.find(String(mappedName.c_str(), mappedName.length()));
-        if (vertexSymbol != vertexSymbolPrecisionMap.end() && vertexSymbol->value != entry.value.precision)
+        if (vertexSymbol != vertexSymbolPrecisionMap.end() && vertexSymbol->value != entry.value.get().precision)
             return false;
     }
 
@@ -926,7 +926,7 @@ Optional<String> GraphicsContextGLOpenGL::mappedSymbolInShaderSourceMap(Platform
     if (symbolEntry == symbolMap.end())
         return WTF::nullopt;
 
-    auto& mappedName = symbolEntry->value.mappedName;
+    auto& mappedName = symbolEntry->value.get().mappedName;
     return String(mappedName.c_str(), mappedName.length());
 }
 
@@ -981,7 +981,7 @@ Optional<String> GraphicsContextGLOpenGL::originalSymbolInShaderSourceMap(Platfo
 
     const auto& symbolMap = result->value.symbolMap(symbolType);
     for (const auto& symbolEntry : symbolMap) {
-        if (name == symbolEntry.value.mappedName.c_str())
+        if (name == symbolEntry.value.get().mappedName.c_str())
             return symbolEntry.key;
     }
     return WTF::nullopt;
@@ -1033,7 +1033,7 @@ String GraphicsContextGLOpenGL::mappedSymbolName(PlatformGLObject shaders[2], si
             
             const ShaderSymbolMap& symbolMap = result->value.symbolMap(static_cast<enum ANGLEShaderSymbolType>(symbolType));
             for (const auto& symbolEntry : symbolMap) {
-                if (name == symbolEntry.value.mappedName.c_str())
+                if (name == symbolEntry.value.get().mappedName.c_str())
                     return symbolEntry.key;
             }
         }
@@ -1263,7 +1263,7 @@ void GraphicsContextGLOpenGL::shaderSource(PlatformGLObject shader, const String
 
     entry.source = string;
 
-    m_shaderSourceMap.set(shader, entry);
+    m_shaderSourceMap.set(shader, WTFMove(entry));
 }
 
 void GraphicsContextGLOpenGL::stencilFunc(GCGLenum func, GCGLint ref, GCGLuint mask)

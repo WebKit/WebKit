@@ -37,9 +37,11 @@
 
 namespace TestWebKitAPI {
 
+constexpr CGFloat redColorComponents[4] = { 1, 0, 0, 1 };
+
 TEST(WebKit, ApplicationManifestCoding)
 {
-    auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\" }";
+    auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\", \"theme_color\": \"red\" }";
     RetainPtr<_WKApplicationManifest> manifest { [_WKApplicationManifest applicationManifestFromJSON:jsonString manifestURL:[NSURL URLWithString:@"https://test.com/manifest.json"] documentURL:[NSURL URLWithString:@"https://test.com/"]] };
 
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:manifest.get() requiringSecureCoding:YES error:nullptr];
@@ -52,6 +54,10 @@ TEST(WebKit, ApplicationManifestCoding)
     EXPECT_STREQ("https://test.com/app", manifest.get().scope.absoluteString.UTF8String);
     EXPECT_STREQ("https://test.com/app/index.html", manifest.get().startURL.absoluteString.UTF8String);
     EXPECT_EQ(_WKApplicationManifestDisplayModeMinimalUI,  manifest.get().displayMode);
+
+    auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+    auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+    EXPECT_TRUE(CGColorEqualToColor(manifest.get().themeColor.CGColor, redColor.get()));
 }
 
 TEST(WebKit, ApplicationManifestBasic)
@@ -90,6 +96,7 @@ TEST(WebKit, ApplicationManifestBasic)
         @"description": @"Hello.",
         @"start_url": @"http://example.com/app/start",
         @"scope": @"http://example.com/app",
+        @"theme_color": @"red",
     };
     NSString *htmlString = [NSString stringWithFormat:@"<link rel=\"manifest\" href=\"data:text/plain;charset=utf-8;base64,%@\">", [[NSJSONSerialization dataWithJSONObject:manifestObject options:0 error:nil] base64EncodedStringWithOptions:0]];
     [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:@"http://example.com/app/index"]];
@@ -100,6 +107,11 @@ TEST(WebKit, ApplicationManifestBasic)
         EXPECT_TRUE([manifest.applicationDescription isEqualToString:@"Hello."]);
         EXPECT_TRUE([manifest.startURL isEqual:[NSURL URLWithString:@"http://example.com/app/start"]]);
         EXPECT_TRUE([manifest.scope isEqual:[NSURL URLWithString:@"http://example.com/app"]]);
+
+        auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
+        auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
+        EXPECT_TRUE(CGColorEqualToColor(manifest.themeColor.CGColor, redColor.get()));
+
         done = true;
     }];
     Util::run(&done);

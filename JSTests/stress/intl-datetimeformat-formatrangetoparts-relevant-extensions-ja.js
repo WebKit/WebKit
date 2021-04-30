@@ -1,15 +1,44 @@
-function shouldBe(actual, expected) {
+function normalize(actual) {
     // Tolerate different space characters used by different ICU versions.
     // Older ICU uses U+2009 Thin Space in ranges, whereas newer ICU uses
     // regular old U+0020. Let's ignore these differences.
     if (typeof actual === 'string')
-        actual = actual.replaceAll(' ', ' ');
+        return actual.replaceAll(' ', ' ');
+    return actual;
+}
 
+function shouldBe(actual, expected) {
+    actual = normalize(actual);
     if (actual !== expected)
         throw new Error('bad value: ' + actual + ' expected value: ' + expected);
 }
 
 function compareParts(actual, expected) {
+    if (actual.length !== expected.length)
+        return false;
+    for (var i = 0; i < actual.length; ++i) {
+        if (normalize(actual[i].type) !== expected[i].type)
+            return false;
+        if (normalize(actual[i].value) !== expected[i].value)
+            return false;
+        if (normalize(actual[i].source) !== expected[i].source)
+            return false;
+    }
+    return true;
+}
+
+function shouldBeOneOfParts(actual, expectedArray) {
+    for (let expected of expectedArray) {
+        if (compareParts(actual, expected))
+            return;
+    }
+    for (let part of actual) {
+        print(JSON.stringify(part) + ',');
+    }
+    throw new Error('bad value: ' + actual + ' expected value: ' + expectedArray);
+}
+
+function shouldBeParts(actual, expected) {
     shouldBe(actual.length, expected.length);
     for (var i = 0; i < actual.length; ++i) {
         shouldBe(actual[i].type, expected[i].type);
@@ -56,7 +85,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         numberingSystem: 'hanidec',
     });
     shouldBe(fmt1.format(date1), `〇七/一/一〇 二:〇〇`);
-    compareParts(fmt1.formatRangeToParts(date1, date2), [
+    shouldBeParts(fmt1.formatRangeToParts(date1, date2), [
         {"type":"year","value":"〇七","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"一","source":"shared"},
@@ -72,7 +101,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"〇〇","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt1.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt1.formatRangeToParts(date1, date3), [
         {"type":"year","value":"〇七","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"一","source":"startRange"},
@@ -105,7 +134,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         calendar: 'chinese'
     });
     shouldBe(fmt2.format(date1), `丙戌年11月22日 2:00`);
-    compareParts(fmt2.formatRangeToParts(date1, date2), [
+    shouldBeParts(fmt2.formatRangeToParts(date1, date2), [
         {"type":"yearName","value":"丙戌","source":"shared"},
         {"type":"literal","value":"年","source":"shared"},
         {"type":"month","value":"11","source":"shared"},
@@ -121,7 +150,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt2.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt2.formatRangeToParts(date1, date3), [
         {"type":"yearName","value":"丙戌","source":"startRange"},
         {"type":"literal","value":"年","source":"startRange"},
         {"type":"month","value":"11","source":"startRange"},
@@ -149,15 +178,15 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         calendar: 'chinese'
     });
     shouldBe(fmt3.format(date1), `丙戌年`);
-    compareParts(fmt3.formatRangeToParts(date1, date2), [
+    shouldBeParts(fmt3.formatRangeToParts(date1, date2), [
         {"type":"yearName","value":"丙戌","source":"shared"},
         {"type":"literal","value":"年","source":"shared"},
     ]);
-    compareParts(fmt3.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt3.formatRangeToParts(date1, date3), [
         {"type":"yearName","value":"丙戌","source":"shared"},
         {"type":"literal","value":"年","source":"shared"},
     ]);
-    compareParts(fmt3.formatRangeToParts(date1, date4), [
+    shouldBeParts(fmt3.formatRangeToParts(date1, date4), [
         {"type":"yearName","value":"丙戌","source":"startRange"},
         {"type":"literal","value":"年～","source":"shared"},
         {"type":"yearName","value":"己丑","source":"endRange"},
@@ -170,17 +199,17 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         timeZone: 'America/Los_Angeles',
     });
     shouldBe(fmt4.format(date1), `仏暦2550年`);
-    compareParts(fmt4.formatRangeToParts(date1, date2), [
+    shouldBeParts(fmt4.formatRangeToParts(date1, date2), [
         {"type":"era","value":"仏暦","source":"shared"},
         {"type":"year","value":"2550","source":"shared"},
         {"type":"literal","value":"年","source":"shared"},
     ]);
-    compareParts(fmt4.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt4.formatRangeToParts(date1, date3), [
         {"type":"era","value":"仏暦","source":"shared"},
         {"type":"year","value":"2550","source":"shared"},
         {"type":"literal","value":"年","source":"shared"},
     ]);
-    compareParts(fmt4.formatRangeToParts(date1, date4), [
+    shouldBeParts(fmt4.formatRangeToParts(date1, date4), [
         {"type":"era","value":"仏暦","source":"shared"},
         {"type":"year","value":"2550","source":"startRange"},
         {"type":"literal","value":"年～","source":"shared"},
@@ -200,22 +229,40 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt5.format(date1), `07/1/10 10:00`);
     shouldBe(fmt5.format(date8), `07/1/11 24:00`);
-    compareParts(fmt5.formatRangeToParts(date1, date2), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt5.formatRangeToParts(date1, date2), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ],
     ]);
-    compareParts(fmt5.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt5.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -236,53 +283,107 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt5.formatRangeToParts(date1, date5), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"hour","value":"12","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt5.formatRangeToParts(date1, date5), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"hour","value":"12","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"12","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ],
     ]);
-    compareParts(fmt5.formatRangeToParts(date1, date6), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"hour","value":"14","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt5.formatRangeToParts(date1, date6), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"hour","value":"14","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"14","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ],
     ]);
-    compareParts(fmt5.formatRangeToParts(date1, date7), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"hour","value":"23","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt5.formatRangeToParts(date1, date7), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"hour","value":"23","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"23","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ],
     ]);
     if ($vm.icuVersion() > 66) {
-        compareParts(fmt5.formatRangeToParts(date1, date8), [
+        shouldBeParts(fmt5.formatRangeToParts(date1, date8), [
             {"type":"year","value":"07","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"month","value":"1","source":"startRange"},
@@ -316,7 +417,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt6.format(date1), `07/1/10 10:00`);
     shouldBe(fmt6.format(date8), `07/1/11 0:00`);
-    compareParts(fmt6.formatRangeToParts(date1, date2), [
+    shouldBeParts(fmt6.formatRangeToParts(date1, date2), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -332,7 +433,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt6.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt6.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -353,7 +454,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt6.formatRangeToParts(date1, date5), [
+    shouldBeParts(fmt6.formatRangeToParts(date1, date5), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -369,7 +470,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt6.formatRangeToParts(date1, date6), [
+    shouldBeParts(fmt6.formatRangeToParts(date1, date6), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -385,7 +486,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt6.formatRangeToParts(date1, date7), [
+    shouldBeParts(fmt6.formatRangeToParts(date1, date7), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -401,7 +502,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt6.formatRangeToParts(date1, date8), [
+    shouldBeParts(fmt6.formatRangeToParts(date1, date8), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -434,24 +535,43 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt7.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt7.format(date8), `07/1/11 午前0:00`);
-    compareParts(fmt7.formatRangeToParts(date1, date2), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt7.formatRangeToParts(date1, date2), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ],
     ]);
-    compareParts(fmt7.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt7.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -474,58 +594,118 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt7.formatRangeToParts(date1, date5), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"0","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt7.formatRangeToParts(date1, date5), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt7.formatRangeToParts(date1, date6), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"2","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt7.formatRangeToParts(date1, date6), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt7.formatRangeToParts(date1, date7), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt7.formatRangeToParts(date1, date7), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt7.formatRangeToParts(date1, date8), [
+    shouldBeParts(fmt7.formatRangeToParts(date1, date8), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -560,7 +740,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt8.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt8.format(date8), `07/1/11 午前12:00`);
-    compareParts(fmt8.formatRangeToParts(date1, date2), [
+    shouldBeParts(fmt8.formatRangeToParts(date1, date2), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -577,7 +757,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt8.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt8.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -600,7 +780,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt8.formatRangeToParts(date1, date5), [
+    shouldBeParts(fmt8.formatRangeToParts(date1, date5), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -618,7 +798,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt8.formatRangeToParts(date1, date6), [
+    shouldBeParts(fmt8.formatRangeToParts(date1, date6), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -636,7 +816,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt8.formatRangeToParts(date1, date7), [
+    shouldBeParts(fmt8.formatRangeToParts(date1, date7), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -655,7 +835,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":"分","source":"shared"},
     ]);
     if ($vm.icuVersion() > 66) {
-        compareParts(fmt8.formatRangeToParts(date1, date8), [
+        shouldBeParts(fmt8.formatRangeToParts(date1, date8), [
             {"type":"year","value":"07","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"month","value":"1","source":"startRange"},
@@ -692,22 +872,40 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt9.format(date1), `07/1/10 10:00`);
     shouldBe(fmt9.format(date8), `07/1/11 24:00`);
-    compareParts(fmt9.formatRangeToParts(date1, date2), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt9.formatRangeToParts(date1, date2), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ],
     ]);
-    compareParts(fmt9.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt9.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -728,53 +926,107 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt9.formatRangeToParts(date1, date5), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"hour","value":"12","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt9.formatRangeToParts(date1, date5), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"hour","value":"12","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"12","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt9.formatRangeToParts(date1, date6), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"hour","value":"14","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt9.formatRangeToParts(date1, date6), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"hour","value":"14","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"14","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ],
     ]);
-    compareParts(fmt9.formatRangeToParts(date1, date7), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"hour","value":"23","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt9.formatRangeToParts(date1, date7), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"hour","value":"23","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"23","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
     if ($vm.icuVersion() > 66) {
-        compareParts(fmt9.formatRangeToParts(date1, date8), [
+        shouldBeParts(fmt9.formatRangeToParts(date1, date8), [
             {"type":"year","value":"07","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"month","value":"1","source":"startRange"},
@@ -808,7 +1060,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt10.format(date1), `07/1/10 10:00`);
     shouldBe(fmt10.format(date8), `07/1/11 00:00`);
-    compareParts(fmt10.formatRangeToParts(date1, date2), [
+    shouldBeParts(fmt10.formatRangeToParts(date1, date2), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -824,7 +1076,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt10.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt10.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -845,7 +1097,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt10.formatRangeToParts(date1, date5), [
+    shouldBeParts(fmt10.formatRangeToParts(date1, date5), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -861,7 +1113,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt10.formatRangeToParts(date1, date6), [
+    shouldBeParts(fmt10.formatRangeToParts(date1, date6), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -877,7 +1129,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt10.formatRangeToParts(date1, date7), [
+    shouldBeParts(fmt10.formatRangeToParts(date1, date7), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -893,7 +1145,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt10.formatRangeToParts(date1, date8), [
+    shouldBeParts(fmt10.formatRangeToParts(date1, date8), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -926,24 +1178,43 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt11.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt11.format(date8), `07/1/11 午前00:00`);
-    compareParts(fmt11.formatRangeToParts(date1, date2), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt11.formatRangeToParts(date1, date2), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt11.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt11.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -966,58 +1237,118 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt11.formatRangeToParts(date1, date5), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"0","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt11.formatRangeToParts(date1, date5), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt11.formatRangeToParts(date1, date6), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"2","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt11.formatRangeToParts(date1, date6), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt11.formatRangeToParts(date1, date7), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt11.formatRangeToParts(date1, date7), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt11.formatRangeToParts(date1, date8), [
+    shouldBeParts(fmt11.formatRangeToParts(date1, date8), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1052,7 +1383,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt12.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt12.format(date8), `07/1/11 午前12:00`);
-    compareParts(fmt12.formatRangeToParts(date1, date2), [
+    shouldBeParts(fmt12.formatRangeToParts(date1, date2), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -1069,7 +1400,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt12.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt12.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1092,7 +1423,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt12.formatRangeToParts(date1, date5), [
+    shouldBeParts(fmt12.formatRangeToParts(date1, date5), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -1110,7 +1441,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt12.formatRangeToParts(date1, date6), [
+    shouldBeParts(fmt12.formatRangeToParts(date1, date6), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -1128,7 +1459,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"minute","value":"00","source":"endRange"},
         {"type":"literal","value":"分","source":"shared"},
     ]);
-    compareParts(fmt12.formatRangeToParts(date1, date7), [
+    shouldBeParts(fmt12.formatRangeToParts(date1, date7), [
         {"type":"year","value":"07","source":"shared"},
         {"type":"literal","value":"/","source":"shared"},
         {"type":"month","value":"1","source":"shared"},
@@ -1147,7 +1478,7 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":"分","source":"shared"},
     ]);
     if ($vm.icuVersion() > 66) {
-        compareParts(fmt12.formatRangeToParts(date1, date8), [
+        shouldBeParts(fmt12.formatRangeToParts(date1, date8), [
             {"type":"year","value":"07","source":"startRange"},
             {"type":"literal","value":"/","source":"startRange"},
             {"type":"month","value":"1","source":"startRange"},
@@ -1185,24 +1516,43 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt13.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt13.format(date8), `07/1/11 午前00:00`);
-    compareParts(fmt13.formatRangeToParts(date1, date2), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt13.formatRangeToParts(date1, date2), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt13.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt13.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1225,58 +1575,118 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt13.formatRangeToParts(date1, date5), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"0","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt13.formatRangeToParts(date1, date5), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt13.formatRangeToParts(date1, date6), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"2","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt13.formatRangeToParts(date1, date6), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt13.formatRangeToParts(date1, date7), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt13.formatRangeToParts(date1, date7), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt13.formatRangeToParts(date1, date8), [
+    shouldBeParts(fmt13.formatRangeToParts(date1, date8), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1312,24 +1722,43 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt14.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt14.format(date8), `07/1/11 午前00:00`);
-    compareParts(fmt14.formatRangeToParts(date1, date2), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt14.formatRangeToParts(date1, date2), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt14.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt14.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1352,58 +1781,118 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt14.formatRangeToParts(date1, date5), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"0","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt14.formatRangeToParts(date1, date5), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt14.formatRangeToParts(date1, date6), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"2","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt14.formatRangeToParts(date1, date6), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt14.formatRangeToParts(date1, date7), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt14.formatRangeToParts(date1, date7), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt14.formatRangeToParts(date1, date8), [
+    shouldBeParts(fmt14.formatRangeToParts(date1, date8), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1439,24 +1928,43 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt15.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt15.format(date8), `07/1/11 午前00:00`);
-    compareParts(fmt15.formatRangeToParts(date1, date2), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt15.formatRangeToParts(date1, date2), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt15.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt15.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1479,58 +1987,118 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt15.formatRangeToParts(date1, date5), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"0","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt15.formatRangeToParts(date1, date5), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt15.formatRangeToParts(date1, date6), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"2","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt15.formatRangeToParts(date1, date6), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt15.formatRangeToParts(date1, date7), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt15.formatRangeToParts(date1, date7), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt15.formatRangeToParts(date1, date8), [
+    shouldBeParts(fmt15.formatRangeToParts(date1, date8), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1566,24 +2134,43 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
     });
     shouldBe(fmt16.format(date1), `07/1/10 午前10:00`);
     shouldBe(fmt16.format(date8), `07/1/11 午前00:00`);
-    compareParts(fmt16.formatRangeToParts(date1, date2), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt16.formatRangeToParts(date1, date2), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"shared"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt16.formatRangeToParts(date1, date3), [
+    shouldBeParts(fmt16.formatRangeToParts(date1, date3), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},
@@ -1606,58 +2193,118 @@ if (Intl.DateTimeFormat.prototype.formatRangeToParts) {
         {"type":"literal","value":":","source":"endRange"},
         {"type":"minute","value":"00","source":"endRange"},
     ]);
-    compareParts(fmt16.formatRangeToParts(date1, date5), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"0","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt16.formatRangeToParts(date1, date5), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"0","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt16.formatRangeToParts(date1, date6), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"2","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt16.formatRangeToParts(date1, date6), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"2","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt16.formatRangeToParts(date1, date7), [
-        {"type":"year","value":"07","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"month","value":"1","source":"shared"},
-        {"type":"literal","value":"/","source":"shared"},
-        {"type":"day","value":"10","source":"shared"},
-        {"type":"literal","value":" ","source":"shared"},
-        {"type":"dayPeriod","value":"午前","source":"startRange"},
-        {"type":"hour","value":"10","source":"startRange"},
-        {"type":"literal","value":":","source":"startRange"},
-        {"type":"minute","value":"00","source":"startRange"},
-        {"type":"literal","value":"～","source":"shared"},
-        {"type":"dayPeriod","value":"午後","source":"endRange"},
-        {"type":"hour","value":"11","source":"endRange"},
-        {"type":"literal","value":":","source":"endRange"},
-        {"type":"minute","value":"00","source":"endRange"},
+    shouldBeOneOfParts(fmt16.formatRangeToParts(date1, date7), [
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":":","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":":","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+        ],
+        [
+            {"type":"year","value":"07","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"month","value":"1","source":"shared"},
+            {"type":"literal","value":"/","source":"shared"},
+            {"type":"day","value":"10","source":"shared"},
+            {"type":"literal","value":" ","source":"shared"},
+            {"type":"dayPeriod","value":"午前","source":"startRange"},
+            {"type":"hour","value":"10","source":"startRange"},
+            {"type":"literal","value":"時","source":"startRange"},
+            {"type":"minute","value":"00","source":"startRange"},
+            {"type":"literal","value":"分～","source":"shared"},
+            {"type":"dayPeriod","value":"午後","source":"endRange"},
+            {"type":"hour","value":"11","source":"endRange"},
+            {"type":"literal","value":"時","source":"endRange"},
+            {"type":"minute","value":"00","source":"endRange"},
+            {"type":"literal","value":"分","source":"shared"},
+        ]
     ]);
-    compareParts(fmt16.formatRangeToParts(date1, date8), [
+    shouldBeParts(fmt16.formatRangeToParts(date1, date8), [
         {"type":"year","value":"07","source":"startRange"},
         {"type":"literal","value":"/","source":"startRange"},
         {"type":"month","value":"1","source":"startRange"},

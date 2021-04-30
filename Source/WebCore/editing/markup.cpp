@@ -697,23 +697,24 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
                 }
             }
         }
-        ASSERT(next || !pastEnd);
+        ASSERT(next || !pastEnd || n->contains(pastEnd));
 
         if (isBlock(n) && canHaveChildrenForEditing(*n) && next == pastEnd) {
             // Don't write out empty block containers that aren't fully selected.
             continue;
         }
 
-        if (!enterNode(*n)) {
+        bool didEnterNode = false;
+        if (!enterNode(*n))
             next = nextSkippingChildren(*n);
-            // Don't skip over pastEnd.
-            if (pastEnd && (isDescendantOf(*pastEnd, *n) || !next))
-                next = pastEnd;
-            ASSERT(next || !pastEnd);
-        } else {
-            if (!hasChildNodes(*n))
-                exitNode(*n);
-        }
+        else if (!hasChildNodes(*n))
+            exitNode(*n);
+        else
+            didEnterNode = true;
+
+        bool aboutToGoPastEnd = pastEnd && !didEnterNode && (!next || isDescendantOf(*pastEnd, *n));
+        if (aboutToGoPastEnd)
+            next = pastEnd;
 
         for (auto* ancestor : exitedAncestors) {
             if (!depth && next == pastEnd)
@@ -1387,7 +1388,6 @@ ExceptionOr<void> replaceChildrenWithFragment(ContainerNode& container, Ref<Docu
     auto* containerChild = containerNode->firstChild();
     if (containerChild && !containerChild->nextSibling()) {
         if (is<Text>(*containerChild) && hasOneTextChild(fragment) && canUseSetDataOptimization(downcast<Text>(*containerChild), mutation)) {
-            ASSERT(!fragment->firstChild()->refCount());
             downcast<Text>(*containerChild).setData(downcast<Text>(*fragment->firstChild()).data());
             return { };
         }

@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+struct BlendingContext;
 class CSSPrimitiveValue;
 
 class CSSCrossfadeValue final : public CSSImageGeneratorValue {
@@ -54,7 +55,7 @@ public:
 
     bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 
-    RefPtr<CSSCrossfadeValue> blend(const CSSCrossfadeValue&, double) const;
+    RefPtr<CSSCrossfadeValue> blend(const CSSCrossfadeValue&, const BlendingContext&) const;
 
     bool equals(const CSSCrossfadeValue&) const;
     bool equalInputImages(const CSSCrossfadeValue&) const;

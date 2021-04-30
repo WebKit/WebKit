@@ -76,9 +76,6 @@ public:
     // Iterate over all empty and committed pages, and put them into the vector. This also records the
     // pages as being decommitted. It's the caller's job to do the actual decommitting.
     void scavenge(const LockHolder&, Vector<DeferredDecommit>&);
-#if BUSE(PARTIAL_SCAVENGE)
-    void scavengeToHighWatermark(const LockHolder&, Vector<DeferredDecommit>&);
-#endif
 
     template<typename Func>
     void forEachCommittedPage(const LockHolder&, const Func&);
@@ -93,9 +90,6 @@ private:
     Bits<numPages> m_empty;
     Bits<numPages> m_committed;
     unsigned m_firstEligibleOrDecommitted { 0 };
-#if BUSE(PARTIAL_SCAVENGE)
-    unsigned m_highWatermark { 0 };
-#endif
 };
 
 } // namespace bmalloc

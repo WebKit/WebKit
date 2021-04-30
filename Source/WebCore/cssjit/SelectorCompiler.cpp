@@ -56,7 +56,6 @@
 #include <JavaScriptCore/VM.h>
 #include <limits>
 #include <wtf/Deque.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

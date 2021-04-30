@@ -125,6 +125,11 @@ struct FeaturesMtl : FeatureSetBase
             "intel_thin_mipmap_workaround", FeatureCategory::MetalWorkarounds,
             "Generate mipmaps for thin (<5 pixel) wide textures on the CPU for Intel",
             &members};
+    
+    Feature intelExplicitBoolCastWorkaround = {
+            "intel_explicit_bool_cast_workaround", FeatureCategory::MetalWorkarounds,
+            "Insert explicit casts for float/double/unsigned/signed int on macOS 10.15 with Intel driver",
+            &members};
 };
 
 }  // namespace angle

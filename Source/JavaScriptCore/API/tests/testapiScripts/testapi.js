@@ -208,6 +208,44 @@ shouldBe("symbolToStringTagDescriptor.configurable", true);
 MyObject[Symbol.toStringTag] = "Foo";
 shouldBe("Object.prototype.toString.call(MyObject)", "[object Foo]");
 
+var MyObjectHeir = Object.create(MyObject);
+MyObjectHeir.throwOnSet = 22;
+var MyObjectHeirThrowOnSetDescriptor = Object.getOwnPropertyDescriptor(MyObjectHeir, "throwOnSet");
+shouldBe("typeof MyObjectHeirThrowOnSetDescriptor", "object");
+shouldBe("MyObjectHeirThrowOnSetDescriptor.value", 22);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.writable", true);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.enumerable", true);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.configurable", true);
+shouldThrow("MyObject.throwOnSet = 22");
+
+var globalObjectHeir = Object.create(this);
+globalObjectHeir.globalStaticValue2 = 33;
+var globalObjectHeirGlobalStaticValue2Descriptor = Object.getOwnPropertyDescriptor(globalObjectHeir, "globalStaticValue2");
+shouldBe("typeof globalObjectHeirGlobalStaticValue2Descriptor", "object");
+shouldBe("globalObjectHeirGlobalStaticValue2Descriptor.value", 33);
+shouldBe("globalObjectHeirGlobalStaticValue2Descriptor.writable", true);
+shouldBe("globalObjectHeirGlobalStaticValue2Descriptor.enumerable", true);
+shouldBe("globalObjectHeirGlobalStaticValue2Descriptor.configurable", true);
+shouldBe("this.globalStaticValue2", 3);
+
+var symbolToPrimitiveDescriptor = Object.getOwnPropertyDescriptor(MyObject, Symbol.toPrimitive);
+shouldBe("typeof symbolToPrimitiveDescriptor", "object");
+shouldBe("symbolToPrimitiveDescriptor.value", MyObject[Symbol.toPrimitive]);
+shouldBe("symbolToPrimitiveDescriptor.writable", true);
+shouldBe("symbolToPrimitiveDescriptor.enumerable", false);
+shouldBe("symbolToPrimitiveDescriptor.configurable", true);
+
+shouldBe("MyObject[Symbol.toPrimitive]('default')", 1);
+shouldBe("MyObject[Symbol.toPrimitive]('number')", 1);
+shouldBe("MyObject[Symbol.toPrimitive]('string')", "MyObjectAsString");
+
+shouldThrow("MyObject[Symbol.toPrimitive]('foo')");
+shouldThrow("MyObject[Symbol.toPrimitive].call({}, 'default')");
+shouldThrow("(0, MyObject[Symbol.toPrimitive])('default')");
+
+MyObject[Symbol.toPrimitive] = () => null;
+shouldBe("MyObject[Symbol.toPrimitive]('bar')", null);
+
 derived = new Derived();
 
 shouldBe("derived instanceof Derived", true);
@@ -286,6 +324,11 @@ EvilExceptionObject.toNumber = function f() { return f(); }
 shouldThrow("EvilExceptionObject*5");
 EvilExceptionObject.toStringExplicit = function f() { return f(); }
 shouldThrow("String(EvilExceptionObject)");
+
+EvilExceptionObject.toNumber = () => ({ valueOf: () => 4815 });
+shouldBe("Number(EvilExceptionObject)", 4815);
+EvilExceptionObject.toStringExplicit = () => ({ toString: () => "foobar" });
+shouldBe("`${EvilExceptionObject}`", "foobar");
 
 shouldBe("console", "[object console]");
 shouldBe("typeof console.log", "function");

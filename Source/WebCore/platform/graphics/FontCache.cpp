@@ -99,7 +99,7 @@ struct FontPlatformDataCacheKeyHashTraits : public SimpleClassHashTraits<FontPla
     static constexpr bool emptyValueIsZero = false;
     static void constructDeletedValue(FontPlatformDataCacheKey& slot)
     {
-        new (NotNull, &slot) FontPlatformDataCacheKey { FontDescriptionKey { WTF::HashTableDeletedValue }, { }, { }, { } };
+        new (NotNull, &slot.descriptionKey) FontDescriptionKey(WTF::HashTableDeletedValue);
     }
     static bool isDeletedValue(const FontPlatformDataCacheKey& key)
     {
@@ -280,7 +280,7 @@ Ref<Font> FontCache::fontForPlatformData(const FontPlatformData& platformData)
 #endif
 
     auto addResult = m_fontDataCaches->data.ensure(platformData, [&] {
-        return Font::create(platformData);
+        return Font::create(platformData, Font::Origin::Local, this);
     });
 
     ASSERT(addResult.iterator->value->platformData() == platformData);

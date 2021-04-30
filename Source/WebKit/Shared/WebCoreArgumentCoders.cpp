@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -103,7 +103,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 #include <WebCore/FloatQuad.h>
-#include <WebCore/SelectionRect.h>
+#include <WebCore/SelectionGeometry.h>
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS_FAMILY)
 
@@ -1302,78 +1302,85 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
 
 #if PLATFORM(IOS_FAMILY)
 
-void ArgumentCoder<SelectionRect>::encode(Encoder& encoder, const SelectionRect& selectionRect)
+void ArgumentCoder<SelectionGeometry>::encode(Encoder& encoder, const SelectionGeometry& selectionGeometry)
 {
-    encoder << selectionRect.rect();
-    encoder << static_cast<uint32_t>(selectionRect.direction());
-    encoder << selectionRect.minX();
-    encoder << selectionRect.maxX();
-    encoder << selectionRect.maxY();
-    encoder << selectionRect.lineNumber();
-    encoder << selectionRect.isLineBreak();
-    encoder << selectionRect.isFirstOnLine();
-    encoder << selectionRect.isLastOnLine();
-    encoder << selectionRect.containsStart();
-    encoder << selectionRect.containsEnd();
-    encoder << selectionRect.isHorizontal();
+    encoder << selectionGeometry.quad();
+    encoder << selectionGeometry.behavior();
+    encoder << static_cast<uint32_t>(selectionGeometry.direction());
+    encoder << selectionGeometry.minX();
+    encoder << selectionGeometry.maxX();
+    encoder << selectionGeometry.maxY();
+    encoder << selectionGeometry.lineNumber();
+    encoder << selectionGeometry.isLineBreak();
+    encoder << selectionGeometry.isFirstOnLine();
+    encoder << selectionGeometry.isLastOnLine();
+    encoder << selectionGeometry.containsStart();
+    encoder << selectionGeometry.containsEnd();
+    encoder << selectionGeometry.isHorizontal();
 }
 
-Optional<SelectionRect> ArgumentCoder<SelectionRect>::decode(Decoder& decoder)
+Optional<SelectionGeometry> ArgumentCoder<SelectionGeometry>::decode(Decoder& decoder)
 {
-    SelectionRect selectionRect;
-    IntRect rect;
-    if (!decoder.decode(rect))
+    SelectionGeometry selectionGeometry;
+    FloatQuad quad;
+    if (!decoder.decode(quad))
         return WTF::nullopt;
-    selectionRect.setRect(rect);
+    selectionGeometry.setQuad(quad);
+
+    Optional<SelectionRenderingBehavior> behavior;
+    decoder >> behavior;
+    if (!behavior)
+        return WTF::nullopt;
+    selectionGeometry.setBehavior(*behavior);
 
     uint32_t direction;
     if (!decoder.decode(direction))
         return WTF::nullopt;
-    selectionRect.setDirection((TextDirection)direction);
+    selectionGeometry.setDirection((TextDirection)direction);
 
     int intValue;
     if (!decoder.decode(intValue))
         return WTF::nullopt;
-    selectionRect.setMinX(intValue);
+    selectionGeometry.setMinX(intValue);
 
     if (!decoder.decode(intValue))
         return WTF::nullopt;
-    selectionRect.setMaxX(intValue);
+    selectionGeometry.setMaxX(intValue);
 
     if (!decoder.decode(intValue))
         return WTF::nullopt;
-    selectionRect.setMaxY(intValue);
+    selectionGeometry.setMaxY(intValue);
 
     if (!decoder.decode(intValue))
         return WTF::nullopt;
-    selectionRect.setLineNumber(intValue);
+    selectionGeometry.setLineNumber(intValue);
 
     bool boolValue;
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setIsLineBreak(boolValue);
+    selectionGeometry.setIsLineBreak(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setIsFirstOnLine(boolValue);
+    selectionGeometry.setIsFirstOnLine(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setIsLastOnLine(boolValue);
+    selectionGeometry.setIsLastOnLine(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setContainsStart(boolValue);
+    selectionGeometry.setContainsStart(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setContainsEnd(boolValue);
+    selectionGeometry.setContainsEnd(boolValue);
 
     if (!decoder.decode(boolValue))
         return WTF::nullopt;
-    selectionRect.setIsHorizontal(boolValue);
+    selectionGeometry.setIsHorizontal(boolValue);
 
-    return selectionRect;
+    return selectionGeometry;
 }
 
 #endif
@@ -2457,17 +2464,17 @@ void ArgumentCoder<MediaPlaybackTargetContext>::encode(Encoder& encoder, const M
     bool hasPlatformData = target.encodingRequiresPlatformData();
     encoder << hasPlatformData;
 
-    int32_t targetType = target.type();
-    encoder << targetType;
+    MediaPlaybackTargetContext::Type contextType = target.type();
+    encoder << contextType;
 
     if (target.encodingRequiresPlatformData()) {
         encodePlatformData(encoder, target);
         return;
     }
 
-    ASSERT(targetType == MediaPlaybackTargetContext::MockType);
-    encoder << target.mockDeviceName();
-    encoder << static_cast<int32_t>(target.mockState());
+    ASSERT(contextType == MediaPlaybackTargetContext::Type::Mock);
+    encoder << target.deviceName();
+    encoder << target.mockState();
 }
 
 bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPlaybackTargetContext& target)
@@ -2476,24 +2483,24 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPl
     if (!decoder.decode(hasPlatformData))
         return false;
 
-    int32_t targetType;
-    if (!decoder.decode(targetType))
+    MediaPlaybackTargetContext::Type contextType;
+    if (!decoder.decode(contextType))
         return false;
 
     if (hasPlatformData)
-        return decodePlatformData(decoder, target);
+        return decodePlatformData(decoder, contextType, target);
 
-    ASSERT(targetType == MediaPlaybackTargetContext::MockType);
-
-    String mockDeviceName;
-    if (!decoder.decode(mockDeviceName))
+    ASSERT(contextType == MediaPlaybackTargetContext::Type::Mock);
+    String deviceName;
+    if (!decoder.decode(deviceName))
         return false;
 
-    int32_t mockState;
+    MediaPlaybackTargetContext::MockState mockState;
     if (!decoder.decode(mockState))
         return false;
 
-    target = MediaPlaybackTargetContext(mockDeviceName, static_cast<MediaPlaybackTargetContext::State>(mockState));
+    target = MediaPlaybackTargetContext(deviceName, mockState);
+
     return true;
 }
 #endif
@@ -2882,9 +2889,6 @@ Optional<MediaSelectionOption> ArgumentCoder<MediaSelectionOption>::decode(Decod
 
 void ArgumentCoder<PromisedAttachmentInfo>::encode(Encoder& encoder, const PromisedAttachmentInfo& info)
 {
-    encoder << info.blobURL;
-    encoder << info.contentType;
-    encoder << info.fileName;
 #if ENABLE(ATTACHMENT_ELEMENT)
     encoder << info.attachmentIdentifier;
 #endif
@@ -2893,15 +2897,6 @@ void ArgumentCoder<PromisedAttachmentInfo>::encode(Encoder& encoder, const Promi
 
 bool ArgumentCoder<PromisedAttachmentInfo>::decode(Decoder& decoder, PromisedAttachmentInfo& info)
 {
-    if (!decoder.decode(info.blobURL))
-        return false;
-
-    if (!decoder.decode(info.contentType))
-        return false;
-
-    if (!decoder.decode(info.fileName))
-        return false;
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (!decoder.decode(info.attachmentIdentifier))
         return false;
@@ -2913,28 +2908,17 @@ bool ArgumentCoder<PromisedAttachmentInfo>::decode(Decoder& decoder, PromisedAtt
     return true;
 }
 
-void ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::encode(Encoder& encoder, const Vector<RefPtr<SecurityOrigin>>& origins)
+void ArgumentCoder<RefPtr<SecurityOrigin>>::encode(Encoder& encoder, const RefPtr<SecurityOrigin>& origin)
 {
-    encoder << static_cast<uint64_t>(origins.size());
-    for (auto& origin : origins)
-        encoder << *origin;
+    encoder << *origin;
 }
     
-bool ArgumentCoder<Vector<RefPtr<SecurityOrigin>>>::decode(Decoder& decoder, Vector<RefPtr<SecurityOrigin>>& origins)
+Optional<RefPtr<SecurityOrigin>> ArgumentCoder<RefPtr<SecurityOrigin>>::decode(Decoder& decoder)
 {
-    uint64_t dataSize;
-    if (!decoder.decode(dataSize))
-        return false;
-
-    for (uint64_t i = 0; i < dataSize; ++i) {
-        auto decodedOriginRefPtr = SecurityOrigin::decode(decoder);
-        if (!decodedOriginRefPtr)
-            return false;
-        origins.append(decodedOriginRefPtr.releaseNonNull());
-    }
-    origins.shrinkToFit();
-
-    return true;
+    auto origin = SecurityOrigin::decode(decoder);
+    if (!origin)
+        return WTF::nullopt;
+    return origin;
 }
 
 void ArgumentCoder<FontAttributes>::encode(Encoder& encoder, const FontAttributes& attributes)
@@ -3154,38 +3138,6 @@ Optional<WebCore::CDMInstanceSession::Message>  ArgumentCoder<WebCore::CDMInstan
 
     return makeOptional<WebCore::CDMInstanceSession::Message>({ type, buffer.releaseNonNull() });
 }
-
-void ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::KeyStatusVector& keyStatuses)
-{
-    encoder << static_cast<uint64_t>(keyStatuses.size());
-    for (auto& keyStatus : keyStatuses) {
-        RefPtr<SharedBuffer> key = keyStatus.first.copyRef();
-        encoder << key << keyStatus.second;
-    }
-}
-
-Optional<WebCore::CDMInstanceSession::KeyStatusVector> ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector>::decode(Decoder& decoder)
-{
-    uint64_t dataSize;
-    if (!decoder.decode(dataSize))
-        return WTF::nullopt;
-
-    WebCore::CDMInstanceSession::KeyStatusVector keyStatuses;
-    keyStatuses.reserveInitialCapacity(dataSize);
-
-    for (uint64_t i = 0; i < dataSize; ++i) {
-        RefPtr<SharedBuffer> key;
-        if (!decoder.decode(key) || !key)
-            return WTF::nullopt;
-
-        WebCore::CDMInstanceSessionClient::KeyStatus status;
-        if (!decoder.decode(status))
-            return WTF::nullopt;
-
-        keyStatuses.uncheckedAppend({ key.releaseNonNull(), status });
-    }
-    return keyStatuses;
-}
 #endif // ENABLE(ENCRYPTED_MEDIA)
 
 template<typename Encoder>
@@ -3251,7 +3203,7 @@ Optional<RefPtr<WebCore::ImageData>> ArgumentCoder<RefPtr<WebCore::ImageData>>::
         return WTF::nullopt;
 
     if (!isEngaged)
-        return RefPtr<WebCore::ImageData>();
+        return { nullptr };
 
     auto result = ArgumentCoder<Ref<WebCore::ImageData>>::decode(decoder);
     if (!result)

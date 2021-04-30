@@ -31,9 +31,9 @@
 #import "FloatRect.h"
 #import "FrameView.h"
 #import "HostWindow.h"
-#import "OpenGLSoftLinkCocoa.h"
 #import "ScreenProperties.h"
 #import <ColorSync/ColorSync.h>
+#import <pal/cocoa/OpenGLSoftLinkCocoa.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/ProcessPrivilege.h>

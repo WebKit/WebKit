@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,11 @@ class ImageBufferShareableBitmapBackend : public WebCore::PlatformImageBufferBac
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 public:
+    static ShareableBitmap::Configuration configuration(const Parameters&);
+    static WebCore::IntSize calculateSafeBackendSize(const Parameters&);
+    static unsigned calculateBytesPerRow(const Parameters&, const WebCore::IntSize& backendSize);
+    static size_t calculateMemoryCost(const Parameters&);
+
     static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, const WebCore::HostWindow*);
     static std::unique_ptr<ImageBufferShareableBitmapBackend> create(const Parameters&, ImageBufferBackendHandle);
 

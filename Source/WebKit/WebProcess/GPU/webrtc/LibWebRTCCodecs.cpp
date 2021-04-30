@@ -34,6 +34,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/LibWebRTCMacros.h>
+#include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/RealtimeVideoUtilities.h>
 #include <WebCore/RemoteVideoSample.h>
 #include <WebCore/RuntimeEnabledFeatures.h>
@@ -163,18 +164,60 @@ static void setEncodeRatesCallback(webrtc::WebKitVideoEncoder encoder, const web
     WebProcess::singleton().libWebRTCCodecs().setEncodeRates(*static_cast<LibWebRTCCodecs::Encoder*>(encoder), bitRate, frameRate);
 }
 
+Ref<LibWebRTCCodecs> LibWebRTCCodecs::create()
+{
+    return adoptRef(*new LibWebRTCCodecs);
+}
+
 LibWebRTCCodecs::LibWebRTCCodecs()
     : m_queue(WorkQueue::create("LibWebRTCCodecs", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
 {
 }
 
-void LibWebRTCCodecs::startListeningForIPC()
+void LibWebRTCCodecs::ensureGPUProcessConnectionOnMainThread(Locker<Lock>& locker)
 {
-    ASSERT(!m_connection);
+    ASSERT(isMainRunLoop());
+    ASSERT_UNUSED(locker, locker.lockable() == &m_connectionLock);
+    if (m_connection)
+        return;
+
     auto& gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
     gpuConnection.addClient(*this);
     m_connection = makeRef(gpuConnection.connection());
     m_connection->addThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), this);
+}
+
+// May be called on any thread.
+void LibWebRTCCodecs::ensureGPUProcessConnectionAndDispatchToThread(Function<void()>&& task)
+{
+    m_needsGPUProcessConnection = true;
+
+    auto locker = holdLock(m_connectionLock);
+
+    // Fast path when we already have a connection.
+    if (m_connection) {
+        dispatchToThread(WTFMove(task));
+        return;
+    }
+
+    // We don't have a connection to the GPUProcess yet, we need to hop to the main thread to initiate it.
+    m_tasksToDispatchAfterEstablishingConnection.append(WTFMove(task));
+    if (m_tasksToDispatchAfterEstablishingConnection.size() != 1)
+        return;
+
+    callOnMainRunLoop([this] {
+        auto locker = holdLock(m_connectionLock);
+        ensureGPUProcessConnectionOnMainThread(locker);
+        for (auto& task : std::exchange(m_tasksToDispatchAfterEstablishingConnection, { }))
+            dispatchToThread(WTFMove(task));
+    });
+}
+
+void LibWebRTCCodecs::gpuProcessConnectionMayNoLongerBeNeeded()
+{
+    ASSERT(!isMainRunLoop());
+    if (m_encoders.isEmpty() && m_decoders.isEmpty())
+        m_needsGPUProcessConnection = false;
 }
 
 LibWebRTCCodecs::~LibWebRTCCodecs()
@@ -196,9 +239,8 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess)
     WebProcess::singleton().libWebRTCCodecs();
 
 #if ENABLE(VP9)
-    auto& gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
     // FIMXE: We should disable VP9VTB if VP9 hardware decoding is enabled but there is no support for it.
-    WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(gpuConnection.isVP9DecoderEnabled() || gpuConnection.isVPSWDecoderEnabled());
+    WebProcess::singleton().libWebRTCCodecs().setVP9VTBSupport(PlatformMediaSessionManager::shouldEnableVP9Decoder() || PlatformMediaSessionManager::shouldEnableVP9SWDecoder());
 #endif
 
     webrtc::setVideoDecoderCallbacks(createVideoDecoder, releaseVideoDecoder, decodeVideoFrame, registerDecodeCompleteCallback);
@@ -212,7 +254,8 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
     decoder->identifier = RTCDecoderIdentifier::generateThreadSafe();
     decoder->type = type;
 
-    dispatchToThread([this, decoder = WTFMove(decoder)]() mutable {
+    ensureGPUProcessConnectionAndDispatchToThread([this, decoder = WTFMove(decoder)]() mutable {
+        auto locker = holdLock(m_connectionLock);
         decoder->connection = m_connection;
         createRemoteDecoder(*decoder, *m_connection);
 
@@ -226,10 +269,12 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
 int32_t LibWebRTCCodecs::releaseDecoder(Decoder& decoder)
 {
     ASSERT(!decoder.decodedImageCallback);
-    dispatchToThread([this, decoderIdentifier = decoder.identifier] {
+    ensureGPUProcessConnectionAndDispatchToThread([this, decoderIdentifier = decoder.identifier] {
         ASSERT(m_decoders.contains(decoderIdentifier));
-        if (auto decoder = m_decoders.take(decoderIdentifier))
+        if (auto decoder = m_decoders.take(decoderIdentifier)) {
             decoder->connection->send(Messages::LibWebRTCCodecsProxy::ReleaseDecoder { decoderIdentifier }, 0);
+            gpuProcessConnectionMayNoLongerBeNeeded();
+        }
     });
     return 0;
 }
@@ -331,7 +376,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
     for (auto& keyValue : formatParameters)
         parameters.append(std::make_pair(String::fromUTF8(keyValue.first.data(), keyValue.first.length()), String::fromUTF8(keyValue.second.data(), keyValue.second.length())));
 
-    dispatchToThread([this, encoder = WTFMove(encoder), type, parameters = WTFMove(parameters)]() mutable {
+    ensureGPUProcessConnectionAndDispatchToThread([this, encoder = WTFMove(encoder), type, parameters = WTFMove(parameters)]() mutable {
         LockHolder holder(m_connectionLock);
         encoder->connection = m_connection;
         encoder->connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, formatNameFromCodecType(type), parameters, RuntimeEnabledFeatures::sharedFeatures().webRTCH264LowLatencyEncoderEnabled() }, 0);
@@ -347,17 +392,18 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
 int32_t LibWebRTCCodecs::releaseEncoder(Encoder& encoder)
 {
     ASSERT(!encoder.encodedImageCallback);
-    dispatchToThread([this, encoderIdentifier = encoder.identifier] {
+    ensureGPUProcessConnectionAndDispatchToThread([this, encoderIdentifier = encoder.identifier] {
         ASSERT(m_encoders.contains(encoderIdentifier));
         auto encoder = m_encoders.take(encoderIdentifier);
         encoder->connection->send(Messages::LibWebRTCCodecsProxy::ReleaseEncoder { encoderIdentifier }, 0);
+        gpuProcessConnectionMayNoLongerBeNeeded();
     });
     return 0;
 }
 
 int32_t LibWebRTCCodecs::initializeEncoder(Encoder& encoder, uint16_t width, uint16_t height, unsigned startBitRate, unsigned maxBitRate, unsigned minBitRate, uint32_t maxFrameRate)
 {
-    dispatchToThread([this, encoderIdentifier = encoder.identifier, width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate]() mutable {
+    ensureGPUProcessConnectionAndDispatchToThread([this, encoderIdentifier = encoder.identifier, width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate]() mutable {
         auto* encoder = m_encoders.get(encoderIdentifier);
         encoder->initializationData = EncoderInitializationData { width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate };
         encoder->connection->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoderIdentifier, width, height, startBitRate, maxBitRate, minBitRate, maxFrameRate }, 0);
@@ -460,15 +506,13 @@ void LibWebRTCCodecs::dispatchToThread(Function<void()>&& callback)
 
 void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
 {
-    auto& gpuConnection = WebProcess::singleton().ensureGPUProcessConnection();
-    gpuConnection.addClient(*this);
-    {
-        auto lock = holdLock(m_connectionLock);
-        m_connection->removeThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName());
-        m_connection = makeRef(gpuConnection.connection());
-        m_connection->addThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName(), this);
-    }
+    ASSERT(isMainRunLoop());
+    auto locker = holdLock(m_connectionLock);
+    std::exchange(m_connection, nullptr)->removeThreadMessageReceiver(Messages::LibWebRTCCodecs::messageReceiverName());
+    if (!m_needsGPUProcessConnection)
+        return;
 
+    ensureGPUProcessConnectionOnMainThread(locker);
     dispatchToThread([this]() {
         // Lock everything so that we can update encoder/decoder connection.
         LockHolder holder(m_connectionLock);

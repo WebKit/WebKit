@@ -52,7 +52,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/RenderedDocumentMarker.h>
-#import <WebCore/SelectionRect.h>
+#import <WebCore/SelectionGeometry.h>
 #import <WebCore/SimpleRange.h>
 #import <WebCore/TextBoundaries.h>
 #import <WebCore/TextFlags.h>
@@ -206,17 +206,17 @@ using namespace WebCore;
 
 - (NSArray *)selectionRectsForCoreRange:(const SimpleRange&)range
 {
-    return createNSArray(RenderObject::collectSelectionRects(range), [] (auto& coreRect) {
+    return createNSArray(RenderObject::collectSelectionGeometries(range), [] (auto& geometry) {
         auto webRect = [WebSelectionRect selectionRect];
-        webRect.rect = coreRect.rect();
-        webRect.writingDirection = coreRect.direction() == TextDirection::LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
-        webRect.isLineBreak = coreRect.isLineBreak();
-        webRect.isFirstOnLine = coreRect.isFirstOnLine();
-        webRect.isLastOnLine = coreRect.isLastOnLine();
-        webRect.containsStart = coreRect.containsStart();
-        webRect.containsEnd = coreRect.containsEnd();
-        webRect.isInFixedPosition = coreRect.isInFixedPosition();
-        webRect.isHorizontal = coreRect.isHorizontal();
+        webRect.rect = geometry.rect();
+        webRect.writingDirection = geometry.direction() == TextDirection::LTR ? WKWritingDirectionLeftToRight : WKWritingDirectionRightToLeft;
+        webRect.isLineBreak = geometry.isLineBreak();
+        webRect.isFirstOnLine = geometry.isFirstOnLine();
+        webRect.isLastOnLine = geometry.isLastOnLine();
+        webRect.containsStart = geometry.containsStart();
+        webRect.containsEnd = geometry.containsEnd();
+        webRect.isInFixedPosition = geometry.isInFixedPosition();
+        webRect.isHorizontal = geometry.isHorizontal();
         return webRect;
     }).autorelease();
 }

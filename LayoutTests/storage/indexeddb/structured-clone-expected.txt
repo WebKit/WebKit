@@ -951,6 +951,44 @@ PASS test_data.extractable is result.extractable
 PASS test_data.algorithm.toString() is result.algorithm.toString()
 PASS arrayCompare(test_data.usages, result.usages) is true
 
+Testing DOMException objects
+Testing: new DOMException()
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+Testing: new DOMException("message")
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+Testing: new DOMException("message", "name")
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+Testing: new DOMException("", "")
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS typeof result is "object"
+PASS Object.prototype.toString.call(result) is Object.prototype.toString.call(test_data)
+PASS test_data !== result is true
+PASS result.toString() is test_data.toString()
+
 Test types that can't be cloned:
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -961,11 +999,6 @@ PASS code is DOMException.DATA_CLONE_ERR
 Exception message: The object can not be cloned.
 Testing Function
 Expecting exception from store.put(new Function, 'key')
-PASS Exception was thrown.
-PASS code is DOMException.DATA_CLONE_ERR
-Exception message: The object can not be cloned.
-Testing DOMException
-Expecting exception from store.put(new DOMException, 'key')
 PASS Exception was thrown.
 PASS code is DOMException.DATA_CLONE_ERR
 Exception message: The object can not be cloned.

@@ -29,6 +29,7 @@
 
 #include "IntlObjectInlines.h"
 #include "IntlSegmentIterator.h"
+#include "IntlWorkaround.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include <unicode/ucurr.h>
@@ -100,7 +101,7 @@ JSObject* IntlSegments::createSegmentIterator(JSGlobalObject* globalObject)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     UErrorCode status = U_ZERO_ERROR;
-    auto segmenter = std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>(ubrk_safeClone(m_segmenter.get(), nullptr, nullptr, &status));
+    auto segmenter = std::unique_ptr<UBreakIterator, UBreakIteratorDeleter>(cloneUBreakIterator(m_segmenter.get(), &status));
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "failed to initialize SegmentIterator"_s);
         return nullptr;

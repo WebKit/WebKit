@@ -57,7 +57,7 @@ Exception Codes: 0x0000000000000002, 0x0000000000000000
 Crashed Thread:  0
 
 Dyld Error Message:
-  Library not loaded: /Volumes/Data/WebKit-BuildSlave/snowleopard-intel-release/build/WebKitBuild/Release/WebCore.framework/Versions/A/WebCore
+  Library not loaded: /Volumes/Data/WebKit-Worker/snowleopard-intel-release/build/WebKitBuild/Release/WebCore.framework/Versions/A/WebCore
   Referenced from: /Volumes/Data/worker/snowleopard-intel-release/build/WebKitBuild/Release/WebKit.framework/Versions/A/WebKit
   Reason: image not found
 

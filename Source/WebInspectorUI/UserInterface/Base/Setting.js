@@ -229,6 +229,7 @@ WI.settings = {
     experimentalEnableStylesJumpToEffective: new WI.Setting("experimental-styles-jump-to-effective", false),
     experimentalEnableStylesJumpToVariableDeclaration: new WI.Setting("experimental-styles-jump-to-variable-declaration", false),
     experimentalCollapseBlackboxedCallFrames: new WI.Setting("experimental-collapse-blackboxed-call-frames", false),
+    experimentalAllowInspectingInspector: new WI.Setting("experimental-allow-inspecting-inspector", false),
 
     // Protocol
     protocolLogAsText: new WI.Setting("protocol-log-as-text", false),

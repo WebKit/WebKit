@@ -46,7 +46,7 @@ public:
     void addProxy(RemoteAudioSessionProxy&);
     void removeProxy(RemoteAudioSessionProxy&);
 
-    void setCategoryForProcess(RemoteAudioSessionProxy&, WebCore::AudioSession::CategoryType, WebCore::RouteSharingPolicy);
+    void updateCategory();
     void setPreferredBufferSizeForProcess(RemoteAudioSessionProxy&, size_t);
 
     bool tryToSetActiveForProcess(RemoteAudioSessionProxy&, bool);

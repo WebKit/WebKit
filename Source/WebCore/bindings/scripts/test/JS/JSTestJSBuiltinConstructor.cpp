@@ -87,6 +87,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestJSBuiltinConstructorPrototype, JSTestJ
 
 using JSTestJSBuiltinConstructorDOMConstructor = JSDOMBuiltinConstructor<JSTestJSBuiltinConstructor>;
 
+template<> const ClassInfo JSTestJSBuiltinConstructorDOMConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorDOMConstructor) };
+
 template<> JSValue JSTestJSBuiltinConstructorDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -104,8 +106,6 @@ template<> FunctionExecutable* JSTestJSBuiltinConstructorDOMConstructor::initial
 {
     return testJSBuiltinConstructorInitializeTestJSBuiltinConstructorCodeGenerator(vm);
 }
-
-template<> const ClassInfo JSTestJSBuiltinConstructorDOMConstructor::s_info = { "TestJSBuiltinConstructor", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestJSBuiltinConstructorDOMConstructor) };
 
 /* Hash table for prototype */
 

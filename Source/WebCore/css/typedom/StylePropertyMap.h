@@ -28,9 +28,6 @@
 #if ENABLE(CSS_TYPED_OM)
 
 #include "StylePropertyMapReadOnly.h"
-#include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

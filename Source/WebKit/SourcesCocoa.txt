@@ -181,6 +181,7 @@ Shared/Cocoa/WKNSURLRequest.mm
 Shared/Cocoa/WKObject.mm
 Shared/Cocoa/WebPreferencesDefaultValuesCocoa.mm
 Shared/Cocoa/XRDeviceInfo.mm
+Shared/Cocoa/XRDeviceProxy.mm
 
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
@@ -395,6 +396,7 @@ UIProcess/Cocoa/MediaUtilities.mm
 UIProcess/Cocoa/MediaPermissionUtilities.mm
 UIProcess/Cocoa/NavigationState.mm
 UIProcess/Cocoa/PageClientImplCocoa.mm
+UIProcess/Cocoa/PlatformXRSystem.mm
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm
 UIProcess/Cocoa/ResourceLoadDelegate.mm
 UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm
@@ -520,6 +522,7 @@ UIProcess/mac/WebPopupMenuProxyMac.mm
 UIProcess/mac/WebProcessProxyMac.mm
 UIProcess/mac/WindowServerConnection.mm
 UIProcess/mac/WKFullScreenWindowController.mm
+UIProcess/mac/WKImageExtractionPreviewController.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WKPrintingView.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
@@ -586,6 +589,7 @@ WebProcess/ApplePay/WebPaymentCoordinator.cpp
 
 WebProcess/ApplePay/cocoa/WebPaymentCoordinatorCocoa.mm
 
+WebProcess/cocoa/PlatformXRSystemProxy.mm
 WebProcess/cocoa/PlaybackSessionManager.mm
 WebProcess/cocoa/RemoteCaptureSampleManager.cpp
 WebProcess/cocoa/RemoteRealtimeAudioSource.cpp
@@ -701,6 +705,8 @@ GPUProcessMessageReceiver.cpp
 LibWebRTCCodecsProxyMessageReceiver.cpp
 LibWebRTCCodecsMessageReceiver.cpp
 MessageNames.cpp
+PlatformXRSystemMessageReceiver.cpp
+PlatformXRSystemProxyMessageReceiver.cpp
 RemoteAudioDestinationManagerMessageReceiver.cpp
 RemoteAudioHardwareListenerMessageReceiver.cpp
 RemoteAudioSessionMessageReceiver.cpp

@@ -55,9 +55,10 @@ RemoteAudioHardwareListener::RemoteAudioHardwareListener(AudioHardwareListener::
 
 RemoteAudioHardwareListener::~RemoteAudioHardwareListener()
 {
-    auto& connection = WebProcess::singleton().ensureGPUProcessConnection();
-    connection.messageReceiverMap().removeMessageReceiver(*this);
-    connection.connection().send(Messages::GPUConnectionToWebProcess::ReleaseAudioHardwareListener(m_identifier), 0);
+    if (auto* connection = WebProcess::singleton().existingGPUProcessConnection()) {
+        connection->messageReceiverMap().removeMessageReceiver(*this);
+        connection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseAudioHardwareListener(m_identifier), 0);
+    }
 }
 
 void RemoteAudioHardwareListener::gpuProcessConnectionDidClose(GPUProcessConnection&)

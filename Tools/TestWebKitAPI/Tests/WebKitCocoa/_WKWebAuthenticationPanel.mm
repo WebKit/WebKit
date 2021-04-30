@@ -491,6 +491,7 @@ TEST(WebAuthenticationPanel, PanelHidSuccess2)
 
     // A bit of extra checks.
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get()], _WKWebAuthenticationTypeCreate);
+    EXPECT_WK_STREQ([delegate panel].userName, "John Appleseed");
 }
 
 #if HAVE(NEAR_FIELD)

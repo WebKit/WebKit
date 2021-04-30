@@ -144,6 +144,10 @@ typedef struct _AtkObject AtkObject;
 #include <WebCore/MediaSessionIdentifier.h>
 #endif
 
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#include "PlatformXRSystemProxy.h"
+#endif
+
 #if PLATFORM(COCOA)
 #include "DynamicViewportSizeUpdate.h"
 #include <WebCore/VisibleSelection.h>
@@ -199,7 +203,7 @@ class RenderImage;
 class ResourceRequest;
 class ResourceResponse;
 class SelectionData;
-class SelectionRect;
+class SelectionGeometry;
 class SharedBuffer;
 class SubstituteData;
 class TextCheckingRequest;
@@ -248,6 +252,7 @@ namespace WebKit {
 
 class DrawingArea;
 class FindController;
+class GPUProcessConnection;
 class GamepadData;
 class GeolocationPermissionRequestManager;
 class LayerHostingContext;
@@ -628,12 +633,12 @@ public:
     void updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor);
 #endif
 
+    void didUpdateRendering();
+
 #if PLATFORM(MAC)
     void setTopOverhangImage(WebImage*);
     void setBottomOverhangImage(WebImage*);
 
-    void didUpdateRendering();
-    
     void setUseSystemAppearance(bool);
 
     void didEndMagnificationGesture();
@@ -776,8 +781,8 @@ public:
     void updateSelectionAppearance();
     void getSelectionContext(CompletionHandler<void(const String&, const String&, const String&)>&&);
     void handleTwoFingerTapAtPoint(const WebCore::IntPoint&, OptionSet<WebKit::WebEvent::Modifier>, uint64_t requestID);
-    void getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, int32_t, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&&);
-    void getRectsAtSelectionOffsetWithText(int32_t, const String&, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&&);
+    void getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, int32_t, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&&);
+    void getRectsAtSelectionOffsetWithText(int32_t, const String&, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&&);
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint&);
     void cancelAutoscroll();
@@ -1386,6 +1391,10 @@ public:
     void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool)>&&);
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+    void handleContextMenuTranslation(const String& text, const WebCore::IntRect& selectionBoundsInView, const WebCore::IntPoint& menuLocationInView);
+#endif
+
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&);
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -1399,6 +1408,7 @@ public:
     void synchronizeCORSDisablingPatternsWithNetworkProcess();
 
 #if ENABLE(GPU_PROCESS)
+    void gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection&);
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
 #endif
 
@@ -1407,7 +1417,7 @@ public:
     WebCore::HighlightRequestOriginatedInApp highlightRequestOriginatedInApp() const { return m_highlightRequestOriginatedInApp; }
 
     bool createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
-    void restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&&);
+    void restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IPCHandle>&&, const Optional<unsigned> index);
 #endif
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
@@ -1428,7 +1438,11 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     void textAutosizingUsesIdempotentModeChanged();
 #endif
-    
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    PlatformXRSystemProxy& xrSystemProxy();
+#endif
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -1781,7 +1795,7 @@ private:
     void setShouldDispatchFakeMouseMoveEvents(bool dispatch) { m_shouldDispatchFakeMouseMoveEvents = dispatch; }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
-    void playbackTargetSelected(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::MediaPlaybackTargetContext& outputDevice) const;
+    void playbackTargetSelected(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaPlaybackTargetContext&&) const;
     void playbackTargetAvailabilityDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool);
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool);
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier);
@@ -2286,9 +2300,7 @@ private:
 
     bool m_canUseCredentialStorage { true };
 
-#if PLATFORM(MAC)
     bool m_didUpdateRenderingAfterCommittingLoad { false };
-#endif
 
     Vector<String> m_corsDisablingPatterns;
 
@@ -2309,6 +2321,10 @@ private:
 #if ENABLE(IMAGE_EXTRACTION)
     Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingImageExtraction;
     WeakHashSet<WebCore::HTMLElement> m_elementsWithExtractedImages;
+#endif
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    std::unique_ptr<PlatformXRSystemProxy> m_xrSystemProxy;
 #endif
 };
 

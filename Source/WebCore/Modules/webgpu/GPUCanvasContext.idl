@@ -28,7 +28,7 @@ typedef unsigned long GPUTextureUsageFlags;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementedAs=WebGPUSwapChainDescriptor
 ] dictionary WebGPUSwapChainDescriptor {
     required WebGPUDevice device;
@@ -39,7 +39,7 @@ typedef unsigned long GPUTextureUsageFlags;
 [
     ActiveDOMObject,
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     GenerateIsReachable=ImplCanvasBase,
     Exposed=Window
 ] interface GPUCanvasContext {

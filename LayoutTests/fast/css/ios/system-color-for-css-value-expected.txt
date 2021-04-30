@@ -35,6 +35,14 @@ PASS internals.systemColorForCSSValue('-apple-system-pink', true, false) is 'rgb
 PASS internals.systemColorForCSSValue('-apple-system-purple', true, false) is 'rgb(191, 90, 242)'
 PASS internals.systemColorForCSSValue('-apple-system-red', true, false) is 'rgb(255, 69, 58)'
 PASS internals.systemColorForCSSValue('-apple-system-yellow', true, false) is 'rgb(255, 214, 10)'
+PASS internals.systemColorForCSSValue('-apple-system-opaque-fill', true, false) is 'rgb(43, 43, 46)'
+PASS internals.systemColorForCSSValue('-apple-system-opaque-fill', false, false) is 'rgb(228, 228, 229)'
+PASS internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill', true, false) is 'rgb(38, 38, 41)'
+PASS internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill', false, false) is 'rgb(233, 233, 234)'
+PASS internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill-disabled', true, false) is 'rgb(29, 29, 31)'
+PASS internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill-disabled', false, false) is 'rgb(238, 238, 239)'
+PASS internals.systemColorForCSSValue('-apple-system-opaque-tertiary-fill', true, false) is 'rgb(28, 28, 30)'
+PASS internals.systemColorForCSSValue('-apple-system-opaque-tertiary-fill', false, false) is 'rgb(238, 238, 239)'
 PASS successfullyParsed is true
 
 TEST COMPLETE

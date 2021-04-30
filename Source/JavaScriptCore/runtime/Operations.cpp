@@ -34,7 +34,6 @@ bool JSValue::equalSlowCase(JSGlobalObject* globalObject, JSValue v1, JSValue v2
 
 NEVER_INLINE JSValue jsAddSlowCase(JSGlobalObject* globalObject, JSValue v1, JSValue v2)
 {
-    // exception for the Date exception in defaultValue()
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue p1 = v1.toPrimitive(globalObject);

@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 <html>
+<style>
+  canvas, svg {
+    image-rendering: pixelated;
+  }
+</style>
 <body>
   <canvas id="canvas"></canvas>
-  <script>
+  <script>  
+    if (window.testRunner)
+      testRunner.waitUntilDone();
+
     var canvas = document.getElementById("canvas");
     canvas.width  = 150;
     canvas.height = 150;
@@ -15,7 +23,9 @@
     var svgImage = new Image();
     svgImage.onload = function() {
       context.globalAlpha = 0.2;
-	  context.drawImage(svgImage, 25, 25);
+      context.drawImage(svgImage, 25, 25);
+      if (window.testRunner)
+        testRunner.notifyDone();
     };
     
     svgImage.src = "data:image/svg+xml, \

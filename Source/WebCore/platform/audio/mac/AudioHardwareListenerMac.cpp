@@ -41,7 +41,9 @@ static AudioHardwareActivityType isAudioHardwareProcessRunning()
     AudioObjectPropertyAddress propertyAddress = {
         kAudioHardwarePropertyProcessIsRunning,
         kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
     };
     
     if (!AudioObjectHasProperty(kAudioObjectSystemObject, &propertyAddress))
@@ -66,7 +68,10 @@ static AudioHardwareListener::BufferSizeRange currentDeviceSupportedBufferSizes(
     AudioObjectPropertyAddress defaultOutputDeviceDescriptor = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
-        kAudioObjectPropertyElementMaster };
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
+    };
 
     if (AudioObjectGetPropertyData(kAudioObjectSystemObject, &defaultOutputDeviceDescriptor, 0, 0, &descriptorSize, (void*)&deviceID))
         return { };
@@ -77,7 +82,9 @@ static AudioHardwareListener::BufferSizeRange currentDeviceSupportedBufferSizes(
     AudioObjectPropertyAddress bufferSizeDescriptor = {
         kAudioDevicePropertyBufferFrameSizeRange,
         kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster,
+        ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     if (AudioObjectGetPropertyData(deviceID, &bufferSizeDescriptor, 0, 0, &descriptorSize, &bufferSizes))
@@ -92,7 +99,9 @@ static const AudioObjectPropertyAddress& processIsRunningPropertyDescriptor()
     static const AudioObjectPropertyAddress processIsRunningProperty = {
         kAudioHardwarePropertyProcessIsRunning,
         kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     return processIsRunningProperty;
@@ -103,7 +112,9 @@ static const AudioObjectPropertyAddress& outputDevicePropertyDescriptor()
     static const AudioObjectPropertyAddress outputDeviceProperty = {
         kAudioHardwarePropertyDefaultOutputDevice,
         kAudioObjectPropertyScopeGlobal,
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         kAudioObjectPropertyElementMaster
+        ALLOW_DEPRECATED_DECLARATIONS_END
     };
 
     return outputDeviceProperty;

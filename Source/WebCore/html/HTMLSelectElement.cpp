@@ -655,6 +655,7 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
             downcast<HTMLOptionElement>(element).setSelectedState(m_cachedStateForActiveSelection[i]);
     }
 
+    invalidateSelectedItems();
     scrollToSelection();
     updateValidity();
 }
@@ -881,6 +882,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
         downcast<HTMLOptionElement>(*element).setSelectedState(true);
     }
 
+    invalidateSelectedItems();
     updateValidity();
 
     // For the menu list case, this is what makes the selected element appear.
@@ -962,6 +964,7 @@ void HTMLSelectElement::deselectItemsWithoutValidation(HTMLElement* excludeEleme
         if (element != excludeElement && is<HTMLOptionElement>(*element))
             downcast<HTMLOptionElement>(*element).setSelectedState(false);
     }
+    invalidateSelectedItems();
 }
 
 FormControlState HTMLSelectElement::saveFormControlState() const
@@ -1027,6 +1030,7 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
         }
     }
 
+    invalidateSelectedItems();
     setOptionsChangedOnRenderer();
     updateValidity();
 }
@@ -1085,6 +1089,7 @@ void HTMLSelectElement::reset()
     if (!selectedOption && firstOption && !m_multiple && m_size <= 1)
         firstOption->setSelectedState(true);
 
+    invalidateSelectedItems();
     setOptionsChangedOnRenderer();
     invalidateStyleForSubtree();
     updateValidity();
@@ -1321,6 +1326,7 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
     if (m_activeSelectionAnchorIndex < 0 || !shiftSelect)
         setActiveSelectionAnchorIndex(listIndex);
 
+    invalidateSelectedItems();
     setActiveSelectionEndIndex(listIndex);
     updateListBoxSelection(!multiSelect);
 }

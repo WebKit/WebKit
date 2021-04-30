@@ -107,4 +107,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #endif
     SetResourceLoadSchedulingMode(WebCore::PageIdentifier webPageID, enum:uint8_t WebCore::LoadSchedulingMode mode)
     PrioritizeResourceLoads(Vector<uint64_t> loadIdentifiers)
+
+    AddIDBConnection()
 }

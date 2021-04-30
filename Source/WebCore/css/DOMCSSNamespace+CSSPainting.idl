@@ -28,6 +28,6 @@
     EnabledAtRuntime=CSSPaintingAPI,
     Conditional=CSS_PAINTING_API,
     ImplementedBy=DOMCSSPaintWorklet
-] partial interface DOMCSSNamespace {
-    [ImplementedAs=ensurePaintWorklet, CallWith=Document] static readonly attribute Worklet paintWorklet;
+] partial namespace DOMCSSNamespace {
+    [ImplementedAs=ensurePaintWorklet, CallWith=Document] readonly attribute Worklet paintWorklet;
 };

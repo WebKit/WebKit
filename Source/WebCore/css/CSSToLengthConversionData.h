@@ -41,13 +41,13 @@ class RenderView;
 
 class CSSToLengthConversionData {
 public:
-    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, float zoom, Optional<CSSPropertyID> propertyToCompute = WTF::nullopt)
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, float zoom, Optional<CSSPropertyID> propertyToCompute = WTF::nullopt, RenderStyle* viewportDependencyDetectionStyle = nullptr)
         : m_style(style)
         , m_rootStyle(rootStyle)
         , m_parentStyle(parentStyle)
+        , m_viewportDependencyDetectionStyle(viewportDependencyDetectionStyle ? viewportDependencyDetectionStyle : const_cast<RenderStyle*>(style))
         , m_renderView(renderView)
         , m_zoom(zoom)
-        , m_useEffectiveZoom(false)
         , m_propertyToCompute(propertyToCompute)
     {
         ASSERT(zoom > 0);
@@ -57,17 +57,13 @@ public:
         : m_style(style)
         , m_rootStyle(rootStyle)
         , m_parentStyle(parentStyle)
+        , m_viewportDependencyDetectionStyle(const_cast<RenderStyle*>(style))
         , m_renderView(renderView)
-        , m_zoom(1)
-        , m_useEffectiveZoom(true)
         , m_propertyToCompute(propertyToCompute)
     {
     }
 
-    CSSToLengthConversionData()
-        : CSSToLengthConversionData(nullptr, nullptr, nullptr, nullptr)
-    {
-    }
+    CSSToLengthConversionData() = default;
 
     const RenderStyle* style() const { return m_style; }
     const RenderStyle* rootStyle() const { return m_rootStyle; }
@@ -94,12 +90,12 @@ public:
     }
 
 private:
-    const RenderStyle* m_style;
-    const RenderStyle* m_rootStyle;
-    const RenderStyle* m_parentStyle;
-    const RenderView* m_renderView;
-    float m_zoom;
-    bool m_useEffectiveZoom;
+    const RenderStyle* m_style { nullptr };
+    const RenderStyle* m_rootStyle { nullptr };
+    const RenderStyle* m_parentStyle { nullptr };
+    RenderStyle* m_viewportDependencyDetectionStyle { nullptr };
+    const RenderView* m_renderView { nullptr };
+    Optional<float> m_zoom;
     Optional<CSSPropertyID> m_propertyToCompute;
 };
 

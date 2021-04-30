@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+    }
+    window.addEventListener('load', function() {
+        setTimeout(function () {
+            testRunner.notifyDone();
+        }, 1000);
+        document.getElementById('submit').click();
+    });
+</script>
+</head>
+<body>
+    <form id='theform' method='post' action='http://127.0.0.1:6000' enctype="multipart/form-data">
+        <label for="fieldname">Test Data:</label>
+        <input type='text' name='fieldname' value='fieldvalue'>
+        <input type='submit' id='submit' value='submit'>
+    </form>
+
+    <p>
+    Tests that blocking form actions to restricted ports works correctly. If this test passes, you will see a console error, and will not see a page indicating a form was POSTed.
+    </p>
+</body>
+</html>

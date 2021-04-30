@@ -1,3 +1,234 @@
+2021-04-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Don't use FORWARDING_HEADERS_DIR for GTK WebKit headers
+        https://bugs.webkit.org/show_bug.cgi?id=225006
+
+        Reviewed by Michael Catanzaro.
+
+        Create CMake variables WebKit2Gtk_FRAMEWORK_HEADERS_DIR and WebKit2Gtk_DERIVED_SOURCES_DIR
+        to represent where the WebKit2 GTK headers and derived sources will reside. The names and
+        locations set then follow along with the conventions used for the other frameworks.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-04-26  Alex Christensen  <achristensen@webkit.org>
+
+        Update Mac-specific CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=225064
+
+        Rubber-stamped by Tim Horton.
+
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/WebKitCommon.cmake:
+
+2021-04-26  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Fix build break after r276368
+        https://bugs.webkit.org/show_bug.cgi?id=225056
+
+        Reviewed by Ross Kirsling.
+
+        Ensure that the OpenGL::GLES target is created.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
+2021-04-22  Martin Robinson  <mrobinson@webkit.org>
+
+        [GTK] Turn on editable <input type=date> and <input type=time> fields
+        https://bugs.webkit.org/show_bug.cgi?id=224921
+
+        Reviewed by Carlos Garcia Campos.
+
+        Turn on editable date and time inputs for GTK
+
+        * Source/cmake/OptionsGTK.cmake: Add new source file to the list.
+
+2021-04-22  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR Input Sources
+        https://bugs.webkit.org/show_bug.cgi?id=223257
+
+        Reviewed by Youenn Fablet.
+
+        Enable WPE Gamepad when WebXR is enabled.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Add support for preconnect
+        https://bugs.webkit.org/show_bug.cgi?id=177934
+
+        Reviewed by Sergio Villar Senin.
+
+        Enable server preconnect support when building with libsoup3.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Bump libsoup3 version to 2.99.4
+        https://bugs.webkit.org/show_bug.cgi?id=224925
+
+        Reviewed by Philippe Normand.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-04-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Enable CSS Scroll Snap by default
+        https://bugs.webkit.org/show_bug.cgi?id=224867
+
+        Reviewed by Don Olmstead.
+
+        * Source/cmake/OptionsFTW.cmake: Remove redundant line enabling scroll snap.
+        * Source/cmake/OptionsGTK.cmake: Ditto.
+        * Source/cmake/OptionsMac.cmake: Ditto.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+        * Source/cmake/OptionsWin.cmake: Explicitly disable scroll snap for AppleWin port
+        until it can be approved by maintainers.
+        * Source/cmake/WebKitFeatures.cmake: Enable scroll snap by default.
+
+2021-04-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add OpenGLES2 targets
+        https://bugs.webkit.org/show_bug.cgi?id=224786
+
+        Reviewed by Adrian Perez de Castro.
+
+        Modernize the FindOpenGLES2.cmake module. Add an OpenGL::GLES target. Also add an
+        OpenGLES2_API_VERSION value so HAVE_OPENGL_ES_3 can be determined.
+
+        For WPE add a find_package for OpenGL ES so the target is present.
+
+        For GTK set HAVE_OPENGL_ES_3 if OpenGLES2_API_VERSION supports it.
+
+        * Source/cmake/FindOpenGLES2.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-04-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers
+        https://bugs.webkit.org/show_bug.cgi?id=224821
+
+        Reviewed by Michael Catanzaro.
+
+        Create CMake variables JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR and
+        JavaScriptCoreGLib_DERIVED_SOURCES_DIR to represent where the JavaScriptCore GLib headers
+        and derived sources will reside. The names and locations set then follow along with the
+        conventions used for the other frameworks.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-04-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WPE] Switch to libsoup3 by default
+        https://bugs.webkit.org/show_bug.cgi?id=224802
+
+        Reviewed by Žan Doberšek.
+
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-04-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Switch to libsoup3 by default
+        https://bugs.webkit.org/show_bug.cgi?id=224741
+
+        Reviewed by Sergio Villar Senin.
+
+        * Source/cmake/OptionsGTK.cmake:
+
+2021-04-19  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE][GTK] Enable AVIF decoder as experimental feature and unskip tests
+        https://bugs.webkit.org/show_bug.cgi?id=224663
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Make the USE_AVIF option public and enable it as experimental feature.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
+2021-04-16  Philippe Normand  <pnormand@igalia.com>
+
+        [CMake] UBSan build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=224536
+
+        Reviewed by Adrian Perez de Castro.
+
+        Synchronize UBSan compiler flags with the ones defined in ubsan.xcconfig.
+
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
+2021-04-15  Don Olmstead  <don.olmstead@sony.com>
+
+        ANGLE is only being built when WebGL is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224555
+
+        Reviewed by Fujii Hironori.
+
+        ANGLE should be built if either USE_ANGLE_EGL or ENABLE_WEBGL is ON.
+
+        * Source/CMakeLists.txt:
+
+2021-04-15  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        Remove warnings caused by export g_config extern definition in WTFConfig.h
+        https://bugs.webkit.org/show_bug.cgi?id=224462
+
+        Reviewed by Don Olmstead.
+
+        While building PlayStation port, lots of warnings are displayed:
+
+        > WTF/Headers\wtf/WTFConfig.h:49:36: warning: redeclaration of 'WebConfig::g_config'
+        > should not add 'dllimport' attribute [-Wdll-attribute-on-redeclaration]
+        > extern "C" WTF_EXPORT_PRIVATE Slot g_config[];
+        >                                    ^
+        > bmalloc/Headers\bmalloc/GigacageConfig.h:38:17: note: previous declaration is here
+        > extern "C" Slot g_config[];
+
+        This is because the two definitions are not same.
+        Becasue we can't solve the situation completely, we just ignore these warnings at
+        this morment.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
+2021-04-15  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system
+        https://bugs.webkit.org/show_bug.cgi?id=202538
+        <rdar://problem/76047172>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/GStreamerChecks.cmake:
+
+2021-04-14  Don Olmstead  <don.olmstead@sony.com>
+
+        [PlayStation] Disable WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=224562
+
+        Reviewed by Alex Christensen.
+
+        WebGL support on PlayStation platforms is deprecated.
+
+        * Source/cmake/OptionsPlayStation.cmake:
+
+2021-04-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK][WPE] Avif decoder build broken
+        https://bugs.webkit.org/show_bug.cgi?id=224232
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/cmake/OptionsGTK.cmake: Require 0.9.0 due to avifIO usage in the decoder.
+
 2021-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.3

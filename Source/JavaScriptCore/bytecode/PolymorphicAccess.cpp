@@ -377,6 +377,20 @@ void PolymorphicAccess::visitAggregateImpl(Visitor& visitor)
 
 DEFINE_VISIT_AGGREGATE(PolymorphicAccess);
 
+size_t PolymorphicAccess::extraMemoryInBytes() const
+{
+    size_t size = 0;
+    size += m_list.sizeInBytes();
+    // FIXME: Account for the size of the various access cases.
+    size += m_list.size() * sizeof(AccessCase);
+    if (m_stubRoutine)
+        size += sizeof(JITStubRoutine) + m_stubRoutine->code().size();
+    if (m_watchpoints)
+        size += sizeof(WatchpointsOnStructureStubInfo) + m_watchpoints->extraMemoryInBytes();
+    size += m_weakReferences.byteSize();
+    return size;
+}
+
 void PolymorphicAccess::dump(PrintStream& out) const
 {
     out.print(RawPointer(this), ":[");

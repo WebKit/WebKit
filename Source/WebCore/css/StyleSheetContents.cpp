@@ -444,6 +444,7 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
         case StyleRuleType::Namespace:
         case StyleRuleType::Unknown:
         case StyleRuleType::Charset:
+        case StyleRuleType::CounterStyle:
         case StyleRuleType::Keyframe:
         case StyleRuleType::Supports:
             break;
@@ -478,6 +479,8 @@ bool StyleSheetContents::traverseSubresources(const WTF::Function<bool (const Ca
             if (auto* cachedResource = downcast<StyleRuleImport>(rule).cachedCSSStyleSheet())
                 return handler(*cachedResource);
             return false;
+        case StyleRuleType::CounterStyle:
+            return m_parserContext.counterStyleAtRuleImageSymbolsEnabled;
         case StyleRuleType::Media:
         case StyleRuleType::Page:
         case StyleRuleType::Keyframes:

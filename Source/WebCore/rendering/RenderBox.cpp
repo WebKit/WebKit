@@ -722,7 +722,7 @@ RoundedRect RenderBox::roundedBorderBoxRect() const
 LayoutRect RenderBox::paddingBoxRect() const
 {
     auto verticalScrollbarWidth = this->verticalScrollbarWidth();
-    LayoutUnit offsetForScrollbar = shouldPlaceBlockDirectionScrollbarOnLeft() ? verticalScrollbarWidth : 0;
+    LayoutUnit offsetForScrollbar = shouldPlaceVerticalScrollbarOnLeft() ? verticalScrollbarWidth : 0;
 
     return LayoutRect(borderLeft() + offsetForScrollbar, borderTop(),
         width() - borderLeft() - borderRight() - verticalScrollbarWidth,
@@ -736,7 +736,7 @@ LayoutRect RenderBox::contentBoxRect() const
 
 LayoutPoint RenderBox::contentBoxLocation() const
 {
-    LayoutUnit scrollbarSpace = shouldPlaceBlockDirectionScrollbarOnLeft() ? verticalScrollbarWidth() : 0;
+    LayoutUnit scrollbarSpace = shouldPlaceVerticalScrollbarOnLeft() ? verticalScrollbarWidth() : 0;
     return { borderLeft() + paddingLeft() + scrollbarSpace, borderTop() + paddingTop() };
 }
 
@@ -1964,7 +1964,7 @@ LayoutRect RenderBox::overflowClipRect(const LayoutPoint& location, RenderFragme
 
     // Subtract out scrollbars if we have them.
     if (auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr) {
-        if (shouldPlaceBlockDirectionScrollbarOnLeft())
+        if (shouldPlaceVerticalScrollbarOnLeft())
             clipRect.move(scrollableArea->verticalScrollbarWidth(relevancy), 0);
         clipRect.contract(scrollableArea->verticalScrollbarWidth(relevancy), scrollableArea->horizontalScrollbarHeight(relevancy));
     }
@@ -2044,10 +2044,8 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
-    if (hasOverridingContainingBlockContentLogicalWidth()) {
-        if (auto width = overridingContainingBlockContentLogicalWidth())
-            return width.value();
-    }
+    if (hasOverridingContainingBlockContentLogicalWidth())
+        return overridingContainingBlockContentLogicalWidth().valueOr(0_lu);
 
     if (RenderBlock* cb = containingBlock())
         return cb->availableLogicalWidth();
@@ -2057,6 +2055,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHeightType heightType) const
 {
     if (hasOverridingContainingBlockContentLogicalHeight()) {
+        // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
+        // height value we get from overridingContainingBlockContentLogicalHeight() here, including WTF::nullopt.
         if (auto height = overridingContainingBlockContentLogicalHeight())
             return height.value();
     }
@@ -3102,7 +3102,7 @@ static bool tableCellShouldHaveZeroInitialSize(const RenderBlock& block, const R
     return scrollsOverflowY && !child.shouldTreatChildAsReplacedInTableCells() && (!cell.style().logicalHeight().isAuto() || !cell.table()->style().logicalHeight().isAuto());
 }
 
-Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& height) const
+Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants updateDescendants) const
 {
     Optional<LayoutUnit> availableHeight;
 
@@ -3118,12 +3118,16 @@ Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& hei
         containingBlockChild = cb;
         cb = cb->containingBlock();
     }
-    cb->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+    if (updateDescendants == UpdatePercentageHeightDescendants::Yes)
+        cb->addPercentHeightDescendant(const_cast<RenderBox&>(*this));
 
-    if (isHorizontal != cb->isHorizontalWritingMode())
-        availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();
-    else if (hasOverridingContainingBlockContentLogicalHeight())
+    bool isOrthogonal = isHorizontal != cb->isHorizontalWritingMode();
+    if (hasOverridingContainingBlockContentLogicalWidth() && isOrthogonal)
+        availableHeight = overridingContainingBlockContentLogicalWidth();
+    else if (hasOverridingContainingBlockContentLogicalHeight() && !isOrthogonal)
         availableHeight = overridingContainingBlockContentLogicalHeight();
+    else if (isOrthogonal)
+        availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();
     else if (is<RenderTableCell>(*cb)) {
         if (!skippedAutoHeightContainingBlock) {
             // Table cells violate what the CSS spec says to do with heights. Basically we
@@ -3758,7 +3762,7 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
     computedValues.m_extent += bordersPlusPadding;
     if (is<RenderBox>(containerBlock)) {
         auto& containingBox = downcast<RenderBox>(containerBlock);
-        if (containingBox.shouldPlaceBlockDirectionScrollbarOnLeft())
+        if (containingBox.shouldPlaceVerticalScrollbarOnLeft() && isHorizontalWritingMode())
             computedValues.m_position += containingBox.verticalScrollbarWidth();
     }
     
@@ -4677,7 +4681,7 @@ bool RenderBox::createsNewFormattingContext() const
 {
     return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasOverflowClip() || isFlexItemIncludingDeprecated()
         || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isRenderFragmentContainer()
-        || isGridItem() || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot;
+        || style().containsLayout() || isGridItem() || style().specifiesColumns() || style().columnSpan() == ColumnSpan::All || style().display() == DisplayType::FlowRoot;
 }
 
 bool RenderBox::avoidsFloats() const
@@ -4924,7 +4928,7 @@ LayoutRect RenderBox::layoutOverflowRectForPropagation(const RenderStyle* parent
 {
     // Only propagate interior layout overflow if we don't clip it.
     LayoutRect rect = borderBoxRect();
-    if (!hasOverflowClip())
+    if (!shouldApplyLayoutContainment(*this) && !hasOverflowClip())
         rect.unite(layoutOverflowRect());
 
     bool hasTransform = this->hasTransform();
@@ -4979,7 +4983,7 @@ LayoutRect RenderBox::flippedClientBoxRect() const
     flipForWritingMode(rect);
     // Subtract space occupied by scrollbars. They are at their physical edge in this coordinate
     // system, so order is important here: first flip, then subtract scrollbars.
-    if (shouldPlaceBlockDirectionScrollbarOnLeft())
+    if (shouldPlaceVerticalScrollbarOnLeft() && isHorizontalWritingMode())
         rect.move(verticalScrollbarWidth(), 0);
     rect.contract(verticalScrollbarWidth(), horizontalScrollbarHeight());
     return rect;

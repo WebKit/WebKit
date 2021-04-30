@@ -77,6 +77,8 @@ public:
     void storeAppHighlight(const WebCore::AppHighlight&) final;
 #endif
 
+    void microphoneCaptureWillChange() final;
+    void cameraCaptureWillChange() final;
     void microphoneCaptureChanged() final;
     void cameraCaptureChanged() final;
 

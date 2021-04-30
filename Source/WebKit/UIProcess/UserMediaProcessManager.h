@@ -23,13 +23,15 @@
 #include "UserMediaPermissionRequestManagerProxy.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/PageIdentifier.h>
-#include <wtf/RunLoop.h>
+#include <WebCore/RealtimeMediaSourceCenter.h>
+#include <WebCore/UserMediaClient.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class WebProcessProxy;
 
-class UserMediaProcessManager {
+class UserMediaProcessManager : public WebCore::RealtimeMediaSourceCenter::Observer {
 public:
 
     static UserMediaProcessManager& singleton();
@@ -48,12 +50,14 @@ public:
     void beginMonitoringCaptureDevices();
 
 private:
-    enum class ShouldNotify { Yes, No };
+    enum class ShouldNotify : bool { No, Yes };
     void updateCaptureDevices(ShouldNotify);
     void captureDevicesChanged();
 
+    // RealtimeMediaSourceCenter::Observer
+    void devicesChanged() final;
+
     Vector<WebCore::CaptureDevice> m_captureDevices;
-    RunLoop::Timer<UserMediaProcessManager> m_debounceTimer;
     bool m_captureEnabled { true };
     bool m_denyNextRequest { false };
 };

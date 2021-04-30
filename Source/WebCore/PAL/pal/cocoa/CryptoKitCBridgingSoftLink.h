@@ -27,7 +27,7 @@
 
 #if HAVE(RSA_BSSA)
 
-#import <CryptoKitCBridging/RSABSSA.h>
+#import <pal/spi/cocoa/CryptoKitCBridgingSPI.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CryptoKitCBridging);

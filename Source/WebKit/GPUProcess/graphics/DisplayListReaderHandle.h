@@ -34,9 +34,11 @@ namespace WebKit {
 class DisplayListReaderHandle : public SharedDisplayListHandle {
     WTF_MAKE_NONCOPYABLE(DisplayListReaderHandle); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<DisplayListReaderHandle> create(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
+    static RefPtr<DisplayListReaderHandle> create(WebCore::DisplayList::ItemBufferIdentifier identifier, Ref<SharedMemory>&& sharedMemory)
     {
-        return adoptRef(*new DisplayListReaderHandle(identifier, WTFMove(sharedMemory)));
+        if (sharedMemory->size() <= headerSize())
+            return nullptr;
+        return adoptRef(new DisplayListReaderHandle(identifier, WTFMove(sharedMemory)));
     }
 
     Optional<size_t> advance(size_t amount);

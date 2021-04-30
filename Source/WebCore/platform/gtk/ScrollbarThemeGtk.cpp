@@ -142,7 +142,7 @@ static GtkStateFlags scrollbarPartStateFlags(Scrollbar& scrollbar, ScrollbarPart
 static RenderThemeScrollbar::Type widgetTypeForScrollbar(Scrollbar& scrollbar, GtkStateFlags scrollbarState)
 {
     if (scrollbar.orientation() == VerticalScrollbar) {
-        if (scrollbar.scrollableArea().shouldPlaceBlockDirectionScrollbarOnLeft())
+        if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
             return scrollbarState & GTK_STATE_FLAG_PRELIGHT ? RenderThemeScrollbar::Type::VerticalScrollbarLeft : RenderThemeScrollbar::Type::VerticalScrollIndicatorLeft;
         return scrollbarState & GTK_STATE_FLAG_PRELIGHT ? RenderThemeScrollbar::Type::VerticalScrollbarRight : RenderThemeScrollbar::Type::VerticalScrollIndicatorRight;
     }
@@ -380,7 +380,7 @@ bool ScrollbarThemeGtk::paint(Scrollbar& scrollbar, GraphicsContext& graphicsCon
     // drawing the indicator we need to adjust the rectangle to its actual size in indicator mode.
     if (scrollbar.orientation() == VerticalScrollbar) {
         if (rect.width() != preferredSize.width()) {
-            if (!scrollbar.scrollableArea().shouldPlaceBlockDirectionScrollbarOnLeft())
+            if (!scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
                 contentsRect.move(std::abs(rect.width() - preferredSize.width()), 0);
             contentsRect.setWidth(preferredSize.width());
         }

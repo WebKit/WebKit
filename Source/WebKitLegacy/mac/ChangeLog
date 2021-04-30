@@ -1,3 +1,224 @@
+2021-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r275912.
+        rdar://77179042
+
+        Broke internal client
+
+        Reverted changeset:
+
+        "Remove support for NPAPI plugins in WebView"
+        https://bugs.webkit.org/show_bug.cgi?id=224449
+        https://commits.webkit.org/r275912
+
+2021-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Improve our constructDeletedValue() template specializations
+        https://bugs.webkit.org/show_bug.cgi?id=224889
+
+        Reviewed by Darin Adler.
+
+        Improve our constructDeletedValue() template specializations and make them more consistent:
+        - Use placement-new instead of object assignment since we don't want/need to destroy the
+          existing object (since it is uninitialized).
+        - Do as little initialization as possible for performance reasons.
+
+        * History/BinaryPropertyList.cpp:
+        (IntegerArray::integers const):
+        (IntegerArray::size const):
+        (IntegerArrayHashTraits::constructDeletedValue):
+        (IntegerArrayHashTraits::isDeletedValue):
+        (IntegerArray::markDeleted): Deleted.
+        (IntegerArray::isDeletedValue const): Deleted.
+        (IntegerArray::deletedValueSize): Deleted.
+
+2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
+        https://bugs.webkit.org/show_bug.cgi?id=221614
+        <rdar://problem/74396781>
+
+        Reviewed by David Kilzer.
+
+        Add -Wthread-safety to compile flags.
+
+        * Configurations/Base.xcconfig:
+
+2021-04-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Add some support for webpage translation in WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=224683
+        <rdar://problem/75641882>
+
+        Reviewed by Darin Adler.
+
+        Add support for the webpage translation context menu item in WebKitLegacy. See below for more details.
+
+        * WebView/WebHTMLView.mm:
+        (toAction):
+        (toTag):
+
+        Introduce the `WebMenuItemTagTranslate` enum value, and use it as the tag value when creating an `NSMenuItem`
+        for the Translate action.
+
+        (createMenuItem):
+        * WebView/WebUIDelegatePrivate.h:
+
+        Unfortunately, in order to support a particular internal client of WebKitLegacy, we need to expose
+        `WebMenuItemTagTranslate` as an enum value in this existing enumeration of context menu item tags. This is
+        because the client's implementation of `-webView:contextMenuItemsForElement:defaultMenuItems:` rejects context
+        menu items by default, unless the item tag is within the set of item tags that they support.
+
+        This client will need to add the enum value of `WebMenuItemTagTranslate` into their allow-list.
+
+        * WebView/WebView.mm:
+        (+[WebView _canHandleContextMenuTranslation]):
+
+        Softlink against and check with `TranslationUIServices` to see if we should be showing the Translate menu item.
+
+        (-[WebView _handleContextMenuTranslation:selectionBounds:menuLocation:]):
+
+        Handle the menu action by creating and presenting a new `LTUITranslationViewController` using the given
+        information.
+
+        * WebView/WebViewInternal.h:
+
+2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().
+        https://bugs.webkit.org/show_bug.cgi?id=197725
+
+        Reviewed by Darin Adler.
+
+        CSSStyleSheet.rules has been changed to alias CSSStyleSheet.cssRulesForBindings.  Now,
+        to access just the CSSRuleList, CSSStyleSheet.cssRules must be called.
+
+        * DOM/DOMCSSStyleSheet.mm:
+        (-[DOMCSSStyleSheet rules]):
+        Update this function to call IMPL->cssRules instead of IMPL->rules.
+
+2021-04-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Deploy Ref/RefPtr in Editor
+        https://bugs.webkit.org/show_bug.cgi?id=224708
+
+        Reviewed by Wenson Hsieh.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame fontForSelection:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateFontPanel]):
+        * WebView/WebView.mm:
+        (-[WebView updateTextTouchBar]):
+
+2021-04-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Refactor some webpage translation code
+        https://bugs.webkit.org/show_bug.cgi?id=224680
+        Work towards <rdar://75641882>
+
+        Reviewed by Tim Horton.
+
+        See WebCore ChangeLog for more details.
+
+        * WebCoreSupport/WebContextMenuClient.h:
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (WebContextMenuClient::handleTranslation):
+        * WebView/WebView.mm:
+        (-[WebView _handleContextMenuTranslation:selectionBounds:menuLocation:]):
+
+        Add an empty stub with a `FIXME` for the time being.
+
+        * WebView/WebViewInternal.h:
+
+2021-04-16  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] WebContent process should not create AVOutputContext instances when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224469
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setMockMediaPlaybackTargetPickerState):
+        * WebView/WebMediaPlaybackTargetPicker.h:
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        (WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerState):
+        * WebView/WebView.mm:
+        (-[WebView _setMockMediaPlaybackTargetPickerName:state:]):
+        * WebView/WebViewInternal.h:
+
+2021-04-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276107.
+        https://bugs.webkit.org/show_bug.cgi?id=224653
+
+        It broke non-Cocoa clean builds
+
+        Reverted changeset:
+
+        "[GPUP] WebContent process should not create AVOutputContext
+        instances when media in GPU Process is enabled"
+        https://bugs.webkit.org/show_bug.cgi?id=224469
+        https://trac.webkit.org/changeset/276107
+
+2021-04-15  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] WebContent process should not create AVOutputContext instances when media in GPU Process is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224469
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::setMockMediaPlaybackTargetPickerState):
+        * WebView/WebMediaPlaybackTargetPicker.h:
+        * WebView/WebMediaPlaybackTargetPicker.mm:
+        (WebMediaPlaybackTargetPicker::setMockMediaPlaybackTargetPickerState):
+        * WebView/WebView.mm:
+        (-[WebView _setMockMediaPlaybackTargetPickerName:state:]):
+        * WebView/WebViewInternal.h:
+
+2021-04-15  Tim Horton  <timothy_horton@apple.com>
+
+        Add a mechanism to dump the PlatformCALayer subtree of a GraphicsLayer, for testing
+        https://bugs.webkit.org/show_bug.cgi?id=224595
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _layerTreeAsText]):
+        Adopt the RenderLayerCompositor version of layerTreeAsText.
+
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove support for NPAPI plugins in WebView
+        https://bugs.webkit.org/show_bug.cgi?id=224449
+
+        Reviewed by Chris Dumez.
+
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences setPlugInsEnabled:]):
+
+2021-04-12  Peng Liu  <peng.liu6@apple.com>
+
+        Fix some issues hidden by unified build
+        https://bugs.webkit.org/show_bug.cgi?id=224457
+
+        Reviewed by Eric Carlson.
+
+        Some small fixes and clean-up. The issues are hidden by the unified build mechanism
+        and were found in a local build.
+
+        * DOM/DOMTokenList.mm:
+        * Plugins/WebPluginController.mm:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebView/WebDataSource.mm:
+        * WebView/WebFrameView.mm:
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebImmediateActionController.mm:
+        * WebView/WebPDFView.mm:
+
 2021-04-02  Darin Adler  <darin@apple.com>
 
         Use Hasher more, remove IntegerHasher, fix hashing-related mistakes

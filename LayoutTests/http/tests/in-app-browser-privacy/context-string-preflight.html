@@ -1,0 +1,62 @@
+<p>Tests that not successful preflight responses make preflight failing</p>
+
+<pre id="console"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + '\n'));
+}
+    
+var preflightLinkDomain = "localhost";
+var contextHost = "127.0.0.1";
+var url = "http://localhost:8000/xmlhttprequest/resources/status-404-without-body.py"
+
+function askForContextStringForPreflight() {
+    testRunner.appBoundRequestContextDataForDomain(preflightLinkDomain, function (contextData) {
+        if (contextData == null) {
+            askForContextStringForPreflight();
+            return;
+        }
+
+        if (contextData == contextHost)
+            log("PASS Context string for CORS preflight correctly captured.");
+        else
+            log("FAIL Context string for CORS preflight NOT correctly captured.");
+
+        testRunner.notifyDone();
+    });
+}
+
+function runTest()
+{
+    var req = new XMLHttpRequest();
+    req.open("GET", url, false);
+    req.setRequestHeader("x-webkit", "foo");
+
+    try {
+        req.send(null);
+        log("PASS: " + req.responseText);
+    } catch (ex) {
+        log("PASS: " + ex);
+    }
+
+    req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.setRequestHeader("x-webkit", "foo");
+
+    req.onload = function() {
+        askForContextStringForPreflight();
+    }
+    req.onerror = function() {
+        askForContextStringForPreflight();
+    }
+    req.send(null);
+}
+
+runTest();
+</script>

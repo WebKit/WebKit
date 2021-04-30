@@ -28,6 +28,7 @@
 
 #include "DisplayListItemBuffer.h"
 #include "DisplayListItems.h"
+#include "DisplayListIterator.h"
 #include "Logging.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
@@ -334,127 +335,15 @@ void DisplayList::append(ItemHandle item)
     }
 }
 
-bool DisplayList::iterator::atEnd() const
+auto DisplayList::begin() const -> Iterator
 {
-    if (m_displayList.isEmpty() || !m_isValid)
-        return true;
-
-    auto& items = *itemBuffer();
-    auto endCursor = items.m_writableBuffer.data + items.m_writtenNumberOfBytes;
-    return m_cursor == endCursor;
+    return { *this };
 }
 
-DisplayList::iterator::ExtentUpdateResult DisplayList::iterator::updateCurrentDrawingItemExtent(ItemType itemType)
+auto DisplayList::end() const -> Iterator
 {
-    auto& extents = m_displayList.m_drawingItemExtents;
-    if (extents.isEmpty())
-        return ExtentUpdateResult::Success;
-
-    if (!isDrawingItem(itemType)) {
-        m_currentExtent = WTF::nullopt;
-        return ExtentUpdateResult::Success;
-    }
-
-    if (m_drawingItemIndex >= extents.size())
-        return ExtentUpdateResult::Failure;
-
-    m_currentExtent = extents[m_drawingItemIndex];
-    m_drawingItemIndex++;
-    return ExtentUpdateResult::Success;
+    return { *this, Iterator::ImmediatelyMoveToEnd::Yes };
 }
-
-void DisplayList::iterator::updateCurrentItem()
-{
-    clearCurrentItem();
-
-    if (atEnd())
-        return;
-
-    auto& items = *itemBuffer();
-    auto itemType = static_cast<ItemType>(m_cursor[0]);
-
-    if (updateCurrentDrawingItemExtent(itemType) == ExtentUpdateResult::Failure) {
-        m_isValid = false;
-        return;
-    }
-
-    auto paddedSizeOfTypeAndItem = paddedSizeOfTypeAndItemInBytes(itemType);
-    m_currentBufferForItem = paddedSizeOfTypeAndItem <= sizeOfFixedBufferForCurrentItem ? m_fixedBufferForCurrentItem : reinterpret_cast<uint8_t*>(fastMalloc(paddedSizeOfTypeAndItem));
-    if (isInlineItem(itemType)) {
-        if (UNLIKELY(!ItemHandle { m_cursor }.safeCopy({ m_currentBufferForItem })))
-            m_isValid = false;
-
-        m_currentItemSizeInBuffer = paddedSizeOfTypeAndItem;
-    } else {
-        auto* client = items.m_readingClient;
-        RELEASE_ASSERT(client);
-        auto dataLength = reinterpret_cast<uint64_t*>(m_cursor)[1];
-        auto* startOfData = m_cursor + 2 * sizeof(uint64_t);
-        auto decodedItemHandle = client->decodeItem(startOfData, dataLength, itemType, m_currentBufferForItem);
-        if (UNLIKELY(!decodedItemHandle))
-            m_isValid = false;
-
-        m_currentBufferForItem[0] = static_cast<uint8_t>(itemType);
-        m_currentItemSizeInBuffer = 2 * sizeof(uint64_t) + roundUpToMultipleOf(alignof(uint64_t), dataLength);
-    }
-}
-
-void DisplayList::iterator::advance()
-{
-    if (atEnd())
-        return;
-
-    m_cursor += m_currentItemSizeInBuffer;
-
-    if (m_cursor == m_currentEndOfBuffer && m_readOnlyBufferIndex < itemBuffer()->m_readOnlyBuffers.size()) {
-        m_readOnlyBufferIndex++;
-        moveCursorToStartOfCurrentBuffer();
-    }
-
-    updateCurrentItem();
-}
-
-void DisplayList::iterator::clearCurrentItem()
-{
-    auto items = itemBuffer();
-    if (items && items->m_readingClient && m_currentBufferForItem) {
-        if (LIKELY(m_isValid))
-            ItemHandle { m_currentBufferForItem }.destroy();
-
-        if (UNLIKELY(m_currentBufferForItem != m_fixedBufferForCurrentItem))
-            fastFree(m_currentBufferForItem);
-    }
-
-    m_currentItemSizeInBuffer = 0;
-    m_currentBufferForItem = nullptr;
-}
-
-void DisplayList::iterator::moveToEnd()
-{
-    if (auto items = itemBuffer()) {
-        m_cursor = items->m_writableBuffer.data + items->m_writtenNumberOfBytes;
-        m_currentEndOfBuffer = m_cursor;
-        m_readOnlyBufferIndex = items->m_readOnlyBuffers.size();
-    }
-}
-
-void DisplayList::iterator::moveCursorToStartOfCurrentBuffer()
-{
-    auto items = itemBuffer();
-    if (!items)
-        return;
-
-    auto numberOfReadOnlyBuffers = items->m_readOnlyBuffers.size();
-    if (m_readOnlyBufferIndex < numberOfReadOnlyBuffers) {
-        auto& nextBufferHandle = items->m_readOnlyBuffers[m_readOnlyBufferIndex];
-        m_cursor = nextBufferHandle.data;
-        m_currentEndOfBuffer = m_cursor + nextBufferHandle.capacity;
-    } else if (m_readOnlyBufferIndex == numberOfReadOnlyBuffers) {
-        m_cursor = items->m_writableBuffer.data;
-        m_currentEndOfBuffer = m_cursor + items->m_writtenNumberOfBytes;
-    }
-}
-
 
 } // namespace DisplayList
 

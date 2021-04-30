@@ -39,6 +39,7 @@ namespace DFG {
 
 class CommonData;
 class DesiredIdentifiers;
+class WatchpointCollector;
 
 class DesiredGlobalProperties {
 public:
@@ -49,7 +50,7 @@ public:
 
     bool isStillValidOnMainThread(VM&, DesiredIdentifiers&);
 
-    void reallyAdd(CodeBlock*, DesiredIdentifiers&, CommonData&);
+    void reallyAdd(CodeBlock*, DesiredIdentifiers&, WatchpointCollector&);
 
 private:
     HashSet<DesiredGlobalProperty> m_set;

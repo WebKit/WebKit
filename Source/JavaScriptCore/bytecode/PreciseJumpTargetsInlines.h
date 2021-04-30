@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,27 +61,25 @@ namespace JSC {
     CASE_OP(OpJbeloweq) \
     case op_switch_imm: { \
         auto bytecode = instruction->as<OpSwitchImm>(); \
-        auto& table = codeBlock->switchJumpTable(bytecode.m_tableIndex); \
-        for (unsigned i = table.branchOffsets.size(); i--;) \
-            SWITCH_CASE(table.branchOffsets[i]); \
+        auto& table = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex); \
+        for (unsigned i = table.m_branchOffsets.size(); i--;) \
+            SWITCH_CASE(table.m_branchOffsets[i]); \
         SWITCH_DEFAULT_OFFSET(OpSwitchImm); \
         break; \
     } \
     case op_switch_char: { \
         auto bytecode = instruction->as<OpSwitchChar>(); \
-        auto& table = codeBlock->switchJumpTable(bytecode.m_tableIndex); \
-        for (unsigned i = table.branchOffsets.size(); i--;) \
-            SWITCH_CASE(table.branchOffsets[i]); \
+        auto& table = codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex); \
+        for (unsigned i = table.m_branchOffsets.size(); i--;) \
+            SWITCH_CASE(table.m_branchOffsets[i]); \
         SWITCH_DEFAULT_OFFSET(OpSwitchChar); \
         break; \
     } \
     case op_switch_string: { \
         auto bytecode = instruction->as<OpSwitchString>(); \
-        auto& table = codeBlock->stringSwitchJumpTable(bytecode.m_tableIndex); \
-        auto iter = table.offsetTable.begin(); \
-        auto end = table.offsetTable.end(); \
-        for (; iter != end; ++iter) \
-            SWITCH_CASE(iter->value.branchOffset); \
+        auto& table = codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex); \
+        for (auto& entry : table.m_offsetTable) \
+            SWITCH_CASE(entry.value.m_branchOffset); \
         SWITCH_DEFAULT_OFFSET(OpSwitchString); \
         break; \
     } \

@@ -30,11 +30,13 @@
 
 #include "LibWebRTCAudioFormat.h"
 #include "Logging.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
 LibWebRTCAudioModule::LibWebRTCAudioModule()
     : m_queue(WorkQueue::create("WebKitWebRTCAudioModule", WorkQueue::Type::Serial, WorkQueue::QOS::UserInteractive))
+    , m_logTimer(*this, &LibWebRTCAudioModule::logTimerFired)
 {
 }
 
@@ -54,6 +56,10 @@ int32_t LibWebRTCAudioModule::StartPlayout()
         return 0;
 
     m_isPlaying = true;
+    callOnMainThread([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
+        m_logTimer.startRepeating(logTimerInterval);
+    });
+
     m_queue->dispatch([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
         m_pollingTime = MonotonicTime::now();
         pollAudioData();
@@ -66,34 +72,50 @@ int32_t LibWebRTCAudioModule::StopPlayout()
     RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::StopPlayout %d", m_isPlaying);
 
     m_isPlaying = false;
+    callOnMainThread([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
+        m_logTimer.stop();
+    });
     return 0;
+}
+
+void LibWebRTCAudioModule::logTimerFired()
+{
+    RELEASE_LOG_IF(m_timeSpent, WebRTC, "LibWebRTCAudioModule::pollAudioData, polling took too much time: %d ms", m_timeSpent);
+    m_timeSpent = 0;
 }
 
 // libwebrtc uses 10ms frames.
 const unsigned frameLengthMs = 1000 * LibWebRTCAudioFormat::chunkSampleCount / LibWebRTCAudioFormat::sampleRate;
-const unsigned pollSamples = 5;
-const unsigned pollInterval = 5 * frameLengthMs;
+const unsigned pollInterval = LibWebRTCAudioModule::PollSamplesCount * frameLengthMs;
 const unsigned channels = 2;
+
+Seconds LibWebRTCAudioModule::computeDelayUntilNextPolling()
+{
+    auto now = MonotonicTime::now();
+    auto delayUntilNextPolling = m_pollingTime + Seconds::fromMilliseconds(pollInterval) - now;
+    if (delayUntilNextPolling.milliseconds() < 0) {
+        m_timeSpent = (now - m_pollingTime).milliseconds();
+        delayUntilNextPolling = 0_s;
+    }
+    m_pollingTime = now + delayUntilNextPolling;
+    return delayUntilNextPolling;
+}
 
 void LibWebRTCAudioModule::pollAudioData()
 {
     if (!m_isPlaying)
         return;
 
+    Function<void()> nextPollFunction = [this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
+        pollAudioData();
+    };
+
+    // For performance reasons, we forbid heap allocations while doing rendering on the webrtc audio thread.
+    ForbidMallocUseForCurrentThreadScope forbidMallocUse;
+
     pollFromSource();
 
-    auto now = MonotonicTime::now();
-    auto delayUntilNextPolling = m_pollingTime + Seconds::fromMilliseconds(pollInterval) - now;
-    if (delayUntilNextPolling.milliseconds() < 0) {
-        callOnMainThread([timeSpent = (now - m_pollingTime).milliseconds()] {
-            RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::pollAudioData, polling took too much time: %d ms", (int)timeSpent);
-        });
-        delayUntilNextPolling = 0_s;
-    }
-    m_pollingTime = now + delayUntilNextPolling;
-    m_queue->dispatchAfter(delayUntilNextPolling, [this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
-        pollAudioData();
-    });
+    m_queue->dispatchAfter(computeDelayUntilNextPolling(), WTFMove(nextPollFunction));
 }
 
 void LibWebRTCAudioModule::pollFromSource()
@@ -101,7 +123,7 @@ void LibWebRTCAudioModule::pollFromSource()
     if (!m_audioTransport)
         return;
 
-    for (unsigned i = 0; i < pollSamples; i++) {
+    for (unsigned i = 0; i < PollSamplesCount; i++) {
         int64_t elapsedTime = -1;
         int64_t ntpTime = -1;
         char data[LibWebRTCAudioFormat::sampleByteSize * channels * LibWebRTCAudioFormat::chunkSampleCount];

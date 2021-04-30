@@ -140,6 +140,12 @@ void MockRealtimeAudioSourceGStreamer::reconfigure()
         addHum(s_NoiseVolume, s_NoiseFrequency, rate, 0, m_bipBopBuffer.data(), sampleCount);
 }
 
+void MockRealtimeAudioSourceGStreamer::setInterruptedForTesting(bool isInterrupted)
+{
+    m_isInterrupted = isInterrupted;
+    MockRealtimeAudioSource::setInterruptedForTesting(isInterrupted);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

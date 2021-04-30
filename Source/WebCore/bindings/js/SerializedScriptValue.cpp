@@ -40,6 +40,7 @@
 #include "JSCryptoKey.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConvertBufferSource.h"
+#include "JSDOMException.h"
 #include "JSDOMGlobalObject.h"
 #include "JSDOMMatrix.h"
 #include "JSDOMPoint.h"
@@ -71,9 +72,9 @@
 #include <JavaScriptCore/JSArrayBufferView.h>
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSDataView.h>
-#include <JavaScriptCore/JSMap.h>
+#include <JavaScriptCore/JSMapInlines.h>
 #include <JavaScriptCore/JSMapIterator.h>
-#include <JavaScriptCore/JSSet.h>
+#include <JavaScriptCore/JSSetInlines.h>
 #include <JavaScriptCore/JSSetIterator.h>
 #include <JavaScriptCore/JSTypedArrays.h>
 #include <JavaScriptCore/JSWebAssemblyMemory.h>
@@ -191,6 +192,7 @@ enum SerializationTag {
 #if ENABLE(WEB_RTC)
     RTCDataChannelTransferTag = 50,
 #endif
+    DOMExceptionTag = 51,
     ErrorTag = 255
 };
 
@@ -381,6 +383,7 @@ static const unsigned StringDataIs8BitFlag = 0x80000000;
  *    | OffscreenCanvasTransferTag <value:uint32_t>
  *    | WasmMemoryTag <value:uint32_t>
  *    | RTCDataChannelTransferTag <processIdentifier:uint64_t><rtcDataChannelIdentifier:uint64_t><label:String>
+ *    | DOMExceptionTag <message:String> <name:String>
  *
  * Inside certificate, data is serialized in this format as per spec:
  *
@@ -502,13 +505,6 @@ protected:
         : m_lexicalGlobalObject(lexicalGlobalObject)
         , m_failed(false)
     {
-    }
-
-    bool shouldTerminate()
-    {
-        VM& vm = m_lexicalGlobalObject->vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-        return scope.exception();
     }
 
     void fail()
@@ -1130,6 +1126,18 @@ private:
     }
 #endif
 
+    void dumpDOMException(JSObject* obj, SerializationReturnCode& code)
+    {
+        if (auto* exception = JSDOMException::toWrapped(m_lexicalGlobalObject->vm(), obj)) {
+            write(DOMExceptionTag);
+            write(exception->message());
+            write(exception->name());
+            return;
+        }
+
+        code = SerializationReturnCode::DataCloneError;
+    }
+
     bool dumpIfTerminal(JSValue value, SerializationReturnCode& code)
     {
         if (!value.isCell()) {
@@ -1390,6 +1398,11 @@ private:
                 return true;
             }
 #endif
+            if (obj->inherits(vm, JSDOMException::info())) {
+                dumpDOMException(obj, code);
+                return true;
+            }
+
             return false;
         }
         // Any other types are expected to serialize as null.
@@ -1767,6 +1780,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<WalkerState, 16> stateStack;
     WalkerState lexicalGlobalObject = StateUnknown;
     JSValue inValue = in;
+    auto scope = DECLARE_THROW_SCOPE(vm);
     while (1) {
         switch (lexicalGlobalObject) {
             arrayStartState:
@@ -1794,6 +1808,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     array->getOwnNonIndexPropertyNames(m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (UNLIKELY(scope.exception()))
+                        return SerializationReturnCode::ExistingExceptionError;
                     if (propertyStack.last().size()) {
                         write(NonIndexPropertiesTag);
                         indexStack.append(0);
@@ -1806,6 +1822,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     break;
                 }
                 inValue = array->getDirectIndex(m_lexicalGlobalObject, index);
+                if (UNLIKELY(scope.exception()))
+                    return SerializationReturnCode::ExistingExceptionError;
                 if (!inValue) {
                     indexStack.last()++;
                     goto arrayStartVisitMember;
@@ -1844,6 +1862,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 indexStack.append(0);
                 propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                 inObject->methodTable(vm)->getOwnPropertyNames(inObject, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                if (UNLIKELY(scope.exception()))
+                    return SerializationReturnCode::ExistingExceptionError;
             }
             objectStartVisitMember:
             FALLTHROUGH;
@@ -1859,7 +1879,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     break;
                 }
                 inValue = getProperty(vm, object, properties[index]);
-                if (shouldTerminate())
+                if (UNLIKELY(scope.exception()))
                     return SerializationReturnCode::ExistingExceptionError;
 
                 if (!inValue) {
@@ -1869,7 +1889,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 }
                 write(properties[index]);
 
-                if (shouldTerminate())
+                if (UNLIKELY(scope.exception()))
                     return SerializationReturnCode::ExistingExceptionError;
 
                 auto terminalCode = SerializationReturnCode::SuccessfullyCompleted;
@@ -1882,7 +1902,7 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                 FALLTHROUGH;
             }
             case ObjectEndVisitMember: {
-                if (shouldTerminate())
+                if (UNLIKELY(scope.exception()))
                     return SerializationReturnCode::ExistingExceptionError;
 
                 indexStack.last()++;
@@ -1912,6 +1932,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     ASSERT(jsDynamicCast<JSMap*>(vm, object));
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable(vm)->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (UNLIKELY(scope.exception()))
+                        return SerializationReturnCode::ExistingExceptionError;
                     write(NonMapPropertiesTag);
                     indexStack.append(0);
                     goto objectStartVisitMember;
@@ -1956,6 +1978,8 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
                     ASSERT(jsDynamicCast<JSSet*>(vm, object));
                     propertyStack.append(PropertyNameArray(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                     object->methodTable(vm)->getOwnPropertyNames(object, m_lexicalGlobalObject, propertyStack.last(), DontEnumPropertiesMode::Exclude);
+                    if (UNLIKELY(scope.exception()))
+                        return SerializationReturnCode::ExistingExceptionError;
                     write(NonSetPropertiesTag);
                     indexStack.append(0);
                     goto objectStartVisitMember;
@@ -3144,6 +3168,18 @@ private:
         return getJSValue(bitmap);
     }
 
+    JSValue readDOMException()
+    {
+        CachedStringRef message;
+        if (!readStringData(message))
+            return JSValue();
+        CachedStringRef name;
+        if (!readStringData(name))
+            return JSValue();
+        auto exception = DOMException::create(message->string(), name->string());
+        return getJSValue(exception);
+    }
+
     JSValue readBigInt()
     {
         uint8_t sign = 0;
@@ -3578,6 +3614,9 @@ private:
         case RTCDataChannelTransferTag:
             return readRTCDataChannel();
 #endif
+        case DOMExceptionTag:
+            return readDOMException();
+
         default:
             m_ptr--; // Push the tag back
             return JSValue();

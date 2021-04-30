@@ -53,7 +53,8 @@ AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Ref<IPC::Connection
 
 AudioMediaStreamTrackRenderer::~AudioMediaStreamTrackRenderer()
 {
-    WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
+    if (auto* connection = WebProcess::singleton().existingGPUProcessConnection())
+        connection->removeClient(*this);
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRendererManager::ReleaseRenderer { m_identifier }, 0);
 }
 
@@ -92,6 +93,7 @@ void AudioMediaStreamTrackRenderer::pushSamples(const MediaTime& time, const Web
         return;
 
     if (m_description != description) {
+        DisableMallocRestrictionsForCurrentThreadScope scope;
         ASSERT(description.platformDescription().type == WebCore::PlatformDescription::CAAudioStreamBasicType);
         m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
 
@@ -102,6 +104,8 @@ void AudioMediaStreamTrackRenderer::pushSamples(const MediaTime& time, const Web
 
     ASSERT(is<WebCore::WebAudioBufferList>(audioData));
     m_ringBuffer->store(downcast<WebCore::WebAudioBufferList>(audioData).list(), numberOfFrames, time.timeValue());
+
+    DisableMallocRestrictionsForCurrentThreadScope scope;
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRenderer::AudioSamplesAvailable { time, numberOfFrames }, m_identifier);
 }
 
@@ -117,6 +121,7 @@ void AudioMediaStreamTrackRenderer::storageChanged(SharedMemory* storage, const 
 #else
     uint64_t dataSize = 0;
 #endif
+    DisableMallocRestrictionsForCurrentThreadScope scope;
     m_connection->send(Messages::RemoteAudioMediaStreamTrackRenderer::AudioSamplesStorageChanged { SharedMemory::IPCHandle { WTFMove(handle), dataSize }, format, frameCount }, m_identifier);
 }
 

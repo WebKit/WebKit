@@ -900,29 +900,41 @@ void JIT::emit_op_switch_imm(const Instruction* currentInstruction)
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
-    SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
-    jumpTable->ensureCTITable();
+    const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
+    SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
+    m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Immediate));
+    linkedTable.ensureCTITable(unlinkedTable);
 
     emitGetVirtualRegister(scrutinee, regT0);
-    callOperation(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), regT0, tableIndex);
+    auto notInt32 = branchIfNotInt32(regT0);
+    sub32(Imm32(unlinkedTable.m_min), regT0);
+
+    addJump(branch32(AboveOrEqual, regT0, Imm32(linkedTable.m_ctiOffsets.size())), defaultOffset);
+    move(TrustedImmPtr(linkedTable.m_ctiOffsets.data()), regT1);
+    farJump(BaseIndex(regT1, regT0, ScalePtr), JSSwitchPtrTag);
+
+    notInt32.link(this);
+    callOperationNoExceptionCheck(operationSwitchImmWithUnknownKeyType, TrustedImmPtr(&vm()), regT0, tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
 void JIT::emit_op_switch_char(const Instruction* currentInstruction)
 {
+    // FIXME: We should have a fast path.
+    // https://bugs.webkit.org/show_bug.cgi?id=224521
     auto bytecode = currentInstruction->as<OpSwitchChar>();
     size_t tableIndex = bytecode.m_tableIndex;
     unsigned defaultOffset = jumpTarget(currentInstruction, bytecode.m_defaultOffset);
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
-    SimpleJumpTable* jumpTable = &m_codeBlock->switchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
-    jumpTable->ensureCTITable();
+    const UnlinkedSimpleJumpTable& unlinkedTable = m_codeBlock->unlinkedSwitchJumpTable(tableIndex);
+    SimpleJumpTable& linkedTable = m_codeBlock->switchJumpTable(tableIndex);
+    m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::Character));
+    linkedTable.ensureCTITable(unlinkedTable);
 
     emitGetVirtualRegister(scrutinee, regT0);
-    callOperation(operationSwitchCharWithUnknownKeyType, TrustedImmPtr(m_codeBlock->globalObject()), regT0, tableIndex);
+    callOperation(operationSwitchCharWithUnknownKeyType, TrustedImmPtr(m_codeBlock->globalObject()), regT0, tableIndex, unlinkedTable.m_min);
     farJump(returnValueGPR, JSSwitchPtrTag);
 }
 
@@ -934,8 +946,10 @@ void JIT::emit_op_switch_string(const Instruction* currentInstruction)
     VirtualRegister scrutinee = bytecode.m_scrutinee;
 
     // create jump table for switch destinations, track this switch statement.
-    StringJumpTable* jumpTable = &m_codeBlock->stringSwitchJumpTable(tableIndex);
-    m_switches.append(SwitchRecord(jumpTable, m_bytecodeIndex, defaultOffset));
+    const UnlinkedStringJumpTable& unlinkedTable = m_codeBlock->unlinkedStringSwitchJumpTable(tableIndex);
+    StringJumpTable& linkedTable = m_codeBlock->stringSwitchJumpTable(tableIndex);
+    m_switches.append(SwitchRecord(tableIndex, m_bytecodeIndex, defaultOffset, SwitchRecord::String));
+    linkedTable.ensureCTITable(unlinkedTable);
 
     emitGetVirtualRegister(scrutinee, regT0);
     callOperation(operationSwitchStringWithUnknownKeyType, TrustedImmPtr(m_codeBlock->globalObject()), regT0, tableIndex);

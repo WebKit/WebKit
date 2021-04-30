@@ -49,13 +49,14 @@ using namespace WebCore;
 static void * WebAVPlayerControllerSeekableTimeRangesObserverContext = &WebAVPlayerControllerSeekableTimeRangesObserverContext;
 static void * WebAVPlayerControllerHasLiveStreamingContentObserverContext = &WebAVPlayerControllerHasLiveStreamingContentObserverContext;
 static void * WebAVPlayerControllerIsPlayingOnSecondScreenObserverContext = &WebAVPlayerControllerIsPlayingOnSecondScreenObserverContext;
-static void * WebAVPlayerControllerDefaultPlaybackRateObserverContext = &WebAVPlayerControllerDefaultPlaybackRateObserverContext;
 
 static double WebAVPlayerControllerLiveStreamSeekableTimeRangeDurationHysteresisDelta = 3.0; // Minimum delta of time required to change the duration of the seekable time range.
 static double WebAVPlayerControllerLiveStreamMinimumTargetDuration = 1.0; // Minimum segment duration to be considered valid.
 static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 30.0;
 
 @implementation WebAVPlayerController {
+    double _defaultPlaybackRate;
+    double _rate;
     BOOL _liveStreamEventModePossible;
     BOOL _isScrubbing;
     BOOL _allowsPictureInPicture;
@@ -76,7 +77,6 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     [self addObserver:self forKeyPath:@"seekableTimeRanges" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:WebAVPlayerControllerSeekableTimeRangesObserverContext];
     [self addObserver:self forKeyPath:@"hasLiveStreamingContent" options:NSKeyValueObservingOptionInitial context:WebAVPlayerControllerHasLiveStreamingContentObserverContext];
     [self addObserver:self forKeyPath:@"playingOnSecondScreen" options:NSKeyValueObservingOptionNew context:WebAVPlayerControllerIsPlayingOnSecondScreenObserverContext];
-    [self addObserver:self forKeyPath:@"defaultPlaybackRate" options:NSKeyValueObservingOptionNew context:WebAVPlayerControllerDefaultPlaybackRateObserverContext];
 
     return self;
 }
@@ -86,7 +86,6 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     [self removeObserver:self forKeyPath:@"seekableTimeRanges" context:WebAVPlayerControllerSeekableTimeRangesObserverContext];
     [self removeObserver:self forKeyPath:@"hasLiveStreamingContent" context:WebAVPlayerControllerHasLiveStreamingContentObserverContext];
     [self removeObserver:self forKeyPath:@"playingOnSecondScreen" context:WebAVPlayerControllerIsPlayingOnSecondScreenObserverContext];
-    [self removeObserver:self forKeyPath:@"defaultPlaybackRate" context:WebAVPlayerControllerDefaultPlaybackRateObserverContext];
 
     [_playerControllerProxy release];
     [_loadedTimeRanges release];
@@ -157,6 +156,48 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
         self.delegate->play();
     else
         self.delegate->pause();
+}
+
+- (double)defaultPlaybackRate
+{
+    return _defaultPlaybackRate;
+}
+
+- (void)setDefaultPlaybackRate:(double)defaultPlaybackRate
+{
+    if (defaultPlaybackRate == _defaultPlaybackRate)
+        return;
+
+    _defaultPlaybackRate = defaultPlaybackRate;
+
+    if (self.delegate && self.delegate->defaultPlaybackRate() != _defaultPlaybackRate)
+        self.delegate->setDefaultPlaybackRate(_defaultPlaybackRate);
+
+    if ([self isPlaying])
+        [self setRate:_defaultPlaybackRate];
+}
+
+- (double)rate
+{
+    return _rate;
+}
+
+- (void)setRate:(double)rate
+{
+    if (rate == _rate)
+        return;
+
+    _rate = rate;
+
+    // AVKit doesn't have a separate variable for "paused", instead representing it by a `rate` of
+    // `0`. Unfortunately, `HTMLMediaElement::play` doesn't call `HTMLMediaElement::setPlaybackRate`
+    // so if we propagate a `rate` of `0` along to the `HTMLMediaElement` then any attempt to
+    // `HTMLMediaElement::play` will effectively be a no-op since the `playbackRate` will be `0`.
+    if (!_rate)
+        return;
+
+    if (self.delegate && self.delegate->playbackRate() != _rate)
+        self.delegate->setPlaybackRate(_rate);
 }
 
 + (NSSet *)keyPathsForValuesAffectingPlaying
@@ -602,12 +643,6 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     if (WebAVPlayerControllerIsPlayingOnSecondScreenObserverContext == context) {
         if (auto* delegate = self.delegate)
             delegate->setPlayingOnSecondScreen(_playingOnSecondScreen);
-        return;
-    }
-
-    if (WebAVPlayerControllerDefaultPlaybackRateObserverContext == context) {
-        if (auto* delegate = self.delegate)
-            delegate->setDefaultPlaybackRate(_defaultPlaybackRate);
         return;
     }
 

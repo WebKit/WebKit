@@ -29,8 +29,8 @@
 
 #include <OpenGL/CGLTypes.h>
 #include <WebCore/Timer.h>
-#include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebKit {
 

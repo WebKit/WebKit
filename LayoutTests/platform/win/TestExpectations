@@ -126,6 +126,10 @@ webkit.org/b/74716 css3/filters/filter-is-on-subpixel-position.html [ Skip ]
 webkit.org/b/74716 css3/masking/clip-path-filter.html [ Skip ]
 webkit.org/b/74716 css3/filters/backdrop [ Skip ]
 
+# platformLayerTreeAsText is only implemented for Cocoa ports.
+fast/harness/platform-layer-tree-as-text.html [ Skip ]
+model-element/model-element-graphics-layers-opacity.html [ Skip ]
+
 # color-filters are off by default
 webkit.org/b/185076 css3/color-filters [ Skip ]
 
@@ -221,6 +225,7 @@ http/tests/xmlhttprequest/post-blob-content-type-sync.html [ Skip ]
 webkit.org/b/29287 http/tests/local/fileapi/ [ Skip ]
 webkit.org/b/29287 http/tests/local/blob/send-hybrid-blob.html [ Skip ]
 webkit.org/b/29287 http/tests/local/formdata/ [ Skip ]
+http/tests/security/frame-src-and-blob-download.https.html [ Skip ]
 
 # Software keyboard is not supported.
 fast/events/autoscroll-with-software-keyboard.html [ Skip ]
@@ -2166,7 +2171,7 @@ webkit.org/b/140703 [ Release ] http/tests/misc/link-rel-icon-beforeload.html [ 
 webkit.org/b/140703 [ Debug ] http/tests/misc/link-rel-icon-beforeload.html [ Skip ] # Crashing
 webkit.org/b/140703 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 webkit.org/b/140703 http/tests/misc/window-dot-stop.html [ Failure ]
-webkit.org/b/140703 http/tests/security/401-logout/401-logout.php [ Failure ]
+webkit.org/b/140703 http/tests/security/401-logout/401-logout.py [ Failure ]
 webkit.org/b/146701 http/tests/security/private-browsing-http-auth.html [ Failure ]
 webkit.org/b/140703 http/tests/security/XFrameOptions/x-frame-options-allowall.html [ Failure ]
 webkit.org/b/140703 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-cached.html [ Crash ]
@@ -2262,6 +2267,7 @@ http/tests/security/mixedContent/blob-url-in-iframe.html [ Skip ]
 http/tests/security/contentSecurityPolicy/navigate-self-to-blob.html [ Skip ]
 http/tests/security/contentSecurityPolicy/report-document-uri-blob.html [ Skip ]
 fast/frames/restoring-page-cache-should-not-run-scripts-via-style-update.html [ Skip ]
+http/tests/security/sandbox-iframe-and-blob.https.html [ Skip ]
 
 # Clear Key not implemented
 http/tests/media/clearkey/clear-key-hls-aes128.html [ Skip ] # Timeout
@@ -3485,6 +3491,7 @@ fast/css/getComputedStyle/computed-style.html [ Failure ]
 fast/css/image-resolution/image-resolution.html [ Failure ]
 fast/dom/collection-iterators.html [ Failure ]
 fast/events/context-activated-by-key-event.html [ Failure ]
+fast/events/contextmenu-actions-in-selected-text.html [ Failure ImageOnlyFailure ]
 fast/events/webkit-media-key-events-constructor.html [ Failure ]
 fast/forms/validation-message-maxLength.html [ Failure ]
 fast/mediacapturefromelement/CanvasCaptureMediaStream-2d-events.html [ Failure ]
@@ -3665,6 +3672,7 @@ imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
 http/tests/webrtc [ Skip ]
 http/wpt/webrtc [ Skip ]
+js/dom/missing-exception-check-in-convertNumbers.html [ Skip ]
 
 # Resource Timing Metrics not available.
 http/wpt/resource-timing/rt-nextHopProtocol.html [ Skip ]
@@ -3713,7 +3721,7 @@ imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-
 imported/w3c/web-platform-tests/content-security-policy/connect-src/connect-src-beacon-redirect-to-blocked.sub.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-allowed.html [ Skip ]
 http/tests/security/contentSecurityPolicy/connect-src-beacon-blocked.html [ Skip ]
-http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.php [ Skip ]
+http/tests/security/contentSecurityPolicy/report-only-connect-src-beacon-redirect-blocked.py [ Skip ]
 
 # Async image tests are currently failing on Windows.
 webkit.org/b/174653 fast/images/async-image-background-image-repeated.html [ Timeout ]
@@ -3981,6 +3989,7 @@ webkit.org/b/185765 fast/images/animated-image-mp4-crash.html [ Skip ]
 webkit.org/b/185678 fast/css-generated-content/pseudo-animation.html [ Failure ]
 
 webkit.org/b/186183 http/tests/security/referrer-policy-header.html [ Skip ]
+webkit.org/b/186183 http/tests/security/referrer-policy-header-multipart.html [ Skip ]
 
 webkit.org/b/186562 [ Release ] accessibility/accessibility-node-memory-management.html [ Failure ]
 webkit.org/b/186562 fast/workers/worker-document-leak.html [ Failure ]
@@ -4649,3 +4658,9 @@ fast/forms/onselect-textfield.html [ Pass Failure ]
 fast/forms/option-mouseevents.html [ Pass Failure ]
 fast/forms/password-doubleclick-selection.html [ Pass Failure ]
 fast/text/offsetForPosition-complex-fallback.html [ Pass Failure ]
+
+# This test is skipped because the necessary feature flag functionality specific to the Windows WebKit legacy port is
+# not implemented.  The feature flags in question are CSSCounterStyleAtRulesEnabled and CSSCounterStyleAtRuleImageSymbolsEnabled.
+webexposed/counter-style-image-symbols-not-exposed.html [ Skip ]
+
+fast/text/line-break-with-locale.html [ ImageOnlyFailure ]

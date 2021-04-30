@@ -5,12 +5,12 @@ var repeatCount = 0;
 
 function sendRequest() {
     var firstReq = new XMLHttpRequest();
-    firstReq.open("GET", "/resources/download-json-with-delay.php?iteration=100&delay=1");
+    firstReq.open("GET", "/resources/download-json-with-delay.py?iteration=100&delay=1");
 
     firstReq.onreadystatechange = function() {
         if (firstReq.readyState == firstReq.HEADERS_RECEIVED) {
             var secondReq = new XMLHttpRequest();
-            secondReq.open("GET", "/resources/download-json-with-delay.php?iteration=10&delay=0");
+            secondReq.open("GET", "/resources/download-json-with-delay.py?iteration=10&delay=0");
 
             secondReq.onload = function() {
                 if (repeatCount++ < 40)

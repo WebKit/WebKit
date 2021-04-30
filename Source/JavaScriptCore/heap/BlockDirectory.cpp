@@ -31,6 +31,9 @@
 #include "SubspaceInlines.h"
 #include "SuperSampler.h"
 
+#include <wtf/FunctionTraits.h>
+#include <wtf/SimpleStats.h>
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BlockDirectory);
@@ -53,21 +56,35 @@ void BlockDirectory::setSubspace(Subspace* subspace)
     m_subspace = subspace;
 }
 
-bool BlockDirectory::isPagedOut(MonotonicTime deadline)
+void BlockDirectory::updatePercentageOfPagedOutPages(SimpleStats& stats)
 {
-    unsigned itersSinceLastTimeCheck = 0;
-    for (auto* block : m_blocks) {
-        if (block)
-            block->block().populatePage();
-        ++itersSinceLastTimeCheck;
-        if (itersSinceLastTimeCheck >= Heap::s_timeCheckResolution) {
-            MonotonicTime currentTime = MonotonicTime::now();
-            if (currentTime > deadline)
-                return true;
-            itersSinceLastTimeCheck = 0;
-        }
+    // FIXME: We should figure out a solution for Windows.
+#if OS(UNIX)
+    size_t pageSize = WTF::pageSize();
+    ASSERT(!(MarkedBlock::blockSize % pageSize));
+    auto numberOfPagesInMarkedBlock = MarkedBlock::blockSize / pageSize;
+    // For some reason this can be unsigned char or char on different OSes...
+    using MincoreBufferType = std::remove_pointer_t<FunctionTraits<decltype(mincore)>::ArgumentType<2>>;
+    static_assert(std::is_same_v<std::make_unsigned_t<MincoreBufferType>, unsigned char>);
+    // pageSize is effectively a constant so this isn't really variable.
+    IGNORE_CLANG_WARNINGS_BEGIN("vla")
+    MincoreBufferType pagedBits[numberOfPagesInMarkedBlock];
+    IGNORE_CLANG_WARNINGS_END
+
+    for (auto* handle : m_blocks) {
+        if (!handle)
+            continue;
+
+        auto markedBlockSizeInBytes = static_cast<size_t>(reinterpret_cast<char*>(handle->end()) - reinterpret_cast<char*>(handle->start()));
+        RELEASE_ASSERT(markedBlockSizeInBytes / pageSize <= numberOfPagesInMarkedBlock);
+        // We could cache this in bulk (e.g. 25 MB chunks) but we haven't seen any data that it actually matters.
+        auto result = mincore(handle->start(), markedBlockSizeInBytes, pagedBits);
+        RELEASE_ASSERT(!result);
+        constexpr unsigned pageIsResidentAndNotCompressed = 1;
+        for (unsigned i = 0; i < numberOfPagesInMarkedBlock; ++i)
+            stats.add(!(pagedBits[i] & pageIsResidentAndNotCompressed));
     }
-    return false;
+#endif
 }
 
 MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
@@ -140,7 +157,7 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
     setIsEmpty(NoLockingNecessary, index, true);
 }
 
-void BlockDirectory::removeBlock(MarkedBlock::Handle* block)
+void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock willDelete)
 {
     ASSERT(block->directory() == this);
     ASSERT(m_blocks[block->index()] == block);
@@ -155,8 +172,9 @@ void BlockDirectory::removeBlock(MarkedBlock::Handle* block)
         [&](auto vectorRef) {
             vectorRef[block->index()] = false;
         });
-    
-    block->didRemoveFromDirectory();
+
+    if (willDelete == WillDeleteBlock::No)
+        block->didRemoveFromDirectory();
 }
 
 void BlockDirectory::stopAllocating()

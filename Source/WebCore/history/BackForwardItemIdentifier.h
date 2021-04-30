@@ -114,9 +114,9 @@ struct BackForwardItemIdentifierHash {
 template<> struct HashTraits<WebCore::BackForwardItemIdentifier> : GenericHashTraits<WebCore::BackForwardItemIdentifier> {
     static WebCore::BackForwardItemIdentifier emptyValue() { return { }; }
 
-    static void constructDeletedValue(WebCore::BackForwardItemIdentifier& slot) { slot.processIdentifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(HashTableDeletedValue); }
+    static void constructDeletedValue(WebCore::BackForwardItemIdentifier& slot) { new (NotNull, &slot.processIdentifier) WebCore::ProcessIdentifier(WTF::HashTableDeletedValue); }
 
-    static bool isDeletedValue(const WebCore::BackForwardItemIdentifier& slot) { return slot.processIdentifier.toUInt64() == std::numeric_limits<uint64_t>::max(); }
+    static bool isDeletedValue(const WebCore::BackForwardItemIdentifier& slot) { return slot.processIdentifier.isHashTableDeletedValue(); }
 };
 
 template<> struct DefaultHash<WebCore::BackForwardItemIdentifier> : BackForwardItemIdentifierHash { };

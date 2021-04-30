@@ -103,6 +103,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestSetLikeWithOverriddenOperationsPrototy
 
 using JSTestSetLikeWithOverriddenOperationsDOMConstructor = JSDOMConstructorNotConstructable<JSTestSetLikeWithOverriddenOperations>;
 
+template<> const ClassInfo JSTestSetLikeWithOverriddenOperationsDOMConstructor::s_info = { "TestSetLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperationsDOMConstructor) };
+
 template<> JSValue JSTestSetLikeWithOverriddenOperationsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -115,8 +117,6 @@ template<> void JSTestSetLikeWithOverriddenOperationsDOMConstructor::initializeP
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestSetLikeWithOverriddenOperations"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestSetLikeWithOverriddenOperationsDOMConstructor::s_info = { "TestSetLikeWithOverriddenOperations", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestSetLikeWithOverriddenOperationsDOMConstructor) };
 
 /* Hash table for prototype */
 

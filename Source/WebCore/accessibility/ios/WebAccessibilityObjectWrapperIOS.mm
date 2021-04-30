@@ -51,7 +51,7 @@
 #import "RuntimeApplicationChecks.h"
 #import "SVGNames.h"
 #import "SVGElement.h"
-#import "SelectionRect.h"
+#import "SelectionGeometry.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
 #import "WAKWindow.h"
@@ -2802,11 +2802,11 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     if (!range || range->collapsed())
         return nil;
 
-    auto rects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
-    if (rects.isEmpty())
+    auto geometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
+    if (geometries.isEmpty())
         return nil;
-    return createNSArray(rects, [&] (auto& rect) {
-        return [NSValue valueWithRect:[self convertRectToSpace:FloatRect(rect.rect()) space:AccessibilityConversionSpace::Screen]];
+    return createNSArray(geometries, [&] (auto& geometry) {
+        return [NSValue valueWithRect:[self convertRectToSpace:FloatRect(geometry.rect()) space:AccessibilityConversionSpace::Screen]];
     }).autorelease();
 }
 

@@ -70,7 +70,7 @@ public:
     void shrinkToFit(const ConcurrentJSLocker&) override;
     
     DFG::CommonData common;
-    SegmentedVector<OSRExit, 8> osrExit;
+    Vector<OSRExit> m_osrExit;
     SegmentedVector<OSRExitDescriptor, 8> osrExitDescriptors;
     Vector<std::unique_ptr<LazySlowPath>> lazySlowPaths;
     

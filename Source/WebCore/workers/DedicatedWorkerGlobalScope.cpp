@@ -122,9 +122,9 @@ void DedicatedWorkerGlobalScope::cancelAnimationFrame(CallbackId callbackId)
 #endif
 
 #if ENABLE(WEB_RTC)
-RefPtr<RTCRtpScriptTransformer> DedicatedWorkerGlobalScope::createRTCRtpScriptTransformer(Ref<SerializedScriptValue>&& options, TransferredMessagePort&& port)
+RefPtr<RTCRtpScriptTransformer> DedicatedWorkerGlobalScope::createRTCRtpScriptTransformer(MessageWithMessagePorts&& options)
 {
-    auto transformerOrException = RTCRtpScriptTransformer::create(*this, WTFMove(options), MessagePort::entangle(*this, WTFMove(port)));
+    auto transformerOrException = RTCRtpScriptTransformer::create(*this, WTFMove(options));
     if (transformerOrException.hasException())
         return nullptr;
     auto transformer = transformerOrException.releaseReturnValue();

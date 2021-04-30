@@ -117,6 +117,7 @@
 #import <WebCore/PagePasteboardContext.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PointerCaptureController.h>
 #import <WebCore/PointerCharacteristics.h>
@@ -257,10 +258,10 @@ bool WebPage::platformNeedsLayoutForEditorState(const Frame& frame) const
     return needsLayout;
 }
 
-static void convertContentToRootViewSelectionRects(const FrameView& view, Vector<SelectionRect>& rects)
+static void convertContentToRootView(const FrameView& view, Vector<SelectionGeometry>& geometries)
 {
-    for (auto& rect : rects)
-        rect.setRect(view.contentsToRootView(rect.rect()));
+    for (auto& geometry : geometries)
+        geometry.setQuad(view.contentsToRootView(geometry.quad()));
 }
 
 void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
@@ -275,8 +276,8 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
 
     if (frame.editor().hasComposition()) {
         if (auto compositionRange = frame.editor().compositionRange()) {
-            postLayoutData.markedTextRects = RenderObject::collectSelectionRects(*compositionRange);
-            convertContentToRootViewSelectionRects(view, postLayoutData.markedTextRects);
+            postLayoutData.markedTextRects = RenderObject::collectSelectionGeometries(*compositionRange);
+            convertContentToRootView(view, postLayoutData.markedTextRects);
 
             postLayoutData.markedText = plainTextForContext(*compositionRange);
             VisibleSelection compositionSelection(*compositionRange);
@@ -309,8 +310,8 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         selectedRange = selection.toNormalizedRange();
         String selectedText;
         if (selectedRange) {
-            postLayoutData.selectionRects = RenderObject::collectSelectionRects(*selectedRange);
-            convertContentToRootViewSelectionRects(view, postLayoutData.selectionRects);
+            postLayoutData.selectionGeometries = RenderObject::collectSelectionGeometries(*selectedRange);
+            convertContentToRootView(view, postLayoutData.selectionGeometries);
             selectedText = plainTextForDisplay(*selectedRange);
             postLayoutData.selectedTextLength = selectedText.length();
             const int maxSelectedTextLength = 200;
@@ -1071,13 +1072,8 @@ void WebPage::sendTapHighlightForNodeIfNecessary(uint64_t requestID, Node* node)
         Color highlightColor = renderer->style().tapHighlightColor();
         if (!node->document().frame()->isMainFrame()) {
             FrameView* view = node->document().frame()->view();
-            for (size_t i = 0; i < quads.size(); ++i) {
-                FloatQuad& currentQuad = quads[i];
-                currentQuad.setP1(view->contentsToRootView(roundedIntPoint(currentQuad.p1())));
-                currentQuad.setP2(view->contentsToRootView(roundedIntPoint(currentQuad.p2())));
-                currentQuad.setP3(view->contentsToRootView(roundedIntPoint(currentQuad.p3())));
-                currentQuad.setP4(view->contentsToRootView(roundedIntPoint(currentQuad.p4())));
-            }
+            for (auto& quad : quads)
+                quad = view->contentsToRootView(quad);
         }
 
         RoundedRect::Radii borderRadii;
@@ -1962,7 +1958,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
     reply(WTFMove(rectsToAvoidInRootViewCoordinates));
 }
 
-void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& completionHandler)
+void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, int32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
 
@@ -1975,9 +1971,9 @@ void WebPage::getRectsForGranularityWithSelectionOffset(WebCore::TextGranularity
         return;
     }
 
-    auto selectionRects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
-    convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
-    completionHandler(selectionRects);
+    auto selectionGeometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
+    convertContentToRootView(*frame.view(), selectionGeometries);
+    completionHandler(selectionGeometries);
 }
 
 void WebPage::storeSelectionForAccessibility(bool shouldStore)
@@ -2002,7 +1998,7 @@ static Optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosition&
     return findClosestPlainText(range, matchText, { }, characterCount({ range.start, *boundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
 }
 
-void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& completionHandler)
+void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     auto& selection = m_storedSelectionForAccessibility.isNone() ? frame.selection().selection() : m_storedSelectionForAccessibility;
@@ -2021,9 +2017,9 @@ void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& te
         }
     }
 
-    auto selectionRects = RenderObject::collectSelectionRectsWithoutUnionInteriorLines(*range);
-    convertContentToRootViewSelectionRects(*frame.view(), selectionRects);
-    completionHandler(selectionRects);
+    auto selectionGeometries = RenderObject::collectSelectionGeometriesWithoutUnionInteriorLines(*range);
+    convertContentToRootView(*frame.view(), selectionGeometries);
+    completionHandler(selectionGeometries);
 }
 
 VisiblePosition WebPage::visiblePositionInFocusedNodeForPoint(const Frame& frame, const IntPoint& point, bool isInteractingWithFocusedElement)
@@ -2340,15 +2336,17 @@ void WebPage::requestAutocorrectionData(const String& textForAutocorrection, Com
         textForRange = plainTextForContext(range);
     }
 
-    Vector<SelectionRect> selectionRects;
+    Vector<SelectionGeometry> selectionGeometries;
     if (textForRange == textForAutocorrection)
-        selectionRects = RenderObject::collectSelectionRects(*range);
+        selectionGeometries = RenderObject::collectSelectionGeometries(*range);
 
-    auto rootViewSelectionRects = selectionRects.map([&](const auto& selectionRect) -> FloatRect { return frame.view()->contentsToRootView(selectionRect.rect()); });
+    auto rootViewSelectionRects = selectionGeometries.map([&](const auto& selectionGeometry) -> FloatRect {
+        return frame.view()->contentsToRootView(selectionGeometry.rect());
+    });
 
     bool multipleFonts = false;
     CTFontRef font = nil;
-    if (auto* coreFont = frame.editor().fontForSelection(multipleFonts))
+    if (auto coreFont = frame.editor().fontForSelection(multipleFonts))
         font = coreFont->getCTFont();
 
     reply({ WTFMove(rootViewSelectionRects) , (__bridge UIFont *)font });
@@ -2557,7 +2555,7 @@ static inline bool isObscuredElement(Element& element)
     auto topDocument = makeRef(element.document().topDocument());
     auto elementRectInMainFrame = element.clientRect();
 
-    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent, HitTestRequest::DisallowUserAgentShadowContent };
+    constexpr OptionSet<HitTestRequest::RequestType> hitType { HitTestRequest::ReadOnly, HitTestRequest::Active, HitTestRequest::AllowChildFrameContent, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::IgnoreClipping };
     HitTestResult result(elementRectInMainFrame.center());
 
     topDocument->hitTest(hitType, result);
@@ -2694,6 +2692,8 @@ static void imagePositionInformation(WebPage& page, Element& element, const Inte
 
     if (request.includeSnapshot || request.includeImageData)
         info.image = createShareableBitmap(renderImage, screenSize() * page.corePage()->deviceScaleFactor());
+
+    info.imageElementContext = page.contextForElement(element);
 }
 
 static void boundsPositionInformation(RenderObject& renderer, InteractionInformationAtPosition& info)
@@ -2719,6 +2719,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     info.isElement = true;
     info.idAttribute = element.getIdAttribute();
+    info.isImageOverlayText = HTMLElement::isImageOverlayText(innerNonSharedNode);
 
     info.title = element.attributeWithoutSynchronization(HTMLNames::titleAttr).string();
     if (linkElement && info.title.isEmpty())
@@ -2726,7 +2727,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
     if (element.renderer())
         info.touchCalloutEnabled = element.renderer()->style().touchCalloutEnabled();
 
-    if (linkElement) {
+    if (linkElement && !info.isImageOverlayText) {
         info.isLink = true;
         info.url = linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr)));
 
@@ -2746,9 +2747,8 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     if (auto* renderer = element.renderer()) {
         bool shouldCollectImagePositionInformation = renderer->isRenderImage();
-        if (shouldCollectImagePositionInformation && innerNonSharedNode && HTMLElement::isImageOverlayText(*innerNonSharedNode)) {
+        if (shouldCollectImagePositionInformation && info.isImageOverlayText) {
             shouldCollectImagePositionInformation = false;
-            info.isImageOverlayText = true;
             if (request.includeImageData) {
                 if (auto rendererAndImage = imageRendererAndImage(element)) {
                     auto& [renderImage, image] = *rendererAndImage;
@@ -2960,13 +2960,17 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     if (m_focusedElement)
         focusedElementPositionInformation(*this, *m_focusedElement, request, info);
 
+    auto hitTestNode = makeRefPtr(hitTestResult.innerNonSharedNode());
     if (is<Element>(nodeRespondingToClickEvents)) {
         auto& element = downcast<Element>(*nodeRespondingToClickEvents);
-        elementPositionInformation(*this, element, request, hitTestResult.innerNonSharedNode(), info);
+        elementPositionInformation(*this, element, request, hitTestNode.get(), info);
 
         if (info.isLink && !info.isImage && request.includeSnapshot)
             info.image = shareableBitmapSnapshotForNode(element);
     }
+
+    if (!info.isImage && request.includeImageData && is<HTMLImageElement>(hitTestNode))
+        imagePositionInformation(*this, downcast<HTMLImageElement>(*hitTestNode), request, info);
 
     if (!(info.isLink || info.isImage))
         selectionPositionInformation(*this, request, info);
@@ -3739,6 +3743,11 @@ void WebPage::updateViewportSizeForCSSViewportUnits()
 void WebPage::applicationWillResignActive()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillResignActiveNotification object:nil];
+
+    // FIXME(224775): Move to WebProcess
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationWillBecomeInactive();
+
     if (m_page)
         m_page->applicationWillResignActive();
 }
@@ -3749,6 +3758,10 @@ void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
 
     m_isSuspendedUnderLock = isSuspendedUnderLock;
     freezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
+
+    // FIXME(224775): Move to WebProcess
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationDidEnterBackground(isSuspendedUnderLock);
 
     if (m_page)
         m_page->applicationDidEnterBackground();
@@ -3768,6 +3781,10 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
 
+    // FIXME(224775): Move to WebProcess
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationWillEnterForeground(isSuspendedUnderLock);
+
     if (m_page)
         m_page->applicationWillEnterForeground();
 }
@@ -3775,6 +3792,11 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
 void WebPage::applicationDidBecomeActive()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidBecomeActiveNotification object:nil];
+
+    // FIXME(224775): Move to WebProcess
+    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+        manager->applicationDidBecomeActive();
+
     if (m_page)
         m_page->applicationDidBecomeActive();
 }

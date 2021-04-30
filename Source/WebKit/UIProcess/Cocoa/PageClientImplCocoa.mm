@@ -26,10 +26,10 @@
 #import "config.h"
 #import "PageClientImplCocoa.h"
 
-#import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewInternal.h"
-#import "WKWebViewPrivateForTesting.h"
 #import <WebCore/AlternativeTextUIController.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/WTFString.h>
@@ -46,11 +46,13 @@ PageClientImplCocoa::~PageClientImplCocoa() = default;
 
 void PageClientImplCocoa::themeColorWillChange()
 {
+    [m_webView willChangeValueForKey:@"themeColor"];
     [m_webView willChangeValueForKey:@"_themeColor"];
 }
 
 void PageClientImplCocoa::themeColorDidChange()
 {
+    [m_webView didChangeValueForKey:@"themeColor"];
     [m_webView didChangeValueForKey:@"_themeColor"];
 }
 
@@ -145,14 +147,24 @@ NSTextAlternatives *PageClientImplCocoa::platformDictationAlternatives(WebCore::
     return m_alternativeTextUIController->alternativesForContext(dictationContext);
 }
 
+void PageClientImplCocoa::microphoneCaptureWillChange()
+{
+    [m_webView willChangeValueForKey:@"microphoneCaptureState"];
+}
+
+void PageClientImplCocoa::cameraCaptureWillChange()
+{
+    [m_webView willChangeValueForKey:@"cameraCaptureState"];
+}
+
 void PageClientImplCocoa::microphoneCaptureChanged()
 {
-    [m_webView didChangeValueForKey:@"_microphoneCaptureState"];
+    [m_webView didChangeValueForKey:@"microphoneCaptureState"];
 }
 
 void PageClientImplCocoa::cameraCaptureChanged()
 {
-    [m_webView didChangeValueForKey:@"_cameraCaptureState"];
+    [m_webView didChangeValueForKey:@"cameraCaptureState"];
 }
 
 }

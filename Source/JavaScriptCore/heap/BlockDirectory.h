@@ -37,6 +37,10 @@
 #include <wtf/SharedTask.h>
 #include <wtf/Vector.h>
 
+namespace WTF {
+class SimpleStats;
+}
+
 namespace JSC {
 
 class GCDeferralContext;
@@ -83,9 +87,11 @@ public:
     RefPtr<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyBlockSource();
     
     void addBlock(MarkedBlock::Handle*);
-    void removeBlock(MarkedBlock::Handle*);
+    enum class WillDeleteBlock { No, Yes };
+    // If WillDeleteBlock::Yes is passed then the block will be left in an invalid state. We do this, however, to avoid potentially paging in / decompressing old blocks to update their handle just before freeing them.
+    void removeBlock(MarkedBlock::Handle*, WillDeleteBlock = WillDeleteBlock::No);
 
-    bool isPagedOut(MonotonicTime deadline);
+    void updatePercentageOfPagedOutPages(WTF::SimpleStats&);
     
     Lock& bitvectorLock() { return m_bitvectorLock; }
 

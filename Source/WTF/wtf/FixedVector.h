@@ -75,6 +75,18 @@ public:
         return *this;
     }
 
+    template<size_t inlineCapacity, typename OverflowHandler>
+    explicit FixedVector(Vector<T, inlineCapacity, OverflowHandler>&& other)
+        : m_storage(WTFMove(other))
+    { }
+
+    template<size_t inlineCapacity, typename OverflowHandler>
+    FixedVector& operator=(Vector<T, inlineCapacity, OverflowHandler>&& other)
+    {
+        m_storage = WTFMove(other);
+        return *this;
+    }
+
     size_t size() const { return m_storage.size(); }
     bool isEmpty() const { return m_storage.isEmpty(); }
     size_t byteSize() const { return m_storage.byteSize(); }

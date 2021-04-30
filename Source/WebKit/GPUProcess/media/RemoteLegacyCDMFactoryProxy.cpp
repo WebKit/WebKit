@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #include "GPUConnectionToWebProcess.h"
+#include "GPUProcess.h"
 #include "RemoteLegacyCDMProxy.h"
 #include "RemoteLegacyCDMProxyMessages.h"
 #include "RemoteLegacyCDMSessionProxy.h"
@@ -151,6 +152,9 @@ void RemoteLegacyCDMFactoryProxy::removeSession(RemoteLegacyCDMSessionIdentifier
 
     ASSERT(m_sessions.contains(identifier));
     m_sessions.remove(identifier);
+
+    if (m_gpuConnectionToWebProcess && allowsExitUnderMemoryPressure())
+        m_gpuConnectionToWebProcess->gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 RemoteLegacyCDMSessionProxy* RemoteLegacyCDMFactoryProxy::getSession(const RemoteLegacyCDMSessionIdentifier& identifier) const
@@ -159,6 +163,11 @@ RemoteLegacyCDMSessionProxy* RemoteLegacyCDMFactoryProxy::getSession(const Remot
     if (results != m_sessions.end())
         return results->value.get();
     return nullptr;
+}
+
+bool RemoteLegacyCDMFactoryProxy::allowsExitUnderMemoryPressure() const
+{
+    return m_sessions.isEmpty();
 }
 
 }

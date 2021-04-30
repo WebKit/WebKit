@@ -94,10 +94,11 @@ private:
     Timer m_animationDestroyedTimer;
 
     struct TrackedDeclarativeAnimationData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
         String trackingAnimationId;
         ComputedEffectTiming lastComputedTiming;
     };
-    HashMap<DeclarativeAnimation*, TrackedDeclarativeAnimationData> m_trackedDeclarativeAnimationData;
+    HashMap<DeclarativeAnimation*, UniqueRef<TrackedDeclarativeAnimationData>> m_trackedDeclarativeAnimationData;
 };
 
 } // namespace WebCore

@@ -71,7 +71,6 @@ enum class ViewStabilityFlag : uint8_t;
 @property (nonatomic, readonly, getter=isResigningFirstResponder) BOOL resigningFirstResponder;
 @property (nonatomic) BOOL sizeChangedSinceLastVisibleContentRectUpdate;
 @property (nonatomic, readonly) UIInterfaceOrientation interfaceOrientation;
-@property (nonatomic, readonly) BOOL canBecomeFocusedForWebView;
 
 - (instancetype)initWithFrame:(CGRect)frame processPool:(NakedRef<WebKit::WebProcessPool>)processPool configuration:(Ref<API::PageConfiguration>&&)configuration webView:(WKWebView *)webView;
 
@@ -99,7 +98,7 @@ enum class ViewStabilityFlag : uint8_t;
 - (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)process;
 - (void)_processDidExit;
 #if ENABLE(GPU_PROCESS)
-- (void)_gpuProcessCrashed;
+- (void)_gpuProcessDidExit;
 #endif
 - (void)_processWillSwap;
 - (void)_didRelaunchProcess;

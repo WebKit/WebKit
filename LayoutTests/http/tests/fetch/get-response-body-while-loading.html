@@ -13,7 +13,7 @@
     <script>
 
 promise_test(function() {
-    var url = "/resources/download-json-with-delay.php?iteration=5&delay=200";
+    var url = "/resources/download-json-with-delay.py?iteration=5&delay=200";
     var loadingFlag = false;
     return fetch(url).then(function(response) {
         assert_equals(response.status, 200);
@@ -27,7 +27,7 @@ promise_test(function() {
 }, "Testing calling Response.text() when still fetching data");
 
 promise_test(function() {
-    var url = "/resources/download-json-with-delay.php?iteration=5&delay=200";
+    var url = "/resources/download-json-with-delay.py?iteration=5&delay=200";
     var loadingFlag = false;
     return fetch(url).then(function(response) {
         assert_equals(response.status, 200);
@@ -41,7 +41,7 @@ promise_test(function() {
 }, "Testing calling Response.arrayBuffer() when still fetching data");
 
 promise_test(function() {
-    var url = "/resources/download-json-with-delay.php?iteration=5&delay=200";
+    var url = "/resources/download-json-with-delay.py?iteration=5&delay=200";
     var loadingFlag = false;
     return fetch(url).then(function(response) {
         assert_equals(response.status, 200);
@@ -55,7 +55,7 @@ promise_test(function() {
 }, "Testing calling Response.blob() when still fetching data");
 
 promise_test(function() {
-    var url = "/resources/download-json-with-delay.php?iteration=5&delay=200";
+    var url = "/resources/download-json-with-delay.py?iteration=5&delay=200";
     var loadingFlag = false;
     return fetch(url).then(function(response) {
         assert_equals(response.status, 200);

@@ -190,8 +190,6 @@ private:
 
     void addRecordToTimeline(Ref<JSON::Object>&&, TimelineRecordType);
 
-    void localToPageQuad(const RenderObject&, const LayoutRect&, FloatQuad*);
-
     std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
     Page& m_inspectedPage;

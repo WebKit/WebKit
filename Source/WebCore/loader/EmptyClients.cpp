@@ -87,6 +87,10 @@
 #include "LegacyPreviewLoaderClient.h"
 #endif
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+#include "DateTimeChooser.h"
+#endif
+
 namespace WebCore {
 
 class UserMessageHandlerDescriptor;
@@ -114,6 +118,10 @@ class EmptyContextMenuClient final : public ContextMenuClient {
 
 #if PLATFORM(COCOA)
     void searchWithSpotlight() final { }
+#endif
+
+#if HAVE(TRANSLATION_UI_SERVICES)
+    void handleTranslation(const String&, const IntRect&, const IntPoint&) final { }
 #endif
 
 #if PLATFORM(GTK)

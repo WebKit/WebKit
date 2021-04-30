@@ -56,11 +56,11 @@ struct OSREntryReshuffling {
 struct OSREntryData {
     BytecodeIndex m_bytecodeIndex;
     CodeLocationLabel<OSREntryPtrTag> m_machineCode;
-    Operands<AbstractValue> m_expectedValues;
+    FixedOperands<AbstractValue> m_expectedValues;
     // Use bitvectors here because they tend to only require one word.
     BitVector m_localsForcedDouble;
     BitVector m_localsForcedAnyInt;
-    Vector<OSREntryReshuffling> m_reshufflings;
+    FixedVector<OSREntryReshuffling> m_reshufflings;
     BitVector m_machineStackUsed;
     
     void dumpInContext(PrintStream&, DumpContext*) const;
@@ -76,7 +76,7 @@ struct CatchEntrypointData {
     // We use this when doing OSR entry at catch. We prove the arguments
     // are of the expected type before entering at a catch block.
     MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode;
-    Vector<FlushFormat> argumentFormats;
+    FixedVector<FlushFormat> argumentFormats;
     BytecodeIndex bytecodeIndex;
 };
 

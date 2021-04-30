@@ -59,6 +59,8 @@ public:
 
     void close();
 
+    bool allowsExitUnderMemoryPressure() const;
+
 private:
     explicit RemoteSampleBufferDisplayLayerManager(GPUConnectionToWebProcess&);
     void startListeningForIPC();

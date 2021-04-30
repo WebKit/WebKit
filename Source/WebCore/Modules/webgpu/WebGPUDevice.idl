@@ -28,7 +28,7 @@ typedef sequence<any> GPUMappedBuffer;  // [GPUBuffer, ArrayBuffer]
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     InterfaceName=GPUDevice,
     JSGenerateToJSObject,
     Exposed=Window

@@ -267,6 +267,12 @@ String fileButtonNoMediaFilesSelectedLabel()
 {
     return WEB_UI_STRING("no media selected (multiple)", "Text to display in file button used in HTML forms for media files when no media files are selected and the button allows multiple files to be selected");
 }
+
+
+String formControlDoneButtonTitle()
+{
+    return WEB_UI_STRING("Done", "Title of the Done button for form controls.");
+}
 #endif
 
 String validationMessageTooLongText(int, int maxLength)

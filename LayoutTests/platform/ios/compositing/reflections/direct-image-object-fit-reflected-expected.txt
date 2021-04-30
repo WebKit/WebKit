@@ -17,7 +17,10 @@
               (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
               (replicated layer)
             )
-          (structural layer 128.00, 88.00 200.00 x 120.00)
+          (structural layer
+            (position 128.00 88.00)
+            (bounds 200.00 120.00)
+          )
         )
         (GraphicsLayer
           (position 272.00 28.00)
@@ -29,7 +32,10 @@
               (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
               (replicated layer)
             )
-          (structural layer 372.00, 88.00 200.00 x 120.00)
+          (structural layer
+            (position 372.00 88.00)
+            (bounds 200.00 120.00)
+          )
         )
         (GraphicsLayer
           (position 516.00 28.00)
@@ -41,7 +47,10 @@
               (transform [1.00 0.00 0.00 0.00] [0.00 -1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 140.00 0.00 1.00])
               (replicated layer)
             )
-          (structural layer 616.00, 88.00 200.00 x 120.00)
+          (structural layer
+            (position 616.00 88.00)
+            (bounds 200.00 120.00)
+          )
         )
       )
     )

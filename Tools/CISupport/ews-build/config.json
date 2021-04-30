@@ -331,6 +331,14 @@
       "platform": "mac-bigsur"
     },
     {
+      "name": "ews181",
+      "platform": "mac-catalina"
+    },
+    {
+      "name": "ews182",
+      "platform": "mac-catalina"
+    },
+    {
       "name": "ews210",
       "platform": "win"
     },
@@ -500,7 +508,7 @@
       "configuration": "release",
       "architectures": ["x86_64"],
       "triggered_by": ["macos-catalina-release-build-ews"],
-      "workernames": ["ews151"]
+      "workernames": ["ews181", "ews182"]
     },
     {
       "name": "macOS-Catalina-Debug-Build-EWS",

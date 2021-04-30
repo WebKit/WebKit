@@ -26,7 +26,7 @@
 #include "config.h"
 #include "TextPaintStyle.h"
 
-#include "ColorUtilities.h"
+#include "ColorLuminance.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
@@ -63,7 +63,7 @@ bool textColorIsLegibleAgainstBackgroundColor(const Color& textColor, const Colo
 {
     // Uses the WCAG 2.0 definition of legibility: a contrast ratio of 4.5:1 or greater.
     // https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast
-    return Color::contrastRatio(textColor, backgroundColor) > 4.5;
+    return contrastRatio(textColor, backgroundColor) >= 4.5;
 }
 
 static Color adjustColorForVisibilityOnBackground(const Color& textColor, const Color& backgroundColor)

@@ -175,9 +175,13 @@ LayoutUnit FormattingContext::Geometry::contentHeightForFormattingContextRoot(co
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     ASSERT(isHeightAuto(formattingContextRoot) || formattingContextRoot.establishesTableFormattingContext() || formattingContextRoot.isTableCell());
-    if (!formattingContextRoot.hasInFlowOrFloatingChild())
-        return { };
-    return LayoutContext::createFormattingContext(formattingContextRoot, const_cast<LayoutState&>(layoutState()))->usedContentHeight();
+    auto usedContentHeight = LayoutUnit { }; 
+    auto hasContent = formattingContextRoot.hasInFlowOrFloatingChild();
+    // The used height of the containment box is determined as if performing a normal layout of the box, except that it is treated as having no content.
+    auto shouldIgnoreContent = formattingContextRoot.isSizeContainmentBox();
+    if (hasContent && !shouldIgnoreContent)
+        usedContentHeight = LayoutContext::createFormattingContext(formattingContextRoot, const_cast<LayoutState&>(layoutState()))->usedContentHeight();
+    return usedContentHeight;
 }
 
 Optional<LayoutUnit> FormattingContext::Geometry::computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const
@@ -278,10 +282,10 @@ LayoutUnit FormattingContext::Geometry::staticHorizontalPositionForOutOfFlowPosi
     return left - horizontalConstraints.logicalLeft;
 }
 
-LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRoot, LayoutUnit availableWidth)
+LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingContextRoot, LayoutUnit availableWidth)
 {
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width] -> shrink to fit -> unsupported -> width(" << LayoutUnit { } << "px) layoutBox: " << &formattingRoot << ")");
-    ASSERT(formattingRoot.establishesFormattingContext());
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "[Width] -> shrink to fit -> unsupported -> width(" << LayoutUnit { } << "px) layoutBox: " << &formattingContextRoot << ")");
+    ASSERT(formattingContextRoot.establishesFormattingContext());
 
     // Calculation of the shrink-to-fit width is similar to calculating the width of a table cell using the automatic table layout algorithm.
     // Roughly: calculate the preferred width by formatting the content without breaking lines other than where explicit line breaks occur,
@@ -291,8 +295,11 @@ LayoutUnit FormattingContext::Geometry::shrinkToFitWidth(const Box& formattingRo
 
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
     auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
-    if (is<ContainerBox>(formattingRoot) && downcast<ContainerBox>(formattingRoot).hasInFlowOrFloatingChild()) {
-        auto& root = downcast<ContainerBox>(formattingRoot);
+    auto hasContent = is<ContainerBox>(formattingContextRoot) && downcast<ContainerBox>(formattingContextRoot).hasInFlowOrFloatingChild();
+    // The used width of the containment box is determined as if performing a normal layout of the box, except that it is treated as having no content.
+    auto shouldIgnoreContent = formattingContextRoot.isSizeContainmentBox();  
+    if (hasContent && !shouldIgnoreContent) {
+        auto& root = downcast<ContainerBox>(formattingContextRoot);
         auto& formattingStateForRoot = layoutState().ensureFormattingState(root);
         auto precomputedIntrinsicWidthConstraints = formattingStateForRoot.intrinsicWidthConstraints();
         if (!precomputedIntrinsicWidthConstraints)

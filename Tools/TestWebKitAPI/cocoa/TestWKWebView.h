@@ -97,6 +97,7 @@
 - (void)addToTestWindow;
 - (BOOL)selectionRangeHasStartOffset:(int)start endOffset:(int)end;
 - (void)clickOnElementID:(NSString *)elementID;
+- (void)waitForPendingMouseEvents;
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -135,7 +136,6 @@
 - (void)sendClickAtPoint:(NSPoint)pointInWindow;
 - (NSWindow *)hostWindow;
 - (void)typeCharacter:(char)character;
-- (void)waitForPendingMouseEvents;
 - (void)setEventTimestampOffset:(NSTimeInterval)offset;
 @property (nonatomic, readonly) NSTimeInterval eventTimestamp;
 @end

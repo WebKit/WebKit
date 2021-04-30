@@ -114,9 +114,22 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialLoginChoiceKind) {
     ASCSecurityKeyPublicKeyCredentialLoginChoiceKindAssertionPlaceholder,
 };
 
+@interface ASCPublicKeyCredentialCreationOptions : NSObject <NSSecureCoding>
+
+@property (nonatomic, copy) NSData *challenge;
+@property (nonatomic, copy) NSString *relyingPartyIdentifier;
+@property (nonatomic, copy) NSString *userName;
+@property (nonatomic, copy) NSData *userIdentifier;
+@property (nonatomic, copy) NSString *userDisplayName;
+@property (nonatomic, copy) NSArray<NSNumber *> *supportedAlgorithmIdentifiers;
+
+@property (nonatomic) BOOL shouldRequireResidentKey;
+
+@end
+
 @interface ASCSecurityKeyPublicKeyCredentialLoginChoice : NSObject <ASCLoginChoiceProtocol>
 
-- (instancetype)initRegistrationChoice;
+- (instancetype)initRegistrationChoiceWithOptions:(ASCPublicKeyCredentialCreationOptions *)options;
 - (instancetype)initWithName:(NSString *)name displayName:(NSString *)displayName userHandle:(NSData *)userHandle;
 - (instancetype)initAssertionPlaceholderChoice;
 
@@ -132,7 +145,7 @@ typedef NS_ENUM(NSInteger, ASCSecurityKeyPublicKeyCredentialLoginChoiceKind) {
 
 @interface ASCPlatformPublicKeyCredentialLoginChoice : NSObject <ASCLoginChoiceProtocol>
 
-- (instancetype)initRegistrationChoice;
+- (instancetype)initRegistrationChoiceWithOptions:(ASCPublicKeyCredentialCreationOptions *)options;
 - (instancetype)initWithName:(NSString *)name displayName:(NSString *)displayName userHandle:(NSData *)userHandle;
 
 @property (nonatomic, readonly, copy) NSString *name;

@@ -206,7 +206,7 @@ inline ArrayElementType* binarySearchImpl(ArrayType& array, size_t size, KeyType
     size_t offset = 0;
     while (size > 1) {
         size_t pos = (size - 1) >> 1;
-        KeyType val = extractKey(&array[offset + pos]);
+        auto val = extractKey(&array[offset + pos]);
         
         if (val == key)
             return &array[offset + pos];

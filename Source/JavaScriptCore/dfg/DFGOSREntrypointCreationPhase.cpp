@@ -94,7 +94,7 @@ public:
         NodeOrigin origin = NodeOrigin(CodeOrigin(BytecodeIndex(0)), CodeOrigin(BytecodeIndex(0)), false);
         
         Vector<Node*> locals(baseline->numCalleeLocals());
-        for (int local = 0; local < baseline->numCalleeLocals(); ++local) {
+        for (unsigned local = 0; local < baseline->numCalleeLocals(); ++local) {
             Node* previousHead = target->variablesAtHead.local(local);
             if (!previousHead)
                 continue;
@@ -113,7 +113,7 @@ public:
         origin = target->at(0)->origin;
         
         ArgumentsVector newArguments = m_graph.m_rootToArguments.find(m_graph.block(0))->value;
-        for (int argument = 0; argument < baseline->numParameters(); ++argument) {
+        for (unsigned argument = 0; argument < baseline->numParameters(); ++argument) {
             Node* oldNode = target->variablesAtHead.argument(argument);
             if (!oldNode) {
                 // Just for sanity, always have a SetArgumentDefinitely even if it's not needed.
@@ -125,7 +125,7 @@ public:
             newArguments[argument] = node;
         }
 
-        for (int local = 0; local < baseline->numCalleeLocals(); ++local) {
+        for (unsigned local = 0; local < baseline->numCalleeLocals(); ++local) {
             Node* previousHead = target->variablesAtHead.local(local);
             if (!previousHead)
                 continue;

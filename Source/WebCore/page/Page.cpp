@@ -1252,6 +1252,11 @@ void Page::didCommitLoad()
 #if ENABLE(EDITABLE_REGION)
     m_isEditableRegionEnabled = false;
 #endif
+
+#if HAVE(OS_DARK_MODE_SUPPORT)
+    setUseDarkAppearanceOverride(WTF::nullopt);
+#endif
+
     resetSeenPlugins();
     resetSeenMediaEngines();
 }
@@ -1615,9 +1620,10 @@ void Page::doAfterUpdateRendering()
     forEachDocument([] (Document& document) {
         document.updateHighlightPositions();
     });
-#if ENABLE(APP_HIGHLIGHT)
+#if ENABLE(APP_HIGHLIGHTS)
     forEachDocument([] (Document& document) {
-        if (!auto appHighlightStorage = document.appHighlightStorageIfExists())
+        auto appHighlightStorage = document.appHighlightStorageIfExists();
+        if (!appHighlightStorage)
             return;
         
         if (appHighlightStorage->hasUnrestoredHighlights() && MonotonicTime::now() - appHighlightStorage->lastRangeSearchTime() > 1_s) {
@@ -2947,7 +2953,7 @@ void Page::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     chrome().client().setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
-void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::State state)
+void Page::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::MockState state)
 {
     chrome().client().setMockMediaPlaybackTargetPickerState(name, state);
 }

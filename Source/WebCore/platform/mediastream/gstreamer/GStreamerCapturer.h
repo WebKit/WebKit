@@ -39,8 +39,8 @@ public:
     ~GStreamerCapturer();
 
     void setupPipeline();
-    virtual void play();
-    virtual void stop();
+    void play();
+    void stop();
     GstCaps* caps();
     void addSink(GstElement *newSink);
     GstElement* makeElement(const char* factoryName);
@@ -54,9 +54,13 @@ public:
     GstElement* pipeline() const { return m_pipeline.get(); }
     virtual GstElement* createConverter() = 0;
 
+    bool isInterrupted() const;
+    void setInterrupted(bool);
+
 protected:
     GRefPtr<GstElement> m_sink;
     GRefPtr<GstElement> m_src;
+    GRefPtr<GstElement> m_valve;
     GRefPtr<GstElement> m_tee;
     GRefPtr<GstElement> m_capsfilter;
     GRefPtr<GstDevice> m_device;

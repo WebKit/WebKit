@@ -2,7 +2,7 @@ after
 
 FAIL display: block assert_equals: buttonTop expected 0 but got 2
 FAIL display: run-in assert_true: display: run-in is not supported expected true got false
-FAIL display: flow assert_true: display: flow is not supported expected true got false
+PASS display: flow
 PASS display: flow-root
 PASS display: table
 PASS display: list-item

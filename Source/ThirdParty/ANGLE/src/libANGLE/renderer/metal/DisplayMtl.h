@@ -165,6 +165,7 @@ class DisplayMtl : public DisplayImpl
     void initializeTextureCaps() const;
     void initializeFeatures();
     void initializeLimitations();
+    EGLenum EGLDrawingBufferTextureTarget();
     id<MTLDevice> getMetalDeviceMatchingAttribute(const egl::AttributeMap &attribs);
     angle::Result initializeShaderLibrary();
 

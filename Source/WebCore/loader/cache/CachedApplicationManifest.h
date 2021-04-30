@@ -33,14 +33,14 @@
 
 namespace WebCore {
 
-class ScriptExecutionContext;
+class Document;
 class TextResourceDecoder;
 
 class CachedApplicationManifest final : public CachedResource {
 public:
     CachedApplicationManifest(CachedResourceRequest&&, const PAL::SessionID&, const CookieJar*);
 
-    Optional<struct ApplicationManifest> process(const URL& manifestURL, const URL& documentURL, RefPtr<ScriptExecutionContext> = nullptr);
+    Optional<struct ApplicationManifest> process(const URL& manifestURL, const URL& documentURL, Document* = nullptr);
 
 private:
     void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) override;

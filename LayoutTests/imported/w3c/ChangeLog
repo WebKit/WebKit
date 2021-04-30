@@ -1,3 +1,1133 @@
+2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [WebIDL] `window.CSS` should be non-callable object with correct Symbol.toStringTag
+        https://bugs.webkit.org/show_bug.cgi?id=220855
+
+        Reviewed by Sam Weinig.
+
+        * web-platform-tests/console/idlharness.any-expected.txt:
+        * web-platform-tests/console/idlharness.any.worker-expected.txt:
+        * web-platform-tests/css/cssom/CSS-namespace-object-class-string-expected.txt:
+        * web-platform-tests/css/cssom/idlharness-expected.txt:
+        * web-platform-tests/resources/idlharness.js:
+        Sync from upstream 15ecbfebd504.
+
+        * web-platform-tests/wasm/jsapi/idlharness.any-expected.txt:
+        * web-platform-tests/wasm/jsapi/idlharness.any.worker-expected.txt:
+
+2021-04-27  Antoine Quint  <graouts@webkit.org>
+
+        Correctly interpolate stroke-dasharray in the discrete case
+        https://bugs.webkit.org/show_bug.cgi?id=225105
+
+        Reviewed by Antti Koivisto.
+
+        Mark 3 WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2021-04-27  Antoine Quint  <graouts@webkit.org>
+
+        Fix animation of the visibility CSS property between "hidden" and "collapse"
+        https://bugs.webkit.org/show_bug.cgi?id=225103
+
+        Reviewed by Antti Koivisto.
+
+        Mark 1 WPT progression.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2021-04-27  Antoine Quint  <graouts@webkit.org>
+
+        Correctly specify interpolation of page-break-* properties
+        https://bugs.webkit.org/show_bug.cgi?id=225098
+
+        Reviewed by Antti Koivisto.
+
+        Mark 15 WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2021-04-26  Tim Nguyen  <ntim@apple.com>
+
+        Create a containing block when relevant properties are set in the current element will-change
+        https://bugs.webkit.org/show_bug.cgi?id=167868
+
+        Reviewed by Alan Bujtas.
+
+        Per spec, any CSS property that is susceptible to create a containing block should create one when put on the
+        current element's will-change.
+
+        Relevant WPT are enabled.
+
+        Test: fast/css/will-change/will-change-creates-containing-block.html
+
+        * web-platform-tests/css/css-box/parsing/padding-computed-expected.txt:
+
+2021-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] OrdinarySet should invoke custom [[Set]] methods
+        https://bugs.webkit.org/show_bug.cgi?id=217916
+
+        Reviewed by Yusuke Suzuki.
+
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver.html:
+
+2021-04-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Implement ShadowRoot.prototype.delegatesFocus attribute
+        https://bugs.webkit.org/show_bug.cgi?id=224805
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined now that test casses are passing.
+
+        * web-platform-tests/shadow-dom/focus/ShadowRoot-delegatesFocus-expected.txt:
+
+2021-04-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Resync WPT shadow DOM tests as of 02f0cc10
+        https://bugs.webkit.org/show_bug.cgi?id=225042
+
+        Reviewed by Antti Koivisto.
+
+        Resync'ed shadow DOM tests as of 02f0cc10c4e92627ccfd8b30ce03e04278af5224.
+
+        * resources/resource-files.json:
+        * web-platform-tests/shadow-dom/accesskey.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/accesskey.tentative.html: Added.
+        * web-platform-tests/shadow-dom/declarative/declarative-after-attachshadow.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-attachment.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-basic.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-shadow-dom-opt-in.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/declarative/declarative-with-disabled-shadow.tentative.html: Added.
+        * web-platform-tests/shadow-dom/declarative/getinnerhtml.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/declarative/innerhtml-before-closing-tag.tentative.html: Renamed from innerhtml-before-closing-tag.html.
+        * web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/declarative/innerhtml-on-ordinary-template.tentative.html: Renamed from innerhtml-on-ordinary-template.html.
+        * web-platform-tests/shadow-dom/declarative/move-template-before-closing-tag.tentative-expected.txt: Added.
+        * web-platform-tests/shadow-dom/declarative/move-template-before-closing-tag.tentative.html: Renamed from move-template-before-closing-tag.html.
+        * web-platform-tests/shadow-dom/declarative/script-access.tentative.html:
+        * web-platform-tests/shadow-dom/declarative/w3c-import.log:
+        * web-platform-tests/shadow-dom/event-on-pseudo-element-crash.html: Added.
+        * web-platform-tests/shadow-dom/focus/ShadowRoot-delegatesFocus-expected.txt: Added.
+        * web-platform-tests/shadow-dom/focus/ShadowRoot-delegatesFocus.html: Added.
+        * web-platform-tests/shadow-dom/focus/focus-selector-delegatesFocus.html:
+        * web-platform-tests/shadow-dom/focus/w3c-import.log:
+        * web-platform-tests/shadow-dom/imperative-slot-api-crash-expected.txt: Added.
+        * web-platform-tests/shadow-dom/imperative-slot-api-crash.html: Added.
+        * web-platform-tests/shadow-dom/imperative-slot-api-expected.txt: Added.
+        * web-platform-tests/shadow-dom/imperative-slot-api-slotchange-expected.txt: Renamed from slots-imperative-api-slotchange.tentative-expected.txt.
+        * web-platform-tests/shadow-dom/imperative-slot-api-slotchange.html: Renamed from slots-imperative-api-slotchange.tentative.html.
+        * web-platform-tests/shadow-dom/imperative-slot-api.html: Renamed from slots-imperative-slot-api.tentative.html.
+        * web-platform-tests/shadow-dom/nested-slot-remove-crash-expected.txt:
+        * web-platform-tests/shadow-dom/nested-slot-remove-crash.html:
+        * web-platform-tests/shadow-dom/w3c-import.log:
+
+2021-04-25  Felipe Erias  <felipeerias@igalia.com>
+
+        [css-flexbox] Table layout disregards overriding width
+        https://bugs.webkit.org/show_bug.cgi?id=224934
+
+        Reviewed by Darin Adler.
+
+        Update expectations.
+
+        * web-platform-tests/css/css-flexbox/table-with-percent-intrinsic-width-expected.txt: This test now passes.
+
+2021-04-24  Antoine Quint  <graouts@webkit.org>
+
+        Improve parsing and computed style of the rotate CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=225019
+
+        Reviewed by Dean Jackson.
+
+        Mark 2 WPT progressions and add some new parsing WPT tests for rotate.
+
+        * web-platform-tests/css/css-transforms/animation/rotate-composition-expected.txt: We don't support additive interpolation,
+        the FAIL result is most likely a test that passed without proper support for the feature which now fails due to lack of
+        support for this feature.
+        * web-platform-tests/css/css-transforms/parsing/rotate-parsing-valid-expected.txt:
+        * web-platform-tests/css/css-transforms/parsing/rotate-parsing-valid.html:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2021-04-24  Antoine Quint  <graouts@webkit.org>
+
+        Support interpolation of the background-repeat shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=225016
+
+        Reviewed by Dean Jackson.
+
+        Mark 10 WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2021-04-24  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of the clip CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=225017
+
+        Reviewed by Dean Jackson.
+
+        Mark 13 WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt:
+
+2021-04-24  Antoine Quint  <graouts@webkit.org>
+
+        Computed style for the translate CSS property should use px for the z value
+        https://bugs.webkit.org/show_bug.cgi?id=225018
+
+        Reviewed by Dean Jackson.
+
+        Mark a single WPT progression.
+
+        * web-platform-tests/css/css-transforms/animation/translate-composition-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2021-04-23  Cathie Chen  <cathiechen@igalia.com>
+
+        Not computing image aspect ratios from width and height attributes for lazy loaded images
+        https://bugs.webkit.org/show_bug.cgi?id=224197
+
+        Reviewed by Darin Adler.
+
+        The test cases for error images and images without src in img-aspect-ratio.html are passed. This patch
+        doesn't change the behavior of the original aspect ratio case, so it's failed like before.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+
+2021-04-23  Cathie Chen  <cathiechen@igalia.com>
+
+        Import the update to "mapping attribute width and height to aspect ratio" tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224911
+
+        Reviewed by Rob Buis.
+
+        Import the update to "mapping attribute width and height to aspect ratio" tests from WPT commit 0ae0bb7cab. Split up the test cases, to make sure
+        each image has its own test case and won't affect testing other images.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/resources/aspect-ratio.js:
+        (test_computed_style_aspect_ratio):
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+
+2021-04-22  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse @counter-style descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=224718
+
+        Reviewed by Darin Adler.
+
+        Parsing for all @counter-style descriptors is implemented with this
+        patch, so mark more tests passing.
+
+        You'll notice that some @counter-style descriptors implemented in this
+        patch did not gain any passing tests (e.g. `pad`, `negative`).  In all
+        of these cases, the expected results contain a <string> value, and we
+        fail only because we incorrectly don't serialize these <string> values
+        with quotes.  I have manually confirmed in all cases that these values
+        are properly parsed, so it's just the serialization that's incorrect.
+
+        These <string> values serialize without quotes because WebKit's representation
+        of custom identifiers is not a separate type, but instead overloaded onto the
+        CSS_STRING type.  This means that during serialization time, WebKit must guess
+        whether it is actually serializing a string (and include quotes if so), or if
+        it's serializing a custom ident (leaving off quotes if so).
+
+        Relevant code snippet:
+
+        https://github.com/WebKit/WebKit/blob/36caeec07975bd5f47db8ac6b749c2787230a461/Source/WebCore/css/CSSMarkup.cpp#L153#L161
+
+        Relevant changelog snippet from David Hyatt, 2016-12-07:
+
+        > We also overload CSS_STRING primitive value type and have it act as both a string
+        > and a custom identifier. This is lame, since the parser should have made two different
+        > types of objects instead, but since our parser doesn't do that yet, I added a serializeAsStringOrCustomIdent
+        > that preserves our old behavior of "quote the string only if needed." In this case what
+        > that really meant was "Try to guess that we were originally a custom ident and leave off
+        > quotes if so." This function will go away once we properly create CSSStringValues and
+        > CSSCustomIdentValues instead of turning the latter into strings.
+
+        * web-platform-tests/css/css-counter-styles/counter-style-fallback-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-range-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-speak-as-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-system-syntax-expected.txt:
+
+2021-04-22  Antoine Quint  <graouts@webkit.org>
+
+        Add discrete animation support for border-image-repeat
+        https://bugs.webkit.org/show_bug.cgi?id=224923
+
+        Reviewed by Antti Koivisto.
+
+        Mark 10 WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2021-04-22  Chris Lord  <clord@igalia.com>
+
+        Implement FontFace in Workers for OffscreenCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=224178
+        <rdar://problem/76529024>
+
+        Reviewed by Darin Adler.
+
+        FontFace is now available for Workers, rebaseline related tests.
+
+        * web-platform-tests/css/css-font-loading/fontfaceset-load-css-wide-keywords-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.center.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.ltr.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.rtl.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.left.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.right.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.ltr.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.rtl.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.alphabetic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.bottom.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.hanging.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.ideographic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.middle.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.top.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fill.maxWidth.bound.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fill.maxWidth.fontface.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fontface.notinpage.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fontface.repeat.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fontface.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.basic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.end.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.nonspace.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.other.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.space.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.draw.space.collapse.start.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.actualBoundingBox.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.advances.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.baselines.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.emHeights.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.fontBoundingBox.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.basic.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.empty.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/text/2d.text.measure.width.space.worker-expected.txt:
+
+2021-04-22  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement WebXR Input Sources
+        https://bugs.webkit.org/show_bug.cgi?id=223257
+
+        Reviewed by Youenn Fablet.
+
+        Update WebXR Input Source test expectations.
+
+        * web-platform-tests/webxr/events_input_source_recreation.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_input_sources_change.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_session_select.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_session_select_subframe.https-expected.txt: Added.
+        * web-platform-tests/webxr/events_session_squeeze.https-expected.txt: Added.
+        * web-platform-tests/webxr/getInputPose_handedness.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrInputSource_add_remove.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrInputSource_emulatedPosition.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrInputSource_profiles.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrInputSource_sameObject.https-expected.txt: Added.
+        * web-platform-tests/webxr/xrReferenceSpace_originOffset.https-expected.txt: Added.
+
+2021-04-21  Tim Nguyen  <ntim@apple.com>
+
+        Import css/css-will-change tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224870
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-will-change/META.yml: Added.
+        * web-platform-tests/css/css-will-change/inheritance-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/inheritance.html: Added.
+        * web-platform-tests/css/css-will-change/parsing/w3c-import.log: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-computed-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-computed.html: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-invalid-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-invalid.html: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-valid-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/parsing/will-change-valid.html: Added.
+        * web-platform-tests/css/css-will-change/w3c-import.log: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-001-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-001.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-002-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-002.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-003-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-003.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-abspos-cb-dynamic-001.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-001-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-001.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-002.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-003-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-003.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-004.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-005.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-006-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-fixedpos-cb-006.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-inherit-dynamic-expected.txt: Added.
+        * web-platform-tests/css/css-will-change/will-change-inherit-dynamic.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-001-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-001.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-002-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-002.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-003-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-stacking-context-003.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-add-content-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-add-content.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-image-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-image.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-zero-size-child-overflow-visible-expected.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-transform-zero-size-child-overflow-visible.html: Added.
+        * web-platform-tests/css/css-will-change/will-change-will-change-1-expected.xht: Added.
+        * web-platform-tests/css/css-will-change/will-change-will-change-1.html: Added.
+
+2021-04-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276380 and r276386.
+        https://bugs.webkit.org/show_bug.cgi?id=224912
+
+        Caused WPT css/css-counter-styles/cssom test crashes on macOS
+        WK1 with ASan
+
+        Reverted changesets:
+
+        "[css-counter-styles] Parse @counter-style descriptors"
+        https://bugs.webkit.org/show_bug.cgi?id=224718
+        https://trac.webkit.org/changeset/276380
+
+        "CSSComputedStyleDeclaration.cpp should use C++ style
+        comments"
+        https://bugs.webkit.org/show_bug.cgi?id=224875
+        https://trac.webkit.org/changeset/276386
+
+2021-04-21  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse @counter-style descriptors
+        https://bugs.webkit.org/show_bug.cgi?id=224718
+
+        Reviewed by Darin Adler.
+
+        Parsing for all @counter-style descriptors is implemented with this
+        patch, so mark more tests passing.
+
+        You'll notice that some @counter-style descriptors implemented in this
+        patch did not gain any passing tests (e.g. `pad`, `negative`).  In all
+        of these cases, the expected results contain a <string> value, and we
+        fail only because we incorrectly don't serialize these <string> values
+        with quotes.  I have manually confirmed in all cases that these values
+        are properly parsed, so it's just the serialization that's incorrect.
+
+        These <string> values serialize without quotes because WebKit's representation
+        of custom identifiers is not a separate type, but instead overloaded onto the
+        CSS_STRING type.  This means that during serialization time, WebKit must guess
+        whether it is actually serializing a string (and include quotes if so), or if
+        it's serializing a custom ident (leaving off quotes if so).
+
+        Relevant code snippet:
+
+        https://github.com/WebKit/WebKit/blob/36caeec07975bd5f47db8ac6b749c2787230a461/Source/WebCore/css/CSSMarkup.cpp#L153#L161
+
+        Relevant changelog snippet from David Hyatt, 2016-12-07:
+
+        > We also overload CSS_STRING primitive value type and have it act as both a string
+        > and a custom identifier. This is lame, since the parser should have made two different
+        > types of objects instead, but since our parser doesn't do that yet, I added a serializeAsStringOrCustomIdent
+        > that preserves our old behavior of "quote the string only if needed." In this case what
+        > that really meant was "Try to guess that we were originally a custom ident and leave off
+        > quotes if so." This function will go away once we properly create CSSStringValues and
+        > CSSCustomIdentValues instead of turning the latter into strings.
+
+        * web-platform-tests/css/css-counter-styles/counter-style-fallback-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-range-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-speak-as-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-system-syntax-expected.txt:
+
+2021-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        will-change: transform should affect nested position:fixed
+        https://bugs.webkit.org/show_bug.cgi?id=167600
+
+        Reviewed by Alan Bujtas.
+
+        "will-change transform" should make an element a container for position:fixed,
+        just as a transform does.
+
+        * web-platform-tests/css/css-position/position-absolute-dynamic-containing-block-expected.txt:
+
+2021-04-21  Antoine Quint  <graouts@webkit.org>
+
+        Add discrete animation support for several background CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=224871
+
+        Reviewed by Antti Koivisto.
+
+        Mark 30 WPT progressions.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2021-04-21  Chris Lord  <clord@igalia.com>
+
+        DOMException should be Serializable
+        https://bugs.webkit.org/show_bug.cgi?id=224865
+
+        Reviewed by Chris Dumez.
+
+        DOMException is now serializable, rebaseline related tests.
+
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structured-cloning-error-stack-optional.sub.window-expected.txt:
+        * web-platform-tests/html/infrastructure/safe-passing-of-structured-data/structuredclone_0-expected.txt:
+
+2021-04-21  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] last-baseline shouldn't affect baseline alignment
+        https://bugs.webkit.org/show_bug.cgi?id=224538
+
+        Reviewed by Darin Adler and Javier Fernandez.
+
+        * web-platform-tests/css/css-grid/alignment/grid-baseline-004-expected.txt:
+
+2021-04-21  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Import one more :focus-visible WPT test
+        https://bugs.webkit.org/show_bug.cgi?id=224827
+
+        Reviewed by Rob Buis.
+
+        * web-platform-tests/css/selectors/focus-visible-020-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-020.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
+2021-04-20  Cathie Chen  <cathiechen@igalia.com>
+
+        Update html/rendering/replaced-elements/attributes-for-embedded-content-and-images/ tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224748
+
+        Reviewed by Rob Buis.
+
+        Update the tests for "mapping attribute width and height as the implicit aspect ratio" which are based on the latest agreement
+        from WPT commit 19445e7b39.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/number-placeholder-right-aligned-expected.html: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/number-placeholder-right-aligned.html: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio-expected.txt: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/picture-aspect-ratio.html: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/resources/aspect-ratio.js: Added.
+        (test_computed_style_aspect_ratio):
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/resources/w3c-import.log: Added.
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/w3c-import.log:
+
+2021-04-20  Tim Nguyen  <ntim@apple.com>
+
+        Implement CSS display property 2-value syntax
+        https://bugs.webkit.org/show_bug.cgi?id=224574
+
+        Reviewed by Darin Adler.
+
+        Except for list-item which doesn't have layout support for different variants.
+        Also fix a WPT to expect the most backwards-compatible form for `display: flow` computed value.
+
+        Test: web-platform-tests/css/css-display/parsing/display-valid.html
+
+        * web-platform-tests/css/css-display/parsing/display-valid-expected.txt:
+        * web-platform-tests/html/rendering/widgets/button-layout/computed-style-expected.txt:
+        * web-platform-tests/html/rendering/widgets/button-layout/computed-style.html:
+        * web-platform-tests/html/rendering/widgets/button-layout/display-other-expected.txt:
+
+2021-04-19  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Script focus and :focus-visible
+        https://bugs.webkit.org/show_bug.cgi?id=224598
+
+        Reviewed by Darin Adler.
+
+        Update expectations as the tests pass now.
+
+        * web-platform-tests/css/selectors/focus-visible-008-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-009-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-010-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-014-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-001-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-002.tentative-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-003.tentative-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-004-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-005-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-006.tentative-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-007.tentative-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-012-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-013-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-014-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-015-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-016.tentative-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-017.tentative-expected.txt:
+
+2021-04-19  Darin Adler  <darin@apple.com>
+
+        Nullptr crash in CSSCalcValue::category() via HTMLConverterCaches::floatPropertyValueForNode
+        https://bugs.webkit.org/show_bug.cgi?id=221392
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-values/minmax-length-percent-serialize-expected.txt:
+        Updated to reflect 8 tests passing that were failing before.
+
+2021-04-19  Youenn Fablet  <youenn@apple.com>
+
+        Migrate some WebRTC encoded transform tests to WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224604
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc-encoded-transform/routines.js: Added.
+        (async createConnections):
+        (waitFor):
+        * web-platform-tests/webrtc-encoded-transform/script-audio-transform-worker.js: Added.
+        (MockRTCRtpTransformer):
+        (MockRTCRtpTransformer.prototype.start):
+        (MockRTCRtpTransformer.prototype.process):
+        (onrtctransform):
+        * web-platform-tests/webrtc-encoded-transform/script-audio-transform.https-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/script-audio-transform.https.html: Renamed from LayoutTests/http/wpt/webrtc/audio-script-transform.html.
+        * web-platform-tests/webrtc-encoded-transform/script-change-transform-worker.js: Renamed from LayoutTests/http/wpt/webrtc/change-encoded-transform.js.
+        * web-platform-tests/webrtc-encoded-transform/script-change-transform.https-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/script-change-transform.https.html: Renamed from LayoutTests/http/wpt/webrtc/change-encoded-transform.html.
+        * web-platform-tests/webrtc-encoded-transform/script-late-transform.https-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/script-late-transform.https.html: Renamed from LayoutTests/http/wpt/webrtc/webrtc-late-transform.html.
+        * web-platform-tests/webrtc-encoded-transform/script-metadata-transform-worker.js: Renamed from LayoutTests/http/wpt/webrtc/metadata-transform-worker.js.
+        * web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html: Renamed from LayoutTests/http/wpt/webrtc/metadata-transform.html.
+        * web-platform-tests/webrtc-encoded-transform/script-transform-worker.js: Renamed from LayoutTests/http/wpt/webrtc/script-transform.js.
+        * web-platform-tests/webrtc-encoded-transform/script-transform.https-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/script-transform.https.html: Renamed from LayoutTests/http/wpt/webrtc/webrtc-transform.html.
+        * web-platform-tests/webrtc-encoded-transform/script-write-twice-transform-worker.js: Renamed from LayoutTests/http/wpt/webrtc/write-twice-transform.js.
+        * web-platform-tests/webrtc-encoded-transform/script-write-twice-transform.https-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/script-write-twice-transform.https.html: Renamed from LayoutTests/http/wpt/webrtc/write-twice-transform.html.
+        * web-platform-tests/webrtc-encoded-transform/sframe-keys.https-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/sframe-keys.https.html: Added.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-buffer-source-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-buffer-source.html: Added.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html: Renamed from LayoutTests/http/wpt/webrtc/sframe-transform-in-worker.html.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-readable-expected.txt: Added.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-readable.html: Added.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform-worker.js: Renamed from LayoutTests/http/wpt/webrtc/sframe-transform.js.
+        * web-platform-tests/webrtc-encoded-transform/sframe-transform.html: Renamed from LayoutTests/http/wpt/webrtc/sframe-transform.html.
+
+2021-04-18  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224601
+        <rdar://problem/76827947>
+
+        Reviewed by Darin Adler.
+
+        Fix expectations that were broken due to a mistake in the previous commit.
+        The tests had some extra changes due to webkit.org/224658, the tests were modified but not the expectations.
+
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-003-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-004-expected.txt:
+
+2021-04-18  Antoine Quint  <graouts@webkit.org>
+
+        Fix interpolation of the rotate CSS property
+        https://bugs.webkit.org/show_bug.cgi?id=224730
+
+        Reviewed by Dean Jackson.
+
+        Mark 123 WPT progressions.
+
+        * web-platform-tests/css/css-transforms/animation/rotate-composition-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/rotate-interpolation-expected.txt:
+        * web-platform-tests/css/css-transforms/animation/transform-interpolation-001-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002-expected.txt:
+
+2021-04-18  Cathie Chen  <cathiechen@igalia.com>
+
+        The implicit aspect-ratio from width and height attributes with float value is not accurate enough
+        https://bugs.webkit.org/show_bug.cgi?id=224664
+
+        Reviewed by Darin Adler.
+
+        The aspect ratio test case with width "0.8" and height "0.2" in img-aspect-ratio.html has passed. This patch doesn't change the behavior of
+        the original aspect ratio test case(`assert_ratio(images[5], 133/106)`) which is related to bug 206161.
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+
+2021-04-17  Tim Nguyen  <ntim@apple.com>
+
+        Add support for inline-{start/end} values to float & clear properties
+        https://bugs.webkit.org/show_bug.cgi?id=218087
+
+        Reviewed by Antti Koivisto & Zalan Bujtas.
+
+        Imported reftests from: https://github.com/web-platform-tests/wpt/commit/47e7176242e2ca4ca68d6cfe032619ccf44d55a6
+        Enabled: imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear.html
+
+        * web-platform-tests/css/css-box/parsing/clear-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/clear-valid-expected.txt:
+        * web-platform-tests/css/css-box/parsing/float-computed-expected.txt:
+        * web-platform-tests/css/css-box/parsing/float-valid-expected.txt:
+        * web-platform-tests/css/css-logical/logical-values-float-clear-1-expected.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-1.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-2-expected.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-2.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-3-expected.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-3.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-4-expected.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-4.html: Added.
+        * web-platform-tests/css/css-logical/logical-values-float-clear-expected.txt:
+        * web-platform-tests/css/css-logical/w3c-import.log:
+
+2021-04-17  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Consider making CSSStyleSheet::rules() just an alias of CSSStyleSheet::cssRules().
+        https://bugs.webkit.org/show_bug.cgi?id=197725
+
+        Reviewed by Darin Adler.
+
+        To match other browsers and the below WPT, CSSStyleSheet.rules now aliases
+        CSSStyleSheet.cssRulesForBindings, meaning we pass two more tests.
+
+        * web-platform-tests/css/cssom/CSSStyleSheet-expected.txt:
+
+2021-04-17  Tim Nguyen  <ntim@apple.com>
+
+        Don't omit conic gradient starting angle when serializing when starting angle is under 0
+        https://bugs.webkit.org/show_bug.cgi?id=224719
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated pre-existing test to cover this case.
+
+        Test: LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub.html
+
+        * web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub.html:
+
+2021-04-16  Cameron McCormack  <heycam@apple.com>
+
+        Place vertical scrollbars at (inline/block)-end edge in all writing modes.
+        https://bugs.webkit.org/show_bug.cgi?id=224224
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/css-scroll-snap/snap-inline-block-expected.txt:
+        * web-platform-tests/css/cssom-view/scrollLeftTop-expected.txt:
+
+2021-04-16  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse and add feature flag for @counter-style
+        https://bugs.webkit.org/show_bug.cgi?id=223150
+
+        Reviewed by Darin Adler.
+
+        @counter-style and its descriptors are now exposed behind a feature
+        flag, so pass some tests and fail others for a different reason
+        because this patch doesn't actually implement descriptor parsing and
+        setting yet.
+
+        * web-platform-tests/css/css-counter-styles/counter-style-additive-symbols-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-fallback-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-name-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-negative-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-pad-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-prefix-suffix-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-range-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-speak-as-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-symbols-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/counter-style-system-syntax-expected.txt:
+        * web-platform-tests/css/css-counter-styles/idlharness-expected.txt:
+        * web-platform-tests/css/cssom/CSSCounterStyleRule-expected.txt:
+
+2021-04-16  Antoine Quint  <graouts@webkit.org>
+
+        Blend using calc() when necessary
+        https://bugs.webkit.org/show_bug.cgi?id=224670
+
+        Reviewed by Antti Koivisto.
+
+        Mark 141 WPT progressions.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-position-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/border-radius-interpolation-expected.txt:
+        * web-platform-tests/css/css-flexbox/animation/flex-basis-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/bottom-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/left-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/right-composition-expected.txt:
+        * web-platform-tests/css/css-position/animations/top-composition-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-margin-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/max-width-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-height-composition-expected.txt:
+        * web-platform-tests/css/css-sizing/animation/min-width-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-composition-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation-expected.txt:
+        * web-platform-tests/css/css-values/animations/calc-interpolation-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2021-04-16  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [selectors] Update :focus-visible tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=224601
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/css/selectors/focus-visible-001.html:
+        * web-platform-tests/css/selectors/focus-visible-002-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-002.html:
+        * web-platform-tests/css/selectors/focus-visible-003-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-003.html:
+        * web-platform-tests/css/selectors/focus-visible-004-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-004.html:
+        * web-platform-tests/css/selectors/focus-visible-005.html:
+        * web-platform-tests/css/selectors/focus-visible-006-expected.txt:
+        * web-platform-tests/css/selectors/focus-visible-006.html:
+        * web-platform-tests/css/selectors/focus-visible-008.html:
+        * web-platform-tests/css/selectors/focus-visible-009.html:
+        * web-platform-tests/css/selectors/focus-visible-010.html:
+        * web-platform-tests/css/selectors/focus-visible-011.html:
+        * web-platform-tests/css/selectors/focus-visible-012.html:
+        * web-platform-tests/css/selectors/focus-visible-013.html:
+        * web-platform-tests/css/selectors/focus-visible-014.html:
+        * web-platform-tests/css/selectors/focus-visible-015.html:
+        * web-platform-tests/css/selectors/focus-visible-016.html:
+        * web-platform-tests/css/selectors/focus-visible-017.html:
+        * web-platform-tests/css/selectors/focus-visible-018.html:
+        * web-platform-tests/css/selectors/focus-visible-019.html:
+        * web-platform-tests/css/selectors/focus-visible-script-focus-001-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-001.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-002.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-002.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-003.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-003.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-004-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-004.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-005-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-005.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-006.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-006.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-007.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-007.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-008-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-008.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-009-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-009.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-010-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-010.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-011-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-011.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-012-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-012.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-013-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-013.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-014-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-014.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-015-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-015.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-016.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-016.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-017.tentative-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-017.tentative.html: Copied from LayoutTests/imported/w3c/web-platform-tests/css/selectors/focus-visible-019.html.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-018-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-018.html: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-019-expected.txt: Added.
+        * web-platform-tests/css/selectors/focus-visible-script-focus-019.html: Added.
+        * web-platform-tests/css/selectors/w3c-import.log:
+
+2021-04-15  Antoine Quint  <graouts@webkit.org>
+
+        calc() should not contain 0 values other than percentages
+        https://bugs.webkit.org/show_bug.cgi?id=224611
+
+        Reviewed by Simon Fraser.
+
+        Fix expectation of existing WPT tests and make some modifications to existing WPT tests.
+
+        * web-platform-tests/css/css-flexbox/parsing/flex-basis-computed-expected.txt:
+        * web-platform-tests/css/css-shapes/parsing/shape-outside-computed-expected.txt:
+        * web-platform-tests/css/css-shapes/parsing/shape-outside-computed.html: Add a new assertion checking
+        that the computed style for shape-outside may not contain 0px values in calc() values.
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation-expected.txt:
+        * web-platform-tests/css/css-transitions/animations/vertical-align-interpolation.html: Use 40% rather than
+        calc(0px + 40%) as the expected value for the computed style at the 100% keyframe when blending from 40px
+        to 40%. The test would have passed with calc(0px + 40%) as well, since it would now compute to 40%, but
+        the test is clearer when the actual computed form is used.
+        * web-platform-tests/css/css-values/minmax-percentage-serialize-expected.txt:
+
+2021-04-14  Tim Nguyen  <ntim@apple.com>
+
+        Omit default position/angle when serializing radial & conic gradients
+        https://bugs.webkit.org/show_bug.cgi?id=223892
+
+        Reviewed by Antti Koivisto.
+
+        Test: LayoutTests/imported/w3c/web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub.html
+
+        * web-platform-tests/css/css-backgrounds/parsing/background-image-computed.sub-expected.txt:
+
+2021-04-13  Ziran Sun  <zsun@igalia.com>
+
+        [css-grid] Incorrect track sizing when using relative sized items in 'auto' column tracks
+        https://bugs.webkit.org/show_bug.cgi?id=191627
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-applied-if-sizing-cyclic-dependency-001-expected.txt:
+
+2021-04-13  Antoine Quint  <graouts@webkit.org>
+
+        Unreviewed. Upstream a test.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation.html:
+
+2021-04-13  Antoine Quint  <graouts@webkit.org>
+
+        calc() simplification for a multiplication should apply the multiplication to each value of an addition
+        https://bugs.webkit.org/show_bug.cgi?id=224376
+
+        Reviewed by Simon Fraser.
+
+        Mark 99 WPT progressions.
+
+        * web-platform-tests/css/css-backgrounds/animations/background-position-origin-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/animation/shape-outside-interpolation-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-margin-003-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-010-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-011-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-008-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-009-expected.txt:
+        * web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-006-expected.txt:
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-001-expected.txt:
+
+2021-04-13  Said Abou-Hallawa  <said@apple.com>
+
+        SVG paced value animations overwrite user-provided keyTimes
+        https://bugs.webkit.org/show_bug.cgi?id=109010
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/svg/animations/scripted/paced-value-animation-overwrites-keyTimes-expected.txt:
+
+2021-04-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r275793.
+        https://bugs.webkit.org/show_bug.cgi?id=224466
+
+        Caused crashes on <http://facebook.com|facebook.com>
+
+        Reverted changeset:
+
+        "calc() simplification for a multiplication should apply the
+        multiplication to each value of an addition"
+        https://bugs.webkit.org/show_bug.cgi?id=224376
+        https://trac.webkit.org/changeset/275793
+
+2021-04-12  Chris Dumez  <cdumez@apple.com>
+
+        webaudio/AudioListener/audiolistener-set-position.html is leaking PannerNodes
+        https://bugs.webkit.org/show_bug.cgi?id=224399
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline existing WPT test. It is still passing but the exception message is different.
+
+        * web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-suspend-resume-expected.txt:
+
+2021-04-12  Antoine Quint  <graouts@webkit.org>
+
+        border-image-width computed values should be a calc() value if it contains a percentage
+        https://bugs.webkit.org/show_bug.cgi?id=224420
+
+        Reviewed by Simon Fraser.
+
+        We now pass the final test that was a FAIL result for the border-image-width computed style test.
+        We also pass a fair few border-image-width interpolation tests since we used to fail them as a
+        result of the expected value being expected to be a resolved value rather than a calc() value
+        due the computed style we returned for such values. There are a few PASS results than became
+        FAIL results because we now correctly expect a calc() value, but we return the keyframe value
+        as-is for 0 and 1 progress, a bug we will fix shortly.
+
+        * web-platform-tests/css/css-backgrounds/animations/border-image-width-interpolation-expected.txt:
+        * web-platform-tests/css/css-backgrounds/parsing/border-image-width-computed-expected.txt:
+
+2021-04-12  Youenn Fablet  <youenn@apple.com>
+
+        Block loading for port 10080
+        https://bugs.webkit.org/show_bug.cgi?id=224432
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/request/request-bad-port.any-expected.txt:
+        * web-platform-tests/fetch/api/request/request-bad-port.any.js:
+        * web-platform-tests/fetch/api/request/request-bad-port.any.worker-expected.txt:
+        * web-platform-tests/websockets/Create-blocked-port.any-expected.txt:
+        * web-platform-tests/websockets/Create-blocked-port.any.js:
+        * web-platform-tests/websockets/Create-blocked-port.any.worker-expected.txt:
+
+2021-04-12  Sam Weinig  <weinig@apple.com>
+
+        Update WPT css/css-color tests
+        https://bugs.webkit.org/show_bug.cgi?id=224419
+
+        Reviewed by Antti Koivisto.
+
+        Update to the latest version of the css/css-color tests.
+
+        * web-platform-tests/css/css-color/META.yml:
+        * web-platform-tests/css/css-color/hex-001-expected.html:
+        * web-platform-tests/css/css-color/hex-001.html:
+        * web-platform-tests/css/css-color/hex-002-expected.html:
+        * web-platform-tests/css/css-color/hex-002.html:
+        * web-platform-tests/css/css-color/hex-003-expected.html:
+        * web-platform-tests/css/css-color/hex-003.html:
+        * web-platform-tests/css/css-color/hex-004-expected.html:
+        * web-platform-tests/css/css-color/hex-004.html:
+        * web-platform-tests/css/css-color/hsl-001-expected.html:
+        * web-platform-tests/css/css-color/hsl-001.html:
+        * web-platform-tests/css/css-color/hsl-002-expected.html:
+        * web-platform-tests/css/css-color/hsl-002.html:
+        * web-platform-tests/css/css-color/hsl-003-expected.html:
+        * web-platform-tests/css/css-color/hsl-003.html:
+        * web-platform-tests/css/css-color/hsl-004-expected.html:
+        * web-platform-tests/css/css-color/hsl-004.html:
+        * web-platform-tests/css/css-color/hsl-005-expected.html:
+        * web-platform-tests/css/css-color/hsl-005.html:
+        * web-platform-tests/css/css-color/hsl-006-expected.html:
+        * web-platform-tests/css/css-color/hsl-006.html:
+        * web-platform-tests/css/css-color/hsl-007-expected.html:
+        * web-platform-tests/css/css-color/hsl-007.html:
+        * web-platform-tests/css/css-color/hsl-008-expected.html:
+        * web-platform-tests/css/css-color/hsl-008.html:
+        * web-platform-tests/css/css-color/hsla-001-expected.html:
+        * web-platform-tests/css/css-color/hsla-001.html:
+        * web-platform-tests/css/css-color/hsla-002-expected.html:
+        * web-platform-tests/css/css-color/hsla-002.html:
+        * web-platform-tests/css/css-color/hsla-003-expected.html:
+        * web-platform-tests/css/css-color/hsla-003.html:
+        * web-platform-tests/css/css-color/hsla-004-expected.html:
+        * web-platform-tests/css/css-color/hsla-004.html:
+        * web-platform-tests/css/css-color/hsla-005-expected.html:
+        * web-platform-tests/css/css-color/hsla-005.html:
+        * web-platform-tests/css/css-color/hsla-006-expected.html:
+        * web-platform-tests/css/css-color/hsla-006.html:
+        * web-platform-tests/css/css-color/hsla-007-expected.html:
+        * web-platform-tests/css/css-color/hsla-007.html:
+        * web-platform-tests/css/css-color/hsla-008-expected.html:
+        * web-platform-tests/css/css-color/hsla-008.html:
+        * web-platform-tests/css/css-color/rgb-001-expected.html:
+        * web-platform-tests/css/css-color/rgb-001.html:
+        * web-platform-tests/css/css-color/rgb-002-expected.html:
+        * web-platform-tests/css/css-color/rgb-002.html:
+        * web-platform-tests/css/css-color/rgb-003-expected.html:
+        * web-platform-tests/css/css-color/rgb-003.html:
+        * web-platform-tests/css/css-color/rgb-004-expected.html:
+        * web-platform-tests/css/css-color/rgb-004.html:
+        * web-platform-tests/css/css-color/rgb-005-expected.html:
+        * web-platform-tests/css/css-color/rgb-005.html:
+        * web-platform-tests/css/css-color/rgb-006-expected.html:
+        * web-platform-tests/css/css-color/rgb-006.html:
+        * web-platform-tests/css/css-color/rgb-007-expected.html:
+        * web-platform-tests/css/css-color/rgb-007.html:
+        * web-platform-tests/css/css-color/rgb-008-expected.html:
+        * web-platform-tests/css/css-color/rgb-008.html:
+        * web-platform-tests/css/css-color/rgba-001-expected.html:
+        * web-platform-tests/css/css-color/rgba-001.html:
+        * web-platform-tests/css/css-color/rgba-002-expected.html:
+        * web-platform-tests/css/css-color/rgba-002.html:
+        * web-platform-tests/css/css-color/rgba-003-expected.html:
+        * web-platform-tests/css/css-color/rgba-003.html:
+        * web-platform-tests/css/css-color/rgba-004-expected.html:
+        * web-platform-tests/css/css-color/rgba-004.html:
+        * web-platform-tests/css/css-color/rgba-005-expected.html:
+        * web-platform-tests/css/css-color/rgba-005.html:
+        * web-platform-tests/css/css-color/rgba-006-expected.html:
+        * web-platform-tests/css/css-color/rgba-006.html:
+        * web-platform-tests/css/css-color/rgba-007-expected.html:
+        * web-platform-tests/css/css-color/rgba-007.html:
+        * web-platform-tests/css/css-color/rgba-008-expected.html:
+        * web-platform-tests/css/css-color/rgba-008.html:
+        * web-platform-tests/css/css-color/w3c-import.log:
+
+2021-04-12  Youenn Fablet  <youenn@apple.com>
+
+        Update WPT streams test to ToT
+        https://bugs.webkit.org/show_bug.cgi?id=224284
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/streams/README.md:
+        * web-platform-tests/streams/piping/general.any-expected.txt:
+        * web-platform-tests/streams/piping/general.any.js:
+        (promise_test.t.const.rs.new.ReadableStream.start):
+        * web-platform-tests/streams/piping/general.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any.js:
+        * web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.any-expected.txt:
+        * web-platform-tests/streams/readable-byte-streams/general.any.js:
+        (test):
+        * web-platform-tests/streams/readable-byte-streams/general.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/async-iterator.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/async-iterator.any.js:
+        (promise_test.async const):
+        (promise_test):
+        * web-platform-tests/streams/readable-streams/async-iterator.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/default-reader.any.js:
+        (promise_test.t.const.rs.new.ReadableStream.start):
+        * web-platform-tests/streams/readable-streams/default-reader.any.worker-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.any-expected.txt:
+        * web-platform-tests/streams/readable-streams/general.any.js:
+        (promise_test):
+        * web-platform-tests/streams/readable-streams/general.any.worker-expected.txt:
+        * web-platform-tests/streams/transform-streams/patched-global.any-expected.txt:
+        * web-platform-tests/streams/transform-streams/patched-global.any.js:
+        * web-platform-tests/streams/transform-streams/patched-global.any.worker-expected.txt:
+
 2021-04-11  Sam Weinig  <weinig@apple.com>
 
         Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior

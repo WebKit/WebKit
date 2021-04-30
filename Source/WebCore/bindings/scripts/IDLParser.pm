@@ -66,6 +66,7 @@ struct( IDLInterface => {
     attributes => '@',    # List of 'IDLAttribute'
     constructors => '@', # Constructors, list of 'IDLOperation'
     isCallback => '$', # Used for callback interfaces
+    isNamespaceObject => '$', # Used for namespace objects like `window.CSS`
     isMixin => '$', # Used for mixin interfaces
     isPartial => '$', # Used for partial interfaces
     iterable => '$', # Used for iterable interfaces, of type 'IDLIterable'
@@ -312,6 +313,33 @@ sub assertExtendedAttributesValidForContext
     }
 }
 
+sub convertNamespaceToInterface
+{
+    # Ideally, we should keep a namespace object as IDLNamespace all the way through generation,
+    # but that would require huge changes to the generator. Feature-wise, a namespace object is
+    # a subset of an interface, so IDLNamespace is converted into IDLInterface, with a flag on.
+
+    my $namespace = shift;
+
+    my $interface = IDLInterface->new();
+    $interface->type(makeSimpleType($namespace->name));
+
+    foreach my $operation (@{$namespace->operations}) {
+        $operation->isStatic(1);
+        push(@{$interface->operations}, $operation);
+    }
+
+    foreach my $attribute (@{$namespace->attributes}) {
+        $attribute->isStatic(1);
+        push(@{$interface->attributes}, $attribute);
+    }
+
+    $interface->isNamespaceObject(1);
+    $interface->isPartial($namespace->isPartial);
+    $interface->extendedAttributes($namespace->extendedAttributes);
+    return $interface;
+}
+
 sub Parse
 {
     my $self = shift;
@@ -351,7 +379,7 @@ sub Parse
         } elsif (ref($definition) eq "IDLCallbackFunction") {
             push(@{$document->callbackFunctions}, $definition);
         } elsif (ref($definition) eq "IDLNamespace") {
-            push(@{$document->namespaces}, $definition);
+            push(@{$document->interfaces}, convertNamespaceToInterface($definition));
         } elsif (ref($definition) eq "IDLIncludesStatement") {
             push(@{$document->includes}, $definition);
         } else {
@@ -1036,8 +1064,6 @@ sub parseNamespace
 
         $self->assertExtendedAttributesValidForContext($extendedAttributeList, "namespace");
         $namespace->extendedAttributes($extendedAttributeList);
-
-        die "'namespace' definitions are not currently supported by the code generators.";
 
         return $namespace;
     }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../video-test.js></script>
+    <script type="text/javascript">
+    var mock;
+    var promise;
+    var capabilities = {};
+
+    function runTest()
+    {
+        if (!window.internals) {
+            failTest("Internals is required for this test.")
+            return;
+        }
+
+        run('internals.initializeMockMediaSource()');
+        run('mock = internals.registerMockCDM()');
+        run('mock.supportedDataTypes = ["mock"]');
+        run('capabilities.initDataTypes = ["mock"]');
+        run(`capabilities.videoCapabilities = [{ contentType: 'video/mock; codecs="mock"' }] `);
+
+        consoleWrite("");
+        consoleWrite("Call navigator.requestMediaKeySystemAccess() in a background tab");
+        internals.settings.setCanStartMedia(false);
+        run('promise = navigator.requestMediaKeySystemAccess("org.webkit.mock", [capabilities])');
+
+        setTimeout(() => {
+            consoleWrite("");
+            consoleWrite("Switch the tab to foreground");
+            internals.settings.setCanStartMedia(true);
+            shouldResolve(promise).then(endTest, failTest);
+        }, 200);
+    }
+    </script>
+</head>
+<body onload="runTest()">
+</body>
+</html>

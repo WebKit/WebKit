@@ -118,6 +118,9 @@ class LibWebRTCNetwork;
 class NetworkProcessConnection;
 class ObjCObjectGraph;
 class ProcessAssertion;
+class RemoteCDMFactory;
+class RemoteLegacyCDMFactory;
+class RemoteMediaEngineConfigurationFactory;
 struct ServiceWorkerInitializationData;
 class StorageAreaMap;
 class UserData;
@@ -240,7 +243,13 @@ public:
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     LibWebRTCCodecs& libWebRTCCodecs();
 #endif
-
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    RemoteLegacyCDMFactory& legacyCDMFactory();
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    RemoteCDMFactory& cdmFactory();
+#endif
+    RemoteMediaEngineConfigurationFactory& mediaEngineConfigurationFactory();
 #endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(WEB_AUTHN)
@@ -256,7 +265,11 @@ public:
     void pageDidEnterWindow(WebCore::PageIdentifier);
     void pageWillLeaveWindow(WebCore::PageIdentifier);
 
-    void nonVisibleProcessCleanupTimerFired();
+    void nonVisibleProcessGraphicsCleanupTimerFired();
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+    void nonVisibleProcessMemoryCleanupTimerFired();
+#endif
 
     void registerStorageAreaMap(StorageAreaMap&);
     void unregisterStorageAreaMap(StorageAreaMap&);
@@ -621,7 +634,7 @@ private:
 #if ENABLE(GPU_PROCESS)
     RefPtr<GPUProcessConnection> m_gpuProcessConnection;
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
-    std::unique_ptr<LibWebRTCCodecs> m_libWebRTCCodecs;
+    RefPtr<LibWebRTCCodecs> m_libWebRTCCodecs;
 #endif
 #endif
 
@@ -653,7 +666,11 @@ private:
     bool m_processIsSuspended { false };
 
     HashSet<WebCore::PageIdentifier> m_pagesInWindows;
-    WebCore::Timer m_nonVisibleProcessCleanupTimer;
+    WebCore::Timer m_nonVisibleProcessGraphicsCleanupTimer;
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+    WebCore::Timer m_nonVisibleProcessMemoryCleanupTimer;
+#endif
 
     RefPtr<WebCore::ApplicationCacheStorage> m_applicationCacheStorage;
 

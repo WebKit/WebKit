@@ -40,7 +40,7 @@ class JSArray : public JSNonFinalObject {
 
 public:
     typedef JSNonFinalObject Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesPut;
 
     static size_t allocationSize(Checked<size_t> inlineCapacity)
     {

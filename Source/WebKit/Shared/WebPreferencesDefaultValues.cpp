@@ -129,11 +129,23 @@ bool defaultAsyncOverflowScrollingEnabled()
     return defaultAsyncFrameAndOverflowScrollingEnabled();
 }
 
+bool defaultOfflineWebApplicationCacheEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfter(WebCore::SDKVersion::FirstWithApplicationCacheDisabledByDefault);
+    return !newSDK;
+#else
+    // FIXME: Other platforms should consider turning this off.
+    // ApplicationCache is on its way to being removed from WebKit.
+    return true;
+#endif
+}
+
 #if ENABLE(GPU_PROCESS)
 
 bool defaultUseGPUProcessForCanvasRenderingEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
     return isFeatureFlagEnabled("gpu_process_canvas_rendering");
 #endif
 
@@ -142,7 +154,7 @@ bool defaultUseGPUProcessForCanvasRenderingEnabled()
 
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
     return isFeatureFlagEnabled("gpu_process_dom_rendering");
 #endif
 
@@ -151,7 +163,7 @@ bool defaultUseGPUProcessForDOMRenderingEnabled()
 
 bool defaultUseGPUProcessForMediaEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
     return isFeatureFlagEnabled("gpu_process_media");
 #endif
 
@@ -173,7 +185,7 @@ bool defaultUseGPUProcessForWebGLEnabled()
 
 bool defaultCaptureAudioInGPUProcessEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
 #if PLATFORM(MAC)
     return isFeatureFlagEnabled("gpu_process_webrtc");
 #elif PLATFORM(IOS_FAMILY)
@@ -194,7 +206,7 @@ bool defaultCaptureAudioInUIProcessEnabled()
 
 bool defaultCaptureVideoInGPUProcessEnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
     return isFeatureFlagEnabled("gpu_process_webrtc");
 #else
     return false;
@@ -207,7 +219,7 @@ bool defaultCaptureVideoInGPUProcessEnabled()
 
 bool defaultWebRTCCodecsInGPUProcess()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(SYSTEM_FEATURE_FLAGS) && ENABLE(GPU_PROCESS_BY_DEFAULT)
     return isFeatureFlagEnabled("gpu_process_webrtc");
 #else
     return false;
@@ -253,11 +265,13 @@ bool defaultIncrementalPDFEnabled()
 
 bool defaultWebXREnabled()
 {
-#if HAVE(SYSTEM_FEATURE_FLAGS)
+#if HAVE(WEBXR_INTERNALS)
+    return true;
+#elif HAVE(SYSTEM_FEATURE_FLAGS)
     return isFeatureFlagEnabled("WebXR");
-#endif
-
+#else
     return false;
+#endif
 }
 
 #endif // ENABLE(WEBXR)

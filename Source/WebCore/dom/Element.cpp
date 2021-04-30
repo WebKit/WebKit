@@ -745,7 +745,7 @@ void Element::setActive(bool flag, bool pause, Style::InvalidationScope invalida
     }
 }
 
-void Element::setFocus(bool flag)
+void Element::setFocus(bool flag, FocusVisibility visibility)
 {
     if (flag == focused())
         return;
@@ -764,13 +764,8 @@ void Element::setFocus(bool flag)
     for (auto* element = this; element; element = element->parentElementInComposedTree())
         element->setHasFocusWithin(flag);
 
-    auto computeHasFocusVisible = [&] {
-        if (!flag)
-            return false;
-        // Elements that support keyboard input (form inputs and contenteditable) always match :focus-visible when focused.
-        return hasFocusVisible() || isTextField() || isContentEditable();
-    };
-    setHasFocusVisible(computeHasFocusVisible());
+    // Elements that support keyboard input (form inputs and contenteditable) always match :focus-visible when focused.
+    setHasFocusVisible(flag && (visibility == FocusVisibility::Visible || isTextField() || isContentEditable()));
 }
 
 void Element::setHasFocusVisible(bool flag)
@@ -1451,9 +1446,8 @@ IntRect Element::boundsInRootViewSpace()
     if (isSVGElement() && renderer()) {
         // Get the bounding rectangle from the SVG model.
         SVGElement& svgElement = downcast<SVGElement>(*this);
-        FloatRect localRect;
-        if (svgElement.getBoundingBox(localRect))
-            quads.append(renderer()->localToAbsoluteQuad(localRect));
+        if (auto localRect = svgElement.getBoundingBox())
+            quads.append(renderer()->localToAbsoluteQuad(*localRect));
     } else {
         // Get the bounding rectangle from the box model.
         if (renderBoxModelObject())
@@ -1512,9 +1506,8 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
     if (isSVGElement()) {
         // Get the bounding rectangle from the SVG model.
         SVGElement& svgElement = downcast<SVGElement>(*this);
-        FloatRect localRect;
-        if (svgElement.getBoundingBox(localRect, SVGLocatable::DisallowStyleUpdate))
-            result = LayoutRect(renderer()->localToAbsoluteQuad(localRect, UseTransforms, &includesFixedPositionElements).boundingBox());
+        if (auto localRect = svgElement.getBoundingBox())
+            result = LayoutRect(renderer()->localToAbsoluteQuad(*localRect, UseTransforms, &includesFixedPositionElements).boundingBox());
     } else {
         auto* renderer = this->renderer();
         if (is<RenderBox>(renderer)) {
@@ -1650,9 +1643,8 @@ Optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWitho
     if (isSVGElement() && renderer && !renderer->isSVGRoot()) {
         // Get the bounding rectangle from the SVG model.
         SVGElement& svgElement = downcast<SVGElement>(*this);
-        FloatRect localRect;
-        if (svgElement.getBoundingBox(localRect))
-            quads.append(renderer->localToAbsoluteQuad(localRect));
+        if (auto localRect = svgElement.getBoundingBox())
+            quads.append(renderer->localToAbsoluteQuad(*localRect));
     } else if (auto pair = listBoxElementBoundingBox(*this)) {
         renderer = pair.value().first;
         quads.append(renderer->localToAbsoluteQuad(FloatQuad { pair.value().second }));
@@ -3081,10 +3073,14 @@ void Element::focus(const FocusOptions& options)
         if (!frame.hasHadUserInteraction() && !frame.isMainFrame() && !document->topDocument().securityOrigin().isSameOriginDomain(document->securityOrigin()))
             return;
 
+        FocusOptions optionsWithVisibility = options;
+        if (!document->wasLastFocusByClick())
+            optionsWithVisibility.visibility = FocusVisibility::Visible;
+
         // Focus and change event handlers can cause us to lose our last ref.
         // If a focus event handler changes the focus to a different node it
         // does not make sense to continue and update appearence.
-        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), options.direction))
+        if (!page->focusController().setFocusedElement(newTarget.get(), *document->frame(), optionsWithVisibility))
             return;
     }
 
@@ -4244,26 +4240,45 @@ void Element::resetComputedStyle()
         return;
 
     auto reset = [](Element& element) {
-        if (!element.hasRareData() || !element.elementRareData()->computedStyle())
-            return;
         if (element.hasCustomStyleResolveCallbacks())
             element.willResetComputedStyle();
         element.elementRareData()->resetComputedStyle();
     };
     reset(*this);
-    for (auto& child : descendantsOfType<Element>(*this))
+    for (auto& child : descendantsOfType<Element>(*this)) {
+        if (!child.hasRareData() || !child.elementRareData()->computedStyle() || child.hasDisplayContents())
+            continue;
         reset(child);
+    }
 }
 
 void Element::resetStyleRelations()
 {
-    // FIXME: Make this code more consistent.
-    auto bitfields = styleBitfields();
-    bitfields.clearDynamicStyleRelations();
-    setStyleBitfields(bitfields);
+    clearStyleFlags(NodeStyleFlag::StyleAffectedByEmpty);
     if (!hasRareData())
         return;
-    elementRareData()->resetStyleRelations();
+    elementRareData()->setChildIndex(0);
+}
+
+void Element::resetChildStyleRelations()
+{
+    clearStyleFlags({
+        NodeStyleFlag::ChildrenAffectedByFirstChildRules,
+        NodeStyleFlag::ChildrenAffectedByLastChildRules,
+        NodeStyleFlag::ChildrenAffectedByForwardPositionalRules,
+        NodeStyleFlag::ChildrenAffectedByBackwardPositionalRules,
+        NodeStyleFlag::ChildrenAffectedByPropertyBasedBackwardPositionalRules
+    });
+}
+
+void Element::resetAllDescendantStyleRelations()
+{
+    resetChildStyleRelations();
+    
+    clearStyleFlags({
+        NodeStyleFlag::DescendantsAffectedByForwardPositionalRules,
+        NodeStyleFlag::DescendantsAffectedByBackwardPositionalRules
+    });
 }
 
 void Element::clearHoverAndActiveStatusBeforeDetachingRenderer()

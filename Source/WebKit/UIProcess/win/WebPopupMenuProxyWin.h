@@ -80,7 +80,7 @@ private:
     WebCore::IntSize visibleSize() const override;
     WebCore::IntSize contentsSize() const override;
     WebCore::IntRect scrollableAreaBoundingBox(bool* = nullptr) const override;
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const override { return false; }
+    bool shouldPlaceVerticalScrollbarOnLeft() const override { return false; }
     bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const override { return false; }
     bool isScrollableOrRubberbandable() override { return true; }
     bool hasScrollableOrRubberbandableAncestor() override { return true; }

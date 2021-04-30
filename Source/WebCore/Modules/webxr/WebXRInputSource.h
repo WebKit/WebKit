@@ -27,6 +27,9 @@
 
 #if ENABLE(WEBXR)
 
+#include "PlatformXR.h"
+#include "WebXRGamepad.h"
+#include "WebXRInputSpace.h"
 #include "XRHandedness.h"
 #include "XRTargetRayMode.h"
 #include <wtf/IsoMalloc.h>
@@ -38,27 +41,54 @@
 
 namespace WebCore {
 
-class WebXRSpace;
+#if ENABLE(GAMEPAD)
+class Gamepad;
+#endif
+class XRInputSourceEvent;
+class WebXRInputSpace;
 
 class WebXRInputSource : public RefCounted<WebXRInputSource> {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSource);
 public:
-    static Ref<WebXRInputSource> create(Ref<WebXRSpace>&&);
+    using InputSource = PlatformXR::Device::FrameData::InputSource;
+    using InputSourceButton = PlatformXR::Device::FrameData::InputSourceButton;
+
+    static Ref<WebXRInputSource> create(Document&, Ref<WebXRSession>&&, double timestamp, const InputSource&);
     ~WebXRInputSource();
 
-    XRHandedness handedness() const;
-    XRTargetRayMode targetRayMode() const;
-    const WebXRSpace& targetRaySpace() const;
-    RefPtr<WebXRSpace> gripSpace() const;
-    const Vector<String>& profiles() const;
+    PlatformXR::InputSourceHandle handle() const { return m_source.handle; }
+    XRHandedness handedness() const { return m_source.handeness; }
+    XRTargetRayMode targetRayMode() const { return m_source.targetRayMode; };
+    const WebXRSpace& targetRaySpace() const {return m_targetRaySpace.get(); };
+    WebXRSpace* gripSpace() const { return m_gripSpace.get(); }
+    const Vector<String>& profiles() const { return m_source.profiles; };
+#if ENABLE(GAMEPAD)
+    const Gamepad* gamepad() const { return m_gamepad.ptr(); }
+#endif
+
+    void update(double timestamp, const InputSource&);
+    bool requiresInputSourceChange(const InputSource&);
+    void disconnect();
+    
+    void pollEvents(Vector<Ref<XRInputSourceEvent>>&);
 
 private:
-    WebXRInputSource(Ref<WebXRSpace>&&);
+    WebXRInputSource(Document&, Ref<WebXRSession>&&, double timestamp, const InputSource&);
 
-    XRHandedness m_handedness;
-    XRTargetRayMode m_targetRayMode;
-    Ref<WebXRSpace> m_targetRaySpace;
-    Vector<String> m_profiles;
+    Ref<XRInputSourceEvent> createEvent(const AtomString&);
+
+    Ref<WebXRSession> m_session;
+    InputSource m_source;
+    Ref<WebXRInputSpace> m_targetRaySpace;
+    RefPtr<WebXRInputSpace> m_gripSpace;
+    double m_connectTime { 0 };
+    bool m_connected { true };
+#if ENABLE(GAMEPAD)
+    Ref<Gamepad> m_gamepad;
+#endif
+
+    bool m_selectStarted { false };
+    bool m_squeezeStarted { false };
 };
 
 } // namespace WebCore

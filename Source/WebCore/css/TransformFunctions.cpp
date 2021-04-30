@@ -451,7 +451,7 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
             type = TransformOperation::ROTATE_Y;
             y = 1.0;
         } else if (axisIdentifier == CSSValueZ) {
-            type = TransformOperation::ROTATE_Z;
+            type = TransformOperation::ROTATE_3D;
             z = 1.0;
         } else
             return nullptr;

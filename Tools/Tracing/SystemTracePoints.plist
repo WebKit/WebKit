@@ -215,6 +215,13 @@
                  <string>47</string>
                  <key>Code</key>
                  <string>5025</string>
+                 <key>ArgNames</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Display ID</string>
+                     <key>Arg2</key>
+                     <string>Send to main thread</string>
+                 </dict>
              </dict>
              <dict>
                  <key>Name</key>
@@ -360,6 +367,28 @@
                  <string>5042</string>
                  <key>CodeEnd</key>
                  <string>5043</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Display ID</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Display Refresh Dispatch to scrolling thread</string>
+                 <key>Type</key>
+                 <string>Impulse</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>Code</key>
+                 <string>5044</string>
+                 <key>ArgNames</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Display ID</string>
+                     <key>Arg2</key>
+                     <string>Recent Events?</string>
+                 </dict>
              </dict>
              <dict>
                  <key>Name</key>
@@ -480,6 +509,52 @@
                  <string>12017</string>
                  <key>CodeEnd</key>
                  <string>12018</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Paint snapshot</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12019</string>
+                 <key>CodeEnd</key>
+                 <string>12020</string>
+                 <key>ArgNamesBegin</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Options</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Render server snapshot</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12021</string>
+                 <key>CodeEnd</key>
+                 <string>12022</string>
+             </dict>
+             <dict>
+                 <key>Name</key>
+                 <string>Take snapshot</string>
+                 <key>Type</key>
+                 <string>Interval</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>CodeBegin</key>
+                 <string>12023</string>
+                 <key>CodeEnd</key>
+                 <string>12024</string>
+                 <key>ArgNamesEnd</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Succeeded</string>
+                 </dict>
              </dict>
              <dict>
                  <key>Name</key>

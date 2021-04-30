@@ -29,6 +29,7 @@
 #include "Document.h"
 
 #include "AXObjectCache.h"
+#include "ApplicationManifest.h"
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
@@ -37,6 +38,7 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
+#include "CachedFontLoadRequest.h"
 #include "CachedFrame.h"
 #include "CachedResourceLoader.h"
 #include "CanvasRenderingContext2D.h"
@@ -59,6 +61,7 @@
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
+#include "DocumentFontLoader.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
 #include "DocumentSharedObjectPool.h"
@@ -73,6 +76,7 @@
 #include "ExtensionStyleSheets.h"
 #include "FocusController.h"
 #include "FocusEvent.h"
+#include "FocusOptions.h"
 #include "FontFaceSet.h"
 #include "FormController.h"
 #include "Frame.h"
@@ -639,6 +643,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , m_visualUpdatesSuppressionTimer(*this, &Document::visualUpdatesSuppressionTimerFired)
     , m_sharedObjectPoolClearTimer(*this, &Document::clearSharedObjectPool)
     , m_fontSelector(CSSFontSelector::create(*this))
+    , m_fontLoader(makeUniqueRef<DocumentFontLoader>(*this))
     , m_didAssociateFormControlsTimer(*this, &Document::didAssociateFormControlsTimerFired)
     , m_cookieCacheExpiryTimer(*this, &Document::invalidateDOMCookieCache)
     , m_socketProvider(page() ? &page()->socketProvider() : nullptr)
@@ -758,7 +763,7 @@ Document::~Document()
     extensionStyleSheets().detachFromDocument();
 
     styleScope().clearResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
-    m_fontSelector->stopLoadingAndClearFonts();
+    m_fontLoader->stopLoadingAndClearFonts();
 
     // It's possible for multiple Documents to end up referencing the same CachedResourceLoader (e.g., SVGImages
     // load the initial empty document and the SVGDocument with the same DocumentLoader).
@@ -805,8 +810,9 @@ void Document::removedLastRef()
         m_fullscreenManager->clear();
 #endif
         m_associatedFormControls.clear();
+        m_pendingRenderTreeTextUpdate = { };
 
-        m_fontSelector->stopLoadingAndClearFonts();
+        m_fontLoader->stopLoadingAndClearFonts();
 
         detachParser();
 
@@ -2050,7 +2056,7 @@ void Document::resolveStyle(ResolveStyleType type)
                 documentElement->invalidateStyleForSubtree();
         }
 
-        Style::TreeResolver resolver(*this);
+        Style::TreeResolver resolver(*this, WTFMove(m_pendingRenderTreeTextUpdate));
         auto styleUpdate = resolver.resolve();
 
         m_lastStyleUpdateSizeForTesting = styleUpdate ? styleUpdate->size() : 0;
@@ -2061,7 +2067,7 @@ void Document::resolveStyle(ResolveStyleType type)
 
         m_inStyleRecalc = false;
 
-        fontSelector().loadPendingFonts();
+        m_fontLoader->loadPendingFonts();
 
         if (styleUpdate) {
             updateRenderTree(WTFMove(styleUpdate));
@@ -2098,10 +2104,12 @@ void Document::resolveStyle(ResolveStyleType type)
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
 {
-    auto textUpdate = makeUnique<Style::Update>(*this);
-    textUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, WTF::nullopt });
+    if (!m_pendingRenderTreeTextUpdate)
+        m_pendingRenderTreeTextUpdate = makeUnique<Style::Update>(*this);
 
-    updateRenderTree(WTFMove(textUpdate));
+    m_pendingRenderTreeTextUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, WTF::nullopt });
+
+    scheduleRenderingUpdate({ });
 }
 
 bool Document::needsStyleRecalc() const
@@ -2113,6 +2121,9 @@ bool Document::needsStyleRecalc() const
         return true;
 
     if (childNeedsStyleRecalc())
+        return true;
+
+    if (m_pendingRenderTreeTextUpdate)
         return true;
 
     if (styleScope().hasPendingUpdate())
@@ -2373,7 +2384,7 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
 Style::Resolver& Document::userAgentShadowTreeStyleResolver()
 {
     if (!m_userAgentShadowTreeStyleResolver)
-        m_userAgentShadowTreeStyleResolver = makeUnique<Style::Resolver>(*this);
+        m_userAgentShadowTreeStyleResolver = Style::Resolver::create(*this);
     return *m_userAgentShadowTreeStyleResolver;
 }
 
@@ -2706,6 +2717,11 @@ void Document::resumeDeviceMotionAndOrientationUpdates()
 #endif
 }
 
+void Document::suspendFontLoading()
+{
+    m_fontLoader->suspendFontLoading();
+}
+
 bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 {
     // Bypass this policy when the world is known, and it not the normal world.
@@ -2989,6 +3005,19 @@ void Document::implicitOpen()
 
     setParsing(true);
     setReadyState(Loading);
+}
+
+std::unique_ptr<FontLoadRequest> Document::fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
+{
+    auto* cachedFont = m_fontLoader->cachedFont(completeURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
+    return cachedFont ? makeUnique<CachedFontLoadRequest>(*cachedFont) : nullptr;
+}
+
+void Document::beginLoadingFontSoon(FontLoadRequest& request)
+{
+    ASSERT(is<CachedFontLoadRequest>(request));
+    auto& font = downcast<CachedFontLoadRequest>(request).cachedFont();
+    m_fontLoader->beginLoadingFontSoon(font);
 }
 
 HTMLBodyElement* Document::body() const
@@ -3825,18 +3854,22 @@ void Document::updateViewportArguments()
     }
 }
 
-void Document::processThemeColor(const String& themeColorString)
+void Document::processMetaElementThemeColor(const String& themeColorString)
 {
-    auto themeColor = CSSParser::parseColor(themeColorString);
-    if (themeColor == m_themeColor)
+    auto oldThemeColor = themeColor();
+    m_metaElementThemeColor = CSSParser::parseColor(themeColorString);
+    if (themeColor() == oldThemeColor)
         return;
 
-    m_themeColor = WTFMove(themeColor);
+    themeColorChanged();
+}
 
+void Document::themeColorChanged()
+{
     scheduleRenderingUpdate({ });
 
     if (auto* page = this->page())
-        page->chrome().client().themeColorChanged(m_themeColor);
+        page->chrome().client().themeColorChanged();
 
 #if ENABLE(RUBBER_BANDING)
     if (auto* view = renderView()) {
@@ -3949,6 +3982,20 @@ void Document::processReferrerPolicy(const String& policy, ReferrerPolicySource 
     }
     setReferrerPolicy(referrerPolicy.value());
 }
+
+#if ENABLE(APPLICATION_MANIFEST)
+
+void Document::processApplicationManifest(const ApplicationManifest& applicationManifest)
+{
+    auto oldThemeColor = themeColor();
+    m_applicationManifestThemeColor = applicationManifest.themeColor;
+    if (themeColor() == oldThemeColor)
+        return;
+
+    themeColorChanged();
+}
+
+#endif // ENABLE(APPLICATION_MANIFEST)
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const LayoutPoint& documentPoint, const PlatformMouseEvent& event)
 {
@@ -4335,7 +4382,7 @@ void Document::adjustFocusedNodeOnNodeRemoval(Node& node, NodeRemoval nodeRemova
         // FIXME: We should avoid synchronously updating the style inside setFocusedElement.
         // FIXME: Object elements should avoid loading a frame synchronously in a post style recalc callback.
         SubframeLoadingDisabler disabler(is<ContainerNode>(node) ? &downcast<ContainerNode>(node) : nullptr);
-        setFocusedElement(nullptr, FocusDirection::None, FocusRemovalEventsMode::DoNotDispatch);
+        setFocusedElement(nullptr, { { }, { }, FocusRemovalEventsMode::DoNotDispatch, { }, { } });
         // Set the focus navigation starting node to the previous focused element so that
         // we can fallback to the siblings or parent node for the next search.
         // Also we need to call removeFocusNavigationNodeOfSubtree after this function because
@@ -4417,7 +4464,7 @@ void Document::invalidateRenderingDependentRegions()
 #endif
 }
 
-bool Document::setFocusedElement(Element* element, FocusDirection direction, FocusRemovalEventsMode eventsMode)
+bool Document::setFocusedElement(Element* element, const FocusOptions& options)
 {
     RefPtr<Element> newFocusedElement = element;
     // Make sure newFocusedElement is actually in this document
@@ -4439,7 +4486,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         oldFocusedElement->setFocus(false);
         setFocusNavigationStartingNode(nullptr);
 
-        if (eventsMode == FocusRemovalEventsMode::Dispatch) {
+        if (options.removalEventsMode == FocusRemovalEventsMode::Dispatch) {
             // Dispatch a change event for form control elements that have been edited.
             if (is<HTMLFormControlElement>(*oldFocusedElement)) {
                 HTMLFormControlElement& formControlElement = downcast<HTMLFormControlElement>(*oldFocusedElement);
@@ -4507,7 +4554,8 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         // Set focus on the new node
         m_focusedElement = newFocusedElement;
         setFocusNavigationStartingNode(m_focusedElement.get());
-        m_focusedElement->setFocus(true);
+        m_focusedElement->setFocus(true, options.visibility);
+        m_latestFocusTrigger = options.trigger;
 
         // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
         if (m_focusedElement != newFocusedElement) {
@@ -4516,7 +4564,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         }
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
-        m_focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), direction);
+        m_focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), options.direction);
 
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
@@ -5510,6 +5558,8 @@ void Document::suspend(ReasonForSuspension reason)
     m_visualUpdatesAllowed = false;
     m_visualUpdatesSuppressionTimer.stop();
 
+    m_fontLoader->suspendFontLoading();
+
     m_isSuspended = true;
 }
 
@@ -5535,6 +5585,8 @@ void Document::resume(ReasonForSuspension reason)
     resumeScheduledTasks(reason);
 
     m_visualUpdatesAllowed = true;
+
+    m_fontLoader->resumeFontLoading();
 
     m_isSuspended = false;
 

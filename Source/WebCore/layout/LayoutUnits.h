@@ -244,8 +244,8 @@ struct SlotPositionHash {
 template<> struct HashTraits<WebCore::Layout::SlotPosition> : GenericHashTraits<WebCore::Layout::SlotPosition> {
     static WebCore::Layout::SlotPosition emptyValue() { return WebCore::Layout::SlotPosition(0, std::numeric_limits<size_t>::max()); }
 
-    static void constructDeletedValue(WebCore::Layout::SlotPosition& slot) { slot = WebCore::Layout::SlotPosition(std::numeric_limits<size_t>::max(), 0); }
-    static bool isDeletedValue(const WebCore::Layout::SlotPosition& slot) { return slot == WebCore::Layout::SlotPosition(std::numeric_limits<size_t>::max(), 0); }
+    static void constructDeletedValue(WebCore::Layout::SlotPosition& slot) { slot.column = std::numeric_limits<size_t>::max(); }
+    static bool isDeletedValue(const WebCore::Layout::SlotPosition& slot) { return slot.column == std::numeric_limits<size_t>::max(); }
 };
 template<> struct DefaultHash<WebCore::Layout::SlotPosition> : SlotPositionHash { };
 }

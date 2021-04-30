@@ -1,0 +1,16 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script src="referrer-policy-header-test.js"></script>
+<script>
+description("Tests support for Referrer-Policy HTTP header (multipart).");
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.setStatisticsShouldDowngradeReferrer(false, () => { runTests(true /* multipart */); });
+</script>
+</body>
+</html>

@@ -29,7 +29,6 @@
 #include <JavaScriptCore/HandleTypes.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Brigand.h>
-#include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 

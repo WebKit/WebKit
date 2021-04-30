@@ -1,0 +1,11 @@
+<script>
+  onload = () => {
+    if (window.testRunner)
+      testRunner.dumpAsText();
+    let writer = new SFrameTransform().writable.getWriter();
+    new AudioContext().audioWorklet.addModule('a').catch(() => {
+      writer.write();
+    });
+  };
+</script>
+<p>This test should not crash.</p>

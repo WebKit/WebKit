@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -865,14 +865,14 @@ class CachedSimpleJumpTable : public CachedObject<UnlinkedSimpleJumpTable> {
 public:
     void encode(Encoder& encoder, const UnlinkedSimpleJumpTable& jumpTable)
     {
-        m_min = jumpTable.min;
-        m_branchOffsets.encode(encoder, jumpTable.branchOffsets);
+        m_min = jumpTable.m_min;
+        m_branchOffsets.encode(encoder, jumpTable.m_branchOffsets);
     }
 
     void decode(Decoder& decoder, UnlinkedSimpleJumpTable& jumpTable) const
     {
-        jumpTable.min = m_min;
-        m_branchOffsets.decode(decoder, jumpTable.branchOffsets);
+        jumpTable.m_min = m_min;
+        m_branchOffsets.decode(decoder, jumpTable.m_branchOffsets);
     }
 
 private:
@@ -884,12 +884,12 @@ class CachedStringJumpTable : public CachedObject<UnlinkedStringJumpTable> {
 public:
     void encode(Encoder& encoder, const UnlinkedStringJumpTable& jumpTable)
     {
-        m_offsetTable.encode(encoder, jumpTable.offsetTable);
+        m_offsetTable.encode(encoder, jumpTable.m_offsetTable);
     }
 
     void decode(Decoder& decoder, UnlinkedStringJumpTable& jumpTable) const
     {
-        m_offsetTable.decode(decoder, jumpTable.offsetTable);
+        m_offsetTable.decode(decoder, jumpTable.m_offsetTable);
     }
 
 private:
@@ -950,8 +950,8 @@ public:
     void encode(Encoder& encoder, const UnlinkedCodeBlock::RareData& rareData)
     {
         m_exceptionHandlers.encode(encoder, rareData.m_exceptionHandlers);
-        m_switchJumpTables.encode(encoder, rareData.m_switchJumpTables);
-        m_stringSwitchJumpTables.encode(encoder, rareData.m_stringSwitchJumpTables);
+        m_unlinkedSwitchJumpTables.encode(encoder, rareData.m_unlinkedSwitchJumpTables);
+        m_unlinkedStringSwitchJumpTables.encode(encoder, rareData.m_unlinkedStringSwitchJumpTables);
         m_expressionInfoFatPositions.encode(encoder, rareData.m_expressionInfoFatPositions);
         m_typeProfilerInfoMap.encode(encoder, rareData.m_typeProfilerInfoMap);
         m_opProfileControlFlowBytecodeOffsets.encode(encoder, rareData.m_opProfileControlFlowBytecodeOffsets);
@@ -965,8 +965,8 @@ public:
     {
         UnlinkedCodeBlock::RareData* rareData = new UnlinkedCodeBlock::RareData { };
         m_exceptionHandlers.decode(decoder, rareData->m_exceptionHandlers);
-        m_switchJumpTables.decode(decoder, rareData->m_switchJumpTables);
-        m_stringSwitchJumpTables.decode(decoder, rareData->m_stringSwitchJumpTables);
+        m_unlinkedSwitchJumpTables.decode(decoder, rareData->m_unlinkedSwitchJumpTables);
+        m_unlinkedStringSwitchJumpTables.decode(decoder, rareData->m_unlinkedStringSwitchJumpTables);
         m_expressionInfoFatPositions.decode(decoder, rareData->m_expressionInfoFatPositions);
         m_typeProfilerInfoMap.decode(decoder, rareData->m_typeProfilerInfoMap);
         m_opProfileControlFlowBytecodeOffsets.decode(decoder, rareData->m_opProfileControlFlowBytecodeOffsets);
@@ -979,8 +979,8 @@ public:
 
 private:
     CachedVector<UnlinkedHandlerInfo> m_exceptionHandlers;
-    CachedVector<CachedSimpleJumpTable> m_switchJumpTables;
-    CachedVector<CachedStringJumpTable> m_stringSwitchJumpTables;
+    CachedVector<CachedSimpleJumpTable> m_unlinkedSwitchJumpTables;
+    CachedVector<CachedStringJumpTable> m_unlinkedStringSwitchJumpTables;
     CachedVector<ExpressionRangeInfo::FatPosition> m_expressionInfoFatPositions;
     CachedHashMap<unsigned, UnlinkedCodeBlock::RareData::TypeProfilerExpressionRange> m_typeProfilerInfoMap;
     CachedVector<InstructionStream::Offset> m_opProfileControlFlowBytecodeOffsets;

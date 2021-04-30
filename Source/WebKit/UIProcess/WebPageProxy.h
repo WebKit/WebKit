@@ -94,7 +94,6 @@
 #include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutSize.h>
 #include <WebCore/MediaControlsContextMenuItem.h>
-#include <WebCore/MediaPlaybackTargetContext.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformEvent.h>
@@ -128,6 +127,10 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include <WebCore/MediaPlaybackTargetContext.h>
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 #include "GestureTypes.h"
@@ -181,6 +184,10 @@ interface ID3D11Device1;
 
 #if ENABLE(MEDIA_USAGE)
 #include <WebCore/MediaSessionIdentifier.h>
+#endif
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+#include "PlatformXRSystem.h"
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -647,7 +654,7 @@ public:
     float topContentInset() const { return m_topContentInset; }
     void setTopContentInset(float);
 
-    // Corresponds to the web content's `<meta name="theme-color" content="...">`.
+    // Corresponds to the web content's `<meta name="theme-color">` or application manifest's `"theme_color"`.
     WebCore::Color themeColor() const { return m_themeColor; }
 
     WebCore::Color underlayColor() const { return m_underlayColor; }
@@ -831,8 +838,8 @@ public:
     double minimumEffectiveDeviceWidth() const { return m_viewportConfigurationMinimumEffectiveDeviceWidth; }
     void setMinimumEffectiveDeviceWidthWithoutViewportConfigurationUpdate(double minimumEffectiveDeviceWidth) { m_viewportConfigurationMinimumEffectiveDeviceWidth = minimumEffectiveDeviceWidth; }
     void setIsScrollingOrZooming(bool);
-    void requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, uint32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&&);
-    void requestRectsAtSelectionOffsetWithText(int32_t offset, const String&, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&&);
+    void requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity, uint32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&&);
+    void requestRectsAtSelectionOffsetWithText(int32_t offset, const String&, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&&);
     void autofillLoginCredentials(const String& username, const String& password);
     void storeSelectionForAccessibility(bool);
     void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
@@ -1233,7 +1240,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    void gpuProcessCrashed();
+    void gpuProcessExited(GPUProcessTerminationReason);
 #endif
 
     virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
@@ -1529,6 +1536,13 @@ public:
     void logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary&, WebCore::ShouldSample);
     void logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain);
 
+    void logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithResultFromWebProcess(const String& message, const String& description, uint32_t result, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValueFromWebProcess(const String& message, const String& description, double value, unsigned significantFigures, WebCore::ShouldSample);
+    void logDiagnosticMessageWithEnhancedPrivacyFromWebProcess(const String& message, const String& description, WebCore::ShouldSample);
+    void logDiagnosticMessageWithValueDictionaryFromWebProcess(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary&, WebCore::ShouldSample);
+    void logDiagnosticMessageWithDomainFromWebProcess(const String& message, WebCore::DiagnosticLoggingDomain);
+
     // Performance logging.
     void logScrollingEvent(uint32_t eventType, MonotonicTime, uint64_t);
 
@@ -1556,7 +1570,7 @@ public:
     void showPlaybackTargetPicker(WebCore::PlaybackTargetClientContextIdentifier, const WebCore::FloatRect&, bool hasVideo);
     void playbackTargetPickerClientStateDidChange(WebCore::PlaybackTargetClientContextIdentifier, WebCore::MediaProducer::MediaStateFlags);
     void setMockMediaPlaybackTargetPickerEnabled(bool);
-    void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::State);
+    void setMockMediaPlaybackTargetPickerState(const String&, WebCore::MediaPlaybackTargetContext::MockState);
     void mockMediaPlaybackTargetPickerDismissPopup();
 
     // WebMediaSessionManagerClient
@@ -1872,7 +1886,7 @@ public:
 #if ENABLE(APP_HIGHLIGHTS)
     void createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight, WebCore::HighlightRequestOriginatedInApp);
     void storeAppHighlight(const WebCore::AppHighlight&);
-    void restoreAppHighlights(const Vector<Ref<WebKit::SharedMemory>>& highlights);
+    void restoreAppHighlightsAndScrollToIndex(const Vector<Ref<WebKit::SharedMemory>>& highlights, const Optional<unsigned> index);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1890,8 +1904,9 @@ public:
     void resetImageExtractionPreview();
 #endif
 
-#if HAVE(TRANSLATION_UI_SERVICES)
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     bool canHandleContextMenuTranslation() const;
+    void handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& locationInView);
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -2221,8 +2236,8 @@ private:
     void discardQueuedMouseEvents();
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
-#if PLATFORM(MAC)
     void didUpdateRenderingAfterCommittingLoad();
+#if PLATFORM(MAC)
     void fontAtSelectionCallback(const FontInfo&, double, bool, CallbackID);
 #endif
 #if PLATFORM(IOS_FAMILY)
@@ -2309,6 +2324,7 @@ private:
 #if HAVE(CVDISPLAYLINK)
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
 #endif
+    void updateWheelEventActivityAfterProcessSwap();
 
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventTracking(const WebTouchEvent&);
@@ -2655,9 +2671,7 @@ private:
     bool m_isInPrintingMode { false };
     bool m_isPerformingDOMPrintOperation { false };
 
-#if PLATFORM(COCOA)
     bool m_hasUpdatedRenderingAfterDidCommitLoad { true };
-#endif
 
     WebCore::ResourceRequest m_decidePolicyForResponseRequest;
     bool m_shouldSuppressAppLinksInNextNavigationPolicyDecision { false };
@@ -2990,6 +3004,10 @@ private:
     bool m_lastNavigationWasAppBound { false };
 
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    std::unique_ptr<PlatformXRSystem> m_xrSystem;
+#endif
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebPageProxyAdditionsAfter.h>

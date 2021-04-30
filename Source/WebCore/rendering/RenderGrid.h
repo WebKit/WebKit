@@ -76,7 +76,7 @@ public:
 
     void updateGridAreaLogicalSize(RenderBox&, Optional<LayoutUnit> width, Optional<LayoutUnit> height) const;
     bool isBaselineAlignmentForChild(const RenderBox&) const;
-    bool isBaselineAlignmentForChild(const RenderBox&, GridAxis) const;
+    bool isBaselineAlignmentForChild(const RenderBox& child, GridAxis, AllowedBaseLine = BothLines) const;
 
     StyleSelfAlignmentData selfAlignmentForChild(GridAxis, const RenderBox&, const RenderStyle* = nullptr) const;
 

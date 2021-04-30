@@ -55,6 +55,7 @@ public:
     const Vector<Ref<GamepadButton>>& buttons() const;
 
     void updateFromPlatformGamepad(const PlatformGamepad&);
+    void setConnected(bool connected) { m_connected = connected; }
 
 private:
     explicit Gamepad(const PlatformGamepad&);

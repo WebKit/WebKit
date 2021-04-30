@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SetNodeAttributeCommand.h"
 
+#include "CompositeEditCommand.h"
 #include "Element.h"
 #include <wtf/Assertions.h>
 

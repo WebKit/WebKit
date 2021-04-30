@@ -46,6 +46,9 @@ fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 
+model-element/model-element-contents-layer-updates-with-clipping.html [ Pass ]
+model-element/model-element-contents-layer-updates.html [ Pass ]
+
 # Pending SDK changes, re-skip these tests that are un-skipped above.
 fast/viewport/ios/viewport-fit-contain.html [ Skip ]
 fast/viewport/ios/viewport-fit-cover.html [ Skip ]
@@ -137,7 +140,6 @@ scrollbars/scrolling-by-page-on-keyboard-spacebar.html [ Failure ]
 scrollbars/scrollbars-on-positioned-content.html [ Failure ]
 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 css3/scroll-snap/scroll-padding-overflow-paging.html [ Failure ]
-css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html [ Failure ]
 
 # SVG tests that time out (these require EventSender)
 svg/animations/animVal-basics.html
@@ -933,6 +935,8 @@ editing/selection/select-out-of-floated-non-editable-09.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-10.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-11.html [ Skip ]
 editing/selection/select-out-of-floated-non-editable-12.html [ Skip ]
+css3/scroll-snap/scroll-snap-click-scrollbar-gutter.html [ Skip ]
+css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
 
 webkit.org/b/192088 media/no-fullscreen-when-hidden.html [ Failure Pass ]
 
@@ -1787,6 +1791,8 @@ http/tests/in-app-browser-privacy/ [ Pass ]
 
 # Some In-App Browser Privacy tests rely on functions in WebKitAdditions.
 http/tests/in-app-browser-privacy/context-string-for-subframe.html [ Skip ]
+http/tests/in-app-browser-privacy/context-string-preconnect.html [ Skip ]
+http/tests/in-app-browser-privacy/context-string-preflight.html [ Skip ]
 
 webkit.org/b/175193 fast/images/async-image-body-background-image.html [ Pass Timeout ]
 
@@ -1871,8 +1877,6 @@ webkit.org/b/196403 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/border-002.html [ Failure ]
 
 webkit.org/b/217268 imported/w3c/web-platform-tests/mathml/relations/html5-tree/dynamic-childlist-001.html [ Failure ]
-
-webkit.org/b/217408 http/tests/cache-storage/page-cache-domcache-pending-promise.html [ Pass Failure DumpJSConsoleLogInStdErr ]
 
 webkit.org/b/217641 [ Debug ] imported/w3c/web-platform-tests/xhr/event-timeout.any.worker.html [ Pass Failure ]
 

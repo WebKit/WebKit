@@ -34,12 +34,12 @@ WI.ComputedStyleDetailsSidebarPanel = class ComputedStyleDetailsSidebarPanel ext
 
     computedStyleDetailsPanelShowProperty(property)
     {
-        let styleRulesPanel = this.parentSidebar.sidebarPanels.find((panel) => panel instanceof WI.RulesStyleDetailsSidebarPanel);
+        let styleRulesPanel = WI.detailsSidebar.sidebarPanels.find((panel) => panel instanceof WI.RulesStyleDetailsSidebarPanel);
         console.assert(styleRulesPanel, "Styles panel is missing.");
         if (!styleRulesPanel)
             return;
 
-        this.parentSidebar.selectedSidebarPanel = styleRulesPanel;
+        WI.detailsSidebar.selectedSidebarPanel = styleRulesPanel;
         styleRulesPanel.panel.scrollToSectionAndHighlightProperty(property);
     }
 };

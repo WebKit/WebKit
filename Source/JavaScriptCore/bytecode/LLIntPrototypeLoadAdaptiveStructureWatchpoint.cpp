@@ -42,6 +42,20 @@ LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructu
     RELEASE_ASSERT(!key.watchingRequiresReplacementWatchpoint());
 }
 
+LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint()
+    : Watchpoint(Watchpoint::Type::LLIntPrototypeLoadAdaptiveStructure)
+    , m_owner(nullptr)
+    , m_bytecodeOffset(0)
+{
+}
+
+void LLIntPrototypeLoadAdaptiveStructureWatchpoint::initialize(CodeBlock* codeBlock, const ObjectPropertyCondition& key, unsigned bytecodeOffset)
+{
+    m_owner = codeBlock;
+    m_bytecodeOffset = bytecodeOffset;
+    m_key = key;
+}
+
 void LLIntPrototypeLoadAdaptiveStructureWatchpoint::install(VM& vm)
 {
     RELEASE_ASSERT(m_key.isWatchable());

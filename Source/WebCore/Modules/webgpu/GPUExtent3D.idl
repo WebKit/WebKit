@@ -28,7 +28,7 @@ typedef [EnforceRange] unsigned long GPUIntegerCoordinate;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary GPUExtent3D {
     required GPUIntegerCoordinate width;
     required GPUIntegerCoordinate height;

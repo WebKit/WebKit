@@ -77,6 +77,7 @@ WEBCORE_EXPORT extern LazyNeverDestroyed<StaticCSSValuePool> staticCSSValuePool;
 
 class CSSValuePool {
     WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(CSSValuePool);
 public:
     CSSValuePool();
 

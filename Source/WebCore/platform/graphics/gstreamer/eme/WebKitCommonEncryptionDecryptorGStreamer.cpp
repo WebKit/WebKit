@@ -225,6 +225,10 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
         GST_ERROR_OBJECT(self, "Failed to get iv_size");
         return GST_FLOW_NOT_SUPPORTED;
     }
+    if (!ivSize && !gst_structure_get_uint(protectionMeta->info, "constant_iv_size", &ivSize)) {
+        GST_ERROR_OBJECT(self, "No iv_size and failed to get constant_iv_size");
+        return GST_FLOW_NOT_SUPPORTED;
+    }
 
     gboolean encrypted;
     if (!gst_structure_get_boolean(protectionMeta->info, "encrypted", &encrypted)) {
@@ -232,13 +236,17 @@ static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
         return GST_FLOW_NOT_SUPPORTED;
     }
 
-    if (!ivSize || !encrypted)
+    if (!ivSize || !encrypted) {
+        GST_TRACE_OBJECT(self, "iv size %u, encrypted %s, bailing out OK as unencrypted", ivSize, boolForPrinting(encrypted));
         return GST_FLOW_OK;
+    }
 
     GST_DEBUG_OBJECT(base, "protection meta: %" GST_PTR_FORMAT, protectionMeta->info);
 
-    unsigned subSampleCount;
-    if (!gst_structure_get_uint(protectionMeta->info, "subsample_count", &subSampleCount)) {
+    unsigned subSampleCount = 0;
+    // cbcs could not include the subsample_count.
+    if (!gst_structure_get_uint(protectionMeta->info, "subsample_count", &subSampleCount)
+        && !gst_structure_has_name(protectionMeta->info, "application/x-cbcs")) {
         GST_ERROR_OBJECT(self, "Failed to get subsample_count");
         return GST_FLOW_NOT_SUPPORTED;
     }

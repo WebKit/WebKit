@@ -803,6 +803,16 @@
                 "url": "https://www.w3.org/TR/css-ruby-1/#rubypos"
             }
         },
+        "additive-symbols": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols"
+            }
+        },
         "alignment-baseline": {
             "values": [
                 "auto",
@@ -2436,6 +2446,16 @@
                 "category": "svg"
             }
         },
+        "fallback": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-fallback"
+            }
+        },
         "fill": {
             "inherited": true,
             "codegen-properties": {
@@ -3377,6 +3397,16 @@
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-y"
             }
         },
+        "pad": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-pad"
+            }
+        },
         "padding": {
             "codegen-properties": {
                 "longhands": [
@@ -3848,6 +3878,16 @@
             "specification": {
                 "category": "css-speech",
                 "url": "https://www.w3.org/TR/css3-speech/#speak-as"
+            }
+        },
+        "symbols": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-symbols"
             }
         },
         "table-layout": {
@@ -6044,6 +6084,16 @@
             },
             "status": "non-standard"
         },
+        "negative": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-negative"
+            }
+        },
         "color-scheme": {
             "inherited": true,
             "values": [
@@ -6129,6 +6179,16 @@
                 "url": "https://www.w3.org/TR/css-transforms-1/#propdef-perspective-origin"
             }
         },
+        "prefix": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-prefix"
+            }
+        },
         "-webkit-print-color-adjust": {
             "inherited": true,
             "values": [
@@ -6136,6 +6196,16 @@
                 "economy"
             ],
             "status": "non-standard"
+        },
+        "range": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-range"
+            }
         },
         "-webkit-rtl-ordering": {
             "inherited": true,
@@ -6148,6 +6218,16 @@
                 "setter": "setRTLOrdering"
             },
             "status": "non-standard"
+        },
+        "suffix": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-suffix"
+            }
         },
         "-webkit-svg-shadow": {
             "codegen-properties": {
@@ -6971,6 +7051,16 @@
                 "url": "https://www.w3.org/TR/css-shapes/#propdef-shape-image-threshold"
             }
         },
+        "system": {
+            "codegen-properties": {
+                "settings-flag": "cssCounterStyleAtRules",
+                "skip-builder": true
+            },
+            "specification": {
+                "category": "css-counter-styles",
+                "url": "https://www.w3.org/TR/css-counter-styles-3/#counter-style-system"
+            }
+        },
         "-webkit-tap-highlight-color": {
             "inherited": true,
             "codegen-properties": {
@@ -7136,10 +7226,20 @@
             "longname": "CSS Compositing and Blending",
             "url": "https://www.w3.org/TR/compositing-1/"
         },
+        "css-contain": {
+            "shortname": "CSS Containment",
+            "longname": "CSS Containment Module",
+            "url": "https://drafts.csswg.org/css-contain-2/"
+        },
         "css-content": {
             "shortname": "CSS Generated Content",
             "longname": "CSS Generated Content Module",
             "url": "https://www.w3.org/TR/css-content-3/"
+        },
+        "css-counter-styles": {
+            "shortname": "CSS Counter Styles",
+            "longname": "CSS Counter Styles Module",
+            "url": "https://www.w3.org/TR/css-counter-styles-3"
         },
         "css-device-adapt": {
             "shortname": "CSS Device Adaptation",

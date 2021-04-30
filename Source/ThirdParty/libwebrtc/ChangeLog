@@ -1,3 +1,72 @@
+2021-04-27  Youenn Fablet  <youenn@apple.com>
+
+        Disable WebRTC trace event macros
+        https://bugs.webkit.org/show_bug.cgi?id=225104
+        <rdar://76146558>
+
+        Reviewed by Eric Carlson.
+
+        We are not using trace events so we can disable them as a small optimization.
+
+        * Configurations/libwebrtc.xcconfig:
+        * Configurations/libwebrtcpcrtc.xcconfig:
+
+2021-04-23  Philippe Normand  <pnormand@igalia.com>
+
+        [LibWebRTC][WPE][GTK] Enable vp9 and NO_MAIN_THREAD_WRAPPING
+        https://bugs.webkit.org/show_bug.cgi?id=222795
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * CMakeLists.txt: Enable NO_MAIN_THREAD_WRAPPING as in the XCode build and harmonize options
+        between Apple and non-Apple ports.
+        * Source/webrtc/common_video/h265/h265_pps_parser.h:
+
+2021-04-21  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebRTC should be compiled with thread-safe statics
+        https://bugs.webkit.org/show_bug.cgi?id=224863
+
+        Reviewed by Youenn Fablet.
+
+        Compile libwebrtc with normal thread-safe c++ local statics.
+        No known threading failures. Based on ad-hoc risk vs benefit
+        evaluation of today and after future merges, it appears
+        better to err in the side of caution.
+
+        * Configurations/Base.xcconfig:
+
+2021-04-21  Youenn Fablet  <youenn@apple.com>
+
+        [ BigSur wk2 ARM64 ] http/wpt/webrtc/change-encoded-transform.html is a flakey crash
+        https://bugs.webkit.org/show_bug.cgi?id=224696
+        <rdar://problem/76780020>
+
+        Reviewed by Eric Carlson.
+
+        On stream recreation, the new delegate may have to process a transformed frame before receiving one from the encoder.
+        Check for encoder_queue to not be null in that case.
+
+        * Source/webrtc/modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.cc:
+
+2021-04-15  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] Build and use the openh264 based encoder if present on the system
+        https://bugs.webkit.org/show_bug.cgi?id=202538
+        <rdar://problem/76047172>
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In WPE/GTK we would like to have the libwebrtc openh264 encoder enabled if libopenh264 is
+        present on the host (eg not vendored).
+
+        * CMakeLists.txt:
+        * LibWebRTCWebKitMacros.h.in: Added.
+        * Source/webrtc/modules/video_coding/codecs/h264/h264.cc:
+        * Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.cc:
+        * Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.h:
+        * cmake/FindOpenh264.cmake: Added.
+
 2021-04-06  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r275275): Broke some build configs lacking openh264

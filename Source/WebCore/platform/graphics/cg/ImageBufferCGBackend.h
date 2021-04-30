@@ -33,6 +33,8 @@ namespace WebCore {
 
 class WEBCORE_EXPORT ImageBufferCGBackend : public ImageBufferBackend {
 public:
+    static unsigned calculateBytesPerRow(const IntSize& backendSize);
+
     RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const override;
     RefPtr<Image> sinkIntoImage(PreserveResolution) override;
 

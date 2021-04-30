@@ -12,7 +12,10 @@
             (GraphicsLayer
               (anchor 0.00 0.00)
               (bounds 800.00 600.00)
-              (contents layer -800.00, -600.00 2400.00 x 1800.00)
+              (contents layer (background color)
+                (position -800.00 -600.00)
+                (bounds 2400.00 1800.00)
+              )
             )
             (GraphicsLayer
               (bounds 800.00 600.00)

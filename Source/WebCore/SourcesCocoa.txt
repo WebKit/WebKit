@@ -369,6 +369,7 @@ platform/graphics/cocoa/IOSurface.mm
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm
 platform/graphics/cocoa/IntRectCocoa.mm
 platform/graphics/cocoa/MediaEngineConfigurationFactoryCocoa.cpp
+platform/graphics/cocoa/MediaPlaybackTargetContext.mm
 platform/graphics/cocoa/RemoteGraphicsContextGLProxyBaseCocoa.mm
 platform/graphics/cocoa/SourceBufferParser.cpp
 platform/graphics/cocoa/SourceBufferParserWebM.cpp
@@ -390,7 +391,6 @@ platform/graphics/cv/PixelBufferConformerCV.cpp
 platform/graphics/cv/GraphicsContextGLCVANGLE.cpp
 platform/graphics/coreimage/FilterEffectRendererCoreImage.mm
 platform/graphics/displaylists/DisplayListDrawGlyphsRecorderCoreText.cpp
-platform/graphics/gpu/TilingData.cpp
 platform/graphics/gpu/cocoa/GPUBindGroupAllocatorMetal.mm
 platform/graphics/gpu/cocoa/GPUBindGroupLayoutMetal.mm
 platform/graphics/gpu/cocoa/GPUBindGroupMetal.mm
@@ -453,7 +453,7 @@ platform/ios/QuickLook.mm
 platform/ios/ScrollAnimatorIOS.mm
 platform/ios/ScrollViewIOS.mm
 platform/ios/ScrollbarThemeIOS.mm
-platform/ios/SelectionRect.cpp
+platform/ios/SelectionGeometry.cpp
 platform/ios/SystemMemoryIOS.cpp
 platform/ios/ThemeIOS.mm
 platform/ios/TileControllerMemoryHandlerIOS.cpp

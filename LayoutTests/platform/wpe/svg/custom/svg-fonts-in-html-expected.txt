@@ -22,8 +22,9 @@ layer at (173,32) size 454x454
 layer at (173,47) size 454x188
   RenderBlock (positioned) {H1} at (0,15) size 454x189 [color=#DD9955]
     RenderInline {SPAN} at (0,0) size 330x181
-      RenderText {#text} at (83,3) size 330x181
-        text run at (83,3) width 287: "CSS ZEN"
+      RenderText {#text} at (79,3) size 330x181
+        text run at (79,3) width 142: "CSS"
+        text run at (192,3) width 174: " ZEN"
         text run at (62,97) width 330: "GARDEN"
 layer at (173,119) size 454x21
   RenderBlock (positioned) {H2} at (0,87) size 454x22 [color=#EEFF00]

@@ -92,6 +92,7 @@ void PerformanceLogging::didReachPointOfInterest(PointOfInterest poi)
 {
 #if RELEASE_LOG_DISABLED
     UNUSED_PARAM(poi);
+    UNUSED_VARIABLE(m_page);
 #else
     // Ignore synthetic main frames used internally by SVG and web inspector.
     if (m_page.mainFrame().loader().client().isEmptyFrameLoaderClient())

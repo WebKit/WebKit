@@ -4,5 +4,5 @@ if (window.testRunner) {
 }
 
 window.onload = function () {
-    window.location = "/security/contentSecurityPolicy/resources/echo-report.php";
+    window.location = "/security/contentSecurityPolicy/resources/echo-report.py";
 }

@@ -1142,7 +1142,7 @@ void CSSCalcOperationNode::combineChildren()
                 auto& children = downcast<CSSCalcOperationNode>(m_children.last().get()).children();
                 if (allChildrenArePrimitiveValues(children)) {
                     for (auto& child : children) {
-                        newChildren.uncheckedAppend(child.copyRef());
+                        newChildren.append(child.copyRef());
                         downcast<CSSCalcPrimitiveValueNode>(newChildren.last().get()).multiply(multiplier);
                     }
                     m_operator = CalcOperator::Add;
@@ -1367,7 +1367,16 @@ std::unique_ptr<CalcExpressionNode> CSSCalcOperationNode::createCalcExpression(c
             return nullptr;
         nodes.uncheckedAppend(WTFMove(node));
     }
-    return makeUnique<CalcExpressionOperation>(WTFMove(nodes), m_operator);
+
+    // Reverse the operation we did when creating this node, recovering a suitable destination category for otherwise-ambiguous min/max/clamp nodes.
+    // Note that this category is really only good enough for that purpose and is not accurate for other node types; we could use a boolean instead.
+    auto destinationCategory = CalculationCategory::Other;
+    if (category() == CalculationCategory::PercentLength)
+        destinationCategory = CalculationCategory::Length;
+    else if (category() == CalculationCategory::PercentNumber)
+        destinationCategory = CalculationCategory::Number;
+
+    return makeUnique<CalcExpressionOperation>(WTFMove(nodes), m_operator, destinationCategory);
 }
 
 double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
@@ -1408,7 +1417,7 @@ void CSSCalcOperationNode::buildCSSText(const CSSCalcExpressionNode& node, Strin
             auto& operationNode = downcast<CSSCalcOperationNode>(rootNode);
             return operationNode.isCalcSumNode() || operationNode.isCalcProductNode();
         }
-        return true;
+        return !is<CSSCalcPrimitiveValueNode>(rootNode);
     };
     
     bool outputCalc = shouldOutputEnclosingCalc(node);
@@ -1937,7 +1946,7 @@ static Vector<Ref<CSSCalcExpressionNode>> createCSS(const Vector<std::unique_ptr
     for (auto& node : nodes) {
         auto cssNode = createCSS(*node, style);
         if (!cssNode)
-            return { };
+            continue;
         values.uncheckedAppend(cssNode.releaseNonNull());
     }
     return values;
@@ -1950,8 +1959,12 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
         float value = downcast<CalcExpressionNumber>(node).value(); // double?
         return CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(value, CSSUnitType::CSS_NUMBER));
     }
-    case CalcExpressionNodeType::Length:
-        return createCSS(downcast<CalcExpressionLength>(node).length(), style);
+    case CalcExpressionNodeType::Length: {
+        auto& length = downcast<CalcExpressionLength>(node).length();
+        if (!length.isPercent() && length.isZero())
+            return nullptr;
+        return createCSS(length, style);
+    }
 
     case CalcExpressionNodeType::Negation: {
         auto childNode = createCSS(*downcast<CalcExpressionNegation>(node).child(), style);
@@ -1975,6 +1988,8 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
             auto children = createCSS(operationChildren, style);
             if (children.isEmpty())
                 return nullptr;
+            if (children.size() == 1)
+                return WTFMove(children[0]);
             return CSSCalcOperationNode::createSum(WTFMove(children));
         }
         case CalcOperator::Subtract: {
@@ -1984,13 +1999,14 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
             values.reserveInitialCapacity(operationChildren.size());
             
             auto firstChild = createCSS(*operationChildren[0], style);
-            if (!firstChild)
-                return nullptr;
-
             auto secondChild = createCSS(*operationChildren[1], style);
+
             if (!secondChild)
-                return nullptr;
+                return firstChild;
+
             auto negateNode = CSSCalcNegateNode::create(secondChild.releaseNonNull());
+            if (!firstChild)
+                return negateNode;
 
             values.append(firstChild.releaseNonNull());
             values.append(WTFMove(negateNode));
@@ -2029,7 +2045,7 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
             auto children = createCSS(operationChildren, style);
             if (children.isEmpty())
                 return nullptr;
-            return CSSCalcOperationNode::createMinOrMaxOrClamp(op, WTFMove(children), CalculationCategory::Other);
+            return CSSCalcOperationNode::createMinOrMaxOrClamp(op, WTFMove(children), operationNode.destinationCategory());
         }
         }
         return nullptr;
@@ -2130,7 +2146,7 @@ RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTo
     auto expression = parser.parseCalc(tokens, function);
     if (!expression)
         return nullptr;
-    auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRangeAll));
+    auto result = adoptRef(new CSSCalcValue(expression.releaseNonNull(), range != ValueRange::All));
     LOG_WITH_STREAM(Calc, stream << "CSSCalcValue::create " << *result);
     return result;
 }

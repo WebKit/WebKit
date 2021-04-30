@@ -1,3 +1,242 @@
+2021-04-26  Alex Christensen  <achristensen@webkit.org>
+
+        Update Mac-specific CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=225064
+
+        Rubber-stamped by Tim Horton.
+
+        * PlatformMac.cmake:
+
+2021-04-25  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] support primitive restart behavior with simple data types
+        https://bugs.webkit.org/show_bug.cgi?id=225011
+
+        Primitive restart behavior for simple data types is not defined in Metal. Add a pre-draw pass to 
+        create a set of restart indices, rather than re-write the index buffer. This pass avoids 
+        storing more copies of the index buffer: instead, we cache the location of restart indices, and
+        use them to build draw lists.
+ 
+        Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/BufferMtl.h:
+        * src/libANGLE/renderer/metal/BufferMtl.mm:
+        (rx::IndexConversionBufferMtl::IndexConversionBufferMtl):
+        (rx::BufferMtl::markConversionBuffersDirty):
+        (rx::calculateRestartRanges):
+        (rx::BufferMtl::getRestartIndices):
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::drawLineLoopElements):
+        (rx::ContextMtl::drawElementsImpl):
+        (rx::ContextMtl::drawElementsSimpleTypesPrimitiveRestart): Deleted.
+        * src/libANGLE/renderer/metal/VertexArrayMtl.h:
+        * src/libANGLE/renderer/metal/VertexArrayMtl.mm:
+        (rx::VertexArrayMtl::getIndexBuffer):
+        (rx::VertexArrayMtl::getDrawIndices):
+        (rx::VertexArrayMtl::convertIndexBuffer):
+        (rx::VertexArrayMtl::streamIndexBufferFromClient):
+
+2021-04-25  John Cunningham  <johncunningham@apple.com>
+
+        [Metal ANGLE] Temporarily remove AST validation even for debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=224991
+        rdar://76299178
+ 
+        Reviewed by Kenneth Russell.
+
+        * src/libANGLE/renderer/metal/ShaderMtl.mm:
+        (rx::ShaderMtl::compileImplMtl):
+
+2021-04-25  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] Select proper IOSurface backing format for WebGL environment
+        https://bugs.webkit.org/show_bug.cgi?id=224948
+        <rdar://76284889>
+
+        Depending on the architecture, WebCore expects different 
+        IOSurface texture targets for the main buffer. When running catalyst on 
+        Arm64 devices, Metal-ANGLE needs to select the TEXTURE_2D texture target for our
+        IOSurface/Pbuffer bind point, rather than TEXTURE_RECTANGLE.
+
+	Reviewed by Dean Jackson.
+
+        * src/libANGLE/renderer/metal/DisplayMtl.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::needsEAGLOnMac):
+        (rx::DisplayMtl::EGLDrawingBufferTextureTarget):
+        (rx::DisplayMtl::generateConfigs):
+
+2021-04-23  Truitt Savell  <tsavell@apple.com>
+
+        Unreviewed, reverting r276190.
+
+        broke a test internally.
+
+        Reverted changeset:
+
+        "Metal-ANGLE: Shared memory texture tests failing in iOS
+        Simulator"
+        https://bugs.webkit.org/show_bug.cgi?id=222685
+        https://commits.webkit.org/r276190
+
+2021-04-22  Lauro Moura  <lmoura@igalia.com>
+
+        [CMake][ANGLE] Silence -Wreturn-type for gcc and clang
+        https://bugs.webkit.org/show_bug.cgi?id=224949
+
+        Reviewed by Don Olmstead.
+
+        Avoid "control reaches end of non-void function" in
+        sh::TIntermRebuild::traverseChildren(...)
+
+        * CMakeLists.txt:
+
+2021-04-22  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, WPE build fix after r276390
+
+        Fix namespacing issues in nullptr_t invocations.
+
+        * src/compiler/translator/tree_util/IntermRebuild.cpp:
+        (sh::TIntermRebuild::BaseResult::BaseResult):
+        (sh::PreResult::PreResult):
+        (sh::PostResult::PostResult):
+        * src/compiler/translator/tree_util/IntermRebuild.h:
+
+2021-04-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [Python 3] Update gni-to-cmake.py
+        https://bugs.webkit.org/show_bug.cgi?id=224880
+
+        Reviewed by Kenneth Russell.
+
+        Update gni-to-cmake.py to run on Python 3. Added ArgumentParser support to be able to run
+        the script on Windows since the script assumed it would be called through a UNIX style
+        shell.
+
+        Ran the .gni files through the converter to verify output. It appears that the
+        Compiler.cmake file wasn't generated in the last update to ANGLE so it has many changes.
+
+        * Compiler.cmake:
+        * D3D.cmake:
+        * gni-to-cmake.py:
+
+2021-04-21  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Add OpenGLES2 targets
+        https://bugs.webkit.org/show_bug.cgi?id=224786
+
+        Reviewed by Adrian Perez de Castro.
+
+        Add an ALIAS target mapping ANGLE's GLESv2 target to OpenGL::GLES if the target is not
+        already present. This is the case for Windows which uses ANGLE as its sole OpenGL ES
+        implementation.
+
+        * CMakeLists.txt:
+
+2021-04-20  Alex Christensen  <achristensen@webkit.org>
+
+        MacCatalyst ANGLE is linked with @loader_path/../../../libANGLE-shared.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=224602
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+
+2021-04-19  Alex Christensen  <achristensen@webkit.org>
+
+        Build ANGLE dylib into WK_OVERRIDE_FRAMEWORKS_DIR in builds that use it
+        https://bugs.webkit.org/show_bug.cgi?id=224785
+        <rdar://76641662>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/ANGLE-dynamic.xcconfig:
+
+2021-04-16  Kyle Piddington  <kpiddington@apple.com>
+
+        Metal-ANGLE: Shared memory texture tests failing in iOS Simulator
+        https://bugs.webkit.org/show_bug.cgi?id=222685
+
+        Reviewed by Dean Jackson.
+
+        Simulator-only path drives filling textures via Blit encoders instead of mapped memory.
+        This workaround fixes dropped texture writes when using replaceRegion
+
+        * src/libANGLE/renderer/metal/TextureMtl.mm:
+        * src/libANGLE/renderer/metal/mtl_utils.mm:
+        (rx::mtl::InitializeTextureContents):
+
+2021-04-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use kIOMainPortDefault where available
+        https://bugs.webkit.org/show_bug.cgi?id=224632
+
+        Reviewed by Alexey Proskuryakov.
+
+        In ANGLE we don't include WTF headers, so we can't use the HAVE macro like we do elsewhere in WebKit,
+        but this is pretty close.
+
+        * src/gpu_info_util/SystemInfo_macos.mm:
+        (angle::GetVendorIDFromMetalDeviceRegistryID):
+
+2021-04-15  Alex Christensen  <achristensen@webkit.org>
+
+        Add deprecation macros
+        https://bugs.webkit.org/show_bug.cgi?id=224624
+
+        * src/gpu_info_util/SystemInfo_macos.mm:
+        (angle::GetVendorIDFromMetalDeviceRegistryID):
+
+2021-04-12  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (Metal ANGLE): [Catalina] 6 consistent WebGL failures / timeouts
+        https://bugs.webkit.org/show_bug.cgi?id=224016
+        <rdar://problem/76070325>
+
+        Patch by John Cunningham <johncunnigham@apple.com>
+        Reviewed by Dean Jackson.
+
+        Implement a workaround for Intel GPUs where we explicitly type cast floating
+        point values to booleans. This is only needed for Catalina systems.
+
+        * include/GLSLANG/ShaderLang.h:
+        * include/platform/FeaturesMtl.h:
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect/AddExplicitTypeCasts.cpp:
+        (sh::Rewriter::Rewriter):
+        (sh::AddExplicitTypeCasts):
+        * src/compiler/translator/TranslatorMetalDirect/AddExplicitTypeCasts.h:
+        * src/compiler/translator/TranslatorMetalDirect/AstHelpers.cpp:
+        (sh::SubVector):
+        (sh::CoerceSimple):
+        * src/compiler/translator/TranslatorMetalDirect/AstHelpers.h:
+        * src/libANGLE/renderer/metal/DisplayMtl.mm:
+        (rx::DisplayMtl::initializeFeatures):
+        * src/libANGLE/renderer/metal/ShaderMtl.mm:
+        (rx::ShaderMtl::compile):
+
+2021-04-12  Kyle Piddington  <kpiddington@apple.com>
+
+        Crash in webgl/2.0.y/conformance/glsl/misc/uninitialized-local-global-variables.html ANGLE+METAL
+        https://bugs.webkit.org/show_bug.cgi?id=223923
+	
+        Anonymous structs require a name in MSL, add a default name ANGLE__unnamed$id to any structs.
+        Also add a unit test to ensure this works.
+        Reviewed by Kenneth Russell.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.cpp:
+        (sh::Separator::Separator):
+        (sh::SeparateCompoundStructDeclarations):
+        * src/compiler/translator/TranslatorMetalDirect/SeparateCompoundStructDeclarations.h:
+        * src/tests/BUILD.gn:
+        * src/tests/angle_unittests.gni:
+        * src/tests/compiler_tests/MSLOutput_Test.cpp:
+
 2021-04-08  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal-ANGLE] Support GPU power preferences, select low-power GPU by default.

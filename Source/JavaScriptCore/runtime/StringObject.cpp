@@ -68,11 +68,10 @@ bool StringObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName 
 
     StringObject* thisObject = jsCast<StringObject*>(cell);
 
-    if (UNLIKELY(isThisValueAltered(slot, thisObject))) 
-        RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode()));
-
     if (propertyName == vm.propertyNames->length)
         return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
+    if (UNLIKELY(slot.thisValue() != thisObject))
+        RELEASE_AND_RETURN(scope, JSObject::put(cell, globalObject, propertyName, value, slot));
     if (Optional<uint32_t> index = parseIndex(propertyName)) 
         RELEASE_AND_RETURN(scope, putByIndex(cell, globalObject, index.value(), value, slot.isStrictMode()));
     RELEASE_AND_RETURN(scope, JSObject::put(cell, globalObject, propertyName, value, slot));

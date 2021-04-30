@@ -6,8 +6,7 @@ import time
 sys.stdout.write(
     'Content-Type: text/html; charset=utf-8\r\n\r\n'
     '{}<body>\n'
-    '<a ona{}\n'
-    '{}'.format('A' * 2048, 'a' * 2000)
+    '<a ona{}\n'.format('A' * 2048, 'a' * 2000)
 )
 
 sys.stdout.flush()

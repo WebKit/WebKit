@@ -559,7 +559,7 @@ void WebPageProxy::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForH
     send(Messages::WebPage::CreateAppHighlightInSelectedRange(createNewGroup, requestOriginatedInApp));
 }
 
-void WebPageProxy::restoreAppHighlights(const Vector<Ref<SharedMemory>>& highlights)
+void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedMemory>>& highlights, const Optional<unsigned> index)
 {
     if (!hasRunningProcess())
         return;
@@ -573,7 +573,7 @@ void WebPageProxy::restoreAppHighlights(const Vector<Ref<SharedMemory>>& highlig
         memoryHandles.append(SharedMemory::IPCHandle { WTFMove(handle), highlight->size() });
     }
 
-    send(Messages::WebPage::RestoreAppHighlights(WTFMove(memoryHandles)));
+    send(Messages::WebPage::RestoreAppHighlightsAndScrollToIndex(WTFMove(memoryHandles), index));
 }
 #endif
 
@@ -613,6 +613,11 @@ void WebPageProxy::handleContextMenuRevealImage()
 bool WebPageProxy::canHandleContextMenuTranslation() const
 {
     return pageClient().canHandleContextMenuTranslation();
+}
+
+void WebPageProxy::handleContextMenuTranslation(const String& text, const WebCore::IntRect& boundsInView, const WebCore::IntPoint& locationInView)
+{
+    return pageClient().handleContextMenuTranslation(text, boundsInView, locationInView);
 }
 
 #endif // HAVE(TRANSLATION_UI_SERVICES)

@@ -3,7 +3,13 @@
 import os
 import sys
 
-filename = '../../../resources/square.png'
+filename = os.path.join('/'.join(__file__.split('/')[0:-4]), 'resources', 'square.png')
+
+if not os.path.isfile(filename):
+    sys.stderr.write('File {} does not exist\n'.format(filename))
+    sys.stdout.write('Content-Type: text/html\r\n\r\n')
+    sys.exit(0)
+
 filesize = os.path.getsize(filename)
 handle = open(filename, 'rb')
 contents = handle.read()

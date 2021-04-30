@@ -1,4 +1,24 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/textureshadow/2d_linear_mipmap_linear_less_or_equal.html
-[ PASS ] All tests passed
+
+[ 1: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component16: High-quality result
+[ 2: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component16: High-quality result
+[ 3: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component16: High-quality result
+[ 4: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component16: High-quality result
+[ 5: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component16: High-quality result
+[ 6: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component16: High-quality result
+[ 7: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component32f: High-quality result
+[ 8: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component32f: High-quality result
+[ 9: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component32f: High-quality result
+[ 10: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component32f: High-quality result
+[ 11: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component32f: High-quality result
+[ 12: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth_component32f: High-quality result
+[ 13: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth24_stencil8: High-quality result
+[ 14: FAIL ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth24_stencil8: Image verification failed
+[ 15: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth24_stencil8: High-quality result
+[ 16: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth24_stencil8: High-quality result
+[ 17: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth24_stencil8: High-quality result
+[ 18: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth24_stencil8: High-quality result
+[ 19: PASS ] texture_shadow.2d.linear_mipmap_linear.less_or_equal_depth24_stencil8: successfullyParsed is true
+[ FAIL ] 1 failures reported

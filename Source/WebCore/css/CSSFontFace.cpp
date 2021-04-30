@@ -76,10 +76,9 @@ void CSSFontFace::appendSources(CSSFontFace& fontFace, CSSValueList& srcList, Sc
         if (!item.isLocal()) {
             const auto* settings = context ? &context->settingsValues() : nullptr;
             bool allowDownloading = foundSVGFont || (settings && settings->downloadableBinaryFontsEnabled);
-            if (allowDownloading && item.isSupportedFormat() && is<Document>(context)) {
-                auto& document = downcast<Document>(*context);
-                if (CachedFont* cachedFont = item.cachedFont(&document, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
-                    source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), document.fontSelector(), *cachedFont);
+            if (allowDownloading && item.isSupportedFormat()) {
+                if (auto fontRequest = item.fontLoadRequest(context, foundSVGFont, isInitiatingElementInUserAgentShadowTree))
+                    source = makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *context->cssFontSelector(), makeUniqueRefFromNonNullUniquePtr(WTFMove(fontRequest)));
             }
         } else
             source = (fontFaceElement ? makeUnique<CSSFontFaceSource>(fontFace, item.resource(), *fontFaceElement)
@@ -397,6 +396,13 @@ Document* CSSFontFace::document()
     return nullptr;
 }
 
+FontCache& CSSFontFace::fontCacheFallingBackToSingleton()
+{
+    if (m_wrapper && m_wrapper->scriptExecutionContext())
+        return m_wrapper->scriptExecutionContext()->fontCache();
+    return FontCache::singleton();
+}
+
 bool CSSFontFace::computeFailureState() const
 {
     if (status() == Status::Failure)
@@ -670,8 +676,9 @@ RefPtr<Font> CSSFontFace::font(const FontDescription& fontDescription, bool synt
         switch (source->status()) {
         case CSSFontFaceSource::Status::Pending:
         case CSSFontFaceSource::Status::Loading: {
+            auto& fontCache = fontCacheFallingBackToSingleton();
             Font::Visibility visibility = WebCore::visibility(status(), fontLoadTiming());
-            return Font::create(FontCache::singleton().lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, Font::Interstitial::Yes, visibility);
+            return Font::create(fontCache.lastResortFallbackFont(fontDescription)->platformData(), Font::Origin::Local, &fontCache, Font::Interstitial::Yes, visibility);
         }
         case CSSFontFaceSource::Status::Success:
             if (auto result = source->font(fontDescription, syntheticBold, syntheticItalic, m_featureSettings, m_fontSelectionCapabilities))

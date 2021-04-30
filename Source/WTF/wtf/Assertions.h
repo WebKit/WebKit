@@ -503,6 +503,20 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define LOG_WITH_LEVEL(channel, level, ...) WTFLogWithLevel(&LOG_CHANNEL(channel), level, __VA_ARGS__)
 #endif
 
+/* LOG_WITH_STREAM */
+
+#if LOG_DISABLED
+#define LOG_WITH_STREAM(channel, commands) ((void)0)
+#else
+#define LOG_WITH_STREAM(channel, commands) do { \
+        if (LOG_CHANNEL(channel).state == WTFLogChannelState::On) { \
+            WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
+            commands; \
+            WTFLog(&LOG_CHANNEL(channel), "%s", stream.release().utf8().data()); \
+        } \
+    } while (0)
+#endif
+
 /* RELEASE_LOG */
 
 #if RELEASE_LOG_DISABLED
@@ -573,6 +587,13 @@ constexpr bool assertionFailureDueToUnreachableCode = false;
 #define RELEASE_LOG_STACKTRACE(channel) WTFReleaseLogStackTrace(&LOG_CHANNEL(channel))
 #endif
 
+/* ALWAYS_LOG */
+
+#define ALWAYS_LOG_WITH_STREAM(commands) do { \
+        WTF::TextStream stream(WTF::TextStream::LineMode::SingleLine); \
+        commands; \
+        WTFLogAlways("%s", stream.release().utf8().data()); \
+    } while (0)
 
 /* RELEASE_ASSERT */
 

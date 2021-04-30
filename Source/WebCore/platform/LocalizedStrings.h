@@ -265,6 +265,8 @@ namespace WebCore {
     String fileButtonChooseMultipleMediaFilesLabel();
     String fileButtonNoMediaFileSelectedLabel();
     String fileButtonNoMediaFilesSelectedLabel();
+
+    WEBCORE_EXPORT String formControlDoneButtonTitle();
 #endif
 
     String imageTitle(const String& filename, const IntSize& size);
@@ -334,7 +336,6 @@ namespace WebCore {
 #if PLATFORM(WATCHOS)
     WEBCORE_EXPORT String numberPadOKButtonTitle();
     WEBCORE_EXPORT String formControlCancelButtonTitle();
-    WEBCORE_EXPORT String formControlDoneButtonTitle();
     WEBCORE_EXPORT String formControlHideButtonTitle();
     WEBCORE_EXPORT String formControlGoButtonTitle();
     WEBCORE_EXPORT String formControlSearchButtonTitle();

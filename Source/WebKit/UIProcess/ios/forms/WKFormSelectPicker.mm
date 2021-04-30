@@ -501,6 +501,10 @@ static const float GroupOptionTextColorAlpha = 0.5;
 
 - (void)controlBeginEditing
 {
+    // Don't show the menu if the element is entirely offscreen.
+    if (!CGRectIntersectsRect(_view.focusedElementInformation.interactionRect, _view.bounds))
+        return;
+
     [_view startRelinquishingFirstResponderToFocusedElement];
 
 #if USE(UICONTEXTMENU)
@@ -733,8 +737,6 @@ static const float GroupOptionTextColorAlpha = 0.5;
 static const CGFloat nextPreviousSpacerWidth = 6.0f;
 static const CGFloat sectionHeaderCollapseButtonSize = 14.0f;
 static const CGFloat sectionHeaderCollapseButtonTransitionDuration = 0.2f;
-static const CGFloat sectionHeaderFontSize = 22.0f;
-static const CGFloat sectionHeaderHeight = 36.0f;
 static const CGFloat sectionHeaderMargin = 16.0f;
 static const CGFloat selectPopoverLength = 320.0f;
 static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
@@ -830,7 +832,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     if (!section)
         return tableView.layoutMargins.left;
 
-    return sectionHeaderHeight;
+    return self.groupHeaderFont.lineHeight + sectionHeaderMargin;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
@@ -873,7 +875,8 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
     auto sectionLabel = adoptNS([[UILabel alloc] init]);
     [sectionLabel setText:[self tableView:tableView titleForHeaderInSection:section]];
-    [sectionLabel setFont:[UIFont boldSystemFontOfSize:sectionHeaderFontSize]];
+    [sectionLabel setFont:self.groupHeaderFont];
+    [sectionLabel setAdjustsFontForContentSizeCategory:YES];
     [sectionLabel setAdjustsFontSizeToFitWidth:NO];
     [sectionLabel setLineBreakMode:NSLineBreakByTruncatingTail];
     [sectionView addSubview:sectionLabel.get()];
@@ -1017,6 +1020,18 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
 
     [_contentView page]->setFocusedElementSelectedIndex([self findItemIndexAt:indexPath], true);
     option->isSelected = !option->isSelected;
+}
+
+- (UIFont *)groupHeaderFont
+{
+    UIFontDescriptor *descriptor = [UIFontDescriptor preferredFontDescriptorWithTextStyle:UIFontTextStyleTitle3];
+    descriptor = [descriptor fontDescriptorByAddingAttributes:@{
+        UIFontDescriptorTraitsAttribute: @{
+            UIFontWeightTrait: @(UIFontWeightSemibold)
+        }
+    }];
+
+    return [UIFont fontWithDescriptor:descriptor size:0];
 }
 
 - (void)next:(id)sender

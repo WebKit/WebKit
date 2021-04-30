@@ -36,8 +36,15 @@ public:
     static Ref<RTCEncodedAudioFrame> create(Ref<RTCRtpTransformableFrame>&& frame) { return adoptRef(*new RTCEncodedAudioFrame(WTFMove(frame))); }
     ~RTCEncodedAudioFrame();
 
+    using Metadata = RTCEncodedAudioFrameMetadata;
+    const Metadata& getMetadata();
+
+    uint64_t timestamp() const;
+
 private:
     explicit RTCEncodedAudioFrame(Ref<RTCRtpTransformableFrame>&&);
+
+    mutable Optional<Metadata> m_metadata;
 };
 
 } // namespace WebCore

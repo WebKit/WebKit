@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+import optparse
 
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
@@ -205,7 +206,7 @@ class DriverTest(unittest.TestCase):
         self.assertEqual(content_block.decoded_content, b'12345678\n')
 
     def test_no_timeout(self):
-        port = TestWebKitPort()
+        port = TestWebKitPort(options=optparse.Values({'enable_all_experimental_features': True}))
         port._config.build_directory = lambda configuration: '/mock-build'
         driver = Driver(port, 0, pixel_tests=True, no_timeout=True)
         if sys.platform.startswith('win'):

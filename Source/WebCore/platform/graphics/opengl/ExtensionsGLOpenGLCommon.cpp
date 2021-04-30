@@ -203,7 +203,7 @@ String ExtensionsGLOpenGLCommon::getTranslatedShaderSourceANGLE(PlatformGLObject
 
     for (const std::pair<ANGLEShaderSymbolType, sh::ShaderVariable>& pair : symbols) {
         const std::string& name = pair.second.name;
-        entry.symbolMap(pair.first).set(String(name.c_str(), name.length()), pair.second);
+        entry.symbolMap(pair.first).set(String(name.c_str(), name.length()), WTF::makeUniqueRefWithoutFastMallocCheck<sh::ShaderVariable>(pair.second));
     }
 
     if (!isValid)

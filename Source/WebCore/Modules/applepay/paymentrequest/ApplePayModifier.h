@@ -27,16 +27,22 @@
 
 #if ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
 
-#include "ApplePayDetailsUpdateData.h"
-#include "ApplePayLineItemData.h"
 #include "ApplePayPaymentMethodType.h"
 #include "ApplePayShippingMethod.h"
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/ApplePayModifierAdditions.h>
+#endif
+
 namespace WebCore {
 
-struct ApplePayModifier final : public ApplePayDetailsUpdateData, public ApplePayLineItemData {
+struct ApplePayModifier {
     Optional<ApplePayPaymentMethodType> paymentMethodType;
     Vector<ApplePayShippingMethod> additionalShippingOptions;
+
+#if defined(ApplePayModifierAdditions_members)
+    ApplePayModifierAdditions_members
+#endif
 };
 
 } // namespace WebCore

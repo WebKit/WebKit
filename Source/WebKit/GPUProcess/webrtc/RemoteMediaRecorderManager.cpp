@@ -65,6 +65,13 @@ void RemoteMediaRecorderManager::createRecorder(MediaRecorderIdentifier identifi
 void RemoteMediaRecorderManager::releaseRecorder(MediaRecorderIdentifier identifier)
 {
     m_recorders.remove(identifier);
+    if (allowsExitUnderMemoryPressure())
+        m_gpuConnectionToWebProcess.gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
+}
+
+bool RemoteMediaRecorderManager::allowsExitUnderMemoryPressure() const
+{
+    return m_recorders.isEmpty();
 }
 
 }

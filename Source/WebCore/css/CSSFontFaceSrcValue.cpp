@@ -26,13 +26,15 @@
 #include "config.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CachedFont.h"
+#include "CachedFontLoadRequest.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
-#include "Document.h"
 #include "FontCustomPlatformData.h"
+#include "FontLoadRequest.h"
 #include "Node.h"
 #include "SVGFontFaceElement.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -76,19 +78,16 @@ bool CSSFontFaceSrcValue::traverseSubresources(const WTF::Function<bool (const C
     return handler(*m_cachedFont);
 }
 
-CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document, bool isSVG, bool isInitiatingElementInUserAgentShadowTree)
+std::unique_ptr<FontLoadRequest> CSSFontFaceSrcValue::fontLoadRequest(ScriptExecutionContext* context, bool isSVG, bool isInitiatingElementInUserAgentShadowTree)
 {
     if (m_cachedFont)
-        return m_cachedFont.get();
+        return makeUnique<CachedFontLoadRequest>(*m_cachedFont);
 
-    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-    options.contentSecurityPolicyImposition = isInitiatingElementInUserAgentShadowTree ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-    options.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
+    auto request = context->fontLoadRequest(m_resource, isSVG, isInitiatingElementInUserAgentShadowTree, m_loadedFromOpaqueSource);
+    if (is<CachedFontLoadRequest>(request.get()))
+        m_cachedFont = &downcast<CachedFontLoadRequest>(request.get())->cachedFont();
 
-    CachedResourceRequest request(ResourceRequest(document->completeURL(m_resource)), options);
-    request.setInitiator(cachedResourceRequestInitiators().css);
-    m_cachedFont = document->cachedResourceLoader().requestFont(WTFMove(request), isSVG).value_or(nullptr);
-    return m_cachedFont.get();
+    return request;
 }
 
 bool CSSFontFaceSrcValue::equals(const CSSFontFaceSrcValue& other) const

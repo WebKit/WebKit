@@ -100,9 +100,9 @@ struct MessagePortIdentifierHash {
 template<> struct HashTraits<WebCore::MessagePortIdentifier> : GenericHashTraits<WebCore::MessagePortIdentifier> {
     static WebCore::MessagePortIdentifier emptyValue() { return { }; }
 
-    static void constructDeletedValue(WebCore::MessagePortIdentifier& slot) { slot.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(std::numeric_limits<uint64_t>::max()); }
+    static void constructDeletedValue(WebCore::MessagePortIdentifier& slot) { new (NotNull, &slot.processIdentifier) WebCore::ProcessIdentifier(WTF::HashTableDeletedValue); }
 
-    static bool isDeletedValue(const WebCore::MessagePortIdentifier& slot) { return slot.processIdentifier.toUInt64() == std::numeric_limits<uint64_t>::max(); }
+    static bool isDeletedValue(const WebCore::MessagePortIdentifier& slot) { return slot.processIdentifier.isHashTableDeletedValue(); }
 };
 
 template<> struct DefaultHash<WebCore::MessagePortIdentifier> : MessagePortIdentifierHash { };

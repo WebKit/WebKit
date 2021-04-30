@@ -199,7 +199,7 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
 
         if (is<RenderLineBreak>(renderer)) {
             clonedStyle.setDisplay(DisplayType::Inline);
-            clonedStyle.setFloating(Float::No);
+            clonedStyle.setFloating(Float::None);
             clonedStyle.setPosition(PositionType::Static);
             childLayoutBox = &createLineBreakBox(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(clonedStyle));
         } else if (is<RenderTable>(renderer)) {
@@ -304,7 +304,7 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
 
     auto tableBoxStyle = RenderStyle::clone(tableRenderer.style());
     tableBoxStyle.setPosition(PositionType::Static);
-    tableBoxStyle.setFloating(Float::No);
+    tableBoxStyle.setFloating(Float::None);
     tableBoxStyle.resetMargin();
     // FIXME: Figure out where the spec says table width is like box-sizing: border-box;
     if (is<HTMLTableElement>(tableRenderer.element()))

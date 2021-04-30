@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, Optional<FloatSize> screenSizeInPixels)
+RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, Optional<FloatSize> screenSizeInPixels, AllowAnimatedImages allowAnimatedImages)
 {
     auto* cachedImage = renderImage.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
@@ -45,6 +45,9 @@ RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, Optional
 
     auto* image = cachedImage->imageForRenderer(&renderImage);
     if (!image || image->width() <= 1 || image->height() <= 1)
+        return nullptr;
+
+    if (allowAnimatedImages == AllowAnimatedImages::No && image->isAnimated())
         return nullptr;
 
     auto bitmapSize = cachedImage->imageSizeForRenderer(&renderImage);

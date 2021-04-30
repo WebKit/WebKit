@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -563,10 +563,10 @@ void InspectorFrontendHost::beep()
 
 void InspectorFrontendHost::inspectInspector()
 {
-    if (m_frontendPage) {
-        m_frontendPage->settings().setDeveloperExtrasEnabled(true);
+    setAllowsInspectingInspector(true);
+
+    if (m_frontendPage)
         m_frontendPage->inspectorController().show();
-    }
 }
 
 bool InspectorFrontendHost::isBeingInspected()
@@ -576,6 +576,12 @@ bool InspectorFrontendHost::isBeingInspected()
 
     InspectorController& inspectorController = m_frontendPage->inspectorController();
     return inspectorController.hasLocalFrontend() || inspectorController.hasRemoteFrontend();
+}
+
+void InspectorFrontendHost::setAllowsInspectingInspector(bool allow)
+{
+    if (m_frontendPage)
+        m_frontendPage->settings().setDeveloperExtrasEnabled(allow);
 }
 
 bool InspectorFrontendHost::supportsShowCertificate() const

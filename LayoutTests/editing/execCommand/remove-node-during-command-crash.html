@@ -1,0 +1,27 @@
+<style>
+  br {
+    content: '';
+  }
+</style>
+<script>
+  onload = () => {
+      
+    if (window.testRunner)
+      testRunner.dumpAsText();
+        
+    document.designMode = 'on';
+    document.execCommand('SelectAll');
+    document.execCommand('InsertImage', false, '#');
+    let ifr0 = document.createElement('iframe');
+    document.body.appendChild(ifr0);
+    ifr0.onload = () => {
+      document.execCommand('JustifyRight');
+    };
+    document.execCommand('InsertParagraph');
+    getSelection().extend(document.body);
+    document.execCommand('InsertParagraph');
+
+    document.write('Test passes if it does not crash\n');
+    document.write('PASS');
+  };
+</script>

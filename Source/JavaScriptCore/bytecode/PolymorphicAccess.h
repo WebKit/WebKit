@@ -157,6 +157,8 @@ public:
 
     // If this returns false then we are requesting a reset of the owning StructureStubInfo.
     bool visitWeak(VM&) const;
+
+    size_t extraMemoryInBytes() const;
     
     // This returns true if it has marked everything it will ever marked. This can be used as an
     // optimization to then avoid calling this method again during the fixpoint.

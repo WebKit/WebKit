@@ -39,10 +39,16 @@ public:
     enum class Type { Empty, Key, Delta };
     Type type() const { return m_type; }
 
+    using Metadata = RTCEncodedVideoFrameMetadata;
+    const Metadata& getMetadata();
+
+    uint64_t timestamp() const;
+
 private:
     explicit RTCEncodedVideoFrame(Ref<RTCRtpTransformableFrame>&&);
 
     Type m_type;
+    mutable Optional<Metadata> m_metadata;
 };
 
 } // namespace WebCore

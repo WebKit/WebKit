@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSPropertyAnimation.h"
 
+#include "AnimationUtilities.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSFilterImageValue.h"
@@ -70,87 +71,97 @@
 
 namespace WebCore {
 
-static inline int blendFunc(const CSSPropertyBlendingClient*, int from, int to, double progress)
+struct CSSPropertyBlendingContext : BlendingContext {
+    const CSSPropertyBlendingClient* client { nullptr };
+
+    CSSPropertyBlendingContext(double progress, bool isDiscrete, const CSSPropertyBlendingClient* client)
+        : BlendingContext(progress, isDiscrete)
+        , client(client)
+    {
+    }
+};
+
+static inline int blendFunc(int from, int to, const CSSPropertyBlendingContext& context)
 {
-    return blend(from, to, progress);
+    return blend(from, to, context);
 }
 
-static inline double blendFunc(const CSSPropertyBlendingClient*, double from, double to, double progress)
+static inline double blendFunc(double from, double to, const CSSPropertyBlendingContext& context)
 {
-    return blend(from, to, progress);
+    return blend(from, to, context);
 }
 
-static inline float blendFunc(const CSSPropertyBlendingClient*, float from, float to, double progress)
+static inline float blendFunc(float from, float to, const CSSPropertyBlendingContext& context)
 {
-    return narrowPrecisionToFloat(from + (to - from) * progress);
+    return narrowPrecisionToFloat(from + (to - from) * context.progress);
 }
 
-static inline Color blendFunc(const CSSPropertyBlendingClient*, const Color& from, const Color& to, double progress)
+static inline Color blendFunc(const Color& from, const Color& to, const CSSPropertyBlendingContext& context)
 {
-    return blend(from, to, progress);
+    return blend(from, to, context);
 }
 
-static inline Length blendFunc(const CSSPropertyBlendingClient*, const Length& from, const Length& to, double progress, ValueRange valueRange = ValueRangeAll)
+static inline Length blendFunc(const Length& from, const Length& to, const CSSPropertyBlendingContext& context, ValueRange valueRange = ValueRange::All)
 {
-    return blend(from, to, progress, valueRange);
+    return blend(from, to, context, valueRange);
 }
 
-static inline GapLength blendFunc(const CSSPropertyBlendingClient*, const GapLength& from, const GapLength& to, double progress)
+static inline GapLength blendFunc(const GapLength& from, const GapLength& to, const CSSPropertyBlendingContext& context)
 {
     if (from.isNormal() || to.isNormal())
-        return progress < 0.5 ? from : to;
-    return blend(from.length(), to.length(), progress, ValueRangeNonNegative);
+        return context.progress < 0.5 ? from : to;
+    return blend(from.length(), to.length(), context, ValueRange::NonNegative);
 }
 
-static inline TabSize blendFunc(const CSSPropertyBlendingClient*, const TabSize& from, const TabSize& to, double progress)
+static inline TabSize blendFunc(const TabSize& from, const TabSize& to, const CSSPropertyBlendingContext& context)
 {
-    auto blendedValue = blend(from.value(), to.value(), progress);
+    auto blendedValue = blend(from.value(), to.value(), context);
     return { blendedValue < 0 ? 0 : blendedValue, from.isSpaces() ? SpaceValueType : LengthValueType };
 }
 
-static inline LengthSize blendFunc(const CSSPropertyBlendingClient* client, const LengthSize& from, const LengthSize& to, double progress)
+static inline LengthSize blendFunc(const LengthSize& from, const LengthSize& to, const CSSPropertyBlendingContext& context)
 {
-    return { blendFunc(client, from.width, to.width, progress, ValueRangeNonNegative),
-             blendFunc(client, from.height, to.height, progress, ValueRangeNonNegative) };
+    return { blendFunc(from.width, to.width, context, ValueRange::NonNegative),
+        blendFunc(from.height, to.height, context, ValueRange::NonNegative) };
 }
 
-static inline LengthPoint blendFunc(const CSSPropertyBlendingClient*, const LengthPoint& from, const LengthPoint& to, double progress)
+static inline LengthPoint blendFunc(const LengthPoint& from, const LengthPoint& to, const CSSPropertyBlendingContext& context)
 {
-    return blend(from, to, progress);
+    return blend(from, to, context);
 }
 
-static inline ShadowStyle blendFunc(const CSSPropertyBlendingClient* client, ShadowStyle from, ShadowStyle to, double progress)
+static inline ShadowStyle blendFunc(ShadowStyle from, ShadowStyle to, const CSSPropertyBlendingContext& context)
 {
     if (from == to)
         return to;
 
     double fromVal = from == ShadowStyle::Normal ? 1 : 0;
     double toVal = to == ShadowStyle::Normal ? 1 : 0;
-    double result = blendFunc(client, fromVal, toVal, progress);
+    double result = blendFunc(fromVal, toVal, context);
     return result > 0 ? ShadowStyle::Normal : ShadowStyle::Inset;
 }
 
-static inline std::unique_ptr<ShadowData> blendFunc(const CSSPropertyBlendingClient* client, const ShadowData* from, const ShadowData* to, double progress)
+static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, const ShadowData* to, const CSSPropertyBlendingContext& context)
 {
     ASSERT(from && to);
     ASSERT(from->style() == to->style());
 
-    return makeUnique<ShadowData>(blend(from->location(), to->location(), progress),
-        std::max(0, blend(from->radius(), to->radius(), progress)),
-        blend(from->spread(), to->spread(), progress),
-        blendFunc(client, from->style(), to->style(), progress),
+    return makeUnique<ShadowData>(blend(from->location(), to->location(), context),
+        std::max(0, blend(from->radius(), to->radius(), context)),
+        blend(from->spread(), to->spread(), context),
+        blendFunc(from->style(), to->style(), context),
         from->isWebkitBoxShadow(),
-        blend(from->color(), to->color(), progress));
+        blend(from->color(), to->color(), context));
 }
 
-static inline TransformOperations blendFunc(const CSSPropertyBlendingClient* client, const TransformOperations& from, const TransformOperations& to, double progress)
+static inline TransformOperations blendFunc(const TransformOperations& from, const TransformOperations& to, const CSSPropertyBlendingContext& context)
 {
-    if (client->transformFunctionListsMatch())
-        return to.blendByMatchingOperations(from, progress);
-    return to.blendByUsingMatrixInterpolation(from, progress, is<RenderBox>(client->renderer()) ? downcast<RenderBox>(*client->renderer()).borderBoxRect().size() : LayoutSize());
+    if (context.client->transformFunctionListsMatch())
+        return to.blendByMatchingOperations(from, context);
+    return to.blendByUsingMatrixInterpolation(from, context, is<RenderBox>(context.client->renderer()) ? downcast<RenderBox>(*context.client->renderer()).borderBoxRect().size() : LayoutSize());
 }
 
-static RefPtr<ScaleTransformOperation> blendFunc(const CSSPropertyBlendingClient* client, ScaleTransformOperation* from, ScaleTransformOperation* to, double progress)
+static RefPtr<ScaleTransformOperation> blendFunc(ScaleTransformOperation* from, ScaleTransformOperation* to, const CSSPropertyBlendingContext& context)
 {
     if (!from && !to)
         return nullptr;
@@ -175,10 +186,10 @@ static RefPtr<ScaleTransformOperation> blendFunc(const CSSPropertyBlendingClient
             normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), TransformOperation::SCALE);
             normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), TransformOperation::SCALE);
         }
-        return blendFunc(client, normalizedFrom.get(), normalizedTo.get(), progress);
+        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
     }
 
-    auto blendedOperation = to->blend(from, progress);
+    auto blendedOperation = to->blend(from, context);
     if (is<ScaleTransformOperation>(blendedOperation.get())) {
         auto& scale = downcast<ScaleTransformOperation>(blendedOperation.get());
         return ScaleTransformOperation::create(scale.x(), scale.y(), scale.z(), scale.type());
@@ -186,7 +197,7 @@ static RefPtr<ScaleTransformOperation> blendFunc(const CSSPropertyBlendingClient
     return nullptr;
 }
 
-static RefPtr<RotateTransformOperation> blendFunc(const CSSPropertyBlendingClient* client, RotateTransformOperation* from, RotateTransformOperation* to, double progress)
+static RefPtr<RotateTransformOperation> blendFunc(RotateTransformOperation* from, RotateTransformOperation* to, const CSSPropertyBlendingContext& context)
 {
     if (!from && !to)
         return nullptr;
@@ -211,10 +222,10 @@ static RefPtr<RotateTransformOperation> blendFunc(const CSSPropertyBlendingClien
             normalizedFrom = RotateTransformOperation::create(from->angle(), TransformOperation::ROTATE);
             normalizedTo = RotateTransformOperation::create(to->angle(), TransformOperation::ROTATE);
         }
-        return blendFunc(client, normalizedFrom.get(), normalizedTo.get(), progress);
+        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
     }
 
-    auto blendedOperation = to->blend(from, progress);
+    auto blendedOperation = to->blend(from, context);
     if (is<RotateTransformOperation>(blendedOperation.get())) {
         auto& rotate = downcast<RotateTransformOperation>(blendedOperation.get());
         return RotateTransformOperation::create(rotate.x(), rotate.y(), rotate.z(), rotate.angle(), rotate.type());
@@ -222,7 +233,7 @@ static RefPtr<RotateTransformOperation> blendFunc(const CSSPropertyBlendingClien
     return nullptr;
 }
 
-static RefPtr<TranslateTransformOperation> blendFunc(const CSSPropertyBlendingClient* client, TranslateTransformOperation* from, TranslateTransformOperation* to, double progress)
+static RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation* from, TranslateTransformOperation* to, const CSSPropertyBlendingContext& context)
 {
     if (!from && !to)
         return nullptr;
@@ -247,10 +258,10 @@ static RefPtr<TranslateTransformOperation> blendFunc(const CSSPropertyBlendingCl
             normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), TransformOperation::TRANSLATE);
             normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), TransformOperation::TRANSLATE);
         }
-        return blendFunc(client, normalizedFrom.get(), normalizedTo.get(), progress);
+        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
     }
 
-    Ref<TransformOperation> blendedOperation = to->blend(from, progress);
+    Ref<TransformOperation> blendedOperation = to->blend(from, context);
     if (is<TranslateTransformOperation>(blendedOperation.get())) {
         TranslateTransformOperation& translate = downcast<TranslateTransformOperation>(blendedOperation.get());
         return TranslateTransformOperation::create(translate.x(), translate.y(), translate.z(), translate.type());
@@ -258,7 +269,7 @@ static RefPtr<TranslateTransformOperation> blendFunc(const CSSPropertyBlendingCl
     return nullptr;
 }
 
-static inline RefPtr<ClipPathOperation> blendFunc(const CSSPropertyBlendingClient*, ClipPathOperation* from, ClipPathOperation* to, double progress)
+static inline RefPtr<ClipPathOperation> blendFunc(ClipPathOperation* from, ClipPathOperation* to, const CSSPropertyBlendingContext& context)
 {
     if (!from || !to)
         return to;
@@ -273,30 +284,30 @@ static inline RefPtr<ClipPathOperation> blendFunc(const CSSPropertyBlendingClien
     if (!fromShape.canBlend(toShape))
         return to;
 
-    return ShapeClipPathOperation::create(toShape.blend(fromShape, progress));
+    return ShapeClipPathOperation::create(toShape.blend(fromShape, context));
 }
 
-static inline RefPtr<ShapeValue> blendFunc(const CSSPropertyBlendingClient*, ShapeValue* from, ShapeValue* to, double progress)
+static inline RefPtr<ShapeValue> blendFunc(ShapeValue* from, ShapeValue* to, const CSSPropertyBlendingContext& context)
 {
-    if (!progress)
+    if (!context.progress)
         return from;
 
-    if (progress == 1.0)
+    if (context.progress == 1.0)
         return to;
 
     ASSERT(from && to);
     const BasicShape& fromShape = *from->shape();
     const BasicShape& toShape = *to->shape();
-    return ShapeValue::create(toShape.blend(fromShape, progress), to->cssBox());
+    return ShapeValue::create(toShape.blend(fromShape, context), to->cssBox());
 }
 
-static inline RefPtr<FilterOperation> blendFunc(const CSSPropertyBlendingClient*, FilterOperation* from, FilterOperation* to, double progress, bool blendToPassthrough = false)
+static inline RefPtr<FilterOperation> blendFunc(FilterOperation* from, FilterOperation* to, const CSSPropertyBlendingContext& context, bool blendToPassthrough = false)
 {
     ASSERT(to);
-    return to->blend(from, progress, blendToPassthrough);
+    return to->blend(from, context, blendToPassthrough);
 }
 
-static inline FilterOperations blendFilterOperations(const CSSPropertyBlendingClient* client,  const FilterOperations& from, const FilterOperations& to, double progress)
+static inline FilterOperations blendFilterOperations(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
 {
     FilterOperations result;
     size_t fromSize = from.operations().size();
@@ -305,12 +316,12 @@ static inline FilterOperations blendFilterOperations(const CSSPropertyBlendingCl
     for (size_t i = 0; i < size; i++) {
         RefPtr<FilterOperation> fromOp = (i < fromSize) ? from.operations()[i].get() : 0;
         RefPtr<FilterOperation> toOp = (i < toSize) ? to.operations()[i].get() : 0;
-        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(client, fromOp.get(), toOp.get(), progress) : (fromOp ? blendFunc(client, 0, fromOp.get(), progress, true) : 0);
+        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), toOp.get(), context) : (fromOp ? blendFunc(0, fromOp.get(), context, true) : 0);
         if (blendedOp)
             result.operations().append(blendedOp);
         else {
             auto identityOp = PassthroughFilterOperation::create();
-            if (progress > 0.5)
+            if (context.progress > 0.5)
                 result.operations().append(toOp ? toOp : WTFMove(identityOp));
             else
                 result.operations().append(fromOp ? fromOp : WTFMove(identityOp));
@@ -319,7 +330,7 @@ static inline FilterOperations blendFilterOperations(const CSSPropertyBlendingCl
     return result;
 }
 
-static inline FilterOperations blendFunc(const CSSPropertyBlendingClient* client, const FilterOperations& from, const FilterOperations& to, double progress, CSSPropertyID propertyID = CSSPropertyFilter)
+static inline FilterOperations blendFunc(const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context, CSSPropertyID propertyID = CSSPropertyFilter)
 {
     FilterOperations result;
 
@@ -328,22 +339,22 @@ static inline FilterOperations blendFunc(const CSSPropertyBlendingClient* client
     bool listsMatch = false;
     switch (propertyID) {
     case CSSPropertyFilter:
-        listsMatch = client->filterFunctionListsMatch();
+        listsMatch = context.client->filterFunctionListsMatch();
         break;
 #if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
-        listsMatch = client->backdropFilterFunctionListsMatch();
+        listsMatch = context.client->backdropFilterFunctionListsMatch();
         break;
 #endif
     case CSSPropertyAppleColorFilter:
-        listsMatch = client->colorFilterFunctionListsMatch();
+        listsMatch = context.client->colorFilterFunctionListsMatch();
         break;
     default:
         break;
     }
     
     if (listsMatch)
-        result = blendFilterOperations(client, from, to, progress);
+        result = blendFilterOperations(from, to, context);
     else {
         // If the filter function lists don't match, we could try to cross-fade, but don't yet have a way to represent that in CSS.
         // For now we'll just fail to animate.
@@ -353,67 +364,68 @@ static inline FilterOperations blendFunc(const CSSPropertyBlendingClient* client
     return result;
 }
 
-static inline RefPtr<StyleImage> blendFilter(const CSSPropertyBlendingClient* client, CachedImage* image, const FilterOperations& from, const FilterOperations& to, double progress)
+static inline RefPtr<StyleImage> blendFilter(CachedImage* image, const FilterOperations& from, const FilterOperations& to, const CSSPropertyBlendingContext& context)
 {
     ASSERT(image);
-    FilterOperations filterResult = blendFilterOperations(client, from, to, progress);
+    FilterOperations filterResult = blendFilterOperations(from, to, context);
 
     auto imageValue = CSSImageValue::create(*image);
-    auto filterValue = ComputedStyleExtractor::valueForFilter(client->currentStyle(), filterResult, DoNotAdjustPixelValues);
+    auto filterValue = ComputedStyleExtractor::valueForFilter(context.client->currentStyle(), filterResult, DoNotAdjustPixelValues);
 
     auto result = CSSFilterImageValue::create(WTFMove(imageValue), WTFMove(filterValue));
     result.get().setFilterOperations(filterResult);
     return StyleGeneratedImage::create(WTFMove(result));
 }
 
-static inline Visibility blendFunc(const CSSPropertyBlendingClient* client, Visibility from, Visibility to, double progress)
+static inline Visibility blendFunc(Visibility from, Visibility to, const CSSPropertyBlendingContext& context)
 {
+    if (from != Visibility::Visible && to != Visibility::Visible)
+        return context.progress < 0.5 ? from : to;
+
     // Any non-zero result means we consider the object to be visible. Only at 0 do we consider the object to be
     // invisible. The invisible value we use (Visibility::Hidden vs. Visibility::Collapse) depends on the specified from/to values.
     double fromVal = from == Visibility::Visible ? 1. : 0.;
     double toVal = to == Visibility::Visible ? 1. : 0.;
     if (fromVal == toVal)
         return to;
-    double result = blendFunc(client, fromVal, toVal, progress);
+    double result = blendFunc(fromVal, toVal, context);
     return result > 0. ? Visibility::Visible : (to != Visibility::Visible ? to : from);
 }
 
-static inline TextUnderlineOffset blendFunc(const CSSPropertyBlendingClient* client, const TextUnderlineOffset& from, const TextUnderlineOffset& to, double progress)
+static inline TextUnderlineOffset blendFunc(const TextUnderlineOffset& from, const TextUnderlineOffset& to, const CSSPropertyBlendingContext& context)
 {
     if (from.isLength() && to.isLength())
-        return TextUnderlineOffset::createWithLength(blendFunc(client, from.lengthValue(), to.lengthValue(), progress));
+        return TextUnderlineOffset::createWithLength(blendFunc(from.lengthValue(), to.lengthValue(), context));
     return TextUnderlineOffset::createWithAuto();
 }
 
-static inline TextDecorationThickness blendFunc(const CSSPropertyBlendingClient* client, const TextDecorationThickness& from, const TextDecorationThickness& to, double progress)
+static inline TextDecorationThickness blendFunc(const TextDecorationThickness& from, const TextDecorationThickness& to, const CSSPropertyBlendingContext& context)
 {
     if (from.isLength() && to.isLength())
-        return TextDecorationThickness::createWithLength(blendFunc(client, from.lengthValue(), to.lengthValue(), progress));
+        return TextDecorationThickness::createWithLength(blendFunc(from.lengthValue(), to.lengthValue(), context));
     return TextDecorationThickness::createWithAuto();
 }
 
-static inline LengthBox blendFunc(const CSSPropertyBlendingClient* client, const LengthBox& from, const LengthBox& to, double progress, ValueRange valueRange = ValueRangeNonNegative)
+static inline LengthBox blendFunc(const LengthBox& from, const LengthBox& to, const CSSPropertyBlendingContext& context, ValueRange valueRange = ValueRange::NonNegative)
 {
-    LengthBox result(blendFunc(client, from.top(), to.top(), progress, valueRange),
-                     blendFunc(client, from.right(), to.right(), progress, valueRange),
-                     blendFunc(client, from.bottom(), to.bottom(), progress, valueRange),
-                     blendFunc(client, from.left(), to.left(), progress, valueRange));
+    LengthBox result(blendFunc(from.top(), to.top(), context, valueRange),
+                     blendFunc(from.right(), to.right(), context, valueRange),
+                     blendFunc(from.bottom(), to.bottom(), context, valueRange),
+                     blendFunc(from.left(), to.left(), context, valueRange));
     return result;
 }
 
-static inline SVGLengthValue blendFunc(const CSSPropertyBlendingClient*, const SVGLengthValue& from, const SVGLengthValue& to, double progress)
+static inline SVGLengthValue blendFunc(const SVGLengthValue& from, const SVGLengthValue& to, const CSSPropertyBlendingContext& context)
 {
-    return SVGLengthValue::blend(from, to, narrowPrecisionToFloat(progress));
+    return SVGLengthValue::blend(from, to, narrowPrecisionToFloat(context.progress));
 }
 
-static inline Vector<SVGLengthValue> blendFunc(const CSSPropertyBlendingClient*, const Vector<SVGLengthValue>& from, const Vector<SVGLengthValue>& to, double progress)
+static inline Vector<SVGLengthValue> blendFunc(const Vector<SVGLengthValue>& from, const Vector<SVGLengthValue>& to, const CSSPropertyBlendingContext& context)
 {
     size_t fromLength = from.size();
     size_t toLength = to.size();
-    if (!fromLength)
-        return !progress ? from : to;
-    if (!toLength)
-        return progress == 1 ? from : to;
+    if (!fromLength || !toLength)
+        return context.progress < 0.5 ? from : to;
     size_t resultLength = fromLength;
     if (fromLength != toLength) {
         if (!remainder(std::max(fromLength, toLength), std::min(fromLength, toLength)))
@@ -423,35 +435,35 @@ static inline Vector<SVGLengthValue> blendFunc(const CSSPropertyBlendingClient*,
     }
     Vector<SVGLengthValue> result(resultLength);
     for (size_t i = 0; i < resultLength; ++i)
-        result[i] = SVGLengthValue::blend(from[i % fromLength], to[i % toLength], narrowPrecisionToFloat(progress));
+        result[i] = SVGLengthValue::blend(from[i % fromLength], to[i % toLength], narrowPrecisionToFloat(context.progress));
     return result;
 }
 
-static inline RefPtr<StyleImage> crossfadeBlend(const CSSPropertyBlendingClient*, StyleCachedImage* fromStyleImage, StyleCachedImage* toStyleImage, double progress)
+static inline RefPtr<StyleImage> crossfadeBlend(StyleCachedImage* fromStyleImage, StyleCachedImage* toStyleImage, const CSSPropertyBlendingContext& context)
 {
     // If progress is at one of the extremes, we want getComputedStyle to show the image,
     // not a completed cross-fade, so we hand back one of the existing images.
-    if (!progress)
+    if (!context.progress)
         return fromStyleImage;
-    if (progress == 1)
+    if (context.progress == 1)
         return toStyleImage;
     if (!fromStyleImage->cachedImage() || !toStyleImage->cachedImage())
         return toStyleImage;
 
     auto fromImageValue = CSSImageValue::create(*fromStyleImage->cachedImage());
     auto toImageValue = CSSImageValue::create(*toStyleImage->cachedImage());
-    auto percentageValue = CSSPrimitiveValue::create(progress, CSSUnitType::CSS_NUMBER);
+    auto percentageValue = CSSPrimitiveValue::create(context.progress, CSSUnitType::CSS_NUMBER);
 
     auto crossfadeValue = CSSCrossfadeValue::create(WTFMove(fromImageValue), WTFMove(toImageValue), WTFMove(percentageValue));
     return StyleGeneratedImage::create(WTFMove(crossfadeValue));
 }
 
-static inline RefPtr<StyleImage> blendFunc(const CSSPropertyBlendingClient* client, StyleImage* from, StyleImage* to, double progress)
+static inline RefPtr<StyleImage> blendFunc(StyleImage* from, StyleImage* to, const CSSPropertyBlendingContext& context)
 {
-    if (!progress)
+    if (!context.progress)
         return from;
 
-    if (progress == 1.0)
+    if (context.progress == 1.0)
         return to;
 
     ASSERT(from && to);
@@ -473,14 +485,14 @@ static inline RefPtr<StyleImage> blendFunc(const CSSPropertyBlendingClient* clie
             CSSFilterImageValue& fromFilter = downcast<CSSFilterImageValue>(fromGenerated);
             CSSFilterImageValue& toFilter = downcast<CSSFilterImageValue>(toGenerated);
             if (fromFilter.equalInputImages(toFilter) && fromFilter.cachedImage())
-                return blendFilter(client, fromFilter.cachedImage(), fromFilter.filterOperations(), toFilter.filterOperations(), progress);
+                return blendFilter(fromFilter.cachedImage(), fromFilter.filterOperations(), toFilter.filterOperations(), context);
         }
 
         if (is<CSSCrossfadeValue>(fromGenerated) && is<CSSCrossfadeValue>(toGenerated)) {
             CSSCrossfadeValue& fromCrossfade = downcast<CSSCrossfadeValue>(fromGenerated);
             CSSCrossfadeValue& toCrossfade = downcast<CSSCrossfadeValue>(toGenerated);
             if (fromCrossfade.equalInputImages(toCrossfade)) {
-                if (auto crossfadeBlend = toCrossfade.blend(fromCrossfade, progress))
+                if (auto crossfadeBlend = toCrossfade.blend(fromCrossfade, context))
                     return StyleGeneratedImage::create(*crossfadeBlend);
             }
         }
@@ -492,7 +504,7 @@ static inline RefPtr<StyleImage> blendFunc(const CSSPropertyBlendingClient* clie
         if (is<CSSFilterImageValue>(fromGenerated)) {
             CSSFilterImageValue& fromFilter = downcast<CSSFilterImageValue>(fromGenerated);
             if (fromFilter.cachedImage() && downcast<StyleCachedImage>(*to).cachedImage() == fromFilter.cachedImage())
-                return blendFilter(client, fromFilter.cachedImage(), fromFilter.filterOperations(), FilterOperations(), progress);
+                return blendFilter(fromFilter.cachedImage(), fromFilter.filterOperations(), FilterOperations(), context);
         }
         // FIXME: Add interpolation between cross-fade and image source.
     } else if (is<StyleCachedImage>(*from) && is<StyleGeneratedImage>(*to)) {
@@ -500,7 +512,7 @@ static inline RefPtr<StyleImage> blendFunc(const CSSPropertyBlendingClient* clie
         if (is<CSSFilterImageValue>(toGenerated)) {
             CSSFilterImageValue& toFilter = downcast<CSSFilterImageValue>(toGenerated);
             if (toFilter.cachedImage() && downcast<StyleCachedImage>(*from).cachedImage() == toFilter.cachedImage())
-                return blendFilter(client, toFilter.cachedImage(), FilterOperations(), toFilter.filterOperations(), progress);
+                return blendFilter(toFilter.cachedImage(), FilterOperations(), toFilter.filterOperations(), context);
         }
         // FIXME: Add interpolation between image source and cross-fade.
     }
@@ -508,12 +520,12 @@ static inline RefPtr<StyleImage> blendFunc(const CSSPropertyBlendingClient* clie
     // FIXME: Add support cross fade between cached and generated images.
     // https://bugs.webkit.org/show_bug.cgi?id=78293
     if (is<StyleCachedImage>(*from) && is<StyleCachedImage>(*to))
-        return crossfadeBlend(client, downcast<StyleCachedImage>(from), downcast<StyleCachedImage>(to), progress);
+        return crossfadeBlend(downcast<StyleCachedImage>(from), downcast<StyleCachedImage>(to), context);
 
     return to;
 }
 
-static inline NinePieceImage blendFunc(const CSSPropertyBlendingClient* client, const NinePieceImage& from, const NinePieceImage& to, double progress)
+static inline NinePieceImage blendFunc(const NinePieceImage& from, const NinePieceImage& to, const CSSPropertyBlendingContext& context)
 {
     if (!from.hasImage() || !to.hasImage())
         return to;
@@ -523,23 +535,23 @@ static inline NinePieceImage blendFunc(const CSSPropertyBlendingClient* client, 
     if (from.imageSlices() != to.imageSlices() || from.borderSlices() != to.borderSlices() || from.outset() != to.outset() || from.fill() != to.fill() || from.horizontalRule() != to.horizontalRule() || from.verticalRule() != to.verticalRule())
         return to;
 
-    if (auto* renderer = client->renderer()) {
+    if (auto* renderer = context.client->renderer()) {
         if (from.image()->imageSize(renderer, 1.0) != to.image()->imageSize(renderer, 1.0))
             return to;
     }
 
-    return NinePieceImage(blendFunc(client, from.image(), to.image(), progress),
+    return NinePieceImage(blendFunc(from.image(), to.image(), context),
         from.imageSlices(), from.fill(), from.borderSlices(), from.outset(), from.horizontalRule(), from.verticalRule());
 }
 
 #if ENABLE(VARIATION_FONTS)
 
-static inline FontVariationSettings blendFunc(const CSSPropertyBlendingClient* client, const FontVariationSettings& from, const FontVariationSettings& to, double progress)
+static inline FontVariationSettings blendFunc(const FontVariationSettings& from, const FontVariationSettings& to, const CSSPropertyBlendingContext& context)
 {
-    if (!progress)
+    if (!context.progress)
         return from;
 
-    if (progress == 1.0)
+    if (context.progress == 1.0)
         return to;
 
     ASSERT(from.size() == to.size());
@@ -549,7 +561,7 @@ static inline FontVariationSettings blendFunc(const CSSPropertyBlendingClient* c
         auto& fromItem = from.at(i);
         auto& toItem = to.at(i);
         ASSERT(fromItem.tag() == toItem.tag());
-        float interpolated = blendFunc(client, fromItem.value(), toItem.value(), progress);
+        float interpolated = blendFunc(fromItem.value(), toItem.value(), context);
         result.insert({ fromItem.tag(), interpolated });
     }
     return result;
@@ -557,14 +569,14 @@ static inline FontVariationSettings blendFunc(const CSSPropertyBlendingClient* c
 
 #endif
 
-static inline FontSelectionValue blendFunc(const CSSPropertyBlendingClient* client, FontSelectionValue from, FontSelectionValue to, double progress)
+static inline FontSelectionValue blendFunc(FontSelectionValue from, FontSelectionValue to, const CSSPropertyBlendingContext& context)
 {
-    return FontSelectionValue(std::max(0.0f, blendFunc(client, static_cast<float>(from), static_cast<float>(to), progress)));
+    return FontSelectionValue(std::max(0.0f, blendFunc(static_cast<float>(from), static_cast<float>(to), context)));
 }
 
-static inline Optional<FontSelectionValue> blendFunc(const CSSPropertyBlendingClient* client, Optional<FontSelectionValue> from, Optional<FontSelectionValue> to, double progress)
+static inline Optional<FontSelectionValue> blendFunc(Optional<FontSelectionValue> from, Optional<FontSelectionValue> to, const CSSPropertyBlendingContext& context)
 {
-    return blendFunc(client, *from, *to, progress);
+    return blendFunc(*from, *to, context);
 }
 
 class AnimationPropertyWrapperBase {
@@ -578,12 +590,12 @@ public:
     virtual ~AnimationPropertyWrapperBase() = default;
 
     virtual bool isShorthandWrapper() const { return false; }
-    virtual bool equals(const RenderStyle*, const RenderStyle*) const = 0;
-    virtual bool canInterpolate(const RenderStyle*, const RenderStyle*) const { return true; }
-    virtual void blend(const CSSPropertyBlendingClient*, RenderStyle*, const RenderStyle*, const RenderStyle*, double) const = 0;
+    virtual bool equals(const RenderStyle&, const RenderStyle&) const = 0;
+    virtual bool canInterpolate(const RenderStyle&, const RenderStyle&) const { return true; }
+    virtual void blend(RenderStyle&, const RenderStyle&, const RenderStyle&, const CSSPropertyBlendingContext&) const = 0;
     
 #if !LOG_DISABLED
-    virtual void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double) const = 0;
+    virtual void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double) const = 0;
 #endif
 
     CSSPropertyID property() const { return m_property; }
@@ -604,28 +616,26 @@ public:
     {
     }
 
-    T value(const RenderStyle* style) const
+    T value(const RenderStyle& style) const
     {
-        return (style->*m_getter)();
+        return (style.*m_getter)();
     }
 
-private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const override
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
         return value(a) == value(b);
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* result, double progress) const final
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
+private:
     T (RenderStyle::*m_getter)() const;
 };
 
@@ -639,9 +649,9 @@ public:
     {
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const override
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
-        (destination->*m_setter)(blendFunc(client, this->value(from), this->value(to), progress));
+        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
 
 protected:
@@ -658,10 +668,10 @@ public:
     }
 
 private:
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        auto blendedValue = blendFunc(client, this->value(from), this->value(to), progress);
-        (destination->*this->m_setter)(blendedValue > 1 ? blendedValue : 1);
+        auto blendedValue = blendFunc(this->value(from), this->value(to), context);
+        (destination.*this->m_setter)(blendedValue > 1 ? blendedValue : 1);
     }
 };
 
@@ -675,16 +685,52 @@ public:
     {
     }
 
-private:
-    bool canInterpolate(const RenderStyle*, const RenderStyle*) const final { return false; }
-
-    void blend(const CSSPropertyBlendingClient*, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        ASSERT(!progress || progress == 1.0);
-        (destination->*this->m_setter)(this->value(progress ? to : from));
+        ASSERT(!context.progress || context.progress == 1.0);
+        (destination.*this->m_setter)(this->value(context.progress ? to : from));
     }
 
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&) const final { return false; }
+
     void (RenderStyle::*m_setter)(T);
+};
+
+class BorderImageRepeatWrapper final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BorderImageRepeatWrapper()
+        : AnimationPropertyWrapperBase(CSSPropertyBorderImageRepeat)
+        , m_horizontalWrapper(DiscretePropertyWrapper<NinePieceImageRule>(CSSPropertyBorderImageRepeat, &RenderStyle::borderImageHorizontalRule, &RenderStyle::setBorderImageHorizontalRule))
+        , m_verticalWrapper(DiscretePropertyWrapper<NinePieceImageRule>(CSSPropertyBorderImageRepeat, &RenderStyle::borderImageVerticalRule, &RenderStyle::setBorderImageVerticalRule))
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle&, const RenderStyle&) const final { return false; }
+
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
+    {
+        return m_horizontalWrapper.equals(a, b) && m_verticalWrapper.equals(a, b);
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        m_horizontalWrapper.blend(destination, from, to, context);
+        m_verticalWrapper.blend(destination, from, to, context);
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    {
+        m_horizontalWrapper.logBlend(from, to, destination, progress);
+        m_verticalWrapper.logBlend(from, to, destination, progress);
+    }
+#endif
+
+    DiscretePropertyWrapper<NinePieceImageRule> m_horizontalWrapper;
+    DiscretePropertyWrapper<NinePieceImageRule> m_verticalWrapper;
 };
 
 template <typename T>
@@ -698,9 +744,9 @@ public:
     }
 
 private:
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination->*this->m_setter)(blendFunc(client, this->value(from), this->value(to), progress));
+        (destination.*this->m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
 
     void (RenderStyle::*m_setter)(RefPtr<T>&&);
@@ -739,15 +785,15 @@ public:
     }
 
 protected:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const override
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const override
     {
         return canInterpolateLengths(value(from), value(to), m_flags.contains(Flags::IsLengthPercentage));
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const override
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
-        auto valueRange = m_flags.contains(Flags::NegativeLengthsAreInvalid) ? ValueRangeNonNegative : ValueRangeAll;
-        (destination->*m_setter)(blendFunc(client, value(from), value(to), progress, valueRange));
+        auto valueRange = m_flags.contains(Flags::NegativeLengthsAreInvalid) ? ValueRange::NonNegative : ValueRange::All;
+        (destination.*m_setter)(blendFunc(value(from), value(to), context, valueRange));
     }
 
 private:
@@ -780,9 +826,9 @@ public:
     }
 
 private:
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination->*m_setter)(blendFunc(client, value(from), value(to), progress));
+        (destination.*m_setter)(blendFunc(value(from), value(to), context));
     }
 
     void (RenderStyle::*m_setter)(LengthPoint&&);
@@ -799,20 +845,20 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
         return canInterpolateLengthVariants(this->value(from), this->value(to));
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination->*m_setter)(blendFunc(client, this->value(from), this->value(to), progress));
+        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
 
     void (RenderStyle::*m_setter)(T&&);
 };
 
-class LengthBoxPropertyWrapper final : public PropertyWrapperGetter<const LengthBox&> {
+class LengthBoxPropertyWrapper : public PropertyWrapperGetter<const LengthBox&> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Flags {
@@ -827,10 +873,9 @@ public:
     {
     }
 
-private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const override
     {
-        if (m_flags.contains(Flags::UsesFillKeyword) && from->borderImage().fill() != to->borderImage().fill())
+        if (m_flags.contains(Flags::UsesFillKeyword) && from.borderImage().fill() != to.borderImage().fill())
             return false;
 
         auto& fromLengthBox = value(from);
@@ -842,16 +887,44 @@ private:
             && canInterpolateLengths(fromLengthBox.left(), toLengthBox.left(), isLengthPercentage);
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
         if (m_flags.contains(Flags::UsesFillKeyword))
-            destination->setBorderImageSliceFill((!progress || canInterpolate(from, to) ? from : to)->borderImage().fill());
-        auto valueRange = m_flags.contains(Flags::AllowsNegativeValues) ? ValueRangeAll : ValueRangeNonNegative;
-        (destination->*m_setter)(blendFunc(client, value(from), value(to), progress, valueRange));
+            destination.setBorderImageSliceFill((!context.progress || !context.isDiscrete ? from : to).borderImage().fill());
+        if (context.isDiscrete) {
+            // It is important we have this non-interpolated shortcut because certain CSS properties
+            // represented as a LengthBox, such as border-image-slice, don't know how to deal with
+            // calculated Length values, see for instance valueForImageSliceSide(const Length&).
+            (destination.*m_setter)(context.progress ? LengthBox(value(to)) : LengthBox(value(from)));
+            return;
+        }
+        auto valueRange = m_flags.contains(Flags::AllowsNegativeValues) ? ValueRange::All : ValueRange::NonNegative;
+        (destination.*m_setter)(blendFunc(value(from), value(to), context, valueRange));
     }
 
     void (RenderStyle::*m_setter)(LengthBox&&);
     OptionSet<Flags> m_flags;
+};
+
+class ClipWrapper final : public LengthBoxPropertyWrapper {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    ClipWrapper()
+        : LengthBoxPropertyWrapper(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip, { LengthBoxPropertyWrapper::Flags::AllowsNegativeValues })
+    {
+    }
+
+private:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        return from.hasClip() && to.hasClip() && LengthBoxPropertyWrapper::canInterpolate(from, to);
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        LengthBoxPropertyWrapper::blend(destination, from, to, context);
+        destination.setHasClip(true);
+    }
 };
 
 class PropertyWrapperClipPath final : public RefCountedPropertyWrapper<ClipPathOperation> {
@@ -863,14 +936,11 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
         // If the style pointers are the same, don't bother doing the test.
-        // If either is null, return false. If both are null, return true.
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
         auto* clipPathA = value(a);
         auto* clipPathB = value(b);
@@ -892,18 +962,15 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
         // If the style pointers are the same, don't bother doing the test.
-        // If either is null, return false. If both are null, return true.
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
         return value(a) == value(b);
     }
 
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
         auto fromVariationSettings = value(from);
         auto toVariationSettings = value(to);
@@ -931,14 +998,11 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
         // If the style pointers are the same, don't bother doing the test.
-        // If either is null, return false. If both are null, return true.
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
         auto* shapeA = value(a);
         auto* shapeB = value(b);
@@ -949,7 +1013,7 @@ private:
         return *shapeA == *shapeB;
     }
 
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
         auto* fromShape = value(from);
         auto* toShape = value(to);
@@ -976,19 +1040,17 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
         auto* imageA = value(a);
         auto* imageB = value(b);
         return arePointingToEqualData(imageA, imageB);
     }
 
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
         return value(from) && value(to);
     }
@@ -1019,7 +1081,7 @@ public:
 private:
     bool animationIsAccelerated() const final { return true; }
 
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
         return arePointingToEqualData(this->value(a), this->value(b));
     }
@@ -1043,9 +1105,9 @@ private:
             ;
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination->*m_setter)(blendFunc(client, value(from), value(to), progress, property()));
+        (destination.*m_setter)(blendFunc(value(from), value(to), context, property()));
     }
 };
 
@@ -1084,15 +1146,13 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
-        const ShadowData* shadowA = (a->*m_getter)();
-        const ShadowData* shadowB = (b->*m_getter)();
+        const ShadowData* shadowA = (a.*m_getter)();
+        const ShadowData* shadowB = (b.*m_getter)();
 
         while (true) {
             // end of both lists
@@ -1113,10 +1173,10 @@ private:
         return true;
     }
 
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        const ShadowData* fromShadow = (from->*m_getter)();
-        const ShadowData* toShadow = (to->*m_getter)();
+        const ShadowData* fromShadow = (from.*m_getter)();
+        const ShadowData* toShadow = (to.*m_getter)();
 
         // The only scenario where we can't interpolate is if specified items don't have the same shadow style.
         while (fromShadow && toShadow) {
@@ -1129,15 +1189,15 @@ private:
         return true;
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        const ShadowData* fromShadow = (from->*m_getter)();
-        const ShadowData* toShadow = (to->*m_getter)();
+        const ShadowData* fromShadow = (from.*m_getter)();
+        const ShadowData* toShadow = (to.*m_getter)();
 
-        if (!canInterpolate(from, to)) {
-            ASSERT(!progress || progress == 1.0);
-            auto* shadow = progress ? toShadow : fromShadow;
-            (destination->*m_setter)(shadow ? makeUnique<ShadowData>(*shadow) : nullptr, false);
+        if (context.isDiscrete) {
+            ASSERT(!context.progress || context.progress == 1.0);
+            auto* shadow = context.progress ? toShadow : fromShadow;
+            (destination.*m_setter)(shadow ? makeUnique<ShadowData>(*shadow) : nullptr, false);
             return;
         }
 
@@ -1145,22 +1205,22 @@ private:
         int toLength = shadowListLength(toShadow);
 
         if (fromLength == toLength || (fromLength <= 1 && toLength <= 1)) {
-            (destination->*m_setter)(blendSimpleOrMatchedShadowLists(client, progress, fromShadow, toShadow), false);
+            (destination.*m_setter)(blendSimpleOrMatchedShadowLists(fromShadow, toShadow, context), false);
             return;
         }
 
-        (destination->*m_setter)(blendMismatchedShadowLists(client, progress, fromShadow, toShadow, fromLength, toLength), false);
+        (destination.*m_setter)(blendMismatchedShadowLists(fromShadow, toShadow, fromLength, toLength, context), false);
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double progress) const final
     {
         // FIXME: better logging.
         LOG_WITH_STREAM(Animations, stream << "  blending ShadowData at " << TextStream::FormatNumberRespectingIntegers(progress));
     }
 #endif
 
-    std::unique_ptr<ShadowData> blendSimpleOrMatchedShadowLists(const CSSPropertyBlendingClient* client, double progress, const ShadowData* shadowA, const ShadowData* shadowB) const
+    std::unique_ptr<ShadowData> blendSimpleOrMatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, const CSSPropertyBlendingContext& context) const
     {
         std::unique_ptr<ShadowData> newShadowData;
         ShadowData* lastShadow = 0;
@@ -1169,7 +1229,7 @@ private:
             const ShadowData* srcShadow = shadowForBlending(shadowA, shadowB);
             const ShadowData* dstShadow = shadowForBlending(shadowB, shadowA);
 
-            std::unique_ptr<ShadowData> blendedShadow = blendFunc(client, srcShadow, dstShadow, progress);
+            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, context);
             ShadowData* blendedShadowPtr = blendedShadow.get();
 
             if (!lastShadow)
@@ -1186,7 +1246,7 @@ private:
         return newShadowData;
     }
 
-    std::unique_ptr<ShadowData> blendMismatchedShadowLists(const CSSPropertyBlendingClient* client, double progress, const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength) const
+    std::unique_ptr<ShadowData> blendMismatchedShadowLists(const ShadowData* shadowA, const ShadowData* shadowB, int fromLength, int toLength, const CSSPropertyBlendingContext& context) const
     {
         // The shadows in ShadowData are stored in reverse order, so when animating mismatched lists,
         // reverse them and match from the end.
@@ -1212,7 +1272,7 @@ private:
             const ShadowData* srcShadow = shadowForBlending(fromShadow, toShadow);
             const ShadowData* dstShadow = shadowForBlending(toShadow, fromShadow);
 
-            std::unique_ptr<ShadowData> blendedShadow = blendFunc(client, srcShadow, dstShadow, progress);
+            std::unique_ptr<ShadowData> blendedShadow = blendFunc(srcShadow, dstShadow, context);
             // Insert at the start of the list to preserve the order.
             blendedShadow->setNext(WTFMove(newShadowData));
             newShadowData = WTFMove(blendedShadow);
@@ -1236,12 +1296,10 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
         Color fromColor = value(a);
         Color toColor = value(b);
@@ -1250,14 +1308,14 @@ private:
             return true;
 
         if (!fromColor.isValid())
-            fromColor = a->color();
+            fromColor = a.color();
         if (!toColor.isValid())
-            toColor = b->color();
+            toColor = b.color();
 
         return fromColor == toColor;
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
         Color fromColor = value(from);
         Color toColor = value(to);
@@ -1266,22 +1324,22 @@ private:
             return;
 
         if (!fromColor.isValid())
-            fromColor = from->color();
+            fromColor = from.color();
         if (!toColor.isValid())
-            toColor = to->color();
-        (destination->*m_setter)(blendFunc(client, fromColor, toColor, progress));
+            toColor = to.color();
+        (destination.*m_setter)(blendFunc(fromColor, toColor, context));
     }
 
-    Color value(const RenderStyle* style) const
+    Color value(const RenderStyle& style) const
     {
-        return (style->*m_getter)();
+        return (style.*m_getter)();
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* result, double progress) const final
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
         // FIXME: better logging.
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
@@ -1308,15 +1366,15 @@ public:
     }
 
 protected:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const override
+    bool equals(const RenderStyle& a, const RenderStyle& b) const override
     {
         return m_wrapper->equals(a, b) && m_visitedWrapper->equals(a, b);
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const override
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
-        m_wrapper->blend(client, destination, from, to, progress);
-        m_visitedWrapper->blend(client, destination, from, to, progress);
+        m_wrapper->blend(destination, from, to, context);
+        m_visitedWrapper->blend(destination, from, to, context);
     }
 
     std::unique_ptr<AnimationPropertyWrapperBase> m_wrapper;
@@ -1324,19 +1382,19 @@ protected:
 
 private:
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* result, double progress) const final
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
-        m_wrapper->logBlend(from, to, result, progress);
-        m_visitedWrapper->logBlend(from, to, result, progress);
+        m_wrapper->logBlend(from, to, destination, progress);
+        m_visitedWrapper->logBlend(from, to, destination, progress);
     }
 #endif
 };
 
-static bool canInterpolateCaretColor(const RenderStyle* from, const RenderStyle* to, bool visited)
+static bool canInterpolateCaretColor(const RenderStyle& from, const RenderStyle& to, bool visited)
 {
     if (visited)
-        return !from->hasVisitedLinkAutoCaretColor() && !to->hasVisitedLinkAutoCaretColor();
-    return !from->hasAutoCaretColor() && !to->hasAutoCaretColor();
+        return !from.hasVisitedLinkAutoCaretColor() && !to.hasVisitedLinkAutoCaretColor();
+    return !from.hasAutoCaretColor() && !to.hasAutoCaretColor();
 }
 
 class CaretColorPropertyWrapper final : public PropertyWrapperVisitedAffectedColor {
@@ -1348,38 +1406,38 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        return a->hasAutoCaretColor() == b->hasAutoCaretColor()
-            && a->hasVisitedLinkAutoCaretColor() == b->hasVisitedLinkAutoCaretColor()
+        return a.hasAutoCaretColor() == b.hasAutoCaretColor()
+            && a.hasVisitedLinkAutoCaretColor() == b.hasVisitedLinkAutoCaretColor()
             && PropertyWrapperVisitedAffectedColor::equals(a, b);
     }
 
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
         return canInterpolateCaretColor(from, to, false) || canInterpolateCaretColor(from, to, true);
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
         if (canInterpolateCaretColor(from, to, false))
-            m_wrapper->blend(client, destination, from, to, progress);
+            m_wrapper->blend(destination, from, to, context);
         else {
-            auto* blendingRenderStyle = progress < 0.5 ? from : to;
-            if (blendingRenderStyle->hasAutoCaretColor())
-                destination->setHasAutoCaretColor();
+            auto& blendingRenderStyle = context.progress < 0.5 ? from : to;
+            if (blendingRenderStyle.hasAutoCaretColor())
+                destination.setHasAutoCaretColor();
             else
-                destination->setCaretColor(blendingRenderStyle->caretColor());
+                destination.setCaretColor(blendingRenderStyle.caretColor());
         }
 
         if (canInterpolateCaretColor(from, to, true))
-            m_visitedWrapper->blend(client, destination, from, to, progress);
+            m_visitedWrapper->blend(destination, from, to, context);
         else {
-            auto* blendingRenderStyle = progress < 0.5 ? from : to;
-            if (blendingRenderStyle->hasVisitedLinkAutoCaretColor())
-                destination->setHasVisitedLinkAutoCaretColor();
+            auto& blendingRenderStyle = context.progress < 0.5 ? from : to;
+            if (blendingRenderStyle.hasVisitedLinkAutoCaretColor())
+                destination.setHasVisitedLinkAutoCaretColor();
             else
-                destination->setVisitedLinkCaretColor(blendingRenderStyle->visitedLinkCaretColor());
+                destination.setVisitedLinkCaretColor(blendingRenderStyle.visitedLinkCaretColor());
         }
     }
 };
@@ -1397,11 +1455,11 @@ public:
     CSSPropertyID property() const { return m_property; }
 
     virtual bool equals(const FillLayer*, const FillLayer*) const = 0;
-    virtual void blend(const CSSPropertyBlendingClient*, FillLayer*, const FillLayer*, const FillLayer*, double) const = 0;
+    virtual void blend(FillLayer*, const FillLayer*, const FillLayer*, const CSSPropertyBlendingContext&) const = 0;
     virtual bool canInterpolate(const FillLayer*, const FillLayer*) const { return true; }
 
 #if !LOG_DISABLED
-    virtual void logBlend(const FillLayer* result, const FillLayer*, const FillLayer*, double) const = 0;
+    virtual void logBlend(const FillLayer* destination, const FillLayer*, const FillLayer*, double) const = 0;
 #endif
 
 private:
@@ -1435,9 +1493,9 @@ protected:
     }
 
 #if !LOG_DISABLED
-    void logBlend(const FillLayer* result, const FillLayer* from, const FillLayer* to, double progress) const override
+    void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const override
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
@@ -1456,9 +1514,9 @@ public:
     }
 
 private:
-    void blend(const CSSPropertyBlendingClient* client, FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
+    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination->*this->m_setter)(blendFunc(client, this->value(from), this->value(to), progress));
+        (destination->*this->m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
 
     bool canInterpolate(const FillLayer* from, const FillLayer* to) const final
@@ -1467,12 +1525,12 @@ private:
     }
 
 #if !LOG_DISABLED
-    void logBlend(const FillLayer* result, const FillLayer* from, const FillLayer* to, double progress) const final
+    void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
     {
         LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(FillLayerPropertyWrapperGetter<const T&>::property())
             << " from " << FillLayerPropertyWrapperGetter<const T&>::value(from)
             << " to " << FillLayerPropertyWrapperGetter<const T&>::value(to)
-            << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << FillLayerPropertyWrapperGetter<const T&>::value(result));
+            << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << FillLayerPropertyWrapperGetter<const T&>::value(destination));
     }
 #endif
 
@@ -1508,7 +1566,7 @@ private:
         return fromLength == toLength && fromEdge == toEdge;
     }
 
-    void blend(const CSSPropertyBlendingClient* client, FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
+    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const CSSPropertyBlendingContext& context) const final
     {
         auto fromLength = value(from);
         auto toLength = value(to);
@@ -1526,13 +1584,13 @@ private:
             }
         }
 
-        (destination->*m_lengthSetter)(blendFunc(client, fromLength, toLength, progress));
+        (destination->*m_lengthSetter)(blendFunc(fromLength, toLength, context));
     }
 
 #if !LOG_DISABLED
-    void logBlend(const FillLayer* result, const FillLayer* from, const FillLayer* to, double progress) const final
+    void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 
@@ -1553,18 +1611,18 @@ public:
     }
 
 private:
-    void blend(const CSSPropertyBlendingClient* client, FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
+    void blend(FillLayer* destination, const FillLayer* from, const FillLayer* to, const CSSPropertyBlendingContext& context) const final
     {
-        (destination->*this->m_setter)(blendFunc(client, this->value(from), this->value(to), progress));
+        (destination->*this->m_setter)(blendFunc(this->value(from), this->value(to), context));
     }
 
 #if !LOG_DISABLED
-    void logBlend(const FillLayer* result, const FillLayer* from, const FillLayer* to, double progress) const override
+    void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const override
     {
         LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(FillLayerPropertyWrapperGetter<T*>::property())
             << " from " << FillLayerPropertyWrapperGetter<T*>::value(from)
             << " to " << FillLayerPropertyWrapperGetter<T*>::value(to)
-            << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << FillLayerPropertyWrapperGetter<T*>::value(result));
+            << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << FillLayerPropertyWrapperGetter<T*>::value(destination));
     }
 #endif
 
@@ -1595,9 +1653,9 @@ private:
     }
 
 #if !LOG_DISABLED
-    void logBlend(const FillLayer* result, const FillLayer* from, const FillLayer* to, double progress) const final
+    void logBlend(const FillLayer* destination, const FillLayer* from, const FillLayer* to, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(result));
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(this->property()) << " from " << this->value(from) << " to " << this->value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
     }
 #endif
 };
@@ -1636,15 +1694,13 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
-        auto* fromLayer = &(a->*m_layersGetter)();
-        auto* toLayer = &(b->*m_layersGetter)();
+        auto* fromLayer = &(a.*m_layersGetter)();
+        auto* toLayer = &(b.*m_layersGetter)();
 
         while (fromLayer && toLayer) {
             if (!m_fillLayerPropertyWrapper->equals(fromLayer, toLayer))
@@ -1657,10 +1713,10 @@ private:
         return true;
     }
 
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        auto* fromLayer = &(from->*m_layersGetter)();
-        auto* toLayer = &(to->*m_layersGetter)();
+        auto* fromLayer = &(from.*m_layersGetter)();
+        auto* toLayer = &(to.*m_layersGetter)();
 
         while (fromLayer && toLayer) {
             if (fromLayer->sizeType() != toLayer->sizeType())
@@ -1676,15 +1732,15 @@ private:
         return true;
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        auto* fromLayer = &(from->*m_layersGetter)();
-        auto* toLayer = &(to->*m_layersGetter)();
-        auto* dstLayer = &(destination->*m_layersAccessor)();
+        auto* fromLayer = &(from.*m_layersGetter)();
+        auto* toLayer = &(to.*m_layersGetter)();
+        auto* dstLayer = &(destination.*m_layersAccessor)();
 
         while (fromLayer && toLayer && dstLayer) {
-            dstLayer->setSizeType((progress ? toLayer : fromLayer)->sizeType());
-            m_fillLayerPropertyWrapper->blend(client, dstLayer, fromLayer, toLayer, progress);
+            dstLayer->setSizeType((context.progress ? toLayer : fromLayer)->sizeType());
+            m_fillLayerPropertyWrapper->blend(dstLayer, fromLayer, toLayer, context);
             fromLayer = fromLayer->next();
             toLayer = toLayer->next();
             dstLayer = dstLayer->next();
@@ -1692,11 +1748,11 @@ private:
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* result, double progress) const final
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
-        auto* fromLayer = &(from->*m_layersGetter)();
-        auto* toLayer = &(to->*m_layersGetter)();
-        auto* dstLayer = &(result->*m_layersGetter)();
+        auto* fromLayer = &(from.*m_layersGetter)();
+        auto* toLayer = &(to.*m_layersGetter)();
+        auto* dstLayer = &(destination.*m_layersGetter)();
 
         while (fromLayer && toLayer && dstLayer) {
             m_fillLayerPropertyWrapper->logBlend(dstLayer, fromLayer, toLayer, progress);
@@ -1726,12 +1782,10 @@ public:
     const Vector<AnimationPropertyWrapperBase*>& propertyWrappers() const { return m_propertyWrappers; }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
         for (auto& wrapper : m_propertyWrappers) {
             if (!wrapper->equals(a, b))
@@ -1740,14 +1794,14 @@ private:
         return true;
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
         for (auto& wrapper : m_propertyWrappers)
-            wrapper->blend(client, destination, from, to, progress);
+            wrapper->blend(destination, from, to, context);
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* destination, double progress) const final
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
         for (auto& wrapper : m_propertyWrappers)
             wrapper->logBlend(from, to, destination, progress);
@@ -1766,30 +1820,28 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
-        return a->flexBasis() == b->flexBasis() && a->flexGrow() == b->flexGrow() && a->flexShrink() == b->flexShrink();
+        return a.flexBasis() == b.flexBasis() && a.flexGrow() == b.flexGrow() && a.flexShrink() == b.flexShrink();
     }
 
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        return from->flexGrow() != to->flexGrow() && from->flexShrink() != to->flexShrink() && canInterpolateLengths(from->flexBasis(), to->flexBasis(), false);
+        return from.flexGrow() != to.flexGrow() && from.flexShrink() != to.flexShrink() && canInterpolateLengths(from.flexBasis(), to.flexBasis(), false);
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        destination->setFlexBasis(blendFunc(client, from->flexBasis(), to->flexBasis(), progress));
-        destination->setFlexGrow(blendFunc(client, from->flexGrow(), to->flexGrow(), progress));
-        destination->setFlexShrink(blendFunc(client, from->flexShrink(), to->flexShrink(), progress));
+        destination.setFlexBasis(blendFunc(from.flexBasis(), to.flexBasis(), context));
+        destination.setFlexGrow(blendFunc(from.flexGrow(), to.flexGrow(), context));
+        destination.setFlexShrink(blendFunc(from.flexShrink(), to.flexShrink(), context));
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double progress) const final
     {
         // FIXME: better logging.
         LOG_WITH_STREAM(Animations, stream << "  blending flex at " << TextStream::FormatNumberRespectingIntegers(progress));
@@ -1809,22 +1861,20 @@ public:
     }
 
 private:
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
-        if ((a->*m_paintTypeGetter)() != (b->*m_paintTypeGetter)())
+        if ((a.*m_paintTypeGetter)() != (b.*m_paintTypeGetter)())
             return false;
 
         // We only support animations between SVGPaints that are pure Color values.
         // For everything else we must return true for this method, otherwise
         // we will try to animate between values forever.
-        if ((a->*m_paintTypeGetter)() == SVGPaintType::RGBColor) {
-            Color fromColor = (a->*m_getter)();
-            Color toColor = (b->*m_getter)();
+        if ((a.*m_paintTypeGetter)() == SVGPaintType::RGBColor) {
+            Color fromColor = (a.*m_getter)();
+            Color toColor = (b.*m_getter)();
 
             if (!fromColor.isValid() && !toColor.isValid())
                 return true;
@@ -1839,14 +1889,14 @@ private:
         return true;
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        if ((from->*m_paintTypeGetter)() != SVGPaintType::RGBColor
-            || (to->*m_paintTypeGetter)() != SVGPaintType::RGBColor)
+        if ((from.*m_paintTypeGetter)() != SVGPaintType::RGBColor
+            || (to.*m_paintTypeGetter)() != SVGPaintType::RGBColor)
             return;
 
-        Color fromColor = (from->*m_getter)();
-        Color toColor = (to->*m_getter)();
+        Color fromColor = (from.*m_getter)();
+        Color toColor = (to.*m_getter)();
 
         if (!fromColor.isValid() && !toColor.isValid())
             return;
@@ -1855,11 +1905,11 @@ private:
             fromColor = Color();
         if (!toColor.isValid())
             toColor = Color();
-        (destination->*m_setter)(blendFunc(client, fromColor, toColor, progress));
+        (destination.*m_setter)(blendFunc(fromColor, toColor, context));
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle*, const RenderStyle*, const RenderStyle*, double progress) const final
+    void logBlend(const RenderStyle&, const RenderStyle&, const RenderStyle&, double progress) const final
     {
         // FIXME: better logging.
         LOG_WITH_STREAM(Animations, stream << "  blending SVGPaint at " << TextStream::FormatNumberRespectingIntegers(progress));
@@ -1880,31 +1930,29 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        return from->fontItalic() && to->fontItalic() && from->fontDescription().fontStyleAxis() == FontStyleAxis::slnt && to->fontDescription().fontStyleAxis() == FontStyleAxis::slnt;
+        return from.fontItalic() && to.fontItalic() && from.fontDescription().fontStyleAxis() == FontStyleAxis::slnt && to.fontDescription().fontStyleAxis() == FontStyleAxis::slnt;
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        auto discrete = !canInterpolate(from, to);
-
         auto blendedStyleAxis = FontStyleAxis::slnt;
-        if (discrete)
-            blendedStyleAxis = (progress < 0.5 ? from : to)->fontDescription().fontStyleAxis();
+        if (context.isDiscrete)
+            blendedStyleAxis = (context.progress < 0.5 ? from : to).fontDescription().fontStyleAxis();
 
-        auto fromFontItalic = from->fontItalic();
-        auto toFontItalic = to->fontItalic();
-        auto blendedFontItalic = progress < 0.5 ? fromFontItalic : toFontItalic;
-        if (!discrete)
-            blendedFontItalic = blendFunc(client, fromFontItalic, toFontItalic, progress);
+        auto fromFontItalic = from.fontItalic();
+        auto toFontItalic = to.fontItalic();
+        auto blendedFontItalic = context.progress < 0.5 ? fromFontItalic : toFontItalic;
+        if (!context.isDiscrete)
+            blendedFontItalic = blendFunc(fromFontItalic, toFontItalic, context);
 
-        FontSelector* currentFontSelector = destination->fontCascade().fontSelector();
-        auto description = destination->fontDescription();
+        auto* currentFontSelector = destination.fontCascade().fontSelector();
+        auto description = destination.fontDescription();
         description.setItalic(blendedFontItalic);
         description.setFontStyleAxis(blendedStyleAxis);
-        destination->setFontDescription(WTFMove(description));
-        destination->fontCascade().update(currentFontSelector);
+        destination.setFontDescription(WTFMove(description));
+        destination.fontCascade().update(currentFontSelector);
     }
 };
 
@@ -1921,28 +1969,28 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        return !(from->*m_autoGetter)() && !(to->*m_autoGetter)();
+        return !(from.*m_autoGetter)() && !(to.*m_autoGetter)();
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        auto blendedValue = blendFunc(client, this->value(from), this->value(to), progress);
+        auto blendedValue = blendFunc(this->value(from), this->value(to), context);
         if (m_minValue)
             blendedValue = blendedValue > *m_minValue ? blendedValue : *m_minValue;
-        (destination->*this->m_setter)(blendedValue);
+        (destination.*this->m_setter)(blendedValue);
 
-        if (canInterpolate(from, to))
+        if (!context.isDiscrete)
             return;
 
-        ASSERT(!progress || progress == 1.0);
-        if (!progress) {
-            if ((from->*m_autoGetter)())
-                (destination->*m_autoSetter)();
+        ASSERT(!context.progress || context.progress == 1.0);
+        if (!context.progress) {
+            if ((from.*m_autoGetter)())
+                (destination.*m_autoSetter)();
         } else {
-            if ((to->*m_autoGetter)())
-                (destination->*m_autoSetter)();
+            if ((to.*m_autoGetter)())
+                (destination.*m_autoSetter)();
         }
     }
 
@@ -1960,10 +2008,10 @@ public:
     }
 
 protected:
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const override
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
     {
-        auto blendedValue = blendFunc(client, value(from), value(to), progress);
-        (destination->*m_setter)(blendedValue > 0 ? blendedValue : 0);
+        auto blendedValue = blendFunc(value(from), value(to), context);
+        (destination.*m_setter)(blendedValue > 0 ? blendedValue : 0);
     }
 };
 
@@ -1976,16 +2024,16 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        return from->verticalAlign() == VerticalAlign::Length && to->verticalAlign() == VerticalAlign::Length && LengthPropertyWrapper::canInterpolate(from, to);
+        return from.verticalAlign() == VerticalAlign::Length && to.verticalAlign() == VerticalAlign::Length && LengthPropertyWrapper::canInterpolate(from, to);
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        LengthPropertyWrapper::blend(client, destination, from, to, progress);
-        auto* blendingStyle = !canInterpolate(from, to) && progress ? to : from;
-        destination->setVerticalAlign(blendingStyle->verticalAlign());
+        LengthPropertyWrapper::blend(destination, from, to, context);
+        auto& blendingStyle = context.isDiscrete && context.progress ? to : from;
+        destination.setVerticalAlign(blendingStyle.verticalAlign());
     }
 };
 
@@ -1998,21 +2046,21 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        if (from->textIndentLine() != to->textIndentLine())
+        if (from.textIndentLine() != to.textIndentLine())
             return false;
-        if (from->textIndentType() != to->textIndentType())
+        if (from.textIndentType() != to.textIndentType())
             return false;
         return LengthPropertyWrapper::canInterpolate(from, to);
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        auto* blendingStyle = !canInterpolate(from, to) && progress ? to : from;
-        destination->setTextIndentLine(blendingStyle->textIndentLine());
-        destination->setTextIndentType(blendingStyle->textIndentType());
-        LengthPropertyWrapper::blend(client, destination, from, to, progress);
+        auto& blendingStyle = context.isDiscrete && context.progress ? to : from;
+        destination.setTextIndentLine(blendingStyle.textIndentLine());
+        destination.setTextIndentType(blendingStyle.textIndentType());
+        LengthPropertyWrapper::blend(destination, from, to, context);
     }
 };
 
@@ -2025,19 +2073,19 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        if (!from->hasPerspective() || !to->hasPerspective())
+        if (!from.hasPerspective() || !to.hasPerspective())
             return false;
         return NonNegativeFloatPropertyWrapper::canInterpolate(from, to);
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        if (!canInterpolate(from, to))
-            (destination->*m_setter)(progress ? value(to) : value(from));
+        if (context.isDiscrete)
+            (destination.*m_setter)(context.progress ? value(to) : value(from));
         else
-            NonNegativeFloatPropertyWrapper::blend(client, destination, from, to, progress);
+            NonNegativeFloatPropertyWrapper::blend(destination, from, to, context);
     }
 };
 
@@ -2050,17 +2098,17 @@ public:
     }
 
 private:
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
         return value(from).isSpaces() == value(to).isSpaces();
     }
 
-    void blend(const CSSPropertyBlendingClient* client, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        if (!canInterpolate(from, to))
-            (destination->*m_setter)(progress ? value(to) : value(from));
+        if (context.isDiscrete)
+            (destination.*m_setter)(context.progress ? value(to) : value(from));
         else
-            PropertyWrapper::blend(client, destination, from, to, progress);
+            PropertyWrapper::blend(destination, from, to, context);
     }
 };
 
@@ -2072,41 +2120,39 @@ public:
     {
     }
 
-    bool equals(const RenderStyle* a, const RenderStyle* b) const final
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        if (a == b)
+        if (&a == &b)
             return true;
-        if (!a || !b)
-            return false;
 
-        return a->aspectRatioType() == b->aspectRatioType() && a->aspectRatioWidth() == b->aspectRatioWidth() && a->aspectRatioHeight() == b->aspectRatioHeight();
+        return a.aspectRatioType() == b.aspectRatioType() && a.aspectRatioWidth() == b.aspectRatioWidth() && a.aspectRatioHeight() == b.aspectRatioHeight();
     }
 
-    bool canInterpolate(const RenderStyle* from, const RenderStyle* to) const final
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to) const final
     {
-        return (from->aspectRatioType() == AspectRatioType::Ratio && to->aspectRatioType() == AspectRatioType::Ratio) || (from->aspectRatioType() == AspectRatioType::AutoAndRatio && to->aspectRatioType() == AspectRatioType::AutoAndRatio);
+        return (from.aspectRatioType() == AspectRatioType::Ratio && to.aspectRatioType() == AspectRatioType::Ratio) || (from.aspectRatioType() == AspectRatioType::AutoAndRatio && to.aspectRatioType() == AspectRatioType::AutoAndRatio);
     }
 
 #if !LOG_DISABLED
-    void logBlend(const RenderStyle* from, const RenderStyle* to, const RenderStyle* result, double progress) const final
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
     {
-        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << from->logicalAspectRatio() << " to " << to->logicalAspectRatio() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << result->logicalAspectRatio());
+        LOG_WITH_STREAM(Animations, stream << "  blending " << getPropertyName(property()) << " from " << from.logicalAspectRatio() << " to " << to.logicalAspectRatio() << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << destination.logicalAspectRatio());
     }
 #endif
 
-    void blend(const CSSPropertyBlendingClient*, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress) const final
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
     {
-        destination->setAspectRatioType(progress < 0.5 ? from->aspectRatioType() : to->aspectRatioType());
-        if (canInterpolate(from, to)) {
-            auto aspectRatioDst = WebCore::blend(log(from->logicalAspectRatio()), log(to->logicalAspectRatio()), progress);
-            destination->setAspectRatio(exp(aspectRatioDst), 1);
+        destination.setAspectRatioType(context.progress < 0.5 ? from.aspectRatioType() : to.aspectRatioType());
+        if (!context.isDiscrete) {
+            auto aspectRatioDst = WebCore::blend(log(from.logicalAspectRatio()), log(to.logicalAspectRatio()), context);
+            destination.setAspectRatio(exp(aspectRatioDst), 1);
             return;
         }
         // For auto/auto-zero aspect-ratio we use discrete values, we can't use general
         // logic since logicalAspectRatio asserts on aspect-ratio type.
-        ASSERT(!progress || progress == 1);
-        auto* applicableStyle = progress ? to : from;
-        destination->setAspectRatio(applicableStyle->aspectRatioWidth(), applicableStyle->aspectRatioHeight());
+        ASSERT(!context.progress || context.progress == 1);
+        auto& applicableStyle = context.progress ? to : from;
+        destination.setAspectRatio(applicableStyle.aspectRatioWidth(), applicableStyle.aspectRatioHeight());
     }
 };
 
@@ -2253,7 +2299,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapper<Visibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility),
         new PropertyWrapper<float>(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoomWithoutReturnValue),
 
-        new LengthBoxPropertyWrapper(CSSPropertyClip, &RenderStyle::clip, &RenderStyle::setClip, { LengthBoxPropertyWrapper::Flags::AllowsNegativeValues }),
+        new ClipWrapper,
 
         new AcceleratedPropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity),
         new AcceleratedPropertyWrapper<const TransformOperations&>(CSSPropertyTransform, &RenderStyle::transform, &RenderStyle::setTransform),
@@ -2333,8 +2379,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new TabSizePropertyWrapper,
 
         // FIXME: The following properties are currently not animatable but should be:
-        // background-attachment, background-blend-mode,background-clip, background-origin,
-        // background-repeat, border-image-repeat, clip-rule, color-interpolation,
+        // background-blend-mode, clip-rule, color-interpolation,
         // color-interpolation-filters, counter-increment, counter-reset, dominant-baseline,
         // fill-rule, font-family, font-feature-settings, font-kerning, font-language-override,
         // font-synthesis, font-variant-alternates, font-variant-caps, font-variant-east-asian,
@@ -2347,8 +2392,14 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<const StyleSelfAlignmentData&>(CSSPropertyAlignItems, &RenderStyle::alignItems, &RenderStyle::setAlignItems),
         new DiscretePropertyWrapper<const StyleSelfAlignmentData&>(CSSPropertyAlignSelf, &RenderStyle::alignSelf, &RenderStyle::setAlignSelf),
         new DiscretePropertyWrapper<BackfaceVisibility>(CSSPropertyWebkitBackfaceVisibility, &RenderStyle::backfaceVisibility, &RenderStyle::setBackfaceVisibility),
+        new DiscretePropertyWrapper<FillAttachment>(CSSPropertyBackgroundAttachment, &RenderStyle::backgroundAttachment, &RenderStyle::setBackgroundAttachment),
+        new DiscretePropertyWrapper<FillBox>(CSSPropertyBackgroundClip, &RenderStyle::backgroundClip, &RenderStyle::setBackgroundClip),
+        new DiscretePropertyWrapper<FillBox>(CSSPropertyBackgroundOrigin, &RenderStyle::backgroundOrigin, &RenderStyle::setBackgroundOrigin),
+        new DiscretePropertyWrapper<FillRepeat>(CSSPropertyBackgroundRepeatX, &RenderStyle::backgroundRepeatX, &RenderStyle::setBackgroundRepeatX),
+        new DiscretePropertyWrapper<FillRepeat>(CSSPropertyBackgroundRepeatY, &RenderStyle::backgroundRepeatY, &RenderStyle::setBackgroundRepeatY),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderBottomStyle, &RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle),
         new DiscretePropertyWrapper<BorderCollapse>(CSSPropertyBorderCollapse, &RenderStyle::borderCollapse, &RenderStyle::setBorderCollapse),
+        new BorderImageRepeatWrapper,
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderLeftStyle, &RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderRightStyle, &RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle),
         new DiscretePropertyWrapper<BorderStyle>(CSSPropertyBorderTopStyle, &RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle),
@@ -2384,9 +2435,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscretePropertyWrapper<OverflowWrap>(CSSPropertyOverflowWrap, &RenderStyle::overflowWrap, &RenderStyle::setOverflowWrap),
         new DiscretePropertyWrapper<Overflow>(CSSPropertyOverflowX, &RenderStyle::overflowX, &RenderStyle::setOverflowX),
         new DiscretePropertyWrapper<Overflow>(CSSPropertyOverflowY, &RenderStyle::overflowY, &RenderStyle::setOverflowY),
-        new DiscretePropertyWrapper<BreakBetween>(CSSPropertyPageBreakAfter, &RenderStyle::breakAfter, &RenderStyle::setBreakAfter),
-        new DiscretePropertyWrapper<BreakBetween>(CSSPropertyPageBreakBefore, &RenderStyle::breakBefore, &RenderStyle::setBreakBefore),
-        new DiscretePropertyWrapper<BreakInside>(CSSPropertyPageBreakInside, &RenderStyle::breakInside, &RenderStyle::setBreakInside),
+        new DiscretePropertyWrapper<BreakBetween>(CSSPropertyBreakAfter, &RenderStyle::breakAfter, &RenderStyle::setBreakAfter),
+        new DiscretePropertyWrapper<BreakBetween>(CSSPropertyBreakBefore, &RenderStyle::breakBefore, &RenderStyle::setBreakBefore),
+        new DiscretePropertyWrapper<BreakInside>(CSSPropertyBreakInside, &RenderStyle::breakInside, &RenderStyle::setBreakInside),
         new DiscretePropertyWrapper<PaintOrder>(CSSPropertyPaintOrder, &RenderStyle::paintOrder, &RenderStyle::setPaintOrder),
         new DiscretePropertyWrapper<PointerEvents>(CSSPropertyPointerEvents, &RenderStyle::pointerEvents, &RenderStyle::setPointerEvents),
         new DiscretePropertyWrapper<PositionType>(CSSPropertyPosition, &RenderStyle::position, &RenderStyle::setPosition),
@@ -2420,6 +2471,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
     static const CSSPropertyID animatableShorthandProperties[] = {
         CSSPropertyBackground, // for background-color, background-position, background-image
         CSSPropertyBackgroundPosition,
+        CSSPropertyBackgroundRepeat,
         CSSPropertyFont, // for font-size, font-weight
         CSSPropertyWebkitMask, // for mask-position
         CSSPropertyWebkitMaskPosition,
@@ -2434,6 +2486,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyMargin,
         CSSPropertyOutline,
         CSSPropertyPadding,
+        CSSPropertyPageBreakAfter,
+        CSSPropertyPageBreakBefore,
+        CSSPropertyPageBreakInside,
         CSSPropertyWebkitTextStroke,
         CSSPropertyColumnRule,
         CSSPropertyWebkitBorderRadius,
@@ -2506,18 +2561,19 @@ static bool gatherEnclosingShorthandProperties(CSSPropertyID property, Animation
     return contained;
 }
 
-void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle* destination, const RenderStyle* from, const RenderStyle* to, double progress)
+void CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* client, CSSPropertyID property, RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, double progress)
 {
     ASSERT(property != CSSPropertyInvalid);
 
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
     if (wrapper) {
         // https://drafts.csswg.org/web-animations-1/#discrete
-        // The property’s values cannot be meaningfully combined, thus it is not additive and
+        // The property's values cannot be meaningfully combined, thus it is not additive and
         // interpolation swaps from Va to Vb at 50% (p=0.5).
-        if (!wrapper->canInterpolate(from, to))
+        auto isDiscrete = !wrapper->canInterpolate(from, to);
+        if (isDiscrete)
             progress = progress < 0.5 ? 0 : 1;
-        wrapper->blend(client, destination, from, to, progress);
+        wrapper->blend(destination, from, to, { progress, isDiscrete, client });
 #if !LOG_DISABLED
         wrapper->logBlend(from, to, destination, progress);
 #endif
@@ -2547,7 +2603,7 @@ HashSet<CSSPropertyID> CSSPropertyAnimation::animatableShorthandsAffectingProper
     return foundProperties;
 }
 
-bool CSSPropertyAnimation::propertiesEqual(CSSPropertyID property, const RenderStyle* a, const RenderStyle* b)
+bool CSSPropertyAnimation::propertiesEqual(CSSPropertyID property, const RenderStyle& a, const RenderStyle& b)
 {
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
     if (wrapper)
@@ -2555,7 +2611,7 @@ bool CSSPropertyAnimation::propertiesEqual(CSSPropertyID property, const RenderS
     return true;
 }
 
-bool CSSPropertyAnimation::canPropertyBeInterpolated(CSSPropertyID property, const RenderStyle* from, const RenderStyle* to)
+bool CSSPropertyAnimation::canPropertyBeInterpolated(CSSPropertyID property, const RenderStyle& from, const RenderStyle& to)
 {
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(property);
     if (wrapper)

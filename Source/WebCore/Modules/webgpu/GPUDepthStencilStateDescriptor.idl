@@ -26,7 +26,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary GPUDepthStencilStateDescriptor {
     boolean depthWriteEnabled = false;
     GPUCompareFunction depthCompare = "always";

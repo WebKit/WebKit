@@ -76,7 +76,7 @@ public:
 #endif
 
 #if ENABLE(WEB_RTC)
-    RefPtr<RTCRtpScriptTransformer> createRTCRtpScriptTransformer(Ref<SerializedScriptValue>&&, TransferredMessagePort&&);
+    RefPtr<RTCRtpScriptTransformer> createRTCRtpScriptTransformer(MessageWithMessagePorts&&);
 #endif
 
     FetchOptions::Destination destination() const final { return FetchOptions::Destination::Worker; }

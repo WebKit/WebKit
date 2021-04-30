@@ -2,32 +2,41 @@
 <html>
 <head>
     <script src="/js-test-resources/js-test.js"></script>
-    <script src="/js-test-resources/ui-helper.js"></script>
-    <script>
-        description("Tests that the app-bound-request context string gets properly set for an iframe");
-        jsTestIsAsync = true;
-
-        var subFrameHost = "localhost";
-        var contextHost = "127.0.0.1";
-        function askForContextStringForSubFrame() {
-            testRunner.appBoundRequestContextDataForDomain(subFrameHost, function (contextData) {
-                if (contextData == null) {
-                    askForContextStringForSubFrame();
-                    return;
-                }
-
-                if (contextData == contextHost)
-                    testPassed("Context string for sub frame correctly captured.");
-                else
-                    testFailed("Context string for sub frame NOT correctly captured.");
-
-                finishJSTest();
-            });
-        }
-    </script>
+    <script src="../resources/util.js"></script>
 </head>
 <body>
-<iframe onload="setTimeout('askForContextStringForSubFrame()', 0)" src="http://localhost:8000/in-app-browser-privacy/resources/basic-iframe.html">
-</iframe>
+<script>
+    description("Tests that the app-bound-request context string gets properly set for an iframe");
+    jsTestIsAsync = true;
+
+    const subFrameHost = "localhost";
+    const contextHost = "127.0.0.1";
+    function askForContextStringForSubFrame() {
+        testRunner.appBoundRequestContextDataForDomain(subFrameHost, function (contextData) {
+            if (contextData == null) {
+                askForContextStringForSubFrame();
+                return;
+            }
+
+            if (contextData == contextHost)
+                testPassed("Context string for sub frame correctly captured.");
+            else
+                testFailed("Context string for sub frame NOT correctly captured.");
+
+            finishJSTest();
+        });
+    }
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+    }
+
+    openIframe("http://localhost:8000/in-app-browser-privacy/resources/basic-iframe.html&dummy=" + Math.random(), askForContextStringForSubFrame);
+</script>
 </body>
 </html>

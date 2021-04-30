@@ -345,6 +345,16 @@ void SourceBufferPrivateRemote::bufferedSamplesForTrackId(const AtomString& trac
     }, m_remoteSourceBufferIdentifier);
 }
 
+void SourceBufferPrivateRemote::enqueuedSamplesForTrackID(const AtomString& trackId, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
+{
+    if (!m_gpuProcessConnection)
+        return;
+
+    m_gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(m_trackIdentifierMap.get(trackId)), [completionHandler = WTFMove(completionHandler)](auto&& samples) mutable {
+        completionHandler(WTFMove(samples));
+    }, m_remoteSourceBufferIdentifier);
+}
+
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void()>&& completionHandler)
 {
     if (!m_client || !m_mediaPlayerPrivate) {

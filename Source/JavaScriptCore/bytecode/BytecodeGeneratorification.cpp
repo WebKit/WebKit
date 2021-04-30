@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Yusuke Suzuki <utatane.tea@gmail.com>
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -216,12 +216,12 @@ void BytecodeGeneratorification::run()
     // Setup the global switch for the generator.
     {
         auto nextToEnterPoint = enterPoint().next();
-        unsigned switchTableIndex = m_codeBlock->numberOfSwitchJumpTables();
+        unsigned switchTableIndex = m_codeBlock->numberOfUnlinkedSwitchJumpTables();
         VirtualRegister state = virtualRegisterForArgumentIncludingThis(static_cast<int32_t>(JSGenerator::Argument::State));
-        auto& jumpTable = m_codeBlock->addSwitchJumpTable();
-        jumpTable.min = 0;
-        jumpTable.branchOffsets = FixedVector<int32_t>(m_yields.size() + 1);
-        std::fill(jumpTable.branchOffsets.begin(), jumpTable.branchOffsets.end(), 0);
+        auto& jumpTable = m_codeBlock->addUnlinkedSwitchJumpTable();
+        jumpTable.m_min = 0;
+        jumpTable.m_branchOffsets = FixedVector<int32_t>(m_yields.size() + 1);
+        std::fill(jumpTable.m_branchOffsets.begin(), jumpTable.m_branchOffsets.end(), 0);
         jumpTable.add(0, nextToEnterPoint.offset());
         for (unsigned i = 0; i < m_yields.size(); ++i)
             jumpTable.add(i + 1, m_yields[i].point);

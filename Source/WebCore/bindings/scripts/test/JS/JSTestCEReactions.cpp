@@ -108,6 +108,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestCEReactionsPrototype, JSTestCEReaction
 
 using JSTestCEReactionsDOMConstructor = JSDOMConstructorNotConstructable<JSTestCEReactions>;
 
+template<> const ClassInfo JSTestCEReactionsDOMConstructor::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsDOMConstructor) };
+
 template<> JSValue JSTestCEReactionsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -120,8 +122,6 @@ template<> void JSTestCEReactionsDOMConstructor::initializeProperties(VM& vm, JS
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestCEReactions"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestCEReactionsDOMConstructor::s_info = { "TestCEReactions", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCEReactionsDOMConstructor) };
 
 /* Hash table for prototype */
 

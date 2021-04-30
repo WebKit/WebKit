@@ -26,6 +26,7 @@
 #include "config.h"
 #include "LoadableClassicScript.h"
 
+#include "DefaultResourceLoadPriority.h"
 #include "FetchIdioms.h"
 #include "ScriptElement.h"
 #include "ScriptSourceCode.h"
@@ -129,7 +130,7 @@ bool LoadableClassicScript::load(Document& document, const URL& sourceURL)
 
     auto priority = [&]() -> Optional<ResourceLoadPriority> {
         if (m_isAsync)
-            return ResourceLoadPriority::Medium;
+            return DefaultResourceLoadPriority::asyncScript;
         // Use default.
         return { };
     };

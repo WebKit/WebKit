@@ -66,6 +66,7 @@ function rewrite_headers () {
                 -e s/WK_MAC_TBA/${OSX_VERSION}/g
                 -e s/WK_IOS_TBA/${IOS_VERSION}/g
                 -e s/WK_API_AVAILABLE/API_AVAILABLE/
+                -e s/WK_API_UNAVAILABLE/API_UNAVAILABLE/
                 -e s/WK_API_DEPRECATED/API_DEPRECATED/
                 -e "s/^WK_CLASS_AVAILABLE/WK_EXTERN API_AVAILABLE/"
                 -e "s/^WK_CLASS_DEPRECATED/WK_EXTERN API_DEPRECATED/"
@@ -73,6 +74,7 @@ function rewrite_headers () {
         else
             SED_OPTIONS+=(
                 -e 's/WK_(API_|CLASS_)AVAILABLE\(.*\)\s*\)//g'
+                -e 's/WK_API_UNAVAILABLE\(.*\)//g'
                 -e 's/WK_(API_|CLASS_)DEPRECATED(_WITH_REPLACEMENT)?\(.*\)\s*\)//g'
             )
         fi

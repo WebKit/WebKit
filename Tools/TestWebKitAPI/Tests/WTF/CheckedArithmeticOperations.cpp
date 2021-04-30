@@ -507,13 +507,6 @@ TEST(CheckedArithmeticTest, Division)
     size = 100;
     EXPECT_FALSE(size.hasOverflowed());
     EXPECT_EQ(100U, size.unsafeGet());
-
-    size /= 10.5;
-    EXPECT_FALSE(size.hasOverflowed());
-    EXPECT_EQ(9U, size.unsafeGet());
-
-    size /= 0.0;
-    EXPECT_TRUE(size.hasOverflowed());
 }
 
 } // namespace TestWebKitAPI

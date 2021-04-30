@@ -27,8 +27,8 @@
 #import "WKDOMTextIterator.h"
 
 #import "WKDOMInternals.h"
-#import "WKDOMRange.h"
 #import <WebCore/TextIterator.h>
+#import <WebKit/WKDOMRange.h>
 
 @interface WKDOMTextIterator () {
 @private

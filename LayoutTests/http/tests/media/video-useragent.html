@@ -14,7 +14,7 @@
                 frame.height = 0;
                 frame.addEventListener('load', function () {
                         source = document.getElementById('source');
-                        source.src = 'http://127.0.0.1:8000/media/resources/video-check-useragent.php?name=' + movie + '&type=' + type;
+                        source.src = 'http://127.0.0.1:8000/media/resources/video-check-useragent.py?name=' + movie + '&type=' + type;
                         source.type = type;
         
                         waitForEventAndFail('error');

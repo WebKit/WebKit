@@ -35,7 +35,6 @@ import getpass
 import logging
 import os
 import os.path
-import pathlib
 import re
 import stat
 import sys
@@ -60,7 +59,14 @@ from webkitpy.common.checkout.scm.detection import detect_scm_system
 from webkitpy.common.checkout.scm.scm import CheckoutNeedsUpdate, commit_error_handler, AuthenticationError
 from webkitpy.common.checkout.scm.svn import SVN
 
+from webkitpy.test.markers import xfail
+
 from webkitcorepy import OutputCapture
+
+try:
+    import pathlib
+except ImportError:
+    import pathlib2 as pathlib
 
 
 # We cache the mock SVN repo so that we don't create it again for each call to an SVNTest or GitTest test_ method.
@@ -1238,6 +1244,7 @@ class GitSVNTest(SCMTest):
         self.assertNotRegexpMatches(diff_to_common_base, b'foo')
         self.assertRegexpMatches(diff_to_merge_base, b'foo')
 
+    @xfail
     def test_rebase_in_progress(self):
         svn_test_file = os.path.join(self.svn_checkout_path, 'test_file')
         write_into_file_at_path(svn_test_file, "svn_checkout")
@@ -1718,6 +1725,7 @@ class GitTestWithMock(unittest.TestCase):
         scm._executive._should_log = logging_executive
         return scm
 
+    @xfail
     def test_create_patch(self):
         scm = self.make_scm(logging_executive=True)
         with OutputCapture(level=logging.INFO) as captured:

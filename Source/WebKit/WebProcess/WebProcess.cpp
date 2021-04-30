@@ -218,14 +218,25 @@
 
 #undef RELEASE_LOG_IF_ALLOWED
 #define RELEASE_LOG_SESSION_ID (m_sessionID ? m_sessionID->toUInt64() : 0)
+#if RELEASE_LOG_DISABLED
+#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) UNUSED_VARIABLE(this)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) UNUSED_VARIABLE(this)
+#else
 #define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [sessionID=%" PRIu64 "] WebProcess::" fmt, this, RELEASE_LOG_SESSION_ID, ##__VA_ARGS__)
+#endif
 
 // This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
 static const Seconds plugInAutoStartExpirationTimeUpdateThreshold { 29 * 24 * 60 * 60 };
 
 // This should be greater than tileRevalidationTimeout in TileController.
-static const Seconds nonVisibleProcessCleanupDelay { 10_s };
+static const Seconds nonVisibleProcessGraphicsCleanupDelay { 10_s };
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+// This should be long enough to support a workload where a user is actively switching between multiple tabs,
+// since our memory cleanup routine could potentially delete a good amount of JIT code.
+static const Seconds nonVisibleProcessMemoryCleanupDelay { 120_s };
+#endif
 
 namespace WebKit {
 using namespace JSC;
@@ -260,7 +271,10 @@ WebProcess::WebProcess()
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #endif
-    , m_nonVisibleProcessCleanupTimer(*this, &WebProcess::nonVisibleProcessCleanupTimerFired)
+    , m_nonVisibleProcessGraphicsCleanupTimer(*this, &WebProcess::nonVisibleProcessGraphicsCleanupTimerFired)
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+    , m_nonVisibleProcessMemoryCleanupTimer(*this, &WebProcess::nonVisibleProcessMemoryCleanupTimerFired)
+#endif
 #if PLATFORM(IOS_FAMILY)
     , m_webSQLiteDatabaseTracker([this](bool isHoldingLockedFiles) { parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(isHoldingLockedFiles), 0); })
 #endif
@@ -380,6 +394,12 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     if (!m_suppressMemoryPressureHandler) {
         auto& memoryPressureHandler = MemoryPressureHandler::singleton();
         memoryPressureHandler.setLowMemoryHandler([this] (Critical critical, Synchronous synchronous) {
+            // If this process contains only non-visible content (e.g. only contains background
+            // tabs), then treat the memory warning as if it was a critical warning to maximize the
+            // amount of memory released for foreground apps to use.
+            if (m_pagesInWindows.isEmpty() && critical == Critical::No)
+                critical = Critical::Yes;
+
 #if PLATFORM(MAC)
             // If this is a process we keep around for performance, kill it on memory pressure instead of trying to free up its memory.
             if (m_processType == ProcessType::CachedWebContent || m_processType == ProcessType::PrewarmedWebContent || areAllPagesSuspended()) {
@@ -755,7 +775,13 @@ void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&
     auto result = m_pageMap.add(pageID, nullptr);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
-        result.iterator->value = WebPage::create(pageID, WTFMove(parameters));
+        auto page = WebPage::create(pageID, WTFMove(parameters));
+        result.iterator->value = page.ptr();
+
+#if ENABLE(GPU_PROCESS)
+        if (m_gpuProcessConnection)
+            page->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
+#endif
 
         // Balanced by an enableTermination in removeWebPage.
         disableTermination();
@@ -1209,6 +1235,12 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
         ASSERT(connectionInfo.auditToken);
         m_gpuProcessConnection->setAuditToken(WTFMove(connectionInfo.auditToken));
 #endif
+
+        for (auto& page : m_pageMap.values()) {
+            // If page is null, then it is currently being constructed.
+            if (page)
+                page->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
+        }
     }
     
     return *m_gpuProcessConnection;
@@ -1531,18 +1563,29 @@ void WebProcess::sendPrewarmInformation(const URL& url)
 void WebProcess::pageDidEnterWindow(PageIdentifier pageID)
 {
     m_pagesInWindows.add(pageID);
-    m_nonVisibleProcessCleanupTimer.stop();
+    m_nonVisibleProcessGraphicsCleanupTimer.stop();
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+    m_nonVisibleProcessMemoryCleanupTimer.stop();
+#endif
 }
 
 void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
 {
     m_pagesInWindows.remove(pageID);
 
-    if (m_pagesInWindows.isEmpty() && !m_nonVisibleProcessCleanupTimer.isActive())
-        m_nonVisibleProcessCleanupTimer.startOneShot(nonVisibleProcessCleanupDelay);
+    if (m_pagesInWindows.isEmpty()) {
+        if (!m_nonVisibleProcessGraphicsCleanupTimer.isActive())
+            m_nonVisibleProcessGraphicsCleanupTimer.startOneShot(nonVisibleProcessGraphicsCleanupDelay);
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+        if (!m_nonVisibleProcessMemoryCleanupTimer.isActive())
+            m_nonVisibleProcessMemoryCleanupTimer.startOneShot(nonVisibleProcessMemoryCleanupDelay);
+#endif
+    }
 }
     
-void WebProcess::nonVisibleProcessCleanupTimerFired()
+void WebProcess::nonVisibleProcessGraphicsCleanupTimerFired()
 {
     ASSERT(m_pagesInWindows.isEmpty());
     if (!m_pagesInWindows.isEmpty())
@@ -1552,6 +1595,19 @@ void WebProcess::nonVisibleProcessCleanupTimerFired()
     destroyRenderingResources();
 #endif
 }
+
+#if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
+void WebProcess::nonVisibleProcessMemoryCleanupTimerFired()
+{
+    ASSERT(m_pagesInWindows.isEmpty());
+    if (!m_pagesInWindows.isEmpty())
+        return;
+
+    WebCore::releaseMemory(Critical::Yes, Synchronous::No, WebCore::MaintainBackForwardCache::Yes, WebCore::MaintainMemoryCache::No);
+    for (auto& page : m_pageMap.values())
+        page->releaseMemory(Critical::Yes);
+}
+#endif
 
 void WebProcess::registerStorageAreaMap(StorageAreaMap& storageAreaMap)
 {
@@ -1956,9 +2012,8 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 #if ENABLE(ENCRYPTED_MEDIA)
     auto& cdmFactories = CDMFactory::registeredFactories();
     cdmFactories.clear();
-
     if (useGPUProcessForMedia)
-        ensureGPUProcessConnection().cdmFactory().registerFactory(cdmFactories);
+        cdmFactory().registerFactory(cdmFactories);
     else
         CDMFactory::platformRegisterFactories(cdmFactories);
 #endif
@@ -1979,13 +2034,13 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (useGPUProcessForMedia)
-        ensureGPUProcessConnection().legacyCDMFactory().registerFactory();
+        legacyCDMFactory().registerFactory();
     else
         LegacyCDM::resetFactories();
 #endif
 
     if (useGPUProcessForMedia)
-        ensureGPUProcessConnection().mediaEngineConfigurationFactory().registerFactory();
+        mediaEngineConfigurationFactory().registerFactory();
     else
         MediaEngineConfigurationFactory::resetFactories();
 
@@ -2055,6 +2110,27 @@ SpeechRecognitionRealtimeMediaSourceManager& WebProcess::ensureSpeechRecognition
         m_speechRecognitionRealtimeMediaSourceManager = makeUnique<SpeechRecognitionRealtimeMediaSourceManager>(makeRef(*parentProcessConnection()));
 
     return *m_speechRecognitionRealtimeMediaSourceManager;
+}
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
+RemoteLegacyCDMFactory& WebProcess::legacyCDMFactory()
+{
+    return *supplement<RemoteLegacyCDMFactory>();
+}
+#endif
+
+#if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
+RemoteCDMFactory& WebProcess::cdmFactory()
+{
+    return *supplement<RemoteCDMFactory>();
+}
+#endif
+
+#if ENABLE(GPU_PROCESS)
+RemoteMediaEngineConfigurationFactory& WebProcess::mediaEngineConfigurationFactory()
+{
+    return *supplement<RemoteMediaEngineConfigurationFactory>();
 }
 #endif
 

@@ -37,7 +37,6 @@
 class WPEQtView;
 
 class Q_DECL_EXPORT WPEQtViewBackend {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<WPEQtViewBackend> create(const QSizeF&, QPointer<QOpenGLContext>, EGLDisplay, QPointer<WPEQtView>);
     WPEQtViewBackend(const QSizeF&, EGLDisplay, EGLContext, QPointer<QOpenGLContext>, QPointer<WPEQtView>);

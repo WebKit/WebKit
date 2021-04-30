@@ -442,7 +442,7 @@ public:
     void clearMisspellingsAndBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection&);
 
-    Element* findEventTargetFrom(const VisibleSelection& selection) const;
+    RefPtr<Element> findEventTargetFrom(const VisibleSelection&) const;
 
     WEBCORE_EXPORT String selectedText() const;
     String selectedTextForDataTransfer() const;
@@ -516,9 +516,9 @@ public:
 
     RefPtr<DocumentFragment> webContentFromPasteboard(Pasteboard&, const SimpleRange& context, bool allowPlainText, bool& chosePlainText);
 
-    WEBCORE_EXPORT const Font* fontForSelection(bool& hasMultipleFonts) const;
-    WEBCORE_EXPORT static const RenderStyle* styleForSelectionStart(Frame* , Node *&nodeToRemove);
-    WEBCORE_EXPORT FontAttributes fontAttributesAtSelectionStart() const;
+    WEBCORE_EXPORT RefPtr<Font> fontForSelection(bool& hasMultipleFonts);
+    WEBCORE_EXPORT const RenderStyle* styleForSelectionStart(RefPtr<Node>& nodeToRemove);
+    WEBCORE_EXPORT FontAttributes fontAttributesAtSelectionStart();
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String stringSelectionForPasteboard();
@@ -605,7 +605,7 @@ private:
 
     void editorUIUpdateTimerFired();
 
-    Element* findEventTargetFromSelection() const;
+    RefPtr<Element> findEventTargetFromSelection() const;
 
     bool unifiedTextCheckerEnabled() const;
 

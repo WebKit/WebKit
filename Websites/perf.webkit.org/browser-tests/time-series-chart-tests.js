@@ -574,21 +574,21 @@ describe('TimeSeriesChart', () => {
 
             let dataChangeCount = 0;
             chart.listenToAction('dataChange', () => dataChangeCount++);
+            expect(chart.sampledTimeSeriesData('current')).to.be(null);
+            expect(chart.content().querySelector('canvas')).to.be(null);
 
             chart.setDomain(ChartTest.sampleCluster.startTime, ChartTest.sampleCluster.endTime);
-            chart.fetchMeasurementSets();
+            await waitForComponentsToRender(context);
 
+            chart.fetchMeasurementSets();
             const requests = context.symbols.MockRemoteAPI.requests;
             expect(requests.length).to.be(1);
             ChartTest.respondWithSampleCluster(requests[0]);
 
-            expect(dataChangeCount).to.be(0);
-            expect(chart.sampledTimeSeriesData('current')).to.be(null);
-            expect(chart.content().querySelector('canvas')).to.be(null);
-
+            await requests[0].promise;
             await waitForComponentsToRender(context);
 
-            expect(dataChangeCount).to.be(1);
+            expect(dataChangeCount).to.be(2);
             expect(chart.sampledTimeSeriesData('current')).to.not.be(null);
             const canvas = chart.content().querySelector('canvas');
             expect(canvas).to.not.be(null);
@@ -607,7 +607,7 @@ describe('TimeSeriesChart', () => {
             await waitForElementResize(chart.element());
             await waitForComponentsToRender(context);
 
-            expect(dataChangeCount).to.be(2);
+            expect(dataChangeCount).to.be(3);
             expect(canvas.offsetWidth).to.be.greaterThan(originalWidth);
             expect(canvas.offsetWidth).to.be(context.document.body.offsetWidth);
             expect(canvas.offsetHeight).to.be(originalHeight);

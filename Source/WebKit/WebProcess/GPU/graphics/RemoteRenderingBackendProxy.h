@@ -110,14 +110,15 @@ public:
 
     RenderingBackendIdentifier renderingBackendIdentifier() const;
 
+    RenderingBackendIdentifier ensureBackendCreated();
+
 private:
     explicit RemoteRenderingBackendProxy(WebPage&);
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
 
-    void connectToGPUProcess();
-    void reestablishGPUProcessConnection();
+    GPUProcessConnection& ensureGPUProcessConnection();
 
     // Messages to be received.
     void didCreateImageBufferBackend(ImageBufferBackendHandle, WebCore::RenderingResourceIdentifier);
@@ -139,6 +140,7 @@ private:
     RefPtr<SharedMemory> m_getImageDataSharedMemory;
     uint64_t m_getImageDataSharedMemoryLength { 0 };
     WebCore::Timer m_destroyGetImageDataSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetImageDataSharedMemory };
+    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 } // namespace WebKit

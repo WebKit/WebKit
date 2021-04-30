@@ -29,7 +29,6 @@
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 
 #include "GPUConnectionToWebProcessMessages.h"
-#include "GPUProcessConnection.h"
 #include "GPUProcessProxy.h"
 #include "RemoteAudioSessionMessages.h"
 #include "RemoteAudioSessionProxyMessages.h"
@@ -42,39 +41,67 @@ using namespace WebCore;
 
 UniqueRef<RemoteAudioSession> RemoteAudioSession::create(WebProcess& process)
 {
-    RemoteAudioSessionConfiguration configuration;
-    process.ensureGPUProcessConnection().connection().sendSync(Messages::GPUConnectionToWebProcess::EnsureAudioSession(), Messages::GPUConnectionToWebProcess::EnsureAudioSession::Reply(configuration), { });
-    return makeUniqueRef<RemoteAudioSession>(process, WTFMove(configuration));
+    return makeUniqueRef<RemoteAudioSession>(process);
 }
 
-RemoteAudioSession::RemoteAudioSession(WebProcess& process, RemoteAudioSessionConfiguration&& configuration)
+RemoteAudioSession::RemoteAudioSession(WebProcess& process)
     : m_process(process)
-    , m_configuration(WTFMove(configuration))
 {
-    m_process.ensureGPUProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), *this);
 }
 
 RemoteAudioSession::~RemoteAudioSession()
 {
-    if (auto* connection = m_process.existingGPUProcessConnection())
-        connection->messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName());
+    if (m_gpuProcessConnection)
+        m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName());
 }
 
-IPC::Connection& RemoteAudioSession::connection()
+void RemoteAudioSession::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
-    return m_process.ensureGPUProcessConnection().connection();
+    ASSERT(m_gpuProcessConnection.get() == &connection);
+    m_gpuProcessConnection = nullptr;
+    connection.messageReceiverMap().removeMessageReceiver(Messages::RemoteAudioSession::messageReceiverName());
+    connection.removeClient(*this);
+}
+
+IPC::Connection& RemoteAudioSession::ensureConnection()
+{
+    if (!m_gpuProcessConnection) {
+        m_gpuProcessConnection = makeWeakPtr(m_process.ensureGPUProcessConnection());
+        m_gpuProcessConnection->addClient(*this);
+        m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), *this);
+
+        RemoteAudioSessionConfiguration configuration;
+        ensureConnection().sendSync(Messages::GPUConnectionToWebProcess::EnsureAudioSession(), Messages::GPUConnectionToWebProcess::EnsureAudioSession::Reply(configuration), { });
+        m_configuration = WTFMove(configuration);
+    }
+    return m_gpuProcessConnection->connection();
+}
+
+const RemoteAudioSessionConfiguration& RemoteAudioSession::configuration() const
+{
+    if (!m_configuration)
+        const_cast<RemoteAudioSession*>(this)->ensureConnection();
+    return *m_configuration;
+}
+
+RemoteAudioSessionConfiguration& RemoteAudioSession::configuration()
+{
+    if (!m_configuration)
+        ensureConnection();
+    return *m_configuration;
 }
 
 void RemoteAudioSession::setCategory(CategoryType type, RouteSharingPolicy policy)
 {
 #if PLATFORM(IOS_FAMILY)
-    if (type == m_configuration.category && policy == m_configuration.routeSharingPolicy)
+    auto& configuration = this->configuration();
+    if (type == configuration.category && policy == configuration.routeSharingPolicy)
         return;
 
-    m_configuration.category = type;
-    m_configuration.routeSharingPolicy = policy;
+    configuration.category = type;
+    configuration.routeSharingPolicy = policy;
 
-    connection().send(Messages::RemoteAudioSessionProxy::SetCategory(type, policy), { });
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::SetCategory(type, policy), { });
 #elif PLATFORM(MAC)
     // FIXME: Move AudioSessionRoutingArbitratorProxy to the GPU process (webkit.org/b/217535)
     AudioSession::setCategory(type, policy);
@@ -86,22 +113,22 @@ void RemoteAudioSession::setCategory(CategoryType type, RouteSharingPolicy polic
 
 void RemoteAudioSession::setPreferredBufferSize(size_t size)
 {
-    connection().send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(size), { });
+    ensureConnection().send(Messages::RemoteAudioSessionProxy::SetPreferredBufferSize(size), { });
 }
 
 bool RemoteAudioSession::tryToSetActiveInternal(bool active)
 {
     bool succeeded;
-    connection().sendSync(Messages::RemoteAudioSessionProxy::TryToSetActive(active), Messages::RemoteAudioSessionProxy::TryToSetActive::Reply(succeeded), { });
+    ensureConnection().sendSync(Messages::RemoteAudioSessionProxy::TryToSetActive(active), Messages::RemoteAudioSessionProxy::TryToSetActive::Reply(succeeded), { });
     if (succeeded)
-        m_configuration.isActive = active;
+        configuration().isActive = active;
     return succeeded;
 }
 
 AudioSession::CategoryType RemoteAudioSession::category() const
 {
 #if PLATFORM(IOS_FAMILY)
-    return m_configuration.category;
+    return configuration().category;
 #elif PLATFORM(MAC)
     return AudioSession::category();
 #else
@@ -111,9 +138,9 @@ AudioSession::CategoryType RemoteAudioSession::category() const
 
 void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& configuration)
 {
-    bool mutedStateChanged = configuration.isMuted != m_configuration.isMuted;
+    bool mutedStateChanged = !m_configuration || configuration.isMuted != m_configuration->isMuted;
 
-    m_configuration = configuration;
+    m_configuration = WTFMove(configuration);
 
     if (mutedStateChanged)
         handleMutedStateChange();

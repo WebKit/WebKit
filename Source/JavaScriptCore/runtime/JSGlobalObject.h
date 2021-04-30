@@ -51,6 +51,7 @@
 #include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
@@ -561,7 +562,7 @@ public:
     String m_evalDisabledErrorMessage;
     String m_webAssemblyDisabledErrorMessage;
     RuntimeFlags m_runtimeFlags;
-    ConsoleClient* m_consoleClient { nullptr };
+    WeakPtr<ConsoleClient> m_consoleClient;
     Optional<unsigned> m_stackTraceLimit;
 
     template<typename T>
@@ -595,7 +596,7 @@ public:
         
 public:
     using Base = JSSegmentedVariableObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | IsImmutablePrototypeExoticObject;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesPut | IsImmutablePrototypeExoticObject;
 
     static constexpr bool needsDestruction = true;
     template<typename CellType, SubspaceAccess mode>
@@ -893,8 +894,8 @@ public:
     static ptrdiff_t globalLexicalBindingEpochOffset() { return OBJECT_OFFSETOF(JSGlobalObject, m_globalLexicalBindingEpoch); }
     unsigned* addressOfGlobalLexicalBindingEpoch() { return &m_globalLexicalBindingEpoch; }
 
-    void setConsoleClient(ConsoleClient* consoleClient) { m_consoleClient = consoleClient; }
-    ConsoleClient* consoleClient() const { return m_consoleClient; }
+    JS_EXPORT_PRIVATE void setConsoleClient(WeakPtr<ConsoleClient>&&);
+    WeakPtr<ConsoleClient> consoleClient() const { return m_consoleClient; }
 
     void setName(const String&);
     const String& name() const { return m_name; }

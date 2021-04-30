@@ -152,9 +152,6 @@ public:
         return StringHasher::hashMemory(hashCodes.data(), hashCodes.size() * sizeof(unsigned));
     }
 
-    static IDBKeyData deletedValue();
-    bool isDeletedValue() const { return m_isDeletedValue; }
-
     String string() const
     {
         ASSERT(m_type == IndexedDB::KeyType::String);
@@ -188,6 +185,8 @@ public:
     size_t size() const;
 
 private:
+    friend struct IDBKeyDataHashTraits;
+
     static void isolatedCopy(const IDBKeyData& source, IDBKeyData& destination);
 
     IndexedDB::KeyType m_type;
@@ -207,16 +206,8 @@ struct IDBKeyDataHashTraits : public WTF::CustomHashTraits<IDBKeyData> {
     static const bool emptyValueIsZero = false;
     static const bool hasIsEmptyValueFunction = true;
 
-    static void constructDeletedValue(IDBKeyData& key)
-    {
-        new (&key) IDBKeyData;
-        key = IDBKeyData::deletedValue();
-    }
-
-    static bool isDeletedValue(const IDBKeyData& key)
-    {
-        return key.isDeletedValue();
-    }
+    static void constructDeletedValue(IDBKeyData& key) { key.m_isDeletedValue = true; }
+    static bool isDeletedValue(const IDBKeyData& key) { return key.m_isDeletedValue; }
 
     static IDBKeyData emptyValue()
     {

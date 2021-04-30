@@ -40,6 +40,7 @@
 namespace WebCore {
 
 class ContentSecurityPolicyResponseHeaders;
+class ScriptBuffer;
 class ScriptExecutionContext;
 class Worker;
 enum class ReferrerPolicy : uint8_t;

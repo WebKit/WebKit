@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,95 +30,59 @@
 #pragma once
 
 #include "CodeLocation.h"
+#include "UnlinkedCodeBlock.h"
+#include <wtf/FixedVector.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 #include <wtf/text/StringImpl.h>
 
 namespace JSC {
 
-    struct OffsetLocation {
-        int32_t branchOffset;
 #if ENABLE(JIT)
-        CodeLocationLabel<JSSwitchPtrTag> ctiOffset;
-#endif
-    };
-
     struct StringJumpTable {
-        using StringOffsetTable = MemoryCompactLookupOnlyRobinHoodHashMap<RefPtr<StringImpl>, OffsetLocation>;
-        StringOffsetTable offsetTable;
-#if ENABLE(JIT)
-        CodeLocationLabel<JSSwitchPtrTag> ctiDefault; // FIXME: it should not be necessary to store this.
-#endif
+        FixedVector<CodeLocationLabel<JSSwitchPtrTag>> m_ctiOffsets;
 
-        inline int32_t offsetForValue(StringImpl* value, int32_t defaultOffset)
+        void ensureCTITable(const UnlinkedStringJumpTable& unlinkedTable)
         {
-            StringOffsetTable::const_iterator end = offsetTable.end();
-            StringOffsetTable::const_iterator loc = offsetTable.find(value);
-            if (loc == end)
-                return defaultOffset;
-            return loc->value.branchOffset;
+            if (!isEmpty())
+                return;
+            m_ctiOffsets = FixedVector<CodeLocationLabel<JSSwitchPtrTag>>(unlinkedTable.m_offsetTable.size() + 1);
         }
 
-#if ENABLE(JIT)
-        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(StringImpl* value)
+        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(const UnlinkedStringJumpTable& unlinkedTable, StringImpl* value) const
         {
-            StringOffsetTable::const_iterator end = offsetTable.end();
-            StringOffsetTable::const_iterator loc = offsetTable.find(value);
-            if (loc == end)
-                return ctiDefault;
-            return loc->value.ctiOffset;
+            auto loc = unlinkedTable.m_offsetTable.find(value);
+            if (loc == unlinkedTable.m_offsetTable.end())
+                return m_ctiOffsets[unlinkedTable.m_offsetTable.size()];
+            return m_ctiOffsets[loc->value.m_indexInTable];
         }
-#endif
-        
-        void clear()
-        {
-            offsetTable.clear();
-        }
+
+        CodeLocationLabel<JSSwitchPtrTag> ctiDefault() const { return m_ctiOffsets.last(); }
+
+        bool isEmpty() const { return m_ctiOffsets.isEmpty(); }
     };
 
     struct SimpleJumpTable {
-        // FIXME: The two Vectors can be combined into one Vector<OffsetLocation>
-        FixedVector<int32_t> branchOffsets;
-        int32_t min { INT32_MIN };
-#if ENABLE(JIT)
-        Vector<CodeLocationLabel<JSSwitchPtrTag>> ctiOffsets;
-        CodeLocationLabel<JSSwitchPtrTag> ctiDefault;
-#endif
+        FixedVector<CodeLocationLabel<JSSwitchPtrTag>> m_ctiOffsets;
+        CodeLocationLabel<JSSwitchPtrTag> m_ctiDefault;
 
-#if ENABLE(DFG_JIT)
-        // JIT part can be later expanded without taking a lock while non-JIT part is stable after CodeBlock is finalized.
-        SimpleJumpTable cloneNonJITPart() const
+        void ensureCTITable(const UnlinkedSimpleJumpTable& unlinkedTable)
         {
-            SimpleJumpTable result;
-            result.branchOffsets = branchOffsets;
-            result.min = min;
-            return result;
+            if (!isEmpty())
+                return;
+            m_ctiOffsets = FixedVector<CodeLocationLabel<JSSwitchPtrTag>>(unlinkedTable.m_branchOffsets.size());
         }
-#endif
 
-        int32_t offsetForValue(int32_t value, int32_t defaultOffset);
-#if ENABLE(JIT)
-        void ensureCTITable()
+        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(int32_t min, int32_t value) const
         {
-            ASSERT(ctiOffsets.isEmpty() || ctiOffsets.size() == branchOffsets.size());
-            ctiOffsets.grow(branchOffsets.size());
+            if (value >= min && static_cast<uint32_t>(value - min) < m_ctiOffsets.size())
+                return m_ctiOffsets[value - min];
+            return m_ctiDefault;
         }
-        
-        inline CodeLocationLabel<JSSwitchPtrTag> ctiForValue(int32_t value)
-        {
-            if (value >= min && static_cast<uint32_t>(value - min) < ctiOffsets.size())
-                return ctiOffsets[value - min];
-            return ctiDefault;
-        }
-#endif
 
-#if ENABLE(DFG_JIT)
-        void clear()
-        {
-            branchOffsets = FixedVector<int32_t>();
-            ctiOffsets.clear();
-        }
-#endif
+        bool isEmpty() const { return m_ctiOffsets.isEmpty(); }
     };
+#endif
 
 } // namespace JSC

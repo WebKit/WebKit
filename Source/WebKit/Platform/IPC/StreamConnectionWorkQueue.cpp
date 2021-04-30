@@ -36,7 +36,7 @@ StreamConnectionWorkQueue::StreamConnectionWorkQueue(const char* name)
 void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
 {
     {
-        Locker locker(m_lock);
+        Locker locker { m_lock };
         m_functions.append(WTFMove(function));
         ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
     }
@@ -46,7 +46,7 @@ void StreamConnectionWorkQueue::dispatch(WTF::Function<void()>&& function)
 void StreamConnectionWorkQueue::addStreamConnection(StreamServerConnectionBase& connection)
 {
     {
-        Locker locker(m_lock);
+        Locker locker { m_lock };
         m_connections.add(connection);
         ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
     }
@@ -57,7 +57,7 @@ void StreamConnectionWorkQueue::removeStreamConnection(StreamServerConnectionBas
 {
     ASSERT(m_processingThread);
     {
-        Locker locker(m_lock);
+        Locker locker { m_lock };
         m_connections.remove(connection);
         ASSERT(!m_shouldQuit); // Re-entering during shutdown not supported.
     }
@@ -112,7 +112,7 @@ void StreamConnectionWorkQueue::processStreams()
         Deque<WTF::Function<void()>> functions;
         HashSet<Ref<StreamServerConnectionBase>> connections;
         {
-            auto locker = holdLock(m_lock);
+            Locker locker { m_lock };
             functions.swap(m_functions);
             connections = m_connections;
         }

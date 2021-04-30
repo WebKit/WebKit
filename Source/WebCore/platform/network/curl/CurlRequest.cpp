@@ -216,14 +216,14 @@ CURL* CurlRequest::setupTransfer()
     if (method == "GET")
         m_curlHandle->enableHttpGetRequest();
     else if (method == "POST")
-        setupPOST(m_request);
+        setupPOST();
     else if (method == "PUT")
-        setupPUT(m_request);
+        setupPUT();
     else if (method == "HEAD")
         m_curlHandle->enableHttpHeadRequest();
     else {
         m_curlHandle->setHttpCustomRequest(method);
-        setupPUT(m_request);
+        setupPUT();
     }
 
     if (!m_user.isEmpty() || !m_password.isEmpty()) {
@@ -529,7 +529,7 @@ void CurlRequest::appendAcceptLanguageHeader(HTTPHeaderMap& header)
         header.add(HTTPHeaderName::AcceptLanguage, language);
 }
 
-void CurlRequest::setupPUT(ResourceRequest& request)
+void CurlRequest::setupPUT()
 {
     m_curlHandle->enableHttpPutRequest();
 
@@ -543,7 +543,7 @@ void CurlRequest::setupPUT(ResourceRequest& request)
     setupSendData(true);
 }
 
-void CurlRequest::setupPOST(ResourceRequest& request)
+void CurlRequest::setupPOST()
 {
     m_curlHandle->enableHttpPostRequest();
 

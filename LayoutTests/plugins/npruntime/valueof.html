@@ -14,6 +14,7 @@
     plugin.setAttribute('test', 'to-string-and-value-of-object');
     document.body.appendChild(plugin);
 
+    shouldBe("plugin[Symbol.toPrimitive]", "undefined");
     shouldBe("plugin.valueOf()", "123456789");
     shouldBeTrue("plugin == 123456789");
     var successfullyParsed = true;

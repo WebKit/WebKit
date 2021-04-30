@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-Optional<RTCRtpTransform> RTCRtpTransform::from(Optional<Internal>&& internal)
+std::unique_ptr<RTCRtpTransform> RTCRtpTransform::from(Optional<Internal>&& internal)
 {
     if (!internal)
-        return { };
-    return RTCRtpTransform(WTFMove(*internal));
+        return nullptr;
+    return makeUnique<RTCRtpTransform>(WTFMove(*internal));
 }
 
 RTCRtpTransform::RTCRtpTransform(Internal&& transform)
@@ -59,32 +59,50 @@ bool RTCRtpTransform::isAttached() const
     });
 }
 
-void RTCRtpTransform::attachToReceiver(RTCRtpReceiver& receiver)
+void RTCRtpTransform::attachToReceiver(RTCRtpReceiver& receiver, RTCRtpTransform* previousTransform)
 {
     ASSERT(!isAttached());
-    if (auto* backend = receiver.backend())
-        m_backend = backend->createRTCRtpTransformBackend();
-    if (m_backend) {
-        switchOn(m_transform, [&](RefPtr<RTCRtpSFrameTransform>& sframeTransform) {
-            sframeTransform->initializeBackendForReceiver(*m_backend);
-        }, [&](RefPtr<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->initializeBackendForReceiver(*m_backend);
-        });
-    }
+
+    if (previousTransform)
+        m_backend = previousTransform->takeBackend();
+    else if (auto* backend = receiver.backend())
+        m_backend = backend->rtcRtpTransformBackend();
+    else
+        return;
+
+    switchOn(m_transform, [&](RefPtr<RTCRtpSFrameTransform>& sframeTransform) {
+        sframeTransform->initializeBackendForReceiver(*m_backend);
+    }, [&](RefPtr<RTCRtpScriptTransform>& scriptTransform) {
+        scriptTransform->initializeBackendForReceiver(*m_backend);
+    });
 }
 
-void RTCRtpTransform::attachToSender(RTCRtpSender& sender)
+void RTCRtpTransform::attachToSender(RTCRtpSender& sender, RTCRtpTransform* previousTransform)
 {
     ASSERT(!isAttached());
-    if (auto* backend = sender.backend())
-        m_backend = backend->createRTCRtpTransformBackend();
-    if (m_backend) {
-        switchOn(m_transform, [&](RefPtr<RTCRtpSFrameTransform>& sframeTransform) {
-            sframeTransform->initializeBackendForSender(*m_backend);
-        }, [&](RefPtr<RTCRtpScriptTransform>& scriptTransform) {
-            scriptTransform->initializeBackendForSender(*m_backend);
-        });
-    }
+
+    if (previousTransform)
+        m_backend = previousTransform->takeBackend();
+    else if (auto* backend = sender.backend())
+        m_backend = backend->rtcRtpTransformBackend();
+    else
+        return;
+
+    switchOn(m_transform, [&](RefPtr<RTCRtpSFrameTransform>& sframeTransform) {
+        sframeTransform->initializeBackendForSender(*m_backend);
+    }, [&](RefPtr<RTCRtpScriptTransform>& scriptTransform) {
+        scriptTransform->initializeBackendForSender(*m_backend);
+        if (previousTransform)
+            previousTransform->backendTransferedToNewTransform();
+    });
+}
+
+void RTCRtpTransform::backendTransferedToNewTransform()
+{
+    switchOn(m_transform, [&](RefPtr<RTCRtpSFrameTransform>&) {
+    }, [&](RefPtr<RTCRtpScriptTransform>& scriptTransform) {
+        scriptTransform->backendTransferedToNewTransform();
+    });
 }
 
 void RTCRtpTransform::clearBackend()

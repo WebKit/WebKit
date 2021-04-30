@@ -77,4 +77,5 @@ PASS WebSocket blocked port test 6667
 PASS WebSocket blocked port test 6668
 PASS WebSocket blocked port test 6669
 PASS WebSocket blocked port test 6697
+PASS WebSocket blocked port test 10080
 

@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL) && (USE(OPENGL) || USE(OPENGL_ES))
+#if USE(OPENGL) || USE(OPENGL_ES)
 #include "TemporaryOpenGLSetting.h"
 
 #if USE(LIBEPOXY)
@@ -77,4 +77,4 @@ TemporaryOpenGLSetting::~TemporaryOpenGLSetting()
 
 }
 
-#endif
+#endif // USE(OPENGL) || USE(OPENGL_ES)

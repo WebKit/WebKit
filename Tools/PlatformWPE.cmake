@@ -19,8 +19,17 @@ endif ()
 
 if (DEVELOPER_MODE AND ENABLE_COG)
     include(ExternalProject)
+    if ("${WPE_COG_REPO}" STREQUAL "")
+        set(WPE_COG_REPO "https://github.com/Igalia/cog.git")
+    endif ()
+    if ("${WPE_COG_TAG}" STREQUAL "")
+        set(WPE_COG_TAG "origin/master")
+    endif ()
+    # TODO Use GIT_REMOTE_UPDATE_STRATEGY with 3.18 to allow switching between
+    # conflicting branches without having to delete the repo
     ExternalProject_Add(cog
-        GIT_REPOSITORY "https://github.com/Igalia/cog.git"
+        GIT_REPOSITORY "${WPE_COG_REPO}"
+        GIT_TAG "${WPE_COG_TAG}"
         SOURCE_DIR "${CMAKE_SOURCE_DIR}/Tools/wpe/cog"
         CMAKE_ARGS "-DCOG_PLATFORM_GTK4=ON"
         INSTALL_COMMAND "")

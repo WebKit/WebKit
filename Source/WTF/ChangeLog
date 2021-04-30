@@ -1,3 +1,492 @@
+2021-04-27  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, reverting r275912.
+        rdar://77179042
+
+        Broke internal client
+
+        Reverted changeset:
+
+        "Remove support for NPAPI plugins in WebView"
+        https://bugs.webkit.org/show_bug.cgi?id=224449
+        https://commits.webkit.org/r275912
+
+2021-04-26  Ben Nham  <nham@apple.com>
+
+        Reduce memory footprint for background tabs
+        https://bugs.webkit.org/show_bug.cgi?id=225007
+
+        Reviewed by Chris Dumez.
+
+        When a WebContent process contains only non-visible pages (e.g. if it is a background tab),
+        we should attempt to reduce our memory footprint after some time interval to help relieve
+        system-wide memory pressure. This is enabled only on Mac because iOS already does something
+        similar just before WebContent suspends.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-04-26  Keith Miller  <keith_miller@apple.com>
+
+        CodeBlock should do a better job accounting for extra memory it allocates.
+        https://bugs.webkit.org/show_bug.cgi?id=225068
+
+        Reviewed by Mark Lam.
+
+        Small convenience function to help compute the memory used by a Bag for JS GC
+        accounting.
+
+        * wtf/Bag.h:
+
+2021-04-26  Angelos Oikonomopoulos  <angelos@igalia.com>
+
+        Bump CeilingOnPageSize to 16KB on MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=225030
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/PageBlock.h:
+
+2021-04-25  Darin Adler  <darin@apple.com>
+
+        Fix handling of overflow of /= and *= operators with double over Checked<uint64_t> and other 64-bit types.
+        https://bugs.webkit.org/show_bug.cgi?id=224835
+
+        Reviewed by Chris Dumez.
+
+        * wtf/CheckedArithmetic.h: Since it is quite difficult to write correct implementations of the
+        operations where we multiply or divide a checked integer by a floating point number, deleted
+        those functions, which were barely used. Also corrected return types of various member functions,
+        which were unconventional "const Type", replacing them with the conventional "Type" for functions
+        that return a distinct value, "Type&" for assignment operators, and bool for relational operators.
+
+2021-04-25  Devin Rousso  <drousso@apple.com>
+
+        Add `ALWAYS_LOG_WITH_STREAM` macro for easier development/debugging
+        https://bugs.webkit.org/show_bug.cgi?id=224959
+
+        Reviewed by Darin Adler.
+
+        It's often very helpful to use existing `operator<<` defined on objects, but annoying to
+        have to copypaste the boilerplate code that creates a `WTF::TextStream` and uses it in a
+        `WTFLogAlways` or wait for a debug build to enable existing `LOG_WITH_STREAM`.
+
+        * wtf/Assertions.h:
+        (LOG_WITH_STREAM): Moved from `Source/WebCore/pal/LogMacros.h`.
+        (ALWAYS_LOG_WITH_STREAM): Added.
+        Add `ALWAYS_LOG_WITH_STREAM` so that one change existing `LOG` when debugging with minimal
+        friction. As an example, many times I've wished I could've just changed
+        ```
+            LOG_WITH_STREAM(Channel, stream << node);
+        ```
+        to something like
+        ```
+            ALWAYS_LOG_WITH_STREAM(stream << node);
+        ```
+        and avoid having to modify the surrounding code too much.
+
+2021-04-23  Darin Adler  <darin@apple.com>
+
+        Remove decoder memory allocations based on untrusted data (sizes) in the stream; related changes
+        https://bugs.webkit.org/show_bug.cgi?id=224984
+
+        Reviewed by Sam Weinig.
+
+        * wtf/persistence/PersistentDecoder.cpp:
+        (WTF::Persistence::Decoder::bufferPointerForDirectRead): Added.
+        (WTF::Persistence::Decoder::decodeFixedLengthData): Refactor to use bufferPointerForDirectRead.
+
+        * wtf/persistence/PersistentDecoder.h: Added bufferPointerForDirectRead function for use in the
+        rare cases where we want to read directly out of the decoder buffer, rather than writing to a
+        passed-in pointer. Also did a small refactoring of bufferIsLargeEnoughToContain to use &&
+        rather than an if statement.
+
+2021-04-23  Chris Dumez  <cdumez@apple.com>
+
+        Disable GPUProcess on shipping iOS
+        https://bugs.webkit.org/show_bug.cgi?id=224897
+
+        Reviewed by Eric Carlson.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-04-22  Lauro Moura  <lmoura@igalia.com>
+
+        [WTF] Undefined behavior warning in StringBuilder::allocateBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=224942
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::allocateBuffer): Add check before calling memcpy
+
+2021-04-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Add trace points for WKWebView snapshotting
+        https://bugs.webkit.org/show_bug.cgi?id=224943
+
+        Reviewed by Tim Horton.
+
+        New snapshot values.
+
+        * wtf/SystemTracing.h:
+
+2021-04-22  Martin Robinson  <mrobinson@webkit.org>
+
+        [GTK] Turn on editable <input type=date> and <input type=time> fields
+        https://bugs.webkit.org/show_bug.cgi?id=224921
+
+        Reviewed by Carlos Garcia Campos.
+
+        Turn on editable date and time inputs for GTK.
+
+        * Scripts/Preferences/WebPreferencesInternal.yaml: Set editable date/time inputs
+        on by default for GTK as well.
+
+2021-04-22  Aditya Keerthi  <akeerthi@apple.com>
+
+        Fix the tvOS build after r276325
+        https://bugs.webkit.org/show_bug.cgi?id=224929
+        <rdar://problem/77003408>
+
+        Reviewed by Wenson Hsieh.
+
+        Fix the tvOS build after r276325
+
+        * wtf/PlatformHave.h:
+
+2021-04-21  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Fix internal builds after r276325
+        https://bugs.webkit.org/show_bug.cgi?id=224896
+
+        Reviewed by Tim Horton.
+
+        * wtf/PlatformHave.h:
+
+2021-04-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Enable CSS Scroll Snap by default
+        https://bugs.webkit.org/show_bug.cgi?id=224867
+
+        Reviewed by Don Olmstead.
+
+        * wtf/PlatformEnable.h: Move the preprocessor enabling of scroll snap here.
+        * wtf/PlatformEnableCocoa.h: Move it from here.
+
+2021-04-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Enhance scrolling-related trace points
+        https://bugs.webkit.org/show_bug.cgi?id=224852
+
+        Reviewed by Tim Horton.
+        
+        One new trace point, and some argument descriptors.
+
+        * wtf/SystemTracing.h:
+
+2021-04-20  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Prevent GPU and WebContent processes from attempting to connect to the AppSSO service 
+        https://bugs.webkit.org/show_bug.cgi?id=224834
+        <rdar://problem/72157514>
+
+        Reviewed by Jiewen Tan.
+
+        * wtf/PlatformHave.h:
+
+2021-04-20  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Enable MediaSession and MediaSessionCoordinator experimental features
+        https://bugs.webkit.org/show_bug.cgi?id=224822
+        <rdar://problem/76908014>
+
+        Reviewed by Jer Noble.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml: Change the defaults for
+        MediaSessionCoordinatorEnabled and MediaSessionEnabled to true.
+
+2021-04-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Lots of spurious -Wnonnull warnings with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=224452
+
+        Reviewed by Darin Adler.
+
+        * wtf/RefPtr.h:
+        (WTF::DefaultRefDerefTraits::derefIfNotNull):
+
+2021-04-20  Keith Miller  <keith_miller@apple.com>
+
+        FullGCActivityCallback should use the percentage of pages uncompressed in RAM to determine deferral.
+        https://bugs.webkit.org/show_bug.cgi?id=224817
+
+        Reviewed by Filip Pizlo.
+
+        Add a noexcept flavor of FunctionTraits. On Linux mincore (and probably other syscalls) are marked noexcept so the existing overloads don't work.
+
+        * wtf/FunctionTraits.h:
+
+2021-04-20  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we don't exit the GPUProcess too frequently while under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=224798
+
+        Reviewed by Darin Adler.
+
+        Add member function to the MemoryPressureHandler to indicate if we're currently simulating memory
+        pressure or not.
+
+        * wtf/MemoryPressureHandler.h:
+        (WTF::MemoryPressureHandler::isSimulatingMemoryPressure const):
+
+2021-04-19  Darin Adler  <darin@apple.com>
+
+        Refactor sorted array mapping machinery in LocaleToScriptMapping.cpp for reuse elsewhere
+        https://bugs.webkit.org/show_bug.cgi?id=224733
+
+        Reviewed by Yusuke Suzuki.
+
+        * WTF.xcodeproj/project.pbxproj: Added SortedArrayMap.h.
+        * wtf/CMakeLists.txt: Ditto.
+
+        * wtf/SortedArrayMap.h: Added. Builds on the idiom in LocalToScriptMapping, and to be
+        generic uses std::pair instead of custom structures. Includes the ComparableASCIILiteral
+        structure for maps that are keyed by case-sensitive ASCII strings.
+
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearchImpl): Use auto in one place to make this a bit more generic.
+
+2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
+        https://bugs.webkit.org/show_bug.cgi?id=221614
+        <rdar://problem/74396781>
+
+        Reviewed by David Kilzer.
+
+        Implement rudimentary support for clang thread safety analysis.
+        The added macros can be used to declare which member variables or
+        global variables are locked by which mutexes. The compiler will
+        check statically that the mutexes are held correctly. The checking
+        is intra procedural, not global.
+
+        * Configurations/Base.xcconfig:
+            Add -Wthread-safety to compile flags.
+
+        * wtf/CheckedLock.h: Added.
+        Add CheckedLock, a Lock variant that is amenable to static
+        analysis.
+        Add a Locker specialization for CheckedLock that is amenable to
+        static analysis.
+
+        Locker<CheckedLock> is a std::scoped_lock. The scoped_lock cannot be aliased,
+        since it appears that (Apple's) libcxx is not compiled with thread safety
+        analysis support enabled by default.
+
+        New types are needed due Locker move constructor and conditional locking.
+        The Locker has default usage pattern of:
+          auto locker = holdLock(m_lock);
+        This forces dynamism that removes the possibility of simple statical
+        analysis that thread safety analysis capabilities "mutex" and "scoped_lock"
+        currently implement. Most likely large fraction of call sites is due to historical
+        lack of CTAD and as such can be converted to less general form.
+        Once the pattern is not used by default, CheckedLock can be deleted
+        and the move dynamism bits of Locker can be moved to some more specific type
+        ("UncheckedLocker").
+
+        * wtf/ThreadSafetyAnalysis.h: Added.
+        Add macro wrappers around clang "mutex" and "scoped_lock" capability attributes.
+
+2021-04-17  Sam Weinig  <weinig@apple.com>
+
+        Move RuntimeEnabledFeatures to Settings (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=224440
+
+        Reviewed by Alex Christensen.
+
+        Move a few RuntimeEnabledFeatures to Settings to consolidate settings
+        in one object and removes the need for additional boilerplate. This 
+        is now possible as Settings are now accessible in workers.
+
+        Moves PeerConnectionEnabled, WebGLUsingMetal, WebGL2Enabled, WebGPUEnabled
+        and MaskWebGLStringsEnabled.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
+2021-04-16  Kate Cheney  <katherine_cheney@apple.com>
+
+        Disable app-bound request API tests on specific OS versions
+        https://bugs.webkit.org/show_bug.cgi?id=223692
+        <rdar://problem/75787288>
+
+        Reviewed by Brent Fulgham.
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Disable ApplicationCache with linkedOnOrAfter check
+        https://bugs.webkit.org/show_bug.cgi?id=224629
+
+        Reviewed by Brady Eidson.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
+2021-04-16  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 128 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224381
+
+        Reviewed by Yusuke Suzuki.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-04-16  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Parse and add feature flag for @counter-style
+        https://bugs.webkit.org/show_bug.cgi?id=223150
+
+        Reviewed by Darin Adler.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+         Add CSSCounterStyleAtRulesEnabled and CSSCounterStyleAtRuleImageSymbolsEnabled flags.
+
+2021-04-15  Alex Christensen  <achristensen@webkit.org>
+
+        Use WTF::Function instead of std::function in SVGPropertyAnimatorFactory::attributeAnimatorCreator
+        https://bugs.webkit.org/show_bug.cgi?id=224586
+
+        Reviewed by Darin Adler.
+
+        This requires something like r223122 until something like http://wg21.link/P1249 is accepted.
+        I also added a missing reserveInitialCapacity call that could reduce rehashing when constructing a HashMap from an initializer_list.
+
+        * wtf/HashMap.h:
+
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Revert important part of r275948
+        https://bugs.webkit.org/show_bug.cgi?id=224381
+
+        It caused an internal build failure.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Reduce maximum HashTable entry size to 128 bytes
+        https://bugs.webkit.org/show_bug.cgi?id=224381
+
+        Reviewed by Yusuke Suzuki.
+
+        It turns out that HashMaps use HashTable::Value as KeyValuePair, so sizeof(Key) + sizeof(Value) was double counting the key size.
+        This caused FontCascadeCache to be a false positive.  It has a key size of a little over 100 bytes.  Only counting it once reflects what is intended.
+        Also, the USE(ANGLE) exception was convenient for a downstream branch, but isn't needed.  Next time they rebase they will use UniqueRef.
+
+        * wtf/HashTable.h:
+        (WTF::KeyTraits>::inlineLookup):
+
+2021-04-13  Ada Chan  <ada.chan@apple.com>
+
+        Implement PlatformXRSystem::xrCoordinator() for USE(APPLE_INTERNAL_SDK)
+        https://bugs.webkit.org/show_bug.cgi?id=224510
+
+        Reviewed by Dean Jackson.
+
+        Update ENABLE_WEBXR flag
+
+        * wtf/PlatformEnableCocoa.h:
+
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        WebProcessPool should store Vector<Ref<WebProcessProxy>> instead of Vector<RefPtr>
+        https://bugs.webkit.org/show_bug.cgi?id=224412
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Ref.h:
+        (WTF::operator==):
+        (WTF::operator!=):
+
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Remove support for NPAPI plugins in WebView
+        https://bugs.webkit.org/show_bug.cgi?id=224449
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/Preferences/WebPreferences.yaml:
+
+2021-04-13  Chris Dumez  <cdumez@apple.com>
+
+        Make MemoryPressureHandler::isUnderMemoryPressure() return true for 2 seconds after a simulated warning
+        https://bugs.webkit.org/show_bug.cgi?id=224505
+
+        Reviewed by Darin Adler.
+
+        Make MemoryPressureHandler::isUnderMemoryPressure() return true for 2 seconds after a simulated warning,
+        to make our simulated warning more realistic.
+
+        * wtf/cocoa/MemoryPressureHandlerCocoa.mm:
+        (WTF::MemoryPressureHandler::install):
+
+2021-04-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [WTF] Add Vector&& move constructor / assignment to FixedVector and RefCountedArray
+        https://bugs.webkit.org/show_bug.cgi?id=224475
+
+        Reviewed by Ryosuke Niwa.
+
+        This patch adds move constructor and move-assignment taking Vector to FixedVector / RefCountedArray.
+        This allows transferring MoveOnly things from Vector to FixedVector.
+
+        * wtf/FixedVector.h:
+        (WTF::FixedVector::FixedVector):
+        (WTF::FixedVector::operator=):
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+        (WTF::RefCountedArray::operator=):
+        (WTF::RefCountedArray::~RefCountedArray):
+        (WTF::RefCountedArray::allocateUninitializedData):
+        (WTF::RefCountedArray::assign):
+
+2021-04-13  Alex Christensen  <achristensen@webkit.org>
+
+        Revert r275172
+        https://bugs.webkit.org/show_bug.cgi?id=224499
+        <rdar://76396241>
+
+        Reviewed by Tim Horton.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
+2021-04-12  Basuke Suzuki  <basuke.suzuki@sony.com>
+
+        [PlayStation] Enable WTFCrashWithInfo implementation
+        https://bugs.webkit.org/show_bug.cgi?id=224458
+
+        Reviewed by Don Olmstead.
+
+        Enable WTFCrashWithInfo implementation for PlayStation platform. It is x86_64 and uses clang
+        so that it can share Darwin's implemetation with us.
+
+        * wtf/Assertions.cpp:
+
+2021-04-12  Youenn Fablet  <youenn@apple.com>
+
+        Block loading for port 10080
+        https://bugs.webkit.org/show_bug.cgi?id=224432
+
+        Reviewed by Alex Christensen.
+
+        Follow Chrome and Firefox by blocking port 10080.
+
+        * wtf/URL.cpp:
+        (WTF::portAllowed):
+
 2021-04-11  Sam Weinig  <weinig@apple.com>
 
         Reduce compile time and binary size cost of enabling proper CSSStyleDeclaration property access behavior

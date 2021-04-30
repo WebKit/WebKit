@@ -94,7 +94,7 @@ private:
 
     StorageNamespaceImpl& m_namespace;
     Ref<WebCore::SecurityOrigin> m_securityOrigin;
-    RefPtr<WebCore::StorageMap> m_map;
+    std::unique_ptr<WebCore::StorageMap> m_map;
     Optional<StorageAreaIdentifier> m_mapID;
     HashCountedSet<String> m_pendingValueChanges;
     uint64_t m_currentSeed { 0 };

@@ -66,6 +66,8 @@ static const HashTableValue JSDedicatedWorkerGlobalScopeTableValues[] =
 };
 
 static const HashTable JSDedicatedWorkerGlobalScopeTable = { 1, 1, true, JSDedicatedWorkerGlobalScope::info(), JSDedicatedWorkerGlobalScopeTableValues, JSDedicatedWorkerGlobalScopeTableIndex };
+template<> const ClassInfo JSDedicatedWorkerGlobalScopeDOMConstructor::s_info = { "DedicatedWorkerGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScopeDOMConstructor) };
+
 template<> JSValue JSDedicatedWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSWorkerGlobalScope::getConstructor(vm, &globalObject);
@@ -77,8 +79,6 @@ template<> void JSDedicatedWorkerGlobalScopeDOMConstructor::initializeProperties
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "DedicatedWorkerGlobalScope"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSDedicatedWorkerGlobalScopeDOMConstructor::s_info = { "DedicatedWorkerGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDedicatedWorkerGlobalScopeDOMConstructor) };
 
 /* Hash table for prototype */
 

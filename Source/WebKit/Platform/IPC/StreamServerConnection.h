@@ -31,6 +31,7 @@
 #include "MessageNames.h"
 #include "StreamConnectionBuffer.h"
 #include "StreamConnectionEncoder.h"
+#include <wtf/CheckedLock.h>
 #include <wtf/Deque.h>
 #include <wtf/Threading.h>
 
@@ -92,8 +93,9 @@ protected:
     size_t m_serverOffset { 0 };
     StreamConnectionBuffer m_buffer;
 
-    Lock m_outOfStreamMessagesLock;
-    Deque<std::unique_ptr<Decoder>> m_outOfStreamMessages;
+    CheckedLock m_outOfStreamMessagesLock;
+    Deque<std::unique_ptr<Decoder>> m_outOfStreamMessages WTF_GUARDED_BY_LOCK(m_outOfStreamMessagesLock);
+
     bool m_isDispatchingStreamMessage { false };
 
     friend class StreamConnectionWorkQueue;
@@ -153,9 +155,9 @@ private:
     bool processSetStreamDestinationID(Decoder&&, RefPtr<Receiver>& currentReceiver);
     bool dispatchStreamMessage(Decoder&&, Receiver&);
     bool dispatchOutOfStreamMessage(Decoder&&);
-    Lock m_receiversLock;
+    CheckedLock m_receiversLock;
     using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<Receiver>>;
-    ReceiversMap m_receivers;
+    ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };
 };
 
@@ -164,7 +166,7 @@ void StreamServerConnection<Receiver>::startReceivingMessages(Receiver& receiver
 {
     {
         auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-        auto locker = holdLock(m_receiversLock);
+        Locker locker { m_receiversLock };
         ASSERT(!m_receivers.contains(key));
         m_receivers.add(key, makeRef(receiver));
     }
@@ -176,7 +178,7 @@ void StreamServerConnection<Receiver>::stopReceivingMessages(ReceiverName receiv
 {
     StreamServerConnectionBase::stopReceivingMessagesImpl(receiverName, destinationID);
     auto key = std::make_pair(static_cast<uint8_t>(receiverName), destinationID);
-    auto locker = holdLock(m_receiversLock);
+    Locker locker { m_receiversLock };
     ASSERT(m_receivers.contains(key));
     m_receivers.remove(key);
 }
@@ -217,7 +219,7 @@ StreamServerConnectionBase::DispatchResult StreamServerConnection<Receiver>::dis
                 m_connection->dispatchDidReceiveInvalidMessage(decoder.messageName());
                 return DispatchResult::HasNoMessages;
             }
-            auto locker = holdLock(m_receiversLock);
+            Locker locker { m_receiversLock };
             currentReceiver = m_receivers.get(key);
         }
         if (!currentReceiver) {
@@ -226,7 +228,7 @@ StreamServerConnectionBase::DispatchResult StreamServerConnection<Receiver>::dis
             // This means we must timeout every receiver in the stream connection.
             // Currently we assert that the receivers are empty, as we only have up to one receiver in
             // a stream connection until possibility of skipping is implemented properly.
-            auto locker = holdLock(m_receiversLock);
+            Locker locker { m_receiversLock };
             ASSERT(m_receivers.isEmpty());
             return DispatchResult::HasNoMessages;
         }
@@ -275,7 +277,7 @@ bool StreamServerConnection<Receiver>::dispatchOutOfStreamMessage(Decoder&& deco
 {
     std::unique_ptr<Decoder> message;
     {
-        auto locker = holdLock(m_outOfStreamMessagesLock);
+        Locker locker { m_outOfStreamMessagesLock };
         if (m_outOfStreamMessages.isEmpty())
             return false;
         message = m_outOfStreamMessages.takeFirst();
@@ -286,7 +288,7 @@ bool StreamServerConnection<Receiver>::dispatchOutOfStreamMessage(Decoder&& deco
     RefPtr<Receiver> receiver;
     {
         auto key = std::make_pair(static_cast<uint8_t>(message->messageReceiverName()), message->destinationID());
-        auto locker = holdLock(m_receiversLock);
+        Locker locker { m_receiversLock };
         receiver = m_receivers.get(key);
     }
     if (receiver) {

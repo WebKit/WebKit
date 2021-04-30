@@ -652,9 +652,13 @@ static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
 
 std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
 {
+    auto scriptExecutionContext = canvas.scriptExecutionContext();
+    if (!scriptExecutionContext)
+        return nullptr;
+
 #if ENABLE(WEBGL2)
     // Note: WebGL 2.0 is only supported with the ANGLE backend.
-    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !RuntimeEnabledFeatures::sharedFeatures().webGL2Enabled())
+    if (type == GraphicsContextGLWebGLVersion::WebGL2 && !scriptExecutionContext->settingsValues().webGL2Enabled)
         return nullptr;
 #else
     UNUSED_PARAM(type);
@@ -715,7 +719,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     attributes.webGLVersion = type;
 
 #if PLATFORM(COCOA)
-    if (RuntimeEnabledFeatures::sharedFeatures().webGLUsingMetal())
+    if (scriptExecutionContext->settingsValues().webGLUsingMetal)
         attributes.useMetal = true;
 #endif
 
@@ -3103,8 +3107,8 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::SCISSOR_TEST:
         return getBooleanParameter(pname);
     case GraphicsContextGL::SHADING_LANGUAGE_VERSION:
-        if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
-            return "WebGL GLSL ES 1.0 (" + m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION) + ")";
+        if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
+            return makeString("WebGL GLSL ES 1.0 (", m_context->getString(GraphicsContextGL::SHADING_LANGUAGE_VERSION), ')');
         return "WebGL GLSL ES 1.0 (1.0)"_str;
     case GraphicsContextGL::STENCIL_BACK_FAIL:
         return getUnsignedIntParameter(pname);
@@ -3170,7 +3174,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case WebGLDebugRendererInfo::UNMASKED_RENDERER_WEBGL:
         if (m_webglDebugRendererInfo) {
 #if !PLATFORM(IOS_FAMILY)
-            if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
+            if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
                 return m_context->getString(GraphicsContextGL::RENDERER);
 #endif
             return "Apple GPU"_str;
@@ -3180,7 +3184,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case WebGLDebugRendererInfo::UNMASKED_VENDOR_WEBGL:
         if (m_webglDebugRendererInfo) {
 #if !PLATFORM(IOS_FAMILY)
-            if (!RuntimeEnabledFeatures::sharedFeatures().maskWebGLStringsEnabled())
+            if (!scriptExecutionContext()->settingsValues().maskWebGLStringsEnabled)
                 return m_context->getString(GraphicsContextGL::VENDOR);
 #endif
             return "Apple Inc."_str;

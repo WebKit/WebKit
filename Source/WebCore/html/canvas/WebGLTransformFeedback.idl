@@ -26,7 +26,7 @@
 // FIXME: This is specified as Exposed=(Window,Worker)
 [
     Conditional=WEBGL2,
-    EnabledAtRuntime=WebGL2,
+    EnabledBySetting=WebGL2,
     GenerateIsReachable=Impl,
     Exposed=Window
 ] interface WebGLTransformFeedback {

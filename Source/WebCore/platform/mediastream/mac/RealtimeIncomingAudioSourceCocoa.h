@@ -45,8 +45,19 @@ public:
 private:
     RealtimeIncomingAudioSourceCocoa(rtc::scoped_refptr<webrtc::AudioTrackInterface>&&, String&&);
 
+    // RealtimeMediaSource API
+    void startProducingData() final;
+    void stopProducingData()  final;
+
     // webrtc::AudioTrackSinkInterface API
     void OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames) final;
+
+#if !RELEASE_LOG_DISABLED
+    void logTimerFired();
+#endif
+
+    static constexpr Seconds LogTimerInterval = 2_s;
+    static constexpr size_t ChunksReceivedCountForLogging = 200; // 200 chunks of 10ms = 2s.
 
     uint64_t m_numberOfFrames { 0 };
 
@@ -56,6 +67,9 @@ private:
     std::unique_ptr<WebAudioBufferList> m_audioBufferList;
 #if !RELEASE_LOG_DISABLED
     size_t m_chunksReceived { 0 };
+    size_t m_lastChunksReceived { 0 };
+    bool m_audioFormatChanged { false };
+    Timer m_logTimer;
 #endif
 };
 

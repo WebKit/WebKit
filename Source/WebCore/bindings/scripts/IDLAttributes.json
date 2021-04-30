@@ -2,6 +2,7 @@
     "contexts": [
         "type",
         "interface",
+        "namespace",
         "attribute",
         "operation",
         "argument",
@@ -48,9 +49,6 @@
         "CallbackThisObject": {
             "contextsAllowed": ["callback-function", "operation"]
         },
-        "CallNamedSetterOnlyForSupportedProperties": {
-            "contextsAllowed": ["operation"]
-        },
         "CallWith": {
             "contextsAllowed": ["attribute", "operation"],
             "values": ["Document", "ExecState", "ScriptExecutionContext", "GlobalObject", "ActiveWindow", "FirstWindow", "ResponsibleDocument", "World", "PropertyName"],
@@ -69,7 +67,7 @@
             }
         },
         "Conditional": {
-            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
+            "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "enum", "attribute", "operation", "constant", "callback-function", "includes"],
             "values": ["*"],
             "supportsConjunction": true
         },
@@ -147,9 +145,6 @@
         "Default": {
             "contextsAllowed": ["operation"]
         },
-        "DefaultDefineOwnProperty": {
-            "contextsAllowed": ["interface"]
-        },
         "DelegateToSharedSyntheticAttribute": {
             "contextsAllowed": ["attribute"]
         },
@@ -179,12 +174,12 @@
             "supportsConjunction": true
         },
         "EnabledAtRuntime": {
-            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "iterable", "includes"],
+            "contextsAllowed": ["interface", "namespace", "dictionary", "enum", "attribute", "operation", "constant", "iterable", "includes"],
             "values": ["*"],
             "supportsConjunction": true
         },
         "EnabledBySetting": {
-            "contextsAllowed": ["interface", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
+            "contextsAllowed": ["interface", "namespace", "dictionary", "enum", "attribute", "operation", "constant", "dictionary-member", "includes"],
             "values": ["*"],
             "supportsConjunction": true
         },
@@ -216,7 +211,7 @@
             "contextsAllowed": ["interface"]
         },
         "Exposed": {
-            "contextsAllowed": ["interface", "attribute", "operation", "constant"],
+            "contextsAllowed": ["interface", "namespace", "attribute", "operation", "constant"],
             "values": ["*"],
             "standard": {
                 "url": "https://heycam.github.io/webidl/#Exposed"
@@ -245,7 +240,7 @@
             "values": ["*"]
         },
         "ImplementedBy": {
-            "contextsAllowed": ["interface", "dictionary", "dictionary-member", "attribute", "operation", "constant"],
+            "contextsAllowed": ["interface", "namespace", "dictionary", "dictionary-member", "attribute", "operation", "constant"],
             "values": ["*"]
         },
         "ImplementationLacksVTable": {
@@ -255,7 +250,7 @@
             "contextsAllowed": ["interface"]
         },
         "InterfaceName": {
-            "contextsAllowed": ["interface"],
+            "contextsAllowed": ["interface", "namespace"],
             "values": ["*"]
         },
         "IsImmutablePrototypeExoticObject": {

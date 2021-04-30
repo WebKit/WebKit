@@ -57,9 +57,11 @@ using namespace WebCore;
 
 enum {
     PROP_0,
-
-    PROP_RGBA
+    PROP_RGBA,
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 enum {
     FINISHED,
@@ -126,13 +128,14 @@ static void webkit_color_chooser_request_class_init(WebKitColorChooserRequestCla
      *
      * Since: 2.8
      */
-    g_object_class_install_property(objectClass,
-        PROP_RGBA,
+    sObjProperties[PROP_RGBA] =
         g_param_spec_boxed("rgba",
             _("Current RGBA color"),
             _("The current RGBA color for the request"),
             GDK_TYPE_RGBA,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 
     /**
      * WebKitColorChooserRequest::finished:
@@ -174,7 +177,7 @@ void webkit_color_chooser_request_set_rgba(WebKitColorChooserRequest* request, c
         return;
 
     request->priv->rgba = *rgba;
-    g_object_notify(G_OBJECT(request), "rgba");
+    g_object_notify_by_pspec(G_OBJECT(request), sObjProperties[PROP_RGBA]);
 }
 
 /**

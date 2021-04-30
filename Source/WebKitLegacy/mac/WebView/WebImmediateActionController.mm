@@ -48,10 +48,12 @@
 #import <WebCore/HTMLConverter.h>
 #import <WebCore/NodeRenderStyle.h>
 #import <WebCore/Page.h>
+#import <WebCore/Range.h>
 #import <WebCore/RenderElement.h>
 #import <WebCore/RenderObject.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/TextIterator.h>
 #import <objc/objc-class.h>
 #import <objc/objc.h>
 #import <pal/spi/mac/DataDetectorsSPI.h>

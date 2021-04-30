@@ -69,14 +69,15 @@ public:
 
     // FIXME: <rdar://problem/71509848> Remove the following deprecated methods.
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
-    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType);
+    static Ref<WebAuthenticationPanel> create(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType, const WTF::String& userName);
     WTF::String rpId() const { return m_rpId; }
     const Vector<WebCore::AuthenticatorTransport>& transports() const { return m_transports; }
     WebCore::ClientDataType clientDataType() const { return m_clientDataType; }
+    WTF::String userName() const { return m_userName; }
 
 private:
     // FIXME: <rdar://problem/71509848> Remove the following deprecated method.
-    WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType);
+    WebAuthenticationPanel(const WebKit::AuthenticatorManager&, const WTF::String& rpId, const TransportSet&, WebCore::ClientDataType, const WTF::String& userName);
 
     std::unique_ptr<WebKit::AuthenticatorManager> m_manager; // FIXME: <rdar://problem/71509848> Change to UniqueRef.
     UniqueRef<WebAuthenticationPanelClient> m_client;
@@ -86,6 +87,7 @@ private:
     WTF::String m_rpId;
     Vector<WebCore::AuthenticatorTransport> m_transports;
     WebCore::ClientDataType m_clientDataType;
+    WTF::String m_userName;
 };
 
 } // namespace API

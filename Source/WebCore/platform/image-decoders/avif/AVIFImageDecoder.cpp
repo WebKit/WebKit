@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if USE(AVIF)
+
 #include "AVIFImageDecoder.h"
 
 #include "AVIFImageReader.h"
@@ -104,7 +107,9 @@ void AVIFImageDecoder::tryDecodeSize(bool allDataReceived)
 {
     if (!m_reader)
         m_reader = makeUnique<AVIFImageReader>(this);
-    m_reader->parseHeader(*m_data, allDataReceived);
+
+    if (!m_reader->parseHeader(*m_data, allDataReceived))
+        return;
 
     m_frameCount = m_reader->imageCount();
 
@@ -127,3 +132,5 @@ void AVIFImageDecoder::decode(size_t frameIndex, bool allDataReceived)
 }
 
 }
+
+#endif // USE(AVIF)

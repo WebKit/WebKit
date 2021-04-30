@@ -49,6 +49,10 @@ LibWebRTCRtpSenderTransformBackend::~LibWebRTCRtpSenderTransformBackend()
 void LibWebRTCRtpSenderTransformBackend::setTransformableFrameCallback(Callback&& callback)
 {
     setInputCallback(WTFMove(callback));
+    if (m_isRegistered)
+        return;
+
+    m_isRegistered = true;
     m_rtcSender->SetEncoderToPacketizerFrameTransformer(this);
 }
 

@@ -98,6 +98,7 @@ $(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/UIProcess/Automation/Automation.json
 $(PROJECT_DIR)/UIProcess/Automation/WebAutomationSession.messages.in
+$(PROJECT_DIR)/UIProcess/Cocoa/PlatformXRSystem.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/PlaybackSessionManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/UserMediaCaptureManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
@@ -105,8 +106,8 @@ $(PROJECT_DIR)/UIProcess/Downloads/DownloadProxy.messages.in
 $(PROJECT_DIR)/UIProcess/DrawingAreaProxy.messages.in
 $(PROJECT_DIR)/UIProcess/GPU/GPUProcessProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/RemoteWebInspectorUIProxy.messages.in
-$(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIExtensionControllerProxy.messages.in
+$(PROJECT_DIR)/UIProcess/Inspector/WebInspectorUIProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Media/AudioSessionRoutingArbitratorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Media/RemoteMediaSessionCoordinatorProxy.messages.in
 $(PROJECT_DIR)/UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.messages.in
@@ -198,6 +199,7 @@ $(PROJECT_DIR)/WebProcess/WebPage/WebPage.messages.in
 $(PROJECT_DIR)/WebProcess/WebProcess.messages.in
 $(PROJECT_DIR)/WebProcess/WebStorage/StorageAreaMap.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/AudioCaptureSampleManager.messages.in
+$(PROJECT_DIR)/WebProcess/cocoa/PlatformXRSystemProxy.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/PlaybackSessionManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/RemoteCaptureSampleManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/UserMediaCaptureManager.messages.in

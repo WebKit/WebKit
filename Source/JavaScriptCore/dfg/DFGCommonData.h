@@ -78,8 +78,6 @@ public:
     { }
     ~CommonData();
     
-    void notifyCompilingStructureTransition(Plan&, CodeBlock*, Node*);
-
     void shrinkToFit();
     
     bool invalidate(); // Returns true if we did invalidate, or false if the code block was already invalidated.
@@ -90,16 +88,11 @@ public:
     CatchEntrypointData* catchOSREntryDataForBytecodeIndex(BytecodeIndex bytecodeIndex)
     {
         return tryBinarySearch<CatchEntrypointData, BytecodeIndex>(
-            catchEntrypoints, catchEntrypoints.size(), bytecodeIndex,
+            m_catchEntrypoints, m_catchEntrypoints.size(), bytecodeIndex,
             [] (const CatchEntrypointData* item) { return item->bytecodeIndex; });
     }
 
-    void appendCatchEntrypoint(BytecodeIndex bytecodeIndex, MacroAssemblerCodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
-    {
-        catchEntrypoints.append(CatchEntrypointData { machineCode,  WTFMove(argumentFormats), bytecodeIndex });
-    }
-
-    void finalizeCatchEntrypoints();
+    void finalizeCatchEntrypoints(Vector<CatchEntrypointData>&&);
 
     unsigned requiredRegisterCountForExecutionAndExit() const
     {
@@ -115,21 +108,19 @@ public:
     RefPtr<InlineCallFrameSet> inlineCallFrames;
     Ref<CodeOriginPool> codeOrigins;
     
-    Vector<Identifier> dfgIdentifiers;
-    Vector<WeakReferenceTransition> transitions;
-    Vector<WriteBarrier<JSCell>> weakReferences;
-    Vector<StructureID> weakStructureReferences;
-    Vector<CatchEntrypointData> catchEntrypoints;
-    Bag<CodeBlockJettisoningWatchpoint> watchpoints;
-    Bag<AdaptiveStructureWatchpoint> adaptiveStructureWatchpoints;
-    Bag<AdaptiveInferredPropertyValueWatchpoint> adaptiveInferredPropertyValueWatchpoints;
+    FixedVector<Identifier> m_dfgIdentifiers;
+    FixedVector<WeakReferenceTransition> m_transitions;
+    FixedVector<WriteBarrier<JSCell>> m_weakReferences;
+    FixedVector<StructureID> m_weakStructureReferences;
+    FixedVector<CatchEntrypointData> m_catchEntrypoints;
+    FixedVector<CodeBlockJettisoningWatchpoint> m_watchpoints;
+    FixedVector<AdaptiveStructureWatchpoint> m_adaptiveStructureWatchpoints;
+    FixedVector<AdaptiveInferredPropertyValueWatchpoint> m_adaptiveInferredPropertyValueWatchpoints;
     RecordedStatuses recordedStatuses;
-    Vector<JumpReplacement> jumpReplacements;
+    Vector<JumpReplacement> m_jumpReplacements;
     
     ScratchBuffer* catchOSREntryBuffer;
     RefPtr<Profiler::Compilation> compilation;
-    bool livenessHasBeenProved; // Initialized and used on every GC.
-    bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.
     bool isStillValid { true };
     bool hasVMTrapsBreakpointsInstalled { false };
     

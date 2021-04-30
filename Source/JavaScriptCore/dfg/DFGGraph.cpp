@@ -1104,7 +1104,7 @@ bool Graph::watchGlobalProperty(JSGlobalObject* globalObject, unsigned identifie
         if (!watchpoint->isStillValid())
             return false;
     }
-    globalProperties().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
+    watchpoints().addLazily(DesiredGlobalProperty(globalObject, identifierNumber));
     return true;
 }
 
@@ -1424,7 +1424,6 @@ void Graph::registerFrozenValues()
 {
     ConcurrentJSLocker locker(m_codeBlock->m_lock);
     m_codeBlock->constants().shrink(0);
-    m_codeBlock->constantsSourceCodeRepresentation().resize(0);
     for (FrozenValue* value : m_frozenValues) {
         if (!value->pointsToHeap())
             continue;
@@ -1445,7 +1444,6 @@ void Graph::registerFrozenValues()
         } }
     }
     m_codeBlock->constants().shrinkToFit();
-    m_codeBlock->constantsSourceCodeRepresentation().shrinkToFit();
 }
 
 template<typename Visitor>

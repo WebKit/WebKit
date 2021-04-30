@@ -259,6 +259,7 @@
 #include <wtf/ProcessID.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SetForScope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -849,27 +850,35 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     });
     RELEASE_LOG_IF_ALLOWED(Process, "WebPage: Created context with ID %u for visibility propagation from UIProcess", m_contextForVisibilityPropagation->contextID());
     send(Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation(m_contextForVisibilityPropagation->contextID()));
-#endif
-
-#if ENABLE(GPU_PROCESS)
-    if (m_shouldPlayMediaInGPUProcess)
-        WebProcess::singleton().ensureGPUProcessConnection().updateParameters(parameters);
-#endif
+#endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(IPC_TESTING_API)
     m_visitedLinkTableID = parameters.visitedLinkTableID;
 #endif
 
 #if ENABLE(VP9)
-    PlatformMediaSessionManager::setShouldEnableVP9Decoder(parameters.shouldEnableVP9Decoder);
     PlatformMediaSessionManager::setShouldEnableVP8Decoder(parameters.shouldEnableVP8Decoder);
+    PlatformMediaSessionManager::setShouldEnableVP9Decoder(parameters.shouldEnableVP9Decoder);
     PlatformMediaSessionManager::setShouldEnableVP9SWDecoder(parameters.shouldEnableVP9SWDecoder);
+    if (m_shouldPlayMediaInGPUProcess && WebProcess::singleton().existingGPUProcessConnection())
+        WebProcess::singleton().existingGPUProcessConnection()->enableVP9Decoders(parameters.shouldEnableVP8Decoder, parameters.shouldEnableVP9Decoder, parameters.shouldEnableVP9SWDecoder);
 #endif
 
     m_page->setCanUseCredentialStorage(parameters.canUseCredentialStorage);
 
     updateThrottleState();
 }
+
+#if ENABLE(GPU_PROCESS)
+void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
+{
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    gpuProcessConnection.createVisibilityPropagationContextForPage(*this);
+#else
+    UNUSED_PARAM(gpuProcessConnection);
+#endif
+}
+#endif
 
 void WebPage::requestMediaPlaybackState(CompletionHandler<void(WebKit::MediaPlaybackState)>&& completionHandler)
 {
@@ -999,6 +1008,11 @@ WebPage::~WebPage()
 #ifndef NDEBUG
     webPageCounter.decrement();
 #endif
+
+#if ENABLE(GPU_PROCESS) && HAVE(VISIBILITY_PROPAGATION_VIEW)
+    if (auto* gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+        gpuProcessConnection->destroyVisibilityPropagationContextForPage(*this);
+#endif // ENABLE(GPU_PROCESS)
     
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (m_playbackSessionManager)
@@ -1180,7 +1194,7 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     }
 
     const VisibleSelection& selection = frame->selection().selection();
-    const Editor& editor = frame->editor();
+    auto& editor = frame->editor();
 
     result.transactionID = m_lastEditorStateTransactionID.increment();
     result.selectionIsNone = selection.isNone();
@@ -2525,6 +2539,8 @@ RefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double 
 
 void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, Frame& frame, FrameView& frameView, GraphicsContext& graphicsContext)
 {
+    TraceScope snapshotScope(PaintSnapshotStart, PaintSnapshotEnd, options);
+
     IntRect snapshotRect = rect;
     float horizontalScaleFactor = static_cast<float>(bitmapSize.width()) / rect.width();
     float verticalScaleFactor = static_cast<float>(bitmapSize.height()) / rect.height();
@@ -2890,6 +2906,8 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
             return handled;
         }
         case PlatformEvent::MouseReleased:
+            if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
+                frame.eventHandler().invalidateClick();
             return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
 
         case PlatformEvent::MouseMoved:
@@ -3933,14 +3951,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 #if ENABLE(WEBGL)
     WebProcess::singleton().setUseGPUProcessForWebGL(m_shouldRenderWebGLInGPUProcess);
 #endif
-
-    // FIXME: This will no longer be needed once we use the GPUProcess for DOM rendering.
-    // For now, it is possible to use the GPUProcess for media playback only. Because media does not
-    // use the RemoteRenderingBackend, we need to force the creation of a RemoteRenderingBackend in
-    // the GPUProcess so that the page gets a visibility propagation view.
-    if (m_shouldPlayMediaInGPUProcess && !usingGPUProcessForDOMRendering)
-        ensureRemoteRenderingBackendProxy();
-#endif
+#endif // ENABLE(GPU_PROCESS)
 
 #if ENABLE(IPC_TESTING_API)
     m_ipcTestingAPIEnabled = store.getBoolValueForKey(WebPreferencesKey::ipcTestingAPIEnabledKey());
@@ -4073,6 +4084,15 @@ void WebPage::layoutIfNeeded()
 void WebPage::updateRendering()
 {
     m_page->updateRendering();
+}
+
+void WebPage::didUpdateRendering()
+{
+    if (m_didUpdateRenderingAfterCommittingLoad)
+        return;
+
+    m_didUpdateRenderingAfterCommittingLoad = true;
+    send(Messages::WebPageProxy::DidUpdateRenderingAfterCommittingLoad());
 }
 
 void WebPage::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags)
@@ -6227,9 +6247,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
             scalePage(1, IntPoint());
     }
 
-#if PLATFORM(MAC)
     m_didUpdateRenderingAfterCommittingLoad = false;
-#endif
+
 #if PLATFORM(IOS_FAMILY)
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = false;
     m_hasRestoredExposedContentRectAfterDidCommitLoad = false;
@@ -7312,7 +7331,7 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
     }
 
     auto& renderImage = downcast<RenderImage>(*renderer);
-    auto bitmap = createShareableBitmap(renderImage);
+    auto bitmap = createShareableBitmap(renderImage, WTF::nullopt, AllowAnimatedImages::No);
     if (!bitmap) {
         if (completion)
             completion({ });
@@ -7479,15 +7498,18 @@ bool WebPage::createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighli
     return true;
 }
 
-void WebPage::restoreAppHighlights(const Vector<SharedMemory::IPCHandle>&& memoryHandles)
+void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IPCHandle>&& memoryHandles, const Optional<unsigned> index)
 {
     auto document = makeRefPtr(m_page->focusController().focusedOrMainFrame().document());
 
+    unsigned i = 0;
     for (const auto& ipcHandle : memoryHandles) {
         auto sharedMemory = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
         if (!sharedMemory)
             continue;
-        document->appHighlightStorage().restoreAppHighlight(SharedBuffer::create(static_cast<const char*>(sharedMemory->data()), sharedMemory->size()));
+
+        document->appHighlightStorage().restoreAndScrollToAppHighlight(SharedBuffer::create(static_cast<const char*>(sharedMemory->data()), sharedMemory->size()), i == index ? ScrollToHighlight::Yes : ScrollToHighlight::No);
+        i++;
     }
 }
 #endif
@@ -7521,6 +7543,15 @@ void WebPage::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& completi
 {
     completionHandler(mainFrame()->document()->loader()->lastNavigationWasAppBound());
 }
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+void WebPage::handleContextMenuTranslation(const String& text, const IntRect& boundsInView, const IntPoint& locationInView)
+{
+    send(Messages::WebPageProxy::HandleContextMenuTranslation(text, boundsInView, locationInView));
+}
+
+#endif
 
 } // namespace WebKit
 

@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ContentSecurityPolicy.h"
 
+#include "BlobURL.h"
 #include "ContentSecurityPolicyClient.h"
 #include "ContentSecurityPolicyDirective.h"
 #include "ContentSecurityPolicyDirectiveList.h"
@@ -277,8 +278,12 @@ void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
     m_overrideInlineStyleAllowed = value;
 }
 
-bool ContentSecurityPolicy::urlMatchesSelf(const URL& url) const
+bool ContentSecurityPolicy::urlMatchesSelf(const URL& url, bool forFrameSrc) const
 {
+    // As per https://w3c.github.io/webappsec-csp/#match-url-to-source-expression, we compare the URL origin with the policy origin.
+    // We get origin using https://url.spec.whatwg.org/#concept-url-origin which has specific blob URLs treatment as follow.
+    if (forFrameSrc && url.protocolIsBlob())
+        return m_selfSource->matches(BlobURL::getOriginURL(url));
     return m_selfSource->matches(url);
 }
 

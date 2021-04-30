@@ -115,11 +115,26 @@ void StorageManagerSet::removeConnection(IPC::Connection& connection)
     connection.removeWorkQueueMessageReceiver(Messages::StorageManagerSet::messageReceiverName());
 
     m_queue->dispatch([this, protectedThis = makeRef(*this), connectionID]() {
-        for (const auto& storageArea : m_storageAreas.values()) {
-            ASSERT(storageArea);
+        Vector<StorageAreaIdentifier> identifiersToRemove;
+        for (auto& [identifier, storageArea] : m_storageAreas) {
             if (storageArea)
                 storageArea->removeListener(connectionID);
+
+            if (!storageArea)
+                identifiersToRemove.append(identifier);
         }
+
+        for (auto identifier : identifiersToRemove)
+            m_storageAreas.remove(identifier);
+    });
+}
+
+void StorageManagerSet::handleLowMemoryWarning()
+{
+    ASSERT(RunLoop::isMain());
+    m_queue->dispatch([this, protectedThis = makeRef(*this)] {
+        for (auto& storageArea : m_storageAreas.values())
+            storageArea->handleLowMemoryWarning();
     });
 }
 
@@ -140,16 +155,7 @@ void StorageManagerSet::waitUntilSyncingLocalStorageFinished()
 {
     ASSERT(RunLoop::isMain());
 
-    BinarySemaphore semaphore;
-    m_queue->dispatch([this, &semaphore] {
-        for (const auto& storageArea : m_storageAreas.values()) {
-            ASSERT(storageArea);
-            if (storageArea)
-                storageArea->syncToDatabase();
-        }
-        semaphore.signal();
-    });
-    semaphore.wait();
+    m_queue->dispatchSync([] { });
 }
 
 void StorageManagerSet::suspend(CompletionHandler<void()>&& completionHandler)
@@ -383,8 +389,12 @@ void StorageManagerSet::disconnectFromStorageArea(IPC::Connection& connection, S
     ASSERT(storageArea);
     ASSERT(storageArea->hasListener(connection.uniqueID()));
 
-    if (storageArea)
-        storageArea->removeListener(connection.uniqueID());
+    if (!storageArea)
+        return;
+
+    storageArea->removeListener(connection.uniqueID());
+    if (!storageArea)
+        m_storageAreas.remove(storageAreaID);
 }
 
 void StorageManagerSet::getValues(IPC::Connection& connection, StorageAreaIdentifier storageAreaID, GetValuesCallback&& completionHandler)

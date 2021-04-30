@@ -121,10 +121,8 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
 
     ondetach()
     {
-        if (this.listItemElement) {
-            WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
-            WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._styleSheetRemoved, this);
-        }
+        WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetAdded, this._styleSheetAdded, this);
+        WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._styleSheetRemoved, this);
 
         super.ondetach();
     }

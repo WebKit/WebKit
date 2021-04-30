@@ -145,10 +145,8 @@ enum ContextMenuAction {
     ContextMenuItemTagToggleVideoFullscreen,
     ContextMenuItemTagShareMenu,
     ContextMenuItemTagToggleVideoEnhancedFullscreen,
-#if ENABLE(APP_HIGHLIGHTS)
     ContextMenuItemTagAddHighlightToCurrentGroup,
     ContextMenuItemTagAddHighlightToNewGroup,
-#endif
     ContextMenuItemTagRevealImage,
     ContextMenuItemTagTranslate,
     ContextMenuItemBaseCustomTag = 5000,

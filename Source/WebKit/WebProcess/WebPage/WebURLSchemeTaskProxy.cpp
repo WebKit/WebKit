@@ -32,6 +32,7 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include "WebURLSchemeHandlerProxy.h"
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ResourceError.h>
@@ -52,6 +53,7 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if !RELEASE_LOG_DISABLED
 static uint64_t pageIDFromWebFrame(const RefPtr<WebFrame>& frame)
 {
     if (frame) {
@@ -67,6 +69,7 @@ static uint64_t frameIDFromWebFrame(const RefPtr<WebFrame>& frame)
         return frame->frameID().toUInt64();
     return 0;
 }
+#endif
 
 WebURLSchemeTaskProxy::WebURLSchemeTaskProxy(WebURLSchemeHandlerProxy& handler, ResourceLoader& loader, WebFrame& frame)
     : m_urlSchemeHandler(handler)

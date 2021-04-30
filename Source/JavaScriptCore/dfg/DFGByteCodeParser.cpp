@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1185,6 +1185,7 @@ private:
         // direct, caller).
         Vector<unsigned> m_identifierRemap;
         Vector<unsigned> m_switchRemap;
+        Vector<unsigned> m_stringSwitchRemap;
         
         // These are blocks whose terminal is a Jump, Branch or Switch, and whose target has not yet been linked.
         // Their terminal instead refers to a bytecode index, and the right BB can be found in m_blockLinkingTargets.
@@ -1493,7 +1494,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
 
             // Some code may statically use the argument count from the InlineCallFrame, so it would be invalid to loop back if it does not match.
             // We "continue" instead of returning false in case another stack entry further on the stack has the right number of arguments.
-            if (argumentCountIncludingThis != static_cast<int>(callFrame->argumentCountIncludingThis))
+            if (argumentCountIncludingThis != callFrame->argumentCountIncludingThis)
                 continue;
             // If the target InlineCallFrame is Varargs, we do not know how many arguments are actually filled by LoadVarargs. Varargs InlineCallFrame's
             // argumentCountIncludingThis is maximum number of potentially filled arguments by xkLoadVarargs. We "continue" to the upper frame which may be
@@ -1503,7 +1504,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         } else {
             // We are in the machine code entry (i.e. the original caller).
             // If we have more arguments than the number of parameters to the function, it is not clear where we could put them on the stack.
-            if (argumentCountIncludingThis > m_codeBlock->numParameters())
+            if (static_cast<unsigned>(argumentCountIncludingThis) > m_codeBlock->numParameters())
                 return false;
         }
 
@@ -1529,8 +1530,8 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
         // We must set the arguments to the right values
         if (!stackEntry->m_inlineCallFrame)
             addToGraph(SetArgumentCountIncludingThis, OpInfo(argumentCountIncludingThis));
-        int argIndex = 0;
-        for (; argIndex < argumentCountIncludingThis; ++argIndex) {
+        unsigned argIndex = 0;
+        for (; argIndex < static_cast<unsigned>(argumentCountIncludingThis); ++argIndex) {
             Node* value = get(virtualRegisterForArgumentIncludingThis(argIndex, registerOffset));
             setDirect(stackEntry->remapOperand(virtualRegisterForArgumentIncludingThis(argIndex)), value, NormalSet);
         }
@@ -1540,7 +1541,7 @@ bool ByteCodeParser::handleRecursiveTailCall(Node* callTargetNode, CallVariant c
 
         // We must repeat the work of op_enter here as we will jump right after it.
         // We jump right after it and not before it, because of some invariant saying that a CFG root cannot have predecessors in the IR.
-        for (int i = 0; i < stackEntry->m_codeBlock->numVars(); ++i)
+        for (unsigned i = 0; i < stackEntry->m_codeBlock->numVars(); ++i)
             setDirect(stackEntry->remapOperand(virtualRegisterForLocal(i)), undefined, NormalSet);
 
         // We want to emit the SetLocals with an exit origin that points to the place we are jumping to.
@@ -1596,7 +1597,7 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     }
 
     if (!Options::useArityFixupInlining()) {
-        if (codeBlock->numParameters() > argumentCountIncludingThis) {
+        if (codeBlock->numParameters() > static_cast<unsigned>(argumentCountIncludingThis)) {
             VERBOSE_LOG("    Failing because of arity mismatch.\n");
             return UINT_MAX;
         }
@@ -5417,7 +5418,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_enter: {
             Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
             // Initialize all locals to undefined.
-            for (int i = 0; i < m_inlineStackTop->m_codeBlock->numVars(); ++i)
+            for (unsigned i = 0; i < m_inlineStackTop->m_codeBlock->numVars(); ++i)
                 set(virtualRegisterForLocal(i), undefined, ImmediateNakedSet);
 
             NEXT_OPCODE(op_enter);
@@ -6872,14 +6873,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
             data.kind = SwitchImm;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
             data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
-            SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
-            for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
-                if (!table.branchOffsets[i])
+            const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); ++i) {
+                if (!unlinkedTable.m_branchOffsets[i])
                     continue;
-                unsigned target = m_currentIndex.offset() + table.branchOffsets[i];
+                unsigned target = m_currentIndex.offset() + unlinkedTable.m_branchOffsets[i];
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
-                data.cases.append(SwitchCase::withBytecodeIndex(m_graph.freeze(jsNumber(static_cast<int32_t>(table.min + i))), target));
+                data.cases.append(SwitchCase::withBytecodeIndex(m_graph.freeze(jsNumber(static_cast<int32_t>(unlinkedTable.m_min + i))), target));
             }
             addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);
@@ -6892,15 +6893,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
             data.kind = SwitchChar;
             data.switchTableIndex = m_inlineStackTop->m_switchRemap[bytecode.m_tableIndex];
             data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
-            SimpleJumpTable& table = m_codeBlock->switchJumpTable(data.switchTableIndex);
-            for (unsigned i = 0; i < table.branchOffsets.size(); ++i) {
-                if (!table.branchOffsets[i])
+            const UnlinkedSimpleJumpTable& unlinkedTable = m_graph.unlinkedSwitchJumpTable(data.switchTableIndex);
+            for (unsigned i = 0; i < unlinkedTable.m_branchOffsets.size(); ++i) {
+                if (!unlinkedTable.m_branchOffsets[i])
                     continue;
-                unsigned target = m_currentIndex.offset() + table.branchOffsets[i];
+                unsigned target = m_currentIndex.offset() + unlinkedTable.m_branchOffsets[i];
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(
-                    SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(table.min + i), target));
+                    SwitchCase::withBytecodeIndex(LazyJSValue::singleCharacterString(unlinkedTable.m_min + i), target));
             }
             addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);
@@ -6911,17 +6912,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpSwitchString>();
             SwitchData& data = *m_graph.m_switchData.add();
             data.kind = SwitchString;
-            data.switchTableIndex = bytecode.m_tableIndex;
+            data.switchTableIndex = m_inlineStackTop->m_stringSwitchRemap[bytecode.m_tableIndex];
             data.fallThrough.setBytecodeIndex(m_currentIndex.offset() + jumpTarget(bytecode.m_defaultOffset));
-            StringJumpTable& table = m_codeBlock->stringSwitchJumpTable(data.switchTableIndex);
-            StringJumpTable::StringOffsetTable::iterator iter;
-            StringJumpTable::StringOffsetTable::iterator end = table.offsetTable.end();
-            for (iter = table.offsetTable.begin(); iter != end; ++iter) {
-                unsigned target = m_currentIndex.offset() + iter->value.branchOffset;
+            const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data.switchTableIndex);
+            for (const auto& entry : unlinkedTable.m_offsetTable) {
+                unsigned target = m_currentIndex.offset() + entry.value.m_branchOffset;
                 if (target == data.fallThrough.bytecodeIndex())
                     continue;
                 data.cases.append(
-                    SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(iter->key.get()), target));
+                    SwitchCase::withBytecodeIndex(LazyJSValue::knownStringImpl(entry.key.get()), target));
             }
             addToGraph(Switch, OpInfo(&data), get(bytecode.m_scrutinee));
             flushIfTerminal(data);
@@ -7032,7 +7031,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             Vector<std::pair<VirtualRegister, Node*>> localsToSet;
-            localsToSet.reserveInitialCapacity(buffer->m_size); // Note: This will reserve more than the number of locals we see below because the buffer includes arguments.
+            localsToSet.reserveInitialCapacity(buffer->size()); // Note: This will reserve more than the number of locals we see below because the buffer includes arguments.
 
             // We're not allowed to exit here since we would not properly recover values.
             // We first need to bootstrap the catch entrypoint state.
@@ -8528,16 +8527,10 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_inlineCallFrame->kind = kind;
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
-        m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
-
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i) {
             UniquedStringImpl* rep = codeBlock->identifier(i).impl();
             unsigned index = byteCodeParser->m_graph.identifiers().ensure(rep);
             m_identifierRemap[i] = index;
-        }
-        for (unsigned i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i) {
-            m_switchRemap[i] = byteCodeParser->m_codeBlock->numberOfSwitchJumpTables();
-            byteCodeParser->m_codeBlock->addSwitchJumpTableFromProfiledCodeBlock(codeBlock->switchJumpTable(i));
         }
     } else {
         // Machine code block case.
@@ -8549,11 +8542,22 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         m_inlineCallFrame = nullptr;
 
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());
-        m_switchRemap.resize(codeBlock->numberOfSwitchJumpTables());
         for (size_t i = 0; i < codeBlock->numberOfIdentifiers(); ++i)
             m_identifierRemap[i] = i;
-        for (size_t i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i)
-            m_switchRemap[i] = i;
+    }
+
+    m_switchRemap.resize(codeBlock->numberOfUnlinkedSwitchJumpTables());
+    byteCodeParser->m_graph.m_switchJumpTables.resize(byteCodeParser->m_graph.m_switchJumpTables.size() + codeBlock->numberOfUnlinkedSwitchJumpTables());
+    for (unsigned i = 0; i < codeBlock->numberOfUnlinkedSwitchJumpTables(); ++i) {
+        m_switchRemap[i] = byteCodeParser->m_graph.m_unlinkedSwitchJumpTables.size();
+        byteCodeParser->m_graph.m_unlinkedSwitchJumpTables.append(&codeBlock->unlinkedSwitchJumpTable(i));
+    }
+
+    m_stringSwitchRemap.resize(codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+    byteCodeParser->m_graph.m_stringSwitchJumpTables.resize(byteCodeParser->m_graph.m_stringSwitchJumpTables.size() + codeBlock->numberOfUnlinkedStringSwitchJumpTables());
+    for (unsigned i = 0; i < codeBlock->numberOfUnlinkedStringSwitchJumpTables(); ++i) {
+        m_stringSwitchRemap[i] = byteCodeParser->m_graph.m_unlinkedStringSwitchJumpTables.size();
+        byteCodeParser->m_graph.m_unlinkedStringSwitchJumpTables.append(&codeBlock->unlinkedStringSwitchJumpTable(i));
     }
     
     m_argumentPositions.resize(argumentCountIncludingThisWithFixup);

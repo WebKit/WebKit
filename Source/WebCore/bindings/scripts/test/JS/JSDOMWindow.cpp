@@ -142,6 +142,8 @@ static const HashTableValue JSDOMWindowTableValues[] =
 };
 
 static const HashTable JSDOMWindowTable = { 11, 31, true, JSDOMWindow::info(), JSDOMWindowTableValues, JSDOMWindowTableIndex };
+template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
+
 template<> JSValue JSDOMWindowDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
@@ -153,8 +155,6 @@ template<> void JSDOMWindowDOMConstructor::initializeProperties(VM& vm, JSDOMGlo
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "DOMWindow"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSDOMWindowDOMConstructor::s_info = { "DOMWindow", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowDOMConstructor) };
 
 /* Hash table for prototype */
 

@@ -198,7 +198,7 @@ public:
 
     void setColumnStylesFromPaginationMode(const Pagination::Mode&);
     
-    bool isFloating() const { return static_cast<Float>(m_nonInheritedFlags.floating) != Float::No; }
+    bool isFloating() const { return static_cast<Float>(m_nonInheritedFlags.floating) != Float::None; }
     bool hasMargin() const { return !m_surroundData->margin.isZero(); }
     bool hasBorder() const { return m_surroundData->border.hasBorder(); }
     bool hasBorderFill() const { return m_surroundData->border.hasFill(); }
@@ -260,6 +260,7 @@ public:
     bool hasInFlowPosition() const { return position() == PositionType::Relative || position() == PositionType::Sticky; }
     bool hasViewportConstrainedPosition() const { return position() == PositionType::Fixed || position() == PositionType::Sticky; }
     Float floating() const { return static_cast<Float>(m_nonInheritedFlags.floating); }
+    static UsedFloat usedFloat(const RenderObject&);
 
     const Length& width() const { return m_boxData->width(); }
     const Length& height() const { return m_boxData->height(); }
@@ -291,6 +292,8 @@ public:
     const LengthBox& borderImageSlices() const { return m_surroundData->border.image().imageSlices(); }
     const LengthBox& borderImageWidth() const { return m_surroundData->border.image().borderSlices(); }
     const LengthBox& borderImageOutset() const { return m_surroundData->border.image().outset(); }
+    NinePieceImageRule borderImageHorizontalRule() const { return m_surroundData->border.image().horizontalRule(); }
+    NinePieceImageRule borderImageVerticalRule() const { return m_surroundData->border.image().verticalRule(); }
 
     const LengthSize& borderTopLeftRadius() const { return m_surroundData->border.topLeftRadius(); }
     const LengthSize& borderTopRightRadius() const { return m_surroundData->border.topRightRadius(); }
@@ -348,6 +351,7 @@ public:
     EUnicodeBidi unicodeBidi() const { return static_cast<EUnicodeBidi>(m_nonInheritedFlags.unicodeBidi); }
 
     Clear clear() const { return static_cast<Clear>(m_nonInheritedFlags.clear); }
+    static UsedClear usedClear(const RenderObject&);
     TableLayoutType tableLayout() const { return static_cast<TableLayoutType>(m_nonInheritedFlags.tableLayout); }
 
     WEBCORE_EXPORT const FontCascade& fontCascade() const;
@@ -522,6 +526,7 @@ public:
     }
     bool hasAspectRatio() const { return aspectRatioType() == AspectRatioType::Ratio || aspectRatioType() == AspectRatioType::AutoAndRatio; }
     OptionSet<Containment> contain() const { return m_rareNonInheritedData->contain; }
+    bool containsLayout() const { return m_rareNonInheritedData->contain.contains(Containment::Layout); }
     BoxAlignment boxAlign() const { return static_cast<BoxAlignment>(m_rareNonInheritedData->deprecatedFlexibleBox->align); }
     BoxDirection boxDirection() const { return static_cast<BoxDirection>(m_inheritedFlags.boxDirection); }
     float boxFlex() const { return m_rareNonInheritedData->deprecatedFlexibleBox->flex; }
@@ -829,7 +834,7 @@ public:
     bool hasIsolation() const { return false; }
 #endif
 
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const;
+    bool shouldPlaceVerticalScrollbarOnLeft() const;
 
 #if ENABLE(CSS_TRAILING_WORD)
     TrailingWord trailingWord() const { return TrailingWord::Auto; }
@@ -887,13 +892,20 @@ public:
     void setBackgroundYPosition(Length&& length) { SET_NESTED_VAR(m_backgroundData, background, m_yPosition, WTFMove(length)); }
     void setBackgroundSize(FillSizeType b) { SET_NESTED_VAR(m_backgroundData, background, m_sizeType, static_cast<unsigned>(b)); }
     void setBackgroundSizeLength(LengthSize&& size) { SET_NESTED_VAR(m_backgroundData, background, m_sizeLength, WTFMove(size)); }
-    
+    void setBackgroundAttachment(FillAttachment attachment) { SET_NESTED_VAR(m_backgroundData, background, m_attachment, static_cast<unsigned>(attachment)); SET_NESTED_VAR(m_backgroundData, background, m_attachmentSet, true); }
+    void setBackgroundClip(FillBox fillBox) { SET_NESTED_VAR(m_backgroundData, background, m_clip, static_cast<unsigned>(fillBox)); SET_NESTED_VAR(m_backgroundData, background, m_clipSet, true); }
+    void setBackgroundOrigin(FillBox fillBox) { SET_NESTED_VAR(m_backgroundData, background, m_origin, static_cast<unsigned>(fillBox)); SET_NESTED_VAR(m_backgroundData, background, m_originSet, true); }
+    void setBackgroundRepeatX(FillRepeat fillRepeat) { SET_NESTED_VAR(m_backgroundData, background, m_repeatX, static_cast<unsigned>(fillRepeat)); SET_NESTED_VAR(m_backgroundData, background, m_repeatXSet, true); }
+    void setBackgroundRepeatY(FillRepeat fillRepeat) { SET_NESTED_VAR(m_backgroundData, background, m_repeatY, static_cast<unsigned>(fillRepeat)); SET_NESTED_VAR(m_backgroundData, background, m_repeatYSet, true); }
+
     void setBorderImage(const NinePieceImage& b) { SET_VAR(m_surroundData, border.m_image, b); }
     void setBorderImageSource(RefPtr<StyleImage>&&);
     void setBorderImageSliceFill(bool);
     void setBorderImageSlices(LengthBox&&);
     void setBorderImageWidth(LengthBox&&);
     void setBorderImageOutset(LengthBox&&);
+    void setBorderImageHorizontalRule(NinePieceImageRule);
+    void setBorderImageVerticalRule(NinePieceImageRule);
 
     void setBorderTopLeftRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_topLeftRadius, WTFMove(size)); }
     void setBorderTopRightRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_topRightRadius, WTFMove(size)); }
@@ -1532,7 +1544,7 @@ public:
     static EUnicodeBidi initialUnicodeBidi() { return UBNormal; }
     static PositionType initialPosition() { return PositionType::Static; }
     static VerticalAlign initialVerticalAlign() { return VerticalAlign::Baseline; }
-    static Float initialFloating() { return Float::No; }
+    static Float initialFloating() { return Float::None; }
     static BreakBetween initialBreakBetween() { return BreakBetween::Auto; }
     static BreakInside initialBreakInside() { return BreakInside::Auto; }
     static OptionSet<HangingPunctuation> initialHangingPunctuation() { return OptionSet<HangingPunctuation> { }; }
@@ -1869,10 +1881,10 @@ private:
         unsigned overflowX : 3; // Overflow
         unsigned overflowY : 3; // Overflow
         unsigned verticalAlign : 4; // VerticalAlign
-        unsigned clear : 2; // Clear
+        unsigned clear : 3; // Clear
         unsigned position : 3; // PositionType
         unsigned unicodeBidi : 3; // EUnicodeBidi
-        unsigned floating : 2; // Float
+        unsigned floating : 3; // Float
         unsigned tableLayout : 1; // TableLayoutType
 
         unsigned hasExplicitlySetBorderRadius : 1;

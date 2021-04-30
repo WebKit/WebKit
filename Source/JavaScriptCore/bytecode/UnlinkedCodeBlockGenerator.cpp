@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -132,8 +132,8 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<InstructionStream> ins
 
         if (!m_codeBlock->m_rareData) {
             if (!m_exceptionHandlers.isEmpty()
-                || !m_switchJumpTables.isEmpty()
-                || !m_stringSwitchJumpTables.isEmpty()
+                || !m_unlinkedSwitchJumpTables.isEmpty()
+                || !m_unlinkedStringSwitchJumpTables.isEmpty()
                 || !m_expressionInfoFatPositions.isEmpty()
                 || !m_typeProfilerInfoMap.isEmpty()
                 || !m_opProfileControlFlowBytecodeOffsets.isEmpty()
@@ -143,8 +143,8 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<InstructionStream> ins
         }
         if (m_codeBlock->m_rareData) {
             m_codeBlock->m_rareData->m_exceptionHandlers = WTFMove(m_exceptionHandlers);
-            m_codeBlock->m_rareData->m_switchJumpTables = WTFMove(m_switchJumpTables);
-            m_codeBlock->m_rareData->m_stringSwitchJumpTables = WTFMove(m_stringSwitchJumpTables);
+            m_codeBlock->m_rareData->m_unlinkedSwitchJumpTables = WTFMove(m_unlinkedSwitchJumpTables);
+            m_codeBlock->m_rareData->m_unlinkedStringSwitchJumpTables = WTFMove(m_unlinkedStringSwitchJumpTables);
             m_codeBlock->m_rareData->m_expressionInfoFatPositions = WTFMove(m_expressionInfoFatPositions);
             m_codeBlock->m_rareData->m_typeProfilerInfoMap = WTFMove(m_typeProfilerInfoMap);
             m_codeBlock->m_rareData->m_opProfileControlFlowBytecodeOffsets = WTFMove(m_opProfileControlFlowBytecodeOffsets);

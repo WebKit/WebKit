@@ -486,12 +486,22 @@ void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& t
         auto childToMove = detachFromRenderElement(from, child, WillBeDestroyed::No, RenderObject::IsInternalMove::Yes);
         attachToRenderElementInternal(to, WTFMove(childToMove), beforeChild, RenderObject::IsInternalMove::Yes);
     }
-    if (is<RenderInline>(child)) {
-        // When moving a subtree out of a BFC we need to make sure that the line boxes generated for the inline tree are not accessible anymore from the renderers.
-        // They eventually get destroyed during the inline layout of the original BFC.
-        for (auto& descendant : descendantsOfType<RenderBox>(downcast<RenderInline>(child)))
-            descendant.setInlineBoxWrapper(nullptr);
-    }
+
+    auto findBFCRootAndDestroyInlineTree = [&] {
+        auto* containingBlock = &from;
+        while (containingBlock) {
+            containingBlock->setNeedsLayout();
+            if (is<RenderBlockFlow>(*containingBlock)) {
+                downcast<RenderBlockFlow>(*containingBlock).deleteLines();
+                break;
+            }
+            containingBlock = containingBlock->containingBlock();
+        }
+    };
+    // When moving a subtree out of a BFC we need to make sure that the line boxes generated for the inline tree are not accessible anymore from the renderers.
+    // Let's find the BFC root and nuke the inline tree (At some point we are going to destroy the subtree instead of moving these renderers around.)
+    if (is<RenderInline>(child))
+        findBFCRootAndDestroyInlineTree();
 }
 
 void RenderTreeBuilder::move(RenderBoxModelObject& from, RenderBoxModelObject& to, RenderObject& child, NormalizeAfterInsertion normalizeAfterInsertion)
@@ -521,8 +531,22 @@ void RenderTreeBuilder::moveChildren(RenderBoxModelObject& from, RenderBoxModelO
     // or when fullRemoveInsert is false.
     if (normalizeAfterInsertion == NormalizeAfterInsertion::Yes && is<RenderBlock>(from)) {
         downcast<RenderBlock>(from).removePositionedObjects(nullptr);
-        if (is<RenderBlockFlow>(from))
-            downcast<RenderBlockFlow>(from).removeFloatingObjects();
+        auto removeFloatingObjectsIfApplicable = [&] {
+            if (from.renderTreeBeingDestroyed())
+                return;
+            if (!is<RenderBlockFlow>(from))
+                return;
+            auto* floatingObjects = downcast<RenderBlockFlow>(from).floatingObjectSet();
+            if (!floatingObjects)
+                return;
+            // Here we remove the floating objects from the descendants as well.
+            auto copyOfFloatingObjects = WTF::map(*floatingObjects, [](auto& floatingObject) { 
+                return floatingObject.get();
+            });
+            for (auto* floatingObject : copyOfFloatingObjects)
+                floatingObject->renderer().removeFloatingOrPositionedChildFromBlockLists();
+        };
+        removeFloatingObjectsIfApplicable();
     }
 
     ASSERT(!beforeChild || &to == beforeChild->parent());
@@ -618,8 +642,8 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
             return false;
         }();
         if (movingIntoMulticolumn) {
-            multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), renderer);
             renderer.initializeFragmentedFlowStateOnInsertion();
+            multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*enclosingFragmentedFlow), renderer);
             return;
         }
         auto movingOutOfMulticolumn = !wasOutOfFlowPositioned && isOutOfFlowPositioned;
@@ -728,10 +752,22 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
                 // We need to re-run the grid items placement if it had gained a new item.
                 downcast<RenderGrid>(*newParent).dirtyGrid();
             }
-            if (auto* newEnclosingFragmentedFlow = newParent->enclosingFragmentedFlow(); is<RenderMultiColumnFlow>(newEnclosingFragmentedFlow) && currentEnclosingFragment != newEnclosingFragmentedFlow) {
+
+            auto newMultiColumnForChildRenderer = [&]() -> RenderMultiColumnFlow* {
+                // Update the state when the child has moved from one multi-column flow to another.
+                auto* newEnclosingFragmentedFlow = newParent->enclosingFragmentedFlow();
+                if (newParent->isMultiColumnBlockFlow()) {
+                    // This child is a spanner so it is not in the subtree of the multicolumn renderer. It is parented directly under the block flow so
+                    // enclosingFragmentedFlow() returns the parent enclosing flow.
+                    ASSERT(is<RenderBox>(child) && downcast<RenderBlockFlow>(*newParent).multiColumnFlow()->spannerMap().contains(&downcast<RenderBox>(child)));
+                    newEnclosingFragmentedFlow = downcast<RenderBlockFlow>(*newParent).multiColumnFlow();
+                }
+                return newEnclosingFragmentedFlow != currentEnclosingFragment && is<RenderMultiColumnFlow>(newEnclosingFragmentedFlow) ? downcast<RenderMultiColumnFlow>(newEnclosingFragmentedFlow) : nullptr;
+            };
+            if (auto* newEnclosingMultiColumn = newMultiColumnForChildRenderer()) {
                 // Let the fragmented flow know that it has a new in-flow descendant.
-                multiColumnBuilder().multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*newEnclosingFragmentedFlow), child);
                 child.initializeFragmentedFlowStateOnInsertion();
+                multiColumnBuilder().multiColumnDescendantInserted(*newEnclosingMultiColumn, child);
             }
         }
     } else {

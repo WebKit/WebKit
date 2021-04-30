@@ -221,6 +221,7 @@ struct WebProcessCreationParameters {
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;
     String localizedDeviceModel;
+    String contentSizeCategory;
 #endif
 
 #if PLATFORM(COCOA)

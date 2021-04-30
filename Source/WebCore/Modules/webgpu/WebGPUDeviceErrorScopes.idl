@@ -28,7 +28,7 @@ typedef (GPUOutOfMemoryError or GPUValidationError) GPUError;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     ImplementedBy=WebGPUDeviceErrorScopes
 ] partial interface WebGPUDevice {
     undefined pushErrorScope(GPUErrorFilter filter);

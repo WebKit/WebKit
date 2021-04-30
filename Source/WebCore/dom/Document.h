@@ -36,7 +36,7 @@
 #include "DocumentTimelinesController.h"
 #include "DocumentTiming.h"
 #include "ElementIdentifier.h"
-#include "FocusDirection.h"
+#include "FocusOptions.h"
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"
 #include "FrameIdentifier.h"
@@ -122,6 +122,7 @@ class DeviceMotionController;
 class DeviceOrientationAndMotionAccessController;
 class DeviceOrientationClient;
 class DeviceOrientationController;
+class DocumentFontLoader;
 class DocumentFragment;
 class DocumentLoader;
 class DocumentMarkerController;
@@ -137,6 +138,7 @@ class ExtensionStyleSheets;
 class FloatQuad;
 class FloatRect;
 class FontFaceSet;
+class FontLoadRequest;
 class FormController;
 class Frame;
 class FrameSelection;
@@ -232,6 +234,7 @@ class XPathExpression;
 class XPathNSResolver;
 class XPathResult;
 
+struct ApplicationManifest;
 struct BoundaryPoint;
 struct HighlightRangeData;
 struct IntersectionObserverData;
@@ -627,6 +630,8 @@ public:
     void suspendDeviceMotionAndOrientationUpdates();
     void resumeDeviceMotionAndOrientationUpdates();
 
+    void suspendFontLoading();
+
     RenderView* renderView() const { return m_renderView.get(); }
 
     bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
@@ -736,7 +741,7 @@ public:
     Seconds timeSinceDocumentCreation() const { return MonotonicTime::now() - m_documentCreationTime; };
 #endif
 
-    const Color& themeColor() const { return m_themeColor; }
+    const Color& themeColor() const { return m_metaElementThemeColor.isValid() ? m_metaElementThemeColor : m_applicationManifestThemeColor; }
 
     void setTextColor(const Color& color) { m_textColor = color; }
     const Color& textColor() const { return m_textColor; }
@@ -753,13 +758,11 @@ public:
     VisitedLinkState& visitedLinkState() const { return *m_visitedLinkState; }
 
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const LayoutPoint&, const PlatformMouseEvent&);
-
-    enum class FocusRemovalEventsMode { Dispatch, DoNotDispatch };
     // Returns whether focus was blocked. A true value does not necessarily mean the element was focused.
     // The element could have already been focused or may not be focusable (e.g. <input disabled>).
-    WEBCORE_EXPORT bool setFocusedElement(Element*, FocusDirection = FocusDirection::None,
-        FocusRemovalEventsMode = FocusRemovalEventsMode::Dispatch);
+    WEBCORE_EXPORT bool setFocusedElement(Element*, const FocusOptions& = { });
     Element* focusedElement() const { return m_focusedElement.get(); }
+    bool wasLastFocusByClick() const { return m_latestFocusTrigger == FocusTrigger::Click; }
     UserActionElementSet& userActionElements()  { return m_userActionElements; }
     const UserActionElementSet& userActionElements() const { return m_userActionElements; }
 
@@ -907,10 +910,14 @@ public:
     void processDisabledAdaptations(const String& adaptations);
     void updateViewportArguments();
     void processReferrerPolicy(const String& policy, ReferrerPolicySource);
-    void processThemeColor(const String& themeColor);
+    void processMetaElementThemeColor(const String& themeColor);
 
 #if ENABLE(DARK_MODE_CSS)
     void processColorScheme(const String& colorScheme);
+#endif
+
+#if ENABLE(APPLICATION_MANIFEST)
+    void processApplicationManifest(const ApplicationManifest&);
 #endif
 
     // Returns the owning element in the parent document.
@@ -1641,6 +1648,8 @@ private:
 
     // ScriptExecutionContext
     CSSFontSelector* cssFontSelector() final { return m_fontSelector.ptr(); }
+    std::unique_ptr<FontLoadRequest> fontLoadRequest(String&, bool, bool, LoadedFromOpaqueSource) final;
+    void beginLoadingFontSoon(FontLoadRequest&) final;
 
     // FontSelectorClient
     void fontsNeedUpdate(FontSelector&) final;
@@ -1665,6 +1674,8 @@ private:
     void updateTitleFromTitleElement();
     void updateTitle(const StringWithDirection&);
     void updateBaseURL();
+
+    void themeColorChanged();
 
     void invalidateAccessKeyCacheSlowCase();
     void buildAccessKeyCache();
@@ -1730,7 +1741,7 @@ private:
 
     UniqueRef<Quirks> m_quirks;
 
-    std::unique_ptr<Style::Resolver> m_userAgentShadowTreeStyleResolver;
+    RefPtr<Style::Resolver> m_userAgentShadowTreeStyleResolver;
 
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document> m_contextDocument;
@@ -1786,7 +1797,9 @@ private:
 
     std::unique_ptr<FormController> m_formController;
 
-    Color m_themeColor;
+    Color m_metaElementThemeColor;
+    Color m_applicationManifestThemeColor;
+
     Color m_textColor { Color::black };
     Color m_linkColor;
     Color m_visitedLinkColor;
@@ -1801,6 +1814,8 @@ private:
     const std::unique_ptr<DocumentMarkerController> m_markers;
     
     Timer m_styleRecalcTimer;
+
+    std::unique_ptr<Style::Update> m_pendingRenderTreeTextUpdate;
 
     Element* m_cssTarget { nullptr };
 
@@ -1974,6 +1989,7 @@ private:
     RefPtr<DocumentFragment> m_documentFragmentForInnerOuterHTML;
 
     Ref<CSSFontSelector> m_fontSelector;
+    UniqueRef<DocumentFontLoader> m_fontLoader;
 
     WeakHashSet<MediaProducer> m_audioProducers;
     WeakPtr<SpeechRecognition> m_activeSpeechRecognition;
@@ -2121,6 +2137,8 @@ private:
 #endif
 
     bool m_updateTitleTaskScheduled { false };
+
+    FocusTrigger m_latestFocusTrigger { FocusTrigger::Other };
 
     OrientationNotifier m_orientationNotifier;
     mutable RefPtr<Logger> m_logger;

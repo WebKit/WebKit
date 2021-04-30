@@ -83,32 +83,32 @@ PASS Web Animations: property <text-indent> from [0em] to [100px] at (0.5) shoul
 PASS Web Animations: property <text-indent> from [0em] to [100px] at (0.75) should be [75px]
 PASS Web Animations: property <text-indent> from [0em] to [100px] at (1) should be [100px]
 PASS Web Animations: property <text-indent> from [0em] to [100px] at (1.25) should be [125px]
-FAIL CSS Transitions: property <text-indent> from [0%] to [100px] at (-0.25) should be [calc(0% + -25px)] assert_equals: expected "calc ( 0 % - 25px ) " but got "- 25px "
+PASS CSS Transitions: property <text-indent> from [0%] to [100px] at (-0.25) should be [calc(0% + -25px)]
 PASS CSS Transitions: property <text-indent> from [0%] to [100px] at (0) should be [0%]
-FAIL CSS Transitions: property <text-indent> from [0%] to [100px] at (0.25) should be [calc(0% + 25px)] assert_equals: expected "calc ( 0 % + 25px ) " but got "25px "
-FAIL CSS Transitions: property <text-indent> from [0%] to [100px] at (0.5) should be [calc(0% + 50px)] assert_equals: expected "calc ( 0 % + 50px ) " but got "50px "
-FAIL CSS Transitions: property <text-indent> from [0%] to [100px] at (0.75) should be [calc(0% + 75px)] assert_equals: expected "calc ( 0 % + 75px ) " but got "75px "
-FAIL CSS Transitions: property <text-indent> from [0%] to [100px] at (1) should be [calc(0% + 100px)] assert_equals: expected "calc ( 0 % + 100px ) " but got "100px "
-FAIL CSS Transitions: property <text-indent> from [0%] to [100px] at (1.25) should be [calc(0% + 125px)] assert_equals: expected "calc ( 0 % + 125px ) " but got "125px "
-FAIL CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (-0.25) should be [calc(0% + -25px)] assert_equals: expected "calc ( 0 % - 25px ) " but got "- 25px "
+PASS CSS Transitions: property <text-indent> from [0%] to [100px] at (0.25) should be [calc(0% + 25px)]
+PASS CSS Transitions: property <text-indent> from [0%] to [100px] at (0.5) should be [calc(0% + 50px)]
+PASS CSS Transitions: property <text-indent> from [0%] to [100px] at (0.75) should be [calc(0% + 75px)]
+PASS CSS Transitions: property <text-indent> from [0%] to [100px] at (1) should be [calc(0% + 100px)]
+PASS CSS Transitions: property <text-indent> from [0%] to [100px] at (1.25) should be [calc(0% + 125px)]
+PASS CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (-0.25) should be [calc(0% + -25px)]
 PASS CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (0) should be [0%]
-FAIL CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (0.25) should be [calc(0% + 25px)] assert_equals: expected "calc ( 0 % + 25px ) " but got "25px "
-FAIL CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (0.5) should be [calc(0% + 50px)] assert_equals: expected "calc ( 0 % + 50px ) " but got "50px "
-FAIL CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (0.75) should be [calc(0% + 75px)] assert_equals: expected "calc ( 0 % + 75px ) " but got "75px "
-FAIL CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (1) should be [calc(0% + 100px)] assert_equals: expected "calc ( 0 % + 100px ) " but got "100px "
-FAIL CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (1.25) should be [calc(0% + 125px)] assert_equals: expected "calc ( 0 % + 125px ) " but got "125px "
-FAIL CSS Animations: property <text-indent> from [0%] to [100px] at (-0.25) should be [calc(0% + -25px)] assert_equals: expected "calc ( 0 % - 25px ) " but got "- 25px "
+PASS CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (0.25) should be [calc(0% + 25px)]
+PASS CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (0.5) should be [calc(0% + 50px)]
+PASS CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (0.75) should be [calc(0% + 75px)]
+PASS CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (1) should be [calc(0% + 100px)]
+PASS CSS Transitions with transition: all: property <text-indent> from [0%] to [100px] at (1.25) should be [calc(0% + 125px)]
+PASS CSS Animations: property <text-indent> from [0%] to [100px] at (-0.25) should be [calc(0% + -25px)]
 PASS CSS Animations: property <text-indent> from [0%] to [100px] at (0) should be [0%]
-FAIL CSS Animations: property <text-indent> from [0%] to [100px] at (0.25) should be [calc(0% + 25px)] assert_equals: expected "calc ( 0 % + 25px ) " but got "25px "
-FAIL CSS Animations: property <text-indent> from [0%] to [100px] at (0.5) should be [calc(0% + 50px)] assert_equals: expected "calc ( 0 % + 50px ) " but got "50px "
-FAIL CSS Animations: property <text-indent> from [0%] to [100px] at (0.75) should be [calc(0% + 75px)] assert_equals: expected "calc ( 0 % + 75px ) " but got "75px "
-FAIL CSS Animations: property <text-indent> from [0%] to [100px] at (1) should be [calc(0% + 100px)] assert_equals: expected "calc ( 0 % + 100px ) " but got "100px "
-FAIL CSS Animations: property <text-indent> from [0%] to [100px] at (1.25) should be [calc(0% + 125px)] assert_equals: expected "calc ( 0 % + 125px ) " but got "125px "
-FAIL Web Animations: property <text-indent> from [0%] to [100px] at (-0.25) should be [calc(0% + -25px)] assert_equals: expected "calc ( 0 % - 25px ) " but got "- 25px "
+PASS CSS Animations: property <text-indent> from [0%] to [100px] at (0.25) should be [calc(0% + 25px)]
+PASS CSS Animations: property <text-indent> from [0%] to [100px] at (0.5) should be [calc(0% + 50px)]
+PASS CSS Animations: property <text-indent> from [0%] to [100px] at (0.75) should be [calc(0% + 75px)]
+PASS CSS Animations: property <text-indent> from [0%] to [100px] at (1) should be [calc(0% + 100px)]
+PASS CSS Animations: property <text-indent> from [0%] to [100px] at (1.25) should be [calc(0% + 125px)]
+PASS Web Animations: property <text-indent> from [0%] to [100px] at (-0.25) should be [calc(0% + -25px)]
 PASS Web Animations: property <text-indent> from [0%] to [100px] at (0) should be [0%]
-FAIL Web Animations: property <text-indent> from [0%] to [100px] at (0.25) should be [calc(0% + 25px)] assert_equals: expected "calc ( 0 % + 25px ) " but got "25px "
-FAIL Web Animations: property <text-indent> from [0%] to [100px] at (0.5) should be [calc(0% + 50px)] assert_equals: expected "calc ( 0 % + 50px ) " but got "50px "
-FAIL Web Animations: property <text-indent> from [0%] to [100px] at (0.75) should be [calc(0% + 75px)] assert_equals: expected "calc ( 0 % + 75px ) " but got "75px "
-FAIL Web Animations: property <text-indent> from [0%] to [100px] at (1) should be [calc(0% + 100px)] assert_equals: expected "calc ( 0 % + 100px ) " but got "100px "
-FAIL Web Animations: property <text-indent> from [0%] to [100px] at (1.25) should be [calc(0% + 125px)] assert_equals: expected "calc ( 0 % + 125px ) " but got "125px "
+PASS Web Animations: property <text-indent> from [0%] to [100px] at (0.25) should be [calc(0% + 25px)]
+PASS Web Animations: property <text-indent> from [0%] to [100px] at (0.5) should be [calc(0% + 50px)]
+PASS Web Animations: property <text-indent> from [0%] to [100px] at (0.75) should be [calc(0% + 75px)]
+PASS Web Animations: property <text-indent> from [0%] to [100px] at (1) should be [calc(0% + 100px)]
+PASS Web Animations: property <text-indent> from [0%] to [100px] at (1.25) should be [calc(0% + 125px)]
 

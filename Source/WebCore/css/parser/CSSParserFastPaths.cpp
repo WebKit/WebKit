@@ -35,6 +35,7 @@
 #include "CSSParserIdioms.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserHelpers.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "HTMLParserIdioms.h"
@@ -618,8 +619,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueDynamic || valueID == CSSValueStatic;
     case CSSPropertyCaptionSide: // top | bottom | left | right
         return valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueTop || valueID == CSSValueBottom;
-    case CSSPropertyClear: // none | left | right | both
-        return valueID == CSSValueNone || valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueBoth;
+    case CSSPropertyClear: // none | inline-start | inline-end | left | right | both
+        return valueID == CSSValueNone || valueID == CSSValueInlineStart || valueID == CSSValueInlineEnd || valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueBoth;
     case CSSPropertyClipRule:
     case CSSPropertyFillRule:
         return valueID == CSSValueNonzero || valueID == CSSValueEvenodd;
@@ -630,13 +631,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueAuto || valueID == CSSValueOptimizeSpeed || valueID == CSSValueOptimizeQuality;
     case CSSPropertyDirection: // ltr | rtl
         return valueID == CSSValueLtr || valueID == CSSValueRtl;
-    case CSSPropertyDisplay:
-        // inline | block | list-item | inline-block | table |
-        // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
-        // table-column-group | table-column | table-cell | table-caption | -webkit-box | -webkit-inline-box | none
-        // flex | inline-flex | -webkit-flex | -webkit-inline-flex | grid | inline-grid
-        return (valueID >= CSSValueInline && valueID <= CSSValueContents) || valueID == CSSValueNone
-            || valueID == CSSValueGrid || valueID == CSSValueInlineGrid || valueID == CSSValueFlowRoot;
     case CSSPropertyDominantBaseline:
         // auto | use-script | no-change | reset-size | ideographic |
         // alphabetic | hanging | mathematical | central | middle |
@@ -646,8 +640,8 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
             || (valueID >= CSSValueCentral && valueID <= CSSValueMathematical);
     case CSSPropertyEmptyCells: // show | hide
         return valueID == CSSValueShow || valueID == CSSValueHide;
-    case CSSPropertyFloat: // left | right | none
-        return valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueNone;
+    case CSSPropertyFloat: // inline-start | inline-end | left | right | none
+        return valueID == CSSValueInlineStart || valueID == CSSValueInlineEnd || valueID == CSSValueLeft || valueID == CSSValueRight || valueID == CSSValueNone;
     case CSSPropertyImageOrientation: // from-image | none
         return valueID == CSSValueFromImage || valueID == CSSValueNone;
     case CSSPropertyImageRendering: // auto | optimizeContrast | pixelated | optimizeSpeed | crispEdges | optimizeQuality | webkit-crispEdges
@@ -661,7 +655,7 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
     case CSSPropertyListStyleType:
         // See section CSS_PROP_LIST_STYLE_TYPE of file CSSValueKeywords.in
         // for the list of supported list-style-types.
-        return (valueID >= CSSValueDisc && valueID <= CSSValueKatakanaIroha) || valueID == CSSValueNone;
+        return CSSPropertyParserHelpers::isPredefinedCounterStyle(valueID) || valueID == CSSValueNone;
     case CSSPropertyMaskType:
         return valueID == CSSValueLuminance || valueID == CSSValueAlpha;
     case CSSPropertyMathStyle:
@@ -928,7 +922,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitColumnProgression:
     case CSSPropertyColumnRuleStyle:
     case CSSPropertyDirection:
-    case CSSPropertyDisplay:
     case CSSPropertyEmptyCells:
     case CSSPropertyFlexDirection:
     case CSSPropertyFlexWrap:

@@ -162,9 +162,9 @@ rm ANGLE.plist.bak
 
 echo "Translating gni build files to cmake."
 git checkout origin/master -- src/compiler.gni src/libGLESv2.gni src/libANGLE/renderer/d3d/BUILD.gn
-./gni-to-cmake.py src/compiler.gni Compiler.cmake ''
-./gni-to-cmake.py src/libGLESv2.gni GLESv2.cmake ''
-./gni-to-cmake.py src/libANGLE/renderer/d3d/BUILD.gn D3D.cmake 'src/libANGLE/renderer/d3d/'
+./gni-to-cmake.py src/compiler.gni Compiler.cmake
+./gni-to-cmake.py src/libGLESv2.gni GLESv2.cmake
+./gni-to-cmake.py src/libANGLE/renderer/d3d/BUILD.gn D3D.cmake --prepend 'src/libANGLE/renderer/d3d/'
 git checkout src/compiler.gni src/libGLESv2.gni
 
 echo "Moving angle_commit.h into place"

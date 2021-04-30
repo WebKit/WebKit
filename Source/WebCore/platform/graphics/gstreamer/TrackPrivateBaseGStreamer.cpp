@@ -43,15 +43,27 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 
 namespace WebCore {
 
+static GRefPtr<GstPad> findBestUpstreamPad(GRefPtr<GstPad> pad)
+{
+    GRefPtr<GstPad> sinkPad = pad;
+    GRefPtr<GstPad> peerSrcPad;
+
+    peerSrcPad = adoptGRef(gst_pad_get_peer(sinkPad.get()));
+    // Some tag events with language tags don't reach the webkittextcombiner pads on time.
+    // It's better to listen for them in the earlier upstream ghost pads.
+    if (GST_IS_GHOST_PAD(peerSrcPad.get()))
+        sinkPad = adoptGRef(gst_ghost_pad_get_target(GST_GHOST_PAD(peerSrcPad.get())));
+    return sinkPad;
+}
+
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gint index, GRefPtr<GstPad> pad)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
-    , m_pad(pad)
+    , m_eventProbe(0)
     , m_owner(owner)
 {
+    setPad(WTFMove(pad));
     ASSERT(m_pad);
-
-    g_signal_connect_swapped(m_pad.get(), "notify::tags", G_CALLBACK(tagsChangedCallback), this);
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     tagsChanged();
@@ -61,12 +73,33 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackPrivateBase* owner, gi
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
     , m_stream(stream)
+    , m_eventProbe(0)
     , m_owner(owner)
 {
     ASSERT(m_stream);
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     tagsChanged();
+}
+
+void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
+{
+    if (m_bestUpstreamPad && m_eventProbe)
+        gst_pad_remove_probe(m_bestUpstreamPad.get(), m_eventProbe);
+
+    m_pad = WTFMove(pad);
+    m_bestUpstreamPad = findBestUpstreamPad(m_pad);
+    m_eventProbe = gst_pad_add_probe(m_bestUpstreamPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, [] (GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
+        auto* track = static_cast<TrackPrivateBaseGStreamer*>(userData);
+        switch (GST_EVENT_TYPE(gst_pad_probe_info_get_event(info))) {
+        case GST_EVENT_TAG:
+            tagsChangedCallback(track);
+            break;
+        default:
+            break;
+        }
+        return GST_PAD_PROBE_OK;
+    }, this, nullptr);
 }
 
 TrackPrivateBaseGStreamer::~TrackPrivateBaseGStreamer()
@@ -84,11 +117,14 @@ void TrackPrivateBaseGStreamer::disconnect()
 
     m_notifier->cancelPendingNotifications();
 
-    if (!m_pad)
-        return;
+    if (m_bestUpstreamPad && m_eventProbe) {
+        gst_pad_remove_probe(m_bestUpstreamPad.get(), m_eventProbe);
+        m_eventProbe = 0;
+        m_bestUpstreamPad.clear();
+    }
 
-    g_signal_handlers_disconnect_matched(m_pad.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
-    m_pad.clear();
+    if (m_pad)
+        m_pad.clear();
 }
 
 void TrackPrivateBaseGStreamer::tagsChangedCallback(TrackPrivateBaseGStreamer* track)
@@ -99,15 +135,26 @@ void TrackPrivateBaseGStreamer::tagsChangedCallback(TrackPrivateBaseGStreamer* t
 void TrackPrivateBaseGStreamer::tagsChanged()
 {
     GRefPtr<GstTagList> tags;
-    if (m_pad) {
-        if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_pad.get()), "tags"))
-            g_object_get(m_pad.get(), "tags", &tags.outPtr(), nullptr);
-        else
-            tags = adoptGRef(gst_tag_list_new_empty());
-    }
-    else if (m_stream)
+    if (m_bestUpstreamPad) {
+        GRefPtr<GstEvent> tagEvent;
+        guint i = 0;
+        // Prefer the tag event having a language tag, if available.
+        do {
+            tagEvent = adoptGRef(gst_pad_get_sticky_event(m_bestUpstreamPad.get(), GST_EVENT_TAG, i));
+            if (tagEvent) {
+                GstTagList* tagsFromEvent;
+                gst_event_parse_tag(tagEvent.get(), &tagsFromEvent);
+                tags = adoptGRef(gst_tag_list_copy(tagsFromEvent));
+                String language;
+                if (getTag(tags.get(), GST_TAG_LANGUAGE_CODE, language))
+                    break;
+            }
+            i++;
+        } while (tagEvent);
+    } else if (m_stream)
         tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
-    else
+
+    if (!tags)
         tags = adoptGRef(gst_tag_list_new_empty());
 
     GST_DEBUG("Inspecting track at index %d with tags: %" GST_PTR_FORMAT, m_index, tags.get());

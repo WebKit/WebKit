@@ -90,8 +90,6 @@ public:
     void setForcedSupportsHighDynamicRangeValue(ForcedAccessibilityValue);
 
     // RuntimeEnabledFeatures.
-    ExceptionOr<void> setWebGL2Enabled(bool);
-    ExceptionOr<void> setWebGPUEnabled(bool);
     ExceptionOr<void> setFetchAPIKeepAliveEnabled(bool);
     ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
 
@@ -159,7 +157,6 @@ private:
         WebCore::FrameFlattening m_frameFlattening;
 
         // RuntimeEnabledFeatures
-        bool m_webGL2Enabled;
         bool m_fetchAPIKeepAliveAPIEnabled;
         bool m_customPasteboardDataEnabled;
 

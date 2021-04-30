@@ -39,7 +39,7 @@ public:
     AVIFImageReader(RefPtr<AVIFImageDecoder>&&);
     ~AVIFImageReader();
 
-    void parseHeader(const SharedBuffer::DataSegment&, bool allDataReceived);
+    bool parseHeader(const SharedBuffer::DataSegment&, bool allDataReceived);
     void decodeFrame(size_t index, ScalableImageDecoderFrame&, const SharedBuffer::DataSegment&);
     size_t imageCount() const;
     double repetitionCount() const;

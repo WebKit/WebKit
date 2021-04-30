@@ -80,7 +80,7 @@ void PatchpointExceptionHandle::scheduleExitCreationForUnwind(
     
     RefPtr<OSRExitHandle> handle = createHandle(GenericUnwind, params);
 
-    handle->exit.m_exceptionHandlerCallSiteIndex = callSiteIndex;
+    handle->m_jitCode->m_osrExit[handle->m_index].m_exceptionHandlerCallSiteIndex = callSiteIndex;
 
     HandlerInfo handler = m_handler;
     params.addLatePath(

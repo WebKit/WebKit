@@ -331,7 +331,17 @@ class PortTest(unittest.TestCase):
     def test_commits_for_upload_git_svn(self):
         with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True):
             port = self.make_port(port_name='foo')
-            self.assertEqual([{'repository_id': 'webkit', 'id': '9', 'branch': 'trunk'}], port.commits_for_upload())
+            self.assertEqual([{
+                'repository_id': 'webkit',
+                'revision': 9,
+                'hash': 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                'identifier': '5@main',
+                'branch': 'main',
+                'author': {'emails': ['jbedard@apple.com'], 'name': 'Jonathan Bedard'},
+                'message': 'Patch Series\ngit-svn-id: https://svn.example.org/repository//trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc',
+                'timestamp': 1601668000,
+                'order': 1,
+            }], port.commits_for_upload())
 
 
 class NaturalCompareTest(unittest.TestCase):

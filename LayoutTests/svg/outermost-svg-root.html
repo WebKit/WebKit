@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      /* relative positioning ensures underlying RenderLayer */
+      .renderingArea {
+          position: relative;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="../resources/js-test-pre.js"></script>
+    <pre id="console"></pre>
+    <div class="renderingArea" id="svg">
+      <svg>
+        <foreignObject>
+          <svg></svg>
+        </foreignObject>
+      </svg>
+    </div>
+    <div class="renderingArea" id="mathml">
+      <math>
+        <semantics>
+          <annotation-xml encoding="image/svg+xml">
+            <svg></svg>
+          </annotation-xml>
+        </semantics>
+      </math>
+    </div>
+    <div class="renderingArea" id="non_svg"></div>
+    <div class="renderingArea" id="svg_use">
+      <svg>
+        <defs>
+          <foreignObject>
+            <svg id="mySVG"></svg>
+          </foreignObject>
+        </defs>
+        <use href="#mySVG"/>
+      </svg>
+    </div>
+    <div class="renderingArea" id="svg_child_of_use">
+      <svg>
+        <use href="#invalid">
+          <svg></svg>
+        </use>
+      </svg>
+    </div>
+    <div class="renderingArea" id="svg_in_shadow_tree"></div>
+    <div class="renderingArea" id="mathml_in_shadow_tree"></div>
+    <div class="renderingArea" id="non_svg_in_shadow_tree"></div>
+    <div class="renderingArea" id="svg_use_in_shadow_tree"></div>
+    <div class="renderingArea" id="svg_child_of_use_in_shadow_tree"></div>
+    <script>
+      const svgNS = 'http://www.w3.org/2000/svg';
+
+      (function() {
+          let nonSVG = document.createElementNS('http://example.org/', "nonSVG");
+          let svg = document.createElementNS(svgNS, 'svg');
+          nonSVG.appendChild(svg);
+          document.getElementById("non_svg").appendChild(nonSVG);
+      })();
+
+      ["svg", "mathml", "non_svg", "svg_use", "svg_child_of_use"].forEach(id => {
+          let shadowHost = document.createElement("div");
+          let shadowRoot = shadowHost.attachShadow({mode: 'open'});
+          let svg = document.getElementById(id).firstElementChild.cloneNode(true);
+          ["href", "id"].forEach(attribute => {
+              // Fix duplicate ids.
+              Array.from(svg.querySelectorAll(`[${attribute}]`)).forEach(element => {
+                  element.setAttribute(attribute,
+                                       `${element.getAttribute(attribute)}_copy`);
+              });
+          });
+          shadowRoot.appendChild(svg);
+          document.getElementById(`${id}_in_shadow_tree`).appendChild(shadowHost);
+
+      });
+
+      function extractSVGRootRenderers(name) {
+          let element = document.getElementById(name);
+          const regexp = /\w+ \{svg\}/g;
+          return window.internals.elementRenderTreeAsText(element).match(regexp);
+      }
+
+      if (window.testRunner)
+          testRunner.dumpAsText();
+
+      shouldBe("extractSVGRootRenderers('svg')",
+               "['RenderSVGRoot {svg}','RenderSVGRoot {svg}']");
+
+      shouldBe("extractSVGRootRenderers('mathml')",
+               "['RenderSVGRoot {svg}']");
+
+      shouldBe("extractSVGRootRenderers('non_svg')",
+               "['RenderSVGRoot {svg}']");
+
+      shouldBe("extractSVGRootRenderers('svg_use')",
+               "['RenderSVGRoot {svg}','RenderSVGViewportContainer {svg}']");
+
+      shouldBe("extractSVGRootRenderers('svg_child_of_use')",
+               "['RenderSVGRoot {svg}','RenderSVGViewportContainer {svg}']");
+
+      shouldBe("extractSVGRootRenderers('svg_in_shadow_tree')",
+               "['RenderSVGRoot {svg}','RenderSVGRoot {svg}']");
+
+      shouldBe("extractSVGRootRenderers('mathml_in_shadow_tree')",
+               "['RenderSVGRoot {svg}']");
+
+      shouldBe("extractSVGRootRenderers('non_svg_in_shadow_tree')",
+               "['RenderSVGRoot {svg}']");
+
+      shouldBe("extractSVGRootRenderers('svg_use_in_shadow_tree')",
+               "['RenderSVGRoot {svg}','RenderSVGViewportContainer {svg}']");
+
+      shouldBe("extractSVGRootRenderers('svg_child_of_use_in_shadow_tree')",
+               "['RenderSVGRoot {svg}','RenderSVGViewportContainer {svg}']");
+
+    </script>
+    <script src="../../resources/js-test-post.js"></script>
+  </body>
+</html>

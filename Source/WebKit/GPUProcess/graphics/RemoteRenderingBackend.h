@@ -58,7 +58,6 @@ namespace WebKit {
 
 class DisplayListReaderHandle;
 class GPUConnectionToWebProcess;
-class LayerHostingContext;
 struct RemoteRenderingBackendCreationParameters;
 
 class RemoteRenderingBackend
@@ -83,6 +82,8 @@ public:
     void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, WebCore::RenderingResourceIdentifier destination);
 
     void populateGetImageDataSharedMemory(WebCore::ImageData*);
+
+    bool allowsExitUnderMemoryPressure() const;
 
     // Runs Function in RemoteRenderingBackend task queue.
     void dispatch(Function<void()>&&);
@@ -163,9 +164,6 @@ private:
     IPC::Semaphore m_getImageDataSemaphore;
     RefPtr<SharedMemory> m_getImageDataSharedMemory;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    std::unique_ptr<LayerHostingContext> m_contextForVisibilityPropagation;
-#endif
 };
 
 } // namespace WebKit

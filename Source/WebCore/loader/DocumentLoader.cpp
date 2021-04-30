@@ -33,7 +33,6 @@
 #include "ApplicationCacheHost.h"
 #include "Archive.h"
 #include "ArchiveResourceCollection.h"
-#include "CSSFontSelector.h"
 #include "CachedPage.h"
 #include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
@@ -338,7 +337,7 @@ void DocumentLoader::stopLoading()
     cancelAll(m_multipartSubresourceLoaders);
 
     if (auto* document = this->document())
-        document->fontSelector().suspendFontLoadingTimer();
+        document->suspendFontLoading();
 
     // Appcache uses ResourceHandle directly, DocumentLoader doesn't count these loads.
     m_applicationCacheHost->stopLoadingInFrame(*m_frame);
@@ -632,9 +631,9 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
             return completionHandler(WTFMove(newRequest));
         }
         if (!portAllowed(newRequest.url())) {
-            RELEASE_LOG_IF_ALLOWED("willSendRequest: canceling - port not allowed");
+            RELEASE_LOG_IF_ALLOWED("willSendRequest: canceling - redirecting to a URL with a blocked port");
             if (m_frame)
-                m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to use restricted network port: " + newRequest.url().string());
+                FrameLoader::reportBlockedLoadFailed(*m_frame, newRequest.url());
             cancelMainResourceLoad(frameLoader()->blockedError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }

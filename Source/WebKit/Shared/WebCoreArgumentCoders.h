@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,6 +52,10 @@
 
 #if USE(CURL)
 #include <WebCore/CurlProxySettings.h>
+#endif
+
+#if ENABLE(WIRELESS_PLAYBACK_TARGET)
+#include <WebCore/MediaPlaybackTargetContext.h>
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
@@ -174,7 +178,7 @@ struct KeypressCommand;
 
 #if PLATFORM(IOS_FAMILY)
 class FloatQuad;
-class SelectionRect;
+class SelectionGeometry;
 struct PasteboardImage;
 struct PasteboardWebContent;
 #endif
@@ -193,10 +197,6 @@ struct PasteboardWebContent;
 
 #if ENABLE(CONTENT_FILTERING)
 class ContentFilterUnblockHandler;
-#endif
-
-#if ENABLE(WIRELESS_PLAYBACK_TARGET)
-class MediaPlaybackTargetContext;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -476,9 +476,9 @@ template<> struct ArgumentCoder<CGAffineTransform> {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-template<> struct ArgumentCoder<WebCore::SelectionRect> {
-    static void encode(Encoder&, const WebCore::SelectionRect&);
-    static Optional<WebCore::SelectionRect> decode(Decoder&);
+template<> struct ArgumentCoder<WebCore::SelectionGeometry> {
+    static void encode(Encoder&, const WebCore::SelectionGeometry&);
+    static Optional<WebCore::SelectionGeometry> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::InspectorOverlay::Highlight> {
@@ -644,7 +644,7 @@ template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static void encode(Encoder&, const WebCore::MediaPlaybackTargetContext&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::MediaPlaybackTargetContext&);
     static void encodePlatformData(Encoder&, const WebCore::MediaPlaybackTargetContext&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::MediaPlaybackTargetContext&);
+    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::MediaPlaybackTargetContext::Type, WebCore::MediaPlaybackTargetContext&);
 };
 #endif
 
@@ -704,9 +704,9 @@ template<> struct ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::Merchant
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities&);
 };
 
-template<> struct ArgumentCoder<Vector<RefPtr<WebCore::ApplePayError>>> {
-    static void encode(Encoder&, const Vector<RefPtr<WebCore::ApplePayError>>&);
-    static Optional<Vector<RefPtr<WebCore::ApplePayError>>> decode(Decoder&);
+template<> struct ArgumentCoder<RefPtr<WebCore::ApplePayError>> {
+    static void encode(Encoder&, const RefPtr<WebCore::ApplePayError>&);
+    static Optional<RefPtr<WebCore::ApplePayError>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::PaymentSessionError> {
@@ -761,9 +761,9 @@ template<> struct ArgumentCoder<WebCore::PromisedAttachmentInfo> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::PromisedAttachmentInfo&);
 };
 
-template<> struct ArgumentCoder<Vector<RefPtr<WebCore::SecurityOrigin>>> {
-    static void encode(Encoder&, const Vector<RefPtr<WebCore::SecurityOrigin>>&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, Vector<RefPtr<WebCore::SecurityOrigin>>&);
+template<> struct ArgumentCoder<RefPtr<WebCore::SecurityOrigin>> {
+    static void encode(Encoder&, const RefPtr<WebCore::SecurityOrigin>&);
+    static Optional<RefPtr<WebCore::SecurityOrigin>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::FontAttributes> {
@@ -810,11 +810,6 @@ template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
 template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {
     static void encode(Encoder&, const WebCore::CDMInstanceSession::Message&);
     static Optional<WebCore::CDMInstanceSession::Message> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::CDMInstanceSession::KeyStatusVector> {
-    static void encode(Encoder&, const WebCore::CDMInstanceSession::KeyStatusVector&);
-    static Optional<WebCore::CDMInstanceSession::KeyStatusVector> decode(Decoder&);
 };
 #endif
 
@@ -1037,21 +1032,6 @@ template <> struct EnumTraits<WebCore::GraphicsContextGL::SimulatedEventForTesti
     WebCore::GraphicsContextGL::SimulatedEventForTesting::Timeout
     >;
 };
-#endif
-
-#if ENABLE(WEBXR)
-
-template<> struct EnumTraits<PlatformXR::ReferenceSpaceType> {
-    using values = EnumValues<
-        PlatformXR::ReferenceSpaceType,
-        PlatformXR::ReferenceSpaceType::Viewer,
-        PlatformXR::ReferenceSpaceType::Local,
-        PlatformXR::ReferenceSpaceType::LocalFloor,
-        PlatformXR::ReferenceSpaceType::BoundedFloor,
-        PlatformXR::ReferenceSpaceType::Unbounded
-    >;
-};
-
 #endif
 
 } // namespace WTF

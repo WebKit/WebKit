@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
 ] dictionary XRInputSourceEventInit : EventInit {
     required WebXRFrame frame;
@@ -32,7 +32,7 @@
 };
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window

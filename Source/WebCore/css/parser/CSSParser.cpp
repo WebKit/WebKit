@@ -108,18 +108,6 @@ Color CSSParser::parseColor(const String& string, bool strict)
     return primitiveValue.color();
 }
 
-Color CSSParser::parseColorWorkerSafe(const String& string)
-{
-    if (auto color = CSSParserFastPaths::parseSimpleColor(string))
-        return *color;
-
-    CSSTokenizer tokenizer(string);
-    CSSParserTokenRange range(tokenizer.tokenRange());
-    range.consumeWhitespace();
-
-    return CSSPropertyParserHelpers::consumeColorWorkerSafe(range, CSSParserContext(HTMLStandardMode));
-}
-
 Color CSSParser::parseSystemColor(StringView string)
 {
     auto keyword = cssValueKeywordID(string);
@@ -136,15 +124,6 @@ Optional<SRGBA<uint8_t>> CSSParser::parseNamedColor(StringView string)
 Optional<SRGBA<uint8_t>> CSSParser::parseHexColor(StringView string)
 {
     return CSSParserFastPaths::parseHexColor(string);
-}
-
-Optional<CSSPropertyParserHelpers::FontRaw> CSSParser::parseFontWorkerSafe(const String& string, CSSParserMode cssParserMode)
-{
-    CSSTokenizer tokenizer(string);
-    CSSParserTokenRange range(tokenizer.tokenRange());
-    range.consumeWhitespace();
-
-    return CSSPropertyParserHelpers::consumeFontWorkerSafe(range, cssParserMode);
 }
 
 RefPtr<CSSValue> CSSParser::parseSingleValue(CSSPropertyID propertyID, const String& string, const CSSParserContext& context)
@@ -259,15 +238,6 @@ RefPtr<CSSValue> CSSParser::parseValueWithVariableReferences(CSSPropertyID propI
 Vector<double> CSSParser::parseKeyframeKeyList(const String& selector)
 {
     return CSSParserImpl::parseKeyframeKeyList(selector);
-}
-
-RefPtr<CSSValue> CSSParser::parseFontFaceDescriptor(CSSPropertyID propertyID, const String& propertyValue, const CSSParserContext& context)
-{
-    String string = makeString("@font-face { ", getPropertyNameString(propertyID), " : ", propertyValue, "; }");
-    RefPtr<StyleRuleBase> rule = parseRule(context, nullptr, string);
-    if (!rule || !rule->isFontFaceRule())
-        return nullptr;
-    return downcast<StyleRuleFontFace>(*rule.get()).properties().getPropertyCSSValue(propertyID);
 }
 
 }

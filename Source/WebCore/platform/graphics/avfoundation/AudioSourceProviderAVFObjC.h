@@ -28,12 +28,12 @@
 #if ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)
 
 #include "AudioSourceProvider.h"
-#include <atomic>
 #include <wtf/MediaTime.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 
 OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVPlayerItem;
@@ -55,6 +55,7 @@ class PlatformAudioData;
 
 class AudioSourceProviderAVFObjC : public ThreadSafeRefCounted<AudioSourceProviderAVFObjC>, public AudioSourceProvider {
 public:
+    using WeakValueType = AudioSourceProviderAVFObjC;
     static RefPtr<AudioSourceProviderAVFObjC> create(AVPlayerItem*);
     virtual ~AudioSourceProviderAVFObjC();
 
@@ -69,8 +70,8 @@ public:
 private:
     AudioSourceProviderAVFObjC(AVPlayerItem *);
 
-    void destroyMix();
-    void createMix();
+    void destroyMixIfNeeded();
+    void createMixIfNeeded();
 
     // AudioSourceProvider
     void provideInput(AudioBus*, size_t framesToProcess) override;
@@ -83,8 +84,6 @@ private:
     static void unprepareCallback(MTAudioProcessingTapRef);
     static void processCallback(MTAudioProcessingTapRef, CMItemCount, MTAudioProcessingTapFlags, AudioBufferList*, CMItemCount*, MTAudioProcessingTapFlags*);
 
-    void init(void* clientInfo, void** tapStorageOut);
-    void finalize();
     void prepare(CMItemCount maxFrames, const AudioStreamBasicDescription *processingFormat);
     void unprepare();
     void process(MTAudioProcessingTapRef, CMItemCount numberFrames, MTAudioProcessingTapFlags flagsIn, AudioBufferList *bufferListInOut, CMItemCount *numberFramesOut, MTAudioProcessingTapFlags *flagsOut);
@@ -101,12 +100,13 @@ private:
 
     MediaTime m_startTimeAtLastProcess;
     MediaTime m_endTimeAtLastProcess;
-    std::atomic<uint64_t> m_writeAheadCount { 0 };
+    uint64_t m_writeAheadCount { 0 };
     uint64_t m_readCount { 0 };
     enum { NoSeek = std::numeric_limits<uint64_t>::max() };
-    std::atomic<uint64_t> m_seekTo { NoSeek };
+    uint64_t m_seekTo { NoSeek };
     bool m_paused { true };
     AudioSourceProviderClient* m_client { nullptr };
+    WeakPtrFactory<AudioSourceProviderAVFObjC> m_weakFactory;
 
     class TapStorage;
     RefPtr<TapStorage> m_tapStorage;

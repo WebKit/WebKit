@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<script src="../../../../resources/js-test-pre.js"></script>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function runTest()
+{
+    description("This tests ToPrimitive performed on Objective-C wrapper object.");
+    if (!window.objCController) {
+        testFailed("window.objCController does not exist. Run with --dump-render-tree.");
+        return;
+    }
+
+    debug("RuntimeObject\n");
+
+    shouldBe("'' + objCController", "'<ObjCController>'");
+    shouldBe("+objCController", "0");
+    shouldBe("`${objCController}`", "'<ObjCController>'");
+
+    debug("");
+    shouldBe("objCController[Symbol.toPrimitive].length", "1");
+    shouldBe("objCController[Symbol.toPrimitive]('default')", "'<ObjCController>'");
+    shouldBe("objCController[Symbol.toPrimitive]('number')", "0");
+    shouldBe("objCController[Symbol.toPrimitive]('string')", "'<ObjCController>'");
+    shouldThrow("objCController[Symbol.toPrimitive]('foo')");
+    shouldThrow("objCController[Symbol.toPrimitive].call({}, 'default')");
+    shouldThrow("(0, objCController[Symbol.toPrimitive])()");
+
+    debug("\nRuntimeObject (redefined Symbol.toPrimitive)\n");
+    testDefineOwnProperty(objCController);
+
+    debug("\nObjcFallbackObjectImp\n");
+
+    fallbackObject = objCController.undefinedKey;
+
+    shouldBe("'' + fallbackObject", "'undefined'");
+    shouldBe("+fallbackObject", "NaN");
+    shouldBe("`${fallbackObject}`", "'undefined'");
+
+    debug("");
+    shouldBe("fallbackObject[Symbol.toPrimitive].length", "0");
+    shouldBe("fallbackObject[Symbol.toPrimitive]()", "undefined");
+    shouldBe("fallbackObject[Symbol.toPrimitive]('foo')", "undefined");
+    shouldThrow("fallbackObject[Symbol.toPrimitive].call({})");
+    shouldThrow("(0, fallbackObject[Symbol.toPrimitive])()");
+
+    debug("\nObjcFallbackObjectImp (redefined Symbol.toPrimitive)\n");
+    testDefineOwnProperty(fallbackObject);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function testDefineOwnProperty(_object)
+{
+    object = _object;
+
+    symbolToPrimitiveDescriptor = Object.getOwnPropertyDescriptor(object, Symbol.toPrimitive);
+    shouldBe("typeof symbolToPrimitiveDescriptor", "'object'");
+    shouldBe("symbolToPrimitiveDescriptor.value", "object[Symbol.toPrimitive]");
+    shouldBe("symbolToPrimitiveDescriptor.writable", "true");
+    shouldBe("symbolToPrimitiveDescriptor.enumerable", "false");
+    shouldBe("symbolToPrimitiveDescriptor.configurable", "true");
+
+    debug("");
+    newToPrimitive = () => "bar";
+    Object.defineProperty(object, Symbol.toPrimitive, { value: newToPrimitive, writable: false, enumerable: true });
+    shouldBe("object[Symbol.toPrimitive]()", "'bar'");
+
+    symbolToPrimitiveDescriptor = Object.getOwnPropertyDescriptor(object, Symbol.toPrimitive);
+    shouldBe("typeof symbolToPrimitiveDescriptor", "'object'");
+    shouldBe("symbolToPrimitiveDescriptor.value", "newToPrimitive");
+    shouldBe("symbolToPrimitiveDescriptor.writable", "false");
+    shouldBe("symbolToPrimitiveDescriptor.enumerable", "true");
+    shouldBe("symbolToPrimitiveDescriptor.configurable", "true");
+
+    debug("");
+    Object.defineProperty(object, Symbol.toPrimitive, { get: () => 123 });
+    shouldBe("object[Symbol.toPrimitive]", "123");
+}
+
+window.onload = runTest;
+</script>
+</body>

@@ -84,7 +84,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 27x17
                   text run at (0,0) width 27: "item"
           RenderBlock (anonymous) at (0,18) size 744x18
-            RenderInline {SPAN} at (0,0) size 0x0
+            RenderInline {SPAN} at (0,0) size 0x17
             RenderBR {BR} at (0,0) size 0x17
       RenderBlock {UL} at (0,274) size 784x36
         RenderListItem {LI} at (40,0) size 744x36

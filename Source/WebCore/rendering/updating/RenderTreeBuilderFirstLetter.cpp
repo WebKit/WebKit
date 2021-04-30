@@ -157,7 +157,7 @@ void RenderTreeBuilder::FirstLetter::cleanupOnDestroy(RenderTextFragment& textFr
 {
     if (!textFragment.firstLetter())
         return;
-    m_builder.destroy(*textFragment.firstLetter());
+    m_builder.destroy(*textFragment.firstLetter(), CanCollapseAnonymousBlock::No);
 }
 
 void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild)

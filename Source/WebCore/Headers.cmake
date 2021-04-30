@@ -437,6 +437,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DeviceOrientationData.h
     dom/DeviceOrientationOrMotionPermissionState.h
     dom/Document.h
+    dom/DocumentFontLoader.h
     dom/DocumentFragment.h
     dom/DocumentFullscreen.h
     dom/DocumentMarker.h
@@ -777,6 +778,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/EmptyClients.h
     loader/EmptyFrameLoaderClient.h
     loader/FetchOptions.h
+    loader/FontLoadRequest.h
     loader/FormState.h
     loader/FormSubmission.h
     loader/FrameLoadRequest.h
@@ -829,6 +831,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     loader/archive/mhtml/MHTMLArchive.h
 
+    loader/cache/CachedFontLoadRequest.h
     loader/cache/CachePolicy.h
     loader/cache/CachedImage.h
     loader/cache/CachedImageClient.h
@@ -1011,6 +1014,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/DataListSuggestionsClient.h
     platform/DataOwnerType.h
     platform/DateComponents.h
+    platform/DateTimeChooser.h
+    platform/DateTimeChooserClient.h
+    platform/DateTimeChooserParameters.h
     platform/Decimal.h
     platform/DeferrableTask.h
     platform/DocumentIdentifier.h
@@ -1266,7 +1272,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/MIMETypeCache.h
     platform/graphics/MediaPlaybackTarget.h
     platform/graphics/MediaPlaybackTargetClient.h
-    platform/graphics/MediaPlaybackTargetContext.h
     platform/graphics/MediaPlaybackTargetPicker.h
     platform/graphics/MediaPlayer.h
     platform/graphics/MediaPlayerEnums.h
@@ -1322,6 +1327,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/displaylists/DisplayListItemBufferIdentifier.h
     platform/graphics/displaylists/DisplayListItemType.h
     platform/graphics/displaylists/DisplayListItems.h
+    platform/graphics/displaylists/DisplayListIterator.h
     platform/graphics/displaylists/DisplayListRecorder.h
     platform/graphics/displaylists/DisplayListReplayer.h
     platform/graphics/displaylists/InMemoryDisplayList.h
@@ -1651,6 +1657,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     workers/ScriptBuffer.h
     workers/WorkerAnimationController.h
     workers/WorkerDebuggerProxy.h
+    workers/WorkerFontLoadRequest.h
     workers/WorkerLoaderProxy.h
     workers/WorkerOrWorkletThread.h
     workers/WorkerRunLoop.h

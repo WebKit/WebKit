@@ -60,6 +60,7 @@ public:
 
     enum class ShouldUpdateRootLayer { No, Yes };
     void updateRootLayerBoundsAndPosition(CGRect, MediaSample::VideoRotation, ShouldUpdateRootLayer);
+    void updateRootLayerAffineTransform(CGAffineTransform);
 
     void initialize(bool hideRootLayer, IntSize, CompletionHandler<void(bool didSucceed)>&&) final;
     bool didFail() const final;

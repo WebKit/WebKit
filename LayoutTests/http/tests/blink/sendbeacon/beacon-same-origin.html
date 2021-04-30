@@ -32,9 +32,9 @@ function testOne() {
         return;
     }
     debug("Sending beacon with type: " + Object.prototype.toString.call(payload));
-    shouldBeTrue('navigator.sendBeacon("resources/save-beacon.php?name=same-origin", payload);');
+    shouldBeTrue('navigator.sendBeacon("resources/save-beacon.py?name=same-origin", payload);');
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "resources/check-beacon.php?name=same-origin");
+    xhr.open("GET", "resources/check-beacon.py?name=same-origin");
     xhr.onload = function () {
         var lines = xhr.responseText.split("\n");
         for (var i in lines)

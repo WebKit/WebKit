@@ -374,7 +374,7 @@
 - (void)_appBoundNavigationData:(void(^)(struct WKAppBoundNavigationTestingData data))completionHandler
 {
     _page->appBoundNavigationData([completionHandler = makeBlockPtr(completionHandler)] (auto&& appBoundData) {
-        completionHandler({ appBoundData.hasLoadedAppBoundRequestTesting, appBoundData.hasLoadedNonAppBoundRequestTesting });
+        completionHandler({ appBoundData.hasLoadedAppBoundRequestTesting, appBoundData.hasLoadedNonAppBoundRequestTesting, appBoundData.didPerformSoftUpdate });
     });
 }
 

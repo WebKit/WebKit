@@ -230,16 +230,6 @@ private:
 #endif
 };
 
-inline bool operator==(const Ref<SharedBuffer>& left, const SharedBuffer& right)
-{
-    return left.get() == right;
-}
-
-inline bool operator!=(const Ref<SharedBuffer>& left, const SharedBuffer& right)
-{
-    return left.get() != right;
-}
-
 class WEBCORE_EXPORT SharedBufferDataView {
 public:
     SharedBufferDataView(Ref<SharedBuffer::DataSegment>&&, size_t);

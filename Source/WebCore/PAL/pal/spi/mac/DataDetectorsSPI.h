@@ -45,6 +45,14 @@
 
 #else // !USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(DATA_DETECTORS_MAC_ACTION)
+@interface DDAction : NSObject
+@property (readonly) NSString *actionUTI;
+@end
+@interface DDMacAction : DDAction
+@end
+#endif
+
 @interface DDActionContext : NSObject <NSCopying, NSSecureCoding>
 
 @property NSRect highlightFrame;

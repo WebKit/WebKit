@@ -44,22 +44,6 @@ class CSSParserTokenRange;
 class CSSToLengthConversionData;
 class RenderStyle;
 
-// FIXME: Unify with CSSPrimitiveValue::UnitCategory.
-enum class CalculationCategory : uint8_t {
-    Number = 0,
-    Length,
-    Percent,
-    PercentNumber,
-    PercentLength,
-    Angle,
-    Time,
-    Frequency,
-    // TODO:
-    // Flex,
-    // Resolution
-    Other
-};
-
 class CSSCalcExpressionNode : public RefCounted<CSSCalcExpressionNode> {
 public:
     enum Type {
@@ -138,12 +122,12 @@ inline CSSCalcValue::CSSCalcValue(Ref<CSSCalcExpressionNode>&& expression, bool 
 inline Ref<CalculationValue> CSSCalcValue::createCalculationValue(const CSSToLengthConversionData& conversionData) const
 {
     return CalculationValue::create(m_expression->createCalcExpression(conversionData),
-        m_shouldClampToNonNegative ? ValueRangeNonNegative : ValueRangeAll);
+        m_shouldClampToNonNegative ? ValueRange::NonNegative : ValueRange::All);
 }
 
 inline void CSSCalcValue::setPermittedValueRange(ValueRange range)
 {
-    m_shouldClampToNonNegative = range != ValueRangeAll;
+    m_shouldClampToNonNegative = range != ValueRange::All;
 }
 
 inline void CSSCalcValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const

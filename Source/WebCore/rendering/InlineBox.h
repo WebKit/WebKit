@@ -25,6 +25,7 @@
 #include "TextFlags.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -134,14 +135,8 @@ public:
     InlineBox* nextLeafOnLine() const;
     InlineBox* previousLeafOnLine() const;
 
-    // Helper functions for editing and hit-testing code.
-    // FIXME: These two functions should be moved to RenderedPosition once the code to convert between
-    // Position and inline box, offset pair is moved to RenderedPosition.
-    InlineBox* nextLeafOnLineIgnoringLineBreak() const;
-    InlineBox* previousLeafOnLineIgnoringLineBreak() const;
-
     // FIXME: Hide this once all callers are using tighter types.
-    RenderObject& renderer() const { return m_renderer; }
+    RenderObject& renderer() const { return *m_renderer; }
 
     InlineFlowBox* parent() const
     {
@@ -244,8 +239,8 @@ public:
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const
     { 
-        if (!is<RenderText>(m_renderer))
-            return &downcast<RenderBoxModelObject>(m_renderer);
+        if (!is<RenderText>(renderer()))
+            return &downcast<RenderBoxModelObject>(renderer());
         return nullptr;
     }
 
@@ -286,7 +281,7 @@ private:
 
     InlineFlowBox* m_parent { nullptr }; // The box that contains us.
 
-    RenderObject& m_renderer;
+    WeakPtr<RenderObject> m_renderer;
 
 private:
     float m_logicalWidth { 0 };
@@ -373,7 +368,7 @@ private:
 
 protected:
     explicit InlineBox(RenderObject& renderer)
-        : m_renderer(renderer)
+        : m_renderer(makeWeakPtr(renderer))
     {
     }
 
@@ -381,7 +376,7 @@ protected:
         : m_nextOnLine(next)
         , m_previousOnLine(previous)
         , m_parent(parent)
-        , m_renderer(renderer)
+        , m_renderer(makeWeakPtr(renderer))
         , m_logicalWidth(logicalWidth)
         , m_topLeft(topLeft)
         , m_bitfields(firstLine, constructed, dirty, extracted, isHorizontal)

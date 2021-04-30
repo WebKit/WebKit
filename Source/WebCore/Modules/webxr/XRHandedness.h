@@ -27,13 +27,11 @@
 
 #if ENABLE(WEBXR)
 
+#include "PlatformXR.h"
+
 namespace WebCore {
 
-enum class XRHandedness {
-    None,
-    Left,
-    Right,
-};
+using XRHandedness = PlatformXR::XRHandedness;
 
 } // namespace WebCore
 

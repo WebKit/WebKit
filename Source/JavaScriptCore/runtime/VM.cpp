@@ -763,12 +763,11 @@ SamplingProfiler& VM::ensureSamplingProfiler(Ref<Stopwatch>&& stopwatch)
 }
 #endif // ENABLE(SAMPLING_PROFILER)
 
-static SymbolImpl::StaticSymbolImpl terminationErrorSymbol { "TerminationError", SymbolImpl::s_flagIsPrivate };
-
+static StringImpl::StaticStringImpl terminationErrorString { "JavaScript execution terminated." };
 Exception* VM::ensureTerminationException()
 {
     if (!m_terminationException) {
-        Symbol* terminationError = Symbol::create(*this, terminationErrorSymbol);
+        JSString* terminationError = jsNontrivialString(*this, terminationErrorString);
         m_terminationException = Exception::create(*this, terminationError, Exception::DoNotCaptureStack);
     }
     return m_terminationException;

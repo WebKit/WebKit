@@ -26,6 +26,8 @@
 #include "config.h"
 #include "InMemoryDisplayList.h"
 
+#include "DisplayListIterator.h"
+
 namespace WebCore {
 namespace DisplayList {
 

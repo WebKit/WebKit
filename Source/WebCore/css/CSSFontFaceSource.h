@@ -25,8 +25,7 @@
 
 #pragma once
 
-#include "CachedFontClient.h"
-#include "CachedResourceHandle.h"
+#include "FontLoadRequest.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
@@ -47,11 +46,11 @@ class SharedBuffer;
 template <typename T> class FontTaggedSettings;
 typedef FontTaggedSettings<int> FontFeatureSettings;
 
-class CSSFontFaceSource final : public CachedFontClient {
+class CSSFontFaceSource final : public FontLoadRequestClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI);
-    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CSSFontSelector&, CachedFont&);
+    CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, CSSFontSelector&, UniqueRef<FontLoadRequest>&&);
     CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, SVGFontFaceElement&);
     CSSFontFaceSource(CSSFontFace& owner, const String& familyNameOrURI, Ref<JSC::ArrayBufferView>&&);
     virtual ~CSSFontFaceSource();
@@ -76,22 +75,22 @@ public:
     void load(Document* = nullptr);
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, FontSelectionSpecifiedCapabilities);
 
-    CachedFont* cachedFont() const { return m_font.get(); }
-    bool requiresExternalResource() const { return m_font; }
+    FontLoadRequest* fontLoadRequest() const { return m_fontRequest.get(); }
+    bool requiresExternalResource() const { return m_fontRequest.get(); }
 
     bool isSVGFontFaceSource() const;
 
 private:
     bool shouldIgnoreFontLoadCompletions() const;
 
-    void fontLoaded(CachedFont&) override;
+    void fontLoaded(FontLoadRequest&) override;
 
     void setStatus(Status);
 
     AtomString m_familyNameOrURI; // URI for remote, built-in font name for local.
     CSSFontFace& m_face; // Our owning font face.
     WeakPtr<CSSFontSelector> m_fontSelector; // For remote fonts, to orchestrate loading.
-    CachedResourceHandle<CachedFont> m_font; // Also for remote fonts, a pointer to our cached resource.
+    std::unique_ptr<FontLoadRequest> m_fontRequest; // Also for remote fonts, a pointer to the resource request.
 
     RefPtr<SharedBuffer> m_generatedOTFBuffer;
     RefPtr<JSC::ArrayBufferView> m_immediateSource;

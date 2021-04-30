@@ -10,8 +10,8 @@ const sampleCluster = {
     'clusterSize': 5184000000,
     'configurations': {
         'current': [
-            [28954983, 217.94607142857, 20, 4358.9214285714, 950303.02365434, false, [[111, 9, '10.11 15D21', 1504021, 0], [222, 11, '192483', null, 1447707055576], [333, 999, 'some unknown revision', null, 0]], 1447707055576, 184629, 1447762266153, '178', 176],
-            [28952257, 220.11455357143, 20, 4402.2910714286, 969099.67509885, false, [[111, 9, '10.11 15D21', 1504021, 0], [444, 11, '192486', null, 1447713500460]], 1447713500460, 184614, 1447760255683, '177', 176]
+            [28954983, 217.94607142857, 20, 4358.9214285714, 950303.02365434, false, [[111, 9, '10.11 15D21', null, 1504021, 0], [222, 11, '192483', null, null, 1447707055576], [333, 999, 'some unknown revision', null, null, 0]], 1447707055576, 184629, 1447762266153, '178', 176],
+            [28952257, 220.11455357143, 20, 4402.2910714286, 969099.67509885, false, [[111, 9, '10.11 15D21', null, 1504021, 0], [444, 11, '192486', null, null, 1447713500460]], 1447713500460, 184614, 1447760255683, '177', 176]
         ],
         'baseline': [
             [10548956, 312.59, 1, 0, 0, false, [], 1420070400000, 67724, 1420070400000, "0", 0]
@@ -28,6 +28,29 @@ const sampleCluster = {
 };
 const sampleData = sampleCluster.configurations.current[0];
 const sampleCustomBaselineData = sampleCluster.configurations.baseline[0];
+
+const sampleClusterWithCommitRevisionIdentifier = {
+    'clusterStart': 946684800000,
+    'clusterSize': 5184000000,
+    'configurations': {
+        'current': [
+            [28954983, 217.94607142857, 20, 4358.9214285714, 950303.02365434, false, [[111, 9, '10.11 15D21', null, 1504021, 0], [222, 11, '192483', '169476@main', null, 1447707055576], [333, 999, 'some unknown revision', '1@main', null, 0]], 1447707055576, 184629, 1447762266153, '178', 176],
+            [28952257, 220.11455357143, 20, 4402.2910714286, 969099.67509885, false, [[111, 9, '10.11 15D21', null, 1504021, 0], [444, 11, '192486', '169479@main', null, 1447713500460]], 1447713500460, 184614, 1447760255683, '177', 176]
+        ],
+        'baseline': [
+            [10548956, 312.59, 1, 0, 0, false, [], 1420070400000, 67724, 1420070400000, "0", 0]
+        ]
+    },
+    'formatMap': ['id', 'mean', 'iterationCount', 'sum', 'squareSum', 'markedOutlier', 'revisions',
+        'commitTime', 'build', 'buildTime', 'buildTag', 'builder'],
+    'startTime': 1449532800000,
+    'endTime': 1454716800000,
+    'lastModified': 1452067190008,
+    'clusterCount': 2,
+    'elapsedTime': 210.68406105042,
+    'status': 'OK'
+};
+const sampleDataWithCommitRevisionIdentifier =  sampleClusterWithCommitRevisionIdentifier.configurations.current[0];
 
 describe('MeasurementAdaptor', function () {
     MockModels.inject();
@@ -71,6 +94,14 @@ describe('MeasurementAdaptor', function () {
             var commitSet = adaptor.applyTo(sampleData).commitSet();
             assert.ok(commitSet instanceof CommitSet);
             assert.equal(commitSet.latestCommitTime(), 1447707055576);
+        });
+
+        it('should adapt revision information as a CommitSet object with revision identifier', () => {
+            const adaptor = new MeasurementAdaptor(sampleClusterWithCommitRevisionIdentifier.formatMap);
+            const commitSet = adaptor.applyTo(sampleDataWithCommitRevisionIdentifier).commitSet();
+            assert.ok(commitSet instanceof CommitSet);
+            const commit = commitSet.commitForRepository(MockModels.webkit);
+            assert.strictEqual(commit.revisionIdentifier(), '169476@main');
         });
 
         it('should adapt OS X version as a CommitLog object', function () {

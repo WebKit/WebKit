@@ -83,6 +83,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestNamedGetterCallWithPrototype, JSTestNa
 
 using JSTestNamedGetterCallWithDOMConstructor = JSDOMConstructorNotConstructable<JSTestNamedGetterCallWith>;
 
+template<> const ClassInfo JSTestNamedGetterCallWithDOMConstructor::s_info = { "TestNamedGetterCallWith", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithDOMConstructor) };
+
 template<> JSValue JSTestNamedGetterCallWithDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -95,8 +97,6 @@ template<> void JSTestNamedGetterCallWithDOMConstructor::initializeProperties(VM
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestNamedGetterCallWith"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestNamedGetterCallWithDOMConstructor::s_info = { "TestNamedGetterCallWith", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithDOMConstructor) };
 
 /* Hash table for prototype */
 

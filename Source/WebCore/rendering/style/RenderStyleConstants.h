@@ -237,9 +237,17 @@ enum class PositionType : uint8_t {
 };
 
 enum class Float : uint8_t {
-    No,
+    None,
     Left,
-    Right
+    Right,
+    InlineStart,
+    InlineEnd,
+};
+
+enum class UsedFloat : uint8_t {
+    None,
+    Left,
+    Right,
 };
 
 enum class MarginCollapse : uint8_t {
@@ -287,10 +295,19 @@ enum class VerticalAlign : uint8_t {
 };
 
 enum class Clear : uint8_t {
-    None = 0,
-    Left = 1,
-    Right = 2,
-    Both = 3
+    None,
+    Left,
+    Right,
+    InlineStart,
+    InlineEnd,
+    Both
+};
+
+enum class UsedClear : uint8_t {
+    None,
+    Left,
+    Right,
+    Both
 };
 
 enum class TableLayoutType : uint8_t {
@@ -1236,6 +1253,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, BreakInside);
 WTF::TextStream& operator<<(WTF::TextStream&, CSSBoxType);
 WTF::TextStream& operator<<(WTF::TextStream&, CaptionSide);
 WTF::TextStream& operator<<(WTF::TextStream&, Clear);
+WTF::TextStream& operator<<(WTF::TextStream&, UsedClear);
 #if ENABLE(DARK_MODE_CSS)
 WTF::TextStream& operator<<(WTF::TextStream&, ColorScheme);
 #endif
@@ -1260,6 +1278,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, FillSizeType);
 WTF::TextStream& operator<<(WTF::TextStream&, FlexDirection);
 WTF::TextStream& operator<<(WTF::TextStream&, FlexWrap);
 WTF::TextStream& operator<<(WTF::TextStream&, Float);
+WTF::TextStream& operator<<(WTF::TextStream&, UsedFloat);
 WTF::TextStream& operator<<(WTF::TextStream&, GridAutoFlow);
 WTF::TextStream& operator<<(WTF::TextStream&, HangingPunctuation);
 WTF::TextStream& operator<<(WTF::TextStream&, Hyphens);

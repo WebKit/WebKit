@@ -163,7 +163,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame))
     DeferGCForAWhile deferGC(vm.heap);
 
     uint32_t exitIndex = vm.osrExitIndex;
-    OSRExit& exit = codeBlock->jitCode()->dfg()->osrExit[exitIndex];
+    OSRExit& exit = codeBlock->jitCode()->dfg()->m_osrExit[exitIndex];
 
     ASSERT(!vm.callFrameForCatch || exit.m_kind == GenericUnwind);
     EXCEPTION_ASSERT_UNUSED(scope, !!scope.exception() || !exit.isExceptionHandler());
@@ -174,7 +174,7 @@ JSC_DEFINE_JIT_OPERATION(operationCompileOSRExit, void, (CallFrame* callFrame))
 
     SpeculationRecovery* recovery = nullptr;
     if (exit.m_recoveryIndex != UINT_MAX)
-        recovery = &codeBlock->jitCode()->dfg()->speculationRecovery[exit.m_recoveryIndex];
+        recovery = &codeBlock->jitCode()->dfg()->m_speculationRecovery[exit.m_recoveryIndex];
 
     {
         CCallHelpers jit(codeBlock);

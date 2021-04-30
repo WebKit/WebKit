@@ -1044,6 +1044,10 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     if (containerType == applicationOctetStream())
         return SupportsType::IsNotSupported;
 
+    auto lowercaseType = containerType.convertToASCIILowercase();
+    if (!lowercaseType.startsWith("video/") && !lowercaseType.startsWith("audio/") && !lowercaseType.startsWith("application/"))
+        return SupportsType::IsNotSupported;
+
     const MediaPlayerFactory* engine = bestMediaEngineForSupportParameters(parameters);
     if (!engine)
         return SupportsType::IsNotSupported;
@@ -1668,6 +1672,11 @@ void MediaPlayer::audioOutputDeviceChanged()
 MediaPlayerIdentifier MediaPlayer::identifier() const
 {
     return m_private->identifier();
+}
+
+String MediaPlayer::elementId() const
+{
+    return client().mediaPlayerElementId();
 }
 
 #if !RELEASE_LOG_DISABLED

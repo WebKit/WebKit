@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: SyntaxError: Cannot declare a const variable twice: 'root'.
+CONSOLE MESSAGE: NotSupportedError: The operation is not supported.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x34

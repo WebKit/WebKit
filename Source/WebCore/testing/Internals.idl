@@ -266,6 +266,17 @@ enum TreeType {
 
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ImageOverlayLine {
+    required DOMPointReadOnly topLeft;
+    required DOMPointReadOnly topRight;
+    required DOMPointReadOnly bottomRight;
+    required DOMPointReadOnly bottomLeft;
+    sequence<ImageOverlayText> children;
+};
+
+[
+    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     LegacyNoInterfaceObject,
 ] interface Internals {
     DOMString address(Node node);
@@ -501,6 +512,12 @@ enum TreeType {
 
     unsigned long long layerIDForElement(Element element);
 
+    // Flags for platformLayerTreeAsText.
+    const unsigned short PLATFORM_LAYER_TREE_DEBUG = 1;
+    const unsigned short PLATFORM_LAYER_TREE_IGNORES_CHILDREN = 2;
+    const unsigned short PLATFORM_LAYER_TREE_INCLUDE_MODELS = 4;
+    DOMString platformLayerTreeAsText(Element element, optional unsigned short flags = 0);
+
     DOMString scrollbarOverlayStyle(optional Node? node = null);
     boolean scrollbarUsingDarkAppearance(optional Node? node = null);
     DOMString horizontalScrollbarState(optional Node? node = null);
@@ -709,7 +726,7 @@ enum TreeType {
 
     [Conditional=MEDIA_SOURCE] undefined initializeMockMediaSource();
     [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> bufferedSamplesForTrackId(SourceBuffer buffer, DOMString trackId);
-    [Conditional=MEDIA_SOURCE] sequence<DOMString> enqueuedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
+    [Conditional=MEDIA_SOURCE] Promise<sequence<DOMString>> enqueuedSamplesForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] undefined setShouldGenerateTimestamps(SourceBuffer buffer, boolean flag);
     [Conditional=MEDIA_SOURCE] double minimumUpcomingPresentationTimeForTrackID(SourceBuffer buffer, DOMString trackID);
     [Conditional=MEDIA_SOURCE] undefined setMaximumQueueDepthForTrackID(SourceBuffer buffer, DOMString trackID, unsigned long maxQueueDepth);
@@ -890,7 +907,7 @@ enum TreeType {
     boolean isSystemPreviewLink(Element element);
     boolean isSystemPreviewImage(Element element);
 
-    undefined installImageOverlay(Element element, sequence<ImageOverlayText> allTextInfo);
+    undefined installImageOverlay(Element element, sequence<ImageOverlayLine> lines);
 
     boolean usingAppleInternalSDK();
     boolean usingGStreamer();

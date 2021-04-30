@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,11 +39,34 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferCGBitmapBackend);
 
+IntSize ImageBufferCGBitmapBackend::calculateSafeBackendSize(const Parameters& parameters)
+{
+    IntSize backendSize = calculateBackendSize(parameters);
+    if (backendSize.isEmpty())
+        return backendSize;
+    
+    Checked<unsigned, RecordOverflow> bytesPerRow = 4 * Checked<unsigned, RecordOverflow>(backendSize.width());
+    if (bytesPerRow.hasOverflowed())
+        return { };
+
+    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(backendSize.height()) * bytesPerRow;
+    if (numBytes.hasOverflowed())
+        return { };
+
+    return backendSize;
+}
+
+size_t ImageBufferCGBitmapBackend::calculateMemoryCost(const Parameters& parameters)
+{
+    IntSize backendSize = calculateBackendSize(parameters);
+    return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
+}
+
 std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(const Parameters& parameters, CGColorSpaceRef cgColorSpace, const HostWindow*)
 {
     ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
 
-    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
+    IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
         return nullptr;
 
@@ -107,6 +130,12 @@ IntSize ImageBufferCGBitmapBackend::backendSize() const
 {
     CGContextRef cgContext = context().platformContext();
     return { static_cast<int>(CGBitmapContextGetWidth(cgContext)), static_cast<int>(CGBitmapContextGetHeight(cgContext)) };
+}
+
+unsigned ImageBufferCGBitmapBackend::bytesPerRow() const
+{
+    IntSize backendSize = calculateBackendSize(m_parameters);
+    return calculateBytesPerRow(backendSize);
 }
 
 RefPtr<NativeImage> ImageBufferCGBitmapBackend::copyNativeImage(BackingStoreCopy copyBehavior) const

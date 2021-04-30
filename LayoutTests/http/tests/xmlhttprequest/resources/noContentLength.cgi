@@ -1,9 +1,9 @@
 #!/usr/bin/perl -wT
 use strict;
 
-print "Content-Type: text/html\n\n";
+print "Content-Type: text/html\r\n\r\n";
 
-print <<EOF
+print <<EOF;
 <html>
 <head>
 <title>This page does not provide any content length</title>

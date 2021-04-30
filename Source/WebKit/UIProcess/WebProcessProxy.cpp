@@ -786,10 +786,10 @@ void WebProcessProxy::getGPUProcessConnection(GPUProcessConnectionParameters&& p
     m_processPool->getGPUProcessConnection(*this, WTFMove(parameters), WTFMove(reply));
 }
 
-void WebProcessProxy::gpuProcessCrashed()
+void WebProcessProxy::gpuProcessExited(GPUProcessTerminationReason reason)
 {
     for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
-        page->gpuProcessCrashed();
+        page->gpuProcessExited(reason);
 }
 #endif
 
@@ -1028,7 +1028,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     RELEASE_ASSERT(!m_webConnection);
     m_webConnection = WebConnectionToWebProcess::create(this);
 
-    m_processPool->processDidFinishLaunching(this);
+    m_processPool->processDidFinishLaunching(*this);
     m_backgroundResponsivenessTimer.updateState();
 
 #if ENABLE(IPC_TESTING_API)

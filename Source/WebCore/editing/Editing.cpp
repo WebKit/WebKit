@@ -403,84 +403,6 @@ const String& nonBreakingSpaceString()
     return nonBreakingSpaceString;
 }
 
-static bool isSpecialHTMLElement(const Node* node)
-{
-    if (!is<HTMLElement>(node))
-        return false;
-
-    if (downcast<HTMLElement>(*node).isLink())
-        return true;
-
-    auto* renderer = downcast<HTMLElement>(*node).renderer();
-    if (!renderer)
-        return false;
-
-    if (renderer->style().display() == DisplayType::Table || renderer->style().display() == DisplayType::InlineTable)
-        return true;
-
-    if (renderer->style().isFloating())
-        return true;
-
-    if (renderer->style().position() != PositionType::Static)
-        return true;
-
-    return false;
-}
-
-static HTMLElement* firstInSpecialElement(const Position& position)
-{
-    auto* rootEditableElement = position.containerNode()->rootEditableElement();
-    for (Node* node = position.deprecatedNode(); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
-        if (!isSpecialHTMLElement(node))
-            continue;
-        VisiblePosition vPos(position);
-        VisiblePosition firstInElement(firstPositionInOrBeforeNode(node));
-        if ((isRenderedTable(node) && vPos == firstInElement.next()) || vPos == firstInElement)
-            return &downcast<HTMLElement>(*node);
-    }
-    return nullptr;
-}
-
-static HTMLElement* lastInSpecialElement(const Position& position)
-{
-    auto* rootEditableElement = position.containerNode()->rootEditableElement();
-    for (Node* node = position.deprecatedNode(); node && node->rootEditableElement() == rootEditableElement; node = node->parentNode()) {
-        if (!isSpecialHTMLElement(node))
-            continue;
-        VisiblePosition vPos(position);
-        VisiblePosition lastInElement(lastPositionInOrAfterNode(node));
-        if ((isRenderedTable(node) && vPos == lastInElement.previous()) || vPos == lastInElement)
-            return &downcast<HTMLElement>(*node);
-    }
-    return nullptr;
-}
-
-Position positionBeforeContainingSpecialElement(const Position& position, HTMLElement** containingSpecialElement)
-{
-    auto* element = firstInSpecialElement(position);
-    if (!element)
-        return position;
-    Position result = positionInParentBeforeNode(element);
-    if (result.isNull() || result.deprecatedNode()->rootEditableElement() != position.deprecatedNode()->rootEditableElement())
-        return position;
-    if (containingSpecialElement)
-        *containingSpecialElement = element;
-    return result;
-}
-
-Position positionAfterContainingSpecialElement(const Position& position, HTMLElement** containingSpecialElement)
-{
-    auto* element = lastInSpecialElement(position);
-    if (!element)
-        return position;
-    Position result = positionInParentAfterNode(element);
-    if (result.isNull() || result.deprecatedNode()->rootEditableElement() != position.deprecatedNode()->rootEditableElement())
-        return position;
-    if (containingSpecialElement)
-        *containingSpecialElement = element;
-    return result;
-}
-
 Element* isFirstPositionAfterTable(const VisiblePosition& position)
 {
     Position upstream(position.deepEquivalent().upstream());
@@ -810,9 +732,9 @@ Node* nextLeafNode(const Node* node)
 // FIXME: Do not require renderer, so that this can be used within fragments.
 bool isRenderedTable(const Node* node)
 {
-    if (!is<Element>(node))
+    if (!is<HTMLElement>(node))
         return false;
-    auto* renderer = downcast<Element>(*node).renderer();
+    auto* renderer = downcast<HTMLElement>(*node).renderer();
     return renderer && renderer->isTable();
 }
 

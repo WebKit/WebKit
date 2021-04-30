@@ -30,7 +30,7 @@ typedef (WebGLRenderingContext) WebXRWebGLRenderingContext;
 #endif
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window,

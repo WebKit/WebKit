@@ -44,6 +44,7 @@
 #import "WKInspectorHighlightView.h"
 #import "WKPreferencesInternal.h"
 #import "WKProcessGroupPrivate.h"
+#import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewIOS.h"
 #import "WebFrameProxy.h"
@@ -206,10 +207,9 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     self.layer.hitTestsAsOpaque = YES;
 
-#if PLATFORM(MACCATALYST)
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [self _setFocusRingType:UIFocusRingTypeNone];
-    ALLOW_DEPRECATED_DECLARATIONS_END
+#if HAVE(UI_FOCUS_EFFECT)
+    if ([self respondsToSelector:@selector(setFocusEffect:)])
+        self.focusEffect = nil;
 #endif
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -349,8 +349,6 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 
     if (self.window)
         [self setUpInteraction];
-    else
-        [self cleanUpRelatedViews];
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -548,17 +546,17 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 
 - (BOOL)canBecomeFocused
 {
-    return [_webView canBecomeFocused];
-}
+    auto delegate = static_cast<id <WKUIDelegatePrivate>>(self.webView.UIDelegate);
+    if ([delegate respondsToSelector:@selector(_webViewCanBecomeFocused:)])
+        return [delegate _webViewCanBecomeFocused:self.webView];
 
-- (BOOL)canBecomeFocusedForWebView
-{
-    return YES;
+    return [delegate respondsToSelector:@selector(_webView:takeFocus:)];
 }
 
 - (void)didUpdateFocusInContext:(UIFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator
 {
-    [self _becomeFirstResponderWithSelectionMovingForward:context.focusHeading == UIFocusHeadingNext completionHandler:nil];
+    if (context.nextFocusedView == self)
+        [self _becomeFirstResponderWithSelectionMovingForward:context.focusHeading == UIFocusHeadingNext completionHandler:nil];
 }
 
 #pragma mark Internal
@@ -655,7 +653,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 }
 
 #if ENABLE(GPU_PROCESS)
-- (void)_gpuProcessCrashed
+- (void)_gpuProcessDidExit
 {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     [self _removeVisibilityPropagationViewForGPUProcess];

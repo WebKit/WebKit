@@ -1831,15 +1831,14 @@ inline void BuilderCustom::applyValueFontSize(BuilderState& builderState, CSSVal
     } else {
         fontDescription.setIsAbsoluteSize(parentIsAbsoluteSize || !(primitiveValue.isPercentage() || primitiveValue.isFontRelativeLength()));
         if (primitiveValue.isLength()) {
-            size = primitiveValue.computeLength<float>(CSSToLengthConversionData(&builderState.parentStyle(), builderState.rootElementStyle(), &builderState.parentStyle(), builderState.document().renderView(), 1.0f, CSSPropertyFontSize));
-            if (primitiveValue.isViewportPercentageLength())
-                builderState.style().setHasViewportUnits();
+            CSSToLengthConversionData conversionData { &builderState.parentStyle(), builderState.rootElementStyle(), &builderState.parentStyle(), builderState.document().renderView(), 1.0f, CSSPropertyFontSize, &builderState.style() };
+            size = primitiveValue.computeLength<float>(conversionData);
         } else if (primitiveValue.isPercentage())
             size = (primitiveValue.floatValue() * parentSize) / 100.0f;
         else if (primitiveValue.isCalculatedPercentageWithLength()) {
-            const auto& conversionData = builderState.cssToLengthConversionData();
-            CSSToLengthConversionData parentConversionData { &builderState.parentStyle(), conversionData.rootStyle(), &builderState.parentStyle(), builderState.document().renderView(), 1.0f, CSSPropertyFontSize };
-            size = primitiveValue.cssCalcValue()->createCalculationValue(parentConversionData)->evaluate(parentSize);
+            // FIXME: Why does this need a different root style than the isLength case above?
+            CSSToLengthConversionData conversionData { &builderState.parentStyle(), builderState.cssToLengthConversionData().rootStyle(), &builderState.parentStyle(), builderState.document().renderView(), 1.0f, CSSPropertyFontSize, &builderState.style() };
+            size = primitiveValue.cssCalcValue()->createCalculationValue(conversionData)->evaluate(parentSize);
         } else
             return;
     }

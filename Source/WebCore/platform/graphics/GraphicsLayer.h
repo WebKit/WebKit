@@ -563,9 +563,6 @@ public:
     virtual float zPosition() const { return m_zPosition; }
     WEBCORE_EXPORT virtual void setZPosition(float);
 
-    WEBCORE_EXPORT virtual void distributeOpacity(float);
-    WEBCORE_EXPORT virtual float accumulatedOpacity() const;
-
     virtual FloatSize pixelAlignmentOffset() const { return FloatSize(); }
     
     virtual void setAppliesPageScale(bool appliesScale = true) { m_appliesPageScale = appliesScale; }
@@ -601,6 +598,8 @@ public:
 
     // For testing.
     virtual String displayListAsText(DisplayList::AsTextFlags) const { return String(); }
+
+    virtual String platformLayerTreeAsText(OptionSet<PlatformLayerTreeAsTextFlags>) const { return String(); }
 
     virtual void setIsTrackingDisplayListReplay(bool isTracking) { m_isTrackingDisplayListReplay = isTracking; }
     virtual bool isTrackingDisplayListReplay() const { return m_isTrackingDisplayListReplay; }
@@ -639,7 +638,7 @@ protected:
     WEBCORE_EXPORT explicit GraphicsLayer(Type, GraphicsLayerClient&);
 
     // Should be called from derived class destructors. Should call willBeDestroyed() on super.
-    WEBCORE_EXPORT virtual void willBeDestroyed();
+    WEBCORE_EXPORT void willBeDestroyed();
     bool beingDestroyed() const { return m_beingDestroyed; }
 
     // This method is used by platform GraphicsLayer classes to clear the filters
@@ -660,7 +659,7 @@ protected:
 
     virtual bool shouldRepaintOnSizeChange() const { return drawsContent(); }
 
-    virtual void setOpacityInternal(float) { }
+    void removeFromParentInternal();
 
     // The layer being replicated.
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }

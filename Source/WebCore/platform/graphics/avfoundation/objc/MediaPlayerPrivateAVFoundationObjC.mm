@@ -47,7 +47,6 @@
 #import "ImageRotationSessionVT.h"
 #import "InbandMetadataTextTrackPrivateAVF.h"
 #import "InbandTextTrackPrivateAVFObjC.h"
-#import "LocalizedDeviceModel.h"
 #import "Logging.h"
 #import "MediaPlaybackTargetCocoa.h"
 #import "MediaPlaybackTargetMock.h"
@@ -89,7 +88,6 @@
 #import <objc/runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/avfoundation/OutputContext.h>
-#import <pal/cocoa/MediaToolboxSoftLink.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -107,6 +105,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+#import "LocalizedDeviceModel.h"
 #import "WAKAppKitStubs.h"
 #import <CoreImage/CoreImage.h>
 #import <UIKit/UIDevice.h>
@@ -119,6 +118,8 @@
 
 #import "CoreVideoSoftLink.h"
 #import "MediaRemoteSoftLink.h"
+
+#import <pal/cocoa/MediaToolboxSoftLink.h>
 
 namespace std {
 template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionAVFObjC>>::iterator> {
@@ -2824,7 +2825,7 @@ bool MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless() const
 
 #if !PLATFORM(IOS_FAMILY)
     if (m_playbackTarget) {
-        if (m_playbackTarget->targetType() == MediaPlaybackTarget::AVFoundation)
+        if (m_playbackTarget->targetType() == MediaPlaybackTarget::TargetType::AVFoundation)
             wirelessTarget = m_avPlayer && m_avPlayer.get().externalPlaybackActive;
         else
             wirelessTarget = m_shouldPlayToPlaybackTarget && m_playbackTarget->hasActiveRoute();
@@ -2968,7 +2969,7 @@ void MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget(Ref<MediaPlay
 {
     m_playbackTarget = WTFMove(target);
 
-    m_outputContext = m_playbackTarget->targetType() == MediaPlaybackTarget::AVFoundation ? toMediaPlaybackTargetCocoa(m_playbackTarget.get())->outputContext() : nullptr;
+    m_outputContext = m_playbackTarget->targetType() == MediaPlaybackTarget::TargetType::AVFoundation ? toMediaPlaybackTargetCocoa(m_playbackTarget.get())->targetContext().outputContext() : nullptr;
 
     INFO_LOG(LOGIDENTIFIER);
 
@@ -2988,7 +2989,7 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
 
     INFO_LOG(LOGIDENTIFIER, shouldPlay);
 
-    if (m_playbackTarget->targetType() == MediaPlaybackTarget::AVFoundation) {
+    if (m_playbackTarget->targetType() == MediaPlaybackTarget::TargetType::AVFoundation) {
         AVOutputContext *newContext = shouldPlay ? m_outputContext.get() : nil;
 
         if (!m_avPlayer)
@@ -3005,7 +3006,7 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget(bool shou
         return;
     }
 
-    ASSERT(m_playbackTarget->targetType() == MediaPlaybackTarget::Mock);
+    ASSERT(m_playbackTarget->targetType() == MediaPlaybackTarget::TargetType::Mock);
 
     setDelayCallbacks(true);
     auto weakThis = makeWeakPtr(*this);

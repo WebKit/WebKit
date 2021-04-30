@@ -939,7 +939,7 @@ RefPtr<GraphicsContextGL> WebChromeClient::createGraphicsContextGL(const Graphic
         return nullptr;
     UNUSED_VARIABLE(hostWindowDisplayID);
 #if PLATFORM(COCOA) || PLATFORM(WIN)
-    return RemoteGraphicsContextGLProxy::create(attributes, m_page.ensureRemoteRenderingBackendProxy().renderingBackendIdentifier());
+    return RemoteGraphicsContextGLProxy::create(attributes, m_page.ensureRemoteRenderingBackendProxy().ensureBackendCreated());
 #else
     return nullptr;
 #endif
@@ -1154,12 +1154,12 @@ Color WebChromeClient::underlayColor() const
     return m_page.underlayColor();
 }
 
-void WebChromeClient::themeColorChanged(Color /* themeColor */) const
+void WebChromeClient::themeColorChanged() const
 {
     m_page.themeColorChanged();
 }
 
-void WebChromeClient::pageExtendedBackgroundColorDidChange(Color /* backgroundColor */) const
+void WebChromeClient::pageExtendedBackgroundColorDidChange() const
 {
     m_page.pageExtendedBackgroundColorDidChange();
 }
@@ -1352,7 +1352,7 @@ void WebChromeClient::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     m_page.send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerEnabled(enabled));
 }
 
-void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::State state)
+void WebChromeClient::setMockMediaPlaybackTargetPickerState(const String& name, MediaPlaybackTargetContext::MockState state)
 {
     m_page.send(Messages::WebPageProxy::SetMockMediaPlaybackTargetPickerState(name, state));
 }
@@ -1472,5 +1472,12 @@ void WebChromeClient::showMediaControlsContextMenu(FloatRect&& targetFrame, Vect
 }
 
 #endif // ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+void WebChromeClient::enumerateImmersiveXRDevices(CompletionHandler<void(const PlatformXR::Instance::DeviceList&)>&& completionHandler)
+{
+    m_page.xrSystemProxy().enumerateImmersiveXRDevices(WTFMove(completionHandler));
+}
+#endif
 
 } // namespace WebKit

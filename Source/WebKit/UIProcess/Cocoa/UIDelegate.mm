@@ -45,7 +45,7 @@
 #import "WKOpenPanelParametersInternal.h"
 #import "WKSecurityOriginInternal.h"
 #import "WKStorageAccessAlert.h"
-#import "WKUIDelegatePrivate.h"
+#import <WebKit/WKUIDelegatePrivate.h>
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewInternal.h"
 #import "WKWindowFeaturesInternal.h"
@@ -139,7 +139,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewWillCloseLocalInspector = [delegate respondsToSelector:@selector(_webView:willCloseLocalInspector:)];
 #endif
 #if ENABLE(DEVICE_ORIENTATION)
-    m_delegateMethods.webViewRequestDeviceOrientationAndMotionPermissionForOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:)];
+    m_delegateMethods.webViewRequestDeviceOrientationAndMotionPermissionForOriginDecisionHandler = [delegate respondsToSelector:@selector(webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:)];
 #endif
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginDatabaseNameDisplayNameCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:databaseName:displayName:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
@@ -187,6 +187,10 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     
     m_delegateMethods.webViewDidEnableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidEnableInspectorBrowserDomain:)];
     m_delegateMethods.webViewDidDisableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidDisableInspectorBrowserDomain:)];
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    m_delegateMethods.webViewStartXRSessionWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:startXRSessionWithCompletionHandler:)];
+#endif
 }
 
 #if ENABLE(CONTEXT_MENUS)
@@ -1054,7 +1058,7 @@ void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::W
     }
 
     auto delegate = m_uiDelegate->m_delegate.get();
-    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:));
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(webView:requestDeviceOrientationAndMotionPermissionForOrigin:initiatedByFrame:decisionHandler:));
     auto decisionHandler = makeBlockPtr([completionHandler = WTFMove(completionHandler), securityOrigin = securityOrigin->data(), checker = WTFMove(checker), page = makeWeakPtr(page)](WKPermissionDecision decision) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
@@ -1075,7 +1079,7 @@ void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::W
             break;
         }
     });
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestDeviceOrientationAndMotionPermissionForOrigin:wrapper(API::SecurityOrigin::create(securityOrigin.get())) initiatedByFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) decisionHandler:decisionHandler.get()];
+    [delegate webView:m_uiDelegate->m_webView.get().get() requestDeviceOrientationAndMotionPermissionForOrigin:wrapper(API::SecurityOrigin::create(securityOrigin.get())) initiatedByFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page)) decisionHandler:decisionHandler.get()];
 }
 #endif
 
@@ -1653,5 +1657,29 @@ void UIDelegate::UIClient::didDisableInspectorBrowserDomain(WebPageProxy&)
 
     [delegate _webViewDidDisableInspectorBrowserDomain:m_uiDelegate->m_webView.get().get()];
 }
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+void UIDelegate::UIClient::startXRSession(WebPageProxy&, CompletionHandler<void(RetainPtr<id>)>&& completionHandler)
+{
+    if (!m_uiDelegate || !m_uiDelegate->m_delegateMethods.webViewStartXRSessionWithCompletionHandler) {
+        completionHandler(nil);
+        return;
+    }
+
+    auto delegate = (id <WKUIDelegatePrivate>)m_uiDelegate->m_delegate.get();
+    if (!delegate) {
+        completionHandler(nil);
+        return;
+    }
+
+    auto checker = CompletionHandlerCallChecker::create(delegate, @selector(_webView:startXRSessionWithCompletionHandler:));
+    [delegate _webView:m_uiDelegate->m_webView.get().get() startXRSessionWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (id result) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(result);
+    }).get()];
+}
+#endif
 
 } // namespace WebKit

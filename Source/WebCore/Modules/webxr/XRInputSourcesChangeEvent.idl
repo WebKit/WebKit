@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
 ] dictionary XRInputSourcesChangeEventInit : EventInit {
     required WebXRSession session;
@@ -33,7 +33,7 @@
 };
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
     SecureContext,
     Exposed=Window
@@ -41,6 +41,6 @@
     constructor(DOMString type, XRInputSourcesChangeEventInit eventInitDict);
 
     [SameObject] readonly attribute WebXRSession session;
-    [SameObject] readonly attribute FrozenArray<WebXRInputSource> added;
-    [SameObject] readonly attribute FrozenArray<WebXRInputSource> removed;
+    [CachedAttribute, SameObject] readonly attribute FrozenArray<WebXRInputSource> added;
+    [CachedAttribute, SameObject] readonly attribute FrozenArray<WebXRInputSource> removed;
 };

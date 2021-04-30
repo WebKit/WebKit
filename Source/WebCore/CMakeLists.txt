@@ -740,6 +740,7 @@ set(WebCore_NON_SVG_IDL_FILES
     crypto/parameters/RsaPssParams.idl
 
     css/CSSConditionRule.idl
+    css/CSSCounterStyleRule.idl
     css/CSSFontFaceRule.idl
     css/CSSGroupingRule.idl
     css/CSSImportRule.idl
@@ -1471,6 +1472,41 @@ if (ENABLE_XSLT)
     list(APPEND WebCore_LIBRARIES LibXslt::LibXslt)
 endif ()
 
+# For platforms that want to use system-provided OpenGL (ES) / EGL headers,
+# these include directories, libraries or definitions need to be
+# added before the ANGLE directories.
+if (USE_LIBEPOXY)
+    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+        ${LIBEPOXY_INCLUDE_DIRS}
+    )
+    list(APPEND WebCore_LIBRARIES
+        ${LIBEPOXY_LIBRARIES}
+    )
+    add_definitions(${LIBEPOXY_DEFINITIONS})
+else ()
+    if (USE_OPENGL)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${OPENGL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${OPENGL_LIBRARIES}
+        )
+        add_definitions(${OPENGL_DEFINITIONS})
+    elseif (USE_OPENGL_ES)
+        list(APPEND WebCore_LIBRARIES OpenGL::GLES)
+    endif ()
+
+    if (USE_EGL)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${EGL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${EGL_LIBRARIES}
+        )
+        add_definitions(${EGL_DEFINITIONS})
+    endif ()
+endif ()
+
 set(WebCoreTestSupport_FRAMEWORKS ${WebCore_FRAMEWORKS})
 set(WebCoreTestSupport_DEPENDENCIES WebCoreTestSupportBindings)
 
@@ -1684,51 +1720,18 @@ if (ENABLE_WEBGL)
 
     list(APPEND WebCore_LIBRARIES ANGLEFramework)
     list(APPEND WebCoreTestSupport_LIBRARIES ANGLEFramework)
-
-    # For platforms that want to use system-provided OpenGL (ES) / EGL headers,
-    # these include directories, libraries or definitions need to be
-    # added before the ANGLE directories.
-    if (USE_LIBEPOXY)
-        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-            ${LIBEPOXY_INCLUDE_DIRS}
-        )
-        list(APPEND WebCore_LIBRARIES
-            ${LIBEPOXY_LIBRARIES}
-        )
-        add_definitions(${LIBEPOXY_DEFINITIONS})
-    else ()
-        if (USE_OPENGL)
-            list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-                ${OPENGL_INCLUDE_DIRS}
-            )
-            list(APPEND WebCore_LIBRARIES
-                ${OPENGL_LIBRARIES}
-            )
-            add_definitions(${OPENGL_DEFINITIONS})
-        elseif (USE_OPENGL_ES)
-            list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-                ${OPENGLES2_INCLUDE_DIRS}
-            )
-            list(APPEND WebCore_LIBRARIES
-                ${OPENGLES2_LIBRARIES}
-            )
-            add_definitions(${OPENGLES2_DEFINITIONS})
-        endif ()
-
-        if (USE_EGL)
-            list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-                ${EGL_INCLUDE_DIRS}
-            )
-            list(APPEND WebCore_LIBRARIES
-                ${EGL_LIBRARIES}
-            )
-            add_definitions(${EGL_DEFINITIONS})
-        endif ()
-    endif ()
-
+elseif (USE_ANGLE_EGL)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/gpu"
+        ${WEBCORE_DIR}/platform/graphics/angle
+        ${WEBCORE_DIR}/platform/graphics/opengl
     )
+
+    list(APPEND WebCore_SOURCES
+        platform/graphics/opengl/TemporaryOpenGLSetting.cpp
+    )
+
+    list(APPEND WebCore_LIBRARIES ANGLEFramework)
+    list(APPEND WebCoreTestSupport_LIBRARIES ANGLEFramework)
 endif ()
 
 list(APPEND WebCore_IDL_FILES

@@ -145,6 +145,7 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     , m_inlineCallFrames(adoptRef(new InlineCallFrameSet()))
     , m_identifiers(m_codeBlock)
     , m_weakReferences(m_codeBlock)
+    , m_transitions(m_codeBlock)
     , m_stage(Preparing)
 {
     RELEASE_ASSERT(m_codeBlock->alternative()->jitCode());
@@ -570,11 +571,10 @@ bool Plan::isStillValid()
 void Plan::reallyAdd(CommonData* commonData)
 {
     ASSERT(m_vm->heap.isDeferred());
-    m_watchpoints.reallyAdd(m_codeBlock, *commonData);
     m_identifiers.reallyAdd(*m_vm, commonData);
     m_weakReferences.reallyAdd(*m_vm, commonData);
     m_transitions.reallyAdd(*m_vm, commonData);
-    m_globalProperties.reallyAdd(m_codeBlock, m_identifiers, *commonData);
+    m_watchpoints.reallyAdd(m_codeBlock, m_identifiers, commonData);
     {
         ConcurrentJSLocker locker(m_codeBlock->m_lock);
         commonData->recordedStatuses = WTFMove(m_recordedStatuses);
@@ -594,7 +594,7 @@ void Plan::notifyReady()
 
 bool Plan::isStillValidOnMainThread()
 {
-    return m_globalProperties.isStillValidOnMainThread(*m_vm, m_identifiers);
+    return m_watchpoints.areStillValidOnMainThread(*m_vm, m_identifiers);
 }
 
 CompilationResult Plan::finalizeWithoutNotifyingCallback()
@@ -636,9 +636,9 @@ CompilationResult Plan::finalizeWithoutNotifyingCallback()
         if (validationEnabled()) {
             TrackedReferences trackedReferences;
 
-            for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->weakReferences)
+            for (WriteBarrier<JSCell>& reference : m_codeBlock->jitCode()->dfgCommon()->m_weakReferences)
                 trackedReferences.add(reference.get());
-            for (StructureID structureID : m_codeBlock->jitCode()->dfgCommon()->weakStructureReferences)
+            for (StructureID structureID : m_codeBlock->jitCode()->dfgCommon()->m_weakStructureReferences)
                 trackedReferences.add(m_vm->getStructure(structureID));
             for (WriteBarrier<Unknown>& constant : m_codeBlock->constants())
                 trackedReferences.add(constant.get());
@@ -756,7 +756,6 @@ void Plan::cancel()
     m_inlineCallFrames = nullptr;
     m_watchpoints = DesiredWatchpoints();
     m_identifiers = DesiredIdentifiers();
-    m_globalProperties = DesiredGlobalProperties();
     m_weakReferences = DesiredWeakReferences();
     m_transitions = DesiredTransitions();
     m_callback = nullptr;

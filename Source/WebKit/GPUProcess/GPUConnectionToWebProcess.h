@@ -55,6 +55,7 @@
 namespace WebKit {
 
 class GPUProcess;
+class LayerHostingContext;
 class LibWebRTCCodecsProxy;
 class RemoteAudioDestinationManager;
 class RemoteAudioHardwareListenerProxy;
@@ -131,7 +132,7 @@ public:
 #endif
 
     RemoteMediaEngineConfigurationFactoryProxy& mediaEngineConfigurationFactoryProxy();
-    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return *m_remoteMediaPlayerManagerProxy; }
+    RemoteMediaPlayerManagerProxy& remoteMediaPlayerManagerProxy() { return m_remoteMediaPlayerManagerProxy.get(); }
 
 #if USE(AUDIO_SESSION)
     RemoteAudioSessionProxyManager& audioSessionManager();
@@ -142,6 +143,8 @@ public:
 #endif
 
     void updateSupportedRemoteCommands();
+
+    bool allowsExitUnderMemoryPressure() const;
 
     void terminateWebProcess();
 #if ENABLE(WEBGL)
@@ -155,9 +158,9 @@ private:
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
-#if HAVE(AVASSETWRITERDELEGATE)
-    RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+    RemoteMediaRecorderManager& mediaRecorderManager();
 #endif
 
     void createRenderingBackend(RemoteRenderingBackendCreationParameters&&);
@@ -173,6 +176,11 @@ private:
 
 #if ENABLE(VP9)
     void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
+#endif
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    void createVisibilityPropagationContextForPage(WebPageProxyIdentifier, WebCore::PageIdentifier, bool canShowWhileLocked);
+    void destroyVisibilityPropagationContextForPage(WebPageProxyIdentifier, WebCore::PageIdentifier);
 #endif
 
 #if USE(AUDIO_SESSION)
@@ -222,7 +230,7 @@ private:
     std::unique_ptr<RemoteAudioDestinationManager> m_remoteAudioDestinationManager;
 #endif
     std::unique_ptr<RemoteMediaResourceManager> m_remoteMediaResourceManager;
-    std::unique_ptr<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
+    UniqueRef<RemoteMediaPlayerManagerProxy> m_remoteMediaPlayerManagerProxy;
     PAL::SessionID m_sessionID;
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     Ref<LibWebRTCCodecsProxy> m_libWebRTCCodecsProxy;
@@ -231,9 +239,9 @@ private:
     std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
     Ref<RemoteAudioMediaStreamTrackRendererManager> m_audioTrackRendererManager;
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
-#if HAVE(AVASSETWRITERDELEGATE)
-    std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+    std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
 #endif
 #if ENABLE(MEDIA_STREAM)
     bool m_allowsAudioCapture { false };
@@ -264,6 +272,10 @@ private:
 #endif
 
     std::unique_ptr<RemoteMediaEngineConfigurationFactoryProxy> m_mediaEngineConfigurationFactoryProxy;
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    HashMap<std::pair<WebPageProxyIdentifier, WebCore::PageIdentifier>, std::unique_ptr<LayerHostingContext>> m_visibilityPropagationContexts;
+#endif
 
     using RemoteAudioHardwareListenerMap = HashMap<RemoteAudioHardwareListenerIdentifier, std::unique_ptr<RemoteAudioHardwareListenerProxy>>;
     RemoteAudioHardwareListenerMap m_remoteAudioHardwareListenerMap;

@@ -34,6 +34,7 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
 
+@class WebDataSource;
 @class WebDownload;
 @class WebFrame;
 @class WebFramePolicyListener;

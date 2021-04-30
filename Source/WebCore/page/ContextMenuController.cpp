@@ -440,14 +440,12 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagTextDirectionRightToLeft:
         frame->editor().command("MakeTextWritingDirectionRightToLeft").execute();
         break;
-#if ENABLE(APP_HIGHLIGHTS)
     case ContextMenuItemTagAddHighlightToCurrentGroup:
         // FIXME: Add Highlight Logic
         break;
     case ContextMenuItemTagAddHighlightToNewGroup:
         // FIXME: Add Highlight Logic
         break;
-#endif
 #if PLATFORM(COCOA)
     case ContextMenuItemTagSearchInSpotlight:
         m_client.searchWithSpotlight();
@@ -523,9 +521,17 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().applyDictationAlternative(title);
         break;
     case ContextMenuItemTagRevealImage:
-    case ContextMenuItemTagTranslate:
         // This should be handled at the client layer.
         ASSERT_NOT_REACHED();
+        break;
+    case ContextMenuItemTagTranslate:
+#if HAVE(TRANSLATION_UI_SERVICES)
+        if (auto view = makeRefPtr(frame->view())) {
+            auto selectionBounds = view->contentsToRootView(enclosingIntRect(frame->selection().selectionBounds()));
+            auto location = view->contentsToRootView(m_context.hitTestResult().roundedPointInInnerNodeFrame());
+            m_client.handleTranslation(m_context.hitTestResult().selectedText(), selectionBounds, location);
+        }
+#endif
         break;
     default:
         break;
@@ -847,18 +853,30 @@ void ContextMenuController::populate()
         return;
 #endif
 
+    auto addSelectedTextActionsIfNeeded = [&] (const String& selectedText) {
+        if (selectedText.isEmpty())
+            return;
+
+#if PLATFORM(COCOA)
+        ContextMenuItem lookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedText));
+        appendItem(lookUpInDictionaryItem, m_contextMenu.get());
+#endif
+
+#if HAVE(TRANSLATION_UI_SERVICES)
+        ContextMenuItem translateItem(ActionType, ContextMenuItemTagTranslate, contextMenuItemTagTranslate(selectedText));
+        appendItem(translateItem, m_contextMenu.get());
+#endif
+
+#if !PLATFORM(GTK)
+        appendItem(SearchWebItem, m_contextMenu.get());
+        appendItem(*separatorItem(), m_contextMenu.get());
+#endif
+    };
+
+    auto selectedText = m_context.hitTestResult().selectedText();
+    m_context.setSelectedText(selectedText);
+
     if (!m_context.hitTestResult().isContentEditable()) {
-        auto selectedString = m_context.hitTestResult().selectedText();
-        m_context.setSelectedText(selectedString);
-
-        if (!selectedString.isEmpty()) {
-            if (auto view = makeRefPtr(frame->view())) {
-                auto selectionBoundsInContentCoordinates = enclosingIntRect(frame->selection().selectionBounds());
-                if (!selectionBoundsInContentCoordinates.isEmpty())
-                    m_context.setSelectionBounds(view->contentsToRootView(selectionBoundsInContentCoordinates));
-            }
-        }
-
         FrameLoader& loader = frame->loader();
         URL linkURL = m_context.hitTestResult().absoluteLinkURL();
         if (!linkURL.isEmpty()) {
@@ -877,11 +895,14 @@ void ContextMenuController::populate()
 
             appendItem(OpenImageInNewWindowItem, m_contextMenu.get());
             appendItem(DownloadImageItem, m_contextMenu.get());
-            if (imageURL.isLocalFile() || m_context.hitTestResult().image()) {
+
+            auto image = m_context.hitTestResult().image();
+            if (imageURL.isLocalFile() || image) {
                 appendItem(CopyImageItem, m_contextMenu.get());
 
 #if ENABLE(IMAGE_EXTRACTION)
-                appendItem(RevealImageItem, m_contextMenu.get());
+                if (image && !image->isAnimated())
+                    appendItem(RevealImageItem, m_contextMenu.get());
 #endif
             }
 #if PLATFORM(GTK)
@@ -934,22 +955,7 @@ void ContextMenuController::populate()
                 appendItem(*separatorItem(), m_contextMenu.get());
 
             if (m_context.hitTestResult().isSelected()) {
-                if (!selectedString.isEmpty()) {
-#if PLATFORM(COCOA)
-                    ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedString));
-
-                    appendItem(LookUpInDictionaryItem, m_contextMenu.get());
-#endif
-#if HAVE(TRANSLATION_UI_SERVICES)
-                    ContextMenuItem TranslateItem(ActionType, ContextMenuItemTagTranslate, contextMenuItemTagTranslate(selectedString));
-                    appendItem(TranslateItem, m_contextMenu.get());
-#endif
-
-#if !PLATFORM(GTK)
-                    appendItem(SearchWebItem, m_contextMenu.get());
-                    appendItem(*separatorItem(), m_contextMenu.get());
-#endif
-                }
+                addSelectedTextActionsIfNeeded(selectedText);
 
                 appendItem(CopyItem, m_contextMenu.get());
 #if PLATFORM(COCOA)
@@ -1081,19 +1087,8 @@ void ContextMenuController::populate()
             appendItem(*separatorItem(), m_contextMenu.get());
         }
 
-        String selectedText = m_context.hitTestResult().selectedText();
-        if (m_context.hitTestResult().isSelected() && !inPasswordField && !selectedText.isEmpty()) {
-#if PLATFORM(COCOA)
-            ContextMenuItem LookUpInDictionaryItem(ActionType, ContextMenuItemTagLookUpInDictionary, contextMenuItemTagLookUpInDictionary(selectedText));
-
-            appendItem(LookUpInDictionaryItem, m_contextMenu.get());
-#endif
-
-#if !PLATFORM(GTK)
-            appendItem(SearchWebItem, m_contextMenu.get());
-            appendItem(*separatorItem(), m_contextMenu.get());
-#endif
-        }
+        if (m_context.hitTestResult().isSelected() && !inPasswordField)
+            addSelectedTextActionsIfNeeded(selectedText);
 
         appendItem(CutItem, m_contextMenu.get());
         appendItem(CopyItem, m_contextMenu.get());
@@ -1320,14 +1315,12 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagCheckSpellingWhileTyping:
             shouldCheck = frame->editor().isContinuousSpellCheckingEnabled();
             break;
-#if ENABLE(APP_HIGHLIGHTS)
         case ContextMenuItemTagAddHighlightToCurrentGroup:
             shouldEnable = frame->selection().isRange();
             break;
         case ContextMenuItemTagAddHighlightToNewGroup:
             shouldEnable = frame->selection().isRange();
             break;
-#endif
 #if PLATFORM(COCOA)
         case ContextMenuItemTagSubstitutionsMenu:
         case ContextMenuItemTagTransformationsMenu:

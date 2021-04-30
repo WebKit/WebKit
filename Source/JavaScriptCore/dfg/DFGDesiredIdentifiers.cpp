@@ -87,13 +87,16 @@ UniquedStringImpl* DesiredIdentifiers::at(unsigned index) const
 
 void DesiredIdentifiers::reallyAdd(VM& vm, CommonData* commonData)
 {
+    unsigned index = 0;
+    FixedVector<Identifier> identifiers(m_addedIdentifiers.size());
     for (auto rep : m_addedIdentifiers) {
         ASSERT(rep->hasAtLeastOneRef());
-        Identifier uid = Identifier::fromUid(vm, rep);
-        {
-            ConcurrentJSLocker locker(m_codeBlock->m_lock);
-            commonData->dfgIdentifiers.append(WTFMove(uid));
-        }
+        identifiers[index++] = Identifier::fromUid(vm, rep);
+    }
+    if (!identifiers.isEmpty()) {
+        ConcurrentJSLocker locker(m_codeBlock->m_lock);
+        ASSERT(commonData->m_dfgIdentifiers.isEmpty());
+        commonData->m_dfgIdentifiers = WTFMove(identifiers);
     }
 }
 

@@ -88,6 +88,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDelegateToSharedSyntheticAttributeProt
 
 using JSTestDelegateToSharedSyntheticAttributeDOMConstructor = JSDOMConstructorNotConstructable<JSTestDelegateToSharedSyntheticAttribute>;
 
+template<> const ClassInfo JSTestDelegateToSharedSyntheticAttributeDOMConstructor::s_info = { "TestDelegateToSharedSyntheticAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDelegateToSharedSyntheticAttributeDOMConstructor) };
+
 template<> JSValue JSTestDelegateToSharedSyntheticAttributeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -100,8 +102,6 @@ template<> void JSTestDelegateToSharedSyntheticAttributeDOMConstructor::initiali
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDelegateToSharedSyntheticAttribute"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestDelegateToSharedSyntheticAttributeDOMConstructor::s_info = { "TestDelegateToSharedSyntheticAttribute", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDelegateToSharedSyntheticAttributeDOMConstructor) };
 
 /* Hash table for prototype */
 

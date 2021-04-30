@@ -28,6 +28,7 @@
 #include "IndexedDB.h"
 #include "ThreadSafeDataBuffer.h"
 #include <wtf/Forward.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
@@ -41,6 +42,7 @@ class JSArrayBufferView;
 namespace WebCore {
 
 class IDBKey : public RefCounted<IDBKey> {
+    WTF_MAKE_ISO_ALLOCATED(IDBKey);
 public:
     static Ref<IDBKey> createInvalid()
     {

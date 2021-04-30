@@ -667,7 +667,7 @@ void WebPageProxy::selectWordBackward()
     m_process->send(Messages::WebPage::SelectWordBackward(), m_webPageID);
 }
 
-void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, uint32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& callback)
+void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGranularity granularity, uint32_t offset, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& callback)
 {
     if (!hasRunningProcess())
         return callback({ });
@@ -675,7 +675,7 @@ void WebPageProxy::requestRectsForGranularityWithSelectionOffset(WebCore::TextGr
     sendWithAsyncReply(Messages::WebPage::GetRectsForGranularityWithSelectionOffset(granularity, offset), WTFMove(callback));
 }
 
-void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionRect>&)>&& callback)
+void WebPageProxy::requestRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& callback)
 {
     if (!hasRunningProcess())
         return callback({ });
@@ -1138,8 +1138,8 @@ WebCore::FloatRect WebPageProxy::selectionBoundingRectInRootViewCoordinates() co
     WebCore::FloatRect bounds;
     auto& postLayoutData = m_editorState.postLayoutData();
     if (m_editorState.selectionIsRange) {
-        for (auto& rect : postLayoutData.selectionRects)
-            bounds.unite(rect.rect());
+        for (auto& geometry : postLayoutData.selectionGeometries)
+            bounds.unite(geometry.rect());
     } else
         bounds = postLayoutData.caretRectAtStart;
 

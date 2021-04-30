@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR
 ] enum XREnvironmentBlendMode {
     "opaque",

@@ -52,7 +52,6 @@ AudioScheduledSourceNode::AudioScheduledSourceNode(BaseAudioContext& context, No
     , ActiveDOMObject(context.scriptExecutionContext())
 {
     suspendIfNeeded();
-    m_pendingActivity = makePendingActivity(*this);
 }
 
 void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, AudioBus& outputBus, size_t& quantumFrameOffset, size_t& nonSilentFramesToProcess, double& startFrameOffset)
@@ -182,11 +181,14 @@ ExceptionOr<void> AudioScheduledSourceNode::stopLater(double when)
     return { };
 }
 
-void AudioScheduledSourceNode::didBecomeMarkedForDeletion()
+bool AudioScheduledSourceNode::virtualHasPendingActivity() const
 {
-    ASSERT(context().isGraphOwner());
-    m_pendingActivity = nullptr;
-    ASSERT(!hasPendingActivity());
+    return m_hasEndedEventListener && m_playbackState != FINISHED_STATE && !isMarkedForDeletion() && !context().isClosed();
+}
+
+void AudioScheduledSourceNode::eventListenersDidChange()
+{
+    m_hasEndedEventListener = hasEventListeners(eventNames().endedEvent);
 }
 
 void AudioScheduledSourceNode::finish()
@@ -200,12 +202,7 @@ void AudioScheduledSourceNode::finish()
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-    callOnMainThread([this, protectedThis = makeRef(*this)] {
-        auto release = makeScopeExit([&] () {
-            AudioContext::AutoLocker locker(context());
-            m_pendingActivity = nullptr;
-            ASSERT(!hasPendingActivity());
-        });
+    callOnMainThread([this, protectedThis = makeRef(*this), pendingActivity = makePendingActivity(*this)] {
         if (context().isStopped())
             return;
         this->dispatchEvent(Event::create(eventNames().endedEvent, Event::CanBubble::No, Event::IsCancelable::No));

@@ -20,8 +20,9 @@ addEventListener("load", async () => {
         testPassed("Started drag");
     });
 
+    endedDrag = false;
     image.addEventListener("dragend", () => {
-        testPassed("Ended drag");
+        endedDrag = true;
     });
 
     if (!window.testRunner)
@@ -36,6 +37,7 @@ addEventListener("load", async () => {
         .end()
         .takeResult());
 
+    await new Promise(resolve => shouldBecomeEqual("endedDrag", "true", resolve));
     while (true) {
         if (!await UIHelper.isAnimatingDragCancel())
             break;

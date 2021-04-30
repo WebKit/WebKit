@@ -328,7 +328,8 @@ void HTMLPlugInImageElement::updateImageLoaderWithNewURLSoon()
         return;
 
     m_needsImageReload = true;
-    scheduleUpdateForAfterStyleResolution();
+    if (inRenderedDocument())
+        scheduleUpdateForAfterStyleResolution();
     invalidateStyle();
 }
 

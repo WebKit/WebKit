@@ -8,7 +8,7 @@
 <script src="/js-test-resources/js-test.js"></script>
 <script>
     // The rand value is necessary to cache-bust slow resources.
-    var imageURL = "http://127.0.0.1:8000/resources/slow-image.php?rand=" + Math.random();
+    var imageURL = "http://127.0.0.1:8000/resources/slow-image.py?rand=" + Math.random();
     function test() {
         setTimeout(function() {
             var entries = performance.getEntriesByName(imageURL).length;

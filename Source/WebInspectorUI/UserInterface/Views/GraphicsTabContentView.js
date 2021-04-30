@@ -203,7 +203,11 @@ WI.GraphicsTabContentView = class GraphicsTabContentView extends WI.ContentBrows
         super.initialLayout();
 
         this._overviewContentView = new WI.GraphicsOverviewContentView;
-        this.contentBrowser.showContentView(this._overviewContentView);
+
+        // FIXME: <https://webkit.org/b/224650> (Web Inspector: audit for re-entrancy issues with `initialLayout` and `layout`)
+        setTimeout(() => {
+            this.contentBrowser.showContentView(this._overviewContentView);
+        });
 
         let dropZoneView = new WI.DropZoneView(this);
         dropZoneView.text = WI.UIString("Import Recording");

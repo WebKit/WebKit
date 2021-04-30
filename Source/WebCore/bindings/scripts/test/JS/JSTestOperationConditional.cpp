@@ -99,6 +99,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestOperationConditionalPrototype, JSTestO
 
 using JSTestOperationConditionalDOMConstructor = JSDOMConstructorNotConstructable<JSTestOperationConditional>;
 
+template<> const ClassInfo JSTestOperationConditionalDOMConstructor::s_info = { "TestOperationConditional", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditionalDOMConstructor) };
+
 template<> JSValue JSTestOperationConditionalDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -111,8 +113,6 @@ template<> void JSTestOperationConditionalDOMConstructor::initializeProperties(V
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestOperationConditional"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestOperationConditionalDOMConstructor::s_info = { "TestOperationConditional", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOperationConditionalDOMConstructor) };
 
 /* Hash table for prototype */
 

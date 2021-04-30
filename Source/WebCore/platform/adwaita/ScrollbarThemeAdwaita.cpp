@@ -127,7 +127,7 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
 
         IntRect frame = rect;
         if (scrollbar.orientation() == VerticalScrollbar) {
-            if (scrollbar.scrollableArea().shouldPlaceBlockDirectionScrollbarOnLeft())
+            if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
                 frame.move(frame.width() - hoveredScrollbarBorderSize, 0);
             frame.setWidth(hoveredScrollbarBorderSize);
         } else
@@ -140,7 +140,7 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
     IntRect thumb = rect;
     if (scrollbar.hoveredPart() == NoPart && usesOverlayScrollbars()) {
         if (scrollbar.orientation() == VerticalScrollbar) {
-            if (scrollbar.scrollableArea().shouldPlaceBlockDirectionScrollbarOnLeft())
+            if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
                 thumb.move(hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
             else
                 thumb.move(scrollbarSize - (overlayThumbSize + thumbBorderSize) + hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
@@ -153,7 +153,7 @@ bool ScrollbarThemeAdwaita::paint(Scrollbar& scrollbar, GraphicsContext& graphic
         }
     } else {
         if (scrollbar.orientation() == VerticalScrollbar) {
-            if (scrollbar.scrollableArea().shouldPlaceBlockDirectionScrollbarOnLeft())
+            if (scrollbar.scrollableArea().shouldPlaceVerticalScrollbarOnLeft())
                 thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2) - hoveredScrollbarBorderSize, thumbPos + thumbBorderSize);
             else
                 thumb.move(scrollbarSize - (scrollbarSize / 2 + thumbSize / 2), thumbPos + thumbBorderSize);

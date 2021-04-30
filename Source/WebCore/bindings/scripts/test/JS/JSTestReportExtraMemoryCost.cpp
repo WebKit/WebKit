@@ -81,6 +81,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestReportExtraMemoryCostPrototype, JSTest
 
 using JSTestReportExtraMemoryCostDOMConstructor = JSDOMConstructorNotConstructable<JSTestReportExtraMemoryCost>;
 
+template<> const ClassInfo JSTestReportExtraMemoryCostDOMConstructor::s_info = { "TestReportExtraMemoryCost", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCostDOMConstructor) };
+
 template<> JSValue JSTestReportExtraMemoryCostDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -93,8 +95,6 @@ template<> void JSTestReportExtraMemoryCostDOMConstructor::initializeProperties(
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestReportExtraMemoryCost"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestReportExtraMemoryCostDOMConstructor::s_info = { "TestReportExtraMemoryCost", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReportExtraMemoryCostDOMConstructor) };
 
 /* Hash table for prototype */
 

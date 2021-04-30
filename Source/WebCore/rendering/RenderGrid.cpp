@@ -1237,13 +1237,14 @@ bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child) const
     return isBaselineAlignmentForChild(child, GridRowAxis) || isBaselineAlignmentForChild(child, GridColumnAxis);
 }
 
-bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child, GridAxis baselineAxis) const
+bool RenderGrid::isBaselineAlignmentForChild(const RenderBox& child, GridAxis baselineAxis, AllowedBaseLine allowed) const
 {
     if (child.isOutOfFlowPositioned())
         return false;
     ItemPosition align = selfAlignmentForChild(baselineAxis, child).position();
     bool hasAutoMargins = baselineAxis == GridColumnAxis ? hasAutoMarginsInColumnAxis(child) : hasAutoMarginsInRowAxis(child);
-    return isBaselinePosition(align) && !hasAutoMargins;
+    bool isBaseline = allowed == FirstLine ? isFirstBaselinePosition(align) : isBaselinePosition(align);
+    return isBaseline && !hasAutoMargins;
 }
 
 // FIXME: This logic is shared by RenderFlexibleBox, so it might be refactored somehow.
@@ -1259,7 +1260,7 @@ LayoutUnit RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode di
 
 Optional<LayoutUnit> RenderGrid::firstLineBaseline() const
 {
-    if (isWritingModeRoot() || !m_grid.hasGridItems())
+    if (isWritingModeRoot() || !m_grid.hasGridItems() || shouldApplyLayoutContainment(*this))
         return WTF::nullopt;
 
     const RenderBox* baselineChild = nullptr;
@@ -1269,7 +1270,7 @@ Optional<LayoutUnit> RenderGrid::firstLineBaseline() const
         for (auto& child : m_grid.cell(0, column)) {
             ASSERT(child.get());
             // If an item participates in baseline alignment, we select such item.
-            if (isBaselineAlignmentForChild(*child)) {
+            if (isBaselineAlignmentForChild(*child, GridColumnAxis, FirstLine)) {
                 // FIXME: self-baseline and content-baseline alignment not implemented yet.
                 baselineChild = child.get();
                 break;

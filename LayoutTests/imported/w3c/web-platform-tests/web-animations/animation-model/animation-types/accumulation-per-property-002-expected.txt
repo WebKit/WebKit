@@ -66,12 +66,12 @@ PASS overflow-y: "hidden" onto "visible"
 PASS overflow-y: "visible" onto "hidden"
 PASS page-break-after (type: discrete) has testAccumulation function
 PASS page-break-after: "auto" onto "always"
-FAIL page-break-after: "always" onto "auto" assert_equals: The value should be always at 0ms expected "always" but got "auto"
+PASS page-break-after: "always" onto "auto"
 PASS page-break-before (type: discrete) has testAccumulation function
 PASS page-break-before: "auto" onto "always"
-FAIL page-break-before: "always" onto "auto" assert_equals: The value should be always at 0ms expected "always" but got "auto"
+PASS page-break-before: "always" onto "auto"
 PASS page-break-inside (type: discrete) has testAccumulation function
-FAIL page-break-inside: "avoid" onto "auto" assert_equals: The value should be avoid at 0ms expected "avoid" but got "auto"
+PASS page-break-inside: "avoid" onto "auto"
 PASS page-break-inside: "auto" onto "avoid"
 PASS paint-order (type: discrete) has testAccumulation function
 PASS paint-order: "stroke" onto "fill"
@@ -172,8 +172,8 @@ PASS transform-style: "preserve-3d" onto "flat"
 PASS transform-style: "flat" onto "preserve-3d"
 PASS rotate (type: rotateList) has testAccumulation function
 FAIL rotate without rotation axes assert_equals: The value should be -45deg at 0ms expected "-45deg" but got "-90deg"
-FAIL rotate with underlying transform assert_equals: The value should be x 45deg at 0ms expected "x 45deg" but got "1 0 0 90deg"
-FAIL rotate with different rotation axes assert_approx_equals: expected 0.707107 0 0.707107 90deg but got 0 1 0 90deg: The value should be 0.707107 0 0.707107 90deg at 500ms but got 0 1 0 90deg expected 0.707107 +/- 0.0001 but got 0
+FAIL rotate with underlying transform assert_equals: The value should be x 45deg at 0ms expected "x 45deg" but got "x 90deg"
+PASS rotate with different rotation axes
 PASS translate (type: translateList) has testAccumulation function
 FAIL translate assert_equals: The value should be -100px at 0ms expected "-100px" but got "-200px"
 FAIL translate with transform assert_equals: The value should be -100px at 0ms expected "-100px" but got "-200px"

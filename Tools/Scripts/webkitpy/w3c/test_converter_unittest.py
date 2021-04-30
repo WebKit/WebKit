@@ -80,6 +80,7 @@ CSS FOR TEST
 </head>
 <body>
 CONTENT OF TEST
+&lt;We shouldn't convert HTML characters.&gt;
 </body>
 </html>
 """

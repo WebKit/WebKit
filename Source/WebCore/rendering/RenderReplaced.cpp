@@ -474,6 +474,23 @@ RoundedRect RenderReplaced::roundedContentBoxRect() const
         borderLeft() + paddingLeft(), borderRight() + paddingRight());
 }
 
+Optional<double> RenderReplaced::intrinsicAspectRatioFromWidthHeight() const
+{
+    if (!settings().aspectRatioOfImgFromWidthAndHeightEnabled())
+        return Optional<double>();
+
+    if (!canMapWidthHeightToAspectRatio())
+        return Optional<double>();
+
+    ASSERT(element());
+    double attributeWidth = parseValidHTMLFloatingPointNumber(element()->getAttribute(HTMLNames::widthAttr)).valueOr(0);
+    double attributeHeight = parseValidHTMLFloatingPointNumber(element()->getAttribute(HTMLNames::heightAttr)).valueOr(0);
+    if (attributeWidth > 0 && attributeHeight > 0)
+        return attributeWidth / attributeHeight;
+
+    return Optional<double>();
+}
+
 void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, double& intrinsicRatio) const
 {
     // If there's an embeddedContentBox() of a remote, referenced document available, this code-path should never be used.
@@ -490,22 +507,8 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
         return;
 
     if (intrinsicSize.isEmpty()) {
-        if (!settings().aspectRatioOfImgFromWidthAndHeightEnabled())
-            return;
-
-        auto* node = element();
-        // The aspectRatioOfImgFromWidthAndHeight only applies to <img>.
-        if (!node || !is<HTMLImageElement>(*node) || !node->hasAttribute(HTMLNames::widthAttr) || !node->hasAttribute(HTMLNames::heightAttr))
-            return;
-
-        // We shouldn't override the aspect-ratio when the <img> element has an empty src attribute.
-        if (!is<RenderImage>(*this) || !downcast<RenderImage>(*this).cachedImage())
-            return;
-
-        intrinsicSize.setWidth(parseValidHTMLFloatingPointNumber(node->getAttribute(HTMLNames::widthAttr)).valueOr(0));
-        intrinsicSize.setHeight(parseValidHTMLFloatingPointNumber(node->getAttribute(HTMLNames::heightAttr)).valueOr(0));
-        if (intrinsicSize.isEmpty())
-            return;
+        intrinsicRatio = intrinsicAspectRatioFromWidthHeight().valueOr(0);
+        return;
     }
 
     intrinsicRatio = intrinsicSize.width() / intrinsicSize.height();
@@ -672,14 +675,9 @@ void RenderReplaced::computePreferredLogicalWidths()
 
     // We cannot resolve any percent logical width here as the available logical
     // width may not be set on our containing block.
-    if (style().logicalWidth().isPercentOrCalculated()) {
-        double intrinsicRatio = 0;
-        FloatSize constrainedSize;
-        // For images with explicit width/height this updates the instrinsic size as a side effect.
-        computeAspectRatioInformationForRenderBox(embeddedContentBox(), constrainedSize, intrinsicRatio);
-
+    if (style().logicalWidth().isPercentOrCalculated())
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-    } else
+    else
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
 
     const RenderStyle& styleToUse = style();

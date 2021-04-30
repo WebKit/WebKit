@@ -240,10 +240,11 @@ public:
         T newMin = static_cast<T>(m_min) << static_cast<T>(shiftAmount);
         T newMax = static_cast<T>(m_max) << static_cast<T>(shiftAmount);
 
-        if ((newMin >> shiftAmount) != static_cast<T>(m_min))
+        if (((newMin >> shiftAmount) != static_cast<T>(m_min))
+            || ((newMax >> shiftAmount) != static_cast<T>(m_max))) {
             newMin = std::numeric_limits<T>::min();
-        if ((newMax >> shiftAmount) != static_cast<T>(m_max))
             newMax = std::numeric_limits<T>::max();
+        }
 
         return IntRange(newMin, newMax);
     }

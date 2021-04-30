@@ -110,9 +110,7 @@ public:
 
     virtual bool isEGLContext() const = 0;
 
-#if ENABLE(WEBGL)
     virtual PlatformGraphicsContextGL platformContext() = 0;
-#endif
 
 protected:
     GLContext(PlatformDisplay&);

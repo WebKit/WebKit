@@ -60,6 +60,7 @@ public:
     WebCore::PlatformCALayer* superlayer() const override;
     void removeFromSuperlayer() override;
     void setSublayers(const WebCore::PlatformCALayerList&) override;
+    WebCore::PlatformCALayerList sublayersForLogging() const override { return m_children; }
     void removeAllSublayers() override;
     void appendSublayer(WebCore::PlatformCALayer&) override;
     void insertSublayer(WebCore::PlatformCALayer&, size_t index) override;

@@ -170,8 +170,8 @@ class Tester(object):
 
         return parser.parse_args(argv)
 
-    def run(self):
-        self._options, args = self._parse_args()
+    def run(self, argv=None):
+        self._options, args = self._parse_args(argv)
         self.printer.configure(self._options)
 
         self.finder.clean_trees()

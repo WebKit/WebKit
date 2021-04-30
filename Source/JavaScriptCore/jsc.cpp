@@ -31,6 +31,7 @@
 #include "CompilerTimingScope.h"
 #include "Completion.h"
 #include "ConfigFile.h"
+#include "DeferTermination.h"
 #include "DeferredWorkTimer.h"
 #include "Disassembler.h"
 #include "Exception.h"
@@ -68,6 +69,7 @@
 #include "TestRunnerUtils.h"
 #include "TypedArrayInlines.h"
 #include "VMInspector.h"
+#include "VMTrapsInlines.h"
 #include "WasmCapabilities.h"
 #include "WasmFaultSignalHandler.h"
 #include "WasmMemory.h"
@@ -2522,6 +2524,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGenerateHeapSnapshot, (JSGlobalObject* globalOb
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler());
@@ -2537,6 +2540,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGenerateHeapSnapshotForGCDebugging, (JSGlobalOb
 {
     VM& vm = globalObject->vm();
     JSLockHolder lock(vm);
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
     String jsonString;
     {
@@ -2580,6 +2584,7 @@ JSC_DEFINE_HOST_FUNCTION(functionStartSamplingProfiler, (JSGlobalObject* globalO
 JSC_DEFINE_HOST_FUNCTION(functionSamplingProfilerStackTraces, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
+    DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!vm.samplingProfiler())

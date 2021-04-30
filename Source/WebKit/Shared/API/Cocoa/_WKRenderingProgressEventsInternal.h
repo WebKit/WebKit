@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKRenderingProgressEvents.h"
+#import <WebKit/_WKRenderingProgressEvents.h>
 
 #import <WebCore/LayoutMilestone.h>
 

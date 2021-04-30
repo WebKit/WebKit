@@ -202,7 +202,7 @@ private:
 
     friend class Internals;
     WEBCORE_EXPORT void bufferedSamplesForTrackId(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
-    WEBCORE_EXPORT Vector<String> enqueuedSamplesForTrackID(const AtomString&);
+    WEBCORE_EXPORT void enqueuedSamplesForTrackID(const AtomString&, CompletionHandler<void(Vector<String>&&)>&&);
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&);
     WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t);
 

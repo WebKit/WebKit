@@ -1215,9 +1215,9 @@ void SourceBuffer::bufferedSamplesForTrackId(const AtomString& trackID, Completi
     m_private->bufferedSamplesForTrackId(trackID, WTFMove(completionHandler));
 }
 
-Vector<String> SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID)
+void SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
-    return m_private->enqueuedSamplesForTrackID(trackID);
+    return m_private->enqueuedSamplesForTrackID(trackID, WTFMove(completionHandler));
 }
 
 MediaTime SourceBuffer::minimumUpcomingPresentationTimeForTrackID(const AtomString& trackID)
@@ -1288,6 +1288,8 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
 void SourceBuffer::sourceBufferPrivateBufferedDirtyChanged(bool flag)
 {
     m_bufferedDirty = flag;
+    if (!isRemoved())
+        m_source->sourceBufferDidChangeBufferedDirty(*this, flag);
 }
 
 bool SourceBuffer::isBufferedDirty() const

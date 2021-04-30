@@ -504,23 +504,27 @@ GPUProcessProxy& WebProcessPool::ensureGPUProcess()
     return *m_gpuProcess;
 }
 
-void WebProcessPool::gpuProcessCrashed(ProcessID identifier)
+void WebProcessPool::gpuProcessExited(ProcessID identifier, GPUProcessTerminationReason reason)
 {
-    WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessCrashed: PID=%d", identifier);
+    WEBPROCESSPOOL_RELEASE_LOG(Process, "gpuProcessDidExit: PID=%d, reason=%u", identifier, static_cast<unsigned>(reason));
     m_gpuProcess = nullptr;
 
-    m_client.gpuProcessDidCrash(this, identifier);
-    Vector<RefPtr<WebProcessProxy>> processes = m_processes;
-    for (auto& process : processes)
-        process->gpuProcessCrashed();
+    if (reason == GPUProcessTerminationReason::Crash)
+        m_client.gpuProcessDidCrash(this, identifier);
 
-    if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
-        WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessCrashed: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
-        m_resetGPUProcessCrashCountTimer.stop();
-        m_recentGPUProcessCrashCount = 0;
-        terminateAllWebContentProcesses();
-    } else if (!m_resetGPUProcessCrashCountTimer.isActive())
-        m_resetGPUProcessCrashCountTimer.startOneShot(resetGPUProcessCrashCountDelay);
+    Vector<Ref<WebProcessProxy>> processes = m_processes;
+    for (auto& process : processes)
+        process->gpuProcessExited(reason);
+
+    if (reason == GPUProcessTerminationReason::Crash) {
+        if (++m_recentGPUProcessCrashCount > maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses) {
+            WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "gpuProcessDidExit: GPU Process has crashed more than %u times in the last %g seconds, terminating all WebProcesses", maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses, resetGPUProcessCrashCountDelay.seconds());
+            m_resetGPUProcessCrashCountTimer.stop();
+            m_recentGPUProcessCrashCount = 0;
+            terminateAllWebContentProcesses();
+        } else if (!m_resetGPUProcessCrashCountTimer.isActive())
+            m_resetGPUProcessCrashCountTimer.startOneShot(resetGPUProcessCrashCountDelay);
+    }
 }
 
 void WebProcessPool::getGPUProcessConnection(WebProcessProxy& webProcessProxy, GPUProcessConnectionParameters&& parameters, Messages::WebProcessProxy::GetGPUProcessConnection::DelayedReply&& reply)
@@ -569,14 +573,14 @@ void WebProcessPool::establishWorkerContextConnectionToNetworkProcess(NetworkPro
 
     if (!s_useSeparateServiceWorkerProcess) {
         for (auto& process : processPool->m_processes) {
-            if (process == processPool->m_prewarmedProcess || process->isDummyProcessProxy())
+            if (process.ptr() == processPool->m_prewarmedProcess.get() || process->isDummyProcessProxy())
                 continue;
             if (&process->websiteDataStore() != websiteDataStore)
                 continue;
             if (!process->isMatchingRegistrableDomain(registrableDomain))
                 continue;
 
-            serviceWorkerProcessProxy = process.get();
+            serviceWorkerProcessProxy = process.ptr();
             serviceWorkerProcessProxy->enableServiceWorkers(processPool->userContentControllerIdentifierForServiceWorkers());
 
             if (serviceWorkerProcessProxy->isInProcessCache()) {
@@ -670,7 +674,7 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     // There is sometimes a delay until we get notified that a prewarmed process has been terminated (e.g. after resuming
     // from suspension) so make sure the process is still running here before deciding to use it.
     if (m_prewarmedProcess->wasTerminated()) {
-        WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "tryTakePrewarmedProcess: Not using prewarmed process because it has been terminated (process=%p, PID=%d)", m_prewarmedProcess, m_prewarmedProcess->processIdentifier());
+        WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "tryTakePrewarmedProcess: Not using prewarmed process because it has been terminated (process=%p, PID=%d)", m_prewarmedProcess.get(), m_prewarmedProcess->processIdentifier());
         m_prewarmedProcess = nullptr;
         return nullptr;
     }
@@ -686,7 +690,7 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     m_prewarmedProcess->setWebsiteDataStore(websiteDataStore);
     m_prewarmedProcess->markIsNoLongerInPrewarmedPool();
 
-    return std::exchange(m_prewarmedProcess, nullptr);
+    return std::exchange(m_prewarmedProcess, nullptr).get();
 }
 
 #if PLATFORM(MAC)
@@ -871,7 +875,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
     if (isPrewarmed == WebProcessProxy::IsPrewarmed::Yes) {
         ASSERT(!m_prewarmedProcess);
-        m_prewarmedProcess = &process;
+        m_prewarmedProcess = makeWeakPtr(process);
     }
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
@@ -901,17 +905,16 @@ void WebProcessPool::prewarmProcess()
 void WebProcessPool::enableProcessTermination()
 {
     m_processTerminationEnabled = true;
-    // FIXME: m_processes should be Vector<Ref<WebProcessProxy>>
-    Vector<RefPtr<WebProcessProxy>> processes = m_processes;
-    for (size_t i = 0; i < processes.size(); ++i) {
-        if (shouldTerminate(*processes[i]))
-            processes[i]->terminate();
+    Vector<Ref<WebProcessProxy>> processes = m_processes;
+    for (auto& process : processes) {
+        if (shouldTerminate(process))
+            process->terminate();
     }
 }
 
 bool WebProcessPool::shouldTerminate(WebProcessProxy& process)
 {
-    ASSERT(m_processes.contains(&process));
+    ASSERT(m_processes.contains(process));
 
     if (!m_processTerminationEnabled || m_configuration->alwaysKeepAndReuseSwappedProcesses())
         return false;
@@ -919,7 +922,7 @@ bool WebProcessPool::shouldTerminate(WebProcessProxy& process)
     return true;
 }
 
-void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
+void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
 {
     ASSERT(m_processes.contains(process));
 
@@ -933,24 +936,24 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy* process)
     if (m_memorySamplerEnabled) {
         SandboxExtension::Handle sampleLogSandboxHandle;        
         WallTime now = WallTime::now();
-        String sampleLogFilePath = makeString("WebProcess", static_cast<unsigned long long>(now.secondsSinceEpoch().seconds()), "pid", process->processIdentifier());
+        String sampleLogFilePath = makeString("WebProcess", static_cast<unsigned long long>(now.secondsSinceEpoch().seconds()), "pid", process.processIdentifier());
         sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::Type::ReadWrite, sampleLogSandboxHandle);
         
-        process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
+        process.send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, m_memorySamplerInterval), 0);
     }
 
     if (m_configuration->fullySynchronousModeIsAllowedForTesting())
-        process->connection()->allowFullySynchronousModeForTesting();
+        process.connection()->allowFullySynchronousModeForTesting();
 
     if (m_configuration->ignoreSynchronousMessagingTimeoutsForTesting())
-        process->connection()->ignoreTimeoutsForTesting();
+        process.connection()->ignoreTimeoutsForTesting();
 
-    m_connectionClient.didCreateConnection(this, process->webConnection());
+    m_connectionClient.didCreateConnection(this, process.webConnection());
 }
 
 void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 {
-    ASSERT(m_processes.contains(&process));
+    ASSERT(m_processes.contains(process));
 
     if (m_prewarmedProcess == &process) {
         ASSERT(m_prewarmedProcess->isPrewarmed());
@@ -973,7 +976,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 
     static_cast<WebContextSupplement*>(supplement<WebGeolocationManagerProxy>())->processDidClose(&process);
 
-    m_processes.removeFirst(&process);
+    m_processes.removeFirst(process);
 
 #if ENABLE(GAMEPAD)
     if (m_processesUsingGamepads.contains(process))
@@ -987,14 +990,14 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
 {
     if (!registrableDomain.isEmpty()) {
         if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore)) {
-            ASSERT(m_processes.contains(process.get()));
+            ASSERT(m_processes.contains(*process));
             return process.releaseNonNull();
         }
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
         if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore)) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processIdentifier());
-            ASSERT(m_processes.contains(process.get()));
+            ASSERT(m_processes.contains(*process));
             return process.releaseNonNull();
         }
     }
@@ -1003,7 +1006,7 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processIdentifier());
         if (!registrableDomain.isEmpty())
             tryPrewarmWithDomainInformation(*process, registrableDomain);
-        ASSERT(m_processes.contains(process.get()));
+        ASSERT(m_processes.contains(*process));
         return process.releaseNonNull();
     }
 
@@ -1015,7 +1018,7 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
 #endif
 
         for (auto& process : m_processes) {
-            if (process == m_prewarmedProcess || process->isDummyProcessProxy())
+            if (process.ptr() == m_prewarmedProcess.get() || process->isDummyProcessProxy())
                 continue;
 #if ENABLE(SERVICE_WORKER)
             if (process->isRunningServiceWorkers())
@@ -1023,7 +1026,7 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
 #endif
             if (mustMatchDataStore && &process->websiteDataStore() != &websiteDataStore)
                 continue;
-            return *process;
+            return process;
         }
     }
     return createNewWebProcess(&websiteDataStore);
@@ -1070,7 +1073,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         if (!process) {
             process = WebProcessProxy::create(*this, pageConfiguration->websiteDataStore(), WebProcessProxy::IsPrewarmed::No, WebProcessProxy::ShouldLaunchProcess::No);
             m_dummyProcessProxies.add(pageConfiguration->websiteDataStore()->sessionID(), makeWeakPtr(*process));
-            m_processes.append(process.copyRef());
+            m_processes.append(*process);
         }
     } else
         process = processForRegistrableDomain(*pageConfiguration->websiteDataStore(), nullptr, { });
@@ -1501,7 +1504,7 @@ void WebProcessPool::stopMemorySampler()
 void WebProcessPool::terminateAllWebContentProcesses()
 {
     WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "terminateAllWebContentProcesses");
-    Vector<RefPtr<WebProcessProxy>> processes = m_processes;
+    Vector<Ref<WebProcessProxy>> processes = m_processes;
     for (auto& process : processes)
         process->terminate();
 }
@@ -1558,11 +1561,11 @@ bool WebProcessPool::httpPipeliningEnabled() const
 #endif
 }
 
-static WebProcessProxy* webProcessProxyFromConnection(IPC::Connection& connection, const Vector<RefPtr<WebProcessProxy>>& processes)
+static WebProcessProxy* webProcessProxyFromConnection(IPC::Connection& connection, const Vector<Ref<WebProcessProxy>>& processes)
 {
     for (auto& process : processes) {
         if (process->hasConnection(connection))
-            return process.get();
+            return process.ptr();
     }
 
     ASSERT_NOT_REACHED();

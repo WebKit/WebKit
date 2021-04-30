@@ -109,9 +109,8 @@ class CheckOutSource(git.Git):
     CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR = (0, 2)
     haltOnFailure = False
 
-    def __init__(self, **kwargs):
-        self.repourl = 'https://github.com/WebKit/WebKit.git'
-        super(CheckOutSource, self).__init__(repourl=self.repourl,
+    def __init__(self, repourl='https://github.com/WebKit/WebKit.git', **kwargs):
+        super(CheckOutSource, self).__init__(repourl=repourl,
                                                 retry=self.CHECKOUT_DELAY_AND_MAX_RETRIES_PAIR,
                                                 timeout=2 * 60 * 60,
                                                 alwaysUseLatest=True,
@@ -222,6 +221,8 @@ class ShowIdentifier(shell.ShellCommand):
         match = re.search(self.identifier_re, log_text, re.MULTILINE)
         if match:
             identifier = match.group(1)
+            if identifier:
+                identifier = identifier.replace('master', 'main')
             self.setProperty('identifier', identifier)
             ews_revision = self.getProperty('ews_revision')
             if ews_revision:
@@ -386,6 +387,8 @@ class CheckPatchRelevance(AnalyzePatch):
         'Tools/CISupport/ews-build',
         'Tools/CISupport/Shared',
         'Tools/Scripts/libraries/resultsdbpy',
+        'Tools/Scripts/libraries/webkitcorepy',
+        'Tools/Scripts/libraries/webkitscmpy',
     ]
 
     jsc_paths = [
@@ -528,9 +531,7 @@ class BugzillaMixin(object):
     addURLs = False
     bug_open_statuses = ['UNCONFIRMED', 'NEW', 'ASSIGNED', 'REOPENED']
     bug_closed_statuses = ['RESOLVED', 'VERIFIED', 'CLOSED']
-    revert_preamble = 'REVERT of r'
-    fast_cq_preamble = '[fast-cq]'
-
+    fast_cq_preambles = ('revert of r', 'fast-cq', '[fast-cq]')
     @defer.inlineCallbacks
     def _addToLog(self, logName, message):
         try:
@@ -615,7 +616,7 @@ class BugzillaMixin(object):
         patch_author = patch_json.get('creator')
         self.setProperty('patch_author', patch_author)
         patch_title = patch_json.get('summary')
-        if patch_title.lower().startswith((self.revert_preamble, self.fast_cq_preamble)):
+        if patch_title.lower().startswith(self.fast_cq_preambles):
             self.setProperty('fast_commit_queue', True)
         if self.addURLs:
             self.addURL('Patch by: {}'.format(patch_author), '')
@@ -2272,6 +2273,10 @@ class RunWebKitTests(shell.Test):
         if self.results != SUCCESS and self.incorrectLayoutLines:
             status = ' '.join(self.incorrectLayoutLines)
             return {'step': status}
+        if self.results == SKIPPED:
+            if self.getProperty('fast_commit_queue'):
+                return {'step': 'Skipped layout-tests in fast-cq mode'}
+            return {'step': 'Skipped layout-tests'}
 
         return super(RunWebKitTests, self).getResultSummary()
 
@@ -3128,6 +3133,31 @@ class PrintConfiguration(steps.ShellSequence):
         return {'step': configuration}
 
 
+class CleanGitRepo(steps.ShellSequence):
+    name = 'clean-up-git-repo'
+    haltOnFailure = False
+    flunkOnFailure = False
+    logEnviron = False
+    # This somewhat quirky sequence of steps seems to clear up all the broken
+    # git situations we've gotten ourself into in the past.
+    command_list = [['git', 'clean', '-f', '-d'],  # Remove any left-over layout test results, added files, etc.
+                    ['git', 'fetch', 'origin'],  # Avoid updating the working copy to a stale revision.
+                    ['git', 'checkout', 'origin/master', '-f'],
+                    ['git', 'branch', '-D', 'master'],
+                    ['git', 'checkout', 'origin/master', '-b', 'master']]
+
+    def run(self):
+        self.commands = []
+        for command in self.command_list:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+        return super(CleanGitRepo, self).run()
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Encountered some issues during cleanup'}
+        return {'step': 'Cleaned up git repository'}
+
+
 class ApplyWatchList(shell.ShellCommand):
     name = 'apply-watch-list'
     description = ['applying watchilist']
@@ -3295,7 +3325,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
             retry_count = int(self.getProperty('retry_count', 0))
             if retry_count < self.MAX_RETRY:
                 self.setProperty('retry_count', retry_count + 1)
-                self.build.addStepsAfterCurrentStep([GitResetHard(), CheckOutSource(), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
+                self.build.addStepsAfterCurrentStep([GitResetHard(), CheckOutSource(repourl='https://git.webkit.org/git/WebKit-https'), ShowIdentifier(), UpdateWorkingDirectory(), ApplyPatch(), CreateLocalGITCommit(), PushCommitToWebKitRepo()])
                 return rc
 
             self.setProperty('bugzilla_comment_text', self.comment_text_for_bug())

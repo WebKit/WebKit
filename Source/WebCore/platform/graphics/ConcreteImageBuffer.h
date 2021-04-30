@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,16 +111,12 @@ protected:
 
     size_t memoryCost() const override
     {
-        if (auto* backend = ensureBackendCreated())
-            return m_backend->memoryCost();
-        return 0;
+        return BackendType::calculateMemoryCost(m_parameters);
     }
 
     size_t externalMemoryCost() const override
     {
-        if (auto* backend = ensureBackendCreated())
-            return m_backend->externalMemoryCost();
-        return 0;
+        return BackendType::calculateExternalMemoryCost(m_parameters);
     }
 
     RefPtr<NativeImage> copyNativeImage(BackingStoreCopy copyBehavior = CopyBackingStore) const override

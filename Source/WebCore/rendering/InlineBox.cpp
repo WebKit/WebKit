@@ -40,7 +40,8 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(InlineBox);
 
 struct SameSizeAsInlineBox {
     virtual ~SameSizeAsInlineBox() = default;
-    void* a[4];
+    void* a[3];
+    WeakPtr<RenderObject> r;
     FloatPoint b;
     float c[2];
     unsigned d : 23;
@@ -96,12 +97,12 @@ const char* InlineBox::boxName() const
 
 void InlineBox::showNodeTreeForThis() const
 {
-    m_renderer.showNodeTreeForThis();
+    renderer().showNodeTreeForThis();
 }
 
 void InlineBox::showLineTreeForThis() const
 {
-    m_renderer.containingBlock()->showLineTreeForThis();
+    renderer().containingBlock()->showLineTreeForThis();
 }
 
 void InlineBox::outputLineTreeAndMark(TextStream& stream, const InlineBox* markedBox, int depth) const
@@ -157,12 +158,12 @@ LayoutUnit InlineBox::lineHeight() const
 
 int InlineBox::caretMinOffset() const 
 { 
-    return m_renderer.caretMinOffset();
+    return renderer().caretMinOffset();
 }
 
 int InlineBox::caretMaxOffset() const 
 { 
-    return m_renderer.caretMaxOffset();
+    return renderer().caretMaxOffset();
 }
 
 void InlineBox::dirtyLineBoxes()
@@ -176,10 +177,10 @@ void InlineBox::adjustPosition(float dx, float dy)
 {
     m_topLeft.move(dx, dy);
 
-    if (m_renderer.isOutOfFlowPositioned())
+    if (renderer().isOutOfFlowPositioned())
         return;
 
-    if (m_renderer.isReplaced())
+    if (renderer().isReplaced())
         downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
@@ -241,31 +242,15 @@ InlineBox* InlineBox::previousLeafOnLine() const
     return leaf;
 }
 
-InlineBox* InlineBox::nextLeafOnLineIgnoringLineBreak() const
-{
-    InlineBox* leaf = nextLeafOnLine();
-    if (leaf && leaf->isLineBreak())
-        return nullptr;
-    return leaf;
-}
-
-InlineBox* InlineBox::previousLeafOnLineIgnoringLineBreak() const
-{
-    InlineBox* leaf = previousLeafOnLine();
-    if (leaf && leaf->isLineBreak())
-        return nullptr;
-    return leaf;
-}
-
 RenderObject::HighlightState InlineBox::selectionState()
 {
-    return m_renderer.selectionState();
+    return renderer().selectionState();
 }
 
 bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
 {
     // Non-replaced elements can always accommodate an ellipsis.
-    if (!m_renderer.isReplaced())
+    if (!renderer().isReplaced())
         return true;
     
     IntRect boxRect(left(), 0, m_logicalWidth, 10);
@@ -289,7 +274,7 @@ void InlineBox::clearKnownToHaveNoOverflow()
 
 FloatPoint InlineBox::locationIncludingFlipping() const
 {
-    if (!m_renderer.style().isFlippedBlocksWritingMode())
+    if (!renderer().style().isFlippedBlocksWritingMode())
         return topLeft();
     RenderBlockFlow& block = root().blockFlow();
     if (block.style().isHorizontalWritingMode())
@@ -299,28 +284,28 @@ FloatPoint InlineBox::locationIncludingFlipping() const
 
 void InlineBox::flipForWritingMode(FloatRect& rect) const
 {
-    if (!m_renderer.style().isFlippedBlocksWritingMode())
+    if (!renderer().style().isFlippedBlocksWritingMode())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
 FloatPoint InlineBox::flipForWritingMode(const FloatPoint& point) const
 {
-    if (!m_renderer.style().isFlippedBlocksWritingMode())
+    if (!renderer().style().isFlippedBlocksWritingMode())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }
 
 void InlineBox::flipForWritingMode(LayoutRect& rect) const
 {
-    if (!m_renderer.style().isFlippedBlocksWritingMode())
+    if (!renderer().style().isFlippedBlocksWritingMode())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
 LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point) const
 {
-    if (!m_renderer.style().isFlippedBlocksWritingMode())
+    if (!renderer().style().isFlippedBlocksWritingMode())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }

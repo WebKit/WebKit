@@ -75,6 +75,7 @@ function measurementCluster()
                             10,
                             '791451',
                             null,
+                            null,
                             1454481204649
                         ],
                         [
@@ -82,12 +83,14 @@ function measurementCluster()
                             11,
                             '196051',
                             null,
+                            null,
                             1454481246108
                         ],
                         [
                             105502,
                             9,
                             '10.11 15D21',
+                            null,
                             1504021,
                             0
                         ]

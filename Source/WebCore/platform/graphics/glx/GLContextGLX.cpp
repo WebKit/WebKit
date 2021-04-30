@@ -394,12 +394,10 @@ void GLContextGLX::swapInterval(int interval)
     glXSwapIntervalSGI(interval);
 }
 
-#if ENABLE(WEBGL)
 PlatformGraphicsContextGL GLContextGLX::platformContext()
 {
     return m_context.get();
 }
-#endif
 
 } // namespace WebCore
 

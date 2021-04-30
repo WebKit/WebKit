@@ -327,8 +327,11 @@
 #include "ScrollbarThemeMac.h"
 #endif
 
-#if PLATFORM(COCOA)
+#if PLATFORM(IOS_FAMILY)
 #include "MediaSessionHelperIOS.h"
+#endif
+
+#if PLATFORM(COCOA)
 #include "SystemBattery.h"
 #include "VP9UtilitiesCocoa.h"
 #include <pal/spi/cf/CoreTextSPI.h>
@@ -559,7 +562,7 @@ void Internals::resetToConsistentState(Page& page)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     page.setMockMediaPlaybackTargetPickerEnabled(true);
-    page.setMockMediaPlaybackTargetPickerState(emptyString(), MediaPlaybackTargetContext::Unknown);
+    page.setMockMediaPlaybackTargetPickerState(emptyString(), MediaPlaybackTargetContext::MockState::Unknown);
 #endif
 
 #if ENABLE(VIDEO)
@@ -2830,11 +2833,9 @@ static LayerTreeFlags toLayerTreeFlags(unsigned short flags)
 // instance instead.
 ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned short flags) const
 {
-    if (!document.frame())
+    if (!document.frame() || !document.frame()->contentRenderer())
         return Exception { InvalidAccessError };
-
-    document.updateLayoutIgnorePendingStylesheets();
-    return document.frame()->layerTreeAsText(toLayerTreeFlags(flags));
+    return document.frame()->contentRenderer()->compositor().layerTreeAsText(toLayerTreeFlags(flags));
 }
 
 ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
@@ -2854,6 +2855,31 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
 
     auto* backing = layerModelObject.layer()->backing();
     return backing->graphicsLayer()->primaryLayerID();
+}
+
+static OptionSet<PlatformLayerTreeAsTextFlags> toPlatformLayerTreeFlags(unsigned short flags)
+{
+    OptionSet<PlatformLayerTreeAsTextFlags> platformLayerTreeFlags = { };
+    if (flags & Internals::PLATFORM_LAYER_TREE_DEBUG)
+        platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::Debug);
+    if (flags & Internals::PLATFORM_LAYER_TREE_IGNORES_CHILDREN)
+        platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::IgnoreChildren);
+    if (flags & Internals::PLATFORM_LAYER_TREE_INCLUDE_MODELS)
+        platformLayerTreeFlags.add(PlatformLayerTreeAsTextFlags::IncludeModels);
+    return platformLayerTreeFlags;
+}
+
+ExceptionOr<String> Internals::platformLayerTreeAsText(Element& element, unsigned short flags) const
+{
+    Document& document = element.document();
+    if (!document.frame() || !document.frame()->contentRenderer())
+        return Exception { InvalidAccessError };
+
+    auto text = document.frame()->contentRenderer()->compositor().platformLayerTreeAsText(element, toPlatformLayerTreeFlags(flags));
+    if (!text)
+        return Exception { NotFoundError };
+
+    return String { text.value() };
 }
 
 ExceptionOr<String> Internals::repaintRectsAsText() const
@@ -4117,9 +4143,11 @@ void Internals::bufferedSamplesForTrackId(SourceBuffer& buffer, const AtomString
     });
 }
 
-Vector<String> Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, const AtomString& trackID)
+void Internals::enqueuedSamplesForTrackID(SourceBuffer& buffer, const AtomString& trackID, BufferedSamplesPromise&& promise)
 {
-    return buffer.enqueuedSamplesForTrackID(trackID);
+    return buffer.enqueuedSamplesForTrackID(trackID, [promise = WTFMove(promise)](auto&& samples) mutable {
+        promise.resolve(WTFMove(samples));
+    });
 }
 
 double Internals::minimumUpcomingPresentationTimeForTrackID(SourceBuffer& buffer, const AtomString& trackID)
@@ -4510,14 +4538,14 @@ ExceptionOr<void> Internals::setMockMediaPlaybackTargetPickerState(const String&
     Page* page = contextDocument()->frame()->page();
     ASSERT(page);
 
-    MediaPlaybackTargetContext::State state = MediaPlaybackTargetContext::Unknown;
+    MediaPlaybackTargetContext::MockState state = MediaPlaybackTargetContext::MockState::Unknown;
 
     if (equalLettersIgnoringASCIICase(deviceState, "deviceavailable"))
-        state = MediaPlaybackTargetContext::OutputDeviceAvailable;
+        state = MediaPlaybackTargetContext::MockState::OutputDeviceAvailable;
     else if (equalLettersIgnoringASCIICase(deviceState, "deviceunavailable"))
-        state = MediaPlaybackTargetContext::OutputDeviceUnavailable;
+        state = MediaPlaybackTargetContext::MockState::OutputDeviceUnavailable;
     else if (equalLettersIgnoringASCIICase(deviceState, "unknown"))
-        state = MediaPlaybackTargetContext::Unknown;
+        state = MediaPlaybackTargetContext::MockState::Unknown;
     else
         return Exception { InvalidAccessError };
 
@@ -5569,26 +5597,47 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
 }
 #endif
 
+Internals::ImageOverlayLine::~ImageOverlayLine() = default;
 Internals::ImageOverlayText::~ImageOverlayText() = default;
 
-void Internals::installImageOverlay(Element& element, Vector<ImageOverlayText>&& allTextInfo)
+#if ENABLE(IMAGE_EXTRACTION)
+
+template<typename T>
+static FloatQuad getQuad(const T& overlayTextOrLine)
+{
+    return {
+        FloatPoint(overlayTextOrLine.topLeft->x(), overlayTextOrLine.topLeft->y()),
+        FloatPoint(overlayTextOrLine.topRight->x(), overlayTextOrLine.topRight->y()),
+        FloatPoint(overlayTextOrLine.bottomRight->x(), overlayTextOrLine.bottomRight->y()),
+        FloatPoint(overlayTextOrLine.bottomLeft->x(), overlayTextOrLine.bottomLeft->y()),
+    };
+}
+
+static ImageExtractionLineData makeDataForLine(const Internals::ImageOverlayLine& line)
+{
+    return {
+        getQuad<Internals::ImageOverlayLine>(line),
+        line.children.map([](auto& textChild) -> ImageExtractionTextData {
+            return { textChild.text, getQuad<Internals::ImageOverlayText>(textChild) };
+        })
+    };
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION)
+
+void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines)
 {
     if (!is<HTMLElement>(element))
         return;
 
 #if ENABLE(IMAGE_EXTRACTION)
     downcast<HTMLElement>(element).updateWithImageExtractionResult(ImageExtractionResult {
-        allTextInfo.map([] (auto& textInfo) -> ImageExtractionTextData {
-            return { textInfo.text, {
-                FloatPoint(textInfo.topLeft->x(), textInfo.topLeft->y()),
-                FloatPoint(textInfo.topRight->x(), textInfo.topRight->y()),
-                FloatPoint(textInfo.bottomRight->x(), textInfo.bottomRight->y()),
-                FloatPoint(textInfo.bottomLeft->x(), textInfo.bottomLeft->y()),
-            }};
+        lines.map([] (auto& line) -> ImageExtractionLineData {
+            return makeDataForLine(line);
         })
     });
 #else
-    UNUSED_PARAM(allTextInfo);
+    UNUSED_PARAM(lines);
 #endif
 }
 
@@ -6046,13 +6095,11 @@ bool Internals::destroySleepDisabler(unsigned identifier)
 
 ExceptionOr<RefPtr<WebXRTest>> Internals::xrTest()
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+    auto* document = contextDocument();
+    if (!document || !document->domWindow() || !document->settings().webXREnabled())
         return Exception { InvalidAccessError };
 
     if (!m_xrTest) {
-        if (!contextDocument() || !contextDocument()->domWindow())
-            return Exception { InvalidAccessError };
-
         auto* navigator = contextDocument()->domWindow()->optionalNavigator();
         if (!navigator)
             return Exception { InvalidAccessError };

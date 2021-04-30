@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#if ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #include "GraphicsContextGLOpenGL.h"
 #include "NicosiaContentLayerTextureMapperImpl.h"
@@ -62,4 +62,4 @@ private:
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)
+#endif // ENABLE(WEBGL) && USE(NICOSIA) && USE(TEXTURE_MAPPER)

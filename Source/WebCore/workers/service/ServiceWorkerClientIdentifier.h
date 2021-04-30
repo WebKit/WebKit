@@ -109,9 +109,9 @@ struct ServiceWorkerClientIdentifierHash {
 template<> struct HashTraits<WebCore::ServiceWorkerClientIdentifier> : GenericHashTraits<WebCore::ServiceWorkerClientIdentifier> {
     static WebCore::ServiceWorkerClientIdentifier emptyValue() { return { }; }
 
-    static void constructDeletedValue(WebCore::ServiceWorkerClientIdentifier& slot) { slot.serverConnectionIdentifier = makeObjectIdentifier<WebCore::SWServerConnectionIdentifierType>(std::numeric_limits<uint64_t>::max()); }
+    static void constructDeletedValue(WebCore::ServiceWorkerClientIdentifier& slot) { new (NotNull, &slot.serverConnectionIdentifier) WebCore::SWServerConnectionIdentifier(HashTableDeletedValue); }
 
-    static bool isDeletedValue(const WebCore::ServiceWorkerClientIdentifier& slot) { return slot.serverConnectionIdentifier.toUInt64() == std::numeric_limits<uint64_t>::max(); }
+    static bool isDeletedValue(const WebCore::ServiceWorkerClientIdentifier& slot) { return slot.serverConnectionIdentifier.isHashTableDeletedValue(); }
 };
 
 template<> struct DefaultHash<WebCore::ServiceWorkerClientIdentifier> : ServiceWorkerClientIdentifierHash { };

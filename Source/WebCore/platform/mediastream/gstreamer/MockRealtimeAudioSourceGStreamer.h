@@ -45,11 +45,15 @@ private:
     void reconfigure();
     void addHum(float amplitude, float frequency, float sampleRate, uint64_t start, float *p, uint64_t count);
 
+    bool interrupted() const final { return m_isInterrupted; };
+    void setInterruptedForTesting(bool) final;
+
     Optional<GStreamerAudioStreamDescription> m_streamFormat;
     Vector<float> m_bipBopBuffer;
     uint32_t m_maximiumFrameCount;
     uint64_t m_samplesEmitted { 0 };
     uint64_t m_samplesRendered { 0 };
+    bool m_isInterrupted { false };
 };
 
 } // namespace WebCore

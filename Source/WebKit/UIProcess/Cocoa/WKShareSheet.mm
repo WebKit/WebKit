@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKShareSheet.h"
+#import <WebKit/WKShareSheet.h>
 
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 

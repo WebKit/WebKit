@@ -34,13 +34,16 @@
 #import "GraphicsContextGLOpenGLManager.h"
 #import "Logging.h"
 #import "RuntimeApplicationChecks.h"
-#import "WebCoreThread.h"
 #import "WebGLLayer.h"
 #import <CoreGraphics/CGBitmapContext.h>
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import "WebCoreThread.h"
+#endif
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 #include "GraphicsContextGLCV.h"
@@ -467,6 +470,9 @@ void GraphicsContextGLOpenGL::clearCurrentContext()
 #if PLATFORM(IOS_FAMILY)
 bool GraphicsContextGLOpenGL::releaseCurrentContext(ReleaseBehavior releaseBehavior)
 {
+    if (!isANGLEAvailable())
+        return true;
+
     // At the moment this function is relevant only when web thread lock owns the GraphicsContextGLOpenGL current context.
     ASSERT(!isCurrentContextPredictable());
 

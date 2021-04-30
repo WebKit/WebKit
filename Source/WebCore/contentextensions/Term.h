@@ -31,11 +31,9 @@
 #include "NFA.h"
 #include <unicode/utypes.h>
 #include <wtf/ASCIICType.h>
-#include <wtf/HashMap.h>
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

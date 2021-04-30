@@ -40,7 +40,6 @@
 #include "RemoteAudioSourceProviderManager.h"
 #include "RemoteCDMFactory.h"
 #include "RemoteCDMProxy.h"
-#include "RemoteLegacyCDMFactory.h"
 #include "RemoteMediaEngineConfigurationFactory.h"
 #include "RemoteMediaPlayerManager.h"
 #include "RemoteRemoteCommandListenerMessages.h"
@@ -100,6 +99,12 @@ GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier connectio
     m_connection->open();
 
     addLanguageChangeObserver(this, languagesChanged);
+
+    if (WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::MediaPainting)) {
+#if ENABLE(VP9)
+        enableVP9Decoders(PlatformMediaSessionManager::shouldEnableVP8Decoder(), PlatformMediaSessionManager::shouldEnableVP9Decoder(), PlatformMediaSessionManager::shouldEnableVP9SWDecoder());
+#endif
+    }
 }
 
 GPUProcessConnection::~GPUProcessConnection()
@@ -149,25 +154,6 @@ RemoteAudioSourceProviderManager& GPUProcessConnection::audioSourceProviderManag
 }
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-RemoteCDMFactory& GPUProcessConnection::cdmFactory()
-{
-    return *WebProcess::singleton().supplement<RemoteCDMFactory>();
-}
-#endif
-
-#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-RemoteLegacyCDMFactory& GPUProcessConnection::legacyCDMFactory()
-{
-    return *WebProcess::singleton().supplement<RemoteLegacyCDMFactory>();
-}
-#endif
-
-RemoteMediaEngineConfigurationFactory& GPUProcessConnection::mediaEngineConfigurationFactory()
-{
-    return *WebProcess::singleton().supplement<RemoteMediaEngineConfigurationFactory>();
-}
-
 bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (decoder.messageReceiverName() == Messages::MediaPlayerPrivateRemote::messageReceiverName()) {
@@ -190,7 +176,7 @@ bool GPUProcessConnection::dispatchMessage(IPC::Connection& connection, IPC::Dec
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMInstanceSession::messageReceiverName()) {
-        WebProcess::singleton().supplement<RemoteCDMFactory>()->didReceiveSessionMessage(connection, decoder);
+        WebProcess::singleton().cdmFactory().didReceiveSessionMessage(connection, decoder);
         return true;
     }
 #endif
@@ -247,18 +233,30 @@ void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteC
     PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
 }
 
-void GPUProcessConnection::updateParameters(const WebPageCreationParameters& parameters)
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+void GPUProcessConnection::createVisibilityPropagationContextForPage(WebPage& page)
 {
+    connection().send(Messages::GPUConnectionToWebProcess::CreateVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier(), page.canShowWhileLocked()), { });
+}
+
+void GPUProcessConnection::destroyVisibilityPropagationContextForPage(WebPage& page)
+{
+    connection().send(Messages::GPUConnectionToWebProcess::DestroyVisibilityPropagationContextForPage(page.webPageProxyIdentifier(), page.identifier()), { });
+}
+#endif
+
 #if ENABLE(VP9)
-    if (m_enableVP8Decoder == parameters.shouldEnableVP8Decoder && m_enableVP9Decoder == parameters.shouldEnableVP9Decoder && m_enableVP9SWDecoder == parameters.shouldEnableVP9SWDecoder)
+void GPUProcessConnection::enableVP9Decoders(bool enableVP8Decoder, bool enableVP9Decoder, bool enableVP9SWDecoder)
+{
+    if (m_enableVP8Decoder == enableVP8Decoder && m_enableVP9Decoder == enableVP9Decoder && m_enableVP9SWDecoder == enableVP9SWDecoder)
         return;
 
-    m_enableVP9Decoder = parameters.shouldEnableVP8Decoder;
-    m_enableVP9Decoder = parameters.shouldEnableVP9Decoder;
-    m_enableVP9SWDecoder = parameters.shouldEnableVP9SWDecoder;
-    connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(parameters.shouldEnableVP8Decoder, parameters.shouldEnableVP9Decoder, parameters.shouldEnableVP9SWDecoder), { });
-#endif
+    m_enableVP8Decoder = enableVP8Decoder;
+    m_enableVP9Decoder = enableVP9Decoder;
+    m_enableVP9SWDecoder = enableVP9SWDecoder;
+    connection().send(Messages::GPUConnectionToWebProcess::EnableVP9Decoders(enableVP8Decoder, enableVP9Decoder, enableVP9SWDecoder), { });
 }
+#endif
 
 void GPUProcessConnection::updateMediaConfiguration()
 {

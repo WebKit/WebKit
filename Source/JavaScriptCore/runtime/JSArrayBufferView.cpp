@@ -172,18 +172,6 @@ void JSArrayBufferView::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
 DEFINE_VISIT_CHILDREN(JSArrayBufferView);
 
-bool JSArrayBufferView::put(
-    JSCell* cell, JSGlobalObject* globalObject, PropertyName propertyName, JSValue value,
-    PutPropertySlot& slot)
-{
-    JSArrayBufferView* thisObject = jsCast<JSArrayBufferView*>(cell);
-
-    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
-        return ordinarySetSlow(globalObject, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
-    
-    return Base::put(thisObject, globalObject, propertyName, value, slot);
-}
-
 ArrayBuffer* JSArrayBufferView::unsharedBuffer()
 {
     ArrayBuffer* result = possiblySharedBuffer();

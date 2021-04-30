@@ -38,6 +38,8 @@ STUBS_CLASS = __name__ + ".TestStubs"
 
 
 class TestStubs(unittest.TestCase):
+    __pytest_no_rewrite__ = True
+
     def test_empty(self):
         pass
 
@@ -53,7 +55,7 @@ class TestStubs(unittest.TestCase):
 
 class TesterTest(unittest.TestCase):
 
-    def test_no_tests_found(self):
+    def serial_test_no_tests_found(self):
         tester = Tester()
         errors = StringIO()
 
@@ -61,16 +63,18 @@ class TesterTest(unittest.TestCase):
         # don't log the messages webkitpy.test while we're testing it.
         root_logger = logging.getLogger()
         root_handlers = root_logger.handlers
-        root_logger.handlers = []
+        try:
+            root_logger.handlers = []
 
-        tester.printer.stream = errors
-        tester.finder.find_names = lambda args, run_all: []
-        with OutputCapture(level=logging.INFO) as captured:
-            self.assertFalse(tester.run())
-        root_logger.handlers = root_handlers
+            tester.printer.stream = errors
+            tester.finder.find_names = lambda args, run_all: []
+            with OutputCapture(level=logging.INFO) as captured:
+                self.assertFalse(tester.run([]))
 
-        self.assertIn('No tests to run', errors.getvalue())
-        self.assertIn('No tests to run', captured.root.log.getvalue())
+            self.assertIn('No tests to run', errors.getvalue())
+            self.assertIn('No tests to run', captured.root.log.getvalue())
+        finally:
+            root_logger.handlers = root_handlers
 
     def _find_test_names(self, args):
         tester = Tester()

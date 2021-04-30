@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,15 +87,14 @@ public:
 
     WEBCORE_EXPORT virtual ~ImageBufferBackend() = default;
 
-    WEBCORE_EXPORT static IntSize calculateBackendSize(const FloatSize&, float resolutionScale);
+    WEBCORE_EXPORT static IntSize calculateBackendSize(const Parameters&);
+    WEBCORE_EXPORT static size_t calculateMemoryCost(const IntSize& backendSize, unsigned bytesPerRow);
+    static size_t calculateExternalMemoryCost(const Parameters&) { return 0; }
 
     virtual GraphicsContext& context() const = 0;
     virtual void flushContext() { }
 
     virtual IntSize backendSize() const { return { }; }
-
-    virtual size_t memoryCost() const { return 4 * backendSize().area().unsafeGet(); }
-    virtual size_t externalMemoryCost() const { return 0; }
 
     virtual RefPtr<NativeImage> copyNativeImage(BackingStoreCopy) const = 0;
     virtual RefPtr<Image> copyImage(BackingStoreCopy, PreserveResolution) const = 0;
@@ -136,7 +135,7 @@ public:
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);
 
-    virtual unsigned bytesPerRow() const { return 4 * backendSize().width(); }
+    virtual unsigned bytesPerRow() const = 0;
 
     template<typename T>
     T toBackendCoordinates(T t) const

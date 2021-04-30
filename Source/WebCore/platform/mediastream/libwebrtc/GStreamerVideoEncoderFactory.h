@@ -23,24 +23,26 @@
 #if USE(LIBWEBRTC) && USE(GSTREAMER)
 #include "LibWebRTCMacros.h"
 #include "api/video_codecs/video_encoder_factory.h"
-#include <gst/gst.h>
 
 namespace WebCore {
 
 class GStreamerVideoEncoderFactory final : public webrtc::VideoEncoderFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GStreamerVideoEncoderFactory();
+    GStreamerVideoEncoderFactory(bool isSupportingVP9Profile0, bool isSupportingVP9Profile2);
 
 private:
     std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const override;
     std::unique_ptr<webrtc::VideoEncoder> CreateVideoEncoder(const webrtc::SdpVideoFormat&) final;
     CodecInfo QueryVideoEncoder(const webrtc::SdpVideoFormat&) const override
     {
-        GST_FIXME("Detect whether the decoder is HW accelerated");
+        // FIXME: Detect whether the decoder is HW accelerated.
 
         return { false };
     }
+
+    bool m_isSupportingVP9Profile0;
+    bool m_isSupportingVP9Profile2;
 };
 }
 

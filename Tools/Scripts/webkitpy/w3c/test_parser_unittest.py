@@ -217,17 +217,22 @@ CONTENT OF TEST
 </html>
 """
         # Set options to 'all' so this gets found
-        options['all'] = True
+        global options
+        orig_options = options.copy()
+        try:
+            options['all'] = True
 
-        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
-        parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
-        test_info = parser.analyze_test(test_contents=test_html)
+            test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
+            parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
+            test_info = parser.analyze_test(test_contents=test_html)
 
-        self.assertNotEqual(test_info, None, 'test_info is None')
-        self.assertTrue('test' in test_info.keys(), 'did not find a test file')
-        self.assertFalse('reference' in test_info.keys(), 'shold not have found a reference file')
-        self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
-        self.assertFalse('jstest' in test_info.keys(), 'test should not be a jstest')
+            self.assertNotEqual(test_info, None, 'test_info is None')
+            self.assertTrue('test' in test_info.keys(), 'did not find a test file')
+            self.assertFalse('reference' in test_info.keys(), 'shold not have found a reference file')
+            self.assertFalse('refsupport' in test_info.keys(), 'there should be no refsupport files for this test')
+            self.assertFalse('jstest' in test_info.keys(), 'test should not be a jstest')
+        finally:
+            options = orig_options
 
     def test_analyze_pixel_test_all_false(self):
         """ Tests analyze_test() using a test that is neither a reftest or jstest, with -all=False """
@@ -246,13 +251,18 @@ CONTENT OF TEST
 </html>
 """
         # Set all to false so this gets skipped
-        options['all'] = False
+        global options
+        orig_options = options.copy()
+        try:
+            options['all'] = False
 
-        test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
-        parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
-        test_info = parser.analyze_test(test_contents=test_html)
+            test_path = os.path.join(os.path.sep, 'some', 'madeup', 'path')
+            parser = TestParser(options, os.path.join(test_path, 'somefile.html'))
+            test_info = parser.analyze_test(test_contents=test_html)
 
-        self.assertEqual(test_info, None, 'test should have been skipped')
+            self.assertEqual(test_info, None, 'test should have been skipped')
+        finally:
+            options = orig_options
 
     def test_analyze_non_html_file(self):
         """ Tests analyze_test() with a file that has no html"""

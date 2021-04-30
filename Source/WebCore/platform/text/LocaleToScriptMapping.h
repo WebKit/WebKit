@@ -28,8 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LocaleToScriptMapping_h
-#define LocaleToScriptMapping_h
+#pragma once
 
 #include <unicode/uscript.h>
 #include <wtf/Forward.h>
@@ -37,8 +36,6 @@
 namespace WebCore {
 
 UScriptCode localeToScriptCodeForFontSelection(const String&);
-WEBCORE_EXPORT UScriptCode scriptNameToCode(const String&);
+WEBCORE_EXPORT UScriptCode scriptNameToCode(StringView);
 
 }
-
-#endif

@@ -30,6 +30,7 @@
 
 #import "WebProcessProxy.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/MainThread.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -106,7 +107,9 @@
 
     _hasMouseDevice = hasMouseDevice;
 
-    WebKit::WebProcessProxy::notifyHasMouseDeviceChanged();
+    ensureOnMainRunLoop([hasMouseDevice] {
+        WebKit::WebProcessProxy::notifyHasMouseDeviceChanged(hasMouseDevice);
+    });
 }
 
 #pragma mark - Testing
@@ -115,7 +118,9 @@
 {
     _hasMouseDevice = hasMouseDevice;
 
-    WebKit::WebProcessProxy::notifyHasMouseDeviceChanged();
+    ensureOnMainRunLoop([hasMouseDevice] {
+        WebKit::WebProcessProxy::notifyHasMouseDeviceChanged(hasMouseDevice);
+    });
 }
 
 @end

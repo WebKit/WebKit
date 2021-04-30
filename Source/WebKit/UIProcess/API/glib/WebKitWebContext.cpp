@@ -114,7 +114,6 @@ using namespace WebKit;
 
 enum {
     PROP_0,
-
 #if PLATFORM(GTK)
     PROP_LOCAL_STORAGE_DIRECTORY,
 #endif
@@ -122,10 +121,13 @@ enum {
 #if PLATFORM(GTK)
     PROP_PSON_ENABLED,
 #if !USE(GTK4)
-    PROP_USE_SYSYEM_APPEARANCE_FOR_SCROLLBARS
+    PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS,
 #endif
 #endif
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 enum {
     DOWNLOAD_STARTED,
@@ -339,7 +341,7 @@ static void webkitWebContextGetProperty(GObject* object, guint propID, GValue* v
         g_value_set_boolean(value, context->priv->psonEnabled);
         break;
 #if !USE(GTK4)
-    case PROP_USE_SYSYEM_APPEARANCE_FOR_SCROLLBARS:
+    case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
         g_value_set_boolean(value, webkit_web_context_get_use_system_appearance_for_scrollbars(context));
         break;
 #endif
@@ -369,7 +371,7 @@ static void webkitWebContextSetProperty(GObject* object, guint propID, const GVa
         context->priv->psonEnabled = g_value_get_boolean(value);
         break;
 #if !USE(GTK4)
-    case PROP_USE_SYSYEM_APPEARANCE_FOR_SCROLLBARS:
+    case PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS:
         webkit_web_context_set_use_system_appearance_for_scrollbars(context, g_value_get_boolean(value));
         break;
 #endif
@@ -473,15 +475,13 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      *
      * Deprecated: 2.10. Use #WebKitWebsiteDataManager:local-storage-directory instead.
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_LOCAL_STORAGE_DIRECTORY,
+    sObjProperties[PROP_LOCAL_STORAGE_DIRECTORY] =
         g_param_spec_string(
             "local-storage-directory",
             _("Local Storage Directory"),
             _("The directory where local storage data will be saved"),
             nullptr,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 #endif
 
     /**
@@ -491,15 +491,13 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      *
      * Since: 2.10
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_WEBSITE_DATA_MANAGER,
+    sObjProperties[PROP_WEBSITE_DATA_MANAGER] =
         g_param_spec_object(
             "website-data-manager",
             _("Website Data Manager"),
             _("The WebKitWebsiteDataManager associated with this context"),
             WEBKIT_TYPE_WEBSITE_DATA_MANAGER,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 #if PLATFORM(GTK)
     /**
@@ -515,15 +513,13 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      *
      * Since: 2.28
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_PSON_ENABLED,
+    sObjProperties[PROP_PSON_ENABLED] =
         g_param_spec_boolean(
             "process-swap-on-cross-site-navigation-enabled",
             _("Swap Processes on Cross-Site Navigation"),
             _("Whether swap Web processes on cross-site navigations is enabled"),
             FALSE,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 #if !USE(GTK4)
     /**
@@ -537,17 +533,17 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
      *
      * Since: 2.30
      */
-    g_object_class_install_property(
-        gObjectClass,
-        PROP_USE_SYSYEM_APPEARANCE_FOR_SCROLLBARS,
+    sObjProperties[PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS] =
         g_param_spec_boolean(
             "use-system-appearance-for-scrollbars",
             _("Use system appearance for scrollbars"),
             _("Whether to use system appearance for rendering scrollbars"),
             TRUE,
-            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 #endif
 #endif
+
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
     /**
      * WebKitWebContext::download-started:
@@ -1784,7 +1780,7 @@ void webkit_web_context_set_use_system_appearance_for_scrollbars(WebKitWebContex
         return;
 
     context->priv->useSystemAppearanceForScrollbars = enabled;
-    g_object_notify(G_OBJECT(context), "use-system-appearance-for-scrollbars");
+    g_object_notify_by_pspec(G_OBJECT(context), sObjProperties[PROP_USE_SYSTEM_APPEARANCE_FOR_SCROLLBARS]);
 
     if (!context->priv->processPool)
         return;

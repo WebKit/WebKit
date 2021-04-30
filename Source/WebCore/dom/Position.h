@@ -83,6 +83,7 @@ public:
     // will return img->parentNode() and img->computeNodeIndex() from these functions.
     WEBCORE_EXPORT Node* containerNode() const; // null for a before/after position anchored to a node with no parent
     Text* containerText() const;
+    Element* containerOrParentElement() const;
 
     int computeOffsetInContainerNode() const;  // O(n) for before/after-anchored positions, O(1) for parent-anchored positions
     WEBCORE_EXPORT Position parentAnchoredEquivalent() const; // Convenience method for DOM positions that also fixes up some positions for editing

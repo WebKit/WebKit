@@ -127,6 +127,12 @@ void PlaybackSessionModelContext::setDefaultPlaybackRate(float defaultPlaybackRa
         m_manager->setDefaultPlaybackRate(m_contextId, defaultPlaybackRate);
 }
 
+void PlaybackSessionModelContext::setPlaybackRate(float playbackRate)
+{
+    if (m_manager)
+        m_manager->setPlaybackRate(m_contextId, playbackRate);
+}
+
 void PlaybackSessionModelContext::selectAudioMediaOption(uint64_t optionId)
 {
     if (m_manager)
@@ -560,6 +566,11 @@ void PlaybackSessionManagerProxy::endScanning(PlaybackSessionContextIdentifier c
 void PlaybackSessionManagerProxy::setDefaultPlaybackRate(PlaybackSessionContextIdentifier contextId, float defaultPlaybackRate)
 {
     m_page->send(Messages::PlaybackSessionManager::SetDefaultPlaybackRate(contextId, defaultPlaybackRate));
+}
+
+void PlaybackSessionManagerProxy::setPlaybackRate(PlaybackSessionContextIdentifier contextId, float playbackRate)
+{
+    m_page->send(Messages::PlaybackSessionManager::SetPlaybackRate(contextId, playbackRate));
 }
 
 void PlaybackSessionManagerProxy::selectAudioMediaOption(PlaybackSessionContextIdentifier contextId, uint64_t index)

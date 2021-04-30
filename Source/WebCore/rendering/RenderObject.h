@@ -72,7 +72,7 @@ class TransformState;
 class VisiblePosition;
 
 #if PLATFORM(IOS_FAMILY)
-class SelectionRect;
+class SelectionGeometry;
 #endif
 
 struct InlineRunAndOffset;
@@ -202,6 +202,8 @@ public:
     bool isRenderBlockFlow() const;
     bool isRenderInline() const;
     bool isRenderLayerModelObject() const;
+
+    inline bool isAtomicInlineLevelBox() const;
 
     virtual bool isCounter() const { return false; }
     virtual bool isQuote() const { return false; }
@@ -548,10 +550,10 @@ public:
     LayoutSize offsetFromAncestorContainer(RenderElement&) const;
 
 #if PLATFORM(IOS_FAMILY)
-    virtual void collectSelectionRects(Vector<SelectionRect>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max());
+    virtual void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned startOffset = 0, unsigned endOffset = std::numeric_limits<unsigned>::max());
     virtual void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const { absoluteQuads(quads); }
-    WEBCORE_EXPORT static Vector<SelectionRect> collectSelectionRects(const SimpleRange&);
-    WEBCORE_EXPORT static Vector<SelectionRect> collectSelectionRectsWithoutUnionInteriorLines(const SimpleRange&);
+    WEBCORE_EXPORT static Vector<SelectionGeometry> collectSelectionGeometries(const SimpleRange&);
+    WEBCORE_EXPORT static Vector<SelectionGeometry> collectSelectionGeometriesWithoutUnionInteriorLines(const SimpleRange&);
 #endif
 
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint&) const { }
@@ -768,11 +770,11 @@ private:
     void setLayerNeedsFullRepaintForPositionedMovementLayout();
 
 #if PLATFORM(IOS_FAMILY)
-    struct SelectionRects {
-        Vector<SelectionRect> rects;
+    struct SelectionGeometries {
+        Vector<SelectionGeometry> geometries;
         int maxLineNumber;
     };
-    WEBCORE_EXPORT static SelectionRects collectSelectionRectsInternal(const SimpleRange&);
+    WEBCORE_EXPORT static SelectionGeometries collectSelectionGeometriesInternal(const SimpleRange&);
 #endif
 
     Node* generatingPseudoHostElement() const;
@@ -1175,6 +1177,11 @@ inline RenderObject* RenderObject::nextInFlowSibling() const
     return nextSibling;
 }
 
+bool RenderObject::isAtomicInlineLevelBox() const
+{
+    return style().isDisplayInlineType() && !(style().display() == DisplayType::Inline && !isReplaced());
+}
+
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderObject&);
 
 #if ENABLE(TREE_DEBUGGING)
@@ -1182,6 +1189,8 @@ void printRenderTreeForLiveDocuments();
 void printLayerTreeForLiveDocuments();
 void printGraphicsLayerTreeForLiveDocuments();
 #endif
+
+bool shouldApplyLayoutContainment(const RenderObject&);
 
 } // namespace WebCore
 

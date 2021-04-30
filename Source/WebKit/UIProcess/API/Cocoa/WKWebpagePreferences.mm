@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WKWebpagePreferences.h"
+#import <WebKit/WKWebpagePreferences.h>
 
 #import "APICustomHeaderFields.h"
 #import "WKUserContentControllerInternal.h"

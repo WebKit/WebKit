@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,19 +43,54 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
-std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, const HostWindow*)
+ShareableBitmap::Configuration ImageBufferShareableBitmapBackend::configuration(const Parameters& parameters)
 {
-    ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
-
-    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
-    if (backendSize.isEmpty())
-        return nullptr;
-
     ShareableBitmap::Configuration configuration;
 #if PLATFORM(COCOA)
     configuration.colorSpace = { cachedCGColorSpace(parameters.colorSpace) };
 #endif
-    auto bitmap = ShareableBitmap::createShareable(backendSize, configuration);
+    return configuration;
+}
+
+IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parameters& parameters)
+{
+    IntSize backendSize = calculateBackendSize(parameters);
+    if (backendSize.isEmpty())
+        return { };
+
+    Checked<unsigned, RecordOverflow> bytesPerRow = ShareableBitmap::calculateBytesPerRow(backendSize, configuration(parameters));
+    if (bytesPerRow.hasOverflowed())
+        return { };
+
+    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(backendSize.height()) * bytesPerRow;
+    if (numBytes.hasOverflowed())
+        return { };
+
+    return backendSize;
+}
+
+unsigned ImageBufferShareableBitmapBackend::calculateBytesPerRow(const Parameters& parameters, const IntSize& backendSize)
+{
+    ASSERT(!backendSize.isEmpty());
+    Checked<unsigned, RecordOverflow> bytesPerRow = ShareableBitmap::calculateBytesPerRow(backendSize, configuration(parameters));
+    return bytesPerRow.unsafeGet();
+}
+
+size_t ImageBufferShareableBitmapBackend::calculateMemoryCost(const Parameters& parameters)
+{
+    IntSize backendSize = calculateBackendSize(parameters);
+    return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(parameters, backendSize));
+}
+
+std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, const HostWindow*)
+{
+    ASSERT(parameters.pixelFormat == PixelFormat::BGRA8);
+
+    IntSize backendSize = calculateSafeBackendSize(parameters);
+    if (backendSize.isEmpty())
+        return nullptr;
+
+    auto bitmap = ShareableBitmap::createShareable(backendSize, configuration(parameters));
     if (!bitmap)
         return nullptr;
 

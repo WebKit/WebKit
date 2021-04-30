@@ -64,7 +64,7 @@
 #include "EditorClient.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "Page.h"
-#include "SelectionRect.h"
+#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
@@ -324,7 +324,7 @@ Vector<IntRect> RenderText::absoluteRectsForRange(unsigned start, unsigned end, 
 // This function is similar in spirit to addLineBoxRects, but returns rectangles
 // which are annotated with additional state which helps the iPhone draw selections in its unique way.
 // Full annotations are added in this class.
-void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned start, unsigned end)
+void RenderText::collectSelectionGeometries(Vector<SelectionGeometry>& rects, unsigned start, unsigned end)
 {
     for (auto run = LayoutIntegration::firstTextRunFor(*this); run; run = run.traverseNextTextRun()) {
         LayoutRect rect;
@@ -369,7 +369,7 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
         bool containsEnd = run->start() <= end && run->end() >= end;
 
         bool isFixed = false;
-        IntRect absRect = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed).enclosingBoundingBox();
+        auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed);
         bool boxIsHorizontal = !is<SVGInlineTextBox>(run->legacyInlineBox()) ? run->isHorizontal() : !style().isVerticalWritingMode();
         // If the containing block is an inline element, we want to check the inlineBoxWrapper orientation
         // to determine the orientation of the block. In this case we also use the inlineBoxWrapper to
@@ -381,7 +381,7 @@ void RenderText::collectSelectionRects(Vector<SelectionRect>& rects, unsigned st
             }
         }
 
-        rects.append(SelectionRect(absRect, run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absRect.x())));
+        rects.append(SelectionGeometry(absoluteQuad, HTMLElement::selectionRenderingBehavior(textNode()), run->direction(), extentsRect.x(), extentsRect.maxX(), extentsRect.maxY(), 0, run->isLineBreak(), isFirstOnLine, isLastOnLine, containsStart, containsEnd, boxIsHorizontal, isFixed, containingBlock->isRubyText(), view().pageNumberForBlockProgressionOffset(absoluteQuad.enclosingBoundingBox().x())));
     }
 }
 #endif
@@ -1593,7 +1593,7 @@ LayoutRect RenderText::clippedOverflowRectForRepaint(const RenderLayerModelObjec
     return rendererToRepaint->clippedOverflowRectForRepaint(repaintContainer);
 }
 
-LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>* rects)
+LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>* rects)
 {
     ASSERT(!needsLayout());
 
@@ -1642,14 +1642,14 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
     return localToContainerQuad(FloatRect(resultRect), repaintContainer).enclosingBoundingBox();
 }
 
-LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>& rects)
+LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<LayoutRect>& rects)
 {
-    return collectSelectionRectsForLineBoxes(repaintContainer, clipToVisibleContent, &rects);
+    return collectSelectionGeometriesForLineBoxes(repaintContainer, clipToVisibleContent, &rects);
 }
 
 LayoutRect RenderText::selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent)
 {
-    return collectSelectionRectsForLineBoxes(repaintContainer, clipToVisibleContent, nullptr);
+    return collectSelectionGeometriesForLineBoxes(repaintContainer, clipToVisibleContent, nullptr);
 }
 
 int RenderText::caretMinOffset() const

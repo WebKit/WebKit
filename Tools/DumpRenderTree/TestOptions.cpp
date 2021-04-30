@@ -132,6 +132,8 @@ const TestFeatures& TestOptions::defaults()
             { "AsyncClipboardAPIEnabled", false },
             { "AttachmentElementEnabled", false },
             { "CSSContainmentEnabled", false },
+            { "CSSCounterStyleAtRulesEnabled", false },
+            { "CSSCounterStyleAtRuleImageSymbolsEnabled", false },
             { "CSSLogicalEnabled", false },
             { "CSSOMViewSmoothScrollingEnabled", false },
             { "ColorFilterEnabled", false },

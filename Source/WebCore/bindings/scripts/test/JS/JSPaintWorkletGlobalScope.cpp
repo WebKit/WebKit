@@ -66,6 +66,8 @@ static const HashTableValue JSPaintWorkletGlobalScopeTableValues[] =
 };
 
 static const HashTable JSPaintWorkletGlobalScopeTable = { 1, 1, true, JSPaintWorkletGlobalScope::info(), JSPaintWorkletGlobalScopeTableValues, JSPaintWorkletGlobalScopeTableIndex };
+template<> const ClassInfo JSPaintWorkletGlobalScopeDOMConstructor::s_info = { "PaintWorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeDOMConstructor) };
+
 template<> JSValue JSPaintWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSWorkletGlobalScope::getConstructor(vm, &globalObject);
@@ -77,8 +79,6 @@ template<> void JSPaintWorkletGlobalScopeDOMConstructor::initializeProperties(VM
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "PaintWorkletGlobalScope"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSPaintWorkletGlobalScopeDOMConstructor::s_info = { "PaintWorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSPaintWorkletGlobalScopeDOMConstructor) };
 
 /* Hash table for prototype */
 

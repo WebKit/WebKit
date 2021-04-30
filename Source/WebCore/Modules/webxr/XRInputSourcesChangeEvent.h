@@ -52,6 +52,8 @@ public:
     const Vector<RefPtr<WebXRInputSource>>& added() const;
     const Vector<RefPtr<WebXRInputSource>>& removed() const;
 
+    EventInterface eventInterface() const final { return XRInputSourcesChangeEventInterfaceType; }
+
 private:
     XRInputSourcesChangeEvent(const AtomString&, const Init&, IsTrusted);
 

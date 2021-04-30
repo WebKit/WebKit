@@ -44,52 +44,48 @@ using namespace WebCore;
 RemoteMediaSessionHelper::RemoteMediaSessionHelper(WebProcess& process)
     : m_process(process)
 {
-    connectToGPUProcess();
 }
 
-void RemoteMediaSessionHelper::connectToGPUProcess()
+IPC::Connection& RemoteMediaSessionHelper::ensureConnection()
 {
-    auto& gpuProcessConnection = m_process.ensureGPUProcessConnection();
-    gpuProcessConnection.addClient(*this);
-    gpuProcessConnection.messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
-    gpuProcessConnection.connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
-}
-
-IPC::Connection& RemoteMediaSessionHelper::connection()
-{
-    return m_process.ensureGPUProcessConnection().connection();
+    if (!m_gpuProcessConnection) {
+        m_gpuProcessConnection = makeWeakPtr(m_process.ensureGPUProcessConnection());
+        m_gpuProcessConnection->addClient(*this);
+        m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
+        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
+    }
+    return m_gpuProcessConnection->connection();
 }
 
 void RemoteMediaSessionHelper::gpuProcessConnectionDidClose(GPUProcessConnection& gpuProcessConnection)
 {
     gpuProcessConnection.removeClient(*this);
     gpuProcessConnection.messageReceiverMap().removeMessageReceiver(*this);
-    connectToGPUProcess();
+    m_gpuProcessConnection = nullptr;
 }
 
 void RemoteMediaSessionHelper::startMonitoringWirelessRoutesInternal()
 {
-    connection().send(Messages::RemoteMediaSessionHelperProxy::StartMonitoringWirelessRoutes(), { });
+    ensureConnection().send(Messages::RemoteMediaSessionHelperProxy::StartMonitoringWirelessRoutes(), { });
 }
 
 void RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal()
 {
-    connection().send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
+    ensureConnection().send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
 }
 
 void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid)
 {
-    connection().send(Messages::RemoteMediaSessionHelperProxy::ProvidePresentingApplicationPID(pid), { });
+    ensureConnection().send(Messages::RemoteMediaSessionHelperProxy::ProvidePresentingApplicationPID(pid), { });
 }
 
 void RemoteMediaSessionHelper::activeVideoRouteDidChange(SupportsAirPlayVideo supportsAirPlayVideo, MediaPlaybackTargetContext&& targetContext)
 {
-    if (targetContext.type() != MediaPlaybackTargetContext::AVOutputContextType) {
-        ASSERT_NOT_REACHED();
+    ASSERT(targetContext.type() != MediaPlaybackTargetContext::Type::AVOutputContext);
+    if (targetContext.type() == MediaPlaybackTargetContext::Type::AVOutputContext)
         return;
-    }
 
-    WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, WebCore::MediaPlaybackTargetCocoa::create(targetContext.avOutputContext()));
+    WebCore::MediaSessionHelper::activeVideoRouteDidChange(supportsAirPlayVideo, WebCore::MediaPlaybackTargetCocoa::create(WTFMove(targetContext)));
 }
 
 }

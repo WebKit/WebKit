@@ -27,6 +27,7 @@
 #include "DisplayListReplayer.h"
 
 #include "DisplayListItems.h"
+#include "DisplayListIterator.h"
 #include "GraphicsContext.h"
 #include "InMemoryDisplayList.h"
 #include "Logging.h"

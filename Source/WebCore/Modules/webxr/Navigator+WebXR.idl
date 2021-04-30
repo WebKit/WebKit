@@ -25,7 +25,7 @@
 
 // https://immersive-web.github.io/webxr/#navigator-xr-attribute
 [
-    EnabledAtRuntime=WebXR,
+    EnabledBySetting=WebXR,
     Conditional=WEBXR,
     ImplementedBy=NavigatorWebXR
 ] partial interface Navigator {

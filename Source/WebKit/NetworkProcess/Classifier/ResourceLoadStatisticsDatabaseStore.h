@@ -69,6 +69,8 @@ using DestinationEarliestTimeToSend = double;
 using SourceDomainID = unsigned;
 using DestinationDomainID = unsigned;
 
+typedef std::pair<String, Optional<String>> TableAndIndexPair;
+
 // This is always constructed / used / destroyed on the WebResourceLoadStatisticsStore's statistics queue.
 class ResourceLoadStatisticsDatabaseStore final : public ResourceLoadStatisticsStore {
 public:
@@ -159,6 +161,7 @@ private:
 
     void openITPDatabase();
     void addMissingTablesIfNecessary();
+    bool missingUniqueIndices();
     bool needsUpdatedSchema();
     bool needsUpdatedPrivateClickMeasurementSchema();
     void renameColumnInTable(String&&, ExistingColumnName&&, ExpectedColumnName&&);
@@ -166,7 +169,7 @@ private:
     void addMissingColumnsIfNecessary();
     void renameColumnsIfNecessary();
     void renameColumnInTable();
-    String tableSchema(const String&);
+    TableAndIndexPair currentTableAndIndexQueries(const String&);
     void updatePrivateClickMeasurementSchemaIfNecessary();
     void enableForeignKeys();
     bool missingReferenceToObservedDomains();

@@ -202,8 +202,12 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
         const squeezeXEnd = (iterationDuration && endDelay) ? 0 : markerHeadRadius + markerHeadPadding;
         const squeezeYStart = markerHeadRadius + (markerHeadPadding * 2);
 
+        // Ensure that at least a line is drawn if the output of the timing function is `0`.
+        const adjustEasingHeight = -1;
+
         // Move the easing line down to cut off the bottom border.
-        const adjustEasingY = 0.5;
+        const adjustEasingBottomY = 0.5;
+
 
         let secondsPerPixel = this._cachedWidth / totalDuration;
 
@@ -276,13 +280,65 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
                 easingContainer.classList.add("easing");
                 easingContainer.setAttribute("transform", `translate(${startX}, ${startY})`);
 
-                let x1 = easing.inPoint.x * width;
-                let y1 = ((1 - easing.inPoint.y) * height) + adjustEasingY;
-                let x2 = easing.outPoint.x * width;
-                let y2 = ((1 - easing.outPoint.y) * height) + adjustEasingY;
-
                 let easingPath = easingContainer.appendChild(createSVGElement("path"));
-                easingPath.setAttribute("d", `M 0 ${height + adjustEasingY} C ${x1} ${y1} ${x2} ${y2} ${width} ${adjustEasingY} V ${height + adjustEasingY} Z`);
+
+                let pathSteps = [];
+                if (easing instanceof WI.CubicBezier) {
+                    pathSteps.push("C");
+                    pathSteps.push(easing.inPoint.x * width); // x1
+                    pathSteps.push((1 - easing.inPoint.y) * (height + adjustEasingHeight)); // y1
+                    pathSteps.push(easing.outPoint.x * width); // x2
+                    pathSteps.push((1 - easing.outPoint.y) * (height + adjustEasingHeight)); // y2
+                    pathSteps.push(width); // x
+                    pathSteps.push(0); // y
+                } else if (easing instanceof WI.StepsFunction) {
+                    let goUpFirst = false;
+                    let stepStartAdjust = 0;
+                    let stepCountAdjust = 0;
+
+                    switch (easing.type) {
+                    case WI.StepsFunction.Type.JumpStart:
+                    case WI.StepsFunction.Type.Start:
+                        goUpFirst = true;
+                        break;
+
+                    case WI.StepsFunction.Type.JumpNone:
+                        --stepCountAdjust;
+                        break;
+
+                    case WI.StepsFunction.Type.JumpBoth:
+                        ++stepStartAdjust;
+                        ++stepCountAdjust;
+                        break;
+                    }
+
+                    let stepCount = easing.count + stepCountAdjust;
+                    let stepX = width / easing.count; // Always use the defined number of steps to divide the duration.
+                    let stepY = (height + adjustEasingHeight) / stepCount;
+
+                    for (let i = stepStartAdjust; i <= stepCount; ++i) {
+                        let x = stepX * (i - stepStartAdjust);
+                        let y = height + adjustEasingHeight - (stepY * i);
+
+                        if (goUpFirst) {
+                            if (i)
+                                pathSteps.push("H", x);
+
+                            if (i < stepCount)
+                                pathSteps.push("V", y - stepY);
+                        } else {
+                            pathSteps.push("V", y);
+
+                            if (i < stepCount || stepCountAdjust < 0)
+                                pathSteps.push("H", x + stepX);
+                        }
+                    }
+                } else if (easing instanceof WI.Spring) {
+                    let duration = easing.calculateDuration();
+                    for (let i = 0; i < width; i += 1 / window.devicePixelRatio)
+                        pathSteps.push("L", i, easing.solve(duration * i / width) * (height + adjustEasingHeight));
+                }
+                easingPath.setAttribute("d", `M 0 ${height + adjustEasingBottomY} ${pathSteps.join(" ")} V ${height + adjustEasingBottomY} Z`);
 
                 let titleRect = easingContainer.appendChild(createSVGElement("rect"));
                 titleRect.setAttribute("width", width);

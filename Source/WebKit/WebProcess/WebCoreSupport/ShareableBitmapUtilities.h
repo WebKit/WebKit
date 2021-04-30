@@ -37,6 +37,7 @@ namespace WebKit {
 
 class ShareableBitmap;
 
-RefPtr<ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, Optional<WebCore::FloatSize> screenSizeInPixels = WTF::nullopt);
+enum class AllowAnimatedImages : bool { No, Yes };
+RefPtr<ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, Optional<WebCore::FloatSize> screenSizeInPixels = WTF::nullopt, AllowAnimatedImages = AllowAnimatedImages::Yes);
 
 };

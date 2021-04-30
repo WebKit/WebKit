@@ -64,7 +64,9 @@ namespace LocalAuthenticatorInternal {
 
 // See https://www.w3.org/TR/webauthn/#flags.
 const uint8_t makeCredentialFlags = 0b01000101; // UP, UV and AT are set.
+const uint8_t otherMakeCredentialFlags = 0b01000001; // UP and AT are set.
 const uint8_t getAssertionFlags = 0b00000101; // UP and UV are set.
+const uint8_t otherGetAssertionFlags = 0b00000001; // UP is set.
 // Credential ID is currently SHA-1 of the corresponding public key.
 const uint16_t credentialIdLength = 20;
 const uint64_t counter = 0;
@@ -306,7 +308,7 @@ void LocalAuthenticator::continueMakeCredentialAfterDecidePolicy(LocalAuthentica
 
         weakThis->continueMakeCredentialAfterUserVerification(accessControl.get(), verification, context);
     };
-    m_connection->verifyUser(creationOptions.rp.id, getClientDataType(requestData().options), accessControlRef, WTFMove(callback));
+    m_connection->verifyUser(creationOptions.rp.id, getClientDataType(requestData().options), accessControlRef, getUserVerificationRequirement(requestData().options), WTFMove(callback));
 }
 
 void LocalAuthenticator::continueMakeCredentialAfterReceivingLAContext(LAContext *context)
@@ -425,19 +427,20 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         cosePublicKey = encodeES256PublicKeyAsCBOR(WTFMove(x), WTFMove(y));
     }
 
+    auto flags = verification == LocalConnection::UserVerification::Presence ? otherMakeCredentialFlags : makeCredentialFlags;
     // Step 12.
     // Skip Apple Attestation for none attestation.
     if (creationOptions.attestation == AttestationConveyancePreference::None) {
         deleteDuplicateCredential();
 
-        auto authData = buildAuthData(creationOptions.rp.id, makeCredentialFlags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
+        auto authData = buildAuthData(creationOptions.rp.id, flags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
         auto attestationObject = buildAttestationObject(WTFMove(authData), "", { }, AttestationConveyancePreference::None);
         receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject));
         return;
     }
 
     // Step 13. Apple Attestation
-    auto authData = buildAuthData(creationOptions.rp.id, makeCredentialFlags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
+    auto authData = buildAuthData(creationOptions.rp.id, flags, counter, buildAttestedCredentialData(aaguidVector(), credentialId, cosePublicKey));
     auto nsAuthData = toNSData(authData);
     auto callback = [credentialId = WTFMove(credentialId), authData = WTFMove(authData), weakThis = makeWeakPtr(*this)] (NSArray * _Nullable certificates, NSError * _Nullable error) mutable {
         ASSERT(RunLoop::isMain());
@@ -579,7 +582,7 @@ void LocalAuthenticator::continueGetAssertionAfterResponseSelected(Ref<WebCore::
 
         weakThis->continueGetAssertionAfterUserVerification(WTFMove(response), verification, context);
     };
-    m_connection->verifyUser(requestOptions.rpId, getClientDataType(requestData().options), accessControlRef, WTFMove(callback));
+    m_connection->verifyUser(requestOptions.rpId, getClientDataType(requestData().options), accessControlRef, getUserVerificationRequirement(requestData().options), WTFMove(callback));
 }
 
 void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::AuthenticatorAssertionResponse>&& response, LocalConnection::UserVerification verification, LAContext *context)
@@ -593,7 +596,7 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
 
     // Step 10.
     auto requestOptions = WTF::get<PublicKeyCredentialRequestOptions>(requestData().options);
-    auto authData = buildAuthData(requestOptions.rpId, getAssertionFlags, counter, { });
+    auto authData = buildAuthData(requestOptions.rpId, verification == LocalConnection::UserVerification::Presence ? otherGetAssertionFlags : getAssertionFlags, counter, { });
 
     // Step 11.
     RetainPtr<CFDataRef> signature;

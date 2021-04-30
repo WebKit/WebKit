@@ -95,7 +95,6 @@ using namespace WebCore;
 
 enum {
     PROP_0,
-
 #if PLATFORM(GTK)
     PROP_GEOMETRY,
 #endif
@@ -105,8 +104,11 @@ enum {
     PROP_MENUBAR_VISIBLE,
     PROP_LOCATIONBAR_VISIBLE,
     PROP_RESIZABLE,
-    PROP_FULLSCREEN
+    PROP_FULLSCREEN,
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 struct _WebKitWindowPropertiesPrivate {
 #if PLATFORM(GTK)
@@ -204,7 +206,7 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
     objectClass->get_property = webkitWindowPropertiesGetProperty;
     objectClass->set_property = webkitWindowPropertiesSetProperty;
 
-    GParamFlags paramFlags = static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
+    constexpr GParamFlags paramFlags = static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 
 #if PLATFORM(GTK)
     /**
@@ -212,13 +214,13 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
      *
      * The size and position of the window on the screen.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_GEOMETRY,
-                                    g_param_spec_boxed("geometry",
-                                                       _("Geometry"),
-                                                       _("The size and position of the window on the screen."),
-                                                       GDK_TYPE_RECTANGLE,
-                                                       paramFlags));
+    sObjProperties[PROP_GEOMETRY] =
+        g_param_spec_boxed(
+            "geometry",
+            _("Geometry"),
+            _("The size and position of the window on the screen."),
+            GDK_TYPE_RECTANGLE,
+            paramFlags);
 #endif
 
     /**
@@ -226,90 +228,92 @@ static void webkit_window_properties_class_init(WebKitWindowPropertiesClass* req
      *
      * Whether the toolbar should be visible for the window.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_TOOLBAR_VISIBLE,
-                                    g_param_spec_boolean("toolbar-visible",
-                                                         _("Toolbar Visible"),
-                                                         _("Whether the toolbar should be visible for the window."),
-                                                         TRUE,
-                                                         paramFlags));
+    sObjProperties[PROP_TOOLBAR_VISIBLE] =
+        g_param_spec_boolean(
+            "toolbar-visible",
+            _("Toolbar Visible"),
+            _("Whether the toolbar should be visible for the window."),
+            TRUE,
+            paramFlags);
 
     /**
      * WebKitWebWindowProperties:statusbar-visible:
      *
      * Whether the statusbar should be visible for the window.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_STATUSBAR_VISIBLE,
-                                    g_param_spec_boolean("statusbar-visible",
-                                                         _("Statusbar Visible"),
-                                                         _("Whether the statusbar should be visible for the window."),
-                                                         TRUE,
-                                                         paramFlags));
+    sObjProperties[PROP_STATUSBAR_VISIBLE] =
+        g_param_spec_boolean(
+            "statusbar-visible",
+            _("Statusbar Visible"),
+            _("Whether the statusbar should be visible for the window."),
+            TRUE,
+            paramFlags);
 
     /**
      * WebKitWebWindowProperties:scrollbars-visible:
      *
      * Whether the scrollbars should be visible for the window.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_SCROLLBARS_VISIBLE,
-                                    g_param_spec_boolean("scrollbars-visible",
-                                                         _("Scrollbars Visible"),
-                                                         _("Whether the scrollbars should be visible for the window."),
-                                                         TRUE,
-                                                         paramFlags));
+    sObjProperties[PROP_SCROLLBARS_VISIBLE] =
+        g_param_spec_boolean(
+            "scrollbars-visible",
+            _("Scrollbars Visible"),
+            _("Whether the scrollbars should be visible for the window."),
+            TRUE,
+            paramFlags);
 
     /**
      * WebKitWebWindowProperties:menubar-visible:
      *
      * Whether the menubar should be visible for the window.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_MENUBAR_VISIBLE,
-                                    g_param_spec_boolean("menubar-visible",
-                                                         _("Menubar Visible"),
-                                                         _("Whether the menubar should be visible for the window."),
-                                                         TRUE,
-                                                         paramFlags));
+    sObjProperties[PROP_MENUBAR_VISIBLE] =
+        g_param_spec_boolean(
+            "menubar-visible",
+            _("Menubar Visible"),
+            _("Whether the menubar should be visible for the window."),
+            TRUE,
+            paramFlags);
 
     /**
      * WebKitWebWindowProperties:locationbar-visible:
      *
      * Whether the locationbar should be visible for the window.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_LOCATIONBAR_VISIBLE,
-                                    g_param_spec_boolean("locationbar-visible",
-                                                         _("Locationbar Visible"),
-                                                         _("Whether the locationbar should be visible for the window."),
-                                                         TRUE,
-                                                         paramFlags));
+    sObjProperties[PROP_LOCATIONBAR_VISIBLE] =
+        g_param_spec_boolean(
+            "locationbar-visible",
+            _("Locationbar Visible"),
+            _("Whether the locationbar should be visible for the window."),
+            TRUE,
+            paramFlags);
     /**
      * WebKitWebWindowProperties:resizable:
      *
      * Whether the window can be resized.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_RESIZABLE,
-                                    g_param_spec_boolean("resizable",
-                                                         _("Resizable"),
-                                                         _("Whether the window can be resized."),
-                                                         TRUE,
-                                                         paramFlags));
+    sObjProperties[PROP_RESIZABLE] =
+        g_param_spec_boolean(
+            "resizable",
+            _("Resizable"),
+            _("Whether the window can be resized."),
+            TRUE,
+            paramFlags);
 
     /**
      * WebKitWebWindowProperties:fullscreen:
      *
      * Whether window will be displayed fullscreen.
      */
-    g_object_class_install_property(objectClass,
-                                    PROP_FULLSCREEN,
-                                    g_param_spec_boolean("fullscreen",
-                                                         _("Fullscreen"),
-                                                         _("Whether window will be displayed fullscreen."),
-                                                         FALSE,
-                                                         paramFlags));
+    sObjProperties[PROP_FULLSCREEN] =
+        g_param_spec_boolean(
+            "fullscreen",
+            _("Fullscreen"),
+            _("Whether window will be displayed fullscreen."),
+            FALSE,
+            paramFlags);
+
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
 }
 
 WebKitWindowProperties* webkitWindowPropertiesCreate()
@@ -326,7 +330,7 @@ void webkitWindowPropertiesSetGeometry(WebKitWindowProperties* windowProperties,
         && windowProperties->priv->geometry.height == geometry->height)
         return;
     windowProperties->priv->geometry = *geometry;
-    g_object_notify(G_OBJECT(windowProperties), "geometry");
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_GEOMETRY]);
 }
 #endif
 
@@ -335,7 +339,7 @@ void webkitWindowPropertiesSetToolbarVisible(WebKitWindowProperties* windowPrope
     if (windowProperties->priv->toolbarVisible == toolbarsVisible)
         return;
     windowProperties->priv->toolbarVisible = toolbarsVisible;
-    g_object_notify(G_OBJECT(windowProperties), "toolbar-visible");
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_TOOLBAR_VISIBLE]);
 }
 
 void webkitWindowPropertiesSetMenubarVisible(WebKitWindowProperties* windowProperties, bool menuBarVisible)
@@ -343,7 +347,7 @@ void webkitWindowPropertiesSetMenubarVisible(WebKitWindowProperties* windowPrope
     if (windowProperties->priv->menubarVisible == menuBarVisible)
         return;
     windowProperties->priv->menubarVisible = menuBarVisible;
-    g_object_notify(G_OBJECT(windowProperties), "menubar-visible");
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_MENUBAR_VISIBLE]);
 }
 
 void webkitWindowPropertiesSetStatusbarVisible(WebKitWindowProperties* windowProperties, bool statusBarVisible)
@@ -351,7 +355,7 @@ void webkitWindowPropertiesSetStatusbarVisible(WebKitWindowProperties* windowPro
     if (windowProperties->priv->statusbarVisible == statusBarVisible)
         return;
     windowProperties->priv->statusbarVisible = statusBarVisible;
-    g_object_notify(G_OBJECT(windowProperties), "statusbar-visible");
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_STATUSBAR_VISIBLE]);
 }
 
 void webkitWindowPropertiesSetLocationbarVisible(WebKitWindowProperties* windowProperties, bool locationBarVisible)
@@ -359,7 +363,7 @@ void webkitWindowPropertiesSetLocationbarVisible(WebKitWindowProperties* windowP
     if (windowProperties->priv->locationbarVisible == locationBarVisible)
         return;
     windowProperties->priv->locationbarVisible = locationBarVisible;
-    g_object_notify(G_OBJECT(windowProperties), "locationbar-visible");
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_LOCATIONBAR_VISIBLE]);
 }
 
 void webkitWindowPropertiesSetScrollbarsVisible(WebKitWindowProperties* windowProperties, bool scrollBarsVisible)
@@ -367,7 +371,7 @@ void webkitWindowPropertiesSetScrollbarsVisible(WebKitWindowProperties* windowPr
     if (windowProperties->priv->scrollbarsVisible == scrollBarsVisible)
         return;
     windowProperties->priv->scrollbarsVisible = scrollBarsVisible;
-    g_object_notify(G_OBJECT(windowProperties), "scrollbars-visible");
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_SCROLLBARS_VISIBLE]);
 }
 
 void webkitWindowPropertiesSetResizable(WebKitWindowProperties* windowProperties, bool resizable)
@@ -375,7 +379,7 @@ void webkitWindowPropertiesSetResizable(WebKitWindowProperties* windowProperties
     if (windowProperties->priv->resizable == resizable)
         return;
     windowProperties->priv->resizable = resizable;
-    g_object_notify(G_OBJECT(windowProperties), "resizable");
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_RESIZABLE]);
 }
 
 void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties* windowProperties, bool fullscreen)
@@ -383,7 +387,7 @@ void webkitWindowPropertiesSetFullscreen(WebKitWindowProperties* windowPropertie
     if (windowProperties->priv->fullscreen == fullscreen)
         return;
     windowProperties->priv->fullscreen = fullscreen;
-    g_object_notify(G_OBJECT(windowProperties), "fullscreen");
+    g_object_notify_by_pspec(G_OBJECT(windowProperties), sObjProperties[PROP_FULLSCREEN]);
 }
 
 void webkitWindowPropertiesUpdateFromWebWindowFeatures(WebKitWindowProperties* windowProperties, const WindowFeatures& windowFeatures)

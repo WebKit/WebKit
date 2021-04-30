@@ -145,6 +145,8 @@ private:
 
     // May get called on a background thread.
     void audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames) final {
+        DisableMallocRestrictionsForCurrentThreadScope scope;
+
         if (m_description != description) {
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
             m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
@@ -197,6 +199,7 @@ private:
 
     void storageChanged(SharedMemory* storage, const WebCore::CAAudioStreamDescription& format, size_t frameCount)
     {
+        DisableMallocRestrictionsForCurrentThreadScope scope;
         SharedMemory::Handle handle;
         if (storage)
             storage->createHandle(handle, SharedMemory::Protection::ReadOnly);
@@ -366,6 +369,11 @@ void UserMediaCaptureManagerProxy::clear()
 void UserMediaCaptureManagerProxy::setOrientation(uint64_t orientation)
 {
     m_orientationNotifier.orientationChanged(orientation);
+}
+
+bool UserMediaCaptureManagerProxy::hasSourceProxies() const
+{
+    return !m_proxies.isEmpty();
 }
 
 }

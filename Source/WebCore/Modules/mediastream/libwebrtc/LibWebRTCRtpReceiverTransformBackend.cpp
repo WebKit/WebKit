@@ -49,6 +49,10 @@ LibWebRTCRtpReceiverTransformBackend::~LibWebRTCRtpReceiverTransformBackend()
 void LibWebRTCRtpReceiverTransformBackend::setTransformableFrameCallback(Callback&& callback)
 {
     setInputCallback(WTFMove(callback));
+    if (m_isRegistered)
+        return;
+
+    m_isRegistered = true;
     m_rtcReceiver->SetDepacketizerToDecoderFrameTransformer(this);
 }
 

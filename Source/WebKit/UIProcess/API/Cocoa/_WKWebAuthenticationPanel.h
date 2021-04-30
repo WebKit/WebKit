@@ -120,6 +120,7 @@ WK_CLASS_AVAILABLE(macos(10.15.4), ios(13.4))
 @property (nonatomic, readonly, copy) NSString *relyingPartyID;
 @property (nonatomic, readonly, copy) NSSet *transports;
 @property (nonatomic, readonly) _WKWebAuthenticationType type;
+@property (nonatomic, readonly, copy, nullable) NSString *userName;
 
 @end
 

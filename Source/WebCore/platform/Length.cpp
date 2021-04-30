@@ -25,6 +25,7 @@
 #include "config.h"
 #include "Length.h"
 
+#include "AnimationUtilities.h"
 #include "CalculationValue.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
@@ -291,40 +292,34 @@ Length convertTo100PercentMinusLength(const Length& length)
     lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(Length(100, LengthType::Percent)));
     lengths.uncheckedAppend(makeUnique<CalcExpressionLength>(length));
     auto op = makeUnique<CalcExpressionOperation>(WTFMove(lengths), CalcOperator::Subtract);
-    return Length(CalculationValue::create(WTFMove(op), ValueRangeAll));
+    return Length(CalculationValue::create(WTFMove(op), ValueRange::All));
 }
 
-static Length blendMixedTypes(const Length& from, const Length& to, double progress)
+static Length blendMixedTypes(const Length& from, const Length& to, const BlendingContext& context)
 {
-    if (!progress)
-        return from;
+    if (!to.isCalculated() && !from.isPercent() && (context.progress == 1 || from.isZero()))
+        return blend(Length(0, to.type()), to, context);
 
-    if (progress == 1.0)
-        return to;
+    if (!from.isCalculated() && !to.isPercent() && (!context.progress || to.isZero()))
+        return blend(from, Length(0, from.type()), context);
 
-    auto blend = makeUnique<CalcExpressionBlendLength>(from, to, progress);
-    return Length(CalculationValue::create(WTFMove(blend), ValueRangeAll));
+    auto blend = makeUnique<CalcExpressionBlendLength>(from, to, context.progress);
+    return Length(CalculationValue::create(WTFMove(blend), ValueRange::All));
 }
 
-Length blend(const Length& from, const Length& to, double progress)
+Length blend(const Length& from, const Length& to, const BlendingContext& context)
 {
-    if (!progress)
+    if ((from.isAuto() || to.isAuto()) || (from.isUndefined() || to.isUndefined()))
+        return context.progress < 0.5 ? from : to;
+
+    if (from.isCalculated() || to.isCalculated() || (from.type() != to.type()))
+        return blendMixedTypes(from, to, context);
+
+    if (!context.progress)
         return from;
 
-    if (progress == 1)
+    if (context.progress == 1)
         return to;
-
-    if (from.isAuto() || to.isAuto())
-        return progress < 0.5 ? from : to;
-
-    if (from.isUndefined() || to.isUndefined())
-        return to;
-
-    if (from.isCalculated() || to.isCalculated())
-        return blendMixedTypes(from, to, progress);
-
-    if (!from.isZero() && !to.isZero() && from.type() != to.type())
-        return blendMixedTypes(from, to, progress);
 
     LengthType resultType = to.type();
     if (to.isZero())
@@ -333,18 +328,18 @@ Length blend(const Length& from, const Length& to, double progress)
     if (resultType == LengthType::Percent) {
         float fromPercent = from.isZero() ? 0 : from.percent();
         float toPercent = to.isZero() ? 0 : to.percent();
-        return Length(WebCore::blend(fromPercent, toPercent, progress), LengthType::Percent);
+        return Length(WebCore::blend(fromPercent, toPercent, context), LengthType::Percent);
     }
 
     float fromValue = from.isZero() ? 0 : from.value();
     float toValue = to.isZero() ? 0 : to.value();
-    return Length(WebCore::blend(fromValue, toValue, progress), resultType);
+    return Length(WebCore::blend(fromValue, toValue, context), resultType);
 }
 
-Length blend(const Length& from, const Length& to, double progress, ValueRange valueRange)
+Length blend(const Length& from, const Length& to, const BlendingContext& context, ValueRange valueRange)
 {
-    auto blended = blend(from, to, progress);
-    if (valueRange == ValueRangeNonNegative && blended.isNegative())
+    auto blended = blend(from, to, context);
+    if (valueRange == ValueRange::NonNegative && blended.isNegative())
         return { 0, from.isZero () ? to.type() : from.type() };
     return blended;
 }

@@ -636,6 +636,15 @@ static UICalloutBar *suppressUICalloutBar()
     [self evaluateJavaScript:[NSString stringWithFormat:@"document.getElementById('%@').click();", elementID] completionHandler:nil];
 }
 
+- (void)waitForPendingMouseEvents
+{
+    __block bool doneProcessingMouseEvents = false;
+    [self _doAfterProcessingAllPendingMouseEvents:^{
+        doneProcessingMouseEvents = true;
+    }];
+    TestWebKitAPI::Util::run(&doneProcessingMouseEvents);
+}
+
 #if PLATFORM(IOS_FAMILY)
 
 - (void)didStartFormControlInteraction
@@ -838,15 +847,6 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     NSEventType keyUpEventType = NSEventTypeKeyUp;
     [self keyDown:[NSEvent keyEventWithType:keyDownEventType location:NSZeroPoint modifierFlags:0 timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
     [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:0 timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
-}
-
-- (void)waitForPendingMouseEvents
-{
-    __block bool doneProcessingMouseEvents = false;
-    [self _doAfterProcessingAllPendingMouseEvents:^{
-        doneProcessingMouseEvents = true;
-    }];
-    TestWebKitAPI::Util::run(&doneProcessingMouseEvents);
 }
 
 @end

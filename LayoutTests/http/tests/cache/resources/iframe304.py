@@ -22,6 +22,6 @@ sys.stdout.write(
     'Content-Type: text/html\r\n'
     'Content-Length: 0\r\n'
     'Etag: 123456789\r\n'
-    f'Last-Modified: {last_modified}\r\n'
+    f'Last-Modified: {last_modified}\r\n\r\n'
 )
 sys.exit(0)

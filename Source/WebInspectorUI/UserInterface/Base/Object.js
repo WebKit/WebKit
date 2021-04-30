@@ -78,10 +78,15 @@ WI.Object = class WebInspectorObject
         console.assert(typeof listener === "function", this, eventType, listener, thisObject);
         console.assert(typeof thisObject === "object" || window.InspectorTest || window.ProtocolTest, this, eventType, listener, thisObject);
 
+        if (!this._listeners)
+            return;
+
         thisObject ??= this;
 
         let listenersForEventType = this._listeners.get(eventType);
         console.assert(listenersForEventType, this, eventType, listener, thisObject);
+        if (!listenersForEventType)
+            return;
 
         let didDelete = false;
         for (let data of listenersForEventType) {

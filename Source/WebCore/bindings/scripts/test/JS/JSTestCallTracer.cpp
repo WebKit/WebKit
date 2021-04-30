@@ -124,6 +124,8 @@ static const HashTableValue JSTestCallTracerConstructorTableValues[] =
 
 static_assert(TestCallTracer::testConstValue == false, "testConstValue in TestCallTracer does not match value from IDL");
 
+template<> const ClassInfo JSTestCallTracerDOMConstructor::s_info = { "TestCallTracer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerDOMConstructor) };
+
 template<> JSValue JSTestCallTracerDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -137,8 +139,6 @@ template<> void JSTestCallTracerDOMConstructor::initializeProperties(VM& vm, JSD
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestCallTracer::info(), JSTestCallTracerConstructorTableValues, *this);
 }
-
-template<> const ClassInfo JSTestCallTracerDOMConstructor::s_info = { "TestCallTracer", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCallTracerDOMConstructor) };
 
 /* Hash table for prototype */
 

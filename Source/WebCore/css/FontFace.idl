@@ -43,17 +43,17 @@ dictionary FontFaceDescriptors {
 
 [
     ActiveDOMObject,
-    Exposed=Window
+    Exposed=(Window,Worker)
 ] interface FontFace {
-    [CallWith=Document] constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors);
+    [CallWith=ScriptExecutionContext] constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors);
 
-    [SetterCallWith=Document] attribute DOMString family;
-    attribute DOMString style;
-    attribute DOMString weight;
-    attribute DOMString stretch;
-    attribute DOMString unicodeRange;
-    attribute DOMString featureSettings;
-    attribute DOMString display;
+    [SetterCallWith=ScriptExecutionContext] attribute DOMString family;
+    [SetterCallWith=ScriptExecutionContext] attribute DOMString style;
+    [SetterCallWith=ScriptExecutionContext] attribute DOMString weight;
+    [SetterCallWith=ScriptExecutionContext] attribute DOMString stretch;
+    [SetterCallWith=ScriptExecutionContext] attribute DOMString unicodeRange;
+    [SetterCallWith=ScriptExecutionContext] attribute DOMString featureSettings;
+    [CallWith=ScriptExecutionContext] attribute DOMString display;
 
     readonly attribute FontFaceLoadStatus status;
 

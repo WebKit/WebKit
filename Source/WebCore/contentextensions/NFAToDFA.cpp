@@ -35,7 +35,6 @@
 #include "NFA.h"
 #include "SerializedNFA.h"
 #include <wtf/DataLog.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
 namespace WebCore {

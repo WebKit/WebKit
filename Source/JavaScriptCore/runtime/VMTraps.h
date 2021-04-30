@@ -191,9 +191,14 @@ public:
     bool needHandling(BitField mask) const { return m_trapBits.loadRelaxed() & mask; }
     void* trapBitsAddress() { return &m_trapBits; }
 
+    enum class DeferAction {
+        DeferForAWhile,
+        DeferUntilEndOfScope
+    };
+
     bool isDeferringTermination() const { return m_deferTerminationCount; }
-    JS_EXPORT_PRIVATE void deferTermination();
-    JS_EXPORT_PRIVATE void undoDeferTermination();
+    void deferTermination(DeferAction);
+    void undoDeferTermination(DeferAction);
 
     void notifyGrabAllLocks()
     {
@@ -221,6 +226,8 @@ public:
 private:
     VM& vm() const;
 
+    JS_EXPORT_PRIVATE void deferTerminationSlow(DeferAction);
+    JS_EXPORT_PRIVATE void undoDeferTerminationSlow(DeferAction);
     Event takeTopPriorityTrap(BitField mask);
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)

@@ -64,9 +64,9 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
         updateListWasEmpty = m_latestUpdate.isEmpty();
         auto iterator = m_latestUpdate.find(pageID);
         if (iterator == m_latestUpdate.end())
-            m_latestUpdate.set<UpdateData>(pageID, { visibleContentRectUpdateInfo, visibleContentRectUpdateInfo.timestamp() });
+            m_latestUpdate.set(pageID, makeUniqueRef<UpdateData>(visibleContentRectUpdateInfo, visibleContentRectUpdateInfo.timestamp()));
         else
-            iterator->value.visibleContentRectUpdateInfo = visibleContentRectUpdateInfo;
+            iterator->value.get().visibleContentRectUpdateInfo = visibleContentRectUpdateInfo;
     }
     if (updateListWasEmpty) {
         RunLoop::main().dispatch([protectedThis = makeRef(*this)]() mutable {
@@ -77,15 +77,15 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
 
 void ViewUpdateDispatcher::dispatchVisibleContentRectUpdate()
 {
-    HashMap<WebCore::PageIdentifier, UpdateData> update;
+    HashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> update;
     {
         LockHolder locker(&m_dataMutex);
-        update = WTFMove(m_latestUpdate);
+        update = std::exchange(m_latestUpdate, { });
     }
 
     for (auto& slot : update) {
         if (WebPage* webPage = WebProcess::singleton().webPage(slot.key))
-            webPage->updateVisibleContentRects(slot.value.visibleContentRectUpdateInfo, slot.value.oldestTimestamp);
+            webPage->updateVisibleContentRects(slot.value.get().visibleContentRectUpdateInfo, slot.value.get().oldestTimestamp);
     }
 }
 

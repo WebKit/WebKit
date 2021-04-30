@@ -63,7 +63,7 @@ void LibWebRTCRtpTransformBackend::Transform(std::unique_ptr<webrtc::Transformab
     {
         auto locker = holdLock(m_inputCallbackLock);
         if (m_inputCallback) {
-            m_inputCallback(LibWebRTCRtpTransformableFrame::create(WTFMove(rtcFrame)));
+            m_inputCallback(LibWebRTCRtpTransformableFrame::create(WTFMove(rtcFrame), m_mediaType == MediaType::Audio && m_side == Side::Sender));
             return;
         }
     }

@@ -86,6 +86,8 @@ struct CallLinkRecord {
 // call to be linked).
 class JITCompiler : public CCallHelpers {
 public:
+    friend class SpeculativeJIT;
+
     JITCompiler(Graph& dfg);
     ~JITCompiler();
     
@@ -265,7 +267,21 @@ public:
 
     void noticeOSREntry(BasicBlock&, JITCompiler::Label blockHead, LinkBuffer&);
     void noticeCatchEntrypoint(BasicBlock&, JITCompiler::Label blockHead, LinkBuffer&, Vector<FlushFormat>&& argumentFormats);
-    
+
+    unsigned appendOSRExit(OSRExit&& exit)
+    {
+        unsigned result = m_osrExit.size();
+        m_osrExit.append(WTFMove(exit));
+        return result;
+    }
+
+    unsigned appendSpeculationRecovery(const SpeculationRecovery& recovery)
+    {
+        unsigned result = m_speculationRecovery.size();
+        m_speculationRecovery.append(recovery);
+        return result;
+    }
+
     RefPtr<JITCode> jitCode() { return m_jitCode; }
     
     Vector<Label>& blockHeads() { return m_blockHeads; }
@@ -373,6 +389,9 @@ private:
     Vector<JSDirectTailCallRecord, 4> m_jsDirectTailCalls;
     SegmentedVector<OSRExitCompilationInfo, 4> m_exitCompilationInfo;
     Vector<Vector<Label>> m_exitSiteLabels;
+    Vector<DFG::OSREntryData> m_osrEntry;
+    Vector<DFG::OSRExit> m_osrExit;
+    Vector<DFG::SpeculationRecovery> m_speculationRecovery;
     
     struct ExceptionHandlingOSRExitInfo {
         OSRExitCompilationInfo& exitInfo;

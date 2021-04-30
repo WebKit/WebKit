@@ -43,8 +43,8 @@
 #include "RealtimeMediaSourceCapabilities.h"
 #include "RealtimeMediaSourceFactory.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/RecursiveLockAdapter.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakHashSet.h>
@@ -276,10 +276,10 @@ private:
     String m_name;
     WeakHashSet<Observer> m_observers;
 
-    mutable RecursiveLock m_audioSampleObserversLock;
+    mutable Lock m_audioSampleObserversLock;
     HashSet<AudioSampleObserver*> m_audioSampleObservers;
 
-    mutable RecursiveLock m_videoSampleObserversLock;
+    mutable Lock m_videoSampleObserversLock;
     HashSet<VideoSampleObserver*> m_videoSampleObservers;
 
     // Set on the main thread from constraints.

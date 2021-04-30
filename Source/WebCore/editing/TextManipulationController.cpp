@@ -475,7 +475,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
             enclosingItemBoundaryElements.removeLast();
         }
 
-        if (m_manipulatedNodes.contains(contentNode)) {
+        if (m_manipulatedNodes.contains(*contentNode)) {
             addItemIfPossible(std::exchange(unitsInCurrentParagraph, { }));
             continue;
         }
@@ -532,7 +532,7 @@ void TextManipulationController::observeParagraphs(const Position& start, const 
 
 void TextManipulationController::didCreateRendererForElement(Element& element)
 {
-    if (m_manipulatedNodes.contains(&element))
+    if (m_manipulatedNodes.contains(element))
         return;
 
     scheduleObservationUpdate();
@@ -546,22 +546,22 @@ void TextManipulationController::didCreateRendererForElement(Element& element)
 
 void TextManipulationController::didUpdateContentForText(Text& text)
 {
-    if (!m_manipulatedNodes.contains(&text))
+    if (!m_manipulatedNodes.contains(text))
         return;
 
     scheduleObservationUpdate();
 
-    m_manipulatedTextsWithNewContent.add(&text);
+    m_manipulatedTextsWithNewContent.add(text);
 }
 
 void TextManipulationController::didCreateRendererForTextNode(Text& text)
 {
-    if (m_manipulatedNodes.contains(&text))
+    if (m_manipulatedNodes.contains(text))
         return;
 
     scheduleObservationUpdate();
 
-    m_textNodesWithNewRenderer.add(&text);
+    m_textNodesWithNewRenderer.add(text);
 }
 
 void TextManipulationController::scheduleObservationUpdate()
@@ -586,16 +586,16 @@ void TextManipulationController::scheduleObservationUpdate()
             nodesToObserve.add(weakElement);
         controller->m_elementsWithNewRenderer.clear();
 
-        for (auto* text : controller->m_manipulatedTextsWithNewContent) {
+        for (auto& text : controller->m_manipulatedTextsWithNewContent) {
             if (!controller->m_manipulatedNodes.contains(text))
                 continue;
             controller->m_manipulatedNodes.remove(text);
-            nodesToObserve.add(*text);
+            nodesToObserve.add(text);
         }
         controller->m_manipulatedTextsWithNewContent.clear();
 
-        for (auto* text : controller->m_textNodesWithNewRenderer)
-            nodesToObserve.add(*text);
+        for (auto& text : controller->m_textNodesWithNewRenderer)
+            nodesToObserve.add(text);
         controller->m_textNodesWithNewRenderer.clear();
 
         if (nodesToObserve.isEmpty())
@@ -925,13 +925,13 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         }
 
         if (insertion.isChildManipulated == IsNodeManipulated::Yes)
-            m_manipulatedNodes.add(insertion.child.ptr());
+            m_manipulatedNodes.add(insertion.child.get());
     }
 
     return WTF::nullopt;
 }
 
-void TextManipulationController::removeNode(Node* node)
+void TextManipulationController::removeNode(Node& node)
 {
     m_manipulatedNodes.remove(node);
     m_textNodesWithNewRenderer.remove(node);

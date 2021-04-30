@@ -176,6 +176,8 @@ static_assert(TestConditionalIncludes::CONST_IMPL == 2, "CONST_IMPL in TestCondi
 static_assert(TestConditionalIncludes::PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL == 5, "PARTIAL_MIXIN_CONSTANT_FROM_PARTIAL in TestConditionalIncludes does not match value from IDL");
 #endif
 
+template<> const ClassInfo JSTestConditionalIncludesDOMConstructor::s_info = { "TestConditionalIncludes", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludesDOMConstructor) };
+
 template<> JSValue JSTestConditionalIncludesDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -213,8 +215,6 @@ template<> void JSTestConditionalIncludesDOMConstructor::initializeProperties(VM
     }
 #endif
 }
-
-template<> const ClassInfo JSTestConditionalIncludesDOMConstructor::s_info = { "TestConditionalIncludes", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestConditionalIncludesDOMConstructor) };
 
 /* Hash table for prototype */
 

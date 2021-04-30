@@ -1,3 +1,30 @@
+2021-04-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Bugzilla needs to linkify identifiers (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=224312
+        <rdar://problem/75845629>
+
+        Reviewed by Aakash Jain.
+
+        * extensions/Commits/Extension.pm:
+        (bug_format_comment): Add regex to replace identifiers with a commits.webkit.org link.
+        (_replace_reference): This function replaces both revisions and identifiers.
+        (_replace_revision): Renamed _replace_reference.
+
+2021-04-23  Jonathan Bedard  <jbedard@apple.com>
+
+        Bugzilla needs to linkify identifiers (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=224312
+        <rdar://problem/75845629>
+
+        Reviewed by Dewei Zhu.
+
+        * extensions/Commits: Moved from Trac.
+        * extensions/Commits/Config.pm: Changed Plugin name.
+        * extensions/Commits/Extension.pm: Ditto.
+        (_replace_revision): Use commit.webkit.org instead of trac.
+        * extensions/Trac: Moved to Commits.
+
 2021-01-15  Ling Ho  <lingho@apple.com>
 
         Bugzilla patch upload no longer displays the agreement for some users

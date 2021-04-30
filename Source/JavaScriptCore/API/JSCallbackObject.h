@@ -129,7 +129,7 @@ template <class Parent>
 class JSCallbackObject final : public Parent {
 public:
     using Base = Parent;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesGetCallData | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | ProhibitsPropertyCaching | GetOwnPropertySlotMayBeWrongAboutDontEnum;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetOwnSpecialPropertyNames | OverridesGetCallData | OverridesPut | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | ImplementsHasInstance | ProhibitsPropertyCaching | GetOwnPropertySlotMayBeWrongAboutDontEnum;
     static_assert(!(StructureFlags & ImplementsDefaultHasInstance), "using customHasInstance");
 
     ~JSCallbackObject();
@@ -199,7 +199,7 @@ private:
     void finishCreation(VM&);
 
     static IsoSubspace* subspaceForImpl(VM&, SubspaceAccess);
-    static JSValue defaultValue(const JSObject*, JSGlobalObject*, PreferredPrimitiveType);
+    static JSC_HOST_CALL_ATTRIBUTES EncodedJSValue customToPrimitive(JSGlobalObject*, CallFrame*);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);

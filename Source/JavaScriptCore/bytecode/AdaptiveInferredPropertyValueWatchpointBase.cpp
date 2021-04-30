@@ -36,6 +36,12 @@ AdaptiveInferredPropertyValueWatchpointBase::AdaptiveInferredPropertyValueWatchp
     RELEASE_ASSERT(key.kind() == PropertyCondition::Equivalence);
 }
 
+void AdaptiveInferredPropertyValueWatchpointBase::initialize(const ObjectPropertyCondition& key)
+{
+    m_key = key;
+    RELEASE_ASSERT(key.kind() == PropertyCondition::Equivalence);
+}
+
 void AdaptiveInferredPropertyValueWatchpointBase::install(VM& vm)
 {
     RELEASE_ASSERT(m_key.isWatchable());

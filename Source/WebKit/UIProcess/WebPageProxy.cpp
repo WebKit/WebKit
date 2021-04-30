@@ -983,6 +983,8 @@ void WebPageProxy::finishAttachingToWebProcess(ProcessLaunchReason reason)
     remoteInspectorInformationDidChange();
 #endif
 
+    updateWheelEventActivityAfterProcessSwap();
+
     pageClient().didRelaunchProcess();
     m_pageLoadState.didSwapWebProcesses();
     if (reason != ProcessLaunchReason::InitialProcess)
@@ -1024,6 +1026,11 @@ void WebPageProxy::didAttachToRunningProcess()
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
     ASSERT(!m_webDeviceOrientationUpdateProviderProxy);
     m_webDeviceOrientationUpdateProviderProxy = makeUnique<WebDeviceOrientationUpdateProviderProxy>(*this);
+#endif
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    ASSERT(!m_xrSystem);
+    m_xrSystem = makeUnique<PlatformXRSystem>(*this);
 #endif
 }
 
@@ -1907,7 +1914,7 @@ void WebPageProxy::setUnderlayColor(const Color& color)
 
 Color WebPageProxy::scrollAreaBackgroundColor() const
 {
-    if (m_preferences->useThemeColorForScrollAreaBackgroundColor())
+    if (m_preferences->useThemeColorForScrollAreaBackgroundColor() && m_themeColor.isValid())
         return m_themeColor;
 
     return m_pageExtendedBackgroundColor;
@@ -2461,13 +2468,20 @@ void WebPageProxy::layerTreeCommitComplete()
 }
 #endif
 
+void WebPageProxy::didUpdateRenderingAfterCommittingLoad()
+{
+    if (m_hasUpdatedRenderingAfterDidCommitLoad)
+        return;
+
+    m_hasUpdatedRenderingAfterDidCommitLoad = true;
+    stopMakingViewBlankDueToLackOfRenderingUpdate();
+}
+
 void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate()
 {
-#if PLATFORM(COCOA)
     ASSERT(m_hasUpdatedRenderingAfterDidCommitLoad);
     RELEASE_LOG_IF_ALLOWED(Process, "stopMakingViewBlankDueToLackOfRenderingUpdate:");
     pageClient().makeViewBlank(false);
-#endif
 }
 
 // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
@@ -2475,15 +2489,17 @@ void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate()
 // until the next paint in such case.
 void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
 {
-#if PLATFORM(COCOA)
     if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
+#if PLATFORM(COCOA)
         static bool shouldMakeViewBlank = linkedOnOrAfter(WebCore::SDKVersion::FirstWithBlankViewOnJSPrompt);
+#else
+        static bool shouldMakeViewBlank = true;
+#endif
         if (shouldMakeViewBlank) {
             RELEASE_LOG_IF_ALLOWED(Process, "makeViewBlankIfUnpaintedSinceLastLoadCommit: Making the view blank because of a JS prompt before the first paint for its page");
             pageClient().makeViewBlank(true);
         }
     }
-#endif
 }
 
 void WebPageProxy::discardQueuedMouseEvents()
@@ -2755,6 +2771,16 @@ void WebPageProxy::wheelEventHysteresisUpdated(PAL::HysteresisState state)
     process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
 }
 #endif
+
+void WebPageProxy::updateWheelEventActivityAfterProcessSwap()
+{
+#if HAVE(CVDISPLAYLINK)
+    if (m_wheelEventActivityHysteresis.state() == PAL::HysteresisState::Started) {
+        bool wantsFullSpeedUpdates = true;
+        process().processPool().setDisplayLinkForDisplayWantsFullSpeedUpdates(*m_process->connection(), *m_displayID, wantsFullSpeedUpdates);
+    }
+#endif
+}
 
 void WebPageProxy::sendWheelEvent(const WebWheelEvent& event)
 {
@@ -3814,6 +3840,8 @@ void WebPageProxy::accessibilitySettingsDidChange()
     if (!hasRunningProcess())
         return;
 
+    // Also update screen properties which encodes invert colors.
+    process().processPool().screenPropertiesStateChanged();
     send(Messages::WebPage::AccessibilitySettingsDidChange());
 }
 
@@ -4676,14 +4704,12 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     m_hasCommittedAnyProvisionalLoads = true;
     m_process->didCommitProvisionalLoad();
 
-#if PLATFORM(COCOA)
     if (frame->isMainFrame()) {
         m_hasUpdatedRenderingAfterDidCommitLoad = false;
 #if PLATFORM(IOS_FAMILY)
         m_firstLayerTreeTransactionIdAfterDidCommitLoad = downcast<RemoteLayerTreeDrawingAreaProxy>(*drawingArea()).nextLayerTreeTransactionID();
 #endif
     }
-#endif
 
     auto transaction = m_pageLoadState.transaction();
     Ref<WebCertificateInfo> webCertificateInfo = WebCertificateInfo::create(certificateInfo);
@@ -6708,15 +6734,17 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         TextChecker::toggleSpellingUIIsShowing();
         return;
 
-#if ENABLE(APP_HIGHLIGHTS)
     case ContextMenuItemTagAddHighlightToNewGroup:
+#if ENABLE(APP_HIGHLIGHTS)
         createAppHighlightInSelectedRange(CreateNewGroupForHighlight::Yes, HighlightRequestOriginatedInApp::No);
+#endif
         return;
 
     case ContextMenuItemTagAddHighlightToCurrentGroup:
+#if ENABLE(APP_HIGHLIGHTS)
         createAppHighlightInSelectedRange(CreateNewGroupForHighlight::No, HighlightRequestOriginatedInApp::No);
-        return;
 #endif
+        return;
 
     case ContextMenuItemTagLearnSpelling:
     case ContextMenuItemTagIgnoreSpelling:
@@ -6726,12 +6754,6 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     case ContextMenuItemTagRevealImage:
 #if ENABLE(IMAGE_EXTRACTION)
         handleContextMenuRevealImage();
-#endif
-        return;
-
-    case ContextMenuItemTagTranslate:
-#if HAVE(TRANSLATION_UI_SERVICES)
-        pageClient().handleContextMenuTranslation(m_activeContextMenuContextData.selectedText(), m_activeContextMenuContextData.selectionBounds(), m_activeContextMenuContextData.menuLocation());
 #endif
         return;
 
@@ -7210,6 +7232,13 @@ void WebPageProxy::logDiagnosticMessage(const String& message, const String& des
     effectiveClient->logDiagnosticMessage(this, message, description);
 }
 
+void WebPageProxy::logDiagnosticMessageFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessage(message, description, shouldSample);
+}
+
 void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
 {
     auto* effectiveClient = effectiveDiagnosticLoggingClient(shouldSample);
@@ -7217,6 +7246,13 @@ void WebPageProxy::logDiagnosticMessageWithResult(const String& message, const S
         return;
 
     effectiveClient->logDiagnosticMessageWithResult(this, message, description, static_cast<WebCore::DiagnosticLoggingResultType>(result));
+}
+
+void WebPageProxy::logDiagnosticMessageWithResultFromWebProcess(const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithResult(message, description, result, shouldSample);
 }
 
 void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample shouldSample)
@@ -7228,6 +7264,13 @@ void WebPageProxy::logDiagnosticMessageWithValue(const String& message, const St
     effectiveClient->logDiagnosticMessageWithValue(this, message, description, String::numberToStringFixedPrecision(value, significantFigures));
 }
 
+void WebPageProxy::logDiagnosticMessageWithValueFromWebProcess(const String& message, const String& description, double value, unsigned significantFigures, ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithValue(message, description, value, significantFigures, shouldSample);
+}
+
 void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message, const String& description, ShouldSample shouldSample)
 {
     auto* effectiveClient = effectiveDiagnosticLoggingClient(shouldSample);
@@ -7235,6 +7278,13 @@ void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacy(const String& message
         return;
 
     effectiveClient->logDiagnosticMessageWithEnhancedPrivacy(this, message, description);
+}
+
+void WebPageProxy::logDiagnosticMessageWithEnhancedPrivacyFromWebProcess(const String& message, const String& description, WebCore::ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithEnhancedPrivacy(message, description, shouldSample);
 }
 
 void WebPageProxy::logDiagnosticMessageWithValueDictionary(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary& valueDictionary, WebCore::ShouldSample shouldSample)
@@ -7258,6 +7308,13 @@ void WebPageProxy::logDiagnosticMessageWithValueDictionary(const String& message
     effectiveClient->logDiagnosticMessageWithValueDictionary(this, message, description, WTFMove(apiDictionary));
 }
 
+void WebPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess(const String& message, const String& description, const WebCore::DiagnosticLoggingClient::ValueDictionary& valueDictionary, WebCore::ShouldSample shouldSample)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithValueDictionary(message, description, valueDictionary, shouldSample);
+}
+
 void WebPageProxy::logDiagnosticMessageWithDomain(const String& message, WebCore::DiagnosticLoggingDomain domain)
 {
     auto* effectiveClient = effectiveDiagnosticLoggingClient(ShouldSample::No);
@@ -7265,6 +7322,13 @@ void WebPageProxy::logDiagnosticMessageWithDomain(const String& message, WebCore
         return;
 
     effectiveClient->logDiagnosticMessageWithDomain(this, message, domain);
+}
+
+void WebPageProxy::logDiagnosticMessageWithDomainFromWebProcess(const String& message, WebCore::DiagnosticLoggingDomain domain)
+{
+    MESSAGE_CHECK(m_process, message.isAllASCII());
+
+    logDiagnosticMessageWithDomain(message, domain);
 }
 
 void WebPageProxy::logScrollingEvent(uint32_t eventType, MonotonicTime timestamp, uint64_t data)
@@ -7588,6 +7652,13 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
     m_speechRecognitionPermissionManager = nullptr;
+
+#if ENABLE(WEBXR) && PLATFORM(COCOA)
+    if (m_xrSystem) {
+        m_xrSystem->invalidate();
+        m_xrSystem = nullptr;
+    }
+#endif
 }
 
 void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)
@@ -7778,14 +7849,6 @@ static const Vector<ASCIILiteral>& mediaRelatedIOKitClasses()
     });
     return services;
 }
-
-static const Vector<ASCIILiteral>& temporaryMachServices()
-{
-    static const auto services = makeNeverDestroyed(Vector<ASCIILiteral> {
-        "com.apple.coremedia.routingcontext.xpc"_s // Remove after <rdar://76403302> is fixed.
-    });
-    return services;
-}
 #endif
 
 WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& process, DrawingAreaProxy& drawingArea, RefPtr<API::WebsitePolicies>&& websitePolicies)
@@ -7881,9 +7944,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         // FIXME(207716): The following should be removed when the GPU process is complete.
         parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
         parameters.mediaIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(mediaRelatedIOKitClasses(), WTF::nullopt);
-    } else {
-        // FIXME(224327): Remove this else clause once <rdar://76403302> is fixed.
-        parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(temporaryMachServices(), WTF::nullopt);
     }
 
     if (!preferences().useGPUProcessForMediaEnabled()
@@ -8095,6 +8155,7 @@ void WebPageProxy::requestStorageSpace(FrameIdentifier frameID, const String& or
         this->makeStorageSpaceRequest(frameID, originIdentifier, databaseName, displayName, currentQuota, currentOriginUsage, currentDatabaseUsage, expectedUsage, [this, protectedThis = WTFMove(protectedThis), frameID, pageURL = WTFMove(pageURL), completionHandler = WTFMove(completionHandler), currentQuota](auto quota) mutable {
 
             RELEASE_LOG_IF_ALLOWED(Storage, "requestStorageSpace response for frame %" PRIu64 ", quota %" PRIu64, frameID.toUInt64(), quota);
+            UNUSED_VARIABLE(frameID);
 
             if (quota <= currentQuota && this->currentURL() == pageURL) {
                 RELEASE_LOG_IF_ALLOWED(Storage, "storage space increase denied");
@@ -9171,8 +9232,14 @@ void WebPageProxy::updateReportedMediaCaptureState()
     bool microphoneCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::AudioCaptureMask) != (activeCaptureState & MediaProducer::AudioCaptureMask);
     bool cameraCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::VideoCaptureMask) != (activeCaptureState & MediaProducer::VideoCaptureMask);
 
+    if (microphoneCaptureChanged)
+        pageClient().microphoneCaptureWillChange();
+    if (cameraCaptureChanged)
+        pageClient().cameraCaptureWillChange();
+
     m_reportedMediaCaptureState = activeCaptureState;
     m_uiClient->mediaCaptureStateDidChange(m_mediaState);
+
     if (microphoneCaptureChanged)
         pageClient().microphoneCaptureChanged();
     if (cameraCaptureChanged)
@@ -9349,7 +9416,7 @@ void WebPageProxy::setMockMediaPlaybackTargetPickerEnabled(bool enabled)
     pageClient().mediaSessionManager().setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
-void WebPageProxy::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetContext::State state)
+void WebPageProxy::setMockMediaPlaybackTargetPickerState(const String& name, WebCore::MediaPlaybackTargetContext::MockState state)
 {
     pageClient().mediaSessionManager().setMockMediaPlaybackTargetPickerState(name, state);
 }
@@ -9364,7 +9431,12 @@ void WebPageProxy::setPlaybackTarget(PlaybackTargetClientContextIdentifier conte
     if (!hasRunningProcess())
         return;
 
-    send(Messages::WebPage::PlaybackTargetSelected(contextId, target->targetContext()));
+    auto context = target->targetContext();
+    ASSERT(context.type() != MediaPlaybackTargetContext::Type::SerializedAVOutputContext);
+    if (preferences().useGPUProcessForMediaEnabled())
+        context.serializeOutputContext();
+
+    send(Messages::WebPage::PlaybackTargetSelected(contextId, context));
 }
 
 void WebPageProxy::externalOutputDeviceAvailableDidChange(PlaybackTargetClientContextIdentifier contextId, bool available)
@@ -9560,9 +9632,7 @@ void WebPageProxy::setURLSchemeHandlerForScheme(Ref<WebURLSchemeHandler>&& handl
 {
     auto canonicalizedScheme = WTF::URLParser::maybeCanonicalizeScheme(scheme);
     ASSERT(canonicalizedScheme);
-
-    bool schemeIsInHTTPFamily = *canonicalizedScheme == "http" || *canonicalizedScheme == "https";
-    ASSERT_UNUSED(schemeIsInHTTPFamily, schemeIsInHTTPFamily || !WTF::URLParser::isSpecialScheme(canonicalizedScheme.value()));
+    ASSERT(!WTF::URLParser::isSpecialScheme(canonicalizedScheme.value()));
 
     auto schemeResult = m_urlSchemeHandlersByScheme.add(canonicalizedScheme.value(), handler.get());
     ASSERT_UNUSED(schemeResult, schemeResult.isNewEntry);
@@ -10333,13 +10403,13 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 #endif
 
 #if ENABLE(GPU_PROCESS)
-void WebPageProxy::gpuProcessCrashed()
+void WebPageProxy::gpuProcessExited(GPUProcessTerminationReason)
 {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     m_contextIDForVisibilityPropagationInGPUProcess = 0;
 #endif
 
-    pageClient().gpuProcessCrashed();
+    pageClient().gpuProcessDidExit();
 
 #if ENABLE(MEDIA_STREAM)
     bool shouldAllowAudioCapture = isCapturingAudio() && preferences().captureAudioInGPUProcessEnabled();

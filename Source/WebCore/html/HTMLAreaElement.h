@@ -59,7 +59,7 @@ private:
     bool isMouseFocusable() const final;
     bool isFocusable() const final;
     RefPtr<Element> focusAppearanceUpdateTarget() final;
-    void setFocus(bool) final;
+    void setFocus(bool, FocusVisibility = FocusVisibility::Invisible) final;
 
     enum Shape { Default, Poly, Rect, Circle, Unknown };
     Path getRegion(const LayoutSize&) const;

@@ -254,13 +254,19 @@ WI.Animation = class Animation extends WI.Object
             }
         }
 
-        if ("timingFunction" in this._effect)
-            this._effect.timingFunction = WI.CubicBezier.fromString(this._effect.timingFunction);
+        if ("timingFunction" in this._effect) {
+            let timingFunction = this._effect.timingFunction;
+            this._effect.timingFunction = WI.CubicBezier.fromString(timingFunction) || WI.StepsFunction.fromString(timingFunction) || WI.Spring.fromString(timingFunction);
+            console.assert(this._effect.timingFunction, timingFunction);
+        }
 
         if ("keyframes" in this._effect) {
             for (let keyframe of this._effect.keyframes) {
-                if (keyframe.easing)
-                    keyframe.easing = WI.CubicBezier.fromString(keyframe.easing);
+                if (keyframe.easing) {
+                    let easing = keyframe.easing;
+                    keyframe.easing = WI.CubicBezier.fromString(easing) || WI.StepsFunction.fromString(easing) || WI.Spring.fromString(easing);
+                    console.assert(keyframe.easing, easing);
+                }
 
                 if (keyframe.style)
                     keyframe.style = keyframe.style.replaceAll(/;\s+/g, ";\n");

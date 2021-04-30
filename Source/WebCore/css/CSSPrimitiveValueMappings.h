@@ -1128,6 +1128,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Clear e)
     case Clear::Right:
         m_value.valueID = CSSValueRight;
         break;
+    case Clear::InlineStart:
+        m_value.valueID = CSSValueInlineStart;
+        break;
+    case Clear::InlineEnd:
+        m_value.valueID = CSSValueInlineEnd;
+        break;
     case Clear::Both:
         m_value.valueID = CSSValueBoth;
         break;
@@ -1145,6 +1151,10 @@ template<> inline CSSPrimitiveValue::operator Clear() const
         return Clear::Left;
     case CSSValueRight:
         return Clear::Right;
+    case CSSValueInlineStart:
+        return Clear::InlineStart;
+    case CSSValueInlineEnd:
+        return Clear::InlineEnd;
     case CSSValueBoth:
         return Clear::Both;
     default:
@@ -1580,7 +1590,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Float e)
 {
     setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
     switch (e) {
-    case Float::No:
+    case Float::None:
         m_value.valueID = CSSValueNone;
         break;
     case Float::Left:
@@ -1588,6 +1598,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Float e)
         break;
     case Float::Right:
         m_value.valueID = CSSValueRight;
+        break;
+    case Float::InlineStart:
+        m_value.valueID = CSSValueInlineStart;
+        break;
+    case Float::InlineEnd:
+        m_value.valueID = CSSValueInlineEnd;
         break;
     }
 }
@@ -1601,15 +1617,19 @@ template<> inline CSSPrimitiveValue::operator Float() const
         return Float::Left;
     case CSSValueRight:
         return Float::Right;
+    case CSSValueInlineStart:
+        return Float::InlineStart;
+    case CSSValueInlineEnd:
+        return Float::InlineEnd;
     case CSSValueNone:
     case CSSValueCenter: // Non-standard CSS value.
-        return Float::No;
+        return Float::None;
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return Float::No;
+    return Float::None;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(LineBreak e)

@@ -924,25 +924,6 @@ AbstractDOMWindow* Frame::virtualWindow() const
     return window();
 }
 
-String Frame::layerTreeAsText(LayerTreeFlags flags) const
-{
-    if (!m_view)
-        return { };
-
-    m_view->updateLayoutAndStyleIfNeededRecursive();
-    if (!contentRenderer())
-        return { };
-
-    contentRenderer()->compositor().updateEventRegions();
-
-    for (auto* child = mainFrame().tree().firstRenderedChild(); child; child = child->tree().traverseNextRendered()) {
-        if (auto* renderer = child->contentRenderer())
-            renderer->compositor().updateEventRegions();
-    }
-
-    return contentRenderer()->compositor().layerTreeAsText(flags);
-}
-
 String Frame::trackedRepaintRectsAsText() const
 {
     if (!m_view)

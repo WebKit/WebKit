@@ -116,7 +116,7 @@ struct SessionIDHash {
 
 template<> struct HashTraits<PAL::SessionID> : GenericHashTraits<PAL::SessionID> {
     static PAL::SessionID emptyValue() { return PAL::SessionID(HashTableEmptyValue); }
-    static void constructDeletedValue(PAL::SessionID& slot) { slot = PAL::SessionID(HashTableDeletedValue); }
+    static void constructDeletedValue(PAL::SessionID& slot) { new (NotNull, &slot) PAL::SessionID(HashTableDeletedValue); }
     static bool isDeletedValue(const PAL::SessionID& slot) { return slot.isHashTableDeletedValue(); }
 };
 

@@ -313,27 +313,30 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
             // Floats never terminate the line.
         } else
             result = handleInlineContent(inlineContentBreaker, needsLayoutRange, lineCandidate);
-        committedInlineItemCount = result.committedCount.isRevert ? result.committedCount.value : committedInlineItemCount + result.committedCount.value;
-        auto& inlineContent = lineCandidate.inlineContent;
-        auto inlineContentIsFullyCommitted = inlineContent.continuousContent().runs().size() == result.committedCount.value && !result.partialTrailingContentLength;
         auto isEndOfLine = result.isEndOfLine == InlineContentBreaker::IsEndOfLine::Yes;
+        if (!result.committedCount.isRevert) {
+            committedInlineItemCount += result.committedCount.value;
+            auto& inlineContent = lineCandidate.inlineContent;
+            auto inlineContentIsFullyCommitted = inlineContent.continuousContent().runs().size() == result.committedCount.value && !result.partialTrailingContentLength;
+            if (inlineContentIsFullyCommitted) {
+                if (auto* wordBreakOpportunity = inlineContent.trailingWordBreakOpportunity()) {
+                    // <wbr> needs to be on the line as an empty run so that we can construct an inline box and compute basic geometry.
+                    ++committedInlineItemCount;
+                    m_line.append(*wordBreakOpportunity, { });
+                }
+                if (inlineContent.trailingLineBreak()) {
+                    // Fully committed (or empty) content followed by a line break means "end of line".
+                    // FIXME: This will put the line break box at the end of the line while in case of some inline boxes, the line break
+                    // could very well be at an earlier position. This has no visual implications at this point though (only geometry correctness on the line break box).
+                    // e.g. <span style="border-right: 10px solid green">text<br></span> where the <br>'s horizontal position is before the right border and not after.
+                    m_line.append(*inlineContent.trailingLineBreak(), { });
+                    ++committedInlineItemCount;
+                    isEndOfLine = true;
+                }
+            }
+        } else
+            committedInlineItemCount = result.committedCount.value;
 
-        if (inlineContentIsFullyCommitted) {
-            if (auto* wordBreakOpportunity = inlineContent.trailingWordBreakOpportunity()) {
-                // <wbr> needs to be on the line as an empty run so that we can construct an inline box and compute basic geometry.
-                ++committedInlineItemCount;
-                m_line.append(*wordBreakOpportunity, { });
-            }
-            if (inlineContent.trailingLineBreak()) {
-                // Fully committed (or empty) content followed by a line break means "end of line".
-                // FIXME: This will put the line break box at the end of the line while in case of some inline boxes, the line break
-                // could very well be at an earlier position. This has no visual implications at this point though (only geometry correctness on the line break box).
-                // e.g. <span style="border-right: 10px solid green">text<br></span> where the <br>'s horizontal position is before the right border and not after.
-                m_line.append(*inlineContent.trailingLineBreak(), { });
-                ++committedInlineItemCount;
-                isEndOfLine = true;
-            }
-        }
         if (isEndOfLine) {
             // We can't place any more items on the current line.
             return { committedInlineItemCount, result.partialTrailingContentLength, result.overflowLogicalWidth };

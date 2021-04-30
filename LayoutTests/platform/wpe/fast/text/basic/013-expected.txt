@@ -63,7 +63,7 @@ layer at (0,0) size 800x268
         RenderBlock {P} at (0,102) size 784x18
           RenderText {#text} at (0,0) size 132x17
             text run at (0,0) width 132: "Text inside "
-          RenderInline {EM} at (0,0) size 99x17
+          RenderInline {EM} at (0,0) size 98x17
             RenderText {#text} at (131,0) size 99x17
               text run at (131,0) width 99: "emphasis"
           RenderText {#text} at (229,0) size 101x17

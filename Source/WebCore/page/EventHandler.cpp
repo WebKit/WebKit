@@ -48,6 +48,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "FocusController.h"
+#include "FocusOptions.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
@@ -694,7 +695,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
 
 bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& event)
 {
-    auto* node = event.targetNode();
+    auto node = makeRefPtr(event.targetNode());
 
     if (Page* page = m_frame.page()) {
         if (!page->chrome().client().shouldUseMouseEventForSelection(event.event()))
@@ -704,7 +705,10 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
     if (!node || !node->renderer())
         return true;
 
-    return node->canStartSelection() || Position::nodeIsUserSelectAll(node);
+    if (HTMLElement::isImageOverlayText(*node))
+        return node->renderer()->style().userSelect() != UserSelect::None;
+
+    return node->canStartSelection() || Position::nodeIsUserSelectAll(node.get());
 }
 
 bool EventHandler::mouseDownMayStartSelect() const
@@ -747,7 +751,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     // Bug: https://bugs.webkit.org/show_bug.cgi?id=155390
 
     // Single mouse down on links or images can always trigger drag-n-drop.
-    bool isImageOverlayText = event.targetNode() && HTMLElement::isImageOverlayText(*event.targetNode());
+    bool isImageOverlayText = HTMLElement::isImageOverlayText(event.targetNode());
     bool isMouseDownOnLinkOrImage = event.isOverLink() || (event.hitTestResult().image() && !isImageOverlayText);
     m_mouseDownMayStartDrag = singleClick && (!event.event().shiftKey() || isMouseDownOnLinkOrImage) && shouldAllowMouseDownToStartDrag();
 #endif
@@ -953,7 +957,8 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
 
     // Restart the selection if this is the first mouse move. This work is usually
     // done in handleMousePressEvent, but not if the mouse press was on an existing selection.
-    VisibleSelection newSelection = m_frame.selection().selection();
+    VisibleSelection oldSelection = m_frame.selection().selection();
+    auto newSelection = oldSelection;
 
     // Special case to limit selection to the containing block for SVG text.
     // FIXME: Isn't there a better non-SVG-specific way to do this?
@@ -1002,8 +1007,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     m_frame.selection().setSelectionByMouseIfDifferent(newSelection, m_frame.selection().granularity(),
         FrameSelection::EndPointsAdjustmentMode::AdjustAtBidiBoundary);
 
-    if (newSelection.start().containerNode() && HTMLElement::isImageOverlayText(*newSelection.start().containerNode())
-        && newSelection.end().containerNode() && HTMLElement::isImageOverlayText(*newSelection.end().containerNode()))
+    if (oldSelection != newSelection && HTMLElement::isImageOverlayText(newSelection.start().containerNode()) && HTMLElement::isImageOverlayText(newSelection.end().containerNode()))
         invalidateClick();
 }
 #endif // ENABLE(DRAG_SUPPORT)
@@ -1515,7 +1519,7 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
             auto& layerRenderer = downcast<RenderLayerModelObject>(*renderer);
             inResizer = layerRenderer.layer()->isPointInResizeControl(roundedIntPoint(result.localPoint()));
             if (inResizer)
-                return layerRenderer.shouldPlaceBlockDirectionScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
+                return layerRenderer.shouldPlaceVerticalScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
         }
 
         if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !result.scrollbar())
@@ -2719,7 +2723,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 
     // If focus shift is blocked, we eat the event.
     auto* page = m_frame.page();
-    if (page && !page->focusController().setFocusedElement(element.get(), m_frame))
+    if (page && !page->focusController().setFocusedElement(element.get(), m_frame, { { }, { }, { }, FocusTrigger::Click, { } }))
         return false;
 
     if (element && m_mouseDownDelegatedFocus)
@@ -3547,6 +3551,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         // Just typing a modifier key is not considered user interaction with the page, but Shift + a (or Caps Lock + a) is considered an interaction.
         return keydown->modifierKeys().isEmpty() || ((keydown->shiftKey() || keydown->capsLockKey()) && !initialKeyEvent.text().isEmpty());
     };
+    // FIXME: This is wrong for text form controls and contenteditable elements (https://webkit.org/b/225075).
     element->setHasFocusVisible(shouldMatchFocusVisible(*element));
 
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
@@ -3598,6 +3603,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         element = eventTargetElementForDocument(m_frame.document());
         if (!element)
             return false;
+        // FIXME: This is wrong for text form controls and contenteditable elements (https://webkit.org/b/225075).
         element->setHasFocusVisible(shouldMatchFocusVisible(*element));
     }
 

@@ -172,7 +172,7 @@ private:
     void paintItemBackground(PaintInfo&, const LayoutPoint&, int listIndex);
     void scrollToRevealSelection();
 
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return RenderBlockFlow::shouldPlaceBlockDirectionScrollbarOnLeft(); }
+    bool shouldPlaceVerticalScrollbarOnLeft() const final { return RenderBlockFlow::shouldPlaceVerticalScrollbarOnLeft(); }
 
     bool m_optionsChanged;
     bool m_scrollToRevealSelectionAfterLayout;

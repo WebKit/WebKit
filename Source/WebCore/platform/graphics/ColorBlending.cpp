@@ -90,41 +90,41 @@ Color blendWithWhite(const Color& color)
     return result;
 }
 
-Color blend(const Color& from, const Color& to, double progress)
+Color blend(const Color& from, const Color& to, const BlendingContext& context)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
     // We need to preserve the state of the valid flag at the end of the animation
-    if (progress == 1 && !to.isValid())
+    if (context.progress == 1 && !to.isValid())
         return { };
 
     auto premultipliedFrom = premultiplied(from.toColorTypeLossy<SRGBA<float>>());
     auto premultipliedTo = premultiplied(to.toColorTypeLossy<SRGBA<float>>());
 
     auto premultipliedBlended = makeFromComponentsClamping<SRGBA<float>>(
-        WebCore::blend(premultipliedFrom.red, premultipliedTo.red, progress),
-        WebCore::blend(premultipliedFrom.green, premultipliedTo.green, progress),
-        WebCore::blend(premultipliedFrom.blue, premultipliedTo.blue, progress),
-        WebCore::blend(premultipliedFrom.alpha, premultipliedTo.alpha, progress)
+        WebCore::blend(premultipliedFrom.red, premultipliedTo.red, context),
+        WebCore::blend(premultipliedFrom.green, premultipliedTo.green, context),
+        WebCore::blend(premultipliedFrom.blue, premultipliedTo.blue, context),
+        WebCore::blend(premultipliedFrom.alpha, premultipliedTo.alpha, context)
     );
 
     return convertColor<SRGBA<uint8_t>>(unpremultiplied(premultipliedBlended));
 }
 
-Color blendWithoutPremultiply(const Color& from, const Color& to, double progress)
+Color blendWithoutPremultiply(const Color& from, const Color& to, const BlendingContext& context)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
     // We need to preserve the state of the valid flag at the end of the animation
-    if (progress == 1 && !to.isValid())
+    if (context.progress == 1 && !to.isValid())
         return { };
 
     auto fromSRGB = from.toColorTypeLossy<SRGBA<float>>();
     auto toSRGB = to.toColorTypeLossy<SRGBA<float>>();
 
     auto blended = makeFromComponentsClamping<SRGBA<float>>(
-        WebCore::blend(fromSRGB.red, toSRGB.red, progress),
-        WebCore::blend(fromSRGB.green, toSRGB.green, progress),
-        WebCore::blend(fromSRGB.blue, toSRGB.blue, progress),
-        WebCore::blend(fromSRGB.alpha, toSRGB.alpha, progress)
+        WebCore::blend(fromSRGB.red, toSRGB.red, context),
+        WebCore::blend(fromSRGB.green, toSRGB.green, context),
+        WebCore::blend(fromSRGB.blue, toSRGB.blue, context),
+        WebCore::blend(fromSRGB.alpha, toSRGB.alpha, context)
     );
 
     return convertColor<SRGBA<uint8_t>>(blended);

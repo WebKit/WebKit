@@ -62,6 +62,8 @@ list(APPEND libangle_sources
 
     src/gpu_info_util/SystemInfo_macos.mm
 
+    src/libANGLE/renderer/driver_utils_mac.mm
+
     src/libANGLE/renderer/metal/SyncMtl.mm
     src/libANGLE/renderer/metal/mtl_format_utils.mm
     src/libANGLE/renderer/metal/RenderBufferMtl.mm

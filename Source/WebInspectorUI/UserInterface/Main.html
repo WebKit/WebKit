@@ -1,5 +1,5 @@
 <!--
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,11 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * file: blob: resource:; connect-src * ws:; media-src * blob:; font-src * blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' data:">
+    <!--
+        Note that some WebKit ports may set custom 'frame-src' and 'connect-src' directives via HTTP response header.
+        The combined CSP policy requires a request to be allowed by both directive lists, so 'default-src' is omitted.
+    -->
+    <meta http-equiv="Content-Security-Policy" content="img-src * file: blob: resource:; media-src * blob:; font-src * blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' data:; object-src 'none'">
 
     <link rel="stylesheet" href="External/CodeMirror/codemirror.css">
 

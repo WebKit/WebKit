@@ -54,11 +54,13 @@ using namespace WebKit;
 
 enum {
     PROP_0,
-
     PROP_WEB_VIEW,
     PROP_PRINT_SETTINGS,
-    PROP_PAGE_SETUP
+    PROP_PAGE_SETUP,
+    N_PROPERTIES,
 };
+
+static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
 
 enum {
     FINISHED,
@@ -153,38 +155,40 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
      *
      * The #WebKitWebView that will be printed.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_WEB_VIEW,
-                                    g_param_spec_object("web-view",
-                                                        _("Web View"),
-                                                        _("The web view that will be printed"),
-                                                        WEBKIT_TYPE_WEB_VIEW,
-                                                        static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+    sObjProperties[PROP_WEB_VIEW] =
+        g_param_spec_object(
+            "web-view",
+            _("Web View"),
+            _("The web view that will be printed"),
+            WEBKIT_TYPE_WEB_VIEW,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
     /**
      * WebKitPrintOperation:print-settings:
      *
      * The initial #GtkPrintSettings for the print operation.
      */
-    g_object_class_install_property(gObjectClass,
-                                    PROP_PRINT_SETTINGS,
-                                    g_param_spec_object("print-settings",
-                                                        _("Print Settings"),
-                                                        _("The initial print settings for the print operation"),
-                                                        GTK_TYPE_PRINT_SETTINGS,
-                                                        WEBKIT_PARAM_READWRITE));
+    sObjProperties[PROP_PRINT_SETTINGS] =
+        g_param_spec_object(
+            "print-settings",
+            _("Print Settings"),
+            _("The initial print settings for the print operation"),
+            GTK_TYPE_PRINT_SETTINGS,
+            WEBKIT_PARAM_READWRITE);
     /**
      * WebKitPrintOperation:page-setup:
      *
      * The initial #GtkPageSetup for the print operation.
      */
-    g_object_class_install_property(gObjectClass,
-                                     PROP_PAGE_SETUP,
-                                     g_param_spec_object("page-setup",
-                                                         _("Page Setup"),
-                                                         _("The initial page setup for the print operation"),
-                                                         GTK_TYPE_PAGE_SETUP,
-                                                         WEBKIT_PARAM_READWRITE));
+    sObjProperties[PROP_PAGE_SETUP] =
+        g_param_spec_object(
+            "page-setup",
+            _("Page Setup"),
+            _("The initial page setup for the print operation"),
+            GTK_TYPE_PAGE_SETUP,
+            WEBKIT_PARAM_READWRITE);
+
+    g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties);
 
     /**
      * WebKitPrintOperation::finished:
@@ -402,7 +406,7 @@ void webkit_print_operation_set_print_settings(WebKitPrintOperation* printOperat
         return;
 
     printOperation->priv->printSettings = printSettings;
-    g_object_notify(G_OBJECT(printOperation), "print-settings");
+    g_object_notify_by_pspec(G_OBJECT(printOperation), sObjProperties[PROP_PRINT_SETTINGS]);
 }
 
 /**
@@ -439,7 +443,7 @@ void webkit_print_operation_set_page_setup(WebKitPrintOperation* printOperation,
         return;
 
     printOperation->priv->pageSetup = pageSetup;
-    g_object_notify(G_OBJECT(printOperation), "page-setup");
+    g_object_notify_by_pspec(G_OBJECT(printOperation), sObjProperties[PROP_PAGE_SETUP]);
 }
 
 /**

@@ -118,8 +118,8 @@ struct CallbackIDHash {
 };
 template<> struct HashTraits<WebKit::CallbackID> : GenericHashTraits<WebKit::CallbackID> {
     static WebKit::CallbackID emptyValue() { return WebKit::CallbackID(); }
-    static void constructDeletedValue(WebKit::CallbackID& slot) { slot = WebKit::CallbackID(std::numeric_limits<uint64_t>::max()); }
-    static bool isDeletedValue(const WebKit::CallbackID& slot) { return slot.m_id == std::numeric_limits<uint64_t>::max(); }
+    static void constructDeletedValue(WebKit::CallbackID& slot) { HashTraits<uint64_t>::constructDeletedValue(slot.m_id); }
+    static bool isDeletedValue(const WebKit::CallbackID& slot) { return HashTraits<uint64_t>::isDeletedValue(slot.m_id); }
 };
 template<> struct DefaultHash<WebKit::CallbackID> : CallbackIDHash { };
 

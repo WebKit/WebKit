@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR)
 #include "JSWebXRRigidTransform.h"
 
+#include "JSDOMConvertBufferSource.h"
 #include "WebXRRigidTransform.h"
 
 namespace WebCore {

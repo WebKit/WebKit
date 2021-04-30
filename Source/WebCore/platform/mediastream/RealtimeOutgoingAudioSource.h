@@ -127,7 +127,7 @@ private:
     bool m_muted { false };
     bool m_enabled { true };
 
-    mutable RecursiveLock m_sinksLock;
+    mutable Lock m_sinksLock;
     HashSet<webrtc::AudioTrackSinkInterface*> m_sinks;
 
 #if !RELEASE_LOG_DISABLED

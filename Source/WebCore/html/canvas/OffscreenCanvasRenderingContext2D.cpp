@@ -36,8 +36,8 @@
 #if ENABLE(OFFSCREEN_CANVAS)
 
 #include "CSSFontSelector.h"
-#include "CSSParser.h"
 #include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParserWorkerSafe.h"
 #include "RenderStyle.h"
 #include "ScriptExecutionContext.h"
 #include "StyleResolveForFontRaw.h"
@@ -71,8 +71,8 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
         return;
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
-    // the "inherit" and "initial" values must be ignored. parseFontWorkerSafe() ignores these.
-    auto fontRaw = CSSParser::parseFontWorkerSafe(newFont, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
+    // the "inherit" and "initial" values must be ignored. CSSPropertyParserWorkerSafe::parseFont() ignores these.
+    auto fontRaw = CSSPropertyParserWorkerSafe::parseFont(newFont, strictToCSSParserMode(!usesCSSCompatibilityParseMode()));
     if (!fontRaw)
         return;
 

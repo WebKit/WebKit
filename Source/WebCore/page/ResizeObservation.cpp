@@ -56,9 +56,8 @@ void ResizeObservation::updateObservationSize(const LayoutSize& size)
 LayoutSize ResizeObservation::computeObservedSize() const
 {
     if (m_target->isSVGElement()) {
-        FloatRect svgRect;
-        if (downcast<SVGElement>(*m_target).getBoundingBox(svgRect))
-            return LayoutSize(svgRect.width(), svgRect.height());
+        if (auto svgRect = downcast<SVGElement>(*m_target).getBoundingBox())
+            return LayoutSize(svgRect->width(), svgRect->height());
     }
     auto* box = m_target->renderBox();
     if (box) {

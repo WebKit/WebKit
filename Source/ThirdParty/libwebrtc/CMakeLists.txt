@@ -538,6 +538,10 @@ set(webrtc_SOURCES
     Source/webrtc/common_video/h264/pps_parser.cc
     Source/webrtc/common_video/h264/sps_parser.cc
     Source/webrtc/common_video/h264/sps_vui_rewriter.cc
+    Source/webrtc/common_video/h265/h265_common.cc
+    Source/webrtc/common_video/h265/h265_pps_parser.cc
+    Source/webrtc/common_video/h265/h265_sps_parser.cc
+    Source/webrtc/common_video/h265/h265_vps_parser.cc
     Source/webrtc/common_video/incoming_video_stream.cc
     Source/webrtc/common_video/libyuv/webrtc_libyuv.cc
     Source/webrtc/common_video/video_frame_buffer.cc
@@ -1042,8 +1046,9 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers_checker.cc
     Source/webrtc/modules/video_coding/codecs/vp9/svc_config.cc
     Source/webrtc/modules/video_coding/codecs/vp9/svc_rate_allocator.cc
-    Source/webrtc/modules/video_coding/codecs/vp9/vp9_impl.cc
+    Source/webrtc/modules/video_coding/codecs/vp9/vp9.cc
     Source/webrtc/modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.cc
+    Source/webrtc/modules/video_coding/codecs/vp9/vp9_impl.cc
     Source/webrtc/modules/video_coding/codec_timer.cc
     Source/webrtc/modules/video_coding/decoder_database.cc
     Source/webrtc/modules/video_coding/decoding_state.cc
@@ -1057,6 +1062,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/generic_decoder.cc
     Source/webrtc/modules/video_coding/h264_sprop_parameter_sets.cc
     Source/webrtc/modules/video_coding/h264_sps_pps_tracker.cc
+    Source/webrtc/modules/video_coding/h265_vps_sps_pps_tracker.cc
     Source/webrtc/modules/video_coding/histogram.cc
     Source/webrtc/modules/video_coding/include/video_codec_interface.cc
     Source/webrtc/modules/video_coding/inter_frame_delay.cc
@@ -1527,6 +1533,19 @@ if (APPLE)
         Source/third_party/opus/src/include/opus_types.h
         DESTINATION ${libwebrtc_PRIVATE_HEADERS_DIR})
 else ()
+    find_package(Openh264)
+    if (NOT Openh264_FOUND)
+        message(WARNING "openh264 is not found, not building support.")
+        set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 0)
+    else()
+        list(APPEND webrtc_SOURCES
+            Source/webrtc/modules/video_coding/codecs/h264/h264_encoder_impl.cc
+        )
+        set(WEBKIT_LIBWEBRTC_OPENH264_ENCODER 1)
+    endif ()
+
+    add_definitions(-DWEBKIT_LIBWEBRTC_OPENH264_ENCODER=${WEBKIT_LIBWEBRTC_OPENH264_ENCODER})
+    configure_file(LibWebRTCWebKitMacros.h.in LibWebRTCWebKitMacros.h @ONLY)
 
     list(APPEND webrtc_SOURCES
         Source/third_party/boringssl/src/crypto/cpu-aarch64-linux.c
@@ -1595,19 +1614,25 @@ set_target_properties(webrtc PROPERTIES CXX_VISIBILITY_PRESET hidden)
 set_target_properties(webrtc PROPERTIES C_VISIBILITY_PRESET hidden)
 
 target_compile_definitions(webrtc PRIVATE
-  OPENSSL_NO_ASM
   DYNAMIC_ANNOTATIONS_ENABLED=1
   EXPAT_RELATIVE_PATH
+  HAVE_CONFIG_H
   HAVE_LRINT
   HAVE_LRINTF
   HAVE_NETINET_IN_H
   HAVE_SCTP
+  HAVE_STDINT_H
+  HAVE_STDLIB_H
+  HAVE_UINT64_T
   HAVE_WEBRTC_VIDEO
   HAVE_WEBRTC_VOICE
   JSON_USE_EXCEPTION=0
   NON_WINDOWS_DEFINE
+  NO_MAIN_THREAD_WRAPPING
+  OPENSSL_NO_ASM
   OPUS_BUILD
   OPUS_EXPORT=
+  RTC_ENABLE_VP9
   VAR_ARRAYS
   WEBRTC_APM_DEBUG_DUMP=0
   WEBRTC_CODEC_G711
@@ -1626,19 +1651,16 @@ target_compile_definitions(webrtc PRIVATE
   WEBRTC_USE_BUILTIN_ISAC_FIX=1
   WEBRTC_USE_BUILTIN_ISAC_FLOAT=0
   WTF_USE_DYNAMIC_ANNOTATIONS=1
-  RTC_DISABLE_VP9
   _GNU_SOURCE
 )
 
 if (APPLE)
     target_compile_definitions(webrtc PRIVATE
-        RTC_ENABLE_VP9
         WEBRTC_ARCH_LITTLE_ENDIAN
         WEBRTC_MAC
     )
 else ()
     target_compile_definitions(webrtc PRIVATE
-        DISABLE_H265
         SCTP_PROCESS_LEVEL_LOCKS
         SCTP_SIMPLE_ALLOCATOR
         SCTP_USE_OPENSSL_SHA1
@@ -1647,6 +1669,11 @@ else ()
         __Userspace__
         __Userspace_os_Linux
     )
+    if (Openh264_FOUND)
+        target_compile_definitions(webrtc PRIVATE
+            WEBRTC_USE_H264
+        )
+    endif ()
 endif ()
 
 if (WTF_CPU_ARM)
@@ -1698,6 +1725,9 @@ else ()
     target_link_libraries(webrtc ${LIBVPX_LIBRARY})
     target_link_libraries(webrtc ${LIBEVENT_LIBRARY})
     target_link_libraries(webrtc ${LIBOPUS_LIBRARY})
+    if (Openh264_FOUND)
+        target_link_libraries(webrtc ${Openh264_LIBRARY})
+    endif ()
 endif ()
 
 target_include_directories(webrtc ${webrtc_INCLUDE_DIRECTORIES})

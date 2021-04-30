@@ -27,22 +27,5 @@
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)
 #include "PlatformXR.h"
-
-namespace PlatformXR {
-
-class PlatformXRDeviceCocoa : public Device {
-public:
-    void initializeTrackingAndRendering(SessionMode) override { }
-    void shutDownTrackingAndRendering() override { }
-    void initializeReferenceSpace(ReferenceSpaceType) override { }
-    Vector<ViewData> views(SessionMode) const override { return { }; }
-    void requestFrame(RequestFrameCallback&&) override { }
-    Optional<LayerHandle> createLayerProjection(uint32_t, uint32_t, bool) override { return WTF::nullopt; };
-    void deleteLayer(LayerHandle) override { };
-};
-
-}
-
 #include <WebKitAdditions/PlatformXRAdditions.h>
-
 #endif

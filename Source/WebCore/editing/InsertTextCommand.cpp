@@ -214,8 +214,12 @@ void InsertTextCommand::doApply()
                 rebalanceWhitespaceAt(startPosition);
         } else {
             ASSERT(m_rebalanceType == RebalanceAllWhitespaces);
-            if (canRebalance(startPosition) && canRebalance(endPosition))
+            ASSERT(textNodeForRebalance(startPosition) == textNodeForRebalance(endPosition));
+            if (auto textForRebalance = textNodeForRebalance(startPosition)) {
+                ASSERT(textForRebalance == textNode);
                 rebalanceWhitespaceOnTextSubstring(*textNode, startPosition.offsetInContainerNode(), endPosition.offsetInContainerNode());
+            }
+
         }
     }
 

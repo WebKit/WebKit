@@ -42,13 +42,15 @@
         await waitFor(sourceBuffer, 'updateend');
 
         consoleWrite("Enqueued so far: (expecting no frames yet)");
-        internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        let enqueuedSamples = await internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples.forEach(consoleWrite);
 
         run('sourceBuffer.appendBuffer(syncSampleRun(0, 5))');
         await waitFor(sourceBuffer, 'updateend');
 
         consoleWrite("Enqueued now:");
-        internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        enqueuedSamples = await internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples.forEach(consoleWrite);
 
         endTest();
     });

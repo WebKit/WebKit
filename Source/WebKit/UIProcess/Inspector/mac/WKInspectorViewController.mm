@@ -29,17 +29,17 @@
 #if PLATFORM(MAC)
 
 #import "APINavigation.h"
-#import "WKFrameInfo.h"
+#import <WebKit/WKFrameInfo.h>
 #import "WKInspectorResourceURLSchemeHandler.h"
 #import "WKInspectorWKWebView.h"
-#import "WKNavigationAction.h"
-#import "WKNavigationDelegate.h"
+#import <WebKit/WKNavigationAction.h>
+#import <WebKit/WKNavigationDelegate.h>
 #import "WKOpenPanelParameters.h"
-#import "WKPreferencesPrivate.h"
+#import <WebKit/WKPreferencesPrivate.h>
 #import "WKProcessPoolInternal.h"
-#import "WKUIDelegatePrivate.h"
-#import "WKWebViewConfigurationPrivate.h"
-#import "WKWebViewPrivate.h"
+#import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import "WebInspectorUIProxy.h"
 #import "WebInspectorUtilities.h"
 #import "WebPageProxy.h"
@@ -114,8 +114,13 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
 - (WKWebViewConfiguration *)webViewConfiguration
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    RetainPtr<WKInspectorResourceURLSchemeHandler> inspectorSchemeHandler = adoptNS([[WKInspectorResourceURLSchemeHandler alloc] init]);
-    [configuration setURLSchemeHandler:inspectorSchemeHandler.autorelease() forURLScheme:WKInspectorResourceScheme];
+    RetainPtr<WKInspectorResourceURLSchemeHandler> inspectorSchemeHandler = adoptNS([WKInspectorResourceURLSchemeHandler new]);
+    RetainPtr<NSMutableSet<NSString *>> allowedURLSchemes = adoptNS([[NSMutableSet alloc] initWithObjects:WKInspectorResourceScheme, nil]);
+    for (auto& pair : _configuration->_configuration->urlSchemeHandlers())
+        [allowedURLSchemes addObject:pair.second];
+
+    [inspectorSchemeHandler setAllowedURLSchemesForCSP:allowedURLSchemes.get()];
+    [configuration setURLSchemeHandler:inspectorSchemeHandler.get() forURLScheme:WKInspectorResourceScheme];
 
     WKPreferences *preferences = configuration.get().preferences;
     preferences._allowFileAccessFromFileURLs = YES;

@@ -36,7 +36,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU
+    EnabledBySetting=WebGPU
 ] dictionary WebGPURenderPipelineDescriptor : WebGPUPipelineDescriptorBase {
     required WebGPUProgrammableStageDescriptor vertexStage;
     WebGPUProgrammableStageDescriptor? fragmentStage = null;

@@ -100,6 +100,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestMapLikePrototype, JSTestMapLikePrototy
 
 using JSTestMapLikeDOMConstructor = JSDOMConstructorNotConstructable<JSTestMapLike>;
 
+template<> const ClassInfo JSTestMapLikeDOMConstructor::s_info = { "TestMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeDOMConstructor) };
+
 template<> JSValue JSTestMapLikeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -112,8 +114,6 @@ template<> void JSTestMapLikeDOMConstructor::initializeProperties(VM& vm, JSDOMG
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestMapLike"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestMapLikeDOMConstructor::s_info = { "TestMapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeDOMConstructor) };
 
 /* Hash table for prototype */
 

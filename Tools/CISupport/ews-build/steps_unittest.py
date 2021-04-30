@@ -43,8 +43,8 @@ from twisted.trial import unittest
 from steps import (AnalyzeAPITestsResults, AnalyzeCompileWebKitResults, AnalyzeJSCTestsResults,
                    AnalyzeLayoutTestsResults, ApplyPatch, ApplyWatchList, ArchiveBuiltProduct, ArchiveTestResults,
                    CheckOutSource, CheckOutSpecificRevision, CheckPatchRelevance, CheckPatchStatusOnEWSQueues, CheckStyle,
-                   CleanBuild, CleanUpGitIndexLock, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch, CompileWebKit,
-                   CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
+                   CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CompileJSCWithoutPatch,
+                   CompileWebKit, CompileWebKitWithoutPatch, ConfigureBuild, CreateLocalGITCommit,
                    DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedChangeLogs, FindModifiedLayoutTests, GitResetHard, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, ReRunAPITests, ReRunJavaScriptCoreTests, ReRunWebKitPerlTests,
@@ -1721,7 +1721,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
         self.setProperty('fast_commit_queue', True)
-        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped layout-tests in fast-cq mode')
         return self.runStep()
 
     def test_skip_for_mac_wk2_passed_patch_on_commit_queue(self):
@@ -1731,7 +1731,7 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
         self.setProperty('passed_mac_wk2', True)
-        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped layout-tests')
         return self.runStep()
 
     def test_parse_results_json_regression(self):
@@ -2260,7 +2260,7 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('fullPlatform', 'mac')
         self.setProperty('configuration', 'debug')
         self.setProperty('fast_commit_queue', True)
-        self.expectOutcome(result=SKIPPED, state_string='layout-tests (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped layout-tests in fast-cq mode')
         return self.runStep()
 
 
@@ -2747,6 +2747,17 @@ class TestCheckPatchRelevance(BuildStepMixinAdditions, unittest.TestCase):
         file_names = ['Tools/Scripts/webkitpy', 'Tools/Scripts/libraries', 'Tools/Scripts/commit-log-editor']
         self.setupStep(CheckPatchRelevance())
         self.setProperty('buildername', 'WebKitPy-Tests-EWS')
+        for file_name in file_names:
+            CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
+            self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
+            rc = self.runStep()
+        return rc
+
+    def test_relevant_services_patch(self):
+        file_names = ['Tools/CISupport/build-webkit-org', 'Tools/CISupport/ews-build', 'Tools/CISupport/Shared',
+                      'Tools/Scripts/libraries/resultsdbpy', 'Tools/Scripts/libraries/webkitcorepy', 'Tools/Scripts/libraries/webkitscmpy']
+        self.setupStep(CheckPatchRelevance())
+        self.setProperty('buildername', 'Services-EWS')
         for file_name in file_names:
             CheckPatchRelevance._get_patch = lambda x: 'Sample patch; file: {}'.format(file_name)
             self.expectOutcome(result=SUCCESS, state_string='Patch contains relevant changes')
@@ -3889,6 +3900,53 @@ OSError: [Errno 2] No such file or directory''')
         return self.runStep()
 
 
+class TestCleanGitRepo(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(CleanGitRepo())
+        self.setProperty('buildername', 'Commit-Queue')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
+            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
+            ExpectShell(command=['git', 'checkout', 'origin/master', '-f'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
+            ExpectShell(command=['git', 'branch', '-D', 'master'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
+            ExpectShell(command=['git', 'checkout', 'origin/master', '-b', 'master'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout="Switched to a new branch 'master'"),
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned up git repository')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(CleanGitRepo())
+        self.setProperty('buildername', 'Commit-Queue')
+
+        self.expectRemoteCommands(
+            ExpectShell(command=['git', 'clean', '-f', '-d'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout=''),
+            ExpectShell(command=['git', 'fetch', 'origin'], workdir='wkdir', timeout=1200, logEnviron=False) + 128
+            + ExpectShell.log('stdio', stdout='fatal: unable to access https://github.com/WebKit/WebKit.git/: Could not resolve host: github.com'),
+            ExpectShell(command=['git', 'checkout', 'origin/master', '-f'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='You are in detached HEAD state.'),
+            ExpectShell(command=['git', 'branch', '-D', 'master'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout='Deleted branch master (was 57015967fef9).'),
+            ExpectShell(command=['git', 'checkout', 'origin/master', '-b', 'master'], workdir='wkdir', timeout=1200, logEnviron=False) + 0
+            + ExpectShell.log('stdio', stdout="Switched to a new branch 'master'"),
+        )
+        self.expectOutcome(result=FAILURE, state_string='Encountered some issues during cleanup')
+        return self.runStep()
+
+
 class TestFindModifiedChangeLogs(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
@@ -4016,6 +4074,17 @@ class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tearDownBuildStep()
 
+    def get_patch(self, title='Patch', obsolete=0):
+        return json.loads('''{{"bug_id": 224460,
+                     "creator":"aakash_jain@apple.com",
+                     "data": "patch-contents",
+                     "file_name":"bug-224460-20210412192105.patch",
+                     "flags": [{{"creation_date" : "2021-04-12T23:21:06Z", "id": 445872, "modification_date": "2021-04-12T23:55:36Z", "name": "review", "setter": "ap@webkit.org", "status": "+", "type_id": 1}}],
+                     "id": 425806,
+                     "is_obsolete": {},
+                     "is_patch": 1,
+                     "summary": "{}"}}'''.format(obsolete, title))
+
     def test_skipped(self):
         self.setupStep(ValidatePatch())
         self.setProperty('patch_id', '1234')
@@ -4023,6 +4092,35 @@ class TestValidatePatch(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('skip_validation', True)
         self.expectOutcome(result=SKIPPED, state_string='Validated patch (skipped)')
         return self.runStep()
+
+    def test_success(self):
+        self.setupStep(ValidatePatch(verifyBugClosed=False))
+        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch()
+        self.setProperty('patch_id', '425806')
+        self.expectOutcome(result=SUCCESS, state_string='Validated patch')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+    def test_obsolete_patch(self):
+        self.setupStep(ValidatePatch(verifyBugClosed=False))
+        ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(obsolete=1)
+        self.setProperty('patch_id', '425806')
+        self.expectOutcome(result=FAILURE, state_string='Patch 425806 is obsolete')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('fast_commit_queue'), None, 'fast_commit_queue is unexpectedly set')
+        return rc
+
+    def test_fast_cq_patches_trigger_fast_cq_mode(self):
+        fast_cq_patch_titles = ('REVERT OF r1234', 'revert of r1234', '[fast-cq]Patch', '[FAST-cq] patch', 'fast-cq-patch', 'FAST-CQ Patch')
+        for fast_cq_patch_title in fast_cq_patch_titles:
+            self.setupStep(ValidatePatch(verifyBugClosed=False))
+            ValidatePatch.get_patch_json = lambda x, patch_id: self.get_patch(title=fast_cq_patch_title)
+            self.setProperty('patch_id', '425806')
+            self.expectOutcome(result=SUCCESS, state_string='Validated patch')
+            rc = self.runStep()
+            self.assertEqual(self.getProperty('fast_commit_queue'), True, 'fast_commit_queue is not set, patch title: {}'.format(fast_cq_patch_title))
+        return rc
 
 
 class TestValidateCommiterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):

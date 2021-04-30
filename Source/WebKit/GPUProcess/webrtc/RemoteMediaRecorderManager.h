@@ -58,6 +58,8 @@ public:
     void didReceiveRemoteMediaRecorderMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
+    bool allowsExitUnderMemoryPressure() const;
+
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

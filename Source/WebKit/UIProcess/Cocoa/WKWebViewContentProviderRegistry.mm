@@ -30,7 +30,7 @@
 
 #import "WKPDFView.h"
 #import "WKSystemPreviewView.h"
-#import "WKWebViewConfigurationPrivate.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/MIMETypeRegistry.h>

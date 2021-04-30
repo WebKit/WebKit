@@ -28,6 +28,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "RTCDataChannelRemoteManagerMessages.h"
 #include "RTCDataChannelRemoteManagerProxyMessages.h"
 #include "WebProcess.h"
@@ -64,15 +65,15 @@ void RTCDataChannelRemoteManager::setConnection(IPC::Connection* connection)
 
 bool RTCDataChannelRemoteManager::connectToRemoteSource(WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
 {
-    ASSERT(Process::identifier() == localIdentifier.processIdentifier);
-    if (Process::identifier() != localIdentifier.processIdentifier)
+    ASSERT(WebCore::Process::identifier() == localIdentifier.processIdentifier);
+    if (WebCore::Process::identifier() != localIdentifier.processIdentifier)
         return false;
 
     auto handler = WebCore::RTCDataChannel::handlerFromIdentifier(localIdentifier.channelIdentifier);
     if (!handler)
         return false;
 
-    auto iterator = m_sources.add(remoteIdentifier.channelIdentifier, RTCDataChannelRemoteSource::create(remoteIdentifier, makeUniqueRefFromNonNullUniquePtr(WTFMove(handler)), remoteSourceConnection()));
+    auto iterator = m_sources.add(remoteIdentifier.channelIdentifier, WebCore::RTCDataChannelRemoteSource::create(remoteIdentifier, makeUniqueRefFromNonNullUniquePtr(WTFMove(handler)), remoteSourceConnection()));
     return iterator.isNewEntry;
 }
 
@@ -92,8 +93,8 @@ WebCore::RTCDataChannelRemoteSourceConnection& RTCDataChannelRemoteManager::remo
 
 void RTCDataChannelRemoteManager::postTaskToHandler(WebCore::RTCDataChannelIdentifier handlerIdentifier, Function<void(WebCore::RTCDataChannelRemoteHandler&)>&& function)
 {
-    ASSERT(Process::identifier() == handlerIdentifier.processIdentifier);
-    if (Process::identifier() != handlerIdentifier.processIdentifier)
+    ASSERT(WebCore::Process::identifier() == handlerIdentifier.processIdentifier);
+    if (WebCore::Process::identifier() != handlerIdentifier.processIdentifier)
         return;
 
     auto iterator = m_handlers.find(handlerIdentifier.channelIdentifier);
@@ -107,10 +108,10 @@ void RTCDataChannelRemoteManager::postTaskToHandler(WebCore::RTCDataChannelIdent
     });
 }
 
-RTCDataChannelRemoteSource* RTCDataChannelRemoteManager::sourceFromIdentifier(WebCore::RTCDataChannelIdentifier sourceIdentifier)
+WebCore::RTCDataChannelRemoteSource* RTCDataChannelRemoteManager::sourceFromIdentifier(WebCore::RTCDataChannelIdentifier sourceIdentifier)
 {
-    ASSERT(Process::identifier() == sourceIdentifier.processIdentifier);
-    if (Process::identifier() != sourceIdentifier.processIdentifier)
+    ASSERT(WebCore::Process::identifier() == sourceIdentifier.processIdentifier);
+    if (WebCore::Process::identifier() != sourceIdentifier.processIdentifier)
         return nullptr;
 
     return m_sources.get(sourceIdentifier.channelIdentifier);

@@ -200,7 +200,6 @@ public:
     void injectUserScriptsAwaitingNotification();
     void addUserScriptAwaitingNotification(DOMWrapperWorld&, const UserScript&);
 
-    WEBCORE_EXPORT String layerTreeAsText(LayerTreeFlags = 0) const;
     WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
 
     WEBCORE_EXPORT static Frame* frameForWidget(const Widget&);

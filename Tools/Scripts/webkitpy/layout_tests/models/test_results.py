@@ -26,21 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-if sys.version_info > (3, 0):
-    import pickle
-else:
-    import cPickle as pickle
-
 from webkitpy.layout_tests.models import test_failures
 
 
 class TestResult(object):
     """Data object containing the results of a single test."""
-
-    @staticmethod
-    def loads(string):
-        return pickle.loads(string)
 
     def __init__(self, test_name, failures=None, test_run_time=None, has_stderr=False, reftest_type=None, pid=None, references=None):
         self.test_name = test_name
@@ -91,6 +81,3 @@ class TestResult(object):
             if type(failure) in failure_classes:
                 return True
         return False
-
-    def dumps(self):
-        return pickle.dumps(self)

@@ -22,6 +22,7 @@
 #include "config.h"
 #include "StyleRule.h"
 
+#include "CSSCounterStyleRule.h"
 #include "CSSDeferredParser.h"
 #include "CSSFontFaceRule.h"
 #include "CSSImportRule.h"
@@ -90,6 +91,9 @@ void StyleRuleBase::destroy()
     case StyleRuleType::Charset:
         delete downcast<StyleRuleCharset>(this);
         return;
+    case StyleRuleType::CounterStyle:
+        delete downcast<StyleRuleCounterStyle>(this);
+        return;
     case StyleRuleType::Unknown:
         ASSERT_NOT_REACHED();
         return;
@@ -112,6 +116,8 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
         return downcast<StyleRuleSupports>(*this).copy();
     case StyleRuleType::Keyframes:
         return downcast<StyleRuleKeyframes>(*this).copy();
+    case StyleRuleType::CounterStyle:
+        return downcast<StyleRuleCounterStyle>(*this).copy();
     case StyleRuleType::Import:
     case StyleRuleType::Namespace:
         // FIXME: Copy import and namespace rules.
@@ -152,6 +158,9 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         break;
     case StyleRuleType::Namespace:
         rule = CSSNamespaceRule::create(downcast<StyleRuleNamespace>(self), parentSheet);
+        break;
+    case StyleRuleType::CounterStyle:
+        rule = CSSCounterStyleRule::create(downcast<StyleRuleCounterStyle>(self), parentSheet);
         break;
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:

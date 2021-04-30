@@ -91,6 +91,7 @@ public:
 #endif
             || m_isSimulatingMemoryPressure;
     }
+    bool isSimulatingMemoryPressure() const { return m_isSimulatingMemoryPressure; }
     void setUnderMemoryPressure(bool);
 
     WTF_EXPORT_PRIVATE static MemoryUsagePolicy currentMemoryUsagePolicy();

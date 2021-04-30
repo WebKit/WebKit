@@ -102,7 +102,7 @@ unsigned CharacterData::parserAppendData(const String& string, unsigned offset, 
         m_data.append(string.characters16() + offset, characterLengthLimit);
 
     ASSERT(!renderer() || is<Text>(*this));
-    if (is<Text>(*this) && parentNode())
+    if (is<Text>(*this))
         downcast<Text>(*this).updateRendererAfterContentChange(oldLength, 0);
 
     notifyParentAfterChange(ContainerNode::ChildChange::Source::Parser);
@@ -182,7 +182,7 @@ void CharacterData::setDataAndUpdate(const String& newData, unsigned offsetOfRep
         document().textInserted(*this, offsetOfReplacedData, newLength);
 
     ASSERT(!renderer() || is<Text>(*this));
-    if (is<Text>(*this) && parentNode())
+    if (is<Text>(*this))
         downcast<Text>(*this).updateRendererAfterContentChange(offsetOfReplacedData, oldLength);
 
     if (is<ProcessingInstruction>(*this))

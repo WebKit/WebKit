@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)
 
 #import "WKFormPeripheralBase.h"
 
@@ -40,4 +40,4 @@
 - (void)setTimePickerHour:(NSInteger)hour minute:(NSInteger)minute;
 @end
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS)

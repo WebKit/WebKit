@@ -58,6 +58,8 @@ public:
 
     explicit operator bool() const { return m_size; }
 
+    size_t memorySize() const { return sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size + sizeof(BytecodeIndex) * m_size; }
+
 private:
     CodeLocationLabel<JSEntryPtrTag>* codeLocations() const
     {

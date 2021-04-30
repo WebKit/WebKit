@@ -29,10 +29,10 @@
 #if HAVE(CONTACTSUI)
 
 #import "ContactsUISPI.h"
-#import "WKWebView.h"
 #import <Contacts/Contacts.h>
 #import <WebCore/ContactInfo.h>
 #import <WebCore/ContactsRequestData.h>
+#import <WebKit/WKWebView.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>

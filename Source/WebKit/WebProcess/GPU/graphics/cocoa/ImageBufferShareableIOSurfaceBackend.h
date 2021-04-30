@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,10 @@ class ImageBufferShareableIOSurfaceBackend final : public WebCore::ImageBufferBa
     WTF_MAKE_ISO_ALLOCATED(ImageBufferShareableIOSurfaceBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableIOSurfaceBackend);
 public:
+    static WebCore::IntSize calculateSafeBackendSize(const Parameters&);
+    static size_t calculateMemoryCost(const Parameters&);
+    static size_t calculateExternalMemoryCost(const Parameters&);
+
     static std::unique_ptr<ImageBufferShareableIOSurfaceBackend> create(const Parameters&, ImageBufferBackendHandle);
 
     ImageBufferShareableIOSurfaceBackend(const Parameters& parameters, ImageBufferBackendHandle&& handle)
@@ -64,6 +68,8 @@ public:
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::Accelerated;
 
 private:
+    unsigned bytesPerRow() const override;
+
     ImageBufferBackendHandle m_handle;
 };
 

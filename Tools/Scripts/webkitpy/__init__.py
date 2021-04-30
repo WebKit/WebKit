@@ -33,15 +33,15 @@ if sys.platform == 'darwin':
 from webkitcorepy import AutoInstall, Package, Version
 AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}'.format(sys.version_info[0])))
 
-if sys.version_info > (3, 4):
-    # Python >=3.5.*
+if sys.version_info >= (3, 5):
     AutoInstall.register(Package('pylint', Version(2, 6, 0)))
-else:
+elif sys.version_info >= (2, 7) and sys.version_info < (3,):
     AutoInstall.register(Package('pylint', Version(0, 28, 0)))
     AutoInstall.register(Package('logilab.common', Version(0, 58, 1), pypi_name='logilab-common', aliases=['logilab']))
     AutoInstall.register(Package('logilab.astng', Version(0, 24, 1), pypi_name='logilab-astng', aliases=['logilab']))
-
-    AutoInstall.register(Package('pathlib', Version(2, 3, 5), pypi_name='pathlib2'))
+    AutoInstall.register(Package('pathlib2', Version(2, 3, 5)))
+else:
+    raise ImportError("Unsupported Python version! (%s)" % sys.version)
 
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(18, 1, 0), pypi_name='attrs'))
@@ -58,7 +58,6 @@ AutoInstall.register(Package('more_itertools', Version(4, 2, 0), pypi_name='more
 AutoInstall.register(Package('mozprocess', Version(1, 2, 0)))
 AutoInstall.register(Package('mozlog', Version(6, 1)))
 AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
-AutoInstall.register(Package('pathlib2', Version(2, 3, 5)))
 AutoInstall.register(Package('pluggy', Version(0, 5, 2)))
 AutoInstall.register(Package('py', Version(1, 5, 2)))
 AutoInstall.register(Package('pytest_timeout', Version(1, 4, 2), pypi_name='pytest-timeout'))

@@ -157,8 +157,8 @@ layer at (0,0) size 785x1151
                 RenderInline {EM} at (0,0) size 20x17
                   RenderText {#text} at (634,0) size 20x17
                     text run at (634,0) width 20: "not"
-                RenderText {#text} at (654,0) size 90x17
-                  text run at (654,0) width 90: " be overlined: "
+                RenderText {#text} at (654,0) size 86x17
+                  text run at (654,0) width 86: " be overlined:"
                 RenderImage {IMG} at (0,18) size 15x15
                 RenderText {#text} at (15,19) size 717x35
                   text run at (15,19) width 8: ". "

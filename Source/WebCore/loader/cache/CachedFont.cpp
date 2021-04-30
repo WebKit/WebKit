@@ -104,21 +104,9 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 
 std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, const String& itemInCollection, bool& wrapping)
 {
-    wrapping = true;
-
-#if !PLATFORM(COCOA)
-    if (isWOFF(bytes)) {
-        wrapping = false;
-        Vector<char> convertedFont;
-        if (!convertWOFFToSfnt(bytes, convertedFont))
-            return nullptr;
-
-        auto buffer = SharedBuffer::create(WTFMove(convertedFont));
-        return createFontCustomPlatformData(buffer, itemInCollection);
-    }
-#endif
-
-    return createFontCustomPlatformData(bytes, itemInCollection);
+    auto buffer = makeRefPtr(bytes);
+    wrapping = !convertWOFFToSfntIfNecessary(buffer);
+    return buffer ? createFontCustomPlatformData(*buffer, itemInCollection) : nullptr;
 }
 
 RefPtr<Font> CachedFont::createFont(const FontDescription& fontDescription, const AtomString&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, FontSelectionSpecifiedCapabilities fontFaceCapabilities)

@@ -27,10 +27,6 @@
 
 #import "WKContentView.h"
 
-#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
-#import "WKShareSheet.h"
-#endif
-
 #import "DragDropInteractionState.h"
 #import "EditorState.h"
 #import "FocusedElementInformation.h"
@@ -43,16 +39,16 @@
 #import "TextCheckingController.h"
 #import "TransactionID.h"
 #import "UIKitSPI.h"
-#import "WKActionSheetAssistant.h"
-#import "WKAirPlayRoutePicker.h"
-#import "WKContactPicker.h"
-#import "WKDeferringGestureRecognizer.h"
-#import "WKFileUploadPanel.h"
-#import "WKFormPeripheral.h"
-#import "WKKeyboardScrollingAnimator.h"
-#import "WKShareSheet.h"
-#import "WKSyntheticTapGestureRecognizer.h"
-#import "WKTouchActionGestureRecognizer.h"
+#import <WebKit/WKActionSheetAssistant.h>
+#import <WebKit/WKAirPlayRoutePicker.h>
+#import <WebKit/WKContactPicker.h>
+#import <WebKit/WKDeferringGestureRecognizer.h>
+#import <WebKit/WKFileUploadPanel.h>
+#import <WebKit/WKFormPeripheral.h>
+#import <WebKit/WKKeyboardScrollingAnimator.h>
+#import <WebKit/WKShareSheet.h>
+#import <WebKit/WKSyntheticTapGestureRecognizer.h>
+#import <WebKit/WKTouchActionGestureRecognizer.h>
 #import "WebAutocorrectionContext.h"
 #import "_WKElementAction.h"
 #import "_WKFormInputSession.h"
@@ -110,7 +106,6 @@ class WebPageProxy;
 @class WKActionSheetAssistant;
 @class WKContextMenuElementInfo;
 @class WKDataListSuggestionsControl;
-@class WKDateTimeInputControl;
 @class WKFocusedFormControlView;
 @class WKFormInputSession;
 @class WKFormSelectControl;
@@ -119,6 +114,10 @@ class WebPageProxy;
 @class WKInspectorNodeSearchGestureRecognizer;
 @class WKTextRange;
 @class _WKTextInputContext;
+
+#if !PLATFORM(WATCHOS)
+@class WKDateTimeInputControl;
+#endif
 
 @class UIPointerInteraction;
 @class UITargetedPreview;
@@ -209,7 +208,7 @@ struct WKSelectionDrawingInfo {
     explicit WKSelectionDrawingInfo(const EditorState&);
     SelectionType type;
     WebCore::IntRect caretRect;
-    Vector<WebCore::SelectionRect> selectionRects;
+    Vector<WebCore::SelectionGeometry> selectionGeometries;
     WebCore::IntRect selectionClipRect;
 };
 
@@ -298,8 +297,6 @@ enum class ProceedWithImageExtraction : bool {
     RetainPtr<UIWebFormAccessory> _formAccessoryView;
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
-    RetainPtr<UIView> _targetedPreviewViewsContainerView;
-    WeakObjCPtr<UIScrollView> _scrollViewForTargetedPreview;
     RetainPtr<UIView> _contextMenuHintContainerView;
     RetainPtr<UIView> _dragPreviewContainerView;
     RetainPtr<UIView> _dropPreviewContainerView;
@@ -531,7 +528,6 @@ enum class ProceedWithImageExtraction : bool {
 
 - (void)setUpInteraction;
 - (void)cleanUpInteraction;
-- (void)cleanUpRelatedViews;
 
 - (void)scrollViewWillStartPanOrPinchGesture;
 
@@ -613,7 +609,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (NSArray<NSValue *> *)_uiTextSelectionRects;
 - (void)accessibilityRetrieveSpeakSelectionContent;
 - (void)_accessibilityRetrieveRectsEnclosingSelectionOffset:(NSInteger)offset withGranularity:(UITextGranularity)granularity;
-- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(const Vector<WebCore::SelectionRect>& rects))completionHandler;
+- (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text completionHandler:(void (^)(const Vector<WebCore::SelectionGeometry>& rects))completionHandler;
 - (void)_accessibilityRetrieveRectsAtSelectionOffset:(NSInteger)offset withText:(NSString *)text;
 - (void)_accessibilityStoreSelection;
 - (void)_accessibilityClearSelection;
@@ -747,7 +743,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;
 @property (nonatomic, readonly) NSString *selectFormPopoverTitle;
 @property (nonatomic, readonly) NSString *formInputLabel;
+#if !PLATFORM(WATCHOS)
 @property (nonatomic, readonly) WKDateTimeInputControl *dateTimeInputControl;
+#endif
 @property (nonatomic, readonly) WKFormSelectControl *selectControl;
 #if ENABLE(DRAG_SUPPORT)
 @property (nonatomic, readonly, getter=isAnimatingDragCancel) BOOL animatingDragCancel;

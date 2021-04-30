@@ -36,6 +36,7 @@
 #include "InlineTextBoxStyle.h"
 #include "Pagination.h"
 #include "QuotesData.h"
+#include "RenderBlock.h"
 #include "RenderObject.h"
 #include "RenderTheme.h"
 #include "ScaleTransformOperation.h"
@@ -2348,6 +2349,20 @@ void RenderStyle::setBorderImageOutset(LengthBox&& outset)
     m_surroundData.access().border.m_image.setOutset(WTFMove(outset));
 }
 
+void RenderStyle::setBorderImageHorizontalRule(NinePieceImageRule rule)
+{
+    if (m_surroundData->border.m_image.horizontalRule() == rule)
+        return;
+    m_surroundData.access().border.m_image.setHorizontalRule(rule);
+}
+
+void RenderStyle::setBorderImageVerticalRule(NinePieceImageRule rule)
+{
+    if (m_surroundData->border.m_image.verticalRule() == rule)
+        return;
+    m_surroundData.access().border.m_image.setVerticalRule(rule);
+}
+
 void RenderStyle::setColumnStylesFromPaginationMode(const Pagination::Mode& paginationMode)
 {
     if (paginationMode == Pagination::Unpaginated)
@@ -2581,9 +2596,9 @@ float RenderStyle::outlineOffset() const
     return m_backgroundData->outline.offset();
 }
 
-bool RenderStyle::shouldPlaceBlockDirectionScrollbarOnLeft() const
+bool RenderStyle::shouldPlaceVerticalScrollbarOnLeft() const
 {
-    return !isLeftToRightDirection() && isHorizontalWritingMode();
+    return (!isLeftToRightDirection() && isHorizontalWritingMode()) || writingMode() == WritingMode::RightToLeft;
 }
 
 Vector<PaintType, 3> RenderStyle::paintTypesForPaintOrder(PaintOrder order)
@@ -2664,4 +2679,47 @@ Color RenderStyle::computedStrokeColor() const
     return visitedDependentColor(effectiveStrokeColorProperty());
 }
 
+UsedClear RenderStyle::usedClear(const RenderObject& renderer)
+{
+    auto computedValue = renderer.style().clear();
+    switch (computedValue) {
+    case Clear::None:
+        return UsedClear::None;
+    case Clear::Left:
+        return UsedClear::Left;
+    case Clear::Right:
+        return UsedClear::Right;
+    case Clear::Both:
+        return UsedClear::Both;
+    case Clear::InlineStart:
+    case Clear::InlineEnd:
+        auto containingBlockDirection = renderer.containingBlock()->style().direction();
+        if (containingBlockDirection == TextDirection::RTL)
+            return computedValue == Clear::InlineStart ? UsedClear::Right : UsedClear::Left;
+        return computedValue == Clear::InlineStart ? UsedClear::Left : UsedClear::Right;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+UsedFloat RenderStyle::usedFloat(const RenderObject& renderer)
+{
+    auto computedValue = renderer.style().floating();
+    switch (computedValue) {
+    case Float::None:
+        return UsedFloat::None;
+    case Float::Left:
+        return UsedFloat::Left;
+    case Float::Right:
+        return UsedFloat::Right;
+    case Float::InlineStart:
+    case Float::InlineEnd:
+        auto containingBlockDirection = renderer.containingBlock()->style().direction();
+        if (containingBlockDirection == TextDirection::RTL)
+            return computedValue == Float::InlineStart ? UsedFloat::Right : UsedFloat::Left;
+        return computedValue == Float::InlineStart ? UsedFloat::Left : UsedFloat::Right;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
 } // namespace WebCore

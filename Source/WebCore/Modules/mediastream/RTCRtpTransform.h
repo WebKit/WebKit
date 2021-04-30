@@ -30,6 +30,7 @@
 #include "RTCRtpSFrameTransform.h"
 #include "RTCRtpScriptTransform.h"
 #include "RTCRtpTransformBackend.h"
+#include <wtf/FastMalloc.h>
 
 namespace WebCore {
 
@@ -37,25 +38,28 @@ class RTCRtpReceiver;
 class RTCRtpSender;
 
 class RTCRtpTransform  {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     using Internal = Variant<RefPtr<RTCRtpSFrameTransform>, RefPtr<RTCRtpScriptTransform>>;
-    static Optional<RTCRtpTransform> from(Optional<Internal>&&);
+    static std::unique_ptr<RTCRtpTransform> from(Optional<Internal>&&);
 
     explicit RTCRtpTransform(Internal&&);
     ~RTCRtpTransform();
 
     bool isAttached() const;
-    void attachToReceiver(RTCRtpReceiver&);
-    void attachToSender(RTCRtpSender&);
+    void attachToReceiver(RTCRtpReceiver&, RTCRtpTransform*);
+    void attachToSender(RTCRtpSender&, RTCRtpTransform*);
     void detachFromReceiver(RTCRtpReceiver&);
     void detachFromSender(RTCRtpSender&);
 
+    RefPtr<RTCRtpTransformBackend> takeBackend() { return WTFMove(m_backend); }
     Internal internalTransform() { return m_transform; }
 
     friend bool operator==(const RTCRtpTransform&, const RTCRtpTransform&);
 
 private:
     void clearBackend();
+    void backendTransferedToNewTransform();
 
     RefPtr<RTCRtpTransformBackend> m_backend;
     Internal m_transform;

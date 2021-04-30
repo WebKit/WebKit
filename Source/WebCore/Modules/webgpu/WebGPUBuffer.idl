@@ -28,7 +28,7 @@ typedef unsigned long long u64;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     InterfaceName=GPUBuffer,
     Exposed=Window
 ] interface WebGPUBuffer {

@@ -50,6 +50,14 @@
 #import <CFNetwork/CFNSURLConnection.h>
 #endif
 
+#if HAVE(NSURLPROTOCOL_WITH_SKIPAPPSSO)
+#if defined(__OBJC__)
+@interface NSURLProtocol (NSURLConnectionAppSSOPrivate)
++ (Class)_protocolClassForRequest:(NSURLRequest *)request skipAppSSO:(BOOL)skipAppSSO;
+@end
+#endif
+#endif
+
 #else // !USE(APPLE_INTERNAL_SDK)
 
 #if HAVE(PRECONNECT_PING) && defined(__OBJC__)
@@ -165,6 +173,12 @@ CF_ENUM(CFHTTPCookieStorageAcceptPolicy)
 @interface NSURLProtocol ()
 + (Class)_protocolClassForRequest:(NSURLRequest *)request;
 @end
+
+#if HAVE(NSURLPROTOCOL_WITH_SKIPAPPSSO)
+@interface NSURLProtocol (NSURLConnectionAppSSOPrivate)
++ (Class)_protocolClassForRequest:(NSURLRequest *)request skipAppSSO:(BOOL)skipAppSSO;
+@end
+#endif
 
 @interface NSURLRequest ()
 + (NSArray *)allowsSpecificHTTPSCertificateForHost:(NSString *)host;

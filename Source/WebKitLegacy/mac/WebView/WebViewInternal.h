@@ -157,6 +157,11 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (WebSelectionServiceController&)_selectionServiceController;
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+@property (class, nonatomic, readonly) BOOL _canHandleContextMenuTranslation;
+- (void)_handleContextMenuTranslation:(const String&)text selectionBounds:(const WebCore::IntRect&)boundsInView menuLocation:(const WebCore::IntPoint&)menuLocation;
+#endif
+
 - (void)_windowVisibilityChanged:(NSNotification *)notification;
 
 - (void)_closeWindow;
@@ -327,7 +332,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 - (void)_showPlaybackTargetPicker:(WebCore::PlaybackTargetClientContextIdentifier)contextId location:(const WebCore::IntPoint&)location hasVideo:(BOOL)hasVideo;
 - (void)_playbackTargetPickerClientStateDidChange:(WebCore::PlaybackTargetClientContextIdentifier)contextId state:(WebCore::MediaProducer::MediaStateFlags)state;
 - (void)_setMockMediaPlaybackTargetPickerEnabled:(bool)enabled;
-- (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::State)state;
+- (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::MockState)state;
 - (void)_mockMediaPlaybackTargetPickerDismissPopup;
 #endif
 

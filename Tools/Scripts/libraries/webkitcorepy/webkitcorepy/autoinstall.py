@@ -139,6 +139,18 @@ class Package(object):
         self.aliases = aliases or []
         self.implicit_deps = implicit_deps or []
 
+    def __repr__(self):
+        return ("Package("
+                "import_name={self.name!r}, "
+                "version={self.version!r}, "
+                "pypi_name={self.pypi_name!r}, "
+                "slow_install={self.slow_install!r}, "
+                "wheel={self.wheel!r}, "
+                "aliases={self.aliases!r}, "
+                "implicit_deps={self.implicit_deps!r}"
+                ")"
+                ).format(self=self)
+
     @property
     def location(self):
         if not AutoInstall.directory:
@@ -506,22 +518,22 @@ class AutoInstall(object):
 
     @classmethod
     def register(cls, package, local=False):
-        if isinstance(package, str):
-            if cls.packages.get(package):
-                return cls.packages[package]
-            else:
-                package = Package(package)
-        elif isinstance(package, Package):
+        if isinstance(package, Package):
             if cls.packages.get(package.name):
                 if cls.packages.get(package.name)[0].version != package.version:
                     raise ValueError('Registered version of {} uses {}, but requested version uses {}'.format(package.name, cls.packages.get(package.name)[0].version, package.version))
                 return cls.packages.get(package.name)
         else:
-            raise ValueError('Expected package to be str or Package, not {}'.format(type(package)))
+            raise ValueError('Expected package to be Package, not {}'.format(type(package)))
+
+        if not isinstance(local, bool):
+            raise ValueError('Expected local to be bool, not {}'.format(type(local)))
 
         # If inside the WebKit checkout, a local library is likely checked in at Tools/Scripts/libraries.
         # When we detect such a library, we should not register it to be auto-installed
-        if local and package.name != 'autoinstalled':
+        if local:
+            if package.name == 'autoinstalled':
+                raise ValueError("local package name 'autoinstalled' is forbidden")
             libraries = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             checkout_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(libraries))))
             for candidate in [
@@ -534,6 +546,12 @@ class AutoInstall(object):
                     continue
                 sys.path.insert(0, candidate)
                 return [package]
+            else:
+                raise ValueError("unable find local package {}".format(package.name))
+        assert not local  # this should follow from the above
+
+        if package.version is None:
+            raise ValueError("trying to install non-local package {} with unspecified version".format(package.name))
 
         for alias in package.aliases:
             cls.packages[alias].append(package)
@@ -542,7 +560,13 @@ class AutoInstall(object):
 
     @classmethod
     def install(cls, package):
-        return all([to_install.install() for to_install in cls.register(package)])
+        if isinstance(package, str):
+            # we want this to throw if it hasn't been previously registered; in the case
+            # that this is being called from cls.find_module it should always exist
+            packages = cls.packages[package]
+        else:
+            packages = cls.register(package)
+        return all([to_install.install() for to_install in packages])
 
     @classmethod
     def install_everything(cls):

@@ -30,6 +30,11 @@ import unittest
 
 from webkitpy.layout_tests.models.test_results import TestResult
 
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+
 
 class TestResultsTest(unittest.TestCase):
     def test_defaults(self):
@@ -38,12 +43,10 @@ class TestResultsTest(unittest.TestCase):
         self.assertEqual(result.failures, [])
         self.assertEqual(result.test_run_time, 0)
 
-    def test_loads(self):
-        result = TestResult(test_name='foo',
-                            failures=[],
-                            test_run_time=1.1)
-        s = result.dumps()
-        new_result = TestResult.loads(s)
+    def test_pickle_roundtrip(self):
+        result = TestResult(test_name='foo', failures=[], test_run_time=1.1)
+        s = pickle.dumps(result)  # multiprocessing uses the default protocol version
+        new_result = pickle.loads(s)
         self.assertIsInstance(new_result, TestResult)
 
         self.assertEqual(new_result, result)

@@ -90,7 +90,7 @@ public:
     Optional<RTCRtpTransceiverDirection> currentTransceiverDirection() const;
 
     Optional<RTCRtpTransform::Internal> transform();
-    ExceptionOr<void> setTransform(Optional<RTCRtpTransform>&&);
+    ExceptionOr<void> setTransform(std::unique_ptr<RTCRtpTransform>&&);
 
 private:
     RTCRtpSender(RTCPeerConnection&, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&&);
@@ -108,7 +108,7 @@ private:
     std::unique_ptr<RTCRtpSenderBackend> m_backend;
     WeakPtr<RTCPeerConnection> m_connection;
     RefPtr<RTCDTMFSender> m_dtmfSender;
-    Optional<RTCRtpTransform> m_transform;
+    std::unique_ptr<RTCRtpTransform> m_transform;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };

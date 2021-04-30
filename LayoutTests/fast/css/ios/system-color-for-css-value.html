@@ -40,6 +40,14 @@ if (window.internals) {
     shouldBe("internals.systemColorForCSSValue('-apple-system-purple', true, false)", "'rgb(191, 90, 242)'");
     shouldBe("internals.systemColorForCSSValue('-apple-system-red', true, false)", "'rgb(255, 69, 58)'");
     shouldBe("internals.systemColorForCSSValue('-apple-system-yellow', true, false)", "'rgb(255, 214, 10)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-fill', true, false)", "'rgb(43, 43, 46)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-fill', false, false)", "'rgb(228, 228, 229)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill', true, false)", "'rgb(38, 38, 41)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill', false, false)", "'rgb(233, 233, 234)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill-disabled', true, false)", "'rgb(29, 29, 31)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill-disabled', false, false)", "'rgb(238, 238, 239)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-tertiary-fill', true, false)", "'rgb(28, 28, 30)'");
+    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-tertiary-fill', false, false)", "'rgb(238, 238, 239)'");
 }
 
 </script>

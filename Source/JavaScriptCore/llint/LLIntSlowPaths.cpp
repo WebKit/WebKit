@@ -723,15 +723,16 @@ static void setupGetByIdPrototypeCache(JSGlobalObject* globalObject, VM& vm, Cod
     unsigned bytecodeOffset = codeBlock->bytecodeOffset(pc);
     PropertyOffset offset = invalidOffset;
     CodeBlock::StructureWatchpointMap& watchpointMap = codeBlock->llintGetByIdWatchpointMap();
-    Vector<LLIntPrototypeLoadAdaptiveStructureWatchpoint> watchpoints;
-    watchpoints.reserveInitialCapacity(conditions.size());
+    FixedVector<LLIntPrototypeLoadAdaptiveStructureWatchpoint> watchpoints(conditions.size());
+    unsigned index = 0;
     for (ObjectPropertyCondition condition : conditions) {
+        auto& watchpoint = watchpoints[index++];
         if (!condition.isWatchable())
             return;
         if (condition.condition().kind() == PropertyCondition::Presence)
             offset = condition.condition().offset();
-        watchpoints.uncheckedConstructAndAppend(codeBlock, condition, bytecodeOffset);
-        watchpoints.last().install(vm);
+        watchpoint.initialize(codeBlock, condition, bytecodeOffset);
+        watchpoint.install(vm);
     }
 
     ASSERT((offset == invalidOffset) == slot.isUnset());
@@ -1597,7 +1598,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_imm)
     int32_t intValue = static_cast<int32_t>(value);
     int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
     if (value == intValue)
-        JUMP_TO(codeBlock->switchJumpTable(bytecode.m_tableIndex).offsetForValue(intValue, defaultOffset));
+        JUMP_TO(codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(intValue, defaultOffset));
     else
         JUMP_TO(defaultOffset);
     LLINT_END();
@@ -1613,7 +1614,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_char)
     ASSERT(string->length() == 1);
     int defaultOffset = JUMP_OFFSET(bytecode.m_defaultOffset);
     StringImpl* impl = string->value(globalObject).impl();
-    JUMP_TO(codeBlock->switchJumpTable(bytecode.m_tableIndex).offsetForValue((*impl)[0], defaultOffset));
+    JUMP_TO(codeBlock->unlinkedSwitchJumpTable(bytecode.m_tableIndex).offsetForValue((*impl)[0], defaultOffset));
     LLINT_END();
 }
 
@@ -1630,7 +1631,7 @@ LLINT_SLOW_PATH_DECL(slow_path_switch_string)
 
         LLINT_CHECK_EXCEPTION();
 
-        JUMP_TO(codeBlock->stringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(scrutineeStringImpl, defaultOffset));
+        JUMP_TO(codeBlock->unlinkedStringSwitchJumpTable(bytecode.m_tableIndex).offsetForValue(scrutineeStringImpl, defaultOffset));
     }
     LLINT_END();
 }

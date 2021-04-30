@@ -135,11 +135,11 @@ static std::unique_ptr<WPEToolingBackends::ViewBackend> createViewBackend(uint32
     return std::make_unique<WPEToolingBackends::WindowViewBackend>(width, height);
 }
 
-typedef struct {
+struct FilterSaveData {
     GMainLoop* mainLoop { nullptr };
     WebKitUserContentFilter* filter { nullptr };
     GError* error { nullptr };
-} FilterSaveData;
+};
 
 static void filterSavedCallback(WebKitUserContentFilterStore *store, GAsyncResult *result, FilterSaveData *data)
 {

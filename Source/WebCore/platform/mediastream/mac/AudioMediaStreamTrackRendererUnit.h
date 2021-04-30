@@ -46,7 +46,7 @@ public:
     AudioMediaStreamTrackRendererUnit() = default;
     ~AudioMediaStreamTrackRendererUnit();
 
-    static OSStatus inputProc(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 numberOfFrames, AudioBufferList*);
+    static OSStatus renderingCallback(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 numberOfFrames, AudioBufferList*);
 
     void start();
     void stop();

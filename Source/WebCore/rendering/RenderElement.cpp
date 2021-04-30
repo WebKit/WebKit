@@ -1529,9 +1529,16 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
     if (isAnonymous())
         return nullptr;
 
-    if (ShadowRoot* root = element()->containingShadowRoot()) {
+    if (auto selectionStyle = getUncachedPseudoStyle({ PseudoId::Selection })) {
+        // We intentionally return the pseudo selection style here if it exists before ascending to
+        // the shadow host element. This allows us to apply selection pseudo styles in user agent
+        // shadow roots, instead of always deferring to the shadow host's selection pseudo style.
+        return selectionStyle;
+    }
+
+    if (auto root = makeRefPtr(element()->containingShadowRoot())) {
         if (root->mode() == ShadowRootMode::UserAgent) {
-            auto* currentElement = element()->shadowHost();
+            auto currentElement = makeRefPtr(element()->shadowHost());
             // When an element has display: contents, this element doesn't have a renderer
             // and its children will render as children of the parent element.
             while (currentElement && currentElement->hasDisplayContents())
@@ -1541,7 +1548,7 @@ std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
         }
     }
 
-    return getUncachedPseudoStyle({ PseudoId::Selection });
+    return nullptr;
 }
 
 Color RenderElement::selectionForegroundColor() const

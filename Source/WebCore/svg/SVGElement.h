@@ -91,7 +91,7 @@ public:
     // The instances of an element are clones made in shadow trees to implement <use>.
     const HashSet<SVGElement*>& instances() const;
 
-    bool getBoundingBox(FloatRect&, SVGLocatable::StyleUpdateStrategy = SVGLocatable::AllowStyleUpdate);
+    Optional<FloatRect> getBoundingBox() const;
 
     SVGElement* correspondingElement() const;
     RefPtr<SVGUseElement> correspondingUseElement() const;

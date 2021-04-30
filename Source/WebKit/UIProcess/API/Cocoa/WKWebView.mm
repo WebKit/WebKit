@@ -70,7 +70,7 @@
 #import "WKLayoutMode.h"
 #import "WKNSData.h"
 #import "WKNSURLExtras.h"
-#import "WKNavigationDelegate.h"
+#import <WebKit/WKNavigationDelegate.h>
 #import "WKNavigationInternal.h"
 #import "WKPDFConfiguration.h"
 #import "WKPreferencesInternal.h"
@@ -78,8 +78,8 @@
 #import "WKSafeBrowsingWarning.h"
 #import "WKSharedAPICast.h"
 #import "WKSnapshotConfiguration.h"
-#import "WKUIDelegate.h"
-#import "WKUIDelegatePrivate.h"
+#import <WebKit/WKUIDelegate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import "WKUserContentControllerInternal.h"
 #import "WKWebViewConfigurationInternal.h"
 #import "WKWebViewContentProvider.h"
@@ -148,6 +148,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/SystemTracing.h>
 #import <wtf/UUID.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/darwin/dyldSPI.h>
@@ -1104,6 +1105,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
 - (void)takeSnapshotWithConfiguration:(WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void(^)(CocoaImage *, NSError *))completionHandler
 {
+    constexpr bool snapshotFailedTraceValue = false;
+    tracePoint(TakeSnapshotStart);
+
     CGRect rectInViewCoordinates = snapshotConfiguration && !CGRectIsNull(snapshotConfiguration.rect) ? snapshotConfiguration.rect : self.bounds;
     CGFloat snapshotWidth;
     if (snapshotConfiguration)
@@ -1128,12 +1132,14 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     // in snapshotConfiguration.afterScreenUpdates at that time.
     _page->takeSnapshot(WebCore::enclosingIntRect(rectInViewCoordinates), bitmapSize, WebKit::SnapshotOptionsInViewCoordinates, [handler, snapshotWidth, imageHeight](const WebKit::ShareableBitmap::Handle& imageHandle) {
         if (imageHandle.isNull()) {
+            tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
         auto bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         auto image = adoptNS([[NSImage alloc] initWithCGImage:cgImage.get() size:NSMakeSize(snapshotWidth, imageHeight)]);
+        tracePoint(TakeSnapshotEnd, true);
         handler(image.get(), nil);
     });
 #else
@@ -1148,7 +1154,8 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
                 error = createNSError(WKErrorUnknown);
             else
                 image = adoptNS([[UIImage alloc] initWithCGImage:snapshotImage scale:deviceScale orientation:UIImageOrientationUp]);
-            
+
+            tracePoint(TakeSnapshotEnd, !!snapshotImage);
             handler(image.get(), error.get());
         }];
     };
@@ -1160,6 +1167,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 
     _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler](WebKit::CallbackBase::Error error) {
         if (error != WebKit::CallbackBase::Error::None) {
+            tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
@@ -1657,6 +1665,14 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     return wrapper(_page->loadFile(URL.absoluteString, readAccessURL.absoluteString));
 }
 
+- (CocoaColor *)themeColor
+{
+    auto themeColor = _page->themeColor();
+    if (!themeColor.isValid())
+        return nil;
+    return WebCore::platformColor(themeColor);
+}
+
 @end
 
 #pragma mark -
@@ -2145,21 +2161,40 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     [self setAllMediaPlaybackSuspended:NO completionHandler:nil];
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, NSData *highlight)
+{
+    auto sharedMemory = WebKit::SharedMemory::allocate(highlight.length);
+    if (sharedMemory) {
+        [highlight getBytes:sharedMemory->data() length:highlight.length];
+        buffers.append(*sharedMemory);
+    }
+}
+#endif
+
 - (void)_restoreAppHighlights:(NSArray<NSData *> *)highlights
 {
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<Ref<WebKit::SharedMemory>> buffers;
 
-    for (NSData *highlight in highlights) {
-        auto sharedMemory = WebKit::SharedMemory::allocate(highlight.length);
-        if (sharedMemory) {
-            [highlight getBytes:sharedMemory->data() length:highlight.length];
-            buffers.append(*sharedMemory);
-        }
-    }
-    _page->restoreAppHighlights(buffers);
+    for (NSData *highlight in highlights)
+        convertAndAddHighlight(buffers, highlight);
+    
+    _page->restoreAppHighlightsAndScrollToIndex(buffers, WTF::nullopt);
 #else
     UNUSED_PARAM(highlights);
+#endif
+}
+
+- (void)_restoreAndScrollToAppHighlight:(NSData *)highlight
+{
+#if ENABLE(APP_HIGHLIGHTS)
+    Vector<Ref<WebKit::SharedMemory>> buffers;
+    
+    convertAndAddHighlight(buffers, highlight);
+    _page->restoreAppHighlightsAndScrollToIndex(buffers, 0);
+#else
+    UNUSED_PARAM(highlight);
 #endif
 }
 
@@ -2984,10 +3019,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (CocoaColor *)_themeColor
 {
-    auto themeColor = _page->themeColor();
-    if (!themeColor.isValid())
-        return nil;
-    return WebCore::platformColor(themeColor);
+    return [self themeColor];
 }
 
 - (CocoaColor *)_pageExtendedBackgroundColor

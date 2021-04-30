@@ -43,19 +43,10 @@ typedef WhitespaceCollapsingState<InlineIterator> LineWhitespaceCollapsingState;
 
 class TrailingObjects {
 public:
-    TrailingObjects()
-        : m_whitespace(0)
-    { }
-
-    void setTrailingWhitespace(RenderText* whitespace)
-    {
-        ASSERT(whitespace);
-        m_whitespace = whitespace;
-    }
-
+    void setTrailingWhitespace(RenderText& whitespace) { m_whitespace = &whitespace; }
     void clear()
     {
-        m_whitespace = 0;
+        m_whitespace = { };
         m_boxes.shrink(0); // Use shrink(0) instead of clear() to retain our capacity.
     }
 
@@ -65,12 +56,11 @@ public:
             m_boxes.append(box);
     }
 
-    enum CollapseFirstSpaceOrNot { DoNotCollapseFirstSpace, CollapseFirstSpace };
-
-    void updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState&, const InlineIterator& lBreak, CollapseFirstSpaceOrNot);
+    enum class CollapseFirstSpace { No, Yes };
+    void updateWhitespaceCollapsingTransitionsForTrailingBoxes(LineWhitespaceCollapsingState&, const InlineIterator& lBreak, CollapseFirstSpace);
 
 private:
-    RenderText* m_whitespace;
+    RenderText* m_whitespace { nullptr };
     Vector<std::reference_wrapper<RenderBoxModelObject>, 4> m_boxes;
 };
 

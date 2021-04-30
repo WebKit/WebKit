@@ -10,7 +10,7 @@
         (GraphicsLayer
           (position 10.00 10.00)
           (anchor 0.50 0.50)
-          (bounds 123.50 20.00)
+          (bounds 125.50 20.00)
           (drawsContent 1)
         )
       )

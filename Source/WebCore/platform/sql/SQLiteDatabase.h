@@ -58,7 +58,7 @@ public:
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 
-    void updateLastChangesCount();
+    WEBCORE_EXPORT void updateLastChangesCount();
 
     WEBCORE_EXPORT bool executeCommand(const String&);
     bool returnsAtLeastOneResult(const String&);
@@ -74,7 +74,7 @@ public:
     WEBCORE_EXPORT void interrupt();
 
     int64_t lastInsertRowID();
-    int lastChanges();
+    WEBCORE_EXPORT int lastChanges();
 
     void setBusyTimeout(int ms);
     void setBusyHandler(int(*)(void*, int));
@@ -145,6 +145,8 @@ public:
 #endif
 
     WEBCORE_EXPORT static void setIsDatabaseOpeningForbidden(bool);
+
+    WEBCORE_EXPORT void releaseMemory();
 
 private:
     static int authorizerFunction(void*, int, const char*, const char*, const char*, const char*);

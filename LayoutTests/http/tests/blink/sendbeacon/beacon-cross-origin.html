@@ -14,9 +14,9 @@ function test() {
         //testRunner.dumpPingLoaderCallbacks();
     }
 
-    shouldBeTrue('navigator.sendBeacon("http://localhost:8000/blink/sendbeacon/resources/save-beacon.php?name=cross-origin", "CrossOrigin");');
+    shouldBeTrue('navigator.sendBeacon("http://localhost:8000/blink/sendbeacon/resources/save-beacon.py?name=cross-origin", "CrossOrigin");');
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "resources/check-beacon.php?name=cross-origin");
+    xhr.open("GET", "resources/check-beacon.py?name=cross-origin");
     xhr.onload = function () {
         var lines = xhr.responseText.split("\n");
         for (var i in lines)

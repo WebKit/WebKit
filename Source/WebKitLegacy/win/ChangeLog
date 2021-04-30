@@ -1,3 +1,27 @@
+2021-04-22  Chris Dumez  <cdumez@apple.com>
+
+        Disable prefixed WebAudio on WebKitLegacy-Windows
+        https://bugs.webkit.org/show_bug.cgi?id=224944
+
+        Reviewed by Eric Carlson.
+
+        Disable prefixed WebAudio on WebKitLegacy-Windows. It is already disabled everywhere else.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
+2021-04-21  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] GetDoubleClickTime() returns 0 in the non-interactive window station on Windows 10 version 2004
+        https://bugs.webkit.org/show_bug.cgi?id=224793
+
+        Reviewed by Don Olmstead.
+
+        * WebView.cpp:
+        (WebView::handleMouseEvent): Use WebCore::getDoubleClickTime
+        instead of GetDoubleClickTime API. Change coding style for
+        check-webkit-style.
+
 2021-03-28  Sam Weinig  <weinig@apple.com>
 
         Remove ENABLE_INDEXED_DATABASE & ENABLE_INDEXED_DATABASE_IN_WORKERS, it seems like it is on for all ports

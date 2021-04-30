@@ -223,6 +223,9 @@ public:
     bool hasSyntheticAttrChildNodes() const { return hasNodeFlag(NodeFlag::HasSyntheticAttrChildNodes); }
     void setHasSyntheticAttrChildNodes(bool flag) { setNodeFlag(NodeFlag::HasSyntheticAttrChildNodes, flag); }
 
+    bool hasShadowRootContainingSlots() const { return hasNodeFlag(NodeFlag::HasShadowRootContainingSlots); }
+    void setHasShadowRootContainingSlots(bool flag) { setNodeFlag(NodeFlag::HasShadowRootContainingSlots, flag); }
+
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns null.
     WEBCORE_EXPORT Element* shadowHost() const;
     ShadowRoot* containingShadowRoot() const;
@@ -553,7 +556,9 @@ protected:
 #endif
         IsComputedStyleInvalidFlag = 1 << 25,
 
-        // Bits 26-31 are free.
+        HasShadowRootContainingSlots = 1 << 26,
+
+        // Bits 27-31 are free.
     };
 
     enum class TabIndexState : uint8_t {
@@ -613,27 +618,24 @@ protected:
     static constexpr uint32_t s_refCountIncrement = 2;
     static constexpr uint32_t s_refCountMask = ~static_cast<uint32_t>(1);
 
-    enum class NodeStyleFlag : uint8_t {
-        DescendantNeedsStyleResolution = 1 << 0,
-        DirectChildNeedsStyleResolution = 1 << 1,
-        StyleResolutionShouldRecompositeLayer = 1 << 2,
+    enum class NodeStyleFlag : uint16_t {
+        DescendantNeedsStyleResolution                          = 1 << 0,
+        DirectChildNeedsStyleResolution                         = 1 << 1,
+        StyleResolutionShouldRecompositeLayer                   = 1 << 2,
 
-        ChildrenAffectedByFirstChildRules = 1 << 3,
-        ChildrenAffectedByLastChildRules = 1 << 4,
-        AffectsNextSiblingElementStyle = 1 << 5,
-        StyleIsAffectedByPreviousSibling = 1 << 6,
-        DescendantsAffectedByPreviousSibling = 1 << 7,
-    };
-
-    enum class DynamicStyleRelationFlag : uint8_t {
-        StyleAffectedByEmpty                                    = 1 << 0,
+        ChildrenAffectedByFirstChildRules                       = 1 << 3,
+        ChildrenAffectedByLastChildRules                        = 1 << 4,
+        AffectsNextSiblingElementStyle                          = 1 << 5,
+        StyleIsAffectedByPreviousSibling                        = 1 << 6,
+        DescendantsAffectedByPreviousSibling                    = 1 << 7,
+        StyleAffectedByEmpty                                    = 1 << 8,
         // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
         // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-        ChildrenAffectedByForwardPositionalRules                = 1 << 1,
-        DescendantsAffectedByForwardPositionalRules             = 1 << 2,
-        ChildrenAffectedByBackwardPositionalRules               = 1 << 3,
-        DescendantsAffectedByBackwardPositionalRules            = 1 << 4,
-        ChildrenAffectedByPropertyBasedBackwardPositionalRules  = 1 << 5,
+        ChildrenAffectedByForwardPositionalRules                = 1 << 9,
+        DescendantsAffectedByForwardPositionalRules             = 1 << 10,
+        ChildrenAffectedByBackwardPositionalRules               = 1 << 11,
+        DescendantsAffectedByBackwardPositionalRules            = 1 << 12,
+        ChildrenAffectedByPropertyBasedBackwardPositionalRules  = 1 << 13,
     };
 
     struct StyleBitfields {
@@ -644,27 +646,22 @@ protected:
         Style::Validity styleValidity() const { return static_cast<Style::Validity>(m_styleValidity); }
         void setStyleValidity(Style::Validity validity) { m_styleValidity = static_cast<uint8_t>(validity); }
 
-        OptionSet<DynamicStyleRelationFlag> dynamicStyleRelations() const { return OptionSet<DynamicStyleRelationFlag>::fromRaw(m_dynamicStyleRelation); }
-        void setDynamicStyleRelation(DynamicStyleRelationFlag flag) { m_dynamicStyleRelation = (dynamicStyleRelations() | flag).toRaw(); }
-        void clearDynamicStyleRelations() { m_dynamicStyleRelation = 0; }
-
         OptionSet<NodeStyleFlag> flags() const { return OptionSet<NodeStyleFlag>::fromRaw(m_flags); }
         void setFlag(NodeStyleFlag flag) { m_flags = (flags() | flag).toRaw(); }
         void clearFlag(NodeStyleFlag flag) { m_flags = (flags() - flag).toRaw(); }
+        void clearFlags(OptionSet<NodeStyleFlag> flagsToClear) { m_flags = (flags() - flagsToClear).toRaw(); }
         void clearDescendantsNeedStyleResolution() { m_flags = (flags() - NodeStyleFlag::DescendantNeedsStyleResolution - NodeStyleFlag::DirectChildNeedsStyleResolution).toRaw(); }
 
     private:
-        uint8_t m_styleValidity : 2;
-        uint8_t m_dynamicStyleRelation : 6;
-        uint8_t m_flags : 8;
+        uint16_t m_styleValidity : 2;
+        uint16_t m_flags : 14;
     };
 
     StyleBitfields styleBitfields() const { return StyleBitfields::fromRaw(m_rendererWithStyleFlags.type()); }
     void setStyleBitfields(StyleBitfields bitfields) { m_rendererWithStyleFlags.setType(bitfields.toRaw()); }
     ALWAYS_INLINE bool hasStyleFlag(NodeStyleFlag flag) const { return styleBitfields().flags().contains(flag); }
     ALWAYS_INLINE void setStyleFlag(NodeStyleFlag);
-    ALWAYS_INLINE bool hasDynamicStyleRelationFlag(DynamicStyleRelationFlag flag) const { return styleBitfields().dynamicStyleRelations().contains(flag); }
-    ALWAYS_INLINE void setDynamicStyleRelationFlag(DynamicStyleRelationFlag);
+    ALWAYS_INLINE void clearStyleFlags(OptionSet<NodeStyleFlag>);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<URL>&) const { }
 
@@ -797,7 +794,9 @@ ALWAYS_INLINE void Node::deref() const
 #if ASSERT_ENABLED
         m_inRemovedLastRefFunction = true;
 #endif
+IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_BEGIN
         const_cast<Node&>(*this).removedLastRef();
+IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_END
         return;
     }
     m_refCountAndParentBit = updatedRefCount;
@@ -857,10 +856,10 @@ ALWAYS_INLINE void Node::setStyleFlag(NodeStyleFlag flag)
     setStyleBitfields(bitfields);
 }
 
-ALWAYS_INLINE void Node::setDynamicStyleRelationFlag(DynamicStyleRelationFlag flag)
+ALWAYS_INLINE void Node::clearStyleFlags(OptionSet<NodeStyleFlag> flags)
 {
     auto bitfields = styleBitfields();
-    bitfields.setDynamicStyleRelation(flag);
+    bitfields.clearFlags(flags);
     setStyleBitfields(bitfields);
 }
 

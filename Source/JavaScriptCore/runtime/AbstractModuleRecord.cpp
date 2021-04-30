@@ -29,7 +29,7 @@
 #include "Error.h"
 #include "JSCInlines.h"
 #include "JSInternalFieldObjectImplInlines.h"
-#include "JSMap.h"
+#include "JSMapInlines.h"
 #include "JSModuleEnvironment.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"

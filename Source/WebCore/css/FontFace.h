@@ -54,17 +54,17 @@ public:
     };
     
     using Source = Variant<String, RefPtr<JSC::ArrayBuffer>, RefPtr<JSC::ArrayBufferView>>;
-    static Ref<FontFace> create(Document&, const String& family, Source&&, const Descriptors&);
+    static Ref<FontFace> create(ScriptExecutionContext&, const String& family, Source&&, const Descriptors&);
     static Ref<FontFace> create(ScriptExecutionContext*, CSSFontFace&);
     virtual ~FontFace();
 
-    ExceptionOr<void> setFamily(Document&, const String&);
-    ExceptionOr<void> setStyle(const String&);
-    ExceptionOr<void> setWeight(const String&);
-    ExceptionOr<void> setStretch(const String&);
-    ExceptionOr<void> setUnicodeRange(const String&);
-    ExceptionOr<void> setFeatureSettings(const String&);
-    ExceptionOr<void> setDisplay(const String&);
+    ExceptionOr<void> setFamily(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setStyle(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setWeight(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setStretch(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setUnicodeRange(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setFeatureSettings(ScriptExecutionContext&, const String&);
+    ExceptionOr<void> setDisplay(ScriptExecutionContext&, const String&);
 
     String family() const;
     String style() const;
@@ -72,7 +72,7 @@ public:
     String stretch() const;
     String unicodeRange() const;
     String featureSettings() const;
-    String display() const;
+    String display(ScriptExecutionContext&) const;
 
     enum class LoadStatus { Unloaded, Loading, Loaded, Error };
     LoadStatus status() const;
@@ -84,8 +84,6 @@ public:
     void adopt(CSSFontFace&);
 
     CSSFontFace& backing() { return m_backing; }
-
-    static RefPtr<CSSValue> parseString(const String&, CSSPropertyID);
 
     void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) final;
 

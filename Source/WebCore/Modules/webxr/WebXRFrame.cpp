@@ -119,7 +119,7 @@ ExceptionOr<Optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(const 
     // 7. Let transform be pose’s transform.
     // 8. Query the XR device's tracking system for space’s pose relative to baseSpace at the frame’s time.
 
-    if (!m_data.isTrackingValid) {
+    if (m_isAnimationFrame && !m_data.isTrackingValid) {
         // FIXME: check if space’s pose relative to baseSpace has been determined in the past.
         // Anyway this emulation is usually provided by the system in the pose (e.g. OpenXR)
         // so we shouldn't hit this path in most XRPlatform ports.
@@ -131,7 +131,7 @@ ExceptionOr<Optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(const 
         return { WTF::nullopt };
 
     auto transform =  *baseTransform.inverse() * space.effectiveOrigin();
-    bool emulatedPosition = m_data.isPositionEmulated || !m_data.isPositionValid;
+    bool emulatedPosition = space.isPositionEmulated() || baseSpace.isPositionEmulated();
 
     bool limit = mustPosesBeLimited(space, baseSpace);
     if (limit) {

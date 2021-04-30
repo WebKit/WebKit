@@ -160,6 +160,30 @@ CSSContainmentEnabled:
     WebCore:
       default: false
 
+CSSCounterStyleAtRuleImageSymbolsEnabled:
+  type: bool
+  humanReadableName: "CSS @counter-style <image> symbols"
+  humanReadableDescription: "Enable support for <image> symbols in CSS @counter-style rules"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+CSSCounterStyleAtRulesEnabled:
+  type: bool
+  humanReadableName: "CSS @counter-style"
+  humanReadableDescription: "Enable support for CSS @counter-style rules"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSCustomPropertiesAndValuesEnabled:
   type: bool
   humanReadableName: "CSS Custom Properties and Values API"
@@ -595,12 +619,13 @@ MaskWebGLStringsEnabled:
   type: bool
   humanReadableName: "Mask WebGL Strings"
   humanReadableDescription: "Mask WebGL Vendor, Renderer, Shader Language Strings"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGL) || ENABLE(WEBGL2)
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
@@ -638,11 +663,11 @@ MediaSessionCoordinatorEnabled:
   condition: ENABLE(MEDIA_SESSION_COORDINATOR)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 MediaSessionEnabled:
   type: bool
@@ -651,11 +676,11 @@ MediaSessionEnabled:
   condition: ENABLE(MEDIA_SESSION)
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 MediaSessionPlaylistEnabled:
   type: bool
@@ -1128,37 +1153,40 @@ WebGL2Enabled:
   type: bool
   humanReadableName: "WebGL 2.0"
   humanReadableDescription: "WebGL 2 prototype"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGL2)
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
       default: true
+    WebCore:
+      default: true
 
 WebGLUsingMetal:
   type: bool
   humanReadableName: "WebGL via Metal"
   humanReadableDescription: "Use the Metal backend for ANGLE"
-  webcoreBinding: RuntimeEnabledFeatures
-  condition: ENABLE(WEBGL)
+  condition: ENABLE(WEBGL) && PLATFORM(COCOA)
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 WebGPUEnabled:
   type: bool
   humanReadableName: "WebGPU"
   humanReadableDescription: "WebGPU Sketch prototype"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBGPU)
   defaultValue:
     WebKitLegacy:
       default: WebKit::defaultWebGPUEnabled()
     WebKit:
       default: WebKit::defaultWebGPUEnabled()
+    WebCore:
+      default: false
 
 WebMFormatReaderEnabled:
   type: bool
@@ -1309,13 +1337,14 @@ WebXREnabled:
   type: bool
   humanReadableName: "WebXR Device API"
   humanReadableDescription: "Adds support for accessing virtual reality (VR) and augmented reality (AR) devices, including sensors and head-mounted displays, on the Web"
-  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEBXR)
   defaultValue:
     WebKitLegacy:
       default: WebKit::defaultWebXREnabled()
     WebKit:
       default: WebKit::defaultWebXREnabled()
+    WebCore:
+      default: false
 
 WheelEventGesturesBecomeNonBlocking:
   type: bool

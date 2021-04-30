@@ -76,6 +76,7 @@ function installDependenciesWithApt {
         libgstreamer-plugins-base1.0-dev \
         libicu-dev \
         libjpeg-dev \
+        libkate-dev \
         libfile-copy-recursive-perl \
         libopenjp2-7-dev \
         libpng-dev \
@@ -198,6 +199,7 @@ function installDependenciesWithPacman {
         itstool \
         libevent \
         libjpeg-turbo \
+        libkate \
         libpng \
         libseccomp \
         libtasn1 \
@@ -327,6 +329,7 @@ function installDependenciesWithDnf {
         libevent-devel \
         libicu-devel \
         libjpeg-turbo-devel \
+        libkate-devel \
         libpng-devel \
         libseccomp-devel \
         libtasn1-devel \

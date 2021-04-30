@@ -7,7 +7,7 @@
     var finishedImage = false;
 </script>
 <script src="/js-test-resources/js-test.js"></script>
-<link rel=preload href="../resources/slow-image.php" as=image onload="finishedImage = true;">
+<link rel=preload href="../resources/slow-image.py" as=image onload="finishedImage = true;">
 <body>
 <script>
     window.addEventListener("load", function() {
@@ -15,7 +15,7 @@
         testRunner.notifyDone();
     });
     var img = new Image();
-    img.src = "../resources/slow-image.php";
+    img.src = "../resources/slow-image.py";
     document.body.appendChild(img);
 </script>
 </body>

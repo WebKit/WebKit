@@ -1,0 +1,3 @@
+
+PASS Poses from XRInputSource.gripSpace have emulatedPosition set properly
+

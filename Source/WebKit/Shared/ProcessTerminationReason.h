@@ -37,4 +37,9 @@ enum class ProcessTerminationReason {
     RequestedByGPUProcess
 };
 
+enum class GPUProcessTerminationReason {
+    Crash,
+    IdleExit
+};
+
 }

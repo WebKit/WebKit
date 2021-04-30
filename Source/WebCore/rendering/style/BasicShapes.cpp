@@ -30,6 +30,7 @@
 #include "config.h"
 #include "BasicShapes.h"
 
+#include "AnimationUtilities.h"
 #include "BasicShapeFunctions.h"
 #include "CalculationValue.h"
 #include "FloatRect.h"
@@ -189,15 +190,15 @@ bool BasicShapeCircle::canBlend(const BasicShape& other) const
     return radius().canBlend(downcast<BasicShapeCircle>(other).radius());
 }
 
-Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, double progress) const
+Ref<BasicShape> BasicShapeCircle::blend(const BasicShape& other, const BlendingContext& context) const
 {
     ASSERT(type() == other.type());
     auto& otherCircle = downcast<BasicShapeCircle>(other);
     auto result =  BasicShapeCircle::create();
 
-    result->setCenterX(m_centerX.blend(otherCircle.centerX(), progress));
-    result->setCenterY(m_centerY.blend(otherCircle.centerY(), progress));
-    result->setRadius(m_radius.blend(otherCircle.radius(), progress));
+    result->setCenterX(m_centerX.blend(otherCircle.centerX(), context));
+    result->setCenterY(m_centerY.blend(otherCircle.centerY(), context));
+    result->setRadius(m_radius.blend(otherCircle.radius(), context));
     return result;
 }
 
@@ -252,7 +253,7 @@ bool BasicShapeEllipse::canBlend(const BasicShape& other) const
     return radiusX().canBlend(otherEllipse.radiusX()) && radiusY().canBlend(otherEllipse.radiusY());
 }
 
-Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progress) const
+Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, const BlendingContext& context) const
 {
     ASSERT(type() == other.type());
     auto& otherEllipse = downcast<BasicShapeEllipse>(other);
@@ -267,10 +268,10 @@ Ref<BasicShape> BasicShapeEllipse::blend(const BasicShape& other, double progres
         return result;
     }
 
-    result->setCenterX(m_centerX.blend(otherEllipse.centerX(), progress));
-    result->setCenterY(m_centerY.blend(otherEllipse.centerY(), progress));
-    result->setRadiusX(m_radiusX.blend(otherEllipse.radiusX(), progress));
-    result->setRadiusY(m_radiusY.blend(otherEllipse.radiusY(), progress));
+    result->setCenterX(m_centerX.blend(otherEllipse.centerX(), context));
+    result->setCenterY(m_centerY.blend(otherEllipse.centerY(), context));
+    result->setRadiusX(m_radiusX.blend(otherEllipse.radiusX(), context));
+    result->setRadiusY(m_radiusY.blend(otherEllipse.radiusY(), context));
     return result;
 }
 
@@ -315,7 +316,7 @@ bool BasicShapePolygon::canBlend(const BasicShape& other) const
     return values().size() == otherPolygon.values().size() && windRule() == otherPolygon.windRule();
 }
 
-Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progress) const
+Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, const BlendingContext& context) const
 {
     ASSERT(type() == other.type());
 
@@ -332,8 +333,8 @@ Ref<BasicShape> BasicShapePolygon::blend(const BasicShape& other, double progres
 
     for (size_t i = 0; i < length; i = i + 2) {
         result->appendPoint(
-            WebCore::blend(otherPolygon.values().at(i), m_values.at(i), progress),
-            WebCore::blend(otherPolygon.values().at(i + 1), m_values.at(i + 1), progress));
+            WebCore::blend(otherPolygon.values().at(i), m_values.at(i), context),
+            WebCore::blend(otherPolygon.values().at(i + 1), m_values.at(i + 1), context));
     }
 
     return result;
@@ -373,14 +374,14 @@ bool BasicShapePath::canBlend(const BasicShape& other) const
     return windRule() == otherPath.windRule() && canBlendSVGPathByteStreams(*m_byteStream, *otherPath.pathData());
 }
 
-Ref<BasicShape> BasicShapePath::blend(const BasicShape& from, double progress) const
+Ref<BasicShape> BasicShapePath::blend(const BasicShape& from, const BlendingContext& context) const
 {
     ASSERT(type() == from.type());
 
     auto& fromPath = downcast<BasicShapePath>(from);
 
     auto resultingPathBytes = makeUnique<SVGPathByteStream>();
-    buildAnimatedSVGPathByteStream(*fromPath.m_byteStream, *m_byteStream, *resultingPathBytes, progress);
+    buildAnimatedSVGPathByteStream(*fromPath.m_byteStream, *m_byteStream, *resultingPathBytes, context.progress);
     auto result = BasicShapePath::create(WTFMove(resultingPathBytes));
     result->setWindRule(windRule());
     result->setZoom(m_zoom);
@@ -430,21 +431,21 @@ bool BasicShapeInset::canBlend(const BasicShape& other) const
     return type() == other.type();
 }
 
-Ref<BasicShape> BasicShapeInset::blend(const BasicShape& from, double progress) const
+Ref<BasicShape> BasicShapeInset::blend(const BasicShape& from, const BlendingContext& context) const
 {
     ASSERT(type() == from.type());
 
     auto& fromInset = downcast<BasicShapeInset>(from);
     auto result =  BasicShapeInset::create();
-    result->setTop(WebCore::blend(fromInset.top(), top(), progress));
-    result->setRight(WebCore::blend(fromInset.right(), right(), progress));
-    result->setBottom(WebCore::blend(fromInset.bottom(), bottom(), progress));
-    result->setLeft(WebCore::blend(fromInset.left(), left(), progress));
+    result->setTop(WebCore::blend(fromInset.top(), top(), context));
+    result->setRight(WebCore::blend(fromInset.right(), right(), context));
+    result->setBottom(WebCore::blend(fromInset.bottom(), bottom(), context));
+    result->setLeft(WebCore::blend(fromInset.left(), left(), context));
 
-    result->setTopLeftRadius(WebCore::blend(fromInset.topLeftRadius(), topLeftRadius(), progress));
-    result->setTopRightRadius(WebCore::blend(fromInset.topRightRadius(), topRightRadius(), progress));
-    result->setBottomRightRadius(WebCore::blend(fromInset.bottomRightRadius(), bottomRightRadius(), progress));
-    result->setBottomLeftRadius(WebCore::blend(fromInset.bottomLeftRadius(), bottomLeftRadius(), progress));
+    result->setTopLeftRadius(WebCore::blend(fromInset.topLeftRadius(), topLeftRadius(), context));
+    result->setTopRightRadius(WebCore::blend(fromInset.topRightRadius(), topRightRadius(), context));
+    result->setBottomRightRadius(WebCore::blend(fromInset.bottomRightRadius(), bottomRightRadius(), context));
+    result->setBottomLeftRadius(WebCore::blend(fromInset.bottomLeftRadius(), bottomLeftRadius(), context));
 
     return result;
 }

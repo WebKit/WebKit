@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ScriptExecutionContext.h"
 
+#include "CSSValuePool.h"
 #include "CachedScript.h"
 #include "CommonVM.h"
 #include "DOMTimer.h"
@@ -36,6 +37,7 @@
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "FontCache.h"
+#include "FontLoadRequest.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWindow.h"
 #include "JSWorkerGlobalScope.h"
@@ -230,6 +232,16 @@ void ScriptExecutionContext::didLoadResourceSynchronously(const URL&)
 FontCache& ScriptExecutionContext::fontCache()
 {
     return FontCache::singleton();
+}
+
+CSSValuePool& ScriptExecutionContext::cssValuePool()
+{
+    return CSSValuePool::singleton();
+}
+
+std::unique_ptr<FontLoadRequest> ScriptExecutionContext::fontLoadRequest(String&, bool, bool, LoadedFromOpaqueSource)
+{
+    return nullptr;
 }
 
 void ScriptExecutionContext::forEachActiveDOMObject(const Function<ShouldContinue(ActiveDOMObject&)>& apply) const

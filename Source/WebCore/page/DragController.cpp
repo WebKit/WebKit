@@ -97,7 +97,7 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#include "SelectionRect.h"
+#include "SelectionGeometry.h"
 #endif
 
 namespace WebCore {
@@ -526,7 +526,7 @@ bool DragController::dispatchTextInputEventFor(Frame* innerFrame, const DragData
 {
     ASSERT(m_page.dragCaretController().hasCaret());
     String text = m_page.dragCaretController().isContentRichlyEditable() ? emptyString() : dragData.asPlainText();
-    Element* target = innerFrame->editor().findEventTargetFrom(m_page.dragCaretController().caretPosition());
+    auto target = innerFrame->editor().findEventTargetFrom(m_page.dragCaretController().caretPosition());
     // FIXME: What guarantees target is not null?
     auto event = TextEvent::createForDrop(&innerFrame->windowProxy(), text);
     target->dispatchEvent(event);
@@ -786,7 +786,7 @@ Element* DragController::draggableElement(const Frame* sourceFrame, Element* sta
 #endif
 
     auto selectionDragElement = state.type.contains(DragSourceAction::Selection) && m_dragSourceAction.contains(DragSourceAction::Selection) ? startElement : nullptr;
-    if (startElement && HTMLElement::isImageOverlayText(*startElement))
+    if (HTMLElement::isImageOverlayText(startElement))
         return selectionDragElement;
 
     for (auto* element = startElement; element; element = element->parentOrShadowHostElement()) {

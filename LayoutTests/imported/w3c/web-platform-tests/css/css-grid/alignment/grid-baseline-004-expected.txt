@@ -5,47 +5,11 @@ PASS .grid, container 3
 PASS .grid, container 4
 PASS .grid, container 5
 PASS .grid, container 6
-FAIL .grid, container 7 assert_equals:
-<div class="container" data-expected-width="480" data-expected-height="165">
-    <div class="grid twoRows" data-offset-x="0" data-offset-y="40">
-        <div class="firstRowFirstColumn target" data-offset-x="0" data-offset-y="0"></div>
-        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
-        <div class="bothRowFirstColumn style2" style="align-self: last baseline" data-offset-x="0"></div>
-    </div>
-    <div class="grid twoRows" data-offset-x="160" data-offset-y="0">
-        <div class="bothRowFirstColumn target" data-offset-x="0" data-offset-y="10"></div>
-        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
-        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
-    </div>
-    <div class="grid twoRows" data-offset-x="320" data-offset-y="55">
-        <div class="firstRowBothColumn target" data-offset-x="0" data-offset-y="15"></div>
-        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
-        <div class="bothRowFirstColumn" data-offset-x="0" data-offset-y="10"></div>
-    </div>
-</div>
-offsetTop expected 40 but got 50
+PASS .grid, container 7
 PASS .grid, container 8
 PASS .grid, container 9
 PASS .grid, container 10
-FAIL .grid, container 11 assert_equals:
-<div class="container" data-expected-width="480" data-expected-height="165">
-    <div class="grid twoRows" data-offset-x="0" data-offset-y="55">
-        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
-        <div class="firstRowBothColumn alignSelfBaseline target" style="width: 100px; height: 20px;" data-offset-x="0" data-offset-y="15"></div>
-        <div class="bothRowFirstColumn" data-offset-x="0" data-offset-y="10"></div>
-    </div>
-    <div class="grid twoRows" data-offset-x="160" data-offset-y="40">
-        <div class="bothRowFirstColumn style2" style="align-self: last baseline" data-offset-x="0"></div>
-        <div class="firstRowFirstColumn alignSelfBaseline target" style="width: 50px; height: 50px;" data-offset-x="0" data-offset-y="0"></div>
-        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
-    </div>
-    <div class="grid twoRows" data-offset-x="320" data-offset-y="0">
-        <div class="firstRowBothColumn" data-offset-x="0" data-offset-y="15"></div>
-        <div class="firstRowFirstColumn" data-offset-x="0" data-offset-y="0"></div>
-        <div class="bothRowFirstColumn alignSelfBaseline target" style="width: 40px; height: 80px;" data-offset-x="0" data-offset-y="10"></div>
-    </div>
-</div>
-offsetTop expected 40 but got 50
+PASS .grid, container 11
 PASS .grid, container 12
 PASS .grid, container 13
 PASS .grid, container 14

@@ -1,0 +1,27 @@
+<p>This test passes if it does not crash.</p>
+<script>
+  if (window.testRunner)
+    testRunner.dumpAsText();
+
+  onload = async () => {
+    let contexts = [];
+    onunload = () => {
+      while (contexts.length) {
+        let ctx = contexts.pop();
+        ctx.startRendering();
+      }
+    };
+
+    for (let i = 0; i < 15; i++) {
+      let offlineAudioContext = new OfflineAudioContext({
+        length: 1,
+        sampleRate: 3000
+      });
+      contexts.push(offlineAudioContext);
+      try {
+        await offlineAudioContext.audioWorklet.addModule('');
+      } catch {
+      }
+    }
+  };
+</script>

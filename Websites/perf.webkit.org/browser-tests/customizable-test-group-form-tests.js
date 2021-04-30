@@ -79,6 +79,9 @@ describe('CustomizableTestGroupFormTests', () => {
         requests[0].resolve({commits: [commitObjectA]});
         requests[1].resolve({commits: [commitObjectB]});
 
+        await requests[0].promise;
+        await requests[1].promise;
+
         await waitForComponentsToRender(context);
 
         const radioButton = customizableTestGroupForm.content('custom-table').querySelector('input[type="radio"][name="A-1-radio"]:not(:checked)');
@@ -89,12 +92,22 @@ describe('CustomizableTestGroupFormTests', () => {
         expect(revisionEditors.length).to.be(2);
         let revisionEditor = revisionEditors[0];
         expect(revisionEditor.value).to.be('210949');
+
+        await waitForComponentsToRender(context);
+        revisionEditors = customizableTestGroupForm.content('custom-table').querySelectorAll('input:not([type="radio"])');
+        revisionEditor = revisionEditors[0];
         revisionEditor.value = '210948';
         revisionEditor.dispatchEvent(new Event('change'));
 
         customizableTestGroupForm.content('name').value = 'a/b test';
         customizableTestGroupForm.content('name').dispatchEvent(new Event('input'));
 
+        await waitForComponentsToRender(context);
+
+        // This is a hack by accessing the private member
+        // customizableTestGroupForm will use commitSet.updateRevisionForOwnerRepository to update the revision, need to await this to see the input value gets updated to 210948
+        await customizableTestGroupForm._commitSetMap.get('A')._fetchCommitLogAndOwnedCommits(repository, '210948');
+        // It will enqueue to render, draw a new input with right revision
         await waitForComponentsToRender(context);
 
         revisionEditors = customizableTestGroupForm.content('custom-table').querySelectorAll('input:not([type="radio"])');
@@ -128,6 +141,9 @@ describe('CustomizableTestGroupFormTests', () => {
         requests[0].resolve({commits: [commitObjectA]});
         requests[1].resolve({commits: [commitObjectB]});
 
+        await requests[0].promise;
+        await requests[1].promise;
+
         await waitForComponentsToRender(context);
 
         const radioButton = customizableTestGroupForm.content('custom-table').querySelector('input[type="radio"][name="A-1-radio"]:not(:checked)');
@@ -146,6 +162,8 @@ describe('CustomizableTestGroupFormTests', () => {
         expect(requests.length).to.be(3);
         expect(requests[2].url).to.be('/api/commits/1/21095?prefix-match=true');
         requests[2].resolve({commits: [commitObjectC]});
+
+        await requests[2].promise;
 
         await waitForComponentsToRender(context);
 
@@ -177,6 +195,8 @@ describe('CustomizableTestGroupFormTests', () => {
         expect(requests[1].url).to.be('/api/commits/1/210949?prefix-match=true');
         requests[0].resolve({commits: [commitObjectA]});
         requests[1].resolve({commits: [commitObjectB]});
+        await requests[0].promise;
+        await requests[1].promise;
 
         await waitForComponentsToRender(context);
 

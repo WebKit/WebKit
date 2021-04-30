@@ -665,12 +665,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     template<typename HashTranslator, typename T>
     ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::inlineLookup(const T& key) -> ValueType*
     {
-#if USE(ANGLE)
-        static_assert(sizeof(Key) + sizeof(Value) < 250, "Your HashTable types are too big to efficiently move when rehashing.  Consider using UniqueRef instead");
-#else
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=223637
-        static_assert(sizeof(Key) + sizeof(Value) < 400, "Your HashTable types are too big to efficiently move when rehashing.  Consider using UniqueRef instead");
-#endif
+        static_assert(sizeof(Value) <= 128, "Your HashTable types are too big to efficiently move when rehashing.  Consider using UniqueRef instead");
         checkKey<HashTranslator>(key);
 
         unsigned k = 0;

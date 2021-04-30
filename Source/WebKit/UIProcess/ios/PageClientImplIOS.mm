@@ -212,9 +212,9 @@ void PageClientImpl::didCreateContextInGPUProcessForVisibilityPropagation(LayerH
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
 #if ENABLE(GPU_PROCESS)
-void PageClientImpl::gpuProcessCrashed()
+void PageClientImpl::gpuProcessDidExit()
 {
-    [m_contentView _gpuProcessCrashed];
+    [m_contentView _gpuProcessDidExit];
 }
 #endif
 

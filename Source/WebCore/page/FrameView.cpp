@@ -2268,10 +2268,9 @@ bool FrameView::scrollToFragmentInternal(const String& fragmentIdentifier)
     
     // If the anchor accepts keyboard focus, move focus there to aid users relying on keyboard navigation.
     if (anchorElement) {
-        if (anchorElement->isFocusable()) {
-            anchorElement->setHasFocusVisible(true);
-            document.setFocusedElement(anchorElement.get());
-        } else {
+        if (anchorElement->isFocusable())
+            document.setFocusedElement(anchorElement.get(), { { }, { }, { }, { }, FocusVisibility::Visible });
+        else {
             document.setFocusedElement(nullptr);
             document.setFocusNavigationStartingNode(anchorElement.get());
         }
@@ -5553,9 +5552,9 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
     return { *viewportSize.width, *viewportSize.height };
 }
 
-bool FrameView::shouldPlaceBlockDirectionScrollbarOnLeft() const
+bool FrameView::shouldPlaceVerticalScrollbarOnLeft() const
 {
-    return renderView() && renderView()->shouldPlaceBlockDirectionScrollbarOnLeft();
+    return renderView() && renderView()->shouldPlaceVerticalScrollbarOnLeft();
 }
 
 TextStream& operator<<(TextStream& ts, const FrameView& view)

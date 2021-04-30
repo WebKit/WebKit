@@ -66,7 +66,10 @@ def convert_for_webkit(new_path, filename, reference_support_info, host=Host(), 
 
 class _W3CTestConverter(HTMLParser):
     def __init__(self, new_path, filename, reference_support_info, host=Host(), convert_test_harness_links=True, webkit_test_runner_options=''):
-        HTMLParser.__init__(self)
+        if sys.version_info > (3, 0):
+            HTMLParser.__init__(self, convert_charrefs=False)
+        else:
+            HTMLParser.__init__(self)
 
         self._host = host
         self._filesystem = self._host.filesystem

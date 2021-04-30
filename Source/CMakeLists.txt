@@ -13,7 +13,7 @@ endif ()
 
 add_subdirectory(JavaScriptCore)
 
-if (ENABLE_WEBGL)
+if (ENABLE_WEBGL OR USE_ANGLE_EGL)
     add_subdirectory(ThirdParty/ANGLE)
 endif ()
 
@@ -27,6 +27,7 @@ endif ()
 
 if (USE_LIBWEBRTC)
     add_subdirectory(ThirdParty/libwebrtc)
+    include_directories(${CMAKE_CURRENT_BINARY_DIR}/ThirdParty/libwebrtc)
 endif ()
 
 if (ENABLE_WEBINSPECTORUI)

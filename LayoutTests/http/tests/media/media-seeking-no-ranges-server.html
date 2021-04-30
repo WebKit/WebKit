@@ -12,7 +12,7 @@
             function start()
             {
                 audio = document.querySelector("audio");
-                audio.src = 'http://127.0.0.1:8000/media/resources/load-video.php?name=' + media + '&type=' + type + '&ranges=no';
+                audio.src = 'http://127.0.0.1:8000/media/resources/load-video.py?name=' + media + '&type=' + type + '&ranges=no';
 
                 waitForEventAndFail('error');
                 waitForEventAndEnd('ended');

@@ -126,6 +126,7 @@ public:
 private:
     InProcessIDBServer(PAL::SessionID, const String& databaseDirectoryPath = nullString());
 
+    Lock m_serverLock;
     std::unique_ptr<WebCore::IDBServer::IDBServer> m_server;
     RefPtr<WebCore::IDBClient::IDBConnectionToServer> m_connectionToServer;
     RefPtr<WebCore::IDBServer::IDBConnectionToClient> m_connectionToClient;

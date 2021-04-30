@@ -83,6 +83,8 @@ public:
         }
         return result;
     }
+
+    T* lockable() { return m_lockable; }
     
     explicit operator bool() const { return !!m_lockable; }
     

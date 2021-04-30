@@ -56,7 +56,7 @@ public:
     void areaElementFocusChanged(HTMLAreaElement*);
     
 #if PLATFORM(IOS_FAMILY)
-    void collectSelectionRects(Vector<SelectionRect>&, unsigned, unsigned) override;
+    void collectSelectionGeometries(Vector<SelectionGeometry>&, unsigned, unsigned) override;
 #endif
 
     void setIsGeneratedContent(bool generated = true) { m_isGeneratedContent = generated; }
@@ -102,6 +102,8 @@ protected:
     {
         imageChanged(imageResource().imagePtr());
     }
+
+    bool canMapWidthHeightToAspectRatio() const override;
 
 private:
     const char* renderName() const override { return "RenderImage"; }

@@ -67,6 +67,10 @@ webkit.org/b/21916 tables/mozilla_expected_failures/bugs/bug178855.xml [ Pass Im
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
+# This test only works with UI-side compositing
+model-element/model-element-contents-layer-updates-with-clipping.html [ Skip ]
+model-element/model-element-contents-layer-updates.html [ Skip ]
+
 # Accessibility tests for notifications that don't exist or aren't needed on Mac OS X.
 accessibility/aria-checkbox-sends-notification.html
 accessibility/aria-switch-sends-notification.html
@@ -1991,10 +1995,6 @@ webkit.org/b/209692 [ BigSur+ ] fast/text/text-security-disc-bullet-pua.html [ I
 # rdar://65641563 ([WebGL2] vector-dynamic-indexing is failing a subtest on iOS (214393))
 [ arm64 ] webgl/2.0.0/conformance2/glsl3/vector-dynamic-indexing.html [ Failure ]
 
-# rdar://65848157 ([AS Layout Tests] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html is failing)
-# Marked as failing on all architectures below. When that is fixed, this bug still needs to be fixed.
-# [ arm64 ] webgl/2.0.0/conformance2/reading/read-pixels-pack-parameters.html [ Failure ]
-
 # rdar://64535650 (BlitFramebuffer sRGB webgl tests crashing/failing)
 [ arm64 ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-srgb.html [ Failure ]
 
@@ -2049,9 +2049,6 @@ webkit.org/b/219448 [ Debug ] webgl/2.0.0/conformance/rendering/multisample-corr
 
 # <rdar://problem/60780398> REGRESSION: (258729?) imported/w3c/web-platform-tests/websockets/opening-handshake/003.html is failing.
 [ BigSur+ ] imported/w3c/web-platform-tests/websockets/opening-handshake/003.html [ Failure ]
-
-# <rdar://problem/66399069> [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html is failing
-[ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ ImageOnlyFailure ]
 
 # <rdar://problem/66351394> [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html is failing
 [ BigSur+ ] imported/w3c/web-platform-tests/css/css-fonts/font-language-override-02.html [ ImageOnlyFailure ]
@@ -2199,7 +2196,7 @@ webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeou
 [ arm64 ] webrtc/concurrentVideoPlayback.html [ Pass Timeout ]
 [ arm64 ] webrtc/direction-change.html [ Pass Timeout ]
 [ arm64 ] webrtc/multi-video.html [ Pass Timeout ]
-[ arm64 ] webrtc/multi-audio.html [ Pass Timeout ]
+[ arm64 ] webrtc/multi-audio.html [ Pass Timeout Crash ]
 [ arm64 ] webrtc/h265.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-setDirection.html [ Pass Timeout ]
 [ arm64 ] webrtc/video-rotation.html [ Pass Timeout ]
@@ -2280,8 +2277,6 @@ webkit.org/b/223976 [ Debug ] imported/w3c/web-platform-tests/cors/redirect-pref
 
 webkit.org/b/224033 imported/w3c/web-platform-tests/custom-elements/reactions/HTMLMediaElement.html [ Pass Crash ]
 
-webkit.org/b/222750 [ Debug ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/css-module-worker-test.html [ Pass Failure Crash ]
-
 webkit.org/b/224123 media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html [ Pass Failure ]
 
 webkit.org/b/224212 [ arm64 ] compositing/background-color/no-composited-background-color-when-perspective.html [ Pass ImageOnlyFailure ]
@@ -2291,3 +2286,10 @@ webkit.org/b/215397 media/modern-media-controls/media-controller/media-controlle
 webkit.org/b/224297 media/modern-media-controls/seek-forward-support/seek-forward-support.html [ Pass Timeout ]
 
 webkit.org/b/224396 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Pass Timeout ]
+
+webkit.org/b/224631 [ BigSur ] imported/w3c/web-platform-tests/css/css-fonts/font-feature-settings-tibetan.html [ Pass ImageOnlyFailure ]
+
+# Buttons are not focusable on Mac so this test doesn't work as expected.
+webkit.org/b/22261 imported/w3c/web-platform-tests/css/selectors/focus-visible-005.html [ Skip ]
+
+webkit.org/b/224842 [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Pass Timeout ]

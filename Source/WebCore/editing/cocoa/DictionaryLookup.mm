@@ -41,16 +41,14 @@
 #import "HitTestResult.h"
 #import "NotImplemented.h"
 #import "Page.h"
+#import "Range.h"
 #import "RenderObject.h"
 #import "TextIterator.h"
 #import "VisiblePosition.h"
 #import "VisibleSelection.h"
 #import "VisibleUnits.h"
-#import <pal/ios/UIKitSoftLink.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/RevealSPI.h>
-#import <pal/spi/ios/UIKitSPI.h>
-#import <WebCore/Range.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RefPtr.h>
 
@@ -58,6 +56,9 @@
 #import <Quartz/Quartz.h>
 #else
 #import <PDFKit/PDFKit.h>
+#import <pal/spi/ios/UIKitSPI.h>
+
+#import <pal/ios/UIKitSoftLink.h>
 #endif
 
 #if PLATFORM(MACCATALYST)

@@ -200,7 +200,7 @@ void GraphicsLayer::willBeDestroyed()
     }
 
     removeAllChildren();
-    removeFromParent();
+    removeFromParentInternal();
 }
 
 void GraphicsLayer::clearClient()
@@ -335,7 +335,7 @@ void GraphicsLayer::removeAllChildren()
     }
 }
 
-void GraphicsLayer::removeFromParent()
+void GraphicsLayer::removeFromParentInternal()
 {
     if (m_parent) {
         GraphicsLayer* parent = m_parent;
@@ -371,6 +371,13 @@ void GraphicsLayer::setChildrenTransform(const TransformationMatrix& matrix)
         *m_childrenTransform = matrix;
     else
         m_childrenTransform = makeUnique<TransformationMatrix>(matrix);
+}
+
+void GraphicsLayer::removeFromParent()
+{
+    // removeFromParentInternal is nonvirtual, for use in willBeDestroyed,
+    // which is called from destructors.
+    removeFromParentInternal();
 }
 
 void GraphicsLayer::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
@@ -655,30 +662,6 @@ void GraphicsLayer::updateDebugIndicators()
 void GraphicsLayer::setZPosition(float position)
 {
     m_zPosition = position;
-}
-
-float GraphicsLayer::accumulatedOpacity() const
-{
-    if (!preserves3D())
-        return 1;
-        
-    return m_opacity * (parent() ? parent()->accumulatedOpacity() : 1);
-}
-
-void GraphicsLayer::distributeOpacity(float accumulatedOpacity)
-{
-    // If this is a transform layer we need to distribute our opacity to all our children
-    
-    // Incoming accumulatedOpacity is the contribution from our parent(s). We mutiply this by our own
-    // opacity to get the total contribution
-    accumulatedOpacity *= m_opacity;
-    
-    setOpacityInternal(accumulatedOpacity);
-    
-    if (preserves3D()) {
-        for (auto& layer : children())
-            layer->distributeOpacity(accumulatedOpacity);
-    }
 }
 
 static inline const FilterOperations& filterOperationsAt(const KeyframeValueList& valueList, size_t index)

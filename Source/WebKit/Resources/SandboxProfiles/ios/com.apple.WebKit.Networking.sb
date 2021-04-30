@@ -492,7 +492,7 @@
        (global-name "com.apple.system.logger"))
 
 ;; Needed by WebKit LOG macros and ASL logging.
-(allow file-read-metadata network-outbound
+(allow file-read-metadata
        (literal "/private/var/run/syslog"))
 
 (allow mach-lookup

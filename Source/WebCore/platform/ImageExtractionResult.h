@@ -34,6 +34,12 @@
 namespace WebCore {
 
 struct ImageExtractionTextData {
+    ImageExtractionTextData(const String& theText, FloatQuad&& quad)
+        : text(theText)
+        , normalizedQuad(WTFMove(quad))
+    {
+    }
+
     String text;
     FloatQuad normalizedQuad;
 
@@ -62,10 +68,45 @@ template<class Decoder> Optional<ImageExtractionTextData> ImageExtractionTextDat
     return {{ WTFMove(*text), WTFMove(*normalizedQuad) }};
 }
 
-struct ImageExtractionResult {
-    Vector<ImageExtractionTextData> textData;
+struct ImageExtractionLineData {
+    ImageExtractionLineData(FloatQuad&& quad, Vector<ImageExtractionTextData>&& theChildren)
+        : normalizedQuad(WTFMove(quad))
+        , children(WTFMove(theChildren))
+    {
+    }
 
-    bool isEmpty() const { return textData.isEmpty(); }
+    FloatQuad normalizedQuad;
+    Vector<ImageExtractionTextData> children;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static Optional<ImageExtractionLineData> decode(Decoder&);
+};
+
+template<class Encoder> void ImageExtractionLineData::encode(Encoder& encoder) const
+{
+    encoder << normalizedQuad;
+    encoder << children;
+}
+
+template<class Decoder> Optional<ImageExtractionLineData> ImageExtractionLineData::decode(Decoder& decoder)
+{
+    Optional<FloatQuad> normalizedQuad;
+    decoder >> normalizedQuad;
+    if (!normalizedQuad)
+        return WTF::nullopt;
+
+    Optional<Vector<ImageExtractionTextData>> children;
+    decoder >> children;
+    if (!children)
+        return WTF::nullopt;
+
+    return {{ WTFMove(*normalizedQuad), WTFMove(*children) }};
+}
+
+struct ImageExtractionResult {
+    Vector<ImageExtractionLineData> lines;
+
+    bool isEmpty() const { return lines.isEmpty(); }
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static Optional<ImageExtractionResult> decode(Decoder&);
@@ -73,17 +114,17 @@ struct ImageExtractionResult {
 
 template<class Encoder> void ImageExtractionResult::encode(Encoder& encoder) const
 {
-    encoder << textData;
+    encoder << lines;
 }
 
 template<class Decoder> Optional<ImageExtractionResult> ImageExtractionResult::decode(Decoder& decoder)
 {
-    Optional<Vector<ImageExtractionTextData>> textData;
-    decoder >> textData;
-    if (!textData)
+    Optional<Vector<ImageExtractionLineData>> lines;
+    decoder >> lines;
+    if (!lines)
         return WTF::nullopt;
 
-    return {{ WTFMove(*textData) }};
+    return {{ WTFMove(*lines) }};
 }
 
 } // namespace WebCore

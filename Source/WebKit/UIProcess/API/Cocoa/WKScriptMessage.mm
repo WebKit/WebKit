@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKScriptMessageInternal.h"
 
-#import "WKFrameInfo.h"
+#import <WebKit/WKFrameInfo.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
 

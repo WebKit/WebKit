@@ -154,8 +154,6 @@ public:
     void setWebRTCVP9Profile2CodecEnabled(bool isEnabled) { m_isWebRTCVP9Profile2CodecEnabled = isEnabled; }
     bool webRTCH264LowLatencyEncoderEnabled() const { return m_isWebRTCH264LowLatencyEncoderEnabled; }
     void setWebRTCH264LowLatencyEncoderEnabled(bool isEnabled) { m_isWebRTCH264LowLatencyEncoderEnabled = isEnabled; }
-    bool peerConnectionEnabled() const { return m_isPeerConnectionEnabled; }
-    void setPeerConnectionEnabled(bool isEnabled) { m_isPeerConnectionEnabled = isEnabled; }
     bool webRTCMDNSICECandidatesEnabled() const { return m_isWebRTCMDNSICECandidatesEnabled; }
     void setWebRTCMDNSICECandidatesEnabled(bool isEnabled) { m_isWebRTCMDNSICECandidatesEnabled = isEnabled; }
     bool webRTCH264SimulcastEnabled() const { return m_isWebRTCH264SimulcastEnabled; }
@@ -167,26 +165,6 @@ public:
 #if ENABLE(DATALIST_ELEMENT)
     bool dataListElementEnabled() const { return m_isDataListElementEnabled; }
     void setDataListElementEnabled(bool isEnabled) { m_isDataListElementEnabled = isEnabled; }
-#endif
-
-#if ENABLE(WEBGL)
-    void setWebGLUsingMetal(bool usingMetal) { m_webGLUsingMetal = usingMetal; }
-    bool webGLUsingMetal() const { return m_webGLUsingMetal; }
-#endif
-
-#if ENABLE(WEBGL2)
-    void setWebGL2Enabled(bool isEnabled) { m_isWebGL2Enabled = isEnabled; }
-    bool webGL2Enabled() const { return m_isWebGL2Enabled; }
-#endif
-
-#if ENABLE(WEBGPU)
-    void setWebGPUEnabled(bool isEnabled) { m_isWebGPUEnabled = isEnabled; }
-    bool webGPUEnabled() const { return m_isWebGPUEnabled; }
-#endif
-
-#if ENABLE(WEBGL) || ENABLE(WEBGL2)
-    void setMaskWebGLStringsEnabled(bool isEnabled) { m_isMaskWebGLStringsEnabled = isEnabled; }
-    bool maskWebGLStringsEnabled() const { return m_isMaskWebGLStringsEnabled; }
 #endif
 
     void setReadableByteStreamAPIEnabled(bool isEnabled) { m_isReadableByteStreamAPIEnabled = isEnabled; }
@@ -327,7 +305,6 @@ private:
 
 #if ENABLE(WEB_RTC)
     bool m_isWebRTCDTMFEnabled { true };
-    bool m_isPeerConnectionEnabled { true };
     bool m_isWebRTCH264SimulcastEnabled { true };
     bool m_isWebRTCMDNSICECandidatesEnabled { false };
     bool m_isWebRTCH265CodecEnabled { false };
@@ -344,22 +321,6 @@ private:
     bool m_isReadableByteStreamAPIEnabled { false };
     bool m_isWritableStreamAPIEnabled { false };
     bool m_isTransformStreamAPIEnabled { false };
-
-#if ENABLE(WEBGL)
-    bool m_webGLUsingMetal { false };
-#endif
-
-#if ENABLE(WEBGL2)
-    bool m_isWebGL2Enabled { true };
-#endif
-
-#if ENABLE(WEBGPU)
-    bool m_isWebGPUEnabled { false };
-#endif
-
-#if ENABLE(WEBGL) || ENABLE(WEBGL2)
-    bool m_isMaskWebGLStringsEnabled { false };
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     bool m_serviceWorkerEnabled { false };

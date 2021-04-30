@@ -37,22 +37,22 @@ layer at (0,0) size 800x1753
             RenderBlock (floating) {SPAN} at (0,73) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 127x16
                 text run at (0,2) width 127: "Your degree program*"
-            RenderMenuList {SELECT} at (325,73) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA]
-              RenderBlock (anonymous) at (5,3) size 170x14
+            RenderMenuList {SELECT} at (325,73) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderBlock (anonymous) at (6,3) size 168x14
                 RenderText at (0,0) size 87x14
                   text run at (0,0) width 87: "Program options"
             RenderBlock (floating) {SPAN} at (0,95) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 110x16
                 text run at (0,2) width 110: "Your year of study*"
-            RenderMenuList {SELECT} at (325,95) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA]
-              RenderBlock (anonymous) at (5,3) size 170x14
+            RenderMenuList {SELECT} at (325,95) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderBlock (anonymous) at (6,3) size 168x14
                 RenderText at (0,0) size 122x14
                   text run at (0,0) width 122: "Years you've been here"
             RenderBlock (floating) {SPAN} at (0,117) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 153x16
                 text run at (0,2) width 153: "Shakespeare classes taken"
-            RenderMenuList {SELECT} at (325,117) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA]
-              RenderBlock (anonymous) at (5,3) size 170x14
+            RenderMenuList {SELECT} at (325,117) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderBlock (anonymous) at (6,3) size 168x14
                 RenderText at (0,0) size 74x14
                   text run at (0,0) width 74: "Number taken"
             RenderBlock {P} at (0,151) size 560x21 [color=#333333]
@@ -64,16 +64,16 @@ layer at (0,0) size 800x1753
             RenderBlock (floating) {SPAN} at (0,223) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 323x16
                 text run at (0,2) width 323: "What percentage of your research time is spent online?"
-            RenderMenuList {SELECT} at (325,223) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA]
-              RenderBlock (anonymous) at (5,3) size 170x14
+            RenderMenuList {SELECT} at (325,223) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderBlock (anonymous) at (6,3) size 168x14
                 RenderText at (0,0) size 106x14
                   text run at (0,0) width 106: "Percentages of time"
             RenderBlock (floating) {SPAN} at (0,245) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 300x36
                 text run at (0,2) width 300: "What is holding you back from doing more research"
                 text run at (0,22) width 41: "online?"
-            RenderMenuList {SELECT} at (325,245) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA]
-              RenderBlock (anonymous) at (5,3) size 170x14
+            RenderMenuList {SELECT} at (325,245) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderBlock (anonymous) at (6,3) size 168x14
                 RenderText at (0,0) size 45x14
                   text run at (0,0) width 45: "Reasons"
             RenderBlock (floating) {SPAN} at (0,267) size 325x21 [color=#333333]
@@ -112,15 +112,15 @@ layer at (0,0) size 800x1753
             RenderBlock (floating) {SPAN} at (0,453) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 275x16
                 text run at (0,2) width 275: "Which area of the ISE did you find most useful?"
-            RenderMenuList {SELECT} at (325,453) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA]
-              RenderBlock (anonymous) at (5,3) size 170x14
+            RenderMenuList {SELECT} at (325,453) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderBlock (anonymous) at (6,3) size 168x14
                 RenderText at (0,0) size 100x14
                   text run at (0,0) width 100: "Sections of the ISE"
             RenderBlock (floating) {SPAN} at (0,475) size 325x21 [color=#333333]
               RenderText {#text} at (0,2) size 251x16
                 text run at (0,2) width 251: "How did you find the navigation of the ISE?"
-            RenderMenuList {SELECT} at (325,475) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA]
-              RenderBlock (anonymous) at (5,3) size 170x14
+            RenderMenuList {SELECT} at (325,475) size 180x21 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
+              RenderBlock (anonymous) at (6,3) size 168x14
                 RenderText at (0,0) size 91x14
                   text run at (0,0) width 91: "Level of difficulty"
             RenderBlock (floating) {SPAN} at (0,497) size 325x21 [color=#333333]

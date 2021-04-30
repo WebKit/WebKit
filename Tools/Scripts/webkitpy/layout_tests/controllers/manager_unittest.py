@@ -29,7 +29,6 @@
 
 """Unit tests for manager.py."""
 
-import sys
 import time
 import unittest
 
@@ -44,53 +43,6 @@ from webkitpy.xcode.device_type import DeviceType
 
 
 class ManagerTest(unittest.TestCase):
-    def test_needs_servers(self):
-        def get_wpt_doc_root():
-            return 'imported/w3c/wpt'
-
-        def get_manager():
-            host = MockHost()
-            port = host.port_factory.get()
-            port.TEST_PATH_SEPARATOR = '/'
-            port.web_platform_test_server_doc_root = get_wpt_doc_root
-            manager = Manager(port, options=MockOptions(http=True), printer=Mock())
-            return manager
-
-        manager = get_manager()
-        self.assertFalse(manager.needs_servers(['fast/html']))
-
-        manager = get_manager()
-        self.assertTrue(manager.needs_servers(['http/tests/misc']))
-
-        manager = get_manager()
-        self.assertTrue(manager.needs_servers(['imported/w3c/wpt/test']))
-
-        manager = get_manager()
-        self.assertTrue(manager.needs_servers(['http/wpt/funky']))
-
-        manager = get_manager()
-        self.assertFalse(manager.needs_servers(['imported/w3c']))
-
-    def integration_test_needs_servers(self):
-        def get_manager():
-            host = MockHost()
-            port = host.port_factory.get()
-            manager = Manager(port, options=MockOptions(test_list=None, http=True), printer=Mock())
-            return manager
-
-        manager = get_manager()
-        self.assertFalse(manager.needs_servers(['fast/html']))
-
-        manager = get_manager()
-        self.assertTrue(manager.needs_servers(['http/tests/mime']))
-
-        if sys.platform.startswith('win'):
-            manager = get_manager()
-            self.assertFalse(manager.needs_servers(['fast\\html']))
-
-            manager = get_manager()
-            self.assertTrue(manager.needs_servers(['http\\tests\\mime']))
-
     def test_look_for_new_crash_logs(self):
         def get_manager():
             host = MockHost()

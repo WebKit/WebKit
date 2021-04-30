@@ -202,7 +202,7 @@ DateTimeInputsEditableComponentsEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(MAC)": true
+      "PLATFORM(MAC) || PLATFORM(GTK)": true
       default: false
     WebCore:
       default: false

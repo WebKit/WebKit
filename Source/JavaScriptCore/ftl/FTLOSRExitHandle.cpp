@@ -41,13 +41,13 @@ void OSRExitHandle::emitExitThunk(State& state, CCallHelpers& jit)
     Profiler::Compilation* compilation = state.graph.compilation();
     CCallHelpers::Label myLabel = jit.label();
     label = myLabel;
-    jit.pushToSaveImmediateWithoutTouchingRegisters(CCallHelpers::TrustedImm32(index));
+    jit.pushToSaveImmediateWithoutTouchingRegisters(CCallHelpers::TrustedImm32(m_index));
     CCallHelpers::PatchableJump jump = jit.patchableJump();
     RefPtr<OSRExitHandle> self = this;
     VM& vm = state.vm();
     jit.addLinkTask(
         [self, jump, myLabel, compilation, &vm] (LinkBuffer& linkBuffer) {
-            self->exit.m_patchableJump = CodeLocationJump<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(jump));
+            self->m_jitCode->m_osrExit[self->m_index].m_patchableJump = CodeLocationJump<JSInternalPtrTag>(linkBuffer.locationOf<JSInternalPtrTag>(jump));
 
             linkBuffer.link(
                 jump.m_jump,

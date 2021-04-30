@@ -208,6 +208,17 @@ const RealtimeMediaSourceSettings& GStreamerAudioCaptureSource::settings()
     return m_currentSettings.value();
 }
 
+bool GStreamerAudioCaptureSource::interrupted() const
+{
+    return m_capturer->isInterrupted() || RealtimeMediaSource::interrupted();
+}
+
+void GStreamerAudioCaptureSource::setInterruptedForTesting(bool isInterrupted)
+{
+    m_capturer->setInterrupted(isInterrupted);
+    RealtimeMediaSource::setInterruptedForTesting(isInterrupted);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

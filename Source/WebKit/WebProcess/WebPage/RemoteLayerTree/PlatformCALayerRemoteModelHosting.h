@@ -42,6 +42,8 @@ private:
     Ref<WebCore::PlatformCALayer> clone(WebCore::PlatformCALayerClient* owner) const override;
     
     void populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeContext&, WebCore::PlatformCALayer::LayerType) override;
+    
+    void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>) final;
 
     Ref<Model> m_model;
 };

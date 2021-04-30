@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,29 +30,16 @@
 
 namespace WebCore {
 
-Ref<StorageMap> StorageMap::create(unsigned quota)
-{
-    return adoptRef(*new StorageMap(quota));
-}
-
 StorageMap::StorageMap(unsigned quota)
-    : m_iterator(m_map.end())
-    , m_quotaSize(quota)  // quota measured in bytes
+    : m_impl(Impl::create())
+    , m_quotaSize(quota) // quota measured in bytes
 {
-}
-
-Ref<StorageMap> StorageMap::copy()
-{
-    Ref<StorageMap> newMap = create(m_quotaSize);
-    newMap->m_map = m_map;
-    newMap->m_currentLength = m_currentLength;
-    return newMap;
 }
 
 void StorageMap::invalidateIterator()
 {
-    m_iterator = m_map.end();
-    m_iteratorIndex = UINT_MAX;
+    m_impl->iterator = m_impl->map.end();
+    m_impl->iteratorIndex = UINT_MAX;
 }
 
 void StorageMap::setIteratorToIndex(unsigned index)
@@ -62,25 +49,25 @@ void StorageMap::setIteratorToIndex(unsigned index)
     // can take the shortest route.
     // Until that mechanism is available, we'll always increment our iterator from begin() or current.
 
-    if (m_iteratorIndex == index)
+    if (m_impl->iteratorIndex == index)
         return;
 
-    if (index < m_iteratorIndex) {
-        m_iteratorIndex = 0;
-        m_iterator = m_map.begin();
-        ASSERT(m_iterator != m_map.end());
+    if (index < m_impl->iteratorIndex) {
+        m_impl->iteratorIndex = 0;
+        m_impl->iterator = m_impl->map.begin();
+        ASSERT(m_impl->iterator != m_impl->map.end());
     }
 
-    while (m_iteratorIndex < index) {
-        ++m_iteratorIndex;
-        ++m_iterator;
-        ASSERT(m_iterator != m_map.end());
+    while (m_impl->iteratorIndex < index) {
+        ++m_impl->iteratorIndex;
+        ++m_impl->iterator;
+        ASSERT(m_impl->iterator != m_impl->map.end());
     }
 }
 
 unsigned StorageMap::length() const
 {
-    return m_map.size();
+    return m_impl->map.size();
 }
 
 String StorageMap::key(unsigned index)
@@ -89,33 +76,29 @@ String StorageMap::key(unsigned index)
         return String();
 
     setIteratorToIndex(index);
-    return m_iterator->key;
+    return m_impl->iterator->key;
 }
 
 String StorageMap::getItem(const String& key) const
 {
-    return m_map.get(key);
+    return m_impl->map.get(key);
 }
 
-RefPtr<StorageMap> StorageMap::setItem(const String& key, const String& value, String& oldValue, bool& quotaException)
+void StorageMap::setItem(const String& key, const String& value, String& oldValue, bool& quotaException)
 {
     ASSERT(!value.isNull());
     quotaException = false;
 
-    // Implement copy-on-write semantics here.  We're guaranteed that the only refs of StorageMaps belong to Storage objects
-    // so if more than one Storage object refs this map, copy it before mutating it.
-    if (refCount() > 1) {
-        RefPtr<StorageMap> newStorageMap = copy();
-        newStorageMap->setItem(key, value, oldValue, quotaException);
-        return newStorageMap;
-    }
+    // Implement copy-on-write semantics.
+    if (m_impl->refCount() > 1)
+        m_impl = m_impl->copy();
 
     // Quota tracking.  This is done in a couple of steps to keep the overflow tracking simple.
-    unsigned newLength = m_currentLength;
+    unsigned newLength = m_impl->currentLength;
     bool overflow = newLength + value.length() < newLength;
     newLength += value.length();
 
-    oldValue = m_map.get(key);
+    oldValue = m_impl->map.get(key);
     overflow |= newLength - oldValue.length() > newLength;
     newLength -= oldValue.length();
 
@@ -127,67 +110,66 @@ RefPtr<StorageMap> StorageMap::setItem(const String& key, const String& value, S
     bool overQuota = newLength > m_quotaSize / sizeof(UChar);
     if (m_quotaSize != noQuota && (overflow || overQuota)) {
         quotaException = true;
-        return nullptr;
+        return;
     }
-    m_currentLength = newLength;
+    m_impl->currentLength = newLength;
 
-    HashMap<String, String>::AddResult addResult = m_map.add(key, value);
+    HashMap<String, String>::AddResult addResult = m_impl->map.add(key, value);
     if (!addResult.isNewEntry)
         addResult.iterator->value = value;
 
     invalidateIterator();
-
-    return nullptr;
 }
 
-RefPtr<StorageMap> StorageMap::setItemIgnoringQuota(const String& key, const String& value)
+void StorageMap::setItemIgnoringQuota(const String& key, const String& value)
 {
     SetForScope<unsigned> quotaSizeChange(m_quotaSize, static_cast<unsigned>(noQuota));
 
     String oldValue;
     bool quotaException;
-
-    RefPtr<StorageMap> map = setItem(key, value, oldValue, quotaException);
+    setItem(key, value, oldValue, quotaException);
     ASSERT(!quotaException);
-
-    return map;
 }
 
-RefPtr<StorageMap> StorageMap::removeItem(const String& key, String& oldValue)
+void StorageMap::removeItem(const String& key, String& oldValue)
 {
-    // Implement copy-on-write semantics here.  We're guaranteed that the only refs of StorageMaps belong to Storage objects
-    // so if more than one Storage object refs this map, copy it before mutating it.
-    if (refCount() > 1) {
-        RefPtr<StorageMap> newStorage = copy();
-        newStorage->removeItem(key, oldValue);
-        return newStorage;
-    }
+    // Implement copy-on-write semantics.
+    if (m_impl->refCount() > 1)
+        m_impl = m_impl->copy();
 
-    oldValue = m_map.take(key);
+    oldValue = m_impl->map.take(key);
     if (!oldValue.isNull()) {
         invalidateIterator();
-        ASSERT(m_currentLength - key.length() <= m_currentLength);
-        m_currentLength -= key.length();
+        ASSERT(m_impl->currentLength - key.length() <= m_impl->currentLength);
+        m_impl->currentLength -= key.length();
     }
-    ASSERT(m_currentLength - oldValue.length() <= m_currentLength);
-    m_currentLength -= oldValue.length();
+    ASSERT(m_impl->currentLength - oldValue.length() <= m_impl->currentLength);
+    m_impl->currentLength -= oldValue.length();
+}
 
-    return nullptr;
+void StorageMap::clear()
+{
+    if (m_impl->refCount() > 1 && length()) {
+        m_impl = Impl::create();
+        return;
+    }
+    m_impl->map.clear();
+    m_impl->currentLength = 0;
 }
 
 bool StorageMap::contains(const String& key) const
 {
-    return m_map.contains(key);
+    return m_impl->map.contains(key);
 }
 
 void StorageMap::importItems(HashMap<String, String>&& items)
 {
-    if (m_map.isEmpty()) {
+    if (m_impl->map.isEmpty()) {
         // Fast path.
-        m_map = WTFMove(items);
-        for (auto& pair : m_map) {
-            ASSERT(m_currentLength + pair.key.length() + pair.value.length() >= m_currentLength);
-            m_currentLength += (pair.key.length() + pair.value.length());
+        m_impl->map = WTFMove(items);
+        for (auto& pair : m_impl->map) {
+            ASSERT(m_impl->currentLength + pair.key.length() + pair.value.length() >= m_impl->currentLength);
+            m_impl->currentLength += (pair.key.length() + pair.value.length());
         }
         return;
     }
@@ -196,12 +178,20 @@ void StorageMap::importItems(HashMap<String, String>&& items)
         auto& key = item.key;
         auto& value = item.value;
 
-        ASSERT(m_currentLength + key.length() + value.length() >= m_currentLength);
-        m_currentLength += (key.length() + value.length());
+        ASSERT(m_impl->currentLength + key.length() + value.length() >= m_impl->currentLength);
+        m_impl->currentLength += (key.length() + value.length());
         
-        auto result = m_map.add(WTFMove(key), WTFMove(value));
+        auto result = m_impl->map.add(WTFMove(key), WTFMove(value));
         ASSERT_UNUSED(result, result.isNewEntry); // True if the key didn't exist previously.
     }
+}
+
+Ref<StorageMap::Impl> StorageMap::Impl::copy() const
+{
+    auto copy = Impl::create();
+    copy->map = map;
+    copy->currentLength = currentLength;
+    return copy;
 }
 
 }

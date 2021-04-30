@@ -119,6 +119,7 @@ function installDependenciesWithApt {
         libgudev-1.0-dev \
         libhyphen-dev \
         libjpeg-dev \
+        libkate-dev \
         libmount-dev \
         libmpg123-dev \
         libnotify-dev \
@@ -322,6 +323,7 @@ function installDependenciesWithPacman {
         pango \
         perl-file-copy-recursive \
         libgcrypt \
+        libkate \
         libnotify \
         libpng \
         libpulse \
@@ -498,6 +500,7 @@ function installDependenciesWithDnf {
         libgcrypt-devel \
         libgudev1-devel \
         libjpeg-turbo-devel \
+        libkate-devel \
         libmount-devel \
         libnotify-devel \
         libpng-devel \

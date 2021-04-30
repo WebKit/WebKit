@@ -534,6 +534,9 @@ class Driver(object):
             cmd.append('--internal-feature')
             cmd.append(feature)
 
+        if not self._port.get_option('enable_all_experimental_features'):
+            cmd.append('--no-enable-all-experimental-features')
+
         for feature in self._port.experimental_feature():
             cmd.append('--experimental-feature')
             cmd.append(feature)

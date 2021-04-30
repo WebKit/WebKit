@@ -84,9 +84,12 @@ bool AudioSummingJunction::removeOutput(AudioNodeOutput& output)
     if (!output.isEnabled())
         return true;
 
-    if (!m_pendingRenderingOutputs)
+    if (!m_pendingRenderingOutputs) {
+        // Heap allocations are forbidden on the audio thread for performance reasons so we need to
+        // explicitly allow the following allocation(s).
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         m_pendingRenderingOutputs.emplace(m_outputs);
-    else {
+    } else {
         bool wasRemoved = m_pendingRenderingOutputs->remove(output);
         ASSERT_UNUSED(wasRemoved, wasRemoved);
     }

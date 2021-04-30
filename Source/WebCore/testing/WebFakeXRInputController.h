@@ -28,9 +28,12 @@
 #if ENABLE(WEBXR)
 
 #include "FakeXRButtonStateInit.h"
+#include "FakeXRInputSourceInit.h"
 #include "FakeXRRigidTransformInit.h"
+#include "PlatformXR.h"
 #include "XRHandedness.h"
 #include "XRTargetRayMode.h"
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -38,36 +41,44 @@ namespace WebCore {
 
 class WebFakeXRInputController final : public RefCounted<WebFakeXRInputController> {
 public:
-    static Ref<WebFakeXRInputController> create() { return adoptRef(*new WebFakeXRInputController); }
+    static Ref<WebFakeXRInputController> create(PlatformXR::InputSourceHandle, const FakeXRInputSourceInit&);
 
-    void setHandedness(XRHandedness);
-
-    void setTargetRayMode(XRTargetRayMode);
-
-    void setProfiles(Vector<String>);
-
+    void setHandedness(XRHandedness handeness) { m_handeness = handeness; }
+    void setTargetRayMode(XRTargetRayMode mode) { m_targetRayMode = mode; }
+    void setProfiles(Vector<String>&& profiles) { m_profiles = WTFMove(profiles); }
     void setGripOrigin(FakeXRRigidTransformInit gripOrigin, bool emulatedPosition = false);
-
-    void clearGripOrigin();
-
+    void clearGripOrigin() { m_gripOrigin = WTF::nullopt; }
     void setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, bool emulatedPosition = false);
-
     void disconnect();
-
     void reconnect();
+    void startSelection() { m_primarySelected = true; }
+    void endSelection() { m_primarySelected = false; }
+    void simulateSelect() { m_simulateSelect = true; }
+    void setSupportedButtons(const Vector<FakeXRButtonStateInit>&);
+    void updateButtonState(const FakeXRButtonStateInit&);
+    bool isConnected() const { return m_connected; }
 
-    void startSelection();
-
-    void endSelection();
-
-    void simulateSelect();
-
-    void setSupportedButtons(Vector<FakeXRButtonStateInit>);
-
-    void updateButtonState(FakeXRButtonStateInit);
+    PlatformXR::Device::FrameData::InputSource getFrameData();
 
 private:
-    WebFakeXRInputController() = default;
+    WebFakeXRInputController(PlatformXR::InputSourceHandle, const FakeXRInputSourceInit&);
+
+    struct ButtonOrPlaceholder {
+        Optional<PlatformXR::Device::FrameData::InputSourceButton> button;
+        Optional<Vector<float>> axes;
+    };
+    ButtonOrPlaceholder getButtonOrPlaceholder(FakeXRButtonStateInit::Type) const;
+
+    PlatformXR::InputSourceHandle m_handle { 0 };
+    XRHandedness m_handeness { XRHandedness::None };
+    XRTargetRayMode m_targetRayMode { XRTargetRayMode::Gaze };
+    Vector<String> m_profiles;
+    PlatformXR::Device::FrameData::InputSourcePose m_pointerOrigin;
+    Optional<PlatformXR::Device::FrameData::InputSourcePose> m_gripOrigin;
+    HashMap<FakeXRButtonStateInit::Type, FakeXRButtonStateInit, WTF::IntHash<FakeXRButtonStateInit::Type>, WTF::StrongEnumHashTraits<FakeXRButtonStateInit::Type>> m_buttons;
+    bool m_connected { true };
+    bool m_primarySelected { false };
+    bool m_simulateSelect { false };
 };
 
 } // namespace WebCore

@@ -31,10 +31,10 @@ function testGradient(actual, expected)
 
 test(function() {
     testGradient("conic-gradient(red, gold)")
-    testGradient("conic-gradient(from 0deg, red, gold)")
-    testGradient("conic-gradient(at center, red, gold)", "conic-gradient(at center center, red, gold)")
+    testGradient("conic-gradient(from 0deg, red, gold)", "conic-gradient(red, gold)")
+    testGradient("conic-gradient(at center, red, gold)", "conic-gradient(red, gold)")
     testGradient("conic-gradient(at 25% 75%, red, gold)")
-    testGradient("conic-gradient(from 0deg at 50% 50%, red, gold)")
+    testGradient("conic-gradient(from 0deg at 50% 50%, red, gold)", "conic-gradient(red, gold)")
     testGradient("conic-gradient(red 0%, gold 100%)")
     testGradient("conic-gradient(red 0deg, gold 1turn)");
     testGradient("conic-gradient(white -50%, black 150%)");
@@ -52,7 +52,7 @@ test(function() {
 
 test(function() {
     testGradient("repeating-conic-gradient(red, gold)");
-    testGradient("repeating-conic-gradient(from 0deg at center, red, gold)", "repeating-conic-gradient(from 0deg at center center, red, gold)");
+    testGradient("repeating-conic-gradient(from 0deg at center, red, gold)", "repeating-conic-gradient(red, gold)");
 }, "Test repeating-conic-gradient parsing");
 
 </script>

@@ -1,3 +1,27 @@
+2021-04-14  Zhifei Fang  <zhifei_fang@apple.com>
+
+        Support Commit revision identifier in the Chart
+        https://bugs.webkit.org/show_bug.cgi?id=224496
+
+        Reviewed by Dewei Zhu.
+
+        In the measurement-set, we include the commit info but not the commit revision identifier column.
+        Make the API return the commit revision identifier as part of the commit data.
+
+        * browser-tests/customizable-test-group-form-tests.js: Fix flaky tests.
+        * browser-tests/index.html: Add commit revision identifier info.
+        * browser-tests/time-series-chart-tests.js: Fix flaky tests.
+        * public/api/measurement-set.php: Make this API provide commit revision identifier info.
+        * public/include/build-requests-fetcher.php: Ditto.
+        * public/v3/models/commit-set.js: Make the commit model can be constructed with the API respose format.
+        * server-tests/api-measurement-set-tests.js: Adding test for commit revision identifier.
+        * server-tests/api-build-requests-tests.js: Ditto.
+        * unit-tests/analysis-task-tests.js: Ditto.
+        (measurementCluster):
+        * unit-tests/commit-set-tests.js: Ditto.
+        * unit-tests/measurement-adaptor-tests.js: Ditto.
+        * unit-tests/measurement-set-tests.js: Ditto.
+
 2021-03-31  Zhifei Fang  <zhifei_fang@apple.com>
 
         Add commit revision label support

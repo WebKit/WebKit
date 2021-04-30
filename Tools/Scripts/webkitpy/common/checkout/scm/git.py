@@ -155,7 +155,7 @@ class Git(SCM, SVNRepository):
         self._run_git(['reset', '--hard', self.remote_branch_ref()])
 
     def local_commits(self):
-        return self._run_git(['log', '--pretty=oneline', 'HEAD...' + self.remote_branch_ref()]).splitlines()
+        return self._run_git(['log', '--no-abbrev-commit', '--pretty=oneline', 'HEAD...' + self.remote_branch_ref()]).splitlines()
 
     def rebase_in_progress(self):
         return self._filesystem.exists(self.absolute_path(self._filesystem.join('.git', 'rebase-apply')))
@@ -185,7 +185,7 @@ class Git(SCM, SVNRepository):
         return self._run_git(["rm", "-f"] + paths)
 
     def exists(self, path):
-        return_code = self._run_git(["show", "HEAD:%s" % path], return_exit_code=True, decode_output=False)
+        return_code = self._run_git(["show", "--no-abbrev-commit", "HEAD:%s" % path], return_exit_code=True, decode_output=False)
         return return_code != self.ERROR_FILE_IS_MISSING
 
     def _branch_from_ref(self, ref):
@@ -243,7 +243,7 @@ class Git(SCM, SVNRepository):
 
     def _changes_files_for_commit(self, git_commit):
         # --pretty="format:" makes git show not print the commit log header.
-        changed_files = self._run_git(["show", "--pretty=format:", "--name-only", git_commit])
+        changed_files = self._run_git(["show", "--no-abbrev-commit", "--pretty=format:", "--name-only", git_commit])
         # Strip blank lines which could appear at the top on older versions of git.
         return changed_files.lstrip().splitlines()
 
@@ -253,7 +253,7 @@ class Git(SCM, SVNRepository):
 
     def revisions_changing_file(self, path, limit=5):
         # git rev-list head --remove-empty --limit=5 -- path would be equivalent.
-        commit_ids = self._run_git(["log", "--remove-empty", "--pretty=format:%H", "-%s" % limit, "--", path]).splitlines()
+        commit_ids = self._run_git(["log", "--no-abbrev-commit", "--remove-empty", "--pretty=format:%H", "-%s" % limit, "--", path]).splitlines()
         return list(filter(lambda revision: revision, map(self.svn_revision_from_git_commit, commit_ids)))
 
     def conflicted_files(self):
@@ -278,10 +278,10 @@ class Git(SCM, SVNRepository):
     def _most_recent_log_matching(self, grep_str, path):
         # We use '--grep=' + foo rather than '--grep', foo because
         # git 1.7.0.4 (and earlier) didn't support the separate arg.
-        return self._run_git(['log', '-1', '--grep=' + grep_str, '--date=iso', self.find_checkout_root(path)])
+        return self._run_git(['log', '--no-abbrev-commit', '-1', '--grep=' + grep_str, '--date=iso', self.find_checkout_root(path)])
 
     def _most_recent_log_for_revision(self, revision, path):
-        return self._run_git(['log', '-1', revision, '--date=iso', self.find_checkout_root(path)])
+        return self._run_git(['log', '--no-abbrev-commit', '-1', revision, '--date=iso', self.find_checkout_root(path)])
 
     def _field_from_git_svn_id(self, path, field):
         # Keep this in sync with the regex from git_svn_id_regexp() above.
@@ -391,7 +391,7 @@ class Git(SCM, SVNRepository):
 
     @memoized
     def git_commit_from_svn_revision(self, svn_revision):
-        git_log = self._run_git(['log', '-1', '--grep=^\s*git-svn-id:.*@%s ' % svn_revision])
+        git_log = self._run_git(['log', '--no-abbrev-commit', '-1', '--grep=^\s*git-svn-id:.*@%s ' % svn_revision])
         git_commit = re.search("^commit (?P<commit>[a-f0-9]{40})", git_log)
         if not git_commit:
             # FIXME: Alternatively we could offer to update the checkout? Or return None?
@@ -406,7 +406,7 @@ class Git(SCM, SVNRepository):
     def contents_at_revision(self, path, revision):
         """Returns a byte array (str()) containing the contents
         of path @ revision in the repository."""
-        return self._run_git(["show", "%s:%s" % (self.git_commit_from_svn_revision(revision), path)], decode_output=False)
+        return self._run_git(["show", "--no-abbrev-commit", "%s:%s" % (self.git_commit_from_svn_revision(revision), path)], decode_output=False)
 
     def diff_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)
@@ -416,11 +416,11 @@ class Git(SCM, SVNRepository):
         return self._run_git(['diff', 'HEAD', '--no-renames', '--', path])
 
     def show_head(self, path):
-        return self._run_git(['show', 'HEAD:' + self.to_object_name(path)], decode_output=False)
+        return self._run_git(['show', '--no-abbrev-commit', 'HEAD:' + self.to_object_name(path)], decode_output=False)
 
     def committer_email_for_revision(self, revision):
         git_commit = self.git_commit_from_svn_revision(revision)
-        committer_email = self._run_git(["log", "-1", "--pretty=format:%ce", git_commit])
+        committer_email = self._run_git(["log", "--no-abbrev-commit", "-1", "--pretty=format:%ce", git_commit])
         # Git adds an extra @repository_hash to the end of every committer email, remove it:
         return committer_email.rsplit("@", 1)[0]
 

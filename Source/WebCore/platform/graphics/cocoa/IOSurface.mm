@@ -26,6 +26,7 @@
 #import "config.h"
 #import "IOSurface.h"
 
+#import "CoreVideoSoftLink.h"
 #import "GraphicsContextCG.h"
 #import "GraphicsContextGL.h"
 #import "HostWindow.h"
@@ -39,8 +40,6 @@
 #import <wtf/MachSendRight.h>
 #import <wtf/MathExtras.h>
 #import <wtf/text/TextStream.h>
-
-#import <WebCore/CoreVideoSoftLink.h>
 
 namespace WebCore {
 

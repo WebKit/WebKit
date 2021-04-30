@@ -94,10 +94,10 @@ CVPixelBufferPoolRef RealtimeIncomingVideoSourceCocoa::pixelBufferPool(size_t wi
         OSType poolBufferType;
         switch (bufferType) {
         case webrtc::BufferType::I420:
-            poolBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+            poolBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
             break;
         case webrtc::BufferType::I010:
-            poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarFullRange;
+            poolBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
         }
         m_pixelBufferPool = createPixelBufferPool(width, height, poolBufferType);
         m_pixelBufferPoolWidth = width;

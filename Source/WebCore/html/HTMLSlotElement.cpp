@@ -141,34 +141,23 @@ Vector<Ref<Node>> HTMLSlotElement::assignedNodes(const AssignedNodesOptions& opt
         flattenAssignedNodes(nodes, *this);
         return nodes;
     }
-    auto* assignedNodes = this->assignedNodes();
-    if (!assignedNodes)
-        return { };
 
-    Vector<Ref<Node>> nodes;
-    nodes.reserveInitialCapacity(assignedNodes->size());
-    for (auto& nodePtr : *assignedNodes) {
-        auto* node = nodePtr.get();
-        if (UNLIKELY(!node))
-            continue;
-        nodes.uncheckedAppend(*node);
+    if (auto* nodes = assignedNodes(); nodes) {
+        return WTF::compactMap(*nodes, [](auto& nodeWeakPtr) -> RefPtr<Node> {
+            return nodeWeakPtr.get();
+        });
     }
 
-    return nodes;
+    return { };
 }
 
 Vector<Ref<Element>> HTMLSlotElement::assignedElements(const AssignedNodesOptions& options) const
 {
-    auto nodes = assignedNodes(options);
-
-    Vector<Ref<Element>> elements;
-    elements.reserveCapacity(nodes.size());
-    for (auto& node : nodes) {
-        if (is<Element>(node))
-            elements.uncheckedAppend(static_reference_cast<Element>(WTFMove(node)));
-    }
-
-    return elements;
+    return WTF::compactMap(assignedNodes(options), [](auto&& node) -> RefPtr<Element> {
+        if (!is<Element>(node))
+            return nullptr;
+        return static_reference_cast<Element>(WTFMove(node));
+    });
 }
 
 void HTMLSlotElement::enqueueSlotChangeEvent()

@@ -32,6 +32,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-padding.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-box-size.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-1.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-2.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-3.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-4-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-4.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-reftest-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear-reftest.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-logical/logical-values-float-clear.html

@@ -54,6 +54,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+#include "WebDateTimePickerGtk.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -269,6 +273,13 @@ RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy* page, con
         return WebKitColorChooser::create(*page, color, rect);
     return WebColorPickerGtk::create(*page, color, rect);
 }
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+RefPtr<WebDateTimePicker> PageClientImpl::createDateTimePicker(WebPageProxy& page)
+{
+    return WebDateTimePickerGtk::create(page);
+}
+#endif
 
 #if ENABLE(DATALIST_ELEMENT)
 RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy& page)
@@ -628,6 +639,11 @@ String PageClientImpl::themeName() const
     if (name.endsWith("-dark") || name.endsWith("-Dark"))
         return name.substring(0, name.length() - 5);
     return name;
+}
+
+void PageClientImpl::makeViewBlank(bool makeBlank)
+{
+    webkitWebViewBaseMakeBlank(WEBKIT_WEB_VIEW_BASE(m_viewWidget), makeBlank);
 }
 
 } // namespace WebKit

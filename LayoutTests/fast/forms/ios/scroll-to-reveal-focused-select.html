@@ -51,15 +51,22 @@ async function run()
     if (!window.testRunner)
         return;
 
+    // Focus the first select element.
     await UIHelper.activateAndWaitForInputSessionAt(160, 40);
+    document.activeElement.blur();
+    await UIHelper.waitForContextMenuToHide();
+
+    // Focus the second select element.
     await tapAtLocationAndWaitForScrollingToEnd(160, 120);
+    await UIHelper.waitForContextMenuToShow();
 
     shouldBe("document.activeElement", "document.getElementById('bottom')");
     shouldBeGreaterThanOrEqual("pageYOffset", "1000");
 
     document.activeElement.blur();
-    await UIHelper.waitForKeyboardToHide();
+    await UIHelper.waitForContextMenuToHide();
     tapToFocus.remove();
+
     finishJSTest();
 }
 </script>

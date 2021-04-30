@@ -441,9 +441,17 @@ URL static inline originURL(const SecurityOrigin& origin)
     return url;
 }
 
-void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, bool shouldRefreshCache)
+void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, SWServerRegistration& registration)
 {
     LOG(ServiceWorker, "Server issuing startScriptFetch for current job %s in client", jobData.identifier().loggingString().utf8().data());
+
+    // Set request's cache mode to "no-cache" if any of the following are true:
+    // - registration's update via cache mode is not "all".
+    // - job's force bypass cache flag is set.
+    // - newestWorker is not null, and registration's last update check time is not null and the time difference in seconds calculated by the
+    //   current time minus registration's last update check time is greater than 86400.
+    bool shouldRefreshCache = registration.updateViaCache() != ServiceWorkerUpdateViaCache::All || (registration.getNewestWorker() && registration.isStale());
+
     auto* connection = m_connections.get(jobData.connectionIdentifier());
     if (connection) {
         connection->startScriptFetchInClient(jobData.identifier().jobIdentifier, jobData.registrationKey(), shouldRefreshCache ? FetchOptions::Cache::NoCache : FetchOptions::Cache::Default);
@@ -466,6 +474,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, bool should
         request.setHTTPReferrer(originURL(origin).string());
         request.setHTTPUserAgent(serviceWorkerClientUserAgent(ClientOrigin { jobData.topOrigin, SecurityOrigin::create(jobData.scriptURL)->data() }));
         request.setPriority(ResourceLoadPriority::Low);
+        request.setIsAppBound(registration.isAppBound());
 
         m_softUpdateCallback(ServiceWorkerJobData { jobData }, shouldRefreshCache, WTFMove(request), [this, weakThis = makeWeakPtr(this)](auto& result) {
             if (!weakThis)

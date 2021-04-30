@@ -6,6 +6,8 @@ PASS console namespace: property descriptor
 PASS console namespace: [[Extensible]] is true
 PASS console namespace: [[Prototype]] is Object.prototype
 PASS console namespace: typeof is "object"
+PASS console namespace: has no length property
+PASS console namespace: has no name property
 PASS console namespace: operation assert(optional boolean, any...)
 PASS console namespace: operation clear()
 PASS console namespace: operation debug(any...)

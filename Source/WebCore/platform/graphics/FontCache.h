@@ -207,7 +207,7 @@ struct FontCascadeCacheKeyHash {
 
 struct FontCascadeCacheKeyHashTraits : HashTraits<FontCascadeCacheKey> {
     static FontCascadeCacheKey emptyValue() { return { }; }
-    static void constructDeletedValue(FontCascadeCacheKey& slot) { new (NotNull, &slot) FontCascadeCacheKey { FontDescriptionKey { WTF::HashTableDeletedValue }, { }, { }, { } }; }
+    static void constructDeletedValue(FontCascadeCacheKey& slot) { new (NotNull, &slot.fontDescriptionKey) FontDescriptionKey(WTF::HashTableDeletedValue); }
     static bool isDeletedValue(const FontCascadeCacheKey& key) { return key.fontDescriptionKey.isHashTableDeletedValue(); }
 };
 
@@ -220,7 +220,7 @@ class FontCache : public RefCounted<FontCache> {
 public:
     static Ref<FontCache> create();
     WEBCORE_EXPORT static FontCache& singleton();
-    static FontCache& fontCacheFallbackToSingleton(RefPtr<FontSelector>);
+    static FontCache& fontCacheFallingBackToSingleton(RefPtr<FontSelector>);
 
     ~FontCache();
 
@@ -378,7 +378,7 @@ Optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::decode(De
     return prewarmInformation;
 }
 
-inline FontCache& FontCache::fontCacheFallbackToSingleton(RefPtr<FontSelector> fontSelector)
+inline FontCache& FontCache::fontCacheFallingBackToSingleton(RefPtr<FontSelector> fontSelector)
 {
     return fontSelector ? fontSelector->fontCache() : FontCache::singleton();
 }

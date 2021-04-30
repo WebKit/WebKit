@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x113
           RenderText {#text} at (0,2) size 455x109
             text run at (0,2) width 455: "The test did"
-          RenderInline {SPAN} at (0,0) size 0x0
+          RenderInline {SPAN} at (0,0) size 0x109
             RenderInline {B} at (0,0) size 0x0
         RenderBlock (anonymous) at (0,113) size 784x0
           RenderBlock {DIV} at (0,0) size 784x0

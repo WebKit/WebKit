@@ -93,6 +93,10 @@ public:
         Configuration m_configuration;
     };
 
+    static Checked<unsigned, RecordOverflow> numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
+    static Checked<unsigned, RecordOverflow> calculateBytesPerRow(WebCore::IntSize, const Configuration&);
+    static Checked<unsigned, RecordOverflow> calculateBytesPerPixel(const Configuration&);
+
     // Create a shareable bitmap that uses malloced memory.
     static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, Configuration);
 
@@ -160,10 +164,6 @@ public:
 private:
     ShareableBitmap(const WebCore::IntSize&, Configuration, void*);
     ShareableBitmap(const WebCore::IntSize&, Configuration, RefPtr<SharedMemory>);
-
-    static Checked<unsigned, RecordOverflow> numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
-    static Checked<unsigned, RecordOverflow> calculateBytesPerRow(WebCore::IntSize, const Configuration&);
-    static Checked<unsigned, RecordOverflow> calculateBytesPerPixel(const Configuration&);
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef) const;

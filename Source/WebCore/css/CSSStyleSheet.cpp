@@ -254,26 +254,6 @@ bool CSSStyleSheet::canAccessRules() const
     return document->securityOrigin().canRequest(baseURL);
 }
 
-ExceptionOr<Ref<CSSRuleList>> CSSStyleSheet::rulesForBindings()
-{
-    auto rules = this->rules();
-    if (!rules)
-        return Exception { SecurityError, "Not allowed to access cross-origin stylesheet"_s };
-    return rules.releaseNonNull();
-}
-
-RefPtr<CSSRuleList> CSSStyleSheet::rules()
-{
-    if (!canAccessRules())
-        return nullptr;
-    // IE behavior.
-    auto ruleList = StaticCSSRuleList::create();
-    unsigned ruleCount = length();
-    for (unsigned i = 0; i < ruleCount; ++i)
-        ruleList->rules().append(item(i));
-    return ruleList;
-}
-
 ExceptionOr<unsigned> CSSStyleSheet::insertRule(const String& ruleString, unsigned index)
 {
     ASSERT(m_childRuleCSSOMWrappers.isEmpty() || m_childRuleCSSOMWrappers.size() == m_contents->ruleCount());

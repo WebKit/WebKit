@@ -22,6 +22,7 @@
 #include "config.h"
 #include "MatrixTransformOperation.h"
 
+#include "AnimationUtilities.h"
 #include <algorithm>
 #include <wtf/text/TextStream.h>
 
@@ -35,10 +36,10 @@ bool MatrixTransformOperation::operator==(const TransformOperation& other) const
     return m_a == m.m_a && m_b == m.m_b && m_c == m.m_c && m_d == m.m_d && m_e == m.m_e && m_f == m.m_f;
 }
 
-Ref<TransformOperation> MatrixTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+Ref<TransformOperation> MatrixTransformOperation::blend(const TransformOperation* from, const BlendingContext& context, bool blendToIdentity)
 {
-    auto createOperation = [] (TransformationMatrix& to, TransformationMatrix& from, double progress) {
-        to.blend(from, progress);
+    auto createOperation = [] (TransformationMatrix& to, TransformationMatrix& from, const BlendingContext& context) {
+        to.blend(from, context.progress);
         return MatrixTransformOperation::create(to);
     };
 
@@ -54,8 +55,8 @@ Ref<TransformOperation> MatrixTransformOperation::blend(const TransformOperation
     }
 
     if (blendToIdentity)
-        return createOperation(fromT, toT, progress);
-    return createOperation(toT, fromT, progress);
+        return createOperation(fromT, toT, context);
+    return createOperation(toT, fromT, context);
 }
 
 void MatrixTransformOperation::dump(TextStream& ts) const

@@ -4,7 +4,7 @@
 <model id="model">
     <source src="resources/heart.usdz">
 </model>
-<pre id="layers"></p>
+<pre id="layers"></pre>
 <script>
     let layers = document.getElementById("layers");
 
@@ -19,6 +19,7 @@
     model.ready.then(value => {
         if (window.testRunner)
             layers.innerText = window.internals.layerTreeAsText(document);
+        model.remove();
     }, reason => {
         layers.textContent = `Failed. Model did not load: ${reason}`;
     }).finally(() => { 

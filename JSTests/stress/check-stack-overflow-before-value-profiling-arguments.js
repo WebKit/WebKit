@@ -1,9 +1,11 @@
-//@ skip if ["arm", "mips"].include?($architecture)
+//@ requireOptions("-e", "let arraysize=0x100000") if ["arm", "mips"].include?($architecture)
 //@ runDefault("--useConcurrentJIT=0", "--thresholdForJITAfterWarmUp=10", "--slowPathAllocsBetweenGCs=10", "--useConcurrentGC=0")
+
+arraysize = typeof(arraysize) === 'undefined' ? 0x1000000 : arraysize;
 
 function fullGC() {
     for (var i = 0; i < 10; i++) {
-        new Float64Array(0x1000000);
+        new Float64Array(arraysize);
     }
 }
 

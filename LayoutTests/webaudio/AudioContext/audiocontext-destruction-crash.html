@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test passes if it does not crash.</p>
+<script>
+  if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+  }
+
+  onload = () => {
+      for (let i = 0; i < 20; i++)
+          new AudioContext().createChannelSplitter();
+      setTimeout(() => {
+          if (window.testRunner)
+              testRunner.notifyDone();
+      }, 10);
+  };
+</script>
+</body>
+</html>

@@ -74,17 +74,17 @@ void ReferenceFilterOperation::loadExternalDocumentIfNeeded(CachedResourceLoader
     m_cachedSVGDocumentReference->load(cachedResourceLoader, options);
 }
 
-RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+RefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;
     
     if (blendToPassthrough)
-        return BasicColorMatrixFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), progress), m_type);
+        return BasicColorMatrixFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), context), m_type);
         
     const BasicColorMatrixFilterOperation* fromOperation = downcast<BasicColorMatrixFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();
-    return BasicColorMatrixFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
+    return BasicColorMatrixFilterOperation::create(WebCore::blend(fromAmount, m_amount, context), m_type);
 }
 
 bool BasicColorMatrixFilterOperation::transformColor(SRGBA<float>& color) const
@@ -137,17 +137,17 @@ double BasicColorMatrixFilterOperation::passthroughAmount() const
     }
 }
 
-RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+RefPtr<FilterOperation> BasicComponentTransferFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;
     
     if (blendToPassthrough)
-        return BasicComponentTransferFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), progress), m_type);
+        return BasicComponentTransferFilterOperation::create(WebCore::blend(m_amount, passthroughAmount(), context), m_type);
         
     const BasicComponentTransferFilterOperation* fromOperation = downcast<BasicComponentTransferFilterOperation>(from);
     double fromAmount = fromOperation ? fromOperation->amount() : passthroughAmount();
-    return BasicComponentTransferFilterOperation::create(WebCore::blend(fromAmount, m_amount, progress), m_type);
+    return BasicComponentTransferFilterOperation::create(WebCore::blend(fromAmount, m_amount, context), m_type);
 }
 
 bool BasicComponentTransferFilterOperation::transformColor(SRGBA<float>& color) const
@@ -215,7 +215,7 @@ bool InvertLightnessFilterOperation::operator==(const FilterOperation& operation
     return true;
 }
     
-RefPtr<FilterOperation> InvertLightnessFilterOperation::blend(const FilterOperation* from, double, bool)
+RefPtr<FilterOperation> InvertLightnessFilterOperation::blend(const FilterOperation* from, const BlendingContext&, bool)
 {
     if (from && !from->isSameType(*this))
         return this;
@@ -331,7 +331,7 @@ bool BlurFilterOperation::operator==(const FilterOperation& operation) const
     return m_stdDeviation == downcast<BlurFilterOperation>(operation).stdDeviation();
 }
     
-RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;
@@ -339,11 +339,11 @@ RefPtr<FilterOperation> BlurFilterOperation::blend(const FilterOperation* from, 
     LengthType lengthType = m_stdDeviation.type();
 
     if (blendToPassthrough)
-        return BlurFilterOperation::create(WebCore::blend(m_stdDeviation, Length(lengthType), progress));
+        return BlurFilterOperation::create(WebCore::blend(m_stdDeviation, Length(lengthType), context));
 
     const BlurFilterOperation* fromOperation = downcast<BlurFilterOperation>(from);
     Length fromLength = fromOperation ? fromOperation->m_stdDeviation : Length(lengthType);
-    return BlurFilterOperation::create(WebCore::blend(fromLength, m_stdDeviation, progress));
+    return BlurFilterOperation::create(WebCore::blend(fromLength, m_stdDeviation, context));
 }
     
 bool DropShadowFilterOperation::operator==(const FilterOperation& operation) const
@@ -354,16 +354,16 @@ bool DropShadowFilterOperation::operator==(const FilterOperation& operation) con
     return m_location == other.m_location && m_stdDeviation == other.m_stdDeviation && m_color == other.m_color;
 }
     
-RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
+RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* from, const BlendingContext& context, bool blendToPassthrough)
 {
     if (from && !from->isSameType(*this))
         return this;
 
     if (blendToPassthrough)
         return DropShadowFilterOperation::create(
-            WebCore::blend(m_location, IntPoint(), progress),
-            WebCore::blend(m_stdDeviation, 0, progress),
-            WebCore::blend(m_color, Color::transparentBlack, progress));
+            WebCore::blend(m_location, IntPoint(), context),
+            WebCore::blend(m_stdDeviation, 0, context),
+            WebCore::blend(m_color, Color::transparentBlack, context));
 
     const DropShadowFilterOperation* fromOperation = downcast<DropShadowFilterOperation>(from);
     IntPoint fromLocation = fromOperation ? fromOperation->location() : IntPoint();
@@ -371,9 +371,9 @@ RefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperation* 
     Color fromColor = fromOperation ? fromOperation->color() : Color::transparentBlack;
     
     return DropShadowFilterOperation::create(
-        WebCore::blend(fromLocation, m_location, progress),
-        WebCore::blend(fromStdDeviation, m_stdDeviation, progress),
-        WebCore::blend(fromColor, m_color, progress));
+        WebCore::blend(fromLocation, m_location, context),
+        WebCore::blend(fromStdDeviation, m_stdDeviation, context),
+        WebCore::blend(fromColor, m_color, context));
 }
 
 TextStream& operator<<(TextStream& ts, const FilterOperation& filter)

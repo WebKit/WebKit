@@ -655,7 +655,7 @@ public:
     void show() final;
     void hide() final;
 
-    bool shouldPlaceBlockDirectionScrollbarOnLeft() const final;
+    bool shouldPlaceVerticalScrollbarOnLeft() const final;
 
     void didRestoreFromBackForwardCache();
 

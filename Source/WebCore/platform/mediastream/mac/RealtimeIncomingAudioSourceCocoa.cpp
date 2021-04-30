@@ -35,6 +35,7 @@
 #include "LibWebRTCAudioFormat.h"
 #include "Logging.h"
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
+#include <wtf/FastMalloc.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
@@ -53,11 +54,6 @@ Ref<RealtimeIncomingAudioSourceCocoa> RealtimeIncomingAudioSourceCocoa::create(r
     return adoptRef(*new RealtimeIncomingAudioSourceCocoa(WTFMove(audioTrack), WTFMove(audioTrackId)));
 }
 
-RealtimeIncomingAudioSourceCocoa::RealtimeIncomingAudioSourceCocoa(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
-    : RealtimeIncomingAudioSource(WTFMove(audioTrack), WTFMove(audioTrackId))
-{
-}
-
 static inline AudioStreamBasicDescription streamDescription(size_t sampleRate, size_t channelCount)
 {
     AudioStreamBasicDescription streamFormat;
@@ -65,25 +61,70 @@ static inline AudioStreamBasicDescription streamDescription(size_t sampleRate, s
     return streamFormat;
 }
 
-void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames)
+RealtimeIncomingAudioSourceCocoa::RealtimeIncomingAudioSourceCocoa(rtc::scoped_refptr<webrtc::AudioTrackInterface>&& audioTrack, String&& audioTrackId)
+    : RealtimeIncomingAudioSource(WTFMove(audioTrack), WTFMove(audioTrackId))
+    , m_sampleRate(LibWebRTCAudioFormat::sampleRate)
+    , m_numberOfChannels(1)
+    , m_streamDescription(streamDescription(m_sampleRate, m_numberOfChannels))
+    , m_audioBufferList(makeUnique<WebAudioBufferList>(m_streamDescription))
+#if !RELEASE_LOG_DISABLED
+    , m_logTimer(*this, &RealtimeIncomingAudioSourceCocoa::logTimerFired)
+#endif
+{
+}
+
+void RealtimeIncomingAudioSourceCocoa::startProducingData()
+{
+    RealtimeIncomingAudioSource::startProducingData();
+#if !RELEASE_LOG_DISABLED
+    m_logTimer.startRepeating(LogTimerInterval);
+#endif
+}
+
+void RealtimeIncomingAudioSourceCocoa::stopProducingData()
 {
 #if !RELEASE_LOG_DISABLED
-    if (!(++m_chunksReceived % 200)) {
-        callOnMainThread([identifier = LOGIDENTIFIER, this, protectedThis = makeRef(*this), chunksReceived = m_chunksReceived] {
-            ALWAYS_LOG_IF(loggerPtr(), identifier, "chunk ", chunksReceived);
-        });
+    m_logTimer.stop();
+#endif
+    RealtimeIncomingAudioSource::stopProducingData();
+}
+
+#if !RELEASE_LOG_DISABLED
+void RealtimeIncomingAudioSourceCocoa::logTimerFired()
+{
+    if (!m_lastChunksReceived || (m_chunksReceived - m_lastChunksReceived) >= ChunksReceivedCountForLogging) {
+        m_lastChunksReceived = m_chunksReceived;
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "chunk ", m_chunksReceived);
     }
+    if (m_audioFormatChanged) {
+        ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER, "new audio buffer list for sampleRate ", m_sampleRate, " and ", m_numberOfChannels, " channel(s)");
+        m_audioFormatChanged = false;
+    }
+}
 #endif
 
-    if (!m_audioBufferList || m_sampleRate != sampleRate || m_numberOfChannels != numberOfChannels) {
-        callOnMainThread([identifier = LOGIDENTIFIER, this, protectedThis = makeRef(*this), sampleRate, numberOfChannels] {
-            ALWAYS_LOG_IF(loggerPtr(), identifier, "new audio buffer list for sampleRate ", sampleRate, " and ", numberOfChannels, " channel(s)");
-        });
+void RealtimeIncomingAudioSourceCocoa::OnData(const void* audioData, int bitsPerSample, int sampleRate, size_t numberOfChannels, size_t numberOfFrames)
+{
+    if (sampleRate != m_sampleRate)
+        return;
+
+#if !RELEASE_LOG_DISABLED
+    ++m_chunksReceived;
+#endif
+
+    if (!m_audioBufferList || m_numberOfChannels != numberOfChannels) {
+#if !RELEASE_LOG_DISABLED
+        m_audioFormatChanged = true;
+#endif
 
         m_sampleRate = sampleRate;
         m_numberOfChannels = numberOfChannels;
         m_streamDescription = streamDescription(sampleRate, numberOfChannels);
-        m_audioBufferList = makeUnique<WebAudioBufferList>(m_streamDescription);
+
+        {
+            DisableMallocRestrictionsForCurrentThreadScope scope;
+            m_audioBufferList = makeUnique<WebAudioBufferList>(m_streamDescription);
+        }
         if (m_sampleRate && m_numberOfFrames)
             m_numberOfFrames = m_numberOfFrames * sampleRate / m_sampleRate;
         else

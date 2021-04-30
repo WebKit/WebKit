@@ -89,8 +89,10 @@ void RemoteRealtimeVideoSource::createRemoteMediaSource()
 
 RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource()
 {
-    if (m_proxy.shouldCaptureInGPUProcess())
-        WebProcess::singleton().ensureGPUProcessConnection().removeClient(*this);
+    if (m_proxy.shouldCaptureInGPUProcess()) {
+        if (auto* connection = WebProcess::singleton().existingGPUProcessConnection())
+            connection->removeClient(*this);
+    }
 
 #if PLATFORM(IOS_FAMILY)
     if (deviceType() == CaptureDevice::DeviceType::Camera)

@@ -36,6 +36,9 @@ class ImageBufferCGBitmapBackend : public ImageBufferCGBackend {
     WTF_MAKE_ISO_ALLOCATED(ImageBufferCGBitmapBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferCGBitmapBackend);
 public:
+    static IntSize calculateSafeBackendSize(const Parameters&);
+    static size_t calculateMemoryCost(const Parameters&);
+
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, CGColorSpaceRef, const HostWindow*);
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const HostWindow*);
     static std::unique_ptr<ImageBufferCGBitmapBackend> create(const Parameters&, const GraphicsContext&);
@@ -55,6 +58,8 @@ public:
 
 private:
     ImageBufferCGBitmapBackend(const Parameters&, void* data, RetainPtr<CGDataProviderRef>&&, std::unique_ptr<GraphicsContext>&&);
+
+    unsigned bytesPerRow() const override;
 
     void* m_data;
     RetainPtr<CGDataProviderRef> m_dataProvider;

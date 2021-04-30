@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import <JavaScriptCore/JSCConfig.h>
 #import <WebKit/WKHTTPCookieStorePrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRef.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
@@ -658,6 +659,7 @@ TEST(WebKit, ApplicationCacheDirectories)
     [webViewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]).get()];
     
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView.get().configuration.preferences _setOfflineApplicationCacheIsEnabled:YES];
     [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/index.html", server.port()]]]];
 
     while (![fileManager fileExistsAtPath:subdirectoryPath])

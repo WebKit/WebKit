@@ -28,7 +28,7 @@ typedef unsigned long u32;
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     InterfaceName=GPUProgrammablePassEncoder,
     SkipVTableValidation,
     Exposed=Window

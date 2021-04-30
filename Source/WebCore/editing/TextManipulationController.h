@@ -119,7 +119,7 @@ public:
     void didCreateRendererForElement(Element&);
     void didCreateRendererForTextNode(Text&);
     void didUpdateContentForText(Text&);
-    void removeNode(Node*);
+    void removeNode(Node&);
 
     enum class ManipulationFailureType : uint8_t {
         ContentChanged,
@@ -182,9 +182,9 @@ private:
 
     WeakPtr<Document> m_document;
     WeakHashSet<Element> m_elementsWithNewRenderer;
-    HashSet<Text*> m_manipulatedTextsWithNewContent;
-    HashSet<Node*> m_textNodesWithNewRenderer;
-    HashSet<Node*> m_manipulatedNodes;
+    WeakHashSet<Text> m_manipulatedTextsWithNewContent;
+    WeakHashSet<Node> m_textNodesWithNewRenderer;
+    WeakHashSet<Node> m_manipulatedNodes;
 
     HashMap<String, bool> m_cachedFontFamilyExclusionResults;
 

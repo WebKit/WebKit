@@ -52,13 +52,6 @@ bool RunIterator::atEnd() const
     });
 }
 
-void RunIterator::setAtEnd()
-{
-    WTF::switchOn(m_run.m_pathVariant, [](auto& path) {
-        path.setAtEnd();
-    });
-}
-
 RunIterator RunIterator::nextOnLine() const
 {
     return RunIterator(*this).traverseNextOnLine();
@@ -131,17 +124,17 @@ RunIterator& RunIterator::traversePreviousOnLine()
 
 RunIterator& RunIterator::traverseNextOnLineIgnoringLineBreak()
 {
-    traverseNextOnLine();
-    if (!atEnd() && m_run.isLineBreak())
-        setAtEnd();
+    do {
+        traverseNextOnLine();
+    } while (!atEnd() && m_run.isLineBreak());
     return *this;
 }
 
 RunIterator& RunIterator::traversePreviousOnLineIgnoringLineBreak()
 {
-    traversePreviousOnLine();
-    if (!atEnd() && m_run.isLineBreak())
-        setAtEnd();
+    do {
+        traversePreviousOnLine();
+    } while (!atEnd() && m_run.isLineBreak());
     return *this;
 }
 

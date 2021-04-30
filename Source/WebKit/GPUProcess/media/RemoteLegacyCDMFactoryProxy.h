@@ -64,6 +64,8 @@ public:
 
     GPUConnectionToWebProcess* gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }
 
+    bool allowsExitUnderMemoryPressure() const;
+
 private:
     friend class GPUProcessConnection;
     // IPC::MessageReceiver

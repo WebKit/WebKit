@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,9 +41,9 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferIOSurfaceBackend);
 
-IntSize ImageBufferIOSurfaceBackend::calculateBackendSize(const FloatSize& size, float resolutionScale)
+IntSize ImageBufferIOSurfaceBackend::calculateSafeBackendSize(const Parameters& parameters)
 {
-    IntSize backendSize = ImageBufferCGBackend::calculateBackendSize(size, resolutionScale);
+    IntSize backendSize = calculateBackendSize(parameters);
     if (backendSize.isEmpty())
         return { };
 
@@ -52,6 +52,23 @@ IntSize ImageBufferIOSurfaceBackend::calculateBackendSize(const FloatSize& size,
         return { };
 
     return backendSize;
+}
+
+unsigned ImageBufferIOSurfaceBackend::calculateBytesPerRow(const IntSize& backendSize)
+{
+    unsigned bytesPerRow = ImageBufferCGBackend::calculateBytesPerRow(backendSize);
+    return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow);
+}
+
+size_t ImageBufferIOSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
+{
+    IntSize backendSize = calculateBackendSize(parameters);
+    return ImageBufferBackend::calculateMemoryCost(backendSize, calculateBytesPerRow(backendSize));
+}
+
+size_t ImageBufferIOSurfaceBackend::calculateExternalMemoryCost(const Parameters& parameters)
+{
+    return calculateMemoryCost(parameters);
 }
 
 RetainPtr<CGColorSpaceRef> ImageBufferIOSurfaceBackend::contextColorSpace(const GraphicsContext& context)
@@ -66,7 +83,7 @@ RetainPtr<CGColorSpaceRef> ImageBufferIOSurfaceBackend::contextColorSpace(const 
 
 std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create(const Parameters& parameters, CGColorSpaceRef cgColorSpace, const HostWindow* hostWindow)
 {
-    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
+    IntSize backendSize = calculateSafeBackendSize(parameters);
     if (backendSize.isEmpty())
         return nullptr;
 
@@ -106,7 +123,6 @@ ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& param
 
 GraphicsContext& ImageBufferIOSurfaceBackend::context() const
 {
-
     GraphicsContext& context = m_surface->ensureGraphicsContext();
     if (m_needsSetupContext) {
         m_needsSetupContext = false;
@@ -123,16 +139,6 @@ void ImageBufferIOSurfaceBackend::flushContext()
 IntSize ImageBufferIOSurfaceBackend::backendSize() const
 {
     return m_surface->size();
-}
-
-size_t ImageBufferIOSurfaceBackend::memoryCost() const
-{
-    return m_surface->totalBytes();
-}
-
-size_t ImageBufferIOSurfaceBackend::externalMemoryCost() const
-{
-    return memoryCost();
 }
 
 unsigned ImageBufferIOSurfaceBackend::bytesPerRow() const

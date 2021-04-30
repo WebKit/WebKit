@@ -446,14 +446,7 @@ void WebXRSystem::requestSession(Document& document, XRSessionMode mode, const X
         promise.resolve(WTFMove(session));
         rejectPromiseWithNotSupportedError.release();
 
-        // FIXME:
-        // 5.4.10 Queue a task to perform the following steps: NOTE: These steps ensure that initial inputsourceschange
-        // events occur after the initial session is resolved.
-        //     1. Set session's promise resolved flag to true.
-        //     2. Let sources be any existing input sources attached to session.
-        //     3. If sources is non-empty, perform the following steps:
-        //        1. Set session's list of active XR input sources to sources.
-        //        2. Fire an XRInputSourcesChangeEvent named inputsourceschange on session with added set to sources.
+        // 5.4.10 is handled in WebXRSession::sessionDidInitializeInputSources.
     });
 }
 
@@ -468,8 +461,10 @@ void WebXRSystem::stop()
 
 void WebXRSystem::registerSimulatedXRDeviceForTesting(PlatformXR::Device& device)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+    auto scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext || !scriptExecutionContext->settingsValues().webXREnabled)
         return;
+
     m_testingDevices++;
     if (device.supports(XRSessionMode::ImmersiveVr) || device.supports(XRSessionMode::ImmersiveAr)) {
         m_immersiveDevices.add(device);
@@ -481,8 +476,10 @@ void WebXRSystem::registerSimulatedXRDeviceForTesting(PlatformXR::Device& device
 
 void WebXRSystem::unregisterSimulatedXRDeviceForTesting(PlatformXR::Device& device)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().webXREnabled())
+    auto scriptExecutionContext = this->scriptExecutionContext();
+    if (!scriptExecutionContext || !scriptExecutionContext->settingsValues().webXREnabled)
         return;
+
     ASSERT(m_testingDevices);
     bool removed = m_immersiveDevices.remove(device);
     ASSERT_UNUSED(removed, removed || m_inlineXRDevice == &device);

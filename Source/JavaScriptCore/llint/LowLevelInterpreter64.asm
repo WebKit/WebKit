@@ -2178,13 +2178,14 @@ llintOpWithJump(op_switch_imm, OpSwitchImm, macro (size, get, jump, dispatch)
     getu(size, OpSwitchImm, m_tableIndex, t3)
     loadConstantOrVariable(size, t2, t1)
     loadp CodeBlock[cfr], t2
-    loadp CodeBlock::m_rareData[t2], t2
-    muli sizeof SimpleJumpTable, t3
-    loadp CodeBlock::RareData::m_switchJumpTables + VectorBufferOffset[t2], t2
+    loadp CodeBlock::m_unlinkedCode[t2], t2
+    loadp UnlinkedCodeBlock::m_rareData[t2], t2
+    muli sizeof UnlinkedSimpleJumpTable, t3
+    loadp UnlinkedCodeBlock::RareData::m_unlinkedSwitchJumpTables + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
     addp t3, t2
     bqb t1, numberTag, .opSwitchImmNotInt
-    subi SimpleJumpTable::min[t2], t1
-    loadp SimpleJumpTable::branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    subi UnlinkedSimpleJumpTable::m_min[t2], t1
+    loadp UnlinkedSimpleJumpTable::m_branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
     btpz t2, .opSwitchImmFallThrough
     biaeq t1, RefCountedArrayStorageNonNullSizeOffset[t2], .opSwitchImmFallThrough
     loadis [t2, t1, 4], t1
@@ -2207,9 +2208,10 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
     getu(size, OpSwitchChar, m_tableIndex, t3)
     loadConstantOrVariable(size, t2, t1)
     loadp CodeBlock[cfr], t2
-    loadp CodeBlock::m_rareData[t2], t2
-    muli sizeof SimpleJumpTable, t3
-    loadp CodeBlock::RareData::m_switchJumpTables + VectorBufferOffset[t2], t2
+    loadp CodeBlock::m_unlinkedCode[t2], t2
+    loadp UnlinkedCodeBlock::m_rareData[t2], t2
+    muli sizeof UnlinkedSimpleJumpTable, t3
+    loadp UnlinkedCodeBlock::RareData::m_unlinkedSwitchJumpTables + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
     addp t3, t2
     btqnz t1, notCellMask, .opSwitchCharFallThrough
     bbneq JSCell::m_type[t1], StringType, .opSwitchCharFallThrough
@@ -2223,8 +2225,8 @@ llintOpWithJump(op_switch_char, OpSwitchChar, macro (size, get, jump, dispatch)
 .opSwitchChar8Bit:
     loadb [t1], t0
 .opSwitchCharReady:
-    subi SimpleJumpTable::min[t2], t0
-    loadp SimpleJumpTable::branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
+    subi UnlinkedSimpleJumpTable::m_min[t2], t0
+    loadp UnlinkedSimpleJumpTable::m_branchOffsets + FixedVector::m_storage + RefCountedArray::m_data[t2], t2
     btpz t2, .opSwitchCharFallThrough
     biaeq t0, RefCountedArrayStorageNonNullSizeOffset[t2], .opSwitchCharFallThrough
     loadis [t2, t0, 4], t1

@@ -66,6 +66,8 @@ static const HashTableValue JSWorkletGlobalScopeTableValues[] =
 };
 
 static const HashTable JSWorkletGlobalScopeTable = { 1, 1, true, JSWorkletGlobalScope::info(), JSWorkletGlobalScopeTableValues, JSWorkletGlobalScopeTableIndex };
+template<> const ClassInfo JSWorkletGlobalScopeDOMConstructor::s_info = { "WorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScopeDOMConstructor) };
+
 template<> JSValue JSWorkletGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEventTarget::getConstructor(vm, &globalObject);
@@ -77,8 +79,6 @@ template<> void JSWorkletGlobalScopeDOMConstructor::initializeProperties(VM& vm,
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "WorkletGlobalScope"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSWorkletGlobalScopeDOMConstructor::s_info = { "WorkletGlobalScope", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkletGlobalScopeDOMConstructor) };
 
 /* Hash table for prototype */
 

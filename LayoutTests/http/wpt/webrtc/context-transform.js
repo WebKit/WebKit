@@ -2,7 +2,7 @@ class MockRTCRtpTransformer {
     constructor(transformer) {
         this.askKeyFrame = false;
         this.context = transformer;
-        this.context.port.onmessage = (event) => {
+        this.context.options.port.onmessage = (event) => {
             if (event.data === "startKeyFrames")
                 this.askKeyFrame = true;
             else if (event.data === "endKeyFrames")
@@ -15,7 +15,7 @@ class MockRTCRtpTransformer {
         this.reader = this.context.readable.getReader();
         this.writer = this.context.writable.getWriter();
         this.process();
-        this.context.port.postMessage("started " + this.context.options.mediaType + " " + this.context.options.side);
+        this.context.options.port.postMessage("started " + this.context.options.mediaType + " " + this.context.options.side);
     }
 
     process()
@@ -28,7 +28,7 @@ class MockRTCRtpTransformer {
 
             if (this.context.options.mediaType === "video") {
                 if (chunk.value instanceof RTCEncodedVideoFrame)
-                    this.context.port.postMessage("video frame " + chunk.value.type);
+                    this.context.options.port.postMessage("video frame " + chunk.value.type);
 
                 if (this.askKeyFrame)
                     this.context.requestKeyFrame();

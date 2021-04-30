@@ -1,3 +1,1693 @@
+2021-04-27  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] Remove defaultValue() from the method table
+        https://bugs.webkit.org/show_bug.cgi?id=225032
+
+        Reviewed by Darin Adler.
+
+        This patch not only removes the unnecessary method table entry, but also makes
+        the presence of custom ToPrimitive behavior observable to userland code.
+
+        To maintain object identity and (possibly) enable caching, Symbol.toPrimitive
+        method is stored on a structure. To avoid any potential breakage, it's made
+        replaceable and configurable, covering the case when its holder is a [[ProxyTarget]].
+
+        For JSCallbackObject, Symbol.toPrimitive method is created only if ConvertToType
+        callback is present, before initialization is performed.
+
+        Also, this change adds additional ordinaryToPrimitive() cast to fix the invariant
+        that toPrimitive() returns a primitive value, which was broken if ConvertToType
+        callback returned an object. The invariant is enforced by the spec [1][2] and is
+        validated via assertion in JSValue::toStringSlowCase().
+
+        [1]: https://tc39.es/ecma262/#sec-toprimitive (step 2.b.vi)
+        [2]: https://tc39.es/ecma262/#sec-ordinarytoprimitive (step 6)
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::init):
+        (JSC::JSCallbackObject<Parent>::customToPrimitive):
+        (JSC::JSCallbackObject<Parent>::defaultValue): Deleted.
+        * API/tests/testapiScripts/testapi.js:
+        * runtime/ClassInfo.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::defaultValue): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toPrimitive const):
+        (JSC::JSObject::defaultValue): Deleted.
+        * runtime/JSObject.h:
+        * runtime/Operations.cpp:
+        (JSC::jsAddSlowCase):
+
+2021-04-27  Keith Miller  <keith_miller@apple.com>
+
+        StructureStubInfo and PolymorphicAccess should account for their non-GC memory
+        https://bugs.webkit.org/show_bug.cgi?id=225113
+
+        Reviewed by Mark Lam.
+
+        We don't pass the ConcurrentJSLocker to the helper methods here since the
+        DECLARE_VISIT_AGGREGATE macro does not allow for extra parameters to be passed.
+        I filed https://bugs.webkit.org/show_bug.cgi?id=225114 to track that.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::JITData::size const):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::extraMemoryInBytes const):
+        * bytecode/PolymorphicAccess.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::extraMemoryInBytes):
+        * bytecode/StructureStubInfo.h:
+
+2021-04-26  Keith Miller  <keith_miller@apple.com>
+
+        UnlinkedCodeBlock should have better accounting for extra memory
+        https://bugs.webkit.org/show_bug.cgi?id=225080
+
+        Reviewed by Mark Lam.
+
+        Right now we aren't telling the JS GC about the extra memory
+        attached to UnlinkedCodeBlocks. It looks like on at least some sites this
+        can be a fairly large percentage of the total memory retained by
+        the JS object graph. This is very similar to the change we made for
+        CodeBlocks in r276610.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::visitChildrenImpl):
+        (JSC::UnlinkedCodeBlock::RareData::sizeInBytes const):
+        * bytecode/UnlinkedCodeBlock.h:
+
+2021-04-26  Alex Christensen  <achristensen@webkit.org>
+
+        Update Mac-specific CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=225064
+
+        Rubber-stamped by Tim Horton.
+
+        * PlatformMac.cmake:
+
+2021-04-26  Mark Lam  <mark.lam@apple.com>
+
+        %TypedArray%.prototype.sort() should not use a regular array as a temp buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=225062
+        rdar://77021547
+
+        Reviewed by Yusuke Suzuki.
+
+        %TypedArray%.prototype.sort() should not be affected by property changes in
+        Array.prototype.
+
+        References:
+        [1] https://tc39.es/ecma262/#sec-%typedarray%.prototype.sort
+        [2] https://tc39.es/ecma262/#sec-array.prototype.sort
+        [3] https://tc39.es/ecma262/#sec-sortcompare
+
+        * builtins/TypedArrayPrototype.js:
+        (globalPrivate.typedArrayMergeSort):
+
+2021-04-26  Keith Miller  <keith_miller@apple.com>
+
+        CodeBlock should do a better job accounting for extra memory it allocates.
+        https://bugs.webkit.org/show_bug.cgi?id=225068
+
+        Reviewed by Mark Lam.
+
+        Right now we aren't telling the JS GC about the extra memory
+        attached to CodeBlocks. It looks like on at least some sites this
+        can be a fairly large percentage of the total memory retained by
+        the JS object graph.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::JITData::size const):
+        * bytecode/CodeBlock.h:
+        * jit/JITCodeMap.h:
+        (JSC::JITCodeMap::memorySize const):
+
+2021-04-26  Keith Miller  <keith_miller@apple.com>
+
+        numCalleeLocals, numParameters, and numVars should be unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=224995
+
+        Reviewed by Mark Lam.
+
+        All of the various CodeBlock classes currently have the
+        numCalleeLocals and numVars marked as ints. I believe this is just
+        a historical artifact or because VirtualRegister's offset is an
+        int to make handling constants easier. Regardless, it's a bit
+        strange to not handle the sign conversion at the point of
+        comparison between a VirtualRegister offset and the local/var
+        count. This doesn't completely fix every place we use ints for
+        these values but starts on the right track. Lastly, I also added
+        some Check<unsigned>s to the wasm parser for sanity checking.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::setNumParameters):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numParameters const):
+        (JSC::CodeBlock::numberOfArgumentsToSkip const):
+        (JSC::CodeBlock::numCalleeLocals const):
+        (JSC::CodeBlock::numVars const):
+        (JSC::CodeBlock::numTmps const):
+        (JSC::CodeBlock::addressOfNumParameters):
+        (JSC::CodeBlock::isTemporaryRegister):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::numCalleeLocals const):
+        (JSC::UnlinkedCodeBlock::numVars const):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::numCalleeLocals const):
+        (JSC::UnlinkedCodeBlockGenerator::numVars const):
+        (JSC::UnlinkedCodeBlockGenerator::setNumCalleeLocals):
+        (JSC::UnlinkedCodeBlockGenerator::setNumVars):
+        (JSC::UnlinkedCodeBlockGenerator::setNumParameters):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        (JSC::BytecodeGenerator::emitPushFunctionNameScope):
+        * bytecompiler/BytecodeGeneratorBaseInlines.h:
+        (JSC::BytecodeGeneratorBase<Traits>::newRegister):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        * ftl/FTLOSREntry.cpp:
+        (JSC::FTL::prepareOSREntry):
+        * interpreter/CallFrameClosure.h:
+        * interpreter/ProtoCallFrameInlines.h:
+        (JSC::ProtoCallFrame::init):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::numberOfStackPaddingSlots):
+        (JSC::CommonSlowPaths::numberOfStackPaddingSlotsWithExtraSlots):
+        * wasm/WasmFunctionCodeBlock.h:
+        (JSC::Wasm::FunctionCodeBlock::numVars const):
+        (JSC::Wasm::FunctionCodeBlock::numCalleeLocals const):
+        (JSC::Wasm::FunctionCodeBlock::setNumVars):
+        (JSC::Wasm::FunctionCodeBlock::setNumCalleeLocals):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::push):
+        (JSC::Wasm::LLIntGenerator::getDropKeepCount):
+        (JSC::Wasm::LLIntGenerator::walkExpressionStack):
+        (JSC::Wasm::LLIntGenerator::checkConsistency):
+        (JSC::Wasm::LLIntGenerator::materializeConstantsAndLocals):
+        (JSC::Wasm::LLIntGenerator::splitStack):
+        (JSC::Wasm::LLIntGenerator::finalize):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addTopLevel):
+        (JSC::Wasm::LLIntGenerator::addBlock):
+        (JSC::Wasm::LLIntGenerator::addIf):
+        (JSC::Wasm::LLIntGenerator::addElseToUnreachable):
+
+2021-04-26  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        [JSC] OrdinarySet should invoke custom [[Set]] methods
+        https://bugs.webkit.org/show_bug.cgi?id=217916
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch fixes putInlineSlow() to handle special properties (like JSFunction's "name"
+        and JSArray's "length") in prototype chain. When such property is encountered, prototype
+        chain traversal is stopped; if it's read-only, a TypeError is thrown in strict mode.
+
+        This change adds OverridesPut out of line type info flag, and utilizes it in putInlineSlow()
+        to invoke overriden methods. While this approach requires put() methods to be aware of
+        altered receivers, it renders several benefits:
+          1. put() method can be used for both "real" [[Set]] overrides and special properties,
+             with its return value remaining `bool`;
+          2. it is simpler, faster, and more predictable than calling [[GetOwnProperty]] in
+             putInlineSlow() or adding defineOwnPropertyViaPut() to the method table.
+
+        Removes ordinarySetSlow() for non-index properties, which didn't invoke some [[Set]]
+        methods as well. Instead, definePropertyOnReceiver() is introduced for altered receivers,
+        which performs correctly when reached because:
+          1. all special properties were already handled (unless it's Reflect.set);
+          2. performing putDirectInternal() is unobservable (unless ProxyObject was seen);
+          3. putDirectInternal() now fully implements property definition of OrdinarySet [1];
+          4. put() override is required if a spec defines custom [[DefineOwnProperty]].
+
+        Since indexed puts handle overrides / altered receivers quite differently, they will
+        be fixed in a follow-up, completely removing ordinarySetSlow().
+
+        Also, by merging putEntry() / putToPrimitive() into putInlineSlow() and introducing
+        putInlineFastReplacingStaticPropertyIfNeeded() helper, this patch fixes a few bugs:
+          1. Direct [[Set]] to non-reified static property now preserves its attributes when replacing [[Value]].
+          2. Prototype chain [[Set]] to non-reified static property now throws if receiver is non-extensible.
+          3. Non-reified static writable property now shadows read-only one that is further in prototype chain.
+          4. Non-reified static properties in prototype chain of a primitive are now considered.
+
+        Fixes a few issues that were previously unobservable:
+          1. PropertyAttribute::CustomValue is now unset when a setter-less property is reassigned.
+          2. uint64_t putByIndexInline() now calls put() via method table like uint32_t counterpart.
+
+        Other notable refactors:
+          1. Inlines callCustomSetter(), dropping weird TriState return value.
+          2. Simplifies initialization of StringPrototype.
+          3. Simplifies isThisValueAltered() to pointer comparisons at non-JSProxy call sites.
+          4. Removes doPutPropertySecurityCheck() methods as the same checks are performed by put() methods.
+          5. Removes prototypeChainMayInterceptStoreTo(), which pretty much duplicated canPerformFastPutInline().
+          6. Removes dummy JSArrayBufferView::put() method.
+          7. Removes now unused lookupPut().
+
+        Aligns JSC with V8 and SpiderMonkey.
+
+        This patch carefully preserves the current behavior of Reflect.set with CustomValue
+        and prototype chain [[Set]] to a JSCallbackObject / legacy platform object.
+
+        This change is performance-neutral on /put/ microbenchmarks as it doesn't affect
+        caching, only the slow path. Reflect.set with JSFinalObject receiver is 130% faster.
+        putInlineSlow() microbenchmarks progress by 4-18%.
+
+        [1]: https://tc39.es/ecma262/#sec-ordinarysetwithowndescriptor (step 3)
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        * API/tests/testapiScripts/testapi.js:
+        * debugger/DebuggerScope.h:
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.h:
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter): Deleted.
+        * runtime/CustomGetterSetter.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::put):
+        * runtime/GetterSetter.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::put):
+        * runtime/JSArray.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::put): Deleted.
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::doPutPropertySecurityCheck): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::definePropertyOnReceiverSlow):
+        (JSC::JSObject::definePropertyOnReceiver):
+        (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded):
+        (JSC::JSObject::doPutPropertySecurityCheck): Deleted.
+        (JSC::JSObject::prototypeChainMayInterceptStoreTo): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::hasNonReifiedStaticProperties):
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::doPutPropertySecurityCheck): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInlineExcludingProto):
+        (JSC::JSObject::putInlineForJSObject):
+        (JSC::JSObject::putInlineFast):
+        (JSC::JSObject::putDirectInternal):
+        * runtime/JSProxy.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::hasStaticPropertyTable const):
+        (JSC::TypeInfo::overridesPut const):
+        (JSC::TypeInfo::getOwnPropertySlotMayBeWrongAboutDontEnum const):
+        (JSC::TypeInfo::hasPutPropertySecurityCheck const): Deleted.
+        * runtime/Lookup.h:
+        (JSC::putEntry): Deleted.
+        (JSC::lookupPut): Deleted.
+        * runtime/PropertySlot.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::put):
+        * runtime/ProxyObject.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::context const):
+        (JSC::PutPropertySlot::isTaintedByOpaqueObject const):
+        (JSC::PutPropertySlot::setIsTaintedByOpaqueObject):
+        * runtime/ReflectObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::StringPrototype::create):
+        * runtime/StringPrototype.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::validateFlags):
+        * runtime/Structure.h:
+        (JSC::Structure::hasNonReifiedStaticProperties const):
+        * tools/JSDollarVM.cpp:
+
+2021-04-23  Michael Saboff  <msaboff@apple.com>
+
+        [YARR Interpreter] Improper backtrack of parentheses with non-zero based greedy quantifiers
+        https://bugs.webkit.org/show_bug.cgi?id=224983
+
+        Reviewed by Mark Lam.
+
+        When we backtrack a parentheses with a greedy non zero based quantifier,
+        we don't properly restore for the case where we hadn't reached the minimum count.
+        We now save the input position on entry and restore it when we backtrack for
+        this case.  We also properly release the allocated ParenthesesDisjunctionContext's.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchParentheses):
+        (JSC::Yarr::Interpreter::backtrackParentheses):
+
+2021-04-23  Mark Lam  <mark.lam@apple.com>
+
+        Fix B3 strength reduction for shl.
+        https://bugs.webkit.org/show_bug.cgi?id=224913
+        rdar://76978874
+
+        Reviewed by Michael Saboff.
+
+        If the operation can potentially either underflow or overflow, then the result
+        can be any value.
+
+        * b3/B3ReduceStrength.cpp:
+
+2021-04-23  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [JSC][Win] callOperationNoExceptionCheck() also needs to support operations that return SlowPathReturnType
+        https://bugs.webkit.org/show_bug.cgi?id=224964
+
+        Reviewed by Yusuke Suzuki.
+
+        r229989 (Bug 183655) added the x64 Windows support only for
+        callOperation(), but for callOperationNoExceptionCheck().
+        callOperationNoExceptionCheck() also needs the x64 Windows
+        support.
+
+        This change is a preparation for Bug 224920 that is going to use
+        callOperationNoExceptionCheck instead of callOperation.
+
+        * jit/JIT.h:
+        (callOperation): Rewrote by using 'if constexpr' instead of SFINAE.
+        (callOperationNoExceptionCheck): Added a new implementation for
+        x64 Windows based on callOperation.
+
+2021-04-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276486.
+        https://bugs.webkit.org/show_bug.cgi?id=224973
+
+        broke windows build
+
+        Reverted changeset:
+
+        "[JSC][Win] callOperationNoExceptionCheck() also needs to
+        support operations that return SlowPathReturnType"
+        https://bugs.webkit.org/show_bug.cgi?id=224964
+        https://trac.webkit.org/changeset/276486
+
+2021-04-22  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [JSC][Win] callOperationNoExceptionCheck() also needs to support operations that return SlowPathReturnType
+        https://bugs.webkit.org/show_bug.cgi?id=224964
+
+        Reviewed by Yusuke Suzuki.
+
+        r229989 (Bug 183655) added the x64 Windows support only for
+        callOperation(), but for callOperationNoExceptionCheck().
+        callOperationNoExceptionCheck() also needs the x64 Windows
+        support.
+
+        This change is a preparation for Bug 224920 that is going to use
+        callOperationNoExceptionCheck instead of callOperation.
+
+        * jit/JIT.h:
+        (callOperation): Rewrote by using 'if constexpr' instead of SFINAE.
+        (callOperationNoExceptionCheck): Added a new implementation for
+        x64 Windows based on callOperation.
+
+2021-04-22  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276456.
+        https://bugs.webkit.org/show_bug.cgi?id=224952
+
+        Windows specific crash
+
+        Reverted changeset:
+
+        "[JSC} Remove exception checks from non-throwing function
+        calls in Baseline JIT"
+        https://bugs.webkit.org/show_bug.cgi?id=224920
+        https://trac.webkit.org/changeset/276456
+
+2021-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC} Remove exception checks from non-throwing function calls in Baseline JIT
+        https://bugs.webkit.org/show_bug.cgi?id=224920
+
+        Reviewed by Tadeu Zagallo.
+
+        These functions are not taking JSGlobalObject and will not throw an error.
+        Use callOperationNoExceptionCheck instead to avoid emitting unnecessary exception checks.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::emitEnterOptimizationCheck):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emitSlow_op_new_object):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitWriteBarrier):
+
+2021-04-22  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Baseline should have fast path for switch_imm
+        https://bugs.webkit.org/show_bug.cgi?id=224521
+
+        Reviewed by Tadeu Zagallo.
+
+        This patch implements op_switch_imm fast path in Baseline.
+        We have this fast path in LLInt, DFG, and FTL. So only Baseline lacks this.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+
+2021-04-21  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] DFG / FTL should inline switch_string
+        https://bugs.webkit.org/show_bug.cgi?id=224578
+
+        Reviewed by Mark Lam.
+
+        Because of r275840 change, we no longer copy StringJumpTable when compiling DFG / FTL code.
+        Instead we are using a pointer to UnlinkedStringTable stored in UnlinkedCodeBlock.
+        This allows DFG / FTL to inline CodeBlock which includes op_switch_string. We were previously not able
+        to do that because we cannot copy StringImpl in DFG / FTL concurrent compiler thread.
+
+        1. We handle StringJumpTable / UnlinkedStringJumpTable in the same way as SimpleJumpTable / UnlinkedSimpleJumpTable.
+        2. We put m_ctiDefault of StringJumpTable in the last element of m_ctiOffsets vector of StringJumpTable to make
+           sizeof(StringJumpTable) small.
+        3. We use m_indexInTable instead of m_branchOffset in FTL switch generation to make switch table dense.
+
+        The microbenchmark shows 30% improvement because of unlocking inlining feature.
+
+                                        ToT                     Patched
+
+            switch-inlining       27.1238+-0.2708     ^     20.2630+-0.1477        ^ definitely 1.3386x faster
+
+            <geometric>           27.1238+-0.2708     ^     20.2630+-0.1477        ^ definitely 1.3386x faster
+
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::ensureCTITable):
+        (JSC::StringJumpTable::ctiForValue const):
+        (JSC::StringJumpTable::ctiDefault const):
+        (JSC::StringJumpTable::isEmpty const):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedStringJumpTable::indexForValue const):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchStringOnString):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringSlow):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLOperations.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+
+2021-04-21  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, mid April 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=222652
+        <rdar://problem/75262285>
+
+        Unreviewed non-unified build fixes.
+
+        * bytecode/JumpTable.cpp: Remove inclusion of wtf/text/StringHash.h
+        * bytecode/JumpTable.h: Add missing inclusions of wtf/FixedVector.h and
+        wtf/text/StringHash.h
+        * bytecode/SpeculatedType.cpp: Add missing includes JSCJSValueInlines.h and
+        JSCellInlines.h
+        * bytecompiler/BytecodeGenerator.cpp: Move template method to header, remove now uneeded
+        LinkTimeConstant.h include.
+        * bytecompiler/BytecodeGenerator.h: Add include for LinkTimeConstant.h
+        (JSC::BytecodeGenerator::emitDirectSetPrototypeOf): Template method moved here from
+        BytecodeGenerator.cpp to avoid compile errors due to usage of missing template body
+        definition.
+        * dfg/DFGDesiredGlobalProperties.cpp: Add missing DFGDesiredWatchpoints.h include.
+        * ftl/FTLAbstractHeap.cpp: Add missing JSCJSValueInlines.h include.
+        * runtime/JSCustomGetterFunction.cpp: Add missing IdentifierInlines.h include.
+        * runtime/JSCustomSetterFunction.cpp: Ditto.
+        * runtime/SetPrototype.cpp: Add missing HashMapImplInlines.h include.
+        * runtime/VMTraps.cpp: Add missing VMEntryScope.h include.
+        * runtime/WeakSetConstructor.cpp: Add missing WeakMapImplInlines.h include.
+        * runtime/WeakSetPrototype.cpp: Add missing includes for HashMapImplInlines.h and
+        WeakMapImplInlines.h
+        * wasm/js/JSWebAssemblyTable.cpp: Add missing ObjectConstructor.h include.
+
+2021-04-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Static asserts in WasmAirIRGenerator.cpp and WasmB3IRGenerator.cpp trigger -Wnonnull warnings with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=224826
+
+        Reviewed by Yusuke Suzuki.
+
+        Rewrite these static asserts to avoid warnings when built with GCC 11. Credit to Jonathan
+        Wakely for providing this mind-bending solution.
+
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::AirIRGenerator::addCurrentMemory):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::addCurrentMemory):
+
+2021-04-20  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        -Warray-bounds warning in AirAllocateRegistersByGraphColoring.cpp with GCC 11
+        https://bugs.webkit.org/show_bug.cgi?id=224782
+
+        Reviewed by Darin Adler.
+
+        These warnings don't make any sense to me. Suppress them.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+
+2021-04-20  Keith Miller  <keith_miller@apple.com>
+
+        FullGCActivityCallback should use the percentage of pages uncompressed in RAM to determine deferral.
+        https://bugs.webkit.org/show_bug.cgi?id=224817
+
+        Reviewed by Filip Pizlo.
+
+        Right now we try to determine if too many pages are paged out by
+        dereferencing them and bailing out of the GC if we go over a
+        deadline. While this works if the only goal is to avoid causing
+        extensive thrashing on spinny disks (HDD), it doesn't prevent
+        thrashing when access to disk is fast (e.g. SSD). This is because
+        on fast disks the proportional time to load the memory from disk
+        is much lower. Additionally, on SSDs in particular we don't want
+        to load the pages into RAM then bail as that will force a
+        different page onto disk, increasing wear.
+
+        This patch switches to asking the OS if each MarkedBlock is paged
+        out. Then if we are over a threshold we wait until we would have
+        GC'd anyway. This patch uses the (maxVMGrowthFactor - 1) as the
+        percentage of "slow" pages (paged out or compressed) needed to
+        defer the GC. The idea behind that threshold is that if we add
+        that many pages then the same number of pages would be forced
+        out of RAM for us to do a GC anyway (in the limit).
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::updatePercentageOfPagedOutPages):
+        (JSC::BlockDirectory::isPagedOut): Deleted.
+        * heap/BlockDirectory.h:
+        * heap/FullGCActivityCallback.cpp:
+        (JSC::FullGCActivityCallback::doCollection):
+        * heap/Heap.cpp:
+        (JSC::Heap::isPagedOut):
+        * heap/Heap.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::isPagedOut):
+        * heap/MarkedSpace.h:
+        * runtime/OptionsList.h:
+
+2021-04-20  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Don't use FORWARDING_HEADERS_DIR for JSC GLib headers
+        https://bugs.webkit.org/show_bug.cgi?id=224821
+
+        Reviewed by Michael Catanzaro.
+
+        Use JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR and JavaScriptCoreGLib_DERIVED_SOURCES_DIR
+        for GLib JSC headers instead of FORWARDING_HEADERS_DIR and DERIVED_SOURCES_DIR.
+
+        * GLib.cmake:
+        * PlatformGTK.cmake:
+
+2021-04-20  Ben Nham  <nham@apple.com>
+
+        LinkBuffer fails to build when MALLOC_HEAP_BREAKDOWN is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=224722
+
+        Reviewed by Yusuke Suzuki.
+
+        When ENABLE_MALLOC_HEAP_BREAKDOWN is set, LinkBuffer causes a build failure at link time
+        since it never defines its debugHeap. Fix that.
+
+        * assembler/LinkBuffer.cpp:
+
+2021-04-20  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use FixedVector for LLIntPrototypeLoadAdaptiveStructureWatchpoint vector
+        https://bugs.webkit.org/show_bug.cgi?id=224729
+
+        Reviewed by Darin Adler.
+
+        Replace Vector<LLIntPrototypeLoadAdaptiveStructureWatchpoint> with FixedVector.
+
+        * bytecode/CodeBlock.h:
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.cpp:
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::LLIntPrototypeLoadAdaptiveStructureWatchpoint):
+        (JSC::LLIntPrototypeLoadAdaptiveStructureWatchpoint::initialize):
+        * bytecode/LLIntPrototypeLoadAdaptiveStructureWatchpoint.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setupGetByIdPrototypeCache):
+
+2021-04-19  Mark Lam  <mark.lam@apple.com>
+
+        Build fix for Debug -O3 after r276162.
+        https://bugs.webkit.org/show_bug.cgi?id=224681
+        rdar://76698113
+
+        Not reviewed.
+
+        * runtime/JSObject.cpp:
+
+2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
+        https://bugs.webkit.org/show_bug.cgi?id=221614
+        <rdar://problem/74396781>
+
+        Reviewed by David Kilzer.
+
+        Add -Wthread-safety to compile flags.
+
+        * Configurations/Base.xcconfig:
+
+2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, build fix
+        https://bugs.webkit.org/show_bug.cgi?id=224715
+
+        * dfg/DFGDesiredWatchpoints.h:
+
+2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not use Bag<> for DFG / FTL watchpoints
+        https://bugs.webkit.org/show_bug.cgi?id=224715
+
+        Reviewed by Darin Adler.
+
+        While Bag<> is useful since its allocated memory will not be moved,
+        this is really memory-inefficient data structure. Each entry gets a
+        tail pointer (so adding 8 bytes) and we allocate each entry separately.
+
+        In DFG and FTL, we are using Bag<> for watchpoints. But this is not necessary actually: thanks to
+        concurrent compilers, our watchpoint registration is batched at the end of compilation. This means
+        that we have a way to know how many watchpoints we should register at that point.
+
+        In this patch, we introduce WatchpointCollector. In DesiredGlobalProperties, we run reallyAdd twice
+        with WatchpointCollector. First time, we just count # of watchpoints. Then we allocate FixedVector<XXXWatchpoint>
+        and install them. Since we do not (cannot) grow this fixed vector, watchpoint's address will not be changed as required.
+
+        We also move DesiredGlobalProperties under DesiredWatchpoints since this basically registers watchpoints.
+
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.cpp:
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::AdaptiveInferredPropertyValueWatchpointBase):
+        (JSC::AdaptiveInferredPropertyValueWatchpointBase::initialize):
+        * bytecode/AdaptiveInferredPropertyValueWatchpointBase.h:
+        * bytecode/CodeBlockJettisoningWatchpoint.h:
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.cpp:
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::AdaptiveInferredPropertyValueWatchpoint):
+        (JSC::DFG::AdaptiveInferredPropertyValueWatchpoint::initialize):
+        * dfg/DFGAdaptiveInferredPropertyValueWatchpoint.h:
+        * dfg/DFGAdaptiveStructureWatchpoint.cpp:
+        (JSC::DFG::AdaptiveStructureWatchpoint::AdaptiveStructureWatchpoint):
+        (JSC::DFG::AdaptiveStructureWatchpoint::initialize):
+        * dfg/DFGAdaptiveStructureWatchpoint.h:
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::validateReferences):
+        (JSC::DFG::CommonData::clearWatchpoints):
+        * dfg/DFGCommonData.h:
+        * dfg/DFGDesiredGlobalProperties.cpp:
+        (JSC::DFG::DesiredGlobalProperties::reallyAdd):
+        * dfg/DFGDesiredGlobalProperties.h:
+        * dfg/DFGDesiredWatchpoints.cpp:
+        (JSC::DFG::ArrayBufferViewWatchpointAdaptor::add):
+        (JSC::DFG::SymbolTableAdaptor::add):
+        (JSC::DFG::FunctionExecutableAdaptor::add):
+        (JSC::DFG::AdaptiveStructureWatchpointAdaptor::add):
+        (JSC::DFG::DesiredWatchpoints::addLazily):
+        (JSC::DFG::DesiredWatchpoints::reallyAdd):
+        (JSC::DFG::DesiredWatchpoints::areStillValidOnMainThread):
+        (JSC::DFG::WatchpointCollector::finalize):
+        * dfg/DFGDesiredWatchpoints.h:
+        (JSC::DFG::SetPointerAdaptor::add):
+        (JSC::DFG::GenericDesiredWatchpoints::reallyAdd):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::watchGlobalProperty):
+        * dfg/DFGGraph.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::reallyAdd):
+        (JSC::DFG::Plan::isStillValidOnMainThread):
+        (JSC::DFG::Plan::cancel):
+        * dfg/DFGPlan.h:
+        (JSC::DFG::Plan::transitions):
+        (JSC::DFG::Plan::globalProperties): Deleted.
+
+2021-04-18  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make more DFG/FTL data FixedVector/Vector
+        https://bugs.webkit.org/show_bug.cgi?id=224713
+
+        Reviewed by Darin Adler.
+
+        1. DFG::JITCode::m_osrEntry / DFG::JITCode::m_osrExit / DFG::JITCode::m_speculationRecovery are changed to FixedVector.
+           They are added at compiling time, and after that, these vectors are not modified. So when finalizing, we can easily make it FixedVector.
+           We also change OSREntry::{m_reshufflings,m_expectedValues} to FixedVector and FixedOperands.
+        2. FTL::JITCode::m_osrExit is changed from SegmentedVector to Vector. We are still using Vector since it also involves osrExitDescriptor.
+           But later, we should merge m_osrExit to osrExitDescriptor. Vector is still better than SegmentedVector since it wastes several entries
+           per segment. SegmentedVector was used to use a direct pointer of OSRExit (this is not possible in Vector since this pointer can be invalidated
+           after growing), but usage of that is fairly limited so that we can just replace them with m_index + osrExit vector.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/Operands.h:
+        (JSC::Operands::Operands):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::shrinkToFit):
+        (JSC::DFG::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::DFG::JITCode::validateReferences):
+        (JSC::DFG::JITCode::findPC):
+        (JSC::DFG::JITCode::finalizeOSREntrypoints):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::noticeOSREntry):
+        (JSC::DFG::JITCompiler::appendExceptionHandlingOSRExit):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendOSRExit):
+        (JSC::DFG::JITCompiler::appendSpeculationRecovery):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::emitInvalidationPoint):
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        * ftl/FTLJITCode.cpp:
+        (JSC::FTL::JITCode::shrinkToFit):
+        (JSC::FTL::JITCode::validateReferences):
+        (JSC::FTL::JITCode::liveRegistersToPreserveAtExceptionHandlingCallSite):
+        (JSC::FTL::JITCode::findPC):
+        * ftl/FTLJITCode.h:
+        * ftl/FTLOSRExit.cpp:
+        (JSC::FTL::OSRExitDescriptor::prepareOSRExitHandle):
+        (JSC::FTL::OSRExit::OSRExit):
+        * ftl/FTLOSRExit.h:
+        * ftl/FTLOSRExitCompiler.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLOSRExitHandle.cpp:
+        (JSC::FTL::OSRExitHandle::emitExitThunk):
+        * ftl/FTLOSRExitHandle.h:
+        (JSC::FTL::OSRExitHandle::OSRExitHandle):
+        * ftl/FTLPatchpointExceptionHandle.cpp:
+        (JSC::FTL::PatchpointExceptionHandle::scheduleExitCreationForUnwind):
+
+2021-04-17  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, suppress warnings
+        https://bugs.webkit.org/show_bug.cgi?id=224616
+
+        * runtime/HashMapImpl.h:
+        * runtime/HashMapImplInlines.h:
+        (JSC::areKeysEqual):
+        (JSC::wangsInt64Hash):
+
+2021-04-16  Mark Lam  <mark.lam@apple.com>
+
+        More changes to support the TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=224681
+        rdar://76698113
+
+        Reviewed by Keith Miller.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        - ProgramExecutable::initializeGlobalProperties() can throw the TerminationException.
+          Add handling for that.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnIndexedProperty):
+        - JSObject::defineOwnIndexedProperty() has a blob of assertion code that it verifying
+          that getOwnPropertyDescriptor() should succeed without throwing any exceptions if
+          the fast path is allowed.  However, this is assertion is only true if there isn't
+          a termination being requested.  So, use the DeferTermination scope to allow this
+          assertion to be tested without the complication of a TerminationException.
+
+2021-04-16  Keith Miller  <keith_miller@apple.com>
+
+        Before deleting a MarkedBlock we do not need to clear its m_directory pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=224677
+
+        Reviewed by Yusuke Suzuki.
+
+        Right now when we are about to free a MarkedBlock we clear the
+        m_directory pointer in the MarkedBlock's Handle. This has the
+        downside, however, of potentially paging in the footer from disk /
+        the compressor, which some data we have seen shows is happening.
+        This patch prevents this uncessary store to hopefully reduce the
+        number of pageins/decompressions caused by Safari web content.
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::removeBlock):
+        (JSC::BlockDirectory::removeBlockForDeletion):
+        * heap/BlockDirectory.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::~Handle):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::freeBlock):
+
+2021-04-16  Mark Lam  <mark.lam@apple.com>
+
+        Build fix for Debug -O3 after r276069.
+        https://bugs.webkit.org/show_bug.cgi?id=224619
+
+        Not reviewed.
+
+        * runtime/HashMapImplInlines.h:
+
+2021-04-15  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276112.
+        https://bugs.webkit.org/show_bug.cgi?id=224646
+
+        .h files should not #include *Inlines.h files.
+
+        Reverted changeset:
+
+        "REGRESSION(r276039) [GTK] Build failures on Ubuntu 18.04"
+        https://bugs.webkit.org/show_bug.cgi?id=224644
+        https://trac.webkit.org/changeset/276112
+
+2021-04-15  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r276039) [GTK] Build failures on Ubuntu 18.04
+        https://bugs.webkit.org/show_bug.cgi?id=224644
+
+        Unreviewed build fix.
+
+        * runtime/JSSet.h: Use HashMapImplInlines to include the base
+        finishCreation implementation. Somehow GCC 7.5 wasn't picking it up.
+
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
+        HashMapImpl::rehash() should use a version of jsMapHash that cannot throw.
+        https://bugs.webkit.org/show_bug.cgi?id=224610
+        rdar://76698910
+
+        Reviewed by Yusuke Suzuki.
+
+        For context, HashMapImpl::rehash()'s rehash operation relies on jsMapHash().
+        jsMapHash() can be interrupted by a TerminationException, and as a result, may
+        not return the string hash we are expecting.  This in turn can lead to the
+        rehash operation hashing with wrong keys.
+
+        However, all the keys should have already been hashed.  Hence, rehash() should
+        never see an exception thrown there.  We can avoid this complication with the
+        TerminationException by simply calling an alternate version of jsMapHash() that
+        is guaranteed to never throw e.g. a jsMapHashForAlreadyHashedValue() function.
+
+        * runtime/ExceptionHelpers.h:
+        * runtime/HashMapImplInlines.h:
+        (JSC::jsMapHashImpl):
+        (JSC::jsMapHash):
+        (JSC::jsMapHashForAlreadyHashedValue):
+        (JSC::HashMapImpl<HashMapBucketType>::rehash):
+
+2021-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove CodeBlock::RareData::m_catchProfiles
+        https://bugs.webkit.org/show_bug.cgi?id=224593
+
+        Reviewed by Mark Lam.
+
+        We are having this Vector just because we would like to destroy them when destroying the owner Baseline / LLInt CodeBlock.
+        But we are setting a pointer in OpCatch's metadata in Baseline / LLInt.
+        So we should just iterate metadata for that and destroy them in the destructor. No need to keep them separately.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndex):
+        (JSC::CodeBlock::ensureCatchLivenessIsComputedForBytecodeIndexSlow):
+        (JSC::CodeBlock::updateAllValueProfilePredictionsAndCountLiveness):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::createRareDataIfNecessary):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileAndVirtualRegisterBuffer::ValueProfileAndVirtualRegisterBuffer): Deleted.
+        (JSC::ValueProfileAndVirtualRegisterBuffer::~ValueProfileAndVirtualRegisterBuffer): Deleted.
+        (JSC::ValueProfileAndVirtualRegisterBuffer::forEach): Deleted.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
+        Optimize the DeferTermination scope to be more efficient.
+        https://bugs.webkit.org/show_bug.cgi?id=224619
+
+        Reviewed by Saam Barati.
+
+        This can be beneficial since we may be using DeferTermination in more places in
+        the code.
+
+        1. Added a VMTrapsInlines.h to hold the inline functions.
+
+        2. Split deferTermination() and undoDeferTermination() into fast and slow functions.
+           The fast functions are inlineable.
+
+        3. Remove the locking of VMTraps::m_lock in these functions.  These functions only
+           modify the following:
+           a. VMTraps::m_deferTerminationCount
+           b. VMTraps::m_suspendedTerminationException
+           c. VMTraps::m_trapBits for setting the NeedTermination bit if needed.
+           d. VM::m_exception
+
+           Except for VMTraps::m_trapBits, all of these are only written to from the mutator
+           thread.  VMTraps::m_trapBits is always written to using Atomics.  There isn't
+           anything that needs to be guarded by VMTraps::m_lock.
+
+        4. Fix VMTraps::deferTermination() to only set m_suspendedTerminationException
+           and clear an existing TerminationException if it's being called from the
+           outermost DeferTermination (i.e. m_deferTerminationCount is 1 after incrementing).
+           These conditional operations are not done in VMTraps::deferTerminationSlow().
+
+           In practice, it wouldn't have mattered anyway because we would never throw a
+           TerminationException while a DeferTermination scope is in effect.  The
+           the vm.isTerminationException() in the original deferTermination() would
+           always have prevented the slow path operations from being executed anyway.
+
+           However, for the purpose of this patch, we want to avoid as much unnecessary
+           work as possible in the fast path.  Hence, it is good to skip the slow path
+           if deferTermination() isn't called from the outermost scope.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jit/JITOperations.cpp:
+        * jsc.cpp:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::deferTerminationSlow):
+        (JSC::VMTraps::undoDeferTerminationSlow):
+        (JSC::VMTraps::vm const): Deleted.
+        (JSC::VMTraps::deferTermination): Deleted.
+        (JSC::VMTraps::undoDeferTermination): Deleted.
+        * runtime/VMTraps.h:
+        * runtime/VMTrapsInlines.h: Added.
+        (JSC::VMTraps::vm const):
+        (JSC::VMTraps::deferTermination):
+        (JSC::VMTraps::undoDeferTermination):
+
+2021-04-15  Mark Lam  <mark.lam@apple.com>
+
+        Refactor inline functions out of HashMapImpl.h into HashMapImplInlines.h.
+        https://bugs.webkit.org/show_bug.cgi?id=224616
+        rdar://76713709
+
+        Reviewed by Yusuke Suzuki.
+
+        Also do the same for clients of HashMapImpl that require similar refactoring.
+        This fixes the #include of JSCJSValueInlines.h in HashMapImpl.h, as well as makes
+        it easier to use other inline functions from other classes in the implementation
+        of HashMapImpl's inline functions in the future.
+
+        This patch only moves inline functions out to their respective *Inlines.h.
+        There are no behavior changes.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        * dfg/DFGOperations.cpp:
+        * runtime/AbstractModuleRecord.cpp:
+        * runtime/HashMapImpl.cpp:
+        * runtime/HashMapImpl.h:
+        (JSC::areKeysEqual): Deleted.
+        (JSC::normalizeMapKey): Deleted.
+        (JSC::wangsInt64Hash): Deleted.
+        (JSC::jsMapHash): Deleted.
+        (JSC::concurrentJSMapHash): Deleted.
+        (JSC::shouldShrink): Deleted.
+        (JSC::shouldRehashAfterAdd): Deleted.
+        (JSC::nextCapacity): Deleted.
+        (JSC::HashMapImpl::finishCreation): Deleted.
+        (JSC::HashMapImpl::findBucket): Deleted.
+        (JSC::HashMapImpl::get): Deleted.
+        (JSC::HashMapImpl::has): Deleted.
+        (JSC::HashMapImpl::add): Deleted.
+        (JSC::HashMapImpl::addNormalized): Deleted.
+        (JSC::HashMapImpl::remove): Deleted.
+        (JSC::HashMapImpl::clear): Deleted.
+        (JSC::HashMapImpl::setUpHeadAndTail): Deleted.
+        (JSC::HashMapImpl::addNormalizedNonExistingForCloning): Deleted.
+        (JSC::HashMapImpl::addNormalizedInternal): Deleted.
+        (JSC::HashMapImpl::findBucketAlreadyHashedAndNormalized): Deleted.
+        (JSC::HashMapImpl::rehash): Deleted.
+        (JSC::HashMapImpl::checkConsistency const): Deleted.
+        (JSC::HashMapImpl::makeAndSetNewBuffer): Deleted.
+        (JSC::HashMapImpl::assertBufferIsEmpty const): Deleted.
+        * runtime/HashMapImplInlines.h: Added.
+        (JSC::areKeysEqual):
+        (JSC::normalizeMapKey):
+        (JSC::wangsInt64Hash):
+        (JSC::jsMapHash):
+        (JSC::concurrentJSMapHash):
+        (JSC::shouldShrink):
+        (JSC::shouldRehashAfterAdd):
+        (JSC::nextCapacity):
+        (JSC::HashMapImpl<HashMapBucketType>::finishCreation):
+        (JSC::HashMapImpl<HashMapBucketType>::findBucket):
+        (JSC::HashMapImpl<HashMapBucketType>::get):
+        (JSC::HashMapImpl<HashMapBucketType>::has):
+        (JSC::HashMapImpl<HashMapBucketType>::add):
+        (JSC::HashMapImpl<HashMapBucketType>::addNormalized):
+        (JSC::HashMapImpl<HashMapBucketType>::remove):
+        (JSC::HashMapImpl<HashMapBucketType>::clear):
+        (JSC::HashMapImpl<HashMapBucketType>::setUpHeadAndTail):
+        (JSC::HashMapImpl<HashMapBucketType>::addNormalizedNonExistingForCloning):
+        (JSC::HashMapImpl<HashMapBucketType>::addNormalizedInternal):
+        (JSC::HashMapImpl<HashMapBucketType>::findBucketAlreadyHashedAndNormalized):
+        (JSC::HashMapImpl<HashMapBucketType>::rehash):
+        (JSC::HashMapImpl<HashMapBucketType>::checkConsistency const):
+        (JSC::HashMapImpl<HashMapBucketType>::makeAndSetNewBuffer):
+        (JSC::HashMapImpl<HashMapBucketType>::assertBufferIsEmpty const):
+        * runtime/JSMap.h:
+        * runtime/JSMapInlines.h: Added.
+        (JSC::JSMap::set):
+        * runtime/JSSetInlines.h: Added.
+        * runtime/JSWeakMap.h:
+        * runtime/JSWeakMapInlines.h: Added.
+        (JSC::JSWeakMap::set):
+        * runtime/MapConstructor.cpp:
+        * runtime/MapPrototype.cpp:
+        * runtime/SetConstructor.cpp:
+        * runtime/WeakMapConstructor.cpp:
+        * runtime/WeakMapImpl.h:
+        (JSC::jsWeakMapHash): Deleted.
+        (JSC::nextCapacityAfterBatchRemoval): Deleted.
+        (JSC::WeakMapImpl::add): Deleted.
+        (JSC::WeakMapImpl::shouldRehashAfterAdd const): Deleted.
+        (JSC::WeakMapImpl::rehash): Deleted.
+        * runtime/WeakMapImplInlines.h:
+        (JSC::jsWeakMapHash):
+        (JSC::nextCapacityAfterBatchRemoval):
+        (JSC::WeakMapImpl<WeakMapBucket>::add):
+        (JSC::WeakMapImpl<WeakMapBucket>::rehash):
+        (JSC::WeakMapImpl<WeakMapBucket>::shouldRehashAfterAdd const):
+        * runtime/WeakMapPrototype.cpp:
+
+2021-04-15  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Change Vector<> to FixedVector<> in DFG::CommonData if possible
+        https://bugs.webkit.org/show_bug.cgi?id=224588
+
+        Reviewed by Mark Lam.
+
+        DFG::CommonData is kept alive so long as DFG code exists. It includes a lot of Vectors while they are not mutable after the DFG code compilation.
+        This patch changes Vector<> to FixedVector<> if possible to shrink sizeof(DFG::CommonData). And this also removes the need of calling shrinkToFit
+        explicitly for them.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::determineLiveness):
+        (JSC::CodeBlock::stronglyVisitWeakReferences):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::numberOfDFGIdentifiers const):
+        (JSC::CodeBlock::identifier const):
+        * bytecode/CodeBlock.h:
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::shrinkToFit):
+        (JSC::DFG::CommonData::invalidate):
+        (JSC::DFG::CommonData::~CommonData):
+        (JSC::DFG::CommonData::installVMTrapBreakpoints):
+        (JSC::DFG::CommonData::isVMTrapBreakpoint):
+        (JSC::DFG::CommonData::finalizeCatchEntrypoints):
+        (JSC::DFG::CommonData::notifyCompilingStructureTransition): Deleted.
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::catchOSREntryDataForBytecodeIndex):
+        (JSC::DFG::CommonData::appendCatchEntrypoint): Deleted.
+        * dfg/DFGDesiredIdentifiers.cpp:
+        (JSC::DFG::DesiredIdentifiers::reallyAdd):
+        * dfg/DFGDesiredTransitions.cpp:
+        (JSC::DFG::DesiredTransition::DesiredTransition):
+        (JSC::DFG::DesiredTransitions::DesiredTransitions):
+        (JSC::DFG::DesiredTransitions::addLazily):
+        (JSC::DFG::DesiredTransitions::reallyAdd):
+        (JSC::DFG::DesiredTransition::reallyAdd): Deleted.
+        * dfg/DFGDesiredTransitions.h:
+        * dfg/DFGDesiredWeakReferences.cpp:
+        (JSC::DFG::DesiredWeakReferences::reallyAdd):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        (JSC::DFG::JITCompiler::noticeCatchEntrypoint):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGPlan.cpp:
+        (JSC::DFG::Plan::Plan):
+        (JSC::DFG::Plan::finalizeWithoutNotifyingCallback):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutStructure):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiPutByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInvalidationPoint):
+
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception check in operationGetPrivateNameOptimize().
+        https://bugs.webkit.org/show_bug.cgi?id=224592
+        rdar://76645873
+
+        Reviewed by Yusuke Suzuki.
+
+        Though the fieldNameValue.toPropertyKey() call in operationGetPrivateNameOptimize()
+        would not normally throw an exception, it still can throw a TerminationException
+        because it contains RETURN_IF_EXCEPTION checks.
+
+        * jit/JITOperations.cpp:
+
+2021-04-14  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not copy SimpleJumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=224472
+
+        Reviewed by Mark Lam.
+
+        This patch avoids copying UnlinkedSimpleJumpTable to SimpleJumpTable by decoupling CTI addresses from jump offset in SimpleJumpTable.
+        SimpleJumpTable and UnlinkedSimpleJumpTable are almost identical. SimpleJumpTable adds JIT jump target for each branch.
+        We should use data from UnlinkedSimpleJumpTable and jump via SimpleJumpTable. Do not need to have copy of branches from UnlinkedSimpleJumpTable.
+
+        This way removes Vector<SimpleJumpTable> from CodeBlock::RareData. And this is moved to CodeBlock::JITData. And it only includes jump target addresses,
+        and branch offset information is kept in UnlinkedSimpleJumpTable side. We no longer need to carefully copy these vectors in CodeBlock including DFG / FTL ones.
+
+        In LLInt, we instead use UnlinkedSimpleJumpTable for jumping.
+
+        In Baseline, we first allocate enough FixedVector<SimpleJumpTable> and fill content via SimpleJumpTable::ensureCTITable() call when compiling corresponding
+        switch opcode. Finally we fill these data structures with actual code locations in JIT::link function.
+
+        In DFG, we first collect UnlinkedSimpleJumpTable without copying. This is OK since it is kept by UnlinkedCodeBlock, and UnlinkedCodeBlock is kept by baseline CodeBlocks that
+        are handled by this DFG compilation. We hold Vector<const UnlinkedSimpleJumpTable*> in DFG::Graph and we materialize Vector<SimpleJumpTable> in DFG::Graph.
+        During DFG compilation, we touch this DFG::Graph's jump tables, and JIT compiler generates code via these tables. And when linking, we move the content to CodeBlock.
+
+        In FTL, while we use UnlinkedSimpleJumpTable in FTL code generation, FTL do not use SimpleJumpTable and instead FTL uses Switch in B3.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpSwitchJumpTables):
+        * bytecode/BytecodeDumper.h:
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::BytecodeGeneratorification::run):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::switchJumpTable):
+        (JSC::CodeBlock::numberOfUnlinkedSwitchJumpTables const):
+        (JSC::CodeBlock::unlinkedSwitchJumpTable):
+        (JSC::CodeBlock::numberOfSwitchJumpTables const): Deleted.
+        (JSC::CodeBlock::clearSwitchJumpTables): Deleted.
+        (JSC::CodeBlock::addSwitchJumpTableFromProfiledCodeBlock): Deleted.
+        * bytecode/JumpTable.cpp:
+        (JSC::SimpleJumpTable::offsetForValue): Deleted.
+        * bytecode/JumpTable.h:
+        (JSC::SimpleJumpTable::ensureCTITable):
+        (JSC::SimpleJumpTable::ctiForValue const):
+        (JSC::SimpleJumpTable::isEmpty const):
+        (): Deleted.
+        (JSC::SimpleJumpTable::cloneNonJITPart const): Deleted.
+        (JSC::SimpleJumpTable::ctiForValue): Deleted.
+        (JSC::SimpleJumpTable::clear): Deleted.
+        * bytecode/PreciseJumpTargetsInlines.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedSimpleJumpTable::offsetForValue const):
+        (JSC::UnlinkedSimpleJumpTable::add):
+        (JSC::UnlinkedCodeBlock::numberOfUnlinkedSwitchJumpTables const):
+        (JSC::UnlinkedCodeBlock::unlinkedSwitchJumpTable const):
+        (JSC::UnlinkedCodeBlock::unlinkedStringSwitchJumpTable const):
+        (JSC::UnlinkedCodeBlock::numberOfSwitchJumpTables const): Deleted.
+        (JSC::UnlinkedCodeBlock::switchJumpTable): Deleted.
+        (JSC::UnlinkedCodeBlock::unlinkedStringSwitchJumpTable): Deleted.
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::numberOfUnlinkedSwitchJumpTables const):
+        (JSC::UnlinkedCodeBlockGenerator::addUnlinkedSwitchJumpTable):
+        (JSC::UnlinkedCodeBlockGenerator::unlinkedSwitchJumpTable):
+        (JSC::UnlinkedCodeBlockGenerator::numberOfSwitchJumpTables const): Deleted.
+        (JSC::UnlinkedCodeBlockGenerator::addSwitchJumpTable): Deleted.
+        (JSC::UnlinkedCodeBlockGenerator::switchJumpTable): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::prepareJumpTableForSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+        (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+        (JSC::DFG::SpeculativeJIT::emitSwitchString):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileWithoutLinking):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        (JSC::SwitchRecord::SwitchRecord):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_imm):
+        (JSC::JIT::emit_op_switch_char):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedSimpleJumpTable::encode):
+        (JSC::CachedSimpleJumpTable::decode const):
+        (JSC::CachedCodeBlockRareData::encode):
+        (JSC::CachedCodeBlockRareData::decode const):
+
+2021-04-14  Alex Christensen  <achristensen@webkit.org>
+
+        Keep UniqueRef<MathICGenerationState> instead of MathICGenerationState in HashTables
+        https://bugs.webkit.org/show_bug.cgi?id=224569
+
+        Reviewed by Geoffrey Garen.
+
+        sizeof(KeyValuePair<const Instruction*, MathICGenerationState>) is 136 on some platforms.
+        That's on the big side for sparse HashTable entries.  I think using UniqueRef will help performance.
+
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emitMathICFast):
+        (JSC::JIT::emitMathICSlow):
+        * jit/JITMathIC.h:
+
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Apply DeferTermination in some utility functions in the jsc shell.
+        https://bugs.webkit.org/show_bug.cgi?id=224572
+        rdar://76646089
+
+        Reviewed by Yusuke Suzuki.
+
+        This is to make sure that these functions don't get in the way of testing with
+        the watchdog.  Since these are only test utility functions, just doing the simple
+        thing of using a DeferTermination scope is the right thing to do here.
+
+        * jsc.cpp:
+
+2021-04-14  Mark Lam  <mark.lam@apple.com>
+
+        Defer TerminationExceptions when evaluating ASSERT in HashMapIml::addNormalized().
+        https://bugs.webkit.org/show_bug.cgi?id=224565
+        rdar://76645980
+
+        Reviewed by Yusuke Suzuki.
+
+        HashMapImpl::addNormalized() has an ASSERT that calls jsMapHash(), which can
+        potentially throw exceptions.  As a result, it has a RETURN_IF_EXCEPTION which
+        provides an opportunity to handle traps and throw a TerminationException.  This
+        in turn causes the ASSERT to fail.
+
+        To fix this, we do:
+
+        1. Introduce VMTraps::DeferAction, which gives us DeferForAWhile and DeferUntilEndOfScope.
+
+        2. Templatize the DeferTermination RAII object on VMTraps::DeferAction.
+           Introduce DeferTerrminationForAWhile, which is DeferTermination<VMTraps::DeferAction::DeferForAWhile>.
+           DeferForAWhile means that the deferScope will not throw the TerminationException
+           on exit.  Instead, it will re-set the NeedTermination bit in the traps, and let
+           the next trap check handle it.
+
+        3. Introduce DEFER_TERMINATION_AND_ASSERT_WITH_MESSAGE (and friends) which creates
+           a DeferTerrminationForAWhile scope before doing an ASSERT_WITH_MESSAGE.
+
+        4. Use DEFER_TERMINATION_AND_ASSERT_WITH_MESSAGE instead in HashMapImpl::addNormalized().
+
+        * runtime/DeferTermination.h:
+        (JSC::DeferTermination::DeferTermination):
+        (JSC::DeferTermination::~DeferTermination):
+        * runtime/ExceptionHelpers.h:
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::addNormalized):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::deferTermination):
+        (JSC::VMTraps::undoDeferTermination):
+        * runtime/VMTraps.h:
+
+2021-04-13  Mark Lam  <mark.lam@apple.com>
+
+        The watchdog should not fire when it's not active.
+        https://bugs.webkit.org/show_bug.cgi?id=224494
+        rdar://76581259
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        The watchdog is only active when we have entered the VM.  If we haven't entered
+        the VM, we postpone starting the watchdog.  For example, see Watchdog::enteredVM()
+        and Watchdog::exitedVM().
+
+        The underlying timer may still fire the NeedWatchdogCheck event after
+        Watchdog::stopTimer() is called.  So, we need to just ignore the event if the
+        watchdog isn't active.
+
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::handleTraps):
+        * runtime/Watchdog.h:
+        (JSC::Watchdog::isActive const):
+
+2021-04-13  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Move cloneUBreakIterator declaration to IntlWorkaround.h
+        https://bugs.webkit.org/show_bug.cgi?id=224511
+
+        Reviewed by Yusuke Suzuki.
+
+        Follow up to r275856. There's ultimately no reason IntlWorkaround.cpp needs to be headerless;
+        this was tied to some confusion about how to successfully include ubrk.h in two different ways.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/IntlSegmenter.cpp:
+        * runtime/IntlSegmenter.h:
+        * runtime/IntlSegments.cpp:
+        * runtime/IntlWorkaround.cpp:
+        * runtime/IntlWorkaround.h: Added.
+
+2021-04-13  Mark Lam  <mark.lam@apple.com>
+
+        Use a JSString for the TerminationException value instead of a Symbol.
+        https://bugs.webkit.org/show_bug.cgi?id=224490
+
+        Reviewed by Yusuke Suzuki.
+
+        This makes it convertible to a String for clients that wish to report the exception.
+        Clients, in this case, does not apply to JS code, only C++ code that catches the
+        exception at the outermost point to handle the termination.  The TerminationException
+        value is not visible to JS code because the TerminationException cannot be caught.
+        So, this change is transparent to JS code.
+
+        * runtime/VM.cpp:
+        (JSC::VM::ensureTerminationException):
+
+2021-04-13  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r275867.
+        https://bugs.webkit.org/show_bug.cgi?id=224495
+
+        Need alternate fix.
+
+        Reverted changeset:
+
+        "Reduce functionWithHellaArguments3()'s number of arguments
+        from 5000 to 500."
+        https://bugs.webkit.org/show_bug.cgi?id=224474
+        https://trac.webkit.org/changeset/275867
+
+2021-04-13  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Unreviewed, casting to unsigned long long to suppress warning
+        https://bugs.webkit.org/show_bug.cgi?id=224473
+
+        * b3/B3ConstDoubleValue.cpp:
+        (JSC::B3::ConstDoubleValue::dumpMeta const):
+
+2021-04-13  Mark Lam  <mark.lam@apple.com>
+
+        Reduce functionWithHellaArguments3()'s number of arguments from 5000 to 500.
+        https://bugs.webkit.org/show_bug.cgi?id=224474
+        rdar://73614896
+
+        Reviewed by Yusuke Suzuki.
+
+        Using 5000 arguments seems excessive, and may blow out the stack on more resource
+        constrained devices.  500 should be high enough.
+
+        * b3/testb3_5.cpp:
+        (JSC_DEFINE_JIT_OPERATION):
+        (testCallFunctionWithHellaArguments3):
+
+2021-04-12  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove CodeBlock::m_constantsSourceCodeRepresentation
+        https://bugs.webkit.org/show_bug.cgi?id=224473
+
+        Reviewed by Mark Lam.
+
+        CodeBlock::m_constantsSourceCodeRepresentation is identical to UnlinkedCodeBlock::m_constantsSourceCodeRepresentation.
+
+        1. For all constants existing at bytecode compile time, elements of the above vectors are identical.
+        2. For lazily added constants from DFG, it is always SourceCodeRepresentation::Other.
+
+        And the array is effectively accessed only when compiling DFG code. So we should remove copy of that in CodeBlock, and
+        get SourceCodeRepresentation from UnlinkedCodeBlock.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpConstants):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::constants):
+        (JSC::CodeBlock::addConstant):
+        (JSC::CodeBlock::addConstantLazily):
+        (JSC::CodeBlock::constantSourceCodeRepresentation const):
+        (JSC::CodeBlock::constantsSourceCodeRepresentation): Deleted.
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::constantSourceCodeRepresentation const):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::constantSourceCodeRepresentation const):
+        (JSC::UnlinkedCodeBlockGenerator::constantsSourceCodeRepresentation): Deleted.
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::registerFrozenValues):
+
+2021-04-12  Mark Lam  <mark.lam@apple.com>
+
+        Interpreter::executeProgram() should install its VMEntryScope at the top.
+        https://bugs.webkit.org/show_bug.cgi?id=224450
+        rdar://76530841
+
+        Reviewed by Yusuke Suzuki.
+
+        "top" includes before any VM code that can throw exceptions is run.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+
+2021-04-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        ICU 69 deprecates ubrk_safeClone in favor of ubrk_clone
+        https://bugs.webkit.org/show_bug.cgi?id=224093
+
+        Reviewed by Yusuke Suzuki.
+
+        In a shining example of "disappointing library practices", ICU 69 deprecates ubrk_safeClone in favor of
+        a new *draft* API ubrk_clone, meaning that no function with this functionality is exposed by default.
+
+        This patch introduces a function cloneUBreakIterator to abstract over this change; however, since we need to:
+
+          1. confine the effects of disabling U_HIDE_DRAFT_API to a non-unified implementation file
+          2. still be able to include ubrk.h from IntlSegmenter.h to instantiate ICUDeleter<ubrk_close> (*not* `clone`!)
+
+        ...the new helper function is introduced in a *headerless* implementation file, IntlWorkaround.cpp.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * runtime/IntlSegmenter.cpp:
+        (JSC::IntlSegmenter::segment const):
+        * runtime/IntlSegmenter.h:
+        * runtime/IntlSegments.cpp:
+        (JSC::IntlSegments::createSegmentIterator):
+        * runtime/IntlWorkaround.cpp: Added.
+        (JSC::cloneUBreakIterator):
+
+2021-04-12  Don Olmstead  <don.olmstead@sony.com>
+
+        Inspector code is wrongly including some private headers
+        https://bugs.webkit.org/show_bug.cgi?id=224456
+
+        Reviewed by Alex Christensen.
+
+        These files were including some headers using #include <JavaScriptCore/Foo.h> style instead
+        of "Foo.h" style. This caused a build error when attempting to revive the Mac CMake build
+        since those headers were private and private headers are generated after the JavaScriptCore
+        build. No other ports were have ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS turned on so the
+        issue hadn't manifested until now. 
+
+        * API/JSContextRefInspectorSupport.h:
+        * inspector/augmentable/AlternateDispatchableAgent.h:
+        * inspector/augmentable/AugmentableInspectorController.h:
+
+2021-04-12  BJ Burg  <bburg@apple.com>
+
+        Modernize uses of ConsoleClient
+        https://bugs.webkit.org/show_bug.cgi?id=224398
+
+        Reviewed by David Kilzer.
+
+        ConsoleClient acts like a delegate, so its callers
+        should be using weak references to it.
+
+        * inspector/JSGlobalObjectInspectorController.cpp:
+        (Inspector::JSGlobalObjectInspectorController::consoleClient const):
+        * inspector/JSGlobalObjectInspectorController.h:
+        * runtime/ConsoleClient.h:
+        * runtime/ConsoleObject.cpp:
+        (JSC::consoleLogWithLevel):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::setConsoleClient):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::consoleClient const):
+        (JSC::JSGlobalObject::setConsoleClient): Deleted.
+
+2021-04-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Do not copy StringSwitchJumpTable
+        https://bugs.webkit.org/show_bug.cgi?id=224414
+
+        Reviewed by Keith Miller.
+
+        Previously, we were copying UnlinkedStringJumpTable to CodeBlock's StringJumpTable because we embed CodeLocation pointer
+        inside CodeBlock's StringJumpTable. This is copying a mostly identical hashtable to each CodeBlock even in DFG and FTL. This
+        even prevents us from inlining op_switch_string in DFG and FTL because (1) we don't want to copy this string tables collected from
+        each inlined CodeBlock into a new DFG / FTL CodeBlock and (2) we cannot ref/deref StringImpl inside DFG / FTL compilers so copying
+        these tables in the compiler threads need additional "DesiredStringSwitchJumpTable" etc.
+
+        In this patch, we stop copying StringSwitchJumpTable. We decouple CodeLocation pointers from the hashtable so that we can use
+        UnlinkedStringJumpTable in UnlinkedCodeBlock. UnlinkedStringJumpTable's hashtable inclues m_indexInTable in each entry so that
+        we can have array of CodeLocation pointers in CodeBlock's JITData to have JIT jump targets separately. This design prevents us
+        from copying unnecessary hashtables, and even this paves the way to inlining switch_string in DFG and FTL.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpStringSwitchJumpTables):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::shrinkToFit):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::stringSwitchJumpTable):
+        (JSC::CodeBlock::numberOfUnlinkedStringSwitchJumpTables const):
+        (JSC::CodeBlock::unlinkedStringSwitchJumpTable):
+        (JSC::CodeBlock::numberOfStringSwitchJumpTables const): Deleted.
+        * bytecode/JumpTable.h:
+        (JSC::StringJumpTable::ctiForValue const):
+        (JSC::StringJumpTable::offsetForValue): Deleted.
+        (JSC::StringJumpTable::ctiForValue): Deleted.
+        (JSC::StringJumpTable::clear): Deleted.
+        * bytecode/PreciseJumpTargetsInlines.h:
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedStringJumpTable::offsetForValue const):
+        (JSC::UnlinkedCodeBlock::numberOfUnlinkedStringSwitchJumpTables const):
+        (JSC::UnlinkedCodeBlock::unlinkedStringSwitchJumpTable):
+        (JSC::UnlinkedStringJumpTable::offsetForValue): Deleted.
+        (JSC::UnlinkedCodeBlock::numberOfStringSwitchJumpTables const): Deleted.
+        (JSC::UnlinkedCodeBlock::stringSwitchJumpTable): Deleted.
+        * bytecode/UnlinkedCodeBlockGenerator.cpp:
+        (JSC::UnlinkedCodeBlockGenerator::finalize):
+        * bytecode/UnlinkedCodeBlockGenerator.h:
+        (JSC::UnlinkedCodeBlockGenerator::numberOfUnlinkedStringSwitchJumpTables const):
+        (JSC::UnlinkedCodeBlockGenerator::addUnlinkedStringSwitchJumpTable):
+        (JSC::UnlinkedCodeBlockGenerator::unlinkedStringSwitchJumpTable):
+        (JSC::UnlinkedCodeBlockGenerator::numberOfStringSwitchJumpTables const): Deleted.
+        (JSC::UnlinkedCodeBlockGenerator::addStringSwitchJumpTable): Deleted.
+        (JSC::UnlinkedCodeBlockGenerator::stringSwitchJumpTable): Deleted.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::beginSwitch):
+        (JSC::prepareJumpTableForStringSwitch):
+        (JSC::BytecodeGenerator::endSwitch):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::switchStringSlow):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        (JSC::SwitchRecord::SwitchRecord):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_switch_string):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedStringJumpTable::encode):
+        (JSC::CachedStringJumpTable::decode const):
+        (JSC::CachedCodeBlockRareData::encode):
+        (JSC::CachedCodeBlockRareData::decode const):
+
 2021-04-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] B3 reduce-double-to-float should reduce only when constant double is canonical one to reduced float value

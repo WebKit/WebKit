@@ -342,7 +342,7 @@ public:
 #endif
 
 #if ENABLE(GPU_PROCESS)
-    virtual void gpuProcessCrashed() { }
+    virtual void gpuProcessDidExit() { }
 #endif
 
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;
@@ -542,6 +542,8 @@ public:
     virtual void didHandleAcceptedCandidate() = 0;
 #endif
 
+    virtual void microphoneCaptureWillChange() { }
+    virtual void cameraCaptureWillChange() { }
     virtual void microphoneCaptureChanged() { }
     virtual void cameraCaptureChanged() { }
 

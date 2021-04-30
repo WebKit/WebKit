@@ -73,7 +73,7 @@ unittest.kExampleResultsJSON = {
     "skipped": 339,
     "num_regressions": 14,
     "interrupted": false,
-    "layout_tests_dir": "\/mnt\/data\/b\/build\/slave\/Webkit_Linux\/build\/src\/third_party\/WebKit\/LayoutTests",
+    "layout_tests_dir": "\/mnt\/data\/b\/worker\/Webkit_Linux\/build\/src\/third_party\/WebKit\/LayoutTests",
     "version": 3,
     "num_passes": 15566,
     "has_pretty_patch": false,

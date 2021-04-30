@@ -362,7 +362,7 @@ public:
             if (m_graph.m_plan.mode() == FTLForOSREntryMode) {
                 auto* jitCode = m_ftlState.jitCode->ftlForOSREntry();
                 FixedVector<DFG::FlushFormat> argumentFlushFormats(codeBlock()->numParameters());
-                for (int i = 0; i < codeBlock()->numParameters(); ++i)
+                for (unsigned i = 0; i < codeBlock()->numParameters(); ++i)
                     argumentFlushFormats[i] = m_graph.m_argumentFormats[0][i];
                 jitCode->setArgumentFlushFormats(WTFMove(argumentFlushFormats));
             } else {
@@ -3849,10 +3849,10 @@ private:
     
     void compilePutStructure()
     {
-        m_ftlState.jitCode->common.notifyCompilingStructureTransition(m_graph.m_plan, codeBlock(), m_node);
-        
         RegisteredStructure oldStructure = m_node->transition()->previous;
         RegisteredStructure newStructure = m_node->transition()->next;
+        m_graph.m_plan.transitions().addLazily(m_node->origin.semantic.codeOriginOwner(), oldStructure.get(), newStructure.get());
+
         ASSERT_UNUSED(oldStructure, oldStructure->indexingMode() == newStructure->indexingMode());
         ASSERT(oldStructure->typeInfo().inlineTypeFlags() == newStructure->typeInfo().inlineTypeFlags());
         ASSERT(oldStructure->typeInfo().type() == newStructure->typeInfo().type());
@@ -8824,7 +8824,7 @@ private:
             } else {
                 DFG_ASSERT(m_graph, m_node, variant.kind() == PutByIdVariant::Transition, variant.kind());
                 m_graph.m_plan.transitions().addLazily(
-                    codeBlock(), m_origin.semantic.codeOriginOwner(),
+                    m_origin.semantic.codeOriginOwner(),
                     variant.oldStructureForTransition(), variant.newStructure());
                 
                 storage = storageForTransition(
@@ -11353,7 +11353,7 @@ private:
                         JumpReplacement jumpReplacement(
                             linkBuffer.locationOf<JSInternalPtrTag>(label),
                             linkBuffer.locationOf<OSRExitPtrTag>(handle->label));
-                        jitCode->common.jumpReplacements.append(jumpReplacement);
+                        jitCode->common.m_jumpReplacements.append(jumpReplacement);
                     });
             });
 
@@ -16742,12 +16742,12 @@ private:
         // https://bugs.webkit.org/show_bug.cgi?id=144369
 
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
+        const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data->switchTableIndex);
         
-        LValue branchOffset = vmCall(
-            Int32, operationSwitchStringAndGetBranchOffset,
-            weakPointer(globalObject), m_out.constIntPtr(data->switchTableIndex), string);
-        
-        StringJumpTable& table = codeBlock()->stringSwitchJumpTable(data->switchTableIndex);
+        LValue branchIndex = vmCall(
+            Int32, operationSwitchStringAndGetIndex,
+            weakPointer(globalObject), m_out.constIntPtr(&unlinkedTable), string);
         
         Vector<SwitchCase> cases;
         // These may be negative, or zero, or probably other stuff, too. We don't want to mess with HashSet's corner cases and we don't really care about throughput here.
@@ -16785,20 +16785,20 @@ private:
             // https://bugs.webkit.org/show_bug.cgi?id=144635
             
             DFG::SwitchCase myCase = data->cases[i];
-            StringJumpTable::StringOffsetTable::iterator iter =
-                table.offsetTable.find(myCase.value.stringImpl());
-            DFG_ASSERT(m_graph, m_node, iter != table.offsetTable.end());
+            auto iter = unlinkedTable.m_offsetTable.find(myCase.value.stringImpl());
+            DFG_ASSERT(m_graph, m_node, iter != unlinkedTable.m_offsetTable.end());
             
-            if (!alreadyHandled.insert(iter->value.branchOffset).second)
+            // Use m_indexInTable instead of m_branchOffset to make Switch table dense.
+            if (!alreadyHandled.insert(iter->value.m_indexInTable).second)
                 continue;
 
             cases.append(SwitchCase(
-                m_out.constInt32(iter->value.branchOffset),
+                m_out.constInt32(iter->value.m_indexInTable),
                 lowBlock(myCase.target.block), Weight(myCase.target.count)));
         }
         
         m_out.switchInstruction(
-            branchOffset, cases, lowBlock(data->fallThrough.block),
+            branchIndex, cases, lowBlock(data->fallThrough.block),
             Weight(data->fallThrough.count));
     }
     

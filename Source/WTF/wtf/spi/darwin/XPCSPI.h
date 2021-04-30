@@ -162,6 +162,7 @@ void xpc_track_activity(void);
 
 xpc_object_t xpc_connection_copy_entitlement_value(xpc_connection_t, const char* entitlement);
 void xpc_connection_get_audit_token(xpc_connection_t, audit_token_t*);
+void xpc_connection_kill(xpc_connection_t, int);
 void xpc_connection_set_instance(xpc_connection_t, uuid_t);
 mach_port_t xpc_dictionary_copy_mach_send(xpc_object_t, const char*);
 void xpc_dictionary_set_mach_send(xpc_object_t, const char*, mach_port_t);

@@ -316,7 +316,11 @@ public:
 
     void widgetDidChangeSize(RenderWidget&);
 
-    String layerTreeAsText(LayerTreeFlags);
+    WEBCORE_EXPORT String layerTreeAsText(LayerTreeFlags = 0) const;
+    WEBCORE_EXPORT String trackedRepaintRectsAsText() const;
+
+    WEBCORE_EXPORT String layerTreeAsText(LayerTreeFlags = 0);
+    WEBCORE_EXPORT Optional<String> platformLayerTreeAsText(Element&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
     float deviceScaleFactor() const override;
     float contentsScaleMultiplierForNewTiles(const GraphicsLayer*) const override;
@@ -571,8 +575,9 @@ private:
 
     bool documentUsesTiledBacking() const;
     bool isMainFrameCompositor() const;
-    
-private:
+
+    void updateCompositingForLayerTreeAsTextDump();
+
     RenderView& m_renderView;
     Timer m_updateCompositingLayersTimer;
 

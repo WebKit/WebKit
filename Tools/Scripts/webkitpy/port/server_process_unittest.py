@@ -70,7 +70,7 @@ class MockFile(object):
 
     def read(self, size=0):
         # This means end of file
-        return ''
+        return b''
 
     def close(self):
         self.closed = True

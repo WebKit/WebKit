@@ -39,6 +39,7 @@
 #include "CachedResourceRequest.h"
 #include "ContainerNode.h"
 #include "CrossOriginAccessControl.h"
+#include "DefaultResourceLoadPriority.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -261,7 +262,7 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
     auto options = CachedResourceLoader::defaultCachedResourceOptions();
     options.referrerPolicy = params.referrerPolicy;
     auto linkRequest = createPotentialAccessControlRequest(url, WTFMove(options), document, params.crossOrigin);
-    linkRequest.setPriority(CachedResource::defaultPriorityForResourceType(type.value()));
+    linkRequest.setPriority(DefaultResourceLoadPriority::forResourceType(type.value()));
     linkRequest.setInitiator("link");
     linkRequest.setIgnoreForRequestCount(true);
     linkRequest.setIsLinkPreload();

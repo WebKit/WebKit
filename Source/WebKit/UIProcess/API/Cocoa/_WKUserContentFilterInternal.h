@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "_WKUserContentFilter.h"
+#import <WebKit/_WKUserContentFilter.h>
 
 #import "APIContentRuleList.h"
 #import "WKObject.h"

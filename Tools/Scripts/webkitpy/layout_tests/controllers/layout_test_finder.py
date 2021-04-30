@@ -80,6 +80,12 @@ class LayoutTestFinder(object):
         self._filesystem = self._port.host.filesystem
         self.LAYOUT_TESTS_DIRECTORY = 'LayoutTests'
         self._w3c_resource_files = None
+        self.http_subdir = 'http' + port.TEST_PATH_SEPARATOR + 'test'
+        self.websocket_subdir = 'websocket' + port.TEST_PATH_SEPARATOR
+        self.web_platform_test_subdir = port.web_platform_test_server_doc_root()
+        self.webkit_specific_web_platform_test_subdir = (
+            'http' + port.TEST_PATH_SEPARATOR + 'wpt' + port.TEST_PATH_SEPARATOR
+        )
 
     def find_tests(self, options, args, device_type=None):
         paths = self._strip_test_dir_prefixes(args)
@@ -91,7 +97,18 @@ class LayoutTestFinder(object):
     def find_tests_by_path(self, paths, device_type=None):
         """Return the list of tests found. Both generic and platform-specific tests matching paths should be returned."""
         expanded_paths = self._expanded_paths(paths, device_type=device_type)
-        return [Test(test_file) for test_file in self._real_tests(expanded_paths)]
+        return [
+            Test(
+                test_file,
+                is_http_test=self.http_subdir in test_file,
+                is_websocket_test=self.websocket_subdir in test_file,
+                is_wpt_test=(
+                    self.web_platform_test_subdir in test_file
+                    or self.webkit_specific_web_platform_test_subdir in test_file
+                ),
+            )
+            for test_file in self._real_tests(expanded_paths)
+        ]
 
     def _expanded_paths(self, paths, device_type=None):
         expanded_paths = []

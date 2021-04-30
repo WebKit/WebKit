@@ -1481,7 +1481,7 @@ static bool calledShouldAllowDeviceOrientationAndMotionAccessDelegate = false;
 
 @implementation WebsitePoliciesDeviceOrientationUIDelegate
 
-- (void)_webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
+- (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin*)origin initiatedByFrame:(WKFrameInfo *)requestingFrame decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
 {
     calledShouldAllowDeviceOrientationAndMotionAccessDelegate = true;
     decisionHandler(WKPermissionDecisionGrant);

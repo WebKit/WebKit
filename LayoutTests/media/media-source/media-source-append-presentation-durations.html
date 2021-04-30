@@ -50,10 +50,11 @@
         await waitFor(sourceBuffer, 'updateend');
 
         consoleWrite("Buffered:");
-        bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
+        const bufferedSamples = await internals.bufferedSamplesForTrackId(sourceBuffer, 1);
         bufferedSamples.forEach(consoleWrite);
         consoleWrite("Enqueued:");
-        internals.enqueuedSamplesForTrackID(sourceBuffer, 1).forEach(consoleWrite);
+        const enqueuedSamples = await internals.enqueuedSamplesForTrackID(sourceBuffer, 1);
+        enqueuedSamples.forEach(consoleWrite);
 
         endTest();
     });

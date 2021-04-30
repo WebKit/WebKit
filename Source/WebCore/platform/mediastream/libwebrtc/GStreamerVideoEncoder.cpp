@@ -35,7 +35,7 @@ GST_DEBUG_CATEGORY(webrtc_venc_debug);
 #define KBIT_TO_BIT 1024
 
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-raw(ANY)"));
-static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8"));
+static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264"));
 
 using SetBitrateFunc = Function<void(GObject* encoder, const char* propertyName, int bitrate)>;
 using SetupFunc = Function<void(WebKitWebrtcVideoEncoder*)>;
@@ -51,7 +51,7 @@ struct EncoderDefinition {
     const char* keyframeIntervalPropertyName;
 };
 
-enum EncoderId { None, X264, OpenH264, OmxH264, Vp8 };
+enum EncoderId { None, X264, OpenH264, OmxH264 };
 
 class Encoders {
 public:

@@ -78,8 +78,11 @@ inline bool doFancyUpsampling() { return true; }
 #endif
 
 static const int exifMarker = JPEG_APP0 + 1;
+
+#if USE(LCMS)
 static const int iccMarker = JPEG_APP0 + 2;
 static const unsigned iccHeaderSize = 14;
+#endif
 
 namespace WebCore {
 

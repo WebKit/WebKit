@@ -119,24 +119,18 @@ void Heap::decommitLargeRange(UniqueLockHolder&, LargeRange& range, BulkDecommit
 #endif
 }
 
-#if BUSE(PARTIAL_SCAVENGE)
-void Heap::scavenge(UniqueLockHolder& lock, BulkDecommit& decommitter)
-#else
 void Heap::scavenge(UniqueLockHolder& lock, BulkDecommit& decommitter, size_t& deferredDecommits)
-#endif
 {
     for (auto& list : m_freePages) {
         for (auto* chunk : list) {
             for (auto* page : chunk->freePages()) {
                 if (!page->hasPhysicalPages())
                     continue;
-#if !BUSE(PARTIAL_SCAVENGE)
                 if (page->usedSinceLastScavenge()) {
                     page->clearUsedSinceLastScavenge();
                     deferredDecommits++;
                     continue;
                 }
-#endif
 
                 size_t pageSize = bmalloc::pageSize(&list - &m_freePages[0]);
                 size_t decommitSize = physicalPageSizeSloppy(page->begin()->begin(), pageSize);
@@ -157,36 +151,14 @@ void Heap::scavenge(UniqueLockHolder& lock, BulkDecommit& decommitter, size_t& d
     }
 
     for (LargeRange& range : m_largeFree) {
-#if BUSE(PARTIAL_SCAVENGE)
-        m_highWatermark = std::min(m_highWatermark, static_cast<void*>(range.begin()));
-#else
         if (range.usedSinceLastScavenge()) {
             range.clearUsedSinceLastScavenge();
             deferredDecommits++;
             continue;
         }
-#endif
         decommitLargeRange(lock, range, decommitter);
     }
-
-#if BUSE(PARTIAL_SCAVENGE)
-    m_freeableMemory = 0;
-#endif
 }
-
-#if BUSE(PARTIAL_SCAVENGE)
-void Heap::scavengeToHighWatermark(UniqueLockHolder& lock, BulkDecommit& decommitter)
-{
-    void* newHighWaterMark = nullptr;
-    for (LargeRange& range : m_largeFree) {
-        if (range.begin() <= m_highWatermark)
-            newHighWaterMark = std::min(newHighWaterMark, static_cast<void*>(range.begin()));
-        else
-            decommitLargeRange(lock, range, decommitter);
-    }
-    m_highWatermark = newHighWaterMark;
-}
-#endif
 
 void Heap::deallocateLineCache(UniqueLockHolder&, LineCache& lineCache)
 {
@@ -221,9 +193,7 @@ void Heap::allocateSmallChunk(UniqueLockHolder& lock, size_t pageClass, FailureA
         size_t accountedInFreeable = 0;
         forEachPage(chunk, pageSize, [&](SmallPage* page) {
             page->setHasPhysicalPages(true);
-#if !BUSE(PARTIAL_SCAVENGE)
             page->setUsedSinceLastScavenge();
-#endif
             page->setHasFreeLines(lock, true);
             chunk->freePages().push(page);
             accountedInFreeable += pageSize;
@@ -314,9 +284,7 @@ SmallPage* Heap::allocateSmallPage(UniqueLockHolder& lock, size_t sizeClass, Lin
             m_physicalPageMap.commit(page->begin()->begin(), pageSize);
 #endif
         }
-#if !BUSE(PARTIAL_SCAVENGE)
         page->setUsedSinceLastScavenge();
-#endif
 
         return page;
     }();
@@ -590,9 +558,6 @@ void* Heap::allocateLarge(UniqueLockHolder& lock, size_t alignment, size_t size,
     m_freeableMemory -= range.totalPhysicalSize();
 
     void* result = splitAndAllocate(lock, range, alignment, size).begin();
-#if BUSE(PARTIAL_SCAVENGE)
-    m_highWatermark = std::max(m_highWatermark, result);
-#endif
     ASSERT_OR_RETURN_ON_FAILURE(result);
     return result;
 

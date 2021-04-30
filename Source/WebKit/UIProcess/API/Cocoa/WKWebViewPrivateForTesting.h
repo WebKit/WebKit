@@ -37,6 +37,7 @@ typedef enum {
 struct WKAppBoundNavigationTestingData {
     BOOL hasLoadedAppBoundRequestTesting;
     BOOL hasLoadedNonAppBoundRequestTesting;
+    BOOL didPerformSoftUpdate;
 };
 
 @protocol _WKMediaSessionCoordinator;

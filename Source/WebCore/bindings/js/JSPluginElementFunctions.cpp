@@ -114,10 +114,14 @@ JSC_DEFINE_CUSTOM_GETTER(pluginElementPropertyGetter, (JSGlobalObject* lexicalGl
 
 bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = lexicalGlobalObject->vm();
     slot.setIsTaintedByOpaqueObject();
 
+    if (propertyName.uid() == vm.propertyNames->toPrimitiveSymbol.impl())
+        return false;
+
     if (!element->globalObject()->world().isNormal()) {
-        JSC::JSValue proto = element->getPrototypeDirect(lexicalGlobalObject->vm());
+        JSValue proto = element->getPrototypeDirect(vm);
         if (proto.isObject() && JSC::jsCast<JSC::JSObject*>(asObject(proto))->hasProperty(lexicalGlobalObject, propertyName))
             return false;
     }

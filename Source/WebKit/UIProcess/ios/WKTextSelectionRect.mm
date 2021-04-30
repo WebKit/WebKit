@@ -28,36 +28,116 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import <WebCore/SelectionRect.h>
+#import <WebCore/SelectionGeometry.h>
+
+#if HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
+
+@interface WKTextSelectionRectCustomHandleInfo : UITextSelectionRectCustomHandleInfo
+- (instancetype)initWithFloatQuad:(const WebCore::FloatQuad&)quad;
+@end
+
+@implementation WKTextSelectionRectCustomHandleInfo {
+    WebCore::FloatQuad _quad;
+}
+
+- (instancetype)initWithFloatQuad:(const WebCore::FloatQuad&)quad
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _quad = quad;
+    return self;
+}
+
+- (CGPoint)bottomLeft
+{
+    return _quad.p4();
+}
+
+- (CGPoint)topLeft
+{
+    return _quad.p1();
+}
+
+- (CGPoint)bottomRight
+{
+    return _quad.p3();
+}
+
+- (CGPoint)topRight
+{
+    return _quad.p2();
+}
+
+@end
+
+#endif // HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
 
 @implementation WKTextSelectionRect {
-    WebCore::SelectionRect _selectionRect;
+    WebCore::SelectionGeometry _selectionGeometry;
+    CGFloat _scaleFactor;
 }
 
 - (instancetype)initWithCGRect:(CGRect)rect
 {
-    WebCore::SelectionRect selectionRect;
-    selectionRect.setRect(WebCore::enclosingIntRect(rect));
-    return [self initWithSelectionRect:WTFMove(selectionRect)];
+    WebCore::SelectionGeometry selectionGeometry;
+    selectionGeometry.setRect(WebCore::enclosingIntRect(rect));
+    return [self initWithSelectionGeometry:WTFMove(selectionGeometry) scaleFactor:1];
 }
 
-- (instancetype)initWithSelectionRect:(const WebCore::SelectionRect&)selectionRect
+- (instancetype)initWithSelectionGeometry:(const WebCore::SelectionGeometry&)selectionGeometry scaleFactor:(CGFloat)scaleFactor
 {
     if (!(self = [super init]))
         return nil;
-    _selectionRect = selectionRect;
+
+    _selectionGeometry = selectionGeometry;
+    _scaleFactor = scaleFactor;
     return self;
 }
 
+- (UIBezierPath *)_path
+{
+    if (_selectionGeometry.behavior() == WebCore::SelectionRenderingBehavior::CoalesceBoundingRects)
+        return nil;
+
+    auto selectionBounds = _selectionGeometry.rect();
+    auto quad = _selectionGeometry.quad();
+    quad.scale(_scaleFactor);
+    quad.move(-selectionBounds.x() * _scaleFactor, -selectionBounds.y() * _scaleFactor);
+
+    auto result = [UIBezierPath bezierPath];
+    [result moveToPoint:quad.p1()];
+    [result addLineToPoint:quad.p2()];
+    [result addLineToPoint:quad.p3()];
+    [result addLineToPoint:quad.p4()];
+    [result addLineToPoint:quad.p1()];
+    [result closePath];
+    return result;
+}
+
+#if HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
+
+- (WKTextSelectionRectCustomHandleInfo *)_customHandleInfo
+{
+    if (_selectionGeometry.behavior() == WebCore::SelectionRenderingBehavior::CoalesceBoundingRects)
+        return nil;
+
+    auto scaledQuad = _selectionGeometry.quad();
+    scaledQuad.scale(_scaleFactor);
+    return adoptNS([[WKTextSelectionRectCustomHandleInfo alloc] initWithFloatQuad:scaledQuad]).autorelease();
+}
+
+#endif // HAVE(UI_TEXT_SELECTION_RECT_CUSTOM_HANDLE_INFO)
+
 - (CGRect)rect
 {
-    return _selectionRect.rect();
+    return _selectionGeometry.rect();
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 - (UITextWritingDirection)writingDirection
 {
-    return _selectionRect.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
+    return _selectionGeometry.direction() == WebCore::TextDirection::LTR ? UITextWritingDirectionLeftToRight : UITextWritingDirectionRightToLeft;
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
@@ -68,17 +148,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)containsStart
 {
-    return _selectionRect.containsStart();
+    return _selectionGeometry.containsStart();
 }
 
 - (BOOL)containsEnd
 {
-    return _selectionRect.containsEnd();
+    return _selectionGeometry.containsEnd();
 }
 
 - (BOOL)isVertical
 {
-    return !_selectionRect.isHorizontal();
+    return !_selectionGeometry.isHorizontal();
 }
 
 @end

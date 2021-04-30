@@ -80,6 +80,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestDefaultToJSONIndirectInheritanceProtot
 
 using JSTestDefaultToJSONIndirectInheritanceDOMConstructor = JSDOMConstructorNotConstructable<JSTestDefaultToJSONIndirectInheritance>;
 
+template<> const ClassInfo JSTestDefaultToJSONIndirectInheritanceDOMConstructor::s_info = { "TestDefaultToJSONIndirectInheritance", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONIndirectInheritanceDOMConstructor) };
+
 template<> JSValue JSTestDefaultToJSONIndirectInheritanceDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSTestDefaultToJSONInherit::getConstructor(vm, &globalObject);
@@ -91,8 +93,6 @@ template<> void JSTestDefaultToJSONIndirectInheritanceDOMConstructor::initialize
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestDefaultToJSONIndirectInheritance"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestDefaultToJSONIndirectInheritanceDOMConstructor::s_info = { "TestDefaultToJSONIndirectInheritance", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONIndirectInheritanceDOMConstructor) };
 
 /* Hash table for prototype */
 

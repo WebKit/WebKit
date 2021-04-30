@@ -295,6 +295,9 @@ WI.ObjectTreeView = class ObjectTreeView extends WI.Object
 
     showOnlyJSON()
     {
+        console.assert(this._mode === WI.ObjectTreeView.Mode.Properties, this._mode);
+        console.assert(!this._hasLosslessPreview);
+
         this.showOnlyProperties();
 
         this._element.classList.add("json-only");

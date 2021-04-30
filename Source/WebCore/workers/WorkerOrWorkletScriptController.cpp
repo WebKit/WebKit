@@ -57,6 +57,7 @@
 #include <JavaScriptCore/JSScriptFetcher.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/VMTrapsInlines.h>
 
 namespace WebCore {
 
@@ -518,7 +519,7 @@ void WorkerOrWorkletScriptController::initScriptWithSubclass()
     ASSERT(asObject(m_globalScopeWrapper->getPrototypeDirect(*m_vm))->globalObject() == m_globalScopeWrapper);
 
     m_consoleClient = makeUnique<WorkerConsoleClient>(*m_globalScope);
-    m_globalScopeWrapper->setConsoleClient(m_consoleClient.get());
+    m_globalScopeWrapper->setConsoleClient(makeWeakPtr(*m_consoleClient));
 }
 
 void WorkerOrWorkletScriptController::initScript()

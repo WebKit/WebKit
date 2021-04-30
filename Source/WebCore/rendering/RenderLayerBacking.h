@@ -43,7 +43,7 @@ class TiledBacking;
 class TransformationMatrix;
 
 
-#if __WORDSIZE == 64 && PLATFORM(COCOA)
+#if CPU(ADDRESS64) && PLATFORM(COCOA)
 #define USE_OWNING_LAYER_BEAR_TRAP 1
 #define BEAR_TRAP_VALUE 0xEEEEEEEEEEEEEEEE
 #else

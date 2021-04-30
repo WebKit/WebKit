@@ -253,19 +253,22 @@ constexpr auto createAttributedPrivateClickMeasurement = "CREATE TABLE Attribute
     "ObservedDomains(domainID) ON DELETE CASCADE)"_s;
 
 // CREATE UNIQUE INDEX Queries.
-constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID );"_s;
-constexpr auto createUniqueIndexTopFrameUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsTo_sourceDomainID_toDomainID on TopFrameUniqueRedirectsTo ( sourceDomainID, toDomainID );"_s;
-constexpr auto createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement_sourceDomainID_toDomainID on TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement ( sourceDomainID, toDomainID );"_s;
-constexpr auto createUniqueIndexTopFrameUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsFrom_targetDomainID_fromDomainID on TopFrameUniqueRedirectsFrom ( targetDomainID, fromDomainID );"_s;
-constexpr auto createUniqueIndexTopFrameLinkDecorationsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLinkDecorationsFrom_toDomainID_fromDomainID on TopFrameLinkDecorationsFrom ( toDomainID, fromDomainID );"_s;
-constexpr auto createUniqueIndexTopFrameLoadedThirdPartyScripts = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLoadedThirdPartyScripts_topFrameDomainID_subresourceDomainID on TopFrameLoadedThirdPartyScripts ( topFrameDomainID, subresourceDomainID );"_s;
-constexpr auto createUniqueIndexSubframeUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubframeUnderTopFrameDomains_subFrameDomainID_topFrameDomainID on SubframeUnderTopFrameDomains ( subFrameDomainID, topFrameDomainID );"_s;
-constexpr auto createUniqueIndexSubresourceUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUnderTopFrameDomains_subresourceDomainID_topFrameDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, topFrameDomainID );"_s;
-constexpr auto createUniqueIndexSubresourceUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsTo_subresourceDomainID_toDomainID on SubresourceUniqueRedirectsTo ( subresourceDomainID, toDomainID );"_s;
-constexpr auto createUniqueIndexSubresourceUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsFrom_subresourceDomainID_fromDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, fromDomainID );"_s;
-constexpr auto createUniqueIndexOperatingDates = "CREATE UNIQUE INDEX IF NOT EXISTS OperatingDates_year_month_monthDay on OperatingDates ( year, month, monthDay );"_s;
-constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID );"_s;
-constexpr auto createUniqueIndexAttributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS AttributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on AttributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID );"_s;
+constexpr auto createUniqueIndexStorageAccessUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS StorageAccessUnderTopFrameDomains_domainID_topLevelDomainID on StorageAccessUnderTopFrameDomains ( domainID, topLevelDomainID )"_s;
+constexpr auto createUniqueIndexTopFrameUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsTo_sourceDomainID_toDomainID on TopFrameUniqueRedirectsTo ( sourceDomainID, toDomainID )"_s;
+constexpr auto createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement_sourceDomainID_toDomainID on TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement ( sourceDomainID, toDomainID )"_s;
+constexpr auto createUniqueIndexTopFrameUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameUniqueRedirectsFrom_targetDomainID_fromDomainID on TopFrameUniqueRedirectsFrom ( targetDomainID, fromDomainID )"_s;
+constexpr auto createUniqueIndexTopFrameLinkDecorationsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLinkDecorationsFrom_toDomainID_fromDomainID on TopFrameLinkDecorationsFrom ( toDomainID, fromDomainID )"_s;
+constexpr auto createUniqueIndexTopFrameLoadedThirdPartyScripts = "CREATE UNIQUE INDEX IF NOT EXISTS TopFrameLoadedThirdPartyScripts_topFrameDomainID_subresourceDomainID on TopFrameLoadedThirdPartyScripts ( topFrameDomainID, subresourceDomainID )"_s;
+constexpr auto createUniqueIndexSubframeUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubframeUnderTopFrameDomains_subFrameDomainID_topFrameDomainID on SubframeUnderTopFrameDomains ( subFrameDomainID, topFrameDomainID )"_s;
+constexpr auto createUniqueIndexSubresourceUnderTopFrameDomains = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUnderTopFrameDomains_subresourceDomainID_topFrameDomainID on SubresourceUnderTopFrameDomains ( subresourceDomainID, topFrameDomainID )"_s;
+constexpr auto createUniqueIndexSubresourceUniqueRedirectsTo = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsTo_subresourceDomainID_toDomainID on SubresourceUniqueRedirectsTo ( subresourceDomainID, toDomainID )"_s;
+constexpr auto createUniqueIndexSubresourceUniqueRedirectsFrom = "CREATE UNIQUE INDEX IF NOT EXISTS SubresourceUniqueRedirectsFrom_subresourceDomainID_fromDomainID on SubresourceUniqueRedirectsFrom ( subresourceDomainID, fromDomainID )"_s;
+constexpr auto createUniqueIndexOperatingDates = "CREATE UNIQUE INDEX IF NOT EXISTS OperatingDates_year_month_monthDay on OperatingDates ( year, month, monthDay )"_s;
+constexpr auto createUniqueIndexUnattributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS UnattributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on UnattributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID )"_s;
+constexpr auto createUniqueIndexAttributedPrivateClickMeasurement = "CREATE UNIQUE INDEX IF NOT EXISTS AttributedPrivateClickMeasurement_sourceSiteDomainID_destinationSiteDomainID on AttributedPrivateClickMeasurement ( sourceSiteDomainID, destinationSiteDomainID )"_s;
+
+// Add one to the count of the above index queries to account for the ObservedDomains table, which has an index automatically created by SQLite because of its primary key.
+const int expectedIndexCount = 14;
 
 static const String ObservedDomainsTableSchemaV1()
 {
@@ -294,27 +297,32 @@ static bool needsNewCreateTableSchema(const String& schema)
     return schema.contains("REFERENCES TopLevelDomains");
 }
 
-static const MemoryCompactLookupOnlyRobinHoodHashMap<String, String>& createTableQueries()
+static String stripIndexQueryToMatchStoredValue(const char* originalQuery)
 {
-    static auto createTableQueries = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, String> {
-        { "ObservedDomains"_s, createObservedDomain},
-        { "TopLevelDomains"_s, createTopLevelDomains},
-        { "StorageAccessUnderTopFrameDomains"_s, createStorageAccessUnderTopFrameDomains},
-        { "TopFrameUniqueRedirectsTo"_s, createTopFrameUniqueRedirectsTo},
-        { "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement},
-        { "TopFrameUniqueRedirectsFrom"_s, createTopFrameUniqueRedirectsFrom},
-        { "TopFrameLinkDecorationsFrom"_s, createTopFrameLinkDecorationsFrom},
-        { "TopFrameLoadedThirdPartyScripts"_s, createTopFrameLoadedThirdPartyScripts},
-        { "SubframeUnderTopFrameDomains"_s, createSubframeUnderTopFrameDomains},
-        { "SubresourceUnderTopFrameDomains"_s, createSubresourceUnderTopFrameDomains},
-        { "SubresourceUniqueRedirectsTo"_s, createSubresourceUniqueRedirectsTo},
-        { "SubresourceUniqueRedirectsFrom"_s, createSubresourceUniqueRedirectsFrom},
-        { "OperatingDates"_s, createOperatingDates},
-        { "UnattributedPrivateClickMeasurement"_s, createUnattributedPrivateClickMeasurement},
-        { "AttributedPrivateClickMeasurement"_s, createAttributedPrivateClickMeasurement}
+    return String(originalQuery).replace("CREATE UNIQUE INDEX IF NOT EXISTS", "CREATE UNIQUE INDEX");
+}
+
+static const MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair>& expectedTableAndIndexQueries()
+{
+    static auto expectedTableAndIndexQueries = makeNeverDestroyed(MemoryCompactLookupOnlyRobinHoodHashMap<String, TableAndIndexPair> {
+        { "ObservedDomains"_s, std::make_pair<String, Optional<String>>(createObservedDomain, WTF::nullopt) },
+        { "TopLevelDomains"_s, std::make_pair<String, Optional<String>>(createTopLevelDomains, WTF::nullopt) },
+        { "StorageAccessUnderTopFrameDomains"_s, std::make_pair<String, Optional<String>>(createStorageAccessUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexStorageAccessUnderTopFrameDomains)) },
+        { "TopFrameUniqueRedirectsTo"_s, std::make_pair<String, Optional<String>>(createTopFrameUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsTo)) },
+        { "TopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement"_s, std::make_pair<String, Optional<String>>(createTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsToSinceSameSiteStrictEnforcement)) },
+        { "TopFrameUniqueRedirectsFrom"_s, std::make_pair<String, Optional<String>>(createTopFrameUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameUniqueRedirectsFrom)) },
+        { "TopFrameLinkDecorationsFrom"_s, std::make_pair<String, Optional<String>>(createTopFrameLinkDecorationsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLinkDecorationsFrom)) },
+        { "TopFrameLoadedThirdPartyScripts"_s, std::make_pair<String, Optional<String>>(createTopFrameLoadedThirdPartyScripts, stripIndexQueryToMatchStoredValue(createUniqueIndexTopFrameLoadedThirdPartyScripts)) },
+        { "SubframeUnderTopFrameDomains"_s, std::make_pair<String, Optional<String>>(createSubframeUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubframeUnderTopFrameDomains)) },
+        { "SubresourceUnderTopFrameDomains"_s, std::make_pair<String, Optional<String>>(createSubresourceUnderTopFrameDomains, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUnderTopFrameDomains)) },
+        { "SubresourceUniqueRedirectsTo"_s, std::make_pair<String, Optional<String>>(createSubresourceUniqueRedirectsTo, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsTo)) },
+        { "SubresourceUniqueRedirectsFrom"_s, std::make_pair<String, Optional<String>>(createSubresourceUniqueRedirectsFrom, stripIndexQueryToMatchStoredValue(createUniqueIndexSubresourceUniqueRedirectsFrom)) },
+        { "OperatingDates"_s, std::make_pair<String, Optional<String>>(createOperatingDates, stripIndexQueryToMatchStoredValue(createUniqueIndexOperatingDates)) },
+        { "UnattributedPrivateClickMeasurement"_s, std::make_pair<String, Optional<String>>(createUnattributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexUnattributedPrivateClickMeasurement)) },
+        { "AttributedPrivateClickMeasurement"_s, std::make_pair<String, Optional<String>>(createAttributedPrivateClickMeasurement, stripIndexQueryToMatchStoredValue(createUniqueIndexAttributedPrivateClickMeasurement)) }
     });
     
-    return createTableQueries;
+    return expectedTableAndIndexQueries;
 }
 
 HashSet<ResourceLoadStatisticsDatabaseStore*>& ResourceLoadStatisticsDatabaseStore::allStores()
@@ -399,7 +407,7 @@ Optional<Vector<String>> ResourceLoadStatisticsDatabaseStore::checkForMissingTab
         return WTF::nullopt;
     }
 
-    for (auto& table : createTableQueries().keys()) {
+    for (auto& table : expectedTableAndIndexQueries().keys()) {
         if (statement.bindText(1, table) != SQLITE_OK) {
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::checkForMissingTablesInSchema failed to bind, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
             return WTF::nullopt;
@@ -426,29 +434,66 @@ void ResourceLoadStatisticsDatabaseStore::enableForeignKeys()
     }
 }
 
-String ResourceLoadStatisticsDatabaseStore::tableSchema(const String& tableName)
+TableAndIndexPair ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries(const String& tableName)
 {
-    SQLiteStatement statement(m_database, makeString("SELECT type, sql FROM sqlite_master WHERE tbl_name='", tableName, "' AND type = 'table'"));
+    SQLiteStatement getTableStatement(m_database, makeString("SELECT sql FROM sqlite_master WHERE tbl_name='", tableName, "' AND type = 'table'"));
+    if (getTableStatement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries Unable to prepare statement to fetch schema for the table, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    if (getTableStatement.step() != SQLITE_ROW) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries error executing statement to fetch table schema, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    String createTableQuery = getTableStatement.getColumnText(0);
+
+    SQLiteStatement getIndexStatement(m_database, makeString("SELECT sql FROM sqlite_master WHERE tbl_name='", tableName, "' AND type = 'index'"));
+    if (getIndexStatement.prepare() != SQLITE_OK) {
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::currentTableAndIndexQueries Unable to prepare statement to fetch index for the table, error message: %{private}s", this, m_database.lastErrorMsg());
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    Optional<String> index;
+    if (getIndexStatement.step() == SQLITE_ROW) {
+        auto rawIndex = String(getIndexStatement.getColumnText(0));
+        if (!rawIndex.isEmpty())
+            index = rawIndex;
+    }
+
+    return std::make_pair<String, Optional<String>>(WTFMove(createTableQuery), WTFMove(index));
+}
+
+bool ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema()
+{
+    auto currentSchema = currentTableAndIndexQueries("AttributedPrivateClickMeasurement"_s).first;
+
+    if (!currentSchema.isEmpty() && currentSchema != createAttributedPrivateClickMeasurement)
+        return true;
+
+    return false;
+}
+
+bool ResourceLoadStatisticsDatabaseStore::missingUniqueIndices()
+{
+    SQLiteStatement statement(m_database, makeString("SELECT COUNT(*) FROM sqlite_master WHERE type = 'index'"));
     if (statement.prepare() != SQLITE_OK) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::tableSchema Unable to prepare statement to fetch schema for the table, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::missingUniqueIndices Unable to prepare statement to fetch index count, error message: %s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return { };
     }
 
     if (statement.step() != SQLITE_ROW) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::tableSchema error executing statement to fetch table schema, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::missingUniqueIndices error executing statement to fetch index count, error message: %s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return { };
     }
 
-    return statement.getColumnText(1);
-}
-
-bool ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSchema()
-{
-    auto currentSchema = tableSchema("AttributedPrivateClickMeasurement"_s);
-
-    if (!currentSchema.isEmpty() && currentSchema != createAttributedPrivateClickMeasurement)
+    if (statement.getColumnInt(0) < expectedIndexCount)
         return true;
 
     return false;
@@ -457,23 +502,46 @@ bool ResourceLoadStatisticsDatabaseStore::needsUpdatedPrivateClickMeasurementSch
 bool ResourceLoadStatisticsDatabaseStore::missingReferenceToObservedDomains()
 {
     // Check a table for a reference to TopLevelDomains, a sign of the old schema.
-    auto oldSchema = tableSchema("TopFrameUniqueRedirectsTo"_s);
+    auto oldSchema = currentTableAndIndexQueries("TopFrameUniqueRedirectsTo"_s).first;
     return needsNewCreateTableSchema(oldSchema);
 }
 
 bool ResourceLoadStatisticsDatabaseStore::needsUpdatedSchema()
 {
-    // There are 2 cases where we expect potential schema changes due to upgrades.
+    // There are 3 cases where we expect potential schema changes due to upgrades.
     // All other tables should be up-to-date, so we should ASSERT that they are correct.
-    if (missingReferenceToObservedDomains() || needsUpdatedPrivateClickMeasurementSchema())
+    if (missingReferenceToObservedDomains() || needsUpdatedPrivateClickMeasurementSchema() || missingUniqueIndices())
         return true;
 
-    for (auto& table : createTableQueries().keys()) {
+    for (auto& table : expectedTableAndIndexQueries().keys()) {
         UNUSED_PARAM(table);
-        ASSERT(tableSchema(table) == createTableQueries().get(table));
+        ASSERT(currentTableAndIndexQueries(table) == expectedTableAndIndexQueries().get(table));
     }
 
     return false;
+}
+
+static String insertDistinctValuesInTableQuery(const String& table)
+{
+    if (table == "SubframeUnderTopFrameDomains")
+        return makeString("INSERT INTO SubframeUnderTopFrameDomains SELECT subFrameDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubframeUnderTopFrameDomains GROUP BY subFrameDomainID, topFrameDomainID");
+
+    if (table == "SubresourceUnderTopFrameDomains")
+        return makeString("INSERT INTO SubresourceUnderTopFrameDomains SELECT subresourceDomainID, MAX(lastUpdated), topFrameDomainID FROM _SubresourceUnderTopFrameDomains GROUP BY subresourceDomainID, topFrameDomainID");
+
+    if (table == "SubresourceUniqueRedirectsTo")
+        return makeString("INSERT INTO SubresourceUniqueRedirectsTo SELECT subresourceDomainID, MAX(lastUpdated), toDomainID FROM _SubresourceUniqueRedirectsTo GROUP BY subresourceDomainID, toDomainID");
+
+    if (table == "TopFrameLinkDecorationsFrom")
+        return makeString("INSERT INTO TopFrameLinkDecorationsFrom SELECT toDomainID, MAX(lastUpdated), fromDomainID FROM _TopFrameLinkDecorationsFrom GROUP BY toDomainID, fromDomainID");
+
+    if (table == "UnattributedPrivateClickMeasurement")
+        return makeString("INSERT INTO UnattributedPrivateClickMeasurement SELECT sourceSiteDomainID, destinationSiteDomainID, sourceID, MAX(timeOfAdClick), token, signature, keyID FROM _UnattributedPrivateClickMeasurement GROUP BY sourceSiteDomainID, destinationSiteDomainID");
+
+    if (table == "AttributedPrivateClickMeasurement")
+        return makeString("INSERT INTO AttributedPrivateClickMeasurement SELECT sourceSiteDomainID, destinationSiteDomainID, sourceID, attributionTriggerData, priority, MAX(timeOfAdClick), earliestTimeToSendToSource, token, signature, keyID, earliestTimeToSendToDestination FROM _AttributedPrivateClickMeasurement GROUP BY sourceSiteDomainID, destinationSiteDomainID");
+
+    return makeString("INSERT INTO ", table, " SELECT DISTINCT * FROM _", table);
 }
 
 void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
@@ -484,27 +552,27 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     SQLiteTransaction transaction(m_database);
     transaction.begin();
 
-    for (auto& table : createTableQueries().keys()) {
+    for (auto& table : expectedTableAndIndexQueries().keys()) {
         auto query = makeString("ALTER TABLE ", table, " RENAME TO _", table);
         SQLiteStatement alterTable(m_database, query);
         if (alterTable.prepare() != SQLITE_OK || alterTable.step() != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to rename table, error message: %{private}s", this, m_database.lastErrorMsg());
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to rename table, error message: %s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
         }
     }
 
     if (!createSchema()) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to create schema, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to create schema, error message: %s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return;
     }
 
-    for (auto& table : createTableQueries().keys()) {
-        auto query = makeString("INSERT INTO ", table, " SELECT * FROM _", table);
+    for (auto& table : expectedTableAndIndexQueries().keys()) {
+        auto query = insertDistinctValuesInTableQuery(table);
         SQLiteStatement migrateTableData(m_database, query);
         if (migrateTableData.prepare() != SQLITE_OK || migrateTableData.step() != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to migrate schema, error message: %{private}s", this, m_database.lastErrorMsg());
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to migrate schema, error message: %s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
         }
@@ -512,7 +580,7 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
         auto dropQuery = makeString("DROP TABLE _", table);
         SQLiteStatement dropTableQuery(m_database, dropQuery);
         if (dropTableQuery.prepare() != SQLITE_OK || dropTableQuery.step() != SQLITE_DONE) {
-            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to drop temporary tables, error message: %{private}s", this, m_database.lastErrorMsg());
+            RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to drop temporary tables, error message: %s", this, m_database.lastErrorMsg());
             ASSERT_NOT_REACHED();
             return;
         }
@@ -521,7 +589,7 @@ void ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary()
     transaction.commit();
 
     if (!createUniqueIndices()) {
-        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesWithCascadingDeletion failed to create unique indices, error message: %{private}s", this, m_database.lastErrorMsg());
+        RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::migrateDataToNewTablesIfNecessary failed to create unique indices, error message: %s", this, m_database.lastErrorMsg());
         ASSERT_NOT_REACHED();
         return;
     }
@@ -624,7 +692,7 @@ void ResourceLoadStatisticsDatabaseStore::addMissingTablesIfNecessary()
         return;
 
     for (auto& table : *missingTables) {
-        auto createTableQuery = createTableQueries().get(table);
+        auto createTableQuery = expectedTableAndIndexQueries().get(table).first;
         if (!m_database.executeCommand(createTableQuery))
             RELEASE_LOG_ERROR(Network, "%p - ResourceLoadStatisticsDatabaseStore::addMissingTables failed to execute, error message: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg());
     }
@@ -724,6 +792,7 @@ bool ResourceLoadStatisticsDatabaseStore::createUniqueIndices()
         || !m_database.executeCommand(createUniqueIndexSubframeUnderTopFrameDomains)
         || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
         || !m_database.executeCommand(createUniqueIndexSubresourceUniqueRedirectsTo)
+        || !m_database.executeCommand(createUniqueIndexSubresourceUniqueRedirectsFrom)
         || !m_database.executeCommand(createUniqueIndexSubresourceUnderTopFrameDomains)
         || !m_database.executeCommand(createUniqueIndexOperatingDates)
         || !m_database.executeCommand(createUniqueIndexUnattributedPrivateClickMeasurement)

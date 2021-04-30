@@ -26,7 +26,7 @@
 #import "WKWebProcessPlugInFramePrivate.h"
 
 #import "WKObject.h"
-#import "WKWebProcessPlugInFrame.h"
+#import <WebKit/WKWebProcessPlugInFrame.h>
 #import "WebFrame.h"
 
 namespace WebKit {

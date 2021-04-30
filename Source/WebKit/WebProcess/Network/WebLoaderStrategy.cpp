@@ -340,9 +340,10 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
             loadParameters.cspResponseHeaders = contentSecurityPolicy->responseHeaders();
     }
     
+#if ENABLE(APP_BOUND_DOMAINS) || ENABLE(CONTENT_EXTENSIONS)
     auto* webFrameLoaderClient = frame ? toWebFrameLoaderClient(frame->loader().client()) : nullptr;
     auto* webFrame = webFrameLoaderClient ? &webFrameLoaderClient->webFrame() : nullptr;
-    auto* webPage = webFrame ? webFrame->page() : nullptr;
+#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
     if (webFrame)
@@ -353,7 +354,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     if (document) {
         loadParameters.mainDocumentURL = document->topDocument().url();
         // FIXME: Instead of passing userContentControllerIdentifier, the NetworkProcess should be able to get it using webPageId.
-        if (webPage)
+        if (auto* webPage = webFrame ? webFrame->page() : nullptr)
             loadParameters.userContentControllerIdentifier = webPage->userContentControllerIdentifier();
     }
 #endif
@@ -767,8 +768,9 @@ void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, S
 void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, PreconnectCompletionHandler&& completionHandler)
 {
     if (auto* document = webPage.mainFrame()->document()) {
-        if (document && document->loader())
-            request.setIsAppBound(document->loader()->lastNavigationWasAppBound());
+        request.setFirstPartyForCookies(document->firstPartyForCookies());
+        if (auto* loader = document->loader())
+            request.setIsAppBound(loader->lastNavigationWasAppBound());
     }
 
     Optional<uint64_t> preconnectionIdentifier;

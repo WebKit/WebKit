@@ -54,6 +54,11 @@ TransformationMatrix WebXRSpace::effectiveOrigin() const
 }
 
 
+bool WebXRSpace::isPositionEmulated() const
+{
+    return session().isPositionEmulated();
+}
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebXRViewerSpace);
 
 WebXRViewerSpace::WebXRViewerSpace(Document& document, WebXRSession& session)

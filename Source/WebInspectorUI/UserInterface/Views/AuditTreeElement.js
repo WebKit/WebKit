@@ -195,7 +195,7 @@ WI.AuditTreeElement = class AuditTreeElement extends WI.GeneralTreeElement
 
                 contextMenu.appendItem(WI.UIString("Duplicate Audit"), async () => {
                     let audit = await this.representedObject.clone();
-                    WI.auditManager.addTest(audit);
+                    WI.auditManager.addTest(audit, {save: true});
                 });
 
                 if (this.representedObject.editable) {

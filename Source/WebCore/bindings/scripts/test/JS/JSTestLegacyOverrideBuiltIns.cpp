@@ -91,6 +91,8 @@ STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(JSTestLegacyOverrideBuiltInsPrototype, JSTes
 
 using JSTestLegacyOverrideBuiltInsDOMConstructor = JSDOMConstructorNotConstructable<JSTestLegacyOverrideBuiltIns>;
 
+template<> const ClassInfo JSTestLegacyOverrideBuiltInsDOMConstructor::s_info = { "TestLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltInsDOMConstructor) };
+
 template<> JSValue JSTestLegacyOverrideBuiltInsDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     UNUSED_PARAM(vm);
@@ -103,8 +105,6 @@ template<> void JSTestLegacyOverrideBuiltInsDOMConstructor::initializeProperties
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestLegacyOverrideBuiltIns"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestLegacyOverrideBuiltInsDOMConstructor::s_info = { "TestLegacyOverrideBuiltIns", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyOverrideBuiltInsDOMConstructor) };
 
 /* Hash table for prototype */
 

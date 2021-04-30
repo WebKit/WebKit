@@ -28,12 +28,12 @@
 
 #import "APIPageConfiguration.h"
 #import "UserInterfaceIdiom.h"
-#import "WKPreferences.h"
-#import "WKProcessPool.h"
-#import "WKRetainPtr.h"
-#import "WKUserContentController.h"
+#import <WebKit/WKPreferences.h>
+#import <WebKit/WKProcessPool.h>
+#import <WebKit/WKRetainPtr.h>
+#import <WebKit/WKUserContentController.h>
 #import "WKWebpagePreferencesInternal.h"
-#import "WKWebView.h"
+#import <WebKit/WKWebView.h>
 #import "WKWebViewContentProviderRegistry.h"
 #import "WebKit2Initialize.h"
 #import "WebPreferencesDefaultValues.h"
@@ -554,7 +554,7 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (void)setURLSchemeHandler:(id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme
 {
-    if ([WKWebView handlesURLScheme:urlScheme] && [urlScheme caseInsensitiveCompare:@"http"] != NSOrderedSame && [urlScheme caseInsensitiveCompare:@"https"] != NSOrderedSame)
+    if ([WKWebView handlesURLScheme:urlScheme])
         [NSException raise:NSInvalidArgumentException format:@"'%@' is a URL scheme that WKWebView handles natively", urlScheme];
 
     auto canonicalScheme = WTF::URLParser::maybeCanonicalizeScheme(urlScheme);

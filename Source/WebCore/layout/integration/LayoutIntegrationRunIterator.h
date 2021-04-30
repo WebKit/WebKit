@@ -149,8 +149,6 @@ public:
     LineIterator line() const;
 
 protected:
-    void setAtEnd();
-
     PathRun m_run;
 };
 

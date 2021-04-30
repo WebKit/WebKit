@@ -59,7 +59,9 @@
 - (DOMCSSRuleList *)rules
 {
     WebCore::JSMainThreadNullState state;
-    return kit(WTF::getPtr(IMPL->rules()));
+    // Calling IMPL->cssRules (not IMPL->rules) is intentional, as `rules` should just be an alias for `cssRules`.
+    // See https://bugs.webkit.org/show_bug.cgi?id=197725 for more information.
+    return kit(WTF::getPtr(IMPL->cssRules()));
 }
 
 - (unsigned)insertRule:(NSString *)rule index:(unsigned)index

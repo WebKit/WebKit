@@ -55,15 +55,13 @@ public:
     IntegerArray() : m_integers(0), m_size(0) { }
     IntegerArray(const int* integers, size_t size) : m_integers(integers), m_size(size) { ASSERT(integers); ASSERT(size); }
 
-    void markDeleted() { m_integers = 0; m_size = deletedValueSize(); }
-    bool isDeletedValue() const { return m_size == deletedValueSize(); }
+    bool isDeletedValue() const { return HashTraits<size_t>::isDeletedValue(m_size); }
 
     const int* integers() const { ASSERT(!isDeletedValue()); return m_integers; }
     size_t size() const { ASSERT(!isDeletedValue()); return m_size; }
 
 private:
-    static size_t deletedValueSize() { return std::numeric_limits<size_t>::max(); }
-
+    friend struct IntegerArrayHashTraits;
     friend bool operator==(const IntegerArray&, const IntegerArray&);
 
     const int* m_integers;
@@ -76,8 +74,8 @@ inline bool operator==(const IntegerArray& a, const IntegerArray& b)
 }
 
 struct IntegerArrayHashTraits : HashTraits<IntegerArray> {
-    static void constructDeletedValue(IntegerArray& slot) { slot.markDeleted(); }
-    static bool isDeletedValue(const IntegerArray& array) { return array.isDeletedValue(); }
+    static void constructDeletedValue(IntegerArray& slot) { HashTraits<size_t>::constructDeletedValue(slot.m_size); }
+    static bool isDeletedValue(const IntegerArray& slot) { return HashTraits<size_t>::isDeletedValue(slot.m_size); }
 };
 
 struct IntegerArrayHash {

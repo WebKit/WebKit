@@ -4,7 +4,7 @@ PASS Property border-image-width value '1'
 PASS Property border-image-width value 'auto'
 PASS Property border-image-width value '10px'
 PASS Property border-image-width value '20%'
-FAIL Property border-image-width value 'calc(20% + 10px)' assert_equals: expected "calc(20% + 10px)" but got "30px"
+PASS Property border-image-width value 'calc(20% + 10px)'
 PASS Property border-image-width value 'calc(-0.5em + 10px)'
 PASS Property border-image-width value 'calc(0.5em + 10px)'
 PASS Property border-image-width value '1 auto'

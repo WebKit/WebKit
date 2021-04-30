@@ -105,11 +105,11 @@ FloatPoint RenderGeometryMap::mapToContainer(const FloatPoint& p, const RenderLa
 #if ASSERT_ENABLED
     FloatPoint rendererMappedResult = m_mapping.last().m_renderer->localToAbsolute(p, m_mapCoordinatesFlags);
 #endif
-    
+
     if (!hasFixedPositionStep() && !hasTransformStep() && !hasNonUniformStep() && (!container || (m_mapping.size() && container == m_mapping[0].m_renderer))) {
-        result = p + roundedIntSize(m_accumulatedOffset);
-        // Should convert to a LayoutPoint because of the uniqueness of LayoutUnit::round
-        ASSERT(m_accumulatedOffsetMightBeSaturated || roundedIntPoint(LayoutPoint(rendererMappedResult)) == result);
+        result = p;
+        result.move(m_accumulatedOffset);
+        ASSERT(m_accumulatedOffsetMightBeSaturated || areEssentiallyEqual(rendererMappedResult, result));
     } else {
         TransformState transformState(TransformState::ApplyTransformDirection, p);
         mapToContainer(transformState, container);
@@ -154,7 +154,7 @@ static bool canMapBetweenRenderersViaLayers(const RenderLayerModelObject& render
         if (current->isFixedPositioned() || style.isFlippedBlocksWritingMode())
             return false;
 
-        if (current->hasTransformRelatedProperty() && (current->style().hasTransform() || current->style().hasPerspective()))
+        if (current->hasTransformRelatedProperty() && !current->style().preserves3D())
             return false;
         
         if (current->isRenderFragmentedFlow())

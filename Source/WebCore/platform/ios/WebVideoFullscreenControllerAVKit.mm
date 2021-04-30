@@ -150,6 +150,7 @@ private:
     void beginScanningBackward() override;
     void endScanning() override;
     void setDefaultPlaybackRate(float) override;
+    void setPlaybackRate(float) override;
     void selectAudioMediaOption(uint64_t) override;
     void selectLegibleMediaOption(uint64_t) override;
     double duration() const override;
@@ -846,6 +847,15 @@ void VideoFullscreenControllerContext::setDefaultPlaybackRate(float defaultPlayb
     WebThreadRun([protectedThis = makeRefPtr(this), this, defaultPlaybackRate] {
         if (m_playbackModel)
             m_playbackModel->setDefaultPlaybackRate(defaultPlaybackRate);
+    });
+}
+
+void VideoFullscreenControllerContext::setPlaybackRate(float playbackRate)
+{
+    ASSERT(isUIThread());
+    WebThreadRun([protectedThis = makeRefPtr(this), this, playbackRate] {
+        if (m_playbackModel)
+            m_playbackModel->setPlaybackRate(playbackRate);
     });
 }
 

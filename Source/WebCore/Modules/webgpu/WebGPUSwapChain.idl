@@ -26,7 +26,7 @@
 
 [
     Conditional=WEBGPU,
-    EnabledAtRuntime=WebGPU,
+    EnabledBySetting=WebGPU,
     InterfaceName=GPUSwapChain,
     SkipVTableValidation,
     Exposed=Window

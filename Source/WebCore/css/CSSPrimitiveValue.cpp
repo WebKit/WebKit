@@ -542,7 +542,7 @@ template<> unsigned CSSPrimitiveValue::computeLength(const CSSToLengthConversion
 
 template<> Length CSSPrimitiveValue::computeLength(const CSSToLengthConversionData& conversionData) const
 {
-    return Length(clampTo<float>(computeLengthDouble(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
+    return Length(clampTo<double>(computeLengthDouble(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
 }
 
 template<> short CSSPrimitiveValue::computeLength(const CSSToLengthConversionData& conversionData) const
@@ -851,6 +851,11 @@ Optional<bool> CSSPrimitiveValue::isNegative() const
     if (primitiveUnitType() == CSSUnitType::CSS_CALC)
         return WTF::nullopt;
     return m_value.num < 0;
+}
+
+bool CSSPrimitiveValue::isCenterPosition() const
+{
+    return valueID() == CSSValueCenter || doubleValue(CSSUnitType::CSS_PERCENTAGE) == 50;
 }
 
 Optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType requestedUnitType) const

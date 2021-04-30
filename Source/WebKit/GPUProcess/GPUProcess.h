@@ -30,9 +30,11 @@
 #include "AuxiliaryProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCEnumTraits.h>
+#include <WebCore/Timer.h>
 #include <pal/SessionID.h>
 #include <wtf/Function.h>
 #include <wtf/MemoryPressureHandler.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/WeakPtr.h>
 
 #if PLATFORM(MAC)
@@ -92,6 +94,8 @@ public:
     void enableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder);
 #endif
 
+    void tryExitIfUnusedAndUnderMemoryPressure();
+
 private:
     void lowMemoryHandler(Critical, Synchronous);
 
@@ -100,6 +104,9 @@ private:
     void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
     void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
     bool shouldTerminate() override;
+
+    void tryExitIfUnused();
+    bool canExitUnderMemoryPressure() const;
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -144,6 +151,7 @@ private:
 
     // Connections to WebProcesses.
     HashMap<WebCore::ProcessIdentifier, Ref<GPUConnectionToWebProcess>> m_webProcessConnections;
+    MonotonicTime m_creationTime { MonotonicTime::now() };
 
 #if ENABLE(MEDIA_STREAM)
     struct MediaCaptureAccess {
@@ -169,6 +177,7 @@ private:
 #endif
     };
     HashMap<PAL::SessionID, GPUSession> m_sessions;
+    WebCore::Timer m_idleExitTimer;
     std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     mutable std::unique_ptr<RemoteAudioSessionProxyManager> m_audioSessionManager;

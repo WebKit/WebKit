@@ -78,7 +78,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [coder encodeBool:self.javaEnabled forKey:@"javaEnabled"];
-    [coder encodeBool:self.plugInsEnabled forKey:@"plugInsEnabled"];
 ALLOW_DEPRECATED_DECLARATIONS_END
     [coder encodeBool:self.tabFocusesLinks forKey:@"tabFocusesLinks"];
 #endif
@@ -100,7 +99,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(MAC)
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     self.javaEnabled = [coder decodeBoolForKey:@"javaEnabled"];
-    self.plugInsEnabled = [coder decodeBoolForKey:@"plugInsEnabled"];
 ALLOW_DEPRECATED_DECLARATIONS_END
     self.tabFocusesLinks = [coder decodeBoolForKey:@"tabFocusesLinks"];
 #endif
@@ -1512,12 +1510,13 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
 
 - (BOOL)plugInsEnabled
 {
-    return _preferences->pluginsEnabled();
+    return NO;
 }
 
 - (void)setPlugInsEnabled:(BOOL)plugInsEnabled
 {
-    _preferences->setPluginsEnabled(plugInsEnabled);
+    if (plugInsEnabled)
+        RELEASE_LOG_FAULT(Plugins, "Application attempted to enable NPAPI plug ins, which are no longer supported");
 }
 
 #endif

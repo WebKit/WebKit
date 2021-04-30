@@ -81,6 +81,7 @@
 #include "JSTestNamedSetterWithLegacyOverrideBuiltIns.h"
 #include "JSTestNamedSetterWithLegacyUnforgeableProperties.h"
 #include "JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.h"
+#include "JSTestNamespaceObject.h"
 #include "JSTestOverloadedConstructorsWithSequence.h"
 #include "JSTestPluginInterface.h"
 #include "JSTestReadOnlyMapLike.h"
@@ -212,6 +213,7 @@ static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithIndexedGe
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor);
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor);
+static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestInterfaceNameConstructor);
 #if ENABLE(ConditionDerived)
 static JSC_DECLARE_CUSTOM_GETTER(jsTestGlobalObject_TestOperationConditionalConstructor);
 #endif
@@ -252,15 +254,15 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 53, -1 },
+    { 54, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
+    { 48, -1 },
     { -1, -1 },
-    { -1, -1 },
-    { 62, -1 },
+    { 63, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -280,7 +282,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 65, -1 },
+    { 66, -1 },
     { 13, 260 },
     { -1, -1 },
     { -1, -1 },
@@ -324,7 +326,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { -1, -1 },
     { 29, -1 },
-    { 55, -1 },
+    { 56, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -333,7 +335,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { 9, 256 },
     { -1, -1 },
-    { 57, -1 },
+    { 58, -1 },
     { 18, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -379,7 +381,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 52, -1 },
+    { 53, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -397,7 +399,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 63, -1 },
+    { 64, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -414,7 +416,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { 15, 259 },
     { -1, -1 },
-    { 58, -1 },
+    { 59, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -427,7 +429,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { 16, -1 },
     { -1, -1 },
-    { 61, -1 },
+    { 62, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -459,7 +461,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 56, -1 },
+    { 57, -1 },
     { -1, -1 },
     { 1, -1 },
     { -1, -1 },
@@ -468,10 +470,10 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 48, 263 },
+    { 49, 263 },
     { 7, 262 },
     { -1, -1 },
-    { 59, -1 },
+    { 60, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -488,9 +490,9 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { -1, -1 },
     { -1, -1 },
     { 3, -1 },
-    { 50, -1 },
-    { -1, -1 },
     { 51, -1 },
+    { -1, -1 },
+    { 52, -1 },
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
@@ -502,10 +504,10 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[267] = {
     { 39, -1 },
     { 41, -1 },
     { 43, -1 },
-    { 49, -1 },
-    { 54, -1 },
-    { 60, -1 },
-    { 64, -1 },
+    { 50, -1 },
+    { 55, -1 },
+    { 61, -1 },
+    { 65, -1 },
 };
 
 
@@ -567,6 +569,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "TestNamedSetterWithLegacyOverrideBuiltIns", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestNamedSetterWithLegacyOverrideBuiltInsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestNamedSetterWithLegacyUnforgeableProperties", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "TestInterfaceName", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestInterfaceNameConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #if ENABLE(ConditionDerived)
     { "TestOperationConditional", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestGlobalObject_TestOperationConditionalConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
 #else
@@ -595,7 +598,7 @@ static const HashTableValue JSTestGlobalObjectTableValues[] =
     { "regularOperation", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<RawNativeFunction>(jsTestGlobalObjectInstanceFunction_regularOperation), (intptr_t) (1) } },
 };
 
-static const HashTable JSTestGlobalObjectTable = { 66, 255, true, JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
+static const HashTable JSTestGlobalObjectTable = { 67, 255, true, JSTestGlobalObject::info(), JSTestGlobalObjectTableValues, JSTestGlobalObjectTableIndex };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestGlobalObjectConstructorTableValues[] =
@@ -606,6 +609,8 @@ static const HashTableValue JSTestGlobalObjectConstructorTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
 };
+
+template<> const ClassInfo JSTestGlobalObjectDOMConstructor::s_info = { "TestGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectDOMConstructor) };
 
 template<> JSValue JSTestGlobalObjectDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
@@ -620,8 +625,6 @@ template<> void JSTestGlobalObjectDOMConstructor::initializeProperties(VM& vm, J
     putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     reifyStaticProperties(vm, JSTestGlobalObject::info(), JSTestGlobalObjectConstructorTableValues, *this);
 }
-
-template<> const ClassInfo JSTestGlobalObjectDOMConstructor::s_info = { "TestGlobalObject", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObjectDOMConstructor) };
 
 /* Hash table for prototype */
 
@@ -1362,6 +1365,17 @@ static inline JSValue jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePro
 JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
 {
     return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltInsConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
+}
+
+static inline JSValue jsTestGlobalObject_TestInterfaceNameConstructorGetter(JSGlobalObject& lexicalGlobalObject, JSTestGlobalObject& thisObject)
+{
+    UNUSED_PARAM(lexicalGlobalObject);
+    return JSTestNamespaceObject::getConstructor(JSC::getVM(&lexicalGlobalObject), &thisObject);
+}
+
+JSC_DEFINE_CUSTOM_GETTER(jsTestGlobalObject_TestInterfaceNameConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName attributeName))
+{
+    return IDLAttribute<JSTestGlobalObject>::get<jsTestGlobalObject_TestInterfaceNameConstructorGetter>(*lexicalGlobalObject, thisValue, attributeName);
 }
 
 #if ENABLE(ConditionDerived)

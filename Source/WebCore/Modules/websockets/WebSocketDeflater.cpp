@@ -33,10 +33,7 @@
 
 #include "Logging.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 #include <zlib.h>
 
 namespace WebCore {

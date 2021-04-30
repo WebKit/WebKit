@@ -57,7 +57,7 @@ inline ThreadGlobalGLContext* currentContext()
 
 static bool initializeOpenGLShimsIfNeeded()
 {
-#if USE(OPENGL_ES) || USE(LIBEPOXY)
+#if USE(OPENGL_ES) || USE(LIBEPOXY) || USE(ANGLE)
     return true;
 #else
     static bool initialized = false;

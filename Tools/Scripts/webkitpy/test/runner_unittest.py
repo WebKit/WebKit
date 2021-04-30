@@ -31,6 +31,15 @@ from webkitpy.test.printer import Printer
 from webkitpy.test.runner import Runner
 
 
+class FakeTestCase(object):
+    def __init__(self, name):
+        self.name = name
+        self.failureException = AssertionError
+
+    def id(self):
+        return self.name
+
+
 class FakeModuleSuite(object):
     def __init__(self, name, result, msg):
         self.name = name
@@ -41,11 +50,19 @@ class FakeModuleSuite(object):
         return self.name
 
     def run(self, result):
-        result.testsRun += 1
-        if self.result == 'F':
-            result.failures.append((self.name, self.msg))
-        elif self.result == 'E':
-            result.errors.append((self.name, self.msg))
+        tc = FakeTestCase(self.name)
+        result.startTest(tc)
+        try:
+            if self.result == 'F':
+                result.addFailure(tc, (None, None, None))
+            elif self.result == 'E':
+                result.addError(tc, (None, None, None))
+            elif self.result == '.':
+                result.addSuccess(tc)
+            else:
+                assert False, "unreachable"
+        finally:
+            result.stopTest(tc)
 
 
 class FakeTopSuite(object):

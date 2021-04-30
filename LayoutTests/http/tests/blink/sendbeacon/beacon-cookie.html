@@ -27,9 +27,9 @@ function test() {
         finishJSTest();
     }
 
-    shouldBeTrue('navigator.sendBeacon("resources/save-beacon.php?name=cookie", "Blip");');
+    shouldBeTrue('navigator.sendBeacon("resources/save-beacon.py?name=cookie", "Blip");');
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "resources/check-beacon.php?name=cookie");
+    xhr.open("GET", "resources/check-beacon.py?name=cookie");
     xhr.onload = function () {
         var lines = xhr.responseText.split("\n");
         for (var i in lines)

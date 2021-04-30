@@ -639,7 +639,7 @@ void CookieJarDB::createPrepareStatement(const String& sql)
 {
     auto statement = makeUnique<SQLiteStatement>(m_database, sql);
     int ret = statement->prepare();
-    ASSERT(ret == SQLITE_OK);
+    ASSERT_UNUSED(ret, ret == SQLITE_OK);
     m_statements.add(sql, WTFMove(statement));
 }
 

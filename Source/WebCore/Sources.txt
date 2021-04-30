@@ -426,8 +426,10 @@ Modules/websockets/WorkerThreadableWebSocketChannel.cpp
 Modules/webxr/NavigatorWebXR.cpp @no-unify
 Modules/webxr/WebXRBoundedReferenceSpace.cpp @no-unify
 Modules/webxr/WebXRFrame.cpp @no-unify
+Modules/webxr/WebXRGamepad.cpp @no-unify
 Modules/webxr/WebXRInputSource.cpp @no-unify
 Modules/webxr/WebXRInputSourceArray.cpp @no-unify
+Modules/webxr/WebXRInputSpace.cpp @no-unify
 Modules/webxr/WebXRLayer.cpp @no-unify
 Modules/webxr/WebXRPose.cpp @no-unify
 Modules/webxr/WebXRReferenceSpace.cpp @no-unify
@@ -723,6 +725,7 @@ css/CSSCanvasValue.cpp
 css/CSSComputedStyleDeclaration.cpp
 css/CSSConditionRule.cpp
 css/CSSContentDistributionValue.cpp
+css/CSSCounterStyleRule.cpp
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
 css/CSSCustomIdentValue.cpp
@@ -837,6 +840,7 @@ css/parser/CSSParserToken.cpp
 css/parser/CSSParserTokenRange.cpp
 css/parser/CSSPropertyParser.cpp
 css/parser/CSSPropertyParserHelpers.cpp
+css/parser/CSSPropertyParserWorkerSafe.cpp
 css/parser/CSSSelectorParser.cpp
 css/parser/CSSSupportsParser.cpp
 css/parser/CSSTokenizer.cpp
@@ -922,6 +926,7 @@ dom/DeviceOrientationController.cpp
 dom/DeviceOrientationData.cpp
 dom/DeviceOrientationEvent.cpp
 dom/Document.cpp
+dom/DocumentFontLoader.cpp
 dom/DocumentFragment.cpp
 dom/DocumentMarkerController.cpp
 dom/DocumentParser.cpp
@@ -1570,6 +1575,7 @@ loader/CrossOriginAccessControl.cpp
 loader/CrossOriginPreflightChecker.cpp
 loader/CrossOriginPreflightResultCache.cpp
 loader/CustomHeaderFields.cpp @no-unify
+loader/DefaultResourceLoadPriority.cpp
 loader/DocumentLoader.cpp
 loader/DocumentThreadableLoader.cpp
 loader/DocumentWriter.cpp
@@ -1934,6 +1940,7 @@ platform/graphics/BitmapImage.cpp
 platform/graphics/Color.cpp
 platform/graphics/ColorBlending.cpp
 platform/graphics/ColorConversion.cpp
+platform/graphics/ColorLuminance.cpp
 platform/graphics/ColorSerialization.cpp
 platform/graphics/ColorSpace.cpp
 platform/graphics/ColorUtilities.cpp
@@ -2025,6 +2032,7 @@ platform/graphics/displaylists/DisplayListDrawingContext.cpp
 platform/graphics/displaylists/DisplayListItems.cpp
 platform/graphics/displaylists/DisplayListItemBuffer.cpp
 platform/graphics/displaylists/DisplayListItemType.cpp
+platform/graphics/displaylists/DisplayListIterator.cpp
 platform/graphics/displaylists/DisplayListRecorder.cpp
 platform/graphics/displaylists/DisplayListReplayer.cpp
 platform/graphics/displaylists/InMemoryDisplayList.cpp
@@ -2648,6 +2656,7 @@ workers/Worker.cpp
 workers/WorkerAnimationController.cpp
 workers/WorkerConsoleClient.cpp
 workers/WorkerEventLoop.cpp
+workers/WorkerFontLoadRequest.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerInspectorProxy.cpp
 workers/WorkerLocation.cpp
@@ -2830,6 +2839,7 @@ JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp
 JSCSSAnimation.cpp
 JSCSSConditionRule.cpp
+JSCSSCounterStyleRule.cpp
 JSCSSFontFaceRule.cpp
 JSCSSGroupingRule.cpp
 JSCSSImportRule.cpp

@@ -47,6 +47,7 @@ public:
     virtual WebXRSession& session() const = 0;
     virtual TransformationMatrix nativeOrigin() const = 0;
     TransformationMatrix effectiveOrigin() const;
+    virtual bool isPositionEmulated() const;
 
     virtual bool isReferenceSpace() const { return false; }
     virtual bool isBoundedReferenceSpace() const { return false; }

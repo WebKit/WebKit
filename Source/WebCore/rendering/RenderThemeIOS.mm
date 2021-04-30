@@ -63,6 +63,8 @@
 #import "PathUtilities.h"
 #import "PlatformLocale.h"
 #import "RenderAttachment.h"
+#import "RenderButton.h"
+#import "RenderMenuList.h"
 #import "RenderMeter.h"
 #import "RenderObject.h"
 #import "RenderProgress.h"
@@ -554,6 +556,10 @@ void RenderThemeIOS::paintTextAreaDecorations(const RenderObject& box, const Pai
     paintTextFieldDecorations(box, paintInfo, rect);
 }
 
+// These values are taken from the UIKit button system.
+constexpr auto largeButtonSize = 45;
+constexpr auto largeButtonBorderRadiusRatio = 0.35f / 2;
+
 const int MenuListMinHeight = 15;
 
 const float MenuListBaseHeight = 20;
@@ -602,6 +608,12 @@ void RenderThemeIOS::adjustRoundBorderRadius(RenderStyle& style, RenderBox& box)
 {
     if (!canAdjustBorderRadiusForAppearance(style.appearance(), box) || style.backgroundLayers().hasImage())
         return;
+
+    if ((is<RenderButton>(box) || is<RenderMenuList>(box)) && box.height() >= largeButtonSize) {
+        auto largeButtonBorderRadius = std::min(box.width(), box.height()) * largeButtonBorderRadiusRatio;
+        style.setBorderRadius({ { largeButtonBorderRadius, LengthType::Fixed }, { largeButtonBorderRadius, LengthType::Fixed } });
+        return;
+    }
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
     style.setBorderRadius({ { std::min(box.width(), box.height()) / 2, LengthType::Fixed }, { box.height() / 2, LengthType::Fixed } });
@@ -1270,7 +1282,7 @@ bool RenderThemeIOS::supportsBoxShadow(const RenderStyle& style) const
 struct CSSValueSystemColorInformation {
     CSSValueID cssValueID;
     SEL selector;
-    bool blendOverWhite { false };
+    bool makeOpaque { false };
     float opacity { 1.0f };
 };
 
@@ -1328,7 +1340,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
     return cssValueSystemColorInformationList;
 }
 
-static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation)
+static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance)
 {
     if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), systemColorInformation.selector)) {
         Color systemColor = { color.CGColor, Color::Flags::Semantic };
@@ -1336,8 +1348,8 @@ static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSV
         if (systemColorInformation.opacity < 1.0f)
             systemColor = systemColor.colorWithAlphaMultipliedBy(systemColorInformation.opacity);
 
-        if (systemColorInformation.blendOverWhite)
-            return blendSourceOver(Color::white, systemColor);
+        if (systemColorInformation.makeOpaque)
+            return blendSourceOver(useDarkAppearance ? Color::black : Color::white, systemColor);
 
         return systemColor;
     }
@@ -1351,7 +1363,7 @@ static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool use
 
     for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
         if (cssValueSystemColorInformation.cssValueID == cssValueID)
-            return systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation);
+            return systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance);
     }
 
     return WTF::nullopt;
@@ -1372,7 +1384,7 @@ const RenderThemeIOS::CSSValueToSystemColorMap& RenderThemeIOS::cssValueToSystem
             for (bool useElevatedUserInterfaceLevel : { false, true }) {
                 LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
                 for (auto& cssValueSystemColorInformation : cssValueSystemColorInformationList()) {
-                    if (auto color = systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation))
+                    if (auto color = systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance))
                         map.add(CSSValueKey { cssValueSystemColorInformation.cssValueID, useDarkAppearance, useElevatedUserInterfaceLevel }, WTFMove(*color));
                 }
             }
@@ -2011,6 +2023,8 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
 
+constexpr auto nativeControlBorderWidth = 1.0f;
+
 Color RenderThemeIOS::checkboxRadioBackgroundColor(OptionSet<ControlStates::States> states, OptionSet<StyleColor::Options> styleColorOptions)
 {
     if (!states.contains(ControlStates::States::Enabled))
@@ -2056,7 +2070,14 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
     auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
-    context.fillRoundedRect(checkboxRect, checkboxRadioBackgroundColor(controlStates, styleColorOptions));
+    context.fillRoundedRect(checkboxRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+
+    FloatRoundedRect checkboxInnerRoundedRect(checkboxRect);
+    checkboxInnerRoundedRect.inflateWithRadii(-nativeControlBorderWidth);
+
+    context.fillRoundedRect(checkboxInnerRoundedRect, checkboxRadioBackgroundColor(controlStates, styleColorOptions));
+
+    FloatRect checkboxInnerRect(checkboxInnerRoundedRect.rect());
 
     bool checked = controlStates.contains(ControlStates::States::Checked);
     bool indeterminate = controlStates.contains(ControlStates::States::Indeterminate);
@@ -2081,18 +2102,18 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
         path.addBezierCurveTo({ 23.536f, 67.675f }, { 25.536f, 68.652f }, { 28.174f, 68.652f });
 
         const FloatSize checkmarkSize(72.0f, 69.0f);
-        float scale = (0.65f * rect.width()) / checkmarkSize.width();
+        float scale = (0.65f * checkboxInnerRect.width()) / checkmarkSize.width();
 
         AffineTransform transform;
-        transform.translate(rect.center() - (checkmarkSize * scale * 0.5f));
+        transform.translate(checkboxInnerRect.center() - (checkmarkSize * scale * 0.5f));
         transform.scale(scale);
         path.transform(transform);
     } else {
         const FloatSize indeterminateBarRoundingRadii(1.25f, 1.25f);
         constexpr float indeterminateBarPadding = 2.5f;
-        float height = 0.12f * rect.height();
+        float height = 0.12f * checkboxInnerRect.height();
 
-        FloatRect indeterminateBarRect(rect.x() + indeterminateBarPadding, rect.center().y() - height / 2.0f, rect.width() - indeterminateBarPadding * 2, height);
+        FloatRect indeterminateBarRect(checkboxInnerRect.x() + indeterminateBarPadding, checkboxInnerRect.center().y() - height / 2.0f, checkboxInnerRect.width() - indeterminateBarPadding * 2, height);
         path.addRoundedRect(indeterminateBarRect, indeterminateBarRoundingRadii);
     }
 
@@ -2113,15 +2134,21 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     auto controlStates = extractControlStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
-    context.setFillColor(checkboxRadioBackgroundColor(controlStates, styleColorOptions));
+    context.setFillColor(systemColor(CSSValueWebkitControlBackground, styleColorOptions));
     context.fillEllipse(rect);
+
+    FloatRect radioRect(rect);
+    radioRect.inflate(-nativeControlBorderWidth);
+
+    context.setFillColor(checkboxRadioBackgroundColor(controlStates, styleColorOptions));
+    context.fillEllipse(radioRect);
 
     if (controlStates.contains(ControlStates::States::Checked)) {
         // The inner circle is 6 / 14 the size of the surrounding circle,
         // leaving 8 / 14 around it. (8 / 14) / 2 = 2 / 7.
         constexpr float innerInverseRatio = 2 / 7.0f;
 
-        FloatRect innerCircleRect(rect);
+        FloatRect innerCircleRect(radioRect);
         innerCircleRect.inflateX(-innerCircleRect.width() * innerInverseRatio);
         innerCircleRect.inflateY(-innerCircleRect.height() * innerInverseRatio);
 
@@ -2132,10 +2159,7 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     return false;
 }
 
-// Animate the indeterminate progress bar at 30 fps. This value was chosen to
-// ensure a smooth animation, while trying to reduce the number of times the
-// progress bar is repainted.
-constexpr Seconds progressAnimationRepeatInterval = 33_ms;
+constexpr Seconds progressAnimationRepeatInterval = 16_ms;
 
 constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
 constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
@@ -2170,12 +2194,17 @@ bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& 
 
     float barTop = rect.y() + (rect.height() - barHeight) / 2.0f;
 
-    FloatRect trackRect(rect.x(), barTop, rect.width(), barHeight);
+    FloatRect trackRect(rect.x() + nativeControlBorderWidth, barTop, rect.width() - 2 * nativeControlBorderWidth, barHeight);
     FloatRoundedRect roundedTrackRect(trackRect, barCornerRadii);
+
+    FloatRoundedRect roundedTrackBorderRect(roundedTrackRect);
+    roundedTrackBorderRect.inflateWithRadii(nativeControlBorderWidth);
+    context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+
     context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
 
     float barWidth;
-    float barLeft = rect.x();
+    float barLeft = trackRect.x();
     float alpha = 1.0f;
 
     if (renderProgress.isDeterminate()) {
@@ -2238,14 +2267,18 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
 
     float cornerRadius = std::min(rect.width(), rect.height()) / 2.0f;
     FloatRoundedRect roundedFillRect(rect, FloatRoundedRect::Radii(cornerRadius));
+    context.fillRoundedRect(roundedFillRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+
+    roundedFillRect.inflateWithRadii(-nativeControlBorderWidth);
     context.fillRoundedRect(roundedFillRect, systemColor(CSSValueAppleSystemOpaqueTertiaryFill, styleColorOptions));
+
     context.clipRoundedRect(roundedFillRect);
 
-    FloatRect fillRect(rect);
+    FloatRect fillRect(roundedFillRect.rect());
     if (renderMeter.style().isLeftToRightDirection())
-        fillRect.move(rect.width() * (element->valueRatio() - 1), 0);
+        fillRect.move(fillRect.width() * (element->valueRatio() - 1), 0);
     else
-        fillRect.move(rect.width() * (1 - element->valueRatio()), 0);
+        fillRect.move(fillRect.width() * (1 - element->valueRatio()), 0);
     roundedFillRect.setRect(fillRect);
 
     switch (element->gaugeRegion()) {
@@ -2373,6 +2406,11 @@ bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& 
 
     FloatRoundedRect::Radii cornerRadii(cornerWidth, cornerHeight);
     FloatRoundedRect innerBorder(trackClip, cornerRadii);
+
+    FloatRoundedRect outerBorder(innerBorder);
+    outerBorder.inflateWithRadii(nativeControlBorderWidth);
+    context.fillRoundedRect(outerBorder, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+
     context.fillRoundedRect(innerBorder, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -2536,11 +2574,10 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
     transform.scale(glyphScale);
     glyphPath.transform(transform);
 
-    auto styleColorOptions = box.styleColorOptions();
     if (isEnabled(box))
-        context.setFillColor(systemColor(CSSValueAppleSystemBlue, styleColorOptions));
+        context.setFillColor(style.color());
     else
-        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions));
+        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions()));
 
     context.fillPath(glyphPath);
 }

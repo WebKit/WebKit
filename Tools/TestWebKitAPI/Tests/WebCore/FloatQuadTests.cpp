@@ -27,6 +27,7 @@
 
 #include <WebCore/FloatQuad.h>
 #include <WebCore/GeometryUtilities.h>
+#include <wtf/text/TextStream.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
@@ -47,7 +48,7 @@ static void expectRotatedRect(const FloatPoint& center, const FloatSize& size, f
 
 TEST(FloatQuad, RotatedBoundingRectForPoint)
 {
-    expectRotatedRect({ 1, -5 }, { 0, 0 }, 0, rotatedBoundingRect({
+    expectRotatedRect({ 1, -5 }, { 0, 0 }, 0, rotatedBoundingRectWithMinimumAngleOfRotation({
         FloatPoint(1, -5),
         FloatPoint(1, -5),
         FloatPoint(1, -5),
@@ -57,7 +58,7 @@ TEST(FloatQuad, RotatedBoundingRectForPoint)
 
 TEST(FloatQuad, RotatedBoundingRectForLineSegment)
 {
-    expectRotatedRect({ 0, -5 }, { 20, 0 }, 0, rotatedBoundingRect({
+    expectRotatedRect({ 0, -5 }, { 20, 0 }, 0, rotatedBoundingRectWithMinimumAngleOfRotation({
         FloatPoint(-10, -5),
         FloatPoint(10, -5),
         FloatPoint(10, -5),
@@ -67,7 +68,7 @@ TEST(FloatQuad, RotatedBoundingRectForLineSegment)
 
 TEST(FloatQuad, RotatedBoundingRectForTriangle)
 {
-    expectRotatedRect({ 10, 0 }, { 40, 20 }, 0, rotatedBoundingRect({
+    expectRotatedRect({ 10, 0 }, { 40, 20 }, 0, rotatedBoundingRectWithMinimumAngleOfRotation({
         FloatPoint(-10, -10),
         FloatPoint(30, 0),
         FloatPoint(30, 0),
@@ -77,14 +78,14 @@ TEST(FloatQuad, RotatedBoundingRectForTriangle)
 
 TEST(FloatQuad, RotatedBoundingRectForTrapezoid)
 {
-    expectRotatedRect({ 25, 15 }, { 28.284, 14.142 }, 5.498, rotatedBoundingRect({
+    expectRotatedRect({ 25, 15 }, { 28.284, 14.142 }, 5.498, rotatedBoundingRectWithMinimumAngleOfRotation({
         FloatPoint(10, 20),
         FloatPoint(20, 10),
         FloatPoint(40, 10),
         FloatPoint(20, 30)
     }));
 
-    expectRotatedRect({ 20, 25 }, { 26.83, 13.42 }, 1.107, rotatedBoundingRect({
+    expectRotatedRect({ 20, 25 }, { 26.83, 13.42 }, 1.107, rotatedBoundingRectWithMinimumAngleOfRotation({
         FloatPoint(20, 10),
         FloatPoint(30, 30),
         FloatPoint(20, 40),
@@ -94,19 +95,75 @@ TEST(FloatQuad, RotatedBoundingRectForTrapezoid)
 
 TEST(FloatQuad, RotatedBoundingRectWithMinimumAngle)
 {
-    expectRotatedRect({ 20, -14.95 }, { 20, 10.1 }, 0, rotatedBoundingRect({
+    expectRotatedRect({ 20, -14.95 }, { 20, 10.1 }, 0, rotatedBoundingRectWithMinimumAngleOfRotation({
         FloatPoint(10, -20),
         FloatPoint(30, -19.9),
         FloatPoint(30, -9.9),
         FloatPoint(10, -10)
     }, 0.01));
 
-    expectRotatedRect({ 20, -15.05 }, { 20, 10.1 }, 0, rotatedBoundingRect({
+    expectRotatedRect({ 20, -15.05 }, { 20, 10.1 }, 0, rotatedBoundingRectWithMinimumAngleOfRotation({
         FloatPoint(10, -20),
         FloatPoint(30, -20.1),
         FloatPoint(30, -10.1),
         FloatPoint(10, -10)
     }, 0.01));
+}
+
+static void checkIsEmpty(bool expectation, FloatQuad&& quad)
+{
+    EXPECT_TRUE(expectation == quad.isEmpty());
+    if (expectation == quad.isEmpty())
+        return;
+
+    TextStream stream;
+    stream << quad;
+    WTFLogAlways("Expected quad: %s to be %s", stream.release().utf8().data(), expectation ? "empty" : "non-empty");
+}
+
+TEST(FloatQuad, IsEmpty)
+{
+    checkIsEmpty(true, { // Line segment.
+        FloatPoint(0, 0),
+        FloatPoint(0, 0),
+        FloatPoint(0, 3),
+        FloatPoint(0, 3),
+    });
+
+    checkIsEmpty(false, { // Triangle.
+        FloatPoint(0, 1),
+        FloatPoint(0, 0),
+        FloatPoint(3, 3),
+        FloatPoint(3, 3),
+    });
+
+    checkIsEmpty(false, { // Another triangle.
+        FloatPoint(0, 0),
+        FloatPoint(0, 0),
+        FloatPoint(3, 3),
+        FloatPoint(0, 3),
+    });
+
+    checkIsEmpty(true, { // Single point.
+        FloatPoint(100, 100),
+        FloatPoint(100, 100),
+        FloatPoint(100, 100),
+        FloatPoint(100, 100),
+    });
+
+    checkIsEmpty(true, { // Two line segments.
+        FloatPoint(0, 0),
+        FloatPoint(100, 100),
+        FloatPoint(0, 0),
+        FloatPoint(50, -100),
+    });
+
+    checkIsEmpty(true, { // 4 distinct but colinear points.
+        FloatPoint(-1, -1),
+        FloatPoint(0, 0),
+        FloatPoint(1, 1),
+        FloatPoint(3, 3),
+    });
 }
 
 } // namespace TestWebKitAPI

@@ -46,6 +46,7 @@ class CSSFontSelector;
 class CSSSegmentedFontFace;
 class CSSValue;
 class CSSValueList;
+class FontCache;
 class FontDescription;
 class Font;
 class FontFace;
@@ -172,6 +173,7 @@ private:
     void timeoutFired();
 
     Document* document();
+    FontCache& fontCacheFallingBackToSingleton();
 
     RefPtr<CSSValueList> m_families;
     Vector<UnicodeRange> m_ranges;

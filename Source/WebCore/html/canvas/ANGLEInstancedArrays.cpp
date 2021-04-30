@@ -28,7 +28,7 @@
 #if ENABLE(WEBGL)
 #include "ANGLEInstancedArrays.h"
 
-#if PLATFORM(GTK) || USE(ANGLE)
+#if PLATFORM(GTK) || USE(ANGLE) || PLATFORM(WPE)
 #include "ExtensionsGL.h"
 #endif
 
@@ -55,7 +55,7 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
 
 bool ANGLEInstancedArrays::supported(WebGLRenderingContextBase& context)
 {
-#if USE(ANGLE) || PLATFORM(GTK)
+#if USE(ANGLE) || PLATFORM(GTK) || PLATFORM(WPE)
     return context.graphicsContextGL()->getExtensions().supports("GL_ANGLE_instanced_arrays");
 #else
     UNUSED_PARAM(context);

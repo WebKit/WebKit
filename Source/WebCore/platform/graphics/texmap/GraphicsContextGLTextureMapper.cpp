@@ -33,7 +33,6 @@
 #include "GLContext.h"
 #include "GraphicsContextGLOpenGLManager.h"
 #include "TextureMapperGCGLPlatformLayer.h"
-#include <ANGLE/ShaderLang.h>
 #include <wtf/Deque.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -47,10 +46,13 @@
 
 #if USE(ANGLE)
 #include "ExtensionsGLANGLE.h"
-#elif USE(OPENGL_ES)
+#else
+#include <ANGLE/ShaderLang.h>
+#if USE(OPENGL_ES)
 #include "ExtensionsGLOpenGLES.h"
 #else
 #include "ExtensionsGLOpenGL.h"
+#endif
 #endif
 
 #if USE(NICOSIA)

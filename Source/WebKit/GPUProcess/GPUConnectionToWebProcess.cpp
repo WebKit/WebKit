@@ -35,6 +35,7 @@
 #include "GPUProcessConnectionParameters.h"
 #include "GPUProcessMessages.h"
 #include "GPUProcessProxyMessages.h"
+#include "LayerHostingContext.h"
 #include "LibWebRTCCodecsProxy.h"
 #include "LibWebRTCCodecsProxyMessages.h"
 #include "Logging.h"
@@ -188,7 +189,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if HAVE(TASK_IDENTITY_TOKEN)
     , m_webProcessIdentityToken(WTFMove(parameters.webProcessIdentityToken))
 #endif
-    , m_remoteMediaPlayerManagerProxy(makeUnique<RemoteMediaPlayerManagerProxy>(*this))
+    , m_remoteMediaPlayerManagerProxy(makeUniqueRef<RemoteMediaPlayerManagerProxy>(*this))
     , m_sessionID(sessionID)
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)
     , m_libWebRTCCodecsProxy(LibWebRTCCodecsProxy::create(*this))
@@ -238,11 +239,79 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     // to break the reference cycle by destroying them.
     m_remoteRenderingBackendMap.clear();
 
+#if ENABLE(WEBGL)
     // RemoteGraphicsContextsGL objects are unneeded after connection closes.
     m_remoteGraphicsContextGLMap.clear();
+#endif
 
     gpuProcess().connectionToWebProcessClosed(connection);
     gpuProcess().removeGPUConnectionToWebProcess(*this); // May destroy |this|.
+}
+
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+void GPUConnectionToWebProcess::createVisibilityPropagationContextForPage(WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked)
+{
+    auto contextForVisibilityPropagation = LayerHostingContext::createForExternalHostingProcess({ canShowWhileLocked });
+    RELEASE_LOG(Process, "GPUConnectionToWebProcess::createVisibilityPropagationContextForPage: pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", contextID=%u", pageProxyID.toUInt64(), pageID.toUInt64(), contextForVisibilityPropagation->contextID());
+    gpuProcess().send(Messages::GPUProcessProxy::DidCreateContextForVisibilityPropagation(pageProxyID, pageID, contextForVisibilityPropagation->contextID()));
+    m_visibilityPropagationContexts.add(std::make_pair(pageProxyID, pageID), WTFMove(contextForVisibilityPropagation));
+}
+
+void GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage(WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID)
+{
+    RELEASE_LOG(Process, "GPUConnectionToWebProcess::destroyVisibilityPropagationContextForPage: pageProxyID=%" PRIu64 ", webPageID=%" PRIu64, pageProxyID.toUInt64(), pageID.toUInt64());
+
+    auto key = std::make_pair(pageProxyID, pageID);
+    ASSERT(m_visibilityPropagationContexts.contains(key));
+    m_visibilityPropagationContexts.remove(key);
+}
+#endif
+
+bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
+{
+    for (auto& remoteRenderingBackend : m_remoteRenderingBackendMap.values()) {
+        if (!remoteRenderingBackend->allowsExitUnderMemoryPressure())
+            return false;
+    }
+#if ENABLE(WEBGL)
+    if (!m_remoteGraphicsContextGLMap.isEmpty())
+        return false;
+#endif
+    if (!m_remoteMediaPlayerManagerProxy->allowsExitUnderMemoryPressure())
+        return false;
+#if ENABLE(WEB_AUDIO)
+    if (m_remoteAudioDestinationManager && !m_remoteAudioDestinationManager->allowsExitUnderMemoryPressure())
+        return false;
+#endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    if (m_userMediaCaptureManagerProxy && m_userMediaCaptureManagerProxy->hasSourceProxies())
+        return false;
+    if (!m_audioTrackRendererManager->allowsExitUnderMemoryPressure())
+        return false;
+    if (!m_sampleBufferDisplayLayerManager->allowsExitUnderMemoryPressure())
+        return false;
+#endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
+    if (m_remoteMediaRecorderManager && !m_remoteMediaRecorderManager->allowsExitUnderMemoryPressure())
+        return false;
+#endif
+#if HAVE(AVASSETREADER)
+    if (m_imageDecoderAVFProxy && !m_imageDecoderAVFProxy->allowsExitUnderMemoryPressure())
+        return false;
+#endif
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (m_cdmFactoryProxy && !m_cdmFactoryProxy->allowsExitUnderMemoryPressure())
+        return false;
+#endif
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    if (m_legacyCdmFactoryProxy && !m_legacyCdmFactoryProxy->allowsExitUnderMemoryPressure())
+        return false;
+#endif
+#if PLATFORM(COCOA) && USE(LIBWEBRTC)
+    if (!m_libWebRTCCodecsProxy->allowsExitUnderMemoryPressure())
+        return false;
+#endif
+    return true;
 }
 
 Logger& GPUConnectionToWebProcess::logger()
@@ -297,8 +366,9 @@ UserMediaCaptureManagerProxy& GPUConnectionToWebProcess::userMediaCaptureManager
 
     return *m_userMediaCaptureManagerProxy;
 }
+#endif
 
-#if HAVE(AVASSETWRITERDELEGATE)
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
 RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
 {
     if (!m_remoteMediaRecorderManager)
@@ -307,7 +377,6 @@ RemoteMediaRecorderManager& GPUConnectionToWebProcess::mediaRecorderManager()
     return *m_remoteMediaRecorderManager;
 }
 #endif
-#endif //  PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 #if ENABLE(ENCRYPTED_MEDIA)
 RemoteCDMFactoryProxy& GPUConnectionToWebProcess::cdmFactoryProxy()
@@ -352,6 +421,7 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
 {
     bool found = m_remoteRenderingBackendMap.remove(renderingBackendIdentifier);
     ASSERT_UNUSED(found, found);
+    gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 #if ENABLE(WEBGL)
@@ -371,6 +441,8 @@ void GPUConnectionToWebProcess::createGraphicsContextGL(WebCore::GraphicsContext
 void GPUConnectionToWebProcess::releaseGraphicsContextGL(GraphicsContextGLIdentifier graphicsContextGLIdentifier)
 {
     m_remoteGraphicsContextGLMap.remove(graphicsContextGLIdentifier);
+    if (m_remoteGraphicsContextGLMap.isEmpty())
+        gpuProcess().tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void GPUConnectionToWebProcess::releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier identifier)
@@ -515,7 +587,8 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         userMediaCaptureManagerProxy().didReceiveMessageFromGPUProcess(connection, decoder);
         return true;
     }
-#if HAVE(AVASSETWRITERDELEGATE)
+#endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM) && HAVE(AVASSETWRITERDELEGATE)
     if (decoder.messageReceiverName() == Messages::RemoteMediaRecorderManager::messageReceiverName()) {
         mediaRecorderManager().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
@@ -524,8 +597,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         mediaRecorderManager().didReceiveRemoteMediaRecorderMessage(connection, decoder);
         return true;
     }
-#endif // HAVE(AVASSETWRITERDELEGATE)
-#endif // PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+#endif
 #if ENABLE(ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteCDMFactoryProxy::messageReceiverName()) {
         cdmFactoryProxy().didReceiveMessageFromWebProcess(connection, decoder);

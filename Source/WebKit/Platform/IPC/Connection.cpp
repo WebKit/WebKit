@@ -93,6 +93,9 @@ public:
     // Dispatch pending sync messages.
     void dispatchMessages();
 
+    // Add matching pending messages to the provided MessageReceiveQueue.
+    void enqueueMatchingMessages(Connection&, MessageReceiveQueue&, ReceiverName, uint64_t destinationID);
+
 private:
     friend class LazyNeverDestroyed<Connection::SyncMessageState>;
     SyncMessageState() = default;
@@ -117,7 +120,8 @@ private:
             connection->dispatchMessage(WTFMove(message));
         }
     };
-    Vector<ConnectionAndIncomingMessage> m_messagesToDispatchWhileWaitingForSyncReply;
+    Deque<ConnectionAndIncomingMessage> m_messagesBeingDispatched; // Only used on the main thread.
+    Deque<ConnectionAndIncomingMessage> m_messagesToDispatchWhileWaitingForSyncReply;
 };
 
 Connection::SyncMessageState& Connection::SyncMessageState::singleton()
@@ -130,6 +134,24 @@ Connection::SyncMessageState& Connection::SyncMessageState::singleton()
     });
 
     return syncMessageState;
+}
+
+void Connection::SyncMessageState::enqueueMatchingMessages(Connection& connection, MessageReceiveQueue& receiveQueue, ReceiverName receiverName, uint64_t destinationID)
+{
+    ASSERT(isMainRunLoop());
+    auto enqueueMatchingMessagesInContainer = [&](Deque<ConnectionAndIncomingMessage>& connectionAndMessages) {
+        Deque<ConnectionAndIncomingMessage> rest;
+        for (auto& connectionAndMessage : connectionAndMessages) {
+            if (connectionAndMessage.connection.ptr() == &connection && connectionAndMessage.message->messageReceiverName() == receiverName && (connectionAndMessage.message->destinationID() == destinationID || !destinationID))
+                receiveQueue.enqueueMessage(connection, WTFMove(connectionAndMessage.message));
+            else
+                rest.append(WTFMove(connectionAndMessage));
+        }
+        connectionAndMessages = WTFMove(rest);
+    };
+    auto locker = holdLock(m_mutex);
+    enqueueMatchingMessagesInContainer(m_messagesBeingDispatched);
+    enqueueMatchingMessagesInContainer(m_messagesToDispatchWhileWaitingForSyncReply);
 }
 
 bool Connection::SyncMessageState::processIncomingMessage(Connection& connection, std::unique_ptr<Decoder>& message)
@@ -173,41 +195,41 @@ void Connection::SyncMessageState::dispatchMessages()
 {
     ASSERT(RunLoop::isMain());
 
-    Vector<ConnectionAndIncomingMessage> messagesToDispatchWhileWaitingForSyncReply;
     {
         auto locker = holdLock(m_mutex);
-        m_messagesToDispatchWhileWaitingForSyncReply.swap(messagesToDispatchWhileWaitingForSyncReply);
+        if (m_messagesBeingDispatched.isEmpty())
+            m_messagesBeingDispatched = std::exchange(m_messagesToDispatchWhileWaitingForSyncReply, { });
+        else {
+            while (!m_messagesToDispatchWhileWaitingForSyncReply.isEmpty())
+                m_messagesBeingDispatched.append(m_messagesToDispatchWhileWaitingForSyncReply.takeLast());
+        }
     }
 
-    for (auto& connectionAndIncomingMessage : messagesToDispatchWhileWaitingForSyncReply)
-        connectionAndIncomingMessage.dispatch();
+    while (!m_messagesBeingDispatched.isEmpty())
+        m_messagesBeingDispatched.takeFirst().dispatch();
 }
 
 void Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(Connection& connection)
 {
     ASSERT(RunLoop::isMain());
 
-    Vector<ConnectionAndIncomingMessage> messagesToDispatchWhileWaitingForSyncReply;
     {
         auto locker = holdLock(m_mutex);
         ASSERT(m_didScheduleDispatchMessagesWorkSet.contains(&connection));
         m_didScheduleDispatchMessagesWorkSet.remove(&connection);
-        m_messagesToDispatchWhileWaitingForSyncReply.swap(messagesToDispatchWhileWaitingForSyncReply);
-    }
-
-    Vector<ConnectionAndIncomingMessage> messagesToPutBack;
-    for (auto& connectionAndIncomingMessage : messagesToDispatchWhileWaitingForSyncReply) {
-        if (&connection == connectionAndIncomingMessage.connection.ptr())
-            connectionAndIncomingMessage.dispatch();
-        else
-            messagesToPutBack.append(WTFMove(connectionAndIncomingMessage));
-    }
-
-    if (!messagesToPutBack.isEmpty()) {
-        auto locker = holdLock(m_mutex);
-        messagesToPutBack.appendVector(WTFMove(m_messagesToDispatchWhileWaitingForSyncReply));
+        ASSERT(m_messagesBeingDispatched.isEmpty());
+        Deque<ConnectionAndIncomingMessage> messagesToPutBack;
+        for (auto& connectionAndIncomingMessage : m_messagesToDispatchWhileWaitingForSyncReply) {
+            if (&connection == connectionAndIncomingMessage.connection.ptr())
+                m_messagesBeingDispatched.append(WTFMove(connectionAndIncomingMessage));
+            else
+                messagesToPutBack.append(WTFMove(connectionAndIncomingMessage));
+        }
         m_messagesToDispatchWhileWaitingForSyncReply = WTFMove(messagesToPutBack);
     }
+
+    while (!m_messagesBeingDispatched.isEmpty())
+        m_messagesBeingDispatched.takeFirst().dispatch();
 }
 
 // Represents a sync request for which we're waiting on a reply.
@@ -282,11 +304,6 @@ Connection::Connection(Identifier identifier, bool isServer, Client& client)
     allConnections().add(m_uniqueID, this);
 
     platformInitialize(identifier);
-
-#if HAVE(QOS_CLASSES)
-    ASSERT(pthread_main_np());
-    m_mainThread = pthread_self();
-#endif
 }
 
 Connection::~Connection()
@@ -319,41 +336,44 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
     m_shouldExitOnSyncMessageSendFailure = shouldExitOnSyncMessageSendFailure;
 }
 
-namespace {
-template <typename T>
-Deque<std::unique_ptr<Decoder>> filterWithMessageReceiveQueue(Connection& connection, T& receiveQueue, ReceiverName receiverName, uint64_t destinationID, Deque<std::unique_ptr<Decoder>>&& incomingMessages)
+// Enqueue any pending message to the MessageReceiveQueue that is meant to go on that queue. This is important to maintain the ordering of
+// IPC messages as some messages may get received on the IPC thread before the message receiver registered itself on the main thread.
+void Connection::enqueueMatchingMessagesToMessageReceiveQueue(Locker<Lock>&, MessageReceiveQueue& receiveQueue, ReceiverName receiverName, uint64_t destinationID)
 {
-    Deque<std::unique_ptr<Decoder>> rest;
-    for (auto& message : incomingMessages) {
+    ASSERT(isMainRunLoop());
+
+    SyncMessageState::singleton().enqueueMatchingMessages(*this, receiveQueue, receiverName, destinationID);
+
+    Deque<std::unique_ptr<Decoder>> remainingIncomingMessages;
+    for (auto& message : m_incomingMessages) {
         if (message->messageReceiverName() == receiverName && (message->destinationID() == destinationID || !destinationID))
-            receiveQueue.enqueueMessage(connection, WTFMove(message));
+            receiveQueue.enqueueMessage(*this, WTFMove(message));
         else
-            rest.append(WTFMove(message));
+            remainingIncomingMessages.append(WTFMove(message));
     }
-    return rest;
-}
+    m_incomingMessages = WTFMove(remainingIncomingMessages);
 }
 
 void Connection::addMessageReceiveQueue(MessageReceiveQueue& receiveQueue, ReceiverName receiverName, uint64_t destinationID)
 {
-    auto locker = holdLock(m_incomingMessagesMutex);
-    m_incomingMessages = filterWithMessageReceiveQueue(*this, receiveQueue, receiverName, destinationID, WTFMove(m_incomingMessages));
+    auto incomingMessagesLocker = holdLock(m_incomingMessagesMutex);
+    enqueueMatchingMessagesToMessageReceiveQueue(incomingMessagesLocker, receiveQueue, receiverName, destinationID);
     m_receiveQueues.add(receiveQueue, receiverName, destinationID);
 }
 
 void Connection::addWorkQueueMessageReceiver(ReceiverName receiverName, WorkQueue& workQueue, WorkQueueMessageReceiver* receiver, uint64_t destinationID)
 {
     auto receiveQueue = makeUnique<WorkQueueMessageReceiverQueue>(workQueue, *receiver);
-    auto locker = holdLock(m_incomingMessagesMutex);
-    m_incomingMessages = filterWithMessageReceiveQueue(*this, *receiveQueue, receiverName, destinationID, WTFMove(m_incomingMessages));
+    auto incomingMessagesLocker = holdLock(m_incomingMessagesMutex);
+    enqueueMatchingMessagesToMessageReceiveQueue(incomingMessagesLocker, *receiveQueue, receiverName, destinationID);
     m_receiveQueues.add(WTFMove(receiveQueue), receiverName, destinationID);
 }
 
 void Connection::addThreadMessageReceiver(ReceiverName receiverName, ThreadMessageReceiver* receiver, uint64_t destinationID)
 {
     auto receiveQueue = makeUnique<ThreadMessageReceiverQueue>(*receiver);
-    auto locker = holdLock(m_incomingMessagesMutex);
-    m_incomingMessages = filterWithMessageReceiveQueue(*this, *receiveQueue, receiverName, destinationID, WTFMove(m_incomingMessages));
+    auto incomingMessagesLocker = holdLock(m_incomingMessagesMutex);
+    enqueueMatchingMessagesToMessageReceiveQueue(incomingMessagesLocker, *receiveQueue, receiverName, destinationID);
     m_receiveQueues.add(WTFMove(receiveQueue), receiverName, destinationID);
 }
 

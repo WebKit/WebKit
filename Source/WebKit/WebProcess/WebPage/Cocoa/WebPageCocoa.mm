@@ -439,6 +439,15 @@ void WebPage::getPDFFirstPageSize(WebCore::FrameIdentifier frameID, CompletionHa
     completionHandler(FloatSize(plugin->pdfDocumentSizeForPrinting()));
 }
 
+#if ENABLE(WEBXR)
+PlatformXRSystemProxy& WebPage::xrSystemProxy()
+{
+    if (!m_xrSystemProxy)
+        m_xrSystemProxy = std::unique_ptr<PlatformXRSystemProxy>(new PlatformXRSystemProxy(*this));
+    return *m_xrSystemProxy;
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

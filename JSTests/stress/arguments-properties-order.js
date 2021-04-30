@@ -1,3 +1,5 @@
+// Currently fails on the Loongson 3A4000 (in 32-bits mode).
+//@ skip if $architecture == "mips"
 function getMappedArguments(a, b) { return arguments; }
 function getUnmappedArguments(a, b) { "use strict"; return arguments; }
 

@@ -56,7 +56,7 @@ TIntermRebuild::BaseResult::BaseResult(TIntermNode *node, VisitBits visit)
       mSingle(node)
 {}
 
-TIntermRebuild::BaseResult::BaseResult(nullptr_t)
+TIntermRebuild::BaseResult::BaseResult(std::nullptr_t)
     : mAction(Action::Drop), mVisit(VisitBits::Neither), mSingle(nullptr)
 {}
 
@@ -116,7 +116,7 @@ using PreResult = TIntermRebuild::PreResult;
 
 PreResult::PreResult(TIntermNode &node, VisitBits visit) : BaseResult(node, visit) {}
 PreResult::PreResult(TIntermNode *node, VisitBits visit) : BaseResult(node, visit) {}
-PreResult::PreResult(nullptr_t) : BaseResult(nullptr) {}
+PreResult::PreResult(std::nullptr_t) : BaseResult(nullptr) {}
 PreResult::PreResult(Fail) : BaseResult(Fail()) {}
 
 PreResult::PreResult(BaseResult &&other) : BaseResult(other) {}
@@ -133,7 +133,7 @@ using PostResult = TIntermRebuild::PostResult;
 
 PostResult::PostResult(TIntermNode &node) : BaseResult(node, VisitBits::Neither) {}
 PostResult::PostResult(TIntermNode *node) : BaseResult(node, VisitBits::Neither) {}
-PostResult::PostResult(nullptr_t) : BaseResult(nullptr) {}
+PostResult::PostResult(std::nullptr_t) : BaseResult(nullptr) {}
 PostResult::PostResult(Fail) : BaseResult(Fail()) {}
 
 PostResult::PostResult(PostResult &&other) : BaseResult(other) {}

@@ -28,8 +28,8 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
+#import "FloatRect.h"
 #import "Logging.h"
-#import <WebCore/FloatRect.h>
 #import <objc/runtime.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/AVKitSPI.h>

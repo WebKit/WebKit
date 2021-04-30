@@ -13,6 +13,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/Surface.h"
+#include "libANGLE/renderer/driver_utils.h"
 #include "libANGLE/renderer/glslang_wrapper_utils.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/IOSurfaceSurfaceMtl.h"
@@ -436,6 +437,29 @@ void DisplayMtl::generateCaps(egl::Caps *outCaps) const {}
 
 void DisplayMtl::populateFeatureList(angle::FeatureList *features) {}
 
+#if TARGET_OS_MACCATALYST
+static bool needsEAGLOnMac()
+{
+#if defined(__arm64__) || defined(__aarch64__)
+    return true;
+#else
+    return false;
+#endif
+}
+#endif
+
+EGLenum DisplayMtl::EGLDrawingBufferTextureTarget()
+{
+#if TARGET_OS_MACCATALYST
+    if (needsEAGLOnMac())
+        return EGL_TEXTURE_2D;
+    return EGL_TEXTURE_RECTANGLE_ANGLE;
+#elif TARGET_OS_OSX
+    return EGL_TEXTURE_RECTANGLE_ANGLE;
+#else
+    return EGL_TEXTURE_2D;
+#endif
+}
 egl::ConfigSet DisplayMtl::generateConfigs()
 {
     // NOTE(hqle): generate more config permutations
@@ -459,11 +483,7 @@ egl::ConfigSet DisplayMtl::generateConfigs()
     config.transparentType = EGL_NONE;
 
     // Pbuffer
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    config.bindToTextureTarget = EGL_TEXTURE_RECTANGLE_ANGLE;
-#else
-    config.bindToTextureTarget = EGL_TEXTURE_2D;
-#endif
+    config.bindToTextureTarget = EGLDrawingBufferTextureTarget();
     config.maxPBufferWidth  = 4096;
     config.maxPBufferHeight = 4096;
     config.maxPBufferPixels = 4096 * 4096;
@@ -907,7 +927,8 @@ void DisplayMtl::initializeFeatures()
     ANGLE_FEATURE_CONDITION((&mFeatures), rewriteRowMajorMatrices, true);
     ANGLE_FEATURE_CONDITION((&mFeatures), emulateTransformFeedback, true);
 
-    ANGLE_FEATURE_CONDITION((&mFeatures),intelThinMipmapWorkaround, isIntel());
+    ANGLE_FEATURE_CONDITION((&mFeatures), intelThinMipmapWorkaround, isIntel());
+    ANGLE_FEATURE_CONDITION((&mFeatures), intelExplicitBoolCastWorkaround, isIntel() && GetMacOSVersion() < OSVersion(11, 0, 0));
 
     angle::PlatformMethods *platform = ANGLEPlatformCurrent();
     platform->overrideFeaturesMtl(platform, &mFeatures);

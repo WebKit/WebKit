@@ -3,7 +3,7 @@ var ResourceLogging = {
     {
         try {
             var req = new XMLHttpRequest;
-            req.open("GET", "/resources/network-simulator.php?test=" + this.testName + "&command=" + cmd, false);
+            req.open("GET", "/resources/network-simulator.py?test=" + this.testName + "&command=" + cmd, false);
             req.send(null);
             return req.responseText;
         } catch (ex) {

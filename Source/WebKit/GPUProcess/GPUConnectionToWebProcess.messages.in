@@ -40,6 +40,10 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 #if ENABLE(VP9)
     EnableVP9Decoders(bool shouldEnableVP8Decoder, bool shouldEnableVP9Decoder, bool shouldEnableVP9SWDecoder)
 #endif
+#if HAVE(VISIBILITY_PROPAGATION_VIEW)
+    CreateVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, bool canShowWhileLocked);
+    DestroyVisibilityPropagationContextForPage(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID);
+#endif
     SetMediaOverridesForTesting(struct WebKit::MediaOverridesForTesting configuration)
     CreateAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)
     ReleaseAudioHardwareListener(WebKit::RemoteAudioHardwareListenerIdentifier identifier)

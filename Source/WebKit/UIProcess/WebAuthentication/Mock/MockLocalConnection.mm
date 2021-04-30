@@ -46,7 +46,7 @@ MockLocalConnection::MockLocalConnection(const MockWebAuthenticationConfiguratio
 {
 }
 
-void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessControlRef, UserVerificationCallback&& callback)
+void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessControlRef, WebCore::UserVerificationRequirement, UserVerificationCallback&& callback)
 {
     // Mock async operations.
     RunLoop::main().dispatch([configuration = m_configuration, callback = WTFMove(callback)]() mutable {
@@ -61,6 +61,10 @@ void MockLocalConnection::verifyUser(const String&, ClientDataType, SecAccessCon
             break;
         case MockWebAuthenticationConfiguration::UserVerification::Cancel:
             userVerification = UserVerification::Cancel;
+            break;
+        case MockWebAuthenticationConfiguration::UserVerification::Presence:
+            userVerification = UserVerification::Presence;
+            break;
         }
 
         callback(userVerification, adoptNS([allocLAContextInstance() init]).get());
@@ -82,6 +86,10 @@ void MockLocalConnection::verifyUser(SecAccessControlRef, LAContext *, Completio
             break;
         case MockWebAuthenticationConfiguration::UserVerification::Cancel:
             userVerification = UserVerification::Cancel;
+            break;
+        case MockWebAuthenticationConfiguration::UserVerification::Presence:
+            userVerification = UserVerification::Presence;
+            break;
         }
 
         callback(userVerification);

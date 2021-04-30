@@ -29,5 +29,5 @@
 [
     JSGenerateToJSObject,
 ] dictionary TestDictionaryWithOnlyConditionalMembers {
-    [Conditional=TEST_CONDITIONAL] double conditionalAttr;
+    [Conditional=TEST_CONDITIONAL] TestDictionary conditionalMember;
 };

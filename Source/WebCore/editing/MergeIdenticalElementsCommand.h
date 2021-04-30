@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "EditCommand.h"
+#include "CompositeEditCommand.h"
 
 namespace WebCore {
 

@@ -246,13 +246,23 @@ class ExecutiveTest(unittest.TestCase):
         import multiprocessing
 
         NUM_PROCESSES = 4
-        DELAY_SECS = 0.25
+        DELAY_SECS = 1.0  # make sure this is much greater than the VM spawn time
         cmd_line = [sys.executable, '-c', 'import time; time.sleep(%f); print("hello")' % DELAY_SECS]
         cwd = os.getcwd()
         commands = [tuple([cmd_line, cwd])] * NUM_PROCESSES
-        start = time.time()
-        command_outputs = Executive().run_in_parallel(commands, processes=NUM_PROCESSES)
-        done = time.time()
+
+        try:
+            # we overwrite __main__ to be this to avoid any issues with
+            # multiprocessing's spawning caused by multiple versions of pytest on
+            # sys.path
+            old_main = sys.modules["__main__"]
+            sys.modules["__main__"] = sys.modules[__name__]
+            start = time.time()
+            command_outputs = Executive().run_in_parallel(commands, processes=NUM_PROCESSES)
+            done = time.time()
+        finally:
+            sys.modules["__main__"] = old_main
+
         self.assertTrue(done - start < NUM_PROCESSES * DELAY_SECS)
         self.assertEqual([output[1] for output in command_outputs], [b'hello\n'] * NUM_PROCESSES)
         self.assertEqual([],  multiprocessing.active_children())

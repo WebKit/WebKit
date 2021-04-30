@@ -19,20 +19,37 @@ addEventListener("load", async () => {
     let image = document.querySelector("img");
     internals.installImageOverlay(image, [
         {
-            text : "hello",
             topLeft : new DOMPointReadOnly(0, 0),
             topRight : new DOMPointReadOnly(1, 0),
             bottomRight : new DOMPointReadOnly(1, 0.5),
             bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "hello",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                }
+            ],
         },
         {
-            text : "world",
             topLeft : new DOMPointReadOnly(0, 0.5),
             topRight : new DOMPointReadOnly(1, 0.5),
             bottomRight : new DOMPointReadOnly(1, 1),
             bottomLeft : new DOMPointReadOnly(0, 1),
-        },
+            children: [
+                {
+                    text : "world",
+                    topLeft : new DOMPointReadOnly(0, 0.5),
+                    topRight : new DOMPointReadOnly(1, 0.5),
+                    bottomRight : new DOMPointReadOnly(1, 1),
+                    bottomLeft : new DOMPointReadOnly(0, 1),
+                }
+            ],
+        }
     ]);
+
     await UIHelper.longPressAtPoint(200, 300);
     selectionRects = await UIHelper.waitForSelectionToAppear();
     shouldBe("selectionRects.length", "1");

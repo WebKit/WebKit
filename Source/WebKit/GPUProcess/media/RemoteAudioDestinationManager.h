@@ -56,6 +56,8 @@ public:
     bool didReceiveSyncMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder) { return didReceiveSyncMessage(connection, decoder, encoder); }
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
+    bool allowsExitUnderMemoryPressure() const;
+
 private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
@@ -69,7 +71,7 @@ private:
     void audioSamplesStorageChanged(RemoteAudioDestinationIdentifier, const SharedMemory::IPCHandle&, const WebCore::CAAudioStreamDescription&, uint64_t numberOfFrames);
 #endif
 
-    HashMap<RemoteAudioDestinationIdentifier, Ref<RemoteAudioDestination>> m_audioDestinations;
+    HashMap<RemoteAudioDestinationIdentifier, UniqueRef<RemoteAudioDestination>> m_audioDestinations;
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
 };
 

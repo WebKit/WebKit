@@ -250,6 +250,7 @@
 #import <wtf/HashTraits.h>
 #import <wtf/Language.h>
 #import <wtf/MainThread.h>
+#import <wtf/MathExtras.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RAMSize.h>
 #import <wtf/RefCountedLeakCounter.h>
@@ -347,6 +348,13 @@
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
 #import <WebCore/PlaybackSessionInterfaceMac.h>
 #import <WebCore/PlaybackSessionModelMediaElement.h>
+#endif
+
+#if HAVE(TRANSLATION_UI_SERVICES)
+#import <TranslationUIServices/LTUITranslationViewController.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
+SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -9232,7 +9240,7 @@ bool LayerFlushController::flushLayers()
     [self _devicePicker]->setMockMediaPlaybackTargetPickerEnabled(enabled);
 }
 
-- (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::State)state
+- (void)_setMockMediaPlaybackTargetPickerName:(NSString *)name state:(WebCore::MediaPlaybackTargetContext::MockState)state
 {
     [self _devicePicker]->setMockMediaPlaybackTargetPickerState(name, state);
 }
@@ -9477,8 +9485,8 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     if (webHTMLView._canEditRichly) {
         const VisibleSelection& selection = coreFrame->selection().selection();
         if (!selection.isNone()) {
-            Node* nodeToRemove;
-            if (auto* style = Editor::styleForSelectionStart(coreFrame, nodeToRemove)) {
+            RefPtr<Node> nodeToRemove;
+            if (auto* style = coreFrame->editor().styleForSelectionStart(nodeToRemove)) {
                 [_private->_textTouchBarItemController setTextIsBold:isFontWeightBold(style->fontCascade().weight())];
                 [_private->_textTouchBarItemController setTextIsItalic:isItalic(style->fontCascade().italic())];
 
@@ -9495,7 +9503,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 
                 [_private->_textTouchBarItemController setCurrentTextAlignment:nsTextAlignmentFromRenderStyle(style)];
 
-                HTMLElement* enclosingListElement = enclosingList(selection.start().deprecatedNode());
+                auto enclosingListElement = makeRefPtr(enclosingList(selection.start().deprecatedNode()));
                 if (enclosingListElement) {
                     if (is<HTMLUListElement>(*enclosingListElement))
                         [[_private->_textTouchBarItemController webTextListTouchBarViewController] setCurrentListType:WebListType::Unordered];
@@ -9626,6 +9634,46 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 {
     [[self _UIDelegateForwarder] webViewClose:self];
 }
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
++ (BOOL)_canHandleContextMenuTranslation
+{
+    return TranslationUIServicesLibrary() && [getLTUITranslationViewControllerClass() isAvailable];
+}
+
+- (void)_handleContextMenuTranslation:(const String&)text selectionBounds:(const WebCore::IntRect&)selectionBoundsInRootView menuLocation:(const WebCore::IntPoint&)locationInRootView
+{
+    if (!WebView._canHandleContextMenuTranslation) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto translationViewController = adoptNS([allocLTUITranslationViewControllerInstance() init]);
+    [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:text]).get()];
+
+    auto convertedSelectionBounds = [self _convertRectFromRootView:selectionBoundsInRootView];
+    auto convertedMenuLocation = [self _convertPointFromRootView:locationInRootView];
+
+    auto popover = adoptNS([[NSPopover alloc] init]);
+    [popover setBehavior:NSPopoverBehaviorTransient];
+    [popover setAppearance:self.effectiveAppearance];
+    [popover setAnimates:YES];
+    [popover setContentViewController:translationViewController.get()];
+    [popover setContentSize:[translationViewController preferredContentSize]];
+
+    NSRectEdge preferredEdge;
+    auto aim = convertedMenuLocation.x;
+    auto highlight = NSMidX(convertedSelectionBounds);
+    if (WTF::areEssentiallyEqual<CGFloat>(aim, highlight))
+        preferredEdge = self.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionRightToLeft ? NSRectEdgeMinX : NSRectEdgeMaxX;
+    else
+        preferredEdge = aim > highlight ? NSRectEdgeMaxX : NSRectEdgeMinX;
+
+    [popover showRelativeToRect:convertedSelectionBounds ofView:self preferredEdge:preferredEdge];
+}
+
+#endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
 @end
 

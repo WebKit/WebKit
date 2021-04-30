@@ -69,6 +69,7 @@ public:
     WEBCORE_EXPORT void beginScanningBackward() final;
     WEBCORE_EXPORT void endScanning() final;
     WEBCORE_EXPORT void setDefaultPlaybackRate(float) final;
+    WEBCORE_EXPORT void setPlaybackRate(float) final;
     WEBCORE_EXPORT void selectAudioMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void selectLegibleMediaOption(uint64_t index) final;
     WEBCORE_EXPORT void togglePictureInPicture() final;

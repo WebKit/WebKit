@@ -119,6 +119,14 @@ void MediaSourcePrivateRemote::durationChanged(const MediaTime& duration)
     m_gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::DurationChanged(duration), m_identifier);
 }
 
+void MediaSourcePrivateRemote::bufferedChanged(const PlatformTimeRanges& buffered)
+{
+    if (!m_gpuProcessConnection)
+        return;
+
+    m_gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::BufferedChanged(buffered), m_identifier);
+}
+
 void MediaSourcePrivateRemote::markEndOfStream(EndOfStreamStatus)
 {
     notImplemented();

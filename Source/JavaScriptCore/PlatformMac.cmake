@@ -32,6 +32,8 @@ list(APPEND JavaScriptCore_PUBLIC_FRAMEWORK_HEADERS
 )
 
 list(APPEND JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
+    inspector/remote/RemoteInspectorConstants.h
+
     inspector/remote/cocoa/RemoteInspectorXPCConnection.h
 )
 

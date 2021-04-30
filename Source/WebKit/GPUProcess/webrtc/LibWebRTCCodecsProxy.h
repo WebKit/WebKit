@@ -59,6 +59,8 @@ public:
 
     void close();
 
+    bool allowsExitUnderMemoryPressure() const;
+
 private:
     explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
 
@@ -83,6 +85,8 @@ private:
     CFDictionaryRef ioSurfacePixelBufferCreationOptions(IOSurfaceRef);
 
     GPUConnectionToWebProcess& m_gpuConnectionToWebProcess;
+
+    mutable Lock m_lock;
     HashMap<RTCDecoderIdentifier, webrtc::LocalDecoder> m_decoders;
     HashMap<RTCEncoderIdentifier, webrtc::LocalEncoder> m_encoders;
 

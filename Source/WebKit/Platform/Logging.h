@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <pal/LogMacros.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
@@ -104,6 +103,7 @@ extern "C" {
     M(WebGL) \
     M(WebRTC) \
     M(WheelEvents) \
+    M(XR) \
 
 WEBKIT2_LOG_CHANNELS(DECLARE_LOG_CHANNEL)
 

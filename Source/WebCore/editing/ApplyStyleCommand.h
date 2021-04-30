@@ -82,7 +82,7 @@ private:
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement&);
     bool removeImplicitlyStyledElement(EditingStyle&, HTMLElement&, InlineStyleRemovalMode, EditingStyle* extractedStyle);
     bool removeCSSStyle(EditingStyle&, HTMLElement&, InlineStyleRemovalMode = RemoveIfNeeded, EditingStyle* extractedStyle = nullptr);
-    HTMLElement* highestAncestorWithConflictingInlineStyle(EditingStyle&, Node*);
+    RefPtr<HTMLElement> highestAncestorWithConflictingInlineStyle(EditingStyle&, Node*);
     void applyInlineStyleToPushDown(Node&, EditingStyle*);
     void pushDownInlineStyleAroundNode(EditingStyle&, Node*);
     void removeInlineStyle(EditingStyle&, const Position& start, const Position& end);
@@ -113,7 +113,7 @@ private:
     float computedFontSize(Node*);
     void joinChildTextNodes(Node*, const Position& start, const Position& end);
 
-    HTMLElement* splitAncestorsWithUnicodeBidi(Node*, bool before, WritingDirection allowedDirection);
+    RefPtr<HTMLElement> splitAncestorsWithUnicodeBidi(Node*, bool before, WritingDirection allowedDirection);
     void removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsplitAncestor);
 
     void updateStartEnd(const Position& newStart, const Position& newEnd);

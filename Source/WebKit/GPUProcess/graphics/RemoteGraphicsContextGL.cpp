@@ -207,7 +207,7 @@ void RemoteGraphicsContextGL::paintImageDataToImageBuffer(RefPtr<WebCore::ImageD
             // Unfortunately "flush" implementation in RemoteRenderingBackend overloads ordering and effects.
             imageBuffer->flushContext();
         }
-        auto locker = holdLock(mutex);
+        Locker locker { mutex };
         isFinished = true;
         conditionVariable.notifyOne();
     });

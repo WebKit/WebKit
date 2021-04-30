@@ -1,3 +1,281 @@
+2021-04-27  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Don't use FORWARDING_HEADERS_DIR for GTK WebKit headers
+        https://bugs.webkit.org/show_bug.cgi?id=225006
+
+        Reviewed by Michael Catanzaro.
+
+        Use WebKit2Gtk_FRAMEWORK_HEADERS_DIR and WebKit2Gtk_DERIVED_SOURCES_DIR for WebKit2 GTK
+        headers instead of FORWARDING_HEADERS_DIR and DERIVED_SOURCES_DIR.
+
+        * PlatformGTK.cmake:
+
+2021-04-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Audit Tab: Edits are not committed when leaving edit mode unless you first click into another text field
+        https://bugs.webkit.org/show_bug.cgi?id=224318
+        <rdar://problem/76382755>
+
+        Reviewed by Devin Rousso.
+
+        Save test and setup code when pressing "Done" button. Don't rely on the blur event because it doesn't fire on
+        the focused element when it's removed from the DOM.
+
+        * UserInterface/Models/AuditTestBase.js:
+        (WI.AuditTestBase.prototype.set setup):
+        * UserInterface/Models/AuditTestCase.js:
+        (WI.AuditTestCase.prototype.set test):
+        Allow setting `test` and `setup` after editing is finished.
+
+        * UserInterface/Views/AuditTestCaseContentView.js:
+        (WI.AuditTestCaseContentView.prototype.layout):
+        (WI.AuditTestCaseContentView.prototype.saveEditedData):
+        * UserInterface/Views/AuditTestContentView.js:
+        (WI.AuditTestContentView.prototype.detached):
+        Saving test on `detached` saves it when selecting a different test in the navigation sidebar.
+
+        (WI.AuditTestContentView.prototype.saveEditedData):
+        (WI.AuditTestContentView.prototype._createSetupEditor):
+        (WI.AuditTestContentView.prototype._handleEditingChanged):
+        (WI.AuditTestContentView):
+
+2021-04-26  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: Uncaught Exception: Failed to execute 'delete' on 'IDBObjectStore': The parameter is not a valid key range.
+        https://bugs.webkit.org/show_bug.cgi?id=224993
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Controllers/AuditManager.js:
+        (WI.AuditManager.prototype.async processJSON):
+        (WI.AuditManager.prototype.async addTest):
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype.willDismissPopover):
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.populateContextMenu):
+        Make sure to save any newly created audits not already in `WI.objectStores.audits` immediately
+        so that if the developer tries to delete it before exiting Edit mode (which is normally when
+        everything is saved) an exception isn't thrown about it not being in `WI.objectStores.audits`.
+
+2021-04-26  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: REGRESSION(r270134) Elements Tab: Details Sidebar toggle is unexpectedly disabled  after switching from Timelines tab
+        https://bugs.webkit.org/show_bug.cgi?id=224772
+        <rdar://73470211>
+
+        Reviewed by Devin Rousso.
+
+        Ensure the logic for identifying and showing the represented object for the selected `DOMNode`
+        is not run unless the Elements Tab is visible. This guards agains the partial setting of state
+        when the Elements Tab is not the default tab while opening Web Inspector.
+
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+        (WI.ElementsTabContentView.prototype.showRepresentedObject):
+        (WI.ElementsTabContentView.prototype.attached):
+        (WI.ElementsTabContentView.prototype.detached):
+        (WI.ElementsTabContentView.prototype._showDOMTreeContentViewIfNeeded):
+        (WI.ElementsTabContentView.prototype._mainFrameDidChange):
+        (WI.ElementsTabContentView.prototype._mainResourceDidChange):
+
+2021-04-25  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Audit: REGRESSION(?): creating a new test in Edit mode causes the Results folder to appear
+        https://bugs.webkit.org/show_bug.cgi?id=224994
+
+        Reviewed by Darin Adler.
+
+        * UserInterface/Views/AuditNavigationSidebarPanel.js:
+        (WI.AuditNavigationSidebarPanel.prototype._addTest):
+
+2021-04-22  BJ Burg  <bburg@apple.com>
+
+        [Cocoa] re-enable test case WKInspectorDelegate.InspectorConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=224577
+        <rdar://70505272>
+
+        Reviewed by Devin Rousso.
+
+        Adjust the CSP directive list in the <meta> tag to allow for customization
+        by WebKit ports. 
+
+        * UserInterface/Main.html:
+        - Remove `default-src 'self'` so as not to block custom scheme loads.
+        - Remove `connect-src * ws:` so as not to block custom scheme loads.
+        - Add `object-src 'none'` as we have no reason to allow <object>, <embed>, or <applet>.
+
+2021-04-20  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called
+        https://bugs.webkit.org/show_bug.cgi?id=224652
+        <rdar://problem/76746385>
+
+        Reviewed by Devin Rousso.
+
+        Ensure `TreeElement.ondetach()` cannot be called if the conditions
+        for previously calling `TreeElement.onattach()` have not been met.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype._detach):
+
+2021-04-19  Patrick Angle  <pangle@apple.com>
+
+        REGRESSION (r268691 && r270134): Web Inspector: Clicking on go-to arrow in Computed panel no longer works
+        https://bugs.webkit.org/show_bug.cgi?id=224774
+
+        Reviewed by Devin Rousso.
+
+        The Styles panel will not always be part of the same sidebar as the Computed panel as of r268691, so we should
+        look for the Styles panel in WI.detailsSidebar, which will report all of the panels it manages across multiple
+        sidebars. Additionally, as of r270134, there is no longer a private `_visible` property for
+        `WI.StyleDetailsPanel`, so it can not be used by `WI.SpreadsheetRulesStyleDetailsPanel`. Instead, visibility
+        should be determined by checking if the panel is attached and not pending layout.
+
+        * UserInterface/Views/ComputedStyleDetailsSidebarPanel.js:
+        (WI.ComputedStyleDetailsSidebarPanel.prototype.computedStyleDetailsPanelShowProperty):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.scrollToSectionAndHighlightProperty):
+
+2021-04-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Graphics: add support for `steps()`/`spring()` CSS timing functions
+        https://bugs.webkit.org/show_bug.cgi?id=224654
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Models/Geometry.js:
+        (WI.StepsFunction): Added.
+        (WI.StepsFunction.fromString): Added.
+        (WI.StepsFunction.prototype.get type): Added.
+        (WI.StepsFunction.prototype.get count): Added.
+        (WI.StepsFunction.prototype.copy): Added.
+        (WI.StepsFunction.prototype.toString): Added.
+        Create a model object for `steps()` CSS timing function.
+
+        * UserInterface/Models/Animation.js:
+        (WI.Animation.prototype._updateEffect):
+        Also support `effect.timingFunction`/`keyframe.easing` being a `steps()`/`spring()` CSS timing function.
+
+        * UserInterface/Views/AnimationContentView.js:
+        (WI.AnimationContentView.prototype._refreshPreview):
+        Create a UI for `steps()`/`spring()` CSS timing functions.
+
+2021-04-19  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(?): Network: Request (Object Tree) is sometimes empty
+        https://bugs.webkit.org/show_bug.cgi?id=224768
+        <rdar://problem/76783636>
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/LocalJSONContentView.js:
+        (WI.LocalJSONContentView.prototype.renderRemoteObject):
+        If the `WI.RemoteObject` is simple enough to be rendered inline, `WI.ObjectTreeView` won't
+        show a `WI.TreeOutline` by default. We have to tell it to use a `WI.TreeOutline` by passing
+        `forceExpanding = true` into the constructor.
+
+        * UserInterface/Views/ObjectTreeView.js:
+        (WI.ObjectTreeView.prototype.showOnlyJSON):
+        Add some `console.assert` to help prevent this from happening again.
+
+2021-04-19  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        Enable -Wthread-safety, add attributes to custom lock classes, and provide macros to declare guards
+        https://bugs.webkit.org/show_bug.cgi?id=221614
+        <rdar://problem/74396781>
+
+        Reviewed by David Kilzer.
+
+        Add -Wthread-safety to compile flags.
+
+        * Configurations/Base.xcconfig:
+
+2021-04-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: REGRESSION(?): Graphics: dropping a recording leaves behind a drop zone view
+        https://bugs.webkit.org/show_bug.cgi?id=224648
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/GraphicsTabContentView.js:
+        (WI.GraphicsTabContentView.prototype.initialLayout):
+        It appears that it's possible for re-entrancy issues in the `WI.View` system since the
+        `_didInitialLayout` flag isn't set until _after_ `initialLayout` returns, meaning that if
+        the logic inside `initialLayout` triggers a synchronous `layout` then that second `layout`
+        won't know that it's already in the middle of an `initialLayout`. In this case, showing the
+        `WI.GraphicsOverviewContentView` causes the navigation sidebar to be shown, which forces a
+        synchronous `layout` from handling `WI.Sidebar.Event.WidthDidChange`. For now, there's no
+        "rush" to show the `WI.GraphicsOverviewContentView` so we delay it by one event loop turn.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.initialLayout):
+        (WI.CanvasContentView.prototype.dropZoneShouldAppearForDragEvent): Deleted.
+        (WI.CanvasContentView.prototype.dropZoneHandleDrop): Deleted.
+        There's no reason to have another `WI.DropZoneView` here since there's already one that
+        covers the entire tab.
+
+2021-04-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Uncaught Exception: null is not an object (evaluating 'this._listeners.get')
+        https://bugs.webkit.org/show_bug.cgi?id=224651
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Base/Object.js:
+        (WI.Object.removeEventListener):
+        Add early-return checks just in case `_listeners` or `listenersForEventType` is falsy. While
+        ideally it would be the case that these would never be falsy, the logic of Web Inspector is
+        complex and far reaching, so better safe than sorry.
+
+        * UserInterface/Views/TreeElement.js:
+        (WI.TreeElement.prototype._detach):
+        * UserInterface/Views/AuditTreeElement.js:
+        (WI.AuditTreeElement.prototype.ondetach):
+        * UserInterface/Views/BootstrapScriptTreeElement.js:
+        (WI.BootstrapScriptTreeElement.prototype.ondetach):
+        * UserInterface/Views/BreakpointTreeElement.js:
+        (WI.BreakpointTreeElement.prototype.ondetach):
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype.ondetach):
+        * UserInterface/Views/FrameTreeElement.js:
+        (WI.FrameTreeElement.prototype.ondetach):
+        * UserInterface/Views/JavaScriptBreakpointTreeElement.js:
+        (WI.JavaScriptBreakpointTreeElement.prototype.ondetach):
+        * UserInterface/Views/LocalResourceOverrideTreeElement.js:
+        (WI.LocalResourceOverrideTreeElement.prototype.ondetach):
+        * UserInterface/Views/ShaderProgramTreeElement.js:
+        (WI.ShaderProgramTreeElement.prototype.ondetach):
+        * UserInterface/Views/WebSocketResourceTreeElement.js:
+        (WI.WebSocketResourceTreeElement.prototype.ondetach):
+        Add FIXME comments warning of this issue so that future changes can take it into account.
+        <https://webkit.org/b/224652> (Web Inspector: Tree Outlines: `ondetach` can be called without `onattach` ever being called)
+
+2021-04-16  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: Sources: don't show the create local override contextmenu if the navigation item is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=224647
+
+        Reviewed by BJ Burg.
+
+        * UserInterface/Views/ResourceContentView.js:
+        (WI.ResourceContentView.prototype._populateCreateLocalResourceOverrideContextMenu):
+
+2021-04-13  BJ Burg  <bburg@apple.com>
+
+        Web Inspector: add setting to allow inspecting Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=224082
+        <rdar://75695002>
+
+        Reviewed by Devin Rousso.
+
+        Instead of telling curious users to set the WebKitDeveloperExtras default,
+        expose an experimental setting that does the same thing.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+
 2021-04-06  BJ Burg  <bburg@apple.com>
 
         Web Inspector: remove duplicate Box Model section from Layout panel in Elements Tab

@@ -22,7 +22,7 @@ PASS > [test-after-close] Test state after context closed
 PASS   p3 = offlineContext.startRendering() did not throw an exception.
 PASS   After close, offlineContext.state is equal to closed.
 PASS   offlineContext.suspend() rejected correctly with TypeError: Not enough arguments.
-PASS   offlineContext.resume() rejected correctly with InvalidStateError: Cannot resume an offline audio context that has not started.
+PASS   offlineContext.resume() rejected correctly with InvalidStateError: Cannot resume an offline audio context that is closed.
 PASS < [test-after-close] All assertions passed. (total 4 assertions)
 PASS > [resume-running-context] Test resuming a running context
 PASS   Create online context did not throw an exception.

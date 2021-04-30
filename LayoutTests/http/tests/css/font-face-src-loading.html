@@ -26,7 +26,7 @@ function startTest() {
         if (xhr.readyState == xhr.DONE)
             forceStyleSelectorRecreation();
     };
-    xhr.open('GET', '/resources/reset-temp-file.php?' + filename, true);
+    xhr.open('GET', '/resources/reset-temp-file.py?' + filename, true);
     xhr.send();
 }
 

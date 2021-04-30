@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,10 +74,17 @@
 namespace WebKit {
 using namespace WebCore;
 
+// We wouldn't want the GPUProcess to repeatedly exit then relaunch when under memory pressure. In particular, we need to make sure the
+// WebProcess has a change to schedule work after the GPUProcess get launched. For this reason, we make sure that the GPUProcess never
+// idle-exits less than 5 seconds after getting launched. This amount of time should be sufficient for the WebProcess to schedule work
+// work in the GPUProcess.
+constexpr Seconds minimumLifetimeBeforeIdleExit { 5_s };
 
 GPUProcess::GPUProcess(AuxiliaryProcessInitializationParameters&& parameters)
+    : m_idleExitTimer(*this, &GPUProcess::tryExitIfUnused)
 {
     initialize(WTFMove(parameters));
+    RELEASE_LOG(Process, "%p - GPUProcess::GPUProcess:", this);
 }
 
 GPUProcess::~GPUProcess()
@@ -86,6 +93,7 @@ GPUProcess::~GPUProcess()
 
 void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, PAL::SessionID sessionID, GPUProcessConnectionParameters&& parameters, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
 {
+    RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
     auto ipcConnection = createIPCConnectionPair();
     if (!ipcConnection) {
         completionHandler({ });
@@ -109,8 +117,10 @@ void GPUProcess::createGPUConnectionToWebProcess(ProcessIdentifier identifier, P
 
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)
 {
+    RELEASE_LOG(Process, "%p - GPUProcess::removeGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
+    tryExitIfUnusedAndUnderMemoryPressure();
 }
 
 void GPUProcess::connectionToWebProcessClosed(IPC::Connection& connection)
@@ -122,13 +132,62 @@ bool GPUProcess::shouldTerminate()
     return m_webProcessConnections.isEmpty();
 }
 
+bool GPUProcess::canExitUnderMemoryPressure() const
+{
+    ASSERT(isMainRunLoop());
+    for (auto& webProcessConnection : m_webProcessConnections.values()) {
+        if (!webProcessConnection->allowsExitUnderMemoryPressure())
+            return false;
+    }
+    return true;
+}
+
+void GPUProcess::tryExitIfUnusedAndUnderMemoryPressure()
+{
+    ASSERT(isMainRunLoop());
+    if (!MemoryPressureHandler::singleton().isUnderMemoryPressure())
+        return;
+
+    tryExitIfUnused();
+}
+
+void GPUProcess::tryExitIfUnused()
+{
+    ASSERT(isMainRunLoop());
+    if (!canExitUnderMemoryPressure()) {
+        m_idleExitTimer.stop();
+        return;
+    }
+
+    // To avoid exiting the GPUProcess too aggressively while under memory pressure and make sure the WebProcess gets a
+    // change to schedule work, we don't exit if we've been running for less than |minimumLifetimeBeforeIdleExit|.
+    // In case of simulated memory pressure, we ignore this rule to avoid flakiness in our benchmarks and tests.
+    auto lifetime = MonotonicTime::now() - m_creationTime;
+    if (lifetime < minimumLifetimeBeforeIdleExit && !MemoryPressureHandler::singleton().isSimulatingMemoryPressure()) {
+        RELEASE_LOG(Process, "GPUProcess::tryExitIfUnused: GPUProcess is idle and under memory pressure but it is not exiting because it has just launched");
+        // Check again after the process have lived long enough (minimumLifetimeBeforeIdleExit) to see if the GPUProcess
+        // can idle-exit then.
+        if (!m_idleExitTimer.isActive())
+            m_idleExitTimer.startOneShot(minimumLifetimeBeforeIdleExit - lifetime);
+        return;
+    }
+    m_idleExitTimer.stop();
+
+    RELEASE_LOG(Process, "GPUProcess::tryExitIfUnused: GPUProcess is exiting because we are under memory pressure and the process is no longer useful.");
+    parentProcessConnection()->send(Messages::GPUProcessProxy::ProcessIsReadyToExit(), 0);
+}
+
 void GPUProcess::lowMemoryHandler(Critical critical, Synchronous synchronous)
 {
+    RELEASE_LOG(Process, "GPUProcess::lowMemoryHandler: critical=%d, synchronous=%d", critical == Critical::Yes, synchronous == Synchronous::Yes);
+    tryExitIfUnused();
+
     WebCore::releaseGraphicsMemory(critical, synchronous);
 }
 
 void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 {
+    RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();
     AtomString::init();
 
@@ -160,6 +219,10 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.containerTemporaryDirectoryExtensionHandle);
+#endif
+#if PLATFORM(IOS_FAMILY)
+    SandboxExtension::consumePermanently(parameters.compilerServiceExtensionHandles);
+    SandboxExtension::consumePermanently(parameters.dynamicIOKitExtensionHandles);
 #endif
 
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)

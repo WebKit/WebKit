@@ -40,10 +40,8 @@
 #include "TypedOMCSSStyleValue.h"
 #include "TypedOMCSSUnitValue.h"
 #include "TypedOMCSSUnparsedValue.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
-
 
 RefPtr<TypedOMCSSStyleValue> StylePropertyMapReadOnly::reifyValue(CSSValue* value, Document& document, Element*)
 {

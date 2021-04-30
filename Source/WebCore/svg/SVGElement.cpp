@@ -200,12 +200,6 @@ bool SVGElement::isOutermostSVGSVGElement() const
     if (!is<SVGSVGElement>(*this))
         return false;
 
-    // If we're living in a shadow tree, we're a <svg> element that got created as replacement
-    // for a <symbol> element or a cloned <svg> element in the referenced tree. In that case
-    // we're always an inner <svg> element.
-    if (isInShadowTree() && is<SVGElement>(parentOrShadowHostElement()))
-        return false;
-
     // Element may not be in the document, pretend we're outermost for viewport(), getCTM(), etc.
     if (!parentNode())
         return true;
@@ -213,6 +207,10 @@ bool SVGElement::isOutermostSVGSVGElement() const
     // We act like an outermost SVG element, if we're a direct child of a <foreignObject> element.
     if (is<SVGForeignObjectElement>(*parentNode()))
         return true;
+
+    // If we're inside the shadow tree of a <use> element, we're always an inner <svg> element.
+    if (isInShadowTree() && is<SVGUseElement>(shadowHost()))
+        return false;
 
     // This is true whenever this is the outermost SVG, even if there are HTML elements outside it
     return !is<SVGElement>(*parentNode());
@@ -293,13 +291,13 @@ const HashSet<SVGElement*>& SVGElement::instances() const
     return m_svgRareData->instances();
 }
 
-bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
+Optional<FloatRect> SVGElement::getBoundingBox() const
 {
     if (is<SVGGraphicsElement>(*this)) {
-        rect = downcast<SVGGraphicsElement>(*this).getBBox(styleUpdateStrategy);
-        return true;
+        if (auto renderer = this->renderer())
+            return renderer->objectBoundingBox();
     }
-    return false;
+    return WTF::nullopt;
 }
 
 SVGElement* SVGElement::correspondingElement() const

@@ -152,7 +152,9 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 
     pageConfiguration.loaderClientForMainFrame = makeUniqueRef<ServiceWorkerFrameLoaderClient>(m_webPageProxyID, m_pageID, FrameIdentifier::generate(), effectiveUserAgent);
 
+#if !RELEASE_LOG_DISABLED
     auto serviceWorkerIdentifier = data.serviceWorkerIdentifier;
+#endif
     auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), WTFMove(data), WTFMove(effectiveUserAgent), WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
     SWContextManager::singleton().registerServiceWorkerThreadForInstall(WTFMove(serviceWorkerThreadProxy));
 

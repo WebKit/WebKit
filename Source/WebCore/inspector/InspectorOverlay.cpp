@@ -286,16 +286,16 @@ static void drawFragmentHighlight(GraphicsContext& context, Node& node, const In
     if (size >= 4)
         contentQuad = highlight.quads[3];
 
-    if (!marginQuad.isEmpty() && marginQuad != borderQuad && highlight.marginColor.isVisible())
+    if (!marginQuad.boundingBoxIsEmpty() && marginQuad != borderQuad && highlight.marginColor.isVisible())
         drawOutlinedQuadWithClip(context, marginQuad, borderQuad, highlight.marginColor, bounds);
 
-    if (!borderQuad.isEmpty() && borderQuad != paddingQuad && highlight.borderColor.isVisible())
+    if (!borderQuad.boundingBoxIsEmpty() && borderQuad != paddingQuad && highlight.borderColor.isVisible())
         drawOutlinedQuadWithClip(context, borderQuad, paddingQuad, highlight.borderColor, bounds);
 
-    if (!paddingQuad.isEmpty() && paddingQuad != contentQuad && highlight.paddingColor.isVisible())
+    if (!paddingQuad.boundingBoxIsEmpty() && paddingQuad != contentQuad && highlight.paddingColor.isVisible())
         drawOutlinedQuadWithClip(context, paddingQuad, contentQuad, highlight.paddingColor, bounds);
 
-    if (!contentQuad.isEmpty() && (highlight.contentColor.isVisible() || highlight.contentOutlineColor.isVisible()))
+    if (!contentQuad.boundingBoxIsEmpty() && (highlight.contentColor.isVisible() || highlight.contentOutlineColor.isVisible()))
         drawOutlinedQuad(context, contentQuad, highlight.contentColor, highlight.contentOutlineColor, bounds);
 }
 
@@ -1363,6 +1363,8 @@ static FloatSize expectedSizeForLayoutLabel(String label, InspectorOverlay::Labe
     case InspectorOverlay::LabelArrowDirection::None:
         return { textWidth + (layoutLabelPadding * 2), textHeight + (layoutLabelPadding * 2) };
     }
+
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void InspectorOverlay::drawLayoutLabel(GraphicsContext& context, String label, FloatPoint point, InspectorOverlay::LabelArrowDirection arrowDirection, InspectorOverlay::LabelArrowEdgePosition arrowEdgePosition, Color backgroundColor, float maximumWidth)
@@ -1766,7 +1768,7 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             gridHighlightOverlay.gaps.append({ previousColumnEndLine.start(), columnStartLine.start(), columnStartLine.end(), previousColumnEndLine.end() });
             FloatLine lineBetweenColumnTops = { columnStartLine.start(), previousColumnEndLine.start() };
             FloatLine lineBetweenColumnBottoms = { columnStartLine.end(), previousColumnEndLine.end() };
-            gapLabelLine = { lineBetweenColumnTops.pointAtRelativeDistance(0.5), lineBetweenColumnTops.pointAtRelativeDistance(0.5) };
+            gapLabelLine = { lineBetweenColumnTops.pointAtRelativeDistance(0.5), lineBetweenColumnBottoms.pointAtRelativeDistance(0.5) };
         }
 
         if (i < columnWidths.size() && i < columnPositions.size()) {

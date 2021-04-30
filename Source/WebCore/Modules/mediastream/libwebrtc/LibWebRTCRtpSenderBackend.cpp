@@ -39,6 +39,12 @@
 
 namespace WebCore {
 
+LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender)
+    : m_peerConnectionBackend(makeWeakPtr(&backend))
+    , m_rtcSender(WTFMove(rtcSender))
+{
+}
+
 LibWebRTCRtpSenderBackend::LibWebRTCRtpSenderBackend(LibWebRTCPeerConnectionBackend& backend, rtc::scoped_refptr<webrtc::RtpSenderInterface>&& rtcSender, Source&& source)
     : m_peerConnectionBackend(makeWeakPtr(&backend))
     , m_rtcSender(WTFMove(rtcSender))
@@ -154,9 +160,11 @@ std::unique_ptr<RTCDTMFSenderBackend> LibWebRTCRtpSenderBackend::createDTMFBacke
     return makeUnique<LibWebRTCDTMFSenderBackend>(m_rtcSender->GetDtmfSender());
 }
 
-Ref<RTCRtpTransformBackend> LibWebRTCRtpSenderBackend::createRTCRtpTransformBackend()
+Ref<RTCRtpTransformBackend> LibWebRTCRtpSenderBackend::rtcRtpTransformBackend()
 {
-    return LibWebRTCRtpSenderTransformBackend::create(m_rtcSender);
+    if (!m_transformBackend)
+        m_transformBackend = LibWebRTCRtpSenderTransformBackend::create(m_rtcSender);
+    return *m_transformBackend;
 }
 
 void LibWebRTCRtpSenderBackend::setMediaStreamIds(const Vector<String>& streamIds)

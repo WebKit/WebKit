@@ -28,6 +28,7 @@ set(WTF_PUBLIC_HEADERS
     CallbackAggregator.h
     CheckedArithmetic.h
     CheckedBoolean.h
+    CheckedLock.h
     ClockType.h
     CommaPrinter.h
     CompactPointerTuple.h
@@ -236,6 +237,7 @@ set(WTF_PUBLIC_HEADERS
     SixCharacterHash.h
     SmallPtrSet.h
     SoftLinking.h
+    SortedArrayMap.h
     SpanningTree.h
     Spectrum.h
     StackBounds.h
@@ -264,6 +266,7 @@ set(WTF_PUBLIC_HEADERS
     TaggedArrayStoragePtr.h
     ThreadGroup.h
     ThreadMessage.h
+    ThreadSafetyAnalysis.h
     ThreadSafeRefCounted.h
     ThreadSanitizerSupport.h
     ThreadSpecific.h

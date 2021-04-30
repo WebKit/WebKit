@@ -58,7 +58,7 @@ public:
     static Ref<WebInspectorUI> create(WebPage&);
     virtual ~WebInspectorUI();
 
-    static void enableFrontendFeatures();
+    static void enableFrontendFeatures(WebPage&);
 
     // Implemented in generated WebInspectorUIMessageReceiver.cpp
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

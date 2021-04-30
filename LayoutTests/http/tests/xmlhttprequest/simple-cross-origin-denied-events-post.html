@@ -36,7 +36,7 @@
         xhr.upload.onload = function() { log("upload.onload") }
         xhr.upload.onloadstart = function() { log("upload.onloadstart") }
         xhr.upload.onprogress = function() { log("upload.onprogress") }
-        xhr.open("POST", "http://localhost:7/", true); // A port that will likely refuse the connection.
+        xhr.open("POST", "http://localhost:8/", true); // A port that will likely refuse the connection.
         xhr.setRequestHeader("Content-Type", "text/plain");
         xhr.send("Text");
     }

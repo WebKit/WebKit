@@ -67,6 +67,10 @@ public:
     RetainPtr<NSImage> imageForCurrentSharingServicePickerItem(WebSharingServicePickerController &) override;
 #endif
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+    void handleTranslation(const String&, const WebCore::IntRect& selectionBoundsInRootView, const WebCore::IntPoint& locationInRootView) final;
+#endif
+
 private:
     NSMenu *contextMenuForEvent(NSEvent *, NSView *, bool& isServicesMenu);
 

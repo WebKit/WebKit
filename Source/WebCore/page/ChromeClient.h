@@ -231,8 +231,8 @@ public:
 
     virtual Color underlayColor() const { return Color(); }
 
-    virtual void themeColorChanged(Color) const { }
-    virtual void pageExtendedBackgroundColorDidChange(Color) const { }
+    virtual void themeColorChanged() const { }
+    virtual void pageExtendedBackgroundColorDidChange() const { }
 
     virtual void exceededDatabaseQuota(Frame&, const String& databaseName, DatabaseDetails) = 0;
 
@@ -513,7 +513,7 @@ public:
     virtual void showPlaybackTargetPicker(PlaybackTargetClientContextIdentifier, const IntPoint&, bool /*isVideo*/) { }
     virtual void playbackTargetPickerClientStateDidChange(PlaybackTargetClientContextIdentifier, MediaProducer::MediaStateFlags) { }
     virtual void setMockMediaPlaybackTargetPickerEnabled(bool)  { }
-    virtual void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::State) { }
+    virtual void setMockMediaPlaybackTargetPickerState(const String&, MediaPlaybackTargetContext::MockState) { }
     virtual void mockMediaPlaybackTargetPickerDismissPopup() { }
 #endif
 

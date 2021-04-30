@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebProcessPlugInFrame.h"
+#import <WebKit/WKWebProcessPlugInFrame.h>
 
 @class JSContext;
 @class WKWebProcessPlugInBrowserContextController;

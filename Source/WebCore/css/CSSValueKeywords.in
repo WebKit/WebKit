@@ -348,6 +348,14 @@ justify
 inter-word
 distribute
 //
+// CSS_PROP_CLEAR:
+// CSS_PROP_FLOAT:
+// none
+// left
+// right
+inline-start
+inline-end
+//
 // CSS_PROP_LIST_STYLE_POSITION:
 //
 outside
@@ -465,6 +473,7 @@ contents
 grid
 inline-grid
 flow-root
+flow
 //none
 //
 // CSS_PROP_CURSOR:
@@ -1438,6 +1447,8 @@ xyz
 // color-contast()
 color-contrast
 vs
+AA
+AA-large
 
 // color-mix()
 color-mix
@@ -1493,6 +1504,24 @@ from-font
 // dynamic-range
 standard
 high
+
+// @counter-style `system` descriptor values
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-system
+cyclic
+numeric
+// alphabetic
+symbolic
+additive
+// fixed
+extends
+
+// @counter-style `speak-as` descriptor values
+// https://www.w3.org/TR/css-counter-styles-3/#counter-style-speak-as
+// auto
+bullets
+numbers
+words
+// spell-out
 
 // @supports selector()
 // https://drafts.csswg.org/css-conditional-4/#typedef-supports-selector-fn

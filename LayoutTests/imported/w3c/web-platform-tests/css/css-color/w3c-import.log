@@ -54,6 +54,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-function-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-initial-canvastext.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-basic-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-hwb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-resolving-keywords.html

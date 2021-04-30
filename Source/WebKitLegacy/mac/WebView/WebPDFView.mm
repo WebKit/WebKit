@@ -61,8 +61,10 @@
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>
+#import <WebCore/Range.h>
 #import <WebCore/ReferrerPolicy.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/SimpleRange.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
 #import <wtf/URL.h>

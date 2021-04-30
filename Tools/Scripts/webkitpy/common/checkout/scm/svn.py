@@ -53,10 +53,17 @@ class SVNRepository(object):
     svn_server_host = svn_server_host
     svn_server_realm = svn_server_realm
 
-    def has_authorization_for_realm(self, realm, home_directory=os.getenv("HOME")):
+    def has_authorization_for_realm(self, realm, home_directory=None):
         # If we are working on a file:// repository realm will be None
         if realm is None:
             return True
+
+        # Find the user's home directory
+        if home_directory is None:
+            home_directory = os.path.expanduser("~")
+            if home_directory == "~":
+                return False
+
         # ignore false positives for methods implemented in the mixee class. pylint: disable=E1101
         # Assumes find and grep are installed.
         if not os.path.isdir(os.path.join(home_directory, ".subversion")):

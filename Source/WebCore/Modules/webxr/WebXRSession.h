@@ -84,6 +84,7 @@ public:
     IntSize nativeWebGLFramebufferResolution() const;
     IntSize recommendedWebGLFramebufferResolution() const;
     bool supportsViewportScaling() const; 
+    bool isPositionEmulated() const;
 
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -111,6 +112,7 @@ private:
     void stop() override;
 
     // PlatformXR::TrackingAndRenderingClient
+    void sessionDidInitializeInputSources(Vector<PlatformXR::Device::FrameData::InputSource>&&) final;
     void sessionDidEnd() final;
 
     enum class InitiatedBySystem : bool { No, Yes };
@@ -152,6 +154,9 @@ private:
     // In meters.
     double m_minimumNearClipPlane { 0.1 };
     double m_maximumFarClipPlane { 1000.0 };
+
+    // https://immersive-web.github.io/webxr/#xrsession-promise-resolved
+    bool m_inputInitialized { false };
 };
 
 } // namespace WebCore

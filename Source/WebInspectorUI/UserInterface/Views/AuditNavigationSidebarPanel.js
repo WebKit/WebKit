@@ -119,7 +119,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
             return;
         }
 
-        WI.auditManager.addTest(audit);
+        WI.auditManager.addTest(audit, {save: true});
 
         WI.showRepresentedObject(audit);
     }
@@ -229,7 +229,7 @@ WI.AuditNavigationSidebarPanel = class AuditNavigationSidebarPanel extends WI.Na
 
         if (this._resultsFolderTreeElement) {
             this.contentTreeOutline.insertChild(treeElement, this.contentTreeOutline.children.indexOf(this._resultsFolderTreeElement));
-            this._resultsFolderTreeElement.hidden = !this._resultsFolderTreeElement.children.length;
+            this._resultsFolderTreeElement.hidden = !this._resultsFolderTreeElement.children.length || WI.auditManager.editing;
         } else
             this.contentTreeOutline.appendChild(treeElement);
     }

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SplitElementCommand.h"
 
+#include "CompositeEditCommand.h"
 #include "Element.h"
 #include "HTMLNames.h"
 #include <wtf/Assertions.h>

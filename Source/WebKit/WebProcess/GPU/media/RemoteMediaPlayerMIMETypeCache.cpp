@@ -72,18 +72,20 @@ MediaPlayerEnums::SupportsType RemoteMediaPlayerMIMETypeCache::supportsTypeAndCo
     if (parameters.type.raw().isEmpty())
         return MediaPlayerEnums::SupportsType::MayBeSupported;
 
+    SupportedTypesAndCodecsKey searchKey { parameters.type.raw(), parameters.isMediaSource, parameters.isMediaStream };
+
     if (m_supportsTypeAndCodecsCache) {
-        auto it = m_supportsTypeAndCodecsCache->find(parameters.type.raw());
+        auto it = m_supportsTypeAndCodecsCache->find(searchKey);
         if (it != m_supportsTypeAndCodecsCache->end())
             return it->value;
     }
 
     if (!m_supportsTypeAndCodecsCache)
-        m_supportsTypeAndCodecsCache = HashMap<String, MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash> { };
+        m_supportsTypeAndCodecsCache = HashMap<SupportedTypesAndCodecsKey, MediaPlayerEnums::SupportsType> { };
 
     MediaPlayerEnums::SupportsType result = MediaPlayerEnums::SupportsType::IsNotSupported;
     if (m_manager.gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs(m_engineIdentifier, parameters), Messages::RemoteMediaPlayerManagerProxy::SupportsTypeAndCodecs::Reply(result), 0))
-        m_supportsTypeAndCodecsCache->add(parameters.type.raw(), result);
+        m_supportsTypeAndCodecsCache->add(searchKey, result);
 
     return result;
 }

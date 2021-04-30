@@ -191,6 +191,8 @@ template<> EncodedJSValue JSC_HOST_CALL_ATTRIBUTES JSTestPromiseRejectionEventDO
 }
 JSC_ANNOTATE_HOST_FUNCTION(JSTestPromiseRejectionEventDOMConstructorConstruct, JSTestPromiseRejectionEventDOMConstructor::construct);
 
+template<> const ClassInfo JSTestPromiseRejectionEventDOMConstructor::s_info = { "TestPromiseRejectionEvent", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPromiseRejectionEventDOMConstructor) };
+
 template<> JSValue JSTestPromiseRejectionEventDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
     return JSEvent::getConstructor(vm, &globalObject);
@@ -202,8 +204,6 @@ template<> void JSTestPromiseRejectionEventDOMConstructor::initializeProperties(
     putDirect(vm, vm.propertyNames->name, jsNontrivialString(vm, "TestPromiseRejectionEvent"_s), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
     putDirect(vm, vm.propertyNames->length, jsNumber(2), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
-
-template<> const ClassInfo JSTestPromiseRejectionEventDOMConstructor::s_info = { "TestPromiseRejectionEvent", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPromiseRejectionEventDOMConstructor) };
 
 /* Hash table for prototype */
 

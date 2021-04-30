@@ -36,7 +36,7 @@ struct CallFrameClosure {
     FunctionExecutable* functionExecutable;
     VM* vm;
     JSScope* scope;
-    int parameterCountIncludingThis;
+    unsigned parameterCountIncludingThis;
     int argumentCountIncludingThis;
     
     void setThis(JSValue value)

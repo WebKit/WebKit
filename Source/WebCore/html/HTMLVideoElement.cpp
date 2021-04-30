@@ -79,7 +79,6 @@ Ref<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Doc
     HTMLVideoElementPictureInPicture::providePictureInPictureTo(videoElement);
 #endif
 
-    videoElement->finishInitialization();
     videoElement->suspendIfNeeded();
     return videoElement;
 }

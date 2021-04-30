@@ -28,7 +28,6 @@
 
 #include "PeerConnectionBackend.h"
 #include "RealtimeMediaSource.h"
-#include <wtf/HashMap.h>
 
 namespace webrtc {
 class IceCandidateInterface;

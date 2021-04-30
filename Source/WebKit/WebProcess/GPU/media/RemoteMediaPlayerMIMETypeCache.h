@@ -55,7 +55,9 @@ public:
 private:
     RemoteMediaPlayerManager& m_manager;
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
-    Optional<HashMap<String, WebCore::MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>> m_supportsTypeAndCodecsCache;
+
+    using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool>;
+    Optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
     Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypesCache;
 };
 

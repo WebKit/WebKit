@@ -146,6 +146,13 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
  */
 - (void)webView:(WKWebView *)webView requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame type:(WKMediaCaptureType)type decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+/*! @abstract Allows your app to determine whether or not the given security origin should have access to the device's orientation and motion.
+ @param securityOrigin The security origin which requested access to the device's orientation and motion.
+ @param frame The frame that initiated the request.
+ @param decisionHandler The decision handler to call once the app has made its decision.
+ */
+- (void)webView:(WKWebView *)webView requestDeviceOrientationAndMotionPermissionForOrigin:(WKSecurityOrigin *)origin initiatedByFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(WKPermissionDecision decision))decisionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA)) WK_API_UNAVAILABLE(macos);
+
 #if TARGET_OS_IPHONE
 
 /*! @abstract Allows your app to determine whether or not the given element should show a preview.
@@ -180,7 +187,6 @@ typedef NS_ENUM(NSInteger, WKMediaCaptureType) {
  @param previewingViewController The view controller that is being popped.
  */
 - (void)webView:(WKWebView *)webView commitPreviewingViewController:(UIViewController *)previewingViewController WK_API_DEPRECATED_WITH_REPLACEMENT("webView:contextMenuForElement:willCommitWithAnimator:", ios(10.0, 13.0));
-
 #endif // TARGET_OS_IPHONE
 
 #if TARGET_OS_IOS

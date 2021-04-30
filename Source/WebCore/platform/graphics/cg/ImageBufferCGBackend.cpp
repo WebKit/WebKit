@@ -60,6 +60,13 @@ private:
     RetainPtr<CGContextRef> m_context;
 };
 
+unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
+{
+    ASSERT(!backendSize.isEmpty());
+    Checked<unsigned, RecordOverflow> bytesPerRow = (Checked<unsigned, RecordOverflow>(backendSize.width()) * 4);
+    return bytesPerRow.unsafeGet();
+}
+
 RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const GraphicsContext& context)
 {
 #if PLATFORM(COCOA)
