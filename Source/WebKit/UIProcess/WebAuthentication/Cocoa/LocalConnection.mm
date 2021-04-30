@@ -129,7 +129,7 @@ void LocalConnection::verifyUser(SecAccessControlRef accessControl, LAContext *c
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
     [options setObject:@YES forKey:@(LAOptionNotInteractive)];
 
-    auto reply = makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSDictionary *, NSError *error) mutable {
+    auto reply = makeBlockPtr([completionHandler = WTFMove(completionHandler)] (NSDictionary *information, NSError *error) mutable {
         UserVerification verification = UserVerification::Yes;
         if (error) {
             LOG_ERROR("Couldn't authenticate with biometrics: %@", error);
@@ -137,12 +137,22 @@ void LocalConnection::verifyUser(SecAccessControlRef accessControl, LAContext *c
             if (error.code == LAErrorUserCancel)
                 verification = UserVerification::Cancel;
         }
+        if (information[@"UserPresence"])
+            verification = UserVerification::Presence;
 
         // This block can be executed in another thread.
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), verification] () mutable {
             completionHandler(verification);
         });
     });
+
+#if USE(APPLE_INTERNAL_SDK)
+    // Depending on certain internal requirements, context might be nil. In that case, just check user presence.
+    if (shouldUseAlternateAttributes() && !context) {
+        reply(@{ @"UserPresence": @YES }, nullptr);
+        return;
+    }
+#endif
 
     [context evaluateAccessControl:accessControl operation:LAAccessControlOperationUseKeySign options:options.get() reply:reply.get()];
 }
