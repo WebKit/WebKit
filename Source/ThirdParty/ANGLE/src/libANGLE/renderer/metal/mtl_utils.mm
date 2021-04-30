@@ -114,6 +114,11 @@ angle::Result InitializeTextureContents(const gl::Context *context,
     const angle::Format &actualAngleFormat           = textureObjFormat.actualAngleFormat();
     const gl::InternalFormat &intendedInternalFormat = textureObjFormat.intendedInternalFormat();
 
+    bool forceGPUInitialization = false;
+#if TARGET_OS_SIMULATOR
+    forceGPUInitialization = true;
+#endif // TARGET_OS_SIMULATOR
+    
     // This function is called in many places to initialize the content of a texture.
     // So it's better we do the sanity check here instead of let the callers do it themselves:
     if (!textureObjFormat.valid() || actualAngleFormat.isBlock || actualAngleFormat.depthBits > 0 ||
@@ -148,7 +153,7 @@ angle::Result InitializeTextureContents(const gl::Context *context,
     }
 
     if (texture->isCPUAccessible() && index.getType() != gl::TextureType::_2DMultisample &&
-        index.getType() != gl::TextureType::_2DMultisampleArray)
+        index.getType() != gl::TextureType::_2DMultisampleArray && !forceGPUInitialization)
     {
         const angle::Format &dstFormat = angle::Format::Get(textureObjFormat.actualFormatId);
         const size_t dstRowPitch       = dstFormat.pixelBytes * size.width;
