@@ -370,21 +370,28 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
         m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
 
     auto size = snappedIntRect(m_player->playerContentBoxRect()).size();
-    m_sampleBufferDisplayLayer->initialize(hideRootLayer(), size, [this, weakThis = makeWeakPtr(this), size](auto didSucceed) {
-        if (!didSucceed) {
-            ERROR_LOG(LOGIDENTIFIER, "Initializing the SampleBufferDisplayLayer failed.");
-            m_sampleBufferDisplayLayer = nullptr;
-            return;
-        }
-        updateRenderingMode();
-        m_shouldUpdateDisplayLayer = true;
-
-        m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
-
-        [m_boundsChangeListener begin:m_sampleBufferDisplayLayer->rootLayer()];
-
-        m_canEnqueueDisplayLayer = true;
+    m_sampleBufferDisplayLayer->initialize(hideRootLayer(), size, [weakThis = makeWeakPtr(this), size](auto didSucceed) {
+        if (weakThis)
+            weakThis->layersAreInitialized(size, didSucceed);
     });
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bool didSucceed)
+{
+    if (!didSucceed) {
+        ERROR_LOG(LOGIDENTIFIER, "Initializing the SampleBufferDisplayLayer failed.");
+        m_sampleBufferDisplayLayer = nullptr;
+        return;
+    }
+
+    updateRenderingMode();
+    m_shouldUpdateDisplayLayer = true;
+
+    m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
+
+    [m_boundsChangeListener begin:m_sampleBufferDisplayLayer->rootLayer()];
+
+    m_canEnqueueDisplayLayer = true;
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::destroyLayers()
