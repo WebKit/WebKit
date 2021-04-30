@@ -1,3 +1,17 @@
+2021-04-30  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (iOS 14.5): PWA's / Home Screen Apps with Service Workers intermittenly fail to open offline
+        https://bugs.webkit.org/show_bug.cgi?id=225083
+        <rdar://problem/77232062>
+
+        Reviewed by Alex Christensen.
+
+        Manually tested.
+
+        * workers/service/server/SWServerWorker.h:
+        Initialize m_shouldSkipHandleFetch to false by default.
+        Otherwise, m_shouldSkipHandleFetch might be used uninitialized during a small amount of time.
+
 2021-04-30  Chris Dumez  <cdumez@apple.com>
 
         Simplify shouldInvalidateNodeListCachesForAttr() template function
