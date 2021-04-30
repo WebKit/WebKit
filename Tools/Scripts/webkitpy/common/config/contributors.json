@@ -3661,6 +3661,15 @@
          "hyuki"
       ]
    },
+   "Kyle Piddington" : {
+      "emails" : [
+         "kpiddington@apple.com"
+      ],
+      "nicks" : [
+         "kpiddington"
+      ],
+      "status" : "committer"
+   },
    "Lars Knoll" : {
       "emails" : [
          "lars.knoll@gmail.com",
