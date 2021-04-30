@@ -332,9 +332,20 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 
     reservation.size = fixedExecutableMemoryPoolSize;
 
-    if (Options::jitMemoryReservationSize())
+    if (Options::jitMemoryReservationSize()) {
         reservation.size = Options::jitMemoryReservationSize();
 
+#if ENABLE(JUMP_ISLANDS)
+        // If asked for a reservation smaller than island size, assume that we want that size allocation
+        // plus an island. The alternative would be to turn off jump islands, but since we only use
+        // this for testing, this is probably the easier way to do it.
+        //
+        // The main reason for this is that some JSC stress tests run with a 50KB pool. This hack means
+        // we don't have to change anything about those tests.
+        if (reservation.size < islandRegionSize)
+            reservation.size += islandRegionSize;
+#endif // ENABLE(JUMP_ISLANDS)
+    }
     reservation.size = std::max(roundUpToMultipleOf(pageSize(), reservation.size), pageSize() * 2);
 
     auto tryCreatePageReservation = [] (size_t reservationSize) {

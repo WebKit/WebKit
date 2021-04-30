@@ -1,5 +1,25 @@
 2021-04-30  Filip Pizlo  <fpizlo@apple.com>
 
+        Make small JIT pool tests pass on AS
+        https://bugs.webkit.org/show_bug.cgi?id=225256
+
+        Reviewed by Mark Lam.
+
+        If we ask for a JIT pool that is smaller than the smallest possible "region" (thing with jump
+        island) that we can create -- i.e. smaller than a jump region, then assume that the user is
+        asking us to create a pool that has that much usable space plus a jump region.
+
+        I think that this makes the option easier to use when you're testing ridiculously small JIT
+        pools, which we happen to do in our test suite.
+
+        Also remove some dead options I didn't mean to commit.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::initializeJITPageReservation):
+        * runtime/OptionsList.h:
+
+2021-04-30  Filip Pizlo  <fpizlo@apple.com>
+
         Make the JIT pool smaller on AS
         https://bugs.webkit.org/show_bug.cgi?id=225249
 
