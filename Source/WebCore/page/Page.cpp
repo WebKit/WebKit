@@ -2554,6 +2554,15 @@ Color Page::pageExtendedBackgroundColor() const
     return renderView->compositor().rootExtendedBackgroundColor();
 }
 
+Color Page::sampledPageTopColor() const
+{
+    auto* document = mainFrame().document();
+    if (!document)
+        return { };
+
+    return document->sampledPageTopColor();
+}
+
 // These are magical constants that might be tweaked over time.
 static const double gMinimumPaintedAreaRatio = 0.1;
 static const double gMaximumUnpaintedAreaRatio = 0.04;

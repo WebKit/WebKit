@@ -330,6 +330,7 @@ private:
 
     void themeColorChanged() const final;
     void pageExtendedBackgroundColorDidChange() const final;
+    void didSamplePageTopColor() const final;
     
     void wheelEventHandlersChanged(bool) final;
 

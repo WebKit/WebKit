@@ -559,6 +559,8 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setServiceWorkerEntitlementDisabledForTesting(!![_configuration preferences]._serviceWorkerEntitlementDisabledForTesting);
 #endif
 
+    pageConfiguration->preferences()->setSampledPageTopColorMaxDifference([_configuration _sampledPageTopColorMaxDifference]);
+
     if (!linkedOnOrAfter(WebCore::SDKVersion::FirstWhereSiteSpecificQuirksAreEnabledByDefault))
         pageConfiguration->preferences()->setNeedsSiteSpecificQuirks(false);
 }
@@ -3028,6 +3030,14 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     if (!pageExtendedBackgroundColor.isValid())
         return nil;
     return WebCore::platformColor(pageExtendedBackgroundColor);
+}
+
+- (CocoaColor *)_sampledPageTopColor
+{
+    auto sampledPageTopColor = _page->sampledPageTopColor();
+    if (!sampledPageTopColor.isValid())
+        return nil;
+    return WebCore::platformColor(sampledPageTopColor);
 }
 
 - (id <_WKInputDelegate>)_inputDelegate

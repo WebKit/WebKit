@@ -6453,6 +6453,11 @@ void WebPage::flushPendingPageExtendedBackgroundColorChange()
     send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(m_page->pageExtendedBackgroundColor()));
 }
 
+void WebPage::didSamplePageTopColor()
+{
+    send(Messages::WebPageProxy::DidSamplePageTopColor(m_page->sampledPageTopColor()));
+}
+
 void WebPage::flushPendingEditorStateUpdate()
 {
     if (!m_hasPendingEditorStateUpdate)

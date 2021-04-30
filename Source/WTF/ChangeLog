@@ -1,3 +1,150 @@
+2021-04-30  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276744. rdar://problem/77402549
+
+    experiment with averaging sampling colors across the top of the page as the scroll area background
+    https://bugs.webkit.org/show_bug.cgi?id=224987
+    <rdar://problem/76251889>
+    
+    Reviewed by Darin Adler.
+    
+    Source/WebCore:
+    
+    Tests: SampledPageTopColor.ZeroMaxDifference
+           SampledPageTopColor.NegativeMaxDifference
+           SampledPageTopColor.SolidColor
+           SampledPageTopColor.DifferentColorsWithoutOutlierBelowMaxDifference
+           SampledPageTopColor.DifferentColorsWithLeftOutlierAboveMaxDifference
+           SampledPageTopColor.DifferentColorsWithMiddleOutlierAboveMaxDifference
+           SampledPageTopColor.DifferentColorsWithRightOutlierAboveMaxDifference
+           SampledPageTopColor.DifferentColorsIndividuallyAboveMaxDifference
+           SampledPageTopColor.DifferentColorsCumulativelyAboveMaxDifference
+           SampledPageTopColor.DisplayP3
+           SampledPageTopColor.ExperimentalUseSampledPageTopColorForScrollAreaBackgroundColor
+    
+    * dom/Document.h:
+    (WebCore::Document::sampledPageTopColor const): Added.
+    * dom/Document.cpp:
+    (WebCore::Document::enqueuePaintTimingEntryIfNeeded):
+    (WebCore::colorDifference): Added.
+    (WebCore::averageColor): Added.
+    (WebCore::Document::determineSampledPageTopColor): Added.
+    Wait until the first contentful paint before sampling. Don't sample if that location would
+    fall into a 3rd-party `<iframe>`. Currently use 5 snapshots across the top of the page,
+    allowing for one of either the first or last snapshot to be an outlier, which is not
+    included in the average of the other snapshots that's used as the final color value. If the
+    Lab color difference between any two snapshots (unless it's the first or last snapshot as
+    described above) or across all the (non-outlier) snapshots is too large, bail. Only enabled
+    if the `SampledPageTopColorMaxDifference` setting is greater than 0.
+    
+    * page/Page.h:
+    * page/Page.cpp:
+    (WebCore::Page::sampledPageTopColor const): Added.
+    * page/ChromeClient.h:
+    (WebCore::ChromeClient::didSamplePageTopColor const): Added.
+    Pass along the `sampledPageTopColor` to the UIProcess after it's determined or if the above
+    logic bails (so that the `WKWebView` can adjust `_sampledPageTopColor` to `nil`).
+    
+    * rendering/RenderLayerCompositor.cpp:
+    (WebCore::RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged):
+    Use the `sampledPageTopColor` if the `UseSampledPageTopColorForScrollAreaBackgroundColor`
+    internal preference is enabled instead of the CSS `background-color` of the `<html>`/`<body>`.
+    
+    Source/WebKit:
+    
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::didSamplePageTopColor const): Added.
+    * WebProcess/WebPage/WebPage.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::didSamplePageTopColor): Added.
+    Pass along the `sampledPageTopColor` to the UIProcess.
+    
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/WebPageProxy.h:
+    (WebKit::WebPageProxy::sampledPageTopColor): Added.
+    * UIProcess/WebPageProxy.cpp:
+    (WebKit::WebPageProxy::scrollAreaBackgroundColor const):
+    (WebKit::WebPageProxy::didSamplePageTopColor): Added.
+    Use the `sampledPageTopColor` if the `UseSampledPageTopColorForScrollAreaBackgroundColor`
+    internal preference is enabled instead of the CSS `background-color` of the `<html>`/`<body>`.
+    
+    * UIProcess/PageClient.h:
+    (WebKit::PageClient::sampledPageTopColorWillChange): Added.
+    (WebKit::PageClient::sampledPageTopColorDidChange): Added.
+    * UIProcess/Cocoa/PageClientImplCocoa.h:
+    * UIProcess/Cocoa/PageClientImplCocoa.mm:
+    (WebKit::PageClientImplCocoa::sampledPageTopColorWillChange): Added.
+    (WebKit::PageClientImplCocoa::sampledPageTopColorDidChange): Added.
+    Add ObjC KVO support for `-[WKWebView _sampledPageTopColor]`.
+    
+    * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _setupPageConfiguration:]):
+    (-[WKWebView _sampledPageTopColor]): Added.
+    * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+    * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+    (-[WKWebViewConfiguration init]):
+    (-[WKWebViewConfiguration copyWithZone:]):
+    (-[WKWebViewConfiguration _setSampledPageTopColorMaxDifference:]): Added.
+    (-[WKWebViewConfiguration _sampledPageTopColorMaxDifference]): Added.
+    Provide SPI to configure the `SampledPageTopColorMaxDifference` preference when
+    creating the `WKWebView`. Expose the result as `_sampledPageTopColor` SPI.
+    
+    Source/WTF:
+    
+    * Scripts/Preferences/WebPreferences.yaml:
+    Add a `SampledPageTopColorMaxDifference` setting that controls both whether or not to sample
+    colors from the top of the page (only if value > 0) and the max Lab color difference allowed
+    across all samples.
+    
+    * Scripts/Preferences/WebPreferencesInternal.yaml:
+    Add a `UseSampledPageTopColorForScrollAreaBackgroundColor` internal setting that controls
+    whether the sampled page top color can be used as the overscroll area background color.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm: Added.
+    (-[TestKVOWrapper initWithObservable:keyPath:callback:]):
+    (-[TestKVOWrapper dealloc]):
+    (-[TestKVOWrapper observeValueForKeyPath:ofObject:change:context:]):
+    (createWebViewWithSampledPageTopColorMaxDifference):
+    (waitForSampledPageTopColorToChangeForHTML):
+    (createHTMLGradientWithColorStops):
+    (TEST.SampledPageTopColor.ZeroMaxDifference):
+    (TEST.SampledPageTopColor.NegativeMaxDifference):
+    (TEST.SampledPageTopColor.SolidColor):
+    (TEST.SampledPageTopColor.DifferentColorsWithoutOutlierBelowMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsWithLeftOutlierAboveMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsWithMiddleOutlierAboveMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsWithRightOutlierAboveMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsIndividuallyAboveMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsCumulativelyAboveMaxDifference):
+    (TEST.SampledPageTopColor.DisplayP3):
+    (TEST.SampledPageTopColor.ExperimentalUseSampledPageTopColorForScrollAreaBackgroundColor):
+    
+    * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276744 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-28  Devin Rousso  <drousso@apple.com>
+
+            experiment with averaging sampling colors across the top of the page as the scroll area background
+            https://bugs.webkit.org/show_bug.cgi?id=224987
+            <rdar://problem/76251889>
+
+            Reviewed by Darin Adler.
+
+            * Scripts/Preferences/WebPreferences.yaml:
+            Add a `SampledPageTopColorMaxDifference` setting that controls both whether or not to sample
+            colors from the top of the page (only if value > 0) and the max Lab color difference allowed
+            across all samples.
+
+            * Scripts/Preferences/WebPreferencesInternal.yaml:
+            Add a `UseSampledPageTopColorForScrollAreaBackgroundColor` internal setting that controls
+            whether the sampled page top color can be used as the overscroll area background color.
+
 2021-04-27  Ruben Turcios  <rubent_22@apple.com>
 
         Cherry-pick r276652. rdar://problem/77235499

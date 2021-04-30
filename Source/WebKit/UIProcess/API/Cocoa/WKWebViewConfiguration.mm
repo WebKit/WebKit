@@ -177,6 +177,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(APP_HIGHLIGHTS)
     BOOL _appHighlightsEnabled;
 #endif
+    double _sampledPageTopColorMaxDifference;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -275,6 +276,9 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(APP_HIGHLIGHTS)
     _appHighlightsEnabled = DEFAULT_VALUE_FOR_AppHighlightsEnabled;
 #endif
+
+    _sampledPageTopColorMaxDifference = DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference;
+
     return self;
 }
 
@@ -452,6 +456,8 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #if ENABLE(APP_HIGHLIGHTS)
     configuration->_appHighlightsEnabled = self->_appHighlightsEnabled;
 #endif
+
+    configuration->_sampledPageTopColorMaxDifference = self->_sampledPageTopColorMaxDifference;
 
     return configuration;
 }
@@ -1271,6 +1277,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_setProcessDisplayName:(NSString *)lsDisplayName
 {
     _pageConfiguration->setProcessDisplayName(lsDisplayName);
+}
+
+- (void)_setSampledPageTopColorMaxDifference:(double)value
+{
+    _sampledPageTopColorMaxDifference = value;
+}
+
+- (double)_sampledPageTopColorMaxDifference
+{
+    return _sampledPageTopColorMaxDifference;
 }
 
 @end
