@@ -38,7 +38,7 @@ class SystemHost(object):
     def __init__(self):
         self.executive = executive.Executive()
         self.filesystem = filesystem.FileSystem()
-        self.platform = platforminfo.PlatformInfo(executive=self.executive)
+        self.platform = platforminfo.PlatformInfo(sys, platform, self.executive)
         self.user = user.User(self.platform)
         self.workspace = workspace.Workspace(self.filesystem, self.executive)
 

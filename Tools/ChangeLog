@@ -1,3 +1,16 @@
+2021-04-30  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r276846.
+        https://bugs.webkit.org/show_bug.cgi?id=225242
+
+        Breaks test execution in GTK and WPE ports
+
+        Reverted changeset:
+
+        "[webkitpy] Support pickling platforminfo"
+        https://bugs.webkit.org/show_bug.cgi?id=225230
+        https://trac.webkit.org/changeset/276846
+
 2021-04-30  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Properly recover from unresponsive web processes

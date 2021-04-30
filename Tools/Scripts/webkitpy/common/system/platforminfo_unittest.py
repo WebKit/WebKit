@@ -75,7 +75,7 @@ class TestPlatformInfo(unittest.TestCase):
     # yet run by default and there's no reason not to run this everywhere by default.
     def test_real_code(self):
         # This test makes sure the real (unmocked) code actually works.
-        info = PlatformInfo(executive=Executive())
+        info = PlatformInfo(sys, platform, Executive())
         self.assertNotEqual(info.os_name, '')
         if info.is_mac() or info.is_win():
             self.assertIsNotNone(info.os_version)
