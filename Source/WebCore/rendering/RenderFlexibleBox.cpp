@@ -547,7 +547,7 @@ static bool childHasAspectRatio(const RenderBox& child)
     return child.hasIntrinsicAspectRatio() || child.style().hasAspectRatio();
 }
 
-Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const RenderBox& child, SizeType sizeType, const Length& size)
+Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox& child, SizeType sizeType, const Length& size)
 {
     // If we have a horizontal flow, that means the main size is the width.
     // That's the logical width for horizontal writing modes, and the logical
@@ -571,18 +571,23 @@ Optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const Rend
 
     // computeLogicalWidth always re-computes the intrinsic widths. However, when
     // our logical width is auto, we can just use our cached value. So let's do
-    // that here. (Compare code in LayoutBlock::computePreferredLogicalWidths)
-    LayoutUnit borderAndPadding = child.borderAndPaddingLogicalWidth();
+    // that here. (Compare code in RenderBlock::computePreferredLogicalWidths)
     if (child.style().logicalWidth().isAuto() && !childHasAspectRatio(child)) {
-        if (size.isMinContent())
-            return child.minPreferredLogicalWidth() - borderAndPadding;
-        if (size.isMaxContent())
-            return child.maxPreferredLogicalWidth() - borderAndPadding;
+        if (size.isMinContent()) {
+            if (child.needsPreferredWidthsRecalculation())
+                child.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
+            return child.minPreferredLogicalWidth() - child.borderAndPaddingLogicalWidth();
+        }
+        if (size.isMaxContent()) {
+            if (child.needsPreferredWidthsRecalculation())
+                child.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
+            return child.maxPreferredLogicalWidth() - child.borderAndPaddingLogicalWidth();
+        }
     }
     
     // FIXME: Figure out how this should work for regions and pass in the appropriate values.
     RenderFragmentContainer* fragment = nullptr;
-    return child.computeLogicalWidthInFragmentUsing(sizeType, size, contentLogicalWidth(), *this, fragment) - borderAndPadding;
+    return child.computeLogicalWidthInFragmentUsing(sizeType, size, contentLogicalWidth(), *this, fragment) - child.borderAndPaddingLogicalWidth();
 }
 
 WritingMode RenderFlexibleBox::transformedWritingMode() const
@@ -1184,7 +1189,7 @@ void RenderFlexibleBox::prepareOrderIteratorAndMargins()
     }
 }
 
-LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(const RenderBox& child, LayoutUnit childSize)
+LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, LayoutUnit childSize)
 {
     Length max = mainSizeLengthForChild(MaxSize, child);
     Optional<LayoutUnit> maxExtent = WTF::nullopt;
@@ -1378,7 +1383,7 @@ bool RenderFlexibleBox::resolveFlexibleLengths(FlexSign flexSign, Vector<FlexIte
 
     for (size_t i = 0; i < children.size(); ++i) {
         FlexItem& flexItem = children[i];
-        const auto& child = flexItem.box;
+        auto& child = flexItem.box;
         
         // This check also covers out-of-flow children.
         if (flexItem.frozen)

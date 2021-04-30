@@ -1,3 +1,16 @@
+2021-04-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        Nullopt in RenderFlexibleBox::layoutFlexItems in RenderFlexibleBox::layoutBlock via RenderMultiColumnFlow::layout
+        https://bugs.webkit.org/show_bug.cgi?id=223369
+
+        Reviewed by Alan Bujtas.
+
+        Imported a test from WPT covering this issue.
+
+        * web-platform-tests/css/css-flexbox/percentage-padding-002-expected.html: Added.
+        * web-platform-tests/css/css-flexbox/percentage-padding-002.html: Added.
+        * web-platform-tests/css/css-flexbox/w3c-import.log:
+
 2021-04-29  Sam Weinig  <weinig@apple.com>
 
         Add support for CanvasRenderingContext2DSettings

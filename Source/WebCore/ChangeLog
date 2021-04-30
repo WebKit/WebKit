@@ -1,3 +1,29 @@
+2021-04-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        Nullopt in RenderFlexibleBox::layoutFlexItems in RenderFlexibleBox::layoutBlock via RenderMultiColumnFlow::layout
+        https://bugs.webkit.org/show_bug.cgi?id=223369
+
+        Reviewed by Alan Bujtas.
+
+        When computing the main axis extent of a flex item being the main axis also the child's inline axis and the
+        inline size of the child is auto, we can directly use the min/maxPreferredLogicalWidths instead of having
+        to call computeLogicalWidthInFragmentUsing(). However we cannot use it straigth away without checking
+        needsPreferredWidthsRecalculation() first, otherwise the cached preferred width might be no longer valid.
+        The cached preferred width includes both border and padding. If any of those are percentages, and thus
+        depend on the size of the containing block, we could end up using obsolete values.
+
+        This was making us hit an assertion because the content size suggestion was negative. That's because in order
+        to compute the content size we were substracting the current borderAndPadding() to the value returned by
+        minPreferredLogicalWidth(). But the current borderAndPadding() might be larger than the one used to compute the
+        preferred width before (they must be the same to properly extract the content size) so the content size ended
+        up being negative.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeMainAxisExtentForChild):
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax): Constness adjustments.
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths): Ditto.
+        * rendering/RenderFlexibleBox.h:
+
 2021-04-30  Youenn Fablet  <youenn@apple.com>
 
         MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers lambda should check its player is alive
