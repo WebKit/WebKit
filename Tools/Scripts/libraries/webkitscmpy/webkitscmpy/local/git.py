@@ -151,8 +151,11 @@ class Git(Scm):
         return sorted(set(['/'.join(branch.split('/')[2:]) if branch.startswith('remotes/origin/') else branch for branch in result]))
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
+        # Only git-svn checkouts can convert revisions to fully qualified commits
         if revision and not self.is_svn:
             raise self.Exception('This git checkout does not support SVN revisions')
+
+        # Determine the hash for a provided Subversion revision
         elif revision:
             if hash:
                 raise ValueError('Cannot define both hash and revision')
@@ -173,6 +176,7 @@ class Git(Scm):
         parsed_branch_point = None
         log_format = ['-1'] if include_log else ['-1', '--format=short']
 
+        # Determine the `git log` output and branch for a given identifier
         if identifier is not None:
             if revision:
                 raise ValueError('Cannot define both revision and identifier')
@@ -218,6 +222,7 @@ class Git(Scm):
             if identifier < 0:
                 identifier = None
 
+        # Determine the `git log` output for a given branch or tag
         elif branch or tag:
             if hash:
                 raise ValueError('Cannot define both tag/branch and hash')
@@ -228,29 +233,37 @@ class Git(Scm):
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
 
+        # Determine the `git log` output for a given hash
         else:
             hash = Commit._parse_hash(hash, do_assert=True)
             log = run([self.executable(), 'log', hash or 'HEAD'] + log_format, cwd=self.root_path, capture_output=True, encoding='utf-8')
             if log.returncode:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
 
+        # Fully define the hash from the `git log` output
         match = self.GIT_COMMIT.match(log.stdout.splitlines()[0])
         if not match:
             raise self.Exception('Invalid commit hash in git log')
         hash = match.group('hash')
 
+        # A commit is often on multiple branches, the canonical branch is the one with the highest priority
         branch = self.prioritize_branches(self._branches_for(hash))
 
+        # Compute the identifier if the function did not receive one and we were asked to
         if not identifier and include_identifier:
             identifier = self._commit_count(hash if branch == default_branch else '{}..{}'.format(default_branch, hash))
+
+        # Only compute the branch point we're on something other than the default branch
         branch_point = None if not include_identifier or branch == default_branch else self._commit_count(hash) - identifier
         if branch_point and parsed_branch_point and branch_point != parsed_branch_point:
             raise ValueError("Provided 'branch_point' does not match branch point of specified branch")
 
+        # Check the commit log for a git-svn revision
         logcontent = '\n'.join(line[4:] for line in log.stdout.splitlines()[4:])
         matches = self.GIT_SVN_REVISION.findall(logcontent)
         revision = int(matches[-1].split('@')[0]) if matches else None
 
+        # We only care about when a commit was commited
         commit_time = run(
             [self.executable(), 'show', '-s', '--format=%ct', hash],
             cwd=self.root_path, capture_output=True, encoding='utf-8',
@@ -259,6 +272,9 @@ class Git(Scm):
             raise self.Exception('Failed to retrieve commit time for {}'.format(hash))
         timestamp = int(commit_time.stdout.lstrip())
 
+        # Comparing commits in different repositories involves comparing timestamps. This is problematic because it git,
+        # it's possible for a series of commits to share a commit time. To handle this case, we assign each commit a
+        # zero-indexed "order" within it's timestamp.
         order = 0
         while not identifier or order + 1 < identifier + (branch_point or 0):
             commit_time = run(
@@ -288,9 +304,11 @@ class Git(Scm):
         if not isinstance(argument, six.string_types):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
+        # Map any candidate default branch to the one used by this repository
         if argument in self.DEFAULT_BRANCHES:
             argument = self.default_branch
 
+        # See if the argument the user specified is a recognized commit format
         parsed_commit = Commit.parse(argument, do_assert=False)
         if parsed_commit:
             if parsed_commit.branch in self.DEFAULT_BRANCHES:
@@ -305,6 +323,7 @@ class Git(Scm):
                 include_identifier=include_identifier,
             )
 
+        # The argument isn't a recognized commit format, hopefully it is a valid git ref of some form
         output = run(
             [self.executable(), 'rev-parse', argument],
             cwd=self.root_path, capture_output=True, encoding='utf-8',

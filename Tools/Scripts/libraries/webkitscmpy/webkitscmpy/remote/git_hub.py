@@ -187,6 +187,7 @@ class GitHub(Scm):
         if revision:
             raise self.Exception('Cannot map revisions to commits on GitHub')
 
+        # Determine the commit data and branch for a given identifier
         if identifier is not None:
             if revision:
                 raise ValueError('Cannot define both revision and identifier')
@@ -232,6 +233,7 @@ class GitHub(Scm):
             if identifier <= 0:
                 identifier = None
 
+        # Determine the commit data for a given branch or tag
         elif branch or tag:
             if hash:
                 raise ValueError('Cannot define both tag/branch and hash')
@@ -241,21 +243,23 @@ class GitHub(Scm):
             if not commit_data:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(branch or tag))
 
+        # Determine the commit data for a given hash
         else:
             hash = Commit._parse_hash(hash, do_assert=True)
             commit_data = self.request('commits/{}'.format(hash or self.default_branch))
             if not commit_data:
                 raise self.Exception("Failed to retrieve commit information for '{}'".format(hash or 'HEAD'))
 
+        # A commit is often on multiple branches, the canonical branch is the one with the highest priority
         branches = self._branches_for(commit_data['sha'])
         if branches:
             branch = self.prioritize_branches(branches)
-
         else:
             # A commit not on any branches cannot have an identifier
             identifier = None
             branch = None
 
+        # Define identifiers on default branch
         branch_point = None
         if include_identifier and branch and branch == self.default_branch:
             if not identifier:
@@ -264,11 +268,13 @@ class GitHub(Scm):
                     raise Exception('{} {}'.format(result, commit_data['sha']))
                 identifier, _ = result
 
+        # Define identifiers on branches diverged from the default branch
         elif include_identifier and branch:
             if not identifier:
                 identifier = self._difference(self.default_branch, commit_data['sha'])
             branch_point = self._count_for_ref(ref=commit_data['sha'])[0] - identifier
 
+        # Check the commit log for a git-svn revision
         matches = self.GIT_SVN_REVISION.findall(commit_data['commit']['message'])
         revision = int(matches[-1].split('@')[0]) if matches else None
 
@@ -277,6 +283,9 @@ class GitHub(Scm):
             commit_data['commit']['committer']['date'], '%Y-%m-%dT%H:%M:%SZ',
         ).timetuple()))
 
+        # Comparing commits in different repositories involves comparing timestamps. This is problematic because it git,
+        # it's possible for a series of commits to share a commit time. To handle this case, we assign each commit a
+        # zero-indexed "order" within it's timestamp.
         order = 0
         while not identifier or order + 1 < identifier + (branch_point or 0):
             response = self.request('commits/{}'.format('{}~{}'.format(commit_data['sha'], order + 1)))
