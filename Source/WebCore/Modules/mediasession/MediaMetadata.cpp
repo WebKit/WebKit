@@ -180,6 +180,8 @@ void MediaMetadata::refreshArtworkImage()
     // FIXME: Implement a heuristic to retrieve the "best" image.
     m_artworkImageSrc = mediaImages[0].src;
     m_artworkLoader = makeUnique<ArtworkImageLoader>(*m_session->document(), m_artworkImageSrc, [this](Image* image) {
+        if (!image->data())
+            return;
         setArtworkImage(image);
         metadataUpdated();
     });

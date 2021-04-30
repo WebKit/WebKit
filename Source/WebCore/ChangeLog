@@ -1,3 +1,16 @@
+2021-04-29  Jean-Yves Avenard  <jya@apple.com>
+        https://bugs.webkit.org/show_bug.cgi?id=225183
+        rdar://77251937
+
+        Reviewed by Eric Carlson.
+
+        Under some circumstances, the decoded image may end up being empty. We need to handle this case.
+
+        * Modules/mediasession/MediaMetadata.cpp:
+        (WebCore::MediaMetadata::refreshArtworkImage): Exit early if image is empty.
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::nowPlayingInfo const): Add assert to clarify code
+
 2021-04-29  Zalan Bujtas  <zalan@apple.com>
 
         Floating object are not removed from the initial containing block
