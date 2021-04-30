@@ -133,6 +133,8 @@ enum class IndirectCompositingReason {
     Preserve3D
 };
 
+enum class ShouldAllowCrossOriginScrolling { No, Yes };
+
 struct ScrollRectToVisibleOptions {
     SelectionRevealMode revealMode { SelectionRevealMode::Reveal };
     const ScrollAlignment& alignX { ScrollAlignment::alignCenterIfNeeded };

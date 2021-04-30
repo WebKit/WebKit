@@ -1,3 +1,15 @@
+2021-04-30  Rob Buis  <rbuis@igalia.com>
+
+        Move ShouldAllowCrossOriginScrolling to RenderLayer
+        https://bugs.webkit.org/show_bug.cgi?id=225231
+
+        Reviewed by Simon Fraser.
+
+        Move ShouldAllowCrossOriginScrolling to RenderLayer.
+
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.h:
+
 2021-04-30  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r276633): ASSERTION FAILED: !forbidMallocUseScopeCount || disableMallocRestrictionScopeCount under WebCore::AudioSampleDataSource::create()

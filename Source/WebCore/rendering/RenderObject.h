@@ -85,8 +85,6 @@ const int caretWidth = 2; // This value should be kept in sync with UIKit. See <
 const int caretWidth = 1;
 #endif
 
-enum class ShouldAllowCrossOriginScrolling { No, Yes };
-
 struct ScrollRectToVisibleOptions;
 
 namespace Style {
