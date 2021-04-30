@@ -1,3 +1,16 @@
+2021-04-30  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Fix logical shorthands with var()
+        https://bugs.webkit.org/show_bug.cgi?id=224594
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Add a new test.
+        Some cases still fail because of bug 225206 and bug 225209.
+
+        * web-platform-tests/css/css-logical/logicalprops-with-variables-expected.txt: Added.
+        * web-platform-tests/css/css-logical/logicalprops-with-variables.html: Added.
+
 2021-04-30  Sergio Villar Senin  <svillar@igalia.com>
 
         Nullopt in RenderFlexibleBox::layoutFlexItems in RenderFlexibleBox::layoutBlock via RenderMultiColumnFlow::layout

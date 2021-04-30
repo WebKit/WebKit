@@ -1,3 +1,23 @@
+2021-04-30  Oriol Brufau  <obrufau@igalia.com>
+
+        [css-logical] Fix logical shorthands with var()
+        https://bugs.webkit.org/show_bug.cgi?id=224594
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Logical shorthands with var() were not working because when resolving
+        the pending-substitution value of the equivalent physical longhand,
+        parseValueWithVariableReferences would parse the logical shorthand into
+        the logical longhands, which would be different properties than the
+        physical longhand being resolved.
+
+        So this patch compares with the equivalent physical property instead.
+
+        Test: imported/w3c/web-platform-tests/css/css-logical/logicalprops-with-variables.html
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParser::parseValueWithVariableReferences):
+
 2021-04-30  Antti Koivisto  <antti@apple.com>
 
         Share style resolvers between author shadow trees without style sheets
