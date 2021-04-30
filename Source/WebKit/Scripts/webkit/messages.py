@@ -775,6 +775,7 @@ def headers_for_type(type):
         'WebCore::ISOWebVTTCue': ['<WebCore/ISOVTTCue.h>'],
         'struct WebCore::Cookie': ['<WebCore/Cookie.h>'],
         'struct WebCore::ElementContext': ['<WebCore/ElementContext.h>'],
+        'struct WebCore::VideoPlaybackQualityMetrics': ['<WebCore/VideoPlaybackQualityMetrics.h>'],
         'struct WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],

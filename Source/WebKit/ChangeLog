@@ -1,3 +1,39 @@
+2021-04-30  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Poll videoPlaybackQualityMetrics at the frequency is it accessed by script
+        https://bugs.webkit.org/show_bug.cgi?id=225245
+        rdar://77159589
+
+        Reviewed by Jer Noble.
+
+        Updating videoPlaybackQualityMetrics is computationally expensive, so instead of
+        getting it every time cached properties are updated (every 100 ms) keep track of
+        how often the page fetches the property and update it at that frequency.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::play):
+        (WebKit::RemoteMediaPlayerProxy::pause):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerRateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged):
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState):
+        (WebKit::RemoteMediaPlayerProxy::setVideoPlaybackMetricsUpdateInterval):
+        (WebKit::RemoteMediaPlayerProxy::maybeUpdateCachedVideoMetrics):
+        (WebKit::RemoteMediaPlayerProxy::updateCachedVideoMetrics):
+        (WebKit::RemoteMediaPlayerProxy::logChannel const):
+        (WebKit::RemoteMediaPlayerProxy::setShouldUpdatePlaybackMetrics): Deleted.
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::pause):
+        (WebKit::MediaPlayerPrivateRemote::updateCachedState):
+        (WebKit::MediaPlayerPrivateRemote::updateVideoPlaybackMetricsUpdateInterval):
+        (WebKit::MediaPlayerPrivateRemote::videoPlaybackQualityMetrics):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
 2021-04-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Always extend access to local process HTTP/3 cache directory

@@ -49,6 +49,7 @@
 #include "TrackPrivateRemoteConfiguration.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/LayoutRect.h>
+#include <WebCore/Logging.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/NotImplemented.h>
@@ -176,6 +177,7 @@ void RemoteMediaPlayerProxy::play()
 void RemoteMediaPlayerProxy::pause()
 {
     m_updateCachedStateMessageTimer.stop();
+    updateCachedVideoMetrics();
     m_player->pause();
     sendCachedState();
 }
@@ -335,6 +337,7 @@ void RemoteMediaPlayerProxy::mediaPlayerNetworkStateChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
 {
+    updateCachedVideoMetrics();
     updateCachedState();
 
     m_cachedState.minTimeSeekable = m_player->minTimeSeekable();
@@ -382,6 +385,7 @@ void RemoteMediaPlayerProxy::mediaPlayerDurationChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerRateChanged()
 {
+    updateCachedVideoMetrics();
     sendCachedState();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::RateChanged(m_player->rate()), m_id);
 }
@@ -460,7 +464,8 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsVideo() const
 
 void RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged()
 {
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_player->paused(), m_player->currentTime(), WallTime::now()), m_id);
+    m_cachedState.paused = m_player->paused();
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_cachedState.paused, m_player->currentTime(), WallTime::now()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerBufferedTimeRangesChanged()
@@ -481,6 +486,7 @@ void RemoteMediaPlayerProxy::mediaPlayerSeekableTimeRangesChanged()
 
 void RemoteMediaPlayerProxy::mediaPlayerCharacteristicChanged()
 {
+    updateCachedVideoMetrics();
     updateCachedState();
     m_cachedState.hasClosedCaptions = m_player->hasClosedCaptions();
     m_cachedState.languageOfPrimaryAudioTrack = m_player->languageOfPrimaryAudioTrack();
@@ -828,10 +834,7 @@ void RemoteMediaPlayerProxy::updateCachedState()
     m_cachedState.paused = m_player->paused();
     m_cachedState.hasAudio = m_player->hasAudio();
     m_cachedState.hasVideo = m_player->hasVideo();
-
-    if (m_shouldUpdatePlaybackMetrics)
-        m_cachedState.videoMetrics = m_player->videoPlaybackQualityMetrics();
-
+    maybeUpdateCachedVideoMetrics();
     if (m_bufferedChanged) {
         m_bufferedChanged = false;
         if (m_engineIdentifier != MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE)
@@ -989,9 +992,29 @@ void RemoteMediaPlayerProxy::wouldTaintOrigin(struct WebCore::SecurityOriginData
     completionHandler(m_player->wouldTaintOrigin(originData.securityOrigin()));
 }
 
-void RemoteMediaPlayerProxy::setShouldUpdatePlaybackMetrics(bool should)
+void RemoteMediaPlayerProxy::setVideoPlaybackMetricsUpdateInterval(double interval)
 {
-    m_shouldUpdatePlaybackMetrics = should;
+    static const Seconds metricsAdvanceUpdate = 0.25_s;
+    ALWAYS_LOG(LOGIDENTIFIER, interval);
+
+    updateCachedVideoMetrics();
+    m_videoPlaybackMetricsUpdateInterval = Seconds(interval);
+    m_nextPlaybackQualityMetricsUpdateTime = WallTime::now() + Seconds(interval) - metricsAdvanceUpdate;
+}
+
+void RemoteMediaPlayerProxy::maybeUpdateCachedVideoMetrics()
+{
+    if (m_cachedState.paused || !m_videoPlaybackMetricsUpdateInterval || WallTime::now() < m_nextPlaybackQualityMetricsUpdateTime)
+        return;
+
+    updateCachedVideoMetrics();
+}
+
+void RemoteMediaPlayerProxy::updateCachedVideoMetrics()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    m_nextPlaybackQualityMetricsUpdateTime = WallTime::now() + m_videoPlaybackMetricsUpdateInterval;
+    m_cachedState.videoMetrics = m_player->videoPlaybackQualityMetrics();
 }
 
 void RemoteMediaPlayerProxy::createAudioSourceProvider()
@@ -1015,6 +1038,13 @@ void RemoteMediaPlayerProxy::setShouldEnableAudioSourceProvider(bool shouldEnabl
         provider->setClient(shouldEnable ? m_remoteAudioSourceProvider.get() : nullptr);
 #endif
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& RemoteMediaPlayerProxy::logChannel() const
+{
+    return WebCore::LogMedia;
+}
+#endif
 
 } // namespace WebKit
 

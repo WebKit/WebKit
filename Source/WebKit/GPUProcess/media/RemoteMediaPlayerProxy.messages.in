@@ -107,7 +107,8 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
 
     PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<WallTime> wallTime) Async
     WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous
-    SetShouldUpdatePlaybackMetrics(bool should)
+
+    SetVideoPlaybackMetricsUpdateInterval(double interval)
 
 #if PLATFORM(IOS_FAMILY)
     ErrorLog() -> (String errorLog) Synchronous

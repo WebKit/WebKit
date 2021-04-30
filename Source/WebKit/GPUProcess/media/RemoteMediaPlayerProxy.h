@@ -189,7 +189,8 @@ public:
     using PerformTaskAtMediaTimeCompletionHandler = CompletionHandler<void(Optional<MediaTime>, Optional<WallTime>)>;
     void performTaskAtMediaTime(const MediaTime&, WallTime, PerformTaskAtMediaTimeCompletionHandler&&);
     void wouldTaintOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(Optional<bool>)>&&);
-    void setShouldUpdatePlaybackMetrics(bool);
+
+    void setVideoPlaybackMetricsUpdateInterval(double);
 
     RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
@@ -284,6 +285,9 @@ private:
     void sendCachedState();
     void timerFired();
 
+    void maybeUpdateCachedVideoMetrics();
+    void updateCachedVideoMetrics();
+
     void createAudioSourceProvider();
     void setShouldEnableAudioSourceProvider(bool);
 
@@ -295,6 +299,10 @@ private:
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
     const void* mediaPlayerLogIdentifier() { return reinterpret_cast<const void*>(m_configuration.logIdentifier); }
+    const Logger& logger() { return mediaPlayerLogger(); }
+    const void* logIdentifier() { return mediaPlayerLogIdentifier(); }
+    const char* logClassName() const { return "RemoteMediaPlayerProxy"; }
+    WTFLogChannel& logChannel() const;
 #endif
 
     HashMap<WebCore::AudioTrackPrivate*, Ref<RemoteAudioTrackProxy>> m_audioTracks;
@@ -320,12 +328,14 @@ private:
     RefPtr<RemoteMediaSourceProxy> m_mediaSourceProxy;
 #endif
 
+    Seconds m_videoPlaybackMetricsUpdateInterval;
+    WallTime m_nextPlaybackQualityMetricsUpdateTime;
+
     WebCore::IntSize m_videoInlineSize;
     float m_videoContentScale { 1.0 };
 
     bool m_bufferedChanged { true };
     bool m_renderingCanBeAccelerated { true };
-    bool m_shouldUpdatePlaybackMetrics { false };
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) && ENABLE(ENCRYPTED_MEDIA)
     bool m_shouldContinueAfterKeyNeeded { false };

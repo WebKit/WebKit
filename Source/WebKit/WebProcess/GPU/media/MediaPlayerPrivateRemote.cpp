@@ -204,7 +204,7 @@ void MediaPlayerPrivateRemote::pause()
 {
     m_cachedState.paused = true;
     auto now = WallTime::now();
-    m_cachedState.currentTime += MediaTime::createWithDouble(m_rate * (now - m_cachedState.wallTime).seconds());
+    m_cachedState.currentTime += MediaTime::createWithDouble(m_rate * (now - m_cachedState.wallTime).value());
     m_cachedState.wallTime = now;
     connection().send(Messages::RemoteMediaPlayerProxy::Pause(), m_id);
 }
@@ -425,6 +425,8 @@ bool MediaPlayerPrivateRemote::canPlayToWirelessPlaybackTarget() const
 
 void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 {
+    const Seconds playbackQualityMetricsTimeout = 30_s;
+
     m_cachedState.wallTime = state.wallTime;
     m_cachedState.currentTime = state.currentTime;
     m_cachedState.duration = state.duration;
@@ -449,8 +451,10 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.hasAudio = state.hasAudio;
     m_cachedState.hasVideo = state.hasVideo;
 
-    if (m_wantPlaybackQualityMetrics)
+    if (state.videoMetrics)
         m_cachedState.videoMetrics = state.videoMetrics;
+    if (m_videoPlaybackMetricsUpdateInterval && (WallTime::now() - m_lastPlaybackQualityMetricsQueryTime) > playbackQualityMetricsTimeout)
+        updateVideoPlaybackMetricsUpdateInterval(0_s);
 
     m_cachedState.hasClosedCaptions = state.hasClosedCaptions;
     m_cachedState.hasAvailableVideoFrame = state.hasAvailableVideoFrame;
@@ -1169,12 +1173,24 @@ size_t MediaPlayerPrivateRemote::extraMemoryCost() const
     return 0;
 }
 
+void MediaPlayerPrivateRemote::updateVideoPlaybackMetricsUpdateInterval(const Seconds& interval)
+{
+    m_videoPlaybackMetricsUpdateInterval = interval;
+    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoPlaybackMetricsUpdateInterval(m_videoPlaybackMetricsUpdateInterval.value()), m_id);
+}
+
 Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateRemote::videoPlaybackQualityMetrics()
 {
-    if (!m_wantPlaybackQualityMetrics) {
-        m_wantPlaybackQualityMetrics = true;
-        connection().send(Messages::RemoteMediaPlayerProxy::SetShouldUpdatePlaybackMetrics(true), m_id);
-    }
+    const Seconds maximumPlaybackQualityMetricsSampleTimeDelta = 0.25_s;
+
+    auto now = WallTime::now();
+    auto timeSinceLastQuery = now - m_lastPlaybackQualityMetricsQueryTime;
+    if (!m_videoPlaybackMetricsUpdateInterval)
+        updateVideoPlaybackMetricsUpdateInterval(1_s);
+    else if (std::abs((timeSinceLastQuery - m_videoPlaybackMetricsUpdateInterval).value()) > maximumPlaybackQualityMetricsSampleTimeDelta.value())
+        updateVideoPlaybackMetricsUpdateInterval(timeSinceLastQuery);
+
+    m_lastPlaybackQualityMetricsQueryTime = now;
 
     return m_cachedState.videoMetrics;
 }

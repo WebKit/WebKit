@@ -365,6 +365,7 @@ private:
     size_t extraMemoryCost() const final;
 
     Optional<WebCore::VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    void updateVideoPlaybackMetricsUpdateInterval(const Seconds&);
 
 #if ENABLE(AVF_CAPTIONS)
     void notifyTrackModeChanged() final;
@@ -414,6 +415,8 @@ private:
     WebCore::SecurityOriginData m_documentSecurityOrigin;
     mutable HashMap<WebCore::SecurityOriginData, Optional<bool>> m_wouldTaintOriginCache;
 
+    WallTime m_lastPlaybackQualityMetricsQueryTime;
+    Seconds m_videoPlaybackMetricsUpdateInterval;
     double m_volume { 1 };
     double m_rate { 1 };
     long m_platformErrorCode { 0 };
@@ -421,7 +424,6 @@ private:
     bool m_seeking { false };
     bool m_isCurrentPlaybackTargetWireless { false };
     bool m_invalid { false };
-    bool m_wantPlaybackQualityMetrics { false };
     bool m_waitingForKey { false };
 };
 
