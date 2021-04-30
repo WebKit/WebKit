@@ -532,6 +532,9 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, useErrorCause, true, Normal, "Allow a cause to be provided when constructing an Error, _NativeError_, or AggregateError.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useTopLevelAwait, true, Normal, "allow the await keyword at the top level of a module.") \
+    v(Bool, dumpLinking, false, Normal, nullptr) \
+    v(Bool, verifySame4GBLink, false, Normal, nullptr) \
+    v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \
 
 
 enum OptionEquivalence {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,12 +95,12 @@ static constexpr size_t fixedExecutableMemoryPoolSize = FIXED_EXECUTABLE_MEMORY_
 static constexpr size_t fixedExecutableMemoryPoolSize = 16 * MB;
 #elif CPU(ARM64)
 #if ENABLE(JUMP_ISLANDS)
-static constexpr size_t fixedExecutableMemoryPoolSize = 1 * GB;
+static constexpr size_t fixedExecutableMemoryPoolSize = 512 * MB;
 // These sizes guarantee that any jump within an island can jump forwards or backwards
 // to the adjacent island in a single instruction.
 static constexpr size_t regionSize = 112 * MB;
 static constexpr size_t islandRegionSize = 16 * MB;
-static constexpr size_t numberOfRegions = fixedExecutableMemoryPoolSize / regionSize;
+static constexpr size_t maxNumberOfRegions = fixedExecutableMemoryPoolSize / regionSize;
 static constexpr size_t islandSizeInBytes = 4;
 static constexpr size_t maxIslandsPerRegion = islandRegionSize / islandSizeInBytes;
 #else
@@ -331,12 +331,10 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
         return reservation;
 
     reservation.size = fixedExecutableMemoryPoolSize;
-#if !ENABLE(JUMP_ISLANDS)
-    // FIXME: Consider making jump islands work with Options::jitMemoryReservationSize
-    // https://bugs.webkit.org/show_bug.cgi?id=209037
+
     if (Options::jitMemoryReservationSize())
         reservation.size = Options::jitMemoryReservationSize();
-#endif
+
     reservation.size = std::max(roundUpToMultipleOf(pageSize(), reservation.size), pageSize() * 2);
 
     auto tryCreatePageReservation = [] (size_t reservationSize) {
@@ -351,6 +349,10 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     };
 
     reservation.pageReservation = tryCreatePageReservation(reservation.size);
+
+    if (Options::verboseExecutablePoolAllocation())
+        dataLog(getpid(), ": Got executable pool reservation at ", RawPointer(reservation.pageReservation.base()), "...", RawPointer(bitwise_cast<char*>(reservation.pageReservation.base()) + reservation.pageReservation.size()), ", while I'm at ", RawPointer(bitwise_cast<void*>(initializeJITPageReservation)), "\n");
+    
     if (reservation.pageReservation) {
         ASSERT(reservation.pageReservation.size() == reservation.size);
         reservation.base = reservation.pageReservation.base();
@@ -397,7 +399,8 @@ class FixedVMPoolExecutableAllocator final {
 public:
     FixedVMPoolExecutableAllocator()
 #if ENABLE(JUMP_ISLANDS)
-        : m_allocators(constructFixedSizeArrayWithArguments<RegionAllocator, numberOfRegions>(*this))
+        : m_allocators(constructFixedSizeArrayWithArguments<RegionAllocator, maxNumberOfRegions>(*this))
+        , m_numAllocators(maxNumberOfRegions)
 #else
         : m_allocator(*this)
 #endif
@@ -408,13 +411,17 @@ public:
 #if ENABLE(JUMP_ISLANDS)
             uintptr_t start = bitwise_cast<uintptr_t>(memoryStart());
             uintptr_t reservationEnd = bitwise_cast<uintptr_t>(memoryEnd());
-            for (size_t i = 0; i < numberOfRegions; ++i) {
-                RELEASE_ASSERT(start < reservationEnd);
+            for (size_t i = 0; i < maxNumberOfRegions; ++i) {
+                RELEASE_ASSERT(start < reservationEnd || Options::jitMemoryReservationSize());
+                if (start >= reservationEnd) {
+                    m_numAllocators = i;
+                    break;
+                }
                 m_allocators[i].m_start = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(start));
                 m_allocators[i].m_end = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(start + regionSize));
                 if (m_allocators[i].end() > reservationEnd) {
                     // We may have taken a page for the executable only copy thunk.
-                    RELEASE_ASSERT(i == numberOfRegions - 1);
+                    RELEASE_ASSERT(i == maxNumberOfRegions - 1 || Options::jitMemoryReservationSize());
                     m_allocators[i].m_end = tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(reservationEnd));
                 }
 
@@ -450,14 +457,14 @@ public:
 
         unsigned start = 0;
         if (Options::useRandomizingExecutableIslandAllocation())
-            start = cryptographicallyRandomNumber() % m_allocators.size();
+            start = cryptographicallyRandomNumber() % m_numAllocators;
 
         unsigned i = start;
         while (true) {
             RegionAllocator& allocator = m_allocators[i];
             if (RefPtr<ExecutableMemoryHandle> result = allocator.allocate(locker, sizeInBytes))
                 return result;
-            i = (i + 1) % m_allocators.size();
+            i = (i + 1) % m_numAllocators;
             if (i == start)
                 break;
         }
@@ -832,7 +839,8 @@ private:
     Lock m_lock;
     PageReservation m_reservation;
 #if ENABLE(JUMP_ISLANDS)
-    std::array<RegionAllocator, numberOfRegions> m_allocators;
+    std::array<RegionAllocator, maxNumberOfRegions> m_allocators;
+    unsigned m_numAllocators;
     RedBlackTree<Islands, void*> m_islandsForJumpSourceLocation;
 #else
     Allocator m_allocator;
