@@ -1,3 +1,17 @@
+2021-04-30  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r276633): ASSERTION FAILED: !forbidMallocUseScopeCount || disableMallocRestrictionScopeCount under WebCore::AudioSampleDataSource::create()
+        https://bugs.webkit.org/show_bug.cgi?id=225196
+        <rdar://problem/77329071>
+
+        Reviewed by Eric Carlson.
+
+        Covered by API test no longer crashing.
+
+        * Modules/speech/SpeechRecognitionCaptureSourceImpl.cpp:
+        (WebCore::SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable):
+        Disabling check here until we figure out a better way of doing things.
+
 2021-04-30  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Fix logical shorthands with var()

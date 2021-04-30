@@ -83,6 +83,8 @@ SpeechRecognitionCaptureSourceImpl::~SpeechRecognitionCaptureSourceImpl()
 void SpeechRecognitionCaptureSourceImpl::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t sampleCount)
 {
 #if PLATFORM(COCOA)
+    DisableMallocRestrictionsForCurrentThreadScope scope;
+
     ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
     auto audioDescription = toCAAudioStreamDescription(description);
     if (!m_dataSource || !m_dataSource->inputDescription() || *m_dataSource->inputDescription() != description) {
