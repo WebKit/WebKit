@@ -169,6 +169,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     _renderers.append(renderer);
     [renderer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nullptr];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(audioRendererWasAutomaticallyFlushed:) name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -179,6 +180,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     ASSERT(_renderers.contains(renderer));
 
     [renderer removeObserver:self forKeyPath:@"error"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification object:renderer];
+
     _renderers.remove(_renderers.find(renderer));
 }
 
@@ -237,6 +240,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     callOnMainThread([parent = _parent, layer = WTFMove(layer), error = retainPtr([[note userInfo] valueForKey:AVSampleBufferDisplayLayerFailedToDecodeNotificationErrorKey])] {
         if (parent)
             parent->layerDidReceiveError(layer.get(), error.get());
+    });
+}
+
+- (void)audioRendererWasAutomaticallyFlushed:(NSNotification*)note
+{
+    RetainPtr<AVSampleBufferAudioRenderer> renderer = (AVSampleBufferAudioRenderer *)[note object];
+    if (!_renderers.contains(renderer.get()))
+        return;
+
+    callOnMainThread([parent = _parent, renderer = WTFMove(renderer), flushTime = [[[note userInfo] valueForKey:AVSampleBufferAudioRendererFlushTimeKey] CMTimeValue]] {
+        if (parent)
+            parent->rendererWasAutomaticallyFlushed(renderer.get(), flushTime);
     });
 }
 @end
@@ -942,6 +957,24 @@ void SourceBufferPrivateAVFObjC::layerDidReceiveError(AVSampleBufferDisplayLayer
 
     if (m_client)
         m_client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
+}
+
+void SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed(AVSampleBufferAudioRenderer *renderer, const CMTime& time)
+{
+    auto mediaTime = toMediaTime(time);
+    ERROR_LOG(LOGIDENTIFIER, mediaTime);
+    AtomString trackId;
+    for (auto& pair : m_audioRenderers) {
+        if (pair.value.get() == renderer) {
+            trackId = String::number(pair.key);
+            break;
+        }
+    }
+    if (trackId.isEmpty()) {
+        ERROR_LOG(LOGIDENTIFIER, "Couldn't find track attached to Audio Renderer.");
+        return;
+    }
+    reenqueSamples(trackId);
 }
 
 void SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)

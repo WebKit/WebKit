@@ -44,6 +44,7 @@
 #import "WebCoreDecompressionSession.h"
 #import <AVFoundation/AVAsset.h>
 #import <AVFoundation/AVTime.h>
+#import <CoreMedia/CMTime.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>

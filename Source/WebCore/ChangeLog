@@ -1,4 +1,24 @@
 2021-04-29  Jean-Yves Avenard  <jya@apple.com>
+
+        Adopt AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification
+        https://bugs.webkit.org/show_bug.cgi?id=225170
+        rdar://77086915
+
+        Reviewed by Eric Carlson.
+
+        When the AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification is received, the SourceBuffer will now
+        re-enqueue all audio frames from currentTime.
+        The handling of AVSampleBufferAudioRendererWasFlushedAutomaticallyNotification is currently broken in AVFoundation.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm: Add missing #include
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (-[WebAVSampleBufferErrorListener beginObservingRenderer:]): Add listener
+        (-[WebAVSampleBufferErrorListener stopObservingRenderer:]): Remove listener
+        (-[WebAVSampleBufferErrorListener audioRendererWasAutomaticallyFlushed:]):
+        (WebCore::SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed):
+
+2021-04-29  Jean-Yves Avenard  <jya@apple.com>
         https://bugs.webkit.org/show_bug.cgi?id=225183
         rdar://77251937
 
