@@ -153,13 +153,10 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     bool http3Enabled = WebsiteDataStore::http3Enabled();
-    String alternativeServiceStorageDirectory;
     SandboxExtension::Handle alternativeServiceStorageDirectoryExtensionHandle;
-    if (http3Enabled) {
-        alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
-        if (!alternativeServiceStorageDirectory.isEmpty())
-            SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
-    }
+    String alternativeServiceStorageDirectory = resolvedAlternativeServicesStorageDirectory();
+    if (!alternativeServiceStorageDirectory.isEmpty())
+        SandboxExtension::createHandleForReadWriteDirectory(alternativeServiceStorageDirectory, alternativeServiceStorageDirectoryExtensionHandle);
 #endif
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = isSafari;

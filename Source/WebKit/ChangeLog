@@ -1,3 +1,20 @@
+2021-04-30  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Always extend access to local process HTTP/3 cache directory
+        https://bugs.webkit.org/show_bug.cgi?id=225171
+        <rdar://problem/76287224>
+
+        Reviewed by Alex Christensen.
+
+        Always pass the cache directory for HTTP/3 use, regardless of the current setting of
+        the flag. We still pass the flag so that users can turn the feature on and off, so there
+        is no change in expected behavior. However, certain OS settings can override the user
+        setting in the browser, so it's helpful to have the path permission for cases where a user
+        toggles state outside of the browser.
+
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+
 2021-04-29  Megan Gardner  <megan_gardner@apple.com>
 
         Remove some unneeded code.
