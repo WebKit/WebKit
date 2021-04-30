@@ -1,3 +1,14 @@
+2021-04-29  Robert Jenner  <jenner@apple.com>
+
+        [macOS-wk2] LayoutTest/http/tests/websocket/tests/hybi/inspector/binary.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=171553
+
+        Unreviewed test gardening.
+
+        Removing expectation as test no longer appears flakey.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-04-29  Aditya Keerthi  <akeerthi@apple.com>
 
         REGRESSION: [iOS] 6 media/modern-media-controls/tracks-support/ tests timing out
