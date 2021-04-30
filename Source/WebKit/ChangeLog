@@ -1,3 +1,18 @@
+2021-04-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r276838.
+
+        Caused
+        TestWebKitAPI.WebKit.AlternativeServicesDefaultDirectoryCreation
+        to fail
+
+        Reverted changeset:
+
+        "[Cocoa] Always extend access to local process HTTP/3 cache
+        directory"
+        https://bugs.webkit.org/show_bug.cgi?id=225171
+        https://commits.webkit.org/r276838
+
 2021-04-30  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Properly recover from unresponsive web processes
