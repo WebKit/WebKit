@@ -1,3 +1,69 @@
+2021-04-30  Antti Koivisto  <antti@apple.com>
+
+        Share style resolvers between author shadow trees without style sheets
+        https://bugs.webkit.org/show_bug.cgi?id=225102
+
+        Reviewed by Sam Weinig.
+
+        Prepare for sharing style resolvers (and all the related data) between shadow trees beyond
+        the currently supported user agent shadow trees. This patch refactors the sharing code
+        and adds support for sharing resolvers for author shadow trees without style sheets.
+        
+        Test: fast/shadow-dom/style-resolver-sharing.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::userAgentShadowTreeStyleResolver): Deleted.
+        (WebCore::Document::didClearStyleResolver): Deleted.
+        
+        Move the shared UA resolver to Style::Scope.
+        
+        * dom/Document.h:
+        * style/StyleResolver.h:
+        (WebCore::Style::Resolver::wasShared const):
+        (WebCore::Style::Resolver::setWasShared):
+        
+        Add a bit indicating if a resolver has been shared between shadow trees.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::resolver):
+        (WebCore::Style::Scope::createDocumentResolver):
+        (WebCore::Style::Scope::createOrFindSharedShadowTreeResolver):
+        
+        Factor into a function.
+        Share user agent shadow tree resolver (as before) and also resolver for empty author shadow trees.
+
+        (WebCore::Style::Scope::unshareShadowTreeResolverBeforeMutation):
+        
+        If we mutate an existing resolver we need to make it unavailable for sharing.
+        
+        (WebCore::Style::Scope::clearResolver):
+        (WebCore::Style::Scope::releaseMemory):
+        (WebCore::Style::Scope::analyzeStyleSheetChange):
+        
+        If we are about to mutate already shared resolver we need to create a new one.
+        
+        (WebCore::Style::Scope::updateActiveStyleSheets):
+        
+        If style sheets change and the resolver is shared always look it up again (since it can't be mutated).
+
+        (WebCore::Style::Scope::updateResolver):
+        (WebCore::Style::Scope::scheduleUpdate):
+        (WebCore::Style::Scope::insertedInDocument):
+        (WebCore::Style::Scope::didChangeStyleSheetEnvironment):
+        (WebCore::Style::Scope::documentScope):
+        (WebCore::Style::Scope::isForUserAgentShadowTree const):
+        (WebCore::Style::Scope::shouldUseSharedUserAgentShadowTreeStyleResolver const): Deleted.
+        (WebCore::Style::Scope::resolverIfExists): Deleted.
+        * style/StyleScope.h:
+        (WebCore::Style::Scope::resolverIfExists):
+        * style/StyleScopeRuleSets.h:
+        (WebCore::Style::ScopeRuleSets::setIsForShadowScope): Deleted.
+        (WebCore::Internals::dumpStyleResolvers):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        
+        Testing support.
+
 2021-04-30  Sergio Villar Senin  <svillar@igalia.com>
 
         Nullopt in RenderFlexibleBox::layoutFlexItems in RenderFlexibleBox::layoutBlock via RenderMultiColumnFlow::layout

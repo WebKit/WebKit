@@ -140,6 +140,9 @@ public:
 
     InspectorCSSOMWrappers& inspectorCSSOMWrappers() { return m_inspectorCSSOMWrappers; }
 
+    bool isSharedBetweenShadowTrees() const { return m_isSharedBetweenShadowTrees; }
+    void setSharedBetweenShadowTrees() { m_isSharedBetweenShadowTrees = true; }
+
 private:
     friend class PageRuleCollector;
 
@@ -196,6 +199,8 @@ private:
     MatchedDeclarationsCache m_matchedDeclarationsCache;
 
     bool m_matchAuthorAndUserStyles { true };
+    bool m_isSharedBetweenShadowTrees { false };
+
     // See if we still have crashes where Resolver gets deleted early.
     bool m_isDeleted { false };
 };

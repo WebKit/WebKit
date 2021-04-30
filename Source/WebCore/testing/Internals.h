@@ -1149,6 +1149,8 @@ public:
 
     void systemBeep();
 
+    String dumpStyleResolvers();
+
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;

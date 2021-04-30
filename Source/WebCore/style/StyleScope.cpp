@@ -74,61 +74,72 @@ Scope::~Scope()
     ASSERT(!hasPendingSheets());
 }
 
-bool Scope::shouldUseSharedUserAgentShadowTreeStyleResolver() const
-{
-    if (!m_shadowRoot)
-        return false;
-    if (m_shadowRoot->mode() != ShadowRootMode::UserAgent)
-        return false;
-    // If we have stylesheets in the user agent shadow tree use per-scope resolver.
-    if (!m_styleSheetCandidateNodes.isEmpty())
-        return false;
-    return true;
-}
-
 Resolver& Scope::resolver()
 {
-    if (shouldUseSharedUserAgentShadowTreeStyleResolver())
-        return m_document.userAgentShadowTreeStyleResolver();
-
     if (!m_resolver) {
-        SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
-
-        m_resolver = Resolver::create(m_document);
-
-        if (!m_shadowRoot) {
-            m_document.fontSelector().buildStarted();
-            m_resolver->ruleSets().initializeUserStyle();
-        } else {
-            m_resolver->ruleSets().setIsForShadowScope();
-            m_resolver->ruleSets().setUsesSharedUserStyle(m_shadowRoot->mode() != ShadowRootMode::UserAgent);
-        }
-
-        m_resolver->addCurrentSVGFontFaceRules();
-        m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
-
-        if (!m_shadowRoot)
-            m_document.fontSelector().buildCompleted();
+        if (m_shadowRoot)
+            createOrFindSharedShadowTreeResolver();
+        else
+            createDocumentResolver();
     }
-    ASSERT(!m_shadowRoot || &m_document == &m_shadowRoot->document());
-    ASSERT(&m_resolver->document() == &m_document);
     return *m_resolver;
 }
 
-Resolver* Scope::resolverIfExists()
+void Scope::createDocumentResolver()
 {
-    if (shouldUseSharedUserAgentShadowTreeStyleResolver())
-        return &m_document.userAgentShadowTreeStyleResolver();
+    ASSERT(!m_resolver);
+    ASSERT(!m_shadowRoot);
 
-    return m_resolver.get();
+    SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+
+    m_resolver = Resolver::create(m_document);
+
+    m_document.fontSelector().buildStarted();
+
+    m_resolver->ruleSets().initializeUserStyle();
+    m_resolver->addCurrentSVGFontFaceRules();
+    m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
+
+    m_document.fontSelector().buildCompleted();
+}
+
+void Scope::createOrFindSharedShadowTreeResolver()
+{
+    ASSERT(!m_resolver);
+    ASSERT(m_shadowRoot);
+
+    if (m_activeStyleSheets.isEmpty()) {
+        auto& sharedResolver = isForUserAgentShadowTree() ? documentScope().m_sharedUserAgentShadowTreeResolver : documentScope().m_sharedEmptyAuthorShadowTreeResolver;
+        if (!sharedResolver) {
+            sharedResolver = Resolver::create(m_document);
+            sharedResolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
+        } else
+            sharedResolver->setSharedBetweenShadowTrees();
+
+        m_resolver = sharedResolver;
+        return;
+    }
+
+    m_resolver = Resolver::create(m_document);
+
+    m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
+    m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
+}
+
+void Scope::unshareShadowTreeResolverBeforeMutation()
+{
+    ASSERT(m_shadowRoot);
+    ASSERT(!m_resolver->isSharedBetweenShadowTrees());
+
+    auto& sharedResolver = isForUserAgentShadowTree() ? documentScope().m_sharedUserAgentShadowTreeResolver : documentScope().m_sharedEmptyAuthorShadowTreeResolver;
+    
+    if (m_resolver == sharedResolver)
+        sharedResolver = nullptr;
 }
 
 void Scope::clearResolver()
 {
     m_resolver = nullptr;
-
-    if (!m_shadowRoot)
-        m_document.didClearStyleResolver();
 }
 
 void Scope::releaseMemory()
@@ -148,6 +159,9 @@ void Scope::releaseMemory()
     }
 #endif
     clearResolver();
+
+    m_sharedUserAgentShadowTreeResolver = nullptr;
+    m_sharedEmptyAuthorShadowTreeResolver = nullptr;
 }
 
 Scope& Scope::forNode(Node& node)
@@ -383,7 +397,11 @@ Scope::StyleSheetChange Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSSSt
 {
     unsigned newStylesheetCount = newStylesheets.size();
 
-    if (!resolverIfExists())
+    auto* resolver = resolverIfExists();
+    if (!resolver)
+        return { ResolverUpdateType::Reconstruct };
+
+    if (resolver->isSharedBetweenShadowTrees())
         return { ResolverUpdateType::Reconstruct };
 
     // Find out which stylesheets are new.
@@ -452,8 +470,12 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
     collectActiveStyleSheets(activeStyleSheets);
 
     Vector<RefPtr<CSSStyleSheet>> activeCSSStyleSheets;
-    activeCSSStyleSheets.appendVector(m_document.extensionStyleSheets().injectedAuthorStyleSheets());
-    activeCSSStyleSheets.appendVector(m_document.extensionStyleSheets().authorStyleSheetsForTesting());
+
+    if (!isForUserAgentShadowTree()) {
+        activeCSSStyleSheets.appendVector(m_document.extensionStyleSheets().injectedAuthorStyleSheets());
+        activeCSSStyleSheets.appendVector(m_document.extensionStyleSheets().authorStyleSheetsForTesting());
+    }
+
     filterEnabledNonemptyCSSStyleSheets(activeCSSStyleSheets, activeStyleSheets);
 
     auto styleSheetChange = StyleSheetChange { ResolverUpdateType::Reconstruct };
@@ -496,19 +518,25 @@ void Scope::updateResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets, Res
         clearResolver();
         return;
     }
-    auto& styleResolver = resolver();
+
+    if (m_shadowRoot)
+        unshareShadowTreeResolverBeforeMutation();
 
     SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+
     if (updateType == ResolverUpdateType::Reset) {
-        styleResolver.ruleSets().resetAuthorStyle();
-        styleResolver.appendAuthorStyleSheets(activeStyleSheets);
-    } else {
-        ASSERT(updateType == ResolverUpdateType::Additive);
-        unsigned firstNewIndex = m_activeStyleSheets.size();
-        Vector<RefPtr<CSSStyleSheet>> newStyleSheets;
-        newStyleSheets.appendRange(activeStyleSheets.begin() + firstNewIndex, activeStyleSheets.end());
-        styleResolver.appendAuthorStyleSheets(newStyleSheets);
+        m_resolver->ruleSets().resetAuthorStyle();
+        m_resolver->appendAuthorStyleSheets(activeStyleSheets);
+        return;
     }
+
+    ASSERT(updateType == ResolverUpdateType::Additive);
+    ASSERT(activeStyleSheets.size() >= m_activeStyleSheets.size());
+
+    unsigned firstNewIndex = m_activeStyleSheets.size();
+    Vector<RefPtr<CSSStyleSheet>> newStyleSheets;
+    newStyleSheets.appendRange(activeStyleSheets.begin() + firstNewIndex, activeStyleSheets.end());
+    m_resolver->appendAuthorStyleSheets(newStyleSheets);
 }
 
 const Vector<RefPtr<CSSStyleSheet>> Scope::activeStyleSheetsForInspector()
@@ -581,7 +609,7 @@ void Scope::scheduleUpdate(UpdateType update)
     if (!m_pendingUpdate || *m_pendingUpdate < update) {
         m_pendingUpdate = update;
         if (m_shadowRoot)
-            m_document.styleScope().m_hasDescendantWithPendingUpdate = true;
+            documentScope().m_hasDescendantWithPendingUpdate = true;
     }
 
     m_document.scheduleRenderingUpdate({ });
@@ -592,7 +620,7 @@ void Scope::insertedInDocument()
     if (!m_pendingUpdate)
         return;
 
-    m_document.styleScope().m_hasDescendantWithPendingUpdate = true;
+    documentScope().m_hasDescendantWithPendingUpdate = true;
     m_document.scheduleRenderingUpdate({ });
 }
 
@@ -659,6 +687,9 @@ void Scope::didChangeStyleSheetContents()
 void Scope::didChangeStyleSheetEnvironment()
 {
     if (!m_shadowRoot) {
+        m_sharedUserAgentShadowTreeResolver = nullptr;
+        m_sharedEmptyAuthorShadowTreeResolver = nullptr;
+
         for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots()) {
             // Stylesheets is author shadow roots are potentially affected.
             if (descendantShadowRoot->mode() != ShadowRootMode::UserAgent)
@@ -684,6 +715,16 @@ const Vector<RefPtr<StyleSheet>>& Scope::styleSheetsForStyleSheetList()
     // FIXME: StyleSheetList content should be updated separately from style resolver updates.
     flushPendingUpdate();
     return m_styleSheetsForStyleSheetList;
+}
+
+Scope& Scope::documentScope()
+{
+    return m_document.styleScope();
+}
+
+bool Scope::isForUserAgentShadowTree() const
+{
+    return m_shadowRoot && m_shadowRoot->mode() == ShadowRootMode::UserAgent;
 }
 
 }

@@ -2382,13 +2382,6 @@ void Document::pageSizeAndMarginsInPixels(int pageIndex, IntSize& pageSize, int&
     marginLeft = style->marginLeft().isAuto() ? marginLeft : intValueForLength(style->marginLeft(), width);
 }
 
-Style::Resolver& Document::userAgentShadowTreeStyleResolver()
-{
-    if (!m_userAgentShadowTreeStyleResolver)
-        m_userAgentShadowTreeStyleResolver = Style::Resolver::create(*this);
-    return *m_userAgentShadowTreeStyleResolver;
-}
-
 void Document::fontsNeedUpdate(FontSelector&)
 {
     invalidateMatchedPropertiesCacheAndForceStyleRecalc();
@@ -2401,11 +2394,6 @@ void Document::invalidateMatchedPropertiesCacheAndForceStyleRecalc()
     if (backForwardCacheState() != NotInBackForwardCache || !renderView())
         return;
     scheduleFullStyleRebuild();
-}
-
-void Document::didClearStyleResolver()
-{
-    m_userAgentShadowTreeStyleResolver = nullptr;
 }
 
 void Document::setIsResolvingTreeStyle(bool value)

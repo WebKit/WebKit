@@ -119,7 +119,7 @@ public:
 #endif
 
     WEBCORE_EXPORT Resolver& resolver();
-    Resolver* resolverIfExists();
+    Resolver* resolverIfExists() { return m_resolver.get(); }
     void clearResolver();
     void releaseMemory();
 
@@ -132,7 +132,8 @@ public:
     static Scope* forOrdinal(Element&, ScopeOrdinal);
 
 private:
-    bool shouldUseSharedUserAgentShadowTreeStyleResolver() const;
+    Scope& documentScope();
+    bool isForUserAgentShadowTree() const;
 
     void didRemovePendingStylesheet();
 
@@ -160,6 +161,9 @@ private:
     void invalidateStyleAfterStyleSheetChange(const StyleSheetChange&);
 
     void updateResolver(Vector<RefPtr<CSSStyleSheet>>&, ResolverUpdateType);
+    void createDocumentResolver();
+    void createOrFindSharedShadowTreeResolver();
+    void unshareShadowTreeResolverBeforeMutation();
 
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
@@ -188,6 +192,10 @@ private:
     bool m_hasDescendantWithPendingUpdate { false };
     bool m_usesStyleBasedEditability { false };
     bool m_isUpdatingStyleResolver { false };
+
+    // FIXME: These (and some things above) are only relevant for the root scope.
+    RefPtr<Resolver> m_sharedUserAgentShadowTreeResolver;
+    RefPtr<Resolver> m_sharedEmptyAuthorShadowTreeResolver;
 };
 
 inline bool Scope::hasPendingSheets() const

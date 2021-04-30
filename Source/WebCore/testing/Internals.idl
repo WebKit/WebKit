@@ -1029,4 +1029,6 @@ enum TreeType {
     boolean rangeIntersectsRange(AbstractRange outerRange, AbstractRange innerRange, optional TreeType tree = "Tree");
 
     undefined systemBeep();
+
+    DOMString dumpStyleResolvers();
 };

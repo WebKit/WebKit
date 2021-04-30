@@ -6296,4 +6296,39 @@ bool Internals::rangeIntersectsRange(const AbstractRange& a, const AbstractRange
     return intersectsForTesting(convertType(type), makeSimpleRange(a), makeSimpleRange(b));
 }
 
+String Internals::dumpStyleResolvers()
+{
+    auto* document = contextDocument();
+    if (!document || !document->domWindow())
+        return { };
+
+    document->updateStyleIfNeeded();
+
+    unsigned currentIdentifier = 0;
+    HashMap<Style::Resolver*, unsigned> resolverIdentifiers;
+
+    StringBuilder result;
+
+    auto dumpResolver = [&](auto name, auto& resolver) {
+        auto identifier = resolverIdentifiers.ensure(&resolver, [&] {
+            return currentIdentifier++;
+        }).iterator->value;
+
+        result.append("(", name, " ");
+        result.append("(identifier=", identifier, ") ");
+        result.append("(author rule count=", resolver.ruleSets().authorStyle().ruleCount(), ")");
+        result.append(")\n");
+    };
+
+    dumpResolver("document resolver", document->styleScope().resolver());
+
+    for (auto* shadowRoot : document->inDocumentShadowRoots()) {
+        auto* name = shadowRoot->mode() == ShadowRootMode::UserAgent ? "shadow root resolver (user agent)" : "shadow root resolver (author)";
+        dumpResolver(name, shadowRoot->styleScope().resolver());
+    }
+
+    return result.toString();
+}
+
+
 } // namespace WebCore
