@@ -1,3 +1,20 @@
+2021-04-30  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Support pickling platforminfo
+        https://bugs.webkit.org/show_bug.cgi?id=225230
+        <rdar://problem/77384913>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo.__init__): Define default arguments.
+        (PlatformInfo.display_name): Use default platform module if platform_module undefined.
+        (PlatformInfo._win_version_str): Ditto.
+        * Scripts/webkitpy/common/system/platforminfo_unittest.py:
+        (TestPlatformInfo.test_real_code):
+        * Scripts/webkitpy/common/system/systemhost.py:
+        (SystemHost.__init__): Use default platforminfo sys and platform modules.
+
 2021-04-30  Aakash Jain  <aakash_jain@apple.com>
 
         report-non-inclusive-language should skip buildstream directory
