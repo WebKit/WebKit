@@ -231,11 +231,17 @@ class Process(object):
             cls.working = False
 
     @classmethod
-    def main(cls, name, setup, queue, teardown):
+    def main(cls, name, setup, setupargs, setupkwargs, queue, teardown, teardownargs, teardownkwargs):
         from tblib import pickling_support
 
         cls.name = name
         cls.working = True
+
+        setupargs = setupargs or []
+        setupkwargs = setupkwargs or {}
+
+        teardownargs = teardownargs or []
+        teardownkwargs = teardownkwargs or {}
 
         if getattr(signal, 'SIGTERM'):
             signal.signal(signal.SIGTERM, cls.handler)
@@ -251,7 +257,7 @@ class Process(object):
             try:
                 pickling_support.install()
                 if setup:
-                    setup()
+                    setup(*setupargs, **setupkwargs)
 
                 while cls.working:
                     task = queue.receive()
@@ -267,7 +273,7 @@ class Process(object):
 
             finally:
                 if teardown:
-                    teardown()
+                    teardown(*teardownargs, **teardownkwargs)
                 sys.stdout.flush()
                 sys.stderr.flush()
                 queue.send(State(State.STOPPING))
@@ -278,7 +284,11 @@ class TaskPool(object):
     class Exception(RuntimeError):
         pass
 
-    def __init__(self, workers=1, name=None, setup=None, teardown=None, grace_period=5, block_size=1000):
+    def __init__(
+        self, workers=1, name=None, setup=None, teardown=None, grace_period=5, block_size=1000,
+        setupargs=None, setupkwargs=None,
+        teardownargs=None, teardownkwargs=None,
+    ):
         # Ensure tblib is installed before creating child processes
         import tblib
 
@@ -293,10 +303,12 @@ class TaskPool(object):
 
         self.workers = [multiprocessing.Process(
             target=Process.main,
-            args=('{}/{}'.format(name, count), setup, BiDirectionalQueue(
-                outgoing=self.queue.incoming,
-                incoming=self.queue.outgoing,
-            ), teardown),
+            args=(
+                '{}/{}'.format(name, count),
+                setup, setupargs, setupkwargs,
+                BiDirectionalQueue(outgoing=self.queue.incoming, incoming=self.queue.outgoing),
+                teardown, teardownargs, teardownkwargs,
+            ),
         ) for count in range(workers)]
         self._started = 0
 
