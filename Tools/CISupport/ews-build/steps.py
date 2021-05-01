@@ -314,7 +314,10 @@ class ApplyPatch(shell.ShellCommand, CompositeStepMixin):
     def start(self):
         patch = self._get_patch()
         if not patch:
-            self.finished(FAILURE)
+            # Forced build, don't have patch_id raw data on the request, need to fech it.
+            patch_id = self.getProperty('patch_id', '')
+            self.command = ['/bin/sh', '-c', 'curl -L "https://bugs.webkit.org/attachment.cgi?id={}" -o .buildbot-diff && {}'.format(patch_id, ' '.join(self.command))]
+            shell.ShellCommand.start(self)
             return None
 
         patch_reviewer_name = self.getProperty('patch_reviewer_full_name', '')

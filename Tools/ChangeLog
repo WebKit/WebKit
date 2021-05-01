@@ -1,3 +1,45 @@
+2021-04-30  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [tools] Make run-buildbot-test compatible with buildbot 2.10.5
+        https://bugs.webkit.org/show_bug.cgi?id=222540
+
+        Reviewed by Aakash Jain.
+
+        This renames the previous tool run-buildbot-test to start-buildbot-server-virtualenv
+        and it makes several changes to it:
+        - Use python3 and refactor the code.
+        - Make it also work with the EWS config (previously it only worked for the build.webkit.org config).
+        - Use newer buildbot configs.
+        - Instead of hardcoding values try to automatically detect the values from the config dir.
+        - Instead of starting Nth workers by default start only one round-robin worker (local-worker).
+
+        It also modifies the configuration of the EWS server to add a force scheduler in order
+        to allow to manually trigger builds (only in test mode).
+
+        * CISupport/build-webkit-org/run-buildbot-test.py: Removed.
+        * CISupport/ews-build/loadConfig.py:
+        (loadBuilderConfig):
+        * CISupport/ews-build/steps.py:
+        (ApplyPatch.start):
+        * CISupport/start-local-buildbot-server: Added.
+        (check_tcp_port_open):
+        (create_tempdir):
+        (print_if_error_stdout_stderr):
+        (cmd_exists):
+        (BuildbotTestRunner):
+        (BuildbotTestRunner.__init__):
+        (BuildbotTestRunner._get_config_tcp_ports):
+        (BuildbotTestRunner.start):
+        (BuildbotTestRunner._wait_for_server_ready):
+        (BuildbotTestRunner._create_mock_worker_passwords_dict):
+        (BuildbotTestRunner._setup_server_workdir):
+        (BuildbotTestRunner._setup_virtualenv):
+        (BuildbotTestRunner._upgrade_db_needed):
+        (BuildbotTestRunner._start_server):
+        (BuildbotTestRunner._get_list_workers):
+        (BuildbotTestRunner._start_worker):
+        (BuildbotTestRunner._clean):
+
 2021-04-30  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Always extend access to local process HTTP/3 cache directory
