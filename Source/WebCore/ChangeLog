@@ -1,3 +1,27 @@
+2021-04-30  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Calling into -[AVPlayerItem currentTime] is very expensive
+        https://bugs.webkit.org/show_bug.cgi?id=225254
+
+        Reviewed by Eric Carlson.
+
+        Calling into -currentTime is an expensive operation that synchronously calls a shared
+        background thread, and so can block for potentially long periods of time. Instead,
+        AVPlayerItem offers an API which will push currentTime changes on a specified dispatch
+        queue. We can use that API to occasionally update a cached view of the item's currentTime
+        and combine that cached value with other cached states to accurately calculate an
+        approximation of the currentTime during playback.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentMediaTimeDidChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setRateDouble):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setPlayerRate):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange):
+
 2021-04-30  Cameron McCormack  <heycam@apple.com>
 
         Defend further against a PlatformCALayer's owner becoming null in PlatformCALayerCocoa::drawLayerContents.

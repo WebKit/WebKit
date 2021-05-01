@@ -321,6 +321,8 @@ private:
     void setPreferredDynamicRangeMode(DynamicRangeMode) final;
     void audioOutputDeviceChanged() final;
 
+    void currentMediaTimeDidChange(MediaTime&&) const;
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
@@ -384,6 +386,7 @@ private:
 
     RetainPtr<AVPlayerItemMetadataCollector> m_metadataCollector;
     RetainPtr<AVPlayerItemMetadataOutput> m_metadataOutput;
+    RetainPtr<id> m_currentTimeObserver;
 
     mutable RetainPtr<NSArray> m_cachedSeekableRanges;
     mutable RetainPtr<NSArray> m_cachedLoadedRanges;
@@ -391,6 +394,10 @@ private:
     RetainPtr<NSArray> m_currentMetaData;
     FloatSize m_cachedPresentationSize;
     MediaTime m_cachedDuration;
+    mutable MediaTime m_cachedCurrentMediaTime;
+    mutable Optional<WallTime> m_wallClockAtCachedCurrentTime;
+    mutable int m_timeControlStatusAtCachedCurrentTime { 0 };
+    mutable double m_requestedRateAtCachedCurrentTime { 0 };
     RefPtr<SharedBuffer> m_keyID;
     double m_cachedRate { 0 };
     bool m_requestedPlaying { false };
