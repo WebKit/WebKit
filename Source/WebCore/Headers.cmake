@@ -754,7 +754,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/LayoutUnits.h
     layout/MarginTypes.h
 
-    layout/inlineformatting/InlineRect.h
+    layout/formattingContexts/inlineformatting/InlineRect.h
 
     layout/integration/LayoutIntegrationInlineContent.h
     layout/integration/LayoutIntegrationLine.h
