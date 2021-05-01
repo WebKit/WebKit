@@ -1,3 +1,27 @@
+2021-05-01  Sam Weinig  <weinig@apple.com>
+
+        Update operations in CanvasImageData.idl to use long rather than float as per spec
+        https://bugs.webkit.org/show_bug.cgi?id=225263
+
+        Reviewed by Simon Fraser.
+
+        * canvas/philip/tests/2d.imageData.create2.tiny-expected.txt:
+        * canvas/philip/tests/2d.imageData.get.tiny-expected.txt:
+        Update results, which now don't pass, to match the spec behavior.
+
+        * fast/canvas/canvas-2d-imageData-create-nonfinite-expected.txt:
+        * fast/canvas/canvas-crash.html:
+        * fast/canvas/canvas-getImageData-invalid-expected.txt:
+        * fast/canvas/canvas-getImageData-invalid-result-buffer-crash.html:
+        * fast/canvas/canvas-getImageData-invalid.html:
+        * fast/canvas/canvas-getImageData-large-crash-expected.txt:
+        * fast/canvas/canvas-getImageData-rounding-expected.txt:
+        * fast/canvas/canvas-getImageData-rounding.html:
+        * fast/canvas/canvas-putImageData-expected.txt:
+        * fast/canvas/canvas-putImageData.js:
+        * fast/canvas/resources/canvas-2d-imageData-create-nonfinite.js:
+        Update tests and results to match spec behavior.
+
 2021-05-01  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Reset the "children inline" state when merging anonymous table boxes

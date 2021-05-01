@@ -2,4 +2,4 @@
 getImageData() works for sizes smaller than one pixel
 Spec references: 2d.imageData.one
 Actual output:
-Passed
+Aborted with exception: The index is not in the allowed range.

@@ -1,3 +1,22 @@
+2021-05-01  Sam Weinig  <weinig@apple.com>
+
+        Update operations in CanvasImageData.idl to use long rather than float as per spec
+        https://bugs.webkit.org/show_bug.cgi?id=225263
+
+        Reviewed by Simon Fraser.
+
+        * canvas/2d.imageData.create2.tiny-expected.txt:
+        * canvas/2d.imageData.get.tiny-expected.txt:
+        Update results, which now don't pass, to match the spec behavior.
+
+        * web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.double-expected.txt:
+        * web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.create2.zero-expected.txt:
+        * web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.get.double-expected.txt:
+        * web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.get.large.crash-expected.txt:
+        * web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.get.rounding-expected.txt:
+        * web-platform-tests/html/canvas/element/pixel-manipulation/2d.imageData.get.zero-expected.txt:
+        Update results, which now pass!
+
 2021-04-30  Oriol Brufau  <obrufau@igalia.com>
 
         [css-logical] Fix logical shorthands with var()
