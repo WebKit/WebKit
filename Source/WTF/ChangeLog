@@ -1,3 +1,18 @@
+2021-05-01  Sam Weinig  <weinig@apple.com>
+
+        Make destination color space enumeration match supported destination color spaces for the port
+        https://bugs.webkit.org/show_bug.cgi?id=225237
+
+        Reviewed by Simon Fraser.
+
+        Add ENABLE_DESTINATION_COLOR_SPACE_LINEAR_SRGB and enabled it for all ports
+        except the Apple Windows port, which is the only one doesn't have any support
+        for it.
+
+        * wtf/PlatformEnable.h:
+        * wtf/PlatformEnableCocoa.h:
+        * wtf/PlatformEnableWinApple.h:
+
 2021-04-30  Darin Adler  <darin@apple.com>
 
         Optimize SortedArrayMap by using linear search for small arrays

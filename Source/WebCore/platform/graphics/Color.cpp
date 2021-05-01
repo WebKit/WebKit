@@ -162,6 +162,18 @@ Color Color::semanticColor() const
     return { asInline(), Flags::Semantic };
 }
 
+ColorComponents<float, 4> Color::toColorComponentsInColorSpace(ColorSpace outputColorSpace) const
+{
+    auto [inputColorSpace, components] = colorSpaceAndComponents();
+    return converColorComponents(inputColorSpace, components, outputColorSpace);
+}
+
+ColorComponents<float, 4> Color::toColorComponentsInColorSpace(DestinationColorSpace outputColorSpace) const
+{
+    auto [inputColorSpace, components] = colorSpaceAndComponents();
+    return converColorComponents(inputColorSpace, components, outputColorSpace);
+}
+
 std::pair<ColorSpace, ColorComponents<float, 4>> Color::colorSpaceAndComponents() const
 {
     if (isOutOfLine())

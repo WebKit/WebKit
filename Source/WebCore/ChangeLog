@@ -1,5 +1,41 @@
 2021-05-01  Sam Weinig  <weinig@apple.com>
 
+        Make destination color space enumeration match supported destination color spaces for the port
+        https://bugs.webkit.org/show_bug.cgi?id=225237
+
+        Reviewed by Simon Fraser.
+
+        Add ENABLE_DESTINATION_COLOR_SPACE_LINEAR_SRGB and enabled it for all ports
+        except the Apple Windows port, which is the only one doesn't have any support
+        for it.
+
+        Removes existing behavior of returning SRGB when LinearSRGB was requested in
+        the Apple Windows port. Now, the callers are responisble for dealing with a
+        ports lack of support of LinearSRGB, making it very clear at those call sites
+        that something is different and wrong.
+
+        * platform/graphics/Color.cpp:
+        * platform/graphics/Color.h:
+        * platform/graphics/ColorConversion.cpp:
+        * platform/graphics/ColorConversion.h:
+        Add new functions to perform color conversion to and from an color space
+        denoted by the ColorSpace or DestinationColorSpace enum. Previously, we
+        only had convient ways to convert if the color was strongly typed (and this
+        is implemented using that mechanism). This is useful when converting for
+        final ouput, such in as the caller in FELighting::drawLighting.
+
+        * platform/graphics/cg/ColorSpaceCG.h:
+        * platform/graphics/ColorSpace.cpp:
+        * platform/graphics/ColorSpace.h:
+        * platform/graphics/filters/FELighting.cpp:
+        * platform/graphics/filters/FilterEffect.h:
+        * rendering/CSSFilter.cpp:
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        Wrap uses of DestinationColorSpace::LinearSRGB in ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB).
+
+2021-05-01  Sam Weinig  <weinig@apple.com>
+
         Generated JS bindings for JSValue -> IDL dictionary don't take into account runtime settings
         https://bugs.webkit.org/show_bug.cgi?id=225271
 

@@ -109,9 +109,13 @@ RefPtr<FilterEffect> CSSFilter::buildReferenceFilter(RenderElement& renderer, Fi
         }
 
         effectElement.setStandardAttributes(effect.get());
-        if (effectElement.renderer())
+        if (effectElement.renderer()) {
+#if ENABLE(DESTINATION_COLOR_SPACE_LINEAR_SRGB)
             effect->setOperatingColorSpace(effectElement.renderer()->style().svgStyle().colorInterpolationFilters() == ColorInterpolation::LinearRGB ? DestinationColorSpace::LinearSRGB : DestinationColorSpace::SRGB);
-
+#else
+            effect->setOperatingColorSpace(DestinationColorSpace::SRGB);
+#endif
+        }
         builder->add(effectElement.result(), effect);
         referenceEffects.append(*effect);
     }
