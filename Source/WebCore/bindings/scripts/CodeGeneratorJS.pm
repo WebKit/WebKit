@@ -2620,40 +2620,52 @@ sub GenerateDictionaryImplementationContent
                 $result .= "#if ${conditionalString}\n";
             }
 
+            my $needsRuntimeCheck = NeedsRuntimeCheck($dictionary, $member);
+            my $indent = "";
+            if ($needsRuntimeCheck) {
+                my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($dictionary, $member, "&lexicalGlobalObject");
+                $result .= "    if (${runtimeEnableConditionalString}) {\n";
+                $indent = "    ";
+            }
+
             # 4.1. Let key be the identifier of member.
             my $key = $member->name;
             my $implementedAsKey = $member->extendedAttributes->{ImplementedAs} || $key;
 
             # 4.2. Let value be an ECMAScript value, depending on Type(V):
-            $result .= "    JSValue ${key}Value;\n";
-            $result .= "    if (isNullOrUndefined)\n";
-            $result .= "        ${key}Value = jsUndefined();\n";
-            $result .= "    else {\n";
-            $result .= "        ${key}Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, \"${key}\"));\n";
-            $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
-            $result .= "    }\n";
+            $result .= "${indent}    JSValue ${key}Value;\n";
+            $result .= "${indent}    if (isNullOrUndefined)\n";
+            $result .= "${indent}        ${key}Value = jsUndefined();\n";
+            $result .= "${indent}    else {\n";
+            $result .= "${indent}        ${key}Value = object->get(&lexicalGlobalObject, Identifier::fromString(vm, \"${key}\"));\n";
+            $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
+            $result .= "${indent}    }\n";
 
             my $IDLType = GetIDLType($typeScope, $type);
 
             # 4.3. If value is not undefined, then:
-            $result .= "    if (!${key}Value.isUndefined()) {\n";
+            $result .= "${indent}    if (!${key}Value.isUndefined()) {\n";
 
             my $nativeValue = JSValueToNative($typeScope, $member, "${key}Value", $member->extendedAttributes->{Conditional}, "&lexicalGlobalObject", "lexicalGlobalObject", "", "*jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)");
-            $result .= "        result.$implementedAsKey = $nativeValue;\n";
-            $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
+            $result .= "${indent}        result.$implementedAsKey = $nativeValue;\n";
+            $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
 
             # Value is undefined.
             # 4.4. Otherwise, if value is undefined but the dictionary member has a default value, then:
             if (!$member->isRequired && defined $member->default) {
-                $result .= "    } else\n";
-                $result .= "        result.$implementedAsKey = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
+                $result .= "${indent}    } else\n";
+                $result .= "${indent}        result.$implementedAsKey = " . GenerateDefaultValue($typeScope, $member, $member->type, $member->default) . ";\n";
             } elsif ($member->isRequired) {
                 # 4.5. Otherwise, if value is undefined and the dictionary member is a required dictionary member, then throw a TypeError.
-                $result .= "    } else {\n";
-                $result .= "        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, \"". $member->name ."\", \"$name\", \"". GetTypeNameForDisplayInException($type) ."\");\n";
-                $result .= "        return { };\n";
-                $result .= "    }\n";
+                $result .= "${indent}    } else {\n";
+                $result .= "${indent}        throwRequiredMemberTypeError(lexicalGlobalObject, throwScope, \"". $member->name ."\", \"$name\", \"". GetTypeNameForDisplayInException($type) ."\");\n";
+                $result .= "${indent}        return { };\n";
+                $result .= "${indent}    }\n";
             } else {
+                $result .= "${indent}    }\n";
+            }
+
+            if ($needsRuntimeCheck) {
                 $result .= "    }\n";
             }
 

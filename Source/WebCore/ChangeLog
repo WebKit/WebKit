@@ -1,3 +1,28 @@
+2021-05-01  Sam Weinig  <weinig@apple.com>
+
+        Generated JS bindings for JSValue -> IDL dictionary don't take into account runtime settings
+        https://bugs.webkit.org/show_bug.cgi?id=225271
+
+        Reviewed by Alexey Shvayka.
+
+        While we did account for Settings/RuntimeEnabledFeatures/etc when converting from a
+        dictionary to a JSValue, we forgot to add code to skip trying to read the properties
+        in on ingestion.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+        Match convertDictionaryToJS and add guard + indent if the property has a runtime flag.
+
+        * bindings/scripts/test/JS/JSTestDerivedDictionary.cpp:
+        (WebCore::convertDictionary<TestDerivedDictionary>):
+        * bindings/scripts/test/JS/JSTestDerivedDictionary2.cpp:
+        (WebCore::convertDictionary<TestDerivedDictionary2::Dictionary>):
+        * bindings/scripts/test/JS/JSTestInheritedDictionary.cpp:
+        (WebCore::convertDictionary<TestInheritedDictionary>):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionary<DictionaryImplName>):
+        Update test results.
+
 2021-05-01  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Reset the "children inline" state when merging anonymous table boxes

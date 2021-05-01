@@ -183,16 +183,18 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(JSGlobalObje
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
-    JSValue partialStringMemberWithEnabledBySettingValue;
-    if (isNullOrUndefined)
-        partialStringMemberWithEnabledBySettingValue = jsUndefined();
-    else {
-        partialStringMemberWithEnabledBySettingValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "partialStringMemberWithEnabledBySetting"));
-        RETURN_IF_EXCEPTION(throwScope, { });
-    }
-    if (!partialStringMemberWithEnabledBySettingValue.isUndefined()) {
-        result.partialStringMemberWithEnabledBySetting = convert<IDLDOMString>(lexicalGlobalObject, partialStringMemberWithEnabledBySettingValue);
-        RETURN_IF_EXCEPTION(throwScope, { });
+    if (jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext()->settingsValues().testSettingEnabled) {
+        JSValue partialStringMemberWithEnabledBySettingValue;
+        if (isNullOrUndefined)
+            partialStringMemberWithEnabledBySettingValue = jsUndefined();
+        else {
+            partialStringMemberWithEnabledBySettingValue = object->get(&lexicalGlobalObject, Identifier::fromString(vm, "partialStringMemberWithEnabledBySetting"));
+            RETURN_IF_EXCEPTION(throwScope, { });
+        }
+        if (!partialStringMemberWithEnabledBySettingValue.isUndefined()) {
+            result.partialStringMemberWithEnabledBySetting = convert<IDLDOMString>(lexicalGlobalObject, partialStringMemberWithEnabledBySettingValue);
+            RETURN_IF_EXCEPTION(throwScope, { });
+        }
     }
 #endif
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
