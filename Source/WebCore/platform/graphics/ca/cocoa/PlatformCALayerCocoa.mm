@@ -1205,12 +1205,11 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
             fontAntialiasingState.emplace(context, !![platformCALayer->platformLayer() isOpaque]);
             fontAntialiasingState->setup([WAKWindow hasLandscapeOrientation]);
 #endif
-        }
-        
-        {
             graphicsContext.setIsCALayerContext(true);
             graphicsContext.setIsAcceleratedContext(platformCALayer->acceleratesDrawing());
+        }
 
+        {
             if (!layerContents->platformCALayerContentsOpaque() && !platformCALayer->supportsSubpixelAntialiasedText() && FontCascade::isSubpixelAntialiasingAvailable()) {
                 // Turn off font smoothing to improve the appearance of text rendered onto a transparent background.
                 graphicsContext.setShouldSmoothFonts(false);

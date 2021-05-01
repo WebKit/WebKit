@@ -1,3 +1,21 @@
+2021-04-30  Cameron McCormack  <heycam@apple.com>
+
+        Avoid a crash in PlatformCALayer::drawLayerContents when called with a display list recording GraphicsContext.
+        https://bugs.webkit.org/show_bug.cgi?id=225224
+        <rdar://76359027>
+
+        Reviewed by Simon Fraser.
+
+        setIsCALayerContext and setIsAcceleratedContext both assume (and assert)
+        that the GraphicsContext has a platform context directly in m_data,
+        but m_data is null when the GraphicsContext a display list recording
+        context (which is the case when GPUP DOM rendering is enabled).  These
+        calls are unnecessary when not working with a CG-backed GraphicsContext,
+        so just skip them in this case.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayer::drawLayerContents):
+
 2021-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Add a heuristic to determine whether a synthetic click triggered any meaningful changes
