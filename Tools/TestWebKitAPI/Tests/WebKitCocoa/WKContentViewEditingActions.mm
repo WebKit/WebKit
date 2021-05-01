@@ -32,6 +32,8 @@
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
+#import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
@@ -71,4 +73,32 @@ TEST(WebKit, InvokeShareWithoutSelection)
     [webView waitForNextPresentationUpdate];
 }
 
-#endif
+#if ENABLE(IMAGE_EXTRACTION) && ENABLE(APP_HIGHLIGHTS)
+
+TEST(WebKit, AppHighlightsInImageOverlays)
+{
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES]);
+    [configuration _setAppHighlightsEnabled:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple-image-overlay"];
+    [webView stringByEvaluatingJavaScript:@"selectImageOverlay()"];
+    [webView waitForNextPresentationUpdate];
+
+    auto createHighlightInCurrentGroupWithRangeSelector = NSSelectorFromString(@"createHighlightInCurrentGroupWithRange:");
+    auto createHighlightInNewGroupWithRangeSelector = NSSelectorFromString(@"createHighlightInNewGroupWithRange:");
+
+    auto contentView = [webView textInputContentView];
+    EXPECT_NULL([contentView targetForAction:createHighlightInCurrentGroupWithRangeSelector withSender:nil]);
+    EXPECT_NULL([contentView targetForAction:createHighlightInNewGroupWithRangeSelector withSender:nil]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+    [webView selectAll:nil];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_EQ([contentView targetForAction:createHighlightInCurrentGroupWithRangeSelector withSender:nil], contentView);
+    EXPECT_EQ([contentView targetForAction:createHighlightInNewGroupWithRangeSelector withSender:nil], contentView);
+}
+
+#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(APP_HIGHLIGHTS)
+
+#endif // PLATFORM(IOS_FAMILY)

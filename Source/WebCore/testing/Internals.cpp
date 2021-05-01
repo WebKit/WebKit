@@ -124,6 +124,7 @@
 #include "LegacySchemeRegistry.h"
 #include "LibWebRTCProvider.h"
 #include "LoaderStrategy.h"
+#include "LocalizedStrings.h"
 #include "Location.h"
 #include "MallocStatistics.h"
 #include "MediaDevices.h"
@@ -6053,6 +6054,14 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
+Vector<String> Internals::appHighlightContextMenuItemTitles() const
+{
+    return {{
+        contextMenuItemTagAddHighlightToCurrentGroup(),
+        contextMenuItemTagAddHighlightToNewGroup(),
+    }};
+}
+
 unsigned Internals::numberOfAppHighlights()
 {
     Document* document = contextDocument();

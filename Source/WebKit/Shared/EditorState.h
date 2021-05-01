@@ -75,6 +75,7 @@ struct EditorState {
     bool shouldIgnoreSelectionChanges { false };
     bool selectionIsNone { true }; // This will be false when there is a caret selection.
     bool selectionIsRange { false };
+    bool selectionIsRangeInsideImageOverlay { false };
     bool isContentEditable { false };
     bool isContentRichlyEditable { false };
     bool isInPasswordField { false };

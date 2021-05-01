@@ -1100,6 +1100,7 @@ public:
     bool destroySleepDisabler(unsigned identifier);
         
 #if ENABLE(APP_HIGHLIGHTS)
+    Vector<String> appHighlightContextMenuItemTitles() const;
     unsigned numberOfAppHighlights();
 #endif
 

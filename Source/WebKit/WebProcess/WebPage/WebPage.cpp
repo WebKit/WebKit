@@ -1208,6 +1208,11 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     Ref<Document> document = *frame->document();
     result.originIdentifierForPasteboard = document->originIdentifierForPasteboard();
 
+    if (result.selectionIsRange) {
+        auto selectionRange = selection.range();
+        result.selectionIsRangeInsideImageOverlay = selectionRange && HTMLElement::isInsideImageOverlay(*selectionRange);
+    }
+
     if (shouldPerformLayout == ShouldPerformLayout::Yes || platformNeedsLayoutForEditorState(frame))
         document->updateLayout(); // May cause document destruction
 

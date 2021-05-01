@@ -3548,6 +3548,16 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         [_textInteractionAssistant activateSelection];
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+
+- (BOOL)shouldAllowAppHighlightCreation
+{
+    auto editorState = _page->editorState();
+    return editorState.selectionIsRange && !editorState.isContentEditable && !editorState.selectionIsRangeInsideImageOverlay;
+}
+
+#endif // ENABLE(APP_HIGHLIGHTS)
+
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender
 {
     if (_domPasteRequestHandler)
@@ -3566,8 +3576,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return editorState.isContentEditable;
 
 #if ENABLE(APP_HIGHLIGHTS)
-    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
-        return editorState.selectionIsRange && !editorState.isContentEditable;
+    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:)) {
+        // FIXME: It doesn't seem like this codepath is exercised, since UIKit only asks for the action target for custom actions
+        // added via -[UIMenuController setMenuItems:]. Can we remove this check?
+        return self.shouldAllowAppHighlightCreation;
+    }
 #endif
 
     return [_webView canPerformAction:action withSender:sender];
@@ -3762,7 +3775,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 {
 #if ENABLE(APP_HIGHLIGHTS)
     if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
-        return self;
+        return self.shouldAllowAppHighlightCreation ? self : nil;
 #endif
     return [_webView targetForAction:action withSender:sender];
 }
