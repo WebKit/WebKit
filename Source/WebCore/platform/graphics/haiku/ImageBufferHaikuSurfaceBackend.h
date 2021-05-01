@@ -56,7 +56,9 @@ public:
     Vector<uint8_t> toBGRAData() const override;
     RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const override;
     void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
+    unsigned bytesPerRow() const override;
 
+    static size_t calculateMemoryCost(const Parameters&);
 
 private:
     ImageBufferHaikuSurfaceBackend(const Parameters& parameters, const IntSize& backendSize);

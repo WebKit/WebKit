@@ -102,7 +102,7 @@ WTF::RefPtr<WebCore::NativeImage> ImageBufferHaikuSurfaceBackend::copyNativeImag
 std::unique_ptr<ImageBufferHaikuSurfaceBackend>
 ImageBufferHaikuSurfaceBackend::create(const ImageBufferBackend::Parameters& parameters, const WebCore::HostWindow*)
 {
-    IntSize backendSize = calculateBackendSize(parameters.logicalSize, parameters.resolutionScale);
+    IntSize backendSize = calculateBackendSize(parameters);
     if (backendSize.isEmpty())
         return nullptr;
 
@@ -191,6 +191,11 @@ void ImageBufferHaikuSurfaceBackend::putImageData(AlphaPremultiplication sourceF
     ImageBufferBackend::putImageData(sourceFormat, imageData, sourceRect, destPoint, premultiplication, m_data.m_image->platformImage()->Bits());
 }
 
+unsigned ImageBufferHaikuSurfaceBackend::bytesPerRow() const
+{
+    return m_data.m_image->platformImage()->BytesPerRow();
+}
+
 // TODO: PreserveResolution
 String ImageBufferHaikuSurfaceBackend::toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const
 {
@@ -267,6 +272,13 @@ Vector<uint8_t> ImageBufferHaikuSurfaceBackend::toData(const String& mimeType, O
     result.append((uint8_t*)translatedStream.Buffer(), size);
 
     return result;
+}
+
+size_t ImageBufferHaikuSurfaceBackend::calculateMemoryCost(const Parameters& parameters)
+{
+    IntSize backendSize = calculateBackendSize(parameters);
+    int bytesPerRow = backendSize.width() * 4;
+    return ImageBufferBackend::calculateMemoryCost(backendSize, bytesPerRow);
 }
 
 } // namespace WebCore

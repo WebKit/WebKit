@@ -59,7 +59,7 @@ void BlockDirectory::setSubspace(Subspace* subspace)
 void BlockDirectory::updatePercentageOfPagedOutPages(SimpleStats& stats)
 {
     // FIXME: We should figure out a solution for Windows.
-#if OS(UNIX)
+#if OS(UNIX) && !OS(HAIKU)
     size_t pageSize = WTF::pageSize();
     ASSERT(!(MarkedBlock::blockSize % pageSize));
     auto numberOfPagesInMarkedBlock = MarkedBlock::blockSize / pageSize;
