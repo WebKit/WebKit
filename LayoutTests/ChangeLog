@@ -1,3 +1,14 @@
+2021-05-01  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Reset the "children inline" state when merging anonymous table boxes
+        https://bugs.webkit.org/show_bug.cgi?id=225266
+        <rdar://77327951>
+
+        Reviewed by Simon Fraser.
+
+        * fast/table/merge-anonymous-table-cells-with-block-children-expected.txt: Added.
+        * fast/table/merge-anonymous-table-cells-with-block-children.html: Added.
+
 2021-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         App highlight UI should be disabled when selecting text in image overlays
