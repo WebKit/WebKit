@@ -1,5 +1,20 @@
 2021-04-30  Cameron McCormack  <heycam@apple.com>
 
+        Defend further against a PlatformCALayer's owner becoming null in PlatformCALayerCocoa::drawLayerContents.
+        https://bugs.webkit.org/show_bug.cgi?id=225250
+        <rdar://37608882>
+
+        Reviewed by Simon Fraser.
+
+        At the end of PlatformCALayer::drawLayerContents, we null check
+        layerContents for the platformCALayerShowRepaintCounter call but not
+        the platformCALayerIncrementRepaintCount call.
+
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayer::drawLayerContents):
+
+2021-04-30  Cameron McCormack  <heycam@apple.com>
+
         Avoid a crash in PlatformCALayer::drawLayerContents when called with a display list recording GraphicsContext.
         https://bugs.webkit.org/show_bug.cgi?id=225224
         <rdar://76359027>
