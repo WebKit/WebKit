@@ -22,7 +22,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -66,9 +66,10 @@ ScrollbarThemeHaiku::~ScrollbarThemeHaiku()
 int ScrollbarThemeHaiku::scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarExpansionState)
 {
     // FIXME: Should we make a distinction between a Small and a Regular Scrollbar?
+
     if (m_drawOuterFrame)
-       return 15;
-    return 14;
+       return (int)be_control_look->GetScrollBarWidth() +1;
+    return (int)be_control_look->GetScrollBarWidth();
 }
 
 
