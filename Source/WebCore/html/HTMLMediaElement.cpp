@@ -1136,6 +1136,7 @@ void HTMLMediaElement::prepareForLoad()
     if (!document().hasBrowsingContext())
         return;
 
+    mediaSession().setActive(true);
     createMediaPlayer();
 
     // 2 - Let pending tasks be a list of all tasks from the media element's media element event task source in one of the task queues.
@@ -1421,6 +1422,8 @@ void HTMLMediaElement::loadNextSourceChild()
         waitForSourceChange();
         return;
     }
+
+    mediaSession().setActive(true);
 
     // Recreate the media player for the new url
     createMediaPlayer();
@@ -2227,6 +2230,7 @@ void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState error)
     logMediaLoadRequest(document().page(), String(), convertEnumerationToString(error), false);
 
     mediaSession().clientCharacteristicsChanged();
+    mediaSession().setActive(false);
 }
 
 void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)

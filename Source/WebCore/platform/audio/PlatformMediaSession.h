@@ -62,6 +62,8 @@ public:
 
     virtual ~PlatformMediaSession();
 
+    void setActive(bool);
+
     enum class MediaType : uint8_t {
         None = 0,
         Video,
@@ -220,6 +222,7 @@ private:
     State m_stateToRestore { Idle };
     InterruptionType m_interruptionType { NoInterruption };
     int m_interruptionCount { 0 };
+    bool m_active { false };
     bool m_notifyingClient { false };
     bool m_isPlayingToWirelessPlaybackTarget { false };
     bool m_hasPlayedSinceLastInterruption { false };

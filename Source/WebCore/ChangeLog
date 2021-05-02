@@ -1,3 +1,47 @@
+2021-05-02  Jer Noble  <jer.noble@apple.com>
+
+        [Perf] Creation of many video elements slows over time
+        https://bugs.webkit.org/show_bug.cgi?id=225273
+
+        Reviewed by Eric Carlson.
+
+        In PerformanceTests/Media/VideoElementCreation.html, 1000 video elements are created
+        per test, and the test reports how long each batch of 1000 element took to create. A
+        typical run shows the amount of time to run each batch slows over time. The underlying
+        cause appears to be the cost it takes to iterate over each MediaElementSession inside
+        PlatformMediaSessionManager and subclasses.
+
+        Before a HTMLMediaElement has a src (or after it's emptied) there's no reason for its
+        MediaElementSession to be tracked by the PlatformMediaSessionManager. It can't play,
+        pause, be interrupted, or accept remote control commands. So PlatformMediaSession will
+        be changed so that it does not add itself to the list of its manager's sessions at
+        creation time; instead a new method, setActive(bool), is added and will be called at
+        an appropriate time by its clients, HTMLMediaElement and AudioContext.
+
+        HTMLMediaElement will activate its mediaSession just before creating its MediaPlayer
+        inside prepareForLoad() or loadNextSourceChild(), and will deactivate after tearing
+        down its MediaPlayer inside mediaLoadingFailed().
+
+        AudioContext will activate its mediaSession during its own initialization, and deactivate
+        inside close().
+
+        Before this change, on this machine, VideoElementCreation.html showed an incresing time
+        to video element creation, levelling out at ~400ms per 1000 elements.  After this change,
+        VideoElelementCreation.html shows a constant time to video element creation, averaging
+        between 4ms and 7ms per 1000 elements.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::close):
+        (WebCore::AudioContext::lazyInitialize):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad):
+        (WebCore::HTMLMediaElement::mediaLoadingFailed):
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::PlatformMediaSession::PlatformMediaSession):
+        (WebCore::PlatformMediaSession::~PlatformMediaSession):
+        (WebCore::PlatformMediaSession::setActive):
+        * platform/audio/PlatformMediaSession.h:
+
 2021-05-01  Antti Koivisto  <antti@apple.com>
 
         Share style resolvers between author shadow trees with identical style

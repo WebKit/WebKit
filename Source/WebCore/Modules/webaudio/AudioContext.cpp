@@ -190,6 +190,7 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
     destination().close([this, activity = makePendingActivity(*this)] {
         setState(State::Closed);
         uninitialize();
+        m_mediaSession->setActive(false);
     });
 }
 
@@ -310,6 +311,7 @@ void AudioContext::lazyInitialize()
 
     BaseAudioContext::lazyInitialize();
     if (isInitialized()) {
+        m_mediaSession->setActive(true);
         if (state() != State::Running) {
             // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
             // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
