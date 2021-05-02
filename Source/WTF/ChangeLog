@@ -1,3 +1,43 @@
+2021-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Start leveraging std::filesystem in WTF::FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=225255
+
+        Reviewed by Sam Weinig.
+
+         Start leveraging std::filesystem in WTF::FileSystem to reduce the amount of
+        platform-specific code.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::fileExists):
+        (WTF::FileSystemImpl::deleteFile):
+        (WTF::FileSystemImpl::deleteEmptyDirectory):
+        (WTF::FileSystemImpl::moveFile):
+        (WTF::FileSystemImpl::getFileSize):
+        (WTF::FileSystemImpl::fileIsDirectory):
+        (WTF::FileSystemImpl::makeAllDirectories):
+        (WTF::FileSystemImpl::getVolumeFreeSpace):
+        (WTF::FileSystemImpl::createSymbolicLink):
+        (WTF::FileSystemImpl::hardLink):
+        (WTF::FileSystemImpl::hardLinkOrCopyFile):
+        (WTF::FileSystemImpl::deleteNonEmptyDirectory):
+        * wtf/FileSystem.h:
+        * wtf/cocoa/FileSystemCocoa.mm:
+        (WTF::FileSystemImpl::createTemporaryDirectory):
+        * wtf/glib/FileSystemGlib.cpp:
+        * wtf/posix/FileSystemPOSIX.cpp:
+        * wtf/win/FileSystemWin.cpp:
+
+        * wtf/PlatformJSCOnly.cmake:
+        GNU implementation prior to 9.1 requires linking with -lstdc++fs and LLVM implementation
+        prior to LLVM 9.0 requires linking with -lc++fs.
+
+        * wtf/StdFilesystem.cpp: Removed.
+        * wtf/StdFilesystem.h:
+        Drop our own copy of std::filesystem as all the operating system we support now have
+        support for this.
+
 2021-05-01  Sam Weinig  <weinig@apple.com>
 
         Make destination color space enumeration match supported destination color spaces for the port

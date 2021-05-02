@@ -1,3 +1,14 @@
+2021-05-01  Chris Dumez  <cdumez@apple.com>
+
+        Start leveraging std::filesystem in WTF::FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=225255
+
+        Reviewed by Sam Weinig.
+
+        Unexport some symbols to fix build.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2021-04-30  Filip Pizlo  <fpizlo@apple.com>
 
         Make small JIT pool tests pass on AS

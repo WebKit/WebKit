@@ -31,6 +31,7 @@
 #include <wtf/FileMetadata.h>
 #include <wtf/HexNumber.h>
 #include <wtf/Scope.h>
+#include <wtf/StdFilesystem.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -382,14 +383,6 @@ void unlockAndCloseFile(PlatformFileHandle handle)
     closeFile(handle);
 }
 
-bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
-{
-    auto metadata = shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes ? fileMetadataFollowingSymlinks(path) : fileMetadata(path);
-    if (!metadata)
-        return false;
-    return metadata.value().type == FileMetadata::Type::Directory;
-}
-
 #if !PLATFORM(IOS_FAMILY)
 bool isSafeToUseMemoryMapForPath(const String&)
 {
@@ -405,20 +398,6 @@ void makeSafeToUseMemoryMapForPath(const String&)
 String createTemporaryZipArchive(const String&)
 {
     return { };
-}
-#endif
-
-#if !PLATFORM(COCOA) && !OS(WINDOWS)
-bool deleteNonEmptyDirectory(const String& path)
-{
-    auto entries = listDirectory(path, "*"_s);
-    for (auto& entry : entries) {
-        if (fileIsDirectory(entry, ShouldFollowSymbolicLinks::No))
-            deleteNonEmptyDirectory(entry);
-        else
-            deleteFile(entry);
-    }
-    return deleteEmptyDirectory(path);
 }
 #endif
 
@@ -502,6 +481,110 @@ Optional<Salt> readOrMakeSalt(const String& path)
         return { };
 
     return salt;
+}
+
+bool fileExists(const String& path)
+{
+    std::error_code ec;
+    // exists() returns false on error so no need to check ec.
+    return std::filesystem::exists(fileSystemRepresentation(path).data(), ec);
+}
+
+bool deleteFile(const String& path)
+{
+    std::error_code ec;
+    // remove() returns false on error so no need to check ec.
+    return std::filesystem::remove(fileSystemRepresentation(path).data(), ec);
+}
+
+// We currently use a different implementation on macOS to deal with .DS_Store files that may be present in otherwise empty directories.
+#if !PLATFORM(MAC)
+bool deleteEmptyDirectory(const String& path)
+{
+    std::error_code ec;
+    // remove() returns false on error so no need to check ec.
+    return std::filesystem::remove(fileSystemRepresentation(path).data(), ec);
+}
+#endif
+
+bool moveFile(const String& oldPath, const String& newPath)
+{
+    std::error_code ec;
+    std::filesystem::rename(fileSystemRepresentation(oldPath).data(), fileSystemRepresentation(newPath).data(), ec);
+    return !ec;
+}
+
+bool getFileSize(const String& path, long long& result)
+{
+    std::error_code ec;
+    auto size = std::filesystem::file_size(fileSystemRepresentation(path).data(), ec);
+    if (ec)
+        return false;
+    result = size;
+    return true;
+}
+
+bool fileIsDirectory(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+{
+    std::error_code ec;
+    std::filesystem::file_status fileStatus;
+    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes)
+        fileStatus = std::filesystem::status(fileSystemRepresentation(path).data(), ec);
+    else
+        fileStatus = std::filesystem::symlink_status(fileSystemRepresentation(path).data(), ec);
+    return fileStatus.type() == std::filesystem::file_type::directory;
+}
+
+bool makeAllDirectories(const String& path)
+{
+    std::error_code ec;
+    std::filesystem::create_directories(fileSystemRepresentation(path).data(), ec);
+    return !ec;
+}
+
+bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
+{
+    std::error_code ec;
+    auto spaceInfo = std::filesystem::space(fileSystemRepresentation(path).data(), ec);
+    if (ec)
+        return false;
+    freeSpace = spaceInfo.available;
+    return true;
+}
+
+bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
+{
+    std::error_code ec;
+    std::filesystem::create_symlink(fileSystemRepresentation(targetPath).data(), fileSystemRepresentation(symbolicLinkPath).data(), ec);
+    return !ec;
+}
+
+bool hardLink(const String& targetPath, const String& linkPath)
+{
+    std::error_code ec;
+    std::filesystem::create_hard_link(fileSystemRepresentation(targetPath).data(), fileSystemRepresentation(linkPath).data(), ec);
+    return !ec;
+}
+
+bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath)
+{
+    std::filesystem::path fsTargetPath = fileSystemRepresentation(targetPath).data();
+    std::filesystem::path fsLinkPath = fileSystemRepresentation(linkPath).data();
+
+    std::error_code ec;
+    std::filesystem::create_hard_link(fsTargetPath, fsLinkPath, ec);
+    if (!ec)
+        return true;
+
+    std::filesystem::copy_file(fsTargetPath, fsLinkPath, ec);
+    return !ec;
+}
+
+bool deleteNonEmptyDirectory(const String& path)
+{
+    std::error_code ec;
+    std::filesystem::remove_all(fileSystemRepresentation(path).data(), ec);
+    return !ec;
 }
 
 } // namespace FileSystemImpl

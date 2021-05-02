@@ -159,3 +159,15 @@ endif ()
 list(APPEND WTF_LIBRARIES
     Threads::Threads
 )
+
+if (COMPILER_IS_GCC_OR_CLANG)
+    if (COMPILER_IS_CLANG)
+        list(APPEND WTF_LIBRARIES
+            c++fs
+        )
+    else ()
+        list(APPEND WTF_LIBRARIES
+            stdc++fs
+        )
+    endif ()
+endif ()

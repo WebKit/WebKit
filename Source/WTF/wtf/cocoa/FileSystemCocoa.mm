@@ -126,29 +126,6 @@ String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileH
     return String::fromUTF8(temporaryFilePath.data());
 }
 
-bool moveFile(const String& oldPath, const String& newPath)
-{
-    // Overwrite existing files.
-    auto manager = adoptNS([[NSFileManager alloc] init]);
-    auto delegate = adoptNS([[WTFWebFileManagerDelegate alloc] init]);
-    [manager setDelegate:delegate.get()];
-
-    NSError *error = nil;
-    bool success = [manager moveItemAtURL:[NSURL fileURLWithPath:oldPath] toURL:[NSURL fileURLWithPath:newPath] error:&error];
-    if (!success)
-        NSLog(@"Error in moveFile: %@", error);
-    return success;
-}
-
-bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
-{
-    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:(NSString *)path error:NULL];
-    if (!fileSystemAttributesDictionary)
-        return false;
-    freeSpace = [[fileSystemAttributesDictionary objectForKey:NSFileSystemFreeSize] unsignedLongLongValue];
-    return true;
-}
-
 NSString *createTemporaryDirectory(NSString *directoryPrefix)
 {
     NSString *tempDirectory = NSTemporaryDirectory();
@@ -176,11 +153,6 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
         return nil;
 
     return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path.data() length:length];
-}
-
-bool deleteNonEmptyDirectory(const String& path)
-{
-    return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
 #if PLATFORM(IOS_FAMILY)
