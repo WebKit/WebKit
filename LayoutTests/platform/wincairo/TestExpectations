@@ -392,25 +392,6 @@ fast/url/tab-and-newline-stripping.html [ Failure ]
 webkit.org/b/58845 fast/dom/title-directionality-removeChild.html [ Skip ]
 webkit.org/b/58845 fast/dom/title-directionality.html [ Skip ]
 
-# Tests that fail across all platforms.
-# Even though some platforms don't skip these tests, there are platform-specific
-# results generated that make these tests 'pass'.
-canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
-canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
-canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
-canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
-canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
-canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
-canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
-canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
-canvas/philip/tests/2d.text.draw.baseline.middle.html [ Failure ]
-canvas/philip/tests/2d.text.draw.baseline.top.html [ Failure ]
-canvas/philip/tests/2d.text.draw.space.collapse.end.html [ Failure ]
-canvas/philip/tests/2d.text.draw.space.collapse.other.html [ Failure ]
-canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
-canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
-canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
-
 # This only applies to file:// loading of ES6 Modules via the import syntax. When
 # Windows recognizes .mjs files as JavaScript, this will just work.
 js/dom/modules/import-mjs-module.html [ Failure ]

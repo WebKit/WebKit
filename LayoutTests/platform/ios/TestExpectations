@@ -1142,27 +1142,6 @@ svg/clip-path/clip-path-line-use-before-defined.svg [ ImageOnlyFailure ]
 # SVG
 webkit.org/b/137574 svg/dom/SVGAnimatedAngle.html [ Skip ] # Pass, Crash
 
-# Canvas tests that fail:
-webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.clear.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.composite.operation.darker.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.animated.poster.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.path.rect.winding.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.bottom.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.hanging.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.middle.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.baseline.top.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.end.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.other.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
-webkit.org/b/137530 canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
-
-# Canvas tests that have stderr:
-canvas/philip/tests/2d.canvas.readonly.html [ Skip ]
-
 # HTTP tests that time out:
 http/tests/security/XFrameOptions/x-frame-options-deny-delete-frame-in-load-event.html
 http/tests/local/blob/send-hybrid-blob.html

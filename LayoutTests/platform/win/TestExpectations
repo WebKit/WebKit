@@ -1770,25 +1770,6 @@ animations/transition-and-animation-2.html [ Pass Failure ]
 ##################          Canvas Issues                   ####################
 ################################################################################
 
-# These tests fail on all platforms:
-canvas/philip/tests/2d.composite.operation.clear.html
-canvas/philip/tests/2d.composite.operation.darker.html
-canvas/philip/tests/2d.drawImage.outsidesource.html
-canvas/philip/tests/2d.gradient.radial.cone.front.html
-
-# These tests only fail on Windows.
-webkit.org/b/140759 canvas/philip/tests/2d.gradient.radial.cone.top.html
-webkit.org/b/140759 canvas/philip/tests/2d.gradient.radial.inside2.html
-webkit.org/b/140759 canvas/philip/tests/2d.gradient.radial.inside3.html
-webkit.org/b/140759 canvas/philip/tests/2d.gradient.radial.outside1.html
-webkit.org/b/140759 canvas/philip/tests/2d.line.cap.closed.html
-webkit.org/b/140759 canvas/philip/tests/2d.path.arcTo.collinear.2.html
-webkit.org/b/140759 canvas/philip/tests/2d.path.arcTo.collinear.3.html
-webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.blur.html
-webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.x.html
-webkit.org/b/140759 canvas/philip/tests/2d.shadow.enable.y.html
-webkit.org/b/146795 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass Failure ]
-
 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-blending-global-alpha.html [ Failure ]
@@ -1816,7 +1797,6 @@ webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.blur.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.x.html [ Failure ]
 webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.y.html [ Failure ]
 
-canvas/philip/tests/2d.drawImage.broken.html [ Skip ] # Crashes in Debug
 ################################################################################
 #################          End Canvas Issues                ####################
 ################################################################################

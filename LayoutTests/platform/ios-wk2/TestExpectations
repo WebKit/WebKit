@@ -891,8 +891,6 @@ fast/loader/frame-src-change-added-to-history.html
 fast/loader/frame-src-change-not-added-to-history.html
 fast/loader/stateobjects/pushstate-clears-forward-history.html
 http/tests/appcache/404-manifest.html
-http/tests/canvas/philip/tests/security.drawImage.canvas.html
-http/tests/canvas/philip/tests/security.drawImage.image.html
 http/tests/cookies/double-quoted-value-with-semi-colon.html
 storage/domstorage/sessionstorage/window-open.html
 transitions/cubic-bezier-overflow-transform.html
