@@ -1,3 +1,17 @@
+2021-05-02  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC] Rename block(inline/table/flex)formattingContext directories to block(inline/table/flex)
+        https://bugs.webkit.org/show_bug.cgi?id=225275
+
+        Reviewed by Antti Koivisto.
+
+        The formattingContext postfix is redundant as they are all under the /formattingContexts directory.
+
+        * CMakeLists.txt:
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2021-05-02  Jer Noble  <jer.noble@apple.com>
 
         [Perf] Creation of many video elements slows over time
