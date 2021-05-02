@@ -1,5 +1,14 @@
 2021-05-01  Aakash Jain  <aakash_jain@apple.com>
 
+        start-local-buildbot-server should fail gracefully for Python 2
+        https://bugs.webkit.org/show_bug.cgi?id=225268
+
+        Reviewed by Alexey Proskuryakov.
+
+        * CISupport/start-local-buildbot-server:
+
+2021-05-01  Aakash Jain  <aakash_jain@apple.com>
+
         Disable search engine crawling on build.webkit.org webpages
         https://bugs.webkit.org/show_bug.cgi?id=225252
 
