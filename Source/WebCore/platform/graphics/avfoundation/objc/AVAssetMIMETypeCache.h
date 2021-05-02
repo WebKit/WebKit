@@ -41,8 +41,6 @@ public:
     void setCacheMIMETypesCallback(CacheMIMETypesCallback&& callback) { m_cacheTypeCallback = WTFMove(callback); }
 
     bool isAvailable() const final;
-    const HashSet<String, ASCIICaseInsensitiveHash>& staticContainerTypeList() final;
-    bool isUnsupportedContainerType(const String&) final;
 
     void addSupportedTypes(const Vector<String>&);
 
@@ -50,6 +48,8 @@ private:
     friend NeverDestroyed<AVAssetMIMETypeCache>;
     AVAssetMIMETypeCache() = default;
 
+    bool isStaticContainerType(StringView) final;
+    bool isUnsupportedContainerType(const String&) final;
     bool canDecodeExtendedType(const ContentType&) final;
     void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&) final;
 

@@ -28,7 +28,6 @@
 #if USE(CORE_IMAGE)
 
 #import "FilterEffectRenderer.h"
-#import <wtf/HashMap.h>
 #import <wtf/Vector.h>
 
 OBJC_CLASS CIImage;

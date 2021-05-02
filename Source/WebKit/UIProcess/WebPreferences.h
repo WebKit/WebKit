@@ -30,7 +30,6 @@
 #include "APIObject.h"
 #include "WebPreferencesDefinitions.h"
 #include "WebPreferencesStore.h"
-#include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakHashSet.h>
 

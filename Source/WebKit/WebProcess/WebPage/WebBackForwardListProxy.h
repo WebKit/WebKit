@@ -28,7 +28,6 @@
 #include "WebBackForwardListCounts.h"
 #include <WebCore/BackForwardClient.h>
 #include <WebCore/PageIdentifier.h>
-#include <wtf/HashSet.h>
 
 namespace WebCore {
 struct BackForwardItemIdentifier;

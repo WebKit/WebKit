@@ -28,7 +28,6 @@
 #include "SharedMemory.h"
 #include "SharedStringHashTable.h"
 #include <WebCore/SharedStringHash.h>
-#include <wtf/HashSet.h>
 #include <wtf/RunLoop.h>
 
 namespace WebKit {

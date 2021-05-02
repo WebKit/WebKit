@@ -30,7 +30,6 @@
 #include "StyleChange.h"
 #include "StyleTreeResolver.h"
 #include "StyleUpdate.h"
-#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

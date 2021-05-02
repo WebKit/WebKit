@@ -36,7 +36,6 @@
 #include <sys/types.h>
 #include <wtf/Assertions.h>
 #include <wtf/FileSystem.h>
-#include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/SchedulePair.h>

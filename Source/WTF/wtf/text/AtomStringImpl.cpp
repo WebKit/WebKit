@@ -24,7 +24,6 @@
 #include "config.h"
 #include <wtf/text/AtomStringImpl.h>
 
-#include <wtf/HashSet.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomStringTable.h>
 #include <wtf/text/StringHash.h>

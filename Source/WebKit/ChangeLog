@@ -1,3 +1,25 @@
+2021-04-30  Darin Adler  <darin@apple.com>
+
+        Use SortedArrayMap in a few more places
+        https://bugs.webkit.org/show_bug.cgi?id=225251
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkLoad.cpp: Removed unneeded includes.
+        * NetworkProcess/NetworkResourceLoadMap.h: Ditto.
+        * Shared/SharedStringHashStore.h: Ditto.
+        * UIProcess/API/APIPageConfiguration.h: Ditto.
+        * UIProcess/API/Cocoa/WKWebsiteDataRecord.mm: Ditto.
+        * UIProcess/API/Cocoa/_WKInspector.mm: Ditto.
+        * UIProcess/Automation/SimulatedInputDispatcher.h: Ditto.
+        * UIProcess/Inspector/WebInspectorUIProxy.cpp: Ditto.
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm: Ditto.
+        * UIProcess/WebPageGroup.h: Ditto.
+        * UIProcess/WebPasteboardProxy.h: Ditto.
+        * UIProcess/WebPreferences.h: Ditto.
+        * WebProcess/Geolocation/WebGeolocationManager.h: Ditto.
+        * WebProcess/WebPage/WebBackForwardListProxy.h: Ditto.
+
 2021-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         App highlight UI should be disabled when selecting text in image overlays

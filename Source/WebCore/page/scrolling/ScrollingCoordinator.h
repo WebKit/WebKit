@@ -33,14 +33,9 @@
 #include "ScrollingCoordinatorTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Threading.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/Variant.h>
-
-#if ENABLE(ASYNC_SCROLLING)
-#include <wtf/HashMap.h>
-#include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Threading.h>
-#endif
 
 namespace WTF {
 class TextStream;
@@ -59,10 +54,6 @@ class RenderObject;
 class RenderLayer;
 class ScrollableArea;
 class ViewportConstraints;
-
-#if ENABLE(ASYNC_SCROLLING)
-class ScrollingTree;
-#endif
 
 using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;

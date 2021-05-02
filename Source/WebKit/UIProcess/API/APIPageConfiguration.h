@@ -30,7 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)

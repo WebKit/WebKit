@@ -136,9 +136,18 @@ template<typename ArrayType> constexpr SortedArrayMap<ArrayType>::SortedArrayMap
     }));
 }
 
+template<typename, typename = void> constexpr bool HasParseMember = false;
+template<typename T> constexpr bool HasParseMember<T, std::void_t<decltype(std::declval<T>().parse)>> = true;
+
 template<typename ArrayType> template<typename KeyArgument> inline auto SortedArrayMap<ArrayType>::tryGet(const KeyArgument& key) const -> const ValueType*
 {
-    auto parsedKey = ElementType::first_type::parse(key);
+    using KeyType = typename ElementType::first_type;
+    auto parsedKey = [&key] {
+        if constexpr (HasParseMember<KeyType>)
+            return KeyType::parse(key);
+        else
+            return makeOptional(key);
+    }();
     if (!parsedKey)
         return nullptr;
     decltype(std::begin(m_array)) iterator;
@@ -172,8 +181,15 @@ template<typename ArrayType> constexpr SortedArraySet<ArrayType>::SortedArraySet
 
 template<typename ArrayType> template<typename KeyArgument> inline bool SortedArraySet<ArrayType>::contains(const KeyArgument& key) const
 {
-    using ElementType = typename std::remove_extent_t<ArrayType>;
-    auto parsedKey = ElementType::parse(key);
+    using KeyType = typename std::remove_extent_t<ArrayType>;
+    auto parsedKey = [&key] {
+        if constexpr (HasParseMember<KeyType>)
+            return KeyType::parse(key);
+        else
+            return makeOptional(key);
+    }();
+    if (!parsedKey)
+        return false;
     if (std::size(m_array) < binarySearchThreshold)
         return std::find(std::begin(m_array), std::end(m_array), *parsedKey) != std::end(m_array);
     auto iterator = std::lower_bound(std::begin(m_array), std::end(m_array), *parsedKey);

@@ -31,9 +31,6 @@
 #include "GenericTaskQueue.h"
 #include "LayoutRect.h"
 #include <wtf/Deque.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 

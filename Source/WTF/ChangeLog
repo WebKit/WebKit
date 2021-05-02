@@ -1,3 +1,16 @@
+2021-04-30  Darin Adler  <darin@apple.com>
+
+        Use SortedArrayMap in a few more places
+        https://bugs.webkit.org/show_bug.cgi?id=225251
+
+        Reviewed by Sam Weinig.
+
+        * wtf/SortedArrayMap.h: Added support for types that don't have a parse member function.
+
+        * wtf/cocoa/MainThreadCocoa.mm: Removed unneeded includes.
+        * wtf/text/AtomStringImpl.cpp: Ditto.
+        * wtf/text/AtomStringTable.cpp: Ditto.
+
 2021-05-01  Chris Dumez  <cdumez@apple.com>
 
         Start leveraging std::filesystem in WTF::FileSystem

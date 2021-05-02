@@ -520,11 +520,8 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
                 measuredWidth += wordMeasurement.width;
             atFirstWordMeasurement = false;
 
-            if (!wordMeasurement.fallbackFonts.isEmpty()) {
-                HashSet<const Font*>::const_iterator end = wordMeasurement.fallbackFonts.end();
-                for (HashSet<const Font*>::const_iterator it = wordMeasurement.fallbackFonts.begin(); it != end; ++it)
-                    fallbackFonts.add(*it);
-            }
+            for (auto& font : wordMeasurement.fallbackFonts)
+                fallbackFonts.add(font);
         }
         if (measuredWidth && lastEndOffset != run->m_stop) {
             // If we don't have enough cached data, we'll measure the run again.

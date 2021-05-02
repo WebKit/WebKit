@@ -81,8 +81,6 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>

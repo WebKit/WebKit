@@ -29,8 +29,6 @@
 #include "WebPageGroupData.h"
 #include "WebProcessProxy.h"
 #include <WebCore/UserStyleSheetTypes.h>
-#include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 

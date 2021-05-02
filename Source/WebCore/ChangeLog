@@ -1,3 +1,80 @@
+2021-04-30  Darin Adler  <darin@apple.com>
+
+        Use SortedArrayMap in a few more places
+        https://bugs.webkit.org/show_bug.cgi?id=225251
+
+        Reviewed by Sam Weinig.
+
+        * Modules/encryptedmedia/CDM.h: Removed unneeded includes.
+        * Modules/indexeddb/server/IDBServer.h: Ditto.
+        * contentextensions/ContentExtensionActions.h: Ditto.
+        * css/CSSVariableData.h: Ditto.
+        * dom/FullscreenManager.h: Ditto.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::isLegacySupportedJavaScriptLanguage): Use SortedArraySet.
+        (WebCore::ScriptElement::executeClassicScript): Fixed typo.
+        (WebCore::ScriptElement::executeModuleScript): Ditto.
+
+        * inspector/InspectorAuditResourcesObject.cpp: Removed unneeded includes.
+        * inspector/agents/InspectorNetworkAgent.cpp: Ditto.
+        * loader/appcache/ApplicationCacheGroup.cpp: Ditto.
+        * page/UserContentProvider.h: Ditto.
+        * page/ios/DOMTimerHoldingTank.cpp: Ditto.
+        * page/scrolling/ScrollingCoordinator.h: Ditto.
+
+        * page/scrolling/ScrollingTreeNode.h: Added forward declaration
+        that used to be inherited from another file where it's not needed.
+
+        * platform/gamepad/cocoa/GameControllerGamepadProvider.mm:
+        (WebCore::GameControllerGamepadProvider::willHandleVendorAndProduct):
+        Use a switch statement.
+
+        * platform/gamepad/mac/HIDGamepadElement.h: Removed unneeded includes.
+        * platform/graphics/FontPlatformData.cpp: Ditto.
+        * platform/graphics/HEVCUtilities.cpp: Ditto.
+        * platform/graphics/IntRectHash.h: Ditto.
+
+        * platform/graphics/MIMETypeCache.cpp:
+        (WebCore::MIMETypeCache::isStaticContainerType): Renamed; this replaces
+        the old staticContainerTypeList function and just returns false.
+
+        * platform/graphics/MIMETypeCache.h: Replaced the staticContainerTypeList
+        fucntion with an isStaticContainerType function. Also made it, and one
+        other function, private.
+
+        * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.h: Updated
+        for the change to MIMETypeCache.
+
+        * platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.mm:
+        (WebCore::AVAssetMIMETypeCache::isStaticContainerType): Use SortedArraySet.
+
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        Removed unneeded includes.
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.h: Ditto.
+        * platform/mediastream/RealtimeMediaSourceSupportedConstraints.cpp: Ditto.
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h: Ditto.
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.h: Ditto.
+        * platform/mediastream/mac/CoreAudioCaptureSource.h: Ditto.
+        * platform/network/cf/FormDataStreamCFNet.cpp: Ditto.
+
+        * platform/network/mac/UTIUtilities.mm:
+        (WebCore::UTIFromUnknownMIMEType): Use SortedArrayMap. Also fixed a regression
+        from r271533 where we accidentally deleted the MIME type model/vnd.reality.
+
+        * rendering/ComplexLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun): Use a range-based for loop.
+
+        * rendering/updating/RenderTreeUpdater.h: Removed unneeded includes.
+        * storage/StorageNamespaceProvider.h: Ditto.
+        * storage/StorageQuotaManager.h: Ditto.
+        * style/StyleUpdate.h: Ditto.
+        * svg/SVGFitToViewBox.h: Ditto.
+
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::isValid const): Use SortedArraySet.
+        (WebCore::SVGTests::hasFeatureForLegacyBindings): Ditto.
+
 2021-05-01  Sam Weinig  <weinig@apple.com>
 
         Update operations in CanvasImageData.idl to use long rather than float as per spec

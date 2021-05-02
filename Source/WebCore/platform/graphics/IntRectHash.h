@@ -23,13 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-#ifndef IntRectHash_h
-#define IntRectHash_h
+#pragma once
 
 #include "IntPointHash.h"
 #include "IntRect.h"
 #include "IntSizeHash.h"
-#include <wtf/HashSet.h>
 
 namespace WTF {
 
@@ -53,5 +51,3 @@ template<> struct HashTraits<WebCore::IntRect> : GenericHashTraits<WebCore::IntR
 };
 
 }
-
-#endif

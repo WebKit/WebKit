@@ -29,9 +29,6 @@
 
 #include "HIDElement.h"
 #include "SharedGamepadValue.h"
-#include <wtf/HashMap.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 

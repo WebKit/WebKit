@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,8 @@
 
 #import "ContentType.h"
 #import "SourceBufferParserWebM.h"
+#import <wtf/SortedArrayMap.h>
+
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
@@ -92,42 +94,43 @@ bool AVAssetMIMETypeCache::isUnsupportedContainerType(const String& type)
     return false;
 }
 
-const HashSet<String, ASCIICaseInsensitiveHash>& AVAssetMIMETypeCache::staticContainerTypeList()
+bool AVAssetMIMETypeCache::isStaticContainerType(StringView type)
 {
-    static const auto cache = makeNeverDestroyed(HashSet<String, ASCIICaseInsensitiveHash> {
-        "application/vnd.apple.mpegurl"_s,
-        "application/x-mpegurl"_s,
-        "audio/3gpp"_s,
-        "audio/aac"_s,
-        "audio/aacp"_s,
-        "audio/aiff"_s,
-        "audio/basic"_s,
-        "audio/mp3"_s,
-        "audio/mp4"_s,
-        "audio/mpeg"_s,
-        "audio/mpeg3"_s,
-        "audio/mpegurl"_s,
-        "audio/mpg"_s,
-        "audio/vnd.wave"_s,
-        "audio/wav"_s,
-        "audio/wave"_s,
-        "audio/x-aac"_s,
-        "audio/x-aiff"_s,
-        "audio/x-m4a"_s,
-        "audio/x-mpegurl"_s,
-        "audio/x-wav"_s,
-        "video/3gpp"_s,
-        "video/3gpp2"_s,
-        "video/mp4"_s,
-        "video/mpeg"_s,
-        "video/mpeg2"_s,
-        "video/mpg"_s,
-        "video/quicktime"_s,
-        "video/x-m4v"_s,
-        "video/x-mpeg"_s,
-        "video/x-mpg"_s,
-    });
-    return cache;
+    static constexpr ComparableLettersLiteral staticContainerTypesArray[] = {
+        "application/vnd.apple.mpegurl",
+        "application/x-mpegurl",
+        "audio/3gpp",
+        "audio/aac",
+        "audio/aacp",
+        "audio/aiff",
+        "audio/basic",
+        "audio/mp3",
+        "audio/mp4",
+        "audio/mpeg",
+        "audio/mpeg3",
+        "audio/mpegurl",
+        "audio/mpg",
+        "audio/vnd.wave",
+        "audio/wav",
+        "audio/wave",
+        "audio/x-aac",
+        "audio/x-aiff",
+        "audio/x-m4a",
+        "audio/x-mpegurl",
+        "audio/x-wav",
+        "video/3gpp",
+        "video/3gpp2",
+        "video/mp4",
+        "video/mpeg",
+        "video/mpeg2",
+        "video/mpg",
+        "video/quicktime",
+        "video/x-m4v",
+        "video/x-mpeg",
+        "video/x-mpg",
+    };
+    static constexpr SortedArraySet staticContainerTypesSet { staticContainerTypesArray };
+    return staticContainerTypesSet.contains(type);
 }
 
 void AVAssetMIMETypeCache::addSupportedTypes(const Vector<String>& types)
@@ -143,7 +146,7 @@ void AVAssetMIMETypeCache::initializeCache(HashSet<String, ASCIICaseInsensitiveH
     if (!isAvailable())
         return;
 
-    for (NSString* type in [PAL::getAVURLAssetClass() audiovisualMIMETypes])
+    for (NSString *type in [PAL::getAVURLAssetClass() audiovisualMIMETypes])
         cache.add(type);
 
 #if ENABLE(WEBM_FORMAT_READER)

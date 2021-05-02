@@ -43,8 +43,6 @@ public:
     virtual ~MIMETypeCache() = default;
 
     virtual bool isAvailable() const;
-    virtual const HashSet<String, ASCIICaseInsensitiveHash>& staticContainerTypeList();
-    virtual bool isUnsupportedContainerType(const String&);
     virtual MediaPlayerEnums::SupportsType canDecodeType(const String&);
     virtual HashSet<String, ASCIICaseInsensitiveHash>& supportedTypes();
 
@@ -55,6 +53,8 @@ protected:
     void addSupportedTypes(const Vector<String>&);
 
 private:
+    virtual bool isStaticContainerType(StringView);
+    virtual bool isUnsupportedContainerType(const String&);
     virtual void initializeCache(HashSet<String, ASCIICaseInsensitiveHash>&);
     virtual bool canDecodeExtendedType(const ContentType&);
 

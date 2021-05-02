@@ -36,7 +36,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
-#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 

@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class ScrollingStateFixedNode;
+class ScrollingTree;
 class ScrollingTreeFrameScrollingNode;
 class ScrollingTreeScrollingNode;
 

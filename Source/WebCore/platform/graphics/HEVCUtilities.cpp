@@ -28,7 +28,6 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>
-#include <wtf/RobinHoodHashSet.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringToIntegerConversion.h>
 

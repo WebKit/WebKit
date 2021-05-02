@@ -27,18 +27,20 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include <wtf/HashSet.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct ContentRuleListResults;
 class Page;
 class ResourceRequest;
+
+struct ContentRuleListResults;
 
 namespace ContentExtensions {
 
 struct Action;
+
 using SerializedActionByte = uint8_t;
 
 enum class ActionType : uint8_t {

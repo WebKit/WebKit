@@ -28,8 +28,8 @@
 
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
+#import <wtf/SortedArrayMap.h>
 #import <wtf/TinyLRUCache.h>
-#import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -85,24 +85,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return emptyString();
 }
 
-static CFStringRef UTIFromUnknownMIMEType(const String& mimeType)
+static CFStringRef UTIFromUnknownMIMEType(StringView mimeType)
 {
-    static const auto map = makeNeverDestroyed([] {
-        HashMap<String, CFStringRef, ASCIICaseInsensitiveHash> map;
-        auto pixarMIMEType = CFSTR("com.pixar.universal-scene-description-mobile");
-        map.add("model/vnd.usdz+zip"_s, pixarMIMEType);
-        map.add("model/usd"_s, pixarMIMEType);
-        map.add("model/vnd.pixar.usd"_s, pixarMIMEType);
-        map.add("model/vnd.usdz+zip"_s, CFSTR("com.apple.reality"));
-        return map;
-    }());
-
-    static const CFStringRef emptyCFString = CFSTR("");
-    auto mapEntry = map.get().find(mimeType);
-    if (mapEntry == map.get().end())
-        return emptyCFString;
-
-    return mapEntry->value;
+    static constexpr std::pair<ComparableLettersLiteral, NSString *> typesArray[] = {
+        { "model/usd", @"com.pixar.universal-scene-description-mobile" },
+        { "model/vnd.pixar.usd", @"com.pixar.universal-scene-description-mobile" },
+        { "model/vnd.reality", @"com.apple.reality" },
+        { "model/vnd.usdz+zip", @"com.pixar.universal-scene-description-mobile" },
+    };
+    static constexpr SortedArrayMap typesMap { typesArray };
+    return (__bridge CFStringRef)typesMap.get(mimeType, @"");
 }
 
 struct UTIFromMIMETypeCachePolicy : TinyLRUCachePolicy<String, RetainPtr<CFStringRef>> {

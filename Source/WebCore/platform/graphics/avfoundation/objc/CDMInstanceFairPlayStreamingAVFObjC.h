@@ -30,9 +30,7 @@
 #include "CDMInstance.h"
 #include "CDMInstanceSession.h"
 #include <wtf/Function.h>
-#include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/text/WTFString.h>
 
 OBJC_CLASS AVContentKeyReportGroup;
 OBJC_CLASS AVContentKeyRequest;
