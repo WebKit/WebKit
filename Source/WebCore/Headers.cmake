@@ -1286,6 +1286,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/Path.h
     platform/graphics/PathUtilities.h
     platform/graphics/Pattern.h
+    platform/graphics/PixelFormat.h
     platform/graphics/PlatformDisplay.h
     platform/graphics/PlatformImage.h
     platform/graphics/PlatformImageBuffer.h
