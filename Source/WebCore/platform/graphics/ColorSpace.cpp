@@ -75,6 +75,11 @@ TextStream& operator<<(TextStream& ts, DestinationColorSpace colorSpace)
         ts << "LinearSRGB";
         break;
 #endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    case DestinationColorSpace::DisplayP3:
+        ts << "DisplayP3";
+        break;
+#endif
     }
     return ts;
 }

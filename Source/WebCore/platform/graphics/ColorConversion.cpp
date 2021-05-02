@@ -328,6 +328,10 @@ ColorComponents<float, 4> converColorComponents(ColorSpace inputColorSpace, Colo
         case DestinationColorSpace::LinearSRGB:
             return asColorComponents(convertColor<LinearSRGBA<float>>(inputColor));
 #endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+        case DestinationColorSpace::DisplayP3:
+            return asColorComponents(convertColor<DisplayP3<float>>(inputColor));
+#endif
         }
 
         ASSERT_NOT_REACHED();

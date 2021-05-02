@@ -1,3 +1,25 @@
+2021-05-02  Sam Weinig  <weinig@apple.com>
+
+        Add support for DestinationColorSpace::DisplayP3 in preparation for DisplayP3 canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225280
+
+        Reviewed by Anders Carlsson.
+
+        Add new ENABLE_DESTINATION_COLOR_SPACE_DISPLAY_P3 macro to declare which ports
+        support P3 backing stores. Currently, only the Apple/Cocoa ports support it.
+
+        When ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3), also define ColorSpaceDestination::DisplayP3.
+        This is not currently used, but will be in subsequent changes.
+
+        * platform/graphics/ColorConversion.cpp:
+        (WebCore::converColorComponents):
+        * platform/graphics/ColorSpace.cpp:
+        (WebCore::operator<<):
+        * platform/graphics/ColorSpace.h:
+        (WebCore::callWithColorType):
+        * platform/graphics/cg/ColorSpaceCG.h:
+        (WebCore::cachedCGColorSpace):
+
 2021-05-02  Zalan Bujtas  <zalan@apple.com>
 
         [LFC] Rename block(inline/table/flex)formattingContext directories to block(inline/table/flex)

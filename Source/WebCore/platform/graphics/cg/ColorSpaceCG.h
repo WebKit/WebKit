@@ -129,6 +129,10 @@ static inline CGColorSpaceRef cachedCGColorSpace(DestinationColorSpace colorSpac
     case DestinationColorSpace::LinearSRGB:
         return linearSRGBColorSpaceRef();
 #endif
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    case DestinationColorSpace::DisplayP3:
+        return displayP3ColorSpaceRef();
+#endif
     }
     ASSERT_NOT_REACHED();
     return sRGBColorSpaceRef();
