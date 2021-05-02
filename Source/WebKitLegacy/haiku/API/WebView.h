@@ -110,6 +110,8 @@ public:
 									bool wrapSelection = true,
 									bool startInSelection = false);
 
+			void				SetDarkMode(bool dark);
+
 	// BWebview API
 			void				SetAutoHidePointer(bool doIt);
 

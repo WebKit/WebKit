@@ -88,6 +88,11 @@ BWebView::BWebView(const char* name, BPrivate::Network::BUrlContext* urlContext)
     // Disable default background painting, we manage it ourselves to avoid
     // flickering
     SetViewColor(B_TRANSPARENT_COLOR);
+
+    // Default value for dark mode depending on the document background color
+    rgb_color background = ui_color(B_DOCUMENT_BACKGROUND_COLOR);
+    if (background.Brightness() < 127)
+        fWebPage->page()->effectiveAppearanceDidChange(true, false);
 }
 
 BWebView::~BWebView()
@@ -465,6 +470,11 @@ void BWebView::FindString(const char* string, bool forward ,
 {
 	fWebPage->FindString(string, forward, caseSensitive,
 	    wrapSelection, startInSelection);
+}
+
+void BWebView::SetDarkMode(bool dark)
+{
+	fWebPage->page()->effectiveAppearanceDidChange(dark, false);
 }
 
 void BWebView::SetAutoHidePointer(bool doIt)
