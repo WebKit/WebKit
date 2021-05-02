@@ -165,6 +165,9 @@ private:
     void createOrFindSharedShadowTreeResolver();
     void unshareShadowTreeResolverBeforeMutation();
 
+    using ResolverSharingKey = std::tuple<Vector<RefPtr<StyleSheetContents>>, bool, bool>;
+    ResolverSharingKey makeResolverSharingKey();
+
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 
@@ -194,8 +197,7 @@ private:
     bool m_isUpdatingStyleResolver { false };
 
     // FIXME: These (and some things above) are only relevant for the root scope.
-    RefPtr<Resolver> m_sharedUserAgentShadowTreeResolver;
-    RefPtr<Resolver> m_sharedEmptyAuthorShadowTreeResolver;
+    HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 };
 
 inline bool Scope::hasPendingSheets() const

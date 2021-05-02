@@ -108,22 +108,23 @@ void Scope::createOrFindSharedShadowTreeResolver()
     ASSERT(!m_resolver);
     ASSERT(m_shadowRoot);
 
-    if (m_activeStyleSheets.isEmpty()) {
-        auto& sharedResolver = isForUserAgentShadowTree() ? documentScope().m_sharedUserAgentShadowTreeResolver : documentScope().m_sharedEmptyAuthorShadowTreeResolver;
-        if (!sharedResolver) {
-            sharedResolver = Resolver::create(m_document);
-            sharedResolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
-        } else
-            sharedResolver->setSharedBetweenShadowTrees();
+    auto key = makeResolverSharingKey();
 
-        m_resolver = sharedResolver;
-        return;
+    auto result = documentScope().m_sharedShadowTreeResolvers.ensure(WTFMove(key), [&] {
+        SetForScope<bool> isUpdatingStyleResolver { m_isUpdatingStyleResolver, true };
+
+        m_resolver = Resolver::create(m_document);
+
+        m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
+        m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
+
+        return makeRef(*m_resolver);
+    });
+
+    if (!result.isNewEntry) {
+        m_resolver = result.iterator->value.ptr();
+        m_resolver->setSharedBetweenShadowTrees();
     }
-
-    m_resolver = Resolver::create(m_document);
-
-    m_resolver->ruleSets().setUsesSharedUserStyle(!isForUserAgentShadowTree());
-    m_resolver->appendAuthorStyleSheets(m_activeStyleSheets);
 }
 
 void Scope::unshareShadowTreeResolverBeforeMutation()
@@ -131,10 +132,17 @@ void Scope::unshareShadowTreeResolverBeforeMutation()
     ASSERT(m_shadowRoot);
     ASSERT(!m_resolver->isSharedBetweenShadowTrees());
 
-    auto& sharedResolver = isForUserAgentShadowTree() ? documentScope().m_sharedUserAgentShadowTreeResolver : documentScope().m_sharedEmptyAuthorShadowTreeResolver;
-    
-    if (m_resolver == sharedResolver)
-        sharedResolver = nullptr;
+    documentScope().m_sharedShadowTreeResolvers.remove(makeResolverSharingKey());
+}
+
+auto Scope::makeResolverSharingKey() -> ResolverSharingKey
+{
+    constexpr bool isNonEmptyHashTableValue = true;
+    return {
+        m_activeStyleSheets.map([&](auto& sheet) { return makeRefPtr(sheet->contents()); }),
+        isForUserAgentShadowTree(),
+        isNonEmptyHashTableValue
+    };
 }
 
 void Scope::clearResolver()
@@ -160,8 +168,7 @@ void Scope::releaseMemory()
 #endif
     clearResolver();
 
-    m_sharedUserAgentShadowTreeResolver = nullptr;
-    m_sharedEmptyAuthorShadowTreeResolver = nullptr;
+    m_sharedShadowTreeResolvers.clear();
 }
 
 Scope& Scope::forNode(Node& node)
@@ -687,8 +694,7 @@ void Scope::didChangeStyleSheetContents()
 void Scope::didChangeStyleSheetEnvironment()
 {
     if (!m_shadowRoot) {
-        m_sharedUserAgentShadowTreeResolver = nullptr;
-        m_sharedEmptyAuthorShadowTreeResolver = nullptr;
+        m_sharedShadowTreeResolvers.clear();
 
         for (auto* descendantShadowRoot : m_document.inDocumentShadowRoots()) {
             // Stylesheets is author shadow roots are potentially affected.

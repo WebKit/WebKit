@@ -1,3 +1,34 @@
+2021-05-01  Antti Koivisto  <antti@apple.com>
+
+        Share style resolvers between author shadow trees with identical style
+        https://bugs.webkit.org/show_bug.cgi?id=225187
+        <rdar://problem/77317178>
+
+        Reviewed by Sam Weinig.
+
+        Style resolvers own style resolution and invalidation rule sets, matched declarations cache, and other things.
+        With complex stylesheets that can be lot of data. We currently create a style resolver for each author
+        shadow tree. With web components it is common for a page to have large number of instances of the same
+        component, and so shadow trees with identical style.
+
+        We already deduplicate shadow tree stylesheets (including inline stylesheets based on string equality).
+        With this patch we'll use these stylesheets as keys for sharing the full style resolvers as well.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::createOrFindSharedShadowTreeResolver):
+
+        Expand the existing support for sharing between user agent shadow trees and author shadow trees with
+        empty style. Look up shareable resolvers from a map.
+
+        (WebCore::Style::Scope::unshareShadowTreeResolverBeforeMutation):
+        (WebCore::Style::Scope::makeResolverSharingKey):
+
+        Make a key from the active stylesheets and a bit indicating the shadow tree type.
+
+        (WebCore::Style::Scope::releaseMemory):
+        (WebCore::Style::Scope::didChangeStyleSheetEnvironment):
+        * style/StyleScope.h:
+
 2021-05-01  Sam Weinig  <weinig@apple.com>
 
         Move PixelFormat into its own file

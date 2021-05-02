@@ -9,6 +9,8 @@ Verify that shadow roots with identical styles share style resolvers (have equal
 <div id=f></div>
 <div id=g></div>
 <div id=h></div>
+<div id=i></div>
+
 <pre id=log></pre>
 
 <script>
@@ -33,6 +35,7 @@ attachShadowWithStyle("e", "div { color: green }");
 attachShadowWithStyle("f", "div { color: green }");
 attachShadowWithStyle("g", "div { color: green }");
 attachShadowWithStyle("h", "div { color: green }");
+attachShadowWithStyle("i", "div { color: green }");
 
 if (window.internals) {
     log.textContent += internals.dumpStyleResolvers();

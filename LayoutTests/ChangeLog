@@ -1,3 +1,14 @@
+2021-05-01  Antti Koivisto  <antti@apple.com>
+
+        Share style resolvers between author shadow trees with identical style
+        https://bugs.webkit.org/show_bug.cgi?id=225187
+        <rdar://problem/77317178>
+
+        Reviewed by Sam Weinig.
+
+        * fast/shadow-dom/style-resolver-sharing-expected.txt:
+        * fast/shadow-dom/style-resolver-sharing.html:
+
 2021-05-01  Sam Weinig  <weinig@apple.com>
 
         Update operations in CanvasImageData.idl to use long rather than float as per spec
