@@ -1,3 +1,15 @@
+2021-05-02  Rob Buis  <rbuis@igalia.com>
+
+        getPropertyValue for url path doesn't return the "#" character
+        https://bugs.webkit.org/show_bug.cgi?id=215409
+
+        Reviewed by Sam Weinig.
+
+        Add test for this.
+
+        * svg/css/computed-style-url-serializing-expected.txt: Added.
+        * svg/css/computed-style-url-serializing.html: Added.
+
 2021-05-02  Sam Weinig  <weinig@apple.com>
 
         Consider removing imported/w3c/canvas and canvas/philip (Part 2)
