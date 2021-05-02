@@ -1,4 +1,0 @@
-2d.shadow.attributes.shadowColor.invalid
-Spec references: 2d.shadow.color.invalid
-Actual output:
-Passed

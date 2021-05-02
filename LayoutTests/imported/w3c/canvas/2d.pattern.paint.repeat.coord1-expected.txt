@@ -1,7 +1,0 @@
-2d.pattern.paint.repeat.coord1
-Spec references: 2d.pattern.painting
-Actual output:
-Expected output:
-
-Passed
-

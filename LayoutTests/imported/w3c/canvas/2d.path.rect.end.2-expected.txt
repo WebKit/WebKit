@@ -1,6 +1,0 @@
-2d.path.rect.end.2
-Spec references: 2d.path.rect.newsubpath
-Actual output:
-Expected output:
-
-Passed

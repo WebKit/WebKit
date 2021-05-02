@@ -1,6 +1,0 @@
-2d.drawImage.canvas
-Spec references: 2d.drawImage.paint
-Actual output:
-Expected output:
-
-Passed

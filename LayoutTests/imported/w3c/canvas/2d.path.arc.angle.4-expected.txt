@@ -1,7 +1,0 @@
-2d.path.arc.angle.4
-arc() draws a full circle when clockwise and end > start+2pi
-Spec references: 2d.path.arc.draw
-Actual output:
-Expected output:
-
-Passed

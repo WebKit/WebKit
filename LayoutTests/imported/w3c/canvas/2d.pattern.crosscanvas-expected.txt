@@ -1,7 +1,0 @@
-2d.pattern.crosscanvas
-Spec references:
-Actual output:
-Expected output:
-
-Passed
-

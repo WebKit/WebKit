@@ -1,7 +1,0 @@
-2d.strokeRect.globalalpha
-strokeRect is affected by globalAlpha
-Spec references: 2d.strokeRect
-Actual output:
-Expected output:
-
-Passed

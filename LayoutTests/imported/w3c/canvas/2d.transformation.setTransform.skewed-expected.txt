@@ -1,6 +1,0 @@
-2d.transformation.setTransform.skewed
-Spec references: 2d.transformation.setTransform
-Actual output:
-Expected output:
-
-Passed

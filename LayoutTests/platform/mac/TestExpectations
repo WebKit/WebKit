@@ -1246,19 +1246,6 @@ security/block-test.html
 security/block-test-no-port.html
 
 # <rdar://problem/31177990> REGRESSION: canvas/2d.gradient.* LayoutTests failing
-# These are imported tests, so we'll have to push changes back to W3C.
-imported/w3c/canvas/2d.gradient.radial.cone.bottom.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.cylinder.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.shape1.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.inside1.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.outside2.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.outside3.html [ Failure ]
-imported/w3c/canvas/2d.gradient.radial.touch2.html [ Failure ]
 fast/canvas/canvas-currentColor.html [ Failure ]
 fast/canvas/set-colors.html [ Failure ]
 

@@ -1,5 +1,0 @@
-fallback.basic
-Fallback content is inserted into the DOM
-Spec references: fallback
-Actual output:
-Passed

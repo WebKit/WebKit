@@ -1,7 +1,0 @@
-2d.transformation.scale.zero
-scale() with a scale factor of zero works
-Spec references: 2d.transformation.scale
-Actual output:
-Expected output:
-
-Passed

@@ -1,7 +1,0 @@
-2d.line.miter.acute
-Miter joins are drawn correctly with acute angles
-Spec references: 2d.lineJoin.miterLimit 2d.lineJoin.miter
-Actual output:
-Expected output:
-
-Passed

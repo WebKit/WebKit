@@ -1,5 +1,0 @@
-2d.imageData.object.readonly
-ImageData objects properties are read-only
-Spec references: 2d.imageData.type
-Actual output:
-Passed

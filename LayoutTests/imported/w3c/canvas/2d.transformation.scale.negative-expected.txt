@@ -1,7 +1,0 @@
-2d.transformation.scale.negative
-scale() with negative scale factors works
-Spec references: 2d.transformation.scale
-Actual output:
-Expected output:
-
-Passed

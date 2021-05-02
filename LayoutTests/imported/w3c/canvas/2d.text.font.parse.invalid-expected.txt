@@ -1,4 +1,0 @@
-2d.text.font.parse.invalid
-Spec references: 2d.text.font.invalid
-Actual output:
-Passed

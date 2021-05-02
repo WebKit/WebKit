@@ -1,4 +1,0 @@
-2d.pattern.repeat.case
-Spec references: 2d.pattern.exact
-Actual output:
-Passed

@@ -1,6 +1,0 @@
-2d.imageData.put.null
-putImageData() with null imagedata throws TypeError
-Spec references: 2d.imageData.put.wrongtype
-Actual output:
-
-Passed

@@ -1,4 +1,0 @@
-2d.composite.operation.over
-Spec references: 2d.composite.operation.unrecognised
-Actual output:
-Passed

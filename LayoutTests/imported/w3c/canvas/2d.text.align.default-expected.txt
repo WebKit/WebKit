@@ -1,4 +1,0 @@
-2d.text.align.default
-Spec references: 2d.text.align.default
-Actual output:
-Passed

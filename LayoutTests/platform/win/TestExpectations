@@ -1785,18 +1785,6 @@ fast/canvas/canvas-composite-fill-repaint.html [ Pass Timeout ]
 fast/canvas/draw-focus-if-needed-with-path.html [ Failure ]
 fast/canvas/draw-focus-if-needed.html [ Failure ]
 
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.cone.front.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.cone.top.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.inside2.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.inside3.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.gradient.radial.outside1.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.line.cap.closed.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.path.arcTo.collinear.2.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.path.arcTo.collinear.3.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.blur.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.x.html [ Failure ]
-webkit.org/b/138862 imported/w3c/canvas/2d.shadow.enable.y.html [ Failure ]
-
 ################################################################################
 #################          End Canvas Issues                ####################
 ################################################################################
@@ -2528,9 +2516,6 @@ webkit.org/b/140866 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
 [ Release ] platform/win/fast/text/uniscribe-missing-glyph.html [ Failure ]
 [ Debug ] platform/win/fast/text/uniscribe-missing-glyph.html [ Skip ] # Debug assertion
-
-webkit.org/b/138676 imported/w3c/canvas/2d.line.join.parallel.html [ Failure ]
-webkit.org/b/138676 imported/w3c/canvas/2d.strokeRect.zero.5.html [ Failure ]
 
 # requestAnimationFrame throttling does not work on Windows because USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR) is disabled.
 webkit.org/b/144718 fast/animation/request-animation-frame-throttle-subframe-display-none.html [ Skip ]

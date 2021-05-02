@@ -1,6 +1,0 @@
-2d.fillStyle.parse.rgba-solid-1
-Spec references: 2d.colours.parse
-Actual output:
-Expected output:
-
-Passed

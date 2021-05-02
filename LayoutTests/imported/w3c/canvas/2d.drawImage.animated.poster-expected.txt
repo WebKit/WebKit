@@ -1,7 +1,0 @@
-2d.drawImage.animated.poster
-drawImage() of an APNG draws the poster frame
-Spec references: 2d.drawImage.animated.image
-Actual output:
-Expected output:
-
-Passed

@@ -1,7 +1,0 @@
-2d.path.arc.angle.1
-arc() draws pi/2 .. -pi anticlockwise correctly
-Spec references: 2d.path.arc.draw
-Actual output:
-Expected output:
-
-Passed

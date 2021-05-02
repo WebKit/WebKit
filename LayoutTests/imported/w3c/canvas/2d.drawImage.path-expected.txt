@@ -1,7 +1,0 @@
-2d.drawImage.path
-Spec references: 2d.drawImage.unaffect
-Actual output:
-Expected output:
-
-Passed
-

@@ -1,6 +1,0 @@
-2d.imageData.object.ctor
-ImageData does not have a usable constructor
-Spec references: 2d.imageData.type
-Actual output:
-
-Passed

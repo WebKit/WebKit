@@ -1,5 +1,0 @@
-2d.state.saverestore.shadowBlur
-save()/restore() works for shadowBlur
-Spec references: 2d.state.shadowBlur
-Actual output:
-Passed

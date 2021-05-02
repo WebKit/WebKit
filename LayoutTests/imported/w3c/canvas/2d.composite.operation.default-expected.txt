@@ -1,4 +1,0 @@
-2d.composite.operation.default
-Spec references: 2d.composite.operation.default
-Actual output:
-Passed

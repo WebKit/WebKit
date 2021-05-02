@@ -1393,9 +1393,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-id-top.html [ Failure ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/scroll-to-top.html [ Failure ]
 
-# w3c tests that pass
-imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
-
 # import tests that pass
 imported/mozilla/svg/smil/transform/rotate-angle-4.svg [ Pass ]
 imported/mozilla/svg/smil/transform/rotate-angle-5.svg [ Pass ]
@@ -1955,5 +1952,4 @@ http/tests/is-logged-in/ [ Skip ]
 # Stale-while-revalidate is not supported on WK1
 imported/w3c/web-platform-tests/fetch/stale-while-revalidate [ Skip ]
 
-webkit.org/b/223193 imported/w3c/canvas/2d.path.stroke.scale2.html [ Failure ]
 webkit.org/b/223193 imported/w3c/web-platform-tests/html/canvas/element/path-objects/2d.path.stroke.scale2.html [ Failure ]

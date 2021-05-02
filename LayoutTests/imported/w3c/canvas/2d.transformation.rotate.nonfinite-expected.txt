@@ -1,7 +1,0 @@
-2d.transformation.rotate.nonfinite
-rotate() with Infinity/NaN is ignored
-Spec references: 2d.nonfinite
-Actual output:
-Expected output:
-
-Passed

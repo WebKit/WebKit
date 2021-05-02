@@ -1,7 +1,0 @@
-2d.path.arc.selfintersect.2
-arc() with lineWidth > 2*radius is drawn sensibly
-Spec references: 2d.path.arc.draw
-Actual output:
-Expected output:
-
-Passed

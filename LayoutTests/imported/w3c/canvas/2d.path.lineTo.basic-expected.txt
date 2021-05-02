@@ -1,6 +1,0 @@
-2d.path.lineTo.basic
-Spec references: 2d.path.lineTo.nonempty
-Actual output:
-Expected output:
-
-Passed

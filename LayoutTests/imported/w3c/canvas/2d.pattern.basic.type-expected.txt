@@ -1,5 +1,0 @@
-2d.pattern.basic.type
-Spec references: 2d.pattern.return
-Actual output:
-Passed
-

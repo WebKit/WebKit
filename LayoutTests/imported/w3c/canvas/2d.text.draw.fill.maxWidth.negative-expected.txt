@@ -1,7 +1,0 @@
-2d.text.draw.fill.maxWidth.negative
-fillText handles maxWidth correctly
-Spec references: 2d.text.draw.maxwidth
-Actual output:
-Expected output:
-
-Passed

@@ -1,3 +1,30 @@
+2021-05-02  Sam Weinig  <weinig@apple.com>
+
+        Consider removing imported/w3c/canvas and canvas/philip (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=225269
+
+        Reviewed by Simon Fraser.
+
+        Remove imported/w3c/canvas/* and canvas/philip/* and related expecations
+        and results. They are out of date copies of tests now bundled as part of
+        WPT in imported/w3c/web-platform-tests/html/canvas/element and are no
+        longer useful.
+
+        Part 2 removes the remaining copy in imported/w3c/canvas.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/canvas: Removed.
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/mac/imported/w3c/canvas: Removed.
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-05-01  Sam Weinig  <weinig@apple.com>
 
         Consider removing imported/w3c/canvas and canvas/philip (Part 1)
