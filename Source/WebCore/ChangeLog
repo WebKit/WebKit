@@ -1,3 +1,16 @@
+2021-05-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Transfer ownership to ARC in speechSynthesisGetDefaultVoiceIdentifierForLocale
+        https://bugs.webkit.org/show_bug.cgi?id=225312
+        <rdar://problem/77458746>
+
+        Reviewed by Chris Fleizach.
+
+        To fix memory leak of defaultVoiceURI.
+
+        * platform/mac/PlatformSpeechSynthesizerMac.mm:
+        (WebCore::speechSynthesisGetDefaultVoiceIdentifierForLocale):
+
 2021-05-03  Tim Nguyen  <ntim@apple.com>
 
         Remove "no-preference" value for prefers-color-scheme media query
