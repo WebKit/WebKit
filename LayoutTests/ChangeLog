@@ -1,3 +1,10 @@
+2021-05-03  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][GTK] Unreviewed test gardening. Updated expectations with latest failures from GTK release bot.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2021-05-02  Rob Buis  <rbuis@igalia.com>
 
         getPropertyValue for url path doesn't return the "#" character
