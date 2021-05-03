@@ -227,7 +227,11 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
 {
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(mode);
-    return DeprecatedGlobalSettings::avKitEnabled();
+#if HAVE(AVKIT)
+    return true;
+#else
+    return false;
+#endif
 #else
     return mode == HTMLMediaElementEnums::VideoFullscreenModeStandard || (mode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture && supportsPictureInPicture());
 #endif

@@ -1,3 +1,29 @@
+2021-05-03  Devin Rousso  <drousso@apple.com>
+
+        [macCatalyst] "Enter Full Screen" button in media controls disappears
+        https://bugs.webkit.org/show_bug.cgi?id=225210
+        <rdar://problem/77010150>
+
+        Reviewed by Eric Carlson.
+
+        In order for the "Enter Full Screen" media controls button to stay visible the `<video>`
+        must return `true` for `HTMLMediaElement::webkitSupportsFullscreen`, which calls into
+       `MediaPlayerPrivate::supportsFullscreen`. On macOS and iOS, this will always return `true`
+        because of `ENABLE(FULLSCREEN_API)`, but on macCatalyst that's not enabled, so we instead
+        use `DeprecatedGlobalSettings::avKitEnabled`, but this is only set in the WebProcess (and
+        WK1). With the GPUProcess enabled, this value is not set, so the `RemoteMediaPlayerProxy`
+        will instead get `false`.
+
+        This patch removes `DeprecatedGlobalSettings::avKitEnabled` since it's enabled on WK1 and
+        non-GPUProcess WK2, and the related iOS-only SPI appears to not be used anywhere internally,
+        instead having callsites just check `HAVE(AVKIT)`.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::VideoFullscreenManager::supportsVideoFullscreen const):
+
 2021-05-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Crash when tapping fields on cycle.travel

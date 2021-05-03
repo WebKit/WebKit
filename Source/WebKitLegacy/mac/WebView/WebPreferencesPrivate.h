@@ -273,7 +273,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 @property (nonatomic) BOOL storageTrackerEnabled;
 @property (nonatomic) unsigned audioSessionCategoryOverride;
-@property (nonatomic, getter=avKitEnabled) BOOL AVKitEnabled;
 // WARNING: this affect network performance. This must not be enabled for production use.
 // Enabling this makes WebCore reports the network data usage.
 // This is a global setting.

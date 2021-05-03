@@ -451,14 +451,10 @@ void MediaPlayerPrivateAVFoundation::prepareForRendering()
 
 bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
 {
-#if ENABLE(FULLSCREEN_API)
+    // FIXME: WebVideoFullscreenController assumes a QTKit/QuickTime media engine
+#if ENABLE(FULLSCREEN_API) || (PLATFORM(IOS_FAMILY) && HAVE(AVKIT))
     return true;
 #else
-    // FIXME: WebVideoFullscreenController assumes a QTKit/QuickTime media engine
-#if PLATFORM(IOS_FAMILY)
-    if (DeprecatedGlobalSettings::avKitEnabled())
-        return true;
-#endif
     return false;
 #endif
 }

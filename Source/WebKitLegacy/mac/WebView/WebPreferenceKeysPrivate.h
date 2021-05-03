@@ -147,7 +147,6 @@
 #define WebKitAnimatedImageAsyncDecodingEnabledPreferenceKey @"WebKitAnimatedImageAsyncDecodingEnabled"
 #if TARGET_OS_IPHONE
 #define WebKitAudioSessionCategoryOverride @"WebKitAudioSessionCategoryOverride"
-#define WebKitAVKitEnabled @"WebKitAVKitEnabled"
 #endif
 #define WebKitShouldRespectImageOrientationKey @"WebKitShouldRespectImageOrientation"
 #define WebKitRequestAnimationFrameEnabledPreferenceKey @"WebKitRequestAnimationFrameEnabled"

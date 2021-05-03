@@ -2948,9 +2948,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     WebCore::DeprecatedGlobalSettings::setAudioSessionCategoryOverride([preferences audioSessionCategoryOverride]);
     WebCore::DeprecatedGlobalSettings::setNetworkDataUsageTrackingEnabled([preferences networkDataUsageTrackingEnabled]);
     WebCore::DeprecatedGlobalSettings::setNetworkInterfaceName([preferences networkInterfaceName]);
-#if HAVE(AVKIT)
-    WebCore::DeprecatedGlobalSettings::setAVKitEnabled([preferences avKitEnabled]);
-#endif
     ASSERT_WITH_MESSAGE(settings.backForwardCacheSupportsPlugins(), "BackForwardCacheSupportsPlugins should be enabled on iOS.");
 #endif
 

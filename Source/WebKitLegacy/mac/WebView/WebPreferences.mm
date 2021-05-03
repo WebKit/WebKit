@@ -433,9 +433,6 @@ public:
         @(static_cast<int>(InterpolationQuality::Low)), WebKitInterpolationQualityPreferenceKey,
         @NO, WebKitNetworkDataUsageTrackingEnabledPreferenceKey,
         @"", WebKitNetworkInterfaceNamePreferenceKey,
-#if HAVE(AVKIT)
-        @YES, WebKitAVKitEnabled,
-#endif
 #endif
         nil];
 
@@ -2098,18 +2095,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     }
 
     [self _setUnsignedIntValue:override forKey:WebKitAudioSessionCategoryOverride];
-}
-
-- (BOOL)avKitEnabled
-{
-    return [self _boolValueForKey:WebKitAVKitEnabled];
-}
-
-- (void)setAVKitEnabled:(BOOL)flag
-{
-#if HAVE(AVKIT)
-    [self _setBoolValue:flag forKey:WebKitAVKitEnabled];
-#endif
 }
 
 - (BOOL)networkDataUsageTrackingEnabled

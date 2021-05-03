@@ -3906,9 +3906,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 #if PLATFORM(IOS_FAMILY)
     setForceAlwaysUserScalable(m_forceAlwaysUserScalable || store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
-#if HAVE(AVKIT)
-    DeprecatedGlobalSettings::setAVKitEnabled(true);
-#endif
 #endif
 
 #if ENABLE(SERVICE_WORKER)
