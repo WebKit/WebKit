@@ -1,3 +1,22 @@
+2021-05-03  Antti Koivisto  <antti@apple.com>
+
+        Move Style::ScopeOrdinal to a header of its own
+        https://bugs.webkit.org/show_bug.cgi?id=225302
+
+        Reviewed by Alan Bujtas.
+
+        Se we don't need to include StyleScope.h everywhere via Animation.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/KeyframeEffect.cpp:
+        * css/DOMCSSRegisterCustomProperty.cpp:
+        * platform/animation/Animation.h:
+        * style/ElementRuleCollector.h:
+        * style/StyleScope.h:
+        (WebCore::Style::operator++): Deleted.
+        * style/StyleScopeOrdinal.h: Added.
+        (WebCore::Style::operator++):
+
 2021-05-03  Zalan Bujtas  <zalan@apple.com>
 
         [Multi-column] Remove spanner placeholder when the spanner becomes nested
