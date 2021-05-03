@@ -1007,6 +1007,12 @@ void WebPageProxy::didNotHandleTapAsClick(const WebCore::IntPoint& point)
     pageClient().didNotHandleTapAsClick(point);
     m_uiClient->didNotHandleTapAsClick(point);
 }
+
+void WebPageProxy::didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint& point)
+{
+    pageClient().didNotHandleTapAsMeaningfulClickAtPoint(point);
+    m_uiClient->didNotHandleTapAsMeaningfulClickAtPoint(point);
+}
     
 void WebPageProxy::didCompleteSyntheticClick()
 {

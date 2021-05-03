@@ -1445,6 +1445,8 @@ public:
     PlatformXRSystemProxy& xrSystemProxy();
 #endif
 
+    void didHandleOrPreventMouseDownOrMouseUpEvent();
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -2165,6 +2167,7 @@ private:
     RefPtr<WebCore::Node> m_potentialTapNode;
     WebCore::FloatPoint m_potentialTapLocation;
     RefPtr<WebCore::SecurityOrigin> m_potentialTapSecurityOrigin;
+    bool m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick { false };
 
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad { false };
     bool m_hasRestoredExposedContentRectAfterDidCommitLoad { false };
@@ -2333,6 +2336,7 @@ private:
 #if !PLATFORM(IOS_FAMILY)
 inline void WebPage::platformWillPerformEditingCommand() { }
 inline bool WebPage::platformNeedsLayoutForEditorState(const WebCore::Frame&) const { return false; }
+inline void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent() { }
 #endif
 
 } // namespace WebKit

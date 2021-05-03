@@ -827,6 +827,7 @@ public:
     void applicationWillEnterForegroundForMedia();
     void commitPotentialTapFailed();
     void didNotHandleTapAsClick(const WebCore::IntPoint&);
+    void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&);
     void didCompleteSyntheticClick();
     void disableDoubleTapGesturesDuringTapIfNecessary(uint64_t requestID);
     void handleSmartMagnificationInformationForPotentialTap(uint64_t requestID, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel);

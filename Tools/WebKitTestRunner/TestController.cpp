@@ -2167,6 +2167,11 @@ void TestController::processDidCrash()
         exit(1);
 }
 
+void TestController::didNotHandleTapAsMeaningfulClick()
+{
+    m_currentInvocation->didNotHandleTapAsMeaningfulClick();
+}
+
 void TestController::didBeginNavigationGesture(WKPageRef)
 {
     m_currentInvocation->didBeginSwipe();

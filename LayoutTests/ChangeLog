@@ -1,3 +1,126 @@
+2021-05-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276853. rdar://problem/77458363
+
+    [iOS] Add a heuristic to determine whether a synthetic click triggered any meaningful changes
+    https://bugs.webkit.org/show_bug.cgi?id=225240
+    rdar://77221196
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Add plumbing for a `ChromeClient` hook that's called when a mousedown or mouseup event is either prevented by
+    the page, or handled with a default event handler on the element (e.g. when clicking a link).
+    
+    Test: fast/events/ios/did-not-handle-meaningful-click.html
+    
+    * page/ChromeClient.h:
+    (WebCore::ChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent):
+    * page/EventHandler.cpp:
+    (WebCore::EventHandler::handleMousePressEvent):
+    (WebCore::EventHandler::handleMouseDoubleClickEvent):
+    (WebCore::EventHandler::handleMouseReleaseEvent):
+    
+    Source/WebKit:
+    
+    Add a simple heuristic to inform WKWebView iOS clients when a tap either failed to result in a synthetic click,
+    or resulted in a synthetic click that (probably) didn't have any "meaningful side effects". While this notion of
+    "meaningfulness" isn't well defined, the idea behind the heuristic is that it should distinguish between taps on
+    clickable elements like buttons or links that trigger some noticable change on the page, vs. taps on both
+    clickable or non-clickable elements that do not trigger any changes on the page.
+    
+    For instance on a news-article-like page, this delegate method should be invoked when tapping on paragraph text
+    in the article, even if there is a click handler over the entire article or even body element. However, tapping
+    a link or a button on the same page should not cause this delegate method to be invoked. Additionally, if the
+    page explicitly prevents default behavior during a synthetic mouse event, this method should also *not* be
+    invoked.
+    
+    This behavior is roughly similar to the existing delegate method `-_webView:didNotHandleTapAsClickAtPoint:`,
+    except that this variant allows for more wiggle room around what constitutes a "meaningful" interaction with the
+    page.
+    
+    * UIProcess/API/APIUIClient.h:
+    (API::UIClient::didNotHandleTapAsMeaningfulClickAtPoint):
+    * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+    * UIProcess/API/ios/WKWebViewPrivateForTestingIOS.h:
+    * UIProcess/API/ios/WKWebViewTestingIOS.mm:
+    (-[WKWebView _didNotHandleTapAsMeaningfulClickAtPoint:]):
+    
+    See Tools/ChangeLog for more details about this testing hook.
+    
+    * UIProcess/Cocoa/UIDelegate.h:
+    * UIProcess/Cocoa/UIDelegate.mm:
+    (WebKit::UIDelegate::setDelegate):
+    (WebKit::UIDelegate::UIClient::didNotHandleTapAsMeaningfulClickAtPoint):
+    * UIProcess/PageClient.h:
+    * UIProcess/WebPageProxy.h:
+    * UIProcess/WebPageProxy.messages.in:
+    * UIProcess/ios/PageClientImplIOS.h:
+    * UIProcess/ios/PageClientImplIOS.mm:
+    (WebKit::PageClientImpl::didNotHandleTapAsMeaningfulClickAtPoint):
+    * UIProcess/ios/WebPageProxyIOS.mm:
+    (WebKit::WebPageProxy::didNotHandleTapAsMeaningfulClickAtPoint):
+    * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+    (WebKit::WebChromeClient::didHandleOrPreventMouseDownOrMouseUpEvent):
+    * WebProcess/WebCoreSupport/WebChromeClient.h:
+    * WebProcess/WebPage/WebPage.h:
+    (WebKit::WebPage::didHandleOrPreventMouseDownOrMouseUpEvent):
+    * WebProcess/WebPage/ios/WebPageIOS.mm:
+    (WebKit::isProbablyMeaningfulClick):
+    
+    Implement the core of the heuristic here. For now, it just examines the size of the click target. This isn't
+    going to satisfy the case where a page installs a click event handler on the body element (or a similar
+    element that encapsulates most of the page) and then performs hit-testing in their script, but it's somewhere to
+    start.
+    
+    (WebKit::WebPage::completeSyntheticClick):
+    (WebKit::WebPage::attemptSyntheticClick):
+    (WebKit::WebPage::didHandleOrPreventMouseDownOrMouseUpEvent):
+    (WebKit::WebPage::handleTwoFingerTapAtPoint):
+    (WebKit::WebPage::commitPotentialTapFailed):
+    
+    Tools:
+    
+    Add test runner plumbing to test the new heuristic. Note that we can't just utilize the `WKUIDelegatePrivate`
+    method directly, since we end up overriding the web view's `UIClient` via `WKPageSetPageUIClient`, so the call
+    to `m_uiClient->didNotHandleTapAsMeaningfulClickAtPoint(point);` ends up being a no-op.
+    
+    * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+    * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+    (WTR::InjectedBundle::didReceiveMessageToPage):
+    * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+    (WTR::TestRunner::installDidNotHandleTapAsMeaningfulClickCallback):
+    (WTR::TestRunner::callDidNotHandleTapAsMeaningfulClickCallback):
+    * WebKitTestRunner/InjectedBundle/TestRunner.h:
+    * WebKitTestRunner/TestController.cpp:
+    (WTR::TestController::didNotHandleTapAsMeaningfulClick):
+    * WebKitTestRunner/TestController.h:
+    * WebKitTestRunner/TestInvocation.cpp:
+    (WTR::TestInvocation::didNotHandleTapAsMeaningfulClick):
+    * WebKitTestRunner/TestInvocation.h:
+    * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+    (-[TestRunnerWKWebView _didNotHandleTapAsMeaningfulClickAtPoint:]):
+    
+    LayoutTests:
+    
+    * fast/events/ios/did-not-handle-meaningful-click-expected.txt: Added.
+    * fast/events/ios/did-not-handle-meaningful-click.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276853 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            [iOS] Add a heuristic to determine whether a synthetic click triggered any meaningful changes
+            https://bugs.webkit.org/show_bug.cgi?id=225240
+            rdar://77221196
+
+            Reviewed by Tim Horton.
+
+            * fast/events/ios/did-not-handle-meaningful-click-expected.txt: Added.
+            * fast/events/ios/did-not-handle-meaningful-click.html: Added.
+
 2021-04-25  Felipe Erias  <felipeerias@igalia.com>
 
         [css-flexbox] Table layout disregards overriding width

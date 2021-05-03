@@ -256,6 +256,9 @@ interface TestRunner {
     object numberOfDFGCompiles(object function);
     object neverInlineFunction(object function);
 
+    // UI delegate hooks.
+    undefined installDidNotHandleTapAsMeaningfulClickCallback(object callback);
+
     // Swipe gestures
     undefined installDidBeginSwipeCallback(object callback);
     undefined installWillEndSwipeCallback(object callback);

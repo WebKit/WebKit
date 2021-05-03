@@ -26,6 +26,7 @@
 #import "config.h"
 #import "TestRunnerWKWebView.h"
 
+#import "TestController.h"
 #import "WebKitTestRunnerDraggingInfo.h"
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
@@ -394,6 +395,11 @@ IGNORE_WARNINGS_END
     self.showingPopover = NO;
     if (self.didDismissPopoverCallback)
         self.didDismissPopoverCallback();
+}
+
+- (void)_didNotHandleTapAsMeaningfulClickAtPoint:(CGPoint)point
+{
+    WTR::TestController::singleton().didNotHandleTapAsMeaningfulClick();
 }
 
 - (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
