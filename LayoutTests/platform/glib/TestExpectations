@@ -2356,12 +2356,6 @@ fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ ImageOnlyFailur
 # It was a flaky crash until r275516, but it's still a timeout flaky. 
 webkit.org/b/224112 media/video-as-img-output-pts.html [ Timeout Pass ]
 
-webkit.org/b/225292 imported/w3c/web-platform-tests/FileAPI/file/send-file-formdata-controls.tentative.html [ Crash ]
-webkit.org/b/225292 imported/w3c/web-platform-tests/FileAPI/file/send-file-formdata-punctuation.tentative.html [ Crash ]
-webkit.org/b/225292 imported/w3c/web-platform-tests/FileAPI/file/send-file-formdata-utf-8.html [ Crash ]
-webkit.org/b/225292 imported/w3c/web-platform-tests/FileAPI/file/send-file-formdata.html [ Crash ]
-webkit.org/b/225292 imported/w3c/web-platform-tests/fetch/api/response/response-consume.html [ Crash ]
-
 webkit.org/b/225292 imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.html [ Failure ]
 webkit.org/b/225292 imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.worker.html [ Failure ]
 
