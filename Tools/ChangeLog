@@ -1,3 +1,13 @@
+2021-05-03  Alex Christensen  <achristensen@webkit.org>
+
+        WKWebView: WKURLSchemeHandler request don't have Range headers for custom scheme videos
+        https://bugs.webkit.org/show_bug.cgi?id=203302
+        <rdar://63750321>
+
+        Reviewed by Jer Noble and Geoff Garen.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKURLSchemeHandler-1.mm:
+
 2021-05-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r275810): [WebKitTestRunner] fast/text/basic/004.html fails after running fast/layoutformattingcontext tests

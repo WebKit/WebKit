@@ -246,6 +246,13 @@ void WebCoreAVFResourceLoader::startLoading()
     ResourceRequest request(nsRequest);
     request.setPriority(ResourceLoadPriority::Low);
 
+    if (AVAssetResourceLoadingDataRequest *dataRequest = [m_avRequest dataRequest]; dataRequest.requestedLength
+        && !request.hasHTTPHeaderField(HTTPHeaderName::Range)
+        && !request.url().protocolIsBlob()) {
+        String rangeEnd = dataRequest.requestsAllDataToEndOfResource ? "*"_s : makeString(dataRequest.requestedOffset + dataRequest.requestedLength - 1);
+        request.addHTTPHeaderField(HTTPHeaderName::Range, makeString("bytes=", dataRequest.requestedOffset, '-', rangeEnd));
+    }
+
     if (auto* loader = m_parent->player()->cachedResourceLoader()) {
         m_resourceMediaLoader = CachedResourceMediaLoader::create(*this, *loader, ResourceRequest(request));
         if (m_resourceMediaLoader)

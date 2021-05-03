@@ -1473,3 +1473,53 @@ TEST(URLSchemeHandler, APIRedirect)
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"Document URL: redirectone://bar.com/anothertest.html", [lastScriptMessage body]);
 }
+
+TEST(URLSchemeHandler, Ranges)
+{
+    RetainPtr<NSData> videoData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]];
+
+    auto handler = adoptNS([[TestURLSchemeHandler alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"ranges"];
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    __block bool foundRangeRequest = false;
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/main.html"]) {
+            NSString *html = @"<video autoplay onplaying=\"alert('playing')\"><source src='/video.m4v' type='video/mp4'></video>";
+            [task didReceiveResponse:[[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil] autorelease]];
+            [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
+            [task didFinish];
+            return;
+        }
+
+        NSString *requestRange = [task.request.allHTTPHeaderFields objectForKey:@"Range"];
+        EXPECT_TRUE(requestRange);
+
+        String requestRangeString(requestRange);
+        String rangeBytes = "bytes="_s;
+        auto begin = requestRangeString.find(rangeBytes, 0);
+        ASSERT(begin != notFound);
+        auto dash = requestRangeString.find('-', begin);
+        ASSERT(dash != notFound);
+        auto end = requestRangeString.length();
+
+        auto rangeBeginString = requestRangeString.substring(begin + rangeBytes.length(), dash - begin - rangeBytes.length());
+        auto rangeEndString = requestRangeString.substring(dash + 1, end - dash - 1);
+        auto rangeBegin = rangeBeginString.toUInt64Strict();
+        auto rangeEnd = rangeEndString == "*" ? [videoData length] : rangeEndString.toUInt64Strict();
+
+        auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://webkit.org/"] statusCode:206 HTTPVersion:@"HTTP/1.1" headerFields:@{
+            @"Content-Range" : [NSString stringWithFormat:@"bytes %llu-%llu/%lu", rangeBegin, rangeEnd, (unsigned long)[videoData length]],
+            @"Content-Length" : [NSString stringWithFormat:@"%llu", rangeEnd - rangeBegin + 1]
+        }]);
+
+        [task didReceiveResponse:response.get()];
+        [task didReceiveData:[videoData subdataWithRange:NSMakeRange(rangeBegin, rangeEnd - rangeBegin)]];
+        [task didFinish];
+        foundRangeRequest = true;
+    }];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"ranges:///main.html"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "playing");
+    EXPECT_TRUE(foundRangeRequest);
+}
