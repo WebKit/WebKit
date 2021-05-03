@@ -376,7 +376,12 @@ void PlatformMediaSession::clientCharacteristicsChanged()
 
 static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)
 {
+#if ENABLE(VIDEO)
     return mediaType == MediaElementSession::MediaType::VideoAudio || mediaType == MediaElementSession::MediaType::Audio;
+#else
+    UNUSED_PARAM(mediaType);
+    return false;
+#endif
 }
 
 bool PlatformMediaSession::canPlayConcurrently(const PlatformMediaSession& otherSession) const

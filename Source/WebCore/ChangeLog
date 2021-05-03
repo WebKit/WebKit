@@ -1,3 +1,15 @@
+2021-05-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] Build with VIDEO=OFF fails
+        https://bugs.webkit.org/show_bug.cgi?id=225316
+
+        Reviewed by Adrian Perez de Castro.
+
+        * platform/audio/PlatformMediaSession.cpp:
+        (WebCore::isPlayingAudio): Guard against invalid media types, when video is disabled we can
+        safely return false here as well.
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h: Include what we use (UniqueRef).
+
 2021-05-03  Sihui Liu  <sihui_liu@apple.com>
 
         Transfer ownership to ARC in speechSynthesisGetDefaultVoiceIdentifierForLocale
