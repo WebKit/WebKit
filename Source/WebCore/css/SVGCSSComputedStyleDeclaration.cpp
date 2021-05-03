@@ -136,15 +136,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return SVGLengthValue::toCSSPrimitiveValue(svgStyle.kerning());
     case CSSPropertyMarkerEnd:
         if (!svgStyle.markerEndResource().isEmpty())
-            return CSSPrimitiveValue::create(makeString("#", svgStyle.markerEndResource()), CSSUnitType::CSS_URI);
+            return CSSPrimitiveValue::create(makeString('#', svgStyle.markerEndResource()), CSSUnitType::CSS_URI);
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
     case CSSPropertyMarkerMid:
         if (!svgStyle.markerMidResource().isEmpty())
-            return CSSPrimitiveValue::create(makeString("#", svgStyle.markerMidResource()), CSSUnitType::CSS_URI);
+            return CSSPrimitiveValue::create(makeString('#', svgStyle.markerMidResource()), CSSUnitType::CSS_URI);
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
     case CSSPropertyMarkerStart:
         if (!svgStyle.markerStartResource().isEmpty())
-            return CSSPrimitiveValue::create(makeString("#", svgStyle.markerStartResource()), CSSUnitType::CSS_URI);
+            return CSSPrimitiveValue::create(makeString('#', svgStyle.markerStartResource()), CSSUnitType::CSS_URI);
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
     case CSSPropertyStroke:
         return adjustSVGPaintForCurrentColor(svgStyle.strokePaintType(), svgStyle.strokePaintUri(), svgStyle.strokePaintColor(), style->color());

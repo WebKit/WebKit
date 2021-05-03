@@ -1,3 +1,15 @@
+2021-05-03  Rob Buis  <rbuis@igalia.com>
+
+        getPropertyValue for url path doesn't return the "#" character
+        https://bugs.webkit.org/show_bug.cgi?id=215409
+
+        Reviewed by Youenn Fablet.
+
+        Address post review comments.
+
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::svgPropertyValue):
+
 2021-05-03  Youenn Fablet  <youenn@apple.com>
 
         REGRESSION (r276633): fast/mediastream/media-stream-track-interrupted.html is consistently timing out
