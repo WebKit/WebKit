@@ -9138,18 +9138,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 }
 #endif
 
+
+
+
 #if ENABLE(APP_HIGHLIGHTS)
-- (void)setUpAppHighlightMenusIfNeeded
-{
-    if (_hasSetUpAppHighlightMenus || !_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange)
-        return;
-
-    auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
-    auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
-    [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
-    _hasSetUpAppHighlightMenus = YES;
-}
-
 - (void)createHighlightInCurrentGroupWithRange:(id)sender
 {
     _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::No);

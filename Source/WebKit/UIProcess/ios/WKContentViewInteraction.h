@@ -452,10 +452,6 @@ enum class ProceedWithImageExtraction : bool {
     BlockPtr<void()> _actionToPerformAfterReceivingEditDragSnapshot;
 #endif
 
-#if ENABLE(APP_HIGHLIGHTS)
-    BOOL _hasSetUpAppHighlightMenus;
-#endif
-
 #if HAVE(PEPPER_UI_CORE)
     RetainPtr<WKFocusedFormControlView> _focusedFormControlView;
 #if HAVE(QUICKBOARD_CONTROLLER)
