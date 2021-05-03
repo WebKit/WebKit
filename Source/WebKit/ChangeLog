@@ -1,3 +1,40 @@
+2021-05-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Grouped <select> options should appear inline in the menu
+        https://bugs.webkit.org/show_bug.cgi?id=225314
+        <rdar://problem/76785797>
+
+        Reviewed by Wenson Hsieh.
+
+        Currently, <select> options within an <optgroup> element are presented
+        within an expandable/collapsible submenu. However, to better match the
+        visual style across the rest of the system, the grouped options should
+        appear inline in the root menu, and groups should be separated by a
+        visual separator.
+
+        Covered by existing tests. A testing-only method was updated to reflect
+        the changes.
+
+        * UIProcess/ios/forms/WKFormSelectPicker.mm:
+        (-[WKSelectPicker createMenu]):
+
+        Used UIMenuOptionsDisplayInline to present submenus inline in the root
+        menu. This option separates submenus using a visual separator.
+
+        Since inline submenus do not support a title, and <optgroup> elements
+        can be labeled, the group title is displayed as a disabled action at
+        the top of the submenu.
+
+        Removed logic to promote the grouped submenu to the root menu in the
+        case where only one submenu contains all options, since the submenu
+        now appears inline, and an additional tap is no longer necessary to
+        view the options.
+
+        (-[WKSelectPicker actionForOptionIndex:]):
+
+        Updated this testing-only method to account for the potential existence
+        of an additional action representing a group title.
+
 2021-05-03  Devin Rousso  <drousso@apple.com>
 
         [macCatalyst] "Enter Full Screen" button in media controls disappears

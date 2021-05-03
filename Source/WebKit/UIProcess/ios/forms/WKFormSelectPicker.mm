@@ -564,6 +564,12 @@ static const float GroupOptionTextColorAlpha = 0.5;
             NSString *groupText = optionItem.text;
             NSMutableArray *groupedItems = [NSMutableArray array];
 
+            if (groupText.length) {
+                UIAction *action = [UIAction actionWithTitle:groupText image:nil identifier:nil handler:^(UIAction *action) { }];
+                action.attributes = UIMenuElementAttributesDisabled;
+                [groupedItems addObject:action];
+            }
+
             currentIndex++;
             while (currentIndex < _view.focusedSelectElementOptions.size()) {
                 auto& childOptionItem = _view.focusedSelectElementOptions[currentIndex];
@@ -576,7 +582,7 @@ static const float GroupOptionTextColorAlpha = 0.5;
                 currentIndex++;
             }
 
-            UIMenu *groupMenu = [UIMenu menuWithTitle:groupText children:groupedItems];
+            UIMenu *groupMenu = [UIMenu menuWithTitle:groupText image:nil identifier:nil options:UIMenuOptionsDisplayInline children:groupedItems];
             [items addObject:groupMenu];
             continue;
         }
@@ -586,12 +592,6 @@ static const float GroupOptionTextColorAlpha = 0.5;
         optionIndex++;
         currentIndex++;
     }
-
-    // Some sites, such as Square Checkout, wrap all the element's <option>s in
-    // an a single <optgroup>. In this case, promote the grouped submenu to the
-    // root menu, avoiding the need for an additional tap to view the options.
-    if (items.count == 1 && [[items firstObject] isKindOfClass:UIMenu.class])
-        return [items firstObject];
 
     return [UIMenu menuWithTitle:@"" children:items];
 }
@@ -626,10 +626,16 @@ static const float GroupOptionTextColorAlpha = 0.5;
         }
 
         UIMenu *groupedMenu = (UIMenu *)menuElement;
-        if (currentIndex + groupedMenu.children.count <= (NSUInteger)optionIndex)
-            currentIndex += groupedMenu.children.count;
+        NSUInteger numGroupedOptions = groupedMenu.children.count;
+
+        // The first child of a grouped menu with a title represents the title, and is not a selectable option.
+        if (groupedMenu.title.length)
+            numGroupedOptions--;
+
+        if (currentIndex + numGroupedOptions <= (NSUInteger)optionIndex)
+            currentIndex += numGroupedOptions;
         else
-            return (UIAction *)[groupedMenu.children objectAtIndex:optionIndex - currentIndex];
+            return (UIAction *)[groupedMenu.children objectAtIndex:(groupedMenu.children.count - numGroupedOptions) + (optionIndex - currentIndex)];
     }
 
     return nil;
