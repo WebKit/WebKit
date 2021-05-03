@@ -1,3 +1,16 @@
+2021-05-03  Tim Nguyen  <ntim@apple.com>
+
+        Remove "no-preference" value for prefers-color-scheme media query
+        https://bugs.webkit.org/show_bug.cgi?id=212952
+
+        Reviewed by Antti Koivisto.
+
+        WPT parsing tests still fail due to: https://bugs.webkit.org/show_bug.cgi?id=225282
+        Updated evaluation tests to use `not (prefers-color-scheme)` instead.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::prefersColorSchemeEvaluate):
+
 2021-05-03  Antti Koivisto  <antti@apple.com>
 
         Move Style::ScopeOrdinal to a header of its own

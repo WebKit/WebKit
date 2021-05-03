@@ -807,8 +807,6 @@ static bool prefersColorSchemeEvaluate(CSSValue* value, const CSSToLengthConvers
     bool useDarkAppearance = frame.page()->useDarkAppearance();
 
     switch (keyword) {
-    case CSSValueNoPreference:
-        return false;
     case CSSValueDark:
         return useDarkAppearance;
     case CSSValueLight:
