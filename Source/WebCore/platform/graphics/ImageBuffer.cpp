@@ -73,19 +73,6 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
     return imageBuffer;
 }
 
-RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, const GraphicsContext& context)
-{
-    RefPtr<ImageBuffer> imageBuffer;
-    
-    if (context.renderingMode() == RenderingMode::Accelerated)
-        imageBuffer = AcceleratedImageBuffer::create(size, context);
-    
-    if (!imageBuffer)
-        imageBuffer = UnacceleratedImageBuffer::create(size, context);
-
-    return imageBuffer;
-}
-
 RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, const GraphicsContext& context)
 {
     if (size.isEmpty())
@@ -93,14 +80,20 @@ RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, c
 
     IntSize scaledSize = ImageBuffer::compatibleBufferSize(size, context);
 
-    auto imageBuffer = ImageBuffer::create(scaledSize, context);
+    RefPtr<ImageBuffer> imageBuffer;
+
+    if (context.renderingMode() == RenderingMode::Accelerated)
+        imageBuffer = AcceleratedImageBuffer::create(scaledSize, context);
+    
+    if (!imageBuffer)
+        imageBuffer = UnacceleratedImageBuffer::create(scaledSize, context);
+
     if (!imageBuffer)
         return nullptr;
 
     // Set up a corresponding scale factor on the graphics context.
     imageBuffer->context().scale(scaledSize / size);
     return imageBuffer;
-
 }
 
 RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, DestinationColorSpace colorSpace, const GraphicsContext& context)
@@ -121,7 +114,7 @@ RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, D
 
 RefPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize& size, float resolutionScale, DestinationColorSpace colorSpace, const GraphicsContext& context)
 {
-    return ImageBuffer::create(size, context.renderingMode(), resolutionScale, colorSpace);
+    return ImageBuffer::create(size, context.renderingMode(), resolutionScale, colorSpace, PixelFormat::BGRA8);
 }
 
 bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)

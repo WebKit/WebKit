@@ -273,7 +273,7 @@ ImageBuffer* FilterEffect::imageBufferResult()
     if (m_imageBufferResult)
         return m_imageBufferResult.get();
 
-    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter.renderingMode(), m_filter.filterScale(), m_resultColorSpace);
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), m_filter.renderingMode(), m_filter.filterScale(), m_resultColorSpace, PixelFormat::BGRA8);
     if (!m_imageBufferResult)
         return nullptr;
 
@@ -439,7 +439,7 @@ RefPtr<ImageData> FilterEffect::convertImageDataToColorSpace(DestinationColorSpa
     destinationRect.scale(1 / m_filter.filterScale());
     FloatSize clampedSize = ImageBuffer::clampedSize(destinationRect.size());
     // Create an ImageBuffer to store incoming ImageData
-    auto buffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), operatingColorSpace());
+    auto buffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), operatingColorSpace(), PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
     buffer->putImageData(outputFormat, inputData, destinationRect);
@@ -450,7 +450,7 @@ RefPtr<ImageData> FilterEffect::convertImageBufferToColorSpace(DestinationColorS
 {
     FloatSize clampedSize = ImageBuffer::clampedSize(rect.size());
     // Create an ImageBuffer with the correct color space and utilize CG to handle color space conversion
-    auto convertedBuffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), targetColorSpace);
+    auto convertedBuffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), targetColorSpace, PixelFormat::BGRA8);
     if (!convertedBuffer)
         return nullptr;
     // Color space conversion happens internally when drawing from one image buffer to another
@@ -554,7 +554,7 @@ ImageBuffer* FilterEffect::createImageBufferResult()
         return nullptr;
 
     FloatSize clampedSize = ImageBuffer::clampedSize(m_absolutePaintRect.size());
-    m_imageBufferResult = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), m_resultColorSpace);
+    m_imageBufferResult = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), m_resultColorSpace, PixelFormat::BGRA8);
     return m_imageBufferResult.get();
 }
 

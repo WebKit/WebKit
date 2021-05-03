@@ -344,11 +344,11 @@ void CSSFilter::allocateBackingStoreIfNeeded(const GraphicsContext& targetContex
     IntSize logicalSize { m_sourceDrawingRegion.size() };
     if (!sourceImage() || sourceImage()->logicalSize() != logicalSize) {
 #if USE(DIRECT2D)
-        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale()));
+        setSourceImage(ImageBuffer::create(logicalSize, renderingMode(), &targetContext, filterScale(), DestinationColorSpace::SRGB, PixelFormat::BGRA8));
 #else
         UNUSED_PARAM(targetContext);
         RenderingMode mode = m_filterRenderer ? RenderingMode::Accelerated : renderingMode();
-        setSourceImage(ImageBuffer::create(logicalSize, mode, filterScale()));
+        setSourceImage(ImageBuffer::create(logicalSize, mode, filterScale(), DestinationColorSpace::SRGB, PixelFormat::BGRA8));
 #endif
     }
     m_graphicsBufferAttached = true;

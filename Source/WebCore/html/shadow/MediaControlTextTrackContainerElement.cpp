@@ -418,7 +418,7 @@ RefPtr<Image> MediaControlTextTrackContainerElement::createTextTrackRepresentati
     IntRect paintingRect = IntRect(IntPoint(), layer->size());
 
     // FIXME (149422): This buffer should not be unconditionally unaccelerated.
-    auto buffer = ImageBuffer::create(paintingRect.size(), RenderingMode::Unaccelerated, deviceScaleFactor);
+    auto buffer = ImageBuffer::create(paintingRect.size(), RenderingMode::Unaccelerated, deviceScaleFactor, DestinationColorSpace::SRGB, PixelFormat::BGRA8);
     if (!buffer)
         return nullptr;
 

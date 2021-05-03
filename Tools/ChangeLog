@@ -1,3 +1,14 @@
+2021-05-03  Sam Weinig  <weinig@apple.com>
+
+        Remove default parameter values for color space and pixel format from ImageBuffer::create to make it clear everwhere we are explicitly requesting SRGB/BGRA8 buffers
+        https://bugs.webkit.org/show_bug.cgi?id=225288
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/Tests/WebCore/cg/DisplayListTestsCG.cpp:
+        (TestWebKitAPI::TEST):
+        Pass arguments explicitly that were previously default values.
+
 2021-05-03  Aakash Jain  <aakash_jain@apple.com>
 
         Remove unused gtk_im_multicontext_get_slave from valgrind/suppressions.txt

@@ -1,3 +1,89 @@
+2021-05-03  Sam Weinig  <weinig@apple.com>
+
+        Remove default parameter values for color space and pixel format from ImageBuffer::create to make it clear everwhere we are explicitly requesting SRGB/BGRA8 buffers
+        https://bugs.webkit.org/show_bug.cgi?id=225288
+
+        Reviewed by Anders Carlsson.
+
+        To make it super clear exactly what type of ImageBuffers we are creating, this
+        removes the default parameters for the scale, color space and pixel format from
+        the ImageBuffer::create() functions.
+
+        This allows us to easily see exactly where we are creating 8-bit sRGB buffers
+        and potentially losing non-sRGB and wide (> 8-bit) source data. In practice, many
+        of these sites are wrong and should be updated to use a color space and pixel
+        format matching the source they are going to be copying/buffering.
+
+        I did not update the ImageBuffer::createCompatibleBuffer, as it is less clear what
+        to do about them, or what exactly is meant by "compatible", as it seems to be
+        inconsistent from one to the other.
+
+        Ultimately, if we want to make it easy to create an ImageBuffer that has the same
+        underlying characteristics of whatever a GraphicsContext is drawing to, we will need
+        to update GraphicsContext to be able to provide scale, color space and pixel format
+        information directly. This will probably require some new mechanism for representing
+        color space that can either be a DestinationColorSpace or a platform specific color
+        space object (e.g. CGColorSpaceRef).
+
+        * Modules/async-clipboard/ClipboardItemBindingsDataSource.cpp:
+        (WebCore::ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNeeded):
+        * Modules/mediasession/MediaMetadata.cpp:
+        (WebCore::ArtworkImageLoader::notifyFinished):
+        * css/CSSFilterImageValue.cpp:
+        (WebCore::CSSFilterImageValue::image):
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createImageBuffer):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::createCompositingBuffer):
+        * html/canvas/ImageBitmapRenderingContext.cpp:
+        (WebCore::ImageBitmapRenderingContext::setOutputBitmap):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer):
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::createTextTrackRepresentationImage):
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::indexForData):
+        (WebCore::InspectorCanvas::buildArrayForCanvasPattern):
+        * page/FrameSnapshotting.cpp:
+        (WebCore::snapshotFrameRectWithClip):
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::screenshot):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::preTransformedNativeImageForCurrentFrame):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::CrossfadeGeneratedImage::drawPattern):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::getScratchBuffer):
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawShadowLayer):
+        * platform/graphics/coreimage/FilterEffectRendererCoreImage.mm:
+        (WebCore::FilterEffectRendererCoreImage::renderToImageBuffer):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::imageBufferResult):
+        (WebCore::FilterEffect::convertImageDataToColorSpace):
+        (WebCore::FilterEffect::convertImageBufferToColorSpace):
+        (WebCore::FilterEffect::createImageBufferResult):
+        * platform/graphics/nicosia/texmap/NicosiaGCGLLayer.cpp:
+        (Nicosia::GCGLLayer::swapBuffersIfNeeded):
+        * platform/graphics/texmap/BitmapTexture.cpp:
+        (WebCore::BitmapTexture::updateContents):
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::imageBuffer const):
+        * rendering/CSSFilter.cpp:
+        (WebCore::CSSFilter::allocateBackingStoreIfNeeded):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::createImageBuffer):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImage):
+
 2021-05-03  Chris Lord  <clord@igalia.com>
 
         Decoding an SVG off the main thread causes a crash
