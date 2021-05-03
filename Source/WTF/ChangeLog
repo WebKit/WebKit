@@ -1,3 +1,23 @@
+2021-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Restore pre-r276879 behavior for FileSystem::deleteFile() and FileSystem::deleteEmptyDirectory()
+        https://bugs.webkit.org/show_bug.cgi?id=225289
+
+        Reviewed by Darin Adler.
+
+        Restore pre-r276879 behavior for FileSystem::deleteFile() and FileSystem::deleteEmptyDirectory() to
+        reduce the risk of regressions. In particular, calling FileSystem::deleteFile() on an empty directory
+        now fails and calling FileSystem::deleteEmptyDirectory() on a non-directory now fails.
+
+        I have also gotten rid of the macOS-specific implementation of deleteEmptyDirectory() and merged the
+        needed behavior (Dealing with .DS_Store files) to the generic function.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::deleteFile):
+        (WTF::FileSystemImpl::deleteEmptyDirectory):
+        * wtf/mac/FileSystemMac.mm:
+        (WTF::FileSystem::deleteEmptyDirectory): Deleted.
+
 2021-05-02  Sam Weinig  <weinig@apple.com>
 
         Add support for DestinationColorSpace::DisplayP3 in preparation for DisplayP3 canvas

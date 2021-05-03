@@ -223,12 +223,77 @@ TEST_F(FileSystemTest, deleteFile)
     EXPECT_FALSE(FileSystem::deleteFile(tempFilePath()));
 }
 
+TEST_F(FileSystemTest, deleteFileOnEmptyDirectory)
+{
+    EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
+    EXPECT_FALSE(FileSystem::deleteFile(tempEmptyFolderPath()));
+    EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
+}
+
 TEST_F(FileSystemTest, deleteEmptyDirectory)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
     EXPECT_TRUE(FileSystem::deleteEmptyDirectory(tempEmptyFolderPath()));
     EXPECT_FALSE(FileSystem::fileExists(tempEmptyFolderPath()));
     EXPECT_FALSE(FileSystem::deleteEmptyDirectory(tempEmptyFolderPath()));
+}
+
+#if PLATFORM(MAC)
+TEST_F(FileSystemTest, deleteEmptyDirectoryContainingDSStoreFile)
+{
+    EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
+
+    // Create .DSStore file.
+    auto dsStorePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".DS_Store");
+    auto dsStoreHandle = FileSystem::openFile(dsStorePath, FileSystem::FileOpenMode::Write);
+    FileSystem::writeToFile(dsStoreHandle, FileSystemTestData, strlen(FileSystemTestData));
+    FileSystem::closeFile(dsStoreHandle);
+    EXPECT_TRUE(FileSystem::fileExists(dsStorePath));
+
+    EXPECT_TRUE(FileSystem::deleteEmptyDirectory(tempEmptyFolderPath()));
+    EXPECT_FALSE(FileSystem::fileExists(tempEmptyFolderPath()));
+}
+#endif
+
+TEST_F(FileSystemTest, deleteEmptyDirectoryOnNonEmptyDirectory)
+{
+    EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
+
+    // Create .DSStore file.
+    auto dsStorePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), ".DS_Store");
+    auto dsStoreHandle = FileSystem::openFile(dsStorePath, FileSystem::FileOpenMode::Write);
+    FileSystem::writeToFile(dsStoreHandle, FileSystemTestData, strlen(FileSystemTestData));
+    FileSystem::closeFile(dsStoreHandle);
+    EXPECT_TRUE(FileSystem::fileExists(dsStorePath));
+
+    // Create a dummy file.
+    auto dummyFilePath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "dummyFile");
+    auto dummyFileHandle = FileSystem::openFile(dummyFilePath, FileSystem::FileOpenMode::Write);
+    FileSystem::writeToFile(dummyFileHandle, FileSystemTestData, strlen(FileSystemTestData));
+    FileSystem::closeFile(dummyFileHandle);
+    EXPECT_TRUE(FileSystem::fileExists(dummyFilePath));
+
+    EXPECT_FALSE(FileSystem::deleteEmptyDirectory(tempEmptyFolderPath()));
+    EXPECT_TRUE(FileSystem::fileExists(tempEmptyFolderPath()));
+    EXPECT_TRUE(FileSystem::fileExists(dsStorePath));
+    EXPECT_TRUE(FileSystem::fileExists(dummyFilePath));
+
+    EXPECT_TRUE(FileSystem::deleteNonEmptyDirectory(tempEmptyFolderPath()));
+    EXPECT_FALSE(FileSystem::fileExists(tempEmptyFolderPath()));
+}
+
+TEST_F(FileSystemTest, deleteEmptyDirectoryOnARegularFile)
+{
+    EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
+    EXPECT_FALSE(FileSystem::deleteEmptyDirectory(tempFilePath()));
+    EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));
+}
+
+TEST_F(FileSystemTest, deleteEmptyDirectoryDoesNotExist)
+{
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist");
+    EXPECT_FALSE(FileSystem::fileExists(doesNotExistPath));
+    EXPECT_FALSE(FileSystem::deleteEmptyDirectory(doesNotExistPath));
 }
 
 TEST_F(FileSystemTest, moveFile)

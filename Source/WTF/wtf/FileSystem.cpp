@@ -493,19 +493,42 @@ bool fileExists(const String& path)
 bool deleteFile(const String& path)
 {
     std::error_code ec;
+    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
+
+    auto fileStatus = std::filesystem::symlink_status(fsPath, ec);
+    if (ec || fileStatus.type() == std::filesystem::file_type::directory)
+        return false;
+
     // remove() returns false on error so no need to check ec.
-    return std::filesystem::remove(fileSystemRepresentation(path).data(), ec);
+    return std::filesystem::remove(fsPath, ec);
 }
 
-// We currently use a different implementation on macOS to deal with .DS_Store files that may be present in otherwise empty directories.
-#if !PLATFORM(MAC)
 bool deleteEmptyDirectory(const String& path)
 {
     std::error_code ec;
-    // remove() returns false on error so no need to check ec.
-    return std::filesystem::remove(fileSystemRepresentation(path).data(), ec);
-}
+    std::filesystem::path fsPath = fileSystemRepresentation(path).data();
+
+    auto fileStatus = std::filesystem::symlink_status(fsPath, ec);
+    if (ec || fileStatus.type() != std::filesystem::file_type::directory)
+        return false;
+
+#if PLATFORM(MAC)
+    bool containsSingleDSStoreFile = false;
+    for (auto& entry : std::filesystem::directory_iterator(fsPath)) {
+        if (entry.path().filename() == ".DS_Store")
+            containsSingleDSStoreFile = true;
+        else {
+            containsSingleDSStoreFile = false;
+            break;
+        }
+    }
+    if (containsSingleDSStoreFile)
+        std::filesystem::remove(fsPath / ".DS_Store", ec);
 #endif
+
+    // remove() returns false on error so no need to check ec.
+    return std::filesystem::remove(fsPath, ec);
+}
 
 bool moveFile(const String& oldPath, const String& newPath)
 {
