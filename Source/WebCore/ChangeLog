@@ -1,3 +1,16 @@
+2021-05-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS][FCR] Missing fill color on slider ticks
+        https://bugs.webkit.org/show_bug.cgi?id=225318
+        <rdar://problem/77100313>
+
+        Reviewed by Wenson Hsieh.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::paintSliderTicks):
+
+        Slider ticks should fill in blue as the knob passes them.
+
 2021-05-03  Sihui Liu  <sihui_liu@apple.com>
 
         Unreviewed, reverting r276913.
