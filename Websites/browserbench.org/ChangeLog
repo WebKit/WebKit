@@ -1,3 +1,647 @@
+2021-05-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Copy PerformanceTests/MotionMark to WebSites/browserbench.org/MotionMark1.2
+        https://bugs.webkit.org/show_bug.cgi?id=225287
+
+        Reviewed by Maciej Stachowiak and Ryosuke Niwa.
+
+        This patch copies the files, and also updates the version in WebSites/browserbench.org
+        to "1.2." It also updates the "about" page to include a description of the changes.
+
+        No existing links have been updated to point to this new version.
+
+        * MotionMark1.2/about.html: Added.
+        * MotionMark1.2/developer.html: Added.
+        * MotionMark1.2/index.html: Added.
+        * MotionMark1.2/resources/debug-runner/d3.min.js: Added.
+        * MotionMark1.2/resources/runner/benchmark-runner.js: Added.
+        (BenchmarkRunnerState.Utilities.createClass):
+        (this.next.currentSuite):
+        (this.next.currentTest):
+        (this.next.isFirstTest):
+        (this.next.next):
+        (this.next.frame.onload):
+        (this.next.prepareCurrentTest):
+        (this.next):
+        (BenchmarkRunner.Utilities.createClass):
+        (_appendFrame):
+        (_removeFrame):
+        (_runBenchmarkAndRecordResults):
+        (step):
+        (runAllSteps):
+        (this._runNextIteration):
+        (runMultipleIterations):
+        (_finalize):
+        * MotionMark1.2/resources/runner/crystal.svg: Added.
+        * MotionMark1.2/resources/runner/lines.svg: Added.
+        * MotionMark1.2/resources/runner/logo.svg: Added.
+        * MotionMark1.2/resources/runner/motionmark.css: Added.
+        (html,):
+        (body):
+        (body.showing-intro,):
+        (body.showing-test-container):
+        (body.images-loaded):
+        (@media screen and (min-width: 667px) body):
+        (@media screen and (min-width: 667px) body.showing-intro,):
+        (@media screen and (min-width: 1025px) body.showing-intro,):
+        (::selection):
+        (.hidden):
+        (section):
+        (section.selected):
+        (.logo):
+        (.logo svg):
+        (.logo div):
+        (body.images-loaded .logo svg):
+        (@media screen and (min-width: 667px) .logo svg):
+        (@media screen and (min-width: 667px) .logo div):
+        (section .body):
+        (section .body p):
+        (@media screen and (min-width: 667px) section .body):
+        (@media screen and (min-width: 667px) section button):
+        (button):
+        (body.images-loaded button):
+        (button:hover):
+        (button:active):
+        (button:disabled):
+        (@media print button):
+        (.portrait-orientation-check):
+        (@media screen and (max-device-width: 1025px) and (orientation: portrait) .portrait-orientation-check):
+        (@media screen and (max-device-width: 1025px) and (orientation: portrait) .landscape-orientation-check):
+        (@keyframes background-fade):
+        (@keyframes background-color):
+        (12%, 20%):
+        (22%, 30%):
+        (32%, 40%):
+        (42%, 50%):
+        (52%, 60%):
+        (62%, 70%):
+        (72%, 80%):
+        (82%, 90%):
+        (92%, 100%):
+        (@keyframes foreground-color):
+        (#intro, #about):
+        (#intro):
+        (body.images-loaded #intro):
+        (#about .body):
+        (#about li):
+        (#about button):
+        (#about h3):
+        (#about #log):
+        (#about #log li):
+        (@media screen and (min-width: 667px) #about .body):
+        (@media screen and (min-width: 667px) #about ol, #about ul):
+        (#intro a, #about a,):
+        (.frame-container):
+        (.frame-container > iframe):
+        (body.small .frame-container):
+        (body.medium .frame-container):
+        (body.large .frame-container):
+        (#results):
+        (#results .body):
+        (#results .score-container):
+        (#results .table-container):
+        (#results .table-container > div):
+        (#results .score):
+        (#results .confidence):
+        (#results table):
+        (#results table td,):
+        (#results table td.suites-separator):
+        (#results table tr:nth-child(even)):
+        (#results #results-header):
+        (#results #results-score):
+        (#results #results-data span):
+        (#results #results-header td,):
+        (#results #results-score td,):
+        (#results #results-score td):
+        (@media screen and (min-width: 667px) #results .score,):
+        (.detail span):
+        (body.small .detail .small,):
+        (#overlay):
+        (@supports (-webkit-backdrop-filter: blur(10px))):
+        (#overlay > div):
+        (#overlay > div div):
+        * MotionMark1.2/resources/runner/motionmark.js: Added.
+        (ResultsDashboard.Utilities.createClass):
+        (this._processData.push):
+        (this._processData._processData):
+        (this._processData.findRegression):
+        (this._processData.):
+        (this._processData.calculateScore):
+        (this._processData.get data):
+        (this._processData.get results):
+        (this._processData.get options):
+        (this._processData.get version):
+        (this._processData._getResultsProperty):
+        (this._processData.get score):
+        (this._processData.get scoreLowerBound):
+        (this._processData.get scoreUpperBound):
+        (this._processData):
+        (ResultsTable.Utilities.createClass):
+        (this.clear.clear):
+        (this.clear._addHeader):
+        (this.clear._addBody):
+        (this.clear._addEmptyRow):
+        (this.clear):
+        (this.clear._addIteration):
+        (this.clear.showIterations):
+        (window.benchmarkRunnerClient.initialize):
+        (window.benchmarkRunnerClient.willStartFirstIteration):
+        (window.benchmarkRunnerClient.didRunSuites):
+        (window.benchmarkRunnerClient.didRunTest):
+        (window.benchmarkRunnerClient.didFinishLastIteration):
+        (window.sectionsManager.showSection):
+        (window.sectionsManager.setSectionVersion):
+        (window.sectionsManager.setSectionScore):
+        (window.sectionsManager.populateTable):
+        (window.benchmarkController.initialize):
+        (window.benchmarkController.determineCanvasSize):
+        (window.benchmarkController.addOrientationListenerIfNecessary):
+        (window.benchmarkController._orientationChanged):
+        (window.benchmarkController.updateStartButtonState):
+        (window.benchmarkController._startBenchmark):
+        (window.benchmarkController.startBenchmark):
+        (window.benchmarkController.showResults):
+        (window.benchmarkController.handleKeyPress):
+        (window.benchmarkController.hideDebugInfo):
+        (window.benchmarkController.data.onclick):
+        (window.benchmarkController.button.onclick):
+        (window.benchmarkController.showDebugInfo):
+        (window.benchmarkController.selectResults):
+        * MotionMark1.2/resources/runner/tests.js: Added.
+        (Headers.details.text):
+        (Suite):
+        (suiteFromName):
+        * MotionMark1.2/resources/statistics.js: Added.
+        (Pseudo.resetRandomSeed):
+        (Pseudo.random):
+        (Statistics.sampleMean):
+        (Statistics.unbiasedSampleStandardDeviation):
+        (Statistics.geometricMean):
+        (Statistics.cdf):
+        (Statistics.erf):
+        (Statistics.largestDeviationPercentage):
+        (Experiment.Utilities.createClass):
+        (this.reset.reset):
+        (this.reset.get sampleCount):
+        (this.reset.sample):
+        (this.reset.mean):
+        (this.reset.standardDeviation):
+        (this.reset.cdf):
+        (this.reset.percentage):
+        (this.reset.concern):
+        (this.reset.score):
+        (this.reset):
+        (Regression.Utilities.createClass):
+        (valueAt):
+        (setBest):
+        (_calculateRegression):
+        (bootstrap):
+        * MotionMark1.2/resources/strings.js: Added.
+        * MotionMark1.2/tests/3d/resources/webgl.js: Added.
+        (Stage.call.initialize):
+        (Stage.call._getFunctionSource):
+        (Stage.call._resetIfNecessary):
+        (Stage.call.tune):
+        (Stage.call.animate):
+        (Stage.call.complexity):
+        (Stage.call):
+        * MotionMark1.2/tests/3d/resources/webgpu.js: Added.
+        (constant.float.uniforms.register):
+        (Stage.call.initialize):
+        (Stage.call._getFunctionSource):
+        (Stage.call._resetIfNecessary):
+        (Stage.call.tune):
+        (Stage.call.animate):
+        (Stage.call.complexity):
+        (Stage.call):
+        (new.WebGLStage.waitUntilReady):
+        (new.WebGLStage):
+        * MotionMark1.2/tests/3d/triangles-webgl.html: Added.
+        * MotionMark1.2/tests/3d/triangles-webgpu.html: Added.
+        * MotionMark1.2/tests/bouncing-particles/bouncing-canvas-images.html: Added.
+        * MotionMark1.2/tests/bouncing-particles/bouncing-canvas-shapes.html: Added.
+        * MotionMark1.2/tests/bouncing-particles/bouncing-css-images.html: Added.
+        * MotionMark1.2/tests/bouncing-particles/bouncing-css-shapes.html: Added.
+        * MotionMark1.2/tests/bouncing-particles/bouncing-svg-images.html: Added.
+        * MotionMark1.2/tests/bouncing-particles/bouncing-svg-shapes.html: Added.
+        * MotionMark1.2/tests/bouncing-particles/bouncing-tagged-images.html: Added.
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-canvas-images.js: Added.
+        (_draw):
+        (BouncingCanvasParticlesStage.call.initialize):
+        (BouncingCanvasParticlesStage.call.createParticle):
+        (BouncingCanvasParticlesStage.call):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-canvas-particles.js: Added.
+        (applyRotation):
+        (applyClipping):
+        (_draw):
+        (animate):
+        (BouncingParticlesStage.call.initialize):
+        (BouncingParticlesStage.call.animate):
+        (BouncingParticlesStage.call):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-canvas-shapes.js: Added.
+        (this._color1.Stage.randomColor._applyFill):
+        (this._color1.Stage.randomColor._drawShape):
+        (this._color1.Stage.randomColor._draw):
+        (this._color1.Stage.randomColor):
+        (BouncingCanvasParticlesStage.call.initialize):
+        (BouncingCanvasParticlesStage.call.createParticle):
+        (BouncingCanvasParticlesStage.call):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-css-images.js: Added.
+        (this._move._move):
+        (this._move.animate):
+        (this._move):
+        (BouncingParticlesStage.call.initialize):
+        (BouncingParticlesStage.call.createParticle):
+        (BouncingParticlesStage.call.particleWillBeRemoved):
+        (BouncingParticlesStage.call):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-css-shapes.js: Added.
+        (switch):
+        (this._move._createSpan):
+        (this._move._move):
+        (this._move.animate):
+        (this._move):
+        (BouncingParticlesStage.call.initialize):
+        (BouncingParticlesStage.call.createParticle):
+        (BouncingParticlesStage.call.particleWillBeRemoved):
+        (BouncingParticlesStage.call):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-particles.js: Added.
+        (BouncingParticle):
+        (BouncingParticle.prototype.get center):
+        (BouncingParticle.prototype.animate):
+        (initialize):
+        (parseShapeParameters):
+        (animate):
+        (tune):
+        (complexity):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-svg-images.js: Added.
+        (BouncingSvgParticlesStage.call.initialize):
+        (BouncingSvgParticlesStage.call.createParticle):
+        (BouncingSvgParticlesStage.call):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-svg-particles.js: Added.
+        (_applyClipping):
+        (_move):
+        (animate):
+        (BouncingParticlesStage.call._createDefs):
+        (BouncingParticlesStage.call._ensureDefsIsCreated):
+        (BouncingParticlesStage.call._createClipStar):
+        (BouncingParticlesStage.call.ensureClipStarIsCreated):
+        (BouncingParticlesStage.call.particleWillBeRemoved):
+        (BouncingParticlesStage.call):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-svg-shapes.js: Added.
+        (this._move._createShape):
+        (this._move._applyFill):
+        (this._move):
+        (BouncingSvgParticlesStage.call.initialize):
+        (BouncingSvgParticlesStage.call.createGradient):
+        (BouncingSvgParticlesStage.call.createParticle):
+        (BouncingSvgParticlesStage.call.particleWillBeRemoved):
+        (BouncingSvgParticlesStage.call):
+        * MotionMark1.2/tests/bouncing-particles/resources/bouncing-tagged-images.js: Added.
+        (this._move._move):
+        (this._move.animate):
+        (this._move):
+        (BouncingParticlesStage.call.):
+        (BouncingParticlesStage.call.initialize):
+        (BouncingParticlesStage.call.img.onload):
+        (BouncingParticlesStage.call._loadImage):
+        (BouncingParticlesStage.call.createParticle):
+        (BouncingParticlesStage.call.particleWillBeRemoved):
+        (BouncingParticlesStage.call):
+        (new.BouncingTaggedImagesStage.waitUntilReady):
+        (new.BouncingTaggedImagesStage):
+        * MotionMark1.2/tests/bouncing-particles/resources/image1.jpg: Added.
+        * MotionMark1.2/tests/bouncing-particles/resources/image2.jpg: Added.
+        * MotionMark1.2/tests/bouncing-particles/resources/image3.jpg: Added.
+        * MotionMark1.2/tests/bouncing-particles/resources/image4.jpg: Added.
+        * MotionMark1.2/tests/bouncing-particles/resources/image5.jpg: Added.
+        * MotionMark1.2/tests/dom/compositing-transforms.html: Added.
+        * MotionMark1.2/tests/dom/focus.html: Added.
+        * MotionMark1.2/tests/dom/leaves.html: Added.
+        * MotionMark1.2/tests/dom/multiply.html: Added.
+        * MotionMark1.2/tests/dom/particles.html: Added.
+        * MotionMark1.2/tests/dom/resources/compositing-transforms.js: Added.
+        (this._move._move):
+        (this._move.animate):
+        (this._move):
+        (BouncingParticlesStage.call.initialize):
+        (BouncingParticlesStage.call.createParticle):
+        (BouncingParticlesStage.call.particleWillBeRemoved):
+        (BouncingParticlesStage.call):
+        * MotionMark1.2/tests/dom/resources/dom-particles.js: Added.
+        (Particle.call.reset):
+        (Particle.call.move):
+        (Particle.call):
+        (ParticlesStage.call.initialize):
+        (ParticlesStage.call.createParticle):
+        (ParticlesStage.call.willRemoveParticle):
+        (ParticlesStage.call):
+        * MotionMark1.2/tests/dom/resources/focus.js: Added.
+        (FocusElement.Utilities.createClass):
+        (hide):
+        (show):
+        (animate):
+        (Stage.call.initialize):
+        (Stage.call.complexity):
+        (Stage.call.tune):
+        (Stage.call.animate):
+        (Stage.call.getBlurValue):
+        (Stage.call.getOpacityValue):
+        (Stage.call):
+        * MotionMark1.2/tests/dom/resources/leaves.js: Added.
+        (SuperLeaf.call.move):
+        (SuperLeaf.call):
+        (switch):
+        * MotionMark1.2/tests/dom/resources/multiply.js: Added.
+        (switch):
+        * MotionMark1.2/tests/master/canvas-stage.html: Added.
+        * MotionMark1.2/tests/master/design.html: Added.
+        * MotionMark1.2/tests/master/focus.html: Added.
+        * MotionMark1.2/tests/master/image-data.html: Added.
+        * MotionMark1.2/tests/master/leaves.html: Added.
+        * MotionMark1.2/tests/master/multiply.html: Added.
+        * MotionMark1.2/tests/master/resources/canvas-stage.js: Added.
+        (initialize):
+        (tune):
+        (animate):
+        (complexity):
+        * MotionMark1.2/tests/master/resources/canvas-tests.js: Added.
+        (CanvasLineSegment.Utilities.createClass):
+        (draw):
+        (CanvasArc.Utilities.createClass):
+        (CanvasLinePoint.Utilities.createClass):
+        (randomPoint):
+        (SimpleCanvasStage.call.initialize):
+        (SimpleCanvasStage.call.animate):
+        (SimpleCanvasStage.call):
+        (switch):
+        * MotionMark1.2/tests/master/resources/compass.svg: Added.
+        * MotionMark1.2/tests/master/resources/compass100.png: Added.
+        * MotionMark1.2/tests/master/resources/console.svg: Added.
+        * MotionMark1.2/tests/master/resources/console100.png: Added.
+        * MotionMark1.2/tests/master/resources/contribute.svg: Added.
+        * MotionMark1.2/tests/master/resources/contribute100.png: Added.
+        * MotionMark1.2/tests/master/resources/debugger.svg: Added.
+        * MotionMark1.2/tests/master/resources/debugger100.png: Added.
+        * MotionMark1.2/tests/master/resources/design.js: Added.
+        (initialize):
+        (tune):
+        (animate):
+        (complexity):
+        * MotionMark1.2/tests/master/resources/focus.js: Added.
+        (FocusElement.Utilities.createClass):
+        (this.animate.hide):
+        (this.animate.show):
+        (this.animate.animate):
+        (this.animate):
+        (Stage.call.initialize):
+        (Stage.call.complexity):
+        (Stage.call.tune):
+        (Stage.call.animate):
+        (Stage.call):
+        * MotionMark1.2/tests/master/resources/image-data.js: Added.
+        (initialize):
+        (_loadImage):
+        (tune):
+        (_createTestElement):
+        (_refreshElement):
+        (animate):
+        (_getRandomNeighboringPixelIndex):
+        (complexity):
+        (new.ImageDataStage.waitUntilReady):
+        (new.ImageDataStage):
+        * MotionMark1.2/tests/master/resources/inspector.svg: Added.
+        * MotionMark1.2/tests/master/resources/inspector100.png: Added.
+        * MotionMark1.2/tests/master/resources/layout.svg: Added.
+        * MotionMark1.2/tests/master/resources/layout100.png: Added.
+        * MotionMark1.2/tests/master/resources/leaves.js: Added.
+        (Particle.call.reset):
+        (Particle.call.animate):
+        (Particle.call.move):
+        (Particle.call):
+        (initialize):
+        (img.onload):
+        (_loadImage):
+        (animate):
+        (createParticle):
+        (willRemoveParticle):
+        (new.ParticlesStage.waitUntilReady):
+        (new.ParticlesStage):
+        * MotionMark1.2/tests/master/resources/multiply.js: Added.
+        (initialize):
+        (_addTile):
+        (complexity):
+        (tune):
+        (animate):
+        * MotionMark1.2/tests/master/resources/particles.js: Added.
+        (Particle):
+        (Particle.prototype.reset):
+        (Particle.prototype.animate):
+        (Particle.prototype.move):
+        (animate):
+        (tune):
+        (complexity):
+        * MotionMark1.2/tests/master/resources/performance.svg: Added.
+        * MotionMark1.2/tests/master/resources/performance100.png: Added.
+        * MotionMark1.2/tests/master/resources/script.svg: Added.
+        * MotionMark1.2/tests/master/resources/script100.png: Added.
+        * MotionMark1.2/tests/master/resources/shortcuts.svg: Added.
+        * MotionMark1.2/tests/master/resources/shortcuts100.png: Added.
+        * MotionMark1.2/tests/master/resources/standards.svg: Added.
+        * MotionMark1.2/tests/master/resources/standards100.png: Added.
+        * MotionMark1.2/tests/master/resources/storage.svg: Added.
+        * MotionMark1.2/tests/master/resources/storage100.png: Added.
+        * MotionMark1.2/tests/master/resources/styles.svg: Added.
+        * MotionMark1.2/tests/master/resources/styles100.png: Added.
+        * MotionMark1.2/tests/master/resources/suits.js: Added.
+        (this.initialize.initialize):
+        (this.initialize.reset):
+        (this.initialize.move):
+        (this.initialize):
+        (ParticlesStage.call.initialize):
+        (ParticlesStage.call.createParticle):
+        (ParticlesStage.call.willRemoveParticle):
+        (ParticlesStage.call):
+        * MotionMark1.2/tests/master/resources/timeline.svg: Added.
+        * MotionMark1.2/tests/master/resources/timeline100.png: Added.
+        * MotionMark1.2/tests/master/suits.html: Added.
+        * MotionMark1.2/tests/resources/main.js: Added.
+        (Sampler.Utilities.createClass):
+        (record):
+        (processSamples):
+        (Controller.Utilities.createClass):
+        (set isFrameLengthEstimatorEnabled):
+        (start):
+        (recordFirstSample):
+        (mark):
+        (containsMark):
+        (filterOutOutliers):
+        (_measureAndResetInterval):
+        (update):
+        (registerFrameTime):
+        (intervalHasConcluded):
+        (didFinishInterval):
+        (tune):
+        (shouldStop):
+        (results):
+        (_processComplexitySamples):
+        (_processMarks):
+        (_processControllerSamples):
+        (_getComplexity):
+        (_getFrameLength):
+        (Stage.Utilities.createClass):
+        (Stage.Utilities.createClass.initialize):
+        (Stage.Utilities.createClass.get element):
+        (Stage.Utilities.createClass.get size):
+        (Stage.Utilities.createClass.complexity):
+        (Stage.Utilities.createClass.tune):
+        (Stage.Utilities.createClass.animate):
+        (Stage.Utilities.createClass.clear):
+        (random):
+        (randomBool):
+        (randomSign):
+        (randomInt):
+        (randomPosition):
+        (randomSquareSize):
+        (randomVelocity):
+        (randomAngle):
+        (randomColor):
+        (randomStyleMixBlendMode):
+        (randomStyleFilter):
+        (randomElementInArray):
+        (rotatingColor):
+        (dateFractionalValue):
+        (dateCounterValue):
+        (randomRotater):
+        (Rotater.Utilities.createClass):
+        (get interval):
+        (next):
+        (degree):
+        (rotateZ):
+        (rotate):
+        (Benchmark.Utilities.createClass):
+        (get stage):
+        (get timestamp):
+        (backgroundColor):
+        (run):
+        (waitUntilReady):
+        (_animateLoop):
+        * MotionMark1.2/tests/resources/math.js: Added.
+        (this._gain.error.sample):
+        (this._gain.error.reset):
+        (this._gain.error):
+        (PIDController.Utilities.createClass):
+        (_yPosition):
+        (_distanceUltimate):
+        (_distance):
+        (_gainIncrement):
+        (_updateStage):
+        (_tuneP):
+        (_tunePID):
+        (_tune):
+        (_saturate):
+        (tune):
+        * MotionMark1.2/tests/resources/stage.css: Added.
+        (html):
+        (body):
+        (#stage):
+        (#center-text):
+        * MotionMark1.2/tests/resources/star.svg: Added.
+        * MotionMark1.2/tests/resources/yin-yang.png: Added.
+        * MotionMark1.2/tests/resources/yin-yang.svg: Added.
+        * MotionMark1.2/tests/simple/resources/simple-canvas-paths.js: Added.
+        (CanvasLineSegment.Utilities.createClass):
+        (this._lineWidth.Stage.randomInt.draw):
+        (this._lineWidth.Stage.randomInt):
+        (CanvasLinePoint.Utilities.createClass):
+        (draw):
+        (CanvasQuadraticSegment.Utilities.createClass):
+        (CanvasQuadraticPoint.Utilities.createClass):
+        (CanvasBezierSegment.Utilities.createClass):
+        (CanvasBezierPoint.Utilities.createClass):
+        (CanvasArcToSegment.Utilities.createClass):
+        (CanvasArcToSegmentFill.Utilities.createClass):
+        (CanvasArcToSegment.call.draw):
+        (CanvasArcToSegment.call):
+        (CanvasArcSegment.Utilities.createClass):
+        (CanvasArcSegmentFill.Utilities.createClass):
+        (CanvasArcSegment.call.draw):
+        (CanvasArcSegment.call):
+        (CanvasRect.Utilities.createClass):
+        (CanvasRectFill.Utilities.createClass):
+        (CanvasRect.call.draw):
+        (CanvasRect.call):
+        (CanvasEllipse.Utilities.createClass):
+        (CanvasEllipseFill.Utilities.createClass):
+        (CanvasEllipse.call.draw):
+        (CanvasEllipse.call):
+        (CanvasStroke.Utilities.createClass):
+        (this._object.new.draw):
+        (this._object.new):
+        (CanvasFill.Utilities.createClass):
+        (SimpleCanvasStage.call.animate):
+        (SimpleCanvasStage.call):
+        (SimpleCanvasStage.call.initialize):
+        (SimpleCanvasPathStrokeStage.call.initialize):
+        (SimpleCanvasPathStrokeStage.call):
+        (initialize):
+        (animate):
+        (switch):
+        * MotionMark1.2/tests/simple/resources/simple-canvas.js: Added.
+        (tune):
+        (animate):
+        (complexity):
+        * MotionMark1.2/tests/simple/resources/tiled-canvas-image.js: Added.
+        (CanvasImageTile.Utilities.createClass):
+        (getImageData):
+        (putImageData):
+        (Stage.call.initialize):
+        (Stage.call._setupTiles):
+        (Stage.call._nextTilePosition):
+        (Stage.call.tune):
+        (Stage.call._drawBackground):
+        (Stage.call.animate):
+        (Stage.call.complexity):
+        (Stage.call):
+        * MotionMark1.2/tests/simple/simple-canvas-paths.html: Added.
+        * MotionMark1.2/tests/simple/tiled-canvas-image.html: Added.
+        * MotionMark1.2/tests/svg/suits.html: Added.
+        * MotionMark1.2/tests/svg/suits.js: Added.
+        (this.initialize.move):
+        (this.initialize):
+        (this.initialize.reset):
+        (switch):
+        * MotionMark1.2/tests/template/resources/template-canvas.js: Added.
+        (TemplateCanvasObject):
+        (TemplateCanvasObject.prototype._draw):
+        (TemplateCanvasObject.prototype.animate):
+        (Stage.call.initialize):
+        (Stage.call.tune):
+        (Stage.call.animate):
+        (Stage.call):
+        (new.TemplateCanvasStage.waitUntilReady):
+        (new.TemplateCanvasStage):
+        * MotionMark1.2/tests/template/resources/template-css.js: Added.
+        (Stage.call.initialize):
+        (Stage.call.tune):
+        (Stage.call.animate):
+        (Stage.call):
+        * MotionMark1.2/tests/template/resources/template-svg.js: Added.
+        (Stage.call.initialize):
+        (Stage.call.tune):
+        (Stage.call.animate):
+        (Stage.call):
+        * MotionMark1.2/tests/template/template-canvas.html: Added.
+        * MotionMark1.2/tests/template/template-css.html: Added.
+        * MotionMark1.2/tests/template/template-svg.html: Added.
+        * MotionMark1.2/tests/text/design-6.html: Added.
+        * MotionMark1.2/tests/text/design-6.js: Added.
+        (switch):
+        (dataset.forEach):
+        * MotionMark1.2/tests/text/design.html: Added.
+        * MotionMark1.2/tests/text/design.js: Added.
+        (switch):
+        (dataset.forEach):
+
 2021-01-05  Beth Dakin  <bdakin@apple.com>
 
         Remove non-inclusive language from copy of JetStream 2.0 in Websites/
