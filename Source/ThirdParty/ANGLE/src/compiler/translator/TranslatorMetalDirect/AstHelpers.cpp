@@ -420,7 +420,7 @@ bool sh::HasArrayField(const TStructure &structure)
     return false;
 }
 
-TIntermTyped &sh::CoerceSimple(TBasicType toBasicType, TIntermTyped &fromNode)
+TIntermTyped &sh::CoerceSimple(TBasicType toBasicType, TIntermTyped &fromNode, bool needsExplicitBoolCast)
 {
     const TType &fromType = fromNode.getType();
 
@@ -433,7 +433,7 @@ TIntermTyped &sh::CoerceSimple(TBasicType toBasicType, TIntermTyped &fromNode)
     if (toBasicType != fromBasicType)
     {
         if (toBasicType == TBasicType::EbtBool &&
-            fromNode.isVector())
+            fromNode.isVector() && needsExplicitBoolCast)
         {
             switch (fromBasicType)
             {
@@ -442,11 +442,15 @@ TIntermTyped &sh::CoerceSimple(TBasicType toBasicType, TIntermTyped &fromNode)
                 case TBasicType::EbtInt:
                 case TBasicType::EbtUInt:
                 {
-                    TIntermTyped &fromTypeSwizzle = SubVector(fromNode, 0, 1);
-                    TIntermAggregate *boolConstructor = TIntermAggregate::CreateConstructor(
-                        *new TType(toBasicType, 1, 1),
-                         new TIntermSequence{&fromTypeSwizzle});
-                    TIntermSequence *argsSequence = new TIntermSequence({boolConstructor});
+                    TIntermSequence *argsSequence = new TIntermSequence();
+                    for (int i = 0; i < fromType.getNominalSize(); i++)
+                    {
+                        TIntermTyped &fromTypeSwizzle = SubVector(fromNode, i, i+1);
+                        TIntermAggregate *boolConstructor = TIntermAggregate::CreateConstructor(
+                            *new TType(toBasicType, 1, 1),
+                             new TIntermSequence{&fromTypeSwizzle});
+                        argsSequence->push_back(boolConstructor);
+                    }
                     return *TIntermAggregate::CreateConstructor(
                         *new TType(toBasicType, fromType.getNominalSize(), fromType.getSecondarySize()),
                         argsSequence);
@@ -465,7 +469,7 @@ TIntermTyped &sh::CoerceSimple(TBasicType toBasicType, TIntermTyped &fromNode)
     return fromNode;
 }
 
-TIntermTyped &sh::CoerceSimple(const TType &toType, TIntermTyped &fromNode)
+TIntermTyped &sh::CoerceSimple(const TType &toType, TIntermTyped &fromNode, bool needsExplicitBoolCast)
 {
     const TType &fromType = fromNode.getType();
 
@@ -482,7 +486,7 @@ TIntermTyped &sh::CoerceSimple(const TType &toType, TIntermTyped &fromNode)
     if (toBasicType != fromBasicType)
     {
         if (toBasicType == TBasicType::EbtBool &&
-            fromNode.isVector())
+            fromNode.isVector() && needsExplicitBoolCast)
         {
             switch (fromBasicType)
             {

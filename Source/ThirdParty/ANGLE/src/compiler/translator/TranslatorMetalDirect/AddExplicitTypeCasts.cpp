@@ -38,7 +38,7 @@ class Rewriter : public TIntermRebuild
                     const TType argType = arg.getType();
                     if (argType.isVector())
                     {
-                        return CoerceSimple(retType, SubVector(arg, 0, 1));
+                        return CoerceSimple(retType, SubVector(arg, 0, 1), mNeedsExplicitBoolCasts);
                     }
                 }
             }
@@ -50,13 +50,13 @@ class Rewriter : public TIntermRebuild
                     const TType argType = arg.getType();
                     if (argType.isVector())
                     {
-                        return CoerceSimple(retType, SubVector(arg, 0, retType.getNominalSize()));
+                        return CoerceSimple(retType, SubVector(arg, 0, retType.getNominalSize()), mNeedsExplicitBoolCasts);
                     }
                 }
                 for (size_t i = 0; i < argCount; ++i)
                 {
                     TIntermTyped &arg = GetArg(callNode, i);
-                    SetArg(callNode, i, CoerceSimple(retType.getBasicType(), arg));
+                    SetArg(callNode, i, CoerceSimple(retType.getBasicType(), arg, mNeedsExplicitBoolCasts));
                 }
             }
             else if (retType.isMatrix())

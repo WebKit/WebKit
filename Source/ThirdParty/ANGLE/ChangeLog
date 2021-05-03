@@ -1,3 +1,22 @@
+2021-05-03  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE]: Fix conversions tests and remove failing test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=225261
+        <rdar://77349615>
+                  
+        bool conversion workaround was being applied to all shaders. Correct shader translation to generate
+        better conversion code on platforms that don't need a workaround. 
+
+        Conversions for basic types like vec2, ivec2, uvec2 were only using the first components when workaround
+        was active. Correct swizzle logic to get all components when doing a conversion.
+
+        Reviewed by Dean Jackson.
+
+        * src/compiler/translator/TranslatorMetalDirect/AddExplicitTypeCasts.cpp:
+        * src/compiler/translator/TranslatorMetalDirect/AstHelpers.cpp:
+        (sh::CoerceSimple):
+        * src/compiler/translator/TranslatorMetalDirect/AstHelpers.h:
+
 2021-04-30  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal ANGLE]: fix webgl/2.0.0/deqp/functional/gles3/negativebufferapi 
