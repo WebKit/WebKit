@@ -1,3 +1,18 @@
+2021-05-03  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        IPC::Semaphore operations ASSERT when the semaphore has been destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=225142
+        <rdar://problem/76178000>
+
+        Reviewed by Chris Dumez.
+
+        Add KERN_TERMINATED to the expected return values of semaphore_{signal,wait,timedwait} calls.
+
+        * Platform/IPC/darwin/IPCSemaphoreDarwin.cpp:
+        (IPC::Semaphore::signal):
+        (IPC::Semaphore::wait):
+        (IPC::Semaphore::waitFor):
+
 2021-04-30  Darin Adler  <darin@apple.com>
 
         Use SortedArrayMap in a few more places
