@@ -744,7 +744,7 @@ public:
     void inspectorNodeSearchEndedAtPosition(const WebCore::FloatPoint&);
 
     void blurFocusedElement();
-    void requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&&);
+    void requestFocusedElementInformation(CompletionHandler<void(const Optional<FocusedElementInformation>&)>&&);
     void selectWithGesture(const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
     void updateSelectionWithTouches(const WebCore::IntPoint&, SelectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&&);
     void selectWithTwoTouches(const WebCore::IntPoint& from, const WebCore::IntPoint& to, GestureType, GestureRecognizerState, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
@@ -1477,7 +1477,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void updateViewportSizeForCSSViewportUnits();
 
-    void getFocusedElementInformation(FocusedElementInformation&);
+    Optional<FocusedElementInformation> focusedElementInformation();
     void platformInitializeAccessibility();
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);
     void handleSyntheticClick(WebCore::Node& nodeRespondingToClick, const WebCore::FloatPoint& location, OptionSet<WebKit::WebEvent::Modifier>, WebCore::PointerID = WebCore::mousePointerID);

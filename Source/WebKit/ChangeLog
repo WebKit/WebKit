@@ -1,3 +1,72 @@
+2021-05-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Crash when tapping fields on cycle.travel
+        https://bugs.webkit.org/show_bug.cgi?id=225259
+        <rdar://problem/77386417>
+
+        Reviewed by Wenson Hsieh.
+
+        The From/To fields on cycle.travel have a click handler that presents
+        a popover. The popover is presented by changing its display property
+        from "none" to "block", and contains an input element with the "autofocus"
+        attribute. After changing the popover element's display property, the
+        page focuses another element by calling focus().
+
+        In WebKit, focusing an element sends an IPC message from the WebProcess
+        to the UIProcess, so that UIProcess knows of the focused element and
+        can present the necessary UI. All relevant information about the element
+        is encoded in a FocusedElementInformation struct, which is populated by
+        WebPage::getFocusedElementInformation.
+
+        Prior to populating the FocusedElementInformation,
+        getFocusedElementInformation performs a layout if needed,
+        so that the information sent to the UIProcess is up-to-date. In this
+        instance, a layout is needed after the popover element's display
+        property is changed. Then, since the page immediately focuses another
+        element after the display change, WebKit calls
+        getFocusedElementInformation prior to the layout being performed.
+        getFocusedElementInformation then sees that a layout is needed, and
+        triggers the pending layout.
+
+        Now, since since the popover contains an element with "autofocus",
+        another element is focused as a post-layout task. This means that the
+        layout triggered by getFocusedElementInformation changes the focused
+        element. r256401 added an early return in this case, to prevent a null
+        pointer deref.
+
+        An early return in getFocusedElementInformation leaves the passed-in
+        FocusedElementInformation in an inconsistent state. In particular,
+        the FocusedElementInformation's elementContext is left with invalid
+        identifiers. Currently, all callers of getFocusedElementInformation do
+        not check whether the information is in a valid state. Consequently,
+        the caller (in this case, WebPage::elementDidFocus) proceeds to send
+        an IPC message with the FocusedElementInformation as one of the
+        arguments. Then, a release assert is hit as sending IPC messages with
+        invalid arguments is unsafe.
+
+        To fix, make getFocusedElementInformation return an optional
+        FocusedElementInformation, rather than populating a parameter that
+        could be left in an invalid state. Then, any early returns can return
+        WTF::nullopt, to signify that we were unable to generate a valid
+        FocusedElementInformation. Finally, whenever the method returns
+        nullopt, we do not send the IPC message (or in another case, send a
+        message with nullopt).
+
+        Test: fast/forms/focus-change-after-layout-update-during-focus-crash.html
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView updateCurrentFocusedElementInformation:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::requestFocusedElementInformation):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::elementDidFocus):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestFocusedElementInformation):
+        (WebKit::WebPage::focusedElementInformation):
+
 2021-05-03  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] Properly reset WebKitWebView's responsiveness flag

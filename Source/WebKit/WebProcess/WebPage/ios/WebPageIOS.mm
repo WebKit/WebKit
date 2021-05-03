@@ -954,13 +954,13 @@ void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, Option
     nodeRespondingToDoubleClick->document().frame()->eventHandler().handleMouseReleaseEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MouseReleased, 2, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, WebCore::OneFingerTap));
 }
 
-void WebPage::requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&& completionHandler)
+void WebPage::requestFocusedElementInformation(CompletionHandler<void(const Optional<FocusedElementInformation>&)>&& completionHandler)
 {
-    FocusedElementInformation info;
+    Optional<FocusedElementInformation> information;
     if (m_focusedElement)
-        getFocusedElementInformation(info);
+        information = focusedElementInformation();
 
-    completionHandler(info);
+    completionHandler(information);
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -3145,11 +3145,11 @@ void WebPage::focusNextFocusedElement(bool isForward, CompletionHandler<void()>&
     completionHandler();
 }
 
-void WebPage::getFocusedElementInformation(FocusedElementInformation& information)
+Optional<FocusedElementInformation> WebPage::focusedElementInformation()
 {
     RefPtr<Document> document = m_page->focusController().focusedOrMainFrame().document();
     if (!document || !document->view())
-        return;
+        return WTF::nullopt;
 
     auto focusedElement = m_focusedElement.copyRef();
     bool willLayout = document->view()->needsLayout();
@@ -3157,12 +3157,14 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
 
     // Layout may have detached the document or caused a change of focus.
     if (!document->view() || focusedElement != m_focusedElement)
-        return;
+        return WTF::nullopt;
 
     if (willLayout)
         sendEditorStateUpdate();
     else
         scheduleFullEditorStateUpdate();
+
+    FocusedElementInformation information;
 
     information.lastInteractionLocation = m_lastInteractionLocation;
     if (auto elementContext = contextForElement(*focusedElement))
@@ -3349,6 +3351,8 @@ void WebPage::getFocusedElementInformation(FocusedElementInformation& informatio
     information.shouldAvoidResizingWhenInputViewBoundsChange = quirks.shouldAvoidResizingWhenInputViewBoundsChange();
     information.shouldAvoidScrollingWhenFocusedContentIsVisible = quirks.shouldAvoidScrollingWhenFocusedContentIsVisible();
     information.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation = quirks.shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation();
+
+    return information;
 }
 
 void WebPage::autofillLoginCredentials(const String& username, const String& password)

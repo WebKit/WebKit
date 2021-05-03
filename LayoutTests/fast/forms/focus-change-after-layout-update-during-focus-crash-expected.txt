@@ -1,0 +1,10 @@
+This test verifies that we don't crash when focusing an element that triggers a layout change, resulting in a change of focus.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Did not crash.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

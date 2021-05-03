@@ -1,3 +1,14 @@
+2021-05-03  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Crash when tapping fields on cycle.travel
+        https://bugs.webkit.org/show_bug.cgi?id=225259
+        <rdar://problem/77386417>
+
+        Reviewed by Wenson Hsieh.
+
+        * fast/forms/focus-change-after-layout-update-during-focus-crash-expected.txt: Added.
+        * fast/forms/focus-change-after-layout-update-during-focus-crash.html: Added.
+
 2021-05-03  Chris Lord  <clord@igalia.com>
 
         Decoding an SVG off the main thread causes a crash

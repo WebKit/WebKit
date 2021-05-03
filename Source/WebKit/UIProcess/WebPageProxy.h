@@ -1452,7 +1452,7 @@ public:
     void recordAutomaticNavigationSnapshot();
     void suppressNextAutomaticNavigationSnapshot() { m_shouldSuppressNextAutomaticNavigationSnapshot = true; }
     void recordNavigationSnapshot(WebBackForwardListItem&);
-    void requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&&);
+    void requestFocusedElementInformation(CompletionHandler<void(const Optional<FocusedElementInformation>&)>&&);
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     RefPtr<ViewSnapshot> takeViewSnapshot(Optional<WebCore::IntRect>&&);

@@ -113,7 +113,7 @@ messages -> WebPage LegacyReceiver {
     StoreSelectionForAccessibility(bool shouldStore)
     StartAutoscrollAtPosition(WebCore::FloatPoint positionInWindow)
     CancelAutoscroll()
-    RequestFocusedElementInformation() -> (struct WebKit::FocusedElementInformation info) Async
+    RequestFocusedElementInformation() -> (Optional<WebKit::FocusedElementInformation> info) Async
     HardwareKeyboardAvailabilityChanged(bool keyboardIsAttached)
     SetIsShowingInputViewForFocusedElement(bool showingInputView)
     UpdateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta) -> () Async

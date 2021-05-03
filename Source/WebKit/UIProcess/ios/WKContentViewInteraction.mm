@@ -6532,13 +6532,13 @@ static BOOL allPasteboardItemOriginsMatchOrigin(UIPasteboard *pasteboard, const 
     WeakObjCPtr<WKContentView> weakSelf { self };
     auto identifierBeforeUpdate = _focusedElementInformation.focusedElementIdentifier;
     _page->requestFocusedElementInformation([callback = WTFMove(callback), identifierBeforeUpdate, weakSelf] (auto& info) {
-        if (!weakSelf || info.focusedElementIdentifier != identifierBeforeUpdate) {
+        if (!weakSelf || !info || info->focusedElementIdentifier != identifierBeforeUpdate) {
             // If the focused element may have changed in the meantime, don't overwrite focused element information.
             callback(false);
             return;
         }
 
-        weakSelf.get()->_focusedElementInformation = info;
+        weakSelf.get()->_focusedElementInformation = info.value();
         callback(true);
     });
 }

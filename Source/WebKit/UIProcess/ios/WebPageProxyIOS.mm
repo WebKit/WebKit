@@ -149,7 +149,7 @@ bool WebPageProxy::readSelectionFromPasteboard(const String&)
     return false;
 }
 
-void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const FocusedElementInformation&)>&& callback)
+void WebPageProxy::requestFocusedElementInformation(CompletionHandler<void(const Optional<FocusedElementInformation>&)>&& callback)
 {
     if (!hasRunningProcess())
         return callback({ });

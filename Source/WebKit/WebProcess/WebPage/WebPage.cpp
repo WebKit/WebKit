@@ -5946,13 +5946,15 @@ void WebPage::elementDidFocus(WebCore::Element& element)
 #endif
 
         ++m_currentFocusedElementIdentifier;
-        FocusedElementInformation information;
-        getFocusedElementInformation(information);
+        auto information = focusedElementInformation();
+        if (!information)
+            return;
+
         RefPtr<API::Object> userData;
 
         m_formClient->willBeginInputSession(this, &element, WebFrame::fromCoreFrame(*element.document().frame()), m_userIsInteracting, userData);
 
-        send(Messages::WebPageProxy::ElementDidFocus(information, m_userIsInteracting, m_recentlyBlurredElement, m_lastActivityStateChanges, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        send(Messages::WebPageProxy::ElementDidFocus(information.value(), m_userIsInteracting, m_recentlyBlurredElement, m_lastActivityStateChanges, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 #elif PLATFORM(MAC)
         // FIXME: This can be unified with the iOS code above by bringing ElementDidFocus to macOS.
         // This also doesn't take other noneditable controls into account, such as input type color.
