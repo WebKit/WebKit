@@ -227,7 +227,7 @@ static NSString *speechSynthesisGetDefaultVoiceIdentifierForLocale(NSLocale *use
     if (!userLocale)
         return nil;
 
-    return adoptCF(GetIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale)).bridgingAutorelease();
+    return (__bridge NSString *)GetIdentifierStringForPreferredVoiceInListWithLocale(speechSynthesisGetVoiceIdentifiers().get(), (__bridge CFLocaleRef)userLocale);
 }
 
 void PlatformSpeechSynthesizer::initializeVoiceList()
