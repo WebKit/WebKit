@@ -231,7 +231,7 @@ class Process(object):
             cls.working = False
 
     @classmethod
-    def main(cls, name, setup, setupargs, setupkwargs, queue, teardown, teardownargs, teardownkwargs):
+    def main(cls, name, loglevel, setup, setupargs, setupkwargs, queue, teardown, teardownargs, teardownkwargs):
         from tblib import pickling_support
 
         cls.name = name
@@ -250,6 +250,7 @@ class Process(object):
         for handler in logger.handlers:
             logger.removeHandler(handler)
         logger.addHandler(cls.LogHandler(queue))
+        logger.setLevel(loglevel)
 
         queue.send(State(State.STARTING))
 
@@ -304,7 +305,7 @@ class TaskPool(object):
         self.workers = [multiprocessing.Process(
             target=Process.main,
             args=(
-                '{}/{}'.format(name, count),
+                '{}/{}'.format(name, count), logging.getLogger().getEffectiveLevel(),
                 setup, setupargs, setupkwargs,
                 BiDirectionalQueue(outgoing=self.queue.incoming, incoming=self.queue.outgoing),
                 teardown, teardownargs, teardownkwargs,

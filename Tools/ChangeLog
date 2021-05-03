@@ -1,3 +1,17 @@
+2021-05-03  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] Pass logging level to child processes
+        https://bugs.webkit.org/show_bug.cgi?id=225311
+        <rdar://problem/77457646>
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (Process.main): Set root logging level.
+        (TaskPool.__init__): Pass logging level to child process.
+
 2021-05-03  Chris Dumez  <cdumez@apple.com>
 
         Restore pre-r276879 behavior for FileSystem::deleteFile() and FileSystem::deleteEmptyDirectory()
