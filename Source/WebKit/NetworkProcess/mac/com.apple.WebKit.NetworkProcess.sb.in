@@ -245,6 +245,7 @@
 (allow user-preference-read
     (preference-domain
         "kCFPreferencesAnyApplication"
+        "com.apple.CFNetwork"
         "com.apple.DownloadAssessment"
         "com.apple.WebFoundation"
         "com.apple.ist.ds.appleconnect2.uat" ;; Remove after <rdar://problem/35542803> ships

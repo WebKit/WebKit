@@ -1,3 +1,15 @@
+2021-05-03  Zhenchao Li  <zhenchao_li@apple.com>
+
+        Add macOS Safari sandbox exception for com.apple.CFNetwork preferences
+        https://bugs.webkit.org/show_bug.cgi?id=225184
+        <rdar://69305108>
+
+        Reviewed by Per Arne Vollan
+
+        rdar://69305108 Add macOS Safari sandbox exception for com.apple.CFNetwork preferences
+
+        * Source/WebKit/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2021-05-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS][FCR] Grouped <select> options should appear inline in the menu
