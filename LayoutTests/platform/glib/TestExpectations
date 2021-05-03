@@ -710,8 +710,6 @@ webkit.org/b/224111 imported/w3c/web-platform-tests/mathml/presentation-markup/o
 webkit.org/b/203146 fast/canvas/offscreen-enabled.html [ Pass ]
 webkit.org/b/203146 http/wpt/offscreen-canvas [ Pass ]
 webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Pass ]
-webkit.org/b/206055 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.svg.worker.html [ Skip ]
-webkit.org/b/206055 imported/w3c/web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.worker.html [ Skip ]
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/canvas/offscreen/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]

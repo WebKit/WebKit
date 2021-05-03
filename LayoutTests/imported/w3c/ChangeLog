@@ -1,3 +1,14 @@
+2021-05-03  Chris Lord  <clord@igalia.com>
+
+        Decoding an SVG off the main thread causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=206055
+
+        Reviewed by Darin Adler.
+
+        Rebaseline OffscreenCanvas SVG tests.
+
+        * web-platform-tests/html/canvas/offscreen/drawing-images-to-the-canvas/2d.drawImage.zerosource.image.worker-expected.txt:
+
 2021-05-02  Sam Weinig  <weinig@apple.com>
 
         Consider removing imported/w3c/canvas and canvas/philip (Part 2)

@@ -64,6 +64,10 @@ Image& Image::nullImage()
 
 RefPtr<Image> Image::create(ImageObserver& observer)
 {
+    // SVGImage and PDFDocumentImage are not safe to use off the main thread.
+    // Workers can use BitmapImage directly.
+    ASSERT(isMainThread());
+
     auto mimeType = observer.mimeType();
     if (mimeType == "image/svg+xml")
         return SVGImage::create(observer);

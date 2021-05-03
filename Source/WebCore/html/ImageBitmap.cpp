@@ -736,12 +736,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
 
     auto sharedBuffer = SharedBuffer::create(static_cast<const char*>(arrayBuffer->data()), arrayBuffer->byteLength());
     auto observer = ImageBitmapImageObserver::create(mimeType, expectedContentLength, sourceURL);
-    auto image = Image::create(observer.get());
-    if (!image) {
-        promise.reject(InvalidStateError, "The type of the argument to createImageBitmap is not supported");
-        return;
-    }
-
+    auto image = BitmapImage::create(observer.ptr());
     auto result = image->setData(sharedBuffer.copyRef(), true);
     if (result != EncodedDataStatus::Complete) {
         promise.reject(InvalidStateError, "Cannot decode the data in the argument to createImageBitmap");
@@ -762,7 +757,7 @@ void ImageBitmap::createFromBuffer(ScriptExecutionContext& scriptExecutionContex
     }
 
     FloatRect destRect(FloatPoint(), outputSize);
-    bitmapData->context().drawImage(*image, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), imageOrientationForOrientation(options.imageOrientation) });
+    bitmapData->context().drawImage(image, destRect, sourceRectangle.releaseReturnValue(), { interpolationQualityForResizeQuality(options.resizeQuality), imageOrientationForOrientation(options.imageOrientation) });
 
     OptionSet<SerializationState> serializationState = SerializationState::OriginClean;
     if (alphaPremultiplicationForPremultiplyAlpha(options.premultiplyAlpha) == AlphaPremultiplication::Premultiplied)

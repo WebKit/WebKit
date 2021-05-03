@@ -1,3 +1,24 @@
+2021-05-03  Chris Lord  <clord@igalia.com>
+
+        Decoding an SVG off the main thread causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=206055
+
+        Reviewed by Darin Adler.
+
+        Use BitmapImage::create instead of Image::create in ImageBitmap. This
+        bypasses use of SVGImage and PDFDocumentImage, which are not safe to
+        use off the main thread.
+
+        No new tests, rebaselined existing tests.
+
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createFromBuffer):
+          Use BitmapImage instead of Image.
+
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::create):
+          Add main-thread assert on Image creation.
+
 2021-05-03  Rob Buis  <rbuis@igalia.com>
 
         getPropertyValue for url path doesn't return the "#" character
