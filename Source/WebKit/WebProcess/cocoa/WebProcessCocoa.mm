@@ -162,6 +162,11 @@ SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+SOFT_LINK_LIBRARY(libAccessibility)
+SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -1067,6 +1072,13 @@ static void setPreferenceValue(const String& domain, const String& key, id value
 #endif
     } else
         CFPreferencesSetValue(key.createCFString().get(), (__bridge CFPropertyListRef)value, domain.createCFString().get(), kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
+
+#if PLATFORM(IOS_FAMILY)
+    if (domain == String(kAXSAccessibilityPreferenceDomain)) {
+        if (_AXSUpdateWebAccessibilitySettingsPtr())
+            _AXSUpdateWebAccessibilitySettingsPtr()();
+    }
+#endif
 }
 
 void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)

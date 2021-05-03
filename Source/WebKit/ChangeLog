@@ -1,3 +1,41 @@
+2021-05-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276852. rdar://problem/77468295
+
+    prefers-reduced-motion is not reactive on iOS
+    https://bugs.webkit.org/show_bug.cgi?id=222381
+    <rdar://75933915>
+    
+    Reviewed by Brent Fulgham.
+    
+    With CFPrefs direct mode, there is a race between the notification that an accessibility preference has been changed
+    by the user, and the the in-memory Accessibility preference cache in the WebContent process. We resolve this by using
+    new SPI to clear the cached Accessibility settings when we are notified of an accessibility change so they always
+    reflect the user's most recent setting.
+    
+    * Platform/spi/Cocoa/AccessibilitySupportSPI.h:
+    * WebProcess/cocoa/WebProcessCocoa.mm:
+    (WebKit::setPreferenceValue):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276852 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-30  Per Arne Vollan  <pvollan@apple.com>
+
+            prefers-reduced-motion is not reactive on iOS
+            https://bugs.webkit.org/show_bug.cgi?id=222381
+            <rdar://75933915>
+
+            Reviewed by Brent Fulgham.
+
+            With CFPrefs direct mode, there is a race between the notification that an accessibility preference has been changed
+            by the user, and the the in-memory Accessibility preference cache in the WebContent process. We resolve this by using
+            new SPI to clear the cached Accessibility settings when we are notified of an accessibility change so they always
+            reflect the user's most recent setting.
+
+            * Platform/spi/Cocoa/AccessibilitySupportSPI.h:
+            * WebProcess/cocoa/WebProcessCocoa.mm:
+            (WebKit::setPreferenceValue):
+
 2021-04-29  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276742. rdar://problem/77326513
