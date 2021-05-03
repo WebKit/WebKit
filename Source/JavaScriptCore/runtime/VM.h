@@ -887,8 +887,8 @@ public:
     Exception* lastException() const { return m_lastException; }
     JSCell** addressOfLastException() { return reinterpret_cast<JSCell**>(&m_lastException); }
 
-    // This should only be used for test or assertion code that wants to inspect
-    // the pending exception without interfering with Throw/CatchScopes.
+    // This should only be used for code that wants to check for any pending
+    // exception without interfering with Throw/CatchScopes.
     Exception* exceptionForInspection() const { return m_exception; }
 
     void setFailNextNewCodeBlock() { m_failNextNewCodeBlock = true; }

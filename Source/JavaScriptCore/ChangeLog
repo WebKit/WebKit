@@ -1,3 +1,39 @@
+2021-05-03  Mark Lam  <mark.lam@apple.com>
+
+        Add some missing exception checks before some jsCasts.
+        https://bugs.webkit.org/show_bug.cgi?id=225264
+        rdar://77381608
+
+        Reviewed by Saam Barati.
+
+        Introducing JSObject::getAs() and JSValue::getAs() convenience methods that will
+        check for an exception before doing a jsCast on the get result.  We only need this
+        to placate the assertion in jsCast in the event a pending exception exists at the
+        time of the jsCast.  If ASSERTs are not enabled, this will be a no-op.  All clients
+        that use jsCast this way (and now use getAs instead) will already be doing an
+        exception check immediately after.  Hence, they are already doing the right thing
+        in terms of handling exceptions.  We're only placating the jsCast assertion here.
+
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::hostResolveImportedModule):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::getAs const):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::then):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::dependencyKeysIfEvaluated):
+        (JSC::JSModuleLoader::provideFetch):
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        (JSC::JSModuleLoader::requestImportModule):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getAs const):
+        * runtime/JSPromise.cpp:
+        (JSC::JSPromise::createDeferredData):
+        * runtime/VM.h:
+
 2021-05-03  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-Function-References] Add call_ref instruction

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1043,6 +1043,18 @@ ALWAYS_INLINE JSValue JSValue::get(JSGlobalObject* globalObject, uint64_t proper
     if (LIKELY(propertyName <= std::numeric_limits<unsigned>::max()))
         return get(globalObject, static_cast<unsigned>(propertyName));
     return get(globalObject, Identifier::from(getVM(globalObject), static_cast<double>(propertyName)));
+}
+
+template<typename T, typename PropertyNameType>
+ALWAYS_INLINE T JSValue::getAs(JSGlobalObject* globalObject, PropertyNameType propertyName) const
+{
+    JSValue value = get(globalObject, propertyName);
+#if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
+    VM& vm = getVM(globalObject);
+    if (vm.exceptionForInspection())
+        return nullptr;
+#endif
+    return jsCast<T>(value);
 }
 
 inline bool JSValue::put(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
