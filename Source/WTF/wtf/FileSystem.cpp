@@ -532,9 +532,20 @@ bool deleteEmptyDirectory(const String& path)
 
 bool moveFile(const String& oldPath, const String& newPath)
 {
+    std::filesystem::path fsOldPath = fileSystemRepresentation(oldPath).data();
+    std::filesystem::path fsNewPath = fileSystemRepresentation(newPath).data();
+
     std::error_code ec;
-    std::filesystem::rename(fileSystemRepresentation(oldPath).data(), fileSystemRepresentation(newPath).data(), ec);
-    return !ec;
+    std::filesystem::rename(fsOldPath, fsNewPath, ec);
+    if (!ec)
+        return true;
+
+    // Fall back to copying and then deleting source as rename() does not work across volumes.
+    ec = { };
+    std::filesystem::copy(fsOldPath, fsNewPath, std::filesystem::copy_options::overwrite_existing | std::filesystem::copy_options::recursive, ec);
+    if (ec)
+        return false;
+    return std::filesystem::remove_all(fsOldPath, ec);
 }
 
 bool getFileSize(const String& path, long long& result)

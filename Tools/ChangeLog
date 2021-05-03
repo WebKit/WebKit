@@ -1,3 +1,16 @@
+2021-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Restore pre-r276879 behavior for FileSystem::moveFile()
+        https://bugs.webkit.org/show_bug.cgi?id=225307
+
+        Reviewed by Sam Weinig.
+
+        Add API test to make sure that FileSystem::moveFile() is able to move directories since this
+        was the case prior to r276879.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-05-03  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Support pickling platforminfo

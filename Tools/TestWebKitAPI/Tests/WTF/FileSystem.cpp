@@ -328,6 +328,32 @@ TEST_F(FileSystemTest, moveFileOverwritesDestination)
     EXPECT_GT(fileSize, 0);
 }
 
+TEST_F(FileSystemTest, moveDirectory)
+{
+    FileSystem::PlatformFileHandle temporaryFile;
+    auto temporaryTestFolder = FileSystem::openTemporaryFile("moveDirectoryTest", temporaryFile);
+    FileSystem::closeFile(temporaryFile);
+
+    EXPECT_TRUE(FileSystem::deleteFile(temporaryTestFolder));
+    EXPECT_TRUE(FileSystem::makeAllDirectories(temporaryTestFolder));
+    auto testFilePath = FileSystem::pathByAppendingComponent(temporaryTestFolder, "testFile");
+    auto fileHandle = FileSystem::openFile(testFilePath, FileSystem::FileOpenMode::Write);
+    FileSystem::writeToFile(fileHandle, FileSystemTestData, strlen(FileSystemTestData));
+    FileSystem::closeFile(fileHandle);
+
+    EXPECT_TRUE(FileSystem::fileExists(testFilePath));
+
+    auto destinationPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "moveDirectoryTest");
+    EXPECT_TRUE(FileSystem::moveFile(temporaryTestFolder, destinationPath));
+    EXPECT_FALSE(FileSystem::fileExists(temporaryTestFolder));
+    EXPECT_FALSE(FileSystem::fileExists(testFilePath));
+    EXPECT_TRUE(FileSystem::fileExists(destinationPath));
+    EXPECT_TRUE(FileSystem::fileExists(FileSystem::pathByAppendingComponent(destinationPath, "testFile")));
+
+    EXPECT_FALSE(FileSystem::deleteEmptyDirectory(destinationPath));
+    EXPECT_TRUE(FileSystem::fileExists(destinationPath));
+}
+
 TEST_F(FileSystemTest, getFileSize)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));

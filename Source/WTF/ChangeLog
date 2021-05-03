@@ -1,5 +1,22 @@
 2021-05-03  Chris Dumez  <cdumez@apple.com>
 
+        Restore pre-r276879 behavior for FileSystem::moveFile()
+        https://bugs.webkit.org/show_bug.cgi?id=225307
+
+        Reviewed by Sam Weinig.
+
+        Update FileSystem::moveFile() so that it now supports again moving a file across different
+        volumes by copying the file over and then deleting the source file.
+
+        I have verified locally that the function is now able to move a file to a different volumes.
+        Sadly, I don't think having an API test is feasible here as it requires pre-determined
+        volumes to be available.
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::moveFile):
+
+2021-05-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix JSCOnly build with recent clang after r276879
         https://bugs.webkit.org/show_bug.cgi?id=225327
 
