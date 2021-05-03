@@ -1,3 +1,38 @@
+2021-05-03  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276514. rdar://problem/77473523
+
+    Web Inspector: [Cocoa] WKInspectorResourceURLSchemeHandler needs to serialize cleanup actions
+    https://bugs.webkit.org/show_bug.cgi?id=224986
+    <rdar://76768454>
+    
+    Reviewed by Devin Rousso.
+    
+    * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm:
+    (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+    Do cleanup on the main queue so that it can be serialized with reads.
+    
+    (-[WKInspectorResourceURLSchemeHandler webView:stopURLSchemeTask:]):
+    Ensure that all removals from the map are processed before doing a lookup.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276514 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-23  BJ Burg  <bburg@apple.com>
+
+            Web Inspector: [Cocoa] WKInspectorResourceURLSchemeHandler needs to serialize cleanup actions
+            https://bugs.webkit.org/show_bug.cgi?id=224986
+            <rdar://76768454>
+
+            Reviewed by Devin Rousso.
+
+            * UIProcess/Inspector/mac/WKInspectorResourceURLSchemeHandler.mm:
+            (-[WKInspectorResourceURLSchemeHandler webView:startURLSchemeTask:]):
+            Do cleanup on the main queue so that it can be serialized with reads.
+
+            (-[WKInspectorResourceURLSchemeHandler webView:stopURLSchemeTask:]):
+            Ensure that all removals from the map are processed before doing a lookup.
+
 2021-04-29  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276618. rdar://problem/77326484
