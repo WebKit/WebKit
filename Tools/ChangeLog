@@ -1,3 +1,37 @@
+2021-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        editing/selection/ios/become-key-window-when-focusing-editable-area.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=225274
+        rdar://77042575
+
+        Reviewed by Tim Horton.
+
+        This test is timing out on recent versions of iOS because the `-becomeKeyWindow` subclassing hook is no longer
+        invoked when calling `-makeKeyWindow`, in the case where the `UIWindow` was already the key window. The iOS
+        version of WebKitTestRunner on iOS was dependent on this behavior because `setWindowIsKey(false)` on
+        `PlatformWebView` did not actually cause the test runner window to resign from being the key window. Instead, it
+        only set the boolean flag `PlatformWebView::m_windowIsKey`, which `WebKitTestRunnerWindow` then uses to override
+        the value of `-[WebKitTestRunnerWindow isKeyWindow]` (effectively side-stepping platform key window state).
+
+        We can fix this by refactoring `PlatformWebView::setWindowIsKey` to actually make the `WebKitTestRunnerWindow`
+        resign key window when calling `setWindowIsKey(false)`. Compared to macOS, doing this on iOS is a bit tricky
+        since `-[UIWindow resignKeyWindow]` is purely a subclassing hook that is invoked when the window loses its
+        status as the key window. However, we can work around this limitation by creating a separate `UIWindow` and
+        making that window key instead (which implicitly makes our current `WebKitTestRunnerWindow` resign key window).
+
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/ios/PlatformWebViewIOS.mm:
+        (WTR::PlatformWebView::setWindowIsKey):
+
+        Install the other `UIWindow` and make it key in order to resign the current key window. Note that this window is
+        placed just offscreen, so that simulated taps and other gestures will continue to go to the original window.
+
+        (-[WebKitTestRunnerWindow isKeyWindow]): Deleted.
+
+        Stop overriding the platform key window state with the simulated test runner state, since we now correctly
+        update platform key window state when setting `m_windowIsKey`. This adjustment is also necessary to ensure that
+        we actually end up in the `!isKey && m_window.keyWindow` case above.
+
 2021-05-03  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] Pass logging level to child processes
