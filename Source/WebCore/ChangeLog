@@ -1,5 +1,24 @@
 2021-05-03  Youenn Fablet  <youenn@apple.com>
 
+        REGRESSION (r276633): fast/mediastream/media-stream-track-interrupted.html is consistently timing out
+        https://bugs.webkit.org/show_bug.cgi?id=225204
+        <rdar://problem/77338070>
+
+        Reviewed by Eric Carlson.
+
+        Reverting to RecursiveLock since resuming a unit will make it notify to unmute sources.
+        Sources will want to restart audio, thus restarting the unit synchronously.
+        This triggers the unit to tell its clients that it is restarting, which creates a dead lock.
+        We should probably update the code to change this, but as a short term fix, we revert to a RecursiveLock.
+
+        Covered by fast/mediastream/media-stream-track-interrupted.html no longer timing out.
+
+        * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+        (WebCore::BaseAudioSharedUnit::audioSamplesAvailable):
+        * platform/mediastream/mac/BaseAudioSharedUnit.h:
+
+2021-05-03  Youenn Fablet  <youenn@apple.com>
+
         Use OptionSet for MediaProducer::MutedStateFlags
         https://bugs.webkit.org/show_bug.cgi?id=224550
         <rdar://problem/76960294>
