@@ -1,3 +1,12 @@
+2021-05-03  Tim Nguyen  <ntim@apple.com>
+
+        Add committer status for "Tim Nguyen" in contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=225320
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-05-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         editing/selection/ios/become-key-window-when-focusing-editable-area.html is timing out
