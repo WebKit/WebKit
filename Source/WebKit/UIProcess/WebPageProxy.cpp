@@ -1990,7 +1990,7 @@ void WebPageProxy::updateActivityState(OptionSet<ActivityState::Flag> flagsToUpd
         m_activityState.add(ActivityState::IsInWindow);
     if (flagsToUpdate & ActivityState::IsVisuallyIdle && pageClient().isVisuallyIdle())
         m_activityState.add(ActivityState::IsVisuallyIdle);
-    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState & MediaProducer::IsPlayingAudio && !(m_mutedState & MediaProducer::AudioIsMuted))
+    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState & MediaProducer::IsPlayingAudio && !(m_mutedState.contains(MediaProducer::MutedState::AudioIsMuted)))
         m_activityState.add(ActivityState::IsAudible);
     if (flagsToUpdate & ActivityState::IsLoading && m_pageLoadState.isLoading())
         m_activityState.add(ActivityState::IsLoading);
@@ -2447,10 +2447,12 @@ void WebPageProxy::setEditable(bool editable)
     
 void WebPageProxy::setMediaStreamCaptureMuted(bool muted)
 {
+    auto state = m_mutedState;
     if (muted)
-        setMuted(m_mutedState | WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+        state.add(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
     else
-        setMuted(m_mutedState & ~WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+        state.remove(WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+    setMuted(state);
 }
 
 void WebPageProxy::activateMediaStreamCaptureInPage()
@@ -2458,7 +2460,7 @@ void WebPageProxy::activateMediaStreamCaptureInPage()
 #if ENABLE(MEDIA_STREAM)
     WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
 #endif
-    setMuted(m_mutedState & ~WebCore::MediaProducer::MediaStreamCaptureIsMuted);
+    setMediaStreamCaptureMuted(false);
 }
 
 #if !PLATFORM(IOS_FAMILY)

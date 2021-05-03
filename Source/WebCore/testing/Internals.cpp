@@ -4590,14 +4590,14 @@ void Internals::setPageMuted(StringView statesString)
     if (!document)
         return;
 
-    WebCore::MediaProducer::MutedStateFlags state = MediaProducer::NoneMuted;
+    WebCore::MediaProducer::MutedStateFlags state;
     for (StringView stateString : statesString.split(',')) {
         if (equalLettersIgnoringASCIICase(stateString, "audio"))
-            state |= MediaProducer::AudioIsMuted;
+            state.add(MediaProducer::MutedState::AudioIsMuted);
         if (equalLettersIgnoringASCIICase(stateString, "capturedevices"))
-            state |= MediaProducer::AudioAndVideoCaptureIsMuted;
+            state.add(MediaProducer::AudioAndVideoCaptureIsMuted);
         if (equalLettersIgnoringASCIICase(stateString, "screencapture"))
-            state |= MediaProducer::ScreenCaptureIsMuted;
+            state.add(MediaProducer::MutedState::ScreenCaptureIsMuted);
     }
 
     if (Page* page = document->page())

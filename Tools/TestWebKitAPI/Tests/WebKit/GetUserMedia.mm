@@ -280,6 +280,7 @@ TEST(WebKit2, CaptureMuteAPI)
     [webView stringByEvaluatingJavaScript:@"stop()"];
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateNone));
 
+    // Mute camera, then microphone
     microphoneCaptureStateChange = false;
     cameraCaptureStateChange = false;
     [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo()"];
@@ -293,14 +294,42 @@ TEST(WebKit2, CaptureMuteAPI)
 
     microphoneCaptureStateChange = false;
     [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
 
     microphoneCaptureStateChange = false;
     cameraCaptureStateChange = false;
     [webView stringByEvaluatingJavaScript:@"stop()"];
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateNone));
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateNone));
+
+    // Mute microphone, then camera
+    microphoneCaptureStateChange = false;
+    cameraCaptureStateChange = false;
+    [webView stringByEvaluatingJavaScript:@"captureAudioAndVideo()"];
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
+
+    microphoneCaptureStateChange = false;
+    [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
+
+    cameraCaptureStateChange = false;
+    [webView setCameraCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
+
+    // Stop microphone, then stop camera
+    microphoneCaptureStateChange = false;
+    [webView setMicrophoneCaptureState:WKMediaCaptureStateNone completionHandler:nil];
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+
+    cameraCaptureStateChange = false;
+    [webView setCameraCaptureState:WKMediaCaptureStateNone completionHandler:nil];
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateNone));
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateNone));
 
     [webView removeObserver:observer.get() forKeyPath:@"microphoneCaptureState"];
     [webView removeObserver:observer.get() forKeyPath:@"cameraCaptureState"];

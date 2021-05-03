@@ -1,3 +1,30 @@
+2021-05-03  Youenn Fablet  <youenn@apple.com>
+
+        Use OptionSet for MediaProducer::MutedStateFlags
+        https://bugs.webkit.org/show_bug.cgi?id=224550
+        <rdar://problem/76960294>
+
+        Reviewed by Eric Carlson.
+
+        Update to use new OptionSet MediaProducer::MutedStateFlags.
+        Fix a potential bug in case the page is video capture muted, covered by updated API test.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetMuted):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView setMicrophoneCaptureState:completionHandler:]):
+        (-[WKWebView setCameraCaptureState:completionHandler:]):
+        (-[WKWebView _setPageMuted:]):
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_set_is_muted):
+        * UIProcess/Cocoa/MediaUtilities.mm:
+        (WebKit::toWKMediaMutedState):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityState):
+        * UIProcess/WebPageProxy.h:
+
 2021-05-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         IPC::Semaphore operations ASSERT when the semaphore has been destroyed

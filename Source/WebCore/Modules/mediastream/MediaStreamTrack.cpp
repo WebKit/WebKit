@@ -483,13 +483,13 @@ void MediaStreamTrack::updateCaptureAccordingToMutedState(Document& document)
 
     auto* activeAudioSource = RealtimeMediaSourceCenter::singleton().audioCaptureFactory().activeSource();
     if (activeAudioSource && isSourceCapturingForTrackInDocument(*activeAudioSource, document)) {
-        bool pageMuted = page->mutedState() & MediaProducer::AudioCaptureIsMuted;
+        bool pageMuted = page->mutedState().contains(MediaProducer::MutedState::AudioCaptureIsMuted);
         activeAudioSource->setMuted(pageMuted || (document.hidden() && document.settings().interruptAudioOnPageVisibilityChangeEnabled()));
     }
 
     auto* activeVideoSource = RealtimeMediaSourceCenter::singleton().videoCaptureFactory().activeSource();
     if (activeVideoSource && isSourceCapturingForTrackInDocument(*activeVideoSource, document)) {
-        bool pageMuted = page->mutedState() & MediaProducer::VideoCaptureIsMuted;
+        bool pageMuted = page->mutedState().contains(MediaProducer::MutedState::VideoCaptureIsMuted);
         activeVideoSource->setMuted(pageMuted || document.hidden());
     }
 #else
@@ -509,14 +509,14 @@ void MediaStreamTrack::updateToPageMutedState()
 
     switch (source().deviceType()) {
     case CaptureDevice::DeviceType::Microphone:
-        m_private->setMuted(page->mutedState() & MediaProducer::AudioCaptureIsMuted);
+        m_private->setMuted(page->mutedState().contains(MediaProducer::MutedState::AudioCaptureIsMuted));
         break;
     case CaptureDevice::DeviceType::Camera:
-        m_private->setMuted(page->mutedState() & MediaProducer::VideoCaptureIsMuted);
+        m_private->setMuted(page->mutedState().contains(MediaProducer::MutedState::VideoCaptureIsMuted));
         break;
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
-        m_private->setMuted(page->mutedState() & MediaProducer::ScreenCaptureIsMuted);
+        m_private->setMuted(page->mutedState().contains(MediaProducer::MutedState::ScreenCaptureIsMuted));
         break;
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:

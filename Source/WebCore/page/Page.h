@@ -699,8 +699,8 @@ public:
     MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
     void updateIsPlayingMedia(uint64_t);
     MediaProducer::MutedStateFlags mutedState() const { return m_mutedState; }
-    bool isAudioMuted() const { return m_mutedState & MediaProducer::AudioIsMuted; }
-    bool isMediaCaptureMuted() const { return m_mutedState & MediaProducer::MediaStreamCaptureIsMuted; };
+    bool isAudioMuted() const { return m_mutedState.contains(MediaProducer::MutedState::AudioIsMuted); }
+    bool isMediaCaptureMuted() const { return m_mutedState.containsAny(MediaProducer::MediaStreamCaptureIsMuted); };
     void schedulePlaybackControlsManagerUpdate();
 #if ENABLE(VIDEO)
     void playbackControlsMediaEngineChanged();
@@ -953,7 +953,7 @@ private:
     bool m_inLowQualityInterpolationMode { false };
     bool m_areMemoryCacheClientCallsEnabled { true };
     float m_mediaVolume { 1 };
-    MediaProducer::MutedStateFlags m_mutedState { MediaProducer::NoneMuted };
+    MediaProducer::MutedStateFlags m_mutedState;
 
     float m_pageScaleFactor { 1 };
     float m_zoomedOutPageScaleFactor { 0 };

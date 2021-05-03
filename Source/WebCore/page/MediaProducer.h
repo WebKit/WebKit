@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/EnumTraits.h>
+#include <wtf/OptionSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -75,17 +76,16 @@ public:
         AudioVideo
     };
 
-    enum MutedState {
-        NoneMuted = 0,
+    enum class MutedState {
         AudioIsMuted = 1 << 0,
         AudioCaptureIsMuted = 1 << 1,
         VideoCaptureIsMuted = 1 << 2,
         ScreenCaptureIsMuted = 1 << 3,
-
-        AudioAndVideoCaptureIsMuted = AudioCaptureIsMuted | VideoCaptureIsMuted,
-        MediaStreamCaptureIsMuted = AudioCaptureIsMuted | VideoCaptureIsMuted | ScreenCaptureIsMuted,
     };
-    typedef unsigned MutedStateFlags;
+
+    using MutedStateFlags = OptionSet<MutedState>;
+    static constexpr MutedStateFlags AudioAndVideoCaptureIsMuted = { MutedState::AudioCaptureIsMuted, MutedState::VideoCaptureIsMuted };
+    static constexpr MutedStateFlags MediaStreamCaptureIsMuted = { MutedState::AudioCaptureIsMuted, MutedState::VideoCaptureIsMuted, MutedState::ScreenCaptureIsMuted };
 
     virtual void pageMutedStateDidChange() = 0;
 
@@ -103,6 +103,16 @@ template<> struct EnumTraits<WebCore::MediaProducer::MediaCaptureKind> {
         WebCore::MediaProducer::MediaCaptureKind::Audio,
         WebCore::MediaProducer::MediaCaptureKind::Video,
         WebCore::MediaProducer::MediaCaptureKind::AudioVideo
+    >;
+};
+
+template<> struct EnumTraits<WebCore::MediaProducer::MutedState> {
+    using values = EnumValues<
+        WebCore::MediaProducer::MutedState,
+        WebCore::MediaProducer::MutedState::AudioIsMuted,
+        WebCore::MediaProducer::MutedState::AudioCaptureIsMuted,
+        WebCore::MediaProducer::MutedState::VideoCaptureIsMuted,
+        WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted
     >;
 };
 

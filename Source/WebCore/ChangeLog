@@ -1,3 +1,24 @@
+2021-05-03  Youenn Fablet  <youenn@apple.com>
+
+        Use OptionSet for MediaProducer::MutedStateFlags
+        https://bugs.webkit.org/show_bug.cgi?id=224550
+        <rdar://problem/76960294>
+
+        Reviewed by Eric Carlson.
+
+        Refactoring to improve type safety.
+        No change of behavior.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::updateCaptureAccordingToMutedState):
+        (WebCore::MediaStreamTrack::updateToPageMutedState):
+        * page/MediaProducer.h:
+        * page/Page.h:
+        (WebCore::Page::isAudioMuted const):
+        (WebCore::Page::isMediaCaptureMuted const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPageMuted):
+
 2021-05-02  Rob Buis  <rbuis@igalia.com>
 
         getPropertyValue for url path doesn't return the "#" character

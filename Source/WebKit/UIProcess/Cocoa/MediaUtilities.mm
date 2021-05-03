@@ -46,13 +46,11 @@ _WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaPro
 _WKMediaMutedState toWKMediaMutedState(WebCore::MediaProducer::MutedStateFlags state)
 {
     _WKMediaMutedState mediaMutedState = _WKMediaNoneMuted;
-    if (state & WebCore::MediaProducer::NoneMuted)
-        mediaMutedState |= _WKMediaNoneMuted;
-    if (state & WebCore::MediaProducer::AudioIsMuted)
+    if (state & WebCore::MediaProducer::MutedState::AudioIsMuted)
         mediaMutedState |= _WKMediaAudioMuted;
     if (state & WebCore::MediaProducer::AudioAndVideoCaptureIsMuted)
         mediaMutedState |= _WKMediaCaptureDevicesMuted;
-    if (state & WebCore::MediaProducer::ScreenCaptureIsMuted)
+    if (state & WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted)
         mediaMutedState |= _WKMediaScreenCaptureMuted;
     return mediaMutedState;
 }

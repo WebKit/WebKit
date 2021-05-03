@@ -1015,10 +1015,10 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
     auto mutedState = _page->mutedStateFlags();
-    if (state == WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::AudioCaptureIsMuted)
-        mutedState ^= WebCore::MediaProducer::AudioCaptureIsMuted;
+    if (state == WKMediaCaptureStateActive)
+        mutedState.remove(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
     else if (state == WKMediaCaptureStateMuted)
-        mutedState = WebCore::MediaProducer::AudioCaptureIsMuted;
+        mutedState.add(WebCore::MediaProducer::MutedState::AudioCaptureIsMuted);
     _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
@@ -1036,10 +1036,10 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
     auto mutedState = _page->mutedStateFlags();
-    if (state == WKMediaCaptureStateActive && mutedState & WebCore::MediaProducer::VideoCaptureIsMuted)
-        mutedState ^= WebCore::MediaProducer::VideoCaptureIsMuted;
+    if (state == WKMediaCaptureStateActive)
+        mutedState.remove(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
     else if (state == WKMediaCaptureStateMuted)
-        mutedState = WebCore::MediaProducer::VideoCaptureIsMuted;
+        mutedState.add(WebCore::MediaProducer::MutedState::VideoCaptureIsMuted);
     _page->setMuted(mutedState, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
@@ -3356,14 +3356,14 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (void)_setPageMuted:(_WKMediaMutedState)mutedState
 {
-    WebCore::MediaProducer::MutedStateFlags coreState = WebCore::MediaProducer::NoneMuted;
+    WebCore::MediaProducer::MutedStateFlags coreState;
 
     if (mutedState & _WKMediaAudioMuted)
-        coreState |= WebCore::MediaProducer::AudioIsMuted;
+        coreState.add(WebCore::MediaProducer::MutedState::AudioIsMuted);
     if (mutedState & _WKMediaCaptureDevicesMuted)
-        coreState |= WebCore::MediaProducer::AudioAndVideoCaptureIsMuted;
+        coreState.add(WebCore::MediaProducer::AudioAndVideoCaptureIsMuted);
     if (mutedState & _WKMediaScreenCaptureMuted)
-        coreState |= WebCore::MediaProducer::ScreenCaptureIsMuted;
+        coreState.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
 
     _page->setMuted(coreState);
 }

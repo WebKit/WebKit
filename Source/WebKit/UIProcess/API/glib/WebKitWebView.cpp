@@ -3271,7 +3271,10 @@ void webkit_web_view_set_is_muted(WebKitWebView* webView, gboolean muted)
     if (webkit_web_view_get_is_muted (webView) == muted)
         return;
 
-    getPage(webView).setMuted(muted ? WebCore::MediaProducer::AudioIsMuted : WebCore::MediaProducer::NoneMuted);
+    WebCore::MediaProducer::MutedStateFlags audioMutedFlag;
+    if (muted)
+        audioMutedFlag.add(WebCore::MediaProducer::MutedState::AudioIsMuted);
+    getPage(webView).setMuted(audioMutedFlag);
     g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_IS_MUTED]);
 }
 

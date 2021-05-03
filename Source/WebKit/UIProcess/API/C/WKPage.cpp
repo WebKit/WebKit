@@ -2712,14 +2712,14 @@ void WKPageSetMediaVolume(WKPageRef page, float volume)
 
 void WKPageSetMuted(WKPageRef page, WKMediaMutedState mutedState)
 {
-    WebCore::MediaProducer::MutedStateFlags coreState = WebCore::MediaProducer::NoneMuted;
+    WebCore::MediaProducer::MutedStateFlags coreState;
 
     if (mutedState & kWKMediaAudioMuted)
-        coreState |= WebCore::MediaProducer::AudioIsMuted;
+        coreState.add(WebCore::MediaProducer::MutedState::AudioIsMuted);
     if (mutedState & kWKMediaCaptureDevicesMuted)
-        coreState |= WebCore::MediaProducer::AudioAndVideoCaptureIsMuted;
+        coreState.add(WebCore::MediaProducer::AudioAndVideoCaptureIsMuted);
     if (mutedState & kWKMediaScreenCaptureMuted)
-        coreState |= WebCore::MediaProducer::ScreenCaptureIsMuted;
+        coreState.add(WebCore::MediaProducer::MutedState::ScreenCaptureIsMuted);
 
     toImpl(page)->setMuted(coreState);
 }
