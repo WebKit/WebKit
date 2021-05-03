@@ -17,11 +17,7 @@
             testRunner.waitUntilDone();
         }
             
-        var canvas = document.getElementById('canvas');
-        var ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = "rgb(0, 128, 0)";
-        ctx.fillRect(0, 0, 200, 200);
+        var ctx;
         
         function repaintTest()
         {
@@ -40,9 +36,15 @@
         
         function startTest()
         {
-            setTimeout(function() {
+            var canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = "rgb(0, 128, 0)";
+            ctx.fillRect(0, 0, 200, 200);
+            
+            requestAnimationFrame(() => {
                 repaintTest();
-            }, 0)
+            });
         }
         window.addEventListener('load', startTest, false);
     </script>

@@ -1,3 +1,21 @@
+2021-05-03  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r274461): [macOS wk1] fast/repaint/canvas-object-fit.html is flakey text failing
+        https://bugs.webkit.org/show_bug.cgi?id=223283
+
+        Reviewed by Ryosuke Niwa.
+        
+        WK1 repaint tests are sensitive to the timing of paints, which are controlled by 
+        WebViewLayerFlushScheduler layerFlushCallback() timing, which in turn is affected by the
+        state of -[NSWindow autodisplay], which DumpRenderTree sets to NO, but we flip to YES
+        when we see composited layers (which canvas triggers).
+        
+        To avoid this fragile mess, have the test trigger compositing early on by making the 2D
+        canvas context, then wait for a frame before the repaint part of the test.
+
+        * fast/repaint/canvas-object-fit.html:
+        * platform/mac-wk1/TestExpectations:
+
 2021-05-03  Truitt Savell  <tsavell@apple.com>
 
         [ Big Sur ] webrtc/video-vp8-videorange.html is faling on macmini8,1
