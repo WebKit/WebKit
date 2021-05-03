@@ -1,3 +1,12 @@
+2021-05-03  Aakash Jain  <aakash_jain@apple.com>
+
+        Remove unused gtk_im_multicontext_get_slave from valgrind/suppressions.txt
+        https://bugs.webkit.org/show_bug.cgi?id=225300
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/valgrind/suppressions.txt:
+
 2021-05-03  Youenn Fablet  <youenn@apple.com>
 
         Use OptionSet for MediaProducer::MutedStateFlags
