@@ -888,6 +888,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         if (enableAllExperimentalFeatures)
             WKPreferencesEnableAllExperimentalFeatures(preferences);
 
+        WKPreferencesResetAllInternalDebugFeatures(preferences);
+
         WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
         WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
     
