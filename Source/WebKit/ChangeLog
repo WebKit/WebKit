@@ -1,3 +1,16 @@
+2021-05-03  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] Properly reset WebKitWebView's responsiveness flag
+        https://bugs.webkit.org/show_bug.cgi?id=225291
+
+        Reviewed by Alicia Boya Garcia.
+
+        Reset the web process responsiveness flag whenever the web process is terminated.
+
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkitWebViewWebProcessTerminated):
+        (webkit_web_view_terminate_web_process):
+
 2021-05-03  Youenn Fablet  <youenn@apple.com>
 
         Use OptionSet for MediaProducer::MutedStateFlags

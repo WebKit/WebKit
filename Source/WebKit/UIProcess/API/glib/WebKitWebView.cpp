@@ -4428,6 +4428,9 @@ void webkitWebViewWebProcessTerminated(WebKitWebView* webView, WebKitWebProcessT
     }
 #endif
     g_signal_emit(webView, signals[WEB_PROCESS_TERMINATED], 0, reason);
+
+    // Reset the state of the responsiveness property.
+    webkitWebViewSetIsWebProcessResponsive(webView, true);
 }
 
 /*
@@ -4780,7 +4783,4 @@ void webkit_web_view_terminate_web_process(WebKitWebView* webView)
         Ref<WebKit::WebProcessProxy> protectedProcessProxy(provisionalPageProxy->process());
         protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
     }
-
-    // Reset the state of the responsiveness property.
-    webkitWebViewSetIsWebProcessResponsive(webView, true);
 }
