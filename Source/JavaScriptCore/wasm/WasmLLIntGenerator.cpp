@@ -253,6 +253,7 @@ public:
     // Calls
     PartialResult WARN_UNUSED_RETURN addCall(uint32_t calleeIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addCallIndirect(unsigned tableIndex, const Signature&, Vector<ExpressionType>& args, ResultList& results);
+    PartialResult WARN_UNUSED_RETURN addCallRef(const Signature&, Vector<ExpressionType>& args, ResultList& results);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
 
     void didFinishParsingLocals();
@@ -1099,6 +1100,21 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const Signature& signa
         WasmCallIndirect::emit(this, calleeIndex, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments, tableIndex);
     else
         WasmCallIndirectNoTls::emit(this, calleeIndex, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments, tableIndex);
+    info.commitResults(results);
+
+    return { };
+}
+
+auto LLIntGenerator::addCallRef(const Signature& signature, Vector<ExpressionType>& args, ResultList& results) -> PartialResult
+{
+    ExpressionType callee = args.takeLast();
+
+    LLIntCallInformation info = callInformationForCaller(signature);
+    unifyValuesWithBlock(info.arguments, args);
+    if (Context::useFastTLS())
+        WasmCallRef::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
+    else
+        WasmCallRefNoTls::emit(this, callee, m_codeBlock->addSignature(signature), info.stackOffset, info.numberOfStackArguments);
     info.commitResults(results);
 
     return { };

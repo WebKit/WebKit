@@ -1248,6 +1248,37 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         return { };
     }
+
+    case CallRef: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
+        WASM_VALIDATOR_FAIL_IF(!m_expressionStack.last().type().isTypeIdx(), "non-funcref call_ref value ", m_expressionStack.last().type().kind);
+
+        const SignatureIndex calleeSignatureIndex = m_expressionStack.last().type().index;
+        const Signature& calleeSignature = SignatureInformation::get(calleeSignatureIndex);
+        size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's value.
+        WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_ref expects ", argumentCount, " arguments, but the expression stack currently holds ", m_expressionStack.size(), " values");
+
+        Vector<ExpressionType> args;
+        WASM_PARSER_FAIL_IF(!args.tryReserveCapacity(argumentCount + 1), "can't allocate enough memory for ", argumentCount, " call_indirect arguments");
+        size_t firstArgumentIndex = m_expressionStack.size() - argumentCount;
+        for (size_t i = firstArgumentIndex; i < m_expressionStack.size(); ++i) {
+            TypedExpression arg = m_expressionStack.at(i);
+            if (i < m_expressionStack.size() - 1)
+                WASM_VALIDATOR_FAIL_IF(arg.type() != calleeSignature.argument(i - firstArgumentIndex), "argument type mismatch in call_indirect, got ", arg.type().kind, ", expected ", calleeSignature.argument(i - firstArgumentIndex).kind);
+            args.uncheckedAppend(arg);
+            m_context.didPopValueFromStack();
+        }
+        m_expressionStack.shrink(firstArgumentIndex);
+
+        ResultList results;
+        WASM_TRY_ADD_TO_CONTEXT(addCallRef(calleeSignature, args, results));
+
+        for (unsigned i = 0; i < calleeSignature.returnCount(); ++i)
+            m_expressionStack.constructAndAppend(calleeSignature.returnType(i), results[i]);
+
+        return { };
+    }
+
     case Block: {
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignature(m_info, inlineSignature), "can't get block's signature");
@@ -1739,6 +1770,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     // no immediate cases
     FOR_EACH_WASM_BINARY_OP(CREATE_CASE)
     FOR_EACH_WASM_UNARY_OP(CREATE_CASE)
+    case CallRef:
     case Unreachable:
     case Nop:
     case Return:

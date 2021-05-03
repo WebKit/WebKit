@@ -1,3 +1,23 @@
+2021-05-03  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Add call_ref instruction
+        https://bugs.webkit.org/show_bug.cgi?id=222903
+
+        Reviewed by Yusuke Suzuki.
+
+        Add basic tests for new call_ref instruction:
+        https://github.com/WebAssembly/function-references/blob/master/proposals/function-references/Overview.md.
+        Add tests for calling same-instance wasm function, foreign-instance
+        wasm function and for calling imported js function.
+
+        * wasm.yaml:
+        * wasm/function-references/call_ref.js: Added.
+        (module):
+        (async basics):
+        (async indirectCall):
+        (async importHostCall):
+        * wasm/wasm.json:
+
 2021-04-28  Mark Lam  <mark.lam@apple.com>
 
         Fix exception assertions in light of the TerminationException.

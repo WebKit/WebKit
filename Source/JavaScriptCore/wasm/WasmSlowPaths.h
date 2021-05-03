@@ -76,6 +76,8 @@ WASM_SLOW_PATH_HIDDEN_DECL(call);
 WASM_SLOW_PATH_HIDDEN_DECL(call_no_tls);
 WASM_SLOW_PATH_HIDDEN_DECL(call_indirect);
 WASM_SLOW_PATH_HIDDEN_DECL(call_indirect_no_tls);
+WASM_SLOW_PATH_HIDDEN_DECL(call_ref);
+WASM_SLOW_PATH_HIDDEN_DECL(call_ref_no_tls);
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(set_global_ref_portable_binding);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_atomic_wait32);

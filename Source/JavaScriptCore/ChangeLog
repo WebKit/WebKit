@@ -1,3 +1,53 @@
+2021-05-03  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
+
+        [WASM-Function-References] Add call_ref instruction
+        https://bugs.webkit.org/show_bug.cgi?id=222903
+
+        Reviewed by Yusuke Suzuki.
+
+        Add support for call_ref instruction from the typed function
+        references proposal: https://github.com/WebAssembly/function-references/blob/master/proposals/function-references/Overview.md.
+        call_ref calls the given function references from the stack 
+        and it does almost the same stuff as call_indirect but
+        it doesn't check signatures because wasm types system guaranties
+        correctness.
+
+        * bytecode/BytecodeList.rb:
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * llint/LowLevelInterpreter.asm:
+        * llint/WebAssembly.asm:
+        * runtime/Gate.h:
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::addCallIndirect):
+        (JSC::Wasm::AirIRGenerator::addCallRef):
+        (JSC::Wasm::AirIRGenerator::emitIndirectCall):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitIndirectCall):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        (JSC::Wasm::B3IRGenerator::addCallRef):
+        * wasm/WasmFunctionParser.h:
+        (JSC::Wasm::FunctionParser<Context>::parseExpression):
+        (JSC::Wasm::FunctionParser<Context>::parseUnreachableExpression):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::addCallRef):
+        * wasm/WasmSlowPaths.cpp:
+        (JSC::LLInt::doWasmCallRef):
+        (JSC::LLInt::WASM_SLOW_PATH_DECL):
+        * wasm/WasmSlowPaths.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        * wasm/js/WebAssemblyFunction.cpp:
+        (JSC::WebAssemblyFunction::WebAssemblyFunction):
+        * wasm/js/WebAssemblyFunction.h:
+        * wasm/js/WebAssemblyFunctionBase.cpp:
+        (JSC::WebAssemblyFunctionBase::WebAssemblyFunctionBase):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        (JSC::WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation):
+        * wasm/js/WebAssemblyWrapperFunction.cpp:
+        (JSC::WebAssemblyWrapperFunction::WebAssemblyWrapperFunction):
+        * wasm/js/WebAssemblyWrapperFunction.h:
+        * wasm/wasm.json:
+
 2021-05-01  Chris Dumez  <cdumez@apple.com>
 
         Start leveraging std::filesystem in WTF::FileSystem

@@ -454,9 +454,8 @@ Structure* WebAssemblyFunction::createStructure(VM& vm, JSGlobalObject* globalOb
 }
 
 WebAssemblyFunction::WebAssemblyFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, Wasm::Callee& jsEntrypoint, Wasm::WasmToWasmImportableFunction::LoadLocation wasmToWasmEntrypointLoadLocation, Wasm::SignatureIndex signatureIndex)
-    : Base { vm, executable, globalObject, structure }
+    : Base { vm, executable, globalObject, structure, Wasm::WasmToWasmImportableFunction { signatureIndex, wasmToWasmEntrypointLoadLocation } }
     , m_jsEntrypoint { jsEntrypoint.entrypoint() }
-    , m_importableFunction { signatureIndex, wasmToWasmEntrypointLoadLocation }
 { }
 
 template<typename Visitor>

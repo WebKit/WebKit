@@ -1474,6 +1474,8 @@ op :wasm_trampoline_wasm_call
 op :wasm_trampoline_wasm_call_no_tls
 op :wasm_trampoline_wasm_call_indirect
 op :wasm_trampoline_wasm_call_indirect_no_tls
+op :wasm_trampoline_wasm_call_ref
+op :wasm_trampoline_wasm_call_ref_no_tls
 
 end_section :NativeHelpers
 
@@ -1495,6 +1497,8 @@ op :call_return_location
 op :call_no_tls_return_location
 op :call_indirect_return_location
 op :call_indirect_no_tls_return_location
+op :call_ref_return_location
+op :call_ref_no_tls_return_location
 
 # FIXME: Wasm and JS LLInt should share common opcodes
 # https://bugs.webkit.org/show_bug.cgi?id=203656
@@ -1684,6 +1688,22 @@ op :call_indirect_no_tls,
         stackOffset: unsigned,
         numberOfStackArgs: unsigned,
         tableIndex: unsigned,
+    }
+
+op :call_ref,
+    args: {
+        functionReference: VirtualRegister,
+        signatureIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfStackArgs: unsigned,
+    }
+
+op :call_ref_no_tls,
+    args: {
+        functionReference: VirtualRegister,
+        signatureIndex: unsigned,
+        stackOffset: unsigned,
+        numberOfStackArgs: unsigned,
     }
 
 op :current_memory,
