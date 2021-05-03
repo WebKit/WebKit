@@ -1,3 +1,10 @@
+2021-05-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed attempt to fix JSCOnly build with recent clang after r276879
+        https://bugs.webkit.org/show_bug.cgi?id=225327
+
+        * wtf/PlatformJSCOnly.cmake:
+
 2021-05-03  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] REGRESSION(r276879): Several tests are crashing or failing
