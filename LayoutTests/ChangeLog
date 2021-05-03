@@ -1,3 +1,15 @@
+2021-05-03  Zalan Bujtas  <zalan@apple.com>
+
+        [Multi-column] Remove spanner placeholder when the spanner becomes nested
+        https://bugs.webkit.org/show_bug.cgi?id=225248
+        <rdar://77326189>
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        * fast/multicol/span/float-becomes-spanner-crash-expected.txt: Added.
+        * fast/multicol/span/float-becomes-spanner-crash.html: Added.
+
 2021-05-03  Aditya Keerthi  <akeerthi@apple.com>
 
         [iOS] Crash when tapping fields on cycle.travel

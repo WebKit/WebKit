@@ -1,3 +1,34 @@
+2021-05-03  Zalan Bujtas  <zalan@apple.com>
+
+        [Multi-column] Remove spanner placeholder when the spanner becomes nested
+        https://bugs.webkit.org/show_bug.cgi?id=225248
+        <rdar://77326189>
+
+        Reviewed by Antti Koivisto.
+
+        Columns spanners (and their subtrees) are moved out of the RenderMultiColumnFlow subtree next to their RenderMultiColumnSet renderers.
+        Placeholder renderers are inserted at the original position e.g.
+
+        <div id=A style="column-count: 2;"><div id=B><div id=C style="column-span: all;"></div></div></div>
+
+        RenderBlockFlow (A) (<div column-count: 2>)
+          RenderMultiColumnFlow
+            RenderBlockFlow (B) (<div>)
+              RenderBlockFlow (C) (<div>)
+                RenderMultiColumnSpannerPlaceholder (placeholder for D)
+          RenderBlockFlow (D) (<div column-span: all>)
+          RenderMultiColumnSet
+
+        Now if (C) becomes a column spanner, we need to move the descendant spanner (D) back to its original position and move the subtree out starting from the outermost spanner (C).
+        RenderTreeUdpater normally solves this by tearing down the new spanner (and its subtree) when the 'column-spanner' property changes.
+        However this spanner property is essentially ignored for floats and out-of-flow boxes (we don't make them spanning the columns) and changing "float" and/or "position" makes
+        spanners active.
+
+        Test: fast/multicol/span/float-becomes-spanner-crash.html
+
+        * style/StyleChange.cpp:
+        (WebCore::Style::determineChange):
+
 2021-05-03  Sam Weinig  <weinig@apple.com>
 
         Remove default parameter values for color space and pixel format from ImageBuffer::create to make it clear everwhere we are explicitly requesting SRGB/BGRA8 buffers
