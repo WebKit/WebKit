@@ -65,5 +65,17 @@ void HighlightRegister::addAppHighlight(Ref<StaticRange>&& value)
     else
         setFromMapLike(appHighlightKey(), Highlight::create(WTFMove(value)));
 }
+
+void HighlightRegister::setHighlightVisibility(HighlightVisibility highlightVisibility)
+{
+    if (m_highlightVisibility == highlightVisibility)
+        return;
+    
+    m_highlightVisibility = highlightVisibility;
+    
+    for (auto& highlight : m_map)
+        highlight.value->repaint();
+}
+
 #endif
 }
