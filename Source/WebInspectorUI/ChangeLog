@@ -1,3 +1,29 @@
+2021-05-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: add assertion for `WI.View` re-entrancy
+        https://bugs.webkit.org/show_bug.cgi?id=224678
+
+        Reviewed by Joseph Pecoraro.
+
+        Add `console.assert` (which are removed from production builds) around each critical
+        `WI.View` subclass member function to prevent reentrancy.
+         - `initialLayout`
+         - `sizeDidChange`
+         - `layout`
+         - `didLayoutSubtree`
+        This is important because `WI.View.prototype._layoutSubtree` sets any related state after
+        calling any of the above (e.g. `_didInitialLayout` after `initialLayout`), meaning that any
+        checks for the related state (which sometimes control whether the function is called, such
+        as in the case of `initialLayout`) would think that the function hadn't been called yet. See
+        r276170 for an example of how this can happen and the potential problems it can cause.
+
+        * UserInterface/Views/View.js:
+        (WI.View.prototype._layoutSubtree):
+
+        * UserInterface/Base/Utilities.js:
+        (WI.setReentrantCheck): Added.
+        (WI.clearReentrantCheck): Added.
+
 2021-05-04  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Sources: Inconsistent selection in source tree when grouped by path
