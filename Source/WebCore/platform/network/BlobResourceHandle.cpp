@@ -569,7 +569,7 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     ASSERT(isMainThread());
 
     bool isRangeRequest = m_rangeOffset != kPositionNotSpecified;
-    ResourceResponse response(firstRequest().url(), m_blobData->contentType(), m_totalRemainingSize, String());
+    ResourceResponse response(firstRequest().url(), extractMIMETypeFromMediaType(m_blobData->contentType()), m_totalRemainingSize, String());
     response.setHTTPStatusCode(isRangeRequest ? httpPartialContent : httpOK);
     response.setHTTPStatusText(isRangeRequest ? httpPartialContentText : httpOKText);
 

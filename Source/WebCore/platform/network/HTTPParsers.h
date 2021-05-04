@@ -79,7 +79,7 @@ bool isValidHTTPToken(const String&);
 bool isValidHTTPToken(StringView);
 Optional<WallTime> parseHTTPDate(const String&);
 String filenameFromHTTPContentDisposition(const String&);
-String extractMIMETypeFromMediaType(const String&);
+WEBCORE_EXPORT String extractMIMETypeFromMediaType(const String&);
 String extractCharsetFromMediaType(const String&);
 XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& failureReason, unsigned& failurePosition, String& reportURL);
 AtomString extractReasonPhraseFromHTTPStatusLine(const String&);

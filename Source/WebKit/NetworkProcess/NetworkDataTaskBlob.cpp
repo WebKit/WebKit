@@ -255,7 +255,7 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
     LOG(NetworkSession, "%p - NetworkDataTaskBlob::dispatchDidReceiveResponse(%u)", this, static_cast<unsigned>(errorCode));
 
     Ref<NetworkDataTaskBlob> protectedThis(*this);
-    ResourceResponse response(m_firstRequest.url(), errorCode != Error::NoError ? "text/plain" : m_blobData->contentType(), errorCode != Error::NoError ? 0 : m_totalRemainingSize, String());
+    ResourceResponse response(m_firstRequest.url(), errorCode != Error::NoError ? "text/plain" : extractMIMETypeFromMediaType(m_blobData->contentType()), errorCode != Error::NoError ? 0 : m_totalRemainingSize, String());
     switch (errorCode) {
     case Error::NoError: {
         bool isRangeRequest = m_rangeOffset != kPositionNotSpecified;
