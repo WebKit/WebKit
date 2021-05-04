@@ -1,3 +1,25 @@
+2021-05-03  Megan Gardner  <megan_gardner@apple.com>
+
+        Allow AppHighlight visibility to be toggled
+        https://bugs.webkit.org/show_bug.cgi?id=225276
+
+        Reviewed by Wenson Hsieh.
+
+        Add supporting infrastructure to allow highlights to be turned on and off. 
+        This is done with a simple state and a forced repaint on the areas that have highlights.
+
+        * Modules/highlight/Highlight.cpp:
+        (WebCore::Highlight::forceRepaint):
+        * Modules/highlight/Highlight.h:
+        * Modules/highlight/HighlightRegister.cpp:
+        (WebCore::HighlightRegister::setActive):
+        * Modules/highlight/HighlightRegister.h:
+        (WebCore::HighlightRegister::isActive):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::collectMarkedTextsForHighlights const):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::calculateHighlightColor const):
+
 2021-05-03  Peng Liu  <peng.liu6@apple.com>
 
         Remove the quirk to disable "return to element fullscreen from picture-in-picture" for wowhead.com

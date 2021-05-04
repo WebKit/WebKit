@@ -59,6 +59,8 @@ public:
     bool addToSetLike(StaticRange&);
     bool removeFromSetLike(const StaticRange&);
     void initializeSetLike(DOMSetAdapter&);
+    
+    void repaint();
     const Vector<Ref<HighlightRangeData>>& rangesData() const { return m_rangesData; }
 
     // FIXME: Add WEBCORE_EXPORT CSSStyleDeclaration& style();

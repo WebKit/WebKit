@@ -7521,6 +7521,15 @@ void WebPage::restoreAppHighlightsAndScrollToIndex(const Vector<SharedMemory::IP
         i++;
     }
 }
+
+void WebPage::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightVisibility)
+{
+    for (RefPtr<Frame> frame = m_mainFrame->coreFrame(); frame; frame = frame->tree().traverseNextRendered()) {
+        if (auto document = makeRefPtr(frame->document()))
+            document->appHighlightRegister().setHighlightVisibility(appHighlightVisibility);
+    }
+}
+
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
