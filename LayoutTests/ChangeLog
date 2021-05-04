@@ -1,5 +1,11 @@
 2021-05-04  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, fix-up bug URL after r276955
+
+        * platform/glib/TestExpectations:
+
+2021-05-04  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GLIB WebRTC gardening
 
         * platform/glib/TestExpectations: Flag test as crashing in debug bots.
