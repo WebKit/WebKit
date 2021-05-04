@@ -1,3 +1,53 @@
+2021-05-03  Frédéric Wang  <fwang@igalia.com>
+
+        ASSERTION FAILED: !m_needExceptionCheck while converting IDLSequence<T>
+        https://bugs.webkit.org/show_bug.cgi?id=223789
+
+        Reviewed by Mark Lam.
+
+        Add RETURN_IF_EXCEPTION after various toJS<T> calls since they can throw exception
+        for some types T.
+
+        * bindings/js/JSDOMConvertSequences.h:
+        (WebCore::JSConverter<IDLSequence<T>>::convert): Add RETURN_IF_EXCEPTION before appending
+        the result of toJS<T>.
+        (WebCore::JSConverter<IDLFrozenArray<T>>::convert): Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent): Add a throw scope and add RETURN_IF_EXCEPTION
+        before setting a dictionary value. Change the potentially unused variable.
+        (GenerateDefaultToJSONOperationDefinition): Add a RETURN_IF_EXCEPTION before setting a
+        value of the JSON object.
+        (NativeToJSValueMayThrow): Add "IDLDictionaryMember" as a possible context for which
+        exception may be thrown.
+        * bindings/scripts/test/JS/JSExposedToWorkerAndWindow.cpp:
+        (WebCore::convertDictionaryToJS): Update expectation.
+        * bindings/scripts/test/JS/JSTestDefaultToJSON.cpp:
+        (WebCore::jsTestDefaultToJSONPrototypeFunction_toJSONBody): Ditto.
+        * bindings/scripts/test/JS/JSTestDefaultToJSONFilteredByExposed.cpp:
+        (WebCore::jsTestDefaultToJSONFilteredByExposedPrototypeFunction_toJSONBody): Ditto.
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInherit.cpp:
+        (WebCore::jsTestDefaultToJSONInheritPrototypeFunction_toJSONBody): Ditto.
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInheritFinal.cpp:
+        (WebCore::jsTestDefaultToJSONInheritFinalPrototypeFunction_toJSONBody): Ditto.
+        * bindings/scripts/test/JS/JSTestDerivedDictionary.cpp:
+        (WebCore::convertDictionaryToJS): Ditto.
+        * bindings/scripts/test/JS/JSTestDerivedDictionary2.cpp:
+        (WebCore::convertDictionaryToJS): Ditto.
+        * bindings/scripts/test/JS/JSTestDictionaryWithOnlyConditionalMembers.cpp:
+        (WebCore::convertDictionaryToJS): Ditto.
+        * bindings/scripts/test/JS/JSTestEmptyDictionary.cpp:
+        (WebCore::convertDictionaryToJS): Ditto.
+        * bindings/scripts/test/JS/JSTestInheritedDictionary.cpp:
+        (WebCore::convertDictionaryToJS): Ditto.
+        * bindings/scripts/test/JS/JSTestInheritedDictionary2.cpp:
+        (WebCore::convertDictionaryToJS): Ditto.
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::jsTestNodePrototypeFunction_toJSONBody): Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionaryToJS): Ditto.
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionaryToJS): Ditto.
+
 2021-05-03  Megan Gardner  <megan_gardner@apple.com>
 
         Allow AppHighlight visibility to be toggled

@@ -63,17 +63,19 @@ template<> TestDictionaryWithOnlyConditionalMembers convertDictionary<TestDictio
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const TestDictionaryWithOnlyConditionalMembers& dictionary)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());
 
 #if ENABLE(TEST_CONDITIONAL)
     if (!IDLDictionary<TestDictionary>::isNullValue(dictionary.conditionalMember)) {
-        auto conditionalMemberValue = toJS<IDLDictionary<TestDictionary>>(lexicalGlobalObject, globalObject, IDLDictionary<TestDictionary>::extractValueFromNullable(dictionary.conditionalMember));
+        auto conditionalMemberValue = toJS<IDLDictionary<TestDictionary>>(lexicalGlobalObject, globalObject, throwScope, IDLDictionary<TestDictionary>::extractValueFromNullable(dictionary.conditionalMember));
+        RETURN_IF_EXCEPTION(throwScope, { });
         result->putDirect(vm, JSC::Identifier::fromString(vm, "conditionalMember"), conditionalMemberValue);
     }
 #endif
     UNUSED_PARAM(dictionary);
-    UNUSED_PARAM(vm);
+    UNUSED_VARIABLE(throwScope);
 
     return result;
 }

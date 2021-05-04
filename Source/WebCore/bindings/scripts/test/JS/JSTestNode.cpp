@@ -381,7 +381,9 @@ static inline EncodedJSValue jsTestNodePrototypeFunction_toJSONBody(JSGlobalObje
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
     auto* result = constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype());
-    result->putDirect(vm, Identifier::fromString(vm, "name"), toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.name()));
+    auto nameValue = toJS<IDLDOMString>(*lexicalGlobalObject, throwScope, impl.name());
+    RETURN_IF_EXCEPTION(throwScope, { });
+    result->putDirect(vm, Identifier::fromString(vm, "name"), nameValue);
     return JSValue::encode(result);
 }
 

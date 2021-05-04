@@ -2685,7 +2685,8 @@ sub GenerateDictionaryImplementationContent
 
         $result .= "JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const ${className}& dictionary)\n";
         $result .= "{\n";
-        $result .= "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n\n";
+        $result .= "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n";
+        $result .= "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n\n";
 
         # 1. Let O be ! ObjectCreate(%ObjectPrototype%).
         $result .= "    auto result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());\n\n";
@@ -2731,12 +2732,14 @@ sub GenerateDictionaryImplementationContent
 
                     $result .= "${indent}    if (!${IDLType}::isNullValue(${valueExpression})) {\n";
                     $result .= "${indent}        auto ${key}Value = ${conversionExpression};\n";
+                    $result .= "${indent}        RETURN_IF_EXCEPTION(throwScope, { });\n";
                     $result .= "${indent}        result->putDirect(vm, JSC::Identifier::fromString(vm, \"${key}\"), ${key}Value);\n";
                     $result .= "${indent}    }\n";
                 } else {
                     my $conversionExpression = NativeToJSValueUsingReferences($member, $typeScope, $valueExpression, "globalObject");
 
                     $result .= "${indent}    auto ${key}Value = ${conversionExpression};\n";
+                    $result .= "${indent}    RETURN_IF_EXCEPTION(throwScope, { });\n";
                     $result .= "${indent}    result->putDirect(vm, JSC::Identifier::fromString(vm, \"${key}\"), ${key}Value);\n";
                 }
                 if ($needsRuntimeCheck) {
@@ -2749,7 +2752,7 @@ sub GenerateDictionaryImplementationContent
 
         if (!$hasUnconditionalMember) {
             $result .= "    UNUSED_PARAM(dictionary);\n";
-            $result .= "    UNUSED_PARAM(vm);\n\n";
+            $result .= "    UNUSED_VARIABLE(throwScope);\n\n";
         }
 
         $result .= "    return result;\n";
@@ -5838,12 +5841,14 @@ sub GenerateDefaultToJSONOperationDefinition
 
                 my $attributeName = $attribute->name;
                 my $toJSExpression = "";
+                my $mayThrowException = 0;
                 if (HasCustomGetter($attribute)) {
                     my $implGetterFunctionName = $codeGenerator->WK_lcfirst($attribute->extendedAttributes->{ImplementedAs} || $attributeName);
                     $toJSExpression = "castedThis->${implGetterFunctionName}(*lexicalGlobalObject)";
                 } else {
                     my ($baseFunctionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $currentInterface->type->name, $attribute);
                     my $functionName = GetFullyQualifiedImplementationCallName($currentInterface, $attribute, $baseFunctionName, "impl", $conditional);
+                    $mayThrowException = NativeToJSValueMayThrow($attribute);
                     $toJSExpression = NativeToJSValue($attribute, $currentInterface, "${functionName}(" . join(", ", @arguments) . ")", "*lexicalGlobalObject", "*castedThis->globalObject()");
                 }
 
@@ -5851,10 +5856,14 @@ sub GenerateDefaultToJSONOperationDefinition
                 if ($needsRuntimeCheck) {
                     my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($currentInterface, $attribute, "castedThis->globalObject()");
                     push(@$outputArray, "    if (${runtimeEnableConditionalString}) {\n");
-                    push(@$outputArray, "        result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${toJSExpression});\n");
+                    push(@$outputArray, "        auto ${attributeName}Value = ${toJSExpression};\n");
+                    push(@$outputArray, "        RETURN_IF_EXCEPTION(throwScope, { });\n") if $mayThrowException;
+                    push(@$outputArray, "        result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${attributeName}Value);\n");
                     push(@$outputArray, "    }\n");
                 } else {
-                    push(@$outputArray, "    result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${toJSExpression});\n");
+                    push(@$outputArray, "    auto ${attributeName}Value = ${toJSExpression};\n");
+                    push(@$outputArray, "    RETURN_IF_EXCEPTION(throwScope, { });\n") if $mayThrowException;
+                    push(@$outputArray, "    result->putDirect(vm, Identifier::fromString(vm, \"${attributeName}\"), ${attributeName}Value);\n");
                 }
 
                 if ($conditional) {
@@ -7156,7 +7165,7 @@ sub IsValidContextForNativeToJSValue
 sub NativeToJSValueMayThrow
 {
     my ($context) = @_;
-    my $mayThrowException = ref($context) eq "IDLAttribute" || ref($context) eq "IDLOperation";
+    return ref($context) eq "IDLAttribute" || ref($context) eq "IDLOperation" || ref($context) eq "IDLDictionaryMember";
 }
 
 sub NativeToJSValue

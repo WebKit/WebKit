@@ -46,11 +46,12 @@ template<> TestEmptyDictionary convertDictionary<TestEmptyDictionary>(JSGlobalOb
 JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const TestEmptyDictionary& dictionary)
 {
     auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto result = constructEmptyObject(&lexicalGlobalObject, globalObject.objectPrototype());
 
     UNUSED_PARAM(dictionary);
-    UNUSED_PARAM(vm);
+    UNUSED_VARIABLE(throwScope);
 
     return result;
 }
