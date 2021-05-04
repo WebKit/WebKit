@@ -1,3 +1,13 @@
+2021-05-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix syntax error message for AUTOPLUSPLUS token.
+        https://bugs.webkit.org/show_bug.cgi?id=225308
+        rdar://76830934
+
+        Reviewed by Saam Barati.
+
+        * stress/prefix-plusplus-syntax-error-should-say-plusplus.js: Added.
+
 2021-05-03  Dmitry Bezhetskov  <dbezhetskov@igalia.com>
 
         [WASM-Function-References] Add call_ref instruction

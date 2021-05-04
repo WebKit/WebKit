@@ -1,3 +1,31 @@
+2021-05-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix syntax error message for AUTOPLUSPLUS token.
+        https://bugs.webkit.org/show_bug.cgi?id=225308
+        rdar://76830934
+
+        Reviewed by Saam Barati.
+
+        For the record, it's not easy to tell from the code why AUTOPLUSPLUS is needed.
+        It's needed to distinguish this:
+            ```
+            statement ++ stuff  // ++ is a postfix operator applied to `statement`.
+            ```
+        from this:
+            ```
+            statement
+            ++stuff    // The `\n` before the ++ makes it a prefix operator applied to `stuff``.
+            ```
+
+        If we merely tokenize the ++ as a PLUSPLUS token, then it's unclear whether it acts
+        as a postfix or prefix token in the 2nd case above.
+
+        This is why the correct fix is not to get rid of the AUTOPLUSPLUS token, but to
+        teach the syntax error message to be aware of the AUTOPLUSPLUS token.
+
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseUnaryExpression):
+
 2021-05-03  Chris Dumez  <cdumez@apple.com>
 
         Restore pre-r276879 behavior for FileSystem::deleteFile() and FileSystem::deleteEmptyDirectory()
