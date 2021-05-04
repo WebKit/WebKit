@@ -1,37 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../resources/webgl_test_files/deqp/functional/gles3/occlusionquery_strict.html
-
-[ 1: FAIL ] occlusion_query.scissor: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 2: FAIL ] occlusion_query.depth_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 3: FAIL ] occlusion_query.depth_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 4: FAIL ] occlusion_query.stencil_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 5: FAIL ] occlusion_query.stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 6: FAIL ] occlusion_query.scissor_depth_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 7: FAIL ] occlusion_query.scissor_depth_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 8: FAIL ] occlusion_query.scissor_stencil_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 9: FAIL ] occlusion_query.scissor_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 10: FAIL ] occlusion_query.depth_write_depth_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 11: FAIL ] occlusion_query.depth_write_stencil_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 12: FAIL ] occlusion_query.depth_write_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 13: FAIL ] occlusion_query.depth_clear_stencil_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 14: FAIL ] occlusion_query.depth_clear_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 15: PASS ] occlusion_query.stencil_write_stencil_clear: Passed
-[ 16: FAIL ] occlusion_query.scissor_depth_write_depth_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 17: PASS ] occlusion_query.scissor_depth_write_stencil_write: Passed
-[ 18: FAIL ] occlusion_query.scissor_depth_write_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 19: FAIL ] occlusion_query.scissor_depth_clear_stencil_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 20: FAIL ] occlusion_query.scissor_depth_clear_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 21: FAIL ] occlusion_query.scissor_stencil_write_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 22: FAIL ] occlusion_query.depth_write_depth_clear_stencil_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 23: FAIL ] occlusion_query.depth_write_depth_clear_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 24: FAIL ] occlusion_query.depth_write_stencil_write_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 25: FAIL ] occlusion_query.depth_clear_stencil_write_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 26: FAIL ] occlusion_query.scissor_depth_write_depth_clear_stencil_write: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 27: FAIL ] occlusion_query.scissor_depth_write_depth_clear_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 28: FAIL ] occlusion_query.scissor_depth_write_stencil_write_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 29: FAIL ] occlusion_query.scissor_depth_clear_stencil_write_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 30: FAIL ] occlusion_query.depth_write_depth_clear_stencil_write_stencil_clear: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 31: FAIL ] occlusion_query.all_occluders: Occlusion query result: Target visible. Framebuffer read result: Target invisible
-[ 32: PASS ] occlusion_query.all_occluders: successfullyParsed is true
-[ FAIL ] 29 failures reported
+[ PASS ] All tests passed

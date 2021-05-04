@@ -1,25 +1,4 @@
 This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
 
 Test: ../../../../resources/webgl_test_files/deqp/functional/gles3/fboinvalidate/sub.html
-
-[ 1: PASS ] invalidate.sub.render_none:
-[ 2: PASS ] invalidate.sub.render_color:
-[ 3: PASS ] invalidate.sub.render_depth:
-[ 4: PASS ] invalidate.sub.render_stencil:
-[ 5: PASS ] invalidate.sub.render_depth_stencil:
-[ 6: PASS ] invalidate.sub.render_all:
-[ 7: PASS ] invalidate.sub.unbind_read_color:
-[ 8: PASS ] invalidate.sub.unbind_read_depth:
-[ 9: PASS ] invalidate.sub.unbind_read_stencil:
-[ 10: PASS ] invalidate.sub.unbind_read_depth_stencil:
-[ 11: PASS ] invalidate.sub.unbind_read_color_stencil:
-[ 12: PASS ] invalidate.sub.unbind_blit_color:
-[ 13: PASS ] invalidate.sub.unbind_blit_depth:
-[ 14: PASS ] invalidate.sub.unbind_blit_stencil:
-[ 15: PASS ] invalidate.sub.unbind_blit_depth_stencil:
-[ 16: FAIL ] invalidate.sub.unbind_blit_msaa_color:
-[ 17: PASS ] invalidate.sub.unbind_blit_msaa_depth:
-[ 18: FAIL ] invalidate.sub.unbind_blit_msaa_stencil:
-[ 19: PASS ] invalidate.sub.unbind_blit_msaa_depth_stencil:
-[ 20: PASS ] invalidate.sub.unbind_blit_msaa_depth_stencil: successfullyParsed is true
-[ FAIL ] 2 failures reported
+[ PASS ] All tests passed
