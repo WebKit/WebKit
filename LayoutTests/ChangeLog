@@ -1,3 +1,18 @@
+2021-05-04  Jean-Yves Avenard  <jya@apple.com>
+
+        webrtc/video-vp8-videorange.html is faling on macmini8,1
+        https://bugs.webkit.org/show_bug.cgi?id=225345
+        rdar://77403100
+
+        Reviewed by Eric Carlson.
+
+        On some hardware, compositing may render slightly differently.
+        We add a small fuzz factor when comparing the YUV component values.
+        Such difference in results would be visually indistinguishible.
+
+        * platform/mac/TestExpectations: Remove test entry.
+        * webrtc/video-vp8-videorange.html:
+
 2021-05-04  Chris Dumez  <cdumez@apple.com>
 
         Blob contentType with charset renders html as plain text

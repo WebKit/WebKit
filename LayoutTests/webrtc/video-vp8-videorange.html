@@ -29,6 +29,12 @@ function drawChecker(ctx, x, y, width, height) {
   }
 }
 
+function checkPixelData(pixelData, expected, fuzz) {
+    return Math.abs(pixelData[0] - expected[0]) <= fuzz
+            && Math.abs(pixelData[1] - expected[1]) <= fuzz
+            && Math.abs(pixelData[2] - expected[2]) <= fuzz;
+}
+
 const FPS = 30;
 var track;
 var remoteTrack;
@@ -70,10 +76,10 @@ promise_test(async (test) => {
     let context = canvas2.getContext('2d');
     // Check pixel is pure black in top left square.
     let pixelData = context.getImageData(canvas2.width / 4, canvas2.height / 4, 1, 1).data;
-    assert_equals([ pixelData[0], pixelData[1], pixelData[2] ].join(), [0, 0, 0].join());
+    assert_true(checkPixelData(pixelData, [0, 0, 0], 1));
     // Check pixel is pure white in top right square.
     pixelData = context.getImageData(3 * canvas2.width / 4, canvas2.height / 4, 1, 1).data;
-    assert_equals([ pixelData[0], pixelData[1], pixelData[2] ].join(), [255, 255, 255].join());
+    assert_true(checkPixelData(pixelData, [255, 255, 255], 1));
 }, "Track is enabled, video should not be black");
         </script>
     </body>

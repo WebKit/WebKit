@@ -2259,5 +2259,3 @@ webkit.org/b/22261 imported/w3c/web-platform-tests/css/selectors/focus-visible-0
 webkit.org/b/224842 [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Pass Timeout ]
 
 webkit.org/b/225315 [ Debug ] http/wpt/crypto/unwrap-rsa-key-crash.any.html [ Pass Crash ]
-
-webkit.org/b/225257 webrtc/video-vp8-videorange.html [ Pass Failure ]
