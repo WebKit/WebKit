@@ -101,11 +101,5 @@ bool Highlight::addToSetLike(StaticRange& range)
     return true;
 }
 
-void Highlight::repaint()
-{
-    for (auto& data : m_rangesData)
-        repaintRange(data->range);
-}
-
 }
 

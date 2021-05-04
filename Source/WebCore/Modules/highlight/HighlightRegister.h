@@ -26,7 +26,6 @@
 #pragma once
 
 #include "Highlight.h"
-#include "HighlightVisibility.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 
@@ -45,10 +44,6 @@ public:
     void setFromMapLike(String&&, Ref<Highlight>&&);
     void clear();
     bool remove(const String&);
-    
-    HighlightVisibility highlightsVisibility() const { return m_highlightVisibility; }
-    WEBCORE_EXPORT void setHighlightVisibility(HighlightVisibility);
-    
 #if ENABLE(APP_HIGHLIGHTS)
     WEBCORE_EXPORT void addAppHighlight(Ref<StaticRange>&&);
     static ASCIILiteral appHighlightKey();
@@ -58,8 +53,6 @@ public:
 private:
     HighlightRegister() = default;
     HashMap<String, Ref<Highlight>> m_map;
-
-    HighlightVisibility m_highlightVisibility { HighlightVisibility::Hidden };
 };
 
 }

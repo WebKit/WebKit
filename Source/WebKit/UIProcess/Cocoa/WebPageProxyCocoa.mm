@@ -572,20 +572,9 @@ void WebPageProxy::restoreAppHighlightsAndScrollToIndex(const Vector<Ref<SharedM
 
         memoryHandles.append(SharedMemory::IPCHandle { WTFMove(handle), highlight->size() });
     }
-    
-    setUpHighlightsObserver();
 
     send(Messages::WebPage::RestoreAppHighlightsAndScrollToIndex(WTFMove(memoryHandles), index));
 }
-
-void WebPageProxy::setAppHighlightsVisibility(WebCore::HighlightVisibility appHighlightsVisibility)
-{
-    if (!hasRunningProcess())
-        return;
-
-    send(Messages::WebPage::SetAppHighlightsVisibility(appHighlightsVisibility));
-}
-
 #endif
 
 SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)

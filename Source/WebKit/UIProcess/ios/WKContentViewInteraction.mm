@@ -3565,6 +3565,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         || action == @selector(_transpose))
         return editorState.isContentEditable;
 
+#if ENABLE(APP_HIGHLIGHTS)
+    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
+        return editorState.selectionIsRange && !editorState.isContentEditable;
+#endif
+
     return [_webView canPerformAction:action withSender:sender];
 }
 
@@ -3756,11 +3761,8 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (id)targetForAction:(SEL)action withSender:(id)sender
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    if (action == @selector(createHighlightInCurrentGroupWithRange:))
-        return self.shouldAllowAppHighlightCreation && _page->appHighlightsVisibility() ? self : nil;
-    if (action == @selector(createHighlightInNewGroupWithRange:))
-        return self.shouldAllowAppHighlightCreation && !_page->appHighlightsVisibility() ? self : nil;
-    
+    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
+        return self;
 #endif
     return [_webView targetForAction:action withSender:sender];
 }
