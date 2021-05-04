@@ -1,3 +1,9 @@
+2021-05-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, unskipped a test which works fine.
+
+        * TestExpectations:
+
 2021-05-04  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, fix-up bug URL after r276955
