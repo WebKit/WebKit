@@ -64,6 +64,9 @@ void RealtimeIncomingAudioSourceLibWebRTC::OnData(const void* audioData, int, in
 
     gst_audio_info_set_format(&info, format, sampleRate, numberOfChannels, NULL);
 
+    // FIXME: We could likely avoid allocation here, when muted -> memset(0...) and maybe wrap the
+    // audioData in a GstBuffer?
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     auto bufferSize = GST_AUDIO_INFO_BPF(&info) * numberOfFrames;
     gpointer bufferData = fastMalloc(bufferSize);
     if (muted())

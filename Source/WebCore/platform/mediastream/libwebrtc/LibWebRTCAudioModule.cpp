@@ -110,11 +110,12 @@ void LibWebRTCAudioModule::pollAudioData()
         pollAudioData();
     };
 
-    // For performance reasons, we forbid heap allocations while doing rendering on the webrtc audio thread.
-    ForbidMallocUseForCurrentThreadScope forbidMallocUse;
+    {
+        // For performance reasons, we forbid heap allocations while doing rendering on the webrtc audio thread.
+        ForbidMallocUseForCurrentThreadScope forbidMallocUse;
 
-    pollFromSource();
-
+        pollFromSource();
+    }
     m_queue->dispatchAfter(computeDelayUntilNextPolling(), WTFMove(nextPollFunction));
 }
 

@@ -1,3 +1,19 @@
+2021-05-04  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Debug] Allow fastMallocs in audio threads
+        https://bugs.webkit.org/show_bug.cgi?id=225306
+
+        Reviewed by Adrian Perez de Castro.
+
+        For the time being the GStreamer ports need to allocate audio buffers for WebRTC. This
+        deserves deeper investigation to avoid the allocations but for now the bots need to be fixed
+        ASAP.
+
+        * platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeIncomingAudioSourceLibWebRTC::OnData):
+        * platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp:
+        (WebCore::LibWebRTCAudioModule::pollAudioData):
+
 2021-05-03  Frédéric Wang  <fwang@igalia.com>
 
         ASSERTION FAILED: !m_needExceptionCheck while converting IDLSequence<T>
