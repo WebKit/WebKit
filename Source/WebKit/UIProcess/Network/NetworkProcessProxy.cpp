@@ -316,8 +316,8 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
     Ref<NetworkProcessProxy> protectedThis(*this);
     for (auto* processPool : WebProcessPool::allProcessPools())
         processPool->networkProcessDidTerminate(*this, reason);
-    for (auto& websiteDataStore : m_websiteDataStores)
-        websiteDataStore.networkProcessDidTerminate(*this);
+    for (auto& websiteDataStore : copyToVectorOf<Ref<WebsiteDataStore>>(m_websiteDataStores))
+        websiteDataStore->networkProcessDidTerminate(*this);
 }
 
 void NetworkProcessProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

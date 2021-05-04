@@ -1,3 +1,19 @@
+2021-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Don't iterate NetworkProcessProxy::m_websiteDataStores
+        https://bugs.webkit.org/show_bug.cgi?id=225337
+        <rdar://77233103>
+
+        Reviewed by Geoffrey Garen.
+
+        There is evidence that this collection is mutated while iterating, and there are a lot of ways that might happen.
+        Instead, keep a Vector<Ref<WebsiteDataStore>>.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessDidTerminate):
+        * UIProcess/Network/NetworkProcessProxyCocoa.mm:
+        (WebKit::NetworkProcessProxy::XPCEventHandler::handleXPCEvent const):
+
 2021-05-04  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] Use MonotonicTime for elapsed time

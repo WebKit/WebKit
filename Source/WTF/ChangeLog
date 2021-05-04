@@ -1,3 +1,17 @@
+2021-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Don't iterate NetworkProcessProxy::m_websiteDataStores
+        https://bugs.webkit.org/show_bug.cgi?id=225337
+        <rdar://77233103>
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Vector.h:
+        (WTF::copyToVectorOf):
+        Use a universal reference instead of const&.
+        * wtf/WeakHashSet.h:
+        WeakHashSet iteration returns T&, and we need this instead of WeakPtr<T> to be able to return a Ref from a map function.
+
 2021-05-04  Chris Dumez  <cdumez@apple.com>
 
         Drop std::filesystem logic in PlatformJSCOnly.cmake
