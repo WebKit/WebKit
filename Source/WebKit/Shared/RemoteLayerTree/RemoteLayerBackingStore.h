@@ -99,7 +99,6 @@ private:
     void swapToValidFrontBuffer();
 
     WebCore::PixelFormat pixelFormat() const;
-    WebCore::IntSize backingStoreSize() const;
 
     PlatformCALayerRemote* m_layer;
 

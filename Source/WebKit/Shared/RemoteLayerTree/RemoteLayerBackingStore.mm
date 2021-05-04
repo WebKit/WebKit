@@ -146,13 +146,6 @@ void RemoteLayerBackingStore::setNeedsDisplay()
     setNeedsDisplay(WebCore::IntRect(WebCore::IntPoint(), WebCore::expandedIntSize(m_size)));
 }
 
-WebCore::IntSize RemoteLayerBackingStore::backingStoreSize() const
-{
-    WebCore::FloatSize scaledSize = m_size;
-    scaledSize.scale(m_scale);
-    return roundedIntSize(scaledSize);
-}
-
 WebCore::PixelFormat RemoteLayerBackingStore::pixelFormat() const
 {
 #if HAVE(IOSURFACE_RGB10)
@@ -199,11 +192,11 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
     auto renderingMode = m_acceleratesDrawing ? WebCore::RenderingMode::Accelerated : WebCore::RenderingMode::Unaccelerated;
 
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM))
-        m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(backingStoreSize(), renderingMode, 1, WebCore::DestinationColorSpace::SRGB, pixelFormat());
+        m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, renderingMode, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat());
     else if (renderingMode == WebCore::RenderingMode::Accelerated)
-        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(backingStoreSize(), 1, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
     else
-        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(backingStoreSize(), 1, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
 }
 
 bool RemoteLayerBackingStore::display()
@@ -219,9 +212,7 @@ bool RemoteLayerBackingStore::display()
     // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
     setBufferVolatility(BufferType::Front, false);
 
-    WebCore::IntSize expandedScaledSize = backingStoreSize();
-
-    if (m_dirtyRegion.isEmpty() || expandedScaledSize.isEmpty())
+    if (m_dirtyRegion.isEmpty() || m_size.isEmpty())
         return needToEncodeBackingStore;
 
     WebCore::IntRect layerBounds(WebCore::IntPoint(), WebCore::expandedIntSize(m_size));
@@ -233,19 +224,12 @@ bool RemoteLayerBackingStore::display()
         m_dirtyRegion.unite(indicatorRect);
     }
 
-    WebCore::IntRect expandedScaledLayerBounds(WebCore::IntPoint(), expandedScaledSize);
-
     swapToValidFrontBuffer();
     if (!m_frontBuffer.imageBuffer)
         return true;
 
     WebCore::GraphicsContext& context = m_frontBuffer.imageBuffer->context();
-
     WebCore::GraphicsContextStateSaver stateSaver(context);
-
-    WebCore::FloatSize scaledSize = m_size;
-    scaledSize.scale(m_scale);
-    WebCore::IntRect scaledLayerBounds(WebCore::IntPoint(), WebCore::roundedIntSize(scaledSize));
 
     // If we have less than webLayerMaxRectsToPaint rects to paint and they cover less
     // than webLayerWastedSpaceThreshold of the total dirty area, we'll repaint each rect separately.
@@ -269,32 +253,26 @@ bool RemoteLayerBackingStore::display()
 
     if (!m_dirtyRegion.contains(layerBounds)) {
         ASSERT(m_backBuffer.imageBuffer);
-        context.drawImageBuffer(*m_backBuffer.imageBuffer, { 0, 0 }, { WebCore::CompositeOperator::Copy });
+        context.drawImageBuffer(*m_backBuffer.imageBuffer, { {0, 0}, m_size }, { {0, 0}, m_size }, { WebCore::CompositeOperator::Copy });
     }
 
-    if (m_paintingRects.size() == 1) {
-        WebCore::FloatRect scaledPaintingRect = m_paintingRects[0];
-        scaledPaintingRect.scale(m_scale);
-        context.clip(scaledPaintingRect);
-    } else {
+    if (m_paintingRects.size() == 1)
+        context.clip(m_paintingRects[0]);
+    else {
         WebCore::Path clipPath;
-        for (auto rect : m_paintingRects) {
-            rect.scale(m_scale);
+        for (auto rect : m_paintingRects)
             clipPath.addRect(rect);
-        }
         context.clipPath(clipPath);
     }
 
     if (!m_isOpaque)
-        context.clearRect(scaledLayerBounds);
+        context.clearRect(layerBounds);
 
 #ifndef NDEBUG
     if (m_isOpaque)
-        context.fillRect(scaledLayerBounds, WebCore::SRGBA<uint8_t> { 255, 47, 146 });
+        context.fillRect(layerBounds, WebCore::SRGBA<uint8_t> { 255, 47, 146 });
 #endif
 
-    context.scale(m_scale);
-    
     // FIXME: Clarify that WebCore::GraphicsLayerPaintSnapshotting is just about image decoding.
     auto flags = m_layer->context() && m_layer->context()->nextRenderingUpdateRequiresSynchronousImageDecoding() ? WebCore::GraphicsLayerPaintSnapshotting : WebCore::GraphicsLayerPaintNormal;
     

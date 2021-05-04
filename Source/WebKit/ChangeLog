@@ -1,3 +1,32 @@
+2021-05-03  Tim Horton  <timothy_horton@apple.com>
+
+        Use ImageBuffer scaling in RemoteLayerBackingStore, rather than handling scale in the class
+        https://bugs.webkit.org/show_bug.cgi?id=225081
+
+        Reviewed by Said Abou-Hallawa.
+
+        No new tests, no behavior change.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::display):
+        (WebKit::RemoteLayerBackingStore::backingStoreSize const): Deleted.
+        Make use of ImageBuffer's scaling support instead of scaling ourselves.
+        This will be helpful for future patches where the backing store's ImageBuffer
+        needs to know the presentation size, not just the backing store size.
+        We also do the back->front copy in scaled space now, which simplifies the code a bit.
+        
+        We have to explicitly specify the source and destination rect for the copy, because
+        GraphicsContext::drawImageBuffer's implicit source rect is computed using
+        ImageBuffer::logicalSize(), which is a *truncated* IntSize.
+
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend):
+        Apply the device scale factor to the GraphicsContext that ImageBufferShareableBitmapBackend
+        adopts from ShareableBitmap. We don't need to flip because ShareableBitmap does that,
+        but it doesn't know anything about scales at all.
+
 2021-05-03  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] Grid overlay area names aren't centered within areas.
