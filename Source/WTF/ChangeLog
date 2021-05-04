@@ -1,3 +1,16 @@
+2021-05-03  Lauro Moura  <lmoura@igalia.com>
+
+        REGRESSION(r276879) Add libstdc++fs to wtf libraries when using experimental fs headers
+        https://bugs.webkit.org/show_bug.cgi?id=225341
+
+        Reviewed by Chris Dumez.
+
+        After r276879, Filesystem.cpp uses std::filesystem directly. So,
+        expose the need for stdc++fs like was done in r268708 when std::fs was
+        used in WTR.
+
+        * wtf/CMakeLists.txt:
+
 2021-05-03  Chris Dumez  <cdumez@apple.com>
 
         Restore pre-r276879 behavior for FileSystem::moveFile()
