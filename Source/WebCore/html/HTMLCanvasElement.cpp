@@ -819,7 +819,7 @@ RefPtr<MediaSample> HTMLCanvasElement::toMediaSample()
     return MediaSampleAVFObjC::createImageSample(imageBuffer->toBGRAData(), width(), height());
 #elif USE(GSTREAMER)
     makeRenderingResultsAvailable();
-    return MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), width(), height());
+    return MediaSampleGStreamer::createImageSample(imageBuffer->toBGRAData(), size());
 #else
     return nullptr;
 #endif

@@ -62,6 +62,8 @@ protected:
     MediaSample::VideoRotation sampleRotation() const final { return m_deviceOrientation; }
     void generatePresets() override;
 
+    IntSize captureSize() const;
+
 private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
@@ -73,7 +75,6 @@ private:
     bool supportsSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) final;
     void setSizeAndFrameRate(Optional<int> width, Optional<int> height, Optional<double>) final;
     void setFrameRateWithPreset(double, RefPtr<VideoPreset>) final;
-    IntSize captureSize() const;
 
 
     bool isMockSource() const final { return true; }

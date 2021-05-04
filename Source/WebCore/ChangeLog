@@ -1,3 +1,28 @@
+2021-05-04  Philippe Normand  <pnormand@igalia.com>
+
+        [WebRTC][GStreamer] fast/mediastream/resize-trim.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=192888
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The test was failing because the GStreamer mock video source was producing garbled frames
+        and the pixel test in the canvas was failing to detect gray. The frame was garbled because
+        the test asked "exact" video width that was inferior to the capture video width and we were
+        not taking this into account when creating a MediaSample from the video frame.
+
+        MediaSampleGStreamer::createImageSample() can now optionally resize the video frame
+        according to the destinationSize, if it was specified.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::toMediaSample):
+        * platform/graphics/gstreamer/MediaSampleGStreamer.cpp:
+        (WebCore::MediaSampleGStreamer::createImageSample):
+        * platform/graphics/gstreamer/MediaSampleGStreamer.h:
+        (WebCore::MediaSampleGStreamer::createImageSample):
+        * platform/mediastream/gstreamer/MockRealtimeVideoSourceGStreamer.cpp:
+        (WebCore::MockRealtimeVideoSourceGStreamer::updateSampleBuffer):
+        * platform/mock/MockRealtimeVideoSource.h:
+
 2021-05-04  Youenn Fablet  <youenn@apple.com>
 
         Use OptionSet for MediaProducer::MediaStateFlags
