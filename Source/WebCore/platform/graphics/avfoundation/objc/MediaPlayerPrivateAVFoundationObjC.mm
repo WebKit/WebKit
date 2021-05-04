@@ -1689,21 +1689,24 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
     if (!m_avAsset)
         return MediaPlayerAVAssetStatusDoesNotExist;
 
-    for (NSString *keyName in assetMetadataKeyNames()) {
-        NSError *error = nil;
-        AVKeyValueStatus keyStatus = [m_avAsset.get() statusOfValueForKey:keyName error:&error];
+    if (!m_cachedAssetIsLoaded) {
+        for (NSString *keyName in assetMetadataKeyNames()) {
+            NSError *error = nil;
+            AVKeyValueStatus keyStatus = [m_avAsset.get() statusOfValueForKey:keyName error:&error];
 
-        if (error)
-            ERROR_LOG(LOGIDENTIFIER, "failed for ", [keyName UTF8String], ", error = ", [[error localizedDescription] UTF8String]);
+            if (error)
+                ERROR_LOG(LOGIDENTIFIER, "failed for ", [keyName UTF8String], ", error = ", [[error localizedDescription] UTF8String]);
 
-        if (keyStatus < AVKeyValueStatusLoaded)
-            return MediaPlayerAVAssetStatusLoading;// At least one key is not loaded yet.
-        
-        if (keyStatus == AVKeyValueStatusFailed)
-            return MediaPlayerAVAssetStatusFailed; // At least one key could not be loaded.
+            if (keyStatus < AVKeyValueStatusLoaded)
+                return MediaPlayerAVAssetStatusLoading; // At least one key is not loaded yet.
 
-        if (keyStatus == AVKeyValueStatusCancelled)
-            return MediaPlayerAVAssetStatusCancelled; // Loading of at least one key was cancelled.
+            if (keyStatus == AVKeyValueStatusFailed)
+                return MediaPlayerAVAssetStatusFailed; // At least one key could not be loaded.
+
+            if (keyStatus == AVKeyValueStatusCancelled)
+                return MediaPlayerAVAssetStatusCancelled; // Loading of at least one key was cancelled.
+        }
+        m_cachedAssetIsLoaded = true;
     }
 
     if (!player()->shouldCheckHardwareSupport())
@@ -1719,7 +1722,10 @@ MediaPlayerPrivateAVFoundation::AssetStatus MediaPlayerPrivateAVFoundationObjC::
         }
     }
 
-    if ([[m_avAsset.get() valueForKey:@"playable"] boolValue] && m_tracksArePlayable.value())
+    if (!m_cachedAssetIsPlayable)
+        m_cachedAssetIsPlayable = [[m_avAsset.get() valueForKey:@"playable"] boolValue];
+
+    if (*m_cachedAssetIsPlayable && m_tracksArePlayable.value())
         return MediaPlayerAVAssetStatusPlayable;
 
     return MediaPlayerAVAssetStatusLoaded;

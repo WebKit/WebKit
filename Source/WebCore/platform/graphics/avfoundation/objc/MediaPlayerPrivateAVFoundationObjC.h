@@ -415,6 +415,8 @@ private:
     bool m_haveBeenAskedToCreateLayer { false };
     bool m_cachedCanPlayFastForward { false };
     bool m_cachedCanPlayFastReverse { false };
+    mutable bool m_cachedAssetIsLoaded { false };
+    mutable Optional<bool> m_cachedAssetIsPlayable;
     bool m_muted { false };
     bool m_shouldObserveTimeControlStatus { false };
     mutable Optional<bool> m_tracksArePlayable;

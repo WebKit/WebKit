@@ -1,5 +1,21 @@
 2021-05-04  Jer Noble  <jer.noble@apple.com>
 
+        [Cocoa] Cache the value of MediaPlayerPrivateAVFoundationObjC::assetStatus()
+        https://bugs.webkit.org/show_bug.cgi?id=225262
+
+        Reviewed by Eric Carlson.
+
+        Calling into assetStatus() requires querying the load state and value of nine different
+        AVAsset properties, which adds up if assetStatus() is called often. Once the assetStatus()
+        value reaches the Loaded state, cache that property, and that of the AVAsset.playable
+        property, so subsequent queries are just an ivar lookup.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::assetStatus const):
+
+2021-05-04  Jer Noble  <jer.noble@apple.com>
+
         REGRESSION (r276883): [Debug] ASSERTION FAILED: index != notFound in WebCore::PlatformMediaSessionManager::setCurrentSession()
         https://bugs.webkit.org/show_bug.cgi?id=225332
         <rdar://problem/77476145>
