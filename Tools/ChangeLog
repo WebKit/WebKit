@@ -1,3 +1,111 @@
+2021-05-04  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276871. rdar://problem/77530347
+
+    App highlight UI should be disabled when selecting text in image overlays
+    https://bugs.webkit.org/show_bug.cgi?id=225260
+    rdar://77359313
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    When both app highlights and image extraction are enabled, parts of the app highlights feature don't play well
+    with highlights created for text selections inside an image overlay. For the time being, address this by
+    disabling app highlights in image overlays.
+    
+    These changes are exercised by a new API test on iOS, and a new layout test for macOS.
+    
+    Tests:  WebKit.AppHighlightsInImageOverlays
+            fast/images/image-extraction/mac/image-overlay-text-disables-app-highlight-menu-items.html
+    
+    * page/ContextMenuController.cpp:
+    (WebCore::ContextMenuController::populate):
+    
+    Don't add app highlight menu items in the case where we've selected text in an image overlay.
+    
+    * testing/Internals.cpp:
+    (WebCore::Internals::appHighlightContextMenuItemTitles const):
+    
+    Add an internal testing hook to expose the localized names of the app highlight menu items to layout tests.
+    
+    * testing/Internals.h:
+    * testing/Internals.idl:
+    
+    Source/WebKit:
+    
+    Add a bit to `EditorState` to indicate when a ranged selection is inside an image overlay.
+    
+    * Shared/EditorState.cpp:
+    (WebKit::EditorState::encode const):
+    (WebKit::EditorState::decode):
+    * Shared/EditorState.h:
+    * UIProcess/ios/WKContentViewInteraction.mm:
+    (-[WKContentView shouldAllowAppHighlightCreation]):
+    (-[WKContentView canPerformAction:withSender:]):
+    (-[WKContentView targetForAction:withSender:]):
+    
+    Make `-targetForAction:withSender:` return `self` only if we have a ranged selection that is not inside an image
+    overlay. Interestingly, UIKit doesn't seem to consult `-canPerformAction:withSender:` for actions that are added
+    through `-[UIMenuController setMenuItems:]`, so we add the check here instead of inside `-canPerformAction:`
+    above.
+    
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::editorState const):
+    
+    Set the new bit here. Note that this (importantly) doesn't trigger layout, because `VisibleSelection::range`
+    just returns a (potentially uncanonicalized) `SimpleRange`. For the purposes of checking whether the selection
+    is inside an image overlay, this is sufficient.
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+    
+    Add a new API test to verify the behavior of `-targetForAction:withSender:` in `WKContentView`.
+    
+    * WebKitTestRunner/TestOptions.cpp:
+    (WTR::TestOptions::defaults):
+    (WTR::TestOptions::keyTypeMapping):
+    * WebKitTestRunner/TestOptions.h:
+    (WTR::TestOptions::appHighlightsEnabled const):
+    * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+    (WTR::TestController::platformCreateWebView):
+    
+    Add support for a new `TestOption` that enables app highlights. See the new layout test for more information.
+    
+    LayoutTests:
+    
+    Add a new layout test to verify that the app higlight context menu items don't show up on macOS when right
+    clicking.
+    
+    * fast/images/image-extraction/mac/image-overlay-text-disables-app-highlight-menu-items-expected.txt: Added.
+    * fast/images/image-extraction/mac/image-overlay-text-disables-app-highlight-menu-items.html: Added.
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276871 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            App highlight UI should be disabled when selecting text in image overlays
+            https://bugs.webkit.org/show_bug.cgi?id=225260
+            rdar://77359313
+
+            Reviewed by Tim Horton.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+
+            Add a new API test to verify the behavior of `-targetForAction:withSender:` in `WKContentView`.
+
+            * WebKitTestRunner/TestOptions.cpp:
+            (WTR::TestOptions::defaults):
+            (WTR::TestOptions::keyTypeMapping):
+            * WebKitTestRunner/TestOptions.h:
+            (WTR::TestOptions::appHighlightsEnabled const):
+            * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+            (WTR::TestController::platformCreateWebView):
+
+            Add support for a new `TestOption` that enables app highlights. See the new layout test for more information.
+
 2021-05-03  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276853. rdar://problem/77458363

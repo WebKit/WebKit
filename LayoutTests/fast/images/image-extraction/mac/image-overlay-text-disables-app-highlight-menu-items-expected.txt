@@ -1,0 +1,9 @@
+PASS foundTitle1 is true
+PASS foundTitle2 is true
+PASS Selected image overlay
+PASS foundTitle1 is false
+PASS foundTitle2 is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
