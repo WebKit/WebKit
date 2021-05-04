@@ -30,7 +30,6 @@
 #import "WebSecurityOriginInternal.h"
 #import "WebStorageNamespaceProvider.h"
 #import "WebStorageTrackerClient.h"
-#import <WebCore/PageGroup.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SecurityOriginData.h>
 #import <wtf/cocoa/VectorCocoa.h>

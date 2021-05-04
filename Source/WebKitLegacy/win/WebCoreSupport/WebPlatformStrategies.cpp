@@ -34,7 +34,6 @@
 #include <WebCore/MediaStrategy.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
-#include <WebCore/PageGroup.h>
 
 #if USE(CFURLCONNECTION)
 #include <pal/spi/win/CFNetworkSPIWin.h>

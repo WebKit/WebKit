@@ -191,7 +191,6 @@
 #import <WebCore/NotificationController.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageConfiguration.h>
-#import <WebCore/PageGroup.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>

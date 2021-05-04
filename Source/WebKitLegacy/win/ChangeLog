@@ -1,3 +1,16 @@
+2021-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused references to PageGroup from WebKitLegacy
+        https://bugs.webkit.org/show_bug.cgi?id=225359
+
+        Reviewed by Sihui Liu.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebHistory.cpp:
+        * WebHistory.h:
+        * WebKitDLL.cpp:
+        * WebView.cpp:
+
 2021-04-27  Alex Christensen  <achristensen@webkit.org>
 
         charset in contentType used in Blob.prototype.slice(start, end, contentType) is lost

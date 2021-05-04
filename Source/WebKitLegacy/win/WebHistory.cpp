@@ -36,7 +36,6 @@
 #include "WebVisitedLinkStore.h"
 #include <WebCore/BString.h>
 #include <WebCore/HistoryItem.h>
-#include <WebCore/PageGroup.h>
 #include <WebCore/SharedBuffer.h>
 #include <functional>
 #include <wtf/DateMath.h>
