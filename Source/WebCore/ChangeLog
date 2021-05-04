@@ -1,3 +1,17 @@
+2021-05-03  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in WebCore::nextBoundary()
+        https://bugs.webkit.org/show_bug.cgi?id=225326
+
+        Reviewed by Ryosuke Niwa.
+
+        nextBoundary() creates a CharacterIterator and calls range() on it
+        without first checking if atEnd() has been reached, which can lead
+        to a null pointer dereference.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::nextBoundary):
+
 2021-05-03  Alex Christensen  <achristensen@webkit.org>
 
         WKWebView: WKURLSchemeHandler request don't have Range headers for custom scheme videos

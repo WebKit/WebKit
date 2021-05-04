@@ -610,6 +610,9 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
         // Use the character iterator to translate the next value into a DOM position.
         CharacterIterator charIt(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
         charIt.advance(next - prefixLength - 1);
+        if (charIt.atEnd())
+            return { };
+
         auto characterRange = charIt.range();
         pos = makeDeprecatedLegacyPosition(characterRange.end);
         
