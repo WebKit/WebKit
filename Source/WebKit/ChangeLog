@@ -1,3 +1,15 @@
+2021-05-04  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Allow HTMLMediaElement preload > "metadata" on iPad by default
+        https://bugs.webkit.org/show_bug.cgi?id=223802
+
+        Reviewed by Eric Carlson.
+
+        Align default iPad WebKit behavior for media element preload with Mac WebKit behavior.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+
 2021-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Don't iterate NetworkProcessProxy::m_websiteDataStores

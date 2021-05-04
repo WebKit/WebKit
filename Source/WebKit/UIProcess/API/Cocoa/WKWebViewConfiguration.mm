@@ -200,8 +200,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _allowsInlineMediaPlayback = WebKit::currentUserInterfaceIdiomIsPadOrMac();
     _inlineMediaPlaybackRequiresPlaysInlineAttribute = !_allowsInlineMediaPlayback;
     _allowsInlineMediaPlaybackAfterFullscreen = !_allowsInlineMediaPlayback;
-
-    _mediaDataLoadsAutomatically = NO;
+    _mediaDataLoadsAutomatically = _allowsInlineMediaPlayback;
 #if !PLATFORM(WATCHOS)
     if (WebCore::linkedOnOrAfter(WebCore::SDKVersion::FirstWithMediaTypesRequiringUserActionForPlayback))
         _mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeAudio;
