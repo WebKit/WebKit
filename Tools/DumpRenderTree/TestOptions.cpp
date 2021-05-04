@@ -170,6 +170,9 @@ const TestFeatures& TestOptions::defaults()
             { "WebGPUEnabled", false },
             { "XSSAuditorEnabled", false },
 #endif
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+            { "UseGPUProcessForWebGLEnabled", false },
+#endif
         };
 #if PLATFORM(WIN)
         features.uint32WebPreferenceFeatures = {

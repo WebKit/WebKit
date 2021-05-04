@@ -749,17 +749,6 @@ UseGPUProcessForDOMRenderingEnabled:
     WebKit:
       default: defaultUseGPUProcessForDOMRenderingEnabled()
 
-UseGPUProcessForWebGLEnabled:
-  type: bool
-  humanReadableName: "GPU Process: WebGL"
-  humanReadableDescription: "Enable WebGL in GPU Process"
-  webcoreBinding: none
-  condition: ENABLE(GPU_PROCESS)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: defaultUseGPUProcessForWebGLEnabled()
-
 UseSampledPageTopColorForScrollAreaBackgroundColor:
   type: bool
   humanReadableName: "Use sampled page top color for scroll area background color"

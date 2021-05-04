@@ -117,6 +117,9 @@ const TestFeatures& TestOptions::defaults()
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
             { "VP9DecoderEnabled", false },
 #endif
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+            { "UseGPUProcessForWebGLEnabled", false },
+#endif
         };
         features.stringWebPreferenceFeatures = {
             { "CursiveFontFamily", "Apple Chancery" },

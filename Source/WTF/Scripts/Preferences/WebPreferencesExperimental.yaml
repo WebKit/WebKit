@@ -990,6 +990,17 @@ UseGPUProcessForMediaEnabled:
     WebKit:
       default: WebKit::defaultUseGPUProcessForMediaEnabled()
 
+UseGPUProcessForWebGLEnabled:
+  type: bool
+  humanReadableName: "GPU Process: WebGL"
+  humanReadableDescription: "Process all WebGL operations in GPU Process"
+  webcoreBinding: none
+  condition: ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && !(PLATFORM(GTK) || PLATFORM(WPE))
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: defaultUseGPUProcessForWebGLEnabled()
+
 UserGesturePromisePropagationEnabled:
   type: bool
   humanReadableName: "UserGesture Promise Propagation"
