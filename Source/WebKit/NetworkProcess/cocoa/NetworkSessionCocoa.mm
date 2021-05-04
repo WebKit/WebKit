@@ -64,7 +64,6 @@
 #import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 #else
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
-#define NETWORK_SESSION_COCOA_HTTP_REDIRECT_ADDITIONS
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(WallTime, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
@@ -534,7 +533,6 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task willPerformHTTPRedirection:(NSHTTPURLResponse *)response newRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLRequest *))completionHandler
 {
-    NETWORK_SESSION_COCOA_HTTP_REDIRECT_ADDITIONS
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu willPerformHTTPRedirection from %s to %s", taskIdentifier, response.URL.absoluteString.UTF8String, request.URL.absoluteString.UTF8String);
 

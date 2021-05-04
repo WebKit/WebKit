@@ -1,3 +1,14 @@
+2021-05-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Remove internal NetworkSessionCocoa additions
+        https://bugs.webkit.org/show_bug.cgi?id=225365
+        <rdar://problem/75693914>
+
+        Reviewed by Per Arne Vollan.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+
 2021-05-04  Chris Dumez  <cdumez@apple.com>
 
         Blob contentType with charset renders html as plain text
