@@ -581,7 +581,14 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
                     completionHandler(nullptr);
                     return;
                 }
-                addResult.iterator->value.first = image->nativeImageForCurrentFrame()->platformImage();
+
+                auto nativeImage = image->nativeImageForCurrentFrame();
+                if (!nativeImage) {
+                    completionHandler(nullptr);
+                    return;
+                }
+
+                addResult.iterator->value.first = nativeImage->platformImage();
             }
 
             auto icon = addResult.iterator->value.first;
@@ -611,11 +618,12 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char*
             LockHolder lockHolder(m_loadedIconsLock);
             auto addResult = m_loadedIcons.set(iconURL, std::make_pair<PlatformImagePtr, MonotonicTime>(nullptr, { }));
             if (iconDataSize) {
+                RefPtr<NativeImage> nativeImage;
                 auto image = BitmapImage::create();
-                if (image->setData(SharedBuffer::create(iconData, iconDataSize), true) < EncodedDataStatus::SizeAvailable)
-                    result = false;
+                if (image->setData(SharedBuffer::create(iconData, iconDataSize), true) >= EncodedDataStatus::SizeAvailable && (nativeImage = image->nativeImageForCurrentFrame()))
+                    addResult.iterator->value.first = nativeImage->platformImage();
                 else
-                    addResult.iterator->value.first = image->nativeImageForCurrentFrame()->platformImage();
+                    result = false;
             }
         }
         startClearLoadedIconsTimer();
