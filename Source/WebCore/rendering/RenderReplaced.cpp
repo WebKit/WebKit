@@ -145,17 +145,19 @@ Color RenderReplaced::calculateHighlightColor() const
     HighlightData highlightData;
 #if ENABLE(APP_HIGHLIGHTS)
     if (auto appHighlightRegister = document().appHighlightRegisterIfExists()) {
-        for (auto& highlight : appHighlightRegister->map()) {
-            for (auto& rangeData : highlight.value->rangesData()) {
-                if (!highlightData.setRenderRange(rangeData))
-                    continue;
+        if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
+            for (auto& highlight : appHighlightRegister->map()) {
+                for (auto& rangeData : highlight.value->rangesData()) {
+                    if (!highlightData.setRenderRange(rangeData))
+                        continue;
 
-                auto state = highlightData.highlightStateForRenderer(*this);
-                if (!isHighlighted(state, highlightData))
-                    continue;
+                    auto state = highlightData.highlightStateForRenderer(*this);
+                    if (!isHighlighted(state, highlightData))
+                        continue;
 
-                OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
-                return theme().appHighlightColor(styleColorOptions);
+                    OptionSet<StyleColor::Options> styleColorOptions = { StyleColor::Options::UseSystemAppearance };
+                    return theme().appHighlightColor(styleColorOptions);
+                }
             }
         }
     }

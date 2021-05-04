@@ -911,14 +911,16 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
     }
 #if ENABLE(APP_HIGHLIGHTS)
     if (auto appHighlightRegister = renderer().document().appHighlightRegisterIfExists()) {
-        for (auto& highlight : appHighlightRegister->map()) {
-            for (auto& rangeData : highlight.value->rangesData()) {
-                if (!highlightData.setRenderRange(rangeData))
-                    continue;
+        if (appHighlightRegister->highlightsVisibility() == HighlightVisibility::Visible) {
+            for (auto& highlight : appHighlightRegister->map()) {
+                for (auto& rangeData : highlight.value->rangesData()) {
+                    if (!highlightData.setRenderRange(rangeData))
+                        continue;
 
-                auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
-                if (highlightStart < highlightEnd)
-                    markedTexts.append({ highlightStart, highlightEnd, MarkedText::AppHighlight });
+                    auto [highlightStart, highlightEnd] = highlightStartEnd(highlightData);
+                    if (highlightStart < highlightEnd)
+                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::AppHighlight });
+                }
             }
         }
     }

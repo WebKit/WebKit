@@ -3575,14 +3575,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         || action == @selector(_transpose))
         return editorState.isContentEditable;
 
-#if ENABLE(APP_HIGHLIGHTS)
-    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:)) {
-        // FIXME: It doesn't seem like this codepath is exercised, since UIKit only asks for the action target for custom actions
-        // added via -[UIMenuController setMenuItems:]. Can we remove this check?
-        return self.shouldAllowAppHighlightCreation;
-    }
-#endif
-
     return [_webView canPerformAction:action withSender:sender];
 }
 
@@ -3774,8 +3766,11 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (id)targetForAction:(SEL)action withSender:(id)sender
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    if (action == @selector(createHighlightInCurrentGroupWithRange:) || action == @selector(createHighlightInNewGroupWithRange:))
-        return self.shouldAllowAppHighlightCreation ? self : nil;
+    if (action == @selector(createHighlightInCurrentGroupWithRange:))
+        return self.shouldAllowAppHighlightCreation && _page->appHighlightsVisibility() ? self : nil;
+    if (action == @selector(createHighlightInNewGroupWithRange:))
+        return self.shouldAllowAppHighlightCreation && !_page->appHighlightsVisibility() ? self : nil;
+    
 #endif
     return [_webView targetForAction:action withSender:sender];
 }
