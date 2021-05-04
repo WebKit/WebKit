@@ -418,28 +418,28 @@ MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
     switch (source.deviceType()) {
     case CaptureDevice::DeviceType::Microphone:
         if (source.muted())
-            return MediaProducer::HasMutedAudioCaptureDevice;
+            return MediaProducer::MediaState::HasMutedAudioCaptureDevice;
         if (source.interrupted())
-            return MediaProducer::HasInterruptedAudioCaptureDevice;
+            return MediaProducer::MediaState::HasInterruptedAudioCaptureDevice;
         if (source.isProducingData())
-            return MediaProducer::HasActiveAudioCaptureDevice;
+            return MediaProducer::MediaState::HasActiveAudioCaptureDevice;
         break;
     case CaptureDevice::DeviceType::Camera:
         if (source.muted())
-            return MediaProducer::HasMutedVideoCaptureDevice;
+            return MediaProducer::MediaState::HasMutedVideoCaptureDevice;
         if (source.interrupted())
-            return MediaProducer::HasInterruptedVideoCaptureDevice;
+            return MediaProducer::MediaState::HasInterruptedVideoCaptureDevice;
         if (source.isProducingData())
-            return MediaProducer::HasActiveVideoCaptureDevice;
+            return MediaProducer::MediaState::HasActiveVideoCaptureDevice;
         break;
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:
         if (source.muted())
-            return MediaProducer::HasMutedDisplayCaptureDevice;
+            return MediaProducer::MediaState::HasMutedDisplayCaptureDevice;
         if (source.interrupted())
-            return MediaProducer::HasInterruptedDisplayCaptureDevice;
+            return MediaProducer::MediaState::HasInterruptedDisplayCaptureDevice;
         if (source.isProducingData())
-            return MediaProducer::HasActiveDisplayCaptureDevice;
+            return MediaProducer::MediaState::HasActiveDisplayCaptureDevice;
         break;
     case CaptureDevice::DeviceType::Speaker:
     case CaptureDevice::DeviceType::Unknown:
@@ -451,11 +451,11 @@ MediaProducer::MediaStateFlags sourceCaptureState(RealtimeMediaSource& source)
 
 MediaProducer::MediaStateFlags MediaStreamTrack::captureState(Document& document)
 {
-    MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
+    MediaProducer::MediaStateFlags state;
     for (auto* captureTrack : allCaptureTracks()) {
         if (captureTrack->document() != &document || captureTrack->ended())
             continue;
-        state |= sourceCaptureState(captureTrack->source());
+        state.add(sourceCaptureState(captureTrack->source()));
     }
     return state;
 }

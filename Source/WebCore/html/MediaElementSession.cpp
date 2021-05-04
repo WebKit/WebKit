@@ -359,7 +359,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePer
     if (m_element.hasMediaStreamSrcObject()) {
         if (document.isCapturing())
             return { };
-        if (document.mediaState() & MediaProducer::IsPlayingAudio)
+        if (document.mediaState() & MediaProducer::MediaState::IsPlayingAudio)
             return { };
     }
 #endif
@@ -374,7 +374,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePer
         return MediaPlaybackDenialReason::UserGestureRequired;
     }
 
-    if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
+    if (topDocument.mediaState() & MediaProducer::MediaState::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
         return { };
 
     if (topDocument.hasHadUserInteraction() && document.quirks().shouldAutoplayForArbitraryUserGesture())

@@ -185,7 +185,7 @@ private:
     void mediaCanStart(WebCore::Document&) override;
 
     // WebCore::MediaProducer
-    MediaProducer::MediaStateFlags mediaState() const override { return m_pluginIsPlayingAudio ? MediaProducer::IsPlayingAudio : MediaProducer::IsNotPlaying; }
+    WebCore::MediaProducer::MediaStateFlags mediaState() const override;
     void pageMutedStateDidChange() override;
 
     // PluginController
@@ -274,5 +274,13 @@ private:
 
     bool m_pluginIsPlayingAudio { false };
 };
+
+inline WebCore::MediaProducer::MediaStateFlags PluginView::mediaState() const
+{
+    WebCore::MediaProducer::MediaStateFlags mediaState;
+    if (m_pluginIsPlayingAudio)
+        mediaState.add(MediaProducer::MediaState::IsPlayingAudio);
+    return mediaState;
+}
 
 } // namespace WebKit

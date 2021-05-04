@@ -350,7 +350,7 @@ bool AudioContext::willPausePlayback()
 MediaProducer::MediaStateFlags AudioContext::mediaState() const
 {
     if (!isStopped() && destination().isPlayingAudio())
-        return MediaProducer::IsPlayingAudio;
+        return MediaProducer::MediaState::IsPlayingAudio;
 
     return MediaProducer::IsNotPlaying;
 }
@@ -408,7 +408,7 @@ bool AudioContext::willBeginPlayback()
 void AudioContext::visibilityStateChanged()
 {
     // Do not suspend if audio is audible.
-    if (!document() || mediaState() == MediaProducer::IsPlayingAudio || isStopped())
+    if (!document() || mediaState() == MediaProducer::MediaState::IsPlayingAudio || isStopped())
         return;
 
     if (document()->hidden()) {

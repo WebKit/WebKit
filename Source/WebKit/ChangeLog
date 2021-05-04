@@ -1,3 +1,32 @@
+2021-05-04  Youenn Fablet  <youenn@apple.com>
+
+        Use OptionSet for MediaProducer::MediaStateFlags
+        https://bugs.webkit.org/show_bug.cgi?id=225227
+
+        Reviewed by Eric Carlson.
+
+        Update code according safer MediaProducer::MediaStateFlags type.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetMediaState):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView cameraCaptureState]):
+        (-[WKWebView microphoneCaptureState]):
+        * UIProcess/Cocoa/MediaUtilities.mm:
+        (WebKit::toWKMediaCaptureStateDeprecated):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::captureStateChanged):
+        * UIProcess/UserMediaPermissionRequestManagerProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateActivityState):
+        (WebKit::WebPageProxy::setMuted):
+        (WebKit::WebPageProxy::updatePlayingMediaDidChange):
+        (WebKit::WebPageProxy::updateReportedMediaCaptureState):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::mediaState const):
+
 2021-05-03  Megan Gardner  <megan_gardner@apple.com>
 
         Allow AppHighlight visibility to be toggled

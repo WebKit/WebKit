@@ -1,3 +1,49 @@
+2021-05-04  Youenn Fablet  <youenn@apple.com>
+
+        Use OptionSet for MediaProducer::MediaStateFlags
+        https://bugs.webkit.org/show_bug.cgi?id=225227
+
+        Reviewed by Eric Carlson.
+
+        Update code to use a safer MediaProducer::MediaStateFlags type.
+
+        No change of behavior, this is a refactoring.
+
+        * Modules/airplay/WebMediaSessionManager.cpp:
+        (WebCore::flagsAreSet):
+        (WebCore::mediaProducerStateString):
+        (WebCore::WebMediaSessionManager::showPlaybackTargetPicker):
+        (WebCore::WebMediaSessionManager::clientStateDidChange):
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetClients):
+        (WebCore::WebMediaSessionManager::configurePlaybackTargetMonitoring):
+        (WebCore::WebMediaSessionManager::configureWatchdogTimer):
+        * Modules/mediastream/MediaStream.cpp:
+        (WebCore::MediaStream::mediaState const):
+        * Modules/mediastream/MediaStream.h:
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::sourceCaptureState):
+        (WebCore::MediaStreamTrack::captureState):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::mediaState const):
+        (WebCore::AudioContext::visibilityStateChanged):
+        * dom/Document.cpp:
+        (WebCore::Document::willBeRemovedFromFrame):
+        (WebCore::Document::updateIsPlayingMedia):
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction const):
+        (WebCore::HTMLMediaElement::mediaState const):
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackStateChangePermitted const):
+        * page/MediaProducer.h:
+        (WebCore::MediaProducer::isCapturing):
+        * page/Page.cpp:
+        (WebCore::Page::updateIsPlayingMedia):
+        * page/Page.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::pageMediaState):
+
 2021-05-04  Diego Pino Garcia  <dpino@igalia.com>
 
         Unreviewed, fix GTK and WPE builds after r276947

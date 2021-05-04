@@ -7698,7 +7698,7 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             return true;
 #endif
 #if ENABLE(MEDIA_STREAM)
-        if (hasMediaStreamSrcObject() && mediaState() & IsPlayingAudio && document().mediaState() & MediaProducer::HasActiveAudioCaptureDevice) {
+        if (hasMediaStreamSrcObject() && mediaState().containsAny(MediaProducer::MediaState::IsPlayingAudio) && document().mediaState().containsAny(MediaProducer::MediaState::HasActiveAudioCaptureDevice)) {
             INFO_LOG(LOGIDENTIFIER, "returning true because playing an audio MediaStreamTrack");
             return true;
         }
@@ -7713,7 +7713,7 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
             return true;
         }
 #if ENABLE(MEDIA_STREAM)
-        if (hasMediaStreamSrcObject() && mediaState() & IsPlayingAudio && document().mediaState() & MediaProducer::HasActiveAudioCaptureDevice) {
+        if (hasMediaStreamSrcObject() && mediaState().containsAny(MediaProducer::MediaState::IsPlayingAudio) && document().mediaState().containsAny(MediaProducer::MediaState::HasActiveAudioCaptureDevice)) {
             INFO_LOG(LOGIDENTIFIER, "returning true because playing an audio MediaStreamTrack");
             return true;
         }
@@ -7773,29 +7773,29 @@ void HTMLMediaElement::updateMediaState()
 
 MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
 {
-    MediaStateFlags state = IsNotPlaying;
+    MediaStateFlags state;
 
     bool hasActiveVideo = isVideo() && hasVideo();
     bool hasAudio = this->hasAudio();
     if (isPlayingToExternalTarget())
-        state |= IsPlayingToExternalDevice;
+        state.add(MediaProducer::MediaState::IsPlayingToExternalDevice);
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (m_hasPlaybackTargetAvailabilityListeners) {
-        state |= HasPlaybackTargetAvailabilityListener;
+        state.add(MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener);
         if (!mediaSession().wirelessVideoPlaybackDisabled())
-            state |= RequiresPlaybackTargetMonitoring;
+            state.add(MediaProducer::MediaState::RequiresPlaybackTargetMonitoring);
     }
 
     bool requireUserGesture = mediaSession().hasBehaviorRestriction(MediaElementSession::RequireUserGestureToAutoplayToExternalDevice);
     if (m_readyState >= HAVE_METADATA && !requireUserGesture && !m_failedToPlayToWirelessTarget)
-        state |= ExternalDeviceAutoPlayCandidate;
+        state.add(MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate);
 
     if (hasActiveVideo || hasAudio)
-        state |= HasAudioOrVideo;
+        state.add(MediaProducer::MediaState::HasAudioOrVideo);
 
     if (hasActiveVideo && endedPlayback())
-        state |= DidPlayToEnd;
+        state.add(MediaProducer::MediaState::DidPlayToEnd);
 #endif
 
     if (!isPlaying())
@@ -7809,10 +7809,10 @@ MediaProducer::MediaStateFlags HTMLMediaElement::mediaState() const
     isPlayingAudio = isPlayingAudio && !muted();
 #endif
     if (isPlayingAudio)
-        state |= IsPlayingAudio;
+        state.add(MediaProducer::MediaState::IsPlayingAudio);
 
     if (hasActiveVideo)
-        state |= IsPlayingVideo;
+        state.add(MediaProducer::MediaState::IsPlayingVideo);
 
     return state;
 }

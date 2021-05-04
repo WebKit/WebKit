@@ -986,9 +986,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 - (WKMediaCaptureState)cameraCaptureState
 {
     auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice)
         return WKMediaCaptureStateActive;
-    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedVideoCaptureDevice)
         return WKMediaCaptureStateMuted;
     return WKMediaCaptureStateNone;
 }
@@ -996,9 +996,9 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
 - (WKMediaCaptureState)microphoneCaptureState
 {
     auto state = _page->reportedMediaState();
-    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice)
         return WKMediaCaptureStateActive;
-    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedAudioCaptureDevice)
         return WKMediaCaptureStateMuted;
     return WKMediaCaptureStateNone;
 }

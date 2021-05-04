@@ -31,13 +31,13 @@ namespace WebKit {
 _WKMediaCaptureStateDeprecated toWKMediaCaptureStateDeprecated(WebCore::MediaProducer::MediaStateFlags state)
 {
     _WKMediaCaptureStateDeprecated mediaCaptureState = _WKMediaCaptureStateDeprecatedNone;
-    if (state & WebCore::MediaProducer::HasActiveAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedActiveMicrophone;
-    if (state & WebCore::MediaProducer::HasActiveVideoCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedActiveCamera;
-    if (state & WebCore::MediaProducer::HasMutedAudioCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedAudioCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedMutedMicrophone;
-    if (state & WebCore::MediaProducer::HasMutedVideoCaptureDevice)
+    if (state & WebCore::MediaProducer::MediaState::HasMutedVideoCaptureDevice)
         mediaCaptureState |= _WKMediaCaptureStateDeprecatedMutedCamera;
 
     return mediaCaptureState;

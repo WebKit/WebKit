@@ -1072,7 +1072,7 @@ private:
     bool m_isClosing { false };
     bool m_isRestoringCachedPage { false };
 
-    MediaProducer::MediaStateFlags m_mediaState { MediaProducer::IsNotPlaying };
+    MediaProducer::MediaStateFlags m_mediaState;
 
 #if ENABLE(VIDEO)
     Timer m_playbackControlsManagerUpdateTimer;

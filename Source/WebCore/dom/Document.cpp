@@ -2638,7 +2638,7 @@ void Document::willBeRemovedFromFrame()
 
     m_cachedResourceLoader->stopUnusedPreloadsTimer();
 
-    if (page() && m_mediaState != MediaProducer::IsNotPlaying) {
+    if (page() && !m_mediaState.isEmpty()) {
         m_mediaState = MediaProducer::IsNotPlaying;
         page()->updateIsPlayingMedia(HTMLMediaElementInvalidID);
     }
@@ -4448,18 +4448,18 @@ void Document::noteUserInteractionWithMediaElement()
 void Document::updateIsPlayingMedia(uint64_t sourceElementID)
 {
     ASSERT(!m_audioProducers.hasNullReferences());
-    MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
+    MediaProducer::MediaStateFlags state;
     for (auto& audioProducer : m_audioProducers)
-        state |= audioProducer.mediaState();
+        state.add(audioProducer.mediaState());
 
 #if ENABLE(MEDIA_STREAM)
-    state |= MediaStreamTrack::captureState(*this);
+    state.add(MediaStreamTrack::captureState(*this));
     if (m_activeSpeechRecognition)
-        state |= MediaProducer::HasActiveAudioCaptureDevice;
+        state.add(MediaProducer::MediaState::HasActiveAudioCaptureDevice);
 #endif
 
     if (m_userHasInteractedWithMediaElement)
-        state |= MediaProducer::HasUserInteractedWithMediaElement;
+        state.add(MediaProducer::MediaState::HasUserInteractedWithMediaElement);
 
     if (state == m_mediaState)
         return;

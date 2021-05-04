@@ -279,13 +279,13 @@ void MediaStream::stopProducingData()
 
 MediaProducer::MediaStateFlags MediaStream::mediaState() const
 {
-    MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
+    MediaProducer::MediaStateFlags state;
 
     if (!m_isActive || !document() || !document()->page())
         return state;
 
     for (const auto& track : m_trackSet.values())
-        state |= track->mediaState();
+        state.add(track->mediaState());
 
     return state;
 }

@@ -2116,9 +2116,9 @@ void Page::storageBlockingStateChanged()
 
 void Page::updateIsPlayingMedia(uint64_t sourceElementID)
 {
-    MediaProducer::MediaStateFlags state = MediaProducer::IsNotPlaying;
-    forEachDocument([&] (Document& document) {
-        state |= document.mediaState();
+    MediaProducer::MediaStateFlags state;
+    forEachDocument([&](auto& document) {
+        state.add(document.mediaState());
     });
 
     if (state == m_mediaState)

@@ -164,7 +164,7 @@ private:
 
     Vector<DeniedRequest> m_deniedRequests;
 
-    WebCore::MediaProducer::MediaStateFlags m_captureState { WebCore::MediaProducer::IsNotPlaying };
+    WebCore::MediaProducer::MediaStateFlags m_captureState;
     RunLoop::Timer<UserMediaPermissionRequestManagerProxy> m_watchdogTimer;
     Seconds m_currentWatchdogInterval;
 #if !RELEASE_LOG_DISABLED

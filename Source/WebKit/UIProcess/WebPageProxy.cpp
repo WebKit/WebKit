@@ -1990,11 +1990,11 @@ void WebPageProxy::updateActivityState(OptionSet<ActivityState::Flag> flagsToUpd
         m_activityState.add(ActivityState::IsInWindow);
     if (flagsToUpdate & ActivityState::IsVisuallyIdle && pageClient().isVisuallyIdle())
         m_activityState.add(ActivityState::IsVisuallyIdle);
-    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState & MediaProducer::IsPlayingAudio && !(m_mutedState.contains(MediaProducer::MutedState::AudioIsMuted)))
+    if (flagsToUpdate & ActivityState::IsAudible && m_mediaState.contains(MediaProducer::MediaState::IsPlayingAudio) && !(m_mutedState.contains(MediaProducer::MutedState::AudioIsMuted)))
         m_activityState.add(ActivityState::IsAudible);
     if (flagsToUpdate & ActivityState::IsLoading && m_pageLoadState.isLoading())
         m_activityState.add(ActivityState::IsLoading);
-    if (flagsToUpdate & ActivityState::IsCapturingMedia && m_mediaState & (MediaProducer::HasActiveAudioCaptureDevice | MediaProducer::HasActiveVideoCaptureDevice))
+    if (flagsToUpdate & ActivityState::IsCapturingMedia && m_mediaState.containsAny({ MediaProducer::MediaState::HasActiveAudioCaptureDevice,  MediaProducer::MediaState::HasActiveVideoCaptureDevice }))
         m_activityState.add(ActivityState::IsCapturingMedia);
 }
 
@@ -6011,8 +6011,8 @@ void WebPageProxy::setMuted(WebCore::MediaProducer::MutedStateFlags state, Compl
         return completionHandler();
 
 #if ENABLE(MEDIA_STREAM)
-    bool hasMutedCaptureStreams = m_mediaState & WebCore::MediaProducer::MutedCaptureMask;
-    if (hasMutedCaptureStreams && !(state & WebCore::MediaProducer::MediaStreamCaptureIsMuted))
+    bool hasMutedCaptureStreams = m_mediaState.containsAny(WebCore::MediaProducer::MutedCaptureMask);
+    if (hasMutedCaptureStreams && !(state.containsAny(WebCore::MediaProducer::MediaStreamCaptureIsMuted)))
         WebProcessProxy::muteCaptureInPagesExcept(m_webPageID);
 #endif
 
@@ -9194,10 +9194,10 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
     WebCore::MediaProducer::MediaStateFlags newMediaCaptureState = newState & WebCore::MediaProducer::MediaCaptureMask;
 #endif
 
-    MediaProducer::MediaStateFlags playingMediaMask = MediaProducer::IsPlayingAudio | MediaProducer::IsPlayingVideo;
+    MediaProducer::MediaStateFlags playingMediaMask { MediaProducer::MediaState::IsPlayingAudio, MediaProducer::MediaState::IsPlayingVideo };
     MediaProducer::MediaStateFlags oldState = m_mediaState;
 
-    bool playingAudioChanges = (oldState & MediaProducer::IsPlayingAudio) != (newState & MediaProducer::IsPlayingAudio);
+    bool playingAudioChanges = (oldState.contains(MediaProducer::MediaState::IsPlayingAudio)) != (newState.contains(MediaProducer::MediaState::IsPlayingAudio));
     if (playingAudioChanges)
         pageClient().isPlayingAudioWillChange();
     m_mediaState = newState;
@@ -9217,11 +9217,11 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducer::MediaStateFlags ne
 
     activityStateDidChange({ ActivityState::IsAudible, ActivityState::IsCapturingMedia });
 
-    playingMediaMask |= WebCore::MediaProducer::MediaCaptureMask;
+    playingMediaMask.add(WebCore::MediaProducer::MediaCaptureMask);
     if ((oldState & playingMediaMask) != (m_mediaState & playingMediaMask))
         m_uiClient->isPlayingMediaDidChange(*this);
 
-    if ((oldState & MediaProducer::HasAudioOrVideo) != (m_mediaState & MediaProducer::HasAudioOrVideo))
+    if ((oldState.containsAny(MediaProducer::MediaState::HasAudioOrVideo)) != (m_mediaState.containsAny(MediaProducer::MediaState::HasAudioOrVideo)))
         videoControlsManagerDidChange();
 
     m_process->updateAudibleMediaAssertions();
@@ -9233,8 +9233,8 @@ void WebPageProxy::updateReportedMediaCaptureState()
     if (m_reportedMediaCaptureState == activeCaptureState)
         return;
 
-    bool haveReportedCapture = m_reportedMediaCaptureState & MediaProducer::MediaCaptureMask;
-    bool willReportCapture = activeCaptureState;
+    bool haveReportedCapture = m_reportedMediaCaptureState.containsAny(MediaProducer::MediaCaptureMask);
+    bool willReportCapture = !activeCaptureState.isEmpty();
 
     if (haveReportedCapture && !willReportCapture && m_updateReportedMediaCaptureStateTimer.isActive())
         return;
@@ -9242,7 +9242,7 @@ void WebPageProxy::updateReportedMediaCaptureState()
     if (!haveReportedCapture && willReportCapture)
         m_updateReportedMediaCaptureStateTimer.startOneShot(m_mediaCaptureReportingDelay);
 
-    RELEASE_LOG_IF_ALLOWED(WebRTC, "updateReportedMediaCaptureState: from %d to %d", m_reportedMediaCaptureState, activeCaptureState);
+    RELEASE_LOG_IF_ALLOWED(WebRTC, "updateReportedMediaCaptureState: from %d to %d", m_reportedMediaCaptureState.toRaw(), activeCaptureState.toRaw());
 
     bool microphoneCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::AudioCaptureMask) != (activeCaptureState & MediaProducer::AudioCaptureMask);
     bool cameraCaptureChanged = (m_reportedMediaCaptureState & MediaProducer::VideoCaptureMask) != (activeCaptureState & MediaProducer::VideoCaptureMask);

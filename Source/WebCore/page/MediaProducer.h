@@ -33,8 +33,7 @@ namespace WebCore {
 
 class MediaProducer : public CanMakeWeakPtr<MediaProducer> {
 public:
-    enum MediaState {
-        IsNotPlaying = 0,
+    enum class MediaState {
         IsPlayingAudio = 1 << 0,
         IsPlayingVideo = 1 << 1,
         IsPlayingToExternalDevice = 1 << 2,
@@ -56,17 +55,17 @@ public:
         HasActiveDisplayCaptureDevice = 1 << 18,
         HasMutedDisplayCaptureDevice = 1 << 19,
         HasInterruptedDisplayCaptureDevice = 1 << 20,
-
-        AudioCaptureMask = HasActiveAudioCaptureDevice | HasMutedAudioCaptureDevice | HasInterruptedAudioCaptureDevice,
-        VideoCaptureMask = HasActiveVideoCaptureDevice | HasMutedVideoCaptureDevice | HasInterruptedVideoCaptureDevice,
-        DisplayCaptureMask = HasActiveDisplayCaptureDevice | HasMutedDisplayCaptureDevice | HasInterruptedDisplayCaptureDevice,
-        ActiveCaptureMask = HasActiveAudioCaptureDevice | HasActiveVideoCaptureDevice | HasActiveDisplayCaptureDevice,
-        MutedCaptureMask =  HasMutedAudioCaptureDevice | HasMutedVideoCaptureDevice | HasMutedDisplayCaptureDevice,
-        MediaCaptureMask = AudioCaptureMask | VideoCaptureMask | DisplayCaptureMask,
     };
-    typedef unsigned MediaStateFlags;
+    using MediaStateFlags = OptionSet<MediaState>;
+    static constexpr MediaStateFlags IsNotPlaying = { };
+    static constexpr MediaStateFlags AudioCaptureMask = { MediaState::HasActiveAudioCaptureDevice, MediaState::HasMutedAudioCaptureDevice, MediaState::HasInterruptedAudioCaptureDevice };
+    static constexpr MediaStateFlags VideoCaptureMask = { MediaState::HasActiveVideoCaptureDevice, MediaState::HasMutedVideoCaptureDevice, MediaState::HasInterruptedVideoCaptureDevice };
+    static constexpr MediaStateFlags DisplayCaptureMask = { MediaState::HasActiveDisplayCaptureDevice, MediaState::HasMutedDisplayCaptureDevice, MediaState::HasInterruptedDisplayCaptureDevice };
+    static constexpr MediaStateFlags ActiveCaptureMask = { MediaState::HasActiveAudioCaptureDevice, MediaState::HasActiveVideoCaptureDevice, MediaState::HasActiveDisplayCaptureDevice };
+    static constexpr MediaStateFlags MutedCaptureMask = { MediaState::HasMutedAudioCaptureDevice, MediaState::HasMutedVideoCaptureDevice, MediaState::HasMutedDisplayCaptureDevice };
+    static constexpr MediaStateFlags MediaCaptureMask = { MediaState::HasActiveAudioCaptureDevice, MediaState::HasMutedAudioCaptureDevice, MediaState::HasInterruptedAudioCaptureDevice, MediaState::HasActiveVideoCaptureDevice, MediaState::HasMutedVideoCaptureDevice, MediaState::HasInterruptedVideoCaptureDevice, MediaState::HasActiveDisplayCaptureDevice, MediaState::HasMutedDisplayCaptureDevice, MediaState::HasInterruptedDisplayCaptureDevice };
 
-    static bool isCapturing(MediaStateFlags state) { return (state & ActiveCaptureMask) || (state & MutedCaptureMask); }
+    static bool isCapturing(MediaStateFlags state) { return state.containsAny(ActiveCaptureMask) || state.containsAny(MutedCaptureMask); }
 
     virtual MediaStateFlags mediaState() const = 0;
 
@@ -103,6 +102,33 @@ template<> struct EnumTraits<WebCore::MediaProducer::MediaCaptureKind> {
         WebCore::MediaProducer::MediaCaptureKind::Audio,
         WebCore::MediaProducer::MediaCaptureKind::Video,
         WebCore::MediaProducer::MediaCaptureKind::AudioVideo
+    >;
+};
+
+template<> struct EnumTraits<WebCore::MediaProducer::MediaState> {
+    using values = EnumValues<
+        WebCore::MediaProducer::MediaState,
+        WebCore::MediaProducer::MediaState::IsPlayingAudio,
+        WebCore::MediaProducer::MediaState::IsPlayingVideo,
+        WebCore::MediaProducer::MediaState::IsPlayingToExternalDevice,
+        WebCore::MediaProducer::MediaState::RequiresPlaybackTargetMonitoring,
+        WebCore::MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate,
+        WebCore::MediaProducer::MediaState::DidPlayToEnd,
+        WebCore::MediaProducer::MediaState::IsSourceElementPlaying,
+        WebCore::MediaProducer::MediaState::IsNextTrackControlEnabled,
+        WebCore::MediaProducer::MediaState::IsPreviousTrackControlEnabled,
+        WebCore::MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener,
+        WebCore::MediaProducer::MediaState::HasAudioOrVideo,
+        WebCore::MediaProducer::MediaState::HasActiveAudioCaptureDevice,
+        WebCore::MediaProducer::MediaState::HasActiveVideoCaptureDevice,
+        WebCore::MediaProducer::MediaState::HasMutedAudioCaptureDevice,
+        WebCore::MediaProducer::MediaState::HasMutedVideoCaptureDevice,
+        WebCore::MediaProducer::MediaState::HasInterruptedAudioCaptureDevice,
+        WebCore::MediaProducer::MediaState::HasInterruptedVideoCaptureDevice,
+        WebCore::MediaProducer::MediaState::HasUserInteractedWithMediaElement,
+        WebCore::MediaProducer::MediaState::HasActiveDisplayCaptureDevice,
+        WebCore::MediaProducer::MediaState::HasMutedDisplayCaptureDevice,
+        WebCore::MediaProducer::MediaState::HasInterruptedDisplayCaptureDevice
     >;
 };
 

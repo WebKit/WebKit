@@ -4610,45 +4610,45 @@ String Internals::pageMediaState()
     if (!document || !document->page())
         return emptyString();
 
-    WebCore::MediaProducer::MediaStateFlags state = document->page()->mediaState();
+    auto state = document->page()->mediaState();
     StringBuilder string;
-    if (state & MediaProducer::IsPlayingAudio)
+    if (state.containsAny(MediaProducer::MediaState::IsPlayingAudio))
         string.append("IsPlayingAudio,");
-    if (state & MediaProducer::IsPlayingVideo)
+    if (state.containsAny(MediaProducer::MediaState::IsPlayingVideo))
         string.append("IsPlayingVideo,");
-    if (state & MediaProducer::IsPlayingToExternalDevice)
+    if (state.containsAny(MediaProducer::MediaState::IsPlayingToExternalDevice))
         string.append("IsPlayingToExternalDevice,");
-    if (state & MediaProducer::RequiresPlaybackTargetMonitoring)
+    if (state.containsAny(MediaProducer::MediaState::RequiresPlaybackTargetMonitoring))
         string.append("RequiresPlaybackTargetMonitoring,");
-    if (state & MediaProducer::ExternalDeviceAutoPlayCandidate)
+    if (state.containsAny(MediaProducer::MediaState::ExternalDeviceAutoPlayCandidate))
         string.append("ExternalDeviceAutoPlayCandidate,");
-    if (state & MediaProducer::DidPlayToEnd)
+    if (state.containsAny(MediaProducer::MediaState::DidPlayToEnd))
         string.append("DidPlayToEnd,");
-    if (state & MediaProducer::IsSourceElementPlaying)
+    if (state.containsAny(MediaProducer::MediaState::IsSourceElementPlaying))
         string.append("IsSourceElementPlaying,");
 
-    if (state & MediaProducer::IsNextTrackControlEnabled)
+    if (state.containsAny(MediaProducer::MediaState::IsNextTrackControlEnabled))
         string.append("IsNextTrackControlEnabled,");
-    if (state & MediaProducer::IsPreviousTrackControlEnabled)
+    if (state.containsAny(MediaProducer::MediaState::IsPreviousTrackControlEnabled))
         string.append("IsPreviousTrackControlEnabled,");
 
-    if (state & MediaProducer::HasPlaybackTargetAvailabilityListener)
+    if (state.containsAny(MediaProducer::MediaState::HasPlaybackTargetAvailabilityListener))
         string.append("HasPlaybackTargetAvailabilityListener,");
-    if (state & MediaProducer::HasAudioOrVideo)
+    if (state.containsAny(MediaProducer::MediaState::HasAudioOrVideo))
         string.append("HasAudioOrVideo,");
-    if (state & MediaProducer::HasActiveAudioCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasActiveAudioCaptureDevice))
         string.append("HasActiveAudioCaptureDevice,");
-    if (state & MediaProducer::HasActiveVideoCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasActiveVideoCaptureDevice))
         string.append("HasActiveVideoCaptureDevice,");
-    if (state & MediaProducer::HasMutedAudioCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasMutedAudioCaptureDevice))
         string.append("HasMutedAudioCaptureDevice,");
-    if (state & MediaProducer::HasMutedVideoCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasMutedVideoCaptureDevice))
         string.append("HasMutedVideoCaptureDevice,");
-    if (state & MediaProducer::HasUserInteractedWithMediaElement)
+    if (state.containsAny(MediaProducer::MediaState::HasUserInteractedWithMediaElement))
         string.append("HasUserInteractedWithMediaElement,");
-    if (state & MediaProducer::HasActiveDisplayCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasActiveDisplayCaptureDevice))
         string.append("HasActiveDisplayCaptureDevice,");
-    if (state & MediaProducer::HasMutedDisplayCaptureDevice)
+    if (state.containsAny(MediaProducer::MediaState::HasMutedDisplayCaptureDevice))
         string.append("HasMutedDisplayCaptureDevice,");
 
     if (string.isEmpty())
