@@ -56,8 +56,7 @@ TEST(WebKit, OverrideAppleLanguagesPreference)
 
 // On older macOSes, CFPREFS_DIRECT_MODE is disabled and the WebProcess does not see the updated AppleLanguages
 // after the AppleLanguagePreferencesChangedNotification notification.
-// FIXME: This test is currently disabled on Apple Silicon because it times out there (https://bugs.webkit.org/show_bug.cgi?id=222619).
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000 && CPU(X86_64)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
 class AppleLanguagesTest : public testing::Test {
 public:
     AppleLanguagesTest()

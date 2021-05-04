@@ -1,3 +1,11 @@
+2021-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, try and re-enable AppleLanguagesTest.UpdateAppleLanguages on Apple Silicon.
+
+        The test has been updated and it may be passing now or at least fail with a more useful output.
+
+        * TestWebKitAPI/Tests/WebKit/OverrideAppleLanguagesPreference.mm:
+
 2021-05-04  Alex Christensen  <achristensen@webkit.org>
 
         localStorage changes aren't reflected between WKWebViews using WKWebViewConfiguration._groupIdentifier
