@@ -1,3 +1,46 @@
+2021-05-04  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r276893. rdar://problem/77510428
+
+    REGRESSION (r276633): fast/mediastream/media-stream-track-interrupted.html is consistently timing out
+    https://bugs.webkit.org/show_bug.cgi?id=225204
+    <rdar://problem/77338070>
+    
+    Reviewed by Eric Carlson.
+    
+    Reverting to RecursiveLock since resuming a unit will make it notify to unmute sources.
+    Sources will want to restart audio, thus restarting the unit synchronously.
+    This triggers the unit to tell its clients that it is restarting, which creates a dead lock.
+    We should probably update the code to change this, but as a short term fix, we revert to a RecursiveLock.
+    
+    Covered by fast/mediastream/media-stream-track-interrupted.html no longer timing out.
+    
+    * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+    (WebCore::BaseAudioSharedUnit::audioSamplesAvailable):
+    * platform/mediastream/mac/BaseAudioSharedUnit.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@276893 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-03  Youenn Fablet  <youenn@apple.com>
+
+            REGRESSION (r276633): fast/mediastream/media-stream-track-interrupted.html is consistently timing out
+            https://bugs.webkit.org/show_bug.cgi?id=225204
+            <rdar://problem/77338070>
+
+            Reviewed by Eric Carlson.
+
+            Reverting to RecursiveLock since resuming a unit will make it notify to unmute sources.
+            Sources will want to restart audio, thus restarting the unit synchronously.
+            This triggers the unit to tell its clients that it is restarting, which creates a dead lock.
+            We should probably update the code to change this, but as a short term fix, we revert to a RecursiveLock.
+
+            Covered by fast/mediastream/media-stream-track-interrupted.html no longer timing out.
+
+            * platform/mediastream/mac/BaseAudioSharedUnit.cpp:
+            (WebCore::BaseAudioSharedUnit::audioSamplesAvailable):
+            * platform/mediastream/mac/BaseAudioSharedUnit.h:
+
 2021-05-01  Antti Koivisto  <antti@apple.com>
 
         Share style resolvers between author shadow trees with identical style

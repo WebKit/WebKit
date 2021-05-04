@@ -30,8 +30,8 @@
 #include "RealtimeMediaSourceCapabilities.h"
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
-#include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
+#include <wtf/RecursiveLockAdapter.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -103,7 +103,7 @@ private:
     int32_t m_producingCount { 0 };
 
     HashSet<CoreAudioCaptureSource*> m_clients;
-    mutable Lock m_clientsLock;
+    mutable RecursiveLock m_clientsLock;
 };
 
 } // namespace WebCore

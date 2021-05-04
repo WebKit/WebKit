@@ -216,11 +216,12 @@ OSStatus BaseAudioSharedUnit::suspend()
 
 void BaseAudioSharedUnit::audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& data, const AudioStreamDescription& description, size_t numberOfFrames)
 {
+    // We hold the lock here since adding/removing clients can only happen in main thread.
+    auto locker = holdLock(m_clientsLock);
+
     // For performance reasons, we forbid heap allocations while doing rendering on the capture audio thread.
     ForbidMallocUseForCurrentThreadScope forbidMallocUse;
 
-    // We hold the lock here since adding/removing clients can only happen in main thread.
-    auto locker = holdLock(m_clientsLock);
     for (auto* client : m_clients) {
         if (client->isProducingData())
             client->audioSamplesAvailable(time, data, description, numberOfFrames);
