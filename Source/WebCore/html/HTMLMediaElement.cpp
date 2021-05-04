@@ -3505,6 +3505,7 @@ void HTMLMediaElement::playInternal()
         return;
     }
 
+    mediaSession().setActive(true);
     if (!mediaSession().clientWillBeginPlayback()) {
         ALWAYS_LOG(LOGIDENTIFIER, "returning because of interruption");
         return;

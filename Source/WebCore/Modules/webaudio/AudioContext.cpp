@@ -311,7 +311,6 @@ void AudioContext::lazyInitialize()
 
     BaseAudioContext::lazyInitialize();
     if (isInitialized()) {
-        m_mediaSession->setActive(true);
         if (state() != State::Running) {
             // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
             // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
@@ -398,6 +397,8 @@ bool AudioContext::willBeginPlayback()
         }
         removeBehaviorRestriction(RequirePageConsentForAudioStartRestriction);
     }
+
+    m_mediaSession->setActive(true);
 
     auto willBegin = m_mediaSession->clientWillBeginPlayback();
     ALWAYS_LOG(LOGIDENTIFIER, "returning ", willBegin);
