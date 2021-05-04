@@ -435,7 +435,7 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
 
 - (CALayer *)_createGridOverlayLayer:(const WebCore::InspectorOverlay::Highlight::GridHighlightOverlay&)overlay scale:(double)scale
 {
-    // Keep implementation roughly equivilent to `WebCore::InspectorOverlay::drawGridOverlay`.
+    // Keep implementation roughly equivalent to `WebCore::InspectorOverlay::drawGridOverlay`.
     CALayer *layer = [CALayer layer];
 
     auto gridLinesPath = adoptCF(CGPathCreateMutable());
@@ -464,7 +464,7 @@ static CALayer * createLayoutLabelLayer(String label, WebCore::FloatPoint point,
     constexpr auto translucentLabelBackgroundColor = WebCore::Color::white.colorWithAlphaByte(230);
 
     for (auto area : overlay.areas)
-        [layer addSublayer:createLayoutLabelLayer(area.name, area.quad.p1(), WebCore::InspectorOverlay::LabelArrowDirection::None, WebCore::InspectorOverlay::LabelArrowEdgePosition::None, translucentLabelBackgroundColor, overlay.color, scale, area.quad.boundingBox().width())];
+        [layer addSublayer:createLayoutLabelLayer(area.name, area.quad.center(), WebCore::InspectorOverlay::LabelArrowDirection::None, WebCore::InspectorOverlay::LabelArrowEdgePosition::None, translucentLabelBackgroundColor, overlay.color, scale, area.quad.boundingBox().width())];
 
     for (auto label : overlay.labels)
         [layer addSublayer:createLayoutLabelLayer(label.text, label.location, label.arrowDirection, label.arrowEdgePosition, label.backgroundColor, overlay.color, scale)];
