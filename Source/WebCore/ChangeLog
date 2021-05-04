@@ -1,3 +1,51 @@
+2021-05-04  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r260360): animation-wide timing function does not apply to 2-keyframe transform Web Animation
+        https://bugs.webkit.org/show_bug.cgi?id=225301
+        <rdar://problem/77452933>
+
+        Reviewed by Dean Jackson.
+
+        Core Animation has a limitation where an animation-wide cubic timing function with y values outside of the [0-1]
+        range are not applied correctly since those values are clipped. This is not the case with similar timing functions
+        applied to a keyframe interval. This is known issue covered by bug 215918.
+
+        We worked around this limitation for CSS Transitions in bug 215826. Indeed, in this case we know that the animation
+        has a single interval and no keyframe-specific timing function, so GraphicsLayerCA would check whether the Animation
+        object originated from a CSS Transition and set the animation-wide timing function on the generated AnimationValue. 
+        
+        With this patch we generalize this approach to any animation, no matter its origin, that has a single keyframe
+        interval with no timing function or a timing function that has a linear effect. To do this, we first check in
+        GraphicsLayerCA::addAnimation*() whether we are dealing with an animation that has an animation-wide cubic timing
+        function outside of the [0-1] range. If that is not the case, we return early and indicate that this animation
+        cannot be run accelerated.
+
+        If instead that is the case, we pass a new boolean flag down through the call stack to setupAnimation() and
+        timingFunctionForAnimationValue() where we choose to use the animation-wide timing function on the first keyframe
+        rather than the animation itself.
+
+        Test: webanimations/accelerated-web-animation-with-single-interval-and-easing-y-axis-above-1.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::backingAnimationForCompositedRenderer const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::timingFunctionIsCubicTimingFunctionWithYValueOutOfRange):
+        (WebCore::keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFunction):
+        (WebCore::GraphicsLayerCA::addAnimation):
+        (WebCore::GraphicsLayerCA::createAnimationFromKeyframes):
+        (WebCore::GraphicsLayerCA::appendToUncommittedAnimations):
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::createFilterAnimationsFromKeyframes):
+        (WebCore::GraphicsLayerCA::createBasicAnimation):
+        (WebCore::GraphicsLayerCA::createKeyframeAnimation):
+        (WebCore::GraphicsLayerCA::createSpringAnimation):
+        (WebCore::GraphicsLayerCA::setupAnimation):
+        (WebCore::GraphicsLayerCA::timingFunctionForAnimationValue):
+        (WebCore::GraphicsLayerCA::setAnimationKeyframes):
+        (WebCore::GraphicsLayerCA::setTransformAnimationKeyframes):
+        (WebCore::GraphicsLayerCA::setFilterAnimationKeyframes):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2021-05-04  Dean Jackson  <dino@apple.com>
 
         [WebXR] Move WebXROpaqueFramebuffer to its own file

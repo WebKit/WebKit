@@ -1,3 +1,18 @@
+2021-05-04  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r260360): animation-wide timing function does not apply to 2-keyframe transform Web Animation
+        https://bugs.webkit.org/show_bug.cgi?id=225301
+        <rdar://problem/77452933>
+
+        Reviewed by Dean Jackson.
+
+        Add a test that runs a JS-orignated animation with a single interval and an animation-wide cubic timing
+        function with y values outside of the [0-1] range.
+
+        * platform/win/TestExpectations:
+        * webanimations/accelerated-web-animation-with-single-interval-and-easing-y-axis-above-1-expected.html: Added.
+        * webanimations/accelerated-web-animation-with-single-interval-and-easing-y-axis-above-1.html: Added.
+
 2021-05-04  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal ANGLE] Update readpixel, sub, whole, and occlusionQuery tests to passing
