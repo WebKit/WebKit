@@ -1,3 +1,23 @@
+2021-05-04  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Sources: Inconsistent selection in source tree when grouped by path
+        https://bugs.webkit.org/show_bug.cgi?id=225317
+
+        Reviewed by Devin Rousso.
+
+        Ensure origin tree elements for different domains in the Sources Tab behave as folder tree elements
+        in that they can be individually selected without triggering rendering of any resource.
+
+        In essence, restore behavior prior to https://trac.webkit.org/changeset/248912/webkit
+
+        The only exception is for document resources. Clicking on the origin tree element associated with a document resource,
+        triggers rendering of the corresponding document.
+
+        * UserInterface/Views/OriginTreeElement.js:
+        (WI.OriginTreeElement):
+        * UserInterface/Views/SourcesNavigationSidebarPanel.js:
+        (WI.SourcesNavigationSidebarPanel.prototype._addResource):
+
 2021-04-28  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: CSS Grid - measure usage of grid overlay options

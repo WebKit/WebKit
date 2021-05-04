@@ -27,6 +27,9 @@ WI.OriginTreeElement = class OriginTreeElement extends WI.GeneralTreeElement
 {
     constructor(title, representedObject, options)
     {
+        // Representing any object other than a WI.Frame yields erratic behavior when navigating sources grouped by path (Bug 225317).
+        console.assert(!representedObject || representedObject instanceof WI.Frame);
+
         const classNames = ["origin-icon"];
         const subtitle = null;
         super(classNames, title, subtitle, representedObject, options);

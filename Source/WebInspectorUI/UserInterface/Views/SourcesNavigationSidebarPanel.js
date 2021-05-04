@@ -1047,7 +1047,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 if (origin) {
                     let originTreeElement = this._originTreeElementMap.get(origin);
                     if (!originTreeElement) {
-                        originTreeElement = new WI.OriginTreeElement(origin, resource.parentFrame, {hasChildren: true});
+                        let representedObject = resource.type === WI.Resource.Type.Document ? resource.parentFrame : null;
+                        originTreeElement = new WI.OriginTreeElement(origin, representedObject, {hasChildren: true});
                         this._originTreeElementMap.set(origin, originTreeElement);
 
                         let index = insertionIndexForObjectInListSortedByFunction(originTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
