@@ -145,7 +145,9 @@ public:
     enum class RoutingArbitrationError : uint8_t { None, Failed, Cancelled };
     enum class DefaultRouteChanged : bool { No, Yes };
 
-    virtual void beginRoutingArbitrationWithCategory(AudioSession::CategoryType, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&&) = 0;
+    using ArbitrationCallback = CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>;
+
+    virtual void beginRoutingArbitrationWithCategory(AudioSession::CategoryType, ArbitrationCallback&&) = 0;
     virtual void leaveRoutingAbritration() = 0;
 
     using WeakValueType = AudioSessionRoutingArbitrationClient;

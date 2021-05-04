@@ -57,6 +57,7 @@ namespace WebKit {
 class GPUProcess;
 class LayerHostingContext;
 class LibWebRTCCodecsProxy;
+class LocalAudioSessionRoutingArbitrator;
 class RemoteAudioDestinationManager;
 class RemoteAudioHardwareListenerProxy;
 class RemoteAudioMediaStreamTrackRendererManager;
@@ -282,6 +283,10 @@ private:
 
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
     bool m_isActiveNowPlayingProcess { false };
+
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+    UniqueRef<LocalAudioSessionRoutingArbitrator> m_routingArbitrator;
+#endif
 };
 
 } // namespace WebKit

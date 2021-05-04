@@ -227,6 +227,7 @@ platform/audio/mac/AudioFileReaderMac.cpp
 platform/audio/mac/AudioHardwareListenerMac.cpp
 platform/audio/mac/AudioSessionMac.mm
 platform/audio/mac/FFTFrameMac.cpp
+platform/audio/mac/SharedRoutingArbitrator.mm
 platform/cf/KeyedDecoderCF.cpp
 platform/cf/KeyedEncoderCF.cpp
 platform/cf/MainThreadSharedTimerCF.cpp

@@ -93,7 +93,7 @@ RemoteAudioSessionConfiguration& RemoteAudioSession::configuration()
 
 void RemoteAudioSession::setCategory(CategoryType type, RouteSharingPolicy policy)
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     auto& configuration = this->configuration();
     if (type == configuration.category && policy == configuration.routeSharingPolicy)
         return;
@@ -102,9 +102,6 @@ void RemoteAudioSession::setCategory(CategoryType type, RouteSharingPolicy polic
     configuration.routeSharingPolicy = policy;
 
     ensureConnection().send(Messages::RemoteAudioSessionProxy::SetCategory(type, policy), { });
-#elif PLATFORM(MAC)
-    // FIXME: Move AudioSessionRoutingArbitratorProxy to the GPU process (webkit.org/b/217535)
-    AudioSession::setCategory(type, policy);
 #else
     UNUSED_PARAM(type);
     UNUSED_PARAM(policy);
@@ -127,10 +124,8 @@ bool RemoteAudioSession::tryToSetActiveInternal(bool active)
 
 AudioSession::CategoryType RemoteAudioSession::category() const
 {
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(COCOA)
     return configuration().category;
-#elif PLATFORM(MAC)
-    return AudioSession::category();
 #else
     return None;
 #endif

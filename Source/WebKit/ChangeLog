@@ -1,3 +1,45 @@
+2021-05-04  Jer Noble  <jer.noble@apple.com>
+
+        [Media in GPU Process] Move AudioSessionRoutingArbitratorProxy to the GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=217535
+        <rdar://problem/70152548>
+
+        Reviewed by Eric Carlson.
+
+        Add a new, local-only object which can aggregate changes to the audio routing.
+        The UIProcess version of this object spans a process boundary, but this new
+        object can operate locally without an XPC communication channel. As part of this
+        change, the "SharedArbitrator" in AudioSessionRoutingArbitratorProxyCocoa has been
+        moved into WebCore to be used both there and in this new object.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        (WebKit::GPUConnectionToWebProcess::didClose):
+        * GPUProcess/GPUConnectionToWebProcess.h:
+        * GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp: Added.
+        (WebKit::LocalAudioSessionRoutingArbitrator::create):
+        (WebKit::LocalAudioSessionRoutingArbitrator::LocalAudioSessionRoutingArbitrator):
+        (WebKit::LocalAudioSessionRoutingArbitrator::~LocalAudioSessionRoutingArbitrator):
+        (WebKit::LocalAudioSessionRoutingArbitrator::processDidTerminate):
+        (WebKit::LocalAudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory):
+        (WebKit::LocalAudioSessionRoutingArbitrator::leaveRoutingAbritration):
+        * GPUProcess/mac/LocalAudioSessionRoutingArbitrator.h:
+        * SourcesCocoa.txt:
+        * UIProcess/Media/AudioSessionRoutingArbitratorProxy.h:
+        * UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm:
+        (WebKit::AudioSessionRoutingArbitratorProxy::AudioSessionRoutingArbitratorProxy):
+        (WebKit::AudioSessionRoutingArbitratorProxy::processDidTerminate):
+        (WebKit::AudioSessionRoutingArbitratorProxy::beginRoutingArbitrationWithCategory):
+        (WebKit::AudioSessionRoutingArbitratorProxy::endRoutingArbitration):
+        (): Deleted.
+        (WebKit::SharedArbitrator::sharedInstance): Deleted.
+        (WebKit::SharedArbitrator::isInRoutingArbitrationForArbitrator): Deleted.
+        (WebKit::SharedArbitrator::beginRoutingArbitrationForArbitrator): Deleted.
+        (WebKit::SharedArbitrator::endRoutingArbitrationForArbitrator): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/GPU/media/RemoteAudioSession.cpp:
+        (WebKit::RemoteAudioSession::setCategory):
+
 2021-05-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Remove internal NetworkSessionCocoa additions

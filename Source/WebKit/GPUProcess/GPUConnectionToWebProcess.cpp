@@ -133,6 +133,10 @@
 #include <WebCore/VP9UtilitiesCocoa.h>
 #endif
 
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+#include "LocalAudioSessionRoutingArbitrator.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -198,6 +202,9 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_audioTrackRendererManager(RemoteAudioMediaStreamTrackRendererManager::create(*this))
     , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
 #endif
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+    , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create())
+#endif
 {
     RELEASE_ASSERT(RunLoop::isMain());
 
@@ -228,6 +235,10 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
 
 void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+    m_routingArbitrator->processDidTerminate();
+#endif
+
 #if USE(AUDIO_SESSION)
     if (m_audioSessionProxy) {
         gpuProcess().audioSessionManager().removeProxy(*m_audioSessionProxy);

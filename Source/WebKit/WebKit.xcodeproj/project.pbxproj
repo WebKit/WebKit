@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		1A50DB38110A3C13000D3FE5 /* All */ = {
+		1A50DB38110A3C13000D3FE5 /* Framework & XPC Services */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildConfigurationList = 1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "Framework & XPC Services" */;
 			buildPhases = (
 				BCFFCA8A160D6DEA003DF315 /* Add XPCServices symlink */,
 			);
@@ -21,7 +21,7 @@
 				BC8283D516B4C01F00A278FE /* PBXTargetDependency */,
 				2D9FB22C2375245C0049F936 /* PBXTargetDependency */,
 			);
-			name = All;
+			name = "Framework & XPC Services";
 			productName = WebKit2;
 		};
 		2D7DEBD821269C6B00B9F73C /* Generate Unified Sources */ = {
@@ -78,6 +78,18 @@
 			);
 			name = "Derived Sources";
 			productName = "Derived Sources";
+		};
+		CD0C36D52639D39A004E35D8 /* Everything */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = CD0C36D62639D39A004E35D8 /* Build configuration list for PBXAggregateTarget "Everything" */;
+			buildPhases = (
+			);
+			dependencies = (
+				CD0C36DD2639D3B4004E35D8 /* PBXTargetDependency */,
+				CD0C36DB2639D3AF004E35D8 /* PBXTargetDependency */,
+			);
+			name = Everything;
+			productName = Everything;
 		};
 		E1AC2E2720F7B94C00B0897D /* Unlock Keychain */ = {
 			isa = PBXAggregateTarget;
@@ -2199,6 +2211,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC3DE46515A91763008D26FC;
 			remoteInfo = WebKit2Service;
+		};
+		CD0C36DA2639D3AF004E35D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A50DB38110A3C13000D3FE5;
+			remoteInfo = "Framework & XPC Services";
+		};
+		CD0C36DC2639D3B4004E35D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CD95493426159004008372D9;
+			remoteInfo = WebKitSwift;
 		};
 		E1AC2E2D20F7B98800B0897D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5603,6 +5629,8 @@
 		CD20CE7725CD2B9D0069B542 /* RemoteAudioHardwareListenerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioHardwareListenerMessageReceiver.cpp; sourceTree = "<group>"; };
 		CD20CE7825CD2B9D0069B542 /* RemoteAudioHardwareListenerMessagesReplies.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioHardwareListenerMessagesReplies.h; sourceTree = "<group>"; };
 		CD20CE7925CD2B9E0069B542 /* RemoteAudioHardwareListenerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioHardwareListenerMessages.h; sourceTree = "<group>"; };
+		CD36C16C260A6EBE00C8C529 /* LocalAudioSessionRoutingArbitrator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalAudioSessionRoutingArbitrator.h; sourceTree = "<group>"; };
+		CD36C16D260A6EBE00C8C529 /* LocalAudioSessionRoutingArbitrator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LocalAudioSessionRoutingArbitrator.cpp; sourceTree = "<group>"; };
 		CD3EEF3125799618006563BB /* RemoteMediaEngineConfigurationFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaEngineConfigurationFactory.h; sourceTree = "<group>"; };
 		CD3EEF3225799618006563BB /* RemoteMediaEngineConfigurationFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaEngineConfigurationFactory.cpp; sourceTree = "<group>"; };
 		CD3EEF3325799717006563BB /* RemoteMediaEngineConfigurationFactoryProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaEngineConfigurationFactoryProxy.h; sourceTree = "<group>"; };
@@ -7590,6 +7618,8 @@
 			children = (
 				2D9FB2082375209D0049F936 /* com.apple.WebKit.GPUProcess.sb.in */,
 				2D9FB2072375209D0049F936 /* GPUProcessMac.mm */,
+				CD36C16D260A6EBE00C8C529 /* LocalAudioSessionRoutingArbitrator.cpp */,
+				CD36C16C260A6EBE00C8C529 /* LocalAudioSessionRoutingArbitrator.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -13261,6 +13291,9 @@
 					A16E65FF2581930800EE1749 = {
 						CreatedOnToolsVersion = 12.4;
 					};
+					CD0C36D52639D39A004E35D8 = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					CD95493426159004008372D9 = {
 						CreatedOnToolsVersion = 13.0;
 					};
@@ -13283,7 +13316,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1A50DB38110A3C13000D3FE5 /* All */,
+				1A50DB38110A3C13000D3FE5 /* Framework & XPC Services */,
+				CD0C36D52639D39A004E35D8 /* Everything */,
 				8DC2EF4F0486A6940098B216 /* WebKit */,
 				CD95493426159004008372D9 /* WebKitSwift */,
 				2D7DEBD821269C6B00B9F73C /* Generate Unified Sources */,
@@ -14615,6 +14649,16 @@
 			target = BC3DE46515A91763008D26FC /* WebContent */;
 			targetProxy = BCA8D46715BCE0D6009DC1F1 /* PBXContainerItemProxy */;
 		};
+		CD0C36DB2639D3AF004E35D8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A50DB38110A3C13000D3FE5 /* Framework & XPC Services */;
+			targetProxy = CD0C36DA2639D3AF004E35D8 /* PBXContainerItemProxy */;
+		};
+		CD0C36DD2639D3B4004E35D8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CD95493426159004008372D9 /* WebKitSwift */;
+			targetProxy = CD0C36DC2639D3B4004E35D8 /* PBXContainerItemProxy */;
+		};
 		E1AC2E2E20F7B98800B0897D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E1AC2E2720F7B94C00B0897D /* Unlock Keychain */;
@@ -15024,6 +15068,30 @@
 			};
 			name = Production;
 		};
+		CD0C36D72639D39A004E35D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CD0C36D82639D39A004E35D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		CD0C36D92639D39A004E35D8 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		CD95493C26159004008372D9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */;
@@ -15072,7 +15140,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "All" */ = {
+		1A50DB48110A3C27000D3FE5 /* Build configuration list for PBXAggregateTarget "Framework & XPC Services" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A50DB39110A3C13000D3FE5 /* Debug */,
@@ -15228,6 +15296,16 @@
 				C0CE72861247E66800BC0EC4 /* Debug */,
 				C0CE72871247E66800BC0EC4 /* Release */,
 				C0CE72881247E66800BC0EC4 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		CD0C36D62639D39A004E35D8 /* Build configuration list for PBXAggregateTarget "Everything" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD0C36D72639D39A004E35D8 /* Debug */,
+				CD0C36D82639D39A004E35D8 /* Release */,
+				CD0C36D92639D39A004E35D8 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
