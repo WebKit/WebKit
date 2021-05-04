@@ -51,6 +51,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/highlight/AppHighlight.h
     Modules/highlight/Highlight.h
     Modules/highlight/HighlightRegister.h
+    Modules/highlight/HighlightVisibility.h
 
     Modules/indexeddb/IDBActiveDOMObject.h
     Modules/indexeddb/IDBDatabaseIdentifier.h

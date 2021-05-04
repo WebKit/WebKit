@@ -1,3 +1,9 @@
+2021-05-04  Diego Pino Garcia  <dpino@igalia.com>
+
+        Unreviewed, fix GTK and WPE builds after r276947
+
+        * Headers.cmake: Add missing header 'Modules/highlight/HighlightVisibility.h'. 
+
 2021-05-04  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][Debug] Allow fastMallocs in audio threads
