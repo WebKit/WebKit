@@ -214,7 +214,11 @@ void GraphicsContext::drawPlatformImage(const PlatformImagePtr& image, const Flo
 #endif
     RetainPtr<CGImageRef> subImage(image);
 
-    float currHeight = options.orientation().usesWidthAsHeight() ? CGImageGetWidth(subImage.get()) : CGImageGetHeight(subImage.get());
+    auto logicalHeight = [&](CGImageRef image) {
+        return options.orientation().usesWidthAsHeight() ? CGImageGetWidth(image) : CGImageGetHeight(image);
+    };
+
+    float currHeight = logicalHeight(subImage.get());
     if (currHeight <= srcRect.y())
         return;
 
@@ -265,8 +269,8 @@ void GraphicsContext::drawPlatformImage(const PlatformImagePtr& image, const Flo
             subImage = adoptCF(CGImageCreateWithImageInRect(subImage.get(), subimageRect));
 #endif
             if (currHeight < srcRect.maxY()) {
-                ASSERT(CGImageGetHeight(subImage.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
-                adjustedDestRect.setHeight(CGImageGetHeight(subImage.get()) / yScale);
+                ASSERT(logicalHeight(subImage.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
+                adjustedDestRect.setHeight(logicalHeight(subImage.get()) / yScale);
             }
         } else {
             adjustedDestRect.setLocation(FloatPoint(destRect.x() - srcRect.x() / xScale, destRect.y() - srcRect.y() / yScale));

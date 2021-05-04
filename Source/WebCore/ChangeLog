@@ -1,3 +1,22 @@
+2021-05-04  Cameron McCormack  <heycam@apple.com>
+
+        Handle clamping of heights for images affected by background-size and EXIF orientation correctly
+        https://bugs.webkit.org/show_bug.cgi?id=221005
+        <rdar://problem/73692426>
+
+        Reviewed by Simon Fraser.
+
+        GraphicsContext::drawPlatformImage handles requests with source rects
+        whose heights are greater than the image (which can happen due to
+        rounding issues) by clamping the source rect.  This clamping incorrectly
+        looks at the CGImage's height, which for an image rotated 90deg due to
+        EXIF orientation metadata, is the wrong dimension.
+
+        Test: fast/images/image-orientation-background-size-bug.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawPlatformImage):
+
 2021-05-04  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Cache the value of MediaPlayerPrivateAVFoundationObjC::assetStatus()
