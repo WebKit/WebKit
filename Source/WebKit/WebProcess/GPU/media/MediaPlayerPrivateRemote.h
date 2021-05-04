@@ -99,7 +99,7 @@ public:
     void timeChanged(RemoteMediaPlayerState&&);
     void durationChanged(RemoteMediaPlayerState&&);
     void rateChanged(double);
-    void playbackStateChanged(bool, MediaTime&&, WallTime&&);
+    void playbackStateChanged(bool, MediaTime&&, MonotonicTime&&);
     void engineFailedToLoad(long);
     void updateCachedState(RemoteMediaPlayerState&&);
     void characteristicChanged(RemoteMediaPlayerState&&);
@@ -415,7 +415,7 @@ private:
     WebCore::SecurityOriginData m_documentSecurityOrigin;
     mutable HashMap<WebCore::SecurityOriginData, Optional<bool>> m_wouldTaintOriginCache;
 
-    WallTime m_lastPlaybackQualityMetricsQueryTime;
+    MonotonicTime m_lastPlaybackQualityMetricsQueryTime;
     Seconds m_videoPlaybackMetricsUpdateInterval;
     double m_volume { 1 };
     double m_rate { 1 };

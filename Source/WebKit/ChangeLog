@@ -1,3 +1,35 @@
+2021-05-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] Use MonotonicTime for elapsed time
+        https://bugs.webkit.org/show_bug.cgi?id=225329
+        <rdar://problem/77472811>
+
+        Reviewed by Simon Fraser.
+
+        No new tests, no change of behavior.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged):
+        (WebKit::RemoteMediaPlayerProxy::updateCachedState):
+        (WebKit::RemoteMediaPlayerProxy::performTaskAtMediaTime):
+        (WebKit::RemoteMediaPlayerProxy::setVideoPlaybackMetricsUpdateInterval):
+        (WebKit::RemoteMediaPlayerProxy::maybeUpdateCachedVideoMetrics):
+        (WebKit::RemoteMediaPlayerProxy::updateCachedVideoMetrics):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::pause):
+        (WebKit::MediaPlayerPrivateRemote::currentMediaTime const):
+        (WebKit::MediaPlayerPrivateRemote::playbackStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::updateCachedState):
+        (WebKit::MediaPlayerPrivateRemote::videoPlaybackQualityMetrics):
+        (WebKit::MediaPlayerPrivateRemote::performTaskAtMediaTime):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.messages.in:
+        * WebProcess/GPU/media/RemoteMediaPlayerState.h:
+        (WebKit::RemoteMediaPlayerState::encode const):
+        (WebKit::RemoteMediaPlayerState::decode):
+
 2021-05-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         REGRESSION: [ iOS ] 11 http/wpt/webauthn/ tests are crashing

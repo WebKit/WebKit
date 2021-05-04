@@ -465,7 +465,7 @@ bool RemoteMediaPlayerProxy::mediaPlayerIsVideo() const
 void RemoteMediaPlayerProxy::mediaPlayerPlaybackStateChanged()
 {
     m_cachedState.paused = m_player->paused();
-    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_cachedState.paused, m_player->currentTime(), WallTime::now()), m_id);
+    m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::PlaybackStateChanged(m_cachedState.paused, m_player->currentTime(), MonotonicTime::now()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerBufferedTimeRangesChanged()
@@ -825,7 +825,7 @@ void RemoteMediaPlayerProxy::timerFired()
 
 void RemoteMediaPlayerProxy::updateCachedState()
 {
-    m_cachedState.wallTime = WallTime::now();
+    m_cachedState.timestamp = MonotonicTime::now();
     m_cachedState.currentTime = m_player->currentTime();
     m_cachedState.duration = m_player->duration();
     m_cachedState.networkState = m_player->networkState();
@@ -959,7 +959,7 @@ void RemoteMediaPlayerProxy::tracksChanged()
     m_player->tracksChanged();
 }
 
-void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, WallTime messageTime, PerformTaskAtMediaTimeCompletionHandler&& completionHandler)
+void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, MonotonicTime messageTime, PerformTaskAtMediaTimeCompletionHandler&& completionHandler)
 {
     if (m_performTaskAtMediaTimeCompletionHandler) {
         // A media player is only expected to track one pending task-at-time at once (e.g. see
@@ -969,11 +969,12 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, W
         handler(WTF::nullopt, WTF::nullopt);
     }
 
-    auto transmissionTime = MediaTime::createWithDouble((WallTime::now() - messageTime).value(), 1);
+    auto now = MonotonicTime::now();
+    auto transmissionTime = MediaTime::createWithDouble((now - messageTime).value(), 1);
     auto adjustedTaskTime = taskTime - transmissionTime;
     auto currentTime = m_player->currentTime();
     if (adjustedTaskTime <= currentTime) {
-        completionHandler(currentTime, WallTime::now());
+        completionHandler(currentTime, now);
         return;
     }
 
@@ -983,7 +984,7 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, W
             return;
 
         auto completionHandler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
-        completionHandler(m_player->currentTime(), WallTime::now());
+        completionHandler(m_player->currentTime(), MonotonicTime::now());
     }, adjustedTaskTime);
 }
 
@@ -999,12 +1000,12 @@ void RemoteMediaPlayerProxy::setVideoPlaybackMetricsUpdateInterval(double interv
 
     updateCachedVideoMetrics();
     m_videoPlaybackMetricsUpdateInterval = Seconds(interval);
-    m_nextPlaybackQualityMetricsUpdateTime = WallTime::now() + Seconds(interval) - metricsAdvanceUpdate;
+    m_nextPlaybackQualityMetricsUpdateTime = MonotonicTime::now() + Seconds(interval) - metricsAdvanceUpdate;
 }
 
 void RemoteMediaPlayerProxy::maybeUpdateCachedVideoMetrics()
 {
-    if (m_cachedState.paused || !m_videoPlaybackMetricsUpdateInterval || WallTime::now() < m_nextPlaybackQualityMetricsUpdateTime)
+    if (m_cachedState.paused || !m_videoPlaybackMetricsUpdateInterval || MonotonicTime::now() < m_nextPlaybackQualityMetricsUpdateTime)
         return;
 
     updateCachedVideoMetrics();
@@ -1013,7 +1014,7 @@ void RemoteMediaPlayerProxy::maybeUpdateCachedVideoMetrics()
 void RemoteMediaPlayerProxy::updateCachedVideoMetrics()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_nextPlaybackQualityMetricsUpdateTime = WallTime::now() + m_videoPlaybackMetricsUpdateInterval;
+    m_nextPlaybackQualityMetricsUpdateTime = MonotonicTime::now() + m_videoPlaybackMetricsUpdateInterval;
     m_cachedState.videoMetrics = m_player->videoPlaybackQualityMetrics();
 }
 

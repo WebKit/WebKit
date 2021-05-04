@@ -186,8 +186,8 @@ public:
     void videoTrackSetSelected(const TrackPrivateRemoteIdentifier&, bool);
     void textTrackSetMode(const TrackPrivateRemoteIdentifier&, WebCore::InbandTextTrackPrivate::Mode);
 
-    using PerformTaskAtMediaTimeCompletionHandler = CompletionHandler<void(Optional<MediaTime>, Optional<WallTime>)>;
-    void performTaskAtMediaTime(const MediaTime&, WallTime, PerformTaskAtMediaTimeCompletionHandler&&);
+    using PerformTaskAtMediaTimeCompletionHandler = CompletionHandler<void(Optional<MediaTime>, Optional<MonotonicTime>)>;
+    void performTaskAtMediaTime(const MediaTime&, MonotonicTime, PerformTaskAtMediaTimeCompletionHandler&&);
     void wouldTaintOrigin(struct WebCore::SecurityOriginData, CompletionHandler<void(Optional<bool>)>&&);
 
     void setVideoPlaybackMetricsUpdateInterval(double);
@@ -329,7 +329,7 @@ private:
 #endif
 
     Seconds m_videoPlaybackMetricsUpdateInterval;
-    WallTime m_nextPlaybackQualityMetricsUpdateTime;
+    MonotonicTime m_nextPlaybackQualityMetricsUpdateTime;
 
     WebCore::IntSize m_videoInlineSize;
     float m_videoContentScale { 1.0 };

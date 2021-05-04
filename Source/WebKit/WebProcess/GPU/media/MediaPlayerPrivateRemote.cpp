@@ -203,9 +203,9 @@ void MediaPlayerPrivateRemote::play()
 void MediaPlayerPrivateRemote::pause()
 {
     m_cachedState.paused = true;
-    auto now = WallTime::now();
-    m_cachedState.currentTime += MediaTime::createWithDouble(m_rate * (now - m_cachedState.wallTime).value());
-    m_cachedState.wallTime = now;
+    auto now = MonotonicTime::now();
+    m_cachedState.currentTime += MediaTime::createWithDouble(m_rate * (now - m_cachedState.timestamp).value());
+    m_cachedState.timestamp = now;
     connection().send(Messages::RemoteMediaPlayerProxy::Pause(), m_id);
 }
 
@@ -254,7 +254,7 @@ MediaTime MediaPlayerPrivateRemote::currentMediaTime() const
     if (m_cachedState.paused || !m_cachedState.currentTime)
         return m_cachedState.currentTime;
 
-    return m_cachedState.currentTime + MediaTime::createWithDouble(m_rate * (WallTime::now() - m_cachedState.wallTime).seconds());
+    return m_cachedState.currentTime + MediaTime::createWithDouble(m_rate * (MonotonicTime::now() - m_cachedState.timestamp).seconds());
 }
 
 void MediaPlayerPrivateRemote::seek(const MediaTime& time)
@@ -348,11 +348,11 @@ void MediaPlayerPrivateRemote::rateChanged(double rate)
     m_player->rateChanged();
 }
 
-void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& mediaTime, WallTime&& wallTime)
+void MediaPlayerPrivateRemote::playbackStateChanged(bool paused, MediaTime&& mediaTime, MonotonicTime&& wallTime)
 {
     m_cachedState.paused = paused;
     m_cachedState.currentTime = mediaTime;
-    m_cachedState.wallTime = wallTime;
+    m_cachedState.timestamp = wallTime;
     m_player->playbackStateChanged();
 }
 
@@ -427,7 +427,7 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 {
     const Seconds playbackQualityMetricsTimeout = 30_s;
 
-    m_cachedState.wallTime = state.wallTime;
+    m_cachedState.timestamp = state.timestamp;
     m_cachedState.currentTime = state.currentTime;
     m_cachedState.duration = state.duration;
     m_cachedState.minTimeSeekable = state.minTimeSeekable;
@@ -453,7 +453,7 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
 
     if (state.videoMetrics)
         m_cachedState.videoMetrics = state.videoMetrics;
-    if (m_videoPlaybackMetricsUpdateInterval && (WallTime::now() - m_lastPlaybackQualityMetricsQueryTime) > playbackQualityMetricsTimeout)
+    if (m_videoPlaybackMetricsUpdateInterval && (MonotonicTime::now() - m_lastPlaybackQualityMetricsQueryTime) > playbackQualityMetricsTimeout)
         updateVideoPlaybackMetricsUpdateInterval(0_s);
 
     m_cachedState.hasClosedCaptions = state.hasClosedCaptions;
@@ -1183,7 +1183,7 @@ Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateRemote::videoPlaybackQua
 {
     const Seconds maximumPlaybackQualityMetricsSampleTimeDelta = 0.25_s;
 
-    auto now = WallTime::now();
+    auto now = MonotonicTime::now();
     auto timeSinceLastQuery = now - m_lastPlaybackQualityMetricsQueryTime;
     if (!m_videoPlaybackMetricsUpdateInterval)
         updateVideoPlaybackMetricsUpdateInterval(1_s);
@@ -1220,16 +1220,16 @@ void MediaPlayerPrivateRemote::applicationDidBecomeActive()
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](Optional<MediaTime> currentTime, Optional<WallTime> wallTime) mutable {
+    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](Optional<MediaTime> currentTime, Optional<MonotonicTime> wallTime) mutable {
         if (!weakThis || !currentTime || !wallTime)
             return;
 
         m_cachedState.currentTime = *currentTime;
-        m_cachedState.wallTime = *wallTime;
+        m_cachedState.timestamp = *wallTime;
         completionHandler();
     };
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PerformTaskAtMediaTime(mediaTime, WallTime::now()), WTFMove(asyncReplyHandler), m_id);
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PerformTaskAtMediaTime(mediaTime, MonotonicTime::now()), WTFMove(asyncReplyHandler), m_id);
 
     return true;
 }

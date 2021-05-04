@@ -105,7 +105,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     VideoTrackSetSelected(WebKit::TrackPrivateRemoteIdentifier identifier, bool selected)
     TextTrackSetMode(WebKit::TrackPrivateRemoteIdentifier identifier, enum:uint8_t WebCore::InbandTextTrackPrivate::Mode mode)
 
-    PerformTaskAtMediaTime(MediaTime mediaTime, WallTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<WallTime> wallTime) Async
+    PerformTaskAtMediaTime(MediaTime mediaTime, MonotonicTime messageTime) -> (Optional<MediaTime> mediaTime, Optional<MonotonicTime> monotonicTime) Async
     WouldTaintOrigin(struct WebCore::SecurityOriginData origin) -> (Optional<bool> wouldTaint) Synchronous
 
     SetVideoPlaybackMetricsUpdateInterval(double interval)
