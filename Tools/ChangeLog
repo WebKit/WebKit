@@ -1,3 +1,9 @@
+2021-05-04  Kate Cheney  <katherine_cheney@apple.com>
+
+        Unreviewed, adding myself as a reviewer.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-05-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         [GPUP] Move GPUProcess WebGL to Experimental Feature
