@@ -1,3 +1,21 @@
+2021-05-04  Sergio Villar Senin  <svillar@igalia.com>
+
+        ASSERTION FAILED: contentSize >= 0 in WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax
+        https://bugs.webkit.org/show_bug.cgi?id=222711
+        <rdar://problem/75022692>
+
+        Reviewed by Alan Bujtas.
+
+        Flexbox code was computing negative content sizes for FrameSet children because RenderFrameSet lacked
+        a implementation of computePreferredLogicalWidths(). Added basic preferred width computation
+        to RenderBox so that FrameSet and any other potential new RenderBox child could benefit from it.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePreferredLogicalWidths): Added a basic implementation that calls
+        computePreferredLogicalWidths(minWidth,maxWidth,borderAndPadding) and clears the flag.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::computePreferredLogicalWidths): Deleted default implementation.
+
 2021-05-04  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r260360): animation-wide timing function does not apply to 2-keyframe transform Web Animation

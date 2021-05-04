@@ -3223,6 +3223,14 @@ static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
 #endif
 }
 
+void RenderBox::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+    computePreferredLogicalWidths(style().logicalMinWidth(), style().logicalMaxWidth(), borderAndPaddingLogicalWidth());
+    setPreferredLogicalWidthsDirty(false);
+}
+
 void RenderBox::computePreferredLogicalWidths(const Length& minWidth, const Length& maxWidth, LayoutUnit borderAndPadding)
 {
     if (shouldComputeLogicalHeightFromAspectRatio()) {

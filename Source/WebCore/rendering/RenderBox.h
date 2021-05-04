@@ -760,7 +760,7 @@ private:
     // This function calculates the minimum and maximum preferred widths for an object.
     // These values are used in shrink-to-fit layout systems.
     // These include tables, positioned objects, floats and flexible boxes.
-    virtual void computePreferredLogicalWidths() { setPreferredLogicalWidthsDirty(false); }
+    virtual void computePreferredLogicalWidths();
 
     LayoutRect frameRectForStickyPositioning() const final { return frameRect(); }
 
