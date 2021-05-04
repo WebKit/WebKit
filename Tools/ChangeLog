@@ -1,3 +1,16 @@
+2021-05-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Ensure file handles are not leaked in unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=225360
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/email_unittest.py:
+        (EmailsDotJSONTest.test_valid_emails_json):
+        (EmailsDotJSONTest.test_emails_json_required_categories_present):
+        * CISupport/ews-build/loadConfig_unittest.py:
+        (ConfigDotJSONTest.get_config):
+
 2021-05-04  Kate Cheney  <katherine_cheney@apple.com>
 
         Unreviewed, adding myself as a reviewer.
