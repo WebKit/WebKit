@@ -1,3 +1,39 @@
+2021-05-04  Chris Dumez  <cdumez@apple.com>
+
+        [iOS] Use async API to take RunningBoard assertions
+        https://bugs.webkit.org/show_bug.cgi?id=225324
+        <rdar://76972252>
+
+        Reviewed by Geoffrey Garen.
+
+        Use async [RBSAssertion acquireWithInvalidationHandler:] API to take process assertions
+        instead of the synchronous [RBSAssertion acquireWithError:] API. This avoids risking
+        hanging the main thread for too long.
+
+        Note that [RBSAssertion isValid] returns false until the assertion is taken so I am
+        using our own "isValid" boolean to indicate if the RBSAssertion was invalidated or
+        or not. We use this flag to decide if we need to take the assertion again. We wouldn't
+        want to re-take the assertion simply because it is still in the process of being
+        acquired.
+
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::isValid const): Deleted.
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::isValid const):
+        * UIProcess/ios/ProcessAssertionIOS.mm:
+        (-[WKProcessAssertionBackgroundTaskManager init]):
+        (-[WKProcessAssertionBackgroundTaskManager _updateBackgroundTask]):
+        (-[WKProcessAssertionBackgroundTaskManager assertion:didInvalidateWithError:]):
+        (-[WKProcessAssertionBackgroundTaskManager _releaseBackgroundTask]):
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAssertion::~ProcessAssertion):
+        (WebKit::ProcessAssertion::processAssertionWasInvalidated):
+        (-[WKProcessAssertionBackgroundTaskManager _hasBackgroundTask]): Deleted.
+        (-[WKRBSAssertionDelegate dealloc]): Deleted.
+        (-[WKRBSAssertionDelegate assertionWillInvalidate:]): Deleted.
+        (-[WKRBSAssertionDelegate assertion:didInvalidateWithError:]): Deleted.
+        (WebKit::ProcessAssertion::isValid const): Deleted.
+
 2021-05-04  Jim Mason  <jmason@ibinx.com>
 
         [GTK] segmentation fault in WebKit::IconDatabase::loadIconForPageURL
