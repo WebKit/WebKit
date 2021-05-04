@@ -1,3 +1,20 @@
+2021-05-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        REGRESSION: [ iOS ] 11 http/wpt/webauthn/ tests are crashing
+        https://bugs.webkit.org/show_bug.cgi?id=225225
+        rdar://77074618
+
+        Reviewed by Brent Fulgham.
+
+        Covered by exisiting tests.
+
+        * UIProcess/WebAuthentication/AuthenticatorManager.cpp:
+        (WebKit::AuthenticatorManager::runPresenter):
+        (WebKit::AuthenticatorManager::runPresenterInternal):
+        * UIProcess/WebAuthentication/AuthenticatorManager.h:
+        * UIProcess/WebAuthentication/Mock/MockAuthenticatorManager.h:
+        Disables the modern UI in the mock testing environment.
+
 2021-05-04  Chris Dumez  <cdumez@apple.com>
 
         [iOS] Use async API to take RunningBoard assertions

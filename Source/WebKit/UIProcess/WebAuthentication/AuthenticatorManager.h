@@ -105,6 +105,7 @@ private:
     // Overriden to return every exception for tests to confirm.
     virtual void respondReceivedInternal(Respond&&) { }
     virtual void filterTransports(TransportSet&) const;
+    virtual void runPresenterInternal(const TransportSet&);
 
     void startDiscovery(const TransportSet&);
     void initTimeOutTimer();

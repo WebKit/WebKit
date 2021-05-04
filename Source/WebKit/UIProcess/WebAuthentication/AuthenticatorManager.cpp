@@ -486,6 +486,11 @@ void AuthenticatorManager::runPresenter()
     if (m_mode == Mode::Native)
         return;
 
+    runPresenterInternal(transports);
+}
+
+void AuthenticatorManager::runPresenterInternal(const TransportSet& transports)
+{
     auto& options = m_pendingRequestData.options;
     m_presenter = makeUnique<AuthenticatorPresenterCoordinator>(*this, getRpId(options), transports, getClientDataType(options), getUserName(options));
 }
