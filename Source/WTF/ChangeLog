@@ -1,3 +1,14 @@
+2021-05-04  Chris Dumez  <cdumez@apple.com>
+
+        Drop std::filesystem logic in PlatformJSCOnly.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=225355
+
+        Reviewed by Alex Christensen.
+
+        Drop std::filesystem logic in PlatformJSCOnly.cmake as it is no longer needed after r276946.
+
+        * wtf/PlatformJSCOnly.cmake:
+
 2021-05-03  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         [GPUP] Move GPUProcess WebGL to Experimental Feature

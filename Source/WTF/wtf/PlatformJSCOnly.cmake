@@ -159,31 +159,3 @@ endif ()
 list(APPEND WTF_LIBRARIES
     Threads::Threads
 )
-
-if (COMPILER_IS_GCC_OR_CLANG)
-    # <filesystem> vs <experimental/filesystem>
-    set(FILESYSTEM_TEST_SOURCE "
-        #include <filesystem>
-        int main() { std::filesystem::path p1(\"\"); std::filesystem::status(p1); }
-    ")
-    set(CMAKE_REQUIRED_FLAGS "--std=c++17")
-    check_cxx_source_compiles("${FILESYSTEM_TEST_SOURCE}" STD_FILESYSTEM_IS_AVAILABLE)
-    if (NOT STD_FILESYSTEM_IS_AVAILABLE)
-        set(EXPERIMENTAL_FILESYSTEM_TEST_SOURCE "
-            #include <experimental/filesystem>
-            int main() {
-                std::experimental::filesystem::path p1(\"//home\");
-                std::experimental::filesystem::status(p1);
-            }
-        ")
-        set(CMAKE_REQUIRED_LIBRARIES stdc++fs)
-        check_cxx_source_compiles("${EXPERIMENTAL_FILESYSTEM_TEST_SOURCE}" STD_EXPERIMENTAL_FILESYSTEM_IS_AVAILABLE)
-        unset(CMAKE_REQUIRED_LIBRARIES)
-        if (STD_EXPERIMENTAL_FILESYSTEM_IS_AVAILABLE)
-            list(APPEND WTF_LIBRARIES
-                stdc++fs
-            )
-        endif ()
-    endif ()
-    unset(CMAKE_REQUIRED_FLAGS)
-endif ()
