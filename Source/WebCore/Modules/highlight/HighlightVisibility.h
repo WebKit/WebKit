@@ -25,49 +25,8 @@
 
 #pragma once
 
-#include "ExceptionOr.h"
-#include "Position.h"
-#include "StaticRange.h"
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-class CSSStyleDeclaration;
-class DOMSetAdapter;
-class PropertySetCSSStyleDeclaration;
-class StaticRange;
-
-
-struct HighlightRangeData : RefCounted<HighlightRangeData>, public CanMakeWeakPtr<HighlightRangeData> {
-    HighlightRangeData(Ref<StaticRange>&& range)
-        : range(WTFMove(range))
-    {
-    }
-    static Ref<HighlightRangeData> create(Ref<StaticRange>&& range)
-    {
-        return adoptRef(*new HighlightRangeData(WTFMove(range)));
-    }
-    Ref<StaticRange> range;
-    Optional<Position> startPosition;
-    Optional<Position> endPosition;
-};
-
-class Highlight : public RefCounted<Highlight> {
-public:
-    WEBCORE_EXPORT static Ref<Highlight> create(StaticRange&);
-    void clearFromSetLike();
-    bool addToSetLike(StaticRange&);
-    bool removeFromSetLike(const StaticRange&);
-    void initializeSetLike(DOMSetAdapter&);
-    
-    void repaint();
-    const Vector<Ref<HighlightRangeData>>& rangesData() const { return m_rangesData; }
-
-    // FIXME: Add WEBCORE_EXPORT CSSStyleDeclaration& style();
-private:
-    Vector<Ref<HighlightRangeData>> m_rangesData; // FIXME: use a HashSet instead of a Vector <rdar://problem/57760614>
-    explicit Highlight(Ref<StaticRange>&&);
-};
+enum class HighlightVisibility : bool { Hidden, Visible };
 
 }
-
