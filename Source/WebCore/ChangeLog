@@ -1,5 +1,41 @@
 2021-05-04  Dean Jackson  <dino@apple.com>
 
+        [WebXR] Move WebXROpaqueFramebuffer to its own file
+        https://bugs.webkit.org/show_bug.cgi?id=225334
+
+        Reviewed by Sam Weinig.
+
+        Move WebXROpaqueFramebuffer out of WebXRWebGLLayer.
+
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp: Copied from Source/WebCore/Modules/webxr/WebXRWebGLLayer.cpp.
+        (WebCore::WebXROpaqueFramebuffer::create):
+        (WebCore::WebXROpaqueFramebuffer::WebXROpaqueFramebuffer):
+        (WebCore::WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer):
+        (WebCore::WebXROpaqueFramebuffer::startFrame):
+        (WebCore::WebXROpaqueFramebuffer::endFrame):
+        (WebCore::WebXROpaqueFramebuffer::setupFramebuffer):
+        * Modules/webxr/WebXROpaqueFramebuffer.h: Copied from Source/WebCore/Modules/webxr/WebXRWebGLLayer.h.
+        (WebCore::WebXROpaqueFramebuffer::handle const):
+        (WebCore::WebXROpaqueFramebuffer::framebuffer const):
+        (WebCore::WebXROpaqueFramebuffer::width const):
+        (WebCore::WebXROpaqueFramebuffer::height const):
+        * Modules/webxr/WebXRWebGLLayer.cpp:
+        (WebCore::WebXROpaqueFramebuffer::create): Deleted.
+        (WebCore::WebXROpaqueFramebuffer::WebXROpaqueFramebuffer): Deleted.
+        (WebCore::WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer): Deleted.
+        (WebCore::WebXROpaqueFramebuffer::startFrame): Deleted.
+        (WebCore::WebXROpaqueFramebuffer::endFrame): Deleted.
+        (WebCore::WebXROpaqueFramebuffer::setupFramebuffer): Deleted.
+        * Modules/webxr/WebXRWebGLLayer.h:
+        (WebCore::WebXROpaqueFramebuffer::handle const): Deleted.
+        (WebCore::WebXROpaqueFramebuffer::framebuffer const): Deleted.
+        (WebCore::WebXROpaqueFramebuffer::width const): Deleted.
+        (WebCore::WebXROpaqueFramebuffer::height const): Deleted.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2021-05-04  Dean Jackson  <dino@apple.com>
+
         [WebXR] Remove renamed IDL files in Xcode project
         https://bugs.webkit.org/show_bug.cgi?id=225331
 

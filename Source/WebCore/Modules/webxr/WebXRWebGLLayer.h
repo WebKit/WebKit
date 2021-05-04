@@ -117,45 +117,6 @@ private:
     bool m_viewportsDirty { true };
 };
 
-class WebXROpaqueFramebuffer {
-public:
-    struct Attributes {
-        bool alpha { true };
-        bool antialias { true };
-        bool depth { true };
-        bool stencil { false };
-    };
-
-    static std::unique_ptr<WebXROpaqueFramebuffer> create(PlatformXR::LayerHandle, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
-    ~WebXROpaqueFramebuffer();
-
-    PlatformXR::LayerHandle handle() const { return m_handle; }
-    const WebGLFramebuffer& framebuffer() const { return m_framebuffer.get(); }
-    uint32_t width() const { return m_width; }
-    uint32_t height() const { return m_height; }
-
-    void startFrame(const PlatformXR::Device::FrameData::LayerData&);
-    void endFrame();
-
-private:
-    WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
-
-    bool setupFramebuffer();
-
-    PlatformXR::LayerHandle m_handle;
-    Ref<WebGLFramebuffer> m_framebuffer;
-    WebGLRenderingContextBase& m_context;
-    Attributes m_attributes;
-    uint32_t m_width { 0 };
-    uint32_t m_height { 0 };
-    PlatformGLObject m_depthStencilBuffer { 0 };
-    PlatformGLObject m_stencilBuffer { 0 };
-    PlatformGLObject m_multisampleColorBuffer { 0 };
-    PlatformGLObject m_resolvedFBO { 0 };
-    GCGLint m_sampleCount { 0 };
-    PlatformGLObject m_opaqueTexture { 0 };
-};
-
 } // namespace WebCore
 
 #endif // ENABLE(WEBXR)

@@ -431,6 +431,7 @@ Modules/webxr/WebXRInputSource.cpp @no-unify
 Modules/webxr/WebXRInputSourceArray.cpp @no-unify
 Modules/webxr/WebXRInputSpace.cpp @no-unify
 Modules/webxr/WebXRLayer.cpp @no-unify
+Modules/webxr/WebXROpaqueFramebuffer.cpp @no-unify
 Modules/webxr/WebXRPose.cpp @no-unify
 Modules/webxr/WebXRReferenceSpace.cpp @no-unify
 Modules/webxr/WebXRRenderState.cpp @no-unify
