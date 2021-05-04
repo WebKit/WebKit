@@ -1,3 +1,22 @@
+2021-05-04  Alex Christensen  <achristensen@webkit.org>
+
+        localStorage changes aren't reflected between WKWebViews using WKWebViewConfiguration._groupIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=225344
+        <rdar://77496721>
+
+        Reviewed by Brady Eidson.
+
+        When we switched from using _pageGroup to _groupIdentifier, we also broke localStorage by making a new pageGroupID for each WKWebView.
+        This is the low-risk solution to this problem that remembers what pageGroupID we used for this same identifier, creating the effect of
+        using the same StorageNamespaceIdentifier for each _groupIdentifier like we did when we used _pageGroup.
+        See the comment in StorageAreaMap::dispatchLocalStorageEvent.
+
+        The higher-risk solution that needs to be done but probably shouldn't be merged to a branch at this point is to remove StorageNamespaceIdentifier.
+        I plan to do that in a follow-up patch.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::pageGroupData):
+
 2021-05-04  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Allow HTMLMediaElement preload > "metadata" on iPad by default
