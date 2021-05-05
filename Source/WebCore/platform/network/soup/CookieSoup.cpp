@@ -93,7 +93,7 @@ static SoupDate* msToSoupDate(double ms)
 
     // monthFromDayInYear() returns a value in the [0,11] range, while soup_date_new() expects
     // a value in the [1,12] range, meaning we have to manually adjust the month value.
-    return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear) + 1, dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int>(ms / 1000) % 60);
+    return soup_date_new(year, monthFromDayInYear(dayOfYear, leapYear) + 1, dayInMonthFromDayInYear(dayOfYear, leapYear), msToHours(ms), msToMinutes(ms), static_cast<int64_t>(ms / 1000) % 60);
 }
 #endif
 
@@ -117,7 +117,7 @@ SoupCookie* Cookie::toSoupCookie() const
         soup_cookie_set_expires(soupCookie, date);
         soup_date_free(date);
 #else
-        GRefPtr<GDateTime> date = adoptGRef(g_date_time_new_from_unix_utc(*expires));
+        GRefPtr<GDateTime> date = adoptGRef(g_date_time_new_from_unix_utc(*expires / 1000.));
         soup_cookie_set_expires(soupCookie, date.get());
 #endif
     }
