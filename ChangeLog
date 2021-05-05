@@ -1,5 +1,16 @@
 2021-05-05  Michael Catanzaro  <mcatanzaro@gnome.org>
 
+        USE_64KB_PAGE_BLOCK build option is broken
+        https://bugs.webkit.org/show_bug.cgi?id=225393
+
+        Reviewed by Adrian Perez de Castro.
+
+        Call SET_AND_EXPOSE_TO_BUILD().
+
+        * Source/cmake/WebKitFeatures.cmake:
+
+2021-05-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
         Fix typo in comment in WebKitFeatures.cmake
         https://bugs.webkit.org/show_bug.cgi?id=225392
 
