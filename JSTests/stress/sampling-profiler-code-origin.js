@@ -1,4 +1,4 @@
-//@ runDefault("--useConcurrentJIT=0", "--useConcurrentGC=0", "--useSamplingProfiler=1", "--collectSamplingProfilerDataForJSCShell=1", "--repatchBufferingCountdown=1")
+//@ runDefault("--useConcurrentJIT=0", "--useConcurrentGC=0", "--useSamplingProfiler=1", "--collectExtraSamplingProfilerData=1", "--repatchBufferingCountdown=1")
 let oThrow = {
     g: 0,
     get f() {

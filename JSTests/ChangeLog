@@ -1,3 +1,15 @@
+2021-05-05  Saam Barati  <sbarati@apple.com>
+
+        Update tests to use collectExtraSamplingProfilerData instead of collectSamplingProfilerDataForJSCShell
+        https://bugs.webkit.org/show_bug.cgi?id=225398
+
+        Reviewed by Mark Lam.
+
+        I forgot to update the tests to use the new option name.
+
+        * stress/sampling-profiler-code-origin.js:
+        * stress/sampling-profiler-richards.js:
+
 2021-05-03  Mark Lam  <mark.lam@apple.com>
 
         Fix syntax error message for AUTOPLUSPLUS token.
