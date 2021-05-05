@@ -1563,7 +1563,6 @@ public:
 
     WEBCORE_EXPORT bool hitTest(const HitTestRequest&, HitTestResult&);
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
-    bool isHitTestLocationThirdPartyFrame(const HitTestLocation&);
 #if ASSERT_ENABLED
     bool inHitTesting() const { return m_inHitTesting; }
 #endif
