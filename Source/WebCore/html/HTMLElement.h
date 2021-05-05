@@ -135,7 +135,7 @@ public:
 
     WEBCORE_EXPORT static bool shouldExtendSelectionToTargetNode(const Node& targetNode, const VisibleSelection& selectionBeforeUpdate);
     WEBCORE_EXPORT bool hasImageOverlay() const;
-    static bool isInsideImageOverlay(const SimpleRange&);
+    WEBCORE_EXPORT static bool isInsideImageOverlay(const SimpleRange&);
     static bool isInsideImageOverlay(const Node&);
     WEBCORE_EXPORT static bool isImageOverlayText(const Node&);
     WEBCORE_EXPORT static bool isImageOverlayText(const Node*);
