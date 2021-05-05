@@ -1,3 +1,22 @@
+2021-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WebKitAdditions stubs for new NetworkLoadMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=225406
+        <rdar://77563372>
+
+        Reviewed by Jer Noble.
+
+        I also removed some dead code and added static asserts that do what the dead code was intended to do.
+
+        * platform/network/NetworkLoadMetrics.h:
+        (WebCore::NetworkLoadMetrics::isolatedCopy const):
+        (WebCore::NetworkLoadMetrics::operator== const):
+        (WebCore::NetworkLoadMetrics::encode const):
+        (WebCore::NetworkLoadMetrics::decode):
+        (WTF::Persistence::Coder<Optional<WebCore::NetworkLoadPriority>>::encode): Deleted.
+        (WTF::Persistence::Coder<Optional<WebCore::NetworkLoadPriority>>::decode): Deleted.
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+
 2021-05-05  Alicia Boya García  <aboya@igalia.com>
 
         [MSE][GStreamer] WebKitMediaSrc rework v2

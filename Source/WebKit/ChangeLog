@@ -1,3 +1,14 @@
+2021-05-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WebKitAdditions stubs for new NetworkLoadMetrics
+        https://bugs.webkit.org/show_bug.cgi?id=225406
+        <rdar://77563372>
+
+        Reviewed by Jer Noble.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+
 2021-05-05  Dean Jackson  <dino@apple.com>
 
         Separated layers need to be configured

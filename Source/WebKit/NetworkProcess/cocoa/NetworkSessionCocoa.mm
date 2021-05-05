@@ -64,6 +64,8 @@
 #import <WebKitAdditions/NetworkSessionCocoaAdditions.h>
 #else
 #define NETWORK_SESSION_COCOA_ADDITIONS_1
+#define NETWORK_SESSION_COCOA_ADDITIONS_2
+#define NETWORK_SESSION_COCOA_ADDITIONS_3
 void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(WallTime, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
 #endif
 
@@ -119,6 +121,8 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
         return WebCore::NetworkLoadPriority::High;
     return WebCore::NetworkLoadPriority::Medium;
 }
+
+NETWORK_SESSION_COCOA_ADDITIONS_2
 
 #if HAVE(CFNETWORK_NEGOTIATED_SSL_PROTOCOL_CIPHER)
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
@@ -800,6 +804,8 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         networkLoadMetrics.multipath = m.multipath;
 #endif
         networkLoadMetrics.isReusedConnection = m.isReusedConnection;
+
+        NETWORK_SESSION_COCOA_ADDITIONS_3
 
         if (networkDataTask->shouldCaptureExtraNetworkLoadMetrics()) {
             networkLoadMetrics.priority = toNetworkLoadPriority(task.priority);

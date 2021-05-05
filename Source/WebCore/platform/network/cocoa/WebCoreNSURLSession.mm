@@ -30,10 +30,18 @@
 #import "ParsedRequestRange.h"
 #import "PlatformMediaResourceLoader.h"
 #import "SubresourceLoader.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/WebCoreNSURLSessionAdditions.h>
+#else
+#define WEBCORE_SESSION_ADDITIONS_1
+#define WEBCORE_SESSION_ADDITIONS_2
+#endif
 
 using namespace WebCore;
 
@@ -67,6 +75,7 @@ static NSDate * __nullable networkLoadMetricsDate(Seconds fetchStart, Seconds de
 @property (readonly, getter=isExpensive) BOOL expensive;
 @property (readonly, getter=isConstrained) BOOL constrained;
 @property (readonly, getter=isMultipath) BOOL multipath;
+WEBCORE_SESSION_ADDITIONS_1;
 @end
 
 @implementation WebCoreNSURLSessionTaskTransactionMetrics {
@@ -146,6 +155,8 @@ static NSDate * __nullable networkLoadMetricsDate(Seconds fetchStart, Seconds de
 {
     return _metrics.isReusedConnection;
 }
+
+WEBCORE_SESSION_ADDITIONS_2
 
 @dynamic cellular;
 - (BOOL)cellular
