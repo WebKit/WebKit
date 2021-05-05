@@ -130,9 +130,9 @@ Resolver::Resolver(Document& document)
 void Resolver::addCurrentSVGFontFaceRules()
 {
     if (m_document.svgExtensions()) {
-        const HashSet<SVGFontFaceElement*>& svgFontFaceElements = m_document.svgExtensions()->svgFontFaceElements();
-        for (auto* svgFontFaceElement : svgFontFaceElements)
-            m_document.fontSelector().addFontFaceRule(svgFontFaceElement->fontFaceRule(), svgFontFaceElement->isInUserAgentShadowTree());
+        auto& svgFontFaceElements = m_document.svgExtensions()->svgFontFaceElements();
+        for (auto& svgFontFaceElement : svgFontFaceElements)
+            m_document.fontSelector().addFontFaceRule(svgFontFaceElement.fontFaceRule(), svgFontFaceElement.isInUserAgentShadowTree());
     }
 }
 

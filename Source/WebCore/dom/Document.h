@@ -1150,10 +1150,6 @@ public:
     WEBCORE_EXPORT const SVGDocumentExtensions* svgExtensions();
     WEBCORE_EXPORT SVGDocumentExtensions& accessSVGExtensions();
 
-    void addSVGUseElement(SVGUseElement&);
-    void removeSVGUseElement(SVGUseElement&);
-    HashSet<SVGUseElement*> const svgUseElements() const { return m_svgUseElements; }
-
     void initSecurityContext();
     void initContentSecurityPolicy();
 
@@ -1611,7 +1607,7 @@ public:
     const FrameSelection& selection() const { return m_selection; }
 
     void prepareCanvasesForDisplayIfNeeded();
-    void clearCanvasPreparation(HTMLCanvasElement*);
+    void clearCanvasPreparation(HTMLCanvasElement&);
     void canvasChanged(CanvasBase&, const Optional<FloatRect>&) final;
     void canvasResized(CanvasBase&) final { };
     void canvasDestroyed(CanvasBase&) final;
@@ -1859,12 +1855,11 @@ private:
     RefPtr<XPathEvaluator> m_xpathEvaluator;
 
     std::unique_ptr<SVGDocumentExtensions> m_svgExtensions;
-    HashSet<SVGUseElement*> m_svgUseElements;
 
     // Collection of canvas objects that need to do work after they've
     // rendered but before compositing, for the next frame. The set is
     // cleared after they've been called.
-    HashSet<HTMLCanvasElement*> m_canvasesNeedingDisplayPreparation;
+    WeakHashSet<HTMLCanvasElement> m_canvasesNeedingDisplayPreparation;
 
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> m_colorScheme;
@@ -1873,7 +1868,7 @@ private:
 
     HashMap<String, RefPtr<HTMLCanvasElement>> m_cssCanvasElements;
 
-    HashSet<Element*> m_documentSuspensionCallbackElements;
+    WeakHashSet<Element> m_documentSuspensionCallbackElements;
 
 #if ENABLE(VIDEO)
     WeakHashSet<HTMLMediaElement> m_mediaElements;
@@ -1884,8 +1879,8 @@ private:
     WeakPtr<HTMLMediaElement> m_mediaElementShowingTextTrack;
 #endif
 
-    Element* m_mainArticleElement { nullptr };
-    HashSet<Element*> m_articleElements;
+    WeakPtr<Element> m_mainArticleElement;
+    WeakHashSet<Element> m_articleElements;
 
     HashSet<VisibilityChangeClient*> m_visibilityStateCallbackClients;
 
@@ -2131,7 +2126,6 @@ private:
     std::unique_ptr<PendingScrollEventTargetList> m_pendingScrollEventTargetList;
 
 #if ENABLE(MEDIA_STREAM)
-    HashSet<HTMLMediaElement*> m_mediaStreamStateChangeElements;
     String m_idHashSalt;
     bool m_hasHadCaptureMediaStreamTrack { false };
 #endif

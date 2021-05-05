@@ -155,7 +155,7 @@ HTMLCanvasElement::~HTMLCanvasElement()
     // downcasts the CanvasBase object to HTMLCanvasElement. That invokes virtual methods, which should be
     // avoided in destructors, but works as long as it's done before HTMLCanvasElement destructs completely.
     notifyObserversCanvasDestroyed();
-    document().clearCanvasPreparation(this);
+    document().clearCanvasPreparation(*this);
 
     m_context = nullptr; // Ensure this goes away before the ImageBuffer.
     setImageBuffer(nullptr);
@@ -1055,7 +1055,7 @@ void HTMLCanvasElement::eventListenersDidChange()
 void HTMLCanvasElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
 {
     if (needsPreparationForDisplay()) {
-        oldDocument.clearCanvasPreparation(this);
+        oldDocument.clearCanvasPreparation(*this);
         removeObserver(oldDocument);
         addObserver(newDocument);
     }
@@ -1080,7 +1080,7 @@ Node::InsertedIntoAncestorResult HTMLCanvasElement::insertedIntoAncestor(Inserti
 void HTMLCanvasElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (needsPreparationForDisplay() && removalType.disconnectedFromDocument) {
-        oldParentOfRemovedTree.document().clearCanvasPreparation(this);
+        oldParentOfRemovedTree.document().clearCanvasPreparation(*this);
         removeObserver(oldParentOfRemovedTree.document());
     }
 

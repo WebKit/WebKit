@@ -30,6 +30,7 @@
 #include "Page.h"
 #include "SMILTimeContainer.h"
 #include "SVGElement.h"
+#include "SVGFontFaceElement.h"
 #include "SVGResourcesCache.h"
 #include "SVGSMILElement.h"
 #include "SVGSVGElement.h"
@@ -46,18 +47,21 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document& document)
 {
 }
 
-SVGDocumentExtensions::~SVGDocumentExtensions() = default;
+SVGDocumentExtensions::~SVGDocumentExtensions()
+{
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_useElementsWithPendingShadowTreeUpdate.computesEmpty());
+}
 
 void SVGDocumentExtensions::addTimeContainer(SVGSVGElement& element)
 {
-    m_timeContainers.add(&element);
+    m_timeContainers.add(element);
     if (m_areAnimationsPaused)
         element.pauseAnimations();
 }
 
 void SVGDocumentExtensions::removeTimeContainer(SVGSVGElement& element)
 {
-    m_timeContainers.remove(&element);
+    m_timeContainers.remove(element);
 }
 
 void SVGDocumentExtensions::addResource(const AtomString& id, RenderSVGResourceContainer& resource)
@@ -85,14 +89,27 @@ RenderSVGResourceContainer* SVGDocumentExtensions::resourceById(const AtomString
     return m_resources.get(id);
 }
 
+
+void SVGDocumentExtensions::addUseElementWithPendingShadowTreeUpdate(SVGUseElement& element)
+{
+    auto result = m_useElementsWithPendingShadowTreeUpdate.add(element);
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.isNewEntry);
+}
+
+void SVGDocumentExtensions::removeUseElementWithPendingShadowTreeUpdate(SVGUseElement& element)
+{
+    m_useElementsWithPendingShadowTreeUpdate.remove(element);
+    // FIXME: Assert that element was in m_svgUseElements once re-entrancy to update style and layout have been removed.
+}
+
+
 void SVGDocumentExtensions::startAnimations()
 {
     // FIXME: Eventually every "Time Container" will need a way to latch on to some global timer
     // starting animations for a document will do this "latching"
     // FIXME: We hold a ref pointers to prevent a shadow tree from getting removed out from underneath us.
     // In the future we should refactor the use-element to avoid this. See https://webkit.org/b/53704
-    Vector<RefPtr<SVGSVGElement>> timeContainers;
-    timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
+    auto timeContainers = copyToVectorOf<Ref<SVGSVGElement>>(m_timeContainers);
     for (auto& element : timeContainers)
         element->timeContainer().begin();
 }
@@ -100,22 +117,20 @@ void SVGDocumentExtensions::startAnimations()
 void SVGDocumentExtensions::pauseAnimations()
 {
     for (auto& container : m_timeContainers)
-        container->pauseAnimations();
+        container.pauseAnimations();
     m_areAnimationsPaused = true;
 }
 
 void SVGDocumentExtensions::unpauseAnimations()
 {
     for (auto& container : m_timeContainers)
-        container->unpauseAnimations();
+        container.unpauseAnimations();
     m_areAnimationsPaused = false;
 }
 
 void SVGDocumentExtensions::dispatchLoadEventToOutermostSVGElements()
 {
-    Vector<RefPtr<SVGSVGElement>> timeContainers;
-    timeContainers.appendRange(m_timeContainers.begin(), m_timeContainers.end());
-
+    auto timeContainers = copyToVectorOf<Ref<SVGSVGElement>>(m_timeContainers);
     for (auto& container : timeContainers) {
         if (!container->isOutermostSVGSVGElement())
             continue;
@@ -302,8 +317,8 @@ void SVGDocumentExtensions::removeAllTargetReferencesForElement(SVGElement& refe
 
 void SVGDocumentExtensions::rebuildElements()
 {
-    Vector<SVGElement*> shadowRebuildElements = WTFMove(m_rebuildElements);
-    for (auto* element : shadowRebuildElements)
+    auto shadowRebuildElements = std::exchange(m_rebuildElements, { });
+    for (auto& element : shadowRebuildElements)
         element->svgAttributeChanged(SVGNames::hrefAttr);
 }
 
@@ -313,7 +328,7 @@ void SVGDocumentExtensions::clearTargetDependencies(SVGElement& referencedElemen
     if (!referencingElements)
         return;
     for (auto* element : *referencingElements) {
-        m_rebuildElements.append(element);
+        m_rebuildElements.append(*element);
         element->callClearTarget();
     }
 }
@@ -338,18 +353,18 @@ void SVGDocumentExtensions::rebuildAllElementReferencesForTarget(SVGElement& ref
 void SVGDocumentExtensions::removeAllElementReferencesForTarget(SVGElement& referencedElement)
 {
     m_elementDependencies.remove(&referencedElement);
-    m_rebuildElements.removeFirst(&referencedElement);
+    m_rebuildElements.removeFirst(referencedElement);
 }
 
 void SVGDocumentExtensions::registerSVGFontFaceElement(SVGFontFaceElement& element)
 {
-    m_svgFontFaceElements.add(&element);
+    m_svgFontFaceElements.add(element);
 }
 
 void SVGDocumentExtensions::unregisterSVGFontFaceElement(SVGFontFaceElement& element)
 {
-    ASSERT(m_svgFontFaceElements.contains(&element));
-    m_svgFontFaceElements.remove(&element);
+    ASSERT(m_svgFontFaceElements.contains(element));
+    m_svgFontFaceElements.remove(element);
 }
 
 }

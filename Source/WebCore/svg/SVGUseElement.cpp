@@ -99,7 +99,7 @@ Node::InsertedIntoAncestorResult SVGUseElement::insertedIntoAncestor(InsertionTy
     SVGGraphicsElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         if (m_shadowTreeNeedsUpdate)
-            document().addSVGUseElement(*this);
+            document().accessSVGExtensions().addUseElementWithPendingShadowTreeUpdate(*this);
         invalidateShadowTree();
         // FIXME: Move back the call to updateExternalDocument() here once notifyFinished is made always async.
         return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
@@ -118,7 +118,7 @@ void SVGUseElement::removedFromAncestor(RemovalType removalType, ContainerNode& 
     // and SVGUseElement::updateExternalDocument which calls invalidateShadowTree().
     if (removalType.disconnectedFromDocument) {
         if (m_shadowTreeNeedsUpdate)
-            document().removeSVGUseElement(*this);
+            document().accessSVGExtensions().removeUseElementWithPendingShadowTreeUpdate(*this);
     }
     SVGGraphicsElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument) {
@@ -225,7 +225,7 @@ void SVGUseElement::updateShadowTree()
 
     if (!isConnected())
         return;
-    document().removeSVGUseElement(*this);
+    document().accessSVGExtensions().removeUseElementWithPendingShadowTreeUpdate(*this);
 
     String targetID;
     auto* target = findTarget(&targetID);
@@ -529,7 +529,7 @@ void SVGUseElement::invalidateShadowTree()
     invalidateStyleAndRenderersForSubtree();
     invalidateDependentShadowTrees();
     if (isConnected())
-        document().addSVGUseElement(*this);
+        document().accessSVGExtensions().addUseElementWithPendingShadowTreeUpdate(*this);
 }
 
 void SVGUseElement::invalidateDependentShadowTrees()

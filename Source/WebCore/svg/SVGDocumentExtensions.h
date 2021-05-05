@@ -50,6 +50,10 @@ public:
     void removeResource(const AtomString& id);
     RenderSVGResourceContainer* resourceById(const AtomString& id) const;
 
+    void addUseElementWithPendingShadowTreeUpdate(SVGUseElement&);
+    void removeUseElementWithPendingShadowTreeUpdate(SVGUseElement&);
+    const WeakHashSet<SVGUseElement>& useElementsWithPendingShadowTreeUpdate() const { return m_useElementsWithPendingShadowTreeUpdate; }
+
     void startAnimations();
     void pauseAnimations();
     void unpauseAnimations();
@@ -70,21 +74,22 @@ public:
     void clearTargetDependencies(SVGElement&);
     void rebuildElements();
 
-    const HashSet<SVGFontFaceElement*>& svgFontFaceElements() const { return m_svgFontFaceElements; }
+    const WeakHashSet<SVGFontFaceElement>& svgFontFaceElements() const { return m_svgFontFaceElements; }
     void registerSVGFontFaceElement(SVGFontFaceElement&);
     void unregisterSVGFontFaceElement(SVGFontFaceElement&);
 
 private:
     Document& m_document;
-    HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
-    HashSet<SVGFontFaceElement*> m_svgFontFaceElements;
+    WeakHashSet<SVGSVGElement> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
+    WeakHashSet<SVGFontFaceElement> m_svgFontFaceElements;
     HashMap<AtomString, RenderSVGResourceContainer*> m_resources;
     HashMap<AtomString, std::unique_ptr<PendingElements>> m_pendingResources; // Resources that are pending.
     HashMap<AtomString, std::unique_ptr<PendingElements>> m_pendingResourcesForRemoval; // Resources that are pending and scheduled for removal.
     HashMap<SVGElement*, std::unique_ptr<HashSet<SVGElement*>>> m_elementDependencies;
     std::unique_ptr<SVGResourcesCache> m_resourcesCache;
 
-    Vector<SVGElement*> m_rebuildElements;
+    Vector<Ref<SVGElement>> m_rebuildElements;
+    WeakHashSet<SVGUseElement> m_useElementsWithPendingShadowTreeUpdate;
     bool m_areAnimationsPaused;
 
 public:

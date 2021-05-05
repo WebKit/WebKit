@@ -779,7 +779,6 @@ Document::~Document()
 
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_listsInvalidatedAtDocument.isEmpty());
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_collectionsInvalidatedAtDocument.isEmpty());
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_svgUseElements.isEmpty());
 
     for (unsigned count : m_nodeListAndCollectionCounts)
         ASSERT_UNUSED(count, !count);
@@ -2007,8 +2006,8 @@ void Document::resolveStyle(ResolveStyleType type)
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
     // FIXME: Do this update per tree scope.
-    {
-        auto elements = copyToVectorOf<RefPtr<SVGUseElement>>(m_svgUseElements);
+    if (auto* extensions = m_svgExtensions.get()) {
+        auto elements = copyToVectorOf<Ref<SVGUseElement>>(extensions->useElementsWithPendingShadowTreeUpdate());
         // We can't clear m_svgUseElements here because updateShadowTree may end up executing arbitrary scripts
         // which may insert new SVG use elements or remove existing ones inside sync IPC via ImageLoader::updateFromElement.
         for (auto& element : elements)
@@ -5648,8 +5647,8 @@ void Document::suspend(ReasonForSuspension reason)
 
     documentWillBecomeInactive();
 
-    for (auto* element : m_documentSuspensionCallbackElements)
-        element->prepareForDocumentSuspension();
+    for (auto& element : m_documentSuspensionCallbackElements)
+        element.prepareForDocumentSuspension();
 
 #if ASSERT_ENABLED
     // Clear the update flag to be able to check if the viewport arguments update
@@ -5696,7 +5695,7 @@ void Document::resume(ReasonForSuspension reason)
     if (!m_isSuspended)
         return;
 
-    for (auto* element : copyToVector(m_documentSuspensionCallbackElements))
+    for (auto element : copyToVectorOf<Ref<Element>>(m_documentSuspensionCallbackElements))
         element->resumeFromDocumentSuspension();
 
     if (renderView())
@@ -5726,12 +5725,12 @@ void Document::resume(ReasonForSuspension reason)
 
 void Document::registerForDocumentSuspensionCallbacks(Element& element)
 {
-    m_documentSuspensionCallbackElements.add(&element);
+    m_documentSuspensionCallbackElements.add(element);
 }
 
 void Document::unregisterForDocumentSuspensionCallbacks(Element& element)
 {
-    m_documentSuspensionCallbackElements.remove(&element);
+    m_documentSuspensionCallbackElements.remove(element);
 }
 
 bool Document::audioPlaybackRequiresUserGesture() const
@@ -6052,18 +6051,6 @@ SVGDocumentExtensions& Document::accessSVGExtensions()
     if (!m_svgExtensions)
         m_svgExtensions = makeUnique<SVGDocumentExtensions>(*this);
     return *m_svgExtensions;
-}
-
-void Document::addSVGUseElement(SVGUseElement& element)
-{
-    auto result = m_svgUseElements.add(&element);
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(result.isNewEntry);
-}
-
-void Document::removeSVGUseElement(SVGUseElement& element)
-{
-    m_svgUseElements.remove(&element);
-    // FIXME: Assert that element was in m_svgUseElements once re-entrancy to update style and layout have been removed.
 }
 
 bool Document::hasSVGRootNode() const
@@ -8342,12 +8329,12 @@ Optional<FrameIdentifier> Document::frameID() const
 
 void Document::registerArticleElement(Element& article)
 {
-    m_articleElements.add(&article);
+    m_articleElements.add(article);
 }
 
 void Document::unregisterArticleElement(Element& article)
 {
-    m_articleElements.remove(&article);
+    m_articleElements.remove(article);
     if (m_mainArticleElement == &article)
         m_mainArticleElement = nullptr;
 }
@@ -8367,29 +8354,29 @@ void Document::updateMainArticleElementAfterLayout()
 
     m_mainArticleElement = nullptr;
 
-    auto numberOfArticles = m_articleElements.size();
+    auto numberOfArticles = m_articleElements.computeSize();
     if (!numberOfArticles || numberOfArticles > maxNumberOfArticlesBeforeIgnoringMainContentArticle)
         return;
 
-    Element* tallestArticle = nullptr;
+    RefPtr<Element> tallestArticle;
     float tallestArticleHeight = 0;
     float tallestArticleWidth = 0;
     float secondTallestArticleHeight = 0;
 
-    for (auto* article : m_articleElements) {
-        auto* box = article->renderBox();
+    for (auto& article : m_articleElements) {
+        auto* box = article.renderBox();
         float height = box ? box->height().toFloat() : 0;
         if (height >= tallestArticleHeight) {
             secondTallestArticleHeight = tallestArticleHeight;
             tallestArticleHeight = height;
             tallestArticleWidth = box ? box->width().toFloat() : 0;
-            tallestArticle = article;
+            tallestArticle = &article;
         } else if (height >= secondTallestArticleHeight)
             secondTallestArticleHeight = height;
     }
 
     if (numberOfArticles == 1) {
-        m_mainArticleElement = tallestArticle;
+        m_mainArticleElement = makeWeakPtr(tallestArticle.get());
         return;
     }
 
@@ -8403,7 +8390,7 @@ void Document::updateMainArticleElementAfterLayout()
     if (tallestArticleWidth * tallestArticleHeight < minimumViewportAreaFactor * (viewportSize.width() * viewportSize.height()).toFloat())
         return;
 
-    m_mainArticleElement = tallestArticle;
+    m_mainArticleElement = makeWeakPtr(tallestArticle.get());
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -8957,40 +8944,39 @@ void Document::prepareCanvasesForDisplayIfNeeded()
     // that would mutate our m_canvasesNeedingDisplayPreparation list. It
     // would be nice if this could be enforced to remove the copyToVector.
 
-    for (auto* canvas : copyToVector(m_canvasesNeedingDisplayPreparation)) {
+    auto canvases = copyToVectorOf<Ref<HTMLCanvasElement>>(m_canvasesNeedingDisplayPreparation);
+    m_canvasesNeedingDisplayPreparation.clear();
+    for (auto& canvas : canvases) {
         // However, if they are not in the document body, then they won't
         // be composited and thus don't need preparation. Unfortunately they
         // can't tell at the time they were added to the list, since they
         // could be inserted or removed from the document body afterwards.
         if (!canvas->isInTreeScope())
             continue;
-
-        auto protectedCanvas = makeRef(*canvas);
-        protectedCanvas->prepareForDisplay();
+        canvas->prepareForDisplay();
     }
-    m_canvasesNeedingDisplayPreparation.clear();
 }
 
-void Document::clearCanvasPreparation(HTMLCanvasElement* canvas)
+void Document::clearCanvasPreparation(HTMLCanvasElement& canvas)
 {
     m_canvasesNeedingDisplayPreparation.remove(canvas);
 }
 
 void Document::canvasChanged(CanvasBase& canvasBase, const Optional<FloatRect>&)
 {
-    if (is<HTMLCanvasElement>(canvasBase)) {
-        auto* canvas = downcast<HTMLCanvasElement>(&canvasBase);
-        if (canvas->needsPreparationForDisplay())
-            m_canvasesNeedingDisplayPreparation.add(canvas);
-    }
+    if (!is<HTMLCanvasElement>(canvasBase))
+        return;
+    auto& canvas = downcast<HTMLCanvasElement>(canvasBase);
+    if (canvas.needsPreparationForDisplay())
+        m_canvasesNeedingDisplayPreparation.add(canvas);
 }
 
 void Document::canvasDestroyed(CanvasBase& canvasBase)
 {
-    if (is<HTMLCanvasElement>(canvasBase)) {
-        auto* canvas = downcast<HTMLCanvasElement>(&canvasBase);
-        m_canvasesNeedingDisplayPreparation.remove(canvas);
-    }
+    if (!is<HTMLCanvasElement>(canvasBase))
+        return;
+    auto& canvas = downcast<HTMLCanvasElement>(canvasBase);
+    m_canvasesNeedingDisplayPreparation.remove(canvas);
 }
 
 JSC::VM& Document::vm()

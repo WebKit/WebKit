@@ -1,3 +1,72 @@
+2021-05-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use WeakHashSet instead of HashSet of raw pointes in Document and SVGDocumentExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=225390
+
+        Reviewed by Antti Koivisto.
+
+        Replaced Document's m_documentSuspensionCallbackElements and m_articleElements as well as
+        SVGDocumentExtensions's m_timeContainers and m_svgFontFaceElements with WeakHashSet.
+
+        Also moved m_svgUseElements from Document to SVGDocumentExtensions as a WeakHashSet.
+
+        This patch also deletes Document::m_mediaStreamStateChangeElements which was never used,
+        m_mainArticleElement a WeakPtr instead of a raw pointer, replaces SVGDocumentExtensions's
+        m_rebuildElements, which is a temporary Vector used during tree mutations, with a Vector
+        of Refs instead of raw pointers.
+
+        No new tests since there should be no observable behavior differences.
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document): The release assert is moved to ~SVGDocumentExtensions.
+        (WebCore::Document::resolveStyle):
+        (WebCore::Document::suspend):
+        (WebCore::Document::resume):
+        (WebCore::Document::registerForDocumentSuspensionCallbacks):
+        (WebCore::Document::unregisterForDocumentSuspensionCallbacks):
+        (WebCore::Document::addSVGUseElement): Moved to SVGDocumentExtensions.
+        (WebCore::Document::removeSVGUseElement): Ditto.
+        (WebCore::Document::registerArticleElement):
+        (WebCore::Document::unregisterArticleElement):
+        (WebCore::Document::updateMainArticleElementAfterLayout):
+        (WebCore::Document::prepareCanvasesForDisplayIfNeeded):
+        (WebCore::Document::clearCanvasPreparation):
+        (WebCore::Document::canvasChanged):
+        (WebCore::Document::canvasDestroyed):
+        * dom/Document.h:
+        (WebCore::Document:: const const): Deleted.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::~HTMLCanvasElement):
+        (WebCore::HTMLCanvasElement::didMoveToNewDocument):
+        (WebCore::HTMLCanvasElement::removedFromAncestor):
+        * style/StyleResolver.cpp:
+        (WebCore::Style::Resolver::addCurrentSVGFontFaceRules):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::~SVGDocumentExtensions): Moved the release assertion
+        from ~Document.
+        (WebCore::SVGDocumentExtensions::addTimeContainer):
+        (WebCore::SVGDocumentExtensions::removeTimeContainer):
+        (WebCore::SVGDocumentExtensions::addUseElementWithPendingShadowTreeUpdate): Moved here
+        Document::addSVGUseElement.
+        (WebCore::SVGDocumentExtensions::removeUseElementWithPendingShadowTreeUpdate): Ditto.
+        (WebCore::SVGDocumentExtensions::startAnimations):
+        (WebCore::SVGDocumentExtensions::pauseAnimations):
+        (WebCore::SVGDocumentExtensions::unpauseAnimations):
+        (WebCore::SVGDocumentExtensions::dispatchLoadEventToOutermostSVGElements):
+        (WebCore::SVGDocumentExtensions::rebuildElements):
+        (WebCore::SVGDocumentExtensions::clearTargetDependencies):
+        (WebCore::SVGDocumentExtensions::removeAllElementReferencesForTarget):
+        (WebCore::SVGDocumentExtensions::registerSVGFontFaceElement):
+        (WebCore::SVGDocumentExtensions::unregisterSVGFontFaceElement):
+        * svg/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::useElementsWithPendingShadowTreeUpdate const): Added.
+        (WebCore::SVGDocumentExtensions::svgFontFaceElements const):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::insertedIntoAncestor):
+        (WebCore::SVGUseElement::removedFromAncestor):
+        (WebCore::SVGUseElement::updateShadowTree):
+        (WebCore::SVGUseElement::invalidateShadowTree):
+
 2021-05-05  Chris Lord  <clord@igalia.com>
 
         OffscreenCanvas should preserve context transform after transferToImageBitmap
