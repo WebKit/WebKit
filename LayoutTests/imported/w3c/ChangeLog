@@ -1,5 +1,32 @@
 2021-05-05  Tim Nguyen  <ntim@apple.com>
 
+        Re-sync css/css-animations WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=225404
+
+        Reviewed by Myles C. Maxfield.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-animations/nested-scale-animations-expected.html: Added.
+        * web-platform-tests/css/css-animations/nested-scale-animations.html: Added.
+        * web-platform-tests/css/css-animations/svg-transform-animation-expected.html: Added.
+        * web-platform-tests/css/css-animations/svg-transform-animation.html: Added.
+        * web-platform-tests/css/css-animations/transform-animation-under-large-scale-expected.html: Added.
+        * web-platform-tests/css/css-animations/transform-animation-under-large-scale.html: Added.
+        * web-platform-tests/css/css-animations/translation-animation-subpixel-offset-expected.html: Added.
+        * web-platform-tests/css/css-animations/translation-animation-subpixel-offset.html: Added.
+        * web-platform-tests/css/css-animations/KeyframeEffect-getKeyframes.tentative.html:
+        * web-platform-tests/css/css-animations/event-dispatch.tentative-expected.txt:
+        * web-platform-tests/css/css-animations/event-dispatch.tentative.html:
+        * web-platform-tests/css/css-animations/parsing/animation-invalid-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-invalid.html:
+        * web-platform-tests/css/css-animations/parsing/animation-shorthand-expected.txt:
+        * web-platform-tests/css/css-animations/parsing/animation-shorthand.html:
+        * web-platform-tests/css/css-animations/support/testcommon.js:
+        (armTimeoutWhenReady):
+        * web-platform-tests/css/css-animations/w3c-import.log:
+
+2021-05-05  Tim Nguyen  <ntim@apple.com>
+
         Invalid media query keyword values should not be parsable
         https://bugs.webkit.org/show_bug.cgi?id=225282
 

@@ -1,3 +1,13 @@
+2021-05-05  Tim Nguyen  <ntim@apple.com>
+
+        Re-sync css/css-animations WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=225404
+
+        Reviewed by Myles C. Maxfield.
+
+        * TestExpectations:
+        * tests-options.json:
+
 2021-05-05  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS wk2] http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html is a flakey failure

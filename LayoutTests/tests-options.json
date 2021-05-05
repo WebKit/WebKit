@@ -632,6 +632,9 @@
     "imported/w3c/web-platform-tests/css/css-animations/event-dispatch.tentative.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/css-animations/idlharness.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/css-color/color-resolving-hsl.html": [
         "slow"
     ],
