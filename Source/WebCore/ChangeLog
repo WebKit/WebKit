@@ -1,3 +1,16 @@
+2021-05-05  Youenn Fablet  <youenn@apple.com>
+
+        No need to error a fetch body stream if its request or response is stopped
+        https://bugs.webkit.org/show_bug.cgi?id=225347
+
+        Reviewed by Geoffrey Garen.
+
+        Test: http/wpt/fetch/fetch-response-body-stop-in-worker.html
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::stop):
+        Nullify the source before we error it.
+
 2021-05-05  Sam Weinig  <weinig@apple.com>
 
         Add preliminary support for specifying a color space for 2D canvas
