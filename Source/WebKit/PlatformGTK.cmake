@@ -684,7 +684,7 @@ if (ENABLE_INTROSPECTION)
             --nsversion=${WEBKITGTK_API_VERSION}
             --include=GObject-2.0
             --include=Gtk-${GTK_API_VERSION}.0
-            --include=Soup-2.4
+            --include=Soup-${SOUP_API_VERSION}
             --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
             --library=webkit2gtk-${WEBKITGTK_API_VERSION}
             --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
@@ -693,7 +693,7 @@ if (ENABLE_INTROSPECTION)
             --no-libtool
             --pkg=gobject-2.0
             --pkg=${GTK_PKGCONFIG_PACKAGE}
-            --pkg=libsoup-2.4
+            --pkg=libsoup-${SOUP_API_VERSION}
             --pkg-export=webkit2gtk-${WEBKITGTK_API_VERSION}
             --output=${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
             ${GIR_SOURCES_TOP_DIRS}
@@ -731,7 +731,7 @@ if (ENABLE_INTROSPECTION)
             --nsversion=${WEBKITGTK_API_VERSION}
             --include=GObject-2.0
             --include=Gtk-${GTK_API_VERSION}.0
-            --include=Soup-2.4
+            --include=Soup-${SOUP_API_VERSION}
             --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
             --library=webkit2gtk-${WEBKITGTK_API_VERSION}
             --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
@@ -741,7 +741,7 @@ if (ENABLE_INTROSPECTION)
             --no-libtool
             --pkg=gobject-2.0
             --pkg=${GTK_PKGCONFIG_PACKAGE}
-            --pkg=libsoup-2.4
+            --pkg=libsoup-${SOUP_API_VERSION}
             --pkg-export=webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}
             --output=${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
             ${GIR_SOURCES_TOP_DIRS}
