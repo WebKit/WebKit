@@ -1,5 +1,17 @@
 2021-05-05  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, reverting r276985.
+
+        This test is still failing on Apple Silicon
+
+        Reverted changeset:
+
+        "Unreviewed, try and re-enable
+        AppleLanguagesTest.UpdateAppleLanguages on Apple Silicon."
+        https://commits.webkit.org/r276985
+
+2021-05-05  Chris Dumez  <cdumez@apple.com>
+
         REGRESSION (r272414?): [macOS] TestWebKitAPI.GPUProcess.CrashWhilePlayingVideo is a flaky failure
         https://bugs.webkit.org/show_bug.cgi?id=221742
         <rdar://problem/74220428>
