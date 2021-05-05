@@ -4871,3 +4871,8 @@ webkit.org/b/223170 [ Debug ] fast/multicol/widow-relayout-with-border-fit.html 
 webkit.org/b/31278 [ Debug ] fast/multicol/spanner-get-re-added-on-move-crash.html [ Skip ]
 
 webkit.org/b/225247 [ Debug ] fast/multicol/span/float-becomes-spanner-crash.html [ Skip ]
+
+# This webstorage test has crashed since it was imported.
+imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html [ Skip ]
+# This webstorage test has timed out since it was imported.
+imported/w3c/web-platform-tests/webstorage/document-domain.html [ Skip ]

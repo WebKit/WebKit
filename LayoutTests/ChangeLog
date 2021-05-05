@@ -1,3 +1,19 @@
+2021-05-04  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Import webstorage WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=225369
+
+        Reviewed by Darin Adler.
+        
+        Import tip-of-tree webstorage WPTs with:
+        `Tools/Scripts/import-w3c-tests -t web-platform-tests/webstorage`
+
+        * TestExpectations:
+        Skip 2 newly imported tests that consistently crash / timeout.
+
+        * tests-options.json:
+        Mark 4 newly imported tests as slow.
+
 2021-05-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Mark imported/w3c/web-platform-tests/worklets/paint-worklet-csp.https.html as flaky crash.

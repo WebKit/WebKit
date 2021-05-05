@@ -1,3 +1,203 @@
+2021-05-04  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        Import webstorage WPTs
+        https://bugs.webkit.org/show_bug.cgi?id=225369
+
+        Reviewed by Darin Adler.
+
+        Import tip-of-tree webstorage WPTs with:
+        `Tools/Scripts/import-w3c-tests -t web-platform-tests/webstorage`
+
+        This patch also sets the baseline results for the newly imported tests.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/webstorage/META.yml: Added.
+        * web-platform-tests/webstorage/README.md: Added.
+        * web-platform-tests/webstorage/defineProperty.window-expected.txt: Added.
+        * web-platform-tests/webstorage/defineProperty.window.html: Added.
+        * web-platform-tests/webstorage/defineProperty.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/document-domain-expected.txt: Added.
+        * web-platform-tests/webstorage/document-domain.html: Added.
+        * web-platform-tests/webstorage/eventTestHarness.js: Added.
+        (iframe.contentWindow.onstorage):
+        (runAfterNStorageEvents):
+        (onTimeout):
+        (countStorageEvents):
+        (clearStorage):
+        * web-platform-tests/webstorage/event_basic-expected.txt: Added.
+        * web-platform-tests/webstorage/event_basic.html: Added.
+        * web-platform-tests/webstorage/event_basic.js: Added.
+        (testStorages.):
+        (testStorages):
+        * web-platform-tests/webstorage/event_body_attribute-expected.txt: Added.
+        * web-platform-tests/webstorage/event_body_attribute.html: Added.
+        * web-platform-tests/webstorage/event_body_attribute.js: Added.
+        (testStorages.):
+        (testStorages):
+        * web-platform-tests/webstorage/event_case_sensitive-expected.txt: Added.
+        * web-platform-tests/webstorage/event_case_sensitive.html: Added.
+        * web-platform-tests/webstorage/event_case_sensitive.js: Added.
+        (testStorages.):
+        (testStorages):
+        * web-platform-tests/webstorage/event_constructor.window-expected.txt: Added.
+        * web-platform-tests/webstorage/event_constructor.window.html: Added.
+        * web-platform-tests/webstorage/event_constructor.window.js: Added.
+        (test):
+        * web-platform-tests/webstorage/event_initstorageevent.window-expected.txt: Added.
+        * web-platform-tests/webstorage/event_initstorageevent.window.html: Added.
+        * web-platform-tests/webstorage/event_initstorageevent.window.js: Added.
+        (test):
+        * web-platform-tests/webstorage/event_local_key-expected.txt: Added.
+        * web-platform-tests/webstorage/event_local_key.html: Added.
+        * web-platform-tests/webstorage/event_local_newvalue-expected.txt: Added.
+        * web-platform-tests/webstorage/event_local_newvalue.html: Added.
+        * web-platform-tests/webstorage/event_local_oldvalue-expected.txt: Added.
+        * web-platform-tests/webstorage/event_local_oldvalue.html: Added.
+        * web-platform-tests/webstorage/event_local_removeitem-expected.txt: Added.
+        * web-platform-tests/webstorage/event_local_removeitem.html: Added.
+        * web-platform-tests/webstorage/event_local_storagearea-expected.txt: Added.
+        * web-platform-tests/webstorage/event_local_storagearea.html: Added.
+        * web-platform-tests/webstorage/event_local_url-expected.txt: Added.
+        * web-platform-tests/webstorage/event_local_url.html: Added.
+        * web-platform-tests/webstorage/event_no_duplicates-expected.txt: Added.
+        * web-platform-tests/webstorage/event_no_duplicates.html: Added.
+        * web-platform-tests/webstorage/event_session_key-expected.txt: Added.
+        * web-platform-tests/webstorage/event_session_key.html: Added.
+        * web-platform-tests/webstorage/event_session_newvalue-expected.txt: Added.
+        * web-platform-tests/webstorage/event_session_newvalue.html: Added.
+        * web-platform-tests/webstorage/event_session_oldvalue-expected.txt: Added.
+        * web-platform-tests/webstorage/event_session_oldvalue.html: Added.
+        * web-platform-tests/webstorage/event_session_removeitem-expected.txt: Added.
+        * web-platform-tests/webstorage/event_session_removeitem.html: Added.
+        * web-platform-tests/webstorage/event_session_storagearea-expected.txt: Added.
+        * web-platform-tests/webstorage/event_session_storagearea.html: Added.
+        * web-platform-tests/webstorage/event_session_url-expected.txt: Added.
+        * web-platform-tests/webstorage/event_session_url.html: Added.
+        * web-platform-tests/webstorage/event_setattribute-expected.txt: Added.
+        * web-platform-tests/webstorage/event_setattribute.html: Added.
+        * web-platform-tests/webstorage/event_setattribute.js: Added.
+        (testStorages.):
+        (testStorages):
+        * web-platform-tests/webstorage/missing_arguments.window-expected.txt: Added.
+        * web-platform-tests/webstorage/missing_arguments.window.html: Added.
+        * web-platform-tests/webstorage/missing_arguments.window.js: Added.
+        (tests):
+        (tests.forEach):
+        * web-platform-tests/webstorage/resources/event_body_handler.html: Added.
+        * web-platform-tests/webstorage/resources/event_setattribute_handler.html: Added.
+        * web-platform-tests/webstorage/resources/local_change_item_iframe.html: Added.
+        * web-platform-tests/webstorage/resources/local_set_item_clear_iframe.html: Added.
+        * web-platform-tests/webstorage/resources/local_set_item_iframe.html: Added.
+        * web-platform-tests/webstorage/resources/local_set_item_remove_iframe.html: Added.
+        * web-platform-tests/webstorage/resources/session_change_item_iframe.html: Added.
+        * web-platform-tests/webstorage/resources/session_set_item_clear_iframe.html: Added.
+        * web-platform-tests/webstorage/resources/session_set_item_iframe.html: Added.
+        * web-platform-tests/webstorage/resources/session_set_item_remove_iframe.html: Added.
+        * web-platform-tests/webstorage/resources/storage_local_window_open_second.html: Added.
+        * web-platform-tests/webstorage/resources/storage_session_window_noopener_second.html: Added.
+        * web-platform-tests/webstorage/resources/storage_session_window_open_second.html: Added.
+        * web-platform-tests/webstorage/resources/w3c-import.log: Added.
+        * web-platform-tests/webstorage/set.window-expected.txt: Added.
+        * web-platform-tests/webstorage/set.window.html: Added.
+        * web-platform-tests/webstorage/set.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_builtins.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_builtins.window.html: Added.
+        * web-platform-tests/webstorage/storage_builtins.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_clear.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_clear.window.html: Added.
+        * web-platform-tests/webstorage/storage_clear.window.js: Added.
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_enumerate.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_enumerate.window.html: Added.
+        * web-platform-tests/webstorage/storage_enumerate.window.js: Added.
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_functions_not_overwritten.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_functions_not_overwritten.window.html: Added.
+        * web-platform-tests/webstorage/storage_functions_not_overwritten.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_getitem.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_getitem.window.html: Added.
+        * web-platform-tests/webstorage/storage_getitem.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_in.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_in.window.html: Added.
+        * web-platform-tests/webstorage/storage_in.window.js: Added.
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_indexing.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_indexing.window.html: Added.
+        * web-platform-tests/webstorage/storage_indexing.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_key.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_key.window.html: Added.
+        * web-platform-tests/webstorage/storage_key.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_key_empty_string.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_key_empty_string.window.html: Added.
+        * web-platform-tests/webstorage/storage_key_empty_string.window.js: Added.
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_length.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_length.window.html: Added.
+        * web-platform-tests/webstorage/storage_length.window.js: Added.
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_local_setitem_quotaexceedederr.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_local_setitem_quotaexceedederr.window.html: Added.
+        * web-platform-tests/webstorage/storage_local_setitem_quotaexceedederr.window.js: Added.
+        (test):
+        * web-platform-tests/webstorage/storage_local_window_open.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_local_window_open.window.html: Added.
+        * web-platform-tests/webstorage/storage_local_window_open.window.js: Added.
+        (async_test):
+        * web-platform-tests/webstorage/storage_removeitem.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_removeitem.window.html: Added.
+        * web-platform-tests/webstorage/storage_removeitem.window.js: Added.
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html: Added.
+        * web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.js: Added.
+        (test):
+        * web-platform-tests/webstorage/storage_session_window_noopener.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_session_window_noopener.window.html: Added.
+        * web-platform-tests/webstorage/storage_session_window_noopener.window.js: Added.
+        (async_test):
+        * web-platform-tests/webstorage/storage_session_window_open.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_session_window_open.window.html: Added.
+        * web-platform-tests/webstorage/storage_session_window_open.window.js: Added.
+        (async_test):
+        * web-platform-tests/webstorage/storage_set_value_enumerate.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_set_value_enumerate.window.html: Added.
+        * web-platform-tests/webstorage/storage_set_value_enumerate.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_setitem.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_setitem.window.html: Added.
+        * web-platform-tests/webstorage/storage_setitem.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_string_conversion.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_string_conversion.window.html: Added.
+        * web-platform-tests/webstorage/storage_string_conversion.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/storage_supported_property_names.window-expected.txt: Added.
+        * web-platform-tests/webstorage/storage_supported_property_names.window.html: Added.
+        * web-platform-tests/webstorage/storage_supported_property_names.window.js: Added.
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/symbol-props.window-expected.txt: Added.
+        * web-platform-tests/webstorage/symbol-props.window.html: Added.
+        * web-platform-tests/webstorage/symbol-props.window.js: Added.
+        (string_appeared_here.forEach.):
+        (string_appeared_here.forEach):
+        * web-platform-tests/webstorage/w3c-import.log: Added.
+
 2021-05-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         REGRESSION(r266511): [ macOS iOS wk2 ]  imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html is a flaky failure
