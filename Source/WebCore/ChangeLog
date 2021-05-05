@@ -1,5 +1,17 @@
 2021-05-05  Cameron McCormack  <heycam@apple.com>
 
+        Remove unused DisplayList::Recorder::ContextState::wasUsedForDrawing
+        https://bugs.webkit.org/show_bug.cgi?id=225381
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::canAppendItemOfType):
+        (WebCore::DisplayList::Recorder::restore):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
+2021-05-05  Cameron McCormack  <heycam@apple.com>
+
         Rename DisplayList::Recorder::appendDrawGraphsItemWithCachedFont.
         https://bugs.webkit.org/show_bug.cgi?id=225382
 

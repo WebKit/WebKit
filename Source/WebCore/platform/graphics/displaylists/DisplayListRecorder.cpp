@@ -139,7 +139,6 @@ bool Recorder::canAppendItemOfType(ItemType type)
             stateChanges.m_changeFlags = { };
             currentState().lastDrawingState = stateChanges.m_state;
         }
-        currentState().wasUsedForDrawing = true;
     }
 
     return true;
@@ -227,12 +226,7 @@ void Recorder::restore()
     if (!m_stateStack.size())
         return;
 
-    bool stateUsedForDrawing = currentState().wasUsedForDrawing;
-
     m_stateStack.removeLast();
-    // Have to avoid eliding nested Save/Restore when a descendant state contains drawing items.
-    currentState().wasUsedForDrawing |= stateUsedForDrawing;
-
     append<Restore>();
 }
 
