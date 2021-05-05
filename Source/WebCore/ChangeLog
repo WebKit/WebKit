@@ -1,3 +1,52 @@
+2021-05-04  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(iOS 14): Author shadow DOM invalidated unnecessarily on pseudo element change
+        https://bugs.webkit.org/show_bug.cgi?id=222187
+        <rdar://problem/74801314>
+
+        Reviewed by Ryosuke Niwa.
+        
+        Hovering the element causes us to invalidate the entire author shadow tree style.
+
+        The invalidation is triggered by the user agent stylesheet having some :hover rules targeting pseudo
+        elements. This should not require invalidation except for those specific elements and only for
+        UA shadow trees.
+        
+        This patch optimizes the case and avoids unnecessary invalidations.
+
+        Test: fast/shadow-dom/shadow-style-invalidation-pseudo-element.html
+        
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::handleFocusEvent):
+        (WebCore::HTMLInputElement::handleBlurEvent):
+        (WebCore::HTMLInputElement::invalidateStyleOnFocusChangeIfNeeded):
+        
+        Input elements with 'text-overflow:ellipsis' (which is affected by focus) were relying
+        on spurious invalidations that we now optimize away. Invalidate properly.
+        
+        * html/HTMLInputElement.h:
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::collectMatchingShadowPseudoElementRules):
+        * style/RuleSet.cpp:
+        (WebCore::Style::RuleSet::evaluateDynamicMediaQueryRules):
+        (WebCore::Style::RuleSet::hasShadowPseudoElementRules const): Deleted.
+        
+        Handle ::cue separately.
+        
+        * style/RuleSet.h:
+        (WebCore::Style::RuleSet::cuePseudoRules const):
+        (WebCore::Style::RuleSet::hasShadowPseudoElementRules const):
+        * style/StyleInvalidationFunctions.h:
+        (WebCore::Style::traverseRuleFeatures):
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::collectRuleInformation):
+        (WebCore::Style::Invalidator::invalidateShadowPseudoElements):
+        
+        Narrowly invalidate user agent shadow tree pseudo elements.
+        
+        (WebCore::Style::Invalidator::invalidateInShadowTreeIfNeeded):
+        * style/StyleInvalidator.h:
+
 2021-05-04  Kenneth Russell  <kbr@chromium.org>
 
         WebKit must treat 'webgl' and 'webgl2' as distinct context types

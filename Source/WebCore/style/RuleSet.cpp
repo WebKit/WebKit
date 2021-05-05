@@ -469,17 +469,6 @@ RuleSet::CollectedMediaQueryChanges RuleSet::evaluateDynamicMediaQueryRules(cons
     return collectedChanges;
 }
 
-bool RuleSet::hasShadowPseudoElementRules() const
-{
-    if (!m_shadowPseudoElementRules.isEmpty())
-        return true;
-#if ENABLE(VIDEO)
-    if (!m_cuePseudoRules.isEmpty())
-        return true;
-#endif
-    return false;
-}
-
 static inline void shrinkMapVectorsToFit(RuleSet::AtomRuleMap& map)
 {
     for (auto& vector : map.values())

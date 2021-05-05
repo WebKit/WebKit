@@ -332,6 +332,7 @@ public:
     void capsLockStateMayHaveChanged();
 
     bool shouldTruncateText(const RenderStyle&) const;
+    void invalidateStyleOnFocusChangeIfNeeded();
 
     ExceptionOr<int> selectionStartForBindings() const;
     ExceptionOr<void> setSelectionStartForBindings(int);

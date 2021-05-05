@@ -71,12 +71,14 @@ private:
     void invalidateStyleForTree(Element&, SelectorFilter*);
     void invalidateStyleForDescendants(Element&, SelectorFilter*);
     void invalidateInShadowTreeIfNeeded(Element&);
+    void invalidateShadowPseudoElements(ShadowRoot&);
     void invalidateStyleWithMatchElement(Element&, MatchElement);
 
     struct RuleInformation {
         bool hasSlottedPseudoElementRules { false };
         bool hasHostPseudoClassRules { false };
         bool hasShadowPseudoElementRules { false };
+        bool hasCuePseudoElementRules { false };
         bool hasPartPseudoElementRules { false };
     };
     RuleInformation collectRuleInformation();

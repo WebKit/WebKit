@@ -56,6 +56,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NodeRenderStyle.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderTextControlSingleLine.h"
@@ -520,11 +521,15 @@ bool HTMLInputElement::shouldUseInputMethod()
 void HTMLInputElement::handleFocusEvent(Node* oldFocusedNode, FocusDirection direction)
 {
     m_inputType->handleFocusEvent(oldFocusedNode, direction);
+
+    invalidateStyleOnFocusChangeIfNeeded();
 }
 
 void HTMLInputElement::handleBlurEvent()
 {
     m_inputType->handleBlurEvent();
+
+    invalidateStyleOnFocusChangeIfNeeded();
 }
 
 void HTMLInputElement::setType(const AtomString& type)
@@ -2002,6 +2007,15 @@ bool HTMLInputElement::shouldTruncateText(const RenderStyle& style) const
     if (!isTextField())
         return false;
     return document().focusedElement() != this && style.textOverflow() == TextOverflow::Ellipsis;
+}
+
+void HTMLInputElement::invalidateStyleOnFocusChangeIfNeeded()
+{
+    if (!isTextField())
+        return;
+    // Focus change may affect the result of shouldTruncateText().
+    if (auto* style = renderStyle(); style && style->textOverflow() == TextOverflow::Ellipsis)
+        invalidateStyleForSubtreeInternal();
 }
 
 ExceptionOr<int> HTMLInputElement::selectionStartForBindings() const

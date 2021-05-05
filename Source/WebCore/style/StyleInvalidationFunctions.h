@@ -65,8 +65,14 @@ inline void traverseRuleFeatures(Element& element, TraverseFunction&& function)
     auto& ruleSets = element.styleResolver().ruleSets();
 
     auto mayAffectShadowTree = [&] {
-        if (element.shadowRoot() && ruleSets.authorStyle().hasShadowPseudoElementRules())
-            return true;
+        if (element.shadowRoot() && element.shadowRoot()->isUserAgentShadowRoot()) {
+            if (ruleSets.authorStyle().hasShadowPseudoElementRules())
+                return true;
+#if ENABLE(VIDEO)
+            if (element.isMediaElement() && !ruleSets.authorStyle().cuePseudoRules().isEmpty())
+                return true;
+#endif
+        }
         if (is<HTMLSlotElement>(element) && !ruleSets.authorStyle().slottedPseudoElementRules().isEmpty())
             return true;
         return false;
