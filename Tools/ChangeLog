@@ -1,3 +1,106 @@
+2021-05-05  Ruben Turcios  <rubent_22@apple.com>
+
+        Cherry-pick r277030. rdar://problem/77573075
+
+    Sampled Page Top Color: take additional snapshots further down the page to see if the sampled top color is more than just a tiny strip
+    https://bugs.webkit.org/show_bug.cgi?id=225323
+    
+    Reviewed by Beth Dakin.
+    
+    Source/WebCore:
+    
+    Add a `SampledPageTopColorMinHeight` setting that controls how far down the sampled page top
+    color needs to extend in order for us to not bail. If the value > 0, we take an additional
+    snapshot at (0, SampledPageTopColorMinHeight) and (width, SampledPageTopColorMinHeight),
+    comparing each to the snapshot directly above (e.g. (0, SampledPageTopColorMinHeight) is
+    compared to (0, 0)) using the `SampledPageTopColorMaxDifference`. Depending on the value, if
+    the color across the top of the page is only a small strip, these extra snapshot comparisons
+    will prevent a resulting color from being derived.
+    
+    Tests: SampledPageTopColor.VerticalGradientBelowMaxDifference
+           SampledPageTopColor.VerticalGradientAboveMaxDifference
+    
+    * dom/Document.cpp:
+    (WebCore::Document::determineSampledPageTopColor):
+    
+    Source/WebKit:
+    
+    Add a `SampledPageTopColorMinHeight` setting that controls how far down the sampled page top
+    color needs to extend in order for us to not bail. If the value > 0, we take an additional
+    snapshot at (0, SampledPageTopColorMinHeight) and (width, SampledPageTopColorMinHeight),
+    comparing each to the snapshot directly above (e.g. (0, SampledPageTopColorMinHeight) is
+    compared to (0, 0)) using the `SampledPageTopColorMaxDifference`. Depending on the value, if
+    the color across the top of the page is only a small strip, these extra snapshot comparisons
+    will prevent a resulting color from being derived.
+    
+    * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+    * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+    (-[WKWebViewConfiguration init]):
+    (-[WKWebViewConfiguration copyWithZone:]):
+    (-[WKWebViewConfiguration _setSampledPageTopColorMinHeight:]): Added.
+    (-[WKWebViewConfiguration _sampledPageTopColorMinHeight]): Added.
+    * UIProcess/API/Cocoa/WKWebView.mm:
+    (-[WKWebView _setupPageConfiguration:]):
+    Provide SPI to configure the `SampledPageTopColorMinHeight` preference when creating the `WKWebView`.
+    
+    Source/WTF:
+    
+    Add a `SampledPageTopColorMinHeight` setting that controls how far down the sampled page top
+    color needs to extend in order for us to not bail. If the value > 0, we take an additional
+    snapshot at (0, SampledPageTopColorMinHeight) and (width, SampledPageTopColorMinHeight),
+    comparing each to the snapshot directly above (e.g. (0, SampledPageTopColorMinHeight) is
+    compared to (0, 0)) using the `SampledPageTopColorMaxDifference`. Depending on the value, if
+    the color across the top of the page is only a small strip, these extra snapshot comparisons
+    will prevent a resulting color from being derived.
+    
+    * Scripts/Preferences/WebPreferences.yaml:
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm:
+    (createWebViewWithSampledPageTopColorMaxDifference):
+    (createHTMLGradientWithColorStops):
+    (TEST.SampledPageTopColor.ZeroMaxDifference):
+    (TEST.SampledPageTopColor.NegativeMaxDifference):
+    (TEST.SampledPageTopColor.SolidColor):
+    (TEST.SampledPageTopColor.DifferentColorsWithoutOutlierBelowMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsWithLeftOutlierAboveMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsWithMiddleOutlierAboveMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsWithRightOutlierAboveMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsIndividuallyAboveMaxDifference):
+    (TEST.SampledPageTopColor.DifferentColorsCumulativelyAboveMaxDifference):
+    (TEST.SampledPageTopColor.VerticalGradientBelowMaxDifference): Added.
+    (TEST.SampledPageTopColor.VerticalGradientAboveMaxDifference): Added.
+    (TEST.SampledPageTopColor.DISABLED_DisplayP3):
+    (TEST.SampledPageTopColor.ExperimentalUseSampledPageTopColorForScrollAreaBackgroundColor):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277030 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-05  Devin Rousso  <drousso@apple.com>
+
+            Sampled Page Top Color: take additional snapshots further down the page to see if the sampled top color is more than just a tiny strip
+            https://bugs.webkit.org/show_bug.cgi?id=225323
+
+            Reviewed by Beth Dakin.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm:
+            (createWebViewWithSampledPageTopColorMaxDifference):
+            (createHTMLGradientWithColorStops):
+            (TEST.SampledPageTopColor.ZeroMaxDifference):
+            (TEST.SampledPageTopColor.NegativeMaxDifference):
+            (TEST.SampledPageTopColor.SolidColor):
+            (TEST.SampledPageTopColor.DifferentColorsWithoutOutlierBelowMaxDifference):
+            (TEST.SampledPageTopColor.DifferentColorsWithLeftOutlierAboveMaxDifference):
+            (TEST.SampledPageTopColor.DifferentColorsWithMiddleOutlierAboveMaxDifference):
+            (TEST.SampledPageTopColor.DifferentColorsWithRightOutlierAboveMaxDifference):
+            (TEST.SampledPageTopColor.DifferentColorsIndividuallyAboveMaxDifference):
+            (TEST.SampledPageTopColor.DifferentColorsCumulativelyAboveMaxDifference):
+            (TEST.SampledPageTopColor.VerticalGradientBelowMaxDifference): Added.
+            (TEST.SampledPageTopColor.VerticalGradientAboveMaxDifference): Added.
+            (TEST.SampledPageTopColor.DISABLED_DisplayP3):
+            (TEST.SampledPageTopColor.ExperimentalUseSampledPageTopColorForScrollAreaBackgroundColor):
+
 2021-05-01  Chris Dumez  <cdumez@apple.com>
 
         Start leveraging std::filesystem in WTF::FileSystem
