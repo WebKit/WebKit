@@ -1,5 +1,60 @@
 2021-05-05  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r277044. rdar://problem/77579966
+
+    Sampled Page Top Color: don't snapshot if the hit test location is an image or has an animation
+    https://bugs.webkit.org/show_bug.cgi?id=225338
+    
+    Reviewed by Tim Horton.
+    
+    Source/WebCore:
+    
+    Tests: SampledPageTopColor.HitTestHTMLImage
+           SampledPageTopColor.HitTestCSSBackgroundImage
+           SampledPageTopColor.HitTestCSSAnimation
+    
+    * dom/Document.h:
+    * dom/Document.cpp:
+    (WebCore::isValidPageSampleLocation): Added.
+    (WebCore::samplePageColor): Added.
+    (WebCore::Document::determineSampledPageTopColor):
+    (WebCore::Document::isHitTestLocationThirdPartyFrame): Deleted.
+    Refactor `isHitTestLocationThirdPartyFrame` (and the `pixelColor` lambda) into `static`
+    functions that are right above `Document::determineSampledPageTopColor` for clarity and to
+    allow for more flexibility. In order to check if the hit test node is an image (including
+    having a CSS `background-image`) or has a CSS animation (or CSS transition), it's necessary
+    to continue to hit test beyond one node as the image and/or node with the CSS animation may
+    be an ancestor (or unrelated `position: absolute` node) to the `HitTestResult::innerNode`.
+    ```
+        <div style="background-image: url(...)">
+            <button>Lorum ipsum ... </button>
+        </div>
+    ```
+    
+    Tools:
+    
+    * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm:
+    (TEST.SampledPageTopColor.HitTestHTMLImage):
+    (TEST.SampledPageTopColor.HitTestCSSBackgroundImage):
+    (TEST.SampledPageTopColor.HitTestCSSAnimation):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277044 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-05  Devin Rousso  <drousso@apple.com>
+
+            Sampled Page Top Color: don't snapshot if the hit test location is an image or has an animation
+            https://bugs.webkit.org/show_bug.cgi?id=225338
+
+            Reviewed by Tim Horton.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm:
+            (TEST.SampledPageTopColor.HitTestHTMLImage):
+            (TEST.SampledPageTopColor.HitTestCSSBackgroundImage):
+            (TEST.SampledPageTopColor.HitTestCSSAnimation):
+
+2021-05-05  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r277030. rdar://problem/77573075
 
     Sampled Page Top Color: take additional snapshots further down the page to see if the sampled top color is more than just a tiny strip

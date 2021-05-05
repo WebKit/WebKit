@@ -177,9 +177,11 @@
 #include "Range.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RenderChildIterator.h"
+#include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayerCompositor.h"
 #include "RenderLineBreak.h"
+#include "RenderStyle.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -3870,6 +3872,53 @@ void Document::themeColorChanged()
 #endif // ENABLE(RUBBER_BANDING)
 }
 
+static bool isValidPageSampleLocation(Document& document, const IntPoint& location)
+{
+    // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
+
+    constexpr OptionSet<HitTestRequest::RequestType> hitTestRequestTypes { HitTestRequest::ReadOnly, HitTestRequest::DisallowUserAgentShadowContent, HitTestRequest::CollectMultipleElements, HitTestRequest::IncludeAllElementsUnderPoint };
+    HitTestResult hitTestResult(location);
+    document.hitTest(hitTestRequestTypes, hitTestResult);
+
+    for (auto& hitTestNode : hitTestResult.listBasedTestResult()) {
+        auto& node = hitTestNode.get();
+
+        auto* renderer = node.renderer();
+        if (!renderer)
+            return false;
+
+        // Skip images (both `<img>` and CSS `background-image`) as they're likely not a solid color.
+        if (is<RenderImage>(renderer) || renderer->style().hasBackgroundImage())
+            return false;
+
+        // Skip nodes with animations as the sample may get an odd color if the animation is in-progress.
+        if (renderer->style().hasTransitions() || renderer->style().hasAnimations())
+            return false;
+
+        // Skip 3rd-party `<iframe>` as the content likely won't match the rest of the page.
+        if (is<HTMLIFrameElement>(node) && !areRegistrableDomainsEqual(downcast<HTMLIFrameElement>(node).location(), document.url()))
+            return false;
+    }
+
+    return true;
+}
+
+static Optional<Lab<float>> samplePageColor(Document& document, IntPoint&& location)
+{
+    // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
+
+    if (!isValidPageSampleLocation(document, location))
+        return WTF::nullopt;
+
+    ASSERT(document.view());
+    auto snapshot = snapshotFrameRect(document.view()->frame(), IntRect(location, IntSize(1, 1)), SnapshotOptionsExcludeSelectionHighlighting | SnapshotOptionsPaintEverythingExcludingSelection);
+    if (!snapshot)
+        return WTF::nullopt;
+
+    auto snapshotData = snapshot->toBGRAData();
+    return convertColor<Lab<float>>(SRGBA<uint8_t> { snapshotData[2], snapshotData[1], snapshotData[0], snapshotData[3] });
+}
+
 static double colorDifference(Lab<float>& lhs, Lab<float>& rhs)
 {
     return sqrt(pow(rhs.lightness - lhs.lightness, 2) + pow(rhs.a - lhs.a, 2) + pow(rhs.b - lhs.b, 2));
@@ -3914,21 +3963,6 @@ void Document::determineSampledPageTopColor()
             page->chrome().client().didSamplePageTopColor();
     });
 
-    // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
-    auto pixelColor = [&] (IntPoint&& location) -> Optional<Lab<float>> {
-        IntSize size(1, 1);
-
-        if (isHitTestLocationThirdPartyFrame(LayoutPoint(location)))
-            return WTF::nullopt;
-
-        auto snapshot = snapshotFrameRect(frameView->frame(), IntRect(location, size), SnapshotOptionsExcludeSelectionHighlighting | SnapshotOptionsPaintEverythingExcludingSelection);
-        if (!snapshot)
-            return WTF::nullopt;
-
-        auto snapshotData = snapshot->toBGRAData();
-        return convertColor<Lab<float>>(SRGBA<uint8_t> { snapshotData[2], snapshotData[1], snapshotData[0], snapshotData[3] });
-    };
-
     // Decrease the width by one pixel so that the last snapshot is within bounds and not off-by-one.
     auto frameWidth = frameView->contentsWidth() - 1;
 
@@ -3948,7 +3982,7 @@ void Document::determineSampledPageTopColor()
     };
 
     for (size_t i = 0; i < numSnapshots; ++i) {
-        auto snapshot = pixelColor(IntPoint(frameWidth * i / (numSnapshots - 1), 0));
+        auto snapshot = samplePageColor(*this, IntPoint(frameWidth * i / (numSnapshots - 1), 0));
         if (!snapshot) {
             if (shouldStopAfterFindingNonMatchingColor(i))
                 return;
@@ -3996,14 +4030,14 @@ void Document::determineSampledPageTopColor()
     auto minHeight = settings().sampledPageTopColorMinHeight() - 1;
     if (minHeight > 0) {
         if (nonMatchingColorIndex) {
-            if (auto leftMiddleSnapshot = pixelColor(IntPoint(0, minHeight))) {
+            if (auto leftMiddleSnapshot = samplePageColor(*this, IntPoint(0, minHeight))) {
                 if (colorDifference(*leftMiddleSnapshot, snapshots[0]) > maxDifference)
                     return;
             }
         }
 
         if (nonMatchingColorIndex != numSnapshots - 1) {
-            if (auto rightMiddleSnapshot = pixelColor(IntPoint(frameWidth, minHeight))) {
+            if (auto rightMiddleSnapshot = samplePageColor(*this, IntPoint(frameWidth, minHeight))) {
                 if (colorDifference(*rightMiddleSnapshot, snapshots[numSnapshots - 1]) > maxDifference)
                     return;
             }
@@ -8751,22 +8785,6 @@ bool Document::hitTest(const HitTestRequest& request, const HitTestLocation& loc
         }
     }
     return resultLayer;
-}
-
-bool Document::isHitTestLocationThirdPartyFrame(const HitTestLocation& location)
-{
-    constexpr OptionSet<HitTestRequest::RequestType> hitTestRequestTypes { HitTestRequest::ReadOnly, HitTestRequest::DisallowUserAgentShadowContent };
-    HitTestResult hitTestResult(location);
-    hitTest(hitTestRequestTypes, hitTestResult);
-
-    auto hitTestNode = makeRefPtr(hitTestResult.innerNode());
-    if (!hitTestNode)
-        return false;
-
-    if (!is<HTMLIFrameElement>(hitTestNode))
-        return false;
-
-    return areRegistrableDomainsEqual(downcast<HTMLIFrameElement>(*hitTestNode).location(), m_url);
 }
 
 ElementIdentifier Document::identifierForElement(Element& element)

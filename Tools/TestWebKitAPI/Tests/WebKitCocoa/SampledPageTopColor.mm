@@ -284,6 +284,33 @@ TEST(SampledPageTopColor, VerticalGradientAboveMaxDifference)
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
+TEST(SampledPageTopColor, HitTestHTMLImage)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0'><img src='enormous.svg' style='width: 100%; height: 100%'>Test"];
+    EXPECT_NULL([webView _sampledPageTopColor]);
+}
+
+TEST(SampledPageTopColor, HitTestCSSBackgroundImage)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0;'><div style='width: 100%; height: 100%; background-image: url(\'enormous.svg\')'>Test"];
+    EXPECT_NULL([webView _sampledPageTopColor]);
+}
+
+TEST(SampledPageTopColor, HitTestCSSAnimation)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<style>@keyframes fadeIn { from { opacity: 0; } }</style><body style='animation: fadeIn 1s infinite alternate'>Test"];
+    EXPECT_NULL([webView _sampledPageTopColor]);
+}
+
 // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
 TEST(SampledPageTopColor, DISABLED_DisplayP3)
 {
