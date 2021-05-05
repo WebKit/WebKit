@@ -1,3 +1,22 @@
+2021-05-05  Chris Lord  <clord@igalia.com>
+
+        OffscreenCanvas should preserve context transform after transferToImageBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=225304
+
+        Reviewed by Darin Adler.
+
+        transferToImageBitmap should not affect the state of the canvas
+        context. Instead of returning the actual canvas buffer, to which the
+        drawing context is tightly bound, return a copy and clear the
+        original.
+
+        No new tests, rebaselined existing tests.
+
+        * html/OffscreenCanvas.cpp:
+        (WebCore::OffscreenCanvas::transferToImageBitmap):
+        (WebCore::OffscreenCanvas::takeImageBuffer const):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+
 2021-05-04  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Implement SourceBufferPrivateRemote::bufferFull()

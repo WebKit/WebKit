@@ -1,3 +1,15 @@
+2021-05-05  Chris Lord  <clord@igalia.com>
+
+        OffscreenCanvas should preserve context transform after transferToImageBitmap
+        https://bugs.webkit.org/show_bug.cgi?id=225304
+
+        Reviewed by Darin Adler.
+
+        Rebaseline transferToImageBitmap tests.
+
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w-expected.txt:
+
 2021-05-04  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Import webstorage WPTs
