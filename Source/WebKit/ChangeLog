@@ -1,3 +1,22 @@
+2021-05-04  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Implement SourceBufferPrivateRemote::bufferFull()
+        https://bugs.webkit.org/show_bug.cgi?id=224139
+
+        Reviewed by Jer Noble.
+
+        Modify two IPC messages to implement `SourceBufferPrivateRemote::bufferFull()`.
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::evictCodedFrames):
+        (WebKit::RemoteSourceBufferProxy::reenqueueMediaIfNeeded):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::evictCodedFrames):
+        (WebKit::SourceBufferPrivateRemote::reenqueueMediaIfNeeded):
+
 2021-05-04  Jiewen Tan  <jiewen_tan@apple.com>
 
         PCM: Find a way to validate source_secret_token and source_secret_token_signature

@@ -166,6 +166,7 @@ protected:
     WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
     WEBCORE_EXPORT void setBufferedRanges(const PlatformTimeRanges&);
+    void setBufferFull(bool bufferFull) { m_bufferFull = bufferFull; }
     void provideMediaData(const AtomString& trackID);
     uint64_t totalTrackBufferSizeInBytes() const;
 

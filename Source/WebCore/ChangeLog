@@ -1,3 +1,14 @@
+2021-05-04  Peng Liu  <peng.liu6@apple.com>
+
+        [GPUP] Implement SourceBufferPrivateRemote::bufferFull()
+        https://bugs.webkit.org/show_bug.cgi?id=224139
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/SourceBufferPrivate.h:
+        (WebCore::SourceBufferPrivate::setBufferFull): This function will be used
+        by `SourceBufferPrivateRemote::evictCodedFrames()` and `SourceBufferPrivateRemote::reenqueueMediaIfNeeded()`.
+
 2021-05-04  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(iOS 14): Author shadow DOM invalidated unnecessarily on pseudo element change
