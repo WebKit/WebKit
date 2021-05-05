@@ -1698,6 +1698,7 @@ set(webrtc_INCLUDE_DIRECTORIES PRIVATE
     Source/third_party/libsrtp/crypto/include
     Source/third_party/libsrtp/include
     Source/third_party/libyuv/include
+    Source/third_party/libvpx/source/libvpx
     Source/third_party/opus/src/celt
     Source/third_party/opus/src/include
     Source/third_party/opus/src/silk
@@ -1715,7 +1716,6 @@ set(webrtc_INCLUDE_DIRECTORIES PRIVATE
 
 if (APPLE)
     list(APPEND webrtc_INCLUDE_DIRECTORIES PRIVATE
-        Source/third_party/libvpx/source/libvpx
         Source/webrtc/sdk/objc
         Source/webrtc/sdk/objc/base
         Source/webrtc/sdk/objc/Framework/Classes

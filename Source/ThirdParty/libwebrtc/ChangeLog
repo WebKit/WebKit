@@ -1,3 +1,14 @@
+2021-05-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        [LibWebRTC][WPE][GTK] do not use system installed vpx headers when building webrtc
+        https://bugs.webkit.org/show_bug.cgi?id=225401
+
+        Reviewed by Philippe Normand.
+
+        Use vpx headers from Source/ThirdParty/libwebrtc instead of those from the host system.
+
+        * CMakeLists.txt: expose libvpx headers to webrtc
+
 2021-04-27  Youenn Fablet  <youenn@apple.com>
 
         Disable WebRTC trace event macros
