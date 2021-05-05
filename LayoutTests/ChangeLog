@@ -1,3 +1,15 @@
+2021-05-05  Chris Gambrell  <cgambrell@apple.com>
+
+        [LayoutTests] http/tests/css/object-fit-delayed-img-svg.html yields errors due to missing scripts
+        https://bugs.webkit.org/show_bug.cgi?id=225246
+        <rdar://problem/77397227>
+
+        Reviewed by Jonathan Bedard.
+
+        * http/tests/css/object-fit-delayed-img-svg.html:
+        * http/tests/css/resources/circle.svg: Added.
+        * http/tests/css/resources/delayedCircle.py: Added.
+
 2021-05-05  Youenn Fablet  <youenn@apple.com>
 
         No need to error a fetch body stream if its request or response is stopped
