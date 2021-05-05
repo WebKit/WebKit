@@ -128,7 +128,7 @@ bool Recorder::canAppendItemOfType(ItemType type)
 
     if (isDrawingItem(type)
 #if USE(CG)
-        || type == ItemType::ApplyStrokePattern || type == ItemType::ApplyStrokePattern
+        || type == ItemType::ApplyFillPattern || type == ItemType::ApplyStrokePattern
 #endif
     ) {
         GraphicsContextStateChange& stateChanges = currentState().stateChange;

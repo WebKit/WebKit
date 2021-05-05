@@ -1,3 +1,13 @@
+2021-05-05  Cameron McCormack  <heycam@apple.com>
+
+        Fix copy paste error in Recorder::canAppendItemOfType.
+        https://bugs.webkit.org/show_bug.cgi?id=225380
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::canAppendItemOfType):
+
 2021-05-05  Devin Rousso  <drousso@apple.com>
 
         Sampled Page Top Color: tie into existing TCADA/RLTT systems so that the value is kept in sync with painting
