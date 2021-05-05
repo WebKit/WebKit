@@ -1354,7 +1354,10 @@ webkit.org/b/224524 editing/selection/user-select-all-selection.html [ Failure P
 webkit.org/b/224524 editing/selection/user-select-all-with-shift.html [ Failure Pass ]
 webkit.org/b/224524 editing/selection/user-select-all-with-single-click.html [ Failure Pass ]
 
+webkit.org/b/224791 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-screenx-screeny.html [ Timeout Pass ]
+
 webkit.org/b/224966 imported/w3c/web-platform-tests/worklets/paint-worklet-service-worker-interception.https.html [ Crash Pass ]
+webkit.org/b/224966 imported/w3c/web-platform-tests/worklets/paint-worklet-csp.https.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1999,7 +2002,6 @@ webkit.org/b/191400 fast/block/basic/inline-content-with-floating-images2.html [
 webkit.org/b/191400 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
 
 webkit.org/b/191402 fast/css/has-attachment.html [ Failure ]
-webkit.org/b/206006 fast/attachment/attachment-border-should-stay-inside-attachment.html [ ImageOnlyFailure ]
 
 webkit.org/b/191688 compositing/backing/no-backing-for-clip-overlap.html [ Failure ]
 webkit.org/b/191688 compositing/backing/no-backing-for-clip.html [ Failure ]

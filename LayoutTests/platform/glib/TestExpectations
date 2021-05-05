@@ -1157,8 +1157,6 @@ webkit.org/b/206656 imported/w3c/web-platform-tests/mediacapture-streams/MediaSt
 webkit.org/b/210385 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-firstframe.https.html [ Failure Crash Pass ]
 webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure ]
 
-webkit.org/b/224969 webrtc/video-vp8-videorange.html [ Failure ]
-
 webkit.org/b/225353 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-after-construct.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2067,7 +2065,6 @@ webkit.org/b/195714 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Pass Ti
 webkit.org/b/196201 fast/text/ja-sans-serif.html [ ImageOnlyFailure ]
 webkit.org/b/197473 imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html [ Failure ]
 webkit.org/b/197708 http/wpt/beacon/cors/cors-preflight-cookie.html [ Failure ]
-webkit.org/b/198121 fast/text/large-synthetic-bold-with-scale-transform.html [ ImageOnlyFailure ]
 webkit.org/b/199001 accessibility/set-selected-text-range-after-newline.html [ Failure ]
 webkit.org/b/199004 fast/events/fire-mousedown-while-pressing-mouse-button.html [ Failure ]
 webkit.org/b/199009 fast/text/variations/optical-sizing-units.html [ ImageOnlyFailure ]
@@ -2222,7 +2219,6 @@ webkit.org/b/193638 media/video-webkit-playsinline.html [ Failure ]
 webkit.org/b/201266 media/audio-playback-restriction-autoplay.html [ Failure Pass ]
 webkit.org/b/201266 media/audio-playback-restriction-play-muted.html [ Failure Pass ]
 webkit.org/b/201266 media/audio-playback-restriction-play.html [ Failure Pass ]
-webkit.org/b/222495 media/media-source/media-source-webm-vorbis-partial.html [ Failure ]
 webkit.org/b/224067 media/media-source/media-source-timestampoffset-trim.html [ Failure ]
 webkit.org/b/160131 webkit.org/b/198830 media/track/track-in-band-duplicate-tracks-when-source-changes.html [ Timeout Pass Crash ]
 webkit.org/b/160119 media/video-object-fit-change.html [ Pass Crash ImageOnlyFailure ]
@@ -2353,7 +2349,7 @@ fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
 fast/replaced/pdf-as-embed-with-no-mime-type-is-not-blank.html [ ImageOnlyFailure ]
 
-# It was a flaky crash until r275516, but it's still a timeout flaky. 
+# It was a flaky crash until r275516, but it's still a timeout flaky.
 webkit.org/b/224112 media/video-as-img-output-pts.html [ Timeout Pass ]
 
 webkit.org/b/225292 imported/w3c/web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.html [ Failure ]
