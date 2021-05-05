@@ -135,6 +135,8 @@ void webKitGLVideoSinkFinalize(GObject* object)
     if (priv->mediaPlayerPrivate)
         g_signal_handlers_disconnect_by_data(priv->appSink.get(), priv->mediaPlayerPrivate);
 
+    GST_DEBUG_OBJECT(object, "WebKitGLVideoSink finalized.");
+
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
@@ -240,11 +242,15 @@ void webKitGLVideoSinkSetMediaPlayerPrivate(WebKitGLVideoSink* sink, MediaPlayer
     priv->mediaPlayerPrivate = player;
     g_signal_connect(priv->appSink.get(), "new-sample", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
         GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
+        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
+        GST_TRACE_OBJECT(sink, "new-sample with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
         player->triggerRepaint(sample.get());
         return GST_FLOW_OK;
     }), player);
     g_signal_connect(priv->appSink.get(), "new-preroll", G_CALLBACK(+[](GstElement* sink, MediaPlayerPrivateGStreamer* player) -> GstFlowReturn {
         GRefPtr<GstSample> sample = adoptGRef(gst_app_sink_pull_preroll(GST_APP_SINK(sink)));
+        GstBuffer* buffer = gst_sample_get_buffer(sample.get());
+        GST_DEBUG_OBJECT(sink, "new-preroll with PTS=%" GST_TIME_FORMAT, GST_TIME_ARGS(GST_BUFFER_PTS(buffer)));
         player->triggerRepaint(sample.get());
         return GST_FLOW_OK;
     }), player);

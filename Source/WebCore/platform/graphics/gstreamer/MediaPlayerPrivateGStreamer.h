@@ -139,7 +139,7 @@ public:
 #endif
     void cancelLoad() final;
     void prepareToPlay() final;
-    void play() final;
+    void play() override;
     void pause() override;
     bool paused() const final;
     bool seeking() const override { return m_isSeeking; }
@@ -252,7 +252,6 @@ protected:
 
     virtual void durationChanged();
     virtual void sourceSetup(GstElement*);
-    virtual void configurePlaySink() { }
     virtual bool changePipelineState(GstState);
     virtual void updatePlaybackRate();
 
@@ -302,6 +301,9 @@ protected:
 
     void ensureAudioSourceProvider();
     void setAudioStreamProperties(GObject*);
+
+    virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags);
+    void invalidateCachedPosition() { m_lastQueryTime.reset(); }
 
     static void setAudioStreamPropertiesCallback(MediaPlayerPrivateGStreamer*, GObject*);
 
@@ -430,8 +432,6 @@ private:
     void purgeInvalidAudioTracks(Vector<String> validTrackIds);
     void purgeInvalidVideoTracks(Vector<String> validTrackIds);
     void purgeInvalidTextTracks(Vector<String> validTrackIds);
-
-    virtual bool doSeek(const MediaTime& position, float rate, GstSeekFlags seekType);
 
     String engineDescription() const override { return "GStreamer"; }
     bool didPassCORSAccessCheck() const override;

@@ -1,3 +1,159 @@
+2021-05-05  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] WebKitMediaSrc rework v2
+        https://bugs.webkit.org/show_bug.cgi?id=225192
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch (re)introduces a new source element for the MSE playback
+        pipeline. This is an iteration on the previous work on r249205 that
+        had to be reverted in r251365 because of flaky playbin3 bugs.
+
+        This new version avoids these pitfalls by avoiding flushes in
+        situations where they are avoidable and known to expose bugs.
+
+        This re-land shares many of the advantages that motivated the first
+        patch: seeks massively oversimplified and greater control by no longer
+        relying on appsrc. It can handle flushes of individual streams
+        natively.
+
+        Work has also gone into decoupling the state of the frame queue from
+        the state of WebKitMediaSrc so that the backend can survive
+        transitions from PAUSED to READY and back which
+        MediaPlayerPrivateGStreamer creates when playback ends. This latter
+        effort is not complete, and instead this version adds a special case
+        to inhibit downwards and back upwards transitions, avoiding any
+        issues.
+
+        It is expected that at this point this new backend is at least as
+        stable as the previous one. No LayoutTest has got worsened
+        expectations from adding this backend and some have improved.
+
+        * platform/GStreamer.cmake:
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (webKitGLVideoSinkFinalize):
+        (webKitGLVideoSinkSetMediaPlayerPrivate):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.cpp:
+        (WTF::adoptGRef):
+        (WTF::refGPtr<GstMiniObject>):
+        (WTF::derefGPtr<GstMiniObject>):
+        * platform/graphics/gstreamer/GRefPtrGStreamer.h:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamer::updateTracks):
+        (WebCore::MediaPlayerPrivateGStreamer::handleStreamCollectionMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        (WebCore::MediaPlayerPrivateGStreamer::invalidateCachedPosition):
+        * platform/graphics/gstreamer/TrackPrivateBaseGStreamer.h:
+        (WebCore::TrackPrivateBaseGStreamer::setInitialCaps):
+        (WebCore::TrackPrivateBaseGStreamer::initialCaps):
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps):
+        (WebCore::AppendPipeline::appsinkCapsChanged):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsinkFromStreamingThread):
+        (WebCore::AppendPipeline::connectDemuxerSrcPadToAppsink):
+        * platform/graphics/gstreamer/mse/AppendPipeline.h:
+        (WebCore::AppendPipeline::demuxerSrcPadCaps):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::~MediaPlayerPrivateGStreamerMSE):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::load):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::play):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::pause):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::setReadyState):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::propagateReadyStateToPlayer):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::sourceSetup):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::unblockDurationChanges):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationChanged):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::startSource):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::hasAllTracks const):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::webKitMediaSrc):
+        * platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.cpp:
+        (WebCore::MediaSourcePrivateGStreamer::addSourceBuffer):
+        (WebCore::MediaSourcePrivateGStreamer::markEndOfStream):
+        (WebCore::MediaSourcePrivateGStreamer::unmarkEndOfStream):
+        (WebCore::MediaSourcePrivateGStreamer::waitForSeekCompleted):
+        (WebCore::MediaSourcePrivateGStreamer::seekCompleted):
+        (WebCore::MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks):
+        * platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.cpp: Added.
+        (WebCore::MediaSourceTrackGStreamer::MediaSourceTrackGStreamer):
+        (WebCore::MediaSourceTrackGStreamer::~MediaSourceTrackGStreamer):
+        (WebCore::MediaSourceTrackGStreamer::create):
+        (WebCore::MediaSourceTrackGStreamer::isReadyForMoreSamples):
+        (WebCore::MediaSourceTrackGStreamer::notifyWhenReadyForMoreSamples):
+        (WebCore::MediaSourceTrackGStreamer::enqueueObject):
+        (WebCore::MediaSourceTrackGStreamer::clearQueue):
+        (WebCore::MediaSourceTrackGStreamer::remove):
+        * platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.h: Added.
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.h: Removed.
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp:
+        (WebCore::SourceBufferPrivateGStreamer::removedFromMediaSource):
+        (WebCore::SourceBufferPrivateGStreamer::flush):
+        (WebCore::SourceBufferPrivateGStreamer::enqueueSample):
+        (WebCore::SourceBufferPrivateGStreamer::isReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued):
+        (WebCore::SourceBufferPrivateGStreamer::didReceiveInitializationSegment):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+        * platform/graphics/gstreamer/mse/TrackQueue.cpp: Added.
+        (WebCore::TrackQueue::TrackQueue):
+        (WebCore::TrackQueue::enqueueObject):
+        (WebCore::TrackQueue::clear):
+        (WebCore::TrackQueue::flush):
+        (WebCore::TrackQueue::notifyWhenLowLevel):
+        (WebCore::TrackQueue::pop):
+        (WebCore::TrackQueue::notifyWhenNotEmpty):
+        (WebCore::TrackQueue::resetNotEmptyHandler):
+        (WebCore::TrackQueue::checkLowLevel):
+        (WebCore::TrackQueue::durationEnqueued const):
+        * platform/graphics/gstreamer/mse/TrackQueue.h: Added.
+        (WebCore::TrackQueue::isFull const):
+        (WebCore::TrackQueue::isEmpty const):
+        (WebCore::TrackQueue::hasNotEmptyHandler const):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (WebKitMediaSrcPrivate::streamByName):
+        (WebKitMediaSrcPrivate::isStarted):
+        (WTF::adoptGRef):
+        (WTF::refGPtr<WebKitMediaSrcPad>):
+        (WTF::derefGPtr<WebKitMediaSrcPad>):
+        (webkit_media_src_pad_class_init):
+        (Stream::Stream):
+        (Stream::StreamingMembers::StreamingMembers):
+        (findPipeline):
+        (gstStreamType):
+        (streamTypeToString):
+        (webkit_media_src_class_init):
+        (webkit_media_src_init):
+        (webKitMediaSrcFinalize):
+        (webKitMediaSrcEmitStreams):
+        (webKitMediaSrcTearDownStream):
+        (webKitMediaSrcActivateMode):
+        (webKitMediaSrcPadLinked):
+        (webKitMediaSrcLoop):
+        (webKitMediaSrcStreamFlush):
+        (webKitMediaSrcFlush):
+        (webKitMediaSrcSeek):
+        (countStreamsOfType):
+        (webKitMediaSrcGetProperty):
+        (webKitMediaSrcChangeState):
+        (webKitMediaSrcSendEvent):
+        (webKitMediaSrcUriGetType):
+        (webKitMediaSrcGetProtocols):
+        (webKitMediaSrcGetUri):
+        (webKitMediaSrcSetUri):
+        (webKitMediaSrcUriHandlerInit):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.h:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamerPrivate.h: Removed.
+
 2021-05-05  Devin Rousso  <drousso@apple.com>
 
         Sampled Page Top Color: take additional snapshots further down the page to see if the sampled top color is more than just a tiny strip

@@ -1,3 +1,16 @@
+2021-05-05  Alicia Boya García  <aboya@igalia.com>
+
+        [MSE][GStreamer] WebKitMediaSrc rework v2
+        https://bugs.webkit.org/show_bug.cgi?id=225192
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        WebKitMediaSrc is a GObject class and needs to follow some GObject
+        conventions that conflict with WebKit's. Make the checker aware of
+        this.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2021-05-05  Devin Rousso  <drousso@apple.com>
 
         Sampled Page Top Color: take additional snapshots further down the page to see if the sampled top color is more than just a tiny strip

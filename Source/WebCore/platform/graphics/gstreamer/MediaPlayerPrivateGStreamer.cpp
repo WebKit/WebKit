@@ -438,7 +438,7 @@ bool MediaPlayerPrivateGStreamer::paused() const
     return paused;
 }
 
-bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate, GstSeekFlags seekType)
+bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate, GstSeekFlags seekFlags)
 {
     // Default values for rate >= 0.
     MediaTime startTime = position, endTime = MediaTime::invalidTime();
@@ -453,7 +453,7 @@ bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate, 
         rate = 1.0;
 
     GST_DEBUG_OBJECT(pipeline(), "[Seek] Performing actual seek to %" GST_TIME_FORMAT " (endTime: %" GST_TIME_FORMAT ") at rate %f", GST_TIME_ARGS(toGstClockTime(startTime)), GST_TIME_ARGS(toGstClockTime(endTime)), rate);
-    return gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekType,
+    return gst_element_seek(m_pipeline.get(), rate, GST_FORMAT_TIME, seekFlags,
         GST_SEEK_TYPE_SET, toGstClockTime(startTime), GST_SEEK_TYPE_SET, toGstClockTime(endTime));
 }
 
@@ -1482,18 +1482,16 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstStreamCollection
     unsigned textTrackIndex = 0;
 
 #define CREATE_TRACK(type, Type) G_STMT_START {                         \
-        if (!useMediaSource) {                                          \
-            RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), type##TrackIndex, stream); \
-            auto trackId = track->id();                                 \
-            if (!type##TrackIndex) {                                    \
-                m_wanted##Type##StreamId = trackId;                     \
-                m_requested##Type##StreamId = trackId;                  \
-                track->setActive(true);                                 \
-            }                                                           \
-            type##TrackIndex++;                                         \
-            m_##type##Tracks.add(trackId, track);                       \
-            m_player->add##Type##Track(*track);                         \
-        }                                                               \
+        RefPtr<Type##TrackPrivateGStreamer> track = Type##TrackPrivateGStreamer::create(makeWeakPtr(*this), type##TrackIndex, stream); \
+        auto trackId = track->id();                                 \
+        if (!type##TrackIndex) {                                    \
+            m_wanted##Type##StreamId = trackId;                     \
+            m_requested##Type##StreamId = trackId;                  \
+            track->setActive(true);                                 \
+        }                                                           \
+        type##TrackIndex++;                                         \
+        m_##type##Tracks.add(trackId, track);                       \
+        m_player->add##Type##Track(*track);                         \
     } G_STMT_END
 
     for (unsigned i = 0; i < length; i++) {
@@ -1540,6 +1538,15 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     if (m_isLegacyPlaybin)
         return;
 
+    // GStreamer workaround:
+    // Unfortunately, when we have a stream-collection aware source (like WebKitMediaSrc) parsebin and decodebin3 emit
+    // their own stream-collection messages, but late, and sometimes with duplicated streams. Let's only listen for
+    // stream-collection messages from the source in the MSE case to avoid these issues.
+    if (isMediaSource() && GST_MESSAGE_SRC(message) != GST_OBJECT(m_source.get())) {
+        GST_DEBUG_OBJECT(pipeline(), "Ignoring redundant STREAM_COLLECTION from %" GST_PTR_FORMAT, message->src);
+        return;
+    }
+
     ASSERT(GST_MESSAGE_TYPE(message) == GST_MESSAGE_STREAM_COLLECTION);
     GRefPtr<GstStreamCollection> collection;
     gst_message_parse_stream_collection(message, &collection.outPtr());
@@ -1555,7 +1562,7 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     if (!collection)
         return;
 
-    callOnMainThreadAndWait([player = makeWeakPtr(*this), collection = WTFMove(collection)] {
+    callOnMainThread([player = makeWeakPtr(*this), collection = WTFMove(collection)] {
         if (player)
             player->updateTracks(collection);
     });
@@ -1813,6 +1820,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             gst_element_state_get_name(currentState), '_', gst_element_state_get_name(newState)).utf8();
         GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, dotFileName.data());
 
+        GST_DEBUG_OBJECT(pipeline(), "Changed state from %s to %s", gst_element_state_get_name(currentState), gst_element_state_get_name(newState));
+
         if (!m_isLegacyPlaybin && currentState == GST_STATE_PAUSED && newState == GST_STATE_PLAYING)
             playbin3SendSelectStreamsIfAppropriate();
         updateStates();
@@ -1971,9 +1980,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         playbin3SendSelectStreamsIfAppropriate();
         break;
     }
-    case GST_MESSAGE_STREAM_COLLECTION:
-        handleStreamCollectionMessage(message);
-        break;
     default:
         GST_DEBUG_OBJECT(pipeline(), "Unhandled GStreamer message type: %s", GST_MESSAGE_TYPE_NAME(message));
         break;
@@ -2551,7 +2557,7 @@ void MediaPlayerPrivateGStreamer::didEnd()
     // until we get the initial STREAMS_SELECTED message one more time.
     m_waitingForStreamsSelectedEvent = true;
 
-    if (!m_player->isLooping()) {
+    if (!m_player->isLooping() && !isMediaSource()) {
         m_isPaused = true;
         changePipelineState(GST_STATE_READY);
         m_didDownloadFinish = false;
@@ -2681,11 +2687,10 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     GST_INFO("Creating pipeline for %s player", m_player->isVideoPlayer() ? "video" : "audio");
     const char* playbinName = "playbin";
 
-    // MSE doesn't support playbin3. Mediastream requires playbin3. Regular
-    // playback can use playbin3 on-demand with the WEBKIT_GST_USE_PLAYBIN3
-    // environment variable.
+    // MSE and Mediastream require playbin3. Regular playback can use playbin3 on-demand with the
+    // WEBKIT_GST_USE_PLAYBIN3 environment variable.
     const char* usePlaybin3 = g_getenv("WEBKIT_GST_USE_PLAYBIN3");
-    if ((!isMediaSource() && usePlaybin3 && equal(usePlaybin3, "1")) || url.protocolIs("mediastream"))
+    if ((isMediaSource() || url.protocolIs("mediastream") || (usePlaybin3 && equal(usePlaybin3, "1"))))
         playbinName = "playbin3";
 
     ASSERT(!m_pipeline);
@@ -2722,6 +2727,12 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     }), this);
     g_signal_connect_swapped(bus.get(), "sync-message::need-context", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
         player->handleNeedContextMessage(message);
+    }), this);
+    // In the MSE case stream collection messages are emitted from the main thread right before the initilization segment
+    // is parsed and "updateend" is fired. We need therefore to handle these synchronously in the same main thread tick
+    // to make the tracks information available to JS no later than "updateend".
+    g_signal_connect_swapped(bus.get(), "sync-message::stream-collection", G_CALLBACK(+[](MediaPlayerPrivateGStreamer* player, GstMessage* message) {
+        player->handleStreamCollectionMessage(message);
     }), this);
 
     g_object_set(m_pipeline.get(), "mute", m_player->muted(), nullptr);
@@ -2768,8 +2779,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     g_object_set(m_pipeline.get(), "audio-sink", m_audioSink.get(), nullptr);
     if (m_player->isVideoPlayer())
         g_object_set(m_pipeline.get(), "video-sink", createVideoSink(), nullptr);
-
-    configurePlaySink();
 
     if (m_shouldPreservePitch) {
         GstElement* scale = gst_element_factory_make("scaletempo", nullptr);

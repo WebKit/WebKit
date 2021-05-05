@@ -3,8 +3,8 @@
  *  Copyright (C) 2013 Collabora Ltd.
  *  Copyright (C) 2013 Orange
  *  Copyright (C) 2014, 2015 Sebastian Dröge <sebastian@centricular.com>
- *  Copyright (C) 2015, 2016 Metrological Group B.V.
- *  Copyright (C) 2015, 2016 Igalia, S.L
+ *  Copyright (C) 2015, 2016, 2018, 2019, 2020, 2021 Metrological Group B.V.
+ *  Copyright (C) 2015, 2016, 2018, 2019, 2020, 2021 Igalia, S.L
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -31,15 +31,13 @@
 #include "MediaSourcePrivate.h"
 #include "SourceBufferPrivate.h"
 #include "SourceBufferPrivateClient.h"
-#include <gst/gst.h>
+#include "SourceBufferPrivateGStreamer.h"
 
 namespace WebCore {
 
 class MediaPlayerPrivateGStreamerMSE;
 
-enum MediaSourceStreamTypeGStreamer { Invalid, Unknown, Audio, Video, Text };
-
-}
+} // namespace WebCore
 
 G_BEGIN_DECLS
 
@@ -49,35 +47,30 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_MEDIA_SRC(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_TYPE_MEDIA_SRC))
 #define WEBKIT_IS_MEDIA_SRC_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), WEBKIT_TYPE_MEDIA_SRC))
 
-typedef struct _WebKitMediaSrc        WebKitMediaSrc;
-typedef struct _WebKitMediaSrcClass   WebKitMediaSrcClass;
-typedef struct _WebKitMediaSrcPrivate WebKitMediaSrcPrivate;
+struct WebKitMediaSrcPrivate;
 
-struct _WebKitMediaSrc {
-    GstBin parent;
+struct WebKitMediaSrc {
+    GstElement parent;
 
     WebKitMediaSrcPrivate *priv;
 };
 
-struct _WebKitMediaSrcClass {
-    GstBinClass parentClass;
-
-    // Notify app that number of audio/video/text streams changed.
-    void (*videoChanged)(WebKitMediaSrc*);
-    void (*audioChanged)(WebKitMediaSrc*);
-    void (*textChanged)(WebKitMediaSrc*);
+struct WebKitMediaSrcClass {
+    GstElementClass parentClass;
 };
 
 GType webkit_media_src_get_type(void);
 
-void webKitMediaSrcRestoreTracks(WebKitMediaSrc*, WebKitMediaSrc*);
-void webKitMediaSrcSignalTracks(WebKitMediaSrc*);
-void webKitMediaSrcSetMediaPlayerPrivate(WebKitMediaSrc*, WebCore::MediaPlayerPrivateGStreamerMSE*);
+void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<WebCore::MediaSourceTrackGStreamer>>& tracks);
 
-void webKitMediaSrcPrepareSeek(WebKitMediaSrc*, const MediaTime&);
-void webKitMediaSrcPrepareInitialSeek(WebKitMediaSrc*, double rate, const MediaTime& startTime, const MediaTime& endTime);
-void webKitMediaSrcSetReadyForSamples(WebKitMediaSrc*, bool);
+void webKitMediaSrcFlush(WebKitMediaSrc*, const AtomString& streamName);
 
 G_END_DECLS
+
+namespace WTF {
+template<> GRefPtr<WebKitMediaSrc> adoptGRef(WebKitMediaSrc* ptr);
+template<> WebKitMediaSrc* refGPtr<WebKitMediaSrc>(WebKitMediaSrc* ptr);
+template<> void derefGPtr<WebKitMediaSrc>(WebKitMediaSrc* ptr);
+} // namespace WTF
 
 #endif // USE(GSTREAMER)

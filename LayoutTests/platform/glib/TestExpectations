@@ -550,7 +550,6 @@ webkit.org/b/210385 fast/mediastream/stream-switch.html [ Crash Timeout Pass ]
 webkit.org/b/210528 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Crash Pass ]
 webkit.org/b/210528 fast/mediastream/mediastreamtrack-video-frameRate-clone-decreasing.html [ Crash Pass ]
 
-webkit.org/b/203078 media/media-source/media-source-remove-unload-crash.html [ Crash Timeout Pass ]
 webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failure ]
 
 webkit.org/b/210528 media/video-src-blob-replay.html [ Crash Pass ]
@@ -580,7 +579,6 @@ webkit.org/b/224767 imported/w3c/web-platform-tests/media-source/mediasource-cha
 
 # See also bug #175578.
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
@@ -2177,9 +2175,8 @@ webkit.org/b/211940 fast/text/multiple-codeunit-vertical-upright.html [ ImageOnl
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
 webkit.org/b/197711 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames.html [ Pass Timeout Failure ]
-webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Timeout Crash Failure ]
 webkit.org/b/214349 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-negative.html [ Crash Failure Pass ]
-webkit.org/b/220083 [ Debug ] media/media-source/media-source-unnecessary-seek-seeked.html [ Pass Crash ]
+webkit.org/b/203078 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
 
 webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Failure Pass ]
 

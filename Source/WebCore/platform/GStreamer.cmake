@@ -37,8 +37,9 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
         platform/graphics/gstreamer/mse/GStreamerRegistryScannerMSE.cpp
         platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp
         platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.cpp
-        platform/graphics/gstreamer/mse/PlaybackPipeline.cpp
+        platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.cpp
         platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
+        platform/graphics/gstreamer/mse/TrackQueue.cpp
         platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
 
         platform/mediastream/libwebrtc/GStreamerVideoCommon.cpp

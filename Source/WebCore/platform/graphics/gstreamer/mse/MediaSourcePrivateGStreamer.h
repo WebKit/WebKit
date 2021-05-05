@@ -41,8 +41,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/LoggerHelper.h>
 
-typedef struct _WebKitMediaSrc WebKitMediaSrc;
-
 namespace WebCore {
 
 class SourceBufferPrivateGStreamer;
@@ -69,13 +67,14 @@ public:
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
 
-    void waitForSeekCompleted() override;
+    void waitForSeekCompleted() override { }
     void seekCompleted() override;
 
     MediaTime duration() const;
     MediaTime currentMediaTime() const;
 
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivateGStreamer*, bool);
+    void startPlaybackIfHasAllTracks();
 
     std::unique_ptr<PlatformTimeRanges> buffered();
 
@@ -96,6 +95,7 @@ private:
     Ref<MediaSourcePrivateClient> m_mediaSource;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     bool m_isEnded { false };
+    bool m_hasAllTracks { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

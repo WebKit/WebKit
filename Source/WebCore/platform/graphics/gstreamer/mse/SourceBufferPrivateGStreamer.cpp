@@ -38,14 +38,21 @@
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
 #include "AppendPipeline.h"
+#include "AudioTrackPrivateGStreamer.h"
 #include "ContentType.h"
 #include "GStreamerCommon.h"
+#include "InbandTextTrackPrivate.h"
+#include "InbandTextTrackPrivateGStreamer.h"
 #include "MediaPlayerPrivateGStreamerMSE.h"
 #include "MediaSample.h"
 #include "MediaSourcePrivateGStreamer.h"
+#include "MediaSourceTrackGStreamer.h"
 #include "NotImplemented.h"
-#include "PlaybackPipeline.h"
+#include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
+
+GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
+#define GST_CAT_DEFAULT webkit_mse_debug
 
 namespace WebCore {
 
@@ -105,10 +112,10 @@ void SourceBufferPrivateGStreamer::removedFromMediaSource()
     ASSERT(isMainThread());
     clearTrackBuffers();
     m_mediaSource->removeSourceBuffer(this);
-    m_playerPrivate.playbackPipeline()->removeSourceBuffer(this);
-    // After this only SourceBuffer should hold a reference to us, which will be destroyed eventually (when JS
-    // GC releases the last reference). Until then SourceBuffer is in "removed" state and won't use SourceBufferPrivate.
-    ASSERT(refCount() == 1);
+
+    for (auto& track : m_tracks.values())
+        track->remove();
+    m_hasBeenRemovedFromMediaSource = true;
 }
 
 MediaPlayer::ReadyState SourceBufferPrivateGStreamer::readyState() const
@@ -126,41 +133,63 @@ void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
     ASSERT(isMainThread());
 
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
-    if (!m_playerPrivate.seeking())
-        m_playerPrivate.playbackPipeline()->flush(trackId);
+
+    if (!m_playerPrivate.hasAllTracks()) {
+        // Source element has not emitted tracks yet, so we only need to clear the queue.
+        MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
+        track->clearQueue();
+        return;
+    }
+
+    // Source element has emitted tracks, let it handle the flush, which may cause a pipeline flush as well.
+    webKitMediaSrcFlush(m_playerPrivate.webKitMediaSrc(), trackId);
 }
 
-void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, const AtomString&)
+void SourceBufferPrivateGStreamer::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackId)
 {
     ASSERT(isMainThread());
-    m_notifyWhenReadyForMoreSamples = false;
 
-    m_playerPrivate.playbackPipeline()->enqueueSample(WTFMove(sample));
+    GST_TRACE("enqueing sample trackId=%s PTS=%s presentationSize=%.0fx%.0f at %" GST_TIME_FORMAT " duration: %" GST_TIME_FORMAT,
+        trackId.string().utf8().data(), sample->presentationTime().toString().utf8().data(),
+        sample->presentationSize().width(), sample->presentationSize().height(),
+        GST_TIME_ARGS(WebCore::toGstClockTime(sample->presentationTime())),
+        GST_TIME_ARGS(WebCore::toGstClockTime(sample->duration())));
+
+    GRefPtr<GstSample> gstSample = sample->platformSample().sample.gstSample;
+    ASSERT(gstSample);
+    ASSERT(gst_sample_get_buffer(gstSample.get()));
+
+    MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
+    track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gstSample.leakRef())));
+}
+
+bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(const AtomString& trackId)
+{
+    ASSERT(isMainThread());
+    MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
+    bool ret = track->isReadyForMoreSamples();
+    GST_TRACE("SourceBufferPrivate(%p) - isReadyForMoreSamples: %s", this, boolForPrinting(ret));
+    return ret;
+}
+
+void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const AtomString& trackId)
+{
+    ASSERT(isMainThread());
+    MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
+    track->notifyWhenReadyForMoreSamples([protector = makeRef(*this), this, trackId]() mutable {
+        RunLoop::main().dispatch([protector = WTFMove(protector), this, trackId]() {
+            if (!m_hasBeenRemovedFromMediaSource)
+                provideMediaData(trackId);
+        });
+    });
 }
 
 void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(const AtomString& trackId)
 {
     ASSERT(isMainThread());
-    m_playerPrivate.playbackPipeline()->allSamplesInTrackEnqueued(trackId);
-}
-
-bool SourceBufferPrivateGStreamer::isReadyForMoreSamples(const AtomString&)
-{
-    return m_isReadyForMoreSamples;
-}
-
-void SourceBufferPrivateGStreamer::setReadyForMoreSamples(bool isReady)
-{
-    ASSERT(WTF::isMainThread());
-    m_isReadyForMoreSamples = isReady;
-}
-
-void SourceBufferPrivateGStreamer::notifyReadyForMoreSamples()
-{
-    ASSERT(WTF::isMainThread());
-    setReadyForMoreSamples(true);
-    if (m_notifyWhenReadyForMoreSamples)
-        provideMediaData(m_trackId);
+    GST_DEBUG("Enqueueing EOS for track '%s'", trackId.string().utf8().data());
+    MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
+    track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gst_event_new_eos())));
 }
 
 void SourceBufferPrivateGStreamer::setActive(bool isActive)
@@ -174,15 +203,27 @@ bool SourceBufferPrivateGStreamer::isActive() const
     return m_isActive;
 }
 
-void SourceBufferPrivateGStreamer::notifyClientWhenReadyForMoreSamples(const AtomString& trackId)
-{
-    ASSERT(WTF::isMainThread());
-    m_notifyWhenReadyForMoreSamples = true;
-    m_trackId = trackId;
-}
-
 void SourceBufferPrivateGStreamer::didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& initializationSegment, CompletionHandler<void()>&& completionHandler)
 {
+    m_hasReceivedInitializationSegment = true;
+    for (auto& trackInfo : initializationSegment.videoTracks) {
+        GRefPtr<GstCaps> initialCaps = static_cast<VideoTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
+        ASSERT(initialCaps);
+        m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Video, trackInfo.track->id(), WTFMove(initialCaps)));
+    }
+    for (auto& trackInfo : initializationSegment.audioTracks) {
+        GRefPtr<GstCaps> initialCaps = static_cast<AudioTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
+        ASSERT(initialCaps);
+        m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Audio, trackInfo.track->id(), WTFMove(initialCaps)));
+    }
+    for (auto& trackInfo : initializationSegment.textTracks) {
+        GRefPtr<GstCaps> initialCaps = static_cast<InbandTextTrackPrivateGStreamer*>(trackInfo.track.get())->initialCaps();
+        ASSERT(initialCaps);
+        m_tracks.add(trackInfo.track->id(), MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType::Text, trackInfo.track->id(), WTFMove(initialCaps)));
+    }
+
+    m_mediaSource->startPlaybackIfHasAllTracks();
+
     SourceBufferPrivate::didReceiveInitializationSegment(WTFMove(initializationSegment), WTFMove(completionHandler));
 }
 

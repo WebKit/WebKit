@@ -57,6 +57,9 @@ public:
     MediaPlayerPrivateGStreamerMSE* playerPrivate() { return m_playerPrivate; }
 
 private:
+    // Similar to TrackPrivateBaseGStreamer::TrackType, but with a new value (Invalid) for when the codec is
+    // not supported on this system, which should result in ParsingFailed error being thrown in SourceBuffer.
+    enum MediaSourceStreamTypeGStreamer { Audio, Video, Text, Unknown, Invalid };
 
     void handleErrorSyncMessage(GstMessage*);
     void handleNeedContextSyncMessage(GstMessage*);
@@ -81,7 +84,6 @@ private:
     GstElement* appsrc() { return m_appsrc.get(); }
     GstElement* appsink() { return m_appsink.get(); }
     GstCaps* demuxerSrcPadCaps() { return m_demuxerSrcPadCaps.get(); }
-    WebCore::MediaSourceStreamTypeGStreamer streamType() { return m_streamType; }
 
     void disconnectDemuxerSrcPadFromAppsinkFromAnyThread(GstPad*);
     void connectDemuxerSrcPadToAppsinkFromStreamingThread(GstPad*);
@@ -142,7 +144,7 @@ private:
     struct PadProbeInformation m_appsinkPadEventProbeInformation;
 #endif
 
-    WebCore::MediaSourceStreamTypeGStreamer m_streamType;
+    MediaSourceStreamTypeGStreamer m_streamType;
     RefPtr<WebCore::TrackPrivateBase> m_track;
 
     AbortableTaskQueue m_taskQueue;

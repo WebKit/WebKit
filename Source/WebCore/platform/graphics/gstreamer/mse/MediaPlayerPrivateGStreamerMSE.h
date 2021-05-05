@@ -30,12 +30,14 @@
 #include "MediaPlayerPrivateGStreamer.h"
 #include "MediaSample.h"
 #include "MediaSourcePrivateGStreamer.h"
-#include "WebKitMediaSourceGStreamer.h"
+
+struct WebKitMediaSrc;
 
 namespace WebCore {
 
 class AppendPipeline;
-class PlaybackPipeline;
+class TrackQueue;
+class MediaSourceTrackGStreamer;
 
 class MediaPlayerPrivateGStreamerMSE : public MediaPlayerPrivateGStreamer {
     WTF_MAKE_NONCOPYABLE(MediaPlayerPrivateGStreamerMSE); WTF_MAKE_FAST_ALLOCATED;
@@ -51,13 +53,12 @@ public:
 
     void updateDownloadBufferingFlag() override { };
 
-    MediaTime currentMediaTime() const override;
-
+    void play() override;
     void pause() override;
-    bool seeking() const override;
     void seek(const MediaTime&) override;
-    void configurePlaySink() override;
-    bool changePipelineState(GstState) override;
+    bool doSeek(const MediaTime&, float rate, GstSeekFlags) override;
+
+    void updatePipelineState(GstState);
 
     void durationChanged() override;
     MediaTime durationMediaTime() const override;
@@ -68,19 +69,18 @@ public:
     void sourceSetup(GstElement*) override;
 
     void setReadyState(MediaPlayer::ReadyState);
-    void waitForSeekCompleted();
-    void seekCompleted();
     MediaSourcePrivateClient* mediaSourcePrivateClient() { return m_mediaSource.get(); }
 
-    void markEndOfStream(MediaSourcePrivate::EndOfStreamStatus);
-
-    void trackDetected(AppendPipeline&, RefPtr<WebCore::TrackPrivateBase>, bool firstTrackDetected);
-    void notifySeekNeedsDataForTime(const MediaTime&);
+    void trackDetected(AppendPipeline&, RefPtr<WebCore::TrackPrivateBase>);
 
     void blockDurationChanges();
     void unblockDurationChanges();
 
-    PlaybackPipeline* playbackPipeline() const { return m_playbackPipeline.get(); }
+    void asyncStateChangeDone() override;
+
+    bool hasAllTracks() const { return m_hasAllTracks; }
+    void startSource(const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks);
+    WebKitMediaSrc* webKitMediaSrc() { return reinterpret_cast<WebKitMediaSrc*>(m_source.get()); }
 
 #if !RELEASE_LOG_DISABLED
     WTFLogChannel& logChannel() const final { return WebCore::LogMediaSource; }
@@ -91,29 +91,26 @@ private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
-    // FIXME: Reduce code duplication.
     void updateStates() override;
-
-    bool doSeek(const MediaTime&, float, GstSeekFlags) override;
-    void maybeFinishSeek();
-
-    void asyncStateChangeDone() override;
 
     // FIXME: Implement videoPlaybackQualityMetrics.
     bool isTimeBuffered(const MediaTime&) const;
 
     bool isMediaSource() const override { return true; }
 
-    bool m_eosMarked = false;
-    mutable bool m_eosPending = false;
-    bool m_gstSeekCompleted = true;
+    void propagateReadyStateToPlayer();
+
     RefPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MediaSourcePrivateGStreamer> m_mediaSourcePrivate;
     MediaTime m_mediaTimeDuration;
-    bool m_mseSeekCompleted = true;
     bool m_areDurationChangesBlocked = false;
     bool m_shouldReportDurationWhenUnblocking = false;
-    RefPtr<PlaybackPipeline> m_playbackPipeline;
+    bool m_isPipelinePlaying = true;
+    bool m_hasAllTracks = false;
+    Vector<RefPtr<MediaSourceTrackGStreamer>> m_tracks;
+
+    bool m_isWaitingForPreroll = true;
+    MediaPlayer::ReadyState m_mediaSourceReadyState = MediaPlayer::ReadyState::HaveNothing;
 };
 
 } // namespace WebCore
