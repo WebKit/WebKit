@@ -162,10 +162,10 @@ TEST(EventAttribution, FraudPrevention)
     auto keyData = WTF::base64URLEncode(nsSpkiData.bytes, nsSpkiData.length);
 
     // The server.
-    HTTPServer server([&done, connectionCount = 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData] (Connection connection) mutable {
+    HTTPServer server([&done, connectionCount = 0, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &secKey] (Connection connection) mutable {
         switch (++connectionCount) {
         case 1:
-            connection.receiveHTTPRequest([connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done] (Vector<char>&& request1) {
+            connection.receiveHTTPRequest([connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request1) {
                 EXPECT_TRUE(strnstr(request1.data(), "GET / HTTP/1.1\r\n", request1.size()));
 
                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
@@ -173,8 +173,8 @@ TEST(EventAttribution, FraudPrevention)
                     "Content-Type: application/json\r\n"
                     "Content-Length: ", 24 + keyData.length(), "\r\n\r\n"
                     "{\"token_public_key\": \"", keyData, "\"}");
-                connection.send(WTFMove(response), [connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done] {
-                    connection.receiveHTTPRequest([connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done] (Vector<char>&& request2) {
+                connection.send(WTFMove(response), [connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] {
+                    connection.receiveHTTPRequest([connection, &rsaPrivateKey, &modulusNBytes, &rng, &keyData, &done, &secKey] (Vector<char>&& request2) {
                         EXPECT_TRUE(strnstr(request2.data(), "POST / HTTP/1.1\r\n", request2.size()));
 
                         auto request2String = String(request2.data());
@@ -197,8 +197,8 @@ TEST(EventAttribution, FraudPrevention)
                             "Content-Type: application/json\r\n"
                             "Content-Length: ", 24 + unlinkableToken.length(), "\r\n\r\n"
                             "{\"unlinkable_token\": \"", unlinkableToken, "\"}");
-                        connection.send(WTFMove(response), [connection, &keyData, &done, unlinkableToken, token] {
-                            connection.receiveHTTPRequest([connection, &keyData, &done, unlinkableToken, token] (Vector<char>&& request3) {
+                        connection.send(WTFMove(response), [connection, &keyData, &done, unlinkableToken, token, &secKey] {
+                            connection.receiveHTTPRequest([connection, &keyData, &done, unlinkableToken, token, &secKey] (Vector<char>&& request3) {
                                 EXPECT_TRUE(strnstr(request3.data(), "GET / HTTP/1.1\r\n", request3.size()));
 
                                 // Example response: { "token_public_key": "ABCD" }. "ABCD" should be Base64URL encoded.
@@ -206,17 +206,36 @@ TEST(EventAttribution, FraudPrevention)
                                     "Content-Type: application/json\r\n"
                                     "Content-Length: ", 24 + keyData.length(), "\r\n\r\n"
                                     "{\"token_public_key\": \"", keyData, "\"}");
-                                connection.send(WTFMove(response), [connection, &done, unlinkableToken, token] {
-                                    connection.receiveHTTPRequest([connection, &done, unlinkableToken, token] (Vector<char>&& request4) {
+                                connection.send(WTFMove(response), [connection, &done, unlinkableToken, token, &secKey] {
+                                    connection.receiveHTTPRequest([connection, &done, unlinkableToken, token, &secKey] (Vector<char>&& request4) {
                                         EXPECT_TRUE(strnstr(request4.data(), "POST / HTTP/1.1\r\n", request4.size()));
                                         EXPECT_TRUE(strnstr(request4.data(), "{\"source_engagement_type\":\"click\",\"source_site\":\"127.0.0.1\",\"source_id\":42,\"attributed_on_site\":\"example.com\",\"trigger_data\":12,\"version\":2,",
                                             request4.size()));
 
-                                        // FIXME(224321): Determine if it is possible to verify the token and signature.
                                         EXPECT_FALSE(strnstr(request4.data(), token.utf8().data(), request4.size()));
                                         EXPECT_FALSE(strnstr(request4.data(), unlinkableToken.utf8().data(), request4.size()));
-                                        EXPECT_TRUE(strnstr(request4.data(), "source_secret_token", request4.size()));
-                                        EXPECT_TRUE(strnstr(request4.data(), "source_secret_token_signature", request4.size()));
+
+                                        auto request4String = String(request4.data());
+
+                                        auto key = String("source_secret_token");
+                                        auto start = request4String.find(key);
+                                        start += key.length() + 3;
+                                        auto end = request4String.find('"', start);
+                                        auto token = request4String.substring(start, end - start);
+                                        Vector<uint8_t> tokenVector;
+                                        base64URLDecode(token, tokenVector);
+                                        auto tokenData = adoptNS([[NSData alloc] initWithBytes:tokenVector.data() length:tokenVector.size()]);
+
+                                        key = String("source_secret_token_signature");
+                                        start = request4String.find(key);
+                                        start += key.length() + 3;
+                                        end = request4String.find('"', start);
+                                        auto signature = request4String.substring(start, end - start);
+                                        Vector<uint8_t> signatureVector;
+                                        base64URLDecode(signature, signatureVector);
+                                        auto signatureData = adoptNS([[NSData alloc] initWithBytes:signatureVector.data() length:signatureVector.size()]);
+
+                                        EXPECT_TRUE(SecKeyVerifySignature(secKey.get(), kSecKeyAlgorithmRSASignatureMessagePSSSHA384, (__bridge CFDataRef)tokenData.get(), (__bridge CFDataRef)signatureData.get(), NULL));
 
                                         done = true;
                                     });

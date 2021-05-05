@@ -1,3 +1,15 @@
+2021-05-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Find a way to validate source_secret_token and source_secret_token_signature
+        https://bugs.webkit.org/show_bug.cgi?id=224321
+        <rdar://problem/76695542>
+
+        Reviewed by John Wilander.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm:
+        (TestWebKitAPI::TEST):
+        Uses RSA-PSS with SHA-384 to verify the signature.
+
 2021-05-04  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitscmpy] Scope classes used in TaskPool to object

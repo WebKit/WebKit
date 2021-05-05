@@ -1,3 +1,18 @@
+2021-05-04  Jiewen Tan  <jiewen_tan@apple.com>
+
+        PCM: Find a way to validate source_secret_token and source_secret_token_signature
+        https://bugs.webkit.org/show_bug.cgi?id=224321
+        <rdar://problem/76695542>
+
+        Reviewed by John Wilander.
+
+        Covered by exisiting tests.
+
+        * NetworkProcess/PrivateClickMeasurementManager.cpp:
+        (WebKit::PrivateClickMeasurementManager::getTokenPublicKey):
+        (WebKit::PrivateClickMeasurementManager::getSignedUnlinkableToken):
+        Reverts r236878.
+
 2021-05-04  Jer Noble  <jer.noble@apple.com>
 
         [Media in GPU Process] Move AudioSessionRoutingArbitratorProxy to the GPU process
