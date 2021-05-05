@@ -114,6 +114,7 @@ class TestFactory(Factory):
             self.addStep(ArchiveTestResults())
             self.addStep(UploadTestResults())
             self.addStep(ExtractTestResults())
+            self.addStep(SetPermissions())
         if platform == "gtk":
             self.addStep(RunGtkAPITests())
             if additionalArguments and "--display-server=wayland" in additionalArguments:

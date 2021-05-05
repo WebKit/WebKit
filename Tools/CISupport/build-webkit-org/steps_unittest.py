@@ -962,3 +962,32 @@ class TestRunJavaScriptCoreTests(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=FAILURE, state_string='9 JSC tests failed')
         return self.runStep()
+
+
+class TestSetPermissions(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success(self):
+        self.setupStep(SetPermissions())
+        self.setProperty('result_directory', 'public_html/results/Apple-BigSur-Release-WK2-Tests/r277034 (2346)')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['chmod', 'a+rx', 'public_html/results/Apple-BigSur-Release-WK2-Tests/r277034 (2346)'])
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Ran')
+        return self.runStep()
+
+    def test_failure(self):
+        self.setupStep(SetPermissions())
+        self.setProperty('result_directory', 'testdir')
+        self.expectLocalCommands(
+            ExpectMasterShellCommand(command=['chmod', 'a+rx', 'testdir'])
+            + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='failed (1) (failure)')
+        return self.runStep()
