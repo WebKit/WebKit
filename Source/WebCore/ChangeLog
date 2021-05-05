@@ -1,3 +1,19 @@
+2021-05-04  Kenneth Russell  <kbr@chromium.org>
+
+        WebKit must treat 'webgl' and 'webgl2' as distinct context types
+        https://bugs.webkit.org/show_bug.cgi?id=222758
+
+        Reviewed by Dean Jackson.
+
+        Update both the regular getContext and CSS context code paths with
+        checks distinguishing WebGL 1.0 and 2.0 contexts.
+
+        Covered by existing WebGL 2.0 conformance tests.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        (WebCore::HTMLCanvasElement::getContextWebGL):
+
 2021-05-04  Jer Noble  <jer.noble@apple.com>
 
         [Media in GPU Process] Move AudioSessionRoutingArbitratorProxy to the GPU process
