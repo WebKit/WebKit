@@ -1,3 +1,12 @@
+2021-05-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix typo in comment in WebKitFeatures.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=225392
+
+        Unreviewed.
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-04-27  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Don't use FORWARDING_HEADERS_DIR for GTK WebKit headers
