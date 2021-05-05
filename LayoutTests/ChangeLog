@@ -1,3 +1,14 @@
+2021-05-05  Robert Jenner  <jenner@apple.com>
+
+        [ macOS ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html is a flaky text failure
+        https://bugs.webkit.org/show_bug.cgi?id=225421
+
+        Unreviewed test gardening. 
+
+        Marking test as flaky (Pass Failure), while under review.
+
+        * platform/mac/TestExpectations:
+
 2021-05-05  Tim Nguyen  <ntim@apple.com>
 
         Re-sync css/css-animations WPTs

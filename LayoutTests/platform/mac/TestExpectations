@@ -2257,3 +2257,5 @@ webkit.org/b/224631 [ BigSur ] imported/w3c/web-platform-tests/css/css-fonts/fon
 webkit.org/b/22261 imported/w3c/web-platform-tests/css/selectors/focus-visible-005.html [ Skip ]
 
 webkit.org/b/224842 [ BigSur Debug ] http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ Pass Timeout ]
+
+webkit.org/b/225421 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html [ Pass Failure ]
