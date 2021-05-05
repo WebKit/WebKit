@@ -69,14 +69,14 @@ RemoteLayerBackingStore::~RemoteLayerBackingStore()
         context->backingStoreWillBeDestroyed(*this);
 }
 
-void RemoteLayerBackingStore::ensureBackingStore(WebCore::FloatSize size, float scale, bool acceleratesDrawing, bool deepColor, bool isOpaque)
+void RemoteLayerBackingStore::ensureBackingStore(Type type, WebCore::FloatSize size, float scale, bool deepColor, bool isOpaque)
 {
-    if (m_size == size && m_scale == scale && m_deepColor == deepColor && m_acceleratesDrawing == acceleratesDrawing && m_isOpaque == isOpaque)
+    if (m_type == type && m_size == size && m_scale == scale && m_deepColor == deepColor && m_isOpaque == isOpaque)
         return;
 
+    m_type = type;
     m_size = size;
     m_scale = scale;
-    m_acceleratesDrawing = acceleratesDrawing;
     m_deepColor = deepColor;
     m_isOpaque = isOpaque;
 
@@ -98,19 +98,24 @@ void RemoteLayerBackingStore::clearBackingStore()
 
 void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 {
+    encoder << m_type;
     encoder << m_size;
     encoder << m_scale;
-    encoder << m_acceleratesDrawing;
     encoder << m_isOpaque;
 
     Optional<ImageBufferBackendHandle> handle;
     if (m_frontBuffer.imageBuffer) {
-        if (m_frontBuffer.imageBuffer->renderingMode() == WebCore::RenderingMode::Unaccelerated)
+        switch (m_type) {
+        case Type::IOSurface:
+            if (m_frontBuffer.imageBuffer->canMapBackingStore())
+                handle = static_cast<AcceleratedImageBufferShareableMappedBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
+            else
+                handle = static_cast<AcceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
+            break;
+        case Type::Bitmap:
             handle = static_cast<UnacceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
-        else if (m_frontBuffer.imageBuffer->canMapBackingStore())
-            handle = static_cast<AcceleratedImageBufferShareableMappedBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
-        else
-            handle = static_cast<AcceleratedImageBufferShareableBackend&>(*m_frontBuffer.imageBuffer->ensureBackendCreated()).createImageBufferBackendHandle();
+            break;
+        }
     }
 
     encoder << handle;
@@ -118,13 +123,13 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 
 bool RemoteLayerBackingStore::decode(IPC::Decoder& decoder, RemoteLayerBackingStore& result)
 {
+    if (!decoder.decode(result.m_type))
+        return false;
+
     if (!decoder.decode(result.m_size))
         return false;
 
     if (!decoder.decode(result.m_scale))
-        return false;
-
-    if (!decoder.decode(result.m_acceleratesDrawing))
         return false;
 
     if (!decoder.decode(result.m_isOpaque))
@@ -149,7 +154,7 @@ void RemoteLayerBackingStore::setNeedsDisplay()
 WebCore::PixelFormat RemoteLayerBackingStore::pixelFormat() const
 {
 #if HAVE(IOSURFACE_RGB10)
-    if (m_acceleratesDrawing && m_deepColor)
+    if (m_type == Type::IOSurface && m_deepColor)
         return m_isOpaque ? WebCore::PixelFormat::RGB10 : WebCore::PixelFormat::RGB10A8;
 #endif
 
@@ -172,7 +177,7 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
     // Sometimes, we can get two swaps ahead of the render server.
     // If we're using shared IOSurfaces, we must wait to modify
     // a surface until it no longer has outstanding clients.
-    if (m_acceleratesDrawing) {
+    if (m_type == Type::IOSurface) {
         if (!m_backBuffer.imageBuffer || m_backBuffer.imageBuffer->isInUse()) {
             std::swap(m_backBuffer, m_secondaryBackBuffer);
 
@@ -189,14 +194,22 @@ void RemoteLayerBackingStore::swapToValidFrontBuffer()
     if (m_frontBuffer.imageBuffer)
         return;
 
-    auto renderingMode = m_acceleratesDrawing ? WebCore::RenderingMode::Accelerated : WebCore::RenderingMode::Unaccelerated;
+    bool shouldUseRemoteRendering = WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM);
 
-    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM))
-        m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, renderingMode, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat());
-    else if (renderingMode == WebCore::RenderingMode::Accelerated)
-        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
-    else
-        m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+    switch (m_type) {
+    case Type::IOSurface:
+        if (shouldUseRemoteRendering)
+            m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, WebCore::RenderingMode::Accelerated, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat());
+        else
+            m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<AcceleratedImageBufferShareableMappedBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+        break;
+    case Type::Bitmap:
+        if (shouldUseRemoteRendering)
+            m_frontBuffer.imageBuffer = m_layer->context()->ensureRemoteRenderingBackendProxy().createImageBuffer(m_size, WebCore::RenderingMode::Unaccelerated, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat());
+        else
+            m_frontBuffer.imageBuffer = WebCore::ConcreteImageBuffer<UnacceleratedImageBufferShareableBackend>::create(m_size, m_scale, WebCore::DestinationColorSpace::SRGB, pixelFormat(), nullptr);
+        break;
+    }
 }
 
 bool RemoteLayerBackingStore::display()
@@ -341,7 +354,8 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
     ASSERT(m_bufferHandle);
     layer.contentsOpaque = m_isOpaque;
 
-    if (acceleratesDrawing()) {
+    switch (m_type) {
+    case Type::IOSurface:
         switch (contentsType) {
         case LayerContentsType::IOSurface: {
             auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(WTF::get<MachSendRight>(*m_bufferHandle)), WebCore::sRGBColorSpaceRef());
@@ -352,12 +366,12 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
             layer.contents = (__bridge id)adoptCF(CAMachPortCreate(WTF::get<MachSendRight>(*m_bufferHandle).leakSendRight())).get();
             break;
         }
-        return;
+        break;
+    case Type::Bitmap:
+        auto bitmap = ShareableBitmap::create(WTF::get<ShareableBitmap::Handle>(*m_bufferHandle));
+        layer.contents = (__bridge id)bitmap->makeCGImageCopy().get();
+        break;
     }
-
-    ASSERT(!acceleratesDrawing());
-    auto bitmap = ShareableBitmap::create(WTF::get<ShareableBitmap::Handle>(*m_bufferHandle));
-    layer.contents = (__bridge id)bitmap->makeCGImageCopy().get();
 }
 
 std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> RemoteLayerBackingStore::takePendingFlusher()
@@ -365,9 +379,9 @@ std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> RemoteLayerBackingStore::
     return std::exchange(m_frontBufferFlusher, nullptr);
 }
 
-bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolatile)
+bool RemoteLayerBackingStore::setBufferVolatility(BufferType bufferType, bool isVolatile)
 {
-    if (!acceleratesDrawing())
+    if (m_type != Type::IOSurface)
         return true;
 
     // Return value is true if we succeeded in making volatile.
@@ -397,7 +411,7 @@ bool RemoteLayerBackingStore::setBufferVolatility(BufferType type, bool isVolati
         return previousState == WebCore::VolatilityState::Empty;
     };
 
-    switch (type) {
+    switch (bufferType) {
     case BufferType::Front:
         if (isVolatile)
             return makeVolatile(m_frontBuffer);

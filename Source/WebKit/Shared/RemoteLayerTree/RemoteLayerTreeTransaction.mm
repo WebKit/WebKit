@@ -787,14 +787,24 @@ void RemoteLayerTreeTransaction::setLayerIDsWithNewlyUnreachableBackingStore(Vec
 
 #if !defined(NDEBUG) || !LOG_DISABLED
 
+static const char* nameForBackingStoreType(RemoteLayerBackingStore::Type type)
+{
+    switch (type) {
+    case RemoteLayerBackingStore::Type::IOSurface:
+        return "IOSurface";
+    case RemoteLayerBackingStore::Type::Bitmap:
+        return "Bitmap";
+    }
+    return nullptr;
+}
+
 static TextStream& operator<<(TextStream& ts, const RemoteLayerBackingStore& backingStore)
 {
     ts << backingStore.size();
     ts << " scale=" << backingStore.scale();
     if (backingStore.isOpaque())
         ts << " opaque";
-    if (backingStore.acceleratesDrawing())
-        ts << " accelerated";
+    ts << " " << nameForBackingStoreType(backingStore.type());
     return ts;
 }
 

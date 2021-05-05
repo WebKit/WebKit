@@ -1,3 +1,31 @@
+2021-05-05  Tim Horton  <timothy_horton@apple.com>
+
+        Add and adopt RemoteLayerBackingStore::Type (instead of "accelerates drawing" bit)
+        https://bugs.webkit.org/show_bug.cgi?id=225384
+
+        Reviewed by Anders Carlsson.
+
+        No new tests, no behavior change, just refactoring.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::type const):
+        (WebKit::RemoteLayerBackingStore::acceleratesDrawing const): Deleted.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::ensureBackingStore):
+        (WebKit::RemoteLayerBackingStore::encode const):
+        (WebKit::RemoteLayerBackingStore::decode):
+        (WebKit::RemoteLayerBackingStore::pixelFormat const):
+        (WebKit::RemoteLayerBackingStore::swapToValidFrontBuffer):
+        (WebKit::RemoteLayerBackingStore::applyBackingStoreToLayer):
+        (WebKit::RemoteLayerBackingStore::setBufferVolatility):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::nameForBackingStoreType):
+        (WebKit::operator<<):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::updateBackingStore):
+        In preparation for adding another backing store type, refactor RemoteLayerBackingStore
+        to have a type enum instead of an "accelerates drawing" bit.
+
 2021-05-05  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Remove access to the unused 'nvram' system command
