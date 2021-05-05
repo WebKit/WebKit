@@ -4630,3 +4630,5 @@ fast/text/offsetForPosition-complex-fallback.html [ Pass Failure ]
 webexposed/counter-style-image-symbols-not-exposed.html [ Skip ]
 
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
+
+fast/canvas/CanvasRenderingContext2DSettings-colorSpace-enabled.html [ Skip ]

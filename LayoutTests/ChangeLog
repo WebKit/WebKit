@@ -1,3 +1,10 @@
+2021-05-05  Sam Weinig  <weinig@apple.com>
+
+        Skip fast/canvas/CanvasRenderingContext2DSettings-colorSpace-enabled.html on windows
+        until the preference has been hooked up.
+
+        * platform/win/TestExpectations:
+
 2021-05-05  Robert Jenner  <jenner@apple.com>
 
         [ macOS/iOS Debug ] http/wpt/crypto/unwrap-rsa-key-crash.any.html (layout-test) is a flaky crash
