@@ -1,3 +1,17 @@
+2021-05-05  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r272414?): [macOS] TestWebKitAPI.GPUProcess.CrashWhilePlayingVideo is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=221742
+        <rdar://problem/74220428>
+
+        Reviewed by Youenn Fablet.
+
+        Make sure the video is looping so that it cannot stop playing before the end of the test.
+        This is a speculative fix since I haven't been able to reproduce the issue.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2021-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Wrong cookie timestamp in case of long expire time

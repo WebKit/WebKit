@@ -317,6 +317,13 @@ TEST(GPUProcess, CrashWhilePlayingVideo)
     [webView synchronouslyLoadTestPageNamed:@"large-videos-with-audio"];
 
     __block bool done = false;
+    [webView evaluateJavaScript:@"document.getElementsByTagName('video')[0].loop = true;" completionHandler:^(id result, NSError *error) {
+        EXPECT_TRUE(!error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
     [webView evaluateJavaScript:@"document.getElementsByTagName('video')[0].play() && true" completionHandler:^(id result, NSError *error) {
         EXPECT_TRUE(!error);
         done = true;
