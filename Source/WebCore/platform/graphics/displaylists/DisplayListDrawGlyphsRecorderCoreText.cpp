@@ -336,7 +336,7 @@ void DrawGlyphsRecorder::recordDrawGlyphs(CGRenderingStateRef, CGGStateRef gstat
     updateStrokeColor(CGGStateGetStrokeColor(gstate));
     updateShadow(CGGStateGetStyle(gstate));
 
-    m_owner.appendDrawGraphsItemWithCachedFont(*m_originalFont, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);
+    m_owner.appendDrawGlyphsItemWithCachedFont(*m_originalFont, glyphs, computeAdvancesFromPositions(positions, count, currentTextMatrix).data(), count, currentTextMatrix.mapPoint(positions[0]), m_smoothingMode);
 
     m_owner.concatCTM(inverseCTMFixup);
 }
@@ -414,7 +414,7 @@ static GlyphsAndAdvances filterOutOTSVGGlyphs(const Font& font, const GlyphBuffe
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
     if (m_drawGlyphsDeconstruction == DrawGlyphsDeconstruction::DontDeconstruct) {
-        m_owner.appendDrawGraphsItemWithCachedFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
+        m_owner.appendDrawGlyphsItemWithCachedFont(font, glyphs, advances, numGlyphs, startPoint, smoothingMode);
         return;
     }
 

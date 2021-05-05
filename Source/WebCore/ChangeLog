@@ -1,5 +1,25 @@
 2021-05-05  Cameron McCormack  <heycam@apple.com>
 
+        Rename DisplayList::Recorder::appendDrawGraphsItemWithCachedFont.
+        https://bugs.webkit.org/show_bug.cgi?id=225382
+
+        Reviewed by Simon Fraser.
+
+        It appends a DrawGlyphsItem, not a DrawGraphsItem.
+
+        * platform/graphics/displaylists/DisplayListDrawGlyphsRecorderCoreText.cpp:
+        (WebCore::DisplayList::DrawGlyphsRecorder::recordDrawGlyphs):
+        (WebCore::DisplayList::DrawGlyphsRecorder::drawGlyphs):
+        * platform/graphics/displaylists/DisplayListDrawGlyphsRecorderHarfBuzz.cpp:
+        (WebCore::DisplayList::DrawGlyphsRecorder::drawGlyphs):
+        * platform/graphics/displaylists/DisplayListDrawGlyphsRecorderWin.cpp:
+        (WebCore::DisplayList::DrawGlyphsRecorder::drawGlyphs):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::appendDrawGlyphsItemWithCachedFont):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
+2021-05-05  Cameron McCormack  <heycam@apple.com>
+
         Fix copy paste error in Recorder::canAppendItemOfType.
         https://bugs.webkit.org/show_bug.cgi?id=225380
 

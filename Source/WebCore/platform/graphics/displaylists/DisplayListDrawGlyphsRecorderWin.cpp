@@ -43,7 +43,7 @@ DrawGlyphsRecorder::DrawGlyphsRecorder(Recorder& owner, DrawGlyphsDeconstruction
 
 void DrawGlyphsRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs, const FloatPoint& startPoint, FontSmoothingMode smoothingMode)
 {
-    m_owner.appendDrawGraphsItemWithCachedFont(font, glyphs, advances, numGlyphs, startPoint, m_smoothingMode);
+    m_owner.appendDrawGlyphsItemWithCachedFont(font, glyphs, advances, numGlyphs, startPoint, m_smoothingMode);
 }
 
 } // namespace DisplayList
