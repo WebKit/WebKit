@@ -38,9 +38,43 @@
 
 namespace WebCore {
 
+static inline bool isValidValueForIdentMediaFeature(const AtomString& feature, const CSSPrimitiveValue& value)
+{
+    auto valueID = value.valueID();
+
+    if (feature == MediaFeatureNames::orientation)
+        return valueID == CSSValuePortrait || valueID == CSSValueLandscape;
+    if (feature == MediaFeatureNames::colorGamut)
+        return valueID == CSSValueSRGB || valueID == CSSValueP3 || valueID == CSSValueRec2020;
+    if (feature == MediaFeatureNames::anyHover || feature == MediaFeatureNames::hover) // FIXME: remove `on-demand` that's no longer in the spec.
+        return valueID == CSSValueOnDemand || valueID == CSSValueHover || valueID == CSSValueNone;
+    if (feature == MediaFeatureNames::anyPointer || feature == MediaFeatureNames::pointer)
+        return valueID == CSSValueFine || valueID == CSSValueCoarse || valueID == CSSValueNone;
+    if (feature == MediaFeatureNames::invertedColors)
+        return valueID == CSSValueInverted || valueID == CSSValueNone;
+#if ENABLE(APPLICATION_MANIFEST)
+    if (feature == MediaFeatureNames::displayMode)
+        return valueID == CSSValueFullscreen || valueID == CSSValueStandalone || valueID == CSSValueMinimalUi || valueID == CSSValueBrowser;
+#endif
+#if ENABLE(DARK_MODE_CSS)
+    if (feature == MediaFeatureNames::prefersColorScheme)
+        return valueID == CSSValueLight || valueID == CSSValueDark;
+#endif
+    if (feature == MediaFeatureNames::prefersContrast) // FIXME: remove `forced` that's no longer in the spec.
+        return valueID == CSSValueNoPreference || valueID == CSSValueMore || valueID == CSSValueLess || valueID == CSSValueForced;
+    if (feature == MediaFeatureNames::prefersReducedMotion)
+        return valueID == CSSValueNoPreference || valueID == CSSValueReduce;
+    if (feature == MediaFeatureNames::prefersDarkInterface)
+        return valueID == CSSValuePrefers || valueID == CSSValueNoPreference;
+    if (feature == MediaFeatureNames::dynamicRange)
+        return valueID == CSSValueHigh || valueID == CSSValueStandard;
+
+    return false;
+}
+
 static inline bool featureWithValidIdent(const AtomString& mediaFeature, const CSSPrimitiveValue& value, const MediaQueryParserContext& context)
 {
-    if (value.primitiveType() != CSSUnitType::CSS_IDENT)
+    if (value.primitiveType() != CSSUnitType::CSS_IDENT || !isValidValueForIdentMediaFeature(mediaFeature, value))
         return false;
 
     return mediaFeature == MediaFeatureNames::orientation
@@ -54,7 +88,7 @@ static inline bool featureWithValidIdent(const AtomString& mediaFeature, const C
     || mediaFeature == MediaFeatureNames::displayMode
 #endif
 #if ENABLE(DARK_MODE_CSS)
-    || (mediaFeature == MediaFeatureNames::prefersColorScheme)
+    || mediaFeature == MediaFeatureNames::prefersColorScheme
 #endif
     || mediaFeature == MediaFeatureNames::prefersContrast
     || mediaFeature == MediaFeatureNames::prefersReducedMotion

@@ -1,3 +1,15 @@
+2021-05-05  Tim Nguyen  <ntim@apple.com>
+
+        Invalid media query keyword values should not be parsable
+        https://bugs.webkit.org/show_bug.cgi?id=225282
+
+        Reviewed by Dean Jackson.
+
+        Updated WPT expectations.
+
+        * web-platform-tests/css/mediaqueries/prefers-color-scheme-expected.txt:
+        * web-platform-tests/css/mediaqueries/prefers-reduced-motion-expected.txt:
+
 2021-05-05  Chris Lord  <clord@igalia.com>
 
         Update WPT OffscreenCanvas tests to respect [EnforceRange]

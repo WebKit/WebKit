@@ -1,3 +1,16 @@
+2021-05-05  Tim Nguyen  <ntim@apple.com>
+
+        Invalid media query keyword values should not be parsable
+        https://bugs.webkit.org/show_bug.cgi?id=225282
+
+        Reviewed by Dean Jackson.
+
+        Updated WPT expectations.
+
+        * css/MediaQueryExpression.cpp:
+        (WebCore::isValidValueForIdentMediaFeature):
+        (WebCore::featureWithValidIdent):
+
 2021-05-05  Alex Christensen  <achristensen@webkit.org>
 
         Add WebKitAdditions stubs for new NetworkLoadMetrics
