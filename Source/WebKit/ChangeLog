@@ -1,5 +1,38 @@
 2021-05-05  Ruben Turcios  <rubent_22@apple.com>
 
+        Cherry-pick r277026. rdar://problem/77579962
+
+    REGRESSION (r276633): ASSERTION FAILED: !forbidMallocUseScopeCount || disableMallocRestrictionScopeCount
+    https://bugs.webkit.org/show_bug.cgi?id=225374
+    <rdar://problem/77533237>
+    
+    Reviewed by Chris Dumez.
+    
+    Disable memory allocation checks in speech recognition code path.
+    No change of behavior.
+    
+    * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+    (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::storageChanged):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277026 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-05  Youenn Fablet  <youenn@apple.com>
+
+            REGRESSION (r276633): ASSERTION FAILED: !forbidMallocUseScopeCount || disableMallocRestrictionScopeCount
+            https://bugs.webkit.org/show_bug.cgi?id=225374
+            <rdar://problem/77533237>
+
+            Reviewed by Chris Dumez.
+
+            Disable memory allocation checks in speech recognition code path.
+            No change of behavior.
+
+            * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+            (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::storageChanged):
+
+2021-05-05  Ruben Turcios  <rubent_22@apple.com>
+
         Cherry-pick r277030. rdar://problem/77573075
 
     Sampled Page Top Color: take additional snapshots further down the page to see if the sampled top color is more than just a tiny strip
