@@ -127,6 +127,10 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 // Expects 0 (disables page top color sampling entirely) or any positive number.
 @property (nonatomic, setter=_setSampledPageTopColorMaxDifference:) double _sampledPageTopColorMaxDifference WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+// How far down the page the sampled page top color needs to extend in order to be considered valid.
+// Expects 0 (the color doesn't need to continue into the page at all) or any positive number.
+@property (nonatomic, setter=_setSampledPageTopColorMinHeight:) double _sampledPageTopColorMinHeight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @end
 
 #if TARGET_OS_IPHONE

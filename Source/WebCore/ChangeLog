@@ -1,3 +1,24 @@
+2021-05-05  Devin Rousso  <drousso@apple.com>
+
+        Sampled Page Top Color: take additional snapshots further down the page to see if the sampled top color is more than just a tiny strip
+        https://bugs.webkit.org/show_bug.cgi?id=225323
+
+        Reviewed by Beth Dakin.
+
+        Add a `SampledPageTopColorMinHeight` setting that controls how far down the sampled page top
+        color needs to extend in order for us to not bail. If the value > 0, we take an additional
+        snapshot at (0, SampledPageTopColorMinHeight) and (width, SampledPageTopColorMinHeight),
+        comparing each to the snapshot directly above (e.g. (0, SampledPageTopColorMinHeight) is
+        compared to (0, 0)) using the `SampledPageTopColorMaxDifference`. Depending on the value, if
+        the color across the top of the page is only a small strip, these extra snapshot comparisons
+        will prevent a resulting color from being derived.
+
+        Tests: SampledPageTopColor.VerticalGradientBelowMaxDifference
+               SampledPageTopColor.VerticalGradientAboveMaxDifference
+
+        * dom/Document.cpp:
+        (WebCore::Document::determineSampledPageTopColor):
+
 2021-05-05  Youenn Fablet  <youenn@apple.com>
 
         No need to error a fetch body stream if its request or response is stopped
