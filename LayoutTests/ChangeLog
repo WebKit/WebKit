@@ -1,3 +1,15 @@
+2021-05-05  Chris Lord  <clord@igalia.com>
+
+        Update WPT OffscreenCanvas tests to respect [EnforceRange]
+        https://bugs.webkit.org/show_bug.cgi?id=225391
+
+        Reviewed by Darin Adler.
+
+        WPT html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.html
+        passes after updating.
+
+        * platform/glib/TestExpectations:
+
 2021-05-05  Jean-Yves Avenard  <jya@apple.com>
 
         imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html is a flakey

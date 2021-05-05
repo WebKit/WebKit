@@ -1,3 +1,0 @@
-
-PASS getImageData() works for sizes smaller than one pixel
-

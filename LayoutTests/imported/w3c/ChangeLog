@@ -1,5 +1,25 @@
 2021-05-05  Chris Lord  <clord@igalia.com>
 
+        Update WPT OffscreenCanvas tests to respect [EnforceRange]
+        https://bugs.webkit.org/show_bug.cgi?id=225391
+
+        Reviewed by Darin Adler.
+
+        Synchronise with upstream WPT OffscreenCanvas tests.
+
+        * web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.worker-expected.txt: Removed.
+        * web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.worker.html: Removed.
+        * web-platform-tests/html/canvas/offscreen/pixel-manipulation/2d.imageData.get.tiny.worker.js: Removed.
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.attributes.idl-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.attributes.idl.html:
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.attributes.idl.worker-expected.txt:
+        * web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.attributes.idl.worker.js:
+        (t.step):
+
+2021-05-05  Chris Lord  <clord@igalia.com>
+
         OffscreenCanvas should preserve context transform after transferToImageBitmap
         https://bugs.webkit.org/show_bug.cgi?id=225304
 
