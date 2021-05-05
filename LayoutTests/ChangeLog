@@ -1,3 +1,12 @@
+2021-05-05  Amir Mark Jr  <amir_mark@apple.com>
+
+        [BigSur WK1] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v* is consistently failing
+        https://bugs.webkit.org/show_bug.cgi?id=221300
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2021-05-05  Sam Weinig  <weinig@apple.com>
 
         Skip fast/canvas/CanvasRenderingContext2DSettings-colorSpace-enabled.html on windows
