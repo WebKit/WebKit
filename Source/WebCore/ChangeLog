@@ -1,5 +1,24 @@
 2021-05-05  Devin Rousso  <drousso@apple.com>
 
+        Sampled Page Top Color: tie into existing TCADA/RLTT systems so that the value is kept in sync with painting
+        https://bugs.webkit.org/show_bug.cgi?id=225405
+
+        Reviewed by Tim Horton.
+
+        Instead of sending an IPC to the UIProcess whenever the logic to determine the sampled page
+        top color finishes, wait to dispatch the IPC until we're about to render (just like theme
+        color and page extended background color). On macOS, this means the IPC is dispatched inside
+        `TiledCoreAnimationDrawingArea::updateRendering`. On iOS, the `Color` is included as part of
+        the `RemoteLayerTreeTransaction`.
+
+        * dom/Document.cpp:
+        (WebCore::Document::determineSampledPageTopColor):
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::sampledPageTopColorChanged const): Renamed from `didSamplePageTopColor`.
+
+2021-05-05  Devin Rousso  <drousso@apple.com>
+
         Sampled Page Top Color: don't snapshot if the hit test location is an image or has an animation
         https://bugs.webkit.org/show_bug.cgi?id=225338
 

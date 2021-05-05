@@ -4026,6 +4026,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setRenderTreeSize(corePage()->renderTreeSize());
     layerTransaction.setThemeColor(corePage()->themeColor());
     layerTransaction.setPageExtendedBackgroundColor(corePage()->pageExtendedBackgroundColor());
+    layerTransaction.setSampledPageTopColor(corePage()->sampledPageTopColor());
 
     layerTransaction.setBaseLayoutViewportSize(frameView->baseLayoutViewportSize());
     layerTransaction.setMinStableLayoutViewportOrigin(frameView->minStableLayoutViewportOrigin());
@@ -4056,6 +4057,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
 
     m_pendingThemeColorChange = false;
     m_pendingPageExtendedBackgroundColorChange = false;
+    m_pendingSampledPageTopColorChange = false;
 
     if (m_hasPendingEditorStateUpdate) {
         layerTransaction.setEditorState(editorState());
@@ -6457,9 +6459,14 @@ void WebPage::flushPendingPageExtendedBackgroundColorChange()
     send(Messages::WebPageProxy::PageExtendedBackgroundColorDidChange(m_page->pageExtendedBackgroundColor()));
 }
 
-void WebPage::didSamplePageTopColor()
+void WebPage::flushPendingSampledPageTopColorChange()
 {
-    send(Messages::WebPageProxy::DidSamplePageTopColor(m_page->sampledPageTopColor()));
+    if (!m_pendingSampledPageTopColorChange)
+        return;
+
+    m_pendingSampledPageTopColorChange = false;
+
+    send(Messages::WebPageProxy::SampledPageTopColorChanged(m_page->sampledPageTopColor()));
 }
 
 void WebPage::flushPendingEditorStateUpdate()

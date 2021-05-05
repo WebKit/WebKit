@@ -79,7 +79,7 @@ messages -> WebPageProxy {
     DidChangePageCount(unsigned pageCount)
     ThemeColorChanged(WebCore::Color themeColor)
     PageExtendedBackgroundColorDidChange(WebCore::Color backgroundColor)
-    DidSamplePageTopColor(WebCore::Color sampledPageTopColor)
+    SampledPageTopColorChanged(WebCore::Color sampledPageTopColor)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     DidFailToInitializePlugin(String mimeType, String frameURLString, String pageURLString)
     DidBlockInsecurePluginVersion(String mimeType, String pluginURLString, String frameURLString, String pageURLString, bool replacementObscured)

@@ -2101,7 +2101,7 @@ private:
     void didChangePageCount(unsigned);
     void themeColorChanged(const WebCore::Color&);
     void pageExtendedBackgroundColorDidChange(const WebCore::Color&);
-    void didSamplePageTopColor(const WebCore::Color&);
+    void sampledPageTopColorChanged(const WebCore::Color&);
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString);
     void didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured);

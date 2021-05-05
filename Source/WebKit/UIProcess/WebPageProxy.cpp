@@ -8529,7 +8529,7 @@ void WebPageProxy::pageExtendedBackgroundColorDidChange(const Color& pageExtende
     pageClient().pageExtendedBackgroundColorDidChange();
 }
 
-void WebPageProxy::didSamplePageTopColor(const Color& sampledPageTopColor)
+void WebPageProxy::sampledPageTopColorChanged(const Color& sampledPageTopColor)
 {
     if (m_sampledPageTopColor == sampledPageTopColor)
         return;

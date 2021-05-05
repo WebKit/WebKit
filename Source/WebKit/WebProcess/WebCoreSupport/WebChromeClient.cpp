@@ -1164,9 +1164,9 @@ void WebChromeClient::pageExtendedBackgroundColorDidChange() const
     m_page.pageExtendedBackgroundColorDidChange();
 }
 
-void WebChromeClient::didSamplePageTopColor() const
+void WebChromeClient::sampledPageTopColorChanged() const
 {
-    m_page.didSamplePageTopColor();
+    m_page.sampledPageTopColorChanged();
 }
 
 void WebChromeClient::wheelEventHandlersChanged(bool hasHandlers)

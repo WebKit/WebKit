@@ -238,6 +238,9 @@ public:
     WebCore::Color pageExtendedBackgroundColor() const { return m_pageExtendedBackgroundColor; }
     void setPageExtendedBackgroundColor(WebCore::Color color) { m_pageExtendedBackgroundColor = color; }
 
+    WebCore::Color sampledPageTopColor() const { return m_sampledPageTopColor; }
+    void setSampledPageTopColor(WebCore::Color color) { m_sampledPageTopColor = color; }
+
     WebCore::IntPoint scrollPosition() const { return m_scrollPosition; }
     void setScrollPosition(WebCore::IntPoint p) { m_scrollPosition = p; }
 
@@ -317,6 +320,7 @@ private:
     WebCore::IntPoint m_scrollPosition;
     WebCore::Color m_themeColor;
     WebCore::Color m_pageExtendedBackgroundColor;
+    WebCore::Color m_sampledPageTopColor;
     double m_pageScaleFactor { 1 };
     double m_minimumScaleFactor { 1 };
     double m_maximumScaleFactor { 1 };

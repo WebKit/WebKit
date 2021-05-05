@@ -3959,7 +3959,7 @@ void Document::determineSampledPageTopColor()
 
     auto notifyDidSamplePageTopColorOnScopeExit = makeScopeExit([&] {
         if (auto* page = this->page())
-            page->chrome().client().didSamplePageTopColor();
+            page->chrome().client().sampledPageTopColorChanged();
     });
 
     // Decrease the width by one pixel so that the last snapshot is within bounds and not off-by-one.

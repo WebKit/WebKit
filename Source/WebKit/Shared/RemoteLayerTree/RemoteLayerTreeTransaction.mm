@@ -590,6 +590,8 @@ void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 
     encoder << m_themeColor;
     encoder << m_pageExtendedBackgroundColor;
+    encoder << m_sampledPageTopColor;
+
     encoder << m_pageScaleFactor;
     encoder << m_minimumScaleFactor;
     encoder << m_maximumScaleFactor;
@@ -688,6 +690,9 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
         return false;
 
     if (!decoder.decode(result.m_pageExtendedBackgroundColor))
+        return false;
+
+    if (!decoder.decode(result.m_sampledPageTopColor))
         return false;
 
     if (!decoder.decode(result.m_pageScaleFactor))

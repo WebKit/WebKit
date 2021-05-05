@@ -339,6 +339,7 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
 {
     themeColorChanged(layerTreeTransaction.themeColor());
     pageExtendedBackgroundColorDidChange(layerTreeTransaction.pageExtendedBackgroundColor());
+    sampledPageTopColorChanged(layerTreeTransaction.sampledPageTopColor());
 
     if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
         if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {

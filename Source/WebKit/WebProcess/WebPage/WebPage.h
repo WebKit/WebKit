@@ -1241,7 +1241,8 @@ public:
     void pageExtendedBackgroundColorDidChange() { m_pendingPageExtendedBackgroundColorChange = true; }
     void flushPendingPageExtendedBackgroundColorChange();
 
-    void didSamplePageTopColor();
+    void sampledPageTopColorChanged() { m_pendingSampledPageTopColorChange = true; }
+    void flushPendingSampledPageTopColorChange();
 
     void flushPendingEditorStateUpdate();
 
@@ -2143,6 +2144,7 @@ private:
     bool m_hasPendingInputContextUpdateAfterBlurringAndRefocusingElement { false };
     bool m_pendingThemeColorChange { false };
     bool m_pendingPageExtendedBackgroundColorChange { false };
+    bool m_pendingSampledPageTopColorChange { false };
     bool m_hasPendingEditorStateUpdate { false };
 
 #if ENABLE(IOS_TOUCH_EVENTS)
