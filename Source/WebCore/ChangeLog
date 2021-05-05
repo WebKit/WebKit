@@ -1,3 +1,16 @@
+2021-05-05  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][WebRTC] Wrap incoming audio buffers, complying with fastMalloc restrictions
+        https://bugs.webkit.org/show_bug.cgi?id=225351
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The audio thread should avoid calling fastMalloc for performance reasons, so audio buffers
+        are now wrapped in GStreamer buffers and passed as read-only memories to the observers.
+
+        * platform/mediastream/gstreamer/RealtimeIncomingAudioSourceLibWebRTC.cpp:
+        (WebCore::RealtimeIncomingAudioSourceLibWebRTC::OnData):
+
 2021-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Wrong cookie timestamp in case of long expire time
