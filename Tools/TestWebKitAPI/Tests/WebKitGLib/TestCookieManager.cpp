@@ -706,6 +706,33 @@ static void testCookieManagerEphemeral(CookieManagerTest* test, gconstpointer)
     g_main_loop_run(test->m_mainLoop);
 }
 
+static void testCookieManagerLongExpires(CookieManagerTest* test, gconstpointer)
+{
+    g_unlink(test->m_cookiesTextFile.get());
+    g_unlink(test->m_cookiesSQLiteFile.get());
+
+    GRefPtr<GDateTime> now = adoptGRef(g_date_time_new_now_utc());
+    GRefPtr<GDateTime> expires = adoptGRef(g_date_time_add_years(now.get(), 35));
+    GUniquePtr<char> line(g_strdup_printf("#HttpOnly_localhost\tFALSE\t/\tFALSE\t%ld\tprov\t123\tNone", g_date_time_to_unix(expires.get())));
+    test->m_cookiesTextFile.reset(g_build_filename(Test::dataDirectory(), "cookies.txt", nullptr));
+    g_file_set_contents(test->m_cookiesTextFile.get(), line.get(), -1, nullptr);
+    test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
+
+    GList* cookies = test->getCookies("http://localhost/");
+    g_assert_cmpint(g_list_length(cookies), ==, 1);
+    SoupCookie* cookie = static_cast<SoupCookie*>(cookies->data);
+    auto* cookiesExpires = soup_cookie_get_expires(cookie);
+    g_assert_nonnull(cookiesExpires);
+#if USE(SOUP2)
+    g_assert_cmpint(g_date_time_to_unix(expires.get()), ==, soup_date_to_time_t(cookiesExpires));
+#else
+    g_assert_cmpint(g_date_time_to_unix(expires.get()), ==, g_date_time_to_unix(cookiesExpires));
+#endif
+
+    test->deleteAllCookies();
+    g_assert_cmpint(g_strv_length(test->getDomains()), ==, 0);
+}
+
 #if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 #else
@@ -748,6 +775,7 @@ void beforeAll()
     CookiePersistentStorageTest::add("WebKitCookieManager", "persistent-storage", testCookieManagerPersistentStorage);
     CookieManagerTest::add("WebKitCookieManager", "persistent-storage-delete-all", testCookieManagerPersistentStorageDeleteAll);
     CookieManagerTest::add("WebKitCookieManager", "ephemeral", testCookieManagerEphemeral);
+    CookieManagerTest::add("WebKitCookieManager", "long-expires", testCookieManagerLongExpires);
 }
 
 void afterAll()

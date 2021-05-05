@@ -1,3 +1,19 @@
+2021-05-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Wrong cookie timestamp in case of long expire time
+        https://bugs.webkit.org/show_bug.cgi?id=225389
+
+        Reviewed by Adrian Perez de Castro.
+
+        There's an overflow when converting the dates in both libsoup2 and libsoup3, but for two different reasons. In
+        the case of libsoup2 we are using an int for the conversion of milliseconds to seconds which is not enough. In
+        the case of libsoup3 we are passing the value in milliseconds to g_date_time_new_from_unix_utc() that expects
+        seconds.
+
+        * platform/network/soup/CookieSoup.cpp:
+        (WebCore::msToSoupDate): Use int64_t instead of int for the cast.
+        (WebCore::Cookie::toSoupCookie const): Convert the value to seconds.
+
 2021-05-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use WeakHashSet instead of HashSet of raw pointes in Document and SVGDocumentExtensions
