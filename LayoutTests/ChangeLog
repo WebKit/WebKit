@@ -1,5 +1,16 @@
 2021-05-05  Amir Mark Jr  <amir_mark@apple.com>
 
+        [MacOS wk2] http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html is a flakey failure
+        https://bugs.webkit.org/show_bug.cgi?id=223531
+
+        Unreviewed test gardening.
+
+        Removed debug from a previous test expectation for this bug.
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-05  Amir Mark Jr  <amir_mark@apple.com>
+
         [BigSur WK1] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v* is consistently failing
         https://bugs.webkit.org/show_bug.cgi?id=221300
 
