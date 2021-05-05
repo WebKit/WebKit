@@ -1,3 +1,30 @@
+2021-05-05  Jean-Yves Avenard  <jya@apple.com>
+
+        imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html is a flakey
+        https://bugs.webkit.org/show_bug.cgi?id=225386
+        rdar://74704447
+
+        Reviewed by Eric Carlson.
+
+        When enabling/disabling a track, the web content process would send a message to the GPU process which in turn
+        would send a message back to the content process, notifying that the track configuration had changed, that would
+        then enable/disable again the track.
+        If the content process in between those IPC messages had modified the track (such as via JS call), it was
+        possible for the track status to get lost once the GPU message above got actioned.
+
+        Having the GPU process notify that a track configuration got changed when it was originally triggered by the
+        content process is unnecessary. We modify the RemoteAudioTrack and RemoteVideoTrack so that if the change came
+        from the web process, the GPU process doesn't send a message back with information that could already be obsolete.
+
+        No new tests. Fix an assertion failure in tests.
+
+        * GPUProcess/media/RemoteAudioTrackProxy.cpp:
+        (WebKit::RemoteAudioTrackProxy::enabledChanged):
+        * GPUProcess/media/RemoteAudioTrackProxy.h:
+        * GPUProcess/media/RemoteVideoTrackProxy.cpp:
+        (WebKit::RemoteVideoTrackProxy::selectedChanged):
+        * GPUProcess/media/RemoteVideoTrackProxy.h:
+
 2021-05-05  Youenn Fablet  <youenn@apple.com>
 
         Dynamically pass capture sandbox extensions to GPUProcess

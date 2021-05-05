@@ -1,3 +1,13 @@
+2021-05-05  Jean-Yves Avenard  <jya@apple.com>
+
+        imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html is a flakey
+        https://bugs.webkit.org/show_bug.cgi?id=225386
+        rdar://74704447
+
+        Reviewed by Eric Carlson.
+
+        * platform/mac-wk2/TestExpectations: Remove
+
 2021-05-04  Tyler Wilcock  <twilco.o@protonmail.com>
 
         Import webstorage WPTs

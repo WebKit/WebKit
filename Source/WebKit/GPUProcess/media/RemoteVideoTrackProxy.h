@@ -58,7 +58,11 @@ public:
     virtual ~RemoteVideoTrackProxy();
 
     TrackPrivateRemoteIdentifier identifier() const { return m_identifier; };
-    void setSelected(bool selected) { m_trackPrivate->setSelected(selected); }
+    void setSelected(bool selected)
+    {
+        m_selected = selected;
+        m_trackPrivate->setSelected(selected);
+    }
 
 private:
     RemoteVideoTrackProxy(GPUConnectionToWebProcess&, TrackPrivateRemoteIdentifier, WebCore::VideoTrackPrivate&, WebCore::MediaPlayerIdentifier);
@@ -79,6 +83,7 @@ private:
     TrackPrivateRemoteIdentifier m_identifier;
     Ref<WebCore::VideoTrackPrivate> m_trackPrivate;
     WebCore::MediaPlayerIdentifier m_mediaPlayerIdentifier;
+    bool m_selected { false };
 };
 
 } // namespace WebKit
