@@ -1,3 +1,13 @@
+2021-05-05  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Update libwpe and wpebackend-fdo
+        https://bugs.webkit.org/show_bug.cgi?id=225358
+
+        Reviewed by Adrian Perez de Castro.
+
+        * elements/sdk/libwpe.bst: Update to version 1.10.
+        * elements/sdk/wpebackend-fdo.bst: Update to 1.9.91, soon to be 1.10.
+
 2021-04-27  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Direct AVIF loading does not work.
