@@ -708,7 +708,7 @@
     (apply-message-filter
         (deny mach-message-send (with telemetry))
         (deny mach-message-send (with no-report) (message-number 1023))
-        (allow mach-message-send (with telemetry) (message-number
+        (allow mach-message-send (message-number
             1002
             1009
             1010
