@@ -109,6 +109,7 @@ private:
     void audioSamplesAvailable(const MediaTime& time, const PlatformAudioData& audioData, const AudioStreamDescription& description, size_t numberOfFrames) final
     {
 #if PLATFORM(COCOA)
+        DisableMallocRestrictionsForCurrentThreadScope scope;
         if (m_description != description) {
             ASSERT(description.platformDescription().type == PlatformDescription::CAAudioStreamBasicType);
             m_description = *WTF::get<const AudioStreamBasicDescription*>(description.platformDescription().description);
@@ -132,6 +133,7 @@ private:
 
     void storageChanged(SharedMemory* storage)
     {
+        DisableMallocRestrictionsForCurrentThreadScope scope;
         SharedMemory::Handle handle;
         if (storage)
             storage->createHandle(handle, SharedMemory::Protection::ReadOnly);

@@ -1,3 +1,17 @@
+2021-05-05  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r276633): ASSERTION FAILED: !forbidMallocUseScopeCount || disableMallocRestrictionScopeCount
+        https://bugs.webkit.org/show_bug.cgi?id=225374
+        <rdar://problem/77533237>
+
+        Reviewed by Chris Dumez.
+
+        Disable memory allocation checks in speech recognition code path.
+        No change of behavior.
+
+        * WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager.cpp:
+        (WebKit::SpeechRecognitionRealtimeMediaSourceManager::Source::storageChanged):
+
 2021-05-05  Jean-Yves Avenard  <jya@apple.com>
 
         imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html is a flakey
