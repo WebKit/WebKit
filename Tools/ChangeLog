@@ -1,3 +1,14 @@
+2021-05-05  Sam Weinig  <weinig@apple.com>
+
+        Add preliminary support for specifying a color space for 2D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225286
+
+        Reviewed by Dean Jackson.
+
+        * DumpRenderTree/TestOptions.cpp:
+        (WTR::TestOptions::defaults):
+        Add CanvasColorSpaceEnabled for windows.
+
 2021-05-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, reverting r276985.

@@ -25,10 +25,13 @@
 
 #pragma once
 
+#include "PredefinedColorSpace.h"
+
 namespace WebCore {
 
 struct CanvasRenderingContext2DSettings {
     bool desynchronized { false };
+    PredefinedColorSpace colorSpace { PredefinedColorSpace::SRGB };
 };
 
 } // namespace WebCore

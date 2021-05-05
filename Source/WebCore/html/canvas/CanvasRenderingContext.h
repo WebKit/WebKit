@@ -42,6 +42,8 @@ class HTMLVideoElement;
 class ImageBitmap;
 class TypedOMCSSImageValue;
 class WebGLObject;
+enum class DestinationColorSpace : uint8_t;
+enum class PixelFormat : uint8_t;
 
 class CanvasRenderingContext : public ScriptWrappable {
     WTF_MAKE_NONCOPYABLE(CanvasRenderingContext);
@@ -85,6 +87,9 @@ public:
     virtual bool compositingResultsNeedUpdating() const { return false; }
     virtual bool needsPreparationForDisplay() const { return false; }
     virtual void prepareForDisplay() { }
+
+    virtual PixelFormat pixelFormat() const;
+    virtual DestinationColorSpace colorSpace() const;
 
 protected:
     explicit CanvasRenderingContext(CanvasBase&);

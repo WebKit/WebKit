@@ -1,3 +1,84 @@
+2021-05-05  Sam Weinig  <weinig@apple.com>
+
+        Add preliminary support for specifying a color space for 2D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225286
+
+        Reviewed by Dean Jackson.
+
+        Tests: fast/canvas/CanvasRenderingContext2DSettings-colorSpace-disabled.html
+               fast/canvas/CanvasRenderingContext2DSettings-colorSpace-enabled.html
+               fast/canvas/canvas-color-space-display-p3.html
+
+        * CMakeLists.txt:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * html/canvas/CanvasRenderingContext2DSettings.idl:
+        * html/canvas/CanvasRenderingContext2DSettings.h:
+        Add a new setting blocked member to the CanvasRenderingContext2DSettings
+        dictionary for specifying a color space. 
+
+        * html/canvas/PredefinedColorSpace.cpp: Added.
+        * html/canvas/PredefinedColorSpace.h: Added.
+        * html/canvas/PredefinedColorSpace.idl: Added.
+        Add a new IDL enumeration to represent the possible color spaces supported.
+        For ports that don't support DisplayP3, trying to use it will result in 
+        type error from JS.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        Add checks for color space and pixel format to 2d context reset optimation.
+        This can happen if the image buffer is allocated prior to the context being
+        requested (such as via canvas.toDataURL() or canvas.toBlob()).
+
+        (WebCore::HTMLCanvasElement::createImageBuffer const):
+        Pass the correct color space and pixel format (though
+        the later is always BGRA8 at the moment) to the ImageBuffer
+        create function to make a backing store in the right format.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::createBufferForPainting const):
+        * html/HTMLVideoElement.h:
+        Pass color space and pixel format through to ensure the helper
+        buffer matches the correct color space.
+
+        * html/ImageBitmap.cpp:
+        (WebCore::ImageBitmap::createPromise):
+        Pass the existing defaults to HTMLVideoElement::createBufferForPainting.
+        In the future, ImageBitmap will also gain color space and pixel
+        format specificity and this will be updated.
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::pixelFormat const):
+        (WebCore::CanvasRenderingContext::colorSpace const):
+        * html/canvas/CanvasRenderingContext.h:
+        Add virtual base implementations of colorSpace and pixelFormat
+        which CanvasRenderingContext2D can override to return the
+        values specified in the CanvasRenderingContext2DSettings.
+
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fontProxy const):
+        Fix incorrect formatting.
+
+        (WebCore::CanvasRenderingContext2D::pixelFormat const):
+        (WebCore::CanvasRenderingContext2D::colorSpace const):
+        Add overrides, return m_settings.colorSpace for colorSpace.
+
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::drawImage):
+        (WebCore::CanvasRenderingContext2DBase::createCompositingBuffer):
+        (WebCore::CanvasRenderingContext2DBase::createPattern):
+        (WebCore::CanvasRenderingContext2DBase::drawTextUnchecked):
+        Pass along the colorSpace and pixelFormat when creating buffers.
+
+        * html/shadow/DateTimeSymbolicFieldElement.cpp:
+        Add missing includes that are now needed.
+
 2021-05-05  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][WebRTC] Wrap incoming audio buffers, complying with fastMalloc restrictions

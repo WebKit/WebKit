@@ -1067,6 +1067,7 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/OffscreenCanvasRenderingContext2D.idl
     html/canvas/PaintRenderingContext2D.idl
     html/canvas/Path2D.idl
+    html/canvas/PredefinedColorSpace.idl
 
     html/track/AudioTrack.idl
     html/track/AudioTrackList.idl

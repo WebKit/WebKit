@@ -1,3 +1,15 @@
+2021-05-05  Sam Weinig  <weinig@apple.com>
+
+        Add preliminary support for specifying a color space for 2D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225286
+
+        Reviewed by Dean Jackson.
+
+        Add new experimental feature, CanvasColorSpaceEnabled, which blocks
+        access to the new ability to specify color spaces for 2D canvas.
+
+        * Scripts/Preferences/WebPreferencesExperimental.yaml:
+
 2021-05-04  Alex Christensen  <achristensen@webkit.org>
 
         Don't iterate NetworkProcessProxy::m_websiteDataStores

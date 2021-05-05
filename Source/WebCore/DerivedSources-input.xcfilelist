@@ -1098,6 +1098,7 @@ $(PROJECT_DIR)/html/canvas/OESVertexArrayObject.idl
 $(PROJECT_DIR)/html/canvas/OffscreenCanvasRenderingContext2D.idl
 $(PROJECT_DIR)/html/canvas/PaintRenderingContext2D.idl
 $(PROJECT_DIR)/html/canvas/Path2D.idl
+$(PROJECT_DIR)/html/canvas/PredefinedColorSpace.idl
 $(PROJECT_DIR)/html/canvas/WebGL2RenderingContext.idl
 $(PROJECT_DIR)/html/canvas/WebGLActiveInfo.idl
 $(PROJECT_DIR)/html/canvas/WebGLBuffer.idl

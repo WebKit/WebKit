@@ -1345,6 +1345,7 @@ html/canvas/OffscreenCanvasRenderingContext2D.cpp
 html/canvas/PaintRenderingContext2D.cpp
 html/canvas/Path2D.cpp
 html/canvas/PlaceholderRenderingContext.cpp
+html/canvas/PredefinedColorSpace.cpp
 html/canvas/WebGL2RenderingContext.cpp
 html/canvas/WebGLBuffer.cpp
 html/canvas/WebGLColorBufferFloat.cpp
@@ -3368,6 +3369,7 @@ JSPositionCallback.cpp
 JSPositionErrorCallback.cpp
 JSPositionOptions.cpp
 JSPostMessageOptions.cpp
+JSPredefinedColorSpace.cpp
 JSProcessingInstruction.cpp
 JSProgressEvent.cpp
 JSPromiseRejectionEvent.cpp

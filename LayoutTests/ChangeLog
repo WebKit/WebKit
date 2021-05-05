@@ -1,3 +1,19 @@
+2021-05-05  Sam Weinig  <weinig@apple.com>
+
+        Add preliminary support for specifying a color space for 2D canvas
+        https://bugs.webkit.org/show_bug.cgi?id=225286
+
+        Reviewed by Dean Jackson.
+
+        Add basic tests for color space in canvas support.
+
+        * fast/canvas/CanvasRenderingContext2DSettings-colorSpace-disabled-expected.txt: Added.
+        * fast/canvas/CanvasRenderingContext2DSettings-colorSpace-disabled.html: Added.
+        * fast/canvas/CanvasRenderingContext2DSettings-colorSpace-enabled-expected.txt: Added.
+        * fast/canvas/CanvasRenderingContext2DSettings-colorSpace-enabled.html: Added.
+        * fast/canvas/canvas-color-space-display-p3-expected.html: Added.
+        * fast/canvas/canvas-color-space-display-p3.html: Added.
+
 2021-05-05  Chris Lord  <clord@igalia.com>
 
         Update WPT OffscreenCanvas tests to respect [EnforceRange]

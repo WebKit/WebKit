@@ -245,6 +245,18 @@ CSSTypedOMEnabled:
       "ENABLE(EXPERIMENTAL_FEATURES) && (PLATFORM(GTK) || PLATFORM(WPE))": true
       default: false
 
+CanvasColorSpaceEnabled:
+  type: bool
+  humanReadableName: "Canvas Color Spaces"
+  humanReadableDescription: "Enable use of predefined canvas color spaces"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CaptureVideoInGPUProcessEnabled:
   type: bool
   humanReadableName: "GPU Process: Video Capture"

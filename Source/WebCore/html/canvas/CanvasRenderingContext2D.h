@@ -61,6 +61,9 @@ private:
 
     bool is2d() const final { return true; }
     const FontProxy* fontProxy() final;
+    PixelFormat pixelFormat() const final;
+    DestinationColorSpace colorSpace() const final;
+
     void setFontWithoutUpdatingStyle(const String&);
 
     void drawTextInternal(const String& text, float x, float y, bool fill, Optional<float> maxWidth = WTF::nullopt);
