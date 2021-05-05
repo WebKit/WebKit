@@ -1,3 +1,39 @@
+2021-05-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitscmpy] Scope classes used in TaskPool to object
+        https://bugs.webkit.org/show_bug.cgi?id=225361
+        <rdar://problem/77514131>
+
+        Reviewed by Dewei Zhu.
+
+        The classes used by TaskPool must be stand-alone because they are passed between processes.
+        However, it makes sense that those classes are scoped to the TaskPool object since their
+        usage should always be associated with the TaskPool object
+
+        * Scripts/libraries/webkitcorepy/setup.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py:
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (_Message): Renamed from Message.
+        (_Task): Renamed from Task.
+        (_Result): Renamed from Result.
+        (_Log): Renamed from Log.
+        (_Print): Renamed from Print.
+        (_State): Renamed from State.
+        (_ChildException): Renamed from ChildException.
+        (_BiDirectionalQueue): Renamed from BiDirectionalQueue.
+        (_Process): Renamed from Process.
+        (TaskPool):
+        (TaskPool.do):
+        (Message): Renamed to _Message..
+        (Task): Renamed to _Task.
+        (Result): Renamed to _Result.
+        (Log): Renamed to _Log.
+        (Print): Renamed to _Print.
+        (State): Renamed to _State.
+        (ChildException): Renamed to _ChildException.
+        (BiDirectionalQueue): Renamed to _BiDirectionalQueue.
+        (Process): Renamed to _Process.
+
 2021-05-04  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, try and re-enable AppleLanguagesTest.UpdateAppleLanguages on Apple Silicon.
