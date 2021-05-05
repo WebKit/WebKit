@@ -120,6 +120,8 @@ private:
     void terminateWebProcess(WebCore::ProcessIdentifier);
     void processIsReadyToExit();
 
+    void updateSandboxAccess(bool allowAudioCapture, bool allowVideoCapture);
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);
 #endif
@@ -129,6 +131,11 @@ private:
 #if ENABLE(MEDIA_STREAM)
     bool m_useMockCaptureDevices { false };
     uint64_t m_orientation { 0 };
+#endif
+#if PLATFORM(COCOA)
+    bool m_hasSentTCCDSandboxExtension { false };
+    bool m_hasSentCameraSandboxExtension { false };
+    bool m_hasSentMicrophoneSandboxExtension { false };
 #endif
     HashSet<PAL::SessionID> m_sessionIDs;
 };

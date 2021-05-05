@@ -1,3 +1,32 @@
+2021-05-05  Youenn Fablet  <youenn@apple.com>
+
+        Dynamically pass capture sandbox extensions to GPUProcess
+        https://bugs.webkit.org/show_bug.cgi?id=225319
+
+        Reviewed by Eric Carlson.
+
+        Make sure to send the sandbox extensions for all WKWebView applications.
+        We do so once we are ready to start capture since TCC access should have been granted at that point.
+        Manually tested.
+
+        * GPUProcess/GPUProcess.cpp:
+        (WebKit::GPUProcess::initializeGPUProcess):
+        (WebKit::GPUProcess::updateSandboxAccess):
+        * GPUProcess/GPUProcess.h:
+        * GPUProcess/GPUProcess.messages.in:
+        * GPUProcess/GPUProcessCreationParameters.cpp:
+        (WebKit::GPUProcessCreationParameters::encode const):
+        (WebKit::GPUProcessCreationParameters::decode):
+        * GPUProcess/GPUProcessCreationParameters.h:
+        * UIProcess/GPU/GPUProcessProxy.cpp:
+        (WebKit::GPUProcessProxy::GPUProcessProxy):
+        (WebKit::GPUProcessProxy::updateSandboxAccess):
+        (WebKit::GPUProcessProxy::updateCaptureAccess):
+        (WebKit::isSafari): Deleted.
+        (WebKit::shouldCreateCameraSandboxExtension): Deleted.
+        (WebKit::shouldCreateMicrophoneSandboxExtension): Deleted.
+        * UIProcess/GPU/GPUProcessProxy.h:
+
 2021-05-04  Peng Liu  <peng.liu6@apple.com>
 
         [GPUP] Implement SourceBufferPrivateRemote::bufferFull()

@@ -43,16 +43,8 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
 {
 #if ENABLE(MEDIA_STREAM)
     encoder << useMockCaptureDevices;
-    encoder << cameraSandboxExtensionHandle;
-#if HAVE(AUDIT_TOKEN)
-    encoder << appleCameraServicePathSandboxExtensionHandle;
-#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-    encoder << additionalAppleCameraServicePathSandboxExtensionHandle;
-#endif
-#endif // HAVE(AUDIT_TOKEN)
+#if PLATFORM(MAC)
     encoder << microphoneSandboxExtensionHandle;
-#if PLATFORM(IOS)
-    encoder << tccSandboxExtensionHandle;
 #endif
 #endif
     encoder << parentPID;
@@ -73,20 +65,8 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
 #if ENABLE(MEDIA_STREAM)
     if (!decoder.decode(result.useMockCaptureDevices))
         return false;
-    if (!decoder.decode(result.cameraSandboxExtensionHandle))
-        return false;
-#if HAVE(AUDIT_TOKEN)
-    if (!decoder.decode(result.appleCameraServicePathSandboxExtensionHandle))
-        return false;
-#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-    if (!decoder.decode(result.additionalAppleCameraServicePathSandboxExtensionHandle))
-        return false;
-#endif
-#endif // HAVE(AUDIT_TOKEN)
+#if PLATFORM(MAC)
     if (!decoder.decode(result.microphoneSandboxExtensionHandle))
-        return false;
-#if PLATFORM(IOS)
-    if (!decoder.decode(result.tccSandboxExtensionHandle))
         return false;
 #endif
 #endif

@@ -208,18 +208,10 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 
 #if ENABLE(MEDIA_STREAM)
     setMockCaptureDevicesEnabled(parameters.useMockCaptureDevices);
-    SandboxExtension::consumePermanently(parameters.cameraSandboxExtensionHandle);
-#if HAVE(AUDIT_TOKEN)
-    SandboxExtension::consumePermanently(parameters.appleCameraServicePathSandboxExtensionHandle);
-#if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-    SandboxExtension::consumePermanently(parameters.additionalAppleCameraServicePathSandboxExtensionHandle);
-#endif
-#endif // HAVE(AUDIT_TOKEN)
+#if PLATFORM(MAC)
     SandboxExtension::consumePermanently(parameters.microphoneSandboxExtensionHandle);
-#if PLATFORM(IOS)
-    SandboxExtension::consumePermanently(parameters.tccSandboxExtensionHandle);
 #endif
-#endif
+#endif // ENABLE(MEDIA_STREAM)
 
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
     SandboxExtension::consumePermanently(parameters.containerCachesDirectoryExtensionHandle);
@@ -299,6 +291,12 @@ void GPUProcess::updateCaptureAccess(bool allowAudioCapture, bool allowVideoCapt
     access.allowDisplayCapture |= allowDisplayCapture;
 
     completionHandler();
+}
+
+void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& extensions)
+{
+    for (auto& extension : extensions)
+        SandboxExtension::consumePermanently(extension);
 }
 
 void GPUProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)
