@@ -36,6 +36,7 @@ namespace JSC {
 static constexpr Seconds sweepTimeSlice = 10_ms;
 static constexpr double sweepTimeTotal = .10;
 static constexpr double sweepTimeMultiplier = 1.0 / sweepTimeTotal;
+static constexpr Seconds deleteJITStubRoutinesTimeSlice = std::min(sweepTimeSlice / 10, 1_ms);
 
 void IncrementalSweeper::scheduleTimer()
 {
@@ -55,7 +56,17 @@ void IncrementalSweeper::doWork(VM& vm)
 
 void IncrementalSweeper::doSweep(VM& vm, MonotonicTime sweepBeginTime)
 {
-    while (sweepNextBlock(vm)) {
+    bool hasMoreBlocksToSweep = true;
+    bool hasMoreWork = true;
+    while (hasMoreWork) {
+        if (hasMoreBlocksToSweep)
+            hasMoreBlocksToSweep = sweepNextBlock(vm);
+
+        if (Heap::mayHaveJITStubRoutinesToDelete())
+            vm.heap.deleteDeadJITStubRoutines(deleteJITStubRoutinesTimeSlice);
+
+        hasMoreWork = hasMoreBlocksToSweep || Heap::mayHaveJITStubRoutinesToDelete();
+
         Seconds elapsedTime = MonotonicTime::now() - sweepBeginTime;
         if (elapsedTime < sweepTimeSlice)
             continue;

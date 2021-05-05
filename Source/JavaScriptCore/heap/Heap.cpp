@@ -973,7 +973,8 @@ void Heap::deleteUnmarkedCompiledCode()
     // Sweeping must occur before deleting stubs, otherwise the stubs might still think they're alive as they get deleted.
     // And CodeBlock destructor is assuming that CodeBlock gets destroyed before UnlinkedCodeBlock gets destroyed.
     vm().forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); });
-    m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
+    if (mayHaveJITStubRoutinesToDelete())
+        deleteDeadJITStubRoutines(5_ms);
 }
 
 void Heap::addToRememberedSet(const JSCell* constCell)
@@ -1040,6 +1041,14 @@ void Heap::sweepSynchronously()
     }
     m_objectSpace.sweepBlocks();
     m_objectSpace.shrink();
+
+    unsigned passes = 0;
+    while (mayHaveJITStubRoutinesToDelete()) {
+        constexpr Seconds unlimitedTime = 600_s;
+        deleteDeadJITStubRoutines(unlimitedTime);
+        RELEASE_ASSERT(passes++ < 100);
+    }
+
     if (UNLIKELY(Options::logGC())) {
         MonotonicTime after = MonotonicTime::now();
         dataLog("=> ", capacity() / 1024, "kb, ", (after - before).milliseconds(), "ms");

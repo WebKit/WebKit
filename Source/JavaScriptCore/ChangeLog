@@ -1,3 +1,70 @@
+2021-05-05  Mark Lam  <mark.lam@apple.com>
+
+        Enable incremental sweeping of GCAwareJITStubRoutines.
+        https://bugs.webkit.org/show_bug.cgi?id=225376
+
+        Reviewed by Filip Pizlo.
+
+        This patch makes the following changes:
+
+        1. Enhance JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines() to be able to
+           run in an incremental time slice.
+
+        2. Added JITStubRoutineSet::notifyHaveRoutinesToDelete() so that
+           GCAwareJITStubRoutine::observeZeroRefCount() can flag that the GC may have
+           some dead GCAwareJITStubRoutines to delete.
+
+        3. Added JITStubRoutineSet::mayHaveRoutinesToDelete() so that clients can do
+           a cheap check ahead of time to determine if there's work to do, and avoid
+           calling JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines() altogether
+           if not needed.
+
+        4. Added Heap::mayHaveJITStubRoutinesToDelete() and Heap::deleteDeadJITStubRoutines()
+           as wrappers around JITStubRoutineSet::mayHaveRoutinesToDelete() and
+           JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines() because the use of
+           the JITStubRoutineSet is a heap internal implementation detail.
+
+        5. Enhanced the IncrementalSweeper to also call Heap::deleteDeadJITStubRoutines()
+           if needed.
+
+        6. Enhanced Heap::sweepSynchronously() to also call Heap::deleteDeadJITStubRoutines()
+           if needed.
+
+        7. Time slices for Heap::deleteDeadJITStubRoutines() is currently set at the
+           current values:
+           a. max of 1 ms (1/10 of the IncreamentalSweeper's time slice) when invoked from
+              the IncreamentalSweeper.
+           b. max of 5 ms when invoked from Heap::deleteUnmarkedCompiledCode().
+           c. unlimited time (with a sanity check) when called from Heap::sweepSynchronously().
+
+           The choices of 1ms and 5ms were picked to not be too long, but would still delete
+           the bulk of the dead GCAwareJITStubRoutines quickly enough based on data from my
+           instrumented runs the CLI version of JetStream2.
+
+           I think these hardcoded values will do for now.  If need be, we can try something
+           more sophisticated later.
+
+        * CMakeLists.txt:
+        * heap/Heap.cpp:
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::sweepSynchronously):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::mayHaveJITStubRoutinesToDelete):
+        (JSC::Heap::deleteDeadJITStubRoutines):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::doSweep):
+        * heap/JITStubRoutineSet.cpp:
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * heap/JITStubRoutineSet.h:
+        (JSC::JITStubRoutineSet::mayHaveRoutinesToDelete):
+        (JSC::JITStubRoutineSet::notifyHaveRoutinesToDelete):
+        (JSC::JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::observeZeroRefCount):
+        * jit/JITStubRoutine.h:
+        (JSC::JITStubRoutine::createSelfManagedRoutine): Deleted.
+
 2021-05-03  Mark Lam  <mark.lam@apple.com>
 
         Fix syntax error message for AUTOPLUSPLUS token.
