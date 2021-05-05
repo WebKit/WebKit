@@ -1,3 +1,14 @@
+2021-05-05  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        USE_64KB_PAGE_BLOCK build option is broken
+        https://bugs.webkit.org/show_bug.cgi?id=225393
+
+        Reviewed by Adrian Perez de Castro.
+
+        Call SET_AND_EXPOSE_TO_BUILD().
+
+        * Source/cmake/WebKitFeatures.cmake:
+
 2021-04-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.4
