@@ -203,6 +203,19 @@ TEST_F(FileSystemTest, fileExists)
     EXPECT_FALSE(FileSystem::fileExists(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s)));
 }
 
+TEST_F(FileSystemTest, fileExistsBrokenSymlink)
+{
+    auto doesNotExistPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s);
+    auto symlinkPath = FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist-symlink"_s);
+    EXPECT_TRUE(FileSystem::createSymbolicLink(doesNotExistPath, symlinkPath));
+    EXPECT_FALSE(FileSystem::fileExists(doesNotExistPath));
+    EXPECT_FALSE(FileSystem::fileExists(symlinkPath)); // fileExists() follows symlinks.
+    auto symlinkMetadata = FileSystem::fileMetadata(symlinkPath);
+    ASSERT_TRUE(!!symlinkMetadata);
+    EXPECT_EQ(symlinkMetadata->type, FileMetadata::Type::SymbolicLink);
+    EXPECT_TRUE(FileSystem::deleteFile(symlinkPath));
+}
+
 TEST_F(FileSystemTest, deleteSymlink)
 {
     EXPECT_TRUE(FileSystem::fileExists(tempFilePath()));

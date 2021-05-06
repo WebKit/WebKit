@@ -1,3 +1,18 @@
+2021-05-06  Chris Dumez  <cdumez@apple.com>
+
+        Add API test for FileSystem::fileExists() on a broken symbolic link
+        https://bugs.webkit.org/show_bug.cgi?id=225476
+
+        Reviewed by Darin Adler.
+
+        Add API test for FileSystem::fileExists() on a broken symbolic link since this is a special
+        case. FileSystem::fileExists() currently tries to follow symbolic links and will thus return
+        false. The behavior is a little odd but I have verified that this is what our access()-based
+        implementation was returning also before I ported FileSystem::fileExists() to std::filesystem.
+
+        * TestWebKitAPI/Tests/WTF/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2021-05-06  Filip Pizlo  <fpizlo@apple.com>
 
         Make it easy to pass __XPC variables to run-benchmark
