@@ -92,7 +92,7 @@ public:
     bool processIncomingMessage(Connection&, std::unique_ptr<Decoder>&);
 
     // Dispatch pending sync messages.
-    void dispatchMessages();
+    void dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage = { });
 
     // Add matching pending messages to the provided MessageReceiveQueue.
     void enqueueMatchingMessages(Connection&, MessageReceiveQueue&, ReceiverName, uint64_t destinationID);
@@ -192,7 +192,7 @@ bool Connection::SyncMessageState::processIncomingMessage(Connection& connection
     return true;
 }
 
-void Connection::SyncMessageState::dispatchMessages()
+void Connection::SyncMessageState::dispatchMessages(Function<void(MessageName, uint64_t)>&& willDispatchMessage)
 {
     ASSERT(RunLoop::isMain());
 
@@ -206,8 +206,12 @@ void Connection::SyncMessageState::dispatchMessages()
         }
     }
 
-    while (!m_messagesBeingDispatched.isEmpty())
-        m_messagesBeingDispatched.takeFirst().dispatch();
+    while (!m_messagesBeingDispatched.isEmpty()) {
+        auto messageToDispatch = m_messagesBeingDispatched.takeFirst();
+        if (willDispatchMessage)
+            willDispatchMessage(messageToDispatch.message->messageName(), messageToDispatch.message->destinationID());
+        messageToDispatch.dispatch();
+    }
 }
 
 void Connection::SyncMessageState::dispatchMessagesAndResetDidScheduleDispatchMessagesForConnection(Connection& connection)
@@ -567,9 +571,17 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
     // Now wait for it to be set.
     while (true) {
         // Handle any messages that are blocked on a response from us.
-        SyncMessageState::singleton().dispatchMessages();
+        bool wasMessageToWaitForAlreadyDispatched = false;
+        SyncMessageState::singleton().dispatchMessages([&](auto nameOfMessageToDispatch, uint64_t destinationOfMessageToDispatch) {
+            wasMessageToWaitForAlreadyDispatched |= messageName == nameOfMessageToDispatch && destinationID == destinationOfMessageToDispatch;
+        });
 
         Locker lock { m_waitForMessageMutex };
+
+        if (wasMessageToWaitForAlreadyDispatched) {
+            m_waitingForMessage = nullptr;
+            break;
+        }
 
         if (m_waitingForMessage->decoder) {
             auto decoder = WTFMove(m_waitingForMessage->decoder);

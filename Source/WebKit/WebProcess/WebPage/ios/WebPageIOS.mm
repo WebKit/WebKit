@@ -2588,6 +2588,21 @@ void WebPage::requestAutocorrectionContext()
     send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
 }
 
+void WebPage::prepareToRunModalJavaScriptDialog()
+{
+    if (!m_focusedElement)
+        return;
+
+    if (!m_focusedElement->hasEditableStyle() && !is<HTMLTextFormControlElement>(*m_focusedElement))
+        return;
+
+    // When a modal dialog is presented while an editable element is focused, UIKit will attempt to request a
+    // WebAutocorrectionContext, which triggers synchronous IPC back to the web process, resulting in deadlock.
+    // To avoid this deadlock, we preemptively compute and send autocorrection context data to the UI process,
+    // such that the UI process can immediately respond to UIKit without synchronous IPC to the web process.
+    send(Messages::WebPageProxy::HandleAutocorrectionContext(autocorrectionContext()));
+}
+
 static HTMLAnchorElement* containingLinkAnchorElement(Element& element)
 {
     // FIXME: There is code in the drag controller that supports any link, even if it's not an HTMLAnchorElement. Why is this different?

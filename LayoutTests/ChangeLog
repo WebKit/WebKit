@@ -1,3 +1,16 @@
+2021-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] UI process hangs when showing a modal JavaScript dialog while focusing an input field
+        https://bugs.webkit.org/show_bug.cgi?id=225409
+        rdar://76792407
+
+        Reviewed by Darin Adler, Chris Dumez and Tim Horton.
+
+        Add a layout test that exercises the deadlock. In the case where we fail, this test will time out.
+
+        * fast/events/ios/show-modal-alert-during-focus-expected.txt: Added.
+        * fast/events/ios/show-modal-alert-during-focus.html: Added.
+
 2021-05-06  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK][WPE] Unreviewed test gardening. Emit platform baselines after r277071.

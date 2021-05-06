@@ -335,6 +335,8 @@ public:
     virtual void didCompleteSyntheticClick() = 0;
 #endif
 
+    virtual void runModalJavaScriptDialog(CompletionHandler<void()>&& callback) { callback(); }
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     virtual void didCreateContextInWebProcessForVisibilityPropagation(LayerHostingContextID) { }
 #if ENABLE(GPU_PROCESS)

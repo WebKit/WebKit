@@ -244,6 +244,8 @@ private:
     void didNotHandleTapAsMeaningfulClickAtPoint(const WebCore::IntPoint&) final;
     void didCompleteSyntheticClick() override;
 
+    void runModalJavaScriptDialog(CompletionHandler<void()>&& callback) final;
+
     void didChangeBackgroundColor() override;
     void videoControlsManagerDidChange() override;
 

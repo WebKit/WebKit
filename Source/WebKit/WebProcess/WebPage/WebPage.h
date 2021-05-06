@@ -1449,6 +1449,7 @@ public:
 #endif
 
     void didHandleOrPreventMouseDownOrMouseUpEvent();
+    void prepareToRunModalJavaScriptDialog();
 
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
@@ -2341,6 +2342,7 @@ private:
 inline void WebPage::platformWillPerformEditingCommand() { }
 inline bool WebPage::platformNeedsLayoutForEditorState(const WebCore::Frame&) const { return false; }
 inline void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent() { }
+inline void WebPage::prepareToRunModalJavaScriptDialog() { }
 #endif
 
 } // namespace WebKit

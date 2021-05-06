@@ -1,3 +1,89 @@
+2021-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] UI process hangs when showing a modal JavaScript dialog while focusing an input field
+        https://bugs.webkit.org/show_bug.cgi?id=225409
+        rdar://76792407
+
+        Reviewed by Darin Adler, Chris Dumez and Tim Horton.
+
+        Consider the scenario where an input field has a focus event handler that shows a modal JavaScript dialog (e.g.
+        confirm, alert, prompt). We get the following sequence of events in this scenario:
+
+        (WEB)   The text field is focused, and sends WebPageProxy::ElementDidFocus. A modal dialog is then triggered by
+                script inside the focus event handler, sending a message like WebPageProxy::RunJavaScriptAlert.
+
+        (UI)    The UI process receives WebPageProxy::ElementDidFocus, and calls `-reloadInputViews` while showing the
+                keyboard. UIKit may then call back into `-requestAutocorrectionContextWithCompletionHandler:`, which
+                triggers sync IPC back to the web process. While waiting to receive a response message, we receive and
+                dispatch WebPageProxy::RunJavaScriptAlert.
+
+        At this point, the UI process is still waiting for a HandleAutocorrectionContext response IPC message, but the
+        web process is blocked on a response to the modal JavaScript dialog; since both processes are blocked on each
+        other, we're now in deadlock.
+
+        To mitigate this, we can preemptively send autocorrection context data right before we're about to synchronously
+        block in the web process on a modal dialog. In the UI process, we use this autocorrection context object to
+        immediately stop syncwaiting for a HandleAutocorrectionContext response. See below for more details.
+
+        Test: fast/events/ios/show-modal-alert-during-focus.html
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::SyncMessageState::dispatchMessages):
+        (IPC::Connection::waitForMessage):
+
+        Make a slight adjustment here so that `waitForMessage` bails if one of the messages we're dispatching underneath
+        `SyncMessageState::dispatchMessages` is the message we happen to be waiting for anyways. In this case, it's
+        necessary in order for the preemptive `WebPageProxy::HandleAutocorrectionContext` message sent by the web
+        process to unblock the UI process, which is waiting for a `WebPageProxy::HandleAutocorrectionContext` response.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::runModalJavaScriptDialog):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runModalJavaScriptDialog):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+
+        Wrap calls to `runJavaScript(Alert|Confirm|Prompt)` underneath a new page client method that takes a block,
+        `runModalJavaScriptDialog`. See `-[WKContentView runModalJavaScriptDialog:]` below for more details.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::runModalJavaScriptDialog):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView requestAutocorrectionContextWithCompletionHandler:]):
+
+        Avoid blocking on the web process if it's waiting on a modal JavaScript dialog anyways; just use the last
+        autocorrection context we received from the web process (which we know must've been sent right before showing
+        the modal dialog anyways).
+
+        (-[WKContentView runModalJavaScriptDialog:]):
+
+        In the case where we're in the process of presenting the keyboard (or UCB) on iOS after focusing an input field,
+        avoid immediately allowing the client to show any modal UI until we're done managing keyboard logic in WebKit.
+        Without this adjustment, we'll end up trying to present the modal JavaScript dialog in the middle of UIKit's
+        call to `-requestAutocorrectionContextWithCompletionHandler:`, which then causes UIKit to throw an exception
+        underneath keyboard code.
+
+        (-[WKContentView _elementDidFocus:userIsInteracting:blurPreviousNode:activityStateChanges:userObject:]):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::prepareToRunModalJavaScriptDialog):
+
+        Add logic to preemptively compute and send `WebAutocorrectionContext` data to the UI process on iOS, in the case
+        where we're about to show a modal JavaScript dialog and there is an editable focused element. While the modal
+        dialog is shown, we'll use this information to immediately respond to UIKit's autocorrection context requests,
+        instead of trying to block on responses from the web process.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestAutocorrectionContext):
+        (WebKit::WebPage::prepareToRunModalJavaScriptDialog):
+
 2021-05-06  Darin Adler  <darin@apple.com>
 
         Streamline codec parsing, replacing uses of HashMap with SortedArrayMap

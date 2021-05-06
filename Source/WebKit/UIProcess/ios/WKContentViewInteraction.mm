@@ -134,6 +134,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -4502,7 +4503,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         return;
     }
 
-    if (_domPasteRequestHandler) {
+    if (_page->isRunningModalJavaScriptDialog() || _domPasteRequestHandler) {
         completionHandler([WKAutocorrectionContext autocorrectionContextWithWebContext:_lastAutocorrectionContext]);
         return;
     }
@@ -4528,6 +4529,14 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 {
     _lastAutocorrectionContext = context;
     [self _invokePendingAutocorrectionContextHandler:[WKAutocorrectionContext autocorrectionContextWithWebContext:context]];
+}
+
+- (void)runModalJavaScriptDialog:(CompletionHandler<void()>&&)callback
+{
+    if (_isFocusingElementWithKeyboard)
+        _pendingRunModalJavaScriptDialogCallback = WTFMove(callback);
+    else
+        callback();
 }
 
 - (void)_didStartProvisionalLoadForMainFrame
@@ -6160,6 +6169,11 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
 {
     SetForScope<BOOL> isChangingFocusForScope { _isChangingFocus, self._hasFocusedElement };
     SetForScope<BOOL> isFocusingElementWithKeyboardForScope { _isFocusingElementWithKeyboard, [self _shouldShowKeyboardForElement:information] };
+
+    auto runModalJavaScriptDialogCallbackIfNeeded = makeScopeExit([&] {
+        if (auto callback = std::exchange(_pendingRunModalJavaScriptDialogCallback, { }))
+            callback();
+    });
 
     auto inputViewUpdateDeferrer = std::exchange(_inputViewUpdateDeferrer, nullptr);
 

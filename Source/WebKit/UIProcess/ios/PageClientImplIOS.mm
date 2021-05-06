@@ -1000,6 +1000,11 @@ void PageClientImpl::handleAsynchronousCancelableScrollEvent(UIScrollView *scrol
 }
 #endif
 
+void PageClientImpl::runModalJavaScriptDialog(CompletionHandler<void()>&& callback)
+{
+    [m_contentView runModalJavaScriptDialog:WTFMove(callback)];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

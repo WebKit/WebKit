@@ -192,6 +192,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/TextStream.h>
 
@@ -5691,9 +5692,24 @@ void WebPageProxy::closePage()
     m_uiClient->close(this);
 }
 
+void WebPageProxy::runModalJavaScriptDialog(RefPtr<WebFrameProxy>&& frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void(WebPageProxy&, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&&)>&& runDialogCallback)
+{
+    pageClient().runModalJavaScriptDialog([weakThis = makeWeakPtr(*this), frameInfo = WTFMove(frameInfo), frame = WTFMove(frame), message, runDialogCallback = WTFMove(runDialogCallback)]() mutable {
+        auto protectedThis = makeRefPtr(weakThis.get());
+        if (!protectedThis)
+            return;
+
+        protectedThis->m_isRunningModalJavaScriptDialog = true;
+        runDialogCallback(*protectedThis, frame.get(), WTFMove(frameInfo), message, [weakThis = WTFMove(weakThis)]() mutable {
+            if (auto protectedThis = makeRefPtr(weakThis.get()))
+                protectedThis->m_isRunningModalJavaScriptDialog = false;
+        });
+    });
+}
+
 void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, FrameInfoData&& frameInfo, const String& message, Messages::WebPageProxy::RunJavaScriptAlert::DelayedReply&& reply)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
+    auto frame = makeRefPtr(m_process->webFrame(frameID));
     MESSAGE_CHECK(m_process, frame);
 
     exitFullscreenImmediately();
@@ -5705,12 +5721,18 @@ void WebPageProxy::runJavaScriptAlert(FrameIdentifier frameID, FrameInfoData&& f
         if (auto* automationSession = process().processPool().automationSession())
             automationSession->willShowJavaScriptDialog(*this);
     }
-    m_uiClient->runJavaScriptAlert(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
+
+    runModalJavaScriptDialog(WTFMove(frame), WTFMove(frameInfo), message, [reply = WTFMove(reply)](WebPageProxy& page, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&& completion) mutable {
+        page.m_uiClient->runJavaScriptAlert(page, message, frame, WTFMove(frameInfo), [reply = WTFMove(reply), completion = WTFMove(completion)]() mutable {
+            reply();
+            completion();
+        });
+    });
 }
 
 void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, FrameInfoData&& frameInfo, const String& message, Messages::WebPageProxy::RunJavaScriptConfirm::DelayedReply&& reply)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
+    auto frame = makeRefPtr(m_process->webFrame(frameID));
     MESSAGE_CHECK(m_process, frame);
 
     exitFullscreenImmediately();
@@ -5723,12 +5745,17 @@ void WebPageProxy::runJavaScriptConfirm(FrameIdentifier frameID, FrameInfoData&&
             automationSession->willShowJavaScriptDialog(*this);
     }
 
-    m_uiClient->runJavaScriptConfirm(*this, message, frame, WTFMove(frameInfo), WTFMove(reply));
+    runModalJavaScriptDialog(WTFMove(frame), WTFMove(frameInfo), message, [reply = WTFMove(reply)](WebPageProxy& page, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&& completion) mutable {
+        page.m_uiClient->runJavaScriptConfirm(page, message, frame, WTFMove(frameInfo), [reply = WTFMove(reply), completion = WTFMove(completion)](bool result) mutable {
+            reply(result);
+            completion();
+        });
+    });
 }
 
 void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, FrameInfoData&& frameInfo, const String& message, const String& defaultValue, Messages::WebPageProxy::RunJavaScriptPrompt::DelayedReply&& reply)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
+    auto frame = makeRefPtr(m_process->webFrame(frameID));
     MESSAGE_CHECK(m_process, frame);
 
     exitFullscreenImmediately();
@@ -5741,7 +5768,12 @@ void WebPageProxy::runJavaScriptPrompt(FrameIdentifier frameID, FrameInfoData&& 
             automationSession->willShowJavaScriptDialog(*this);
     }
 
-    m_uiClient->runJavaScriptPrompt(*this, message, defaultValue, frame, WTFMove(frameInfo), WTFMove(reply));
+    runModalJavaScriptDialog(WTFMove(frame), WTFMove(frameInfo), message, [reply = WTFMove(reply), defaultValue](WebPageProxy& page, WebFrameProxy* frame, FrameInfoData&& frameInfo, const String& message, CompletionHandler<void()>&& completion) mutable {
+        page.m_uiClient->runJavaScriptPrompt(page, message, defaultValue, frame, WTFMove(frameInfo), [reply = WTFMove(reply), completion = WTFMove(completion)](auto& result) mutable {
+            reply(result);
+            completion();
+        });
+    });
 }
 
 void WebPageProxy::setStatusText(const String& text)

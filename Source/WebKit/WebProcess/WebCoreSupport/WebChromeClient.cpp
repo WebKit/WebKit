@@ -456,6 +456,7 @@ void WebChromeClient::runJavaScriptAlert(Frame& frame, const String& alertText)
 
     // Notify the bundle client.
     m_page.injectedBundleUIClient().willRunJavaScriptAlert(&m_page, alertText, webFrame);
+    m_page.prepareToRunModalJavaScriptDialog();
 
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
@@ -473,6 +474,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame& frame, const String& message)
 
     // Notify the bundle client.
     m_page.injectedBundleUIClient().willRunJavaScriptConfirm(&m_page, message, webFrame);
+    m_page.prepareToRunModalJavaScriptDialog();
 
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
@@ -494,6 +496,7 @@ bool WebChromeClient::runJavaScriptPrompt(Frame& frame, const String& message, c
 
     // Notify the bundle client.
     m_page.injectedBundleUIClient().willRunJavaScriptPrompt(&m_page, message, defaultValue, webFrame);
+    m_page.prepareToRunModalJavaScriptDialog();
 
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;

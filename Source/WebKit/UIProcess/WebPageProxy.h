@@ -1930,6 +1930,8 @@ public:
     void setCocoaView(WKWebView *);
 #endif
 
+    bool isRunningModalJavaScriptDialog() const { return m_isRunningModalJavaScriptDialog; }
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2474,6 +2476,8 @@ private:
 
     void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
 
+    void runModalJavaScriptDialog(RefPtr<WebFrameProxy>&&, FrameInfoData&&, const String& message, CompletionHandler<void(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, const String&, CompletionHandler<void()>&&)>&&);
+
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;
     WeakPtr<PageClient> m_pageClient;
@@ -3009,6 +3013,7 @@ private:
     size_t m_suspendMediaPlaybackCounter { 0 };
 
     bool m_lastNavigationWasAppBound { false };
+    bool m_isRunningModalJavaScriptDialog { false };
 
     Optional<WebCore::PrivateClickMeasurement> m_privateClickMeasurement;
 
