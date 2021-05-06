@@ -362,7 +362,7 @@ bool InlineTextBox::isLineBreak() const
 bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/,
     HitTestAction /*hitTestAction*/)
 {
-    if (!visibleToHitTesting())
+    if (!visibleToHitTesting(request))
         return false;
 
     if (isLineBreak())

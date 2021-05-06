@@ -329,6 +329,15 @@ TEST(SampledPageTopColor, HitTestCSSAnimation)
     EXPECT_NULL([webView _sampledPageTopColor]);
 }
 
+TEST(SampledPageTopColor, HitTestCSSPointerEventsNone)
+{
+    auto webView = createWebViewWithSampledPageTopColorMaxDifference(5);
+    EXPECT_NULL([webView _sampledPageTopColor]);
+
+    [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0'><div style='width: 100%; height: 100%; background-color: red; pointer-events: none'></div>Test"];
+    EXPECT_EQ(WebCore::Color([webView _sampledPageTopColor].CGColor), WebCore::Color::red);
+}
+
 // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
 TEST(SampledPageTopColor, DISABLED_DisplayP3)
 {
