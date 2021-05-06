@@ -57,6 +57,8 @@ public:
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&);
 
+    bool operator==(const CSSImageGeneratorValue& other) const;
+
 protected:
     CSSImageGeneratorValue(ClassType);
 

@@ -40,7 +40,7 @@ public:
     CSSImageGeneratorValue& imageValue() { return m_imageGeneratorValue; }
 
 private:
-    bool operator==(const StyleImage& other) const final { return data() == other.data(); }
+    bool operator==(const StyleImage& other) const final;
 
     WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
 
@@ -56,6 +56,7 @@ private:
     void setContainerContextForRenderer(const RenderElement&, const FloatSize& containerSize, float) final { m_containerSize = containerSize; }
     void addClient(RenderElement&) final;
     void removeClient(RenderElement&) final;
+    bool hasClient(RenderElement&) const final;
     RefPtr<Image> image(RenderElement*, const FloatSize&) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
 

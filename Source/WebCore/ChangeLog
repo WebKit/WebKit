@@ -1,3 +1,44 @@
+2021-05-06  Antoine Quint  <graouts@webkit.org>
+
+        CSS custom properties on pseudo elements background gradients causes infinite layout and high CPU load
+        https://bugs.webkit.org/show_bug.cgi?id=194332
+        <rdar://problem/47873895>
+
+        Reviewed by Simon Fraser.
+
+        When a background-image uses a CSS custom property the resulting StyleGeneratedImage may not be the same
+        object as during prior style updates. This caused transitions to be triggered for all style updates for
+        such background-image values. To fix this, we modify the == operator for StyleGeneratedImage to use
+        arePointingToEqualData() with the CSSImageGeneratorValue member and added an == operator for the
+        CSSImageGeneratorValue class to call into the existing equals() methods. These equals() methods
+        are now overrides of the virtual CSSImageGeneratorValue method.
+
+        This change in behavior required a change in RenderElement::updateFillImages() to not only check whether
+        the images were identical, but to also check whether the renderer was registered as a client on the new
+        images. To do this, we add a new virtual hasClient() method on StyleImage.
+
+        Test: webanimations/css-transition-element-with-gradient-background-image-and-css-custom-property.html
+
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::operator== const):
+        * css/CSSImageGeneratorValue.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::updateFillImages):
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::imagesIdentical): Deleted.
+        * rendering/style/FillLayer.h:
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::hasClient const):
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::operator== const):
+        (WebCore::StyleGeneratedImage::hasClient const):
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        * rendering/style/StyleMultiImage.cpp:
+        (WebCore::StyleMultiImage::hasClient const):
+        * rendering/style/StyleMultiImage.h:
+
 2021-05-06  Philippe Normand  <pnormand@igalia.com>
 
         [WebAudio][GStreamer] socketpair leaks

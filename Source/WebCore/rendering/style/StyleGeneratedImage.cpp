@@ -37,6 +37,13 @@ StyleGeneratedImage::StyleGeneratedImage(Ref<CSSImageGeneratorValue>&& value)
     m_isGeneratedImage = true;
 }
 
+bool StyleGeneratedImage::operator==(const StyleImage& other) const
+{
+    if (is<StyleGeneratedImage>(other))
+        return arePointingToEqualData(m_imageGeneratorValue.ptr(), downcast<StyleGeneratedImage>(other).m_imageGeneratorValue.ptr());
+    return false;
+}
+
 Ref<CSSValue> StyleGeneratedImage::cssValue() const
 {
     return m_imageGeneratorValue.copyRef();
@@ -94,6 +101,11 @@ void StyleGeneratedImage::addClient(RenderElement& renderer)
 void StyleGeneratedImage::removeClient(RenderElement& renderer)
 {
     m_imageGeneratorValue->removeClient(renderer);
+}
+
+bool StyleGeneratedImage::hasClient(RenderElement& renderer) const
+{
+    return m_imageGeneratorValue->clients().contains(&renderer);
 }
 
 RefPtr<Image> StyleGeneratedImage::image(RenderElement* renderer, const FloatSize& size) const

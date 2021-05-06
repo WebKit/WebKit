@@ -1,3 +1,18 @@
+2021-05-06  Antoine Quint  <graouts@webkit.org>
+
+        CSS custom properties on pseudo elements background gradients causes infinite layout and high CPU load
+        https://bugs.webkit.org/show_bug.cgi?id=194332
+        <rdar://problem/47873895>
+
+        Reviewed by Simon Fraser.
+
+        Add a test where an element with a background-image set to a CSS gradient using a custom property as a color
+        stop changes another property targeted by a transition to check that there is no background-image transition
+        generated. 
+
+        * webanimations/css-transition-element-with-gradient-background-image-and-css-custom-property-expected.txt: Added.
+        * webanimations/css-transition-element-with-gradient-background-image-and-css-custom-property.html: Added.
+
 2021-05-06  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update expectations after WPT re-import in r277073 and r277077.
