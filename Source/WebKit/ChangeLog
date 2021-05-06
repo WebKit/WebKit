@@ -1,3 +1,21 @@
+2021-05-06  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crash when WebsiteDataStore is destroyed with outstanding getNetworkProcessConnection request
+        https://bugs.webkit.org/show_bug.cgi?id=225478
+        <rdar://77576148>
+
+        Reviewed by Chris Dumez.
+
+        In WebsiteDataStore::getNetworkProcessConnection if we don't get a connection the first time, we terminate the network process
+        and try again.  This greatly increases our success rate.  However, if we are cancelling the reply because of the destruction
+        of the WebsiteDataStore, we will end up doing bad things with partially destroyed objects, which ends up crashing.
+        In order to prevent this, use RunLoop::main.dispatch to retry on the next runloop iteration so that we will never be inside the
+        stack of WebsiteDataStore::~WebsiteDataStore when retrying.  In that case, we will find that weakThis is null and send an empty
+        reply.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::getNetworkProcessConnection):
+
 2021-05-06  Sihui Liu  <sihui_liu@apple.com>
 
         Drop some unnecessary code in LocalStorageDatabase
