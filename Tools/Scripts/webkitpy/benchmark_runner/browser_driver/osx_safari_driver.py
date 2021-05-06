@@ -2,6 +2,7 @@
 
 import logging
 import os
+import re
 import subprocess
 import time
 
@@ -26,6 +27,9 @@ class OSXSafariDriver(OSXBrowserDriver):
     def launch_url(self, url, options, browser_build_path, browser_path):
         args = ['/Applications/Safari.app/Contents/MacOS/Safari']
         env = {}
+        for key, value in os.environ.items():
+            if re.match(r"^__XPC_", key):
+                env[key] = value
         if browser_build_path:
             browser_build_absolute_path = os.path.abspath(browser_build_path)
             safari_app_in_build_path = os.path.join(browser_build_absolute_path, 'Safari.app/Contents/MacOS/Safari')
@@ -37,8 +41,10 @@ class OSXSafariDriver(OSXBrowserDriver):
                 args = [safari_app_in_build_path]
 
             if contains_frameworks:
-                env = {'DYLD_FRAMEWORK_PATH': browser_build_absolute_path, 'DYLD_LIBRARY_PATH': browser_build_absolute_path,
-                    '__XPC_DYLD_FRAMEWORK_PATH': browser_build_absolute_path, '__XPC_DYLD_LIBRARY_PATH': browser_build_absolute_path}
+                env['DYLD_FRAMEWORK_PATH'] = browser_build_absolute_path
+                env['DYLD_LIBRARY_PATH'] = browser_build_absolute_path
+                env['__XPC_DYLD_FRAMEWORK_PATH'] = browser_build_absolute_path
+                env['__XPC_DYLD_LIBRARY_PATH'] = browser_build_absolute_path
             elif not has_safari_app:
                 raise Exception('Could not find any framework "{}"'.format(browser_build_path))
 

@@ -1,3 +1,15 @@
+2021-05-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Make it easy to pass __XPC variables to run-benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=225473
+
+        Reviewed by Stephanie Lewis.
+
+        * Scripts/webkitpy/benchmark_runner/browser_driver/osx_safari_driver.py:
+        (OSXSafariDriver.launch_url):
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (config_argument_parser):
+
 2021-05-06  Aakash Jain  <aakash_jain@apple.com>
 
         EWS bubbles should show current status after pressing 'Retry failed builds' button
