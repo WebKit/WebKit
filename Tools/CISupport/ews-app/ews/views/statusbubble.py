@@ -122,7 +122,11 @@ class StatusBubble(View):
             bubble['details_message'] = 'Build is in-progress. Recent messages:' + self._steps_messages_from_multiple_builds(builds)
         elif build.retried:
             bubble['state'] = 'started'
-            bubble['details_message'] = 'Waiting for available bot to retry the build.\n\nRecent messages:' + self._steps_messages_from_multiple_builds(builds)
+            bubble['details_message'] = 'Waiting for available bot to retry the build.'
+            bubble['url'] = None
+            queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
+            if queue_full_name:
+                bubble['url'] = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
         elif build.result == Buildbot.SUCCESS:
             if is_parent_build:
                 if patch.created < (timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK)):
