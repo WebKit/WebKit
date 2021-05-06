@@ -280,6 +280,7 @@
         "web-platform-tests/css/css-backgrounds/box-shadow/tools/box-shadow-blur-definition-001-image-generator.html",
         "web-platform-tests/css/css-backgrounds/color-behind-images.htm",
         "web-platform-tests/css/css-backgrounds/justfortest.html",
+        "web-platform-tests/css/css-backgrounds/linear-gradient-calc-crash.html",
         "web-platform-tests/css/css-backgrounds/none-as-image-layer.htm",
         "web-platform-tests/css/css-backgrounds/order-of-images.htm",
         "web-platform-tests/css/css-backgrounds/ttwf-css3background-border-color-shorthand-missing-bottom.htm",
