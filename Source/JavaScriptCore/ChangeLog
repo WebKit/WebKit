@@ -1,5 +1,31 @@
 2021-05-05  Mark Lam  <mark.lam@apple.com>
 
+        Introduce VM::hasPendingTerminationException() to make code a little more terse.
+        https://bugs.webkit.org/show_bug.cgi?id=225412
+
+        Reviewed by Michael Saboff.
+
+        This is purely a refactoring patch.  There is no behavior change.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        * jit/JITOperations.cpp:
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::assertNoExceptionExceptTermination):
+        (JSC::ExceptionScope::releaseAssertNoExceptionExceptTermination):
+        * runtime/JSObject.h:
+        (JSC::JSObject::get const):
+        * runtime/LazyPropertyInlines.h:
+        (JSC::ElementType>::callFunc):
+        * runtime/VM.cpp:
+        (JSC::VM::throwException):
+        * runtime/VM.h:
+        (JSC::VM::hasPendingTerminationException const):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::deferTerminationSlow):
+
+2021-05-05  Mark Lam  <mark.lam@apple.com>
+
         Enable incremental sweeping of GCAwareJITStubRoutines.
         https://bugs.webkit.org/show_bug.cgi?id=225376
 

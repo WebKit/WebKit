@@ -798,7 +798,7 @@ failedJSONP:
 
     // Compile source to bytecode if necessary:
     JSObject* error = program->initializeGlobalProperties(vm, globalObject, scope);
-    EXCEPTION_ASSERT(!throwScope.exception() || !error || vm.isTerminationException(throwScope.exception()));
+    EXCEPTION_ASSERT(!throwScope.exception() || !error || vm.hasPendingTerminationException());
     RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
     if (UNLIKELY(error))
         return checkedReturn(throwException(globalObject, throwScope, error));

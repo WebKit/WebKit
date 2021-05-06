@@ -1,3 +1,25 @@
+2021-05-05  Mark Lam  <mark.lam@apple.com>
+
+        Introduce VM::hasPendingTerminationException() to make code a little more terse.
+        https://bugs.webkit.org/show_bug.cgi?id=225412
+
+        Reviewed by Michael Saboff.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::handleResponseOnStreamingAction):
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DOMPromise::whenPromiseIsSettled):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::reject):
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::invokeReadableStreamFunction):
+        (WebCore::ReadableStream::lock):
+        (WebCore::checkReadableStream):
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        (WebCore::invokeReadableStreamDefaultControllerFunction):
+        (WebCore::ReadableStreamDefaultController::error):
+        (WebCore::ReadableStreamDefaultController::enqueue):
+
 2021-05-05  Aditya Keerthi  <akeerthi@apple.com>
 
         [macOS] Use system colors for ActiveButtonText

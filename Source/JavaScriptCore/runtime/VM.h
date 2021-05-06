@@ -352,6 +352,10 @@ public:
         ASSERT(exception);
         return exception == m_terminationException;
     }
+    bool hasPendingTerminationException() const
+    {
+        return m_exception && isTerminationException(m_exception);
+    }
 
     void throwTerminationException();
 

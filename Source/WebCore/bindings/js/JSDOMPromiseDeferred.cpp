@@ -147,7 +147,7 @@ void DeferredPromise::reject(Exception exception, RejectAsHandled rejectAsHandle
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto error = createDOMException(lexicalGlobalObject, WTFMove(exception));
     if (UNLIKELY(scope.exception())) {
-        ASSERT(vm.isTerminationException(scope.exception()));
+        ASSERT(vm.hasPendingTerminationException());
         return;
     }
 
@@ -181,7 +181,7 @@ void DeferredPromise::reject(ExceptionCode ec, const String& message, RejectAsHa
     auto scope = DECLARE_THROW_SCOPE(vm);
     auto error = createDOMException(&lexicalGlobalObject, ec, message);
     if (UNLIKELY(scope.exception())) {
-        ASSERT(vm.isTerminationException(scope.exception()));
+        ASSERT(vm.hasPendingTerminationException());
         return;
     }
 

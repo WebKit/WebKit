@@ -50,7 +50,7 @@ static bool invokeReadableStreamDefaultControllerFunction(JSC::JSGlobalObject& l
     auto scope = DECLARE_CATCH_SCOPE(vm);
     auto callData = JSC::getCallData(vm, function);
     call(&lexicalGlobalObject, function, callData, JSC::jsUndefined(), arguments);
-    EXCEPTION_ASSERT(!scope.exception() || vm.isTerminationException(scope.exception()));
+    EXCEPTION_ASSERT(!scope.exception() || vm.hasPendingTerminationException());
     return !scope.exception();
 }
 
@@ -75,7 +75,7 @@ void ReadableStreamDefaultController::error(const Exception& exception)
     auto value = createDOMException(&lexicalGlobalObject, exception.code(), exception.message());
 
     if (UNLIKELY(scope.exception())) {
-        ASSERT(vm.isTerminationException(scope.exception()));
+        ASSERT(vm.hasPendingTerminationException());
         return;
     }
 
@@ -121,7 +121,7 @@ bool ReadableStreamDefaultController::enqueue(RefPtr<JSC::ArrayBuffer>&& buffer)
     auto value = toJS(&lexicalGlobalObject, &lexicalGlobalObject, chunk.get());
 
     if (UNLIKELY(scope.exception())) {
-        ASSERT(vm.isTerminationException(scope.exception()));
+        ASSERT(vm.hasPendingTerminationException());
         return false;
     }
 

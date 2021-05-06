@@ -992,7 +992,7 @@ void VM::throwTerminationException()
 Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exceptionToThrow)
 {
     // The TerminationException should never be overridden.
-    if (m_exception && isTerminationException(m_exception))
+    if (hasPendingTerminationException())
         return m_exception;
 
     // The TerminationException is not like ordinary exceptions that should be
