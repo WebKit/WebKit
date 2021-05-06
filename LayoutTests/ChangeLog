@@ -1,3 +1,9 @@
+2021-05-06  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB] Unreviewed test gardening. Update expectations after WPT re-import in r277073 and r277077.
+
+        * platform/glib/TestExpectations:
+
 2021-05-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] UI process hangs when showing a modal JavaScript dialog while focusing an input field

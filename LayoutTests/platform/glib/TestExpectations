@@ -258,6 +258,15 @@ imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.h
 webaudio/Panner/hrtf-database.html [ Timeout Pass ]
 webaudio/Panner/panner-loop.html [ Timeout Pass ]
 
+# CSS backgrounds. Passing after WPT re-import in r277073.
+imported/w3c/web-platform-tests/css/css-backgrounds/background-size-percentage-root.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-backgrounds/box-shadow-overlapping-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ Pass ]
+
+# CSS color. Passing after WPT re-import in r277077.
+imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2349,6 +2358,24 @@ webkit.org/b/224112 media/video-as-img-output-pts.html [ Timeout Pass ]
 
 webkit.org/b/225423 fast/canvas/canvas-color-space-display-p3.html [ ImageOnlyFailure ]
 webkit.org/b/225423 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
+
+# Failing after r277073.
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-10.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-1a.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-1b.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-1c.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-3.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-4.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-5.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-6.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-7.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-8.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat-space-9.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-7.html [ ImageOnlyFailure ]
+webkit.org/b/225462 imported/w3c/web-platform-tests/css/css-backgrounds/border-radius-clip-001.html [ ImageOnlyFailure ]
+
+# Failing after r277077.
+webkit.org/b/225466 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-system-colors.html [ Failure ]
 
 # End: Common failures between GTK and WPE.
 
