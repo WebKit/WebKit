@@ -1377,3 +1377,5 @@ webkit.org/b/224257 [ Debug ] webgl/2.0.0/conformance/glsl/misc/shader-uniform-p
 webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ] 
 
 webkit.org/b/225430 [ BigSur arm64 ] http/tests/inspector/network/resource-sizes-network.html [ Pass Failure ]
+
+webkit.org/b/225488 fast/scrolling/mac/rubberband-overflow-in-wheel-region-root-jiggle.html [ Pass Timeout ]

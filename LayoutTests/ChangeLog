@@ -1,5 +1,16 @@
 2021-05-06  Robert Jenner  <jenner@apple.com>
 
+        N[ macOS wk2 ] fast/scrolling/mac/rubberband-overflow-in-wheel-region-root-jiggle.html (layout-test) is a flaky timeout
+        https://bugs.webkit.org/show_bug.cgi?id=225488
+
+        Unreviewed test gardening.
+
+        Updating test expectations to flaky ( Pass Timeout ) while test is reviewed. 
+
+        * platform/mac-wk2/TestExpectations:
+
+2021-05-06  Robert Jenner  <jenner@apple.com>
+
         [ macOS ] imported/w3c/web-platform-tests/css/css-animations/translation-animation-subpixel-offset.html (layout-test) is a flakey ImageOnly failure
         https://bugs.webkit.org/show_bug.cgi?id=225484
 
