@@ -1,3 +1,12 @@
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
+        Re-sync css/css-box/parsing/padding-valid.html WPT
+
+        Unreviewed. Trivial WPT sync on one single test.
+
+        * web-platform-tests/css/css-box/parsing/padding-valid-expected.txt:
+        * web-platform-tests/css/css-box/parsing/padding-valid.html:
+
 2021-05-05  Tim Nguyen  <ntim@apple.com>
 
         Re-sync css/css-animations WPTs
