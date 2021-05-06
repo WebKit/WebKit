@@ -431,6 +431,8 @@
         "web-platform-tests/css/css-flexbox/zero-content-size-with-scrollbar-crash.html",
         "web-platform-tests/css/css-font-loading/fontfaceset-no-root-element.html",
         "web-platform-tests/css/css-fonts/font-face-unicode-range.html",
+        "web-platform-tests/css/css-fonts/font-language-override-02-notref.html",
+        "web-platform-tests/css/css-fonts/font-size-zero-1-notref.html",
         "web-platform-tests/css/css-fonts/font-variant-debug.html",
         "web-platform-tests/css/css-fonts/language-specific-01.html",
         "web-platform-tests/css/css-fonts/standard-font-family-10-notref.html",

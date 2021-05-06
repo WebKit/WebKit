@@ -1,5 +1,77 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-fonts WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225455
+
+        Reviewed by Simon Fraser.
+
+        Base commit: https://github.com/web-platform-tests/wpt/commit/c4c81d21b9d606bedd0adb8f72bd0ecf15740e3e
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-font-loading/fontface-override-descriptor-getter-setter.sub-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/ascent-descent-override-expected.html: Added.
+        * web-platform-tests/css/css-fonts/ascent-descent-override.html: Added.
+        * web-platform-tests/css/css-fonts/downloadable-font-in-iframe-print-expected.html: Added.
+        * web-platform-tests/css/css-fonts/downloadable-font-in-iframe-print.html: Added.
+        * web-platform-tests/css/css-fonts/downloadable-font-print-expected.html: Added.
+        * web-platform-tests/css/css-fonts/downloadable-font-print.html: Added.
+        * web-platform-tests/css/css-fonts/fallback-url-to-local-expected.txt: Added.
+        * web-platform-tests/css/css-fonts/fallback-url-to-local.html: Added.
+        * web-platform-tests/css/css-fonts/font-display/font-display-expected.html:
+        * web-platform-tests/css/css-fonts/font-display/font-display.html:
+        * web-platform-tests/css/css-fonts/font-face-range-order.html:
+        * web-platform-tests/css/css-fonts/font-feature-resolution-001-expected.html:
+        * web-platform-tests/css/css-fonts/font-feature-resolution-001.html:
+        * web-platform-tests/css/css-fonts/font-feature-resolution-002-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-feature-resolution-002.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-adjust-zero-1-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-adjust-zero-1.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-adjust-zero-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-adjust-zero-2.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-zero-1-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-zero-1-notref.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-zero-1-ref-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-zero-1-ref.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-zero-1.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-zero-2-expected.html: Added.
+        * web-platform-tests/css/css-fonts/font-size-zero-2.html: Added.
+        * web-platform-tests/css/css-fonts/line-gap-override-expected.html: Added.
+        * web-platform-tests/css/css-fonts/line-gap-override.html: Added.
+        * web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative.html:
+        * web-platform-tests/css/css-fonts/metrics-override-normal-keyword-expected.html: Added.
+        * web-platform-tests/css/css-fonts/metrics-override-normal-keyword.html: Added.
+        * web-platform-tests/css/css-fonts/parsing/font-variation-settings-computed-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variation-settings-computed.html:
+        * web-platform-tests/css/css-fonts/parsing/font-variation-settings-invalid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variation-settings-invalid.html:
+        * web-platform-tests/css/css-fonts/parsing/font-variation-settings-valid-expected.txt:
+        * web-platform-tests/css/css-fonts/parsing/font-variation-settings-valid.html:
+        * web-platform-tests/css/css-fonts/rem-in-monospace-expected.html: Added.
+        * web-platform-tests/css/css-fonts/rem-in-monospace.html: Added.
+        * web-platform-tests/css/css-fonts/resources/markA.ttf: Added.
+        * web-platform-tests/css/css-fonts/resources/markB.ttf: Added.
+        * web-platform-tests/css/css-fonts/resources/w3c-import.log: Added.
+        * web-platform-tests/css/css-fonts/size-adjust-01-expected.html: Added.
+        * web-platform-tests/css/css-fonts/size-adjust-01.html: Added.
+        * web-platform-tests/css/css-fonts/size-adjust-02-expected.html: Added.
+        * web-platform-tests/css/css-fonts/size-adjust-02.html: Added.
+        * web-platform-tests/css/css-fonts/size-adjust-text-decoration.tentative-expected.html: Added.
+        * web-platform-tests/css/css-fonts/size-adjust-text-decoration.tentative.html: Added.
+        * web-platform-tests/css/css-fonts/size-adjust.tentative-expected.html: Added.
+        * web-platform-tests/css/css-fonts/size-adjust.tentative.html: Added.
+        * web-platform-tests/css/css-fonts/support/fonts/Lato-Medium-Liga.ttf: Added.
+        * web-platform-tests/css/css-fonts/support/fonts/w3c-import.log:
+        * web-platform-tests/css/css-fonts/variations/at-font-face-font-matching.html:
+        * web-platform-tests/css/css-fonts/variations/font-parse-numeric-stretch-style-weight.html:
+        * web-platform-tests/css/css-fonts/variations/font-variation-settings-parsing-expected.txt: Removed.
+        * web-platform-tests/css/css-fonts/variations/font-variation-settings-parsing.html: Removed.
+        * web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust-expected.html: Added.
+        * web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html: Added.
+        * web-platform-tests/css/css-fonts/variations/w3c-import.log:
+        * web-platform-tests/css/css-fonts/w3c-import.log:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-flexbox WPT
         https://bugs.webkit.org/show_bug.cgi?id=225450
 
