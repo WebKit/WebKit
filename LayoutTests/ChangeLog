@@ -1,3 +1,14 @@
+2021-05-06  Alicia Boya García  <aboya@igalia.com>
+
+        [EME][GStreamer] Unreviewed micro-gardening
+        https://bugs.webkit.org/show_bug.cgi?id=225422
+
+        I'm adjusting the expectations to specify that
+        imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html
+        doesn't resolve as a failure.
+
+        * platform/glib/TestExpectations:
+
 2021-05-06  Antoine Quint  <graouts@webkit.org>
 
         CSS custom properties on pseudo elements background gradients causes infinite layout and high CPU load
