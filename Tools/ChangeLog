@@ -1,3 +1,19 @@
+2021-05-06  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (r272414?): [macOS] TestWebKitAPI.GPUProcess.CrashWhilePlayingVideo is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=221742
+        <rdar://problem/74220428>
+
+        Reviewed by Youenn Fablet.
+
+        Check that video.currentTime is changing to determine if the video is playing, instead of
+        relying on [webView _isPlayingAudio]. Also use a test page with a single video element instead
+        of multiple. I am hoping this will make the test more reliable or at least shade some light on
+        why this is flaky.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/GPUProcess.mm:
+        (TEST):
+
 2021-05-06  Sam Sneddon  <gsnedders@apple.com>
 
         mark all SCM tests using SVN as slow, a couple as xfail; enable SCM
