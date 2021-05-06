@@ -1,5 +1,30 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-color & css/css-color-adjust WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225438
+
+        Reviewed by Youenn Fablet.
+
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-color-adjust/META.yml: Added.
+        * web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub-expected.html: Added.
+        * web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html: Added.
+        * web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-system-colors-expected.txt: Added.
+        * web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-system-colors.html: Added.
+        * web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/w3c-import.log:
+        * web-platform-tests/css/css-color-adjust/w3c-import.log:
+        * web-platform-tests/css/css-color/color-function-parsing.html:
+        * web-platform-tests/css/css-color/color-function-parsing-expected.txt:
+        * web-platform-tests/css/css-color/color-mix-basic-001.tentative-expected.txt: Added.
+        * web-platform-tests/css/css-color/color-mix-basic-001.tentative.html: Added.
+        * web-platform-tests/css/css-color/predefined-014-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-014.html: Removed.
+        * web-platform-tests/css/css-color/predefined-015-expected.html: Removed.
+        * web-platform-tests/css/css-color/predefined-015.html: Removed.
+        * web-platform-tests/css/css-color/w3c-import.log:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-cascade WPT
         https://bugs.webkit.org/show_bug.cgi?id=225437
 

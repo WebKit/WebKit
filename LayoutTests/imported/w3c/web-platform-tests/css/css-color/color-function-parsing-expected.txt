@@ -13,7 +13,6 @@ PASS Two missing components are 0
 PASS All components missing
 PASS Display P3 color
 PASS Different case for Display P3
-FAIL Unknown color space should fallback assert_equals: expected "color(unknown 1 2 3, red)" but got "rgb(0, 0, 0)"
 PASS sRGB color with negative component should clamp to 0
 PASS sRGB color with component > 1 should clamp
 PASS Display P3 color with negative component should clamp to 0

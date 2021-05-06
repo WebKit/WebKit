@@ -1,5 +1,14 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-color & css/css-color-adjust WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225438
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-backgrounds WPTs
         https://bugs.webkit.org/show_bug.cgi?id=225408
 

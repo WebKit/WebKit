@@ -4325,6 +4325,7 @@ webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/renderi
 webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background.html [ ImageOnlyFailure ]
 webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-alpha.html [ ImageOnlyFailure ]
 webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque.html [ ImageOnlyFailure ]
+webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-iframe-background-mismatch-opaque-cross-origin.sub.html [ ImageOnlyFailure ]
 webkit.org/b/214455 imported/w3c/web-platform-tests/css/css-color-adjust/rendering/dark-color-scheme/color-scheme-visited-link-initial.html [ ImageOnlyFailure ]
 
 webkit.org/b/214456 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ ImageOnlyFailure ]
@@ -4618,10 +4619,6 @@ webanimations/rotate-property-and-rotate-animation-with-delay-on-forced-layer.ht
 webanimations/scale-property-and-scale-animation-with-delay-on-forced-layer.html [ Skip ]
 webanimations/transform-property-and-transform-animation-with-delay-on-forced-layer.html [ Skip ]
 webanimations/translate-property-and-translate-animation-with-delay-on-forced-layer.html [ Skip ]
-
-# Unsupported css color() fallback feature
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-014.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support
-webkit.org/b/220928 imported/w3c/web-platform-tests/css/css-color/predefined-015.html [ ImageOnlyFailure ] # Requires fallback (at parse time) support (unclear if this makes sense)
 
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-animation-001.html [ ImageOnlyFailure ]
