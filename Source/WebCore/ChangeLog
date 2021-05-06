@@ -1,3 +1,29 @@
+2021-05-05  Megan Gardner  <megan_gardner@apple.com>
+
+        AppHighlight scrolls should be smooth
+        https://bugs.webkit.org/show_bug.cgi?id=225395
+
+        Reviewed by Simon Fraser.
+
+        Leverage smooth scrolling experimental feature to allow AppHighlight scrolls
+        to be smooth.
+
+        * Modules/highlight/AppHighlightStorage.cpp:
+        (WebCore::AppHighlightStorage::attemptToRestoreHighlightAndScroll):
+        * editing/Editor.cpp:
+        (WebCore::TemporarySelectionChange::setSelection):
+        * editing/Editor.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setSelection):
+        (WebCore::FrameSelection::updateAndRevealSelection):
+        (WebCore::FrameSelection::revealSelection):
+        * editing/FrameSelection.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::scrollTo const):
+        * page/ScrollBehavior.cpp:
+        (WebCore::useSmoothScrolling):
+        * platform/ScrollTypes.h:
+
 2021-05-05  Mark Lam  <mark.lam@apple.com>
 
         Introduce VM::hasPendingTerminationException() to make code a little more terse.
