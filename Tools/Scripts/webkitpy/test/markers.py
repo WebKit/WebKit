@@ -57,3 +57,10 @@ def xfail(*args, **kwargs):
             return func
 
     return decorator
+
+
+def slow(func):
+    try:
+        return pytest.mark.slow(func)
+    except NameError:
+        return func
