@@ -91,7 +91,6 @@ struct WebKitMediaSrcPrivate {
 
 static void webKitMediaSrcUriHandlerInit(gpointer, gpointer);
 static void webKitMediaSrcConstructed(GObject*);
-static void webKitMediaSrcFinalize(GObject*);
 static GstStateChangeReturn webKitMediaSrcChangeState(GstElement*, GstStateChange);
 static gboolean webKitMediaSrcActivateMode(GstPad*, GstObject*, GstPadMode, gboolean activate);
 static void webKitMediaSrcLoop(void*);
@@ -244,7 +243,6 @@ static void webkit_media_src_class_init(WebKitMediaSrcClass* klass)
     GstElementClass* eklass = GST_ELEMENT_CLASS(klass);
 
     oklass->constructed = webKitMediaSrcConstructed;
-    oklass->finalize = webKitMediaSrcFinalize;
     oklass->get_property = webKitMediaSrcGetProperty;
 
     gst_element_class_add_static_pad_template_with_gtype(eklass, &srcTemplate, webkit_media_src_pad_get_type());
@@ -273,15 +271,6 @@ static void webKitMediaSrcConstructed(GObject* object)
 
     ASSERT(isMainThread());
     GST_OBJECT_FLAG_SET(object, GST_ELEMENT_FLAG_SOURCE);
-}
-
-static void webKitMediaSrcFinalize(GObject* object)
-{
-    ASSERT(isMainThread());
-
-    WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(object);
-    source->priv->~WebKitMediaSrcPrivate();
-    GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
 void webKitMediaSrcEmitStreams(WebKitMediaSrc* source, const Vector<RefPtr<MediaSourceTrackGStreamer>>& tracks)
