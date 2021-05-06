@@ -452,7 +452,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
 
     switch (transition) {
     case GST_STATE_CHANGE_READY_TO_PAUSED: {
-        priv->pool = gst_buffer_pool_new();
+        priv->pool = adoptGRef(gst_buffer_pool_new());
         GstStructure* config = gst_buffer_pool_get_config(priv->pool.get());
         gst_buffer_pool_config_set_params(config, nullptr, priv->bufferSize, 0, 0);
         gst_buffer_pool_set_config(priv->pool.get(), config);
