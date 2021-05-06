@@ -1,3 +1,20 @@
+2021-05-06  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (r276870): ASSERTION FAILED: !m_impl || !m_shouldEnableAssertions || m_impl->wasConstructedOnMainThread() == isMainThread() under WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer
+        https://bugs.webkit.org/show_bug.cgi?id=225371
+        <rdar://problem/77531907>
+
+        Reviewed by Eric Carlson.
+
+        In WebKitLegacy, the weakPtr created by createAVPlayer() is constructed on the WebThread, and
+        dereferenced on the main thread. However, the reason we use a WeakPtr for this call is a long-
+        since fixed bug in AVFoundation. We can just remove the WeakPtr and rely on AVFoundation to
+        not call our block after the observer has been removed in the destructor.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+
 2021-05-06  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] Reduce MediaPlayer polling frequency when possible
