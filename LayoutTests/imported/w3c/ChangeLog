@@ -1,5 +1,29 @@
 2021-05-06  Tim Nguyen  <ntim@apple.com>
 
+        Re-import css/css-display WPT
+        https://bugs.webkit.org/show_bug.cgi?id=225448
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/css/css-display/display-contents-dynamic-fieldset-legend-001-expected.html: Added.
+        * web-platform-tests/css/css-display/display-contents-dynamic-fieldset-legend-001.html: Added.
+        * web-platform-tests/css/css-display/display-contents-fieldset-002-expected.html: Added.
+        * web-platform-tests/css/css-display/display-contents-fieldset-002.html: Added.
+        * web-platform-tests/css/css-display/display-contents-slot-attach-whitespace-expected.html: Added.
+        * web-platform-tests/css/css-display/display-contents-slot-attach-whitespace.html: Added.
+        * web-platform-tests/css/css-display/display-first-line-001.html:
+        * web-platform-tests/css/css-display/display-math-on-non-mathml-elements-expected.txt: Added.
+        * web-platform-tests/css/css-display/display-math-on-non-mathml-elements.html: Added.
+        * web-platform-tests/css/css-display/display-math-on-pseudo-elements-001-expected.txt: Added.
+        * web-platform-tests/css/css-display/display-math-on-pseudo-elements-001.html: Added.
+        * web-platform-tests/css/css-display/display-math-on-pseudo-elements-002-expected.html: Added.
+        * web-platform-tests/css/css-display/display-math-on-pseudo-elements-002.html: Added.
+        * web-platform-tests/css/css-display/textarea-display-expected.txt: Added.
+        * web-platform-tests/css/css-display/textarea-display.html: Added.
+        * web-platform-tests/css/css-display/w3c-import.log:
+
+2021-05-06  Tim Nguyen  <ntim@apple.com>
+
         Re-import css/css-contain WPT
         https://bugs.webkit.org/show_bug.cgi?id=225445
 
